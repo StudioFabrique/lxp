@@ -8,7 +8,6 @@ import ModuleExplorerContentSkeleton from "./module-content-explorer-skeleton";
 import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/module-content-explorer/sidebar/create-course-item";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import ActivityList from "../../components/module-content-explorer/sidebar/activity-list";
 import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
@@ -100,7 +99,7 @@ const ModuleExplorerContent = () => {
   };
 
   return (
-    <ViewWrapper className="flex flex-col gap-6 min-h-[120vh]">
+    <div className="w-full flex flex-col gap-6">
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && selectedLesson && (
         <LessonCompletionModal
@@ -309,7 +308,7 @@ const ModuleExplorerContent = () => {
       ) : (
         <ModuleExplorerContentSkeleton />
       )}
-    </ViewWrapper>
+    </div>
   );
 };
 

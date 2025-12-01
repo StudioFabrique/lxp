@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookMarkedIcon } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 
 const Formation = ({ currentRoute }: { currentRoute: string[] }) => {
   /* const [isHover, setIsHover] = useState(false); */
@@ -17,7 +17,7 @@ const Formation = ({ currentRoute }: { currentRoute: string[] }) => {
           data-tip="Formations"
         >
           <div className="flex hover justify-center items-center">
-            <BookMarkedIcon />
+            <GraduationCap />
             <span
               className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
                 isCurrentPathActive && "bg-primary/50"

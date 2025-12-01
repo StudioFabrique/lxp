@@ -50,8 +50,8 @@ const UserHome = () => {
   console.log({ dataList });
 
   return (
-    <main className="w-fit">
-      <section className="w-full h-full flex flex-col items-center py-8 gap-y-8">
+    <div>
+      <section className="w-full h-full flex flex-col items-center gap-y-8">
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
@@ -68,7 +68,7 @@ const UserHome = () => {
 
         <UsersListStats stats={stats} />
 
-        <Wrapper>
+        <Wrapper additionalClassname="w-full">
           <div className="w-full">
             <UserRolesTabs
               isLoading={isLoading}
@@ -142,7 +142,7 @@ const UserHome = () => {
           </Modal>
         ) : null}
       </>
-    </main>
+    </div>
   );
 };
 

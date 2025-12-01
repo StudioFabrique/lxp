@@ -1,21 +1,17 @@
 import { LogOutIcon } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
-import imageProfileReplacement from "../../../config/image-profile-replacement";
 import { Context } from "../../../store/context.store";
 import Questionnaire from "./questionnaire";
-import yannickYannick from "../../../assets/yannick-glitch.mp4";
 import newLogo from "../../../assets/images/new-logo-2.svg";
+import { AvatarSmall } from "../avatar/avatar.component";
 
 type SharedSideBarProps = {
   interfaceType: string;
 };
 
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
-  const { pathname } = useLocation();
-  const isStudent = pathname.split("/")[1] === "student";
-
   const { user, logout } = useContext(Context);
   const navigate = useNavigate();
 
@@ -24,12 +20,14 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
     navigate("/", { replace: true });
   };
 
+  console.log({ user });
+
   return (
-    <ul className="flex flex-col gap-4 items-center">
+    <ul className="flex flex-col gap-1 pl-2">
       <li>
         <Link
           to={`/${interfaceType}/profil`}
-          className="text-white rounded-lg h-[35px] w-[35px] tooltip tooltip-right group"
+          className="flex gap-2 items-center text-white capitalize p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
           data-tip={`${
             user?.firstname &&
             user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)
@@ -39,61 +37,44 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
               user?.lastname.charAt(0).toUpperCase() + user?.lastname.slice(1)
             }`}
         >
-          {isStudent ? (
-            <>
-              <video
-                src={yannickYannick}
-                loop
-                onMouseOver={(e) => {
-                  e.currentTarget.play();
-                }}
-                className="h-full w-full rounded-lg object-cover absolute invisible group-hover:visible"
-              />
-              <img
-                className="h-full w-full rounded-lg object-cover visible group-hover:invisible"
-                src={`data:image/jpeg;base64,${
-                  user?.avatar ?? imageProfileReplacement
-                }`}
-                alt="User Avatar"
-              />
-            </>
-          ) : (
-            <img
-              className="h-full w-full rounded-lg object-cover"
-              src={`data:image/jpeg;base64,${
-                user?.avatar ?? imageProfileReplacement
-              }`}
-              alt="User Avatar"
+          {user && (
+            <AvatarSmall
+              user={{
+                ...user,
+                avatar:
+                  user?.avatar && `data:image/jpeg;base64,${user?.avatar}`,
+              }}
+              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-base-200"
+              imgClassName="w-4 h-4 rounded-full object-cover"
             />
           )}
+          {`${user?.firstname} ${user?.lastname}`}
         </Link>
       </li>
+
+      <Questionnaire />
+
       <li
-        className="tooltip tooltip-right"
-        data-tip="Questionnaire Bêta-Testeurs"
+        className="cursor-pointer text-sm flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50"
+        data-tip="Déconnexion"
+        onClick={handleClickLogout}
       >
-        <Questionnaire />
+        <LogOutIcon className="w-4" />
+        Déconnexion
       </li>
 
-      <li className="tooltip tooltip-right" data-tip="Mode Clair / Mode Sombre">
-        <ModeToggle />
-      </li>
-
-      <li>
-        <div
-          className="tooltip tooltip-right w-6 h-6 cursor-pointer"
-          data-tip="Déconnexion"
-          onClick={handleClickLogout}
-        >
-          <LogOutIcon />
-        </div>
-      </li>
-      <li className="mb-2">
+      <li className="my-2 flex items-center justify-between px-2">
         <img
-          className="w-10 object-contain"
+          className="w-16 object-contain"
           src={newLogo}
           alt="logo ANDRIA en blanc et bleu"
         />
+        <div
+          className="tooltip tooltip-top"
+          data-tip="Mode Clair / Mode Sombre"
+        >
+          <ModeToggle />
+        </div>
       </li>
     </ul>
   );

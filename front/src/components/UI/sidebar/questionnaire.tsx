@@ -2,13 +2,15 @@ import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const Questionnaire = () => {
+type Props = { textSize?: "text-sm" | "text-lg" };
+
+const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       const hasClosedQuestionnaire = localStorage.getItem(
-        "hasClosedQuestionnaire",
+        "hasClosedQuestionnaire"
       );
       if (!hasClosedQuestionnaire) {
         setShowTooltip(true);
@@ -22,13 +24,11 @@ const Questionnaire = () => {
   };
 
   return (
-    <>
-      {/* {showTooltip && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[50]" />
-      )} */}
+    <li>
       <div className="relative z-50">
         <motion.a
           href="https://forms.gle/joWqE48La7S6NqCK8"
+          onClick={handleClose}
           target="_blank"
           rel="noopener noreferrer"
           animate={
@@ -47,9 +47,16 @@ const Questionnaire = () => {
             repeat: showTooltip ? Infinity : 0,
             ease: "easeInOut",
           }}
-          className={`inline-block ${showTooltip ? "spotlight ring-4 ring-primary ring-offset-2 rounded-full p-2" : ""}`}
+          className={`flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50 ${
+            showTooltip
+              ? "spotlight ring-4 ring-primary ring-offset-2 rounded-full p-2"
+              : ""
+          }`}
         >
-          <ClipboardList />
+          <span>
+            <ClipboardList className="w-4" />
+          </span>
+          <span className={textSize}>Questionnaire (Bêta Testeurs)</span>
         </motion.a>
 
         {showTooltip && (
@@ -61,7 +68,7 @@ const Questionnaire = () => {
               duration: 0.5,
               ease: "easeOut",
             }}
-            className="absolute left-full flex flex-col w-[25vw] bottom-0 ml-10 bg-base-100 p-4 rounded-xl shadow-lg border border-base-300"
+            className="absolute left-full flex flex-col w-[25vw] top-0 ml-10 bg-base-100 p-4 rounded-xl shadow-lg border border-base-300"
           >
             <motion.p
               initial={{ y: 20, opacity: 0 }}
@@ -92,7 +99,7 @@ const Questionnaire = () => {
                 whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                 whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
                 onClick={handleClose}
-                className="btn btn-secondary text-secondary-content btn-sm"
+                className="btn btn-secondary text-base-100 btn-sm"
               >
                 Fermer
               </motion.button>
@@ -100,7 +107,7 @@ const Questionnaire = () => {
           </motion.div>
         )}
       </div>
-    </>
+    </li>
   );
 };
 

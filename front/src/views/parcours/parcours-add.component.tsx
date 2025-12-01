@@ -141,82 +141,80 @@ const AddParcours = () => {
   }, [formation, sendRequest]);
 
   return (
-    <>
-      <FadeWrapper>
-        <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
-          <>
-            <div>
-              {isLoading ? (
-                <div className="h-full grid grid-rows-1">
-                  <Loader />
-                </div>
-              ) : (
-                <div className="grid grid-rows-2 gap-8">
-                  <h1 className="text-2xl font-extrabold">
-                    Création d'un parcours
-                  </h1>
+    <FadeWrapper>
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto">
+        <>
+          <div>
+            {isLoading ? (
+              <div className="h-full grid grid-rows-1">
+                <Loader />
+              </div>
+            ) : (
+              <div className="grid grid-rows-2 gap-8">
+                <h1 className="text-2xl font-extrabold">
+                  Création d'un parcours
+                </h1>
 
-                  <h3>
-                    Pour commencer, veuillez saisir les informations nécessaires
-                    pour créer le parcours
-                  </h3>
+                <h3>
+                  Pour commencer, veuillez saisir les informations nécessaires
+                  pour créer le parcours
+                </h3>
 
-                  <Wrapper>
-                    <div className="h-full flex flex-col justify-around gap-y-4">
-                      <div className="text-sm font-bold">
-                        Créer un parcours à partir d'un modèle
-                      </div>
-                      <div className="flex flex-col gap-y-8">
-                        <span className="w-full flex items-center gap-x-4">
-                          <Selecter
-                            list={formations}
-                            title="Rechercher par formation"
-                            onSelectItem={handleFormation}
-                          />
-                          <QuestionMarkTooltip tooltipValue="Chosissez une formation pour obtenir une liste de parcours dans le menu déroulant ci-dessous">
-                            <HelpCircle className="w-6 h-6 text-info" />
-                          </QuestionMarkTooltip>
-                        </span>
-
-                        <span className="w-full flex items-center gap-x-4">
-                          <Selecter
-                            list={parcoursList}
-                            title="Choisisez le parcours à dupliquer"
-                            onSelectItem={handleParcours}
-                          />
-                          <QuestionMarkTooltip tooltipValue="Les compétences, objectifs, ressources pédagogiques, modules, cours, leçons et activités associés au parcours choisi seront également dupliqués lors de l'opération.">
-                            <HelpCircle className="w-6 h-6 text-info" />
-                          </QuestionMarkTooltip>
-                        </span>
-                      </div>
-                      <div className="w-full flex justify-end mt-4">
-                        <button
-                          className="btn btn-primary"
-                          type="button"
-                          onClick={handleDuplicateParcours}
-                          disabled={parcours === undefined || !formation}
-                        >
-                          Créer
-                        </button>
-                      </div>
+                <Wrapper>
+                  <div className="h-full flex flex-col justify-around gap-y-4">
+                    <div className="text-sm font-bold">
+                      Créer un parcours à partir d'un modèle
                     </div>
-                  </Wrapper>
+                    <div className="flex flex-col gap-y-8">
+                      <span className="w-full flex items-center gap-x-4">
+                        <Selecter
+                          list={formations}
+                          title="Rechercher par formation"
+                          onSelectItem={handleFormation}
+                        />
+                        <QuestionMarkTooltip tooltipValue="Chosissez une formation pour obtenir une liste de parcours dans le menu déroulant ci-dessous">
+                          <HelpCircle className="w-6 h-6 text-info" />
+                        </QuestionMarkTooltip>
+                      </span>
 
-                  <h3>Ou</h3>
-                  <Wrapper>
-                    <NewParcoursForm
-                      formations={formations}
-                      onSubmit={handleSubmit}
-                    />
-                  </Wrapper>
-                </div>
-              )}
-            </div>
-            <div style={classImage} />
-          </>
-        </div>
-      </FadeWrapper>
-    </>
+                      <span className="w-full flex items-center gap-x-4">
+                        <Selecter
+                          list={parcoursList}
+                          title="Choisisez le parcours à dupliquer"
+                          onSelectItem={handleParcours}
+                        />
+                        <QuestionMarkTooltip tooltipValue="Les compétences, objectifs, ressources pédagogiques, modules, cours, leçons et activités associés au parcours choisi seront également dupliqués lors de l'opération.">
+                          <HelpCircle className="w-6 h-6 text-info" />
+                        </QuestionMarkTooltip>
+                      </span>
+                    </div>
+                    <div className="w-full flex justify-end mt-4">
+                      <button
+                        className="btn btn-primary"
+                        type="button"
+                        onClick={handleDuplicateParcours}
+                        disabled={parcours === undefined || !formation}
+                      >
+                        Créer
+                      </button>
+                    </div>
+                  </div>
+                </Wrapper>
+
+                <h3>Ou</h3>
+                <Wrapper>
+                  <NewParcoursForm
+                    formations={formations}
+                    onSubmit={handleSubmit}
+                  />
+                </Wrapper>
+              </div>
+            )}
+          </div>
+          <div style={classImage} />
+        </>
+      </div>
+    </FadeWrapper>
   );
 };
 

@@ -39,7 +39,7 @@ function EditLesson() {
       </section>
 
       {/* Formulaire d'édition */}
-      <section className="w-full lg:w-[40rem]">
+      <section className="w-full">
         {/* Affichage conditionnel du formulaire si la leçon est chargée */}
         {lesson ? (
           <Wrapper>
