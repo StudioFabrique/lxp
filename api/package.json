@@ -27,8 +27,8 @@
   "license": "ISC",
   "dependencies": {
     "@elastic/elasticsearch": "^8.10.0",
-    "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "^7.0.0",
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "@tiptap/extension-placeholder": "^2.11.7",
     "@types/jsonwebtoken": "^9.0.1",
     "accesscontrol": "^2.2.1",
