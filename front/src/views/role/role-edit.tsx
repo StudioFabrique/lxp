@@ -7,7 +7,6 @@ import toTitleCase from "../../utils/toTitleCase";
 import RoleForm from "../../components/role/role-form/role-form";
 import { useEffect } from "react";
 import { ListRestartIcon } from "lucide-react";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 const RoleEdit = () => {
@@ -35,7 +34,7 @@ const RoleEdit = () => {
   if (!role) return <Loader />;
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       {/* Header de la liste des rôles */}
       <Header
         title={`Modification du rôle ${toTitleCase(role.label)}`}
@@ -127,7 +126,7 @@ const RoleEdit = () => {
           Valider
         </button>
       </span>
-    </ViewWrapper>
+    </div>
   );
 };
 

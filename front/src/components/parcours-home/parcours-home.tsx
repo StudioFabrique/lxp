@@ -82,7 +82,7 @@ const ParcoursList = (props: ParcoursListProps) => {
       <ParcoursHeader />
 
       <section className="w-full flex flex-col gap-y-4">
-        <article className="w-full flex justify-end items-center gap-x-4">
+        <article className="w-full flex justify-end items-center">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
         {!showList ? (

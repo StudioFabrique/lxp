@@ -8,7 +8,6 @@ import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
 import TeacherLessonsQualityStats from "../../components/admin-home/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import { Context } from "../../store/context.store";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const links = [
   {
@@ -72,7 +71,7 @@ const AdminHome = () => {
   }, [getParcours]);
 
   return (
-    <ViewWrapper className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4">
       <section className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center">
         <article className="w-full">
           <span className="w-full flex flex-1 flex-col gap-y-2">
@@ -174,7 +173,7 @@ const AdminHome = () => {
           <article></article>
         </section>
       </div>
-    </ViewWrapper>
+    </div>
   );
 };
 

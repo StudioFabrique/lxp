@@ -10,6 +10,7 @@ import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
 import { COMPANY_LOGO } from "./config/urls";
+import AppLayout from "./components/UI/AppLayout";
 
 const StudentLayout = lazy(
   async () => await import("./views/student/student-layout.component")
@@ -40,19 +41,9 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <div className="flex flex-col gap-2">
-            <img
-              className="self-start max-h-20 object-contain rounded-lg border-slate-700 border-1 p-0.5"
-              src={COMPANY_LOGO}
-            />
-            <div className="flex gap-2">
-              <Sidebar />
-
-              <Suspense fallback={<Loader />}>
-                <StudentLayout />
-              </Suspense>
-            </div>
-          </div>
+          <AppLayout logoUrl={COMPANY_LOGO}>
+            <StudentLayout />
+          </AppLayout>
         ),
         children: studentRoutes,
       },

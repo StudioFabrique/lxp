@@ -11,7 +11,6 @@ import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
 import { useSearchParams } from "react-router-dom";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
 
 // Composant principal pour l'ajout/édition d'une formation
@@ -226,7 +225,7 @@ export default function FormationAdd() {
 
   // Rendu du composant
   return (
-    <ViewWrapper className="flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2">
       <Header
         title={
           formationToEdit
@@ -293,6 +292,6 @@ export default function FormationAdd() {
           />
         </article>
       </section>
-    </ViewWrapper>
+    </div>
   );
 }

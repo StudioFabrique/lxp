@@ -65,7 +65,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       <li className="my-2 flex items-center justify-between px-2">
         <img
-          className="w-14 object-contain"
+          className="w-16 object-contain"
           src={newLogo}
           alt="logo ANDRIA en blanc et bleu"
         />

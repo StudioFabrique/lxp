@@ -5,7 +5,6 @@ import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
 import Calendrier from "../../components/user-profile/calendrier";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
 import Journal from "../../components/user-profile/journal/journal";
 
@@ -62,7 +61,7 @@ const Profile = () => {
   }, [state?.refreshId, state?.tab, state?.editMode]);
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <Header title="Mon profil" />
 
       {/* Tabs */}
@@ -144,7 +143,7 @@ const Profile = () => {
           </button>
         </div>
       )}
-    </ViewWrapper>
+    </div>
   );
 };
 
