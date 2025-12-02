@@ -186,30 +186,25 @@ stage("Build App") {
 }
 
         stage("Starting app") {
-            steps {
-                withCredentials([
-                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
-                    '''
+        steps {
+            withCredentials([
+            file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
+            string(credentialsId: 'INFA_HOST', variable: 'HOST'),
+            string(credentialsId: 'INFA_USER', variable: 'USER'),
+            string(credentialsId: 'INFA_PORT', variable: 'PORT'),
+            string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+            sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+            ]) {
 
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
-                    '''
+            sh '''
+                ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
+            '''
 
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
-                    '''
+            sh '''
+                ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
+            '''
 
-                    echo "✅ Deployment to DEMO completed successfully!"
-                }
+            echo "✅ Deployment to DEMO completed successfully!"
             }
         }
-    }
 }
