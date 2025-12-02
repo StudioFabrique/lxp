@@ -28,17 +28,14 @@ const Info: FC<{
       <h3 className="text-lg font-semibold">Informations</h3>
       <Wrapper>
         <div className="flex flex-col gap-2">
-          <Field
-            fieldRef={firstInputRef}
-            name="firstname"
-            label="Prénom"
-            data={formProps}
-          />
-          <Field name="lastname" label="Nom" data={formProps} />
-          <Field name="nickname" label="Pseudo" data={formProps} />
-          <div className="flex gap-5 justify-between">
-            <Field isDisabled name="email" label="Email" data={formProps} />
-            <div className="flex flex-col w-[50%] items-end gap-2">
+          <div className="flex gap-10 justify-between">
+            <Field
+              fieldRef={firstInputRef}
+              name="firstname"
+              label="Prénom"
+              data={formProps}
+            />
+            <div className="flex flex-col items-center gap-2">
               <h4>Avatar</h4>
               <ProfileImageFileUpload
                 temporaryAvatar={temporaryAvatar}
@@ -48,6 +45,9 @@ const Info: FC<{
               />
             </div>
           </div>
+          <Field name="lastname" label="Nom" data={formProps} />
+          <Field name="nickname" label="Pseudo" data={formProps} />
+          <Field isDisabled name="email" label="Email" data={formProps} />
         </div>
         <div className="flex flex-col gap-2">
           <Field name="address" label="Adresse" data={formProps} />
