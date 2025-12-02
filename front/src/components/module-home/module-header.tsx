@@ -12,7 +12,7 @@
 import { Link } from "react-router-dom";
 import Can from "../UI/can/can.component";
 import Header from "../UI/header";
-import AddIcon from "../UI/svg/add-icon";
+import { PlusCircle } from "lucide-react";
 
 function ModuleHeader() {
   return (
@@ -27,10 +27,8 @@ function ModuleHeader() {
           {/* Create new module button that navigates to creation page */}
           <Link className="btn btn-primary btn-soft" to="add">
             <div className="flex gap-x-2 items-center">
-              <div className="w-8 h-8">
-                <AddIcon />
-              </div>
-              <p>Créer un module</p>
+              <PlusCircle />
+              Créer un module
             </div>
           </Link>
         </Can>
