@@ -11,6 +11,6 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["src/**/*.ts", "prisma.config.ts"],
+  "include": ["src/**/*.ts", "prisma.config.ts", "generated/prisma/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }
