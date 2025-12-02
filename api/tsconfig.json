@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
     "module": "CommonJS",
-    "sourceMap": true,
-    "outDir": "dist",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
     "strict": true,
-    "lib": ["es6"],
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "target": "es6",
-    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": ["src/**/*.ts", "prisma.config.ts", "generated/prisma/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
