@@ -173,10 +173,10 @@ stage("Build App") {
                     set -eu
                     cd /home/$USER/$TARGET/
                     # Optionnel: attendre que Postgres soit prêt
-                    until pg_isready -h localhost -p 5500 -U postgres >/dev/null 2>&1; do sleep 2; done
+                    # until pg_isready -h localhost -p 5500 -U postgres >/dev/null 2>&1; do sleep 2; done
 
                     # Migration avec user DDL (least privilege respecté)
-                    DATABASE_URL=\\"$MIGRATOR_PG_URL\\" npx prisma migrate deploy
+                    npx prisma migrate deploy
                     "
                 '''
                 }
