@@ -63,11 +63,11 @@ const ProfileImageFileUpload = ({
     <button
       type="button"
       onClick={onClickChangeAvatar}
-      className="btn btn-primary text-white p-0 rounded-lg h-[60px] w-[60px]"
+      className="btn btn-primary p-0 text-white rounded-full h-[60px] w-[60px] bg-white"
     >
       {temporaryAvatar.url || !children ? (
         <img
-          className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
+          className="h-[58px] w-[58px] rounded-full border-primary object-contain p-1"
           src={
             temporaryAvatar.url
               ? temporaryAvatar.url
@@ -80,8 +80,8 @@ const ProfileImageFileUpload = ({
       ) : (
         children
       )}
-      <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-lg backdrop-blur-[2px] opacity-0 hover:opacity-100">
-        <EditIcon className="text-primary-content stroke-[3px]" />
+      <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-full backdrop-blur-[2px] opacity-0 hover:opacity-100">
+        <EditIcon className="text-black stroke-[2px] p-1" />
       </span>
       <input
         ref={fileUploadRef}

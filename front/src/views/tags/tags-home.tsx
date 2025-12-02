@@ -115,7 +115,7 @@ const TagsHome = () => {
         description="Créer, modifier et supprimer des tags"
       >
         <Can object="tag" action="write">
-          <Link className="btn btn-primary text-base-100" to="?openModal=true">
+          <Link className="btn btn-primary btn-soft" to="?openModal=true">
             <PlusCircle />
             Créer un nouveau tag
           </Link>

@@ -4,13 +4,15 @@ import ProfileImageFileUpload from "../UI/image-file-upload/profile-image-file-u
 import { useCallback, useEffect, useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
+import ColorPicker from "../UI/color-picker";
+import { COMPANY_LOGO } from "../../config/urls";
 
 const CompanyPictureUpload = () => {
   const { sendRequest } = useHttp(true);
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
     url: string | null;
-  }>({ file: null, url: null });
+  }>({ file: null, url: COMPANY_LOGO });
 
   const handleSubmitPicture = useCallback(
     (avatar: { file: File | null; url: string | null }) => {
@@ -27,10 +29,10 @@ const CompanyPictureUpload = () => {
           method: "post",
           body: formData,
         },
-        applyData,
+        applyData
       );
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   useEffect(() => {
@@ -46,18 +48,24 @@ const CompanyPictureUpload = () => {
           Téléverser un nouveau logo de l'organisme de formation
         </p>
         <span className="ml-2 flex flex-col gap-2">
-          <ProfileImageFileUpload
-            temporaryAvatar={temporaryAvatar}
-            onSetTemporaryAvatar={setTemporaryAvatar}
-            maxSize={avatarImageMaxSize}
-          >
-            Ajouter le Logo
-          </ProfileImageFileUpload>
-          {!temporaryAvatar.file ? (
-            <p className="text-sm text-gray-600">
-              Formats acceptés : .jpg, .jpeg, .png
-            </p>
-          ) : (
+          <div className="flex justify-center items-end gap-10">
+            <ProfileImageFileUpload
+              temporaryAvatar={temporaryAvatar}
+              onSetTemporaryAvatar={setTemporaryAvatar}
+              maxSize={avatarImageMaxSize}
+            >
+              Ajouter le Logo
+            </ProfileImageFileUpload>
+            <div className="flex flex-col gap-2">
+              <ColorPicker onColorChange={() => {}} />
+              {!temporaryAvatar.file && (
+                <p className="text-sm text-gray-600">
+                  Formats acceptés : .jpg, .jpeg, .png
+                </p>
+              )}
+            </div>
+          </div>
+          {temporaryAvatar.file && (
             <FadeWrapper>
               <p className="text-success">
                 Le nouveau logo sera affiché au prochain rechargement complet de
