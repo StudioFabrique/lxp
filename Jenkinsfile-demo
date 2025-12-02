@@ -23,7 +23,8 @@ stage("Build App") {
     steps {
         withCredentials([
             file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
-            file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE')
+            file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
+            string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
         ]) {
             sh '''
             echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
@@ -39,6 +40,12 @@ stage("Build App") {
             npm run install
             npm run generate
             npm run deploy
+
+            echo "📦 Copying generated Prisma client into dist..."
+            # On copie ./$TARGET/generated -> ./$TARGET/dist/generated
+            rm -rf ./$TARGET/dist/generated || true
+            mkdir -p ./$TARGET/dist
+            cp -r ./$TARGET/generated ./$TARGET/dist/generated
             '''
         }
     }
