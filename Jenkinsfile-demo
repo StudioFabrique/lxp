@@ -45,6 +45,7 @@ stage("Build App") {
             # On copie ./$TARGET/generated -> ./$TARGET/dist/generated
             rm -rf ./$TARGET/dist/generated || true
             mkdir -p ./$TARGET/dist
+            npx prisma generate
             cp -r ./$TARGET/generated ./$TARGET/dist/generated
             '''
         }
