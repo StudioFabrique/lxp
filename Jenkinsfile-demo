@@ -174,7 +174,7 @@ stage("Build App") {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            DATABASE_URL="${MIGRATOR_PG_URL}" npx prisma migrate deploy
+                            npx prisma migrate deploy
                         '
                     """
                 }
