@@ -200,12 +200,6 @@ stage("Build App") {
                     '''
 
                     sh '''
-                    rm -rf ./$TARGET/dist/generated || true
-                    mkdir -p ./$TARGET/dist
-                    cp -r ./$TARGET/generated ./$TARGET/dist/generated
-                    '''
-
-                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
                     '''
 
