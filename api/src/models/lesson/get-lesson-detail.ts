@@ -1,9 +1,9 @@
-import { Contact } from "@prisma/client";
+import { Contact } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function getLessonDetail(
   lessonId: number,
-  userIdMdb?: string
+  userIdMdb?: string,
 ) {
   let existingLesson = (await prisma.lesson.findFirst({
     where: { id: lessonId },
@@ -66,7 +66,7 @@ export default async function getLessonDetail(
     ...existingLesson,
     course: {
       contacts: existingLesson.course.contacts.map(
-        (contact: { contact: Contact }) => contact.contact
+        (contact: { contact: Contact }) => contact.contact,
       ),
     },
   };
