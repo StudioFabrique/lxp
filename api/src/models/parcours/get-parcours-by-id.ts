@@ -1,4 +1,4 @@
-import { Contact, Module } from "@prisma/client";
+import { Contact, Module } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
@@ -141,13 +141,13 @@ async function getParcoursById(parcoursId: number, userId: string) {
       return {
         ...result,
         contacts: result.contacts.map(
-          (contact: { contact: Contact }) => contact.contact
+          (contact: { contact: Contact }) => contact.contact,
         ),
         modules: result.modules.map(
           (module: { contacts: { contact: Contact }[] }) => ({
             ...module,
             contacts: module.contacts.map((contact) => contact.contact),
-          })
+          }),
         ),
       };
     }
