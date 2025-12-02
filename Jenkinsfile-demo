@@ -196,8 +196,6 @@ stage("Build App") {
             sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
             ]) {
 
-            // coucou
-
             sh '''
                 ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
             '''
@@ -209,4 +207,5 @@ stage("Build App") {
             echo "✅ Deployment to DEMO completed successfully!"
             }
         }
+    }
 }
