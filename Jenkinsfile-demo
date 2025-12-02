@@ -40,6 +40,9 @@ stage("Build App") {
             npm run install
             npm run generate
             npm run deploy
+            rm -rf ./api/dist/generated || true
+            mkdir -p ./api/dist
+            cp -r ./api/generated ./api/dist/generated
             '''
         }
     }
