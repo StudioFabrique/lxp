@@ -9,7 +9,8 @@
 
     "skipLibCheck": true,
     "types": ["node", "jest"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "."
   },
   "include": ["src/**/*.ts", "prisma.config.ts"],
   "exclude": ["dist", "node_modules", "prisma.config.ts"]
