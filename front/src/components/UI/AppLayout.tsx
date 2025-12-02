@@ -16,7 +16,7 @@ const AppLayout = ({
 }: PropsWithChildren<Props>) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className={`flex gap-2 h-[100vh]`}>
+      <div className={`flex gap-2 h-screen`}>
         <div className="h-[98.5vh]">{sidebar}</div>
         <div className="overflow-scroll w-full">
           <Suspense fallback={loader}>

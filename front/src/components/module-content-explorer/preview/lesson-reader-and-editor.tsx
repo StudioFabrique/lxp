@@ -73,12 +73,13 @@ const LessonReaderAndEditor = ({
 
   return (
     <>
-      {showDeleteModal && selectedActivity && (
+      {showDeleteModal && selectedActivity && textActivityTitle && (
         <Modal title="Supprimer l'activité" leftLabel="Annuler">
           <ActivityDeleteModal
             onCloseDeleteModal={onCloseDeleteModal}
             onConfirmDelete={handleConfirmDelete}
             textActivityTitle={textActivityTitle}
+            isOpen
           />
         </Modal>
       )}

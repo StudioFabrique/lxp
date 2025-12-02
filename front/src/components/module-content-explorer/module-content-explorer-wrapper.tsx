@@ -79,7 +79,7 @@ const ModuleContentExplorerWrapper = ({
           </motion.div>
         )}
         <div
-          className={`flex flex-col gap-2 ${
+          className={`flex flex-col gap-2 min-h-[80vh] ${
             isPanelClosed ? "lg:col-span-3" : "lg:col-span-2"
           }`}
         >
