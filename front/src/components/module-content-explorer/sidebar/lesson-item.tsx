@@ -87,7 +87,13 @@ const LessonItem = ({
     if (!isOpen) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      // Check if click is outside both button and dropdown menu
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(target) &&
+        !(target as HTMLElement).closest(".menu") // Don't close if clicking inside menu
+      ) {
         setIsOpen(false);
       }
     };
@@ -126,11 +132,12 @@ const LessonItem = ({
                   {isOpen &&
                     createPortal(
                       <ul
-                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-[10rem] p-1 z-50"
+                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-[10rem] p-1 z-[9999]"
                         style={{
                           top: `${dropdownPosition.top}px`,
                           left: `${dropdownPosition.left}px`,
                         }}
+                        onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling
                       >
                         <li>
                           <Link
