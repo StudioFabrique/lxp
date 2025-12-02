@@ -6,12 +6,11 @@
     "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
-
     "skipLibCheck": true,
     "types": ["node", "jest"],
     "outDir": "dist",
     "rootDir": "."
   },
   "include": ["src/**/*.ts", "prisma.config.ts"],
-  "exclude": ["dist", "node_modules", "prisma.config.ts", "generated/**/*"]
+  "exclude": ["dist", "node_modules"]
 }
