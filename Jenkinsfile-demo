@@ -176,7 +176,7 @@ stage("Build App") {
                     # until pg_isready -h localhost -p 5500 -U postgres >/dev/null 2>&1; do sleep 2; done
 
                     # Migration avec user DDL (least privilege respecté)
-                    npx prisma migrate deploy
+                    DATABASE_URL=\\"$MIGRATOR_PG_URL\\ npx prisma migrate deploy
                     "
                 '''
                 }
@@ -194,7 +194,7 @@ stage("Build App") {
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
                     '''
 
                     sh '''
