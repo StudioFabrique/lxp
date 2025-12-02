@@ -1,6 +1,7 @@
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import SidebarBottom from "./sidebar-bottom";
+import { COMPANY_LOGO } from "../../../config/urls";
 
 const SidebarWrapper = ({
   children,
@@ -11,13 +12,46 @@ const SidebarWrapper = ({
 }) => {
   const { theme } = useContext(Context);
 
+  const [logoExists, setExists] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  const showLogo = (logoExists || loading) && COMPANY_LOGO;
+
+  useEffect(() => {
+    if (!COMPANY_LOGO) {
+      setExists(false);
+      setLoading(false);
+      return;
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      setExists(true);
+      setLoading(false);
+    };
+    img.onerror = () => {
+      setExists(false);
+      setLoading(false);
+    };
+    img.src = COMPANY_LOGO;
+  }, []);
+
   return (
     <nav
-      className={`w-[20rem] flex flex-col justify-between gap-y-4 px-2 py-4 rounded-xl gap-2 ${
+      className={`h-full w-[20rem] flex flex-col justify-between gap-y-4 px-2 py-4 rounded-xl gap-2 ${
         theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
       }`}
     >
-      {children}
+      <div>
+        {showLogo && (
+          <img
+            className="self-start h-[3vw] w-[3vw] rounded-full border-slate-700 border-1 object-contain p-1 m-2 mb-3 bg-white"
+            src={COMPANY_LOGO}
+            alt="Company logo"
+          />
+        )}
+        {children}
+      </div>
       <SidebarBottom interfaceType={interfaceType} />
     </nav>
   );

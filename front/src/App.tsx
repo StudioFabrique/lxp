@@ -8,7 +8,6 @@ import Loader from "./components/UI/loader";
 import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
-import { COMPANY_LOGO } from "./config/urls";
 import AppLayout from "./components/UI/AppLayout";
 
 const StudentLayout = lazy(
@@ -40,7 +39,7 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <AppLayout logoUrl={COMPANY_LOGO}>
+          <AppLayout>
             <StudentLayout />
           </AppLayout>
         ),
@@ -50,7 +49,7 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <AppLayout logoUrl={COMPANY_LOGO}>
+          <AppLayout>
             <AdminLayout />
           </AppLayout>
         ),
