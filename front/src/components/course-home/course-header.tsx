@@ -27,8 +27,8 @@ function CourseHeader() {
           {/* Create new course button that navigates to creation page */}
           <Link className="btn btn-primary btn-soft" to="add">
             <div className="flex gap-x-2 items-center">
-              <PlusCircle className="w-8 h-8" />
-              <p>Créer un cours</p>
+              <PlusCircle />
+              Créer un cours
             </div>
           </Link>
         </Can>

@@ -10,6 +10,7 @@ import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
 import useUser from "../../components/user-list/use-user";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import { PlusCircle } from "lucide-react";
 
 const UserHome = () => {
   const {
@@ -57,10 +58,8 @@ const UserHome = () => {
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
         >
           <Can action="write" object="user">
-            <Link
-              className="btn btn-primary text-base-100"
-              to="/admin/user/add"
-            >
+            <Link className="btn btn-primary btn-soft" to="/admin/user/add">
+              <PlusCircle />
               Créer un utilisateur
             </Link>
           </Can>
