@@ -1,31 +1,55 @@
+import { useParams } from "react-router-dom";
 import { Activity } from "../../utils/interfaces/activity";
 import ImageActivityEditor from "../edit-lesson/activities/image/image-activity-editor";
+import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+import toast from "react-hot-toast";
+import useHttp from "../../hooks/use-http";
+import ImageActivityPreview from "../edit-lesson/activities/image/image-activity-preview";
 
 type Props = {
-  activity: Activity | null;
+  activity?: Activity;
   mode: "read" | "edit" | "write";
+  onCancel: (value: boolean) => void;
 };
 
 export default function ImageActivityResource(props: Props) {
-  if (props.mode === "read") {
+  const params = useParams();
+  const { resourceId } = params;
+  const { sendRequest } = useHttp();
+
+  const handleImageSubmit = (fd: FormData) => {
+    const applyData = (data: SuccessWithMessage) => {
+      if (data.success) {
+        toast.success(data.message);
+        props.onCancel(false);
+      }
+    };
+    sendRequest(
+      {
+        path: `/activity/image/${props.activity?.id ?? resourceId}/resource`,
+        method: props.activity ? "put" : "post",
+        body: fd,
+      },
+      applyData,
+    );
+  };
+
+  if (props.mode === "read" && props.activity) {
     return (
-      <div>
-        <h2>Admire Image Activity Resource</h2>
-        <p>This is a placeholder for the ImageActivityResource component.</p>
-      </div>
+      <ImageActivityPreview
+        activity={props.activity}
+        isEditing={false}
+        onSubmitted={props.onCancel}
+      />
     );
   }
 
-  if (props.mode === "edit") {
-    return (
-      <div>
-        <h2>UpdateImage Activity Resource</h2>
-        <p>This is a placeholder for the ImageActivityResource component.</p>
-      </div>
-    );
-  }
-
-  if (props.mode === "write") {
-    return <ImageActivityEditor onCancel={() => {}} parent="resource" />;
-  }
+  return (
+    <ImageActivityEditor
+      activity={props.activity}
+      onCancel={props.onCancel}
+      parent="resource"
+      onSubmit={handleImageSubmit}
+    />
+  );
 }

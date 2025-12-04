@@ -20,6 +20,7 @@ const useEditImageActivity = (
   activity: Activity | undefined,
   onCancel: (value: boolean) => void,
   parent: "lesson" | "resource",
+  onSubmit?: (fd: FormData) => void,
 ) => {
   // Initialize the form with the useForm hook
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
@@ -43,11 +44,13 @@ const useEditImageActivity = (
       .regex(regexGeneric, {
         message: "The title contains unauthorized characters",
       }),
+    /*
     description: z
       .string({ required_error: "A description is required" })
       .regex(regexGeneric, {
         message: "The description contains unauthorized characters",
       }),
+    */
   });
 
   /**
@@ -78,20 +81,23 @@ const useEditImageActivity = (
     if (file) {
       formData.append("image", file);
     }
-    const applyData = (data: SuccessWithMessage) => {
-      if (data.success) {
-        toast.success(data.message);
-        onCancel(false);
-      }
-    };
-    sendRequest(
-      {
-        path: `/activity/image/${activity?.id ?? lessonId}/${parent}`,
-        method: activity ? "put" : "post",
-        body: formData,
-      },
-      applyData,
-    );
+    if (onSubmit) onSubmit(formData);
+    else {
+      const applyData = (data: SuccessWithMessage) => {
+        if (data.success) {
+          toast.success(data.message);
+          onCancel(false);
+        }
+      };
+      sendRequest(
+        {
+          path: `/activity/image/${activity?.id ?? lessonId}/${parent}`,
+          method: activity ? "put" : "post",
+          body: formData,
+        },
+        applyData,
+      );
+    }
   };
 
   /**

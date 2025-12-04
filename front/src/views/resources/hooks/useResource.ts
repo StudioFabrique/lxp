@@ -285,6 +285,7 @@ const useResource = () => {
 
   const closePreviewActivity = () => {
     dispatch({ type: "CLOSE_PREVIEW_ACTIVITY" });
+    getResourceDetails();
   };
 
   const resourceActivityiesSubmitted = () => {

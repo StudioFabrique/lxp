@@ -17,7 +17,10 @@ import {
   activityIdValidator,
   idValidator,
   postIframeValidator,
+  postImage,
+  postImageValidator,
   postVideoValidator,
+  putImageValidator,
   putReorderActivitiesValidator,
   putResourceValidator,
   resourceIdValidator,
@@ -144,17 +147,18 @@ activityRouter.post(
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
+  postImageValidator,
   httpPostImage,
 );
 
 // Route pour mettre à jour une activité de type image existante
 activityRouter.put(
-  "/image/:activityId",
+  "/image/:activityId/:parent",
   checkPermissions("lesson"),
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
-  activityIdValidator,
+  putImageValidator,
   httpPutImage,
 );
 

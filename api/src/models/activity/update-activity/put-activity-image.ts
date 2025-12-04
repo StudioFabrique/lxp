@@ -1,17 +1,19 @@
+import { Activity, BonusActivity } from "../../../../generated/prisma/client";
 import { prisma } from "../../../utils/db";
 //import path from "path";
 //import fs from "fs";
 
 /**
- * Met à jour une activité de type image
- * @param activityId - L'identifiant de l'activité à mettre à jour
- * @param userId - L'identifiant de l'utilisateur effectuant la mise à jour
- * @param title - Le nouveau titre de l'activité
- * @param description - La nouvelle description de l'activité
- * @param filename - Le nom du fichier image uploadé (optionnel)
- * @param url - L'URL de l'image depuis la médiathèque (optionnel)
- * @returns L'activité mise à jour
- * @throws {Error} Si l'utilisateur ou l'activité n'existe pas
+ * Updates an image type activity
+ * @param activityId - The identifier of the activity to update
+ * @param userId - The identifier of the user performing the update
+ * @param title - The new title of the activity
+ * @param description - The new description of the activity
+ * @param filename - The name of the uploaded image file (optional)
+ * @param url - The URL of the image from the media library (optional)
+ * @param parent - The type of parent entity ("lesson" for Activity, "resource" for BonusActivity)
+ * @returns The updated activity
+ * @throws {Error} If the user or activity does not exist
  */
 export default async function putActivityImage(
   activityId: number,
@@ -19,34 +21,53 @@ export default async function putActivityImage(
   title: string,
   description: string,
   filename: string | null,
-  url: string | null
+  url: string | null,
+  parent: "lesson" | "resource" = "lesson",
 ) {
-  // Vérifie que l'utilisateur existe
+  // Check that the user exists
   const existingUser = await prisma.admin.findFirst({
     where: { idMdb: userId },
   });
-  if (!existingUser)
-    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+  if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
-  // Vérifie que l'activité existe
-  const existingActivity = await prisma.activity.findFirst({
-    where: { id: activityId },
-  });
+  // Initialize variable to hold either Activity or BonusActivity
+  let existingElement: Activity | BonusActivity | null = null;
 
-  if (!existingActivity)
-    throw { statusCode: 404, message: "L'activité n'existe pas." };
+  // Fetch the appropriate entity based on parent type
+  if (parent === "lesson") {
+    // Handle regular lesson activities
+    existingElement = await prisma.activity.findFirst({
+      where: { id: activityId },
+    });
+  } else if (parent === "resource") {
+    // Handle bonus resource activities
+    existingElement = await prisma.bonusActivity.findFirst({
+      where: { id: activityId },
+    });
+  }
 
+  // Ensure the target activity/resource exists
+  if (!existingElement)
+    throw {
+      statusCode: 404,
+      message: "Activity or resource does not exist.",
+    };
+
+  // TODO: Handle old file cleanup if needed
   //const oldFilename = existingActivity.url;
 
-  // Met à jour l'activité avec les nouvelles données
-  // Si un nouveau fichier est uploadé, utilise son nom
-  // Sinon utilise l'URL de la médiathèque si fournie
-  // Sinon conserve l'URL existante
+  // Updates the activity with the new data
+  // Priority order for URL: uploaded file > media library URL > existing URL
+  // If a new file is uploaded, use its name
+  // Otherwise use the URL from the media library if provided
+  // Otherwise keep the existing URL
 
+  // Use transaction to ensure data consistency between activity update and media usage tracking
   const transaction = await prisma.$transaction(async (tx) => {
-    if (existingActivity.url) {
+    // Decrement usage count for the old media if it exists
+    if (existingElement.url) {
       const media = await tx.mediatheque.findFirst({
-        where: { url: existingActivity.url },
+        where: { url: existingElement.url },
       });
       if (media) {
         await tx.mediatheque.update({
@@ -56,14 +77,28 @@ export default async function putActivityImage(
       }
     }
 
-    await prisma.activity.update({
-      where: { id: activityId },
-      data: {
-        title,
-        url: filename ?? url ?? existingActivity.url,
-      },
-    });
+    // Update the appropriate entity based on parent type
+    if (parent === "lesson") {
+      await prisma.activity.update({
+        where: { id: activityId },
+        data: {
+          title,
+          // Use filename if provided, otherwise url from media library, otherwise keep existing
+          url: filename ?? url ?? existingElement.url,
+        },
+      });
+    } else {
+      await prisma.bonusActivity.update({
+        where: { id: activityId },
+        data: {
+          title,
+          // Use filename if provided, otherwise url from media library, otherwise keep existing
+          url: filename ?? url ?? existingElement.url,
+        },
+      });
+    }
 
+    // Increment usage count for the new media from library if selected
     if (url) {
       const media = await tx.mediatheque.findFirst({
         where: { url },
