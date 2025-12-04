@@ -167,7 +167,7 @@ const useUpdateResources = (
         onChangeValue("name", "");
       } else {
         toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX",
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
         );
         return;
       }

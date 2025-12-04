@@ -1,4 +1,4 @@
-import { FileStack, TextInitial, Video } from "lucide-react";
+import { Files, Image, TextInitial, Video } from "lucide-react";
 
 export const getActivityIcon = (
   activityType: "text" | "video" | "resource" | "image" | "iframe",
@@ -16,10 +16,10 @@ export const getActivityIcon = (
       icon = <Video className={iconStyle} />;
       break;
     case "resource":
-      icon = <FileStack className={iconStyle} />;
+      icon = <Files className={iconStyle} />;
       break;
     case "image":
-      icon = <span className={iconStyle}>🖼️</span>;
+      icon = <Image className={iconStyle} />;
       break;
     default:
       icon = <span>❓</span>;

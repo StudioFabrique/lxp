@@ -1,4 +1,4 @@
-import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
+import { EditIcon, Trash2 } from "lucide-react";
 import { Activity } from "../../utils/interfaces/activity";
 import { getActivityIcon } from "../../helpers/getActivityIcon";
 
