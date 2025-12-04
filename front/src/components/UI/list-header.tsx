@@ -23,9 +23,7 @@ function ListHeader({ children }: Props) {
   // Render a main container with responsive width (full on mobile, 9/12 on xl screens)
   // Adds consistent padding and spacing between child elements
   return (
-    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
-      {children}
-    </main>
+    <main className="w-full flex flex-col items-center gap-8">{children}</main>
   );
 }
 

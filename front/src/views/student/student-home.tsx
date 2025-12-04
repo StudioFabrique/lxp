@@ -10,7 +10,6 @@ import FeelingFeedback from "../../components/student-home/right-side/feeling-fe
 import StudentAccomplishments from "../../components/student-home/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../../components/student-home/right-side/most-read-courses";
 import { Context } from "../../store/context.store";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
 import { Bell, Search } from "lucide-react";
 
@@ -29,7 +28,7 @@ const StudentHome = () => {
   }, [sendRequest]);
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <Header
         title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
@@ -67,7 +66,7 @@ const StudentHome = () => {
           {/* <Chat /> */}
         </div>
       </div>
-    </ViewWrapper>
+    </div>
   );
 };
 

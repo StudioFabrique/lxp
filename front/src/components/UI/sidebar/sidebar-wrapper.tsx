@@ -1,7 +1,7 @@
-import { ReactNode, useContext, useState, useEffect } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
-import { COMPANY_LOGO } from "../../../config/urls";
 import SidebarBottom from "./sidebar-bottom";
+import { COMPANY_LOGO } from "../../../config/urls";
 
 const SidebarWrapper = ({
   children,
@@ -11,42 +11,48 @@ const SidebarWrapper = ({
   interfaceType: string;
 }) => {
   const { theme } = useContext(Context);
-  const [companyLogo, setCompanyLogo] = useState<string | null>(COMPANY_LOGO);
+
+  const [logoExists, setExists] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  const showLogo = (logoExists || loading) && COMPANY_LOGO;
 
   useEffect(() => {
-    // Check if image exists
+    if (!COMPANY_LOGO) {
+      setExists(false);
+      setLoading(false);
+      return;
+    }
+
     const img = new Image();
-    img.src = COMPANY_LOGO;
-
     img.onload = () => {
-      setCompanyLogo(COMPANY_LOGO);
+      setExists(true);
+      setLoading(false);
     };
-
     img.onerror = () => {
-      setCompanyLogo(null);
+      setExists(false);
+      setLoading(false);
     };
+    img.src = COMPANY_LOGO;
   }, []);
 
   return (
-    <nav className="w-24 h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
-      {companyLogo ? (
-        <div className="w-full bg-slate-100 rounded-lg">
+    <nav
+      className={`h-full w-[20rem] flex flex-col justify-between gap-y-4 px-2 py-4 rounded-xl gap-2 ${
+        theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
+      }`}
+    >
+      <div>
+        {showLogo && (
           <img
-            className="h-full w-full object-contain rounded-lg border-slate-700 border-2 p-1"
-            src={companyLogo}
+            className="self-start h-[3vw] w-[3vw] rounded-full border-slate-700 border-1 object-contain p-1 m-2 mb-3 bg-white"
+            src={COMPANY_LOGO}
+            alt="Company logo"
           />
-        </div>
-      ) : null}
-      <div
-        className={`flex flex-col justify-between gap-y-4 px-2 pb-2 pt-6 rounded-lg h-full relative ${
-          theme === "dark"
-            ? "text-white bg-slate-500"
-            : "text-white bg-slate-800"
-        }`}
-      >
+        )}
         {children}
-        <SidebarBottom interfaceType={interfaceType} />
       </div>
+      <SidebarBottom interfaceType={interfaceType} />
     </nav>
   );
 };

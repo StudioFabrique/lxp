@@ -1,12 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
-import { ComponentIcon, FileEditIcon, PlayCircleIcon } from "lucide-react";
+import {
+  BookMarked,
+  ComponentIcon,
+  FileEditIcon,
+  PlayCircleIcon,
+} from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import Can from "../UI/can/can.component";
-import CourseIcon from "../UI/svg/course-icon";
 import defaultImage from "../../assets/images/module-default.jpg";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
@@ -51,7 +55,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         }: ${toUpperFirstLetter(lastLesson.lesson.course.title)}`}
         subTitleIcon={
           <div className="text-white w-5">
-            <CourseIcon />
+            <BookMarked />
           </div>
         }
         hidePublished

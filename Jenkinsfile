@@ -24,8 +24,8 @@ pipeline {
             steps {
                 withCredentials([
                     file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
-                    file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    file(credentialsId: 'FNP_ENV', variable: 'API_ENV_FILE'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
                 ]) {
                     sh '''
                         echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
@@ -81,22 +81,22 @@ pipeline {
         }
         */
 
-        stage("Deploying to INFA") {
+        stage("Deploying to FNP") {
             steps {
                 withCredentials([
-                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
-                        echo INFA_HOST=$HOST
-                        echo INFA_USER=$USER
-                        echo INFA_PORT=$PORT
-                        echo INFA_TARGET=$TARGET
+                        echo FNP_HOST=$HOST
+                        echo FNP_USER=$USER
+                        echo FNP_PORT=$PORT
+                        echo FNP_TARGET=$TARGET
 
                         echo "ls -la"
                         ls -la ./api/dist || true
@@ -154,11 +154,11 @@ pipeline {
         stage('Run Prisma migrations (DDL)') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'INFA_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh """
@@ -178,10 +178,10 @@ pipeline {
         stage("Generate Prisma Client") {
             steps {
                 withCredentials([
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh """
@@ -201,11 +201,11 @@ pipeline {
         stage("Starting app") {
             steps {
                 withCredentials([
-                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''

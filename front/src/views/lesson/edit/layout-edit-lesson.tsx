@@ -28,7 +28,7 @@ export default function LayoutEditLesson() {
       {
         path: `/lesson/${lessonId}`,
       },
-      applyData,
+      applyData
     );
   }, [lessonId, dispatch, sendRequest]);
 
@@ -50,7 +50,7 @@ export default function LayoutEditLesson() {
   }, [dispatch]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center">
       <FadeWrapper>
         <div className="w-full h-full flex flex-col items-center gap-y-4">
           <div className="w-full flex flex-col items-center gap-y-4">
@@ -72,7 +72,7 @@ export default function LayoutEditLesson() {
             ) : null}
           </div>
           {lesson && lesson !== undefined ? (
-            <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
+            <div className="w-full flex flex-col items-center">
               <Outlet />
             </div>
           ) : (

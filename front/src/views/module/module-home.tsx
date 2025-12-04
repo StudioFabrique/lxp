@@ -107,14 +107,14 @@ const ModuleHome = () => {
   }, [error]);
 
   return (
-    <main className="p-2 flex flex-col items-center gap-y-8 w-full">
+    <main className="flex flex-col items-center gap-y-8 w-full">
       <section className="w-full flex justify-center">
         {isLoading ? (
           <div className="flex items-center">
             <Loader />
           </div>
         ) : (
-          <div className="xl:w-9/12">
+          <div className="w-full">
             {modules ? (
               <ModuleHomeList
                 modulesList={modules}

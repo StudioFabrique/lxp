@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 const LayoutCourse = () => {
   return (
-    <div className="flex-1 min-h-screen">
+    <div className="w-full">
       <Outlet />
     </div>
   );

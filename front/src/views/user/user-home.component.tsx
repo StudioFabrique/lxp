@@ -10,6 +10,7 @@ import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
 import useUser from "../../components/user-list/use-user";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import { PlusCircle } from "lucide-react";
 
 const UserHome = () => {
   const {
@@ -50,17 +51,15 @@ const UserHome = () => {
   console.log({ dataList });
 
   return (
-    <main className="w-fit">
-      <section className="w-full h-full flex flex-col items-center py-8 gap-y-8">
+    <div>
+      <section className="w-full h-full flex flex-col items-center gap-y-8">
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
         >
           <Can action="write" object="user">
-            <Link
-              className="btn btn-primary text-base-100"
-              to="/admin/user/add"
-            >
+            <Link className="btn btn-primary btn-soft" to="/admin/user/add">
+              <PlusCircle />
               Créer un utilisateur
             </Link>
           </Can>
@@ -68,7 +67,7 @@ const UserHome = () => {
 
         <UsersListStats stats={stats} />
 
-        <Wrapper>
+        <Wrapper additionalClassname="w-full">
           <div className="w-full">
             <UserRolesTabs
               isLoading={isLoading}
@@ -142,7 +141,7 @@ const UserHome = () => {
           </Modal>
         ) : null}
       </>
-    </main>
+    </div>
   );
 };
 
