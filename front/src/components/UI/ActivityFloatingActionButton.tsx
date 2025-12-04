@@ -1,4 +1,10 @@
-import { FileStack, Image, TextInitial, Video } from "lucide-react";
+import {
+  FileStack,
+  Image,
+  MonitorPlay,
+  TextInitial,
+  Video,
+} from "lucide-react";
 
 type Props = {
   onTypeSelection: (type: "video" | "text" | "image" | "resource") => void;
@@ -28,6 +34,11 @@ export default function ActivityFloatingActionButton(props: Props) {
       type: "resource",
       icon: <FileStack className={style} />,
       tooltip: "Ajouter une activité de type fichier",
+    },
+    {
+      type: "iframe",
+      icon: <MonitorPlay className={style} />,
+      tooltip: "Ajouter une activité de type iframe",
     },
   ];
 
