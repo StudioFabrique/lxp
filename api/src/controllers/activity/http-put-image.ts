@@ -13,15 +13,18 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
  */
 export default async function httpPutImage(
   req: CustomRequest,
-  res: Response,
-  next: NextFunction
+  _res: Response,
+  next: NextFunction,
 ) {
   try {
     // Extraction des données de la requête
     const { data } = req.body;
     const file = req.file;
     const userId = req.auth?.userId;
-    const { activityId } = req.params;
+    const { activityId, parent } = req.params as {
+      activityId: string;
+      parent: "lesson" | "resource" | undefined;
+    };
 
     // Gestion du nom du fichier s'il y en a un
     let filename: string | null = null;
@@ -34,7 +37,8 @@ export default async function httpPutImage(
       data.title,
       data.description,
       filename,
-      data.url
+      data.url,
+      parent,
     );
 
     // Préparation de la réponse en cas de succès

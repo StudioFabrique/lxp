@@ -155,6 +155,7 @@ export default function ResourceAdd() {
                     <ImageActivityResource
                       activity={previewActivity!}
                       mode={activityState}
+                      onCancel={closePreviewActivity}
                     />
                   ) : null}
                 </ActivityWrapper>
