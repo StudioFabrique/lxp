@@ -20,14 +20,19 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 export default async function httpPostImage(
   req: CustomRequest,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     // Extraction des données de la requête
     const { data } = req.body; // Récupération des données JSON du formulaire
     const file = req.file; // Récupération du fichier uploadé s'il existe
     const userId = req.auth?.userId; // ID de l'utilisateur authentifié
-    const { lessonId } = req.params; // ID de la leçon parent
+    let { lessonId, parent } = req.params; // ID de la leçon ou ressource parent
+
+    if (!parent) parent = "lesson";
+
+    if (parent !== "lesson" && parent !== "resource")
+      throw { statusCode: 400, message: "Invalid parent type" };
 
     // Détermine le nom du fichier à utiliser (null si pas de fichier)
     const filename = file ? file.filename : null;
@@ -38,7 +43,8 @@ export default async function httpPostImage(
       userId!, // L'utilisateur doit exister à ce stade
       data.title, // Titre de l'activité
       filename ?? null, // Nom du fichier uploadé ou null
-      data.url ?? null // URL de l'image si sélectionnée depuis la médiathèque
+      data.url ?? null, // URL de l'image si sélectionnée depuis la médiathèque
+      parent,
     );
 
     // Préparation de la réponse en cas de succès

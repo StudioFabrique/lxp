@@ -22,6 +22,9 @@ export const allowedMimeTypes = [
   "text/plain", // TXT
   "application/msword", // DOC
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+  "application/vnd.ms-excel", // XLS
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // XLSX
+  "text/markdown", // MD
 ];
 
 /**
@@ -90,7 +93,7 @@ const useUploadResources = (
         onChangeValue("name", "");
       } else {
         toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX",
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
         );
         return;
       }

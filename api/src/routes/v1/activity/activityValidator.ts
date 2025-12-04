@@ -2,6 +2,7 @@ import { body, param } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
   stringValidateGeneric,
+  stringValidateOptional,
   videoUrlValidate,
 } from "../../../helpers/custom-validators";
 
@@ -140,5 +141,60 @@ export const putResourceValidator = [
     .withMessage(
       "Le label de la ressource contient des caractères non autorisés.",
     ),
+  checkValidatorResult,
+];
+
+export const postImage = [
+  param("lessonId")
+    .isNumeric()
+    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
+  checkValidatorResult,
+];
+
+export const postImageValidator = [
+  param("lessonId")
+    .isNumeric()
+    .withMessage("L'identifiant de la leçon doit être un nombre entier.")
+    .optional(),
+  param("parent")
+    .isString()
+    .withMessage("Le parent doit être une chaîne de caractères.")
+    .isIn(["resource", "lesson"])
+    .withMessage('Le parent doit être soit "resource" soit "lesson".'),
+  body("data.title")
+    .isString()
+    .withMessage("Le titre doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de l'image contient des caractères non autorisés."),
+  body("data.url")
+    .isString()
+    .withMessage("L'URL doit être une chaîne de caractères.")
+    .custom(stringValidateOptional)
+    .withMessage("L'URL de l'image contient des caractères non autorisés.")
+    .optional(),
+  checkValidatorResult,
+];
+
+export const putImageValidator = [
+  param("activityIdId")
+    .isNumeric()
+    .withMessage("L'identifiant de l'activité doit être un nombre entier.")
+    .optional(),
+  param("parent")
+    .isString()
+    .withMessage("Le parent doit être une chaîne de caractères.")
+    .isIn(["resource", "lesson"])
+    .withMessage('Le parent doit être soit "resource" soit "lesson".'),
+  body("data.title")
+    .isString()
+    .withMessage("Le titre doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de l'image contient des caractères non autorisés."),
+  body("data.url")
+    .isString()
+    .withMessage("L'URL doit être une chaîne de caractères.")
+    .custom(stringValidateOptional)
+    .withMessage("L'URL de l'image contient des caractères non autorisés.")
+    .optional(),
   checkValidatorResult,
 ];

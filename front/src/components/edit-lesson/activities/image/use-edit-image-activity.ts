@@ -10,48 +10,53 @@ import toast from "react-hot-toast";
 import type SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
 
 /**
- * Hook personnalisé pour gérer l'édition d'une activité de type image
- * @param activity - L'activité à éditer (optionnel)
- * @param onCancel - Fonction de callback appelée lors de l'annulation
- * @returns Un objet contenant les états et fonctions nécessaires pour gérer le formulaire
+ * Custom hook to manage the editing of an image activity
+ * @param activity - The activity to edit (optional)
+ * @param onCancel - Callback function called on cancellation
+ * @param parent - The parent type of the activity (optional, defaults to "lesson")
+ * @returns An object containing the states and functions needed to manage the form
  */
 const useEditImageActivity = (
   activity: Activity | undefined,
   onCancel: (value: boolean) => void,
+  parent: "lesson" | "resource",
+  onSubmit?: (fd: FormData) => void,
 ) => {
-  // Initialisation du formulaire avec le hook useForm
+  // Initialize the form with the useForm hook
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
     useForm();
   const data = { values, errors, onChangeValue };
 
-  // États pour la gestion des images
-  const [image, setImage] = useState<string | null>(null); // Pour la prévisualisation
-  const [file, setFile] = useState<File | null>(null); // Pour le fichier uploadé
-  const [showDialog, setShowDialog] = useState<boolean>(false); // Pour la modal de sélection
+  // States for image management
+  const [image, setImage] = useState<string | null>(null); // For preview
+  const [file, setFile] = useState<File | null>(null); // For uploaded file
+  const [showDialog, setShowDialog] = useState<boolean>(false); // For selection modal
 
-  // Hooks pour les requêtes HTTP et la navigation
+  // Hooks for HTTP requests and navigation
   const { error, isLoading, sendRequest } = useHttp();
   const { lessonId } = useParams();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Définition du schéma de validation avec Zod
+  // Define validation schema with Zod
   const imageActivitySchema = z.object({
     title: z
-      .string({ required_error: "Un titre est requis" })
+      .string({ required_error: "A title is required" })
       .regex(regexGeneric, {
-        message: "Le titre contient des caractères non autorisés",
+        message: "The title contains unauthorized characters",
       }),
+    /*
     description: z
-      .string({ required_error: "Une description est requise" })
+      .string({ required_error: "A description is required" })
       .regex(regexGeneric, {
-        message: "La description contient des caracèteres non autorisés",
+        message: "The description contains unauthorized characters",
       }),
+    */
   });
 
   /**
-   * Gère la soumission du formulaire
-   * Valide les données, prépare le FormData et envoie la requête
-   * @param event - L'événement de soumission du formulaire
+   * Handles form submission
+   * Validates data, prepares FormData and sends the request
+   * @param event - The form submission event
    */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -65,7 +70,7 @@ const useEditImageActivity = (
       }
     }
     if (!activity && !file && !selectedImage) {
-      toast.error("Un fichier est requis");
+      toast.error("A file is required");
       return;
     }
     if (!file && selectedImage) {
@@ -76,25 +81,28 @@ const useEditImageActivity = (
     if (file) {
       formData.append("image", file);
     }
-    const applyData = (data: SuccessWithMessage) => {
-      if (data.success) {
-        toast.success(data.message);
-        onCancel(false);
-      }
-    };
-    sendRequest(
-      {
-        path: `/activity/image/${activity?.id ?? lessonId}`,
-        method: activity ? "put" : "post",
-        body: formData,
-      },
-      applyData,
-    );
+    if (onSubmit) onSubmit(formData);
+    else {
+      const applyData = (data: SuccessWithMessage) => {
+        if (data.success) {
+          toast.success(data.message);
+          onCancel(false);
+        }
+      };
+      sendRequest(
+        {
+          path: `/activity/image/${activity?.id ?? lessonId}/${parent}`,
+          method: activity ? "put" : "post",
+          body: formData,
+        },
+        applyData,
+      );
+    }
   };
 
   /**
-   * Effect pour gérer la prévisualisation de l'image
-   * Convertit le fichier en URL base64 pour l'affichage
+   * Effect to handle image preview
+   * Converts the file to base64 URL for display
    */
   useEffect(() => {
     if (file) {
@@ -109,8 +117,8 @@ const useEditImageActivity = (
   }, [file]);
 
   /**
-   * Effect pour initialiser le formulaire avec les données existantes
-   * si on est en mode édition
+   * Effect to initialize the form with existing data
+   * when in edit mode
    */
   useEffect(() => {
     if (activity) {
@@ -120,8 +128,8 @@ const useEditImageActivity = (
   }, [activity, onChangeValue]);
 
   /**
-   * Effect pour gérer la communication entre fenêtres
-   * via BroadcastChannel pour la sélection d'image
+   * Effect to manage inter-window communication
+   * via BroadcastChannel for image selection
    */
   useEffect(() => {
     const ecouteur = new BroadcastChannel("clipboardChannel");
@@ -135,13 +143,13 @@ const useEditImageActivity = (
   }, []);
 
   /**
-   * Effect pour afficher les erreurs via toast
+   * Effect to display errors via toast
    */
   useEffect(() => {
     if (error.length > 0) toast.error(error);
   }, [error]);
 
-  // Retourne les états et fonctions nécessaires
+  // Return necessary states and functions
   return {
     data,
     handleSubmit,

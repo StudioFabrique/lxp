@@ -14,6 +14,7 @@ import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
 import VideoActivityResource from "../../components/resources-add/VideoActivityResource";
 import ResourceUpload from "../../components/edit-lesson/activities/resources/resource-upload";
 import ResourcePreview from "../../components/edit-lesson/activities/resources/preview/resource-preview";
+import ImageActivityResource from "../../components/resources-add/ImageActivityResource";
 
 export default function ResourceAdd() {
   const {
@@ -147,6 +148,14 @@ export default function ResourceAdd() {
                       activity={previewActivity!}
                       onCancel={closePreviewActivity}
                       parent="resource"
+                    />
+                  ) : null}
+
+                  {activityType === "image" ? (
+                    <ImageActivityResource
+                      activity={previewActivity!}
+                      mode={activityState}
+                      onCancel={closePreviewActivity}
                     />
                   ) : null}
                 </ActivityWrapper>

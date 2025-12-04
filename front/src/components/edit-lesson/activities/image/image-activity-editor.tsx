@@ -1,5 +1,4 @@
 import Field from "../../../UI/forms/field";
-import FieldArea from "../../../UI/forms/field-area";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import defaultImage from "../../../../assets/images/bookshelf.jpg";
 import { activityImageSize } from "../../../../config/images-sizes";
@@ -19,6 +18,10 @@ import bgImageGradient from "../../../../utils/bg-image-gradient";
 type Props = {
   activity?: Activity;
   onCancel: (value: boolean) => void;
+  parent?: "lesson" | "resource";
+  //  TODO : implements the onSubmit function on the lesson part invocation of this component
+  // today the onSubmit is needed to use this componetn from a bonus resource perspective.
+  onSubmit?: (fd: FormData) => void;
 };
 
 /**
@@ -26,7 +29,12 @@ type Props = {
  * Allows creating or modifying an activity with an image, title and description
  * Uses a custom hook useEditImageActivity to handle form state and image upload
  */
-export default function ImageActivityEditor({ activity, onCancel }: Props) {
+export default function ImageActivityEditor({
+  activity,
+  onCancel,
+  parent = "lesson",
+  onSubmit = undefined,
+}: Props) {
   const {
     data,
     handleSubmit,
@@ -36,7 +44,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     showDialog,
     setShowDialog,
     selectedImage,
-  } = useEditImageActivity(activity, onCancel);
+  } = useEditImageActivity(activity, onCancel, parent, onSubmit);
 
   /**
    * Styles for the image preview display
@@ -47,10 +55,10 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       selectedImage
         ? `${ACTIVITIES}images/${selectedImage}`
         : image
-        ? image
-        : activity?.url
-        ? `${ACTIVITIES}images/${activity.url}`
-        : defaultImage
+          ? image
+          : activity?.url
+            ? `${ACTIVITIES}images/${activity.url}`
+            : defaultImage,
     ),
     width: "100%",
     height: "100%",
@@ -71,7 +79,6 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
           <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
             <span className="flex flex-col gap-y-4">
               <Field name="title" label="Titre *" data={data} />
-              <FieldArea name="description" data={data} label="Description *" />
             </span>
             <span className="flex flex-col gap-y-4">
               <MemoizedImageFileUpload
