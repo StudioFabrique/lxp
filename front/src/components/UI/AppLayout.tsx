@@ -21,7 +21,13 @@ const AppLayout = ({
         <div className="overflow-scroll w-full">
           <Suspense fallback={loader}>
             <div className="flex justify-center">
-              <div style={{ width: contentWidth, marginTop: "8vh" }}>
+              <div
+                style={{
+                  width: contentWidth,
+                  marginTop: "8vh",
+                  marginBottom: "4vh",
+                }}
+              >
                 {children}
               </div>
             </div>
