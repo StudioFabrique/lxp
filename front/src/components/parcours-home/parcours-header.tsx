@@ -10,9 +10,9 @@
  * ```
  */
 import Header from "../UI/header";
-import AddIcon from "../UI/svg/add-icon";
 import { Link } from "react-router-dom";
 import Can from "../UI/can/can.component";
+import { PlusCircle } from "lucide-react";
 
 function ParcoursHeader() {
   return (
@@ -27,10 +27,8 @@ function ParcoursHeader() {
           {/* Create new course button that navigates to creation page */}
           <Link className="btn btn-primary btn-soft" to="créer-un-parcours">
             <div className="flex gap-x-2 items-center">
-              <div className="w-8 h-8">
-                <AddIcon />
-              </div>
-              <p>Créer un parcours</p>
+              <PlusCircle />
+              Créer un parcours
             </div>
           </Link>
         </Can>

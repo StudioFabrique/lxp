@@ -67,7 +67,7 @@ const ParcoursHome = () => {
   }, [error]);
 
   return (
-    <main className="min-h-screen xl:w-9/12 flex justify-center">
+    <div>
       {/* Affiche un loader pendant le chargement */}
       {isLoading ? (
         <div className="flex items-center">
@@ -84,7 +84,7 @@ const ParcoursHome = () => {
           ) : null}
         </>
       )}
-    </main>
+    </div>
   );
 };
 

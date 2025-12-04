@@ -24,9 +24,9 @@ function MediathequeHomePage() {
   } = usePaginatedMediatheque<Media>();
 
   return (
-    <main className="w-full min-h-screen flex flex-col items-center py-8 gap-8">
+    <div className="w-full flex flex-col items-center gap-8">
       {/* Section d'en-tête avec titre et description */}
-      <section className="w-5/6 flex flex-col items-center">
+      <section className="w-full flex flex-col items-center">
         <Header
           title="Mediathèque"
           description="Gérez toutes les ressources utilisées dans l'application."
@@ -34,7 +34,7 @@ function MediathequeHomePage() {
       </section>
 
       {/* Section principale avec les onglets et la pagination */}
-      <section className="w-5/6 flex-1 flex flex-col items-center gap-y-2">
+      <section className="w-full flex-1 flex flex-col items-center gap-y-2">
         {/* Composant d'onglets pour filtrer les médias */}
         <TabsMedia
           type={type}
@@ -57,7 +57,7 @@ function MediathequeHomePage() {
           </div>
         </TabsMedia>
       </section>
-    </main>
+    </div>
   );
 }
 

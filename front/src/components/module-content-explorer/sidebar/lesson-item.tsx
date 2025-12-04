@@ -2,7 +2,8 @@ import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
-import { PropsWithChildren, useRef, useState } from "react";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 type LessonItemProps = {
   lesson: Lesson;
@@ -13,7 +14,6 @@ type LessonItemProps = {
   onOpenModal: (lesson: Lesson) => void;
 };
 
-// Composant représentant un élément de leçon individuel
 const LessonItem = ({
   lesson,
   moduleId,
@@ -23,33 +23,86 @@ const LessonItem = ({
   onOpenModal,
   children,
 }: PropsWithChildren<LessonItemProps>) => {
-  // Vérifie si cette leçon est actuellement sélectionnée
   const isLessonSelected = selectedLesson?.id === lesson.id;
   const lessonRef = useRef<HTMLDivElement>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  // Vérifie si cette leçon a déjà été lue entièrement et finie
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const isLessonRead = lesson.lessonsRead?.some(
     (lessonRead) => lessonRead.finishedAt
   );
 
-  // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
     if (!isLessonSelected) onSelectLesson(lesson);
   };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleMenuOption = () => {
-    setIsMenuOpen(false);
+  const handleDeleteClick = () => {
+    setIsOpen(false);
     onOpenModal(lesson);
   };
 
+  const handleDropdownToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
+  // Update position when dropdown opens or on scroll
+  const updatePosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom,
+        left: rect.left,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+    }
+  }, [isOpen]);
+
+  // Handle scroll - update position or close dropdown
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = () => {
+      updatePosition(); // Update position on scroll
+      // Or close dropdown instead: setIsOpen(false);
+    };
+
+    // Listen to both window scroll and any parent scroll
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [isOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      // Check if click is outside both button and dropdown menu
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(target) &&
+        !(target as HTMLElement).closest(".menu") // Don't close if clicking inside menu
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
   return (
-    // Conteneur principal avec style conditionnel basé sur la sélection
     <div className="w-full">
       <div
         ref={lessonRef}
@@ -66,52 +119,62 @@ const LessonItem = ({
             <div className="flex items-center gap-1">
               {canEditLesson && (
                 <Can action="update" object="lesson">
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
-                      onClick={handleMenuClick}
-                    >
-                      <EllipsisIcon className="w-4 h-4" />
-                    </button>
+                  <button
+                    ref={buttonRef}
+                    tabIndex={0}
+                    type="button"
+                    className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
+                    onClick={handleDropdownToggle}
+                  >
+                    <EllipsisIcon className="w-4 h-4" />
+                  </button>
 
-                    {isMenuOpen && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-10"
-                          onClick={() => setIsMenuOpen(false)}
-                        />
-                        <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
-                          <Can action="update" object="lesson">
-                            <Link
-                              to={`/admin/lesson/edit-lesson/${lesson.id}`}
-                              state={{ moduleId: moduleId }}
-                              className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Edit3 className="w-4 h-4" />
-                              <span>Éditer les détails</span>
-                            </Link>
-                          </Can>
+                  {isOpen &&
+                    createPortal(
+                      <ul
+                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-[10rem] p-1 z-[9999]"
+                        style={{
+                          top: `${dropdownPosition.top}px`,
+                          left: `${dropdownPosition.left}px`,
+                        }}
+                        onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling
+                      >
+                        <li>
+                          <Link
+                            to={`/admin/lesson/edit-lesson/${lesson.id}`}
+                            state={{ moduleId: moduleId }}
+                            className="flex items-center gap-2 text-sm text-gray-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsOpen(false);
+                            }}
+                          >
+                            <Edit3 className="w-4 h-4" />
+                            <span>Éditer les détails</span>
+                          </Link>
+                        </li>
+                        <li>
                           <button
                             type="button"
-                            onClick={() => handleMenuOption()}
-                            className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick();
+                            }}
+                            className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-100"
                           >
                             <Trash2 className="w-4 h-4" />
                             <span>Supprimer</span>
                           </button>
-                        </div>
-                      </>
+                        </li>
+                      </ul>,
+                      document.body
                     )}
-                  </div>
                 </Can>
               )}
             </div>
           )}
         </span>
 
-        {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead && (
           <Check
             className={`w-5 h-5 p-1 rounded-full stroke-3 ${"bg-success stroke-success-content"}`}

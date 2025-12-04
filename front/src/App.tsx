@@ -5,29 +5,29 @@ import { Suspense, lazy } from "react";
 import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
-import Sidebar from "./components/UI/sidebar/sidebar";
 import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
+import AppLayout from "./components/UI/AppLayout";
 
 const StudentLayout = lazy(
-  async () => await import("./views/student/student-layout.component"),
+  async () => await import("./views/student/student-layout.component")
 );
 
 const AdminLayout = lazy(
-  async () => await import("./views/admin/admin-layout.component"),
+  async () => await import("./views/admin/admin-layout.component")
 );
 
 const RegisterHome = lazy(
-  async () => await import("./views/register/register-home"),
+  async () => await import("./views/register/register-home")
 );
 
 const ResetPasswordHome = lazy(
-  async () => await import("./views/reset-password/reset-password-home"),
+  async () => await import("./views/reset-password/reset-password-home")
 );
 
 const ResetPasswordUpdate = lazy(
-  async () => await import("./views/reset-password/reset-password-update"),
+  async () => await import("./views/reset-password/reset-password-update")
 );
 
 const router = createBrowserRouter([
@@ -39,13 +39,9 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <div>
-            <Sidebar />
-
-            <Suspense fallback={<Loader />}>
-              <StudentLayout />
-            </Suspense>
-          </div>
+          <AppLayout>
+            <StudentLayout />
+          </AppLayout>
         ),
         children: studentRoutes,
       },
@@ -53,13 +49,9 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <div>
-            <Sidebar />
-
-            <Suspense fallback={<Loader />}>
-              <AdminLayout />
-            </Suspense>
-          </div>
+          <AppLayout>
+            <AdminLayout />
+          </AppLayout>
         ),
         children: adminRoutes,
       },

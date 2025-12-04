@@ -11,7 +11,6 @@ import {
 } from "./role-table-config";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import useRoleActions from "./hooks/use-role-actions";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 // import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
 // import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
 // import { Ref, useRef } from "react";
@@ -61,7 +60,7 @@ const RolePage = () => {
   // const csvRef: Ref<HTMLButtonElement> = useRef(null);
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       {/* Header de la liste des rôles */}
       <Header
         title="Liste des rôles"
@@ -133,7 +132,7 @@ const RolePage = () => {
 
         <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
       </div>
-    </ViewWrapper>
+    </div>
   );
 };
 

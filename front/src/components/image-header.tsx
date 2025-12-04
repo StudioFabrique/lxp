@@ -32,8 +32,8 @@ const ImageHeader = (props: ImageHeaderProps) => {
         <div className="rounded-xl absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
         {props.children ? props.children[1] : null}
         <div className="w-full flex gap-x-2 px-4 py-5 items-end justify-between font-bold absolute z-[5] bottom-2 left-2">
-          <span className="flex gap-x-2 items-center">
-            <div>{props.children ? props.children[0] : null}</div>
+          <span className="flex gap-x-2">
+            {props.children ? props.children[0] : null}
             <div className="flex flex-col gap-1">
               {props.subTitle ? (
                 <div className="flex items-center gap-2">

@@ -139,7 +139,7 @@ const EditParcours = () => {
   const handleResetImportedObjectives = () => {};
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center">
       {isLoading ? (
         <div className="h-[100vh] flex items-center">
           <Loader />
@@ -160,7 +160,7 @@ const EditParcours = () => {
               </ImageHeaderMutable>
             ) : null}
             {/* Etapes du parcours */}
-            <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
+            <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
               <Stepper
                 actualStep={actualStep}
                 finalStep={finalStep}
@@ -169,7 +169,7 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full 2xl:w-4/6 mt-16">
+          <div className="w-full mt-16">
             {actualStep.id === 1 && id ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
@@ -200,7 +200,7 @@ const EditParcours = () => {
               <ParcoursPreview onEdit={updateStep} />
             ) : null}
           </div>
-          <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
+          <div className="w-full mt-8 flex justify-between">
             {actualStep.id !== stepsList.length ? (
               <>
                 {actualStep.id === 1 ? (
