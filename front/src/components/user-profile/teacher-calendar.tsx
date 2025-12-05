@@ -43,7 +43,7 @@ const TeacherCalendar = () => {
                 <ViewSelector
                   view={view}
                   setView={setView}
-                  allowedViews={["day", "week"]}
+                  allowedViews={["day", "week", "month"]}
                   darkMode={darkMode}
                 />
               </div>,

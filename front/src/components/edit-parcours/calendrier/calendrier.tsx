@@ -1,32 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * MADE IN MARTIN
- */
 
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
-import ModulesListCalendrier from "./modules-list-calendrier";
-import moment from "moment";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import CalendarDatesForm from "./forms/calendar-dates-form";
-
-const localizer = momentLocalizer(moment);
+import Calendar from "../../UI/calendar/calendar";
+import { Context } from "../../../store/context.store";
+import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
 
 const Calendrier = () => {
+  const { theme } = useContext(Context);
+  const darkMode = theme === "dark";
+
+  const currentDate = new Date();
+
   const dispatch = useDispatch();
 
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos,
+    (state: any) => state.parcoursInformations.infos
   );
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModules.modules,
+    (state: any) => state.parcoursModules.modules
   );
   const currentModule = useSelector(
-    (state: any) => state.parcoursModules.currentModule,
+    (state: any) => state.parcoursModules.currentModule
   );
 
   const datesParcours = {
@@ -38,13 +37,21 @@ const Calendrier = () => {
       : new Date(),
   };
 
+  const modulesTimelineEvents: TimelineEvent[] = modules.map((mod) => ({
+    id: mod.id!,
+    title: mod.title,
+    startDate: mod.minDate ? new Date(mod.minDate) : undefined,
+    endDate: mod.maxDate ? new Date(mod.maxDate) : undefined,
+    image: mod.thumb && `data:image/jpeg;base64,${mod.thumb}`,
+  }));
+
   useEffect(() => {
     if (!modules || modules.length === 0) return;
 
     dispatch(
       parcoursModulesSliceActions.updateCurrentParcoursModule(
-        !currentModule ? modules[0].id : currentModule.id,
-      ),
+        !currentModule ? modules[0].id : currentModule.id
+      )
     );
   }, [dispatch, currentModule, modules]);
 
@@ -65,42 +72,31 @@ const Calendrier = () => {
 
   return (
     <div className="flex flex-col gap-y-5">
-      <h1 className="text-2xl">Calendrier</h1>
-      <div className="grid grid-cols-3 gap-x-5 min-h-[60vh]">
-        <ModulesListCalendrier modules={modules} />
+      <div className="flex gap-4 items-center justify-between">
+        <h1 className="text-2xl">Dates des modules</h1>
+        <span>
+          {`Le parcours commence le ${datesParcours.startDate.toLocaleDateString()} et termine le
+          ${datesParcours.endDate.toLocaleDateString()}`}
+        </span>
+      </div>
+      {/* <ModulesListCalendrier modules={modules} /> */}
+      <div className="col-span-2">
         <Calendar
-          className="col-span-2 bg-white rounded-lg p-5"
-          localizer={localizer}
-          events={modules.map((module) => ({
-            start: module.minDate
-              ? new Date(module.minDate)
-              : datesParcours.startDate,
-            end: module.maxDate
-              ? new Date(module.maxDate)
-              : datesParcours.endDate,
-            title: module.title || "Sans titre",
-          }))}
-          onDoubleClickEvent={(event) => {
-            const selectedModule = modules.find(
-              (module) => module.title === event.title,
-            );
-            if (selectedModule) {
-              dispatch(
-                parcoursModulesSliceActions.updateCurrentParcoursModule(
-                  selectedModule.id,
-                ),
-              );
-            }
-          }}
+          currentDate={currentDate}
+          events={[]}
+          startHour={8}
+          endHour={18}
+          view={"year-timeline"}
+          timelineEvents={modulesTimelineEvents}
+          darkMode={darkMode}
         />
       </div>
-      <div className="grid grid-cols-3 mt-4">
+      {/* <div className="grid grid-cols-3 mt-4">
         <div />
         <div className="col-span-2 flex flex-col gap-4 bg-base-200 rounded-lg p-4">
-          <span className="text-base font-bold">{`Dates du parcours : ${datesParcours.startDate.toLocaleDateString("fr-FR")} au ${datesParcours.endDate.toLocaleDateString("fr-FR")}`}</span>
           <CalendarDatesForm datesParcours={datesParcours} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
