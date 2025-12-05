@@ -31,6 +31,8 @@ const ModuleDetailsModal = ({ modalId, isOpen, onClose }: Props) => {
     });
   };
 
+  console.log({ currentModule });
+
   return (
     <dialog id={modalId} className="modal" ref={modalRef} onClose={onClose}>
       <div className="modal-box p-0 bg-transparent shadow-none w-full max-w-lg overflow-visible">
@@ -53,12 +55,13 @@ const ModuleDetailsModal = ({ modalId, isOpen, onClose }: Props) => {
             <h2 className="card-title text-2xl mb-2">{currentModule.title}</h2>
 
             {/* Badges / Stats */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2">
               <div className="badge badge-primary badge-outline gap-1">
                 Module
               </div>
-              {/* Add other badges if you have data like 'duration' or 'teacher' */}
             </div>
+
+            <span className="p-4">{currentModule.module.description}</span>
 
             {/* Info Grid */}
             <div className="grid grid-cols-2 gap-4 bg-base-200/50 p-4 rounded-xl border border-base-200">
