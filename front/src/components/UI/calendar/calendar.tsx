@@ -9,6 +9,7 @@ interface Props {
   startHour?: number;
   endHour?: number;
   view?: CalendarView;
+  currentWeekDayVisible?: boolean;
   darkMode?: boolean;
   header?: ReactNode;
 }
@@ -19,6 +20,7 @@ const Calendar = ({
   startHour = 8,
   endHour = 19,
   view = "week",
+  currentWeekDayVisible = true,
   darkMode = false,
   header,
 }: PropsWithChildren<Props>) => {
@@ -41,6 +43,7 @@ const Calendar = ({
           startHour={startHour}
           endHour={endHour}
           currentDate={currentDate}
+          currentWeekDayVisible={currentWeekDayVisible}
           darkMode={darkMode}
         />
       )}

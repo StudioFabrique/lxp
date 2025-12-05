@@ -20,6 +20,7 @@ type Props = {
   startHour: number;
   endHour: number;
   darkMode: boolean;
+  currentWeekDayVisible: boolean;
 };
 
 const TimelineView = ({
@@ -29,6 +30,7 @@ const TimelineView = ({
   startHour,
   endHour,
   darkMode,
+  currentWeekDayVisible,
 }: Props) => {
   const [nowTime, setNowTime] = useState(new Date());
 
@@ -81,33 +83,35 @@ const TimelineView = ({
 
       {/* GRID */}
       <div className="flex-1 min-w-[300px] overflow-x-auto">
-        <div
-          className={`flex h-10 sticky top-0 z-20 border-b ${
-            theme(darkMode).headerBg
-          } ${theme(darkMode).border}`}
-        >
-          {visibleDays.map((day, i) => {
-            const realIndex = getRealDayIndex(i, view, currentDate);
+        {(view === "week" || currentWeekDayVisible) && (
+          <div
+            className={`flex h-10 sticky top-0 z-20 border-b ${
+              theme(darkMode).headerBg
+            } ${theme(darkMode).border}`}
+          >
+            {visibleDays.map((day, i) => {
+              const realIndex = getRealDayIndex(i, view, currentDate);
 
-            // In Week view, we just check day index match for generic "Today" highlighting if in current week
-            // Simplified: Highlight if dayIndex matches Today's index
-            const isTodaySimple = timeIndicator?.dayIndex === realIndex;
+              // In Week view, we just check day index match for generic "Today" highlighting if in current week
+              // Simplified: Highlight if dayIndex matches Today's index
+              const isTodaySimple = timeIndicator?.dayIndex === realIndex;
 
-            return (
-              <div
-                key={day}
-                className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px] 
+              return (
+                <div
+                  key={day}
+                  className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px] 
                   ${
                     isTodaySimple
                       ? theme(darkMode).todayText
                       : theme(darkMode).subText
                   }`}
-              >
-                {day}
-              </div>
-            );
-          })}
-        </div>
+                >
+                  {day}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div
           className="relative"

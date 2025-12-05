@@ -20,8 +20,6 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
     navigate("/", { replace: true });
   };
 
-  console.log({ user });
-
   return (
     <ul className="flex flex-col gap-1 pl-2">
       <li>
@@ -44,7 +42,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
                 avatar:
                   user?.avatar && `data:image/jpeg;base64,${user?.avatar}`,
               }}
-              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-base-200"
+              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"
               imgClassName="w-4 h-4 rounded-full object-cover"
             />
           )}

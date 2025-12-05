@@ -77,3 +77,21 @@ export const getCurrentTimeIndicator = (
     return null;
   return { top: `${top}px`, dayIndex };
 };
+
+export const getWeekBounds = (date: Date) => {
+  const d = new Date(date);
+
+  // Get day index where Monday = 0, Sunday = 6
+  let dayIndex = d.getDay() - 1;
+  if (dayIndex === -1) dayIndex = 6; // Sunday becomes 6
+
+  // Calculate first day (Monday) of the week
+  const firstDay = new Date(d);
+  firstDay.setDate(d.getDate() - dayIndex);
+
+  // Calculate last day (Sunday) of the week
+  const lastDay = new Date(d);
+  lastDay.setDate(d.getDate() + (6 - dayIndex));
+
+  return { firstDay, lastDay };
+};

@@ -15,7 +15,7 @@ const ViewSelector = ({ view, setView, darkMode }: Props) => {
         <button
           key={v}
           onClick={() => setView(v)}
-          className={`px-3 py-1 text-xs font-semibold rounded-md transition-all capitalize ${
+          className={`px-3 py-1 btn btn-xs btn-ghost text-xs font-semibold rounded-md transition-all capitalize ${
             view === v
               ? `${theme(darkMode).controlItemBg} shadow-sm`
               : `${theme(darkMode).subText} hover:opacity-80`

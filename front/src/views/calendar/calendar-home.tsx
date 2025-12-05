@@ -27,7 +27,7 @@ const myEvents: CalendarEvent[] = [
     subtitle: "Cours",
     dayIndex: 0,
     start: "10:30",
-    end: "12:30",
+    end: "12:00",
     type: "secondary",
   },
   {
@@ -35,8 +35,8 @@ const myEvents: CalendarEvent[] = [
     title: "Versionnement avec Git & GitHub",
     subtitle: "Cours",
     dayIndex: 0,
-    start: "12:30",
-    end: "13:30",
+    start: "13:00",
+    end: "15:30",
     type: "neutral",
   },
   {
@@ -74,6 +74,7 @@ const CalendarHome = () => {
       />
       <Calendar
         currentDate={currentDate}
+        currentWeekDayVisible={false}
         events={myEvents}
         startHour={8}
         endHour={18}
@@ -84,7 +85,7 @@ const CalendarHome = () => {
               <TitleWithSelector
                 key="title-with-selector"
                 currentTitle="Développeur Web"
-                availableTitles={[""]}
+                availableTitles={["test", "test 1"]}
                 onSelectTitle={() => {}}
                 currentDate={currentDate}
                 view={view}
