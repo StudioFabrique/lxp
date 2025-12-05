@@ -15,7 +15,7 @@ const CalendarHeader = ({
         theme(darkMode).border
       } ${theme(darkMode).headerBg}`}
     >
-      {children}
+      {Array.isArray(children) ? children.map((node) => node) : children}
     </div>
   );
 };

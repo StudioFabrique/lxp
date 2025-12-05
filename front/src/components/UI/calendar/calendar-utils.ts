@@ -1,5 +1,7 @@
 // --- UTILS ---
 
+import { CalendarView, HOUR_HEIGHT } from "./calendar-configuration";
+
 export const getMinutes = (timeStr: string) => {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
@@ -34,4 +36,44 @@ export const getMonthDays = (year: number, month: number) => {
   }
 
   return days;
+};
+
+export const getRealDayIndex = (
+  viewIndex: number,
+  view: CalendarView,
+  currentDate: Date
+) => {
+  if (view === "week") return viewIndex;
+  let dayIndex = currentDate.getDay() - 1;
+  if (dayIndex === -1) dayIndex = 6;
+  return dayIndex;
+};
+
+export const getEventStyle = (
+  start: string,
+  end: string,
+  calendarStartHour: number
+) => {
+  const startMin = getMinutes(start);
+  const endMin = getMinutes(end);
+  const startOffset = calendarStartHour * 60;
+  const top = ((startMin - startOffset) / 60) * HOUR_HEIGHT;
+  const height = ((endMin - startMin) / 60) * HOUR_HEIGHT;
+  return { top: `${top}px`, height: `${height}px` };
+};
+
+export const getCurrentTimeIndicator = (
+  nowTime: Date,
+  startHour: number,
+  endHour: number
+) => {
+  const currentMinutes = nowTime.getHours() * 60 + nowTime.getMinutes();
+  const startOffset = startHour * 60;
+  const top = ((currentMinutes - startOffset) / 60) * HOUR_HEIGHT;
+  let dayIndex = nowTime.getDay() - 1;
+  if (dayIndex === -1) dayIndex = 6;
+
+  if (nowTime.getHours() < startHour || nowTime.getHours() >= endHour)
+    return null;
+  return { top: `${top}px`, dayIndex };
 };

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { MouseEvent, useMemo } from "react";
 import {
   CalendarView,
   daysOfWeek,
@@ -7,22 +7,24 @@ import {
 } from "../calendar-configuration";
 
 type Props = {
+  currentTitle?: string;
+  availableTitles?: string[];
   currentDate: Date;
-  setCurrentDate: (date: Date) => void;
-  title?: string;
+  onSelectTitle?: (title: string) => void;
   view: CalendarView;
   darkMode?: boolean;
 };
 
 const TitleWithSelector = ({
+  currentTitle = "Calendrier",
+  availableTitles,
   currentDate,
-  setCurrentDate,
-  title = "Calendrier",
+  onSelectTitle,
   view,
   darkMode,
 }: Props) => {
-  // --- DYNAMIC TITLE ---
-  const headerTitle = useMemo(() => {
+  // --- DYNAMIC DATE ---
+  const dynamicDate = useMemo(() => {
     const m = monthNames[currentDate.getMonth()];
     const y = currentDate.getFullYear();
     if (view === "day")
@@ -32,78 +34,104 @@ const TitleWithSelector = ({
     return `${m} ${y}`;
   }, [currentDate, view]);
 
-  // --- NAVIGATION LOGIC ---
-  const handleNavigate = (direction: "prev" | "next") => {
-    const newDate = new Date(currentDate);
-    const offset = direction === "next" ? 1 : -1;
-
-    if (view === "day") newDate.setDate(newDate.getDate() + offset);
-    else if (view === "week") newDate.setDate(newDate.getDate() + offset * 7);
-    else if (view === "month") newDate.setMonth(newDate.getMonth() + offset);
-
-    setCurrentDate(newDate);
+  const handleSelectTitle = (e: MouseEvent<HTMLAnchorElement>) => {
+    const value = e.currentTarget.dataset.title;
+    value && onSelectTitle?.(value);
   };
 
-  const handleToday = () => setCurrentDate(new Date());
+  // --- DATE NAVIGATION LOGIC ---
+  // const handleNavigate = (direction: "prev" | "next") => {
+  //   const newDate = new Date(currentDate);
+  //   const offset = direction === "next" ? 1 : -1;
+
+  //   if (view === "day") newDate.setDate(newDate.getDate() + offset);
+  //   else if (view === "week") newDate.setDate(newDate.getDate() + offset * 7);
+  //   else if (view === "month") newDate.setMonth(newDate.getMonth() + offset);
+
+  //   setCurrentDate(newDate);
+  // };
+
+  // const handleToday = () => setCurrentDate(new Date());
 
   return (
-    <div className="flex items-center gap-4">
-      <h2 className="font-bold text-lg">
-        {title}
-        <span className={`text-sm font-normal ml-2 ${theme(darkMode).subText}`}>
-          | {headerTitle}
+    <div className="flex items-center">
+      {availableTitles?.length ? (
+        <details className="dropdown">
+          <summary className="btn btn-ghost p-2 font-bold text-lg text-base-content">
+            {currentTitle}
+          </summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            {availableTitles.map((title) => (
+              <li key={title}>
+                <a onClick={handleSelectTitle} data-title={title}>
+                  {title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : (
+        <span className="font-bold text-lg text-base-content">
+          {currentTitle}
         </span>
-      </h2>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => handleNavigate("prev")}
-          className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
-        >
-          {/* Chevron Left */}
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-        <button
-          onClick={handleToday}
-          className={`text-xs font-bold px-2 py-1 rounded border ${
-            theme(darkMode).border
-          } hover:opacity-70`}
-        >
-          Aujourd'hui
-        </button>
-        <button
-          onClick={() => handleNavigate("next")}
-          className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
-        >
-          {/* Chevron Right */}
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
+      )}
+
+      <span className={`text-sm font-normal ml-2 ${theme(darkMode).subText}`}>
+        | {dynamicDate}
+      </span>
     </div>
   );
+
+  // return (
+  //   <div className="flex items-center gap-1">
+  //     <button
+  //       onClick={() => handleNavigate("prev")}
+  //       className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
+  //     >
+  //       {/* Chevron Left */}
+  //       <svg
+  //         className="w-5 h-5"
+  //         fill="none"
+  //         stroke="currentColor"
+  //         viewBox="0 0 24 24"
+  //       >
+  //         <path
+  //           strokeLinecap="round"
+  //           strokeLinejoin="round"
+  //           strokeWidth={2}
+  //           d="M15 19l-7-7 7-7"
+  //         />
+  //       </svg>
+  //     </button>
+  //     <button
+  //       onClick={handleToday}
+  //       className={`text-xs font-bold px-2 py-1 rounded border ${
+  //         theme(darkMode).border
+  //       } hover:opacity-70`}
+  //     >
+  //       Aujourd'hui
+  //     </button>
+  //     <button
+  //       onClick={() => handleNavigate("next")}
+  //       className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
+  //     >
+  //       {/* Chevron Right */}
+  //       <svg
+  //         className="w-5 h-5"
+  //         fill="none"
+  //         stroke="currentColor"
+  //         viewBox="0 0 24 24"
+  //       >
+  //         <path
+  //           strokeLinecap="round"
+  //           strokeLinejoin="round"
+  //           strokeWidth={2}
+  //           d="M9 5l7 7-7 7"
+  //         />
+  //       </svg>
+  //     </button>
+  //   </div>
+  // );
 };
 
 export default TitleWithSelector;
