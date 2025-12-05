@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { theme, TimelineEvent } from "../calendar-configuration";
+import { formatDate } from "../calendar-utils";
 
 type Props = {
   events: TimelineEvent[];
@@ -33,15 +34,6 @@ const YearTimelineView = ({
 
     return { min, max, total };
   }, [events]);
-
-  // Helper to format date for tooltips/labels
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("fr-FR", {
-      day: "numeric", // "4"
-      month: "long", // "janvier"
-      year: "numeric", // "2026"
-    });
-  };
 
   if (events.length === 0) {
     return (
@@ -129,8 +121,9 @@ const YearTimelineView = ({
                         theme(darkMode).subText
                       }`}
                     >
-                      {formatDate(event.startDate)} -{" "}
-                      {formatDate(event.endDate)}
+                      {`${formatDate(event.startDate)} - ${formatDate(
+                        event.endDate
+                      )}`}
                     </div>
                   )}
                 </div>

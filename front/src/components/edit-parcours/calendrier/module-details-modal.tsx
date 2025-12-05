@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import { formatDate } from "../../UI/calendar/calendar-utils";
 
 interface Props {
   modalId: string;
@@ -21,15 +22,6 @@ const ModuleDetailsModal = ({ modalId, isOpen, onClose }: Props) => {
   }, [currentModule, isOpen]);
 
   if (!currentModule) return null;
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Non défini";
-    return new Date(dateString).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
 
   console.log({ currentModule });
 

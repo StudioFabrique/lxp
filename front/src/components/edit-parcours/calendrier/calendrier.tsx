@@ -9,6 +9,7 @@ import { Context } from "../../../store/context.store";
 import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
 import ModuleDateModal from "./module-date-modal";
 import ModuleDetailsModal from "./module-details-modal";
+import { formatDate } from "../../UI/calendar/calendar-utils";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
@@ -104,9 +105,9 @@ const Calendrier = () => {
               : "bg-gray-50 border-gray-200"
           }`}
         >
-          <span className="font-semibold">Parcours : </span>
-          {datesParcours.startDate.toLocaleDateString()} -{" "}
-          {datesParcours.endDate.toLocaleDateString()}
+          <span className="font-semibold">Dates du parcours : </span>
+          {`${formatDate(datesParcours.startDate)} -
+          ${formatDate(datesParcours.endDate)}`}
         </div>
       </div>
 
