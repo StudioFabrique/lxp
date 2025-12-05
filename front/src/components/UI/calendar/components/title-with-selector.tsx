@@ -5,6 +5,7 @@ import {
   monthNames,
   theme,
 } from "../calendar-configuration";
+import { getWeekBounds } from "../calendar-utils";
 
 type Props = {
   currentTitle?: string;
@@ -27,11 +28,20 @@ const TitleWithSelector = ({
   const dynamicDate = useMemo(() => {
     const m = monthNames[currentDate.getMonth()];
     const y = currentDate.getFullYear();
-    if (view === "day")
-      return `${
-        daysOfWeek[currentDate.getDay() === 0 ? 6 : currentDate.getDay() - 1]
-      } ${currentDate.getDate()} ${m} ${y}`;
-    return `${m} ${y}`;
+    switch (view) {
+      case "day":
+        return `${
+          daysOfWeek[currentDate.getDay() === 0 ? 6 : currentDate.getDay() - 1]
+        } ${currentDate.getDate()} ${m} ${y}`;
+      case "week": {
+        const weekBounds = getWeekBounds(currentDate);
+        return `Semaine du ${weekBounds.firstDay.getDate()} au ${weekBounds.lastDay.getDate()} ${m} ${y}`;
+      }
+      case "month":
+        return `${m} ${y}`;
+      default:
+        return null;
+    }
   }, [currentDate, view]);
 
   const handleSelectTitle = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -57,10 +67,10 @@ const TitleWithSelector = ({
     <div className="flex items-center">
       {availableTitles?.length ? (
         <details className="dropdown">
-          <summary className="btn btn-ghost p-2 font-bold text-lg text-base-content">
+          <summary className="btn btn-ghost h-fit px-1 py-0 font-bold text-lg text-base-content">
             {currentTitle}
           </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow-sm">
             {availableTitles.map((title) => (
               <li key={title}>
                 <a onClick={handleSelectTitle} data-title={title}>
@@ -71,7 +81,7 @@ const TitleWithSelector = ({
           </ul>
         </details>
       ) : (
-        <span className="font-bold text-lg text-base-content">
+        <span className="px-1 py-0 font-bold text-lg text-base-content">
           {currentTitle}
         </span>
       )}

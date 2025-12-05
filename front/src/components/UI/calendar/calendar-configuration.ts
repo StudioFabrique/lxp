@@ -43,7 +43,15 @@ export const theme = (darkMode?: boolean) => ({
     : "bg-white text-slate-900",
 });
 
-export const daysOfWeek = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+export const daysOfWeek = [
+  "Lundi",
+  "Mardi",
+  "Mercredi",
+  "Jeudi",
+  "Vendredi",
+  "Samedi",
+  "Dimanche",
+];
 export const monthNames = [
   "Janvier",
   "Février",
