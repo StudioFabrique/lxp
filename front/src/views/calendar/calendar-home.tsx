@@ -4,60 +4,60 @@ import Header from "../../components/UI/header";
 import CalendarHeader from "../../components/UI/calendar/calendar-header";
 import { Context } from "../../store/context.store";
 import {
-  CalendarEvent,
+  // CalendarEvent,
   CalendarView,
 } from "../../components/UI/calendar/calendar-configuration";
 import TitleWithSelector from "../../components/UI/calendar/components/title-with-selector";
 import ViewSelector from "../../components/UI/calendar/components/view-selector";
 import TimeSelector from "../../components/UI/calendar/components/time-selector";
 
-const myEvents: CalendarEvent[] = [
-  {
-    id: 1,
-    title: "HTML & Sémantique Web",
-    subtitle: "Cours",
-    dayIndex: 0,
-    start: "08:30",
-    end: "10:00",
-    type: "primary",
-  },
-  {
-    id: 2,
-    title: "CSS et Design Web Responsive",
-    subtitle: "Cours",
-    dayIndex: 0,
-    start: "10:30",
-    end: "12:00",
-    type: "secondary",
-  },
-  {
-    id: 3,
-    title: "Versionnement avec Git & GitHub",
-    subtitle: "Cours",
-    dayIndex: 0,
-    start: "13:00",
-    end: "15:30",
-    type: "neutral",
-  },
-  {
-    id: 4,
-    title: "JavaScript Moderne (ES6+)",
-    subtitle: "Cours",
-    dayIndex: 1,
-    start: "14:15",
-    end: "16:00",
-    type: "danger",
-  },
-  {
-    id: 5,
-    title: "UI/UX : Conception d'Interfaces Utilisateur",
-    subtitle: "Cours",
-    dayIndex: 2,
-    start: "8:30",
-    end: "12:00",
-    type: "accent",
-  },
-];
+// const myEvents: CalendarEvent[] = [
+//   {
+//     id: 1,
+//     title: "HTML & Sémantique Web",
+//     subtitle: "Cours",
+//     date: new Date(2025, 11, 4),
+//     start: "08:30",
+//     end: "12:00",
+//     type: "primary",
+//   },
+//   {
+//     id: 2,
+//     title: "CSS et Design Web Responsive",
+//     subtitle: "Cours",
+//     date: new Date(2025, 11, 4),
+//     start: "13:30",
+//     end: "16:30",
+//     type: "secondary",
+//   },
+//   {
+//     id: 3,
+//     title: "Versionnement avec Git & GitHub",
+//     subtitle: "Cours",
+//     date: new Date(2025, 11, 5),
+//     start: "08:30",
+//     end: "12:00",
+//     type: "neutral",
+//   },
+//   {
+//     id: 4,
+//     title: "JavaScript Moderne (ES6+)",
+//     subtitle: "Cours",
+//     date: new Date(2025, 11, 5),
+//     start: "13:0",
+//     end: "14:30",
+//     type: "danger",
+//   },
+//   {
+//     id: 5,
+//     title: "UI/UX : Conception d'Interfaces Utilisateur",
+//     subtitle: "Cours",
+//     date: new Date(2025, 11, 5),
+//     start: "14:30",
+//     end: "17:00",
+//     type: "accent",
+//   },
+// ];
 
 const CalendarHome = () => {
   const { theme } = useContext(Context);
@@ -75,7 +75,7 @@ const CalendarHome = () => {
       <Calendar
         currentDate={currentDate}
         currentWeekDayVisible={false}
-        events={myEvents}
+        events={[]}
         startHour={8}
         endHour={18}
         header={

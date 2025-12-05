@@ -11,6 +11,7 @@ import {
   getCurrentTimeIndicator,
   getEventStyle,
   getRealDayIndex,
+  isSameDate, // Make sure this is imported from your utils
 } from "../calendar-utils";
 
 type Props = {
@@ -55,7 +56,7 @@ const TimelineView = ({
   }, []);
 
   return (
-    <div className="flex flex-1 overflow-y-auto relative">
+    <div className="select-none flex flex-1 overflow-y-auto relative">
       {/* TIME COLUMN */}
       <div
         className={`sticky left-0 z-30 w-16 flex-shrink-0 border-r ${
@@ -92,7 +93,6 @@ const TimelineView = ({
             {visibleDays.map((day, i) => {
               const realIndex = getRealDayIndex(i, view, currentDate);
 
-              // In Week view, we just check day index match for generic "Today" highlighting if in current week
               // Simplified: Highlight if dayIndex matches Today's index
               const isTodaySimple = timeIndicator?.dayIndex === realIndex;
 
@@ -133,7 +133,21 @@ const TimelineView = ({
           {/* COLUMNS */}
           <div className="absolute inset-0 flex">
             {visibleDays.map((_, i) => {
-              const dayIndex = getRealDayIndex(i, view, currentDate);
+              const colDayIndex = getRealDayIndex(i, view, currentDate);
+
+              // --- LOGIC TO DETERMINE DATE OF THIS COLUMN ---
+              // We need the exact date object to compare with event.date
+              const columnDate = new Date(currentDate);
+
+              if (view === "week") {
+                // Calculate Monday of the current week
+                const currentDay = columnDate.getDay(); // 0 (Sun) to 6 (Sat)
+                const distanceToMonday = (currentDay + 6) % 7; // Convert to Mon=0, Sun=6
+                columnDate.setDate(columnDate.getDate() - distanceToMonday + i);
+              }
+              // If view is 'day', columnDate is already currentDate
+              // ----------------------------------------------
+
               return (
                 <div
                   key={i}
@@ -142,10 +156,21 @@ const TimelineView = ({
                   }`}
                 >
                   {events
-                    .filter((e) => e.dayIndex === dayIndex)
+                    .filter((e) => {
+                      // 1. Check Hour bounds
+                      const startH = parseInt(e.start.split(":")[0]);
+                      if (startH < startHour || startH >= endHour) return false;
+
+                      // 2. Check Date Logic
+                      if (e.date) {
+                        // One-off event: must match the exact date of this column
+                        return isSameDate(e.date, columnDate);
+                      } else {
+                        // Recurring event: matches the day index (Mon/Tue/etc)
+                        return e.dayIndex === colDayIndex;
+                      }
+                    })
                     .map((event) => {
-                      const startH = parseInt(event.start.split(":")[0]);
-                      if (startH < startHour || startH >= endHour) return null;
                       const styleClass = darkMode
                         ? eventConfig[event.type].dark
                         : eventConfig[event.type].light;
@@ -173,7 +198,7 @@ const TimelineView = ({
                     })}
 
                   {/* NOW INDICATOR */}
-                  {timeIndicator && timeIndicator.dayIndex === dayIndex && (
+                  {timeIndicator && timeIndicator.dayIndex === colDayIndex && (
                     <div
                       className="absolute w-full flex items-center z-30 pointer-events-none"
                       style={{ top: timeIndicator.top }}

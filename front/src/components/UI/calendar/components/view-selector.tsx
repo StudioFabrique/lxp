@@ -3,15 +3,21 @@ import { CalendarView, theme } from "../calendar-configuration";
 type Props = {
   view: CalendarView;
   setView: (view: CalendarView) => void;
+  allowedViews?: CalendarView[];
   darkMode?: boolean;
 };
 
-const ViewSelector = ({ view, setView, darkMode }: Props) => {
+const ViewSelector = ({
+  view,
+  setView,
+  allowedViews = ["day", "week", "month"],
+  darkMode,
+}: Props) => {
   return (
     <div
       className={`flex rounded-lg p-1 space-x-1 ${theme(darkMode).controlBg}`}
     >
-      {(["day", "week", "month"] as const).map((v) => (
+      {allowedViews.map((v) => (
         <button
           key={v}
           onClick={() => setView(v)}

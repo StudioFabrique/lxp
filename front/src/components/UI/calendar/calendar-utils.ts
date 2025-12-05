@@ -10,32 +10,38 @@ export const getMinutes = (timeStr: string) => {
 // Helper to get days for the Month Grid
 export const getMonthDays = (year: number, month: number) => {
   const firstDayOfMonth = new Date(year, month, 1);
-  const lastDayOfMonth = new Date(year, month + 1, 0);
-
-  const daysInMonth = lastDayOfMonth.getDate();
 
   // Adjust so 0 is Monday, 6 is Sunday
   let startDay = firstDayOfMonth.getDay() - 1;
   if (startDay === -1) startDay = 6;
 
+  // We start 'startDay' days before the 1st of the month
+  const startDate = new Date(firstDayOfMonth);
+  startDate.setDate(startDate.getDate() - startDay);
+
   const days = [];
 
-  // Padding for previous month
-  for (let i = 0; i < startDay; i++) {
-    days.push({ day: 0, currentMonth: false });
-  }
+  // Generate a 5-week (35 days) or 6-week (42 days) grid
+  // 42 covers all possible month configurations
+  for (let i = 0; i < 42; i++) {
+    const current = new Date(startDate);
+    current.setDate(startDate.getDate() + i);
 
-  // Days of current month
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push({ day: i, currentMonth: true });
-  }
-
-  // Padding for next month to fill grid
-  while (days.length % 7 !== 0) {
-    days.push({ day: 0, currentMonth: false });
+    days.push({
+      date: current,
+      currentMonth: current.getMonth() === month,
+    });
   }
 
   return days;
+};
+
+export const isSameDate = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 };
 
 export const getRealDayIndex = (
