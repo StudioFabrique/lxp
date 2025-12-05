@@ -13,7 +13,8 @@ interface Props {
   events: CalendarEvent[];
   // New Prop: Optional because not all views need it
   timelineEvents?: TimelineEvent[];
-
+  onClickDetailsTimelineYearEvent?: (id: number | string) => void;
+  onClickEditTimelineYearEvent?: (id: number | string) => void;
   currentDate: Date;
   startHour?: number;
   endHour?: number;
@@ -26,6 +27,8 @@ interface Props {
 const Calendar = ({
   events,
   timelineEvents = [], // Default to empty array
+  onClickDetailsTimelineYearEvent,
+  onClickEditTimelineYearEvent,
   currentDate,
   startHour = 8,
   endHour = 19,
@@ -46,7 +49,14 @@ const Calendar = ({
           />
         );
       case "year-timeline":
-        return <YearTimelineView events={timelineEvents} darkMode={darkMode} />;
+        return (
+          <YearTimelineView
+            events={timelineEvents}
+            darkMode={darkMode}
+            onClickDetails={onClickDetailsTimelineYearEvent}
+            onClickEdit={onClickEditTimelineYearEvent}
+          />
+        );
       case "week":
       case "day":
       default:

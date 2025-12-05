@@ -3,10 +3,17 @@ import { theme, TimelineEvent } from "../calendar-configuration";
 
 type Props = {
   events: TimelineEvent[];
+  onClickEdit?: (id: number | string) => void;
+  onClickDetails?: (id: number | string) => void;
   darkMode: boolean;
 };
 
-const YearTimelineView = ({ events, darkMode }: Props) => {
+const YearTimelineView = ({
+  events,
+  onClickEdit,
+  onClickDetails,
+  darkMode,
+}: Props) => {
   // 1. Calculate the global Edge-to-Edge range (Min Start -> Max End)
   const range = useMemo(() => {
     if (events.length === 0) return { min: 0, max: 0, total: 0 };
@@ -87,7 +94,10 @@ const YearTimelineView = ({ events, darkMode }: Props) => {
               }`}
             >
               {/* LEFT: Avatar + Title Info */}
-              <div className="w-48 flex items-center gap-3 flex-shrink-0">
+              <div
+                onClick={() => onClickDetails?.(event.id)}
+                className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
+              >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
                     theme(darkMode).border
@@ -128,7 +138,10 @@ const YearTimelineView = ({ events, darkMode }: Props) => {
 
               {/* RIGHT: Timeline Bar Area */}
               {event.startDate && event.endDate ? (
-                <div className="flex-1 relative h-8 flex items-center">
+                <div
+                  className="flex-1 relative h-8 flex items-center"
+                  onClick={() => onClickEdit?.(event.id)}
+                >
                   {/* Background Track Line */}
                   <div
                     className={`absolute w-full h-[1px] rounded ${
@@ -162,9 +175,14 @@ const YearTimelineView = ({ events, darkMode }: Props) => {
               ) : (
                 <div className="flex items-center justify-end gap-5 w-full mr-10">
                   <span>Cet événement n'a pas encore de date</span>
-                  <button className="btn btn-sm btn-outline">
-                    Attribuer une date
-                  </button>
+                  {onClickEdit && (
+                    <button
+                      className="btn btn-sm btn-outline"
+                      onClick={() => onClickEdit(event.id)}
+                    >
+                      Attribuer une date
+                    </button>
+                  )}
                 </div>
               )}
             </div>
