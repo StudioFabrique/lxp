@@ -35,7 +35,11 @@ const Calendar = ({
 
       {/* --- BODY --- */}
       {view === "month" ? (
-        <MonthView darkMode={darkMode} />
+        <MonthView
+          events={events}
+          currentDate={currentDate}
+          darkMode={darkMode}
+        />
       ) : (
         <TimelineView
           events={events}

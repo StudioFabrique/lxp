@@ -84,7 +84,8 @@ export interface CalendarEvent {
   id: number | string;
   title: string;
   subtitle?: string;
-  dayIndex: number; // 0 = Monday, 6 = Sunday
+  dayIndex?: number; // 0 = Monday, 6 = Sunday
+  date?: Date;
   start: string; // Format "HH:MM"
   end: string; // Format "HH:MM"
   type: CalendarEventType;
