@@ -16,7 +16,7 @@ const ContextProvider = (props: PropsWithChildren) => {
   const { axiosInstance, sendRequest } = useHttp();
 
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -95,7 +95,7 @@ const ContextProvider = (props: PropsWithChildren) => {
 
     const activeTheme = localStorage.getItem("activeTheme");
     if (activeTheme) {
-      setTheme(activeTheme);
+      setTheme(activeTheme as "light" | "dark");
     } else {
       setTheme("light");
       localStorage.setItem("activeTheme", "light");

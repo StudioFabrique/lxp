@@ -17,7 +17,7 @@ const CalendarDatesForm: FC<{
   const [isAllowedToEdit, setIsAllowedToEdit] = useState(false);
 
   const currentModule = useSelector(
-    (state: any) => state.parcoursModules.currentModule,
+    (state: any) => state.parcoursModules.currentModule
   );
 
   const [datesModule, setDatesModule] = useState({
@@ -51,12 +51,20 @@ const CalendarDatesForm: FC<{
 
     if (newMinDate && new Date(newMinDate) < datesParcours.startDate) {
       return setError(
-        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString("fr-FR")}) et la fin (${datesParcours.endDate.toLocaleDateString("fr-FR")}) du parcours`,
+        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString(
+          "fr-FR"
+        )}) et la fin (${datesParcours.endDate.toLocaleDateString(
+          "fr-FR"
+        )}) du parcours`
       );
     }
     if (newMaxDate && new Date(newMaxDate) > datesParcours.endDate) {
       return setError(
-        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString("fr-FR")}) et la fin (${datesParcours.endDate.toLocaleDateString("fr-FR")}) du parcours`,
+        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString(
+          "fr-FR"
+        )}) et la fin (${datesParcours.endDate.toLocaleDateString(
+          "fr-FR"
+        )}) du parcours`
       );
     }
     if (
@@ -65,7 +73,7 @@ const CalendarDatesForm: FC<{
       new Date(newMinDate) > new Date(newMaxDate)
     ) {
       return setError(
-        "La date minimum ne peut pas être supérieure à la date maximum",
+        "La date minimum ne peut pas être supérieure à la date maximum"
       );
     }
     setError(null);
@@ -81,7 +89,7 @@ const CalendarDatesForm: FC<{
             maxDate: datesModule.maxDate,
           },
           moduleId: currentModule.id,
-        }),
+        })
       );
       setIsAllowedToEdit(false);
       toast.success("Dates du module mises à jour");
@@ -99,7 +107,7 @@ const CalendarDatesForm: FC<{
           maxDate: datesModule.maxDate,
         },
       },
-      applyData,
+      applyData
     );
   };
 
