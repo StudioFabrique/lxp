@@ -78,7 +78,7 @@ export type CalendarEventType =
   | "neutral"
   | "danger";
 
-export type CalendarView = "day" | "week" | "month";
+export type CalendarView = "day" | "week" | "month" | "year-timeline";
 
 export interface CalendarEvent {
   id: number | string;
@@ -89,4 +89,12 @@ export interface CalendarEvent {
   start: string; // Format "HH:MM"
   end: string; // Format "HH:MM"
   type: CalendarEventType;
+}
+
+export interface TimelineEvent {
+  id: number | string;
+  title: string;
+  startDate?: Date;
+  endDate?: Date;
+  image?: string;
 }
