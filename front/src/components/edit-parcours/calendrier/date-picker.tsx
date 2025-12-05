@@ -11,15 +11,15 @@ import CalendarIcon from "../../UI/svg/calendar-icon";
 const DatePicker: FC<{
   id: string;
   name?: string;
-  date: string;
+  date?: string;
   label?: string;
   disabled?: boolean;
   onSubmitDate?: (id: string, date: string) => void;
   onChangeDate?: (event: React.FormEvent<HTMLInputElement>) => void;
 }> = ({ id, date, name, label, disabled, onSubmitDate, onChangeDate }) => {
   const dateFormatted = useMemo(
-    () => new Date(date).toLocaleDateString("fr-FR"),
-    [date],
+    () => new Date(date || Date.now()).toLocaleDateString("fr-FR"),
+    [date]
   );
 
   const dateRef: Ref<HTMLInputElement> = useRef(null);
@@ -29,7 +29,7 @@ const DatePicker: FC<{
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     if (onSubmitDate) onSubmitDate(event.target.id, event.target.value);
     if (onChangeDate) onChangeDate(event);

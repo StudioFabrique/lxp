@@ -1,12 +1,11 @@
 // front/src/store/context.ts
 import React from "react";
 import { Socket } from "socket.io-client";
-import { themes } from "../config/themes";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
 
 export type ContextType = {
-  theme: string;
+  theme: "light" | "dark";
   initTheme: () => void;
   toggleTheme: () => void;
   isLoggedIn: boolean;
@@ -23,7 +22,7 @@ export type ContextType = {
 };
 
 export const Context = React.createContext<ContextType>({
-  theme: themes.light,
+  theme: "light",
   initTheme: () => {},
   toggleTheme: () => {},
   isLoggedIn: false,

@@ -1,32 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * MADE IN MARTIN
- */
-
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useContext, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
-import ModulesListCalendrier from "./modules-list-calendrier";
-import moment from "moment";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import CalendarDatesForm from "./forms/calendar-dates-form";
-
-const localizer = momentLocalizer(moment);
+import Calendar from "../../UI/calendar/calendar";
+import { Context } from "../../../store/context.store";
+import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
+import ModuleDateModal from "./module-date-modal";
+import ModuleDetailsModal from "./module-details-modal";
+import { formatDate } from "../../UI/calendar/calendar-utils";
 
 const Calendrier = () => {
+  const { theme } = useContext(Context);
+  const darkMode = theme === "dark";
+  const currentDate = new Date();
   const dispatch = useDispatch();
 
+  // STATE TO TRACK WHICH MODAL IS OPEN
+  const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
+    null
+  );
+
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos,
+    (state: any) => state.parcoursInformations.infos
   );
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModules.modules,
-  );
-  const currentModule = useSelector(
-    (state: any) => state.parcoursModules.currentModule,
+    (state: any) => state.parcoursModules.modules
   );
 
   const datesParcours = {
@@ -38,15 +38,46 @@ const Calendrier = () => {
       : new Date(),
   };
 
-  useEffect(() => {
-    if (!modules || modules.length === 0) return;
+  const modulesTimelineEvents: TimelineEvent[] = (modules || [])
+    .filter((mod) => mod.id !== undefined)
+    .map((mod) => ({
+      id: mod.id!,
+      title: mod.title,
+      startDate: mod.minDate ? new Date(mod.minDate) : undefined,
+      endDate: mod.maxDate ? new Date(mod.maxDate) : undefined,
+      image: mod.thumb ? `data:image/jpeg;base64,${mod.thumb}` : undefined,
+    }));
 
-    dispatch(
-      parcoursModulesSliceActions.updateCurrentParcoursModule(
-        !currentModule ? modules[0].id : currentModule.id,
-      ),
-    );
-  }, [dispatch, currentModule, modules]);
+  // --- COMMON HELPER ---
+  const handleSelectModule = (
+    moduleId: number | string,
+    mode: "edit" | "details"
+  ) => {
+    const selectedModule = modules.find((m) => m.id === moduleId);
+    if (selectedModule) {
+      // 1. Set the intended mode (edit vs details)
+      setActiveModal(mode);
+      // 2. Update Redux (this triggers the useEffect in the modal)
+      dispatch(parcoursModulesSliceActions.setCurrentModule(selectedModule));
+    }
+  };
+
+  // --- HANDLER: EDIT DATES ---
+  const handleEditModuleDates = (moduleId: number | string) => {
+    handleSelectModule(moduleId, "edit");
+  };
+
+  // --- HANDLER: SHOW DETAILS ---
+  const handleShowModuleDetails = (moduleId: number | string) => {
+    handleSelectModule(moduleId, "details");
+  };
+
+  // --- HANDLER: CLOSE MODALS ---
+  const handleCloseModal = () => {
+    setActiveModal(null);
+    // Optionally clear redux here if you want to ensure total reset
+    // dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+  };
 
   useEffect(() => {
     return () => {
@@ -56,51 +87,58 @@ const Calendrier = () => {
 
   if (!modules || !parcoursInfos) {
     return (
-      <div className="flex flex-col gap-y-5">
-        <h1 className="text-2xl">Calendrier</h1>
-        <p>Chargement...</p>
+      <div className="flex flex-col gap-y-5 p-10 items-center justify-center h-full">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+        <p>Chargement du calendrier...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-y-5">
-      <h1 className="text-2xl">Calendrier</h1>
-      <div className="grid grid-cols-3 gap-x-5 min-h-[60vh]">
-        <ModulesListCalendrier modules={modules} />
-        <Calendar
-          className="col-span-2 bg-white rounded-lg p-5"
-          localizer={localizer}
-          events={modules.map((module) => ({
-            start: module.minDate
-              ? new Date(module.minDate)
-              : datesParcours.startDate,
-            end: module.maxDate
-              ? new Date(module.maxDate)
-              : datesParcours.endDate,
-            title: module.title || "Sans titre",
-          }))}
-          onDoubleClickEvent={(event) => {
-            const selectedModule = modules.find(
-              (module) => module.title === event.title,
-            );
-            if (selectedModule) {
-              dispatch(
-                parcoursModulesSliceActions.updateCurrentParcoursModule(
-                  selectedModule.id,
-                ),
-              );
-            }
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-3 mt-4">
-        <div />
-        <div className="col-span-2 flex flex-col gap-4 bg-base-200 rounded-lg p-4">
-          <span className="text-base font-bold">{`Dates du parcours : ${datesParcours.startDate.toLocaleDateString("fr-FR")} au ${datesParcours.endDate.toLocaleDateString("fr-FR")}`}</span>
-          <CalendarDatesForm datesParcours={datesParcours} />
+    <div className="flex flex-col gap-y-5 h-full">
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <h1 className="text-2xl font-bold">Calendrier des Modules</h1>
+        <div
+          className={`text-sm px-4 py-2 rounded-lg border ${
+            darkMode
+              ? "bg-slate-800 border-slate-700"
+              : "bg-gray-50 border-gray-200"
+          }`}
+        >
+          <span className="font-semibold">Dates du parcours : </span>
+          {`${formatDate(datesParcours.startDate)} -
+          ${formatDate(datesParcours.endDate)}`}
         </div>
       </div>
+
+      <div className="flex-1 min-h-0 border rounded-xl shadow-sm overflow-hidden">
+        <Calendar
+          currentDate={currentDate}
+          events={[]}
+          startHour={8}
+          endHour={18}
+          view={"year-timeline"}
+          timelineEvents={modulesTimelineEvents}
+          darkMode={darkMode}
+          // PASS HANDLERS
+          onClickDetailsTimelineYearEvent={handleShowModuleDetails}
+          onClickEditTimelineYearEvent={handleEditModuleDates}
+        />
+      </div>
+
+      {/* --- EDIT DATES MODAL --- */}
+      <ModuleDateModal
+        modalId="module_dates_modal"
+        datesParcours={datesParcours}
+        isOpen={activeModal === "edit"} // Only opens if mode is edit
+      />
+
+      {/* --- DETAILS MODAL --- */}
+      <ModuleDetailsModal
+        modalId="module_details_modal"
+        isOpen={activeModal === "details"} // Only opens if mode is details
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
