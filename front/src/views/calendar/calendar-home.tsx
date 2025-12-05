@@ -1,7 +1,13 @@
-import NewCalendarTimeline, {
-  CalendarEvent,
-} from "../../components/student-home/timeline/new-calendar-timeline";
+import { useContext, useState } from "react";
+import Calendar from "../../components/UI/calendar/calendar";
 import Header from "../../components/UI/header";
+import CalendarHeader from "../../components/UI/calendar/calendar-header";
+import { Context } from "../../store/context.store";
+import {
+  CalendarEvent,
+  CalendarView,
+} from "../../components/UI/calendar/calendar-configuration";
+import TitleWithSelector from "../../components/UI/calendar/components/title-with-selector";
 
 const myEvents: CalendarEvent[] = [
   {
@@ -52,18 +58,38 @@ const myEvents: CalendarEvent[] = [
 ];
 
 const CalendarHome = () => {
+  const { theme } = useContext(Context);
+  const darkMode = theme === "dark";
+
+  const [view, setView] = useState<CalendarView>("week");
+  const [currentDate, setCurrentDate] = useState(new Date());
+
   return (
     <div className="w-full flex flex-col gap-6">
       <Header
         title="Calendrier"
         description="Consulter le calendrier des prochains cours."
       />
-      <NewCalendarTimeline
-        title="Développeur Web"
+      <Calendar
+        currentDate={currentDate}
         events={myEvents}
         startHour={8}
         endHour={18}
-        defaultView="week"
+        header={
+          <CalendarHeader
+            darkMode={darkMode}
+            children={
+              <TitleWithSelector
+                currentDate={currentDate}
+                setCurrentDate={setCurrentDate}
+                view={view}
+                darkMode={darkMode}
+              />
+            }
+          />
+        }
+        view={view}
+        darkMode={darkMode}
       />
     </div>
   );
