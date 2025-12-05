@@ -8,6 +8,8 @@ import {
   CalendarView,
 } from "../../components/UI/calendar/calendar-configuration";
 import TitleWithSelector from "../../components/UI/calendar/components/title-with-selector";
+import ViewSelector from "../../components/UI/calendar/components/view-selector";
+import TimeSelector from "../../components/UI/calendar/components/time-selector";
 
 const myEvents: CalendarEvent[] = [
   {
@@ -78,14 +80,25 @@ const CalendarHome = () => {
         header={
           <CalendarHeader
             darkMode={darkMode}
-            children={
+            children={[
               <TitleWithSelector
+                key="title-with-selector"
+                currentTitle="Développeur Web"
+                availableTitles={[""]}
+                onSelectTitle={() => {}}
                 currentDate={currentDate}
-                setCurrentDate={setCurrentDate}
                 view={view}
                 darkMode={darkMode}
-              />
-            }
+              />,
+              <div key="view-selector" className="flex gap-2">
+                <TimeSelector date={currentDate} setDate={setCurrentDate} />
+                <ViewSelector
+                  view={view}
+                  setView={setView}
+                  darkMode={darkMode}
+                />
+              </div>,
+            ]}
           />
         }
         view={view}

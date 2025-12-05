@@ -1,12 +1,20 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  CalendarEvent,
   CalendarView,
   daysOfWeek,
+  eventConfig,
   HOUR_HEIGHT,
   theme,
 } from "../calendar-configuration";
+import {
+  getCurrentTimeIndicator,
+  getEventStyle,
+  getRealDayIndex,
+} from "../calendar-utils";
 
 type Props = {
+  events: CalendarEvent[];
   view: CalendarView;
   currentDate: Date;
   startHour: number;
@@ -15,12 +23,15 @@ type Props = {
 };
 
 const TimelineView = ({
+  events,
   view,
   currentDate,
   startHour,
   endHour,
   darkMode,
 }: Props) => {
+  const [nowTime, setNowTime] = useState(new Date());
+
   const hours = useMemo(() => {
     return Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
   }, [startHour, endHour]);
@@ -34,6 +45,13 @@ const TimelineView = ({
     return [daysOfWeek[dayIndex]];
   }, [view, currentDate]);
 
+  const timeIndicator = getCurrentTimeIndicator(nowTime, startHour, endHour);
+
+  useEffect(() => {
+    const timer = setInterval(() => setNowTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="flex flex-1 overflow-y-auto relative">
       {/* TIME COLUMN */}
@@ -42,11 +60,7 @@ const TimelineView = ({
           theme(darkMode).sidebarBg
         } ${theme(darkMode).border}`}
       >
-        <div
-          className={`h-10 border-b ${theme(darkMode).border} ${
-            theme(darkMode).headerBg
-          }`}
-        ></div>
+        <div className="h-10"></div>
         <div
           className="relative"
           style={{ height: hours.length * HOUR_HEIGHT }}
@@ -73,7 +87,7 @@ const TimelineView = ({
           } ${theme(darkMode).border}`}
         >
           {visibleDays.map((day, i) => {
-            const realIndex = getRealDayIndex(i);
+            const realIndex = getRealDayIndex(i, view, currentDate);
 
             // In Week view, we just check day index match for generic "Today" highlighting if in current week
             // Simplified: Highlight if dayIndex matches Today's index
@@ -115,7 +129,7 @@ const TimelineView = ({
           {/* COLUMNS */}
           <div className="absolute inset-0 flex">
             {visibleDays.map((_, i) => {
-              const dayIndex = getRealDayIndex(i);
+              const dayIndex = getRealDayIndex(i, view, currentDate);
               return (
                 <div
                   key={i}
@@ -136,7 +150,11 @@ const TimelineView = ({
                         <div
                           key={event.id}
                           className={`absolute inset-x-1 rounded-md px-2 py-1 border-l-4 shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden z-10 group-hover:z-20 ${styleClass}`}
-                          style={getEventStyle(event.start, event.end)}
+                          style={getEventStyle(
+                            event.start,
+                            event.end,
+                            startHour
+                          )}
                         >
                           <div className="font-bold text-xs truncate leading-tight">
                             {event.title}
