@@ -22,6 +22,7 @@ interface Props {
   currentWeekDayVisible?: boolean;
   darkMode?: boolean;
   header?: ReactNode;
+  style?: { hourHeight: number };
 }
 
 const Calendar = ({
@@ -36,6 +37,7 @@ const Calendar = ({
   currentWeekDayVisible = true,
   darkMode = false,
   header,
+  style = { hourHeight: 60 },
 }: PropsWithChildren<Props>) => {
   // Helper to render the correct view body
   const renderBody = () => {
@@ -69,6 +71,7 @@ const Calendar = ({
             currentDate={currentDate}
             currentWeekDayVisible={currentWeekDayVisible}
             darkMode={darkMode}
+            style={style}
           />
         );
     }
@@ -76,7 +79,7 @@ const Calendar = ({
 
   return (
     <div
-      className={`flex flex-col h-full rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300 ${
+      className={`flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300 ${
         theme(darkMode).bg
       } ${theme(darkMode).text} ${theme(darkMode).border}`}
     >
