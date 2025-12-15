@@ -1,8 +1,10 @@
 import { CalendarClock, ChevronLeft, ChevronRight } from "lucide-react";
 import { MouseEvent } from "react";
 import { DayPicker } from "react-day-picker";
+import { fr } from "react-day-picker/locale";
 import "react-day-picker/style.css";
 import { CalendarView } from "../calendar-configuration";
+import { formatDate } from "../calendar-utils";
 
 type Props = {
   view?: CalendarView;
@@ -80,7 +82,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
           role="button"
           className="cursor-pointer input input-border input-sm w-[10rem] rounded-xl flex justify-between items-center"
         >
-          {date ? date.toLocaleDateString() : "Pick a date"}
+          {date ? formatDate(date.toLocaleDateString()) : "Pick a date"}
 
           {!isToday && (
             <button
@@ -106,6 +108,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
             selected={date}
             onSelect={setDate}
             animate
+            locale={fr}
           />
         </div>
       </div>
