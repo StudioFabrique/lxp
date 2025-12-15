@@ -7,9 +7,9 @@ import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcou
 import Calendar from "../../UI/calendar/calendar";
 import { Context } from "../../../store/context.store";
 import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
-import ModuleDateModal from "./module-date-modal";
-import ModuleDetailsModal from "./module-details-modal";
 import { formatDate } from "../../UI/calendar/calendar-utils";
+import ModuleTimelineDetailsPopover from "./Module-timeline-details-popover";
+import ModuleTimelineDateModal from "./module-timeline-date-modal";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
@@ -17,10 +17,11 @@ const Calendrier = () => {
   const currentDate = new Date();
   const dispatch = useDispatch();
 
-  // STATE TO TRACK WHICH MODAL IS OPEN
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
     null
   );
+  const [detailsCardRectPosition, setDetailsCardRectPosition] =
+    useState<DOMRect>();
 
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos
@@ -48,16 +49,15 @@ const Calendrier = () => {
       image: mod.thumb ? `data:image/jpeg;base64,${mod.thumb}` : undefined,
     }));
 
-  // --- COMMON HELPER ---
   const handleSelectModule = (
     moduleId: number | string,
     mode: "edit" | "details"
   ) => {
     const selectedModule = modules.find((m) => m.id === moduleId);
     if (selectedModule) {
-      // 1. Set the intended mode (edit vs details)
+      // Set the intended mode
       setActiveModal(mode);
-      // 2. Update Redux (this triggers the useEffect in the modal)
+      // Update Redux
       dispatch(parcoursModulesSliceActions.setCurrentModule(selectedModule));
     }
   };
@@ -68,15 +68,17 @@ const Calendrier = () => {
   };
 
   // --- HANDLER: SHOW DETAILS ---
-  const handleShowModuleDetails = (moduleId: number | string) => {
+  const handleShowModuleDetails = (
+    moduleId: number | string,
+    position: DOMRect
+  ) => {
     handleSelectModule(moduleId, "details");
+    setDetailsCardRectPosition(position);
   };
 
   // --- HANDLER: CLOSE MODALS ---
   const handleCloseModal = () => {
     setActiveModal(null);
-    // Optionally clear redux here if you want to ensure total reset
-    // dispatch(parcoursModulesSliceActions.setCurrentModule(null));
   };
 
   useEffect(() => {
@@ -120,23 +122,24 @@ const Calendrier = () => {
           view={"year-timeline"}
           timelineEvents={modulesTimelineEvents}
           darkMode={darkMode}
-          // PASS HANDLERS
           onClickDetailsTimelineYearEvent={handleShowModuleDetails}
           onClickEditTimelineYearEvent={handleEditModuleDates}
         />
       </div>
 
-      {/* --- EDIT DATES MODAL --- */}
-      <ModuleDateModal
-        modalId="module_dates_modal"
-        datesParcours={datesParcours}
-        isOpen={activeModal === "edit"} // Only opens if mode is edit
+      {/* DETAILS MODAL */}
+      <ModuleTimelineDetailsPopover
+        modalId="module_details_modal"
+        isOpen={activeModal === "details"}
+        position={detailsCardRectPosition}
+        onClose={handleCloseModal}
       />
 
-      {/* --- DETAILS MODAL --- */}
-      <ModuleDetailsModal
-        modalId="module_details_modal"
-        isOpen={activeModal === "details"} // Only opens if mode is details
+      {/* EDIT DATES MODAL */}
+      <ModuleTimelineDateModal
+        modalId="module_dates_modal"
+        datesParcours={datesParcours}
+        isOpen={activeModal === "edit"}
         onClose={handleCloseModal}
       />
     </div>
