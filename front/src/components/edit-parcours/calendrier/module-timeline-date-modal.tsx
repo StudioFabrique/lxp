@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-const ModuleDateModal = ({
+const ModuleTimelineDateModal = ({
   datesParcours,
   modalId,
   isOpen,
@@ -200,4 +200,4 @@ const ModuleDateModal = ({
   );
 };
 
-export default ModuleDateModal;
+export default ModuleTimelineDateModal;

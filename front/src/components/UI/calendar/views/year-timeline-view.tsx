@@ -5,7 +5,7 @@ import { formatDate } from "../calendar-utils";
 type Props = {
   events: TimelineEvent[];
   onClickEdit?: (id: number | string) => void;
-  onClickDetails?: (id: number | string) => void;
+  onClickDetails?: (id: number | string, rect: DOMRect) => void;
   darkMode: boolean;
 };
 
@@ -15,7 +15,7 @@ const YearTimelineView = ({
   onClickDetails,
   darkMode,
 }: Props) => {
-  // 1. Calculate the global Edge-to-Edge range (Min Start -> Max End)
+  // Calculate the global Edge-to-Edge range (Min Start -> Max End)
   const range = useMemo(() => {
     if (events.length === 0) return { min: 0, max: 0, total: 0 };
 
@@ -87,7 +87,12 @@ const YearTimelineView = ({
             >
               {/* LEFT: Avatar + Title Info */}
               <div
-                onClick={() => onClickDetails?.(event.id)}
+                onClick={(e) =>
+                  onClickDetails?.(
+                    event.id,
+                    e.currentTarget.getBoundingClientRect()
+                  )
+                }
                 className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
               >
                 <div
@@ -148,7 +153,7 @@ const YearTimelineView = ({
                     style={{
                       left: `${leftPercent}%`,
                       width: `${widthPercent}%`,
-                      // Using a nice gradient logic, or you can pass a color in the event object
+                      // Gradient
                       background: darkMode
                         ? "linear-gradient(90deg, #6366f1 0%, #a855f7 100%)"
                         : "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)",
@@ -157,12 +162,12 @@ const YearTimelineView = ({
                       event.startDate
                     )} - ${formatDate(event.endDate)}`}
                   >
-                    {/* Optional: Label inside bar if wide enough */}
-                    {widthPercent > 10 && (
+                    {/* Label inside bar */}
+                    {
                       <span className="text-[10px] text-white font-medium px-2 truncate drop-shadow-md">
                         {event.title}
                       </span>
-                    )}
+                    }
                   </div>
                 </div>
               ) : (
