@@ -103,10 +103,12 @@ export const getWeekBounds = (date: Date) => {
 };
 
 // Helper to format date for tooltips/labels
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("fr-FR", {
-    day: "numeric", // "4"
-    month: "long", // "janvier"
-    year: "numeric", // "2026"
-  });
+export const formatDate = (date?: Date | string): string | null => {
+  return date
+    ? new Date(date).toLocaleDateString("fr-FR", {
+        day: "numeric", // "4"
+        month: "long", // "janvier"
+        year: "numeric", // "2026"
+      })
+    : null;
 };

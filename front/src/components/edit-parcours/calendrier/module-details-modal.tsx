@@ -23,8 +23,6 @@ const ModuleDetailsModal = ({ modalId, isOpen, onClose }: Props) => {
 
   if (!currentModule) return null;
 
-  console.log({ currentModule });
-
   return (
     <dialog id={modalId} className="modal" ref={modalRef} onClose={onClose}>
       <div className="modal-box p-0 bg-transparent shadow-none w-full max-w-lg overflow-visible">
