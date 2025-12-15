@@ -12,7 +12,6 @@ const TeacherLessonsQualityStats = () => {
   useEffect(() => {
     const applyData = (data: LessonsQualityStats) => {
       setStats(data);
-      console.log(data);
     };
 
     sendRequest({ path: "/course/best-rated" }, applyData);

@@ -46,6 +46,7 @@ const ModuleExplorerContent = () => {
     isFirstActivitySelected,
     isLastActivitySelected,
     isLastLessonSelected,
+    isLoading,
     dispatch,
     onCompleteLesson,
     onRateContent,
@@ -238,6 +239,7 @@ const ModuleExplorerContent = () => {
                   }
                   selectedLesson={selectedLesson}
                   showDeleteModal={modalVisibility === "deletionModal"}
+                  isLoading={isLoading}
                   onOpenDeleteModal={() =>
                     dispatch({
                       type: "set_modal_visibility",
