@@ -25,7 +25,8 @@ const useModuleExplorerContent = () => {
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
   // ------------
   const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp(true);
+  const { sendRequest } = useHttp(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [state, dispatch] = useReducer(
     moduleExplorerContentReducer,
@@ -281,6 +282,8 @@ const useModuleExplorerContent = () => {
       return true;
     };
 
+    setIsLoading(true);
+
     const response: Promise<boolean> = await sendRequest(
       {
         path: `/activity/text/${
@@ -300,6 +303,8 @@ const useModuleExplorerContent = () => {
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    setIsLoading(false);
+
     return response;
   };
 
@@ -315,6 +320,8 @@ const useModuleExplorerContent = () => {
 
       return true;
     };
+
+    setIsLoading(true);
 
     const response: Promise<boolean> = await sendRequest(
       {
@@ -337,6 +344,8 @@ const useModuleExplorerContent = () => {
 
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
     await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setIsLoading(false);
 
     return response;
   };

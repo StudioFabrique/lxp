@@ -24,6 +24,7 @@ type Props = {
   textActivityContent?: string;
   iframeActivitySrc?: string;
   showDeleteModal: boolean;
+  isLoading?: boolean;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onEditIframeSrc: (src: string) => void;
@@ -54,6 +55,7 @@ const LessonReaderAndEditor = ({
   iframeActivitySrc,
   textActivityContent,
   showDeleteModal,
+  isLoading,
   onEditContent,
   onEditTitle,
   onEditIframeSrc,
@@ -114,6 +116,7 @@ const LessonReaderAndEditor = ({
                 <button
                   className="btn btn-sm btn-error self-end text-base-100"
                   onClick={mode === "write" ? onBack : onClose}
+                  disabled={isLoading}
                 >
                   Annuler
                 </button>

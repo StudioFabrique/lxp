@@ -1,6 +1,6 @@
 // --- UTILS ---
 
-import { CalendarView, HOUR_HEIGHT } from "./calendar-configuration";
+import { CalendarView } from "./calendar-configuration";
 
 export const getMinutes = (timeStr: string) => {
   const [h, m] = timeStr.split(":").map(Number);
@@ -58,24 +58,26 @@ export const getRealDayIndex = (
 export const getEventStyle = (
   start: string,
   end: string,
-  calendarStartHour: number
+  calendarStartHour: number,
+  style: { hourHeight: number }
 ) => {
   const startMin = getMinutes(start);
   const endMin = getMinutes(end);
   const startOffset = calendarStartHour * 60;
-  const top = ((startMin - startOffset) / 60) * HOUR_HEIGHT;
-  const height = ((endMin - startMin) / 60) * HOUR_HEIGHT;
+  const top = ((startMin - startOffset) / 60) * style.hourHeight;
+  const height = ((endMin - startMin) / 60) * style.hourHeight;
   return { top: `${top}px`, height: `${height}px` };
 };
 
 export const getCurrentTimeIndicator = (
   nowTime: Date,
   startHour: number,
-  endHour: number
+  endHour: number,
+  style: { hourHeight: number }
 ) => {
   const currentMinutes = nowTime.getHours() * 60 + nowTime.getMinutes();
   const startOffset = startHour * 60;
-  const top = ((currentMinutes - startOffset) / 60) * HOUR_HEIGHT;
+  const top = ((currentMinutes - startOffset) / 60) * style.hourHeight;
   let dayIndex = nowTime.getDay() - 1;
   if (dayIndex === -1) dayIndex = 6;
 
@@ -103,10 +105,12 @@ export const getWeekBounds = (date: Date) => {
 };
 
 // Helper to format date for tooltips/labels
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("fr-FR", {
-    day: "numeric", // "4"
-    month: "long", // "janvier"
-    year: "numeric", // "2026"
-  });
+export const formatDate = (date?: Date | string): string | null => {
+  return date
+    ? new Date(date).toLocaleDateString("fr-FR", {
+        day: "numeric", // "4"
+        month: "long", // "janvier"
+        year: "numeric", // "2026"
+      })
+    : null;
 };
