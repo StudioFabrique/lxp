@@ -13,7 +13,10 @@ interface Props {
   events: CalendarEvent[];
   // New Prop: Optional because not all views need it
   timelineEvents?: TimelineEvent[];
-  onClickDetailsTimelineYearEvent?: (id: number | string) => void;
+  onClickDetailsTimelineYearEvent?: (
+    id: number | string,
+    rect: DOMRect
+  ) => void;
   onClickEditTimelineYearEvent?: (id: number | string) => void;
   currentDate: Date;
   startHour?: number;
