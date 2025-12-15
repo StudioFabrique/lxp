@@ -163,11 +163,11 @@ const TimelineView = ({
                 >
                   {events
                     .filter((e) => {
-                      // 1. Check Hour bounds
+                      // Check Hour bounds
                       const startH = parseInt(e.start.split(":")[0]);
                       if (startH < startHour || startH >= endHour) return false;
 
-                      // 2. Check Date Logic
+                      // Check Date
                       if (e.date) {
                         // One-off event: must match the exact date of this column
                         return isSameDate(e.date, columnDate);
