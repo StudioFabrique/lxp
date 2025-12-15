@@ -5,31 +5,24 @@ type Props = { date: Date | undefined; setDate: (date: Date) => void };
 
 const TimeSelector = ({ date, setDate }: Props) => {
   return (
-    <>
-      <div>
-        <button
-          popoverTarget="rdp-popover"
-          className="cursor-pointer input input-border input-sm w-[10rem] rounded-xl"
-          style={{ anchorName: "--rdp" } as React.CSSProperties}
-        >
-          {date ? date.toLocaleDateString() : "Pick a date"}
-        </button>
-        <div
-          popover="auto"
-          id="rdp-popover"
-          className="dropdown"
-          style={{ positionAnchor: "--rdp" } as React.CSSProperties}
-        >
-          <DayPicker
-            required
-            className="react-day-picker"
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-          />
-        </div>
+    <div className="dropdown">
+      <div
+        tabIndex={0}
+        role="button"
+        className="cursor-pointer input input-border input-sm w-[10rem] rounded-xl"
+      >
+        {date ? date.toLocaleDateString() : "Pick a date"}
       </div>
-    </>
+      <div tabIndex={0} className="dropdown-content z-50 shadow-md mt-2">
+        <DayPicker
+          required
+          className="react-day-picker"
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+        />
+      </div>
+    </div>
   );
 };
 
