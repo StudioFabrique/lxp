@@ -67,8 +67,6 @@ export const monthNames = [
   "Décembre",
 ];
 
-export const HOUR_HEIGHT = 60;
-
 // --- TYPES ---
 
 export type CalendarEventType =

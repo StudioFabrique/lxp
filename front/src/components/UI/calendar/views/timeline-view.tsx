@@ -4,7 +4,6 @@ import {
   CalendarView,
   daysOfWeek,
   eventConfig,
-  HOUR_HEIGHT,
   theme,
 } from "../calendar-configuration";
 import {
@@ -22,6 +21,7 @@ type Props = {
   endHour: number;
   darkMode: boolean;
   currentWeekDayVisible: boolean;
+  style?: { hourHeight: number };
 };
 
 const TimelineView = ({
@@ -32,6 +32,7 @@ const TimelineView = ({
   endHour,
   darkMode,
   currentWeekDayVisible,
+  style = { hourHeight: 60 },
 }: Props) => {
   const [nowTime, setNowTime] = useState(new Date());
 
@@ -48,7 +49,12 @@ const TimelineView = ({
     return [daysOfWeek[dayIndex]];
   }, [view, currentDate]);
 
-  const timeIndicator = getCurrentTimeIndicator(nowTime, startHour, endHour);
+  const timeIndicator = getCurrentTimeIndicator(
+    nowTime,
+    startHour,
+    endHour,
+    style
+  );
 
   useEffect(() => {
     const timer = setInterval(() => setNowTime(new Date()), 60000);
@@ -66,7 +72,7 @@ const TimelineView = ({
         <div className="h-10"></div>
         <div
           className="relative"
-          style={{ height: hours.length * HOUR_HEIGHT }}
+          style={{ height: hours.length * style.hourHeight }}
         >
           {hours.map((h) => (
             <div
@@ -74,7 +80,7 @@ const TimelineView = ({
               className={`absolute w-full text-right pr-3 text-xs font-medium -mt-2 ${
                 theme(darkMode).subText
               }`}
-              style={{ top: `${(h - startHour) * HOUR_HEIGHT}px` }}
+              style={{ top: `${(h - startHour) * style.hourHeight}px` }}
             >
               {h}:00
             </div>
@@ -115,7 +121,7 @@ const TimelineView = ({
 
         <div
           className="relative"
-          style={{ height: hours.length * HOUR_HEIGHT }}
+          style={{ height: hours.length * style.hourHeight }}
         >
           {/* GRID LINES */}
           <div className="absolute inset-0 flex flex-col">
@@ -125,7 +131,7 @@ const TimelineView = ({
                 className={`w-full border-b box-border ${
                   theme(darkMode).gridLine
                 }`}
-                style={{ height: HOUR_HEIGHT }}
+                style={{ height: style.hourHeight }}
               ></div>
             ))}
           </div>
@@ -182,7 +188,8 @@ const TimelineView = ({
                           style={getEventStyle(
                             event.start,
                             event.end,
-                            startHour
+                            startHour,
+                            style
                           )}
                         >
                           <div className="font-bold text-xs truncate leading-tight">
