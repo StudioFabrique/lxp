@@ -10,14 +10,19 @@ interface Props {
   datesParcours: { startDate: Date; endDate: Date };
   modalId: string;
   isOpen: boolean;
+  onClose: () => void;
 }
 
-const ModuleDateModal = ({ datesParcours, modalId, isOpen }: Props) => {
+const ModuleDateModal = ({
+  datesParcours,
+  modalId,
+  isOpen,
+  onClose,
+}: Props) => {
   const dispatch = useDispatch();
   const { sendRequest } = useHttp(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Ref to close modal programmatically on success
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const currentModule = useSelector(
@@ -120,7 +125,7 @@ const ModuleDateModal = ({ datesParcours, modalId, isOpen }: Props) => {
   if (!currentModule) return null;
 
   return (
-    <dialog id={modalId} className="modal" ref={modalRef}>
+    <dialog id={modalId} className="modal" ref={modalRef} onClose={onClose}>
       <div className="modal-box p-0 bg-transparent shadow-none w-full max-w-md overflow-visible">
         <div className="card bg-base-100 shadow-xl w-full">
           {/* --- CARD IMAGE --- */}

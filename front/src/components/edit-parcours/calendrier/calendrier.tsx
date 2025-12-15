@@ -75,8 +75,6 @@ const Calendrier = () => {
   // --- HANDLER: CLOSE MODALS ---
   const handleCloseModal = () => {
     setActiveModal(null);
-    // Optionally clear redux here if you want to ensure total reset
-    // dispatch(parcoursModulesSliceActions.setCurrentModule(null));
   };
 
   useEffect(() => {
@@ -126,17 +124,18 @@ const Calendrier = () => {
         />
       </div>
 
-      {/* --- EDIT DATES MODAL --- */}
-      <ModuleDateModal
-        modalId="module_dates_modal"
-        datesParcours={datesParcours}
-        isOpen={activeModal === "edit"} // Only opens if mode is edit
-      />
-
-      {/* --- DETAILS MODAL --- */}
+      {/* DETAILS MODAL */}
       <ModuleDetailsModal
         modalId="module_details_modal"
         isOpen={activeModal === "details"} // Only opens if mode is details
+        onClose={handleCloseModal}
+      />
+
+      {/* EDIT DATES MODAL */}
+      <ModuleDateModal
+        modalId="module_dates_modal"
+        datesParcours={datesParcours}
+        isOpen={activeModal === "edit"}
         onClose={handleCloseModal}
       />
     </div>
