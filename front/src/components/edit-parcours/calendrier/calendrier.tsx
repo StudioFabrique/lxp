@@ -8,8 +8,8 @@ import Calendar from "../../UI/calendar/calendar";
 import { Context } from "../../../store/context.store";
 import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
 import { formatDate } from "../../UI/calendar/calendar-utils";
-import ModuleTimelineDetailsPopover from "./Module-timeline-details-popover";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
+import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
