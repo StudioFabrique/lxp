@@ -42,6 +42,7 @@ const Calendar = ({
   header,
   style = { hourHeight: 60 },
 }: PropsWithChildren<Props>) => {
+  console.log(view);
   // Helper to render the correct view body
   const renderBody = () => {
     switch (view) {

@@ -44,7 +44,11 @@ const StudentTimeline = () => {
               darkMode={darkMode}
             />,
             <div key="view-selector" className="flex gap-2">
-              <TimeSelector date={currentDate} setDate={setCurrentDate} />
+              <TimeSelector
+                view={view}
+                date={currentDate}
+                setDate={setCurrentDate}
+              />
               <ViewSelector
                 view={view}
                 setView={setView}

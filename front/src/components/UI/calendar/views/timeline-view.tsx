@@ -69,7 +69,7 @@ const TimelineView = ({
           theme(darkMode).sidebarBg
         } ${theme(darkMode).border}`}
       >
-        <div className="h-10"></div>
+        {(view === "week" || currentWeekDayVisible) && <div className="h-10" />}
         <div
           className="relative"
           style={{ height: hours.length * style.hourHeight }}
@@ -77,7 +77,7 @@ const TimelineView = ({
           {hours.map((h) => (
             <div
               key={h}
-              className={`absolute w-full text-right pr-3 text-xs font-medium -mt-2 ${
+              className={`absolute w-full text-right pr-3 text-xs font-medium first:mt-1 -mt-2 ${
                 theme(darkMode).subText
               }`}
               style={{ top: `${(h - startHour) * style.hourHeight}px` }}
