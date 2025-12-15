@@ -29,7 +29,7 @@ const useModuleExplorerContent = () => {
 
   const [state, dispatch] = useReducer(
     moduleExplorerContentReducer,
-    initialModuleExplorerContentState
+    initialModuleExplorerContentState,
   );
 
   const [hasOrderChanged, setOrderChanged] = useState({
@@ -42,31 +42,30 @@ const useModuleExplorerContent = () => {
     () =>
       Boolean(
         state.selectedLesson?.lessonsRead?.some(
-          (lessonRead) => lessonRead.finishedAt
-        )
+          (lessonRead) => lessonRead.finishedAt,
+        ),
       ),
-    [state.selectedLesson?.lessonsRead]
+    [state.selectedLesson?.lessonsRead],
   );
 
   const isFirstActivitySelected = useMemo(
     () =>
       Boolean(
         state.selectedActivity &&
-          state.selectedLesson?.activities?.indexOf(state.selectedActivity) ===
-            0
+        state.selectedLesson?.activities?.indexOf(state.selectedActivity) === 0,
       ),
-    [state.selectedActivity, state.selectedLesson?.activities]
+    [state.selectedActivity, state.selectedLesson?.activities],
   );
 
   const isLastActivitySelected = useMemo(
     () =>
       Boolean(
         state.selectedActivity &&
-          state.selectedLesson?.activities &&
-          state.selectedLesson.activities.indexOf(state.selectedActivity) ===
-            state.selectedLesson.activities.length - 1
+        state.selectedLesson?.activities &&
+        state.selectedLesson.activities.indexOf(state.selectedActivity) ===
+          state.selectedLesson.activities.length - 1,
       ),
-    [state.selectedActivity, state.selectedLesson?.activities]
+    [state.selectedActivity, state.selectedLesson?.activities],
   );
 
   const isLastLessonSelected = useMemo(
@@ -76,11 +75,11 @@ const useModuleExplorerContent = () => {
           state.module?.courses.flatMap((course) => course.lessons).length) ||
           0) -
           1 ===
-          state.module?.courses
-            .flatMap((course) => course.lessons)
-            .findIndex((lesson) => lesson.id === state.selectedLesson?.id)
+        state.module?.courses
+          .flatMap((course) => course.lessons)
+          .findIndex((lesson) => lesson.id === state.selectedLesson?.id),
       ),
-    [state.module?.courses, state.selectedLesson]
+    [state.module?.courses, state.selectedLesson],
   );
 
   const fetchModuleData = useCallback(() => {
@@ -98,7 +97,7 @@ const useModuleExplorerContent = () => {
         method: "post",
       });
     },
-    [sendRequest]
+    [sendRequest],
   );
 
   // Marquer une leçon comme terminée et attribuer une note
@@ -128,10 +127,10 @@ const useModuleExplorerContent = () => {
             path: `/lesson/read/${state.selectedLesson.id}?rate=${rating}`,
             method: "put",
           },
-          applyData
+          applyData,
         );
     },
-    [sendRequest, state.selectedLesson]
+    [sendRequest, state.selectedLesson],
   );
 
   const deleteActivity = useCallback(() => {
@@ -147,7 +146,7 @@ const useModuleExplorerContent = () => {
         path: `/activity/${state.selectedActivity.type}/${state.selectedActivity.id}/lesson`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, state.selectedActivity]);
 
@@ -165,10 +164,10 @@ const useModuleExplorerContent = () => {
           path: `/lesson/rate/${state.selectedLesson?.id}`,
           body: { rate: rating },
         },
-        applyData
+        applyData,
       );
     },
-    [sendRequest, state.selectedLesson?.id]
+    [sendRequest, state.selectedLesson?.id],
   );
 
   const enableCourse = useCallback(
@@ -185,10 +184,10 @@ const useModuleExplorerContent = () => {
           path: `/course/enable-course/${courseId}?visibility=${visibility}`,
           method: "put",
         },
-        applyData
+        applyData,
       );
     },
-    [fetchModuleData, sendRequest]
+    [fetchModuleData, sendRequest],
   );
 
   const deleteCourse = useCallback(
@@ -202,10 +201,10 @@ const useModuleExplorerContent = () => {
 
       await sendRequest(
         { path: `/course/delete-course/${courseId}`, method: "delete" },
-        applyData
+        applyData,
       );
     },
-    [sendRequest]
+    [sendRequest],
   );
 
   const deleteLesson = useCallback(
@@ -218,10 +217,10 @@ const useModuleExplorerContent = () => {
       };
       await sendRequest(
         { path: `/lesson/${lessonId}`, method: "delete" },
-        applyData
+        applyData,
       );
     },
-    [sendRequest]
+    [sendRequest],
   );
 
   const fetchLessonData = useCallback(async () => {
@@ -236,7 +235,7 @@ const useModuleExplorerContent = () => {
     });
     await sendRequest(
       { path: `/lesson/${state.selectedLesson.id}` },
-      applyData
+      applyData,
     );
     await initiateLesson(state.selectedLesson.id);
   }, [state.selectedLesson?.id, sendRequest, initiateLesson, navigate]);
@@ -257,7 +256,7 @@ const useModuleExplorerContent = () => {
 
   const saveTextActivity = async (
     title: string,
-    content: string | undefined
+    content: string | undefined,
   ): Promise<boolean> => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
 
@@ -295,7 +294,7 @@ const useModuleExplorerContent = () => {
           parent: "lesson",
         },
       },
-      state.mode === "write" ? applyDataPost : applyDataPut
+      state.mode === "write" ? applyDataPost : applyDataPut,
     );
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -332,7 +331,7 @@ const useModuleExplorerContent = () => {
               : state.selectedActivity?.url,
         },
       },
-      state.mode === "write" ? applyDataPost : applyDataPut
+      state.mode === "write" ? applyDataPost : applyDataPut,
     );
 
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
@@ -344,7 +343,7 @@ const useModuleExplorerContent = () => {
   const saveActivity = async (
     _id?: number | undefined,
     _title?: string | undefined,
-    content?: string | undefined
+    content?: string | undefined,
   ): Promise<boolean> => {
     if (state.mode === "read") return false;
 
@@ -415,15 +414,15 @@ const useModuleExplorerContent = () => {
         });
       case "video":
         return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=video`
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=video`,
         );
       case "image":
         return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=image`
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=image`,
         );
       case "resource":
         return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=resource`
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=resource`,
         );
     }
   };
@@ -454,7 +453,7 @@ const useModuleExplorerContent = () => {
           method: "put",
           body: state.selectedLesson.activities.map((activity) => activity.id),
         },
-        applyData
+        applyData,
       );
     }
     if (hasOrderChanged.lesson && state.module) {
@@ -470,7 +469,7 @@ const useModuleExplorerContent = () => {
             .find((course) => state.selectedLesson?.course.id === course.id)
             ?.lessons.map((lesson) => lesson.id),
         },
-        applyData
+        applyData,
       );
     }
   }, [sendRequest, hasOrderChanged, state.selectedLesson, state.module]);

@@ -8,8 +8,8 @@ type ModuleListItemProps = {
 };
 
 /**
- * Collapsible module item in the drawer list
- * Shows module info and metadatas from other parcours
+ * Collapsible module item in the drawer list.
+ * Shows module info and metadatas from other parcours.
  */
 export default function ModuleListItem({
   module,
@@ -18,15 +18,15 @@ export default function ModuleListItem({
 }: ModuleListItemProps) {
   // Filter metadatas to only show those from other parcours
   const otherParcoursMetadatas = module.metadatas?.filter(
-    (meta: Metadatas) => meta.parcours?.id !== currentParcoursId
+    (meta: Metadatas) => meta.parcours?.id !== currentParcoursId,
   );
 
-  // ✅ Vérifier si le module a des metadatas
+  // Check if the module has any metadatas
   const hasMetadatas = module.metadatas && module.metadatas.length > 0;
   const hasOtherParcoursMetadatas =
     otherParcoursMetadatas && otherParcoursMetadatas.length > 0;
 
-  // ✅ Afficher si : pas de metadatas du tout OU metadatas dans d'autres parcours
+  // Display if the module has no metadatas at all OR has metadatas in other parcours
   const shouldDisplay = !hasMetadatas || hasOtherParcoursMetadatas;
 
   // Don't render if module only exists in current parcours
@@ -38,7 +38,7 @@ export default function ModuleListItem({
     onCopyModule(module, meta);
   };
 
-  // ✅ Affichage conditionnel selon le cas
+  // Conditional rendering based on module metadata state
   return (
     <div className="collapse bg-base-100 border border-base-300">
       <input type="radio" name="my-accordion-1" />
@@ -61,7 +61,7 @@ export default function ModuleListItem({
               Ce module n'est rattaché à aucun parcours.
             </p>
             <button
-              onClick={() => handleCopy({} as Metadatas)} // Metadata vide pour module orphelin
+              onClick={() => handleCopy({} as Metadatas)} // Empty metadata for orphan module
               className="btn btn-sm btn-primary"
             >
               Utiliser ce module

@@ -47,6 +47,7 @@ export default function ResourceAdd() {
     closePreviewActivity,
     createNewActivity,
     resourceActivityiesSubmitted,
+    submitIframeActivity,
   } = useResource();
 
   console.log("STATE", activityState);
@@ -161,7 +162,12 @@ export default function ResourceAdd() {
                   ) : null}
 
                   {activityType === "iframe" ? (
-                    <IFrameActivityResource mode={activityState} />
+                    <IFrameActivityResource
+                      activity={previewActivity}
+                      mode={activityState}
+                      onSubmit={submitIframeActivity}
+                      onCancel={closePreviewActivity}
+                    />
                   ) : null}
                 </ActivityWrapper>
               ) : (

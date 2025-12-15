@@ -292,6 +292,30 @@ const useResource = () => {
     getResourceDetails();
   };
 
+  const submitIframeActivity = (newActivity: {
+    title: string;
+    url: string;
+  }) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+      getResourceDetails();
+    };
+    sendRequest(
+      {
+        path: `/activity/iframe/${state.previewActivity?.id ?? resourceId}`,
+        method: state.previewActivity ? "put" : "post", // PUT si modification, POST si création
+        body: {
+          title: newActivity.title,
+          url: newActivity.url,
+          parent: "resource",
+        },
+      },
+      applyData,
+    );
+  };
+
   useEffect(() => {
     if (resourceId) {
       dispatch({ type: "SET_MODE", payload: "update" });
@@ -322,6 +346,7 @@ const useResource = () => {
     refreshActivityList,
     uploadVideo,
     resourceActivityiesSubmitted,
+    submitIframeActivity,
   };
 };
 

@@ -6,19 +6,20 @@ import postIframe from "../../models/activity/post-activity/post-iframe";
 
 export default async function httpPostActivityIframe(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   try {
     const { lessonId } = req.params;
     const userId = req.auth?.userId;
-    const { title, description, url } = req.body;
+    const { title, description, url, parent = "lesson" } = req.body;
 
     const response = await postIframe(
       +lessonId,
       userId!,
       title,
       description,
-      url
+      url,
+      parent,
     );
 
     return res.status(201).json(response);
