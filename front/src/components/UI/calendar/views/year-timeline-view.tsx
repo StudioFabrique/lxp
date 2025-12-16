@@ -163,7 +163,13 @@ const YearTimelineView = ({
                       </span>
                     )}
                   </div>
-                  <div className="max-w-[15vw]">
+                  <div
+                    className={
+                      event.startDate && event.endDate
+                        ? "min-w-0"
+                        : "max-w-[15vw]"
+                    }
+                  >
                     <div
                       className={`text-sm font-semibold truncate ${
                         theme(darkMode).text
