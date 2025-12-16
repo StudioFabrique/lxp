@@ -301,6 +301,7 @@ const useResource = () => {
         toast.success(data.message);
       }
       getResourceDetails();
+      dispatch({ type: "CLOSE_PREVIEW_ACTIVITY" });
     };
     sendRequest(
       {
