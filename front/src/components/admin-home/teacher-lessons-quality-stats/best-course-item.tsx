@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import RatingWithStars from "../../UI/lesson-rating/rating-with-stars";
 
 type BestCourseItemProps = {
   firstLessonId: number;
@@ -24,12 +25,8 @@ const BestCourseItem = ({
         <div className="flex-1">
           <h2 className="card-title text-sm">{title}</h2>
           <div className="mt-2">
-            <div className="text-xs mb-1">Qualité du cours</div>
-            <progress
-              className="progress progress-primary w-full h-2"
-              value={rating}
-              max="100"
-            ></progress>
+            <div className="text-xs mb-1">Moyenne des notes attribués</div>
+            <RatingWithStars selectedStars={rating} />
           </div>
         </div>
         <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />

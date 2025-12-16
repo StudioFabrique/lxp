@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 type RatingWithStarsProps = {
   selectedStars: number;
-  onSelectStarRate: (rating: number) => void;
+  onSelectStarRate?: (rating: number) => void;
 };
 
 const RatingWithStars = ({
@@ -14,8 +14,10 @@ const RatingWithStars = ({
       <Star
         size={24}
         key={item}
-        onClick={() => onSelectStarRate(item)}
-        className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
+        onClick={() => onSelectStarRate?.(item)}
+        className={`cursor-pointer ${
+          onSelectStarRate && "transition-all duration-200 hover:scale-110"
+        } ${
           item <= selectedStars
             ? "fill-primary scale-105 stroke-1"
             : "stroke-base-content/50 stroke-1 hover:stroke-1"
