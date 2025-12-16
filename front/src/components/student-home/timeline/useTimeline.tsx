@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { useLocation, useNavigate } from "react-router-dom";
-import { View, Views, Event } from "react-big-calendar";
 import { CourseTimeline } from "../../../utils/interfaces/course";
 import Parcours from "../../../utils/interfaces/parcours";
 
@@ -35,10 +34,10 @@ const useTimeline = (view: View) => {
     maxDate: Date;
   }>({
     minDate: new Date(
-      new Date().setDate(new Date().getDate() - new Date().getDay() + 1),
+      new Date().setDate(new Date().getDate() - new Date().getDay() + 1)
     ),
     maxDate: new Date(
-      new Date().setDate(new Date().getDate() - new Date().getDay() + 5),
+      new Date().setDate(new Date().getDate() - new Date().getDay() + 5)
     ),
   });
 
@@ -49,16 +48,16 @@ const useTimeline = (view: View) => {
           start: Date;
           end: Date;
         }
-      | Date[],
+      | Date[]
   ) => {
     if (Array.isArray(range)) {
       if (currentView === Views.DAY) {
         const date = new Date(range[0]);
         const startOfWeek = new Date(
-          date.setDate(date.getDate() - date.getDay() + 1),
+          date.setDate(date.getDate() - date.getDay() + 1)
         );
         const endOfWeek = new Date(
-          date.setDate(date.getDate() - date.getDay() + 5),
+          date.setDate(date.getDate() - date.getDay() + 5)
         );
         setDatesSearchingRange({
           minDate: startOfWeek,
@@ -112,7 +111,7 @@ const useTimeline = (view: View) => {
       {
         path: `/course/timeline?minDate=${datesSearchingRange.minDate}&maxDate=${datesSearchingRange.maxDate}&showAllCourses=${showAllCourses}`,
       },
-      applyData,
+      applyData
     );
   }, [sendRequest, datesSearchingRange, showAllCourses]);
 

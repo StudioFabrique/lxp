@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useContext, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
@@ -8,8 +7,8 @@ import Calendar from "../../UI/calendar/calendar";
 import { Context } from "../../../store/context.store";
 import { TimelineEvent } from "../../UI/calendar/calendar-configuration";
 import { formatDate } from "../../UI/calendar/calendar-utils";
-import ModuleTimelineDetailsPopover from "./Module-timeline-details-popover";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
+import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
@@ -122,7 +121,7 @@ const Calendrier = () => {
           view={"year-timeline"}
           timelineEvents={modulesTimelineEvents}
           darkMode={darkMode}
-          onClickDetailsTimelineYearEvent={handleShowModuleDetails}
+          onClickTimelineYearEventDetails={handleShowModuleDetails}
           onClickEditTimelineYearEvent={handleEditModuleDates}
         />
       </div>

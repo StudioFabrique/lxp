@@ -38,15 +38,15 @@ const ModuleTimelineDateModal = ({
   const setInitDates = useCallback(() => {
     if (currentModule) {
       setDatesModule({
-        minDate: currentModule.minDate
-          ? new Date(currentModule.minDate).toISOString().split("T")[0]
-          : "",
-        maxDate: currentModule.maxDate
-          ? new Date(currentModule.maxDate).toISOString().split("T")[0]
-          : "",
+        minDate: new Date(currentModule.minDate || datesParcours.startDate)
+          .toISOString()
+          .split("T")[0],
+        maxDate: new Date(currentModule.maxDate || datesParcours.startDate)
+          .toISOString()
+          .split("T")[0],
       });
     }
-  }, [currentModule]);
+  }, [currentModule, datesParcours.startDate]);
 
   const handleSetDates = (id: string, date: string) => {
     const newMinDate = id === "minDate" ? date : datesModule.minDate;
@@ -153,19 +153,17 @@ const ModuleTimelineDateModal = ({
               Modifiez les dates de disponibilité pour ce module.
             </p>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
               <DatePicker
                 id="minDate"
                 label="Date de début"
                 date={datesModule.minDate}
-                disabled={false}
                 onSubmitDate={handleSetDates}
               />
               <DatePicker
                 id="maxDate"
                 label="Date de fin"
                 date={datesModule.maxDate}
-                disabled={false}
                 onSubmitDate={handleSetDates}
               />
             </div>

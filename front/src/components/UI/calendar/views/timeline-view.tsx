@@ -10,7 +10,7 @@ import {
   getCurrentTimeIndicator,
   getEventStyle,
   getRealDayIndex,
-  isSameDate, // Make sure this is imported from your utils
+  isSameDate,
 } from "../calendar-utils";
 
 type Props = {
@@ -22,6 +22,7 @@ type Props = {
   darkMode: boolean;
   currentWeekDayVisible: boolean;
   style?: { hourHeight: number };
+  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
 };
 
 const TimelineView = ({
@@ -33,6 +34,7 @@ const TimelineView = ({
   darkMode,
   currentWeekDayVisible,
   style = { hourHeight: 60 },
+  onClickEventDetails,
 }: Props) => {
   const [nowTime, setNowTime] = useState(new Date());
 
@@ -57,6 +59,7 @@ const TimelineView = ({
   );
 
   useEffect(() => {
+    // Update the "now" time every minute
     const timer = setInterval(() => setNowTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
@@ -69,7 +72,7 @@ const TimelineView = ({
           theme(darkMode).sidebarBg
         } ${theme(darkMode).border}`}
       >
-        <div className="h-10"></div>
+        {(view === "week" || currentWeekDayVisible) && <div className="h-10" />}
         <div
           className="relative"
           style={{ height: hours.length * style.hourHeight }}
@@ -77,7 +80,7 @@ const TimelineView = ({
           {hours.map((h) => (
             <div
               key={h}
-              className={`absolute w-full text-right pr-3 text-xs font-medium -mt-2 ${
+              className={`absolute w-full text-right pr-3 text-xs font-medium first:mt-1 -mt-2 ${
                 theme(darkMode).subText
               }`}
               style={{ top: `${(h - startHour) * style.hourHeight}px` }}
@@ -97,17 +100,23 @@ const TimelineView = ({
             } ${theme(darkMode).border}`}
           >
             {visibleDays.map((day, i) => {
-              const realIndex = getRealDayIndex(i, view, currentDate);
+              // Calculate the specific date for this header to see if it is today
+              const headerDate = new Date(currentDate);
+              if (view === "week") {
+                const currentDay = headerDate.getDay();
+                const distanceToMonday = (currentDay + 6) % 7;
+                headerDate.setDate(headerDate.getDate() - distanceToMonday + i);
+              }
 
-              // Simplified: Highlight if dayIndex matches Today's index
-              const isTodaySimple = timeIndicator?.dayIndex === realIndex;
+              // Check if this header represents "Today"
+              const isTodayHeader = isSameDate(headerDate, nowTime);
 
               return (
                 <div
                   key={day}
                   className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px] 
                   ${
-                    isTodaySimple
+                    isTodayHeader
                       ? theme(darkMode).todayText
                       : theme(darkMode).subText
                   }`}
@@ -142,7 +151,6 @@ const TimelineView = ({
               const colDayIndex = getRealDayIndex(i, view, currentDate);
 
               // --- LOGIC TO DETERMINE DATE OF THIS COLUMN ---
-              // We need the exact date object to compare with event.date
               const columnDate = new Date(currentDate);
 
               if (view === "week") {
@@ -151,8 +159,9 @@ const TimelineView = ({
                 const distanceToMonday = (currentDay + 6) % 7; // Convert to Mon=0, Sun=6
                 columnDate.setDate(columnDate.getDate() - distanceToMonday + i);
               }
-              // If view is 'day', columnDate is already currentDate
-              // ----------------------------------------------
+
+              // Check if this specific column date matches "Today"
+              const isToday = isSameDate(columnDate, nowTime);
 
               return (
                 <div
@@ -163,16 +172,12 @@ const TimelineView = ({
                 >
                   {events
                     .filter((e) => {
-                      // 1. Check Hour bounds
                       const startH = parseInt(e.start.split(":")[0]);
                       if (startH < startHour || startH >= endHour) return false;
 
-                      // 2. Check Date Logic
                       if (e.date) {
-                        // One-off event: must match the exact date of this column
                         return isSameDate(e.date, columnDate);
                       } else {
-                        // Recurring event: matches the day index (Mon/Tue/etc)
                         return e.dayIndex === colDayIndex;
                       }
                     })
@@ -191,6 +196,12 @@ const TimelineView = ({
                             startHour,
                             style
                           )}
+                          onClick={(e) =>
+                            onClickEventDetails?.(
+                              event.id,
+                              e.currentTarget.getBoundingClientRect()
+                            )
+                          }
                         >
                           <div className="font-bold text-xs truncate leading-tight">
                             {event.title}
@@ -205,13 +216,14 @@ const TimelineView = ({
                     })}
 
                   {/* NOW INDICATOR */}
-                  {timeIndicator && timeIndicator.dayIndex === colDayIndex && (
+                  {/* Only render if we have an indicator AND this column is actually today */}
+                  {timeIndicator && isToday && (
                     <div
                       className="absolute w-full flex items-center z-30 pointer-events-none"
                       style={{ top: timeIndicator.top }}
                     >
-                      <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 shadow-sm ring-2 ring-transparent"></div>
-                      <div className="h-[2px] w-full bg-red-500 opacity-60"></div>
+                      <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 shadow-sm ring-2 ring-transparent" />
+                      <div className="h-[2px] w-full bg-red-500 opacity-60" />
                     </div>
                   )}
                 </div>

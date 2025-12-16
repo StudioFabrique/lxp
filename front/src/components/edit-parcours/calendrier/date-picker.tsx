@@ -36,9 +36,9 @@ const DatePicker: FC<{
   };
 
   return (
-    <div className="flex items-center">
-      {label && <label className="w-20">{label}</label>}
-      <span className="w-full flex gap-2 items-center justify-end">
+    <div className="flex flex-col gap-2">
+      {label && <label>{label}</label>}
+      <span className="pl-2 w-full flex gap-2 items-center justify-end">
         <input
           className="w-full input input-sm pl-5"
           type="text"
