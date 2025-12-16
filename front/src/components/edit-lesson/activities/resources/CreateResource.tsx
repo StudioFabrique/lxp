@@ -35,7 +35,7 @@ function CreateResource({
   uploadProgress,
 }: Props) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       <span className="w-full flex flex-col gap-y-4">
         <ResourceForm
           data={{
