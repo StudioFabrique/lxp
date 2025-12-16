@@ -102,32 +102,33 @@ const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
           Module
         </div>
 
-        <p className="text-sm py-2 text-gray-600 line-clamp-4">
-          {currentModule.module.description}
-        </p>
+        {currentModule.module.description && (
+          <p className="text-sm py-2 text-gray-600 line-clamp-4">
+            {currentModule.module.description}
+          </p>
+        )}
 
         {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-2 bg-base-200/50 p-3 rounded-lg border border-base-200 text-xs">
-          <div>
-            <span className="uppercase font-bold text-gray-400 block mb-1">
-              Début
-            </span>
-            <span className="font-semibold">
-              {formatDate(currentModule.minDate)}
-            </span>
+        {currentModule.minDate && currentModule.maxDate && (
+          <div className="grid grid-cols-2 gap-2 bg-base-200/50 p-3 rounded-lg border border-base-200 text-xs">
+            <div>
+              <span className="uppercase font-bold text-gray-400 block mb-1">
+                Début
+              </span>
+              <span className="font-semibold">
+                {formatDate(currentModule.minDate)}
+              </span>
+            </div>
+            <div>
+              <span className="uppercase font-bold text-gray-400 block mb-1">
+                Fin
+              </span>
+              <span className="font-semibold">
+                {formatDate(currentModule.maxDate)}
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="uppercase font-bold text-gray-400 block mb-1">
-              Fin
-            </span>
-            <span className="font-semibold">
-              {formatDate(currentModule.maxDate)}
-            </span>
-          </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="card-actions justify-end mt-2"></div>
+        )}
       </div>
     </div>
   );

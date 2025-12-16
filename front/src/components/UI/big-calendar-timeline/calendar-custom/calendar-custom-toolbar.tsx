@@ -1,5 +1,4 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { View, Views, ViewsProps } from "react-big-calendar";
 import ActionsDropdown from "../../actions-dropdown/actions-dropdown";
 
 interface ToolbarProps {
@@ -40,8 +39,8 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
           {toolbar.view === "month"
             ? "Précédent"
             : toolbar.view === "day"
-              ? "Précédent"
-              : "Précédent"}
+            ? "Précédent"
+            : "Précédent"}
         </button>
         <button
           type="button"
@@ -58,8 +57,8 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
           {toolbar.view === "month"
             ? "Suivant"
             : toolbar.view === "day"
-              ? "Suivant"
-              : "Suivant"}
+            ? "Suivant"
+            : "Suivant"}
           <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
       </div>

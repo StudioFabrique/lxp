@@ -44,6 +44,11 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
     );
   }, [props.usersFromCsv, props.usersToAdd]);
 
+  // Par défaut, les étudiants sont tous selectionnés
+  useEffect(() => {
+    setAllSelected(true);
+  }, []);
+
   if (props.usersFromCsv.length > 0) {
     return (
       <div className="flex flex-col justify-between h-full items-center">
@@ -73,7 +78,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
             ))}
           </div>
         </div>
-        <div className="mt-10 flex justify-between w-full items-center">
+        <div className="mt-10 flex justify-between w-full items-center pb-4">
           <button className="btn btn-outline" onClick={handleCancel}>
             Annuler
           </button>

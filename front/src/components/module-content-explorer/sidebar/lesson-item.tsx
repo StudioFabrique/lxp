@@ -143,7 +143,7 @@ const LessonItem = ({
                           <Link
                             to={`/admin/lesson/edit-lesson/${lesson.id}`}
                             state={{ moduleId: moduleId }}
-                            className="flex items-center gap-2 text-sm text-gray-700"
+                            className="flex items-center gap-2 text-sm text-base-content"
                             onClick={(e) => {
                               e.stopPropagation();
                               setIsOpen(false);
