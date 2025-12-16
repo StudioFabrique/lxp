@@ -22,6 +22,7 @@ type Props = {
   darkMode: boolean;
   currentWeekDayVisible: boolean;
   style?: { hourHeight: number };
+  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
 };
 
 const TimelineView = ({
@@ -33,6 +34,7 @@ const TimelineView = ({
   darkMode,
   currentWeekDayVisible,
   style = { hourHeight: 60 },
+  onClickEventDetails,
 }: Props) => {
   const [nowTime, setNowTime] = useState(new Date());
 
@@ -194,6 +196,12 @@ const TimelineView = ({
                             startHour,
                             style
                           )}
+                          onClick={(e) =>
+                            onClickEventDetails?.(
+                              event.id,
+                              e.currentTarget.getBoundingClientRect()
+                            )
+                          }
                         >
                           <div className="font-bold text-xs truncate leading-tight">
                             {event.title}

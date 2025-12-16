@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { ReactNode } from "react";
 import {
   CalendarEvent,
   CalendarView,
@@ -11,9 +11,10 @@ import YearTimelineView from "./views/year-timeline-view"; // Import new Compone
 
 interface Props {
   events: CalendarEvent[];
+  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
   // New Prop: Optional because not all views need it
   timelineEvents?: TimelineEvent[];
-  onClickDetailsTimelineYearEvent?: (
+  onClickTimelineYearEventDetails?: (
     id: number | string,
     rect: DOMRect
   ) => void;
@@ -30,8 +31,9 @@ interface Props {
 
 const Calendar = ({
   events,
+  onClickEventDetails,
   timelineEvents = [], // Default to empty array
-  onClickDetailsTimelineYearEvent,
+  onClickTimelineYearEventDetails,
   onClickEditTimelineYearEvent,
   currentDate,
   startHour = 8,
@@ -41,7 +43,7 @@ const Calendar = ({
   darkMode = false,
   header,
   style = { hourHeight: 60 },
-}: PropsWithChildren<Props>) => {
+}: Props) => {
   // Render the body
   const renderBody = () => {
     switch (view) {
@@ -58,7 +60,7 @@ const Calendar = ({
           <YearTimelineView
             events={timelineEvents}
             darkMode={darkMode}
-            onClickDetails={onClickDetailsTimelineYearEvent}
+            onClickDetails={onClickTimelineYearEventDetails}
             onClickEdit={onClickEditTimelineYearEvent}
           />
         );
@@ -75,6 +77,7 @@ const Calendar = ({
             currentWeekDayVisible={currentWeekDayVisible}
             darkMode={darkMode}
             style={style}
+            onClickEventDetails={onClickEventDetails}
           />
         );
     }

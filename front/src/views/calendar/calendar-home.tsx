@@ -11,8 +11,10 @@ import {
 import TitleWithSelector from "../../components/UI/calendar/components/title-with-selector";
 import ViewSelector from "../../components/UI/calendar/components/view-selector";
 import TimeSelector from "../../components/UI/calendar/components/time-selector";
+import EventDetailsModal from "../../components/UI/calendar/components/event-details-modal";
+import { Link } from "react-router-dom";
 
-const myEvents: CalendarEvent[] = [
+const calendarTestEvents: CalendarEvent[] = [
   {
     id: 1,
     title: "HTML & Sémantique Web",
@@ -67,6 +69,14 @@ const CalendarHome = () => {
   const [view, setView] = useState<CalendarView>("week");
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<CalendarEvent>();
+
+  const handleShowCourseDetails = (id: number | string) => {
+    setShowModal(true);
+    setSelectedCourse(calendarTestEvents.find((item) => item.id === id));
+  };
+
   return (
     <div className="w-full flex flex-col gap-6">
       <Header
@@ -76,7 +86,9 @@ const CalendarHome = () => {
       <Calendar
         currentDate={currentDate}
         currentWeekDayVisible={false}
-        events={myEvents}
+        // events={calendarTestEvents}
+        events={[]}
+        onClickEventDetails={handleShowCourseDetails}
         startHour={8}
         endHour={18}
         header={
@@ -85,8 +97,7 @@ const CalendarHome = () => {
             children={[
               <TitleWithSelector
                 key="title-with-selector"
-                currentTitle="Développeur Web"
-                availableTitles={["test", "test 1"]}
+                currentTitle="Mon emploi du temps"
                 onSelectTitle={() => {}}
                 currentDate={currentDate}
                 view={view}
@@ -110,6 +121,26 @@ const CalendarHome = () => {
         view={view}
         darkMode={darkMode}
       />
+      <EventDetailsModal
+        modalId="event-details-modal"
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        item={
+          selectedCourse && {
+            id: selectedCourse.id,
+            title: selectedCourse.title,
+            description: selectedCourse.subtitle,
+            img: "https://img.freepik.com/vecteurs-premium/www-concept-illustration_114360-2143.jpg",
+          }
+        }
+      >
+        <Link
+          to={`/student/parcours/module/1`}
+          className="btn btn-primary text-white"
+        >
+          Naviguer vers le cours
+        </Link>
+      </EventDetailsModal>
     </div>
   );
 };
