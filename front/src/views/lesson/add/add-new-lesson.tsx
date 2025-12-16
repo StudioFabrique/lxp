@@ -2,7 +2,7 @@
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import Header from "../../../components/UI/header";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
-import bgImage from "../../../assets/images/chaton.jpg";
+import bgImage from "../../../assets/images/lesson.png";
 
 // Import du hook personnalisé pour la gestion de l'état
 import useAddLesson from "./use-add-lesson";
@@ -70,48 +70,45 @@ function AddNewLesson() {
 
       {/* Contenu principal en deux colonnes */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto my-16">
-        <div className="flex flex-col gap-y-8">
-          {/* Affichage conditionnel basé sur l'étape du formulaire */}
-          {!nextClicked ? (
-            // Étape 1 : Sélection du parcours/module/cours
-            <CourseSelecters
-              parcoursList={parcoursList}
-              modulesList={modulesList}
-              courseList={courseList}
-              parcoursId={parcoursId}
-              moduleId={moduleId}
-              courseId={courseId}
-              handleStep={handleStep}
-              getItem={getItem}
-              setParcoursId={setParcoursId}
-              setModuleId={setModuleId}
-              setCourseId={setCourseId}
-            />
-          ) : (
-            // Étape 2 : Formulaire de création de leçon
-            <Wrapper>
-              <LessonForm
-                title={title}
-                description={description}
-                tag={tag}
-                tags={tags!}
-                mode={mode}
-                onSetTag={setTag}
-                onSetMode={setMode}
-                isLoading={isLoading}
-                onSubmitLesson={handleSubmitLesson}
-              >
-                <NewLessonActions
-                  isLoading={false}
-                  handleResetForm={handleResetForm}
-                  handleStep={handleStep}
-                />
-              </LessonForm>
-            </Wrapper>
-          )}
-        </div>
-        {/* Image décorative */}
-        <div style={classImage} />
+        {/* Affichage conditionnel basé sur l'étape du formulaire */}
+
+        <CourseSelecters
+          parcoursList={parcoursList}
+          modulesList={modulesList}
+          courseList={courseList}
+          parcoursId={parcoursId}
+          moduleId={moduleId}
+          courseId={courseId}
+          handleStep={handleStep}
+          getItem={getItem}
+          setParcoursId={setParcoursId}
+          setModuleId={setModuleId}
+          setCourseId={setCourseId}
+        />
+
+        {nextClicked ? (
+          <Wrapper>
+            <LessonForm
+              title={title}
+              description={description}
+              tag={tag}
+              tags={tags!}
+              mode={mode}
+              onSetTag={setTag}
+              onSetMode={setMode}
+              isLoading={isLoading}
+              onSubmitLesson={handleSubmitLesson}
+            >
+              <NewLessonActions
+                isLoading={false}
+                handleResetForm={handleResetForm}
+                handleStep={handleStep}
+              />
+            </LessonForm>
+          </Wrapper>
+        ) : (
+          <div style={classImage} />
+        )}
       </div>
     </FadeWrapper>
   );

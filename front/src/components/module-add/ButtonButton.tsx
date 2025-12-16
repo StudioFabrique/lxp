@@ -29,10 +29,10 @@ type Props = {
  */
 export default function ButtonButton(props: Props) {
   return (
-    <>
+    <div className="flex gap-x-4">
       {/* Button to navigate back to the module list */}
       <button
-        className="btn btn-secondary"
+        className="btn btn-secondary "
         type="button"
         onClick={props.toggleModal}
       >
@@ -40,6 +40,7 @@ export default function ButtonButton(props: Props) {
       </button>
 
       {/* Button to open metadata form; disabled until module is created */}
+
       <button
         className="btn btn-info"
         disabled={!props.newModuleData}
@@ -48,6 +49,6 @@ export default function ButtonButton(props: Props) {
       >
         Attacher à un parcours
       </button>
-    </>
+    </div>
   );
 }
