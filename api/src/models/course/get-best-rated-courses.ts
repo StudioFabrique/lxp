@@ -45,7 +45,7 @@ export default async function getBestRatedCourses(userId: string) {
   // 4 Faire la moyenne des notes de chaque cours
   const coursesRating = courses.map((course) => {
     const ratings = course.lessons.flatMap((lesson) =>
-      lesson.lessonRating.map((rating) => rating.rating * 20),
+      lesson.lessonRating.map((rating) => rating.rating)
     );
     const avg =
       ratings.length > 0
