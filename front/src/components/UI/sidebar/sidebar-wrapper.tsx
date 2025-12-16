@@ -1,7 +1,7 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import SidebarBottom from "./sidebar-bottom";
-import { COMPANY_LOGO } from "../../../config/urls";
+import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
 
 const SidebarWrapper = ({
   children,
@@ -15,10 +15,18 @@ const SidebarWrapper = ({
   const [logoExists, setExists] = useState(true);
   const [loading, setLoading] = useState(true);
 
+  const [logoBgColor, setBgColor] = useState<string>();
+
   const showLogo = (logoExists || loading) && COMPANY_LOGO;
 
   useEffect(() => {
     if (!COMPANY_LOGO) {
+      setExists(false);
+      setLoading(false);
+      return;
+    }
+
+    if (!COMPANY_LOGO_COLOR) {
       setExists(false);
       setLoading(false);
       return;
@@ -34,6 +42,10 @@ const SidebarWrapper = ({
       setLoading(false);
     };
     img.src = COMPANY_LOGO;
+
+    fetch(COMPANY_LOGO_COLOR).then(async (response) =>
+      setBgColor(await response.text())
+    );
   }, []);
 
   return (
@@ -47,6 +59,7 @@ const SidebarWrapper = ({
           <img
             className="self-start h-[3vw] w-[3vw] rounded-full border-slate-700 border-1 object-contain p-1 m-2 mb-3 bg-white"
             src={COMPANY_LOGO}
+            style={{ backgroundColor: logoBgColor }}
             alt="Company logo"
           />
         )}
