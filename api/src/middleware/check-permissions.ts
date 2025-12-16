@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { noAccess, serverIssue } from "../utils/constantes";
 import { IRole } from "../utils/interfaces/db/role";
 import Permission from "../utils/interfaces/db/permission";
+import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
 
 function youShallNotPass() {
   console.log("vous ne passerez pas 🧙");
@@ -20,7 +21,7 @@ function youShallNotPass() {
 export default function checkPermissions(
   ressource?: string,
   action?: "read" | "write" | "update" | "delete",
-  failedRedirectPath?: string
+  failedRedirectPath?: string,
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
@@ -47,7 +48,7 @@ export default function checkPermissions(
         case "POST":
           actionDefined = "write";
           break;
-        // will do the same thing
+        // merge the both cases
         case "PATCH":
         case "PUT":
           actionDefined = "update";
@@ -66,6 +67,13 @@ export default function checkPermissions(
 
     jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
       if (err) {
+        try {
+          await BlackListedToken.create({
+            token: authCookie,
+          });
+        } catch (error) {
+          console.error({ error });
+        }
         return res.status(403).json({ message: noAccess });
       }
 
@@ -80,8 +88,8 @@ export default function checkPermissions(
           rolesToCheck.map((role) =>
             Permission.find({
               roles: role._id,
-            })
-          )
+            }),
+          ),
         );
       } catch (error) {
         console.log({ error });
@@ -97,7 +105,7 @@ export default function checkPermissions(
         !ressource && roleFromParam ? roleFromParam : ressource!
       }`;
       const hasPermission = flattenedPermissions.some(
-        (permission: any) => permission.name === requiredPermissionName
+        (permission: any) => permission.name === requiredPermissionName,
       );
 
       if (hasPermission) {
