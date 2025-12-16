@@ -461,7 +461,11 @@ const useModuleExplorerContent = () => {
         {
           path: `/activity/reorder/${state.selectedLesson.id}`,
           method: "put",
-          body: state.selectedLesson.activities.map((activity) => activity.id),
+          body: {
+            activitiesIds: state.selectedLesson.activities.map(
+              (activity) => activity.id
+            ),
+          },
         },
         applyData
       );
