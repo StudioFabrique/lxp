@@ -73,7 +73,7 @@ export default function ResourceUpload({ onCancel, onSubmit }: Props) {
 
   return (
     // Main grid layout with 2 columns on xl screens
-    <section className="grid xl:grid-cols-2 gap-4">
+    <section className="grid grid-cols-1 gap-4">
       {/* Left column: form and actions */}
       <article className="flex flex-col gap-y-4">
         <Wrapper>
