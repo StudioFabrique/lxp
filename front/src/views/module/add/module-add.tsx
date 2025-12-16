@@ -34,7 +34,6 @@ export default function ModuleAdd() {
     setCurrentSkills,
     setImageBase64,
     showMetadataForm,
-    showModal,
     skills,
     toggleModal,
     toggleShowMetadataForm,
@@ -72,7 +71,6 @@ export default function ModuleAdd() {
 
   return (
     <main className="flex flex-col items-center gap-y-8 w-full">
-      <pre>{showModal ? "Le modal est ouvert" : "Le modal est fermé"}</pre>
       {/* En-tête de la page */}
       <section className="flex justify-center w-full">
         <Header
@@ -97,8 +95,8 @@ export default function ModuleAdd() {
                 newModuleData={newModuleData}
               />
             </span>
-            <div className="col-span-1 lg:col-span-0 divider sm:my-auto lg:hidden" />
-            <div className="col-span-1 divider divider-horizontal lg:mx-auto hidden lg:divider " />
+            <div className="col-span-1 lg:col-span-0 sm:divider sm:my-auto lg:hidden block" />
+            <div className="col-span-1 divider divider-horizontal lg:mx-auto hidden lg:block " />
             <span className="col-span-6 mx-auto flex flex-col gap-y-4">
               {showMetadataForm && newModuleData && parcoursList ? (
                 <AssociateToParcours

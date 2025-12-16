@@ -26,7 +26,7 @@ const parcoursModulesSlice = createSlice({
       state.modules = sortArray(
         [...state.modules, { ...action.payload }],
         "id",
-        false
+        false,
       );
     },
     updateCurrentParcoursModule(state, action) {
@@ -42,12 +42,12 @@ const parcoursModulesSlice = createSlice({
       state.modules = modules.map((moduleToEdit) =>
         moduleToEdit.id === moduleId
           ? { ...moduleToEdit, ...module }
-          : moduleToEdit
+          : moduleToEdit,
       );
     },
     removeModule(state, action) {
       state.modules = state.modules!.filter(
-        (item) => item.id !== action.payload
+        (item) => item.id !== action.payload,
       );
     },
     setCurrentModule(state, action) {
@@ -59,15 +59,14 @@ const parcoursModulesSlice = createSlice({
     replaceModule(state, action) {
       if (state.modules) {
         state.modules = state.modules.filter(
-          (item) => item.id !== action.payload.id
+          (item) => item.id !== action.payload.id,
         );
         state.modules = sortArray(
           [...state.modules, action.payload],
           "id",
-          false
+          false,
         );
       }
-      console.log("modules", state.modules);
     },
     resetModule(state) {
       state.modules = null;

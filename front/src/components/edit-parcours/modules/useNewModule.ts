@@ -15,6 +15,8 @@ import {
 } from "../../../utils/interfaces/new-module";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
+import { useDispatch } from "react-redux";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 /**
  * Custom hook for managing module creation and display within a parcours
@@ -25,6 +27,7 @@ const useNewModule = () => {
   const { id } = useParams();
   const { sendRequest, isLoading, error } = useHttp();
   const refForm = useRef<HTMLFormElement | null>(null);
+  const reduxDispatch = useDispatch();
 
   // Single useReducer replaces 11 useState hooks
   const [state, dispatch] = useReducer(moduleReducer, initialState);
@@ -85,6 +88,7 @@ const useNewModule = () => {
       onResetForm();
       // Single action handles multiple state updates
       dispatch({ type: "MODULE_CREATED", payload: data.data });
+      reduxDispatch(parcoursModulesSliceActions.addNewModule(data.data));
       scrollToTop();
     };
 
@@ -94,7 +98,7 @@ const useNewModule = () => {
         method: "post",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -123,6 +127,9 @@ const useNewModule = () => {
     const applyData = (data: SuccessWithMessage) => {
       dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       dispatch({ type: "CLOSE_DELETE_MODAL" });
+      reduxDispatch(
+        parcoursModulesSliceActions.removeModule(state.moduleToDelete!.id),
+      );
       toast.success(data.message);
     };
 
@@ -131,7 +138,7 @@ const useNewModule = () => {
         path: `/modules/${state.moduleToDelete!.id}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -170,7 +177,7 @@ const useNewModule = () => {
       {
         path: `/modules/formation/${state.parcours!.formationId}/true`,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -230,11 +237,12 @@ const useNewModule = () => {
 
     if (isEmptyObject(state.moduleToDuplicate)) {
       const applyData = (
-        data: SuccessWithMessage & { response: ModuleData }
+        data: SuccessWithMessage & { response: ModuleData },
       ) => {
         onResetForm();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
         toast.success(data.message);
+        reduxDispatch(parcoursModulesSliceActions.addNewModule(data.response));
         scrollToTop();
       };
       sendRequest(
@@ -249,7 +257,7 @@ const useNewModule = () => {
             duration: data.values.duration as number,
           },
         },
-        applyData
+        applyData,
       );
     } else {
       const applyData = (data: {
@@ -273,7 +281,7 @@ const useNewModule = () => {
             parcoursId: +id!,
           },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -298,6 +306,7 @@ const useNewModule = () => {
           },
         });
         toast.success(data.message);
+        reduxDispatch(parcoursModulesSliceActions.replaceModule(data.response));
         onResetForm();
         scrollToTop();
       }
@@ -319,7 +328,7 @@ const useNewModule = () => {
           },
         },
       },
-      applyData
+      applyData,
     );
   };
 
