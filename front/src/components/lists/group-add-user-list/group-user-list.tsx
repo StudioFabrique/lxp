@@ -28,7 +28,7 @@ const GroupUserList: FC<{
           item.lastname.toLowerCase().includes(searchTerm)
         );
       }),
-    [filter, usersToAdd],
+    [filter, usersToAdd]
   );
 
   const {
@@ -44,7 +44,7 @@ const GroupUserList: FC<{
     filter && filter?.length > 0 ? usersToAddFiltered : usersToAdd,
     "ASC",
     10,
-    "_id",
+    "_id"
   );
 
   const handleDeleteUsersToAdd = () => {
@@ -73,7 +73,7 @@ const GroupUserList: FC<{
           <ActionsDropdown
             actions={[
               {
-                actionTitle: "Supprimer les étudiants selectionnés",
+                actionTitle: "Retirer les étudiants selectionnés de la liste",
                 data: null,
                 onClick: handleDeleteUsersToAdd,
               },
