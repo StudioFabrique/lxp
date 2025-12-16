@@ -14,6 +14,8 @@ const CompanyPictureUpload = () => {
     url: string | null;
   }>({ file: null, url: COMPANY_LOGO });
 
+  const [bgColor, setBgColor] = useState<string>("#FFFFFF");
+
   const handleSubmitPicture = useCallback(
     (avatar: { file: File | null; url: string | null }) => {
       const applyData = ({ message }: { message: string }) => {
@@ -22,6 +24,7 @@ const CompanyPictureUpload = () => {
 
       const formData = new FormData();
       if (avatar.file) formData.append("image", avatar.file);
+      if (bgColor) formData.append("color", bgColor);
 
       sendRequest(
         {
@@ -32,7 +35,7 @@ const CompanyPictureUpload = () => {
         applyData
       );
     },
-    [sendRequest]
+    [sendRequest, bgColor]
   );
 
   useEffect(() => {
@@ -42,13 +45,28 @@ const CompanyPictureUpload = () => {
   }, [temporaryAvatar, handleSubmitPicture]);
 
   return (
-    <div className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="card-body flex flex-col gap-4 p-6 rounded-lg">
-        <p className="text-base-content text-lg font-medium">
-          Téléverser un nouveau logo de l'organisme de formation
-        </p>
-        <span className="ml-2 flex flex-col gap-2">
-          <div className="flex justify-center items-end gap-10">
+    <div className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+      <div className="card-body p-6">
+        {/* Header */}
+        <h2 className="card-title text-lg font-medium mb-4">
+          Logo de l'organisme
+        </h2>
+
+        {/* Main */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Left color picker */}
+          <div className="flex flex-col gap-3 items-center md:items-start w-full md:w-auto">
+            <span className="label-text font-semibold">Arrière-plan</span>
+            <ColorPicker onColorChange={setBgColor} />
+            {!temporaryAvatar.file && (
+              <p className="text-xs text-base-content/60 italic">
+                Formats : .jpg, .jpeg, .png
+              </p>
+            )}
+          </div>
+
+          {/* Right image upload */}
+          <div className="flex-shrink-0">
             <ProfileImageFileUpload
               temporaryAvatar={temporaryAvatar}
               onSetTemporaryAvatar={setTemporaryAvatar}
@@ -56,30 +74,38 @@ const CompanyPictureUpload = () => {
             >
               Ajouter le Logo
             </ProfileImageFileUpload>
-            <div className="flex flex-col gap-2">
-              <ColorPicker onColorChange={() => {}} />
-              {!temporaryAvatar.file && (
-                <p className="text-sm text-gray-600">
-                  Formats acceptés : .jpg, .jpeg, .png
-                </p>
-              )}
-            </div>
           </div>
-          {temporaryAvatar.file && (
-            <FadeWrapper>
-              <p className="text-success">
-                Le nouveau logo sera affiché au prochain rechargement complet de
-                la page
-              </p>
+        </div>
+
+        {/* Feedback */}
+        {temporaryAvatar.file && (
+          <FadeWrapper>
+            <div className="alert alert-success mt-6 py-2 shadow-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="text-sm">
+                <span>Rechargement requis pour afficher le nouveau logo</span>
+              </div>
               <button
                 onClick={() => window.location.reload()}
-                className="btn btn-ghost btn-sm mt-2"
+                className="btn btn-sm btn-ghost"
               >
-                Recharger la page
+                Recharger
               </button>
-            </FadeWrapper>
-          )}
-        </span>
+            </div>
+          </FadeWrapper>
+        )}
       </div>
     </div>
   );

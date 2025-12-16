@@ -13,3 +13,6 @@ export const ACTIVITIES_VIDEOS =
 
 export const COMPANY_LOGO =
   import.meta.env.VITE_API_BASE_URL + "company/company-logo.jpeg";
+
+export const COMPANY_LOGO_COLOR =
+  import.meta.env.VITE_API_BASE_URL + "company/company-color.txt";
