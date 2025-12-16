@@ -10,7 +10,7 @@ import {
   getCurrentTimeIndicator,
   getEventStyle,
   getRealDayIndex,
-  isSameDate, // Make sure this is imported from your utils
+  isSameDate,
 } from "../calendar-utils";
 
 type Props = {
@@ -57,6 +57,7 @@ const TimelineView = ({
   );
 
   useEffect(() => {
+    // Update the "now" time every minute
     const timer = setInterval(() => setNowTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
@@ -97,17 +98,23 @@ const TimelineView = ({
             } ${theme(darkMode).border}`}
           >
             {visibleDays.map((day, i) => {
-              const realIndex = getRealDayIndex(i, view, currentDate);
+              // Calculate the specific date for this header to see if it is today
+              const headerDate = new Date(currentDate);
+              if (view === "week") {
+                const currentDay = headerDate.getDay();
+                const distanceToMonday = (currentDay + 6) % 7;
+                headerDate.setDate(headerDate.getDate() - distanceToMonday + i);
+              }
 
-              // Simplified: Highlight if dayIndex matches Today's index
-              const isTodaySimple = timeIndicator?.dayIndex === realIndex;
+              // Check if this header represents "Today"
+              const isTodayHeader = isSameDate(headerDate, nowTime);
 
               return (
                 <div
                   key={day}
                   className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px] 
                   ${
-                    isTodaySimple
+                    isTodayHeader
                       ? theme(darkMode).todayText
                       : theme(darkMode).subText
                   }`}
@@ -142,7 +149,6 @@ const TimelineView = ({
               const colDayIndex = getRealDayIndex(i, view, currentDate);
 
               // --- LOGIC TO DETERMINE DATE OF THIS COLUMN ---
-              // We need the exact date object to compare with event.date
               const columnDate = new Date(currentDate);
 
               if (view === "week") {
@@ -151,8 +157,9 @@ const TimelineView = ({
                 const distanceToMonday = (currentDay + 6) % 7; // Convert to Mon=0, Sun=6
                 columnDate.setDate(columnDate.getDate() - distanceToMonday + i);
               }
-              // If view is 'day', columnDate is already currentDate
-              // ----------------------------------------------
+
+              // Check if this specific column date matches "Today"
+              const isToday = isSameDate(columnDate, nowTime);
 
               return (
                 <div
@@ -163,16 +170,12 @@ const TimelineView = ({
                 >
                   {events
                     .filter((e) => {
-                      // Check Hour bounds
                       const startH = parseInt(e.start.split(":")[0]);
                       if (startH < startHour || startH >= endHour) return false;
 
-                      // Check Date
                       if (e.date) {
-                        // One-off event: must match the exact date of this column
                         return isSameDate(e.date, columnDate);
                       } else {
-                        // Recurring event: matches the day index (Mon/Tue/etc)
                         return e.dayIndex === colDayIndex;
                       }
                     })
@@ -205,7 +208,8 @@ const TimelineView = ({
                     })}
 
                   {/* NOW INDICATOR */}
-                  {timeIndicator && timeIndicator.dayIndex === colDayIndex && (
+                  {/* Only render if we have an indicator AND this column is actually today */}
+                  {timeIndicator && isToday && (
                     <div
                       className="absolute w-full flex items-center z-30 pointer-events-none"
                       style={{ top: timeIndicator.top }}
