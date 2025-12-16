@@ -63,13 +63,12 @@ export default function IFrameActivityResource(props: Props) {
           onCancel={props.onCancel}
         />
 
-        <div className="p-6 bg-base-200 text-center rounded-lg text-base-content/70">
-          <p>
-            {props.mode === "write"
-              ? "Saisir une URL ci-dessus pour prévisualiser le contenu."
-              : "Aucune ressource iframe disponible."}
-          </p>
-        </div>
+        {/* Displays a message when no URL is provided */}
+        {!cleanedUrl ? (
+          <div className="p-6 bg-base-200 text-center rounded-lg text-base-content/70">
+            <p>Saisir une URL ci-dessus pour prévisualiser le contenu.</p>
+          </div>
+        ) : null}
       </>
     );
   }
@@ -87,3 +86,4 @@ export default function IFrameActivityResource(props: Props) {
     </>
   );
 }
+("Aucune ressource iframe disponible.");
