@@ -116,12 +116,16 @@ export default function ModuleAdd() {
                   cantSubmit={cantSubmit}
                 />
               ) : (
-                <div className="h-full flex justify-center items-center gap-x-4">
+                <div className="h-full flex flex-col justify-center items-center gap-y-8">
                   <ButtonButton
                     toggleModal={toggleModal}
                     toggleShowMetadataForm={toggleShowMetadataForm}
                     newModuleData={newModuleData}
                   />
+                  <h2 className="text-center text-xs text-info">
+                    Vous pourrez associer le module à un parcours une fois un
+                    nouveau module crée.
+                  </h2>
                 </div>
               )}
             </span>
