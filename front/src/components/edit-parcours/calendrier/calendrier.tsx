@@ -121,7 +121,7 @@ const Calendrier = () => {
           view={"year-timeline"}
           timelineEvents={modulesTimelineEvents}
           darkMode={darkMode}
-          onClickDetailsTimelineYearEvent={handleShowModuleDetails}
+          onClickTimelineYearEventDetails={handleShowModuleDetails}
           onClickEditTimelineYearEvent={handleEditModuleDates}
         />
       </div>
