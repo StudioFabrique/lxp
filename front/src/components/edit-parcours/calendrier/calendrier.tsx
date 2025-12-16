@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useContext, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";

@@ -3,7 +3,6 @@ import "./big-calendar-timeline.css";
 
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
-import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import CalendarCustomToolbar from "./calendar-custom/calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
 import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
@@ -29,7 +28,7 @@ type BigCalendarTimelineProps = {
   onSetView: Dispatch<SetStateAction<View>>;
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
-    view?: View,
+    view?: View
   ) => void;
   onDoubleClickEvent?: (event: Event) => void;
 };
@@ -44,7 +43,7 @@ const BigCalendarTimeline = ({
   const dataAdjusted = adjustScheduleToCurrentWeek(
     data,
     undefined,
-    view === "month",
+    view === "month"
   );
   const CustomEvent = useMemo(() => makeCustomEvent(view === "month"), [view]);
 
@@ -89,7 +88,9 @@ const BigCalendarTimeline = ({
             .format("dddd DD")
             .replace(/^\w/, (c) => c.toUpperCase()),
         dayRangeHeaderFormat: (range) =>
-          `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
+          `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(
+            range.end
+          ).format("DD MMMM")}`,
         eventTimeRangeFormat: () => "",
       }}
       eventPropGetter={() => {
