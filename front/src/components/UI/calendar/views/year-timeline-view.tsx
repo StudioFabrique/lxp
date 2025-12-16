@@ -216,9 +216,11 @@ const YearTimelineView = ({
                       }}
                       title={`${event.title}`}
                     >
-                      <span className="text-[10px] text-white font-medium px-2 truncate drop-shadow-md">
-                        {event.title}
-                      </span>
+                      {widthPercent > 3 && (
+                        <span className="text-[10px] text-white font-medium px-2 truncate drop-shadow-md">
+                          {event.title}
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (
