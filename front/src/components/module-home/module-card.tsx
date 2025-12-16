@@ -21,7 +21,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage
+      module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage,
     ),
     width: "100%",
     height: "9rem",
@@ -36,7 +36,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
   };
 
   return (
-    <div className="card w-96 bg-base-100 shadow-xl border border-primary/20 font-bold">
+    <div className="card w-72 bg-base-100 shadow-xl border border-primary/20 font-bold">
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
