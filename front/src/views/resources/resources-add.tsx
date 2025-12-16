@@ -15,6 +15,7 @@ import VideoActivityResource from "../../components/resources-add/VideoActivityR
 import ResourceUpload from "../../components/edit-lesson/activities/resources/resource-upload";
 import ResourcePreview from "../../components/edit-lesson/activities/resources/preview/resource-preview";
 import ImageActivityResource from "../../components/resources-add/ImageActivityResource";
+import IFrameActivityResource from "../../components/resources-add/IFrameActivityResource";
 
 export default function ResourceAdd() {
   const {
@@ -46,6 +47,7 @@ export default function ResourceAdd() {
     closePreviewActivity,
     createNewActivity,
     resourceActivityiesSubmitted,
+    submitIframeActivity,
   } = useResource();
 
   console.log("STATE", activityState);
@@ -155,6 +157,15 @@ export default function ResourceAdd() {
                     <ImageActivityResource
                       activity={previewActivity!}
                       mode={activityState}
+                      onCancel={closePreviewActivity}
+                    />
+                  ) : null}
+
+                  {activityType === "iframe" ? (
+                    <IFrameActivityResource
+                      activity={previewActivity}
+                      mode={activityState}
+                      onSubmit={submitIframeActivity}
                       onCancel={closePreviewActivity}
                     />
                   ) : null}

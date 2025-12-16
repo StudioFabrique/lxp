@@ -22,12 +22,12 @@ export default function ActivityWrapper(props: Props) {
           <p className="whitespace-nowrap text-base-content/50">
             Titre de l'activité :&nbsp;
           </p>
-          <span className="border border-primary/50 flex justify-between p-2 rounded-lg w-full">
+          <span className="border border-primary/50 flex justify-between p-2 rounded-lg w-full items-center">
             <div className="flex gap-x-4 items-center">
               {getActivityIcon(props.activity.type, 6)}
               <h2>{props.activity?.title}</h2>
             </div>
-            <p className="italic text-base-content/50">
+            <p className="italic text-xs text-base-content/50">
               &nbsp;ajouté le {localeDate(props.activity.createdAt)}
             </p>
           </span>

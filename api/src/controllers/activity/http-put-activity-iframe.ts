@@ -6,19 +6,20 @@ import putIframe from "../../models/activity/update-activity/put-iframe";
 
 export default async function httpPutActivityIframe(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   try {
     const { activityId } = req.params;
     const userId = req.auth?.userId;
-    const { title, description, url } = req.body;
+    const { title, description, url, parent = "lesson" } = req.body;
 
     const response = await putIframe(
       +activityId,
       userId!,
       title,
       description,
-      url
+      url,
+      parent,
     );
 
     console.log({ response });

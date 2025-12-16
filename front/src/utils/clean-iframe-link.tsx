@@ -7,6 +7,7 @@ import { regexIframe, regexUrl } from "./constantes";
  */
 export default function cleanIframeLink(link: string): string {
   if (regexUrl.test(link)) {
+    console.log({ link });
     return link;
   } else if (regexIframe.test(link)) {
     const srcPos = link.lastIndexOf('src="') + 5;
@@ -14,7 +15,7 @@ export default function cleanIframeLink(link: string): string {
     const cleanedSrc = link.substring(srcPos, lastPos);
     if (!regexUrl.test(cleanedSrc))
       throw new Error("Le lien d'intégration iframe est incorrect");
-
+    console.log({ cleanedSrc });
     return cleanedSrc;
   } else throw new Error("Le lien d'intégration iframe est incorrect");
 }

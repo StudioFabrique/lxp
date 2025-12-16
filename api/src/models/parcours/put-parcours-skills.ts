@@ -1,5 +1,4 @@
-import { Skill } from "@prisma/client";
-
+import { Skill } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
@@ -14,7 +13,7 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
 
   for (const newSkill of newSkills) {
     const skill = existingSkills.find(
-      (item) => item.description === newSkill.description
+      (item) => item.description === newSkill.description,
     );
     if (!skill) {
       skillsToCreate.push(newSkill);
