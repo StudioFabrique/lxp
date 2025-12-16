@@ -1,5 +1,6 @@
 import { Activity } from "../../utils/interfaces/activity";
 import useResourceIFrame from "../../views/resources/hooks/useResourceIFrame";
+import Wrapper from "../UI/wrapper/wrapper.component";
 import ResourceIFrameForm from "./ResourceIFrameForm";
 import ResourceIFramePreview from "./ResourceIFramePreview";
 
@@ -44,32 +45,34 @@ export default function IFrameActivityResource(props: Props) {
   // Render edit/write mode with form
   if (props.mode !== "read") {
     return (
-      <>
-        {/* Display URL validation error if present */}
-        {urlError && urlError.length > 0 ? (
-          <p className="text-error text-xs font-bold">{urlError}</p>
-        ) : null}
+      <div>
+        <Wrapper>
+          {/* Display URL validation error if present */}
+          {urlError && urlError.length > 0 ? (
+            <p className="text-error text-xs font-bold">{urlError}</p>
+          ) : null}
 
-        {/* Form */}
+          {/* Form */}
 
-        <ResourceIFrameForm
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-          src={src!}
-          cleanedUrl={cleanedUrl}
-          data={data}
-          onUrlChange={handleUrlChange}
-          onSubmit={handleSubmit}
-          onCancel={props.onCancel}
-        />
+          <ResourceIFrameForm
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            src={src!}
+            cleanedUrl={cleanedUrl}
+            data={data}
+            onUrlChange={handleUrlChange}
+            onSubmit={handleSubmit}
+            onCancel={props.onCancel}
+          />
 
-        {/* Displays a message when no URL is provided */}
-        {!cleanedUrl ? (
-          <div className="p-6 bg-base-200 text-center rounded-lg text-base-content/70">
-            <p>Saisir une URL ci-dessus pour prévisualiser le contenu.</p>
-          </div>
-        ) : null}
-      </>
+          {/* Displays a message when no URL is provided */}
+          {!cleanedUrl ? (
+            <div className="p-6 bg-base-200 text-center rounded-lg text-base-content/70">
+              <p>Saisir une URL ci-dessus pour prévisualiser le contenu.</p>
+            </div>
+          ) : null}
+        </Wrapper>
+      </div>
     );
   }
 
