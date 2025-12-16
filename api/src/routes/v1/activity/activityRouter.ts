@@ -17,7 +17,7 @@ import {
   activityIdValidator,
   idValidator,
   postIframeValidator,
-  postImage,
+  //postImage,
   postImageValidator,
   postVideoValidator,
   putImageValidator,

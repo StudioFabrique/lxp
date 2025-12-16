@@ -24,7 +24,7 @@ export default function BonusActivityItem({
       <div className={style}>{getActivityIcon(activity.type)}</div>
       <button
         className={
-          "text-xs text-primary flex-1 hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10 tooltip tooltip-bottom"
+          "text-xs text-primary flex-1 text-left hover:cursor-pointer truncate p-2 rounded-sm bg-secondary/10 tooltip tooltip-bottom"
         }
         data-tip="Cliquez pour prévisualiser l'activité."
         onClick={() => onPreview(activity)}

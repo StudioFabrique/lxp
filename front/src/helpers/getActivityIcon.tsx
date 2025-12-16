@@ -1,4 +1,4 @@
-import { Files, Image, TextInitial, Video } from "lucide-react";
+import { Files, Image, MonitorPlay, TextInitial, Video } from "lucide-react";
 
 export const getActivityIcon = (
   activityType: "text" | "video" | "resource" | "image" | "iframe",
@@ -20,6 +20,9 @@ export const getActivityIcon = (
       break;
     case "image":
       icon = <Image className={iconStyle} />;
+      break;
+    case "iframe":
+      icon = <MonitorPlay className={iconStyle} />;
       break;
     default:
       icon = <span>❓</span>;

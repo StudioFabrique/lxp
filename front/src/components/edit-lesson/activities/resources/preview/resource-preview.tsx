@@ -56,9 +56,9 @@ function ResourcePreview({
   return (
     <div className="flex flex-col gap-y-4">
       {/* Bouton d'ajout de ressource */}
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-center">
         {/* Message d'aide pour modifier l'ordre des ressources */}
-        <p className="text-xs italic">
+        <p className="text-xs italic mr-8">
           {isAdding
             ? ""
             : resources && resources.length > 1

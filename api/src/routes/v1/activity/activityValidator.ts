@@ -91,6 +91,10 @@ export const postIframeValidator = [
     .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
     .isURL()
     .withMessage("L'url de l'activité contient des caractères non autorisés."),
+  body("parent")
+    .optional()
+    .isIn(["lesson", "resource"])
+    .withMessage('Le champ "parent" doit être soit "lesson" soit "resource".'),
   checkValidatorResult,
 ];
 
@@ -104,12 +108,15 @@ export const updateIframeValidator = [
     .withMessage(
       "Le titre de l'activité contient des caractères non autorisés.",
     ),
-
   body("url")
     .isString()
     .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
     .isURL()
     .withMessage("L'url de l'activité contient des caractères non autorisés."),
+  body("parent")
+    .optional()
+    .isIn(["lesson", "resource"])
+    .withMessage('Le champ "parent" doit être soit "lesson" soit "resource".'),
   checkValidatorResult,
 ];
 
