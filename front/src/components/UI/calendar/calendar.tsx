@@ -42,7 +42,7 @@ const Calendar = ({
   header,
   style = { hourHeight: 60 },
 }: PropsWithChildren<Props>) => {
-  // Helper to render the correct view body
+  // Render the body
   const renderBody = () => {
     switch (view) {
       case "month":

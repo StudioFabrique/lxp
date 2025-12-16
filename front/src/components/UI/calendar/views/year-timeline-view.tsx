@@ -163,7 +163,7 @@ const YearTimelineView = ({
                       </span>
                     )}
                   </div>
-                  <div className="min-w-0 flex-1">
+                  <div className="max-w-[15vw]">
                     <div
                       className={`text-sm font-semibold truncate ${
                         theme(darkMode).text
