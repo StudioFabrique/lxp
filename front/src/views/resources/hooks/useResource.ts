@@ -157,7 +157,7 @@ const useResource = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const { errors, onChangeValue, onValidateForm, values, initValues } = useForm(
     {},
-    resourceSchema,
+    resourceSchema
   );
 
   // Form data object combining values, change handler, and errors
@@ -168,7 +168,7 @@ const useResource = () => {
    * @param type - Type of activity to create
    */
   const createNewActivity = (
-    type: "text" | "video" | "image" | "resource" | "iframe",
+    type: "text" | "video" | "image" | "resource" | "iframe"
   ) => {
     // Single composite action instead of 2 dispatches
     dispatch({ type: "OPEN_ACTIVITY_EDITOR", payload: type });
@@ -209,7 +209,7 @@ const useResource = () => {
         method: state.mode === "update" ? "put" : "post",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -225,7 +225,7 @@ const useResource = () => {
         // Remove the deleted activity from the resource state
         if (state.resource) {
           const updatedActivities = state.resource.activities.filter(
-            (activity) => activity.id !== state.activityToDelete!.id,
+            (activity) => activity.id !== state.activityToDelete!.id
           );
           dispatch({
             type: "SET_RESOURCE",
@@ -233,6 +233,7 @@ const useResource = () => {
           });
         }
         dispatch({ type: "SET_ACTIVITY_TO_DELETE", payload: null });
+        dispatch({ type: "RESET_ACTIVITY_EDITOR" });
       }
     };
     sendRequest(
@@ -242,7 +243,7 @@ const useResource = () => {
         }/resource`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -351,7 +352,7 @@ const useResource = () => {
         method: state.previewActivity ? "put" : "post",
         body: fd,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -398,7 +399,7 @@ const useResource = () => {
           parent: "resource",
         },
       },
-      applyData,
+      applyData
     );
   };
 
