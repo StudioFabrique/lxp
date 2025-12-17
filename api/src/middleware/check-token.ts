@@ -10,6 +10,7 @@ function checkToken(req: CustomRequest, res: Response, next: NextFunction) {
   const authCookie = req.cookies.accessToken;
   jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
     if (err) {
+      console.log("AUTHCOOKIE : ", authCookie);
       try {
         await BlackListedToken.create({
           token: authCookie,

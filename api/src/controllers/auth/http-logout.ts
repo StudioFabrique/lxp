@@ -2,16 +2,19 @@ import { Request, Response } from "express";
 import BlackListedToken from "../../utils/interfaces/db/blacklisted-token";
 
 async function httpLogout(req: Request, res: Response) {
-  const authCookie = req.cookies.accessToken;
+  const { accessToken, refreshToken } = req.cookies;
 
-  if (authCookie)
+  const tokensToBlacklist = [accessToken, refreshToken]
+    .filter(Boolean)
+    .map((token) => ({ token }));
+
+  if (tokensToBlacklist.length > 0) {
     try {
-      await BlackListedToken.create({
-        token: authCookie,
-      });
+      await BlackListedToken.insertMany(tokensToBlacklist, { ordered: false });
     } catch (error) {
-      console.error("Error creating blacklisted token:", error);
+      console.error("Error creating blacklisted tokens:", error);
     }
+  }
 
   return res
     .clearCookie("accessToken")

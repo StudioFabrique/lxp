@@ -33,7 +33,14 @@ export default function checkPermissions(
 
     const authCookie = req.cookies.accessToken;
 
-    if (!authCookie)
+    let blacklistedToken;
+    if (authCookie) {
+      blacklistedToken = await BlackListedToken.findOne({
+        token: authCookie,
+      });
+    }
+
+    if (!authCookie || blacklistedToken)
       return res.status(403).json({
         message: "Vous n'êtes pas autorisé à accéder à cette ressource",
       });
