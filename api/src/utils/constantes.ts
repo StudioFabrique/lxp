@@ -35,3 +35,6 @@ export const regexRgba =
 export const regexJwt = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
 
 export const regexMongodbId = /^[0-9a-fA-F]{24}$/;
+
+export const JWT_PATTERN =
+  /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/;

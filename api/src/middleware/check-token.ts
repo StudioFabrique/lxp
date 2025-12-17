@@ -4,11 +4,27 @@ import jwt from "jsonwebtoken";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 import { noAccess } from "../utils/constantes";
 import { hasRole } from "../utils/services/permissions/hasRole";
+import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
+import {
+  isTokenBlacklisted,
+  letsBlackListAToken,
+} from "../utils/services/auth/set-tokens";
 
-function checkToken(req: CustomRequest, res: Response, next: NextFunction) {
+async function checkToken(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   const authCookie = req.cookies.accessToken;
-  jwt.verify(authCookie, process.env.SECRET!, (err: any, data: any) => {
+  if (await isTokenBlacklisted(authCookie))
+    return res.status(403).json({ message: noAccess });
+  jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
     if (err) {
+      try {
+        await letsBlackListAToken(authCookie);
+      } catch (error) {
+        console.error("Error creating blacklisted token:", error);
+      }
       return res.status(403).json({ message: noAccess });
     } else if (
       data &&
