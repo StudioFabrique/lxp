@@ -4,6 +4,11 @@ import jwt from "jsonwebtoken";
 import { noAccess, serverIssue } from "../utils/constantes";
 import { IRole } from "../utils/interfaces/db/role";
 import Permission from "../utils/interfaces/db/permission";
+import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
+import {
+  isTokenBlacklisted,
+  letsBlackListAToken,
+} from "../utils/services/auth/set-tokens";
 
 function youShallNotPass() {
   console.log("vous ne passerez pas 🧙");
@@ -32,7 +37,7 @@ export default function checkPermissions(
 
     const authCookie = req.cookies.accessToken;
 
-    if (!authCookie)
+    if (await isTokenBlacklisted(authCookie))
       return res.status(403).json({
         message: "Vous n'êtes pas autorisé à accéder à cette ressource",
       });
@@ -47,7 +52,7 @@ export default function checkPermissions(
         case "POST":
           actionDefined = "write";
           break;
-        // will do the same thing
+        // merge the both cases
         case "PATCH":
         case "PUT":
           actionDefined = "update";
@@ -66,6 +71,11 @@ export default function checkPermissions(
 
     jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
       if (err) {
+        try {
+          await letsBlackListAToken(authCookie);
+        } catch (error) {
+          console.error({ error });
+        }
         return res.status(403).json({ message: noAccess });
       }
 

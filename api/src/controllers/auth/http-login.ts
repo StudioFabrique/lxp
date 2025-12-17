@@ -37,8 +37,8 @@ async function httpLogin(req: Request, res: Response) {
     const permissions = await getAllPermissionsForUser(user._id);
 
     if (user) {
-      const accessToken = setTokens(user._id, user.roles);
-      const refreshToken = setTokens(user._id, user.roles);
+      const accessToken = setTokens(user._id, user.roles, "20m");
+      const refreshToken = setTokens(user._id, user.roles, "2h");
 
       /*       if (user.roles[0].rank > 2) {
         await userConnectionNotification(
