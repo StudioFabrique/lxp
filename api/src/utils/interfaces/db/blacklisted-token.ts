@@ -16,12 +16,14 @@ const blacklistedTokenSchema: Schema = new Schema(
   {
     token: { type: String, required: true, unique: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
+
+blacklistedTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 const BlackListedToken = mongoose.model<IBlacklistedToken>(
   "BlacklistedToken",
-  blacklistedTokenSchema,
+  blacklistedTokenSchema
 );
 
 export default BlackListedToken;
