@@ -2,26 +2,32 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 import { noAccess } from "../utils/constantes";
-import { setTokens } from "../utils/services/auth/set-tokens";
+import {
+  isTokenBlacklisted,
+  letsBlackListAToken,
+  setTokens,
+} from "../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../config/config";
 import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
 
-function refreshTokens(req: CustomRequest, res: Response, _next: NextFunction) {
+async function refreshTokens(
+  req: CustomRequest,
+  res: Response,
+  _next: NextFunction
+) {
   const authCookie = req.cookies.refreshToken;
+
+  if (await isTokenBlacklisted(authCookie)) {
+    return res.status(403).json({ message: noAccess });
+  }
 
   jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
     if (err) {
-      try {
-        await BlackListedToken.create({
-          token: authCookie,
-        });
-      } catch (error) {
-        console.error("Error creating blacklisted token:", error);
-      }
+      await letsBlackListAToken(authCookie);
       return res.status(403).json({ message: noAccess });
     } else {
-      const accessToken = setTokens(data.userId, data.userRoles);
-      const refreshToken = setTokens(data.userId, data.userRoles);
+      const accessToken = setTokens(data.userId, data.userRoles, "20m");
+      const refreshToken = setTokens(data.userId, data.userRoles, "2h");
       return res
         .cookie("accessToken", accessToken, {
           maxAge: tokensMaxAge.accessToken,
