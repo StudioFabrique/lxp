@@ -5,6 +5,10 @@ import { noAccess, serverIssue } from "../utils/constantes";
 import { IRole } from "../utils/interfaces/db/role";
 import Permission from "../utils/interfaces/db/permission";
 import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
+import {
+  isTokenBlacklisted,
+  letsBlackListAToken,
+} from "../utils/services/auth/set-tokens";
 
 function youShallNotPass() {
   console.log("vous ne passerez pas 🧙");
@@ -21,7 +25,7 @@ function youShallNotPass() {
 export default function checkPermissions(
   ressource?: string,
   action?: "read" | "write" | "update" | "delete",
-  failedRedirectPath?: string,
+  failedRedirectPath?: string
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
@@ -33,14 +37,7 @@ export default function checkPermissions(
 
     const authCookie = req.cookies.accessToken;
 
-    let blacklistedToken;
-    if (authCookie) {
-      blacklistedToken = await BlackListedToken.findOne({
-        token: authCookie,
-      });
-    }
-
-    if (!authCookie || blacklistedToken)
+    if (await isTokenBlacklisted(authCookie))
       return res.status(403).json({
         message: "Vous n'êtes pas autorisé à accéder à cette ressource",
       });
@@ -75,9 +72,7 @@ export default function checkPermissions(
     jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
       if (err) {
         try {
-          await BlackListedToken.create({
-            token: authCookie,
-          });
+          await letsBlackListAToken(authCookie);
         } catch (error) {
           console.error({ error });
         }
@@ -95,8 +90,8 @@ export default function checkPermissions(
           rolesToCheck.map((role) =>
             Permission.find({
               roles: role._id,
-            }),
-          ),
+            })
+          )
         );
       } catch (error) {
         console.log({ error });
@@ -112,7 +107,7 @@ export default function checkPermissions(
         !ressource && roleFromParam ? roleFromParam : ressource!
       }`;
       const hasPermission = flattenedPermissions.some(
-        (permission: any) => permission.name === requiredPermissionName,
+        (permission: any) => permission.name === requiredPermissionName
       );
 
       if (hasPermission) {
