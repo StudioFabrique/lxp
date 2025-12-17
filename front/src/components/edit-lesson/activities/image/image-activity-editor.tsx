@@ -55,10 +55,10 @@ export default function ImageActivityEditor({
       selectedImage
         ? `${ACTIVITIES}images/${selectedImage}`
         : image
-          ? image
-          : activity?.url
-            ? `${ACTIVITIES}images/${activity.url}`
-            : defaultImage,
+        ? image
+        : activity?.url
+        ? `${ACTIVITIES}images/${activity.url}`
+        : defaultImage
     ),
     width: "100%",
     height: "100%",
@@ -70,7 +70,7 @@ export default function ImageActivityEditor({
   };
 
   return (
-    <div className="w-full h-[30rem] gap-8 grid grid-cols-1 2xl:grid-cols-2 p-6">
+    <div className="w-full h-fit gap-8 grid grid-cols-1 3xl:grid-cols-2 p-6">
       <Wrapper>
         <span className="h-full flex flex-col gap-y-2">
           <h2 className="text-lg font-bold">
