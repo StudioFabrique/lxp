@@ -27,6 +27,9 @@ export default async function getAllModules() {
       return {
         ...item,
         formation: item.formations[0].formation.title,
+        thumb: item.thumb
+          ? Buffer.from(item.thumb as any).toString("base64")
+          : null,
       };
     }
   });
@@ -37,14 +40,5 @@ export default async function getAllModules() {
     }
   }); */
 
-  const modules = serializedModules.map((item: any) => {
-    if (item.thumb) {
-      const base64Image = item.thumb.toString("base64");
-      return { ...item, thumb: base64Image };
-    } else {
-      return item;
-    }
-  });
-
-  return modules ?? [];
+  return serializedModules ?? [];
 }
