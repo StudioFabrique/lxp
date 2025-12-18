@@ -132,7 +132,7 @@ const YearTimelineView = ({
             return (
               <div
                 key={event.id}
-                className={`flex items-center gap-4 group rounded-lg p-2 transition-colors ${
+                className={`flex items-center gap-4 group rounded-lg p-2 transition-colors group ${
                   darkMode ? "hover:bg-slate-800/50" : "hover:bg-gray-50"
                 }`}
               >
@@ -179,7 +179,7 @@ const YearTimelineView = ({
                     </div>
                     {event.startDate && event.endDate && (
                       <div
-                        className={`text-[10px] truncate ${
+                        className={`text-[10px] truncate group-hover:text-secondary ${
                           theme(darkMode).subText
                         }`}
                       >
