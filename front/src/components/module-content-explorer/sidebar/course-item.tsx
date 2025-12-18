@@ -1,6 +1,12 @@
 import { ChevronDown, ChevronRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { PropsWithChildren, useContext, useEffect, useState } from "react";
+import {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -51,6 +57,10 @@ const CourseItem = ({
   >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
+
+  // State for the expander button visibility
+  const [showDescriptionExpander, setShowDescriptionExpander] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
 
   const courseProgress =
     course.lessons.reduce(
@@ -104,10 +114,6 @@ const CourseItem = ({
     handleCloseModal();
   };
 
-  // const handleClickChangeCourseOrder = () => {
-  //   setDragAndDropEnabled((prev) => !prev);
-  // };
-
   const handleClickToggleExpandDescription = () => {
     setDescriptionExpanded((prev) => !prev);
   };
@@ -122,6 +128,27 @@ const CourseItem = ({
       setCourseOpen(false);
     }
   }, [course.lessons, selectedLesson]);
+
+  useEffect(() => {
+    const element = descriptionRef.current;
+    if (!element || !isCourseOpen) return;
+
+    const checkOverflow = () => {
+      // If height is 0, the element is likely still hidden/animating, skip calculation
+      if (element.clientHeight === 0) return;
+
+      const isOverflowing = element.scrollHeight > element.clientHeight + 1;
+      setShowDescriptionExpander(isOverflowing);
+    };
+
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(element);
+
+    // Trigger once immediately
+    checkOverflow();
+
+    return () => observer.disconnect();
+  }, [isCourseOpen, course.description]);
 
   return (
     <>
@@ -170,6 +197,7 @@ const CourseItem = ({
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
         >
+          {/* ... Header Content ... */}
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span className="flex gap-1 items-center min-w-0">
@@ -220,28 +248,33 @@ const CourseItem = ({
               {course.description && (
                 <span className="flex-1 min-w-0">
                   <p
-                    className={`text-sm break-words overflow-y-clip min-w-0 ${
-                      !isDescriptionExpanded && "max-h-5"
+                    ref={descriptionRef}
+                    className={`text-sm break-words overflow-hidden min-w-0 ${
+                      !isDescriptionExpanded ? "line-clamp-1" : ""
                     }`}
                   >
                     {toUpperFirstLetter(course.description)}
                   </p>
 
-                  <p
-                    className="text-xs link"
-                    onClick={handleClickToggleExpandDescription}
-                  >
-                    {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
-                  </p>
+                  {/* Render the button based on the state calculated in useEffect */}
+                  {(showDescriptionExpander || isDescriptionExpanded) && (
+                    <span
+                      className="text-xs link cursor-pointer select-"
+                      onClick={handleClickToggleExpandDescription}
+                    >
+                      {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
+                    </span>
+                  )}
                 </span>
               )}
+
+              {/* ... Lessons List ... */}
               {course.lessons.length > 0 ? (
                 course.lessons.map(
                   (lesson) =>
                     lesson.id && (
-                      <div className={`w-full`}>
+                      <div className={`w-full`} key={lesson.id}>
                         <LessonItem
-                          key={lesson.id}
                           lesson={lesson}
                           moduleId={moduleId}
                           selectedLesson={selectedLesson}
