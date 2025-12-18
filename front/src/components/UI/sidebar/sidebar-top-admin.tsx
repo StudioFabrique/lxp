@@ -20,11 +20,21 @@ type SharedSideBarProps = {
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   const sidebarItems = [
     <SidebarItem
+      itemPath={undefined}
+      currentRoute={currentRoute}
+      icon={<Home className="w-4" />}
+      linkTo={`/${currentRoute[0]}`}
+      tooltipText="Accueil"
+    >
+      Accueil
+    </SidebarItem>,
+    <SidebarItem
       key="user"
       currentRoute={currentRoute}
       itemPath={"user"}
       icon={<User className="w-4" />}
       linkTo={`/${currentRoute[0]}/user`}
+      tooltipText="Utilisateurs"
     >
       Utilisateurs
     </SidebarItem>,
@@ -34,6 +44,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"formation"}
       icon={<GraduationCap className="w-4" />}
       linkTo={`/${currentRoute[0]}/formation`}
+      tooltipText="Formations"
     >
       Formations
     </SidebarItem>,
@@ -43,6 +54,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"parcours"}
       icon={<Rocket className="w-4" />}
       linkTo={`/${currentRoute[0]}/parcours`}
+      tooltipText="Parcours"
     >
       Parcours
     </SidebarItem>,
@@ -52,6 +64,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"module"}
       icon={<Component className="w-4" />}
       linkTo={`/${currentRoute[0]}/module`}
+      tooltipText="Modules"
     >
       Modules
     </SidebarItem>,
@@ -61,6 +74,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"course"}
       icon={<BookMarked className="w-4" />}
       linkTo={`/${currentRoute[0]}/course`}
+      tooltipText="Cours"
     >
       Cours
     </SidebarItem>,
@@ -70,8 +84,9 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"lesson"}
       icon={<FileEdit className="w-4" />}
       linkTo={`/${currentRoute[0]}/lesson`}
+      tooltipText="Leçons"
     >
-      Leçon
+      Leçons
     </SidebarItem>,
     <SidebarItem
       key="group"
@@ -79,6 +94,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"group"}
       icon={<Users className="w-4" />}
       linkTo={`/${currentRoute[0]}/group`}
+      tooltipText="Groupes"
     >
       Groupes
     </SidebarItem>,
@@ -88,8 +104,9 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"roles"}
       icon={<Shield className="w-4" />}
       linkTo={`/${currentRoute[0]}/roles`}
+      tooltipText="Rôles"
     >
-      Roles
+      Rôles
     </SidebarItem>,
     <SidebarItem
       key="tag"
@@ -97,6 +114,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"tags"}
       icon={<Tag className="w-4" />}
       linkTo={`/${currentRoute[0]}/tags`}
+      tooltipText="Tags"
     >
       Tags
     </SidebarItem>,
@@ -106,6 +124,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"mediatheque"}
       icon={<Library className="w-4" />}
       linkTo={`/${currentRoute[0]}/mediatheque`}
+      tooltipText="Médiathèque"
     >
       Médiathèque
     </SidebarItem>,
@@ -115,25 +134,13 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       itemPath={"resources"}
       icon={<FileEdit className="w-4" />}
       linkTo={`/${currentRoute[0]}/resources`}
+      tooltipText="Ressources supplémentaires"
     >
       Ressources supplémentaires
     </SidebarItem>,
   ];
 
-  return (
-    <ul className={`flex flex-col px-2 gap-1`}>
-      <SidebarItem
-        itemPath={undefined}
-        currentRoute={currentRoute}
-        icon={<Home className="w-4" />}
-        linkTo={`/${currentRoute[0]}`}
-      >
-        Accueil
-      </SidebarItem>
-
-      {sidebarItems}
-    </ul>
-  );
+  return <ul className={`flex flex-col px-2 gap-1`}>{sidebarItems}</ul>;
 };
 
 export default SidebarTopAdmin;
