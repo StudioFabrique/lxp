@@ -4,14 +4,12 @@ import Sidebar from "./sidebar/sidebar";
 
 type Props = {
   loader?: ReactNode;
-  contentWidth?: string;
   sidebar?: ReactNode;
 };
 
 const AppLayout = ({
   children,
   loader = <Loader />,
-  contentWidth = "80%",
   sidebar = <Sidebar />,
 }: PropsWithChildren<Props>) => {
   return (
@@ -21,15 +19,7 @@ const AppLayout = ({
         <div className="overflow-scroll w-full">
           <Suspense fallback={loader}>
             <div className="flex justify-center">
-              <div
-                style={{
-                  width: contentWidth,
-                  marginTop: "8vh",
-                  marginBottom: "4vh",
-                }}
-              >
-                {children}
-              </div>
+              <div className={`mt-[8vh] mb-[4vh] w-[80%]`}>{children}</div>
             </div>
           </Suspense>
         </div>

@@ -1,6 +1,7 @@
 import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 
@@ -26,30 +27,14 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   return (
     <li>
       <div className="relative z-50">
-        <motion.a
-          href="https://forms.gle/joWqE48La7S6NqCK8"
+        <Link
+          to="https://forms.gle/joWqE48La7S6NqCK8"
           onClick={handleClose}
           target="_blank"
           rel="noopener noreferrer"
-          animate={
-            showTooltip
-              ? {
-                  scale: [1, 1.05, 1],
-                  x: [0, 2, 0],
-                }
-              : {
-                  scale: 1,
-                  x: 0,
-                }
-          }
-          transition={{
-            duration: 1.5,
-            repeat: showTooltip ? Infinity : 0,
-            ease: "easeInOut",
-          }}
           className={`flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50 ${
             showTooltip
-              ? "spotlight ring-4 ring-primary ring-offset-2 rounded-full p-2"
+              ? "ring-2 ring-primary ring-offset-1 rounded-full p-2 animate-pulse"
               : ""
           }`}
         >
@@ -57,7 +42,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
             <ClipboardList className="w-4" />
           </span>
           <span className={textSize}>Questionnaire (Bêta Testeurs)</span>
-        </motion.a>
+        </Link>
 
         {showTooltip && (
           <motion.div
@@ -68,7 +53,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
               duration: 0.5,
               ease: "easeOut",
             }}
-            className="absolute left-full flex flex-col w-[25vw] top-0 ml-10 bg-base-100 p-4 rounded-xl shadow-lg border border-base-300"
+            className="absolute left-full flex flex-col w-[25vw] bottom-0 ml-5 bg-primary p-4 rounded-xl shadow-lg border border-base-300"
           >
             <motion.p
               initial={{ y: 20, opacity: 0 }}
@@ -78,31 +63,27 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
                 duration: 0.6,
                 ease: "easeOut",
               }}
-              className="text-base-content font-medium mb-3"
+              className="font-medium mb-3 text-base-200"
             >
               Merci de donnez votre avis sur la version bêta de l'application
               ANDRIA à tout moment depuis ce formulaire
             </motion.p>
             <div className="flex flex-wrap gap-2 justify-between">
-              <motion.a
-                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-                whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
+              <Link
                 onClick={handleClose}
-                className="btn btn-primary text-base-100 btn-sm whitespace-pre-wrap w-fit"
-                href="https://forms.gle/joWqE48La7S6NqCK8"
+                className="btn btn-sm whitespace-pre-wrap w-fit"
+                to="https://forms.gle/joWqE48La7S6NqCK8"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Donner mon avis maintenant
-              </motion.a>
-              <motion.button
-                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-                whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
+              </Link>
+              <button
                 onClick={handleClose}
-                className="btn btn-secondary text-base-100 btn-sm"
+                className="btn btn-secondary btn-sm text-base-100"
               >
                 Fermer
-              </motion.button>
+              </button>
             </div>
           </motion.div>
         )}

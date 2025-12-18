@@ -27,7 +27,7 @@ const SidebarItem = ({
             }`}
           >
             <span>{icon}</span>
-            {children}
+            <span className="xl:block hidden">{children}</span>
           </div>
         </div>
       </Link>
