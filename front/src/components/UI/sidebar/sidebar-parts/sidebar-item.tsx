@@ -7,6 +7,7 @@ type Props = {
   itemPath: string | undefined;
   icon: React.ReactNode;
   textSize?: "text-sm" | "text-lg";
+  tooltipText?: string;
 };
 
 const SidebarItem = ({
@@ -15,6 +16,7 @@ const SidebarItem = ({
   itemPath,
   icon,
   textSize = "text-sm",
+  tooltipText,
   children,
 }: PropsWithChildren<Props>) => {
   return (
@@ -22,12 +24,13 @@ const SidebarItem = ({
       <Link to={linkTo}>
         <div data-tip="Accueil LXP">
           <div
-            className={`${textSize} flex gap-5 p-1 px-2 rounded-lg hover:bg-primary/50 items-center select-none ${
+            data-tip={tooltipText}
+            className={`${textSize} max-xl:tooltip max-xl:tooltip-right flex gap-5 p-1 px-2 rounded-lg hover:bg-primary/50 items-center select-none ${
               currentRoute[1] === itemPath && "bg-primary/50"
             }`}
           >
             <span>{icon}</span>
-            {children}
+            <span className="xl:block hidden">{children}</span>
           </div>
         </div>
       </Link>

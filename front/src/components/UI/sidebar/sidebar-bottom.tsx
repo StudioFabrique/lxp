@@ -21,7 +21,8 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   };
 
   return (
-    <ul className="flex flex-col gap-1 pl-2 select-none">
+    <ul className="flex flex-col gap-1 xl:pl-2 items-center xl:items-start select-none">
+      {/* Avatar */}
       <li>
         <Link
           to={`/${interfaceType}/profil`}
@@ -46,29 +47,33 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
               imgClassName="w-4 h-4 rounded-full object-cover"
             />
           )}
-          {`${user?.firstname} ${user?.lastname}`}
+          <span className="xl:block hidden">{`${user?.firstname} ${user?.lastname}`}</span>
         </Link>
       </li>
 
+      {/* Bouton + modal questionnaire */}
       <Questionnaire />
 
+      {/* Bouton Deconnection */}
       <li
         className="cursor-pointer text-sm flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50"
         data-tip="Déconnexion"
         onClick={handleClickLogout}
       >
         <LogOutIcon className="w-4" />
-        Déconnexion
+        <span className="xl:block hidden">Déconnexion</span>
       </li>
 
-      <li className="my-2 flex items-center justify-between px-2">
+      <li className="my-2 gap-4 flex flex-col-reverse xl:flex-row items-center justify-between w-full xl:px-2">
+        {/* Logo */}
         <img
-          className="w-16 object-contain"
+          className="xl:w-16 w-10 object-contain"
           src={newLogo}
           alt="logo ANDRIA en blanc et bleu"
         />
+        {/* Toggle clair/sombre */}
         <div
-          className="tooltip tooltip-top"
+          className="tooltip xl:tooltip-top tooltip-right xl:w-5 w-4"
           data-tip="Mode Clair / Mode Sombre"
         >
           <ModeToggle />

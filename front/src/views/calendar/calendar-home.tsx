@@ -86,8 +86,7 @@ const CalendarHome = () => {
       <Calendar
         currentDate={currentDate}
         currentWeekDayVisible={false}
-        // events={calendarTestEvents}
-        events={[]}
+        events={calendarTestEvents}
         onClickEventDetails={handleShowCourseDetails}
         startHour={8}
         endHour={18}
