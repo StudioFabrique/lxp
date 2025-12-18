@@ -64,7 +64,8 @@ type Action =
   | { type: "SET_TAGS"; payload: Tag[] }
   | { type: "SET_TAG_ERROR"; payload: boolean }
   | { type: "SET_RESOURCE"; payload: Resource | null }
-  | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null };
+  | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null }
+  | { type: "SET_RESOURCE_ID"; payload: string };
 
 /**
  * Initial state for the resource reducer
@@ -89,6 +90,11 @@ const initialState: State = {
  */
 const useResourceReducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case "SET_RESOURCE_ID":
+      return {
+        ...state,
+        resourceId: +action.payload,
+      };
     // Composite action: Reset the activity editor to initial state
     case "RESET_ACTIVITY_EDITOR":
       return {
@@ -157,7 +163,7 @@ const useResource = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const { errors, onChangeValue, onValidateForm, values, initValues } = useForm(
     {},
-    resourceSchema
+    resourceSchema,
   );
 
   // Form data object combining values, change handler, and errors
@@ -168,7 +174,7 @@ const useResource = () => {
    * @param type - Type of activity to create
    */
   const createNewActivity = (
-    type: "text" | "video" | "image" | "resource" | "iframe"
+    type: "text" | "video" | "image" | "resource" | "iframe",
   ) => {
     // Single composite action instead of 2 dispatches
     dispatch({ type: "OPEN_ACTIVITY_EDITOR", payload: type });
@@ -201,15 +207,19 @@ const useResource = () => {
           payload: { ...data.resource, activities: [] },
         });
       }
+      dispatch({
+        type: "SET_RESOURCE_ID",
+        payload: data.resource.id.toString(),
+      });
       dispatch({ type: "SET_TAG_ERROR", payload: false });
     };
     sendRequest(
       {
-        path: `/resources${resourceId ? `/${resourceId}` : ""}`,
+        path: `/resources${state.resourceId ? `/${state.resourceId}` : ""}`,
         method: state.mode === "update" ? "put" : "post",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -225,7 +235,7 @@ const useResource = () => {
         // Remove the deleted activity from the resource state
         if (state.resource) {
           const updatedActivities = state.resource.activities.filter(
-            (activity) => activity.id !== state.activityToDelete!.id
+            (activity) => activity.id !== state.activityToDelete!.id,
           );
           dispatch({
             type: "SET_RESOURCE",
@@ -243,7 +253,7 @@ const useResource = () => {
         }/resource`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -297,8 +307,11 @@ const useResource = () => {
       dispatch({ type: "SET_TAGS", payload: data.resourceDetails.tags ?? [] });
       initValues(data.resourceDetails);
     };
-    sendRequest({ path: `/resources/${resourceId}`, method: "get" }, applyData);
-  }, [sendRequest, resourceId, initValues]);
+    sendRequest(
+      { path: `/resources/${state.resourceId}`, method: "get" },
+      applyData,
+    );
+  }, [sendRequest, state.resourceId, initValues]);
 
   /** Closes the text editor and resets to initial state */
   const handleCloseTextEditor = () => {
@@ -348,11 +361,11 @@ const useResource = () => {
     };
     sendRequest(
       {
-        path: `/activity/video/${state.previewActivity?.id ?? resourceId}`,
+        path: `/activity/video/${state.previewActivity?.id ?? state.resourceId}`,
         method: state.previewActivity ? "put" : "post",
         body: fd,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -391,7 +404,7 @@ const useResource = () => {
     };
     sendRequest(
       {
-        path: `/activity/iframe/${state.previewActivity?.id ?? resourceId}`,
+        path: `/activity/iframe/${state.previewActivity?.id ?? state.resourceId}`,
         method: state.previewActivity ? "put" : "post",
         body: {
           title: newActivity.title,
@@ -399,7 +412,7 @@ const useResource = () => {
           parent: "resource",
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -410,6 +423,7 @@ const useResource = () => {
   useEffect(() => {
     if (resourceId) {
       dispatch({ type: "SET_MODE", payload: "update" });
+      dispatch({ type: "SET_RESOURCE_ID", payload: resourceId });
       getResourceDetails();
     } else dispatch({ type: "SET_MODE", payload: "create" });
   }, [getResourceDetails, resourceId]);
