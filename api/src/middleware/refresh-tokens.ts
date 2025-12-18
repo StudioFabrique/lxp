@@ -7,13 +7,13 @@ import {
   letsBlackListAToken,
   setTokens,
 } from "../utils/services/auth/set-tokens";
-import { tokensMaxAge } from "../config/config";
+import { accessExpire, refreshExpire, tokensMaxAge } from "../config/config";
 import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
 
 async function refreshTokens(
   req: CustomRequest,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   const authCookie = req.cookies.refreshToken;
 
@@ -26,8 +26,12 @@ async function refreshTokens(
       await letsBlackListAToken(authCookie);
       return res.status(403).json({ message: noAccess });
     } else {
-      const accessToken = setTokens(data.userId, data.userRoles, "20m");
-      const refreshToken = setTokens(data.userId, data.userRoles, "2h");
+      const accessToken = setTokens(data.userId, data.userRoles, accessExpire);
+      const refreshToken = setTokens(
+        data.userId,
+        data.userRoles,
+        refreshExpire,
+      );
       return res
         .cookie("accessToken", accessToken, {
           maxAge: tokensMaxAge.accessToken,
