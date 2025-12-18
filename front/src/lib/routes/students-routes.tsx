@@ -2,27 +2,31 @@
 import React from "react";
 
 const ParcoursHome = React.lazy(
-  () => import("../../views/parcours/parcours-home.component")
+  () => import("../../views/parcours/parcours-home.component"),
 );
 const StudentHome = React.lazy(
-  () => import("../../views/student/student-home")
+  () => import("../../views/student/student-home"),
 );
 const ParcoursLayout = React.lazy(
-  () => import("../../views/parcours/parcours-layout.component")
+  () => import("../../views/parcours/parcours-layout.component"),
 );
 const CalendarHome = React.lazy(
-  () => import("../../views/calendar/calendar-home")
+  () => import("../../views/calendar/calendar-home"),
 );
 const ParcoursView = React.lazy(
-  () => import("../../views/parcours/parcours-view")
+  () => import("../../views/parcours/parcours-view"),
 );
 const LessonsPreview = React.lazy(
-  () => import("../../views/module-content-explorer/module-content-explorer")
+  () => import("../../views/module-content-explorer/module-content-explorer"),
 );
 const FeaturesList = React.lazy(
-  () => import("../../views/features-list/features-list")
+  () => import("../../views/features-list/features-list"),
 );
 const UserProfile = React.lazy(() => import("../../views/profile/profile"));
+
+const StudentResourceHome = React.lazy(
+  () => import("../../views/resources/students/student-resource-home"),
+);
 
 const studentRoutes = [
   {
@@ -39,7 +43,7 @@ const studentRoutes = [
     ],
   },
   { path: "calendrier", element: <CalendarHome /> },
-
+  { path: "ressources", element: <StudentResourceHome /> },
   { path: "profil", element: <UserProfile /> },
   { path: "*", element: <FeaturesList /> },
 ];
