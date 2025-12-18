@@ -7,7 +7,7 @@ import {
 } from "../../utils/constantes";
 import userLogin from "../../models/auth/user-login";
 import { setTokens } from "../../utils/services/auth/set-tokens";
-import { tokensMaxAge } from "../../config/config";
+import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger";
 import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
@@ -37,8 +37,8 @@ async function httpLogin(req: Request, res: Response) {
     const permissions = await getAllPermissionsForUser(user._id);
 
     if (user) {
-      const accessToken = setTokens(user._id, user.roles, "20m");
-      const refreshToken = setTokens(user._id, user.roles, "2h");
+      const accessToken = setTokens(user._id, user.roles, accessExpire);
+      const refreshToken = setTokens(user._id, user.roles, refreshExpire);
 
       /*       if (user.roles[0].rank > 2) {
         await userConnectionNotification(

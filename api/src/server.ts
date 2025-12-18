@@ -7,7 +7,7 @@ import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 import { socket } from "./socket/socket";
 
-const PORT = process.env.PORT || 7001;
+const PORT = process.env.PORT || 5001;
 const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
 const MTLS_TO_FASTAPI = process.env.MTLS_TO_FASTAPI === "true";
 
@@ -18,8 +18,8 @@ if (HTTPS_ENABLED) {
   console.log("🔒 Starting HTTPS server for frontend...");
 
   const httpsOptions = {
-    key: fs.readFileSync("./certs/node-server-key.pem"), // ✅ Bon nom
-    cert: fs.readFileSync("./certs/node-server-cert.pem"), // ✅ Bon nom
+    key: fs.readFileSync("./certs/node-server-key.pem"),
+    cert: fs.readFileSync("./certs/node-server-cert.pem"),
   };
 
   server = https.createServer(httpsOptions, app);
@@ -78,7 +78,7 @@ async function mongoInit() {
     console.log(
       `🚀 Serveur démarré sur ${
         HTTPS_ENABLED ? "https" : "http"
-      }://localhost:${PORT}`
+      }://localhost:${PORT}`,
     );
   });
 

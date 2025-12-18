@@ -13,7 +13,7 @@ import {
 async function checkToken(
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const authCookie = req.cookies.accessToken;
   if (await isTokenBlacklisted(authCookie))
