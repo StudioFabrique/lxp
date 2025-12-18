@@ -41,7 +41,9 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           <span>
             <ClipboardList className="w-4" />
           </span>
-          <span className={textSize}>Questionnaire (Bêta Testeurs)</span>
+          <span className={`xl:block hidden ${textSize}`}>
+            Questionnaire (Bêta Testeurs)
+          </span>
         </Link>
 
         {showTooltip && (

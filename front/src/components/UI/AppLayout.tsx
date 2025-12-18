@@ -19,7 +19,9 @@ const AppLayout = ({
         <div className="overflow-scroll w-full">
           <Suspense fallback={loader}>
             <div className="flex justify-center">
-              <div className={`mt-[8vh] mb-[4vh] w-[80%]`}>{children}</div>
+              <div className={`mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]`}>
+                {children}
+              </div>
             </div>
           </Suspense>
         </div>
