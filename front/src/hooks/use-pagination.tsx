@@ -23,6 +23,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [path, setPath] = useState(defaultUrlPath);
   const { sendRequest } = useHttp();
   const [allChecked, setAllChecked] = useState(false);
+  const [urlComplement, setUrlComplement] = useState<string | null>(null);
 
   const handlePageNumber = useCallback((value: number) => {
     setPage(value);
@@ -80,11 +81,20 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       {
         path: `${path}/${stype}/${
           sdir ? "desc" : "asc"
-        }?page=${page}&limit=${perPage}`,
+        }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}`,
       },
       applyData,
     );
-  }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
+  }, [
+    sendRequest,
+    page,
+    perPage,
+    handleTotalPages,
+    stype,
+    sdir,
+    path,
+    urlComplement,
+  ]);
 
   const uncheckAll = () => {
     setDataList((prevDataList) => {

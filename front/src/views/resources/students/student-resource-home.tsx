@@ -30,6 +30,28 @@ export default function StudentResourceHome() {
         />
       </div>
 
+      <form className="flex gap-x-4">
+        <input
+          className="btn"
+          type="checkbox"
+          name="frameworks"
+          aria-label="Svelte"
+        />
+        <input
+          className="btn"
+          type="checkbox"
+          name="frameworks"
+          aria-label="Vue"
+        />
+        <input
+          className="btn"
+          type="checkbox"
+          name="frameworks"
+          aria-label="React"
+        />
+        <input className="btn btn-square" type="reset" value="×" />
+      </form>
+
       {dataList && dataList.length > 0 ? (
         <>
           {/* Affichage de la liste des ressources sous forme de card  */}
