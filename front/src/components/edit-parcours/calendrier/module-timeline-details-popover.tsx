@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { formatDate } from "../../UI/calendar/calendar-utils";
+import { X } from "lucide-react";
 
 interface Props {
   modalId: string;
@@ -78,6 +79,12 @@ const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
       {/* --- BANNER IMAGE --- */}
       {currentModule.thumb && (
         <figure className="h-32 w-full relative bg-gray-100">
+          <button
+            onClick={onClose}
+            className="z-50 absolute top-2 right-2 btn btn-xs btn-circle"
+          >
+            <X className="w-3 h-3" />
+          </button>
           <img
             src={`data:image/jpeg;base64,${currentModule.thumb}`}
             alt={currentModule.title}
@@ -93,9 +100,14 @@ const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
           <h2 className="card-title text-lg leading-tight">
             {currentModule.title}
           </h2>
-          <button onClick={onClose} className="btn btn-xs btn-circle btn-ghost">
-            ✕
-          </button>
+          {!currentModule.thumb && (
+            <button
+              onClick={onClose}
+              className="btn btn-xs btn-circle btn-ghost"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
 
         <div className="badge badge-primary badge-outline gap-1 text-xs">
