@@ -4,7 +4,7 @@ import ListHeader from "../../components/UI/list-header";
 import ToggleList from "../../components/UI/toggle-list";
 import ElementNotFound from "../../components/UI/element-not-found";
 import ResourcesListTable from "../../components/resources-home/ResourcesListTable";
-import Pagination from "../../components/pagination";
+import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ export type ResourceListItem = {
   title: string;
   author: string;
   createdAt: string;
+  imageUrl?: string;
 };
 
 export default function ResourcesHome() {
@@ -71,7 +72,7 @@ export default function ResourcesHome() {
               totalPages={totalPages}
               setPage={setPage}
               perPage={perPage}
-              setLimit={setPerPage}
+              setPerPages={setPerPage}
             />
           ) : null}
         </section>
