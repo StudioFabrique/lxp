@@ -114,8 +114,8 @@ export const componentPermissionsList = [
 const teacherResourcesRbac = resourcesRbac.filter(
   (resource) =>
     !["permission", "role", "admin", "teacher", "everything"].includes(
-      resource.name
-    )
+      resource.name,
+    ),
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template
@@ -164,7 +164,7 @@ export const resourcesRbacByRank = {
 };
 
 export async function getPermissionsByRank(
-  rank: number
+  rank: number,
 ): Promise<
   { resource: string; actions: ("read" | "write" | "update" | "delete")[] }[]
 > {

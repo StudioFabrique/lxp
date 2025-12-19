@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from "react";
+import { ChangeEvent, Dispatch, FC, SetStateAction } from "react";
 
 import PaginationSelect from "./pagination-select.component";
 
@@ -13,18 +13,18 @@ import PaginationSelect from "./pagination-select.component";
 const Pagination: FC<{
   page: number;
   totalPages: number | null;
-  setPage: (newPage: number) => void;
-  setPerPages?: (perPage: number) => void;
+  setPage: Dispatch<SetStateAction<number>>;
+  setPerPages?: Dispatch<SetStateAction<number>>;
   perPage?: number;
 }> = ({ page, totalPages, setPage, setPerPages, perPage }) => {
   // Fonction pour aller à la page précédente
   const decrementPage = () => {
-    setPage(page - 1);
+    setPage((prevPage) => prevPage - 1);
   };
 
   // Fonction pour aller à la page suivante
   const incrementPage = () => {
-    setPage(page + 1);
+    setPage((prevPage) => prevPage + 1);
   };
 
   // Fonction pour aller à la première page
@@ -47,7 +47,7 @@ const Pagination: FC<{
   };
 
   return (
-    <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-transparent rounded-lg p-2 text-base-content text-sm">
+    <div className="flex justify-end mt-4 items-center gap-x-4 bg-transparent rounded-lg px-8 py-4 text-base-content text-sm border border-primary/20">
       {/* Sélecteur du nombre d'éléments par page */}
       <PaginationSelect
         handleSetPerPages={handleSetPerPages}
