@@ -1,5 +1,4 @@
 import { Edit, Trash2 } from "lucide-react";
-import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import React, { useContext } from "react";
 import { ResourceListItem } from "../../views/resources/resources-home";
 import { DOWNLOAD_URL } from "../../config/urls";
@@ -72,13 +71,6 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
                       data-tip="Supprimer la ressource"
                     >
                       <Trash2 className="text-error w-4 h-4" />
-                    </button>
-                    <button
-                      className="text-primary w-4 h-4 cursor-pointer tooltip tooltip-bottom"
-                      data-tip="Voir la ressource"
-                      aria-label="Aperçu de la ressource"
-                    >
-                      <ArrowTopRightIcon />
                     </button>
                   </>
                 ) : (

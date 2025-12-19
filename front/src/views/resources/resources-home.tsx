@@ -7,6 +7,8 @@ import ResourcesListTable from "../../components/resources-home/ResourcesListTab
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import { useState } from "react";
+import Modal from "../../components/UI/modal/modal";
+import SuccessWithMessage from "../../utils/interfaces/success-with-message";
 
 export type ResourceListItem = {
   id: string;
@@ -18,6 +20,8 @@ export type ResourceListItem = {
 
 export default function ResourcesHome() {
   const [showList, setShowList] = useState(true);
+  const [resourceToDelete, setResourceToDelete] =
+    useState<ResourceListItem | null>(null);
 
   const notFoundMessage = (
     <ElementNotFound message="Aucune ressource disponible pour le moment." />
@@ -33,10 +37,18 @@ export default function ResourcesHome() {
     setPerPage,
     setPage,
     perPage,
+    initPagination,
   } = usePagination("title", "/resources");
 
   const handleToggleList = (value: boolean) => {
     setShowList(value);
+  };
+
+  const handleDeleteResource = () => {
+    const applyData = (data: SuccessWithMessage) => {
+      setResourceToDelete(null);
+      initPagination();
+    };
   };
 
   return (
@@ -77,6 +89,18 @@ export default function ResourcesHome() {
           ) : null}
         </section>
       </ListHeader>
+      {resourceToDelete ? (
+        <Modal
+          onLeftClick={() => {}}
+          onRightClick={() => {}}
+          title="Supprimer une ressource supplémentaire"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention l'activité sera supprimée définitivement.
+        </Modal>
+      ) : null}
     </main>
   );
 }

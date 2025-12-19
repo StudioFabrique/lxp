@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { truncateText } from "../../helpers/truncate-text";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
-import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import TableWrapper from "../UI/table-wrapper";
@@ -85,20 +84,6 @@ Props) {
                       <div className="cursor-pointer" onClick={() => {}}>
                         <Trash2Icon className="w-4 h-4" />
                       </div>
-                    </div>
-                  </div>
-                  <div className="w-4 h-4">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Aperçu de la ressource"
-                    >
-                      <Link
-                        className="text-primary w-4"
-                        to={`view/${item.id}`}
-                        aria-label="Aperçu de la ressource"
-                      >
-                        <ArrowTopRightIcon />
-                      </Link>
                     </div>
                   </div>
                 </div>
