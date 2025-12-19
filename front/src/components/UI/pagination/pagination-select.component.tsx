@@ -7,7 +7,7 @@ const PaginationSelect: FC<{
   if (perPage) {
     return (
       <div className="flex justify-end items-center focus:outline-none gap-x-2 self-end">
-        <p>Éléments par page :</p>
+        <p className="whitespace-nowrap">Éléments par page :</p>
         <select
           defaultValue={perPage}
           onChange={handleSetPerPages}
