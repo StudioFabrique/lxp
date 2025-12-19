@@ -6,9 +6,9 @@ import Can from "../UI/can/can.component";
 type Props = {
   disabled?: boolean;
   activity: Activity;
-  onDelete: (activity: any) => void;
-  onEdit: (activity: any) => void;
-  onPreview: (activity: any | null) => void;
+  onDelete: (activity: Activity) => void;
+  onEdit: (activity: Activity) => void;
+  onPreview: (activity: Activity | null) => void;
 };
 
 export default function BonusActivityItem({
