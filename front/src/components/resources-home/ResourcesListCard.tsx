@@ -4,7 +4,6 @@ import React, { useContext } from "react";
 import { ResourceListItem } from "../../views/resources/resources-home";
 import { DOWNLOAD_URL } from "../../config/urls";
 import { Context } from "../../store/context.store";
-import Can from "../UI/can/can.component";
 import hasPermission from "../../utils/hasPermission";
 import { Link } from "react-router-dom";
 
@@ -17,7 +16,7 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
   // Defensive: if resourcesList is not an array treat as empty
   const list = Array.isArray(resourcesList) ? resourcesList : [];
   const { theme } = useContext(Context);
-  const baseStyle = "card glass image-full w-66 shadow-sm h-42";
+  const baseStyle = "card glass image-full w-62 shadow-sm h-42";
   const { user } = useContext(Context);
 
   const style = theme === "light" ? baseStyle + " bg-primary/75" : baseStyle;
@@ -84,7 +83,7 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
                   </>
                 ) : (
                   <Link
-                    to="#"
+                    to={`/student/ressources/details/${item.id}`}
                     className="text-primary text-xs underline cursor-pointer"
                   >
                     Voir les détails

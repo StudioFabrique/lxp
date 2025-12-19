@@ -15,7 +15,7 @@ type Props = {
   /** Existing activity to edit (optional, undefined when creating new activity) */
   activity?: Activity;
   /** Type of activity being created or edited */
-  activityType: "text" | "video" | "image" | "resource";
+  activityType: "text" | "video" | "image" | "iframe" | "resource";
   /** Callback to close the activity editor */
   onClose: () => void;
   /** Callback executed after successful activity creation/update */
@@ -74,27 +74,27 @@ export default function TextActivityResource({
       id: number,
       title: string,
       content: string,
-      isEditing: "read" | "write" | "edit"
+      isEditing: "read" | "write" | "edit",
     ) => {
       const result = await createActivity(id, title, content, isEditing);
 
       // Handle error case
       if (!result) {
         toast.error(
-          "Une erreur est survenue lors de la mise à jour de l'activité."
+          "Une erreur est survenue lors de la mise à jour de l'activité.",
         );
       }
 
       // Handle success case with appropriate message
       if (result) {
         onSubmit(
-          `Activité ${mode === "edit" ? "mise à jour" : "créée"} avec succès.`
+          `Activité ${mode === "edit" ? "mise à jour" : "créée"} avec succès.`,
         );
       }
 
       return result;
     },
-    [createActivity, mode, onSubmit]
+    [createActivity, mode, onSubmit],
   );
 
   /**
@@ -121,7 +121,7 @@ export default function TextActivityResource({
           activity ? activity.id : parentId,
           title,
           content,
-          mode
+          mode,
         )
       }
     />
