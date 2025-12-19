@@ -28,6 +28,14 @@ const StudentResourceHome = React.lazy(
   () => import("../../views/resources/students/student-resource-home"),
 );
 
+const StudentResourceDetails = React.lazy(
+  () => import("../../views/resources/students/student-resource-details"),
+);
+
+const StudentResourcesLayout = React.lazy(
+  () => import("../../views/resources/students/student-resources-layout"),
+);
+
 const studentRoutes = [
   {
     index: true,
@@ -43,7 +51,14 @@ const studentRoutes = [
     ],
   },
   { path: "calendrier", element: <CalendarHome /> },
-  { path: "ressources", element: <StudentResourceHome /> },
+  {
+    path: "ressources",
+    element: <StudentResourcesLayout />,
+    children: [
+      { index: true, element: <StudentResourceHome /> },
+      { path: "details/:resourceId", element: <StudentResourceDetails /> },
+    ],
+  },
   { path: "profil", element: <UserProfile /> },
   { path: "*", element: <FeaturesList /> },
 ];
