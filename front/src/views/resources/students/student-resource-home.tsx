@@ -10,8 +10,16 @@ export default function StudentResourceHome() {
     <ElementNotFound message="Aucune ressource disponible pour le moment." />
   );
 
-  const { page, totalPages, dataList, setPage, perPage, setPerPage } =
-    useStudentResources();
+  const {
+    page,
+    totalPages,
+    dataList,
+    setPage,
+    perPage,
+    setPerPage,
+    handleOnChangeValue,
+    searchTerm,
+  } = useStudentResources();
 
   return (
     <ListHeader>
@@ -24,38 +32,19 @@ export default function StudentResourceHome() {
 
       <div className="flex justify-end w-full">
         <input
-          className="input input-primary"
-          type="text"
-          placeholder="Rechercher..."
+          className="input input-primary w-84"
+          type="search"
+          placeholder="Entrez un mot-clé pour filtrer les ressources..."
+          defaultValue={searchTerm}
+          onChange={handleOnChangeValue}
+          name="search"
         />
       </div>
-
-      <form className="flex gap-x-4">
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="Svelte"
-        />
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="Vue"
-        />
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="React"
-        />
-        <input className="btn btn-square" type="reset" value="×" />
-      </form>
 
       {dataList && dataList.length > 0 ? (
         <>
           {/* Affichage de la liste des ressources sous forme de card  */}
-          <section className="flex justify-center">
+          <section className="w-full mx-auto flex justify-center">
             <ResourcesListCard resourcesList={dataList}>
               {notFoundMessage}
             </ResourcesListCard>

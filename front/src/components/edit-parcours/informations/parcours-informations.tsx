@@ -27,10 +27,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
 
   const parcoursStartDate = useSelector(
-    (state: any) => state.parcoursInformations.infos.startDate
+    (state: any) => state.parcoursInformations.infos.startDate,
   );
   const parcoursEndDate = useSelector(
-    (state: any) => state.parcoursInformations.infos.endDate
+    (state: any) => state.parcoursInformations.infos.endDate,
   );
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
@@ -43,11 +43,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
     useSelector(
-      (state: any) => state.parcoursInformations.infos.virtualClass as string
-    )
+      (state: any) => state.parcoursInformations.infos.virtualClass as string,
+    ),
   );
   const parentTags = useSelector(
-    (state: any) => state.tags.parentTags
+    (state: any) => state.tags.parentTags,
   ) as Tag[];
 
   const updateDates = useCallback(
@@ -63,17 +63,17 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           method: "put",
           body: { parcoursId, startDate, endDate },
         },
-        processData
+        processData,
       );
     },
-    [parcoursId, sendRequest]
+    [parcoursId, sendRequest],
   );
 
   const handleUpdateContacts = useCallback(
     (updatedContacts: Contact[]) => {
       updateParcoursContacts(+parcoursId, updatedContacts);
     },
-    [parcoursId, updateParcoursContacts]
+    [parcoursId, updateParcoursContacts],
   );
 
   /**
@@ -83,10 +83,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     (tags: Array<Tag>) => {
       updateParcoursTags(
         +parcoursId,
-        tags.map((item) => item.id)
+        tags.map((item) => item.id),
       );
     },
-    [parcoursId, updateParcoursTags]
+    [parcoursId, updateParcoursTags],
   );
 
   // Callback pour soumettre les dates du parcours
@@ -95,11 +95,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
       dispatch(parcoursInformationsAction.updateParcoursDates(dates));
       updateDates(dates.startDate, dates.endDate);
     },
-    [updateDates, dispatch]
+    [updateDates, dispatch],
   );
 
   const handleVirtualClassValue = (
-    event: React.FormEvent<HTMLInputElement>
+    event: React.FormEvent<HTMLInputElement>,
   ) => {
     if (!submitVirtualClass) {
       setSubmitVirtualClass(true);
@@ -120,23 +120,21 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           toast.success(data.message);
         } else {
           toast.error(
-            "Le lien vers la classe virtuelle n'a pas été mis à jour"
+            "Le lien vers la classe virtuelle n'a pas été mis à jour",
           );
         }
         dispatch(
-          parcoursInformationsAction.setVirtualClass(virtualClass.value)
+          parcoursInformationsAction.setVirtualClass(virtualClass.value),
         );
       };
       if (formIsValid && submitVirtualClass) {
-        console.log(virtualClass.value, parcoursId);
-
         sendRequest(
           {
             path: "/parcours/update-virtual-class",
             method: "put",
             body: { parcoursId, virtualClass: virtualClass.value },
           },
-          processData
+          processData,
         );
         setSubmitVirtualClass(false);
       }

@@ -131,6 +131,10 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     );
   };
 
+  const handleSearch = (searchTerm: string) => {
+    setUrlComplement(searchTerm.length > 0 ? `&searchTerm=${searchTerm}` : "");
+  };
+
   useEffect(() => {
     getList();
   }, [path, getList]);
@@ -172,6 +176,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     uncheckAll,
     getSelectedIds,
     sendInvitation,
+    handleSearch,
   };
 };
 
