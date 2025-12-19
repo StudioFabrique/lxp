@@ -9,49 +9,38 @@ import ElementNotFound from "../../components/UI/element-not-found";
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
 import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingActionButton";
-import TextActivityResource from "../../components/resources-add/TextActivityResource";
-import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
-import VideoActivityResource from "../../components/resources-add/VideoActivityResource";
-import ResourceUpload from "../../components/edit-lesson/activities/resources/resource-upload";
-import ResourcePreview from "../../components/edit-lesson/activities/resources/preview/resource-preview";
-import ImageActivityResource from "../../components/resources-add/ImageActivityResource";
-import IFrameActivityResource from "../../components/resources-add/IFrameActivityResource";
+import ActivityContent from "../../components/resources-add/ActivityContent";
 
 export default function ResourceAdd() {
   const {
     activityType,
     activityState,
-    mode,
-    setFile,
-    data,
-    isLoading,
-    tags,
-    setTags,
-    tagError,
-    setTagError,
-    setActivityState,
-    resource,
-    handleSubmitForm,
-    handleDeleteActivity,
     activityToDelete,
-    setActivityToDelete,
-    previewActivity,
-    setPreviewActivity,
-    //activitiesActionsDisabled,
-    handleCloseTextEditor,
-    //createNewActivity,
-    resourceId,
-    setEditActivity,
-    refreshActivityList,
-    uploadVideo,
     closePreviewActivity,
     createNewActivity,
+    data,
+    handleCloseTextEditor,
+    handleDeleteActivity,
+    handleSubmitForm,
+    isLoading,
+    mode,
+    previewActivity,
+    refreshActivityList,
+    resource,
     resourceActivityiesSubmitted,
+    resourceId,
+    setActivityState,
+    setActivityToDelete,
+    setEditActivity,
+    setFile,
+    setPreviewActivity,
+    setTagError,
+    setTags,
     submitIframeActivity,
+    tagError,
+    tags,
+    uploadVideo,
   } = useResource();
-
-  console.log("STATE", activityState);
-  console.log("TYPE", activityType);
 
   const placeholder = (
     <div className="border border-primary/20 rounded-lg p-8 h-[50vh] relative">
@@ -120,97 +109,24 @@ export default function ResourceAdd() {
 
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {activityType && activityType !== "text" ? (
-                <ActivityWrapper
-                  activity={previewActivity}
-                  mode={activityState}
-                  onSwitchMode={setActivityState}
-                  onClose={closePreviewActivity}
-                >
-                  {activityType === "video" ? (
-                    <VideoActivityResource
-                      activity={previewActivity ? previewActivity : null}
-                      mode={activityState}
-                      values={data.values}
-                      onClose={closePreviewActivity}
-                      onSubmit={uploadVideo}
-                      parent="resource"
-                    />
-                  ) : null}
-
-                  {activityType === "resource" && activityState === "write" ? (
-                    <ResourceUpload
-                      onCancel={closePreviewActivity}
-                      onResetForm={() => {}}
-                      onSubmit={resourceActivityiesSubmitted}
-                    />
-                  ) : activityType === "resource" &&
-                    activityState !== "write" ? (
-                    <ResourcePreview
-                      activity={previewActivity!}
-                      onCancel={closePreviewActivity}
-                      parent="resource"
-                    />
-                  ) : null}
-
-                  {activityType === "image" ? (
-                    <ImageActivityResource
-                      activity={previewActivity!}
-                      mode={activityState}
-                      onCancel={closePreviewActivity}
-                    />
-                  ) : null}
-
-                  {activityType === "iframe" ? (
-                    <IFrameActivityResource
-                      activity={previewActivity}
-                      mode={activityState}
-                      onSubmit={submitIframeActivity}
-                      onCancel={closePreviewActivity}
-                    />
-                  ) : null}
-                </ActivityWrapper>
-              ) : (
-                <>
-                  {activityType === "text" ? (
-                    <>
-                      {activityState !== "read" ? (
-                        <TextActivityResource
-                          parentId={+resourceId!}
-                          activity={
-                            previewActivity ? previewActivity : undefined
-                          }
-                          activityType={activityType}
-                          onClose={handleCloseTextEditor}
-                          mode={activityState}
-                          onSubmit={refreshActivityList}
-                        />
-                      ) : null}
-                      {activityState === "read" ? (
-                        <ActivityWrapper
-                          activity={previewActivity}
-                          mode={activityState}
-                          onSwitchMode={setActivityState}
-                          onClose={() => setPreviewActivity(null)}
-                        >
-                          <TextActivityResource
-                            parentId={+resourceId!}
-                            activity={
-                              previewActivity ? previewActivity : undefined
-                            }
-                            activityType={activityType}
-                            onClose={handleCloseTextEditor}
-                            mode={activityState}
-                            onSubmit={refreshActivityList}
-                          />
-                        </ActivityWrapper>
-                      ) : null}
-                    </>
-                  ) : (
-                    placeholder
-                  )}
-                </>
-              )}
+              <ActivityContent
+                activityState={activityState}
+                parentId={resourceId ? +resourceId : 0}
+                previewActivity={previewActivity}
+                activityType={activityType!}
+                onClose={closePreviewActivity}
+                setActivityState={setActivityState}
+                setPreviewActivity={setPreviewActivity}
+                refreshActivityList={refreshActivityList}
+                closePreviewActivity={closePreviewActivity}
+                uploadVideo={uploadVideo}
+                data={data}
+                resourceActivitiesSubmitted={resourceActivityiesSubmitted}
+                submitIframeActivity={submitIframeActivity}
+                onCloseTextEditor={handleCloseTextEditor}
+              >
+                {placeholder}
+              </ActivityContent>
             </Can>
           </section>
         </div>

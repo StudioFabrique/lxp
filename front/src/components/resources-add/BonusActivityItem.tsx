@@ -1,6 +1,7 @@
 import { EditIcon, Trash2 } from "lucide-react";
 import { Activity } from "../../utils/interfaces/activity";
 import { getActivityIcon } from "../../helpers/getActivityIcon";
+import Can from "../UI/can/can.component";
 
 type Props = {
   disabled?: boolean;
@@ -31,30 +32,32 @@ export default function BonusActivityItem({
       >
         {activity.title}
       </button>
-      <div
-        className={
-          "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"
-        }
-      >
-        <button
-          className="cursor-pointer"
-          disabled={disabled}
-          title="Éditer l'activité"
-          onClick={() => onEdit(activity)}
-          aria-label="Éditer l'activité"
+      <Can action="write" object="lesson">
+        <div
+          className={
+            "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"
+          }
         >
-          <EditIcon className="w-4 h-4 text-primary" />
-        </button>
-        <button
-          className="cursor-pointer"
-          disabled={disabled}
-          onClick={() => onDelete(activity)}
-          title="Supprimer l'activité"
-          aria-label="Supprimer l'activité"
-        >
-          <Trash2 className="w-4 h-4 text-error" />
-        </button>
-      </div>
+          <button
+            className="cursor-pointer"
+            disabled={disabled}
+            title="Éditer l'activité"
+            onClick={() => onEdit(activity)}
+            aria-label="Éditer l'activité"
+          >
+            <EditIcon className="w-4 h-4 text-primary" />
+          </button>
+          <button
+            className="cursor-pointer"
+            disabled={disabled}
+            onClick={() => onDelete(activity)}
+            title="Supprimer l'activité"
+            aria-label="Supprimer l'activité"
+          >
+            <Trash2 className="w-4 h-4 text-error" />
+          </button>
+        </div>
+      </Can>
     </div>
   );
 }

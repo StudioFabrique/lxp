@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Activity } from "../../utils/interfaces/activity";
 import { getActivityIcon } from "../../helpers/getActivityIcon";
 import { localeDate } from "../../helpers/locale-date";
+import Can from "../UI/can/can.component";
 
 type Props = {
   children: ReactNode;
@@ -19,9 +20,11 @@ export default function ActivityWrapper(props: Props) {
         props.activity &&
         props.activity.type === "resource") ? (
         <div className="flex items-center gap-x-4 justify-start">
-          <p className="whitespace-nowrap text-base-content/50">
-            Titre de l'activité :&nbsp;
-          </p>
+          <Can action="write" object="lesson">
+            <p className="whitespace-nowrap text-base-content/50">
+              Titre de l'activité :&nbsp;
+            </p>
+          </Can>
           <span className="border border-primary/50 flex justify-between p-2 rounded-lg w-full items-center">
             <div className="flex gap-x-4 items-center">
               {getActivityIcon(props.activity.type, 6)}
