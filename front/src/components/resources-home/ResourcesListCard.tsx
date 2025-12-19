@@ -4,7 +4,9 @@ import React, { useContext } from "react";
 import { ResourceListItem } from "../../views/resources/resources-home";
 import { DOWNLOAD_URL } from "../../config/urls";
 import { Context } from "../../store/context.store";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Can from "../UI/can/can.component";
+import hasPermission from "../../utils/hasPermission";
+import { Link } from "react-router-dom";
 
 type Props = {
   resourcesList?: ResourceListItem[] | null;
@@ -15,9 +17,15 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
   // Defensive: if resourcesList is not an array treat as empty
   const list = Array.isArray(resourcesList) ? resourcesList : [];
   const { theme } = useContext(Context);
-  const baseStyle = "card glass image-full w-72 shadow-sm h-42";
+  const baseStyle = "card glass image-full w-66 shadow-sm h-42";
+  const { user } = useContext(Context);
 
   const style = theme === "light" ? baseStyle + " bg-primary/75" : baseStyle;
+
+  const isAllowed =
+    user &&
+    user.permissions &&
+    hasPermission(user.permissions, "write", "lesson");
 
   // If no data, render the provided children (fallback UI) if valid
   if (list.length === 0) {
@@ -31,9 +39,11 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
     );
   }
 
+  console.log({ isAllowed });
+
   return (
-    <Wrapper>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 text-lg font-semibold text-center">
+    <>
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-10 text-lg font-semibold text-center">
         {list.map((item) => (
           <div key={item.id ?? JSON.stringify(item)} className={style}>
             {item.imageUrl ? (
@@ -48,32 +58,43 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
               <h2 className="card-title">{item.title}</h2>
 
               <div className="flex justify-around items-end h-full">
-                <button
-                  aria-label="modifier la ressource"
-                  className="tooltip tooltip-bottom cursor-pointer"
-                  data-tip="Modifier la ressource"
-                >
-                  <Edit className="text-primary w-4 h-4" />
-                </button>
-                <button
-                  aria-label="supprimer la ressource tooltip-bottom"
-                  className="tooltip tooltip-bottom cursor-pointer"
-                  data-tip="Supprimer la ressource"
-                >
-                  <Trash2 className="text-error w-4 h-4" />
-                </button>
-                <button
-                  className="text-primary w-4 h-4 cursor-pointer tooltip tooltip-bottom"
-                  data-tip="Aperçu de la ressource"
-                  aria-label="Aperçu de la ressource"
-                >
-                  <ArrowTopRightIcon />
-                </button>
+                {isAllowed ? (
+                  <>
+                    <button
+                      aria-label="modifier la ressource"
+                      className="tooltip tooltip-bottom cursor-pointer"
+                      data-tip="Modifier la ressource"
+                    >
+                      <Edit className="text-primary w-4 h-4" />
+                    </button>
+                    <button
+                      aria-label="supprimer la ressource tooltip-bottom"
+                      className="tooltip tooltip-bottom cursor-pointer"
+                      data-tip="Supprimer la ressource"
+                    >
+                      <Trash2 className="text-error w-4 h-4" />
+                    </button>
+                    <button
+                      className="text-primary w-4 h-4 cursor-pointer tooltip tooltip-bottom"
+                      data-tip="Voir la ressource"
+                      aria-label="Aperçu de la ressource"
+                    >
+                      <ArrowTopRightIcon />
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="#"
+                    className="text-primary text-xs underline cursor-pointer"
+                  >
+                    Voir les détails
+                  </Link>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
-    </Wrapper>
+    </>
   );
 }
