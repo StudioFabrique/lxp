@@ -13,18 +13,18 @@ import PaginationSelect from "./pagination-select.component";
 const Pagination: FC<{
   page: number;
   totalPages: number | null;
-  setPage: Dispatch<SetStateAction<number>>;
+  setPage: (value: number) => void;
   setPerPages?: Dispatch<SetStateAction<number>>;
   perPage?: number;
 }> = ({ page, totalPages, setPage, setPerPages, perPage }) => {
   // Fonction pour aller à la page précédente
   const decrementPage = () => {
-    setPage((prevPage) => prevPage - 1);
+    setPage(page - 1);
   };
 
   // Fonction pour aller à la page suivante
   const incrementPage = () => {
-    setPage((prevPage) => prevPage + 1);
+    setPage(page + 1);
   };
 
   // Fonction pour aller à la première page

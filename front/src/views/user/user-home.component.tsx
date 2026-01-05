@@ -47,9 +47,6 @@ const UserHome = () => {
     userToDelete,
   } = useUser();
 
-  console.log({ isDeleting });
-  console.log({ dataList });
-
   return (
     <div>
       <section className="w-full h-full flex flex-col items-center gap-y-8">
