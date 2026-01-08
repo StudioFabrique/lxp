@@ -141,7 +141,7 @@ const YearTimelineView = ({
                   onClick={(e) =>
                     onClickDetails?.(
                       event.id,
-                      e.currentTarget.getBoundingClientRect()
+                      e.currentTarget.getBoundingClientRect(),
                     )
                   }
                   className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
@@ -159,7 +159,7 @@ const YearTimelineView = ({
                       />
                     ) : (
                       <span className="text-xs font-bold opacity-50">
-                        {event.title.charAt(0)}
+                        {event.title?.charAt(0)}
                       </span>
                     )}
                   </div>
@@ -184,7 +184,7 @@ const YearTimelineView = ({
                         }`}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
-                          event.endDate
+                          event.endDate,
                         )}`}
                       </div>
                     )}

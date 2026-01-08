@@ -15,7 +15,7 @@ interface Props {
 const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const currentModule = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+    (state: any) => state.parcoursModules.currentModule,
   );
 
   // Helper to close if clicked outside
@@ -114,7 +114,7 @@ const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
           Module
         </div>
 
-        {currentModule.module.description && (
+        {currentModule.module?.description && (
           <p className="text-sm py-2 text-gray-600 line-clamp-4">
             {currentModule.module.description}
           </p>
