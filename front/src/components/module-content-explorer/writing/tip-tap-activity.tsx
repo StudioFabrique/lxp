@@ -49,7 +49,7 @@ const TiptapActivity = ({
       activityId: id,
       onEditTitle,
       onEditContent,
-    }
+    },
   );
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +80,7 @@ const TiptapActivity = ({
       />
 
       {mode !== "read" && (
-        <div className="py-4 flex gap-4 items-center">
+        <div className="py-4 flex gap-4 items-center select-none">
           {/* Input titre */}
           <label className="label min-w-fit" htmlFor="activity-title">
             Titre de l'activité :

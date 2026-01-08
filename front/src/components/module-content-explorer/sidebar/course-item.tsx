@@ -68,7 +68,7 @@ const CourseItem = ({
         sum +
         (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
           0),
-      0
+      0,
     ) / course.lessons.length;
 
   const handleToggleCourseTab = () => {
@@ -157,8 +157,8 @@ const CourseItem = ({
           modalType === "visibility"
             ? "Visibilité"
             : modalType === "deleteLesson"
-            ? "Supprimer la leçon"
-            : "Supprimer le cours"
+              ? "Supprimer la leçon"
+              : "Supprimer le cours"
         }
         description={
           modalType === "visibility"
@@ -166,8 +166,8 @@ const CourseItem = ({
                 course.visibility ? "cacher" : "rendre visible"
               } ce cours ?`
             : modalType === "deleteLesson"
-            ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
-            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
+              ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
+              : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
         }
         showModal={showModal}
         isModalLoading={isModalLoading}
@@ -176,7 +176,7 @@ const CourseItem = ({
         onCancel={handleCloseModal}
         onConfirm={handleConfirmAction}
       />
-      <div className="flex flex-col w-full relative">
+      <div className="flex flex-col w-full relative select-none">
         {!course.isPublished || !course.visibility ? (
           <div
             className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
@@ -285,7 +285,7 @@ const CourseItem = ({
                           {children}
                         </LessonItem>
                       </div>
-                    )
+                    ),
                 )
               ) : (
                 <div className="text-center">

@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ActivitySelectMode } from "../../../views/module-content-explorer/store/module-explorer-reducer";
 import cleanIframeLink from "../../../utils/clean-iframe-link";
 import SaveButton from "../../UI/tiptap-editor/components/SaveButton";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -62,7 +63,7 @@ const IframeActivity = ({
   }, [cleanedUrl, onChangeSrc]);
 
   return (
-    <div className="w-full flex flex-col gap-4 mt-5">
+    <div className="w-full flex flex-col gap-4 mt-5 select-none">
       {["write", "edit"].includes(mode) && (
         <div className="form-control">
           <label className="label">
@@ -82,6 +83,13 @@ const IframeActivity = ({
             <span className="label-text font-semibold text-primary">
               URL iframe de la ressource
             </span>
+            <QuestionMarkTooltip
+              tooltipValue={`Pour afficher une ressource interactive :
+              1. Cherchez le bouton "Partager" ou "Intégrer" sur votre outil (Genially, YouTube, etc.).
+              2. Copiez l'adresse (URL) ou le code complet commençant par <iframe...>.
+              3. Collez-le simplement dans le champ ci-dessous.`}
+              tooltipPosition="bottom"
+            />
           </label>
           <input
             type="text"
