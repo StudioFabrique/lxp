@@ -45,7 +45,7 @@ const TimelineView = ({
   // Determine Visible Days for Day/Week views
   const visibleDays = useMemo(() => {
     if (view === "week") return daysOfWeek;
-    // For Day view, we use currentDate, not nowTime
+    // For Day view, we use currentDate
     let dayIndex = currentDate.getDay() - 1;
     if (dayIndex === -1) dayIndex = 6;
     return [daysOfWeek[dayIndex]];
@@ -150,7 +150,7 @@ const TimelineView = ({
             {visibleDays.map((_, i) => {
               const colDayIndex = getRealDayIndex(i, view, currentDate);
 
-              // --- LOGIC TO DETERMINE DATE OF THIS COLUMN ---
+              // Determine the specific date for this column
               const columnDate = new Date(currentDate);
 
               if (view === "week") {

@@ -95,7 +95,6 @@ const YearTimelineView = ({
         {/* --- TODAY INDICATOR OVERLAY --- */}
         {todayPosition !== null && (
           <div className="absolute inset-0 pointer-events-none flex p-4 z-50">
-            {/* Spacer to match the Avatar column width (w-48 + gap-4) */}
             <div className="w-48 gap-4 flex-shrink-0 mr-4"></div>
 
             {/* The Timeline Area */}
@@ -141,7 +140,7 @@ const YearTimelineView = ({
                   onClick={(e) =>
                     onClickDetails?.(
                       event.id,
-                      e.currentTarget.getBoundingClientRect(),
+                      e.currentTarget.getBoundingClientRect()
                     )
                   }
                   className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
@@ -184,7 +183,7 @@ const YearTimelineView = ({
                         }`}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
-                          event.endDate,
+                          event.endDate
                         )}`}
                       </div>
                     )}
