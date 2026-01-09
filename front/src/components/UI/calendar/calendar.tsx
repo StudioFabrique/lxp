@@ -53,6 +53,7 @@ const Calendar = ({
             events={events}
             currentDate={currentDate}
             darkMode={darkMode}
+            onClickEventDetails={onClickEventDetails}
           />
         );
       case "year-timeline":
