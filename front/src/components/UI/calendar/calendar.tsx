@@ -3,16 +3,15 @@ import {
   CalendarEvent,
   CalendarView,
   theme,
-  TimelineEvent, // Import new Type
+  TimelineEvent,
 } from "./calendar-configuration";
 import MonthView from "./views/month-view";
 import TimelineView from "./views/timeline-view";
-import YearTimelineView from "./views/year-timeline-view"; // Import new Component
+import YearTimelineView from "./views/year-timeline-view";
 
 interface Props {
   events: CalendarEvent[];
   onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
-  // New Prop: Optional because not all views need it
   timelineEvents?: TimelineEvent[];
   onClickTimelineYearEventDetails?: (
     id: number | string,
