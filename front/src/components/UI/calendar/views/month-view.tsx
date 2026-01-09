@@ -12,9 +12,15 @@ type Props = {
   events: CalendarEvent[];
   currentDate: Date;
   darkMode: boolean;
+  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
 };
 
-const MonthView = ({ events, currentDate, darkMode }: Props) => {
+const MonthView = ({
+  events,
+  currentDate,
+  darkMode,
+  onClickEventDetails,
+}: Props) => {
   const days = useMemo(() => {
     return getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
   }, [currentDate]);
@@ -102,6 +108,12 @@ const MonthView = ({ events, currentDate, darkMode }: Props) => {
                   return (
                     <div
                       key={`${event.id}-${idx}`}
+                      onClick={(e) =>
+                        onClickEventDetails?.(
+                          event.id,
+                          e.currentTarget.getBoundingClientRect()
+                        )
+                      }
                       className={`text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
                       title={event.title}
                     >
