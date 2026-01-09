@@ -68,7 +68,10 @@ const Contenu = ({ modules }: ContenuProps) => {
             </Can>
           )}
         </span>
-        <div className="grid lg:grid-cols-2 gap-x-10 gap-y-5">
+        <div
+          data-testid="contenu-section"
+          className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
+        >
           <div className="flex flex-col gap-y-2">{contentsList}</div>
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
