@@ -324,7 +324,10 @@ export async function createOrUpdateRoleWithPermissions(
 ) {
   let formattedPermissions: string[] = [];
 
-  if (resourcesRbac.flatMap((res) => res.name).includes(roleName)) {
+  // This avoids preventing roles from being named the same as a resource (e.g. "course")
+  // while still preventing exact name collisions with permission documents.
+  const permissionConflict = await Permission.findOne({ name: roleName });
+  if (permissionConflict) {
     const error = new Error(
       "Le nom du rôle est déjà utilisé par une permission"
     ) as any;
