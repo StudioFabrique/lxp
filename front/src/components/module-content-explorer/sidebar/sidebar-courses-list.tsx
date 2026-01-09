@@ -34,7 +34,7 @@ const SidebarCoursesList = ({
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
-    (course) => course.lessons.length > 0
+    (course) => course.lessons.length > 0,
   );
 
   // Calcule le pourcentage global de progression du module
@@ -48,11 +48,11 @@ const SidebarCoursesList = ({
               sum +
               (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt)
                 .length || 0),
-            0
+            0,
           ) / course.lessons.length,
-          1
+          1,
         ),
-      0
+      0,
     ) / coursesWithLessons.length;
 
   // Fonction utilitaire pour générer le style du cercle de progression
@@ -63,7 +63,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border-1 rounded-lg p-5 border-secondary/20">
+    <div className="border-1 rounded-lg p-5 border-secondary/20 select-none">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
         <div className="flex justify-between">
@@ -77,7 +77,7 @@ const SidebarCoursesList = ({
                 <span
                   className="radial-progress self-end mb-5"
                   style={radialStyle(
-                    !Number.isNaN(moduleProgress) ? moduleProgress : 0
+                    !Number.isNaN(moduleProgress) ? moduleProgress : 0,
                   )}
                 >
                   <p className="text-base-content font font-bold">

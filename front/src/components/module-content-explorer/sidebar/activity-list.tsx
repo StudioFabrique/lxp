@@ -47,13 +47,13 @@ export default function ActivityList({
           {(provided, droppableState) => (
             <div
               ref={provided.innerRef}
-              className={`pt-2 flex flex-col items-center gap-1 w-full ${
+              className={`pt-2 flex flex-col items-center gap-1 w-full select-none ${
                 droppableState.isDraggingOver && "-mt-5 mb-5"
               }`}
               {...provided.droppableProps}
             >
               {provided.placeholder}
-              {activities ? (
+              {activities?.length ? (
                 activities?.map((activity, index) => (
                   <Draggable
                     key={activity.id}
@@ -65,7 +65,7 @@ export default function ActivityList({
                         hasPermission(
                           user?.permissions || [],
                           "update",
-                          "lesson"
+                          "lesson",
                         )
                       )
                     }
