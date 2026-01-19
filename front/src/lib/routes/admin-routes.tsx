@@ -1,7 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import React from "react";
-import RoleEdit from "../../views/role/role-edit";
-
+const ParcoursImportCourses = React.lazy(
+  () => import("../../views/parcours/parcours-import-courses"),
+);
+const RoleEdit = React.lazy(() => import("../../views/role/role-edit"));
 const AdminHome = React.lazy(
   () => import("../../views/admin/admin-home.component"),
 );
@@ -172,6 +174,7 @@ const adminRoutes = [
     element: <ParcoursLayout />,
     children: [
       { index: true, element: <ParcoursHome /> },
+      { path: "import-cours", element: <ParcoursImportCourses /> },
       { path: "créer-un-parcours", element: <ParcoursAdd /> },
       { path: "edit/:id/", element: <EditParcours /> },
       { path: "view/:id", element: <ParcoursView /> },
