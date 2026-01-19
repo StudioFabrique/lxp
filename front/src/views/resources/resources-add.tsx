@@ -146,29 +146,3 @@ export default function ResourceAdd() {
     </main>
   );
 }
-
-/* <>
-                  {previewActivity && previewActivity.type === "text" ? (
-                    <TiptapActivity
-                      id={
-                        previewActivity?.id ?? resource?.activities.length ?? 0
-                      }
-                      title={title}
-                      content={content}
-                      mode={activityState}
-                      onClose={handleCloseTextEditor}
-                      onEditTitle={setTitle}
-                      onEditContent={editActivityContent}
-                      onSave={() =>
-                        updateActivities(
-                          previewActivity
-                            ? previewActivity.id
-                            : resource?.id ?? 0,
-                          title,
-                          content,
-                          activityState
-                        )
-                      }
-                    />
-                  ) : null}
-                </> */
