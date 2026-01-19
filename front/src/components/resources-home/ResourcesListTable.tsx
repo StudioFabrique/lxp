@@ -24,6 +24,7 @@ export default function ResourcesListTable({
   fieldSort,
   direction,
   onSorting,
+  onDeleteResource,
 }: // onDeleteResource,
 //loading,
 Props) {
@@ -41,6 +42,10 @@ Props) {
       </>
     );
   }
+
+  const deleteRsource = (resource: ResourceListItem) => {
+    onDeleteResource(resource);
+  };
 
   const content = (
     <>
@@ -81,7 +86,10 @@ Props) {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer la ressource"
                     >
-                      <div className="cursor-pointer" onClick={() => {}}>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => deleteRsource(item)}
+                      >
                         <Trash2Icon className="w-4 h-4" />
                       </div>
                     </div>

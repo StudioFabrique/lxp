@@ -20,10 +20,11 @@ const resourceSchema = z.object({
       message: "Le titre contient des caractères non autorisés.",
     }),
   description: z
-    .string({ required_error: "La description est requise." })
+    .string()
     .regex(regexGeneric, {
       message: "La description contient des caractères non autorisés.",
-    }),
+    })
+    .optional(),
 });
 
 /**
