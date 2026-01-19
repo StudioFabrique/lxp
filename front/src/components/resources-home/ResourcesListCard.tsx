@@ -1,5 +1,4 @@
 import { Edit, Trash2 } from "lucide-react";
-import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import React, { useContext } from "react";
 import { ResourceListItem } from "../../views/resources/resources-home";
 import { DOWNLOAD_URL } from "../../config/urls";
@@ -10,9 +9,14 @@ import { Link } from "react-router-dom";
 type Props = {
   resourcesList?: ResourceListItem[] | null;
   children?: React.ReactNode;
+  onDeleteResource: (resource: ResourceListItem) => void;
 };
 
-export default function ResourcesListCard({ resourcesList, children }: Props) {
+export default function ResourcesListCard({
+  resourcesList,
+  children,
+  onDeleteResource,
+}: Props) {
   // Defensive: if resourcesList is not an array treat as empty
   const list = Array.isArray(resourcesList) ? resourcesList : [];
   const { theme } = useContext(Context);
@@ -38,7 +42,9 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
     );
   }
 
-  console.log({ isAllowed });
+  const deleteRsource = (resource: ResourceListItem) => {
+    onDeleteResource(resource);
+  };
 
   return (
     <>
@@ -59,26 +65,20 @@ export default function ResourcesListCard({ resourcesList, children }: Props) {
               <div className="flex justify-around items-end h-full">
                 {isAllowed ? (
                   <>
-                    <button
+                    <Link
+                      className="text-primary"
+                      to={`add/${item.id}`}
                       aria-label="modifier la ressource"
-                      className="tooltip tooltip-bottom cursor-pointer"
-                      data-tip="Modifier la ressource"
                     >
-                      <Edit className="text-primary w-4 h-4" />
-                    </button>
+                      <Edit className="w-4 h-4" />
+                    </Link>
                     <button
                       aria-label="supprimer la ressource tooltip-bottom"
                       className="tooltip tooltip-bottom cursor-pointer"
                       data-tip="Supprimer la ressource"
+                      onClick={() => deleteRsource(item)}
                     >
                       <Trash2 className="text-error w-4 h-4" />
-                    </button>
-                    <button
-                      className="text-primary w-4 h-4 cursor-pointer tooltip tooltip-bottom"
-                      data-tip="Voir la ressource"
-                      aria-label="Aperçu de la ressource"
-                    >
-                      <ArrowTopRightIcon />
                     </button>
                   </>
                 ) : (
