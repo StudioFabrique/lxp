@@ -7,6 +7,10 @@ import ResourcesListTable from "../../components/resources-home/ResourcesListTab
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import { useState } from "react";
+import Modal from "../../components/UI/modal/modal";
+import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+import useHttp from "../../hooks/use-http";
+import toast from "react-hot-toast";
 
 export type ResourceListItem = {
   id: string;
@@ -18,6 +22,9 @@ export type ResourceListItem = {
 
 export default function ResourcesHome() {
   const [showList, setShowList] = useState(true);
+  const [resourceToDelete, setResourceToDelete] =
+    useState<ResourceListItem | null>(null);
+  const { sendRequest } = useHttp();
 
   const notFoundMessage = (
     <ElementNotFound message="Aucune ressource disponible pour le moment." />
@@ -33,10 +40,28 @@ export default function ResourcesHome() {
     setPerPage,
     setPage,
     perPage,
+    getList,
   } = usePagination("title", "/resources");
 
   const handleToggleList = (value: boolean) => {
     setShowList(value);
+  };
+
+  const handleDeleteResource = () => {
+    const applyData = (data: SuccessWithMessage) => {
+      if (data.success) {
+        setResourceToDelete(null);
+        toast.success(data.message);
+        getList();
+      }
+    };
+    sendRequest(
+      {
+        path: `/resources/${resourceToDelete?.id}`,
+        method: "delete",
+      },
+      applyData,
+    );
   };
 
   return (
@@ -54,13 +79,16 @@ export default function ResourcesHome() {
               fieldSort={stype}
               direction={sdir}
               onSorting={sortData}
-              onDeleteResource={() => {}}
+              onDeleteResource={setResourceToDelete}
               loading={false}
             >
               {notFoundMessage}
             </ResourcesListTable>
           ) : (
-            <ResourcesListCard resourcesList={dataList}>
+            <ResourcesListCard
+              resourcesList={dataList}
+              onDeleteResource={setResourceToDelete}
+            >
               {notFoundMessage}
             </ResourcesListCard>
           )}
@@ -77,6 +105,18 @@ export default function ResourcesHome() {
           ) : null}
         </section>
       </ListHeader>
+      {resourceToDelete ? (
+        <Modal
+          onLeftClick={() => setResourceToDelete(null)}
+          onRightClick={handleDeleteResource}
+          title="Supprimer une ressource supplémentaire"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention l'activité sera supprimée définitivement.
+        </Modal>
+      ) : null}
     </main>
   );
 }

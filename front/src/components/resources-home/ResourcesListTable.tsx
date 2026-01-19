@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { truncateText } from "../../helpers/truncate-text";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
-import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import TableWrapper from "../UI/table-wrapper";
@@ -25,6 +24,7 @@ export default function ResourcesListTable({
   fieldSort,
   direction,
   onSorting,
+  onDeleteResource,
 }: // onDeleteResource,
 //loading,
 Props) {
@@ -42,6 +42,10 @@ Props) {
       </>
     );
   }
+
+  const deleteRsource = (resource: ResourceListItem) => {
+    onDeleteResource(resource);
+  };
 
   const content = (
     <>
@@ -82,23 +86,12 @@ Props) {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer la ressource"
                     >
-                      <div className="cursor-pointer" onClick={() => {}}>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => deleteRsource(item)}
+                      >
                         <Trash2Icon className="w-4 h-4" />
                       </div>
-                    </div>
-                  </div>
-                  <div className="w-4 h-4">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Aperçu de la ressource"
-                    >
-                      <Link
-                        className="text-primary w-4"
-                        to={`view/${item.id}`}
-                        aria-label="Aperçu de la ressource"
-                      >
-                        <ArrowTopRightIcon />
-                      </Link>
                     </div>
                   </div>
                 </div>

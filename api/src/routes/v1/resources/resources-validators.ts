@@ -1,8 +1,9 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import {
   stringValidateGeneric,
   stringValidateOptional,
 } from "../../../helpers/custom-validators";
+import { checkValidatorResult } from "../../../middleware/validators";
 
 export const postResourceValidator = [
   body("data.title")
@@ -13,11 +14,11 @@ export const postResourceValidator = [
   body("data.description")
     .isString()
     .withMessage(
-      "La description de la ressource doit être une chaîne de caractères."
+      "La description de la ressource doit être une chaîne de caractères.",
     )
     .custom(stringValidateOptional)
     .withMessage(
-      "La description de la ressource contient des caractères non autorisés."
+      "La description de la ressource contient des caractères non autorisés.",
     )
     .optional(),
   body("data.tags")
@@ -28,4 +29,14 @@ export const postResourceValidator = [
     .withMessage("Le nom du tag doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le nom du tag contient des caractères invalides."),
+];
+
+export const resourceIdValidator = [
+  param("resourceId")
+    .isNumeric()
+    .withMessage("Identifiant de ressource invalide")
+    .notEmpty()
+    .withMessage("Identifiant de ressource absent")
+    .escape(),
+  checkValidatorResult,
 ];

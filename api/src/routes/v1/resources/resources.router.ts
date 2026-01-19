@@ -5,16 +5,20 @@ import httpPostResource from "../../../controllers/resources/http-post-resource"
 import { uploadActivityImage } from "../../../middleware/upload-activity-image";
 import mediatheque from "../../../middleware/mediatheque";
 import jsonParser from "../../../middleware/json-parser";
-import { postResourceValidator } from "./resources-validators";
+import {
+  postResourceValidator,
+  resourceIdValidator,
+} from "./resources-validators";
 import httpGetResourceDetails from "../../../controllers/resources/http-get-resource-details";
 import httpPutResource from "../../../controllers/resources/http-put-resource";
+import httpDeleteResource from "../../../controllers/resources/http-delete-resource";
 
 const resourcesRouter = Router();
 
 resourcesRouter.get(
   "/:stype/:sdir",
   checkPermissions("lesson"),
-  httpGetResourcesList
+  httpGetResourcesList,
 );
 
 resourcesRouter.post(
@@ -24,13 +28,13 @@ resourcesRouter.post(
   mediatheque("image"),
   jsonParser,
   postResourceValidator,
-  httpPostResource
+  httpPostResource,
 );
 
 resourcesRouter.get(
   "/:resourceId",
   checkPermissions("lesson"),
-  httpGetResourceDetails
+  httpGetResourceDetails,
 );
 
 resourcesRouter.put(
@@ -39,7 +43,14 @@ resourcesRouter.put(
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
-  httpPutResource
+  httpPutResource,
+);
+
+resourcesRouter.delete(
+  "/:resourceId",
+  checkPermissions("lesson"),
+  resourceIdValidator,
+  httpDeleteResource,
 );
 
 export default resourcesRouter;
