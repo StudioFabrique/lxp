@@ -12,9 +12,15 @@ type Props = {
   events: CalendarEvent[];
   currentDate: Date;
   darkMode: boolean;
+  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
 };
 
-const MonthView = ({ events, currentDate, darkMode }: Props) => {
+const MonthView = ({
+  events,
+  currentDate,
+  darkMode,
+  onClickEventDetails,
+}: Props) => {
   const days = useMemo(() => {
     return getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
   }, [currentDate]);
@@ -44,7 +50,6 @@ const MonthView = ({ events, currentDate, darkMode }: Props) => {
       {/* Grid */}
       <div className="flex-1 grid grid-cols-7 grid-rows-6 auto-rows-fr overflow-y-auto">
         {days.map((cell, idx) => {
-          // --- LOGIC START ---
           const cellDate = cell.date;
           // Calculate 0-6 index for this specific cell (0=Mon, 6=Sun)
           let cellDayIndex = cellDate.getDay() - 1;
@@ -52,16 +57,13 @@ const MonthView = ({ events, currentDate, darkMode }: Props) => {
 
           const dayEvents = events.filter((event) => {
             if (event.date) {
-              // 1. One-off Event: Check exact date match
+              // One-off Event: Check exact date match
               return isSameDate(event.date, cellDate);
             } else {
-              // 2. Recurring Event: Check day index match (only if displayed in valid context)
-              // Note: You might want to hide recurring events from previous/next months
-              // to reduce noise, but standard calendars usually show them.
+              // Recurring Event: Check day index match (only if displayed in valid context)
               return event.dayIndex === cellDayIndex;
             }
           });
-          // --- LOGIC END ---
 
           const isToday = isSameDate(cellDate, now);
 
@@ -102,6 +104,12 @@ const MonthView = ({ events, currentDate, darkMode }: Props) => {
                   return (
                     <div
                       key={`${event.id}-${idx}`}
+                      onClick={(e) =>
+                        onClickEventDetails?.(
+                          event.id,
+                          e.currentTarget.getBoundingClientRect()
+                        )
+                      }
                       className={`text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
                       title={event.title}
                     >

@@ -1,4 +1,4 @@
-import { Calendar, Home, Rocket, Toilet } from "lucide-react";
+import { Calendar, Home, Layers, Rocket } from "lucide-react";
 import SidebarItem from "./sidebar-parts/sidebar-item";
 
 type SharedSideBarProps = {
@@ -38,7 +38,7 @@ const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => {
       key="ressources-supp"
       currentRoute={currentRoute}
       itemPath={"ressources"}
-      icon={<Toilet className="w-4" />}
+      icon={<Layers className="w-4" />}
       linkTo={`/${currentRoute[0]}/ressources`}
     >
       Ressources Supplémentaires

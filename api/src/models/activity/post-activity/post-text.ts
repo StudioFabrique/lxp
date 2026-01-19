@@ -45,7 +45,7 @@ export default async function postActivityText(
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
   const uniqueID: string = uuidv4();
-  const fileName: string = uniqueID + new Date().getTime() + ".mdx";
+  const fileName: string = uniqueID + new Date().getTime() + ".html";
 
   try {
     const file = fs.writeFileSync(
