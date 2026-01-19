@@ -22,6 +22,7 @@ const ContenuItem: FC<{
 
   return (
     <div
+      data-testid="contenu-item"
       className={`flex gap-x-2 items-center ${
         selectedModuleId === module.id ? "text-base-100" : "text-base-content"
       }`}

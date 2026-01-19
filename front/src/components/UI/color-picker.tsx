@@ -75,7 +75,7 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
               type="color"
               value={selectedColor}
               onChange={(e) => handleColorSelect(e.target.value)}
-              className="input input-bordered input-sm p-0 w-10 h-10 cursor-pointer"
+              className="input border-0 input-sm p-0 w-10 h-10 cursor-pointer"
             />
           </div>
 

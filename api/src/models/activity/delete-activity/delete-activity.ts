@@ -2,165 +2,78 @@ import fs, { readdirSync } from "fs";
 import path from "path";
 
 import { prisma } from "../../../utils/db";
-import {
-  Activity,
-  BonusActivity,
-  ResourceActivity,
-  ResourceBonusActivity,
-} from "../../../../generated/prisma/client";
+import { TransactionClient } from "../../../../generated/prisma/internal/prismaNamespace";
 
 export default async function deleteActivity(
   activityId: number,
   type: string,
-  parent = "lesson"
+  parent = "lesson",
 ) {
-  let existingActivity: Activity | BonusActivity | null = null;
+  const existingActivity = await (parent === "lesson"
+    ? prisma.activity.findFirst({
+        where: { id: activityId },
+        include: { resourceActivities: true },
+      })
+    : prisma.bonusActivity.findFirst({
+        where: { id: activityId },
+        include: { resourceBonusActivities: true },
+      }));
 
-  if (parent === "lesson")
-    existingActivity = await prisma.activity.findFirst({
-      where: { id: activityId },
-      include: {
-        resourceActivities: true,
-      },
-    });
-  else
-    existingActivity = await prisma.bonusActivity.findFirst({
-      where: { id: activityId },
-      include: {
-        resourceBonusActivities: true,
-      },
-    });
-
-  if (!existingActivity)
+  if (!existingActivity) {
     throw { statusCode: 404, message: "L'activité n'existe pas" };
+  }
+
+  const activityFolder = path.resolve(
+    __dirname,
+    "../../../../uploads/activities",
+  );
+  const filePath = path.join(activityFolder, existingActivity.url);
 
   await prisma.$transaction(async (tx) => {
-    parent === "lesson"
-      ? await tx.activity.delete({ where: { id: activityId } })
-      : await tx.bonusActivity.delete({ where: { id: activityId } });
-
-    const activityToDelete = await tx.activity.findUnique({
-      where: { id: activityId },
-    });
-
-    if (!activityToDelete) {
-      console.log(`Activity ${activityId} already deleted, skipping...`);
-      return;
-    }
-
-    await tx.activity.delete({
-      where: { id: activityId },
-    });
-
-    // Gestion des activités de type vidéo (fichier viédo ou lien externe)
-    if (type === "video" && existingActivity.url.startsWith("https://")) return;
-
-    // Gestion des activités de type texte (fichier markdown)
-    if (type === "text") {
-      const filePath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "uploads",
-        "activities",
-        existingActivity.url
-      );
-
-      // Lecture du contenu du fichier pour les autres types d'activités
-      const fileContent = fs.readFileSync(filePath, "utf-8");
-
-      // Extraction des URLs d'images du contenu
-      const filesUrls = extraireURLImages(fileContent);
-      let imageFiles = filesUrls.map((item: string) => extraireNomImage(item));
-
-      try {
-        const dirFiles = readdirSync(
-          path.join(
-            __dirname,
-            "..",
-            "..",
-            "..",
-            "..",
-            "uploads",
-            "activities",
-            "images"
-          )
-        );
-
-        // Supprime les images associées si elles existent
-        if (imageFiles.length > 0) {
-          for (const elem of imageFiles) {
-            const imagePath = path.join(
-              __dirname,
-              "..",
-              "..",
-              "..",
-              "uploads",
-              "activities",
-              "images",
-              elem!
-            );
-            const image = dirFiles.find((item) => item.includes(elem!));
-            if (image) {
-              await tx.mediatheque.updateMany({
-                where: { url: image },
-                data: {
-                  used: {
-                    decrement: 1,
-                  },
-                },
-              });
-            }
-          }
-        }
-
-        await fs.promises.unlink(filePath);
-        return;
-      } catch (error) {
-        console.log({ error });
-
-        throw {
-          statusCode: 500,
-          message: "Erreur lors de la suppression du fichier",
-        };
-      }
+    // Delete Activity
+    if (parent === "lesson") {
+      await tx.activity.delete({ where: { id: activityId } });
+    } else {
+      await tx.bonusActivity.delete({ where: { id: activityId } });
     }
 
     if (type === "resource") {
-      if (parent === "lesson") {
-        await updateMediatheque(
-          (
-            existingActivity as Activity & {
-              resourceActivities: ResourceActivity[];
-            }
-          ).resourceActivities
-        );
-      } else {
-        await updateMediatheque(
-          (
-            existingActivity as BonusActivity & {
-              resourceBonusActivities: ResourceBonusActivity[];
-            }
-          ).resourceBonusActivities
-        );
+      const resources =
+        (existingActivity as any).resourceActivities ||
+        (existingActivity as any).resourceBonusActivities ||
+        [];
+      await updateMediatheque(resources, tx);
+    } else if (type === "text") {
+      console.log({ filePath });
+      if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        const names = extraireURLImages(fileContent)
+          .map(extraireNomImage)
+          .filter(Boolean);
+
+        // Convert names to objects matching the helper's expected shape
+        const resources = names.map((name) => ({ url: name! }));
+        console.log({ resources });
+        await updateMediatheque(resources, tx);
       }
-      return;
+    } else if (!(type === "video" && existingActivity.url.startsWith("http"))) {
+      await updateMediatheque([{ url: existingActivity.url }], tx);
     }
-
-    // Mise à jour de la médiathèque (décrémentation du compteur d'utilisation)
-    await tx.mediatheque.updateMany({
-      where: { url: existingActivity.url },
-      data: {
-        used: {
-          decrement: 1,
-        },
-      },
-    });
-
-    return;
   });
+
+  // File System Cleanup
+  if (
+    type === "text" ||
+    (type === "video" && !existingActivity.url.startsWith("http"))
+  ) {
+    try {
+      if (fs.existsSync(filePath)) {
+        await fs.promises.unlink(filePath);
+      }
+    } catch (error) {
+      console.error("FS Error:", error);
+    }
+  }
 }
 
 /**
@@ -169,16 +82,17 @@ export default async function deleteActivity(
  * @returns
  */
 function extraireURLImages(texte: string): string[] {
-  const regex = /!\[\]\((.*?)\)/g;
-  const matches = texte.match(regex);
-  if (matches) {
-    return matches.map((match) => {
-      const urlRegex = /\(([^)]+)\)/;
-      const urlMatch = match.match(urlRegex);
-      return urlMatch ? urlMatch[1] : "";
-    });
+  // Regex matches <img src="URL"> and captures the URL inside the quotes
+  const regex = /<img[^>]+src="([^">]+)"/g;
+  const matches = [];
+  let match;
+
+  while ((match = regex.exec(texte)) !== null) {
+    matches.push(match[1]); // match[1] is the captured URL
   }
-  return [];
+
+  console.log({ extractedUrls: matches });
+  return matches;
 }
 
 /**
@@ -187,22 +101,22 @@ function extraireURLImages(texte: string): string[] {
  * @returns Le nom de l'image ou null si non trouvé
  */
 function extraireNomImage(url: string): string | null {
-  const regex = /images\/(.*?)\./;
-  const match = url.match(regex);
-  return match ? match[1] : null;
+  // This extracts the image file name after the last '/'
+  const parts = url.split("/");
+  console.log({ parts });
+  return parts.length > 0 ? parts[parts.length - 1] : null;
 }
 
 async function updateMediatheque(
-  resource: ResourceActivity[] | ResourceBonusActivity[]
+  resources: { url: string }[],
+  tx: TransactionClient,
 ) {
-  for (const res of resource) {
-    await prisma.mediatheque.updateMany({
+  for (const res of resources) {
+    if (!res.url) continue;
+
+    await tx.mediatheque.updateMany({
       where: { url: res.url },
-      data: {
-        used: {
-          decrement: 1,
-        },
-      },
+      data: { used: { decrement: 1 } },
     });
   }
 }

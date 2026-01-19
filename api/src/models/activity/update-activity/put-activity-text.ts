@@ -51,7 +51,7 @@ export default async function putActivityText(
   }
 
   const uniqueID: string = uuidv4();
-  const fileName: string = uniqueID + new Date().getTime() + ".mdx";
+  const fileName: string = uniqueID + new Date().getTime() + ".html";
 
   try {
     const file = fs.writeFileSync(
