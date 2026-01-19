@@ -20,6 +20,7 @@ type SharedSideBarProps = {
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   const sidebarItems = [
     <SidebarItem
+      key="sidebar"
       itemPath={undefined}
       currentRoute={currentRoute}
       icon={<Home className="w-4" />}
