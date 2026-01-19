@@ -308,10 +308,12 @@ const useResource = () => {
       dispatch({ type: "SET_TAGS", payload: data.resourceDetails.tags ?? [] });
       initValues(data.resourceDetails);
     };
-    sendRequest(
-      { path: `/resources/${state.resourceId}`, method: "get" },
-      applyData,
-    );
+    if (state.resourceId) {
+      sendRequest(
+        { path: `/resources/${state.resourceId}`, method: "get" },
+        applyData,
+      );
+    }
   }, [sendRequest, state.resourceId, initValues]);
 
   /** Closes the text editor and resets to initial state */
@@ -422,7 +424,7 @@ const useResource = () => {
    * Fetches resource details if updating existing resource
    */
   useEffect(() => {
-    if (resourceId) {
+    if (resourceId !== undefined && resourceId !== null) {
       dispatch({ type: "SET_MODE", payload: "update" });
       dispatch({ type: "SET_RESOURCE_ID", payload: resourceId });
       getResourceDetails();
