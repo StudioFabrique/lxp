@@ -1,19 +1,41 @@
-import RepertoryImport from "../../../components/import-courses/repertory-import";
-import useImportModules from "../hooks/use-import-modules";
+import ImportResult from "../../../components/import-modules/import-result";
+import ZipImport from "../../../components/import-modules/zip-import";
+import Header from "../../../components/UI/header";
+import useImportModules, {
+  ModulesImportStep,
+} from "../hooks/use-import-modules";
 
 /**
  * Import de cours.
  * 1. Choisir le repertoire dans lequel un fichier json et des cours (type texte et document) sont présents.
- * 2. Après que la vérification du format est validée, choisir une formation puis un parcours. Ensuite clic sur le bouton "choisir le parcours".
- * 3. Montrer un récapitulatif des cours.
- * 4. Après la confirmation de l'utilisateur, créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
+ * 2. Montrer un récapitulatif des cours.
+ * 3. Après que la vérification du format est validée, choisir une formation puis un parcours. Ensuite un clic sur le bouton "choisir le parcours"
+ *    permet de passer à l'étape suivante.
+ * 4. Créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
  */
 const ImportModulesHome = () => {
-  const { importStep } = useImportModules();
+  const { step, onImportZip } = useImportModules();
+
+  const renderBody = () => {
+    switch (step) {
+      case ModulesImportStep.ZipImport:
+        // Folder picker input
+        // Show imported Modules -> Courses -> Lessons -> Activities
+        return <ZipImport onImportZip={onImportZip} />;
+      case ModulesImportStep.ImportResult:
+        return <ImportResult />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div>
-      <RepertoryImport />
+    <div className="flex flex-col gap-4">
+      <Header
+        title="Import de modules"
+        description="Importer des modules ainsi que tous les cours, leçons et activités associés."
+      />
+      {renderBody()}
     </div>
   );
 };
