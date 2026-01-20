@@ -98,7 +98,7 @@ const Details: FC<{
     <Wrapper>
       <div className="flex flex-col gap-5 max-w-[50vh]">
         <span className="flex justify-between">
-          <h2 className="font-bold text-xl">Details</h2>
+          <h2 className="font-bold text-xl">Détails</h2>
         </span>
         <div className="flex flex-col gap-y-8">
           <SelecterWithId
