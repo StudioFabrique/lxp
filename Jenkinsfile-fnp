@@ -26,6 +26,9 @@ pipeline {
                     file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
                     file(credentialsId: 'FNP_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    string(credentialsId : 'MIGRATOR_PG_URL', variable: 'FNP_MIGRATOR_PG_URL'
+                        
+                    )
                 ]) {
                     sh '''
                         echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
@@ -168,7 +171,7 @@ pipeline {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            npx prisma migrate deploy
+                            $MIGRATOR_PG_URL npx prisma migrate deploy
                         '
                     """
                 }
