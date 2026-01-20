@@ -171,8 +171,7 @@ pipeline {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            $MIGRATOR_PG_URL npx prisma migrate deploy
-                        '
+                            DATABASE_URL='${MIGRATOR_PG_URL}' npx prisma migrate deploy
                     """
                 }
             }
