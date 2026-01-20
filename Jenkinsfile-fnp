@@ -41,9 +41,9 @@ pipeline {
                         npm run install
                         npm run generate
                         npm run deploy
-
-                        echo "📂 Verifying dist/generated contains .js files:"
-                        ls -la ./api/dist/generated/prisma/ | head -10
+                        rm -rf ./api/dist/generated || true
+                        mkdir -p ./api/dist
+                        cp -r ./api/generated ./api/dist/generated
                     '''
                 }
             }
@@ -81,7 +81,7 @@ pipeline {
         }
         */
 
-        stage("Deploying to FNP") {
+        stage("Deploying to INFA") {
             steps {
                 withCredentials([
                     file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
@@ -168,8 +168,31 @@ pipeline {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            DATABASE_URL='${MIGRATOR_PG_URL}' npx prisma migrate deploy
-                            '
+                            npx prisma migrate deploy
+                        '
+                    """
+                }
+            }
+        }
+
+        stage("Generate Prisma Client") {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                ]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'set -eu
+                            cd /home/${USER}/${TARGET}
+
+                            echo "🔄 Regenerating Prisma Client with correct configuration..."
+                            npx prisma generate
+
+                            echo "✅ Prisma Client regenerated successfully"
+                        '
                     """
                 }
             }
