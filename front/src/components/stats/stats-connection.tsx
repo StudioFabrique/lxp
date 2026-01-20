@@ -11,10 +11,10 @@ export default function StatsConnection({
   connectionTime,
 }: StatsConnectionProps) {
   const categories = connectionTime.map((item) =>
-    localeDate(item.lastConnection)
+    localeDate(item.lastConnection),
   );
   const series = connectionTime.map((item) =>
-    Math.ceil(item.duration / 3600000)
+    Math.ceil(item.duration / 3600000),
   );
 
   return (
