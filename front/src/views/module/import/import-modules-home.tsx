@@ -1,5 +1,5 @@
 import ImportResult from "../../../components/import-modules/import-result";
-import ZipImport from "../../../components/import-modules/zip-import";
+import ZipImport from "../../../components/import-modules/zip-import/zip-import";
 import Header from "../../../components/UI/header";
 import useImportModules, {
   ModulesImportStep,
@@ -21,8 +21,10 @@ const ImportModulesHome = () => {
       case ModulesImportStep.ZipImport:
         // Folder picker input
         // Show imported Modules -> Courses -> Lessons -> Activities
+        // Select the associated parcours and confirm the import
         return <ZipImport onImportZip={onImportZip} />;
       case ModulesImportStep.ImportResult:
+        // Send activites to the server, then show the result of the importation
         return <ImportResult />;
       default:
         return null;

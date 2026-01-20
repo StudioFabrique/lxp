@@ -12,7 +12,7 @@ export enum ModulesImportStep {
 
 // Module type altered to be compatible with the current context
 // Adding value to Activity type
-type ModuleImportType = Module & {
+export type ModuleImportType = Module & {
   courses: (Course & {
     lessons: (Lesson & { activities: (Activity & { value: string })[] })[];
   })[];
@@ -27,6 +27,8 @@ export default function useImportModules() {
 
   // Modules with his courses, lessons and associated activities
   const [importedModules, setImportedModules] = useState<ModuleImportType[]>();
+  // Selected modules to import
+  const [selectedModules, setSelectedModules] = useState<ModuleImportType[]>();
 
   // const [formationsList, setFormationsList] = useState<Formation[]>();
   // const [selectedFormation, setSelectedFormation] = useState<Formation>();
