@@ -192,7 +192,7 @@ pipeline {
                             cd /home/${USER}/${TARGET}
 
                             echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            npx prisma generate
+                            DATABASE_URL='${MIGRATOR_PG_URL}' npx prisma generate
 
                             echo "✅ Prisma Client regenerated successfully"
                         '
