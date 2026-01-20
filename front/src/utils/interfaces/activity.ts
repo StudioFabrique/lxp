@@ -11,7 +11,13 @@ export interface Activity {
   resourceBonusActivities?: Resource[];
 }
 
-export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
+export type ActivityType =
+  | "text"
+  | "image"
+  | "video"
+  | "iframe"
+  | "resource"
+  | "file";
 
 export interface Resource {
   id: number;
