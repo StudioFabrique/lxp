@@ -41,9 +41,9 @@ pipeline {
                         npm run install
                         npm run generate
                         npm run deploy
-                        rm -rf ./api/dist/generated || true
-                        mkdir -p ./api/dist
-                        cp -r ./api/generated ./api/dist/generated
+
+                        echo "📂 Verifying dist/generated contains .js files:"
+                        ls -la ./api/dist/generated/prisma/ | head -10
                     '''
                 }
             }
@@ -174,7 +174,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage("Starting app") {
             steps {
                 withCredentials([
