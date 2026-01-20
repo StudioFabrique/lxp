@@ -14,7 +14,7 @@ import useImportModules, {
  * 4. Créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
  */
 const ImportModulesHome = () => {
-  const { step, onImportZip } = useImportModules();
+  const { step, onImportZip, importedModules } = useImportModules();
 
   const renderBody = () => {
     switch (step) {
@@ -22,7 +22,12 @@ const ImportModulesHome = () => {
         // Folder picker input
         // Show imported Modules -> Courses -> Lessons -> Activities
         // Select the associated parcours and confirm the import
-        return <ZipImport onImportZip={onImportZip} />;
+        return (
+          <ZipImport
+            onImportZip={onImportZip}
+            importedModules={importedModules}
+          />
+        );
       case ModulesImportStep.ImportResult:
         // Send activites to the server, then show the result of the importation
         return <ImportResult />;
