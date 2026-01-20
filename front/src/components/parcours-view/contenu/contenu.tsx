@@ -11,6 +11,7 @@ import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Context } from "../../../store/context.store";
 import { useSelector } from "react-redux";
 import Contact from "../../../utils/interfaces/contact";
+import { ImportIcon } from "lucide-react";
 
 type ContenuProps = {
   modules: Module[];
@@ -20,13 +21,13 @@ const Contenu = ({ modules }: ContenuProps) => {
   const { user } = useContext(Context);
   const contacts = useSelector(
     (state: { parcoursContacts: { currentContacts: Contact[] } }) =>
-      state.parcoursContacts.currentContacts
+      state.parcoursContacts.currentContacts,
   );
 
   const { id: parcoursId } = useParams();
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    modules ? modules[0] : null
+    modules ? modules[0] : null,
   );
 
   const canEditParcoursContent = userBelongsToContacts(user, contacts);
@@ -55,17 +56,29 @@ const Contenu = ({ modules }: ContenuProps) => {
             Contenu du parcours
           </h2>
           {canEditParcoursContent && (
-            <Can action="update" object="parcours">
+            <div className="flex gap-5">
               <Link
-                to={`/admin/parcours/edit/${parcoursId}?step=${4}`}
-                className="btn btn-primary text-base-100"
+                className="btn btn-primary btn-soft"
+                to="import-modules"
+                state={{ parcoursId }}
               >
-                <span className="h-5 w-5">
-                  <EditIcon />
-                </span>
-                Modifier
+                <div className="flex gap-x-2 items-center">
+                  <ImportIcon />
+                  Importer des modules
+                </div>
               </Link>
-            </Can>
+              <Can action="update" object="parcours">
+                <Link
+                  to={`/admin/parcours/edit/${parcoursId}?step=${4}`}
+                  className="btn btn-primary text-base-100"
+                >
+                  <span className="h-5 w-5">
+                    <EditIcon />
+                  </span>
+                  Modifier
+                </Link>
+              </Can>
+            </div>
           )}
         </span>
         <div

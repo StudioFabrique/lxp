@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React from "react";
-const ParcoursImportCourses = React.lazy(
-  () => import("../../views/parcours/parcours-import-courses"),
+const ImportModulesHome = React.lazy(
+  () => import("../../views/module/import/import-modules-home"),
 );
 const RoleEdit = React.lazy(() => import("../../views/role/role-edit"));
 const AdminHome = React.lazy(
@@ -174,7 +174,6 @@ const adminRoutes = [
     element: <ParcoursLayout />,
     children: [
       { index: true, element: <ParcoursHome /> },
-      { path: "import-cours", element: <ParcoursImportCourses /> },
       { path: "créer-un-parcours", element: <ParcoursAdd /> },
       { path: "edit/:id/", element: <EditParcours /> },
       { path: "view/:id", element: <ParcoursView /> },
@@ -220,6 +219,7 @@ const adminRoutes = [
         index: true,
         element: <ModuleHome />,
       },
+      { path: "import-modules", element: <ImportModulesHome /> },
       {
         path: "add/",
         element: <ModuleAdd />,

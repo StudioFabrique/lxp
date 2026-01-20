@@ -75,6 +75,7 @@ export default function ModuleComponent() {
         {/* Header with action buttons */}
         <ModuleHeader
           showForm={showForm}
+          parcoursId={parcours?.id}
           onCreateNew={() => setShowForm(true)}
           onAddExisting={handleDuplicateModule}
         />
