@@ -174,38 +174,7 @@ pipeline {
                 }
             }
         }
-
-        stage("Generate Prisma Client") {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
-                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
-                    string(credentialsId: 'FNP_USER', variable: 'USER'),
-                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "set -eu
-                            cd /home/$USER/$TARGET
-
-                            echo '🔄 Regenerating Prisma Client...'
-                            DATABASE_URL='$MIGRATOR_PG_URL' npx prisma generate
-
-                            echo '📦 Copying generated client to dist folder...'
-                            rm -rf ./dist/generated
-                            cp -r ./generated ./dist/generated
-
-                            echo '📂 Verifying copy:'
-                            ls -la ./dist/generated/prisma/
-
-                            echo '✅ Done'
-                        "
-                    '''
-                }
-            }
-        }
-
+        
         stage("Starting app") {
             steps {
                 withCredentials([
