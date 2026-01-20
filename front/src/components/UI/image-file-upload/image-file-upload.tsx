@@ -3,14 +3,32 @@ import toast from "react-hot-toast";
 import { maxSizeError } from "../../../helpers/max-size-error";
 import { Edit, Upload } from "lucide-react";
 
-const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
+const allowedExtensions = {
+  image: {
+    rgx: /(\.jpeg|\.jpg|\.png)$/i,
+    type: ["image/png", "image/jpeg", "image/jpg"],
+    pickerAccept: ".jpg, .jpeg, .png",
+  },
+  zip: {
+    rgx: /(\.zip)$/i,
+    type: "application/x-zip-compressed",
+    pickerAccept: ".zip",
+  },
+};
 
-const ImageFileUpload: FC<{
+const FileUpload: FC<{
   maxSize: number;
-  label: string;
+  label?: string;
+  fileType?: "image" | "zip";
   variant?: "normal" | "minimized";
   onSetFile: (file: File) => void;
-}> = ({ maxSize, onSetFile, label, variant = "normal" }) => {
+}> = ({
+  maxSize,
+  onSetFile,
+  label,
+  variant = "normal",
+  fileType = "image",
+}) => {
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -18,11 +36,10 @@ const ImageFileUpload: FC<{
     if (event.target.files) {
       const selectedFile = event.target.files[0];
       if (selectedFile && selectedFile !== undefined) {
-        if (!selectedFile.type.startsWith("image/")) {
-          toast.error("Ce fichier n'est pas un fichier image");
-          return;
-        }
-        if (!allowedExtensions.test(selectedFile.name)) {
+        if (
+          !allowedExtensions[fileType].rgx.test(selectedFile.name) &&
+          !allowedExtensions[fileType].type.includes(selectedFile.type)
+        ) {
           toast.error("Extension de fichier non autorisée");
           return;
         }
@@ -51,7 +68,7 @@ const ImageFileUpload: FC<{
         variant === "normal" ? "flex-col" : "flex-row"
       } gap-y-2 justify-center`}
     >
-      {label.length > 0 ? <p>{label}</p> : null}
+      {label?.length ? <p>{label}</p> : null}
       <span className="flex w-full items-center justify-end">
         <div
           onClick={handleSetFile}
@@ -78,17 +95,17 @@ const ImageFileUpload: FC<{
       <input
         ref={fileRef}
         type="file"
-        accept=".jpg, ;jpeg, .png, .webp, .gif"
+        accept={allowedExtensions[fileType].pickerAccept}
         className="hidden"
         onChange={handleFileChange}
         name="file"
-        aria-label="téléverser une image"
+        aria-label="téléverser un fichier"
         id="file"
       />
     </div>
   );
 };
 
-const MemoizedImageFileUpload = React.memo(ImageFileUpload);
+const MemoizedFileUpload = React.memo(FileUpload);
 
-export default MemoizedImageFileUpload;
+export default MemoizedFileUpload;
