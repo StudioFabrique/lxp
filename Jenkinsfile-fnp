@@ -81,7 +81,7 @@ pipeline {
         }
         */
 
-        stage("Deploying to INFA") {
+        stage("Deploying to FNP") {
             steps {
                 withCredentials([
                     file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
@@ -154,7 +154,6 @@ pipeline {
         stage('Run Prisma migrations (DDL)') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
