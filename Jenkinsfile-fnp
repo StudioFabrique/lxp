@@ -26,7 +26,7 @@ pipeline {
                     file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
                     file(credentialsId: 'FNP_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    string(credentialsId : 'MIGRATOR_PG_URL', variable: 'FNP_MIGRATOR_PG_URL'
+                    string(credentialsId : 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'
                         
                     )
                 ]) {
