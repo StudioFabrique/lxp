@@ -1,4 +1,5 @@
-import RepertoryImport from "../../components/import-courses/repertory-import";
+import RepertoryImport from "../../../components/import-courses/repertory-import";
+import useImportModules from "../hooks/use-import-modules";
 
 /**
  * Import de cours.
@@ -7,7 +8,9 @@ import RepertoryImport from "../../components/import-courses/repertory-import";
  * 3. Montrer un récapitulatif des cours.
  * 4. Après la confirmation de l'utilisateur, créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
  */
-const ParcoursImportCourses = () => {
+const ImportModulesHome = () => {
+  const { importStep } = useImportModules();
+
   return (
     <div>
       <RepertoryImport />
@@ -15,4 +18,4 @@ const ParcoursImportCourses = () => {
   );
 };
 
-export default ParcoursImportCourses;
+export default ImportModulesHome;
