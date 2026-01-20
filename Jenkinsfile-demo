@@ -23,7 +23,7 @@ pipeline {
         stage("Build App") {
             steps {
                 withCredentials([
-                    file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
+                    file(credentialsId: 'DEMO_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
                     file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
                 ]) {
