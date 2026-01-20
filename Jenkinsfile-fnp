@@ -26,9 +26,6 @@ pipeline {
                     file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
                     file(credentialsId: 'FNP_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    string(credentialsId : 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'
-                        
-                    )
                 ]) {
                     sh '''
                         echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
@@ -192,10 +189,23 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'set -eu
                             cd /home/${USER}/${TARGET}
 
-                            echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            DATABASE_URL='${MIGRATOR_PG_URL}' npx prisma generate
+                            echo "📂 Current directory structure:"
+                            ls -la
+                            
+                            echo "📂 Prisma folder:"
+                            ls -la prisma/ || echo "No prisma folder"
 
-                            echo "✅ Prisma Client regenerated successfully"
+                            echo "🔄 Regenerating Prisma Client..."
+                            DATABASE_URL="${MIGRATOR_PG_URL}" npx prisma generate
+
+                            echo "📂 Checking where generated folder is:"
+                            find . -type d -name "generated" 2>/dev/null || echo "No generated folder found"
+                            find . -type d -name "prisma" 2>/dev/null
+                            
+                            echo "📦 Copying generated client to dist folder..."
+                            cp -r ./generated ./dist/generated || echo "Copy failed - generated not found at ./generated"
+
+                            echo "✅ Done"
                         '
                     """
                 }
