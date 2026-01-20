@@ -19,10 +19,14 @@ export default async function getUserData(userId: string) {
       password: 0,
       emailVerified: 0,
       invitationSent: 0,
-      isActive: 0,
       studentFeedbacks: 0,
       graduations: 0,
-    }
+      address: 0,
+      nickname: 0,
+      birthDate: 0,
+      postCode: 0,
+      city: 0,
+    },
   )
     .populate("connectionInfos") // Include connection history data
     .populate("group", { image: 0 }) // Include group data but exclude images
@@ -49,7 +53,7 @@ export default async function getUserData(userId: string) {
     const last = item?.lastConnection
       ? new Date(item.lastConnection).getTime()
       : 0;
-    return last >= now - 15 * 24 * 3600 * 1000;
+    return last >= now - 60 * 24 * 3600 * 1000;
   });
 
   // Create array to store missing connection days
