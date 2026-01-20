@@ -172,6 +172,7 @@ pipeline {
 
                             # Migration avec user DDL (least privilege respecté)
                             DATABASE_URL='${MIGRATOR_PG_URL}' npx prisma migrate deploy
+                            '
                     """
                 }
             }
