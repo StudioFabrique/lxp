@@ -55,12 +55,9 @@ export default async function getUserLastParcours(userId: string) {
 
       // safe conversion: Buffer.isBuffer check and fallback if `.toString` exists
       try {
-        if (
-          item.thumb &&
-          (Buffer.isBuffer(item.thumb) ||
-            typeof (item.thumb as any).toString === "function")
-        ) {
-          thumbBase64 = (item.thumb as any).toString("base64");
+        if (item && item.thumb) {
+          const tmp = Buffer.from(item.thumb);
+          thumbBase64 = tmp.toString("base64");
         }
       } catch {
         thumbBase64 = null;

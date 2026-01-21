@@ -30,7 +30,7 @@ export default async function getUserData(userId: string) {
   )
     .populate("connectionInfos") // Include connection history data
     .populate("group", { image: 0 }) // Include group data but exclude images
-    .populate("roles") // Include user roles
+    .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 }) // Include user roles
     .populate("hobbies")
     .populate("links")
     .lean()) as IUser;
@@ -177,15 +177,11 @@ export default async function getUserData(userId: string) {
     // Convert parcours image from Buffer to base64 string if it exists
     if (parcours && parcours.image) {
       try {
-        // protect against non-buffer values
+        // Convert Buffer/Uint8Array to base64 string for frontend consumption
+        const imageBuffer = Buffer.from(parcours.image);
         parcours = {
           ...parcours,
-          image:
-            parcours.image &&
-            typeof parcours.image === "object" &&
-            "toString" in parcours.image
-              ? (parcours.image as any).toString("base64")
-              : parcours.image,
+          image: imageBuffer.toString("base64"),
         };
       } catch {
         // ignore image conversion errors and leave image as-is
