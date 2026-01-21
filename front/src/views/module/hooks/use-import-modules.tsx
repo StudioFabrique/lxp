@@ -13,7 +13,17 @@ export enum ModulesImportStep {
   ImportResult,
 }
 
-export type ActivityImportType = Activity & { value?: string };
+export type ActivityImportType = Activity & { value?: string | Blob };
+
+type JsonFileFormat = {
+  type: "text" | "file";
+  title: string;
+  module: string;
+  course: string;
+  lesson: string;
+  order: number;
+  path: string;
+};
 
 export type ModuleImportType = Module & {
   courses: (Course & {
@@ -55,7 +65,7 @@ export default function useImportModules() {
 
       const rootPath = exportFile.name.replace("export.json", "");
       const jsonContent = await exportFile.async("string");
-      const flatActivities = JSON.parse(jsonContent);
+      const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
       const modulesMap = new Map<string, ModuleImportType>();
 
@@ -128,6 +138,12 @@ export default function useImportModules() {
           const fullZipPath = rootPath + relativePath;
           const fileInZip = loadedZip.file(fullZipPath);
 
+          if (!fileInZip) {
+            const newError = `Fichier introuvable: ${fullZipPath}`;
+            console.warn(newError);
+            setError(newError);
+          }
+
           const activity: ActivityImportType = {
             id: Math.random(),
             title: item.title,
@@ -136,16 +152,14 @@ export default function useImportModules() {
             url: item.path,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            value: fileInZip ? await fileInZip.async("string") : "",
+            value: fileInZip
+              ? await fileInZip.async(item.type === "text" ? "string" : "blob")
+              : "",
             resourceActivities: [],
             resourceBonusActivities: [],
           } as ActivityImportType;
 
           currentLesson.activities?.push(activity);
-
-          if (!fileInZip) {
-            console.warn(`Fichier introuvable: ${fullZipPath}`);
-          }
         }
       }
 
