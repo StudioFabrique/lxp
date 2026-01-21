@@ -53,14 +53,14 @@ export default async function getUserData(userId: string) {
     const last = item?.lastConnection
       ? new Date(item.lastConnection).getTime()
       : 0;
-    return last >= now - 60 * 24 * 3600 * 1000;
+    return last >= now - 30 * 24 * 3600 * 1000;
   });
 
   // Create array to store missing connection days
   let newInfos: Array<any> = [];
 
   // Fill in missing days with zero duration for complete 14-day history
-  for (let delay = 14; delay > 0; delay--) {
+  for (let delay = 30; delay > 0; delay--) {
     const date = new Date(now - delay * 24 * 3600 * 1000);
 
     // Check if connection info exists for this specific day
@@ -193,6 +193,6 @@ export default async function getUserData(userId: string) {
   return {
     user,
     parcours: parcours ?? null,
-    parcoursCompletion: parcoursCompletion,
+    parcoursCompletion: Math.floor(parcoursCompletion),
   };
 }
