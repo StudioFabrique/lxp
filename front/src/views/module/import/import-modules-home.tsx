@@ -15,12 +15,13 @@ const ImportModulesHome = () => {
     // Data & Selection states
     formationsList,
     selectedFormation,
-    setSelectedFormation,
     parcoursList,
     selectedParcours,
+    setSelectedFormation,
     setSelectedParcours,
     // Actions
     onImportZip,
+    onRemoveModule,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,
@@ -35,6 +36,7 @@ const ImportModulesHome = () => {
             error={error}
             onImportZip={onImportZip}
             onConfirmZipImport={onConfirmImport}
+            onRemoveModule={onRemoveModule} // Passage de la prop
           />
         );
       case ModulesImportStep.ParcoursSelection:
@@ -51,7 +53,8 @@ const ImportModulesHome = () => {
           />
         );
       case ModulesImportStep.ImportResult:
-        return <ImportResult />;
+        if (!importedModules) return undefined;
+        return <ImportResult importedModules={importedModules} />;
       default:
         return null;
     }

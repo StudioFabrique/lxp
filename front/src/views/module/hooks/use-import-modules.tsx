@@ -8,7 +8,7 @@ import { cleanPath } from "../../../utils/zip-utils";
 import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
-import useHttp from "../../../hooks/use-http"; // Assure-toi que le chemin est bon
+import useHttp from "../../../hooks/use-http";
 
 export enum ModulesImportStep {
   ZipImport,
@@ -35,7 +35,7 @@ export type ModuleImportType = Module & {
 };
 
 export default function useImportModules() {
-  const { sendRequest } = useHttp(); // Utilisation du hook HTTP existant
+  const { sendRequest } = useHttp();
 
   const [step, setImportStep] = useState<ModulesImportStep>(
     ModulesImportStep.ZipImport,
@@ -58,8 +58,6 @@ export default function useImportModules() {
   const [error, setError] = useState<string>("");
 
   // --- LOGIQUE API ---
-
-  // 1. Charger les formations quand on arrive sur l'étape ParcoursSelection
   useEffect(() => {
     if (step === ModulesImportStep.ParcoursSelection) {
       const processData = (data: Formation[]) => {
@@ -69,17 +67,14 @@ export default function useImportModules() {
     }
   }, [step, sendRequest]);
 
-  // 2. Charger les parcours quand une formation est sélectionnée
   useEffect(() => {
     if (selectedFormation) {
-      // Reset parcours selection
       setParcoursList([]);
       setSelectedParcours(null);
 
       const processData = (data: { data: Parcours[] }) => {
         setParcoursList(data.data);
       };
-      // Endpoint basé sur ton ancien code
       sendRequest(
         {
           path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
@@ -90,7 +85,7 @@ export default function useImportModules() {
     }
   }, [selectedFormation, sendRequest]);
 
-  // --- LOGIQUE ZIP (Inchangée mais condensée pour la lisibilité) ---
+  // --- LOGIQUE ZIP ---
   const onImportZip = async (file: File) => {
     setError("");
     setIsLoading(true);
@@ -129,7 +124,6 @@ export default function useImportModules() {
         }
         const currentModule = modulesMap.get(item.module)!;
 
-        // ... (Reste de la logique de parsing identique à ton code précédent)
         let currentCourse = currentModule.courses.find(
           (c) => c.title === item.course,
         );
@@ -199,23 +193,33 @@ export default function useImportModules() {
     }
   };
 
+  /**
+   * Supprime un module de la liste des modules importés
+   */
+  const onRemoveModule = (moduleTitle: string) => {
+    setImportedModules((prevModules) => {
+      if (!prevModules) return undefined;
+      const updatedList = prevModules.filter((m) => m.title !== moduleTitle);
+      // Si la liste est vide, on retourne undefined pour reset l'état du UI
+      return updatedList.length > 0 ? updatedList : undefined;
+    });
+  };
+
   const onConfirmImport = () => {
     setImportStep(ModulesImportStep.ParcoursSelection);
   };
 
-  /**
-   * Valide la sélection du parcours et passe à l'étape finale.
-   * Si parcours est null, on est en mode standalone.
-   */
-  const onConfirmParcoursSelection = () => {
+  const onConfirmParcoursSelection = (explicitParcours?: Parcours | null) => {
     if (importedModules) {
-      // On met à jour tous les modules importés avec le parcours sélectionné
+      const parcoursToApply =
+        explicitParcours !== undefined ? explicitParcours : selectedParcours;
+
       const updatedModules = importedModules.map((mod) => ({
         ...mod,
-        // Si un parcours est sélectionné, on l'associe, sinon on laisse tel quel (ou null)
-        parcours: selectedParcours ? selectedParcours : ({} as Parcours),
-        parcoursId: selectedParcours?.id,
+        parcours: parcoursToApply ? parcoursToApply : ({} as Parcours),
+        parcoursId: parcoursToApply?.id,
       }));
+
       setImportedModules(updatedModules);
     }
     setImportStep(ModulesImportStep.ImportResult);
@@ -233,15 +237,14 @@ export default function useImportModules() {
     importedModules,
     isLoading,
     error,
-    // Data Lists & Selection
     formationsList,
     selectedFormation,
-    setSelectedFormation,
     parcoursList,
     selectedParcours,
     setSelectedParcours,
-    // Actions
+    setSelectedFormation,
     onImportZip,
+    onRemoveModule,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,
