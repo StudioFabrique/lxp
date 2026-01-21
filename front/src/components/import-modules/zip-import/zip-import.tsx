@@ -47,8 +47,7 @@ const ZipImport = ({
       setSelectedModule(null);
     }
     setSelectedActivity(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [importedModules]);
+  }, [importedModules, selectedModule]);
 
   // Gestion du changement de module
   const handlePreviewModule = (module: ModuleImportType) => {
