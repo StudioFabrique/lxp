@@ -1,6 +1,7 @@
 import { Admin, Resource, Tag } from "../../../generated/prisma/client";
 import { getSoftColor } from "../../helpers/getSoftColors";
 import { prisma } from "../../utils/db";
+import { IRole } from "../../utils/interfaces/db/role";
 import User from "../../utils/interfaces/db/user";
 
 export default async function putResource(
@@ -9,7 +10,8 @@ export default async function putResource(
   title: string,
   description: string,
   tags: string[],
-  filename: string | null
+  filename: string | null,
+  roles: IRole[],
 ) {
   let updatedResource: Resource | null = null;
   const existingResource = await prisma.resource.findFirst({
@@ -29,6 +31,16 @@ export default async function putResource(
 
   if (!mongoUser) throw { message: "Utilisateur non trouvé", status: 404 };
 
+  if (
+    existingAuthor.id !== existingResource.adminId &&
+    !roles.find((r) => r.rank === 1)
+  )
+    throw {
+      statusCode: 405,
+      message:
+        "Vous ne pouvez pas modifier une ressource dont vous n'êtes pas l'auteur.",
+    };
+
   const existingTagIds = await prisma.tag.findMany({
     where: { name: { in: tags, mode: "insensitive" } },
   });
@@ -36,8 +48,8 @@ export default async function putResource(
   let remainingTags = tags.filter(
     (tag) =>
       !existingTagIds.some(
-        (existingTag) => existingTag.name.toLowerCase() === tag.toLowerCase()
-      )
+        (existingTag) => existingTag.name.toLowerCase() === tag.toLowerCase(),
+      ),
   );
 
   const newTags = remainingTags.map((tag) => ({
@@ -62,7 +74,7 @@ export default async function putResource(
       title,
       description,
       tagsToAdd,
-      filename
+      filename,
     );
   } else
     updatedResource = await updateResource(
@@ -72,7 +84,7 @@ export default async function putResource(
       title,
       description,
       existingTagIds,
-      filename
+      filename,
     );
 
   return {
@@ -89,7 +101,7 @@ async function updateResource(
   title: string,
   description: string,
   tags: Tag[],
-  filename: string | null
+  filename: string | null,
 ) {
   return await prisma.resource.update({
     where: { id: resourceId },
