@@ -1,17 +1,18 @@
 import { useState } from "react";
-import JSZip from "jszip"; // Import de la librairie
+import JSZip from "jszip";
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import { cleanPath } from "../../../utils/zip-utils";
+import Parcours from "../../../utils/interfaces/parcours";
+import Tag from "../../../utils/interfaces/tag";
 
 export enum ModulesImportStep {
   ZipImport,
   ImportResult,
 }
 
-// Type enrichi pour contenir le contenu (HTML string) de l'activité
 export type ActivityImportType = Activity & { value?: string };
 
 export type ModuleImportType = Module & {
@@ -30,46 +31,55 @@ export default function useImportModules() {
 
   const onImportZip = async (file: File) => {
     setIsLoading(true);
+    setImportedModules(undefined);
+
     try {
       const zip = new JSZip();
       const loadedZip = await zip.loadAsync(file);
 
-      // Lire le fichier export.json
-      const exportFile = loadedZip.file("export.json");
+      const foundFiles = loadedZip.file(/export\.json$/);
+      const exportFile = foundFiles.find(
+        (f) =>
+          !f.name.includes("__MACOSX") &&
+          !f.name.split("/").pop()?.startsWith("._"),
+      );
+
       if (!exportFile) {
-        throw new Error("Fichier export.json manquant");
+        throw new Error("Fichier export.json introuvable dans l'archive.");
       }
 
+      const rootPath = exportFile.name.replace("export.json", "");
       const jsonContent = await exportFile.async("string");
       const flatActivities = JSON.parse(jsonContent);
 
-      // Structure temporaire pour regrouper les données
       const modulesMap = new Map<string, ModuleImportType>();
 
-      // Parcourir chaque ligne du JSON pour reconstruire l'arborescence
       for (const item of flatActivities) {
-        // --- Gestion du Module ---
+        // --- MODULE ---
         if (!modulesMap.has(item.module)) {
           modulesMap.set(item.module, {
             title: item.module,
-            description: "", // Valeur par défaut
+            description: "",
             courses: [],
             contacts: [],
             bonusSkills: [],
             tags: [],
             duration: 0,
-            parcours: {}, // Mock pour le type
-          });
+            parcours: {} as Parcours,
+          } as ModuleImportType);
         }
         const currentModule = modulesMap.get(item.module)!;
 
-        // --- Gestion du Cours ---
+        // --- COURSE ---
+        // On force le typage ici pour éviter que TS pense que c'est "Course | undefined"
         let currentCourse = currentModule.courses.find(
           (c) => c.title === item.course,
         );
+
         if (!currentCourse) {
-          currentCourse = {
-            id: Math.random(), // ID temporaire pour les keys React
+          // Création de l'objet
+          const newCourse = {
+            id: Math.random(),
             title: item.course,
             module: currentModule,
             tags: [],
@@ -78,41 +88,49 @@ export default function useImportModules() {
             dates: [],
             bonusSkills: [],
             isPublished: false,
-            course: {},
-          } as unknown as Course & { lessons: Lesson[] }; // Cast rapide pour compatibilité
-          currentModule.courses.push(currentCourse);
+          } as Course & { lessons: Lesson[] };
+
+          currentModule.courses.push(newCourse);
+          currentCourse = newCourse;
         }
 
-        // --- Gestion de la Leçon ---
+        // --- LESSON ---
         let currentLesson = currentCourse.lessons.find(
           (l) => l.title === item.lesson,
         );
+
         if (!currentLesson) {
-          currentLesson = {
+          const newLesson = {
             id: Math.random(),
             title: item.lesson,
             description: "",
-            modalite: "elearning",
-            tag: {},
+            modalite: "hybride",
+            tag: {} as Tag,
             adminId: 0,
             course: currentCourse,
             activities: [],
             lessonRating: [],
-          };
-          currentCourse.lessons.push(currentLesson);
+          } as Lesson;
+
+          currentCourse.lessons.push(newLesson);
+          currentLesson = newLesson;
         }
 
-        // --- Lecture du contenu du fichier dans le ZIP ---
+        // --- CONTENT & ACTIVITY ---
         let content = "";
+
         if (item.path) {
-          const fileInZip = loadedZip.file(cleanPath(item.path));
+          const relativePath = cleanPath(item.path);
+          const fullZipPath = rootPath + relativePath;
+          const fileInZip = loadedZip.file(fullZipPath);
+
           if (fileInZip) {
-            // Si c'est du texte/html, on lit en string, sinon on pourrait lire en base64/blob
             content = await fileInZip.async("string");
+          } else {
+            console.warn(`Fichier introuvable: ${fullZipPath}`);
           }
         }
 
-        // --- Création de l'activité ---
         const activity: ActivityImportType = {
           id: Math.random(),
           title: item.title,
@@ -121,17 +139,17 @@ export default function useImportModules() {
           url: item.path,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          value: content, // On stocke le contenu HTML ici pour Tiptap
-        };
+          value: content,
+          resourceActivities: [],
+          resourceBonusActivities: [],
+        } as ActivityImportType;
 
-        currentLesson?.activities?.push(activity);
+        currentLesson.activities?.push(activity);
       }
 
-      // Conversion de la Map en Array
       setImportedModules(Array.from(modulesMap.values()));
     } catch (error) {
-      console.error("Erreur lors de l'import ZIP", error);
-      alert("Erreur lors de la lecture du fichier ZIP");
+      console.error("Erreur import ZIP", error);
     } finally {
       setIsLoading(false);
     }
@@ -140,11 +158,6 @@ export default function useImportModules() {
   const onConfirmImport = () => {
     setImportStep(ModulesImportStep.ImportResult);
   };
-
-  // --- Data Fetching from api ---
-  // const retreiveFormations = useCallback(() => {}, []);
-
-  // const retreiveParcours = useCallback(() => {}, []);
 
   return {
     step,
