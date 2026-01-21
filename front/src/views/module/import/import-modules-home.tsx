@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom";
 import ImportResult from "../../../components/import-modules/import-result";
+import ParcoursSelection from "../../../components/import-modules/parcours-selection";
 import ZipImport from "../../../components/import-modules/zip-import/zip-import";
 import Header from "../../../components/UI/header";
 import useImportModules, {
@@ -14,7 +16,8 @@ import useImportModules, {
  * 4. Créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
  */
 const ImportModulesHome = () => {
-  const { step, onImportZip, importedModules, error } = useImportModules();
+  const { step, importedModules, error, onImportZip, onConfirmImport } =
+    useImportModules();
 
   const renderBody = () => {
     switch (step) {
@@ -23,13 +26,15 @@ const ImportModulesHome = () => {
         // Show imported Modules -> Courses -> Lessons -> Activities
         return (
           <ZipImport
-            onImportZip={onImportZip}
             importedModules={importedModules}
             error={error}
+            onImportZip={onImportZip}
+            onConfirmZipImport={onConfirmImport}
           />
         );
       // Select the associated parcours and confirm the import
-      // case ;
+      case ModulesImportStep.ParcoursSelection:
+        return <ParcoursSelection />;
       case ModulesImportStep.ImportResult:
         // Send activites to the server, then show the result of the importation
         return <ImportResult />;
@@ -43,7 +48,11 @@ const ImportModulesHome = () => {
       <Header
         title="Import de modules"
         description="Importer des modules ainsi que tous les cours, leçons et activités associés."
-      />
+      >
+        <Link to={".."} className="btn btn-outline">
+          Annuler
+        </Link>
+      </Header>
       {renderBody()}
     </div>
   );

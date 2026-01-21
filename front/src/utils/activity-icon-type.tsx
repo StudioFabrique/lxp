@@ -14,6 +14,7 @@ const activityIconType = (type: Activity["type"], size?: number) => {
       return <Image className={iconSize} />;
     case "iframe":
       return <MonitorPlay className={iconSize} />;
+    case "file":
     case "resource":
       return <FileSpreadsheet className={iconSize} />;
     default:

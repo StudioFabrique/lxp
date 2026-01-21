@@ -70,13 +70,13 @@ const FileUpload: FC<{
     >
       {label?.length ? <p>{label}</p> : null}
       <span className="flex w-full items-center justify-end">
-        <div
+        <button
           onClick={handleSetFile}
-          className={`gap-2 px-5 flex ${
+          className={`btn gap-2 px-5 flex ${
             variant === "normal" ? "justify-center" : "justify-between"
-          } items-center cursor-pointer bg-primary text-base-100 text-center text-xs lg:text-sm p-2 rounded-l-lg ${
+          } items-center cursor-pointer btn-primary btn-soft text-center text-xs lg:text-sm p-2 rounded-l-sm ${
             variant === "normal" && "w-[50%]"
-          } h-10 last:rounded-r-lg`}
+          } h-10 last:rounded-r-sm`}
         >
           {variant === "minimized" &&
             (!fileName ? <Upload className="w-5" /> : <Edit className="w-5" />)}
@@ -85,7 +85,7 @@ const FileUpload: FC<{
               ? "Choisir un fichier"
               : fileName}
           </span>
-        </div>
+        </button>
         {variant === "normal" && (
           <p className="text-center my-auto p-2 text-xs lg:text-sm bg-secondary/50 rounded-r-lg w-full overflow-x-clip h-10">
             {fileName ?? "Aucun fichier choisi"}

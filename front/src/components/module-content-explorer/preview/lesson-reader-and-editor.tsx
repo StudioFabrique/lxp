@@ -38,7 +38,7 @@ type Props = {
   onSaveActivity: (
     id?: number,
     title?: string,
-    content?: string
+    content?: string,
   ) => Promise<boolean>;
 };
 
@@ -101,10 +101,7 @@ const LessonReaderAndEditor = ({
           {/* Header de l'activité : titre et menu contextuel */}
 
           <div className="font-semibold text-primary flex justify-between items-center">
-            <div
-              className="flex gap-1 items-center w-[92%]"
-              data-tip={toUpperFirstLetter(textActivityTitle)}
-            >
+            <div className="flex gap-1 items-center w-[92%]">
               <span className="w-5">{activityIconType(activityType)}</span>
               <span className="text-2xl px-2 w-fit">
                 {toUpperFirstLetter(textActivityTitle)}
