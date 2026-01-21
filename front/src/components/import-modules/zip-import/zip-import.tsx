@@ -82,7 +82,7 @@ const ZipImport = ({
         </div>
         <button
           className="btn btn-success hover:text-base-100 ml-5"
-          disabled={!importedModules}
+          disabled={!importedModules || Boolean(error)}
           onClick={onConfirmZipImport}
         >
           Confirmer l'importation
