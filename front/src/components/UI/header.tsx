@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 
 interface HeaderProps {
   title: string;
+  alternateBgColor?: boolean;
   disabled?: boolean;
   description?: string;
   classname?: string;
@@ -15,7 +16,7 @@ interface HeaderProps {
 const Header = (props: HeaderProps) => {
   return (
     <div
-      className={`w-full flex items-center justify-between p-4 rounded-lg bg-secondary/20 select-none ${props.disabled && "opacity-15"}`}
+      className={`w-full flex items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"}`}
     >
       <div>
         <h2
