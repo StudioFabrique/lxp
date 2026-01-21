@@ -1,10 +1,10 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { IRole } from "../utils/interfaces/db/role";
 
 export const activationToken = (
   userId: string,
   role: IRole,
-  expire: string
+  expire: SignOptions["expiresIn"],
 ) => {
   // création d'un token contenant l'id et le rôle de l'utilisateur
   const token = jwt.sign(
@@ -12,7 +12,7 @@ export const activationToken = (
     process.env.REGISTER_SECRET!,
     {
       expiresIn: expire,
-    }
+    },
   );
   return token;
 };
