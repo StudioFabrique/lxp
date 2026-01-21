@@ -57,7 +57,8 @@ const ModulesImportList = ({
               <details key={lIdx} className="group mt-2">
                 {/* Titre de la Leçon */}
                 <summary className="cursor-pointer list-none p-1 hover:text-primary transition-colors flex items-center font-medium text-base-content/80">
-                  <FilePen className="mr-2 w-4 h-4" /> {lesson.title}
+                  <FilePen className="mr-2 w-4 h-4" />{" "}
+                  {toUpperFirstLetter(lesson.title)}
                 </summary>
 
                 {/* Liste des Activités */}
@@ -82,7 +83,9 @@ const ModulesImportList = ({
                         >
                           {activityIconType(activity.type)}
                         </span>
-                        <span className="truncate">{activity.title}</span>
+                        <span className="truncate">
+                          {toUpperFirstLetter(activity.title)}
+                        </span>
                       </button>
                     );
                   })}

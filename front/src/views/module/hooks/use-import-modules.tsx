@@ -177,6 +177,17 @@ export default function useImportModules() {
     setImportStep(ModulesImportStep.ParcoursSelection);
   };
 
+  const onGoBack = () => {
+    setImportStep((currentStep) => {
+      // Prevent going below 0
+      if (currentStep <= ModulesImportStep.ZipImport) {
+        return currentStep;
+      }
+      // Simply decrement the index
+      return currentStep - 1;
+    });
+  };
+
   return {
     step,
     importedModules,
@@ -184,5 +195,6 @@ export default function useImportModules() {
     error,
     onImportZip,
     onConfirmImport,
+    onGoBack,
   };
 }
