@@ -8,6 +8,7 @@ import {
   ModuleImportType,
 } from "../../../views/module/hooks/use-import-modules";
 import { Eye, Trash2, CheckCircle2, Component } from "lucide-react";
+import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 
 type Props = {
   importedModules?: ModuleImportType[];
@@ -119,16 +120,14 @@ const ZipImport = ({
                       className="card-title text-base font-bold text-base-content truncate"
                       title={module.title}
                     >
-                      <Component /> {module.title}
+                      <Component /> {toUpperFirstLetter(module.title)}
                     </h3>
 
                     <div className="text-xs text-base-content/70 mt-1">
-                      {module.courses.length} cours •{" "}
-                      {module.courses.reduce(
+                      {`${module.courses.length} cours • ${module.courses.reduce(
                         (acc, c) => acc + c.lessons.length,
                         0,
-                      )}
-                      leçons
+                      )} leçons`}
                     </div>
 
                     <div className="card-actions justify-end mt-4 pt-4 border-t border-base-200">
@@ -160,7 +159,7 @@ const ZipImport = ({
           {selectedModule && (
             <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-200/50 rounded-xl border border-base-200 p-4 mt-2">
               {/* Colonne de gauche : Arborescence */}
-              <div className="col-span-4 overflow-y-auto border-r border-base-300 pr-4 custom-scrollbar">
+              <div className="select-none col-span-4 overflow-y-auto border-r border-base-300 pr-4 custom-scrollbar">
                 <h3 className="text-xs uppercase tracking-wide text-primary font-bold mb-3">
                   Module : {selectedModule.title}
                 </h3>

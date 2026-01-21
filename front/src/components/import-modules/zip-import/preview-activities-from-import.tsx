@@ -90,7 +90,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
 
   if (!activity) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-gray-400 p-10">
+      <div className="select-none h-full flex flex-col items-center justify-center text-gray-400 p-10">
         <EyeIcon className="w-12 h-12" />
         <p>
           Sélectionner une activité dans la menu de navigation pour
