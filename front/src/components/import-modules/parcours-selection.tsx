@@ -4,10 +4,12 @@ import {
   Ban,
   CheckCircle2,
   ArrowRight,
+  Rocket,
 } from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
+import { Link } from "react-router-dom";
 
 type Props = {
   formations: Formation[];
@@ -16,9 +18,9 @@ type Props = {
 
   parcoursList: Parcours[];
   selectedParcours: Parcours | null;
-  onSelectParcours: (parcours: Parcours) => void;
+  onSelectParcours: (parcours: Parcours | null) => void;
 
-  onConfirm: () => void;
+  onConfirm: (parcours?: Parcours | null) => void;
   onGoBack: () => void;
 };
 
@@ -32,9 +34,13 @@ const ParcoursSelection = ({
   onConfirm,
   onGoBack,
 }: Props) => {
-  // Détermine si le bouton final est activé
-  // Activé si : (Formation ET Parcours choisis) OU (Aucune formation -> mode standalone implicite via bouton dédié)
-  const canConfirm = !!(selectedFormation && selectedParcours);
+  // Détermine si le bouton de confirmation d'i,portation est activé
+  const canConfirm = Boolean(selectedFormation && selectedParcours);
+
+  const handleConfirmWithoutParcours = () => {
+    onSelectParcours(null);
+    onConfirm(null);
+  };
 
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
@@ -53,21 +59,34 @@ const ParcoursSelection = ({
         description="Selectionner le parcours auquels les modules seront rattachés"
         alternateBgColor
       >
+        {selectedParcours && (
+          <div className="flex font-bold text-sm items-center gap-2 mr-5">
+            <span>Parcours choisi :</span>
+            <Link
+              data-tip="Ouverture dans un nouvel onglet"
+              className="link hover:text-secondary tooltip tooltip-bottom"
+              to={`/admin/parcours/view/${selectedParcours.id}`}
+              target="_blank"
+            >
+              {selectedParcours.title}
+            </Link>
+          </div>
+        )}
         <button
-          className="btn btn-primary gap-2"
+          className="btn btn-success gap-2"
           disabled={!canConfirm}
-          onClick={onConfirm}
+          onClick={() => onConfirm(selectedParcours)}
         >
           Lancer l'importation <ArrowRight size={18} />
         </button>
       </Header>
 
-      <div className="flex flex-col gap-8 pb-10">
+      <div className="ml-10 flex flex-col gap-8 pb-10">
         {/* --- SECTION 1 : FORMATIONS --- */}
         <div className="flex flex-col gap-4">
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             <GraduationCap className="text-primary" />
-            Choisissez une formation
+            Choisir une formation
           </h3>
 
           {formations.length === 0 ? (
@@ -80,10 +99,7 @@ const ParcoursSelection = ({
                   <div
                     key={formation.id}
                     onClick={() => onSelectFormation(formation)}
-                    className={`
-                                    card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1
-                                    ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200 hover:border-primary/50"}
-                                `}
+                    className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200 hover:border-primary/50"}`}
                   >
                     <div className="card-body p-4 flex flex-row items-center gap-3">
                       <div
@@ -115,7 +131,7 @@ const ParcoursSelection = ({
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               <Waypoints className="text-secondary" />
-              Choisissez un parcours pour :{" "}
+              Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted">
                 {selectedFormation.title}
               </span>
@@ -133,16 +149,13 @@ const ParcoursSelection = ({
                     <div
                       key={parcours.id}
                       onClick={() => onSelectParcours(parcours)}
-                      className={`
-                                        card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200
-                                        ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}
-                                    `}
+                      className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}`}
                     >
                       <div className="card-body p-4 flex flex-row items-center gap-3">
                         <div
                           className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
                         >
-                          <Waypoints size={20} />
+                          <Rocket size={20} />
                         </div>
                         <span
                           className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
@@ -163,11 +176,11 @@ const ParcoursSelection = ({
 
         <div className="flex justify-center">
           <button
-            onClick={onConfirm} // On confirme directement sans parcours selectionné (selectedParcours est null ici)
+            onClick={handleConfirmWithoutParcours}
             className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
           >
             <Ban size={18} />
-            Continuer sans rattacher à un parcours (Modules orphelins)
+            Lancer l'importation sans rattacher à un parcours
           </button>
         </div>
       </div>
