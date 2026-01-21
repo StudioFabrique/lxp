@@ -1,7 +1,7 @@
 /**
  * Props for the ButtonButton component
  *
- * Big up to Martin Martin! 😉
+ * Big up to Martin Martin! 😉😉
  */
 
 type Props = {
