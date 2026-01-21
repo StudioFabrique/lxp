@@ -141,6 +141,10 @@ pipeline {
                     '''
 
                     sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
+                '''
+
+                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker network create lxp_network || true"
                     '''
 
