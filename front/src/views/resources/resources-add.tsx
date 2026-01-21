@@ -42,6 +42,8 @@ export default function ResourceAdd() {
     uploadVideo,
   } = useResource();
 
+  console.log({ resourceId });
+
   const placeholder = (
     <div className="border border-primary/20 rounded-lg p-8 h-[50vh] relative">
       <div className="m-auto xl:w-6/12">
@@ -58,6 +60,7 @@ export default function ResourceAdd() {
       <ActivityFloatingActionButton onTypeSelection={createNewActivity} />
     </div>
   );
+  console.log({ resourceId });
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
