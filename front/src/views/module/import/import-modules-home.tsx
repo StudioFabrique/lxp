@@ -7,29 +7,28 @@ import useImportModules, {
   ModulesImportStep,
 } from "../hooks/use-import-modules";
 
-/**
- * Import de cours.
- * 1. Choisir le repertoire dans lequel un fichier json et des cours (type texte et document) sont présents.
- * 2. Montrer un récapitulatif des modules et des cours.
- * 3. Après que la vérification du format est validée, choisir une formation puis un parcours. Ensuite un clic sur le bouton "choisir le parcours"
- *    permet de passer à l'étape suivante.
- * 4. Créer les modules, cours et leçons puis envoyer de façon progressive les activités au backend (avec une barre de progression).
- */
 const ImportModulesHome = () => {
   const {
     step,
     importedModules,
     error,
+    // Data & Selection states
+    formationsList,
+    selectedFormation,
+    setSelectedFormation,
+    parcoursList,
+    selectedParcours,
+    setSelectedParcours,
+    // Actions
     onImportZip,
     onConfirmImport,
+    onConfirmParcoursSelection,
     onGoBack,
   } = useImportModules();
 
   const renderBody = () => {
     switch (step) {
       case ModulesImportStep.ZipImport:
-        // Folder picker input
-        // Show imported Modules -> Courses -> Lessons -> Activities
         return (
           <ZipImport
             importedModules={importedModules}
@@ -38,11 +37,20 @@ const ImportModulesHome = () => {
             onConfirmZipImport={onConfirmImport}
           />
         );
-      // Select the associated parcours and confirm the import
       case ModulesImportStep.ParcoursSelection:
-        return <ParcoursSelection onGoBack={onGoBack} />;
+        return (
+          <ParcoursSelection
+            formations={formationsList}
+            selectedFormation={selectedFormation}
+            onSelectFormation={setSelectedFormation}
+            parcoursList={parcoursList}
+            selectedParcours={selectedParcours}
+            onSelectParcours={setSelectedParcours}
+            onConfirm={onConfirmParcoursSelection}
+            onGoBack={onGoBack}
+          />
+        );
       case ModulesImportStep.ImportResult:
-        // Send activites to the server, then show the result of the importation
         return <ImportResult />;
       default:
         return null;

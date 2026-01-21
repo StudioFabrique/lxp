@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import JSZip from "jszip";
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
@@ -7,6 +7,8 @@ import { Activity } from "../../../utils/interfaces/activity";
 import { cleanPath } from "../../../utils/zip-utils";
 import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
+import Formation from "../../../utils/interfaces/formation";
+import useHttp from "../../../hooks/use-http"; // Assure-toi que le chemin est bon
 
 export enum ModulesImportStep {
   ZipImport,
@@ -33,15 +35,62 @@ export type ModuleImportType = Module & {
 };
 
 export default function useImportModules() {
+  const { sendRequest } = useHttp(); // Utilisation du hook HTTP existant
+
   const [step, setImportStep] = useState<ModulesImportStep>(
     ModulesImportStep.ZipImport,
   );
 
   const [importedModules, setImportedModules] = useState<ModuleImportType[]>();
-  const [isLoading, setIsLoading] = useState(false);
 
+  // États pour la sélection Formation/Parcours
+  const [formationsList, setFormationsList] = useState<Formation[]>([]);
+  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
+    null,
+  );
+
+  const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
+  const [selectedParcours, setSelectedParcours] = useState<Parcours | null>(
+    null,
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
+  // --- LOGIQUE API ---
+
+  // 1. Charger les formations quand on arrive sur l'étape ParcoursSelection
+  useEffect(() => {
+    if (step === ModulesImportStep.ParcoursSelection) {
+      const processData = (data: Formation[]) => {
+        setFormationsList(data);
+      };
+      sendRequest({ path: "/formation" }, processData);
+    }
+  }, [step, sendRequest]);
+
+  // 2. Charger les parcours quand une formation est sélectionnée
+  useEffect(() => {
+    if (selectedFormation) {
+      // Reset parcours selection
+      setParcoursList([]);
+      setSelectedParcours(null);
+
+      const processData = (data: { data: Parcours[] }) => {
+        setParcoursList(data.data);
+      };
+      // Endpoint basé sur ton ancien code
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
+          method: "get",
+        },
+        processData,
+      );
+    }
+  }, [selectedFormation, sendRequest]);
+
+  // --- LOGIQUE ZIP (Inchangée mais condensée pour la lisibilité) ---
   const onImportZip = async (file: File) => {
     setError("");
     setIsLoading(true);
@@ -50,7 +99,6 @@ export default function useImportModules() {
     try {
       const zip = new JSZip();
       const loadedZip = await zip.loadAsync(file);
-
       const foundFiles = loadedZip.file(/export\.json$/);
       const exportFile = foundFiles.find(
         (f) =>
@@ -58,11 +106,7 @@ export default function useImportModules() {
           !f.name.split("/").pop()?.startsWith("._"),
       );
 
-      if (!exportFile) {
-        throw new Error(
-          "Fichier export.json introuvable dans l'archive importé.",
-        );
-      }
+      if (!exportFile) throw new Error("Fichier export.json introuvable.");
 
       const rootPath = exportFile.name.replace("export.json", "");
       const jsonContent = await exportFile.async("string");
@@ -71,7 +115,6 @@ export default function useImportModules() {
       const modulesMap = new Map<string, ModuleImportType>();
 
       for (const item of flatActivities) {
-        // --- MODULE ---
         if (!modulesMap.has(item.module)) {
           modulesMap.set(item.module, {
             title: item.module,
@@ -86,15 +129,12 @@ export default function useImportModules() {
         }
         const currentModule = modulesMap.get(item.module)!;
 
-        // --- COURSE ---
-        // On force le typage ici pour éviter que TS pense que c'est "Course | undefined"
+        // ... (Reste de la logique de parsing identique à ton code précédent)
         let currentCourse = currentModule.courses.find(
           (c) => c.title === item.course,
         );
-
         if (!currentCourse) {
-          // Création de l'objet
-          const newCourse = {
+          currentCourse = {
             id: Math.random(),
             title: item.course,
             module: currentModule,
@@ -105,18 +145,13 @@ export default function useImportModules() {
             bonusSkills: [],
             isPublished: false,
           } as Course & { lessons: Lesson[] };
-
-          currentModule.courses.push(newCourse);
-          currentCourse = newCourse;
+          currentModule.courses.push(currentCourse);
         }
-
-        // --- LESSON ---
         let currentLesson = currentCourse.lessons.find(
           (l) => l.title === item.lesson,
         );
-
         if (!currentLesson) {
-          const newLesson = {
+          currentLesson = {
             id: Math.random(),
             title: item.lesson,
             description: "",
@@ -127,18 +162,11 @@ export default function useImportModules() {
             activities: [],
             lessonRating: [],
           } as Lesson;
-
-          currentCourse.lessons.push(newLesson);
-          currentLesson = newLesson;
+          currentCourse.lessons.push(currentLesson);
         }
-
-        // --- CONTENT & ACTIVITY ---
-
         if (item.path) {
-          const relativePath = cleanPath(item.path);
-          const fullZipPath = rootPath + relativePath;
+          const fullZipPath = rootPath + cleanPath(item.path);
           const fileInZip = loadedZip.file(fullZipPath);
-
           if (!fileInZip) {
             const newError = `Fichier introuvable: ${fullZipPath}`;
             console.warn(newError);
@@ -159,11 +187,9 @@ export default function useImportModules() {
             resourceActivities: [],
             resourceBonusActivities: [],
           } as ActivityImportType;
-
           currentLesson.activities?.push(activity);
         }
       }
-
       setImportedModules(Array.from(modulesMap.values()));
     } catch (error) {
       console.error("Erreur import ZIP", error);
@@ -177,13 +203,27 @@ export default function useImportModules() {
     setImportStep(ModulesImportStep.ParcoursSelection);
   };
 
+  /**
+   * Valide la sélection du parcours et passe à l'étape finale.
+   * Si parcours est null, on est en mode standalone.
+   */
+  const onConfirmParcoursSelection = () => {
+    if (importedModules) {
+      // On met à jour tous les modules importés avec le parcours sélectionné
+      const updatedModules = importedModules.map((mod) => ({
+        ...mod,
+        // Si un parcours est sélectionné, on l'associe, sinon on laisse tel quel (ou null)
+        parcours: selectedParcours ? selectedParcours : ({} as Parcours),
+        parcoursId: selectedParcours?.id,
+      }));
+      setImportedModules(updatedModules);
+    }
+    setImportStep(ModulesImportStep.ImportResult);
+  };
+
   const onGoBack = () => {
     setImportStep((currentStep) => {
-      // Prevent going below 0
-      if (currentStep <= ModulesImportStep.ZipImport) {
-        return currentStep;
-      }
-      // Simply decrement the index
+      if (currentStep <= ModulesImportStep.ZipImport) return currentStep;
       return currentStep - 1;
     });
   };
@@ -193,8 +233,17 @@ export default function useImportModules() {
     importedModules,
     isLoading,
     error,
+    // Data Lists & Selection
+    formationsList,
+    selectedFormation,
+    setSelectedFormation,
+    parcoursList,
+    selectedParcours,
+    setSelectedParcours,
+    // Actions
     onImportZip,
     onConfirmImport,
+    onConfirmParcoursSelection,
     onGoBack,
   };
 }
