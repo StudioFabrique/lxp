@@ -150,7 +150,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Run Prisma migrations (DDL)') {
             steps {
                 withCredentials([
@@ -196,7 +196,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage("Starting app") {
             steps {
                 withCredentials([
