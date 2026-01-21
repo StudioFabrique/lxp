@@ -161,7 +161,7 @@ const ZipImport = ({
             <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-200/50 rounded-xl border border-base-200 p-4 mt-2">
               {/* Colonne de gauche : Arborescence */}
               <div className="col-span-4 overflow-y-auto border-r border-base-300 pr-4 custom-scrollbar">
-                <h3 className="text-xs uppercase tracking-wide text-base-content/50 font-bold mb-3">
+                <h3 className="text-xs uppercase tracking-wide text-primary font-bold mb-3">
                   Module : {selectedModule.title}
                 </h3>
                 <ModulesImportList
