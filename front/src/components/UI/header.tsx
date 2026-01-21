@@ -12,13 +12,15 @@ interface HeaderProps {
   description?: string;
   hasError?: boolean;
   classname?: string;
+  onClick?: () => void;
   children?: ReactNode;
 }
 
 const Header = (props: HeaderProps) => {
   return (
     <div
-      className={`w-full flex ${props.hasError && "border-2 border-error"} items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"}`}
+      onClick={props.onClick}
+      className={`w-full flex ${props.hasError && "border-2 border-error"} items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""}`}
     >
       <div>
         <h2

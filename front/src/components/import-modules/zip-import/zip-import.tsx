@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, MouseEvent } from "react";
 import Header from "../../UI/header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
@@ -56,13 +56,9 @@ const ZipImport = ({
   };
 
   // Gestion de la suppression (à connecter avec le parent)
-  const handleDeleteModule = (moduleTitle: string) => {
-    if (onRemoveModule) {
-      onRemoveModule(moduleTitle);
-    } else {
-      console.log("Logique de suppression à implémenter pour :", moduleTitle);
-      alert("Fonction de suppression non connectée");
-    }
+  const handleDeleteModule = (e: MouseEvent, moduleTitle: string) => {
+    e.stopPropagation();
+    onRemoveModule?.(moduleTitle);
   };
 
   return (
@@ -138,10 +134,7 @@ const ZipImport = ({
                     <div className="card-actions justify-end mt-4 pt-4 border-t border-base-200">
                       {/* Bouton Supprimer */}
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteModule(module.title);
-                        }}
+                        onClick={(e) => handleDeleteModule(e, module.title)}
                         className="btn btn-sm btn-ghost text-error hover:bg-error/10 tooltip tooltip-bottom"
                         data-tip="Retirer de l'import"
                       >
@@ -169,7 +162,7 @@ const ZipImport = ({
               {/* Colonne de gauche : Arborescence */}
               <div className="col-span-4 overflow-y-auto border-r border-base-300 pr-4 custom-scrollbar">
                 <h3 className="text-xs uppercase tracking-wide text-base-content/50 font-bold mb-3">
-                  Contenu : {selectedModule.title}
+                  Module : {selectedModule.title}
                 </h3>
                 <ModulesImportList
                   activeModule={selectedModule}
