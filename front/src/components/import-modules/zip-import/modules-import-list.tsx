@@ -36,12 +36,10 @@ const ModulesImportList = ({
 
   return (
     <div className="flex flex-col gap-2 text-sm">
-      {/* On itère sur les cours */}
       {activeModule.courses.map((course, cIdx) => (
         <details
           key={cIdx}
           open
-          // bg-base-100 (fond) et border-base-200 (bordure subtile)
           className="group bg-base-100 rounded border border-base-200 shadow-sm"
         >
           {/* Titre du Cours */}
@@ -69,7 +67,7 @@ const ModulesImportList = ({
                       <button
                         key={aIdx}
                         onClick={() => onSelectActivity(activity)}
-                        className={`text-left px-2 py-1.5 rounded text-xs flex items-center transition-all w-full truncate
+                        className={`text-left px-2 py-1.5 rounded text-xs flex items-center transition-all w-full truncate cursor-pointer
                           ${
                             isSelected
                               ? "bg-primary/10 text-primary font-bold border-l-4 border-primary" // État Actif
@@ -77,7 +75,6 @@ const ModulesImportList = ({
                           }
                         `}
                       >
-                        {/* Wrapper pour l'icône afin de gérer sa couleur si besoin */}
                         <span
                           className={`mr-2 ${isSelected ? "text-primary" : "text-base-content/50"}`}
                         >
