@@ -11,9 +11,10 @@ import {
 type Props = {
   onImportZip: (file: File) => void;
   importedModules?: ModuleImportType[];
+  error: string;
 };
 
-const ZipImport = ({ onImportZip, importedModules }: Props) => {
+const ZipImport = ({ onImportZip, importedModules, error }: Props) => {
   // Module actuellement affiché
   const [selectedModule, setSelectedModule] = useState<ModuleImportType | null>(
     null,
@@ -42,8 +43,11 @@ const ZipImport = ({ onImportZip, importedModules }: Props) => {
     <div className="flex flex-col gap-6 ml-5">
       <Header
         title="Première étape"
-        description="Téléverser un dossier compressé de format .zip"
+        description={
+          error ? error : "Téléverser un dossier compressé de format .zip"
+        }
         alternateBgColor
+        hasError={Boolean(error)}
       >
         <div className="flex items-center gap-4">
           <MemoizedFileUpload
@@ -83,7 +87,7 @@ const ZipImport = ({ onImportZip, importedModules }: Props) => {
                       : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                   }`}
               >
-                📦 {module.title}
+                {module.title}
               </button>
             ))}
           </div>

@@ -9,6 +9,7 @@ interface HeaderProps {
   alternateBgColor?: boolean;
   disabled?: boolean;
   description?: string;
+  hasError?: boolean;
   classname?: string;
   children?: ReactNode;
 }
@@ -16,15 +17,19 @@ interface HeaderProps {
 const Header = (props: HeaderProps) => {
   return (
     <div
-      className={`w-full flex items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"}`}
+      className={`w-full flex ${props.hasError && "border-2 border-error"} items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"}`}
     >
       <div>
         <h2
-          className={`flex-1 text-xl text-base-content font-extrabold capitalize ${props.classname}`}
+          className={`flex-1 text-xl font-extrabold capitalize ${props.classname}`}
         >
           {props.title}
         </h2>
-        <p className="text-xs">{props.description}</p>
+        <p
+          className={`text-xs ${props.hasError ? "text-error" : "text-base-content"}`}
+        >
+          {props.description}
+        </p>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>

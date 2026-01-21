@@ -29,7 +29,10 @@ export default function useImportModules() {
   const [importedModules, setImportedModules] = useState<ModuleImportType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
+  const [error, setError] = useState<string>("");
+
   const onImportZip = async (file: File) => {
+    setError("");
     setIsLoading(true);
     setImportedModules(undefined);
 
@@ -45,7 +48,9 @@ export default function useImportModules() {
       );
 
       if (!exportFile) {
-        throw new Error("Fichier export.json introuvable dans l'archive.");
+        throw new Error(
+          "Fichier export.json introuvable dans l'archive importé.",
+        );
       }
 
       const rootPath = exportFile.name.replace("export.json", "");
@@ -117,39 +122,37 @@ export default function useImportModules() {
         }
 
         // --- CONTENT & ACTIVITY ---
-        let content = "";
 
         if (item.path) {
           const relativePath = cleanPath(item.path);
           const fullZipPath = rootPath + relativePath;
           const fileInZip = loadedZip.file(fullZipPath);
 
-          if (fileInZip) {
-            content = await fileInZip.async("string");
-          } else {
+          const activity: ActivityImportType = {
+            id: Math.random(),
+            title: item.title,
+            type: item.type,
+            order: item.order,
+            url: item.path,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            value: fileInZip ? await fileInZip.async("string") : "",
+            resourceActivities: [],
+            resourceBonusActivities: [],
+          } as ActivityImportType;
+
+          currentLesson.activities?.push(activity);
+
+          if (!fileInZip) {
             console.warn(`Fichier introuvable: ${fullZipPath}`);
           }
         }
-
-        const activity: ActivityImportType = {
-          id: Math.random(),
-          title: item.title,
-          type: item.type,
-          order: item.order,
-          url: item.path,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          value: content,
-          resourceActivities: [],
-          resourceBonusActivities: [],
-        } as ActivityImportType;
-
-        currentLesson.activities?.push(activity);
       }
 
       setImportedModules(Array.from(modulesMap.values()));
     } catch (error) {
       console.error("Erreur import ZIP", error);
+      setError((error as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -163,6 +166,7 @@ export default function useImportModules() {
     step,
     importedModules,
     isLoading,
+    error,
     onImportZip,
     onConfirmImport,
   };
