@@ -10,6 +10,7 @@ import Tag from "../../../utils/interfaces/tag";
 
 export enum ModulesImportStep {
   ZipImport,
+  ParcoursSelection,
   ImportResult,
 }
 
@@ -173,7 +174,7 @@ export default function useImportModules() {
   };
 
   const onConfirmImport = () => {
-    setImportStep(ModulesImportStep.ImportResult);
+    setImportStep(ModulesImportStep.ParcoursSelection);
   };
 
   return {
