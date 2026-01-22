@@ -13,6 +13,7 @@ import {
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
+import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 
 type Props = {
   activeModule: ModuleImportType | null;
@@ -20,7 +21,7 @@ type Props = {
   selectedActivityId?: number;
 };
 
-const ModulesArborescence = ({
+const ModuleArborescence = ({
   activeModule,
   onSelectActivity,
   selectedActivityId,
@@ -53,11 +54,20 @@ const ModulesArborescence = ({
           >
             {/* Titre du Cours */}
             <summary
-              className={`cursor-pointer list-none font-semibold p-2 ${course.hasError ? "bg-error/15" : "hover:bg-base-200"} transition-colors flex items-center text-base-content rounded-t-sm`}
+              className={`cursor-pointer list-none font-semibold p-2 ${course.hasError ? "bg-error/5" : "hover:bg-base-200"} transition-colors flex justify-between items-center text-base-content rounded-t-sm`}
             >
-              <BookMarked className="mr-2 w-4 h-4 group-open:hidden block" />
-              <BookOpenText className="mr-2 w-4 h-4 group-open:block hidden" />
-              {toUpperFirstLetter(course.title)}
+              <div className="flex items-center">
+                <BookMarked className="mr-2 w-4 h-4 group-open:hidden block" />
+                <BookOpenText className="mr-2 w-4 h-4 group-open:block hidden" />
+                {toUpperFirstLetter(course.title)}
+              </div>
+
+              {activeModule.hasError && (
+                <ToolTipWarning
+                  tooltipPos="tooltip-left"
+                  message="Des leçons sont manquantes"
+                />
+              )}
             </summary>
 
             {/* Contenu du Cours (Leçons) */}
@@ -67,7 +77,7 @@ const ModulesArborescence = ({
                   <details key={lIdx} className="mt-2 group/lesson">
                     {/* Titre de la Leçon */}
                     <summary
-                      className={`${lesson.hasError ? "bg-error/15" : "hover:bg-base-200"} cursor-pointer list-none py-1 px-2 hover:text-primary transition-colors flex items-center font-medium text-base-content/80 rounded-sm justify-between`}
+                      className={`${lesson.hasError ? "bg-error/10" : "hover:bg-base-200"} cursor-pointer list-none py-1 px-2 hover:text-primary transition-colors flex items-center font-medium text-base-content/80 rounded-sm justify-between`}
                     >
                       <div className="flex gap-2 items-center">
                         <FilePen className="w-4 h-4" />
@@ -134,4 +144,4 @@ const ModulesArborescence = ({
   );
 };
 
-export default ModulesArborescence;
+export default ModuleArborescence;
