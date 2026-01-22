@@ -377,7 +377,7 @@ const useNewModule = () => {
   // Return state and handlers
   return {
     id,
-    ...state, // ✅ Spread all state properties
+    ...state, //  Spread all state properties
     data,
     isLoading,
     refForm,

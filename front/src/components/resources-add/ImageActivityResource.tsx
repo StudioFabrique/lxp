@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { Activity } from "../../utils/interfaces/activity";
 import ImageActivityEditor from "../edit-lesson/activities/image/image-activity-editor";
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
@@ -9,12 +8,11 @@ import ImageActivityPreview from "../edit-lesson/activities/image/image-activity
 type Props = {
   activity?: Activity;
   mode: "read" | "edit" | "write";
+  resourceId: number;
   onCancel: (value: boolean) => void;
 };
 
 export default function ImageActivityResource(props: Props) {
-  const params = useParams();
-  const { resourceId } = params;
   const { sendRequest } = useHttp();
 
   const handleImageSubmit = (fd: FormData) => {
@@ -26,7 +24,7 @@ export default function ImageActivityResource(props: Props) {
     };
     sendRequest(
       {
-        path: `/activity/image/${props.activity?.id ?? resourceId}/resource`,
+        path: `/activity/image/${props.activity?.id ?? props.resourceId}/resource`,
         method: props.activity ? "put" : "post",
         body: fd,
       },
