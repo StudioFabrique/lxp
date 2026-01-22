@@ -6,21 +6,34 @@ import { ReactNode } from "react";
 
 interface HeaderProps {
   title: string;
+  alternateBgColor?: boolean;
+  successBgColor?: boolean;
+  disabled?: boolean;
   description?: string;
+  isSubHeader?: boolean;
+  hasError?: boolean;
   classname?: string;
+  onClick?: () => void;
   children?: ReactNode;
 }
 
 const Header = (props: HeaderProps) => {
   return (
-    <div className="w-full flex items-center justify-between p-4 rounded-lg bg-secondary/20">
+    <div
+      onClick={props.onClick}
+      className={`w-full flex ${props.isSubHeader && !props.disabled ? "ring-1" : ""} ${props.hasError && "ring-2 ring-error"} items-center justify-between p-4 rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""}`}
+    >
       <div>
         <h2
-          className={`flex-1 text-xl text-base-content font-extrabold ${props.classname}`}
+          className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}
         >
           {props.title}
         </h2>
-        <p className="text-xs">{props.description}</p>
+        <p
+          className={`${props.isSubHeader ? "text-[8.5pt]" : "text-xs"} ${props.hasError ? "text-error" : "text-base-content"}`}
+        >
+          {props.description}
+        </p>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>

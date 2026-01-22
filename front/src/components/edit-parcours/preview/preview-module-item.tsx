@@ -51,7 +51,9 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
       <span className="w-full h-[5rem] px-4 flex flex-col justify-center items-start relative">
         <p className="text-xs">{dates}</p>
         <p className="text-xs xl:text-sm font-bold">{text}</p>
-        {notValid ? <ToolTipWarning message={notValidModuleTooltip} /> : null}
+        {notValid ? (
+          <ToolTipWarning absolutePos message={notValidModuleTooltip} />
+        ) : null}
       </span>
     </div>
   );

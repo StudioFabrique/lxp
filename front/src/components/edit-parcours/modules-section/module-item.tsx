@@ -28,17 +28,17 @@ const ModuleItem: FC<ModuleItemProps> = ({
   onDeleteModule,
 }) => {
   const parcoursTitle = useSelector(
-    (state: any) => state.parcoursInformations.infos.title
+    (state: any) => state.parcoursInformations.infos.title,
   );
   const isFormOpen = useSelector(
-    (state: any) => state.parcoursModules.isFormOpen
+    (state: any) => state.parcoursModules.isFormOpen,
   ) as boolean;
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
       module.thumb
         ? `data:image/jpeg;base64,${module.thumb}`
-        : defaultModuleThumb
+        : defaultModuleThumb,
     ),
     width: "50px",
     height: "50px",
@@ -88,7 +88,7 @@ const ModuleItem: FC<ModuleItemProps> = ({
               </div>
             ) : null}
             {notValid ? (
-              <ToolTipWarning message={notValidModuleTooltip} />
+              <ToolTipWarning absolutePos message={notValidModuleTooltip} />
             ) : null}
           </Wrapper>
         </div>
