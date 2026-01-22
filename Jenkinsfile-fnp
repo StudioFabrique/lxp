@@ -177,6 +177,7 @@ pipeline {
         stage("Generate Prisma Client") {
             steps {
                 withCredentials([
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATION_DATABASE_URL'),
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
@@ -188,7 +189,7 @@ pipeline {
                             cd /home/${USER}/${TARGET}
 
                             echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            npx prisma generate
+                            DATABASE_URL="${MIGRATION_DATABASE_URL}" npx prisma migrate deploy
 
                             echo "✅ Prisma Client regenerated successfully"
                         '
