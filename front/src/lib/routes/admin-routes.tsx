@@ -1,7 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import React from "react";
-import RoleEdit from "../../views/role/role-edit";
-
+const ImportModulesHome = React.lazy(
+  () => import("../../views/module/import/import-modules-home"),
+);
+const RoleEdit = React.lazy(() => import("../../views/role/role-edit"));
 const AdminHome = React.lazy(
   () => import("../../views/admin/admin-home.component"),
 );
@@ -217,6 +219,7 @@ const adminRoutes = [
         index: true,
         element: <ModuleHome />,
       },
+      { path: "import-modules", element: <ImportModulesHome /> },
       {
         path: "add/",
         element: <ModuleAdd />,

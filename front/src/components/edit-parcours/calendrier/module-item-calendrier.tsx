@@ -9,7 +9,7 @@ import defaultModuleThumb from "../../../assets/images/module-default-thumb.png"
 
 const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const currentModule: Module | null = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+    (state: any) => state.parcoursModules.currentModule,
   );
   const dispatch = useDispatch();
   const [isSelected, setIsSelected] = useState(false);
@@ -19,7 +19,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
 
   const handleClick = () => {
     dispatch(
-      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id)
+      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id),
     );
   };
 
@@ -37,7 +37,9 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
             isSelected ? "bg-primary" : "bg-secondary/80"
           } flex items-center gap-x-3 w-max text-base-100 p-3 rounded-lg hover:bg-primary-focus hover:cursor-pointer relative`}
         >
-          {notValid && <ToolTipWarning message={notValidModuleTooltip} />}
+          {notValid && (
+            <ToolTipWarning absolutePos message={notValidModuleTooltip} />
+          )}
           <span className="w-8 h-8">
             <img
               className="h-full object-cover rounded-md"
