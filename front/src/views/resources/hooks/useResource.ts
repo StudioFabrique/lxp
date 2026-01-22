@@ -47,17 +47,33 @@ type State = {
 
 /**
  * Action types for the resource reducer
- * Includes composite actions to reduce multiple dispatches
+ * Uses composite actions to minimize re-renders
  */
 type Action =
-  | { type: "RESET_ACTIVITY_EDITOR" } // Composite: Reset editor to initial state
+  | { type: "RESET_ACTIVITY_EDITOR" }
   | {
-      type: "OPEN_ACTIVITY_EDITOR"; // Composite: Open editor for new activity creation
+      type: "OPEN_ACTIVITY_EDITOR";
       payload: "text" | "video" | "image" | "resource" | "iframe";
     }
   | {
-      type: "OPEN_ACTIVITY"; // Composite: Open activity in preview or edit mode
+      type: "OPEN_ACTIVITY";
       payload: { activity: Activity | null; mode: "read" | "write" | "edit" };
+    }
+  | {
+      type: "RESOURCE_CREATED";
+      payload: { resource: Resource; resourceId: number };
+    }
+  | {
+      type: "RESOURCE_LOADED";
+      payload: { resource: Resource; tags: Tag[] };
+    }
+  | {
+      type: "ACTIVITY_DELETED";
+      payload: { updatedActivities: Activity[] };
+    }
+  | {
+      type: "INIT_UPDATE_MODE";
+      payload: string;
     }
   | { type: "SET_ACTIVITY_STATE"; payload: "read" | "write" | "edit" }
   | { type: "SET_MODE"; payload: "create" | "update" }
@@ -65,8 +81,7 @@ type Action =
   | { type: "SET_TAGS"; payload: Tag[] }
   | { type: "SET_TAG_ERROR"; payload: boolean }
   | { type: "SET_RESOURCE"; payload: Resource | null }
-  | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null }
-  | { type: "SET_RESOURCE_ID"; payload: string };
+  | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null };
 
 /**
  * Initial state for the resource reducer
@@ -87,16 +102,50 @@ const initialState: State = {
 
 /**
  * Reducer function for managing resource and activity state
- * Uses composite actions to minimize re-renders and simplify logic
+ * Uses composite actions to minimize re-renders
  */
 const useResourceReducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "SET_RESOURCE_ID":
+    // Composite: Initialize update mode with resourceId from URL
+    case "INIT_UPDATE_MODE":
       return {
         ...state,
+        mode: "update",
         resourceId: +action.payload,
       };
-    // Composite action: Reset the activity editor to initial state
+
+    // Composite: Resource created - set resource, id, and clear tag error
+    case "RESOURCE_CREATED":
+      return {
+        ...state,
+        resource: { ...action.payload.resource, activities: [] },
+        resourceId: action.payload.resourceId,
+        tagError: false,
+      };
+
+    // Composite: Resource loaded from API - set resource and tags
+    case "RESOURCE_LOADED":
+      return {
+        ...state,
+        resource: action.payload.resource,
+        tags: action.payload.tags,
+      };
+
+    // Composite: Activity deleted - update activities, clear deletion state, reset editor
+    case "ACTIVITY_DELETED":
+      return {
+        ...state,
+        resource: state.resource
+          ? { ...state.resource, activities: action.payload.updatedActivities }
+          : null,
+        activityToDelete: null,
+        previewActivity: null,
+        activitiesActionsDisabled: false,
+        activityState: "read",
+        activityType: null,
+      };
+
+    // Composite: Reset the activity editor to initial state
     case "RESET_ACTIVITY_EDITOR":
       return {
         ...state,
@@ -106,7 +155,7 @@ const useResourceReducer = (state: State, action: Action): State => {
         activityType: null,
       };
 
-    // Composite action: Open activity editor for creating new activity
+    // Composite: Open activity editor for creating new activity
     case "OPEN_ACTIVITY_EDITOR":
       return {
         ...state,
@@ -114,7 +163,7 @@ const useResourceReducer = (state: State, action: Action): State => {
         activityState: "write",
       };
 
-    // Composite action: Open activity for preview or edit
+    // Composite: Open activity for preview or edit
     case "OPEN_ACTIVITY":
       return {
         ...state,
@@ -161,7 +210,7 @@ const useResourceReducer = (state: State, action: Action): State => {
 const useResource = () => {
   const { resourceId } = useParams();
   const [state, dispatch] = useReducer(useResourceReducer, initialState);
-  const { error, isLoading, sendRequest } = useHttp();
+  const { error, isLoading, sendRequest } = useHttp(true);
   const { errors, onChangeValue, onValidateForm, values, initValues } = useForm(
     {},
     resourceSchema,
@@ -204,19 +253,17 @@ const useResource = () => {
       if (data.success) {
         toast.success(data.message);
         dispatch({
-          type: "SET_RESOURCE",
-          payload: { ...data.resource, activities: [] },
+          type: "RESOURCE_CREATED",
+          payload: { resource: data.resource, resourceId: data.resource.id },
         });
+      } else {
+        dispatch({ type: "SET_TAG_ERROR", payload: false });
       }
-      dispatch({
-        type: "SET_RESOURCE_ID",
-        payload: data.resource.id.toString(),
-      });
-      dispatch({ type: "SET_TAG_ERROR", payload: false });
     };
+
     sendRequest(
       {
-        path: `/resources${state.resourceId ? `/${state.resourceId}` : ""}`,
+        path: `/resources${state.mode === "update" ? `/${state.resourceId}` : ""}`,
         method: state.mode === "update" ? "put" : "post",
         body: formData,
       },
@@ -233,18 +280,14 @@ const useResource = () => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
         toast.success(data.message);
-        // Remove the deleted activity from the resource state
-        if (state.resource) {
-          const updatedActivities = state.resource.activities.filter(
+        const updatedActivities =
+          state.resource?.activities.filter(
             (activity) => activity.id !== state.activityToDelete!.id,
-          );
-          dispatch({
-            type: "SET_RESOURCE",
-            payload: { ...state.resource, activities: updatedActivities },
-          });
-        }
-        dispatch({ type: "SET_ACTIVITY_TO_DELETE", payload: null });
-        dispatch({ type: "RESET_ACTIVITY_EDITOR" });
+          ) ?? [];
+        dispatch({
+          type: "ACTIVITY_DELETED",
+          payload: { updatedActivities },
+        });
       }
     };
     sendRequest(
@@ -304,14 +347,21 @@ const useResource = () => {
       success: boolean;
       resourceDetails: Resource;
     }) => {
-      dispatch({ type: "SET_RESOURCE", payload: data.resourceDetails });
-      dispatch({ type: "SET_TAGS", payload: data.resourceDetails.tags ?? [] });
+      dispatch({
+        type: "RESOURCE_LOADED",
+        payload: {
+          resource: data.resourceDetails,
+          tags: data.resourceDetails.tags ?? [],
+        },
+      });
       initValues(data.resourceDetails);
     };
-    sendRequest(
-      { path: `/resources/${state.resourceId}`, method: "get" },
-      applyData,
-    );
+    if (state.resourceId) {
+      sendRequest(
+        { path: `/resources/${state.resourceId}`, method: "get" },
+        applyData,
+      );
+    }
   }, [sendRequest, state.resourceId, initValues]);
 
   /** Closes the text editor and resets to initial state */
@@ -422,11 +472,12 @@ const useResource = () => {
    * Fetches resource details if updating existing resource
    */
   useEffect(() => {
-    if (resourceId) {
-      dispatch({ type: "SET_MODE", payload: "update" });
-      dispatch({ type: "SET_RESOURCE_ID", payload: resourceId });
+    if (resourceId !== undefined && resourceId !== null) {
+      dispatch({ type: "INIT_UPDATE_MODE", payload: resourceId });
       getResourceDetails();
-    } else dispatch({ type: "SET_MODE", payload: "create" });
+    } else {
+      dispatch({ type: "SET_MODE", payload: "create" });
+    }
   }, [getResourceDetails, resourceId]);
 
   return {
@@ -440,7 +491,6 @@ const useResource = () => {
     handleSubmitForm,
     isLoading,
     newActivity,
-    resourceId,
     setActivityToDelete,
     setFile,
     setPreviewActivity,

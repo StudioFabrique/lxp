@@ -85,7 +85,7 @@ model BonusSkill {
 model BonusSkillsOnModuleMetadata {
   bonusSkillId Int
   moduleId     Int
-  bonusSkill   BonusSkill     @relation(fields: [bonusSkillId], references: [id])
+  bonusSkill   BonusSkill     @relation(fields: [bonusSkillId], references: [id], onDelete: Cascade)
   module       ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([bonusSkillId, moduleId])

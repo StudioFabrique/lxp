@@ -23,7 +23,7 @@ pipeline {
         stage("Build App") {
             steps {
                 withCredentials([
-                    file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
+                    file(credentialsId: 'DEMO_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
                     file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
                 ]) {
@@ -41,9 +41,6 @@ pipeline {
                         npm run install
                         npm run generate
                         npm run deploy
-                        rm -rf ./api/dist/generated || true
-                        mkdir -p ./api/dist
-                        cp -r ./api/generated ./api/dist/generated
                     '''
                 }
             }
@@ -139,6 +136,10 @@ pipeline {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
                     '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
+                '''
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker network create lxp_network || true"

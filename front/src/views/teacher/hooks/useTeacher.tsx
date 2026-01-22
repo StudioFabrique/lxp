@@ -27,7 +27,7 @@ const useTeacher = (studentId: string) => {
       {
         path: `/user/data/${studentId}`,
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, studentId]);
 

@@ -41,9 +41,6 @@ pipeline {
                         npm run install
                         npm run generate
                         npm run deploy
-                        rm -rf ./api/dist/generated || true
-                        mkdir -p ./api/dist
-                        cp -r ./api/generated ./api/dist/generated
                     '''
                 }
             }
@@ -106,7 +103,7 @@ pipeline {
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
-                        echo "📡 Deploying to Demo..."
+                        echo "📡 Deploying to FNP..."
                         echo "🔎 Pinging $HOST..."
 
                         ping -c 4 $HOST
@@ -154,7 +151,7 @@ pipeline {
         stage('Run Prisma migrations (DDL)') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'DATABASE_URL'),
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
@@ -168,7 +165,7 @@ pipeline {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            npx prisma migrate deploy
+                            DATABASE_URL="${DATABASE_URL}" npx prisma migrate deploy
                         '
                     """
                 }
@@ -178,6 +175,7 @@ pipeline {
         stage("Generate Prisma Client") {
             steps {
                 withCredentials([
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATION_DATABASE_URL'),
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
@@ -189,7 +187,7 @@ pipeline {
                             cd /home/${USER}/${TARGET}
 
                             echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            npx prisma generate
+                            DATABASE_URL="${MIGRATION_DATABASE_URL}" npx prisma migrate deploy
 
                             echo "✅ Prisma Client regenerated successfully"
                         '
@@ -213,7 +211,7 @@ pipeline {
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js || pm2 start /home/$USER/$TARGET/dist/src/server.js --name lxp-server"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && pm2 restart lxp-server || pm2 start ./dist/src/server.js --name lxp-server"
                     '''
 
                     echo "✅ Deployment to FNP completed successfully!"

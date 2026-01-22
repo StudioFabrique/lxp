@@ -36,6 +36,9 @@ export default function VerticalBars({
     chart: {
       id: label,
     },
+    dataLabels: {
+      enabled: false, // Désactive l'affichage des valeurs sur les barres
+    },
     xaxis: {
       categories: truncatedCategories,
       labels: {
@@ -53,6 +56,7 @@ export default function VerticalBars({
         },
       },
     },
+
     plotOptions: {
       bar: {
         colors: {
