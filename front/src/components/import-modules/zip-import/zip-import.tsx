@@ -114,9 +114,7 @@ const ZipImport = ({
                   key={idx}
                   title={toUpperFirstLetter(module.title)}
                   error={
-                    module.hasError
-                      ? "Des activités de ce module sont manquantes"
-                      : ""
+                    module.hasError ? "Des ressources sont manquantes" : ""
                   }
                   subtitle={subtitle}
                   icon={<Component className="w-5 h-5" />}
@@ -135,9 +133,9 @@ const ZipImport = ({
 
           {/* Zone de prévisualisation : Grid 2 colonnes */}
           {selectedModule && (
-            <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-200/50 rounded-xl border border-base-200 p-4 mt-2">
+            <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
               {/* Colonne de gauche : Arborescence */}
-              <div className="select-none col-span-4 overflow-y-auto border-r border-base-300 pr-4 custom-scrollbar">
+              <div className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar">
                 <h3 className="text-xs uppercase tracking-wide text-primary font-bold mb-3">
                   Module : {selectedModule.title}
                 </h3>

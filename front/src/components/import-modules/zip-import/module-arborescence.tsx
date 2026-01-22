@@ -50,11 +50,11 @@ const ModuleArborescence = ({
           <details
             key={cIdx}
             open
-            className="group bg-base-100 rounded border border-base-200 shadow-sm"
+            className="group bg-base-100 rounded-md border border-base-200 shadow-sm"
           >
             {/* Titre du Cours */}
             <summary
-              className={`cursor-pointer list-none font-semibold p-2 ${course.hasError ? "bg-error/5" : "hover:bg-base-200"} transition-colors flex justify-between items-center text-base-content rounded-t-sm`}
+              className={`cursor-pointer list-none font-semibold p-2 ${course.hasError ? "bg-error/5" : "hover:bg-base-200"} transition-colors flex justify-between items-center text-base-content`}
             >
               <div className="flex items-center">
                 <BookMarked className="mr-2 w-4 h-4 group-open:hidden block" />
@@ -65,7 +65,7 @@ const ModuleArborescence = ({
               {activeModule.hasError && (
                 <ToolTipWarning
                   tooltipPos="tooltip-left"
-                  message="Des leçons sont manquantes"
+                  message="Des activités sont manquantes"
                 />
               )}
             </summary>
