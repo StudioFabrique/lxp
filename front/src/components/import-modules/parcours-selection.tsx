@@ -75,7 +75,7 @@ const ParcoursSelection = ({
           </div>
         )}
         <button
-          className="btn btn-success gap-2"
+          className="btn btn-sm btn-success gap-2"
           disabled={!canConfirm}
           onClick={() => onConfirm(selectedParcours)}
         >

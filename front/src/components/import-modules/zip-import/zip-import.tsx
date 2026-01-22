@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../../UI/header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
-import ModulesArborescence from "./modules-arborescence";
+import ModuleArborescence from "./module-arborescence";
 import {
   ActivityImportType,
   ModuleImportType,
@@ -98,7 +98,7 @@ const ZipImport = ({
       </Header>
 
       {importedModules && importedModules.length > 0 && (
-        <div className="ml-5 flex flex-col gap-6">
+        <div className="ml-5 flex flex-col gap-4">
           {/* Grille de Cards DaisyUI */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {importedModules.map((module, idx) => {
@@ -113,6 +113,11 @@ const ZipImport = ({
                 <SelectableCard
                   key={idx}
                   title={toUpperFirstLetter(module.title)}
+                  error={
+                    module.hasError
+                      ? "Des activités de ce module sont manquantes"
+                      : ""
+                  }
                   subtitle={subtitle}
                   icon={<Component className="w-5 h-5" />}
                   isSelected={isSelected}
@@ -136,7 +141,7 @@ const ZipImport = ({
                 <h3 className="text-xs uppercase tracking-wide text-primary font-bold mb-3">
                   Module : {selectedModule.title}
                 </h3>
-                <ModulesArborescence
+                <ModuleArborescence
                   activeModule={selectedModule}
                   onSelectActivity={setSelectedActivity}
                   selectedActivityId={selectedActivity?.id}

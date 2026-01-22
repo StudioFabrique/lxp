@@ -15,7 +15,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
     backgroundImage: bgImageGradient(
       props.module.thumb
         ? "data:image/jpeg;base64," + props.module.thumb
-        : defaultImage
+        : defaultImage,
     ),
     width: "100%",
     minHeight: "9rem",
@@ -35,7 +35,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   }
 
   const dates = `Du ${new Date(
-    module.minDate!
+    module.minDate!,
   ).toLocaleDateString()} au ${new Date(module.maxDate!).toLocaleDateString()}`;
 
   const text =
@@ -53,7 +53,9 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
       <span className="w-full h-[5rem] px-4 flex flex-col justify-center items-start relative">
         <p className="text-xs">{dates}</p>
         <p className="text-xs xl:text-sm font-bold">{text}</p>
-        {notValid ? <ToolTipWarning message={notValidModuleTooltip} /> : null}
+        {notValid ? (
+          <ToolTipWarning absolutePos message={notValidModuleTooltip} />
+        ) : null}
       </span>
     </div>
   );

@@ -16,6 +16,7 @@ const ImportResult = ({ importedModules }: Props) => {
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
         successBgColor
+        isSubHeader
         disabled
       />
       {/* Header étape 2 */}
@@ -23,6 +24,7 @@ const ImportResult = ({ importedModules }: Props) => {
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
         successBgColor
+        isSubHeader
         disabled
       />
       {/* Header étape 3 (actuelle) */}
@@ -30,6 +32,7 @@ const ImportResult = ({ importedModules }: Props) => {
         title="Traitement de l'importation..."
         description={`Les modules selectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`}
         alternateBgColor
+        isSubHeader
       >
         <Loader />
       </Header>

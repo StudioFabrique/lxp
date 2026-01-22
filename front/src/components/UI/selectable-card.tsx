@@ -1,5 +1,6 @@
 import { ReactNode, MouseEvent } from "react";
 import { Eye, Trash2 } from "lucide-react";
+import ToolTipWarning from "./tooltip-warning/tooltip-warning";
 
 type SelectableCardProps = {
   // Données
@@ -20,6 +21,8 @@ type SelectableCardProps = {
 
   // Style
   className?: string;
+
+  error?: string;
 };
 
 const SelectableCard = ({
@@ -33,6 +36,7 @@ const SelectableCard = ({
   onDelete,
   deleteTooltip = "Supprimer",
   className = "",
+  error,
 }: SelectableCardProps) => {
   // Gestionnaire pour la suppression avec stopPropagation
   const handleDeleteClick = (e: MouseEvent) => {
@@ -43,8 +47,9 @@ const SelectableCard = ({
   return (
     <div
       className={`
-        card bg-base-100 shadow-sm border transition-all duration-200 hover:shadow-md
+        card shadow-sm border transition-all duration-200 hover:shadow-md
         ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200"}
+        ${error ? "bg-error/10" : "bg-base-100"}
         ${className}
       `}
     >
@@ -58,6 +63,7 @@ const SelectableCard = ({
             >
               {icon && <div className="flex-shrink-0">{icon}</div>}
               <span className="truncate">{title}</span>
+              {error && <ToolTipWarning absolutePos message={error} />}
             </h3>
 
             {subtitle && (
@@ -66,7 +72,9 @@ const SelectableCard = ({
           </div>
 
           {/* PARTIE DROITE : Actions */}
-          <div className="flex gap-2 flex-none items-center">
+          <div
+            className={`flex gap-2 flex-none items-center ${error ? "mr-5" : ""}`}
+          >
             {/* Bouton Supprimer (Affiché seulement si onDelete est fourni) */}
             {onDelete && (
               <button
@@ -89,7 +97,7 @@ const SelectableCard = ({
                 }`}
               >
                 {actionIcon}
-                <span className="hidden xl:inline">{actionLabel}</span>
+                <span className="hidden 2xl:inline">{actionLabel}</span>
               </button>
             )}
           </div>
