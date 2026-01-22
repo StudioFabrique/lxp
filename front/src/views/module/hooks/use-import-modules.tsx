@@ -9,6 +9,7 @@ import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import useHttp from "../../../hooks/use-http";
+import { marked } from "marked";
 
 export enum ModulesImportStep {
   ZipImport,
@@ -104,16 +105,17 @@ export default function useImportModules() {
     try {
       const zip = new JSZip();
       const loadedZip = await zip.loadAsync(file);
-      const foundFiles = loadedZip.file(/export\.json$/);
+      const foundFiles = loadedZip.file(/index\.json$/);
       const exportFile = foundFiles.find(
         (f) =>
           !f.name.includes("__MACOSX") &&
           !f.name.split("/").pop()?.startsWith("._"),
       );
 
-      if (!exportFile) throw new Error("Fichier export.json introuvable.");
+      if (!exportFile)
+        throw new Error("Fichier index.json introuvable dans l'archive.");
 
-      const rootPath = exportFile.name.replace("export.json", "");
+      const rootPath = exportFile.name.replace("index.json", "");
       const jsonContent = await exportFile.async("string");
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
@@ -188,9 +190,18 @@ export default function useImportModules() {
             currentCourse.hasError = true;
             currentModule.hasError = true;
           } else {
-            activity.value = await fileInZip.async(
-              item.type === "text" ? "string" : "blob",
-            );
+            if (item.type === "text") {
+              // Si c'est du texte, on lit la string Markdown
+              const markdownContent = await fileInZip.async("string");
+
+              // On convertit le Markdown en HTML (String) pour Tiptap
+              const htmlContent = await marked.parse(markdownContent);
+
+              activity.value = htmlContent;
+            } else {
+              // Si c'est un fichier binaire (image, pdf...), on garde le blob
+              activity.value = await fileInZip.async("blob");
+            }
           }
         }
       }

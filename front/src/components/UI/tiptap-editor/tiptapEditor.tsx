@@ -22,6 +22,7 @@ type TiptapEditorProps = {
 
 export default function TiptapEditor({
   mode = "read",
+
   initialValue,
   pending,
   onSave,
@@ -31,13 +32,14 @@ export default function TiptapEditor({
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
   const [isImageUploadPending, setImageUploadPending] = useState(false);
 
-  const { editor, menuContainerRef, isMenuBarSticky } = useTiptapEditor(
-    "prose min-h-[12vh] m-1 w-[70%] py-5 focus:outline-none transition-all duration-200",
-    editorRef,
-    mode !== "read",
-    initialValue,
-    onContentChange
-  );
+  const { editor, menuContainerRef, stickyMarkerRef, isMenuBarSticky } =
+    useTiptapEditor(
+      "prose min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
+      editorRef,
+      mode !== "read",
+      initialValue,
+      onContentChange,
+    );
 
   const handleSave = async () => {
     if (uploadAllImagesRef.current) {
@@ -54,18 +56,27 @@ export default function TiptapEditor({
 
   return (
     <>
-      <div className={`editor relative`} ref={menuContainerRef}>
+      <div className="editor relative w-[70%] mx-auto" ref={menuContainerRef}>
+        <div
+          ref={stickyMarkerRef}
+          className="absolute -top-6 left-0 w-full h-4 pointer-events-none"
+        />
+
+        {/* Espace réservé (Placeholder) pour éviter le saut de contenu quand le menu devient fixed */}
+        {isMenuBarSticky && <div className="h-14 mb-2 w-full" />}
+
         {editor ? (
           <MenuBar
             shouldHide={mode === "read"}
             editor={editor}
             isSticky={isMenuBarSticky}
-            onUploadAllImagesRef={uploadAllImagesRef} // Pass ref
+            onUploadAllImagesRef={uploadAllImagesRef}
           />
         ) : null}
+
         <EditorContent
-          className={`editor__content ${
-            mode === "read" ? "mt-5" : "cursor-text mt-5"
+          className={`editor__content mt-5 ${
+            mode === "read" ? "" : "cursor-text"
           }`}
           onClick={() => editor?.commands.focus()}
           editor={editor}

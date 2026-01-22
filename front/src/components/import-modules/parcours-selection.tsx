@@ -1,6 +1,5 @@
 import {
   GraduationCap,
-  Waypoints,
   Ban,
   CheckCircle2,
   ArrowRight,
@@ -87,7 +86,6 @@ const ParcoursSelection = ({
         {/* --- SECTION 1 : FORMATIONS --- */}
         <div className="flex flex-col gap-4">
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
-            <GraduationCap className="text-primary" />
             Choisir une formation
           </h3>
 
@@ -101,7 +99,7 @@ const ParcoursSelection = ({
                   <div
                     key={formation.id}
                     onClick={() => onSelectFormation(formation)}
-                    className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200 hover:border-primary/50"}`}
+                    className={`card bg-base-300 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200 hover:border-primary/50"}`}
                   >
                     <div className="card-body p-4 flex flex-row items-center gap-3">
                       <div
@@ -132,7 +130,6 @@ const ParcoursSelection = ({
         {selectedFormation && (
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
-              <Waypoints className="text-secondary" />
               Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted">
                 {selectedFormation.title}
@@ -190,7 +187,7 @@ const ParcoursSelection = ({
             onClick={onGoBack}
             className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
           >
-            Annuler
+            Retourner à la prévisualisation des modules
           </button>
         </div>
       </div>

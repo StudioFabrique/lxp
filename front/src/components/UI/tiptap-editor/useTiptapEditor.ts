@@ -7,7 +7,7 @@ export default function useTiptapEditor(
   editorRef: React.MutableRefObject<Editor | null>,
   isEditingActivity: boolean,
   initialValue?: string,
-  onContentChange?: (content: string) => void
+  onContentChange?: (content: string) => void,
 ) {
   const editor = useEditor({
     extensions: tiptapExtensions,
@@ -19,7 +19,6 @@ export default function useTiptapEditor(
       },
     },
     onUpdate: ({ editor }) => {
-      // Appelle onContentChange lors de la mise à jour du contenu
       if (onContentChange && isEditingActivity) {
         onContentChange(editor.getHTML());
       }
@@ -28,12 +27,14 @@ export default function useTiptapEditor(
 
   const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
+  // Ref pour le conteneur principal
   const menuContainerRef = useRef<HTMLDivElement>(null);
+  // Ref pour la sentinelle invisible
+  const stickyMarkerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editor) {
       editorRef.current = editor;
-      editorRef.current.commands.focus();
     }
   }, [editor, editorRef]);
 
@@ -43,57 +44,40 @@ export default function useTiptapEditor(
     }
   }, [editor, isEditingActivity]);
 
-  // Effet pour mettre à jour le contenu de l'éditeur lorsque initialValue change
   useEffect(() => {
     if (editor && editor.getHTML() !== initialValue) {
       editor.commands.setContent(initialValue || "");
     }
   }, [editor, initialValue]);
 
-  // Effet pour détecter quand le composant sort de la vue et rendre la menu bar sticky
+  // --- LOGIQUE MENU BAR STICKY (Utilisation de IntersectionObserver) ---
   useEffect(() => {
-    if (!isEditingActivity || !menuContainerRef.current) return;
+    if (!isEditingActivity || !stickyMarkerRef.current) return;
 
-    let ticking = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsMenuBarSticky(
+          !entry.isIntersecting && entry.boundingClientRect.top < 0,
+        );
+      },
+      {
+        root: null,
+        threshold: 1.0,
+        rootMargin: "-10px 0px 0px 0px",
+      },
+    );
 
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          if (!menuContainerRef.current) return;
-
-          const containerRect =
-            menuContainerRef.current.getBoundingClientRect();
-          const containerTop = containerRect.top;
-
-          // Si le haut du composant est en dessous du haut de la fenêtre (donc hors de vue)
-          // alors rendre la menu bar sticky
-          setIsMenuBarSticky(containerTop < 0);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // Vérifier immédiatement la position
-    handleScroll();
+    observer.observe(stickyMarkerRef.current);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     };
-  }, [isEditingActivity]);
-
-  // Réinitialiser l'état sticky quand on quitte le mode édition
-  useEffect(() => {
-    if (!isEditingActivity) {
-      setIsMenuBarSticky(false);
-    }
   }, [isEditingActivity]);
 
   return {
     editor,
     menuContainerRef,
+    stickyMarkerRef,
     isMenuBarSticky,
   };
 }
