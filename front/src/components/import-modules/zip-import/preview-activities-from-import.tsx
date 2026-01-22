@@ -29,7 +29,7 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [activity]); // Dépendance à 'activity' entière pour être sûr
+  }, [activity]);
 
   // Fonction de rendu du contenu pour séparer proprement la logique
   const renderContent = () => {
@@ -38,13 +38,24 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
     // CAS 1 : TEXTE
     if (activity.type === "text" && typeof activity.value === "string") {
       return (
-        <div key={`text-wrapper-${activity.id}`} className="prose max-w-none">
+        <div key={`text-wrapper-${activity.id}`}>
           <TiptapEditor
-            // On garde aussi la key ici par sécurité
             key={activity.id}
             mode="read"
             initialValue={activity.value}
           />
+        </div>
+      );
+    }
+
+    if (activity.type === "text" && activity.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg gap-4">
+          <p className="font-semibold text-secondary">Activité de type texte</p>
+          <div className="flex flex-col items-center gap-4 text-xs text-red-400">
+            <span>Le fichier est manquant</span>
+            <span>({activity.url})</span>
+          </div>
         </div>
       );
     }
@@ -71,9 +82,10 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
                 Ouvrir le document <ArrowUpRight className="w-4" />
               </a>
             ) : (
-              <span className="text-xs text-red-400">
-                Impossible de générer l'aperçu (format invalide)
-              </span>
+              <div className="flex flex-col items-center gap-4 text-xs text-red-400">
+                <span>Le fichier est manquant</span>
+                <span>({activity.url})</span>
+              </div>
             )}
           </div>
         </div>

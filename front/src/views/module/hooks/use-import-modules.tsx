@@ -16,7 +16,10 @@ export enum ModulesImportStep {
   ImportResult,
 }
 
-export type ActivityImportType = Activity & { value?: string | Blob };
+export type ActivityImportType = Activity & {
+  value?: string | Blob;
+  hasError?: boolean;
+};
 
 type JsonFileFormat = {
   type: "text" | "file";
@@ -29,8 +32,13 @@ type JsonFileFormat = {
 };
 
 export type ModuleImportType = Module & {
+  hasError?: boolean;
   courses: (Course & {
-    lessons: (Lesson & { activities: ActivityImportType[] })[];
+    hasError?: boolean;
+    lessons: (Lesson & {
+      hasError?: boolean;
+      activities: ActivityImportType[];
+    })[];
   })[];
 };
 
@@ -56,6 +64,7 @@ export default function useImportModules() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [tooltipErrorTip, setTooltipErrorTip] = useState<string>("");
 
   // --- LOGIQUE API ---
   useEffect(() => {
@@ -88,6 +97,7 @@ export default function useImportModules() {
   // --- LOGIQUE ZIP ---
   const onImportZip = async (file: File) => {
     setError("");
+    setTooltipErrorTip("");
     setIsLoading(true);
     setImportedModules(undefined);
 
@@ -124,48 +134,36 @@ export default function useImportModules() {
         }
         const currentModule = modulesMap.get(item.module)!;
 
-        let currentCourse = currentModule.courses.find(
-          (c) => c.title === item.course,
-        );
+        let currentCourse: (Course & { hasError?: boolean }) | undefined =
+          currentModule.courses.find((c) => c.title === item.course);
         if (!currentCourse) {
           currentCourse = {
             id: Math.random(),
             title: item.course,
             module: currentModule,
-            tags: [],
-            contacts: [],
-            lessons: [],
-            dates: [],
-            bonusSkills: [],
+            lessons: [] as Lesson[],
             isPublished: false,
           } as Course & { lessons: Lesson[] };
           currentModule.courses.push(currentCourse);
         }
-        let currentLesson = currentCourse.lessons.find(
-          (l) => l.title === item.lesson,
-        );
+        let currentLesson: (Lesson & { hasError?: boolean }) | undefined =
+          currentCourse.lessons.find((l) => l.title === item.lesson);
+
         if (!currentLesson) {
           currentLesson = {
             id: Math.random(),
             title: item.lesson,
-            description: "",
             modalite: "hybride",
             tag: {} as Tag,
             adminId: 0,
             course: currentCourse,
-            activities: [],
-            lessonRating: [],
+            activities: [] as Activity[],
           } as Lesson;
           currentCourse.lessons.push(currentLesson);
         }
         if (item.path) {
           const fullZipPath = rootPath + cleanPath(item.path);
           const fileInZip = loadedZip.file(fullZipPath);
-          if (!fileInZip) {
-            const newError = `Fichier introuvable: ${fullZipPath}`;
-            console.warn(newError);
-            setError(newError);
-          }
 
           const activity: ActivityImportType = {
             id: Math.random(),
@@ -173,15 +171,27 @@ export default function useImportModules() {
             type: item.type,
             order: item.order,
             url: item.path,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            value: fileInZip
-              ? await fileInZip.async(item.type === "text" ? "string" : "blob")
-              : "",
-            resourceActivities: [],
-            resourceBonusActivities: [],
           } as ActivityImportType;
+
           currentLesson.activities?.push(activity);
+
+          if (!fileInZip) {
+            const newError = `Fichier introuvable: ${fullZipPath}`;
+            console.warn(newError);
+            setTooltipErrorTip(
+              "Les fichiers manquant sont indiqués dans la previsualisation en bas.",
+            );
+            setError("Un ou plusieurs fichiers sont manquants.");
+
+            activity.hasError = true;
+            currentLesson.hasError = true;
+            currentCourse.hasError = true;
+            currentModule.hasError = true;
+          } else {
+            activity.value = await fileInZip.async(
+              item.type === "text" ? "string" : "blob",
+            );
+          }
         }
       }
       setImportedModules(Array.from(modulesMap.values()));
@@ -237,6 +247,7 @@ export default function useImportModules() {
     importedModules,
     isLoading,
     error,
+    tooltipErrorTip,
     formationsList,
     selectedFormation,
     parcoursList,

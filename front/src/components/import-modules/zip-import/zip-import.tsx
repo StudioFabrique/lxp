@@ -1,18 +1,21 @@
-import { useState, useEffect, MouseEvent } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../UI/header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
-import ModulesImportList from "./modules-import-list";
+import ModulesArborescence from "./modules-arborescence";
 import {
   ActivityImportType,
   ModuleImportType,
 } from "../../../views/module/hooks/use-import-modules";
-import { Eye, Trash2, CheckCircle2, Component } from "lucide-react";
+import { Eye, Component } from "lucide-react";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import SelectableCard from "../../UI/selectable-card";
 
 type Props = {
   importedModules?: ModuleImportType[];
   error?: string;
+  tooltipErrorTip?: string;
   onImportZip: (file: File) => void;
   onConfirmZipImport: () => void;
   onRemoveModule?: (moduleTitle: string) => void;
@@ -21,6 +24,7 @@ type Props = {
 const ZipImport = ({
   importedModules,
   error,
+  tooltipErrorTip,
   onImportZip,
   onConfirmZipImport,
   onRemoveModule,
@@ -32,6 +36,18 @@ const ZipImport = ({
   // Activité sélectionnée pour la prévisualisation
   const [selectedActivity, setSelectedActivity] =
     useState<ActivityImportType | null>(null);
+
+  const headerDescription = error
+    ? error
+    : importedModules
+      ? `${importedModules.length > 1 ? importedModules.length + " m" : "M"}odule${importedModules.length > 1 ? "s" : ""} prêt${importedModules.length > 1 ? "s" : ""} à être importé${importedModules.length > 1 ? "s" : ""}`
+      : "Téléverser un dossier compressé de format .zip";
+
+  // Gestion du changement de module
+  const handlePreviewModule = (module: ModuleImportType) => {
+    setSelectedModule(module);
+    setSelectedActivity(null);
+  };
 
   // Dès qu'on importe, on sélectionne le premier module par défaut
   useEffect(() => {
@@ -49,107 +65,65 @@ const ZipImport = ({
     setSelectedActivity(null);
   }, [importedModules, selectedModule]);
 
-  // Gestion du changement de module
-  const handlePreviewModule = (module: ModuleImportType) => {
-    setSelectedModule(module);
-    setSelectedActivity(null);
-  };
-
-  // Gestion de la suppression (à connecter avec le parent)
-  const handleDeleteModule = (e: MouseEvent, moduleTitle: string) => {
-    e.stopPropagation();
-    onRemoveModule?.(moduleTitle);
-  };
-
   return (
     <div className="flex flex-col gap-6 ml-5">
       <Header
         title="Première étape"
-        description={
-          error ? error : "Téléverser un dossier compressé de format .zip"
-        }
+        isSubHeader
+        description={headerDescription}
         alternateBgColor
         hasError={Boolean(error)}
       >
-        <div className="flex items-center gap-4">
-          <MemoizedFileUpload
-            variant="minimized"
-            maxSize={10000000}
-            onSetFile={onImportZip}
-            fileType="zip"
-          />
-        </div>
+        <MemoizedFileUpload
+          buttonLabel="Importer un fichier .zip"
+          variant="minimized"
+          maxSize={10000000}
+          onSetFile={onImportZip}
+          fileType="zip"
+        />
+
         <button
-          className="btn btn-success hover:text-base-100 ml-5"
+          className="btn btn-sm btn-success hover:text-base-100 ml-5 mr-2"
           disabled={!importedModules || Boolean(error)}
           onClick={onConfirmZipImport}
         >
           Confirmer l'importation
         </button>
+        {tooltipErrorTip && (
+          <QuestionMarkTooltip
+            tooltipValue={tooltipErrorTip}
+            tooltipPosition="left"
+          />
+        )}
       </Header>
 
-      {/* --- SECTION : Liste des modules (Cards DaisyUI) --- */}
       {importedModules && importedModules.length > 0 && (
-        <div className="flex flex-col gap-6 border-t border-base-200 pt-6">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-base-content font-medium flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-success" />
-              {`${importedModules.length} module${importedModules.length > 1 ? "s" : ""} prêt${importedModules.length > 1 ? "s" : ""} à être importé${importedModules.length > 1 ? "s" : ""}`}
-            </span>
-          </div>
-
+        <div className="ml-5 flex flex-col gap-6">
           {/* Grille de Cards DaisyUI */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {importedModules.map((module, idx) => {
               const isSelected = selectedModule?.title === module.title;
 
+              const subtitle = `${module.courses.length} cours • ${module.courses.reduce(
+                (acc, c) => acc + c.lessons.length,
+                0,
+              )} leçons`;
+
               return (
-                <div
+                <SelectableCard
                   key={idx}
-                  className={`card bg-base-100 shadow-sm border transition-all duration-200 hover:shadow-md
-                        ${
-                          isSelected
-                            ? "border-primary ring-1 ring-primary"
-                            : "border-base-200"
-                        }
-                    `}
-                >
-                  <div className="card-body p-5">
-                    <h3
-                      className="card-title text-base font-bold text-base-content truncate"
-                      title={module.title}
-                    >
-                      <Component /> {toUpperFirstLetter(module.title)}
-                    </h3>
-
-                    <div className="text-xs text-base-content/70 mt-1">
-                      {`${module.courses.length} cours • ${module.courses.reduce(
-                        (acc, c) => acc + c.lessons.length,
-                        0,
-                      )} leçons`}
-                    </div>
-
-                    <div className="card-actions justify-end mt-4 pt-4 border-t border-base-200">
-                      {/* Bouton Supprimer */}
-                      <button
-                        onClick={(e) => handleDeleteModule(e, module.title)}
-                        className="btn btn-sm btn-ghost text-error hover:bg-error/10 tooltip tooltip-bottom"
-                        data-tip="Retirer de l'import"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-
-                      {/* Bouton Prévisualiser */}
-                      <button
-                        onClick={() => handlePreviewModule(module)}
-                        className={`btn btn-sm gap-2 ${isSelected ? "btn-primary text-base-100" : "btn-outline btn-primary"}`}
-                      >
-                        <Eye className="w-4 h-4" />
-                        {isSelected ? "Aperçu en cours" : "Prévisualiser"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  title={toUpperFirstLetter(module.title)}
+                  subtitle={subtitle}
+                  icon={<Component className="w-5 h-5" />}
+                  isSelected={isSelected}
+                  onAction={() => handlePreviewModule(module)}
+                  actionLabel="Aperçu"
+                  actionIcon={<Eye className="w-4 h-4" />}
+                  onDelete={() => {
+                    onRemoveModule?.(module.title);
+                  }}
+                  deleteTooltip="Retirer de l'import"
+                />
               );
             })}
           </div>
@@ -162,7 +136,7 @@ const ZipImport = ({
                 <h3 className="text-xs uppercase tracking-wide text-primary font-bold mb-3">
                   Module : {selectedModule.title}
                 </h3>
-                <ModulesImportList
+                <ModulesArborescence
                   activeModule={selectedModule}
                   onSelectActivity={setSelectedActivity}
                   selectedActivityId={selectedActivity?.id}
@@ -182,6 +156,7 @@ const ZipImport = ({
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
         disabled
+        isSubHeader
       />
     </div>
   );

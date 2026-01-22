@@ -12,6 +12,7 @@ const ImportModulesHome = () => {
     step,
     importedModules,
     error,
+    tooltipErrorTip,
     // Data & Selection states
     formationsList,
     selectedFormation,
@@ -34,6 +35,7 @@ const ImportModulesHome = () => {
           <ZipImport
             importedModules={importedModules}
             error={error}
+            tooltipErrorTip={tooltipErrorTip}
             onImportZip={onImportZip}
             onConfirmZipImport={onConfirmImport}
             onRemoveModule={onRemoveModule} // Passage de la prop
