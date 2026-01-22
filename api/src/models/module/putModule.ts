@@ -87,7 +87,9 @@ async function putModule(module: any) {
     maxDate: updatedModule.maxDate,
     title: updatedModule.module?.title,
     description: updatedModule.module?.description,
-    thumb: updatedModule.module?.thumb?.toString("base64") ?? null,
+    thumb: updatedModule.module?.thumb
+      ? Buffer.from(updatedModule.module.thumb).toString("base64")
+      : null,
     contacts: updatedModule.contacts.map(
       (c: { contact: { id: number; name: string; role: string } }) => c.contact,
     ),
