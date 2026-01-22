@@ -8,20 +8,21 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 export default async function httpPostModuleFromScratch(
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const module = req.body.module;
     const uploadedFile = req.file;
 
     const userId = req.auth?.userId;
+    let response;
     if (uploadedFile) {
       const data = await fs.promises.readFile(uploadedFile.path);
       const image = data.toString("base64");
       const resizedPic = sharp(uploadedFile.path).resize(400, 400);
       const thumb = resizedPic.toBuffer();
       const thumb64 = (await thumb).toString("base64");
-      const response = await postModuleFromScratch(
+      response = await postModuleFromScratch(
         userId!,
         module.title,
         module.description,
@@ -31,11 +32,11 @@ export default async function httpPostModuleFromScratch(
         module.bonusSkillsIds,
         module.duration,
         image,
-        thumb64
+        thumb64,
       );
       await deleteTempUploadedFile(req);
     } else {
-      const response = await postModuleFromScratch(
+      response = await postModuleFromScratch(
         userId!,
         module.title,
         module.description,
@@ -45,12 +46,12 @@ export default async function httpPostModuleFromScratch(
         module.bonusSkillsIds,
         module.duration,
         null,
-        null
+        null,
       );
     }
     next({
       statusCode: 201,
-      data: { success: true, message: "Le module a été ajouté avec succès." },
+      data: response,
     });
   } catch (error: any) {
     next({ statusCode: error.statusCode ?? 500, message: error.message });
