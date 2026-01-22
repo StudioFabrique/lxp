@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
 import { ModuleData } from "../../utils/interfaces/new-module";
+import { useDispatch } from "react-redux";
+import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 /**
  * Represents a selectable item (formation or parcours)
@@ -202,11 +204,12 @@ const newModuleReducer = (state: State, action: Action): State => {
  */
 const useNewModule = () => {
   const nav = useNavigate();
+  const redux = useDispatch();
   const [state, dispatch] = useReducer(newModuleReducer, initialState);
   const { sendRequest, error, isLoading } = useHttp();
   const { errors, onChangeValue, onValidateForm, values } = useForm(
     {},
-    moduleCreateSchema
+    moduleCreateSchema,
   );
 
   // Form data object combining values, change handler, and errors
@@ -263,6 +266,7 @@ const useNewModule = () => {
       const applyData = (result: { data: ModuleData; message: string }) => {
         toast.success(result.message);
         dispatch({ type: "SET_NEW_MODULE_DATA", payload: result.data });
+        redux(parcoursModulesSliceActions.addNewModule(result.data));
       };
 
       sendRequest(
@@ -271,10 +275,17 @@ const useNewModule = () => {
           method: "post",
           body: formData,
         },
-        applyData
+        applyData,
       );
     },
-    [state.formationId, state.file, data.values, onValidateForm, sendRequest]
+    [
+      state.formationId,
+      state.file,
+      data.values,
+      onValidateForm,
+      sendRequest,
+      redux,
+    ],
   );
 
   /**
@@ -300,7 +311,7 @@ const useNewModule = () => {
 
       sendRequest({ path: `/parcours/select/${fid}` }, processData);
     },
-    [state.formationId, sendRequest]
+    [state.formationId, sendRequest],
   );
 
   /**
@@ -322,7 +333,7 @@ const useNewModule = () => {
 
       // Fetch contacts and skills for the selected parcours
       const applyData = (
-        result: SuccessWithMessage & { contacts: Contact[]; skills: Skill[] }
+        result: SuccessWithMessage & { contacts: Contact[]; skills: Skill[] },
       ) => {
         dispatch({
           type: "SET_SKILLS_AND_CONTACTS",
@@ -332,7 +343,7 @@ const useNewModule = () => {
 
       sendRequest({ path: `/parcours/skills-contacts/${id}` }, applyData);
     },
-    [sendRequest]
+    [sendRequest],
   );
 
   /**
@@ -361,7 +372,7 @@ const useNewModule = () => {
             skillIds: state.currentSkills.map((s) => s.id ?? []),
           },
         },
-        applyData
+        applyData,
       );
     } catch (error: unknown) {
       if (error instanceof ZodError) {
@@ -418,7 +429,7 @@ const useNewModule = () => {
 
     // Get modal element from DOM (DaisyUI modal element)
     const modal = document.getElementById(
-      "back_to_module_list_modal"
+      "back_to_module_list_modal",
     ) as HTMLDialogElement | null;
 
     if (!modal) return;

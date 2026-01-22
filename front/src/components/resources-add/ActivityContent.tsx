@@ -33,6 +33,8 @@ type Props = {
 };
 
 export default function ActivityContent(props: PropsWithChildren<Props>) {
+  console.log("PROPS", props.parentId);
+
   return (
     <>
       {props.activityType && props.activityType !== "text" ? (
@@ -71,6 +73,7 @@ export default function ActivityContent(props: PropsWithChildren<Props>) {
 
           {props.activityType === "image" ? (
             <ImageActivityResource
+              resourceId={props.parentId}
               activity={props.previewActivity!}
               mode={props.activityState}
               onCancel={props.closePreviewActivity}

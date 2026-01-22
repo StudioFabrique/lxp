@@ -25,7 +25,7 @@ const Header = (props: HeaderProps) => {
     >
       <div>
         <h2
-          className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} capitalize ${props.classname}`}
+          className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}
         >
           {props.title}
         </h2>

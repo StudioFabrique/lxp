@@ -1,11 +1,10 @@
 import { getAdmin } from "../../helpers/get-admin";
-import { noAccess } from "../../utils/constantes";
 import { prisma } from "../../utils/db";
 
 async function putParcoursTags(
   parcoursId: number,
   newTags: Array<number>,
-  userId: string
+  userId: string,
 ) {
   const admin = await getAdmin(userId);
 

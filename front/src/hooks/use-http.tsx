@@ -23,7 +23,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     const responseInterceptor = axiosInstance.interceptors.response.use(
@@ -51,7 +51,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
@@ -59,12 +59,6 @@ const useHttp = (invokeErrorToast?: boolean) => {
       axiosInstance.interceptors.response.eject(responseInterceptor);
     };
   }, [axiosInstance, logout]);
-
-  useEffect(() => {
-    if (invokeErrorToast && error.length > 0) {
-      toast.error(error);
-    }
-  }, [error, invokeErrorToast]);
 
   const sendRequest = useCallback(
     async (
@@ -77,7 +71,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         onDownloadProgress?: (progress: number) => void;
         signal?: AbortSignal;
       },
-      applyData?: (data: any) => void
+      applyData?: (data: any) => void,
     ) => {
       setIsLoading(true);
       setError("");
@@ -88,14 +82,14 @@ const useHttp = (invokeErrorToast?: boolean) => {
           headers: req.headers,
           onUploadProgress: (event: import("axios").AxiosProgressEvent) => {
             const progress = Math.round(
-              (event.loaded * 100) / (event.total ?? 0)
+              (event.loaded * 100) / (event.total ?? 0),
             );
             setUploadProgress(progress);
             req.onUploadProgress?.(progress);
           },
           onDownloadProgress: (event: import("axios").AxiosProgressEvent) => {
             const progress = Math.round(
-              (event.loaded * 100) / (event.total ?? 0)
+              (event.loaded * 100) / (event.total ?? 0),
             );
             setDownloadProgress(progress);
             req.onDownloadProgress?.(progress);
@@ -107,26 +101,26 @@ const useHttp = (invokeErrorToast?: boolean) => {
             response = await axiosInstance.post(
               `${BASE_API_URL}${req.path}`,
               req.body,
-              config
+              config,
             );
             break;
           case "put":
             response = await axiosInstance.put(
               `${BASE_API_URL}${req.path}`,
               req.body,
-              config
+              config,
             );
             break;
           case "delete":
             response = await axiosInstance.delete(
               `${BASE_API_URL}${req.path}`,
-              config
+              config,
             );
             break;
           default:
             response = await axiosInstance.get(
               `${BASE_API_URL}${req.path}`,
-              config
+              config,
             );
             break;
         }
@@ -137,7 +131,19 @@ const useHttp = (invokeErrorToast?: boolean) => {
           return response.data;
         }
       } catch (err: any) {
-        setError(err.response?.data.message ?? "Erreur inconnue");
+        const errorMessage = err.response?.data.message ?? "Erreur inconnue";
+        setError(errorMessage);
+
+        // Déclencher le toast immédiatement pour éviter les problèmes de batching React
+        console.log(
+          "useHttp catch - invokeErrorToast:",
+          invokeErrorToast,
+          "errorMessage:",
+          errorMessage,
+        );
+        if (invokeErrorToast) {
+          toast.error(errorMessage);
+        }
 
         if (err.response?.status === 403) {
           logout();
@@ -148,7 +154,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         setDownloadProgress(null);
       }
     },
-    [logout, axiosInstance]
+    [logout, axiosInstance, invokeErrorToast],
   );
 
   return {
