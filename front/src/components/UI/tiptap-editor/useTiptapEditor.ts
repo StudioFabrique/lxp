@@ -62,7 +62,7 @@ export default function useTiptapEditor(
       },
       {
         root: null,
-        threshold: 1.0,
+        threshold: 0.5,
         rootMargin: "-10px 0px 0px 0px",
       },
     );
