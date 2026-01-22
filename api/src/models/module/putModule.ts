@@ -50,6 +50,15 @@ async function putModule(module: any) {
       select: {
         id: true,
         duration: true,
+        minDate: true,
+        maxDate: true,
+        module: {
+          select: {
+            title: true,
+            description: true,
+            thumb: true,
+          },
+        },
         contacts: {
           select: {
             contact: {
@@ -74,11 +83,17 @@ async function putModule(module: any) {
   const result = {
     id: updatedModule.id,
     duration: updatedModule.duration ? updatedModule.duration : 1,
+    minDate: updatedModule.minDate,
+    maxDate: updatedModule.maxDate,
+    title: updatedModule.module?.title,
+    description: updatedModule.module?.description,
+    thumb: updatedModule.module?.thumb?.toString("base64") ?? null,
     contacts: updatedModule.contacts.map(
-      (c: { contact: { id: number; name: string; role: string } }) => c.contact
+      (c: { contact: { id: number; name: string; role: string } }) => c.contact,
     ),
-    skills: updatedModule.bonusSkills.map(
-      (bs: { bonusSkill: { id: number; description: string } }) => bs.bonusSkill
+    bonusSkills: updatedModule.bonusSkills.map(
+      (bs: { bonusSkill: { id: number; description: string } }) =>
+        bs.bonusSkill,
     ),
   };
 

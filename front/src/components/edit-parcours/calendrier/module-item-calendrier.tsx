@@ -14,11 +14,8 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const dispatch = useDispatch();
   const [isSelected, setIsSelected] = useState(false);
 
-  // Check if module is valid
-  let notValid = true;
-  if (module.contacts !== undefined && module.bonusSkills !== undefined) {
-    notValid = module.contacts.length === 0 || module.bonusSkills.length === 0;
-  }
+  // Check if module is valid (contacts et bonusSkills doivent exister et ne pas être vides)
+  const notValid = !module.contacts?.length || !module.bonusSkills?.length;
 
   const handleClick = () => {
     dispatch(

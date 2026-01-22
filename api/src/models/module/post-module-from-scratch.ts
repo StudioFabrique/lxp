@@ -115,8 +115,23 @@ export default async function postModuleFromScratch(
           minDate: new Date(existingParcours!.startDate!),
           maxDate: new Date(existingParcours!.endDate!),
         },
+        include: {
+          contacts: { include: { contact: true } },
+          bonusSkills: { include: { bonusSkill: true } },
+        },
       });
+
+      // Retourne le module avec les données nécessaires pour le frontend
+      return {
+        ...newModule,
+        title: module.title,
+        description: module.description,
+        thumb: module.thumb,
+        contacts: newModule.contacts.map((c: any) => c.contact),
+        bonusSkills: newModule.bonusSkills.map((s: any) => s.bonusSkill),
+      };
     }
+
+    return null;
   });
-  return true;
 }

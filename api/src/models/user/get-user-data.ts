@@ -30,7 +30,7 @@ export default async function getUserData(userId: string) {
   )
     .populate("connectionInfos") // Include connection history data
     .populate("group", { image: 0 }) // Include group data but exclude images
-    .populate("roles") // Include user roles
+    .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 }) // Include user roles
     .populate("hobbies")
     .populate("links")
     .lean()) as IUser;
@@ -53,14 +53,14 @@ export default async function getUserData(userId: string) {
     const last = item?.lastConnection
       ? new Date(item.lastConnection).getTime()
       : 0;
-    return last >= now - 60 * 24 * 3600 * 1000;
+    return last >= now - 30 * 24 * 3600 * 1000;
   });
 
   // Create array to store missing connection days
   let newInfos: Array<any> = [];
 
   // Fill in missing days with zero duration for complete 14-day history
-  for (let delay = 14; delay > 0; delay--) {
+  for (let delay = 30; delay > 0; delay--) {
     const date = new Date(now - delay * 24 * 3600 * 1000);
 
     // Check if connection info exists for this specific day
@@ -177,15 +177,11 @@ export default async function getUserData(userId: string) {
     // Convert parcours image from Buffer to base64 string if it exists
     if (parcours && parcours.image) {
       try {
-        // protect against non-buffer values
+        // Convert Buffer/Uint8Array to base64 string for frontend consumption
+        const imageBuffer = Buffer.from(parcours.image);
         parcours = {
           ...parcours,
-          image:
-            parcours.image &&
-            typeof parcours.image === "object" &&
-            "toString" in parcours.image
-              ? (parcours.image as any).toString("base64")
-              : parcours.image,
+          image: imageBuffer.toString("base64"),
         };
       } catch {
         // ignore image conversion errors and leave image as-is
@@ -197,6 +193,6 @@ export default async function getUserData(userId: string) {
   return {
     user,
     parcours: parcours ?? null,
-    parcoursCompletion: parcoursCompletion,
+    parcoursCompletion: Math.floor(parcoursCompletion),
   };
 }

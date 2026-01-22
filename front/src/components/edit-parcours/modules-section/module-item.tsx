@@ -50,14 +50,8 @@ const ModuleItem: FC<ModuleItemProps> = ({
   };
 
   // un module item de la iste des modules du parcours n'est pas valide par défaut
-  let notValid = !fromSource;
-
-  // teste si un module du parcours est valide
-  if (module.contacts !== undefined && module.bonusSkills !== undefined) {
-    notValid =
-      !fromSource &&
-      (module.contacts.length === 0 || module.bonusSkills.length === 0);
-  }
+  // teste si un module du parcours est valide (contacts et bonusSkills doivent exister et ne pas être vides)
+  const notValid = !fromSource && (!module.contacts?.length || !module.bonusSkills?.length);
 
   // définit le style d'un module du parcours
   const style = notValid

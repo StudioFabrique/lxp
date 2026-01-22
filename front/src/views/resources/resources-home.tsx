@@ -24,7 +24,7 @@ export default function ResourcesHome() {
   const [showList, setShowList] = useState(true);
   const [resourceToDelete, setResourceToDelete] =
     useState<ResourceListItem | null>(null);
-  const { sendRequest } = useHttp();
+  const { sendRequest } = useHttp(true);
 
   const notFoundMessage = (
     <ElementNotFound message="Aucune ressource disponible pour le moment." />

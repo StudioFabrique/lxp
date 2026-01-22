@@ -7,7 +7,7 @@ import putResource from "../../models/resources/put-resource";
 export default async function httpPutResource(
   req: CustomRequest,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const userId = req.auth?.userId;
@@ -15,6 +15,7 @@ export default async function httpPutResource(
     const { data } = req.body;
     const { title, description, tags } = data;
     const file = req.file;
+    const roles = req.auth?.userRoles || [];
 
     const filename = file ? file.filename : null;
 
@@ -24,7 +25,8 @@ export default async function httpPutResource(
       title,
       description,
       tags,
-      filename ?? null
+      filename ?? null,
+      roles,
     );
     next({
       statusCode: 201,
