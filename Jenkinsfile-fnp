@@ -149,11 +149,9 @@ pipeline {
         }
 
         stage('Run Prisma migrations (DDL)') {
-            environment {
-                DATABASE_URL = credentials('FNP_MIGRATOR_PG_URL')
-            }
             steps {
-                withCredentials([                    
+                withCredentials([
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'DATABASE_URL'),
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
@@ -167,7 +165,7 @@ pipeline {
                             echo "📌 Running Prisma migrations from: \$(pwd)"
 
                             # Migration avec user DDL (least privilege respecté)
-                            npx prisma migrate deploy
+                            DATABASE_URL="${DATABASE_URL}" npx prisma migrate deploy
                         '
                     """
                 }
