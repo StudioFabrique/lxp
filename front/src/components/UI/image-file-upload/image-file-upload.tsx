@@ -19,6 +19,7 @@ const allowedExtensions = {
 const FileUpload: FC<{
   maxSize: number;
   label?: string;
+  buttonLabel?: string;
   fileType?: "image" | "zip";
   variant?: "normal" | "minimized";
   onSetFile: (file: File) => void;
@@ -26,6 +27,7 @@ const FileUpload: FC<{
   maxSize,
   onSetFile,
   label,
+  buttonLabel,
   variant = "normal",
   fileType = "image",
 }) => {
@@ -72,17 +74,17 @@ const FileUpload: FC<{
       <span className="flex w-full items-center justify-end">
         <button
           onClick={handleSetFile}
-          className={`btn gap-2 px-5 flex ${
+          className={`btn btn-sm gap-2 px-5 flex ${
             variant === "normal" ? "justify-center" : "justify-between"
-          } items-center cursor-pointer btn-primary btn-soft text-center text-xs lg:text-sm p-2 rounded-l-sm ${
-            variant === "normal" && "w-[50%]"
-          } h-10 last:rounded-r-sm`}
+          } items-center cursor-pointer btn-primary btn-soft text-center p-2 rounded-l-sm last:rounded-r-sm`}
         >
           {variant === "minimized" &&
-            (!fileName ? <Upload className="w-5" /> : <Edit className="w-5" />)}
+            (!fileName ? <Upload className="w-4" /> : <Edit className="w-5" />)}
           <span>
             {variant === "normal" || !fileName
-              ? "Choisir un fichier"
+              ? buttonLabel
+                ? buttonLabel
+                : "Choisir un fichier"
               : fileName}
           </span>
         </button>

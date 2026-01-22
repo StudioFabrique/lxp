@@ -49,6 +49,7 @@ const ParcoursSelection = ({
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
         successBgColor
+        isSubHeader
         disabled
         onClick={onGoBack}
       />
@@ -57,6 +58,7 @@ const ParcoursSelection = ({
       <Header
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
+        isSubHeader
         alternateBgColor
       >
         {selectedParcours && (
@@ -177,10 +179,18 @@ const ParcoursSelection = ({
         <div className="flex justify-center">
           <button
             onClick={handleConfirmWithoutParcours}
-            className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
+            className="btn btn-outline hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
           >
             <Ban size={18} />
             Lancer l'importation sans rattacher à un parcours
+          </button>
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={onGoBack}
+            className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
+          >
+            Annuler
           </button>
         </div>
       </div>
