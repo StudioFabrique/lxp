@@ -136,10 +136,6 @@ pipeline {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
                     '''
-                   
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
-                '''
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker network create lxp_network || true"
@@ -153,8 +149,11 @@ pipeline {
         }
 
         stage('Run Prisma migrations (DDL)') {
+            environment {
+                DATABASE_URL = credentials('FNP_MIGRATOR_PG_URL')
+            }
             steps {
-                withCredentials([
+                withCredentials([                    
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
