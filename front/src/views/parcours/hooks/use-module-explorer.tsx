@@ -1,19 +1,19 @@
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import Module from "../../../utils/interfaces/module";
-import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
+import Lesson from "../../../utils/interfaces/lesson";
+import { ACTIVITIES } from "../../../config/urls";
+import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
+import { OnDragEndResponder } from "react-beautiful-dnd";
 import {
   initialModuleExplorerContentState,
   moduleExplorerContentReducer,
-} from "../store/module-explorer-reducer";
-import { ACTIVITIES } from "../../../config/urls";
-import { Activity, ActivityType } from "../../../utils/interfaces/activity";
-import { OnDragEndResponder } from "react-beautiful-dnd";
-import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
+} from "../module-content-explorer/store/module-explorer-reducer";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useModuleExplorerContent = () => {
@@ -462,7 +462,7 @@ const useModuleExplorerContent = () => {
           method: "put",
           body: {
             activitiesIds: state.selectedLesson.activities.map(
-              (activity) => activity.id
+              (activity) => activity.id,
             ),
           },
         },
