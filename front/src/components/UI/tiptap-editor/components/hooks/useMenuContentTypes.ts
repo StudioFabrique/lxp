@@ -13,12 +13,12 @@ interface QueuedImage {
 
 export const useMenuContentTypes = (
   editor: Editor,
-  imageInputRef: React.RefObject<HTMLInputElement>
+  imageInputRef: React.RefObject<HTMLInputElement>,
 ) => {
   const { sendRequest } = useHttp();
   const [imageQueue, setImageQueue] = useState<QueuedImage[]>([]);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
-    "small"
+    "small",
   );
 
   const handleImageSelect = useCallback(
@@ -32,7 +32,7 @@ export const useMenuContentTypes = (
           ...prev,
           {
             file,
-            blobUrl, // Make sure this is the actual blob URL string
+            blobUrl,
             size: imageSize,
             tempId,
           },
@@ -50,14 +50,14 @@ export const useMenuContentTypes = (
             imageSize === "small"
               ? "25%"
               : imageSize === "medium"
-              ? "50%"
-              : "100%",
+                ? "50%"
+                : "100%",
         },
       });
 
       editor.commands.enter();
     },
-    [editor, imageSize]
+    [editor, imageSize],
   );
 
   const handleImageUploadFromURL = useCallback(
@@ -71,14 +71,14 @@ export const useMenuContentTypes = (
             imageSize === "small"
               ? "25%"
               : imageSize === "medium"
-              ? "50%"
-              : "100%",
+                ? "50%"
+                : "100%",
         },
       });
 
       editor.commands.enter();
     },
-    [editor, imageSize]
+    [editor, imageSize],
   );
 
   const uploadAllImages = useCallback(async () => {
@@ -146,7 +146,7 @@ export const useMenuContentTypes = (
 
       if (updatedCount > 0) {
         console.log(
-          `Dispatching transaction with ${updatedCount} images updates`
+          `Dispatching transaction with ${updatedCount} images updates`,
         );
         editor.view.dispatch(transaction);
 
