@@ -13,7 +13,7 @@ import { OnDragEndResponder } from "react-beautiful-dnd";
 import {
   initialModuleExplorerContentState,
   moduleExplorerContentReducer,
-} from "../module-content-explorer/store/module-explorer-reducer";
+} from "../store/module-explorer-reducer";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useModuleExplorerContent = () => {
