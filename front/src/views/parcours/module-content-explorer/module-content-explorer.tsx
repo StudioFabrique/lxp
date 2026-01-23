@@ -1,25 +1,25 @@
-import SidebarCoursesList from "../../components/module-content-explorer/sidebar/sidebar-courses-list";
-import ProgressBar from "../../components/module-content-explorer/progress-bar";
-import useModuleExplorerContent from "./hooks/use-module-explorer";
-import ModuleExplorerContentHeader from "../../components/module-content-explorer/module-content-explorer-header";
-import ModuleData from "../../components/module-content-explorer/module-data/module-data";
-import ModuleExplorerContentWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
+import SidebarCoursesList from "../../../components/module-content-explorer/sidebar/sidebar-courses-list";
+import ProgressBar from "../../../components/module-content-explorer/progress-bar";
+import useModuleExplorerContent from "../hooks/use-module-explorer";
+import ModuleExplorerContentHeader from "../../../components/module-content-explorer/module-content-explorer-header";
+import ModuleData from "../../../components/module-content-explorer/module-data/module-data";
+import ModuleExplorerContentWrapper from "../../../components/module-content-explorer/module-content-explorer-wrapper";
 import ModuleExplorerContentSkeleton from "./module-content-explorer-skeleton";
-import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
-import Can from "../../components/UI/can/can.component";
-import CreateCourseItem from "../../components/module-content-explorer/sidebar/create-course-item";
-import ActivityList from "../../components/module-content-explorer/sidebar/activity-list";
-import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
+import LessonCompletionModal from "../../../components/module-content-explorer/lesson-completion-modal";
+import Can from "../../../components/UI/can/can.component";
+import CreateCourseItem from "../../../components/module-content-explorer/sidebar/create-course-item";
+import ActivityList from "../../../components/module-content-explorer/sidebar/activity-list";
+import NoActivityPlaceholder from "../../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
 import { useCallback, useContext } from "react";
-import ActivityBottomNavigation from "../../components/module-content-explorer/preview/activity-bottom-navigation";
-import Lesson from "../../utils/interfaces/lesson";
-import ActivityTypeSelection from "../../components/module-content-explorer/preview/activity-type-selection";
-import LessonReaderAndEditor from "../../components/module-content-explorer/preview/lesson-reader-and-editor";
-import Header from "../../components/UI/header";
-import { Context } from "../../store/context.store";
-import userBelongsToContacts from "../../utils/userBelongsToContacts";
+import ActivityBottomNavigation from "../../../components/module-content-explorer/preview/activity-bottom-navigation";
+import Lesson from "../../../utils/interfaces/lesson";
+import ActivityTypeSelection from "../../../components/module-content-explorer/preview/activity-type-selection";
+import LessonReaderAndEditor from "../../../components/module-content-explorer/preview/lesson-reader-and-editor";
+import Header from "../../../components/UI/header";
+import { Context } from "../../../store/context.store";
+import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -64,28 +64,28 @@ const ModuleExplorerContent = () => {
   const canEditModule = userBelongsToContacts(user, module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
     user,
-    selectedLesson?.course?.contacts
+    selectedLesson?.course?.contacts,
   );
 
   const editTitle = useCallback(
     (title: string) => {
       dispatch({ type: "update_activity_title", title });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editIframeSrc = useCallback(
     (src: string) => {
       dispatch({ type: "update_activity_iframe_src", src });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editContent = useCallback(
     (content: string) => {
       dispatch({ type: "update_activity_content", content });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleSelectLesson = (lesson: Lesson) => {
