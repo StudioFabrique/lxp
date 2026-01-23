@@ -22,7 +22,7 @@ import HardBreak from "@tiptap/extension-hard-break";
 const lowlight = createLowlight(all);
 
 const tiptapExtensions = [
-  StarterKit.configure({ codeBlock: false }),
+  StarterKit.configure({ codeBlock: false, hardBreak: false }),
   HardBreak.extend({
     addKeyboardShortcuts() {
       return {
