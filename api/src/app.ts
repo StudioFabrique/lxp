@@ -49,13 +49,13 @@ app
       crossOriginOpenerPolicy: true,
       referrerPolicy: false,
       originAgentCluster: false,
-    })
+    }),
   )
   .use(
     cors({
       origin: origins,
       credentials: true,
-    })
+    }),
   )
   .use(cookieParser())
   .use(morgan("combined"))
