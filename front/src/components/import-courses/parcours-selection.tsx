@@ -1,4 +1,10 @@
-import { GraduationCap, CheckCircle2, ArrowRight, Rocket } from "lucide-react";
+import {
+  GraduationCap,
+  CheckCircle2,
+  ArrowRight,
+  Rocket,
+  Component,
+} from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
@@ -40,7 +46,9 @@ const ParcoursSelection = ({
   onGoBack,
 }: Props) => {
   // Détermine si le bouton de confirmation d'i,portation est activé
-  const canConfirm = Boolean(selectedFormation && selectedParcours);
+  const canConfirm = Boolean(
+    selectedFormation && selectedParcours && selectedModule,
+  );
 
   // const handleConfirmWithoutParcours = () => {
   //   onSelectParcours(null);
@@ -210,7 +218,7 @@ const ParcoursSelection = ({
                         <div
                           className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
                         >
-                          <Rocket size={20} />
+                          <Component size={20} />
                         </div>
                         <span
                           className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
