@@ -6,17 +6,17 @@ type SelectableCardProps = {
   // Données
   title?: string;
   subtitle?: string | ReactNode;
-  icon?: ReactNode; // L'icône principale à gauche du titre
+  icon?: ReactNode;
 
   // État
   isSelected?: boolean;
 
   // Actions
-  onAction?: () => void; // Action principale (ex: Prévisualiser)
-  actionLabel?: string; // Texte du bouton d'action (ex: "Aperçu")
-  actionIcon?: ReactNode; // Icône du bouton d'action
+  onAction?: () => void;
+  actionLabel?: string;
+  actionIcon?: ReactNode;
 
-  onDelete?: () => void; // Si fourni, affiche le bouton poubelle
+  onDelete?: () => void;
   deleteTooltip?: string;
 
   // Style
@@ -38,7 +38,6 @@ const SelectableCard = ({
   className = "",
   error,
 }: SelectableCardProps) => {
-  // Gestionnaire pour la suppression avec stopPropagation
   const handleDeleteClick = (e: MouseEvent) => {
     e.stopPropagation();
     if (onDelete) onDelete();
@@ -51,24 +50,33 @@ const SelectableCard = ({
         ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200"}
         ${error ? "bg-error/10" : "bg-base-300"}
         ${className}
+        w-full overflow-hidden {/* Ajout: assure que la card ne dépasse pas son parent */}
       `}
     >
       <div className="card-body p-3">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center w-full gap-4">
           {/* PARTIE GAUCHE : Contenu */}
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center flex-1 min-w-0">
             {icon && <div className="flex-shrink-0">{icon}</div>}
-            <div className="flex flex-col min-w-0 gap-1">
+
+            <div className="flex flex-col min-w-0 gap-1 w-full">
               <h3
-                className="card-title text-base font-bold text-base-content truncate flex gap-2 items-center"
+                className="card-title text-base font-bold text-base-content flex gap-2 items-center"
                 title={title}
               >
                 <span className="truncate">{title}</span>
-                {error && <ToolTipWarning absolutePos message={error} />}
+
+                {error && (
+                  <div className="flex-shrink-0">
+                    <ToolTipWarning absolutePos message={error} />
+                  </div>
+                )}
               </h3>
 
               {subtitle && (
-                <div className="text-xs text-base-content/70">{subtitle}</div>
+                <div className="text-xs text-base-content/70 truncate">
+                  {subtitle}
+                </div>
               )}
             </div>
           </div>
@@ -77,7 +85,6 @@ const SelectableCard = ({
           <div
             className={`flex gap-2 flex-none items-center ${error ? "mr-5" : ""}`}
           >
-            {/* Bouton Supprimer (Affiché seulement si onDelete est fourni) */}
             {onDelete && (
               <button
                 onClick={handleDeleteClick}
@@ -88,7 +95,6 @@ const SelectableCard = ({
               </button>
             )}
 
-            {/* Bouton d'Action Principale */}
             {onAction && (
               <button
                 onClick={onAction}
@@ -97,7 +103,9 @@ const SelectableCard = ({
                 }`}
               >
                 {actionIcon}
-                <span className="hidden 2xl:inline">{actionLabel}</span>
+                <span className="hidden 2xl:inline whitespace-nowrap">
+                  {actionLabel}
+                </span>
               </button>
             )}
           </div>
