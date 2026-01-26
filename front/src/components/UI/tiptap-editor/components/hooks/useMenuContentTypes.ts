@@ -75,8 +75,6 @@ export const useMenuContentTypes = (
               : "100%",
         },
       });
-
-      editor.commands.enter();
     },
     [editor, imageSize]
   );
