@@ -3,6 +3,9 @@ import React from "react";
 const ImportModulesHome = React.lazy(
   () => import("../../views/module/import/import-modules-home"),
 );
+const ImportCoursesHome = React.lazy(
+  () => import("../../views/course/import/import-courses-home"),
+);
 const RoleEdit = React.lazy(() => import("../../views/role/role-edit"));
 const AdminHome = React.lazy(
   () => import("../../views/admin/admin-home.component"),
@@ -191,6 +194,7 @@ const adminRoutes = [
         index: true,
         element: <CourseHome />,
       },
+      { path: "import-cours", element: <ImportCoursesHome /> },
       {
         path: "edit/:courseId",
         element: <LayoutCourseEdit />,
