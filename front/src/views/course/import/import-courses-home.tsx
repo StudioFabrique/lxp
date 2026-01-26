@@ -48,6 +48,9 @@ const ImportCoursesHome = () => {
             parcoursList={parcoursList}
             selectedParcours={selectedParcours}
             onSelectParcours={setSelectedParcours}
+            modulesList={[]}
+            selectedModule={null}
+            onSelectModule={() => {}}
             onConfirm={onConfirmParcoursSelection}
             onGoBack={onGoBack}
           />

@@ -3,6 +3,7 @@ import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
 import { Link } from "react-router-dom";
+import Module from "../../utils/interfaces/module";
 
 type Props = {
   formationsList: Formation[];
@@ -13,17 +14,28 @@ type Props = {
   selectedParcours: Parcours | null;
   onSelectParcours: (parcours: Parcours | null) => void;
 
+  modulesList: Module[];
+  selectedModule: Module | null;
+  onSelectModule: (module: Module | null) => void;
+
   onConfirm: (parcours?: Parcours | null) => void;
   onGoBack: () => void;
 };
 
 const ParcoursSelection = ({
+  // Formation
   formationsList,
   selectedFormation,
   onSelectFormation,
+  // Parcours
   parcoursList,
   selectedParcours,
   onSelectParcours,
+  // Modules
+  modulesList,
+  selectedModule,
+  onSelectModule,
+
   onConfirm,
   onGoBack,
 }: Props) => {
@@ -155,6 +167,12 @@ const ParcoursSelection = ({
                         >
                           {parcours.title}
                         </span>
+                        {isSelected && (
+                          <CheckCircle2
+                            size={16}
+                            className="text-primary ml-auto"
+                          />
+                        )}
                       </div>
                     </div>
                   );
@@ -164,26 +182,49 @@ const ParcoursSelection = ({
           </div>
         )}
 
-        {/* --- SECTION 3 : STANDALONE --- */}
-        {/* <div className="divider text-base-content/30 text-xs">OU</div>
+        {/* --- SECTION 3 : MODULES (Apparait si le parcours est sélectionné) --- */}
+        {selectedParcours && (
+          <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
+              Choisir un module pour :
+              <span className="text-primary underline decoration-dotted">
+                {selectedParcours.title}
+              </span>
+            </h3>
 
-        <div className="flex justify-center">
-          <button
-            onClick={handleConfirmWithoutParcours}
-            className="btn btn-outline hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-          >
-            <Ban size={18} />
-            Lancer l'importation sans rattacher à un parcours
-          </button>
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={onGoBack}
-            className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-          >
-            Retourner à la prévisualisation des modules
-          </button>
-        </div> */}
+            {modulesList.length === 0 ? (
+              <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
+                Aucun module disponible pour ce parcours.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {modulesList.map((module) => {
+                  const isSelected = selectedParcours?.id === module.id;
+                  return (
+                    <div
+                      key={module.id}
+                      onClick={() => onSelectModule(module)}
+                      className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}`}
+                    >
+                      <div className="card-body p-4 flex flex-row items-center gap-3">
+                        <div
+                          className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
+                        >
+                          <Rocket size={20} />
+                        </div>
+                        <span
+                          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
+                        >
+                          {module.title}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
