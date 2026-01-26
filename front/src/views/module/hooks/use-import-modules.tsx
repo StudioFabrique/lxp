@@ -22,6 +22,14 @@ export type ActivityImportType = Activity & {
   hasError?: boolean;
 };
 
+// AJOUT : Interface pour les images extraites du HTML
+export interface QueuedImage {
+  file: File;
+  blobUrl: string;
+  size: "small" | "medium" | "large";
+  tempId: string;
+}
+
 type JsonFileFormat = {
   type: "text" | "file";
   title: string;
@@ -51,6 +59,9 @@ export default function useImportModules() {
   );
 
   const [importedModules, setImportedModules] = useState<ModuleImportType[]>();
+
+  // AJOUT : State pour stocker les images extraites
+  const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
 
   // États pour la sélection Formation/Parcours
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
@@ -95,12 +106,64 @@ export default function useImportModules() {
     }
   }, [selectedFormation, sendRequest]);
 
+  // --- AJOUT : FONCTION DE TRAITEMENT DES IMAGES HTML ---
+  const processHtmlImages = async (
+    htmlContent: string,
+    zip: JSZip,
+    rootPath: string,
+  ): Promise<{ newHtml: string; newImages: QueuedImage[] }> => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, "text/html");
+    const imgTags = doc.querySelectorAll("img");
+    const extractedImages: QueuedImage[] = [];
+
+    for (const img of Array.from(imgTags)) {
+      const src = img.getAttribute("src");
+
+      // Vérifie si l'image est locale (commence par ./files ou files/)
+      if (src && (src.startsWith("./files") || src.startsWith("files/"))) {
+        const cleanSrc = cleanPath(src);
+        const fullPath = rootPath + cleanSrc;
+        const fileInZip = zip.file(fullPath);
+
+        if (fileInZip) {
+          const blob = await fileInZip.async("blob");
+          const fileName = cleanSrc.split("/").pop() || "image.png";
+          const file = new File([blob], fileName, { type: blob.type });
+          const blobUrl = URL.createObjectURL(blob);
+          const tempId = `temp-${Date.now()}-${Math.random()}`;
+
+          extractedImages.push({
+            file,
+            blobUrl,
+            size: "medium",
+            tempId,
+          });
+
+          // Remplace le src relatif par l'URL Blob
+          img.setAttribute("src", blobUrl);
+          img.setAttribute("data-temp-id", tempId);
+        } else {
+          console.warn(`Image introuvable dans le ZIP : ${fullPath}`);
+          img.style.border = "2px solid red";
+          img.setAttribute("title", "Image manquante");
+        }
+      }
+    }
+
+    return {
+      newHtml: doc.body.innerHTML,
+      newImages: extractedImages,
+    };
+  };
+
   // --- LOGIQUE ZIP ---
   const onImportZip = async (file: File) => {
     setError("");
     setTooltipErrorTip("");
     setIsLoading(true);
     setImportedModules(undefined);
+    setImagesQueue([]); // Reset queue
 
     try {
       const zip = new JSZip();
@@ -120,6 +183,7 @@ export default function useImportModules() {
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
       const modulesMap = new Map<string, ModuleImportType>();
+      const allExtractedImages: QueuedImage[] = []; // Liste temporaire
 
       for (const item of flatActivities) {
         if (!modulesMap.has(item.module)) {
@@ -175,8 +239,6 @@ export default function useImportModules() {
             url: item.path,
           } as ActivityImportType;
 
-          currentLesson.activities?.push(activity);
-
           if (!fileInZip) {
             const newError = `Fichier introuvable: ${fullZipPath}`;
             console.warn(newError);
@@ -193,19 +255,27 @@ export default function useImportModules() {
             if (item.type === "text") {
               // Si c'est du texte, on lit la string Markdown
               const markdownContent = await fileInZip.async("string");
-
-              // On convertit le Markdown en HTML (String) pour Tiptap
               const htmlContent = await marked.parse(markdownContent);
 
-              activity.value = htmlContent;
+              // --- AJOUT : Traitement des images HTML ---
+              const { newHtml, newImages } = await processHtmlImages(
+                htmlContent,
+                loadedZip,
+                rootPath,
+              );
+
+              activity.value = newHtml;
+              allExtractedImages.push(...newImages);
             } else {
               // Si c'est un fichier binaire (image, pdf...), on garde le blob
               activity.value = await fileInZip.async("blob");
             }
           }
+          currentLesson.activities?.push(activity);
         }
       }
       setImportedModules(Array.from(modulesMap.values()));
+      setImagesQueue(allExtractedImages); // Sauvegarde des images extraites
     } catch (error) {
       console.error("Erreur import ZIP", error);
       setError((error as Error).message);
@@ -259,6 +329,7 @@ export default function useImportModules() {
     isLoading,
     error,
     tooltipErrorTip,
+    imagesQueue, // Exposé si besoin par le composant parent
     formationsList,
     selectedFormation,
     parcoursList,
