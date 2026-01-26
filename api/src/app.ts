@@ -29,7 +29,7 @@ app
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "http://localhost:5001"],
-          imgSrc: ["'self'", "data:"],
+          imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
           scriptSrc: ["'self'", "https://www.youtube.com"],
           frameSrc: [
             "'self'",
@@ -49,13 +49,13 @@ app
       crossOriginOpenerPolicy: true,
       referrerPolicy: false,
       originAgentCluster: false,
-    })
+    }),
   )
   .use(
     cors({
       origin: origins,
       credentials: true,
-    })
+    }),
   )
   .use(cookieParser())
   .use(morgan("combined"))
