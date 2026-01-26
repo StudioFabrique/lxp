@@ -87,7 +87,7 @@ const GroupHome = () => {
           data,
           isLoading,
           Boolean(searchValue),
-          actionsConfig(onRefreshData)
+          actionsConfig(onRefreshData),
         )}
         checkboxConfig={checkboxConfig}
         sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
@@ -120,7 +120,7 @@ const GroupHome = () => {
           // bas du tableau
           <TablePagination
             key={1}
-            leftText={`Nombre de groupes : ${totalItems}`}
+            leftText={`Groupes : ${totalItems}`}
             {...pagination}
           />,
         ]}

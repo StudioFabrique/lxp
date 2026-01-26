@@ -132,7 +132,7 @@ const TagsHome = () => {
           data,
           isLoading,
           Boolean(searchValue),
-          actionsConfig(onRefreshData)
+          actionsConfig(onRefreshData),
         )}
         checkboxConfig={checkboxConfig}
         sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
@@ -165,7 +165,7 @@ const TagsHome = () => {
           // bas du tableau
           <TablePagination
             key={1}
-            leftText={`Nombre de tags : ${totalItems}`}
+            leftText={`Tags : ${totalItems}`}
             {...pagination}
           />,
         ]}
