@@ -73,9 +73,8 @@ const LayoutEditModule = React.lazy(
 const EditModuleHome = React.lazy(
   () => import("../../views/module/edit/edit-module-home"),
 );
-const ModuleContentExplorer = React.lazy(
-  () =>
-    import("../../views/parcours/module-content-explorer/module-content-explorer"),
+const LessonsPreview = React.lazy(
+  () => import("../../views/module-content-explorer/module-content-explorer"),
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
@@ -180,7 +179,7 @@ const adminRoutes = [
       { path: "view/:id", element: <ParcoursView /> },
       {
         path: "module/:moduleId",
-        element: <ModuleContentExplorer key="lessons-preview" />,
+        element: <LessonsPreview key="lessons-preview" />,
       },
     ],
   },
