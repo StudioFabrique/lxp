@@ -76,7 +76,7 @@ const FileUpload: FC<{
           onClick={handleSetFile}
           className={`btn btn-sm gap-2 px-5 flex ${
             variant === "normal" ? "justify-center" : "justify-between"
-          } items-center cursor-pointer btn-secondary btn-soft text-center p-2 rounded-l-sm last:rounded-r-sm`}
+          } items-center cursor-pointer btn-secondary text-center p-2 rounded-l-sm last:rounded-r-sm`}
         >
           {variant === "minimized" &&
             (!fileName ? <Upload className="w-4" /> : <Edit className="w-5" />)}
