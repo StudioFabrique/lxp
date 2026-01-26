@@ -26,7 +26,7 @@ function CourseHeader() {
         <Can action="write" object="course">
           <Link
             className="btn btn-primary btn-soft mr-5"
-            to="import-courses"
+            to="import-cours"
             // state={{ parcoursId }}
           >
             <div className="flex gap-x-2 items-center">
