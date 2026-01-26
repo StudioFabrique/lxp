@@ -68,7 +68,11 @@ const SelectableCard = ({
 
                 {error && (
                   <div className="flex-shrink-0">
-                    <ToolTipWarning absolutePos message={error} />
+                    <ToolTipWarning
+                      absolutePos
+                      tooltipPos="tooltip-left"
+                      message={error}
+                    />
                   </div>
                 )}
               </h3>

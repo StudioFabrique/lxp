@@ -79,7 +79,7 @@ const CourseArborescence = ({
                     <button
                       key={aIdx}
                       onClick={() => onSelectActivity(activity)}
-                      className={`text-left px-4 py-2 text-xs flex items-center gap-3 transition-all w-full border-l-4
+                      className={`cursor-pointer text-left px-4 py-2 text-xs flex items-center gap-3 transition-all w-full border-l-4
                         ${
                           isSelected
                             ? `${activity.hasError ? "border-error bg-error/10 text-error" : "border-primary bg-primary/10 text-primary"} font-semibold`
