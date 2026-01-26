@@ -53,7 +53,7 @@ const SelectableCard = ({
         w-full overflow-hidden {/* Ajout: assure que la card ne dépasse pas son parent */}
       `}
     >
-      <div className="card-body p-3">
+      <div className="card-body p-1 px-2">
         <div className="flex justify-between items-center w-full gap-4">
           {/* PARTIE GAUCHE : Contenu */}
           <div className="flex gap-4 items-center flex-1 min-w-0">
@@ -103,7 +103,9 @@ const SelectableCard = ({
               <button
                 onClick={onAction}
                 className={`btn btn-sm ${
-                  isSelected ? "btn-secondary" : "btn-outline btn-secondary"
+                  isSelected
+                    ? "btn-outline btn-primary"
+                    : "btn-ghost btn-secondary"
                 }`}
               >
                 {actionIcon}
