@@ -93,9 +93,7 @@ const SelectableCard = ({
               <button
                 onClick={onAction}
                 className={`btn btn-sm ${
-                  isSelected
-                    ? "btn-secondary text-base-100"
-                    : "btn-outline btn-secondary"
+                  isSelected ? "btn-secondary" : "btn-outline btn-secondary"
                 }`}
               >
                 {actionIcon}
