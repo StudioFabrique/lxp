@@ -21,6 +21,47 @@ from app.utils.config import ALLOWED_ORIGINS
 from app.utils.logging_setup import LoggerSetup
 from app.routes import chatbot
 
+from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic.functional_serializers import PlainSerializer
+from typing import Annotated, Optional
+
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+from .utils.config import DATABASE_URL
+
+engine = create_engine(DATABASE_URL)
+Base = automap_base()
+Base.prepare(engine, reflect=True)
+
+Parcours = Base.classes.Parcours
+with Session(engine) as session:
+    result = session.query(Parcours).all()
+    for row in result:
+        print(row.id, row.title)
+
+# Custom type for ObjectId that serializes to string
+PyObjectId = Annotated[ObjectId, PlainSerializer(lambda x: str(x), return_type=str)]
+
+
+class UserModel(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    id: PyObjectId = Field(alias="_id")
+    # Ajoute ici les autres champs de ton modèle User
+    # email: str
+    # name: Optional[str] = None
+    email: str
+    isActive: bool
+    lastname: Optional[str] = None
+
+
+client = AsyncIOMotorClient("mongodb://localhost:27000")
+mongo_db = client.lxp
+
 # Initialize the logger
 logger = LoggerSetup()
 
@@ -76,3 +117,12 @@ async def health_check():
     Returns service status for health checks.
     """
     return {"status": "ok"}
+
+
+@app.get("/test-mongo")
+async def read_mongo():
+    cursor = mongo_db.users.find()
+    documents = await cursor.to_list(length=100)
+    print("Documents from MongoDB:", len(documents))
+    # Pydantic gère automatiquement la sérialisation des ObjectId
+    return [UserModel.model_validate(doc) for doc in documents]

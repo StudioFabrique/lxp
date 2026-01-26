@@ -10,3 +10,5 @@ ALLOWED_ORIGINS = [os.getenv("ALLOWED_ORIGINS")]
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
+# URL de connexion à la base de données
+DATABASE_URL = os.getenv("DATABASE_URL")
