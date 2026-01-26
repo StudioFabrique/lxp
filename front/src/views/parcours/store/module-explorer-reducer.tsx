@@ -1,9 +1,9 @@
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
-import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
-import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
+import LessonRead from "../../../utils/interfaces/lesson-read";
+import Module from "../../../utils/interfaces/module";
 
 // Identifiant de clé pour stocker la valeur permettant de savoir si le panneau latéral a été fermé par l'utilisateur
 const STORAGE_KEY = "lessons-preview-panel-closed";
@@ -101,7 +101,7 @@ export const initialModuleExplorerContentState: ModuleExplorerContentState = {
 
 export function moduleExplorerContentReducer(
   state: ModuleExplorerContentState,
-  action: ModuleExplorerContentAction
+  action: ModuleExplorerContentAction,
 ): ModuleExplorerContentState {
   switch (action.type) {
     // --- Module ---
@@ -115,7 +115,7 @@ export function moduleExplorerContentReducer(
       const courses = state.module.courses.map((course) =>
         course.id === action.course.id
           ? { ...course, visibility: action.isVisible }
-          : course
+          : course,
       );
 
       return {
@@ -225,7 +225,7 @@ export function moduleExplorerContentReducer(
 
       const allLessons = module.courses.flatMap((course) => course.lessons);
       const currentLessonIndex = allLessons.findIndex(
-        (lesson) => lesson.id === selectedLesson.id
+        (lesson) => lesson.id === selectedLesson.id,
       );
       const nextLesson = allLessons[currentLessonIndex + 1];
 
@@ -248,7 +248,7 @@ export function moduleExplorerContentReducer(
             state.module?.courses.map((course) => ({
               ...course,
               lessons: course.lessons.filter(
-                (lesson) => lesson.id !== action.id
+                (lesson) => lesson.id !== action.id,
               ),
             })) || [],
         },
@@ -263,7 +263,7 @@ export function moduleExplorerContentReducer(
       let fromCourseIndex, fromLessonIndex, lessonToMove;
       for (let i = 0; i < courses.length; i++) {
         const lessonIndex = courses[i].lessons.findIndex(
-          (l) => l.id === action.fromId
+          (l) => l.id === action.fromId,
         );
         if (lessonIndex !== -1) {
           fromCourseIndex = i;
@@ -279,7 +279,7 @@ export function moduleExplorerContentReducer(
       let toCourseIndex, toLessonIndex;
       for (let i = 0; i < courses.length; i++) {
         const lessonIndex = courses[i].lessons.findIndex(
-          (l) => l.id === action.toId
+          (l) => l.id === action.toId,
         );
         if (lessonIndex !== -1) {
           toCourseIndex = i;
@@ -345,7 +345,7 @@ export function moduleExplorerContentReducer(
         return state;
 
       const activities = state.selectedLesson.activities?.map((activity) =>
-        activity.id === action.activity?.id ? action.activity : activity
+        activity.id === action.activity?.id ? action.activity : activity,
       );
 
       return {
@@ -358,7 +358,7 @@ export function moduleExplorerContentReducer(
     case "delete_selected_activity": {
       if (!state.selectedActivity?.id || !state.selectedLesson) return state;
       const activities = state.selectedLesson?.activities?.filter(
-        (activity) => state.selectedActivity?.id !== activity.id
+        (activity) => state.selectedActivity?.id !== activity.id,
       );
       const selectedActivity = activities?.[0];
 

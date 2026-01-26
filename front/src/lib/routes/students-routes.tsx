@@ -16,8 +16,9 @@ const CalendarHome = React.lazy(
 const ParcoursView = React.lazy(
   () => import("../../views/parcours/parcours-view"),
 );
-const LessonsPreview = React.lazy(
-  () => import("../../views/module-content-explorer/module-content-explorer"),
+const ModuleContentExplorer = React.lazy(
+  () =>
+    import("../../views/parcours/module-content-explorer/module-content-explorer"),
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
@@ -47,7 +48,7 @@ const studentRoutes = [
     children: [
       { index: true, element: <ParcoursHome /> },
       { path: "view/:id", element: <ParcoursView /> },
-      { path: "module/:moduleId", element: <LessonsPreview /> },
+      { path: "module/:moduleId", element: <ModuleContentExplorer /> },
     ],
   },
   { path: "calendrier", element: <CalendarHome /> },
