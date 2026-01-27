@@ -225,6 +225,14 @@ const ParcoursSelection = ({
           </div>
         )}
       </div>
+      <div className="flex justify-end">
+        <button
+          onClick={onGoBack}
+          className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
+        >
+          Retourner à la prévisualisation des modules
+        </button>
+      </div>
     </div>
   );
 };

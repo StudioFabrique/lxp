@@ -1,5 +1,5 @@
-import { ReactNode, MouseEvent } from "react";
-import { Eye, Trash2 } from "lucide-react";
+import { ReactNode, MouseEvent, useState, useEffect } from "react";
+import { Eye, Trash2, PenLine } from "lucide-react";
 import ToolTipWarning from "./tooltip-warning/tooltip-warning";
 
 type SelectableCardProps = {
@@ -19,6 +19,9 @@ type SelectableCardProps = {
   onDelete?: () => void;
   deleteTooltip?: string;
 
+  // Edition
+  onEditTitle?: (newTitle: string) => void;
+
   // Style
   className?: string;
 
@@ -26,7 +29,7 @@ type SelectableCardProps = {
 };
 
 const SelectableCard = ({
-  title,
+  title = "",
   subtitle,
   icon,
   isSelected = false,
@@ -35,12 +38,40 @@ const SelectableCard = ({
   actionIcon = <Eye className="w-4 h-4" />,
   onDelete,
   deleteTooltip = "Supprimer",
+  onEditTitle,
   className = "",
   error,
 }: SelectableCardProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempTitle, setTempTitle] = useState(title);
+
+  useEffect(() => {
+    setTempTitle(title);
+  }, [title]);
+
   const handleDeleteClick = (e: MouseEvent) => {
     e.stopPropagation();
     if (onDelete) onDelete();
+  };
+
+  const handleEditClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsEditing(true);
+  };
+
+  const handleSaveTitle = (e?: MouseEvent | React.KeyboardEvent) => {
+    e?.stopPropagation();
+    if (tempTitle.trim() !== "" && onEditTitle) {
+      onEditTitle(tempTitle);
+    } else {
+      setTempTitle(title);
+    }
+    setIsEditing(false);
+  };
+
+  const handleInputClick = (e: MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -50,7 +81,7 @@ const SelectableCard = ({
         ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200"}
         ${error ? "bg-error/10" : "bg-base-300"}
         ${className}
-        w-full overflow-hidden {/* Ajout: assure que la card ne dépasse pas son parent */}
+        w-full overflow-hidden
       `}
     >
       <div className="card-body p-1.5 px-4">
@@ -59,23 +90,55 @@ const SelectableCard = ({
           <div className="flex gap-4 items-center flex-1 min-w-0">
             {icon && <div className="flex-shrink-0">{icon}</div>}
 
-            <div className="flex flex-col min-w-0 w-full">
-              <h3
-                className="card-title text-base font-bold text-base-content flex gap-2 items-center"
-                title={title}
-              >
-                <span className="truncate">{title}</span>
+            <div className="flex flex-col min-w-0 w-full group/card-title">
+              {isEditing ? (
+                <div className="flex items-center gap-1 w-full max-w-[200px]">
+                  <input
+                    type="text"
+                    value={tempTitle}
+                    onChange={(e) => setTempTitle(e.target.value)}
+                    onClick={handleInputClick}
+                    className="input input-xs input-bordered w-full bg-base-100"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveTitle(e);
+                      e.stopPropagation();
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    className="btn btn-xs btn-square btn-success"
+                    onClick={handleSaveTitle}
+                  >
+                    ✓
+                  </button>
+                </div>
+              ) : (
+                <h3
+                  className="card-title text-base font-bold text-base-content flex gap-2 items-center"
+                  title={title}
+                >
+                  <span className="truncate">{title}</span>
 
-                {error && (
-                  <div className="flex-shrink-0">
-                    <ToolTipWarning
-                      absolutePos
-                      tooltipPos="tooltip-left"
-                      message={error}
-                    />
-                  </div>
-                )}
-              </h3>
+                  {onEditTitle && (
+                    <button
+                      onClick={handleEditClick}
+                      className="opacity-0 group-hover/card-title:opacity-100 transition-opacity p-1 hover:bg-base-content/10 rounded"
+                    >
+                      <PenLine className="w-3 h-3 text-base-content/60" />
+                    </button>
+                  )}
+
+                  {error && (
+                    <div className="flex-shrink-0">
+                      <ToolTipWarning
+                        absolutePos
+                        tooltipPos="tooltip-left"
+                        message={error}
+                      />
+                    </div>
+                  )}
+                </h3>
+              )}
 
               {subtitle && (
                 <div className="text-xs text-base-content/70 truncate">
