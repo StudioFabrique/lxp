@@ -53,13 +53,13 @@ const SelectableCard = ({
         w-full overflow-hidden {/* Ajout: assure que la card ne dépasse pas son parent */}
       `}
     >
-      <div className="card-body p-1 px-4">
+      <div className="card-body p-1.5 px-4">
         <div className="flex justify-between items-center w-full gap-4">
           {/* PARTIE GAUCHE : Contenu */}
           <div className="flex gap-4 items-center flex-1 min-w-0">
             {icon && <div className="flex-shrink-0">{icon}</div>}
 
-            <div className="flex flex-col min-w-0 gap-1 w-full">
+            <div className="flex flex-col min-w-0 w-full">
               <h3
                 className="card-title text-base font-bold text-base-content flex gap-2 items-center"
                 title={title}
