@@ -442,3 +442,10 @@ model Teacher {
   id    Int    @id @default(autoincrement())
   idMdb String
 }
+
+model Authorization {
+  id       Int    @id @default(autoincrement())
+  role     String
+  action   String
+  resource String
+}
