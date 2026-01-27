@@ -29,35 +29,24 @@ type Props = {
 };
 
 const ParcoursSelection = ({
-  // Formation
   formationsList,
   selectedFormation,
   onSelectFormation,
-  // Parcours
   parcoursList,
   selectedParcours,
   onSelectParcours,
-  // Modules
   modulesList,
   selectedModule,
   onSelectModule,
-
   onConfirm,
   onGoBack,
 }: Props) => {
-  // Détermine si le bouton de confirmation d'i,portation est activé
   const canConfirm = Boolean(
     selectedFormation && selectedParcours && selectedModule,
   );
 
-  // const handleConfirmWithoutParcours = () => {
-  //   onSelectParcours(null);
-  //   onConfirm(null);
-  // };
-
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
-      {/* Header Etape 1 */}
       <Header
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
@@ -67,7 +56,6 @@ const ParcoursSelection = ({
         onClick={onGoBack}
       />
 
-      {/* Header Etape 2 */}
       <Header
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
@@ -97,7 +85,6 @@ const ParcoursSelection = ({
       </Header>
 
       <div className="ml-10 flex flex-col gap-8 pb-10">
-        {/* --- SECTION 1 : FORMATIONS --- */}
         <div className="flex flex-col gap-4">
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
@@ -140,7 +127,6 @@ const ParcoursSelection = ({
           )}
         </div>
 
-        {/* --- SECTION 2 : PARCOURS (Apparait si formation sélectionnée) --- */}
         {selectedFormation && (
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
@@ -190,7 +176,6 @@ const ParcoursSelection = ({
           </div>
         )}
 
-        {/* --- SECTION 3 : MODULES (Apparait si le parcours est sélectionné) --- */}
         {selectedParcours && (
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
@@ -200,14 +185,14 @@ const ParcoursSelection = ({
               </span>
             </h3>
 
-            {modulesList.length === 0 ? (
+            {modulesList?.length === 0 ? (
               <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
                 Aucun module disponible pour ce parcours.
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {modulesList.map((module) => {
-                  const isSelected = selectedParcours?.id === module.id;
+                {modulesList?.map((module) => {
+                  const isSelected = selectedModule?.id === module.id;
                   return (
                     <div
                       key={module.id}
@@ -225,6 +210,12 @@ const ParcoursSelection = ({
                         >
                           {module.title}
                         </span>
+                        {isSelected && (
+                          <CheckCircle2
+                            size={16}
+                            className="text-primary ml-auto"
+                          />
+                        )}
                       </div>
                     </div>
                   );

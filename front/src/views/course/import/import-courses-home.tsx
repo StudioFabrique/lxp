@@ -17,8 +17,11 @@ const ImportCoursesHome = () => {
     selectedFormation,
     parcoursList,
     selectedParcours,
+    modulesList,
+    selectedModule,
     setSelectedFormation,
     setSelectedParcours,
+    setSelectedModule,
     onImportZip,
     onRemoveCourse,
     onConfirmImport,
@@ -48,9 +51,9 @@ const ImportCoursesHome = () => {
             parcoursList={parcoursList}
             selectedParcours={selectedParcours}
             onSelectParcours={setSelectedParcours}
-            modulesList={[]}
-            selectedModule={null}
-            onSelectModule={() => {}}
+            modulesList={modulesList}
+            selectedModule={selectedModule}
+            onSelectModule={setSelectedModule}
             onConfirm={onConfirmParcoursSelection}
             onGoBack={onGoBack}
           />

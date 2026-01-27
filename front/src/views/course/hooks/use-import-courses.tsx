@@ -46,6 +46,7 @@ export type CourseImportType = Course & {
   })[];
   parcours?: Parcours;
   parcoursId?: number;
+  moduleId?: number;
 };
 
 export default function useImportCourses() {
@@ -62,10 +63,14 @@ export default function useImportCourses() {
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
     null,
   );
+
   const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
   const [selectedParcours, setSelectedParcours] = useState<Parcours | null>(
     null,
   );
+
+  const [modulesList, setModulesList] = useState<Module[]>([]);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
@@ -84,6 +89,8 @@ export default function useImportCourses() {
     if (selectedFormation) {
       setParcoursList([]);
       setSelectedParcours(null);
+      setModulesList([]);
+      setSelectedModule(null);
       const processData = (data: { data: Parcours[] }) => {
         setParcoursList(data.data);
       };
@@ -96,6 +103,26 @@ export default function useImportCourses() {
       );
     }
   }, [selectedFormation, sendRequest]);
+
+  useEffect(() => {
+    if (selectedParcours) {
+      setModulesList([]);
+      setSelectedModule(null);
+      const processData = (data: { modules: Module[] }) => {
+        setModulesList(data.modules);
+      };
+      sendRequest(
+        {
+          path: `/modules/${selectedParcours.id}`,
+          method: "get",
+        },
+        processData,
+      );
+    } else {
+      setModulesList([]);
+      setSelectedModule(null);
+    }
+  }, [selectedParcours, sendRequest]);
 
   const processHtmlImages = async (
     htmlContent: string,
@@ -284,10 +311,15 @@ export default function useImportCourses() {
     if (importedCourses) {
       const parcoursToApply =
         explicitParcours !== undefined ? explicitParcours : selectedParcours;
+
+      const moduleToApply = selectedModule;
+
       const updatedCourses = importedCourses.map((crs) => ({
         ...crs,
         parcours: parcoursToApply ? parcoursToApply : ({} as Parcours),
         parcoursId: parcoursToApply?.id,
+        module: moduleToApply ? moduleToApply : ({} as Module),
+        moduleId: moduleToApply?.id,
       }));
       setImportedCourses(updatedCourses);
     }
@@ -312,8 +344,11 @@ export default function useImportCourses() {
     selectedFormation,
     parcoursList,
     selectedParcours,
+    modulesList,
+    selectedModule,
     setSelectedParcours,
     setSelectedFormation,
+    setSelectedModule,
     onImportZip,
     onRemoveCourse,
     onConfirmImport,
