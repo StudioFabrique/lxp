@@ -53,7 +53,7 @@ const SelectableCard = ({
         w-full overflow-hidden {/* Ajout: assure que la card ne dépasse pas son parent */}
       `}
     >
-      <div className="card-body p-1 px-2">
+      <div className="card-body p-1 px-4">
         <div className="flex justify-between items-center w-full gap-4">
           {/* PARTIE GAUCHE : Contenu */}
           <div className="flex gap-4 items-center flex-1 min-w-0">
