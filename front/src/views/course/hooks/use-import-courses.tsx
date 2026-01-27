@@ -39,9 +39,12 @@ type JsonFileFormat = {
 };
 
 export type CourseImportType = Course & {
+  id: number;
   hasError?: boolean;
   lessons: (Lesson & {
+    id: number;
     hasError?: boolean;
+    isSelected: boolean;
     activities: ActivityImportType[];
   })[];
   parcours?: Parcours;
@@ -223,7 +226,7 @@ export default function useImportCourses() {
 
         let currentLesson = currentCourse.lessons.find(
           (l) => l.title === item.lesson,
-        ) as Lesson & { hasError?: boolean };
+        ) as Lesson & { hasError?: boolean; isSelected: boolean };
 
         if (!currentLesson) {
           currentLesson = {
@@ -235,7 +238,8 @@ export default function useImportCourses() {
             course: currentCourse,
             activities: [] as Activity[],
             hasError: false,
-          } as Lesson & { hasError?: boolean };
+            isSelected: true,
+          } as Lesson & { hasError?: boolean; isSelected: boolean };
           currentCourse.lessons.push(currentLesson);
         }
 
@@ -303,6 +307,76 @@ export default function useImportCourses() {
     });
   };
 
+  const onToggleLessonSelection = (courseId: number, lessonId: number) => {
+    setImportedCourses((prev) => {
+      if (!prev) return undefined;
+      return prev.map((course) => {
+        if (course.id !== courseId) return course;
+        return {
+          ...course,
+          lessons: course.lessons.map((lesson) => {
+            if (lesson.id !== lessonId) return lesson;
+            return { ...lesson, isSelected: !lesson.isSelected };
+          }),
+        };
+      }) as CourseImportType[];
+    });
+  };
+
+  const onUpdateCourseTitle = (courseId: number, newTitle: string) => {
+    setImportedCourses((prev) => {
+      if (!prev) return undefined;
+      return prev.map((c) =>
+        c.id === courseId ? { ...c, title: newTitle } : c,
+      );
+    });
+  };
+
+  const onUpdateLessonTitle = (
+    courseId: number,
+    lessonId: number,
+    newTitle: string,
+  ) => {
+    setImportedCourses((prev) => {
+      if (!prev) return undefined;
+      return prev.map((course) => {
+        if (course.id !== courseId) return course;
+        return {
+          ...course,
+          lessons: course.lessons.map((lesson) =>
+            lesson.id === lessonId ? { ...lesson, title: newTitle } : lesson,
+          ),
+        };
+      }) as CourseImportType[];
+    });
+  };
+
+  const onUpdateActivityTitle = (
+    courseId: number,
+    lessonId: number,
+    activityId: number,
+    newTitle: string,
+  ) => {
+    setImportedCourses((prev) => {
+      if (!prev) return undefined;
+      return prev.map((course) => {
+        if (course.id !== courseId) return course;
+        return {
+          ...course,
+          lessons: course.lessons.map((lesson) => {
+            if (lesson.id !== lessonId) return lesson;
+            return {
+              ...lesson,
+              activities: (lesson.activities || []).map((act) =>
+                act.id === activityId ? { ...act, title: newTitle } : act,
+              ),
+            };
+          }),
+        };
+      }) as CourseImportType[];
+    });
+  };
+
   const onConfirmImport = () => {
     setImportStep(CoursesImportStep.ParcoursSelection);
   };
@@ -314,14 +388,28 @@ export default function useImportCourses() {
 
       const moduleToApply = selectedModule;
 
-      const updatedCourses = importedCourses.map((crs) => ({
-        ...crs,
-        parcours: parcoursToApply ? parcoursToApply : ({} as Parcours),
-        parcoursId: parcoursToApply?.id,
-        module: moduleToApply ? moduleToApply : ({} as Module),
-        moduleId: moduleToApply?.id,
-      }));
-      setImportedCourses(updatedCourses);
+      const updatedCourses = importedCourses.map((crs) => {
+        const updatedCourse: CourseImportType = {
+          ...crs,
+          lessons: crs.lessons.filter(
+            (l) => l.isSelected,
+          ) as CourseImportType["lessons"],
+
+          parcours: parcoursToApply
+            ? parcoursToApply
+            : ({} as CourseImportType["parcours"]),
+          parcoursId: parcoursToApply?.id,
+          module: moduleToApply ? moduleToApply : ({} as Module),
+          moduleId: moduleToApply?.id,
+        };
+        return updatedCourse;
+      });
+
+      const finalCourses = updatedCourses.filter(
+        (c) => c.lessons.length > 0 || c.id,
+      );
+
+      setImportedCourses(finalCourses);
     }
     setImportStep(CoursesImportStep.ImportResult);
   };
@@ -351,6 +439,10 @@ export default function useImportCourses() {
     setSelectedModule,
     onImportZip,
     onRemoveCourse,
+    onToggleLessonSelection,
+    onUpdateCourseTitle,
+    onUpdateLessonTitle,
+    onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,

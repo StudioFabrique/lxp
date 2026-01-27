@@ -24,6 +24,10 @@ const ImportCoursesHome = () => {
     setSelectedModule,
     onImportZip,
     onRemoveCourse,
+    onToggleLessonSelection,
+    onUpdateCourseTitle,
+    onUpdateLessonTitle,
+    onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,
@@ -40,6 +44,10 @@ const ImportCoursesHome = () => {
             onImportZip={onImportZip}
             onConfirmZipImport={onConfirmImport}
             onRemoveCourse={onRemoveCourse}
+            onToggleLessonSelection={onToggleLessonSelection}
+            onUpdateCourseTitle={onUpdateCourseTitle}
+            onUpdateLessonTitle={onUpdateLessonTitle}
+            onUpdateActivityTitle={onUpdateActivityTitle}
           />
         );
       case CoursesImportStep.ParcoursSelection:
