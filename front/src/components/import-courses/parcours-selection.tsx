@@ -137,7 +137,7 @@ const ParcoursSelection = ({
             </h3>
 
             {parcoursList.length === 0 ? (
-              <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
+              <div className="alert alert-warning bg-warning/10 text-warning border-warning/20 text-sm">
                 Aucun parcours disponible pour cette formation.
               </div>
             ) : (
@@ -186,7 +186,7 @@ const ParcoursSelection = ({
             </h3>
 
             {modulesList?.length === 0 ? (
-              <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
+              <div className="alert alert-warning bg-warning/10 text-warning border-warning/20 text-sm">
                 Aucun module disponible pour ce parcours.
               </div>
             ) : (
