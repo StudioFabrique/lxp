@@ -11,13 +11,13 @@ import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import Lesson from "../../../utils/interfaces/lesson";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 import {
-  ActivityImportType,
-  CourseImportType,
+  ActivityImport,
+  CourseImport,
 } from "../../../views/course/hooks/use-import-courses";
 
 type Props = {
-  activeCourse: CourseImportType | null;
-  onSelectActivity: (activity: ActivityImportType) => void;
+  activeCourse: CourseImport | null;
+  onSelectActivity: (activity: ActivityImport) => void;
   selectedActivityId?: number;
   onToggleLessonSelection: (courseId: number, lessonId: number) => void;
   onUpdateLessonTitle: (
@@ -178,85 +178,83 @@ const CourseArborescence = ({
             {lesson.isSelected && (
               <div className="flex flex-col border-t border-base-200 bg-base-50/50">
                 {lesson.activities && lesson.activities.length > 0 ? (
-                  lesson.activities.map(
-                    (activity: ActivityImportType, aIdx) => {
-                      const isSelected = selectedActivityId === activity.id;
-                      const isEditing = editingId === `activity-${activity.id}`;
+                  lesson.activities.map((activity: ActivityImport, aIdx) => {
+                    const isSelected = selectedActivityId === activity.id;
+                    const isEditing = editingId === `activity-${activity.id}`;
 
-                      return (
-                        <div
-                          key={aIdx}
-                          className={`flex items-center w-full border-l-4 transition-all
+                    return (
+                      <div
+                        key={aIdx}
+                        className={`flex items-center w-full border-l-4 transition-all
                             ${
                               isSelected
                                 ? `${activity.hasError ? "border-error bg-error/10" : "border-primary bg-primary/10"}`
                                 : `border-transparent hover:bg-base-200`
                             }
                           `}
-                        >
-                          {isEditing ? (
-                            <div className="px-4 py-1 flex items-center gap-2 w-full">
-                              <span className="shrink-0">
-                                {activityIconType(activity.type)}
-                              </span>
-                              <input
-                                type="text"
-                                value={tempTitle}
-                                onChange={(e) => setTempTitle(e.target.value)}
-                                className="input input-xs input-bordered w-full"
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" && lesson.id)
-                                    saveActivityTitle(lesson.id, activity.id);
-                                }}
-                                autoFocus
-                              />
-                              <button
-                                className="btn btn-xs btn-square btn-success"
-                                onClick={() => {
-                                  if (lesson.id)
-                                    saveActivityTitle(lesson.id, activity.id);
-                                }}
-                              >
-                                ✓
-                              </button>
-                            </div>
-                          ) : (
+                      >
+                        {isEditing ? (
+                          <div className="px-4 py-1 flex items-center gap-2 w-full">
+                            <span className="shrink-0">
+                              {activityIconType(activity.type)}
+                            </span>
+                            <input
+                              type="text"
+                              value={tempTitle}
+                              onChange={(e) => setTempTitle(e.target.value)}
+                              className="input input-xs input-bordered w-full"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && lesson.id)
+                                  saveActivityTitle(lesson.id, activity.id);
+                              }}
+                              autoFocus
+                            />
                             <button
-                              onClick={() => onSelectActivity(activity)}
-                              className={`text-left px-4 py-2 text-xs flex items-center gap-3 w-full group/act
+                              className="btn btn-xs btn-square btn-success"
+                              onClick={() => {
+                                if (lesson.id)
+                                  saveActivityTitle(lesson.id, activity.id);
+                              }}
+                            >
+                              ✓
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => onSelectActivity(activity)}
+                            className={`text-left px-4 py-2 text-xs flex items-center gap-3 w-full group/act
                                 ${isSelected ? "font-semibold" : ""}
                                 ${activity.hasError ? "text-error" : "text-base-content/70 hover:text-base-content"}
                               `}
+                          >
+                            <span className="shrink-0">
+                              {activity.hasError ? (
+                                <AlertCircle className="w-3.5 h-3.5" />
+                              ) : (
+                                activityIconType(activity.type)
+                              )}
+                            </span>
+                            <span className="truncate flex-1">
+                              {toUpperFirstLetter(activity.title)}
+                            </span>
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (activity.title)
+                                  startEditing(
+                                    `activity-${activity.id}`,
+                                    activity.title,
+                                  );
+                              }}
+                              className="opacity-0 group-hover/act:opacity-100 p-1 hover:bg-base-300 rounded cursor-pointer"
                             >
-                              <span className="shrink-0">
-                                {activity.hasError ? (
-                                  <AlertCircle className="w-3.5 h-3.5" />
-                                ) : (
-                                  activityIconType(activity.type)
-                                )}
-                              </span>
-                              <span className="truncate flex-1">
-                                {toUpperFirstLetter(activity.title)}
-                              </span>
-                              <div
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (activity.title)
-                                    startEditing(
-                                      `activity-${activity.id}`,
-                                      activity.title,
-                                    );
-                                }}
-                                className="opacity-0 group-hover/act:opacity-100 p-1 hover:bg-base-300 rounded cursor-pointer"
-                              >
-                                <PenLine className="w-3 h-3 text-base-content/60" />
-                              </div>
-                            </button>
-                          )}
-                        </div>
-                      );
-                    },
-                  )
+                              <PenLine className="w-3 h-3 text-base-content/60" />
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
                   <div className="px-4 py-3 text-xs text-base-content/40 italic flex items-center gap-2">
                     <AlertCircle className="w-3 h-3" />

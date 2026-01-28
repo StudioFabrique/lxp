@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import activityIconType from "../../../utils/activity-icon-type";
 import {
-  ActivityImportType,
-  ModuleImportType,
+  ActivityImport,
+  ModuleImport,
 } from "../../../views/module/hooks/use-import-modules";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import Course from "../../../utils/interfaces/course";
@@ -16,8 +16,8 @@ import Lesson from "../../../utils/interfaces/lesson";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 
 type Props = {
-  activeModule: ModuleImportType | null;
-  onSelectActivity: (activity: ActivityImportType) => void;
+  activeModule: ModuleImport | null;
+  onSelectActivity: (activity: ActivityImport) => void;
   selectedActivityId?: number;
 };
 
@@ -91,7 +91,7 @@ const ModuleArborescence = ({
                     {/* Liste des Activités */}
                     <div className="pl-6 flex flex-col gap-1 mt-2 border-l-2 border-base-200 ml-2">
                       {lesson.activities?.map(
-                        (activity: ActivityImportType, aIdx) => {
+                        (activity: ActivityImport, aIdx) => {
                           const isSelected = selectedActivityId === activity.id;
                           return (
                             <button

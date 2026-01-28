@@ -1,9 +1,9 @@
-import { CourseImportType } from "../../views/course/hooks/use-import-courses";
+import { CourseImport } from "../../views/course/hooks/use-import-courses";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
 
 type Props = {
-  importedCourses: CourseImportType[];
+  importedCourses: CourseImport[];
 };
 
 const ImportResult = ({ importedCourses }: Props) => {

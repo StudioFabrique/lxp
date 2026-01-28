@@ -17,7 +17,7 @@ export enum CoursesImportStep {
   ImportResult,
 }
 
-export type ActivityImportType = Activity & {
+export type ActivityImport = Activity & {
   value?: string | Blob;
   hasError?: boolean;
 };
@@ -38,14 +38,14 @@ type JsonFileFormat = {
   path: string;
 };
 
-export type CourseImportType = Course & {
+export type CourseImport = Course & {
   id: number;
   hasError?: boolean;
   lessons: (Lesson & {
     id: number;
     hasError?: boolean;
     isSelected: boolean;
-    activities: ActivityImportType[];
+    activities: ActivityImport[];
   })[];
   parcours?: Parcours;
   parcoursId?: number;
@@ -59,7 +59,7 @@ export default function useImportCourses() {
     CoursesImportStep.ZipImport,
   );
 
-  const [importedCourses, setImportedCourses] = useState<CourseImportType[]>();
+  const [importedCourses, setImportedCourses] = useState<CourseImport[]>();
   const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
 
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
@@ -202,7 +202,7 @@ export default function useImportCourses() {
       const jsonContent = await exportFile.async("string");
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
-      const coursesMap = new Map<string, CourseImportType>();
+      const coursesMap = new Map<string, CourseImport>();
       const allExtractedImages: QueuedImage[] = [];
 
       for (const item of flatActivities) {
@@ -220,7 +220,7 @@ export default function useImportCourses() {
             dates: [],
             duration: 0,
             parcours: {} as Parcours,
-          } as CourseImportType);
+          } as CourseImport);
         }
         const currentCourse = coursesMap.get(item.course)!;
 
@@ -248,14 +248,14 @@ export default function useImportCourses() {
           const fullZipPath = rootPath + relativePath;
           const fileInZip = loadedZip.file(fullZipPath);
 
-          const activity: ActivityImportType = {
+          const activity: ActivityImport = {
             id: Math.random(),
             title: item.title,
             type: item.type,
             order: item.order,
             url: item.path,
             hasError: false,
-          } as ActivityImportType;
+          } as ActivityImport;
 
           if (!fileInZip) {
             const newError = `Fichier introuvable: ${fullZipPath}`;
@@ -319,7 +319,7 @@ export default function useImportCourses() {
             return { ...lesson, isSelected: !lesson.isSelected };
           }),
         };
-      }) as CourseImportType[];
+      }) as CourseImport[];
     });
   };
 
@@ -347,7 +347,7 @@ export default function useImportCourses() {
             lesson.id === lessonId ? { ...lesson, title: newTitle } : lesson,
           ),
         };
-      }) as CourseImportType[];
+      }) as CourseImport[];
     });
   };
 
@@ -373,7 +373,7 @@ export default function useImportCourses() {
             };
           }),
         };
-      }) as CourseImportType[];
+      }) as CourseImport[];
     });
   };
 
@@ -389,15 +389,15 @@ export default function useImportCourses() {
       const moduleToApply = selectedModule;
 
       const updatedCourses = importedCourses.map((crs) => {
-        const updatedCourse: CourseImportType = {
+        const updatedCourse: CourseImport = {
           ...crs,
           lessons: crs.lessons.filter(
             (l) => l.isSelected,
-          ) as CourseImportType["lessons"],
+          ) as CourseImport["lessons"],
 
           parcours: parcoursToApply
             ? parcoursToApply
-            : ({} as CourseImportType["parcours"]),
+            : ({} as CourseImport["parcours"]),
           parcoursId: parcoursToApply?.id,
           module: moduleToApply ? moduleToApply : ({} as Module),
           moduleId: moduleToApply?.id,
