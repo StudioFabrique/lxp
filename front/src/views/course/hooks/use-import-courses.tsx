@@ -378,6 +378,7 @@ export default function useImportCourses() {
   };
 
   const onConfirmImport = () => {
+    if (!(importedCourses && importedCourses.length > 0)) return;
     setImportStep(CoursesImportStep.ParcoursSelection);
   };
 
