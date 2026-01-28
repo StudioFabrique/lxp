@@ -1,5 +1,5 @@
 import { ReactNode, MouseEvent, useState, useEffect } from "react";
-import { Eye, Trash2, PenLine } from "lucide-react";
+import { Eye, Trash2, PenLine, Check } from "lucide-react";
 import ToolTipWarning from "./tooltip-warning/tooltip-warning";
 
 type SelectableCardProps = {
@@ -92,13 +92,13 @@ const SelectableCard = ({
 
             <div className="flex flex-col min-w-0 w-full group/card-title">
               {isEditing ? (
-                <div className="flex items-center gap-1 w-full max-w-[200px]">
+                <div className="flex items-center gap-2 w-full max-w-[200px]">
                   <input
                     type="text"
                     value={tempTitle}
                     onChange={(e) => setTempTitle(e.target.value)}
                     onClick={handleInputClick}
-                    className="input input-xs input-bordered w-full bg-base-100"
+                    className="input input-xs focus:border-0 focus:h-auto focus:rounded bg-base-100"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleSaveTitle(e);
                       e.stopPropagation();
@@ -109,7 +109,7 @@ const SelectableCard = ({
                     className="btn btn-xs btn-square btn-success"
                     onClick={handleSaveTitle}
                   >
-                    ✓
+                    <Check className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ) : (
