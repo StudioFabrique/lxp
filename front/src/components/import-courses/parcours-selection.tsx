@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Rocket,
   Component,
+  Undo2,
 } from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
@@ -62,19 +63,26 @@ const ParcoursSelection = ({
         isSubHeader
         alternateBgColor
       >
-        {selectedParcours && (
+        {selectedModule && (
           <div className="flex font-bold text-sm items-center gap-2 mr-5">
-            <span>Parcours choisi :</span>
+            <span>Module choisi :</span>
             <Link
               data-tip="Ouverture dans un nouvel onglet"
               className="link hover:text-secondary tooltip tooltip-bottom"
-              to={`/admin/parcours/view/${selectedParcours.id}`}
+              to={`/admin/parcours/view/${selectedModule.id}`}
               target="_blank"
             >
-              {selectedParcours.title}
+              {selectedModule.title}
             </Link>
           </div>
         )}
+        <button
+          className="btn btn-sm btn-outline mr-5 tooltip"
+          data-tip="Retourner à la prévisualisation des modules"
+          onClick={onGoBack}
+        >
+          <Undo2 />
+        </button>
         <button
           className="btn btn-sm btn-success gap-2"
           disabled={!canConfirm}
@@ -224,14 +232,6 @@ const ParcoursSelection = ({
             )}
           </div>
         )}
-      </div>
-      <div className="flex justify-end">
-        <button
-          onClick={onGoBack}
-          className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-        >
-          Retourner à la prévisualisation des modules
-        </button>
       </div>
     </div>
   );
