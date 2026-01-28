@@ -42,6 +42,13 @@ class Authorization(BaseModel):
     resource: str
 
 
+class TokenPayload(BaseModel):
+    userId: str
+    userRoles: list[Role]
+    exp: int
+    iat: int
+
+
 class UserModel(BaseModel):
     """Modèle utilisateur pour les données MongoDB."""
 
