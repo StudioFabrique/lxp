@@ -4,6 +4,7 @@ import {
   FilePen,
   AlertCircle,
   PenLine,
+  Check,
 } from "lucide-react";
 import { useState } from "react";
 import activityIconType from "../../../utils/activity-icon-type";
@@ -135,7 +136,7 @@ const CourseArborescence = ({
                           if (lesson.id) saveLessonTitle(lesson.id);
                         }}
                       >
-                        ✓
+                        <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ) : (
@@ -216,7 +217,7 @@ const CourseArborescence = ({
                                   saveActivityTitle(lesson.id, activity.id);
                               }}
                             >
-                              ✓
+                              <Check className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         ) : (

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../../UI/header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
-import { Eye, BookOpen, PenLine } from "lucide-react";
+import { Eye, BookOpen, PenLine, Check } from "lucide-react";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import SelectableCard from "../../UI/selectable-card";
@@ -185,7 +185,7 @@ const ZipImport = ({
                         className="btn btn-xs btn-square btn-success"
                         onClick={handleSaveCourseTitle}
                       >
-                        ✓
+                        <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ) : (
