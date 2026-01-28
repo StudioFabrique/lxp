@@ -1,9 +1,9 @@
-import { ModuleImportType } from "../../views/module/hooks/use-import-modules";
+import { ModuleImport } from "../../views/module/hooks/use-import-modules";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
 
 type Props = {
-  importedModules: ModuleImportType[];
+  importedModules: ModuleImport[];
 };
 
 const ImportResult = ({ importedModules }: Props) => {

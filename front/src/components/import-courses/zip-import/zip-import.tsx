@@ -6,12 +6,12 @@ import { Eye, BookOpen, PenLine } from "lucide-react";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import SelectableCard from "../../UI/selectable-card";
-import { CourseImportType } from "../../../views/course/hooks/use-import-courses";
-import { ActivityImportType } from "../../../views/module/hooks/use-import-modules";
+import { CourseImport } from "../../../views/course/hooks/use-import-courses";
+import { ActivityImport } from "../../../views/module/hooks/use-import-modules";
 import CourseArborescence from "./course-arborescence";
 
 type Props = {
-  importedCourses?: CourseImportType[];
+  importedCourses?: CourseImport[];
   error?: string;
   tooltipErrorTip?: string;
   onImportZip: (file: File) => void;
@@ -44,11 +44,11 @@ const ZipImport = ({
   onUpdateLessonTitle,
   onUpdateActivityTitle,
 }: Props) => {
-  const [selectedCourse, setSelectedCourse] = useState<CourseImportType | null>(
+  const [selectedCourse, setSelectedCourse] = useState<CourseImport | null>(
     null,
   );
   const [selectedActivity, setSelectedActivity] =
-    useState<ActivityImportType | null>(null);
+    useState<ActivityImport | null>(null);
 
   const [isEditingCourseTitle, setIsEditingCourseTitle] = useState(false);
   const [tempCourseTitle, setTempCourseTitle] = useState("");
@@ -59,7 +59,7 @@ const ZipImport = ({
       ? `${importedCourses.length > 1 ? importedCourses.length + " c" : "C"}ours prêt${importedCourses.length > 1 ? "s" : ""} à être importé${importedCourses.length > 1 ? "s" : ""}`
       : "Téléverser un dossier compressé de format .zip";
 
-  const handlePreviewCourse = (course: CourseImportType) => {
+  const handlePreviewCourse = (course: CourseImport) => {
     setSelectedCourse(course);
     setSelectedActivity(null);
     setTempCourseTitle(course.title);

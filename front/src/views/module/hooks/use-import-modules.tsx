@@ -17,7 +17,7 @@ export enum ModulesImportStep {
   ImportResult,
 }
 
-export type ActivityImportType = Activity & {
+export type ActivityImport = Activity & {
   value?: string | Blob;
   hasError?: boolean;
 };
@@ -40,13 +40,13 @@ type JsonFileFormat = {
   path: string;
 };
 
-export type ModuleImportType = Module & {
+export type ModuleImport = Module & {
   hasError?: boolean;
   courses: (Course & {
     hasError?: boolean;
     lessons: (Lesson & {
       hasError?: boolean;
-      activities: ActivityImportType[];
+      activities: ActivityImport[];
     })[];
   })[];
 };
@@ -58,7 +58,7 @@ export default function useImportModules() {
     ModulesImportStep.ZipImport,
   );
 
-  const [importedModules, setImportedModules] = useState<ModuleImportType[]>();
+  const [importedModules, setImportedModules] = useState<ModuleImport[]>();
 
   // AJOUT : State pour stocker les images extraites
   const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
@@ -182,7 +182,7 @@ export default function useImportModules() {
       const jsonContent = await exportFile.async("string");
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
-      const modulesMap = new Map<string, ModuleImportType>();
+      const modulesMap = new Map<string, ModuleImport>();
       const allExtractedImages: QueuedImage[] = []; // Liste temporaire
 
       for (const item of flatActivities) {
@@ -196,7 +196,7 @@ export default function useImportModules() {
             tags: [],
             duration: 0,
             parcours: {} as Parcours,
-          } as ModuleImportType);
+          } as ModuleImport);
         }
         const currentModule = modulesMap.get(item.module)!;
 
@@ -231,13 +231,13 @@ export default function useImportModules() {
           const fullZipPath = rootPath + cleanPath(item.path);
           const fileInZip = loadedZip.file(fullZipPath);
 
-          const activity: ActivityImportType = {
+          const activity: ActivityImport = {
             id: Math.random(),
             title: item.title,
             type: item.type,
             order: item.order,
             url: item.path,
-          } as ActivityImportType;
+          } as ActivityImport;
 
           if (!fileInZip) {
             const newError = `Fichier introuvable: ${fullZipPath}`;
