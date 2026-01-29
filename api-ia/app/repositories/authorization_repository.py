@@ -7,7 +7,7 @@ class PgAuthorizationRepository:
     def __init__(self):
         pass
 
-    def get_authorization(
+    async def get_authorization(
         self, db: Session, role: str, action: str, resource: str
     ) -> Authorization:
         # Implémente la logique pour vérifier l'autorisation dans PostgreSQL
@@ -18,6 +18,10 @@ class PgAuthorizationRepository:
         )
         if not authorization:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="authorization_not_found"
+                status_code=status.HTTP_403_FORBIDDEN, detail="authorization_not_found"
             )
         return authorization
+
+
+def get_authorization_repository() -> PgAuthorizationRepository:
+    return PgAuthorizationRepository()
