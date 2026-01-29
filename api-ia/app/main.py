@@ -32,6 +32,7 @@ from typing import Annotated, Optional
 from app.utils.database import Module
 from app.models.pydantic.auth import TokenPayload
 from app.middlewares.exceptions_handler import ExceptionHandlerMiddleware
+from app.middlewares.security_headers import SecurityHeadersMiddleware
 
 
 # Custom type for ObjectId that serializes to string
@@ -93,6 +94,7 @@ app.add_middleware(
 
 # Ajout des middlewares de gestion des exceptions et de sécurité
 app.add_middleware(ExceptionHandlerMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 
 # Custom handler for HTTP exceptions
