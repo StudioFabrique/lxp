@@ -26,3 +26,15 @@ connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection re
 	Is the server running on that host and accepting TCP/IP connections?
 
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-01-29 13:32:26,519 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:11,706 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:12,813 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:14,029 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:24,401 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:16,833 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:18,010 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:18,696 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:48,704 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:52,164 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:39:27,507 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:39:34,163 - CMV_GATEWAY - WARNING - Not Found FROM: None

@@ -10,10 +10,14 @@ type ChatbotValues = {
 };
 
 const useChatbot = () => {
-  const promptSchema = z
-    .string()
-    .min(2, { message: "Prompt must be between 2 and 255 characters long." })
-    .max(255, { message: "Prompt must be between 2 and 255 characters long." });
+  const promptSchema = z.object({
+    prompt: z
+      .string()
+      .min(2, { message: "Prompt must be between 2 and 255 characters long." })
+      .max(255, {
+        message: "Prompt must be between 2 and 255 characters long.",
+      }),
+  });
 
   const {
     errors,
@@ -33,7 +37,7 @@ const useChatbot = () => {
     onValidateForm();
     setDialog((prevState) => [
       ...prevState,
-      { origin: "user", message: values.prompt, date: new Date() },
+      { origin: "user", message: values.prompt as string, date: new Date() },
     ]);
 
     const applyData = async (data: string) => {
@@ -56,7 +60,7 @@ const useChatbot = () => {
           "Content-Type": "application/json",
         },
       },
-      applyData
+      applyData,
     );
   };
 
