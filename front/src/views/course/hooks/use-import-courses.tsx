@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import JSZip from "jszip";
+import { marked } from "marked";
+import useHttp from "../../../hooks/use-http";
+import { cleanPath } from "../../../utils/zip-utils";
+
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
-import { cleanPath } from "../../../utils/zip-utils";
 import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
-import useHttp from "../../../hooks/use-http";
-import { marked } from "marked";
 import Module from "../../../utils/interfaces/module";
 
 export enum CoursesImportStep {
@@ -55,36 +56,38 @@ export type CourseImport = Course & {
 export default function useImportCourses() {
   const { sendRequest } = useHttp();
 
+  // Navigation & Data
   const [step, setImportStep] = useState<CoursesImportStep>(
     CoursesImportStep.ZipImport,
   );
-
   const [importedCourses, setImportedCourses] = useState<CourseImport[]>();
   const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
 
+  // Selection Data
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
     null,
   );
-
   const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
   const [selectedParcours, setSelectedParcours] = useState<Parcours | null>(
     null,
   );
-
   const [modulesList, setModulesList] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
 
+  // UI State
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [tooltipErrorTip, setTooltipErrorTip] = useState<string>("");
 
+  // Progress State
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [currentAction, setCurrentAction] = useState("");
+
+  // --- API LOADERS ---
   useEffect(() => {
     if (step === CoursesImportStep.ParcoursSelection) {
-      const processData = (data: Formation[]) => {
-        setFormationsList(data);
-      };
-      sendRequest({ path: "/formation" }, processData);
+      sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
     }
   }, [step, sendRequest]);
 
@@ -94,15 +97,12 @@ export default function useImportCourses() {
       setSelectedParcours(null);
       setModulesList([]);
       setSelectedModule(null);
-      const processData = (data: { data: Parcours[] }) => {
-        setParcoursList(data.data);
-      };
       sendRequest(
         {
           path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
           method: "get",
         },
-        processData,
+        (data) => setParcoursList(data.data),
       );
     }
   }, [selectedFormation, sendRequest]);
@@ -111,21 +111,191 @@ export default function useImportCourses() {
     if (selectedParcours) {
       setModulesList([]);
       setSelectedModule(null);
-      const processData = (data: { modules: Module[] }) => {
-        setModulesList(data.modules);
-      };
       sendRequest(
-        {
-          path: `/modules/${selectedParcours.id}`,
-          method: "get",
-        },
-        processData,
+        { path: `/modules/${selectedParcours.id}`, method: "get" },
+        (data) => setModulesList(data.modules),
       );
-    } else {
-      setModulesList([]);
-      setSelectedModule(null);
     }
   }, [selectedParcours, sendRequest]);
+
+  // --- UPLOAD HELPERS ---
+
+  // Upload d'une image intégrée dans le texte (Blog Image)
+  const uploadBlogImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const response = await sendRequest({
+      path: "/activity/blog-image",
+      method: "post",
+      body: formData,
+    });
+    return response.response || response.url;
+  };
+
+  // Upload d'une ressource (Fichier Blob/PDF etc) via le endpoint resource
+  const uploadActivityResource = async (
+    lessonId: number,
+    file: File,
+    title: string,
+  ) => {
+    const formData = new FormData();
+    // 1. Ajout du fichier
+    formData.append("files", file);
+    // 2. Construction de l'objet data requis par le backend (jsonParser middleware)
+    const resourceData = {
+      resources: [
+        {
+          label: title,
+          filename: file.name,
+        },
+      ],
+      parent: "lesson",
+    };
+    // 3. Stringify pour le middleware jsonParser
+    formData.append("data", JSON.stringify(resourceData));
+
+    await sendRequest({
+      path: `/activity/resource/${lessonId}`,
+      method: "post",
+      body: formData,
+    });
+  };
+
+  // --- MAIN IMPORT PROCESS ---
+
+  const processImport = async () => {
+    if (!importedCourses) return;
+
+    let processedCount = 0;
+    let totalItems = 0;
+
+    // Calcul du nombre total d'éléments à traiter pour la barre de progression
+    importedCourses.forEach((c) => {
+      totalItems++; // 1 pour la structure du cours
+      c.lessons.forEach((l) => {
+        if (l.isSelected) {
+          totalItems++; // 1 pour la leçon
+          if (l.activities) totalItems += l.activities.length; // N pour les activités
+        }
+      });
+    });
+
+    try {
+      for (const course of importedCourses) {
+        setCurrentAction(`Création du cours : ${course.title}`);
+
+        // 1. Création de la Structure (Cours + Leçons) via transaction
+        const structurePayload = {
+          title: course.title,
+          description: course.description,
+          moduleId: selectedModule?.id,
+          parcoursId: selectedParcours?.id,
+          lessons: course.lessons
+            .filter((l) => l.isSelected)
+            .map((l) => ({
+              id: l.id,
+              title: l.title,
+              modalite: l.modalite,
+              isSelected: true,
+            })),
+        };
+
+        const structureResponse = await sendRequest({
+          path: "/course/import-structure",
+          method: "post",
+          body: structurePayload,
+        });
+
+        // Mise à jour progression (Cours + Leçons créées)
+        processedCount += 1 + structurePayload.lessons.length;
+        setUploadProgress((processedCount / totalItems) * 100);
+
+        const { lessonsMap } = structureResponse; // Map { tempId, realId }
+
+        // 2. Traitement des Activités pour chaque leçon
+        for (const lesson of course.lessons) {
+          if (!lesson.isSelected) continue;
+
+          // Récupération du vrai ID de la leçon
+          const mapping = lessonsMap.find((m: any) => m.tempId === lesson.id);
+          if (!mapping) continue;
+          const realLessonId = mapping.realId;
+
+          for (const activity of lesson.activities) {
+            setCurrentAction(`Téléversement : ${activity.title}`);
+
+            if (
+              activity.type === "text" &&
+              typeof activity.value === "string"
+            ) {
+              // --- CAS A : Activité Texte (HTML) ---
+              let finalHtml = activity.value;
+
+              // Remplacement des images blob: par des URLs serveur
+              for (const img of imagesQueue) {
+                if (finalHtml.includes(`data-temp-id="${img.tempId}"`)) {
+                  try {
+                    const serverUrl = await uploadBlogImage(img.file);
+                    finalHtml = finalHtml.replace(img.blobUrl, serverUrl);
+                  } catch (err) {
+                    console.error("Erreur upload image blog", err);
+                  }
+                }
+              }
+
+              // Création de l'activité texte
+              await sendRequest({
+                path: `/activity/text/${realLessonId}`,
+                method: "post",
+                body: {
+                  title: activity.title,
+                  description: "",
+                  value: finalHtml,
+                  parent: "lesson",
+                },
+              });
+            } else if (activity.value instanceof Blob) {
+              // --- CAS B : Activité Fichier (PDF, etc.) ---
+              // On utilise le endpoint /activity/resource/:lessonId
+              // On doit recréer un objet File avec le nom d'origine si possible, ou générique
+              const fileName =
+                activity.url.split("/").pop() || `${activity.title}.pdf`;
+              const fileToSend = new File([activity.value], fileName, {
+                type: activity.value.type,
+              });
+
+              await uploadActivityResource(
+                realLessonId,
+                fileToSend,
+                activity.title || fileName,
+              );
+            }
+
+            processedCount++;
+            setUploadProgress((processedCount / totalItems) * 100);
+          }
+        }
+      }
+
+      setCurrentAction("Importation terminée avec succès !");
+      setUploadProgress(100);
+    } catch (error) {
+      console.error("Erreur fatale import", error);
+      setError(
+        "Une erreur est survenue lors du transfert. Vérifiez votre connexion.",
+      );
+    }
+  };
+
+  // Déclenchement automatique du processus quand on arrive sur l'étape de résultat
+  useEffect(() => {
+    if (step === CoursesImportStep.ImportResult && importedCourses) {
+      processImport();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  // --- ZIP PARSING LOGIC ---
 
   const processHtmlImages = async (
     htmlContent: string,
@@ -139,7 +309,6 @@ export default function useImportCourses() {
 
     for (const img of Array.from(imgTags)) {
       const src = img.getAttribute("src");
-
       if (src && (src.startsWith("./files") || src.startsWith("files/"))) {
         const cleanSrc = cleanPath(src);
         const fullPath = rootPath + cleanSrc;
@@ -161,10 +330,6 @@ export default function useImportCourses() {
 
           img.setAttribute("src", blobUrl);
           img.setAttribute("data-temp-id", tempId);
-        } else {
-          console.warn(`Image introuvable dans le ZIP : ${fullPath}`);
-          img.style.border = "2px solid red";
-          img.setAttribute("title", "Image manquante");
         }
       }
     }
@@ -185,7 +350,6 @@ export default function useImportCourses() {
     try {
       const zip = new JSZip();
       const loadedZip = await zip.loadAsync(file);
-
       const foundFiles = loadedZip.file(/(export|index)\.json$/);
       const exportFile = foundFiles.find(
         (f) =>
@@ -193,12 +357,10 @@ export default function useImportCourses() {
           !f.name.split("/").pop()?.startsWith("._"),
       );
 
-      if (!exportFile)
-        throw new Error("Fichier d'index (index.json) introuvable.");
+      if (!exportFile) throw new Error("Fichier d'index introuvable.");
 
       const fileName = exportFile.name.split("/").pop() || "";
       const rootPath = exportFile.name.replace(fileName, "");
-
       const jsonContent = await exportFile.async("string");
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
@@ -232,14 +394,16 @@ export default function useImportCourses() {
           currentLesson = {
             id: Math.random(),
             title: item.lesson,
+            description: "",
             modalite: "hybride",
             tag: {} as Tag,
             adminId: 0,
             course: currentCourse,
-            activities: [] as Activity[],
+            activities: [],
             hasError: false,
             isSelected: true,
-          } as Lesson & { hasError?: boolean; isSelected: boolean };
+            lessonRating: [],
+          };
           currentCourse.lessons.push(currentLesson);
         }
 
@@ -258,13 +422,8 @@ export default function useImportCourses() {
           } as ActivityImport;
 
           if (!fileInZip) {
-            const newError = `Fichier introuvable: ${fullZipPath}`;
-            console.warn(newError);
-            setTooltipErrorTip(
-              "Fichiers manquants indiqués dans la prévisualisation.",
-            );
+            setTooltipErrorTip("Fichiers manquants.");
             setError("Un ou plusieurs fichiers sont manquants.");
-
             activity.hasError = true;
             currentLesson.hasError = true;
             currentCourse.hasError = true;
@@ -277,14 +436,13 @@ export default function useImportCourses() {
                 loadedZip,
                 rootPath,
               );
-
               activity.value = newHtml;
               allExtractedImages.push(...newImages);
             } else {
+              // Stockage du blob pour upload ultérieur
               activity.value = await fileInZip.async("blob");
             }
           }
-
           currentLesson.activities?.push(activity);
         }
       }
@@ -292,134 +450,110 @@ export default function useImportCourses() {
       setImportedCourses(Array.from(coursesMap.values()));
       setImagesQueue(allExtractedImages);
     } catch (error) {
-      console.error("Erreur import ZIP", error);
+      console.error(error);
       setError((error as Error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // --- STATE ACTIONS ---
+
   const onRemoveCourse = (courseTitle: string) => {
-    setImportedCourses((prevCourses) => {
-      if (!prevCourses) return undefined;
-      const updatedList = prevCourses.filter((c) => c.title !== courseTitle);
-      return updatedList.length > 0 ? updatedList : undefined;
-    });
+    setImportedCourses(
+      (prev) => prev?.filter((c) => c.title !== courseTitle) || undefined,
+    );
   };
 
   const onToggleLessonSelection = (courseId: number, lessonId: number) => {
-    setImportedCourses((prev) => {
-      if (!prev) return undefined;
-      return prev.map((course) => {
-        if (course.id !== courseId) return course;
-        return {
-          ...course,
-          lessons: course.lessons.map((lesson) => {
-            if (lesson.id !== lessonId) return lesson;
-            return { ...lesson, isSelected: !lesson.isSelected };
-          }),
-        };
-      }) as CourseImport[];
-    });
+    setImportedCourses(
+      (prev) =>
+        prev?.map((c) =>
+          c.id === courseId
+            ? {
+                ...c,
+                lessons: c.lessons.map((l) =>
+                  l.id === lessonId ? { ...l, isSelected: !l.isSelected } : l,
+                ),
+              }
+            : c,
+        ) as CourseImport[],
+    );
   };
 
   const onUpdateCourseTitle = (courseId: number, newTitle: string) => {
-    setImportedCourses((prev) => {
-      if (!prev) return undefined;
-      return prev.map((c) =>
-        c.id === courseId ? { ...c, title: newTitle } : c,
-      );
-    });
+    setImportedCourses((prev) =>
+      prev?.map((c) => (c.id === courseId ? { ...c, title: newTitle } : c)),
+    );
   };
 
-  const onUpdateLessonTitle = (
-    courseId: number,
-    lessonId: number,
-    newTitle: string,
-  ) => {
-    setImportedCourses((prev) => {
-      if (!prev) return undefined;
-      return prev.map((course) => {
-        if (course.id !== courseId) return course;
-        return {
-          ...course,
-          lessons: course.lessons.map((lesson) =>
-            lesson.id === lessonId ? { ...lesson, title: newTitle } : lesson,
-          ),
-        };
-      }) as CourseImport[];
-    });
+  const onUpdateLessonTitle = (cId: number, lId: number, title: string) => {
+    setImportedCourses(
+      (prev) =>
+        prev?.map((c) =>
+          c.id === cId
+            ? {
+                ...c,
+                lessons: c.lessons.map((l) =>
+                  l.id === lId ? { ...l, title } : l,
+                ),
+              }
+            : c,
+        ) as CourseImport[],
+    );
   };
 
   const onUpdateActivityTitle = (
-    courseId: number,
-    lessonId: number,
-    activityId: number,
-    newTitle: string,
+    cId: number,
+    lId: number,
+    aId: number,
+    title: string,
   ) => {
-    setImportedCourses((prev) => {
-      if (!prev) return undefined;
-      return prev.map((course) => {
-        if (course.id !== courseId) return course;
-        return {
-          ...course,
-          lessons: course.lessons.map((lesson) => {
-            if (lesson.id !== lessonId) return lesson;
-            return {
-              ...lesson,
-              activities: (lesson.activities || []).map((act) =>
-                act.id === activityId ? { ...act, title: newTitle } : act,
-              ),
-            };
-          }),
-        };
-      }) as CourseImport[];
-    });
+    setImportedCourses(
+      (prev) =>
+        prev?.map((c) =>
+          c.id === cId
+            ? {
+                ...c,
+                lessons: c.lessons.map((l) =>
+                  l.id === lId
+                    ? {
+                        ...l,
+                        activities: l.activities?.map((a) =>
+                          a.id === aId ? { ...a, title } : a,
+                        ),
+                      }
+                    : l,
+                ),
+              }
+            : c,
+        ) as CourseImport[],
+    );
   };
 
   const onConfirmImport = () => {
-    if (!(importedCourses && importedCourses.length > 0)) return;
-    setImportStep(CoursesImportStep.ParcoursSelection);
+    if (importedCourses?.length)
+      setImportStep(CoursesImportStep.ParcoursSelection);
   };
 
-  const onConfirmParcoursSelection = (explicitParcours?: Parcours | null) => {
+  const onConfirmParcoursSelection = () => {
     if (importedCourses) {
-      const parcoursToApply =
-        explicitParcours !== undefined ? explicitParcours : selectedParcours;
+      const finalCourses = importedCourses
+        .map((c) => ({
+          ...c,
+          lessons: c.lessons.filter((l) => l.isSelected),
+        }))
+        .filter((c) => c.lessons.length > 0);
 
-      const moduleToApply = selectedModule;
-
-      const updatedCourses = importedCourses.map((crs) => {
-        const updatedCourse: CourseImport = {
-          ...crs,
-          lessons: crs.lessons.filter(
-            (l) => l.isSelected,
-          ) as CourseImport["lessons"],
-
-          parcours: parcoursToApply
-            ? parcoursToApply
-            : ({} as CourseImport["parcours"]),
-          parcoursId: parcoursToApply?.id,
-          module: moduleToApply ? moduleToApply : ({} as Module),
-          moduleId: moduleToApply?.id,
-        };
-        return updatedCourse;
-      });
-
-      const finalCourses = updatedCourses.filter(
-        (c) => c.lessons.length > 0 || c.id,
-      );
-
-      setImportedCourses(finalCourses);
+      setImportedCourses(finalCourses as CourseImport[]);
     }
     setImportStep(CoursesImportStep.ImportResult);
   };
 
   const onGoBack = () => {
-    setImportStep((currentStep) => {
-      if (currentStep <= CoursesImportStep.ZipImport) return currentStep;
-      return currentStep - 1;
-    });
+    setImportStep((curr) =>
+      curr <= CoursesImportStep.ZipImport ? curr : curr - 1,
+    );
   };
 
   return {
@@ -428,6 +562,8 @@ export default function useImportCourses() {
     isLoading,
     error,
     tooltipErrorTip,
+    uploadProgress,
+    currentAction,
     imagesQueue,
     formationsList,
     selectedFormation,
@@ -435,8 +571,8 @@ export default function useImportCourses() {
     selectedParcours,
     modulesList,
     selectedModule,
-    setSelectedParcours,
     setSelectedFormation,
+    setSelectedParcours,
     setSelectedModule,
     onImportZip,
     onRemoveCourse,

@@ -13,6 +13,8 @@ const ImportCoursesHome = () => {
     importedCourses,
     error,
     tooltipErrorTip,
+    uploadProgress,
+    currentAction,
     formationsList,
     selectedFormation,
     parcoursList,
@@ -68,7 +70,13 @@ const ImportCoursesHome = () => {
         );
       case CoursesImportStep.ImportResult:
         if (!importedCourses) return undefined;
-        return <ImportResult importedCourses={importedCourses} />;
+        return (
+          <ImportResult
+            importedCourses={importedCourses}
+            progress={uploadProgress}
+            currentAction={currentAction}
+          />
+        );
       default:
         return null;
     }
