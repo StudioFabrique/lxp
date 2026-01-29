@@ -9,4 +9,5 @@ uvicorn app.main:app \
   --ssl-certfile ./certs/fastapi-server-cert.pem \
   --ssl-ca-certs ./certs/ca-cert.pem \
   --ssl-cert-reqs 2 \
-  --log-level debug
+  --log-level debug \
+  --reload

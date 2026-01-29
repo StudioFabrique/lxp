@@ -8,7 +8,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.dependancies.pg_session import get_db
 from app.dependancies.mg_session import get_mg_database, connect_db, close_db
-from app.dependancies.get_current_user import CurrentUser, require_auth, TokenPayload
+from app.dependancies.require_auth import require_auth
 from contextlib import asynccontextmanager
 from fastapi.exception_handlers import (
     http_exception_handler,
@@ -30,6 +30,9 @@ from pydantic import BaseModel, Field, ConfigDict
 from pydantic.functional_serializers import PlainSerializer
 from typing import Annotated, Optional
 from app.utils.database import Module
+from app.models.pydantic.auth import TokenPayload
+from app.middlewares.exceptions_handler import ExceptionHandlerMiddleware
+from app.middlewares.security_headers import SecurityHeadersMiddleware
 
 
 # Custom type for ObjectId that serializes to string
@@ -89,6 +92,10 @@ app.add_middleware(
     max_age=600,
 )
 
+# Ajout des middlewares de gestion des exceptions et de sécurité
+app.add_middleware(ExceptionHandlerMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+
 
 # Custom handler for HTTP exceptions
 @app.exception_handler(StarletteHTTPException)
@@ -126,7 +133,6 @@ async def health_check():
 async def read_mongo(
     current_user: Annotated[TokenPayload, Depends(require_auth("GET", "test-mongo"))],
     mongo_db=Depends(get_mg_database),
-    db: Session = Depends(get_db),
 ):
     print("Current user ID:", current_user.userId)
     cursor = mongo_db.users.find()
@@ -138,7 +144,9 @@ async def read_mongo(
 
 @app.get("/test-pg")
 async def read_pg(
-    current_user: Annotated[TokenPayload, Depends(require_auth("GET", "test-pg"))],
+    current_user: Annotated[
+        TokenPayload, Depends(require_auth(action="GET", resource="test-pg"))
+    ],
     db: Session = Depends(get_db),
 ):
     result = db.query(Module).all()
@@ -148,6 +156,3 @@ async def read_pg(
     for r in current_user.userRoles:
         print("User role:", r.label)
     return modules_list
-
-
-# Note:
