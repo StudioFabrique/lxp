@@ -88,9 +88,11 @@ const ImportCoursesHome = () => {
         title="Import de cours"
         description="Importer des cours ainsi que toutes les leçons et activités associées."
       >
-        <Link to={".."} className="btn btn-outline">
-          Annuler
-        </Link>
+        {step !== CoursesImportStep.ImportResult && (
+          <Link to={".."} className="btn btn-outline">
+            Annuler
+          </Link>
+        )}
       </Header>
       {renderBody()}
     </div>

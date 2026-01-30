@@ -6,13 +6,14 @@ import { Link } from "react-router-dom";
 
 type Props = {
   importedCourses: CourseImport[];
-  progress: number; // Nouvelle prop
-  currentAction: string; // Nouvelle prop
+  progress: number;
+  currentAction: string;
 };
 
 const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
   const parcoursTitle = importedCourses[0]?.parcours?.title;
   const isFinished = progress === 100;
+
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
       <Header
@@ -35,7 +36,7 @@ const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
         alternateBgColor
         isSubHeader
       >
-        <Loader />
+        {!isFinished ? <Loader /> : <Check />}
       </Header>
 
       <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
@@ -74,7 +75,7 @@ const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
               Importation réussie !
             </h3>
             <p>Tous les cours et activités ont été créés.</p>
-            <Link className="btn btn-primary mt-4" to="/admin/course">
+            <Link className="btn btn-success mt-4" to="/admin/course">
               Terminer
             </Link>
           </div>
