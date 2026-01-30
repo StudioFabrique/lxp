@@ -53,6 +53,34 @@ export type CourseImport = Course & {
   moduleId?: number;
 };
 
+// --- NOUVELLE FONCTION UTILITAIRE ---
+// Permet de forcer le bon MIME type pour Multer
+const getMimeType = (filename: string): string => {
+  const ext = filename.split(".").pop()?.toLowerCase();
+  switch (ext) {
+    case "pdf":
+      return "application/pdf";
+    case "ppt":
+      return "application/vnd.ms-powerpoint";
+    case "pptx":
+      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    case "txt":
+      return "text/plain";
+    case "doc":
+      return "application/msword";
+    case "docx":
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case "xls":
+      return "application/vnd.ms-excel";
+    case "xlsx":
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case "md":
+      return "text/markdown";
+    default:
+      return "application/octet-stream";
+  }
+};
+
 export default function useImportCourses() {
   const { sendRequest } = useHttp();
 
@@ -210,14 +238,17 @@ export default function useImportCourses() {
         processedCount += 1 + structurePayload.lessons.length;
         setUploadProgress((processedCount / totalItems) * 100);
 
-        const { lessonsMap } = structureResponse; // Map { tempId, realId }
+        const {
+          lessonsMap,
+        }: { lessonsMap: { tempId: number; realId: number }[] } =
+          structureResponse; // Map
 
         // 2. Traitement des Activités pour chaque leçon
         for (const lesson of course.lessons) {
           if (!lesson.isSelected) continue;
 
           // Récupération du vrai ID de la leçon
-          const mapping = lessonsMap.find((m: any) => m.tempId === lesson.id);
+          const mapping = lessonsMap.find((m) => m.tempId === lesson.id);
           if (!mapping) continue;
           const realLessonId = mapping.realId;
 
@@ -257,11 +288,17 @@ export default function useImportCourses() {
             } else if (activity.value instanceof Blob) {
               // --- CAS B : Activité Fichier (PDF, etc.) ---
               // On utilise le endpoint /activity/resource/:lessonId
-              // On doit recréer un objet File avec le nom d'origine si possible, ou générique
+
               const fileName =
                 activity.url.split("/").pop() || `${activity.title}.pdf`;
+
+              // *** CORRECTION ICI ***
+              // On détecte le MIME type correct basé sur l'extension du fichier
+              const mimeType = getMimeType(fileName);
+
+              // On force le 'type' lors de la création du File pour que Multer l'accepte
               const fileToSend = new File([activity.value], fileName, {
-                type: activity.value.type,
+                type: mimeType,
               });
 
               await uploadActivityResource(
