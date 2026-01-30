@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
-import { ActivityImportType } from "../../../views/module/hooks/use-import-modules";
+import { ActivityImport } from "../../../views/module/hooks/use-import-modules";
 import { ArrowUpRight, EyeIcon } from "lucide-react";
 import activityIconType from "../../../utils/activity-icon-type";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 
 type Props = {
-  activity: ActivityImportType | null;
+  activity: ActivityImport | null;
   error?: string;
 };
 

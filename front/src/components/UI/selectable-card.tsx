@@ -1,23 +1,26 @@
-import { ReactNode, MouseEvent } from "react";
-import { Eye, Trash2 } from "lucide-react";
+import { ReactNode, MouseEvent, useState, useEffect } from "react";
+import { Eye, Trash2, PenLine, Check } from "lucide-react";
 import ToolTipWarning from "./tooltip-warning/tooltip-warning";
 
 type SelectableCardProps = {
   // Données
   title?: string;
   subtitle?: string | ReactNode;
-  icon?: ReactNode; // L'icône principale à gauche du titre
+  icon?: ReactNode;
 
   // État
   isSelected?: boolean;
 
   // Actions
-  onAction?: () => void; // Action principale (ex: Prévisualiser)
-  actionLabel?: string; // Texte du bouton d'action (ex: "Aperçu")
-  actionIcon?: ReactNode; // Icône du bouton d'action
+  onAction?: () => void;
+  actionLabel?: string;
+  actionIcon?: ReactNode;
 
-  onDelete?: () => void; // Si fourni, affiche le bouton poubelle
+  onDelete?: () => void;
   deleteTooltip?: string;
+
+  // Edition
+  onEditTitle?: (newTitle: string) => void;
 
   // Style
   className?: string;
@@ -26,7 +29,7 @@ type SelectableCardProps = {
 };
 
 const SelectableCard = ({
-  title,
+  title = "",
   subtitle,
   icon,
   isSelected = false,
@@ -35,13 +38,40 @@ const SelectableCard = ({
   actionIcon = <Eye className="w-4 h-4" />,
   onDelete,
   deleteTooltip = "Supprimer",
+  onEditTitle,
   className = "",
   error,
 }: SelectableCardProps) => {
-  // Gestionnaire pour la suppression avec stopPropagation
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempTitle, setTempTitle] = useState(title);
+
+  useEffect(() => {
+    setTempTitle(title);
+  }, [title]);
+
   const handleDeleteClick = (e: MouseEvent) => {
     e.stopPropagation();
     if (onDelete) onDelete();
+  };
+
+  const handleEditClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsEditing(true);
+  };
+
+  const handleSaveTitle = (e?: MouseEvent | React.KeyboardEvent) => {
+    e?.stopPropagation();
+    if (tempTitle.trim() !== "" && onEditTitle) {
+      onEditTitle(tempTitle);
+    } else {
+      setTempTitle(title);
+    }
+    setIsEditing(false);
+  };
+
+  const handleInputClick = (e: MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -51,24 +81,69 @@ const SelectableCard = ({
         ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200"}
         ${error ? "bg-error/10" : "bg-base-300"}
         ${className}
+        w-full overflow-hidden
       `}
     >
-      <div className="card-body p-3">
-        <div className="flex justify-between items-center">
+      <div className="card-body p-4">
+        <div className="flex justify-between items-center w-full gap-4">
           {/* PARTIE GAUCHE : Contenu */}
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center flex-1 min-w-0">
             {icon && <div className="flex-shrink-0">{icon}</div>}
-            <div className="flex flex-col min-w-0 gap-1">
-              <h3
-                className="card-title text-base font-bold text-base-content truncate flex gap-2 items-center"
-                title={title}
-              >
-                <span className="truncate">{title}</span>
-                {error && <ToolTipWarning absolutePos message={error} />}
-              </h3>
+
+            <div className="flex flex-col min-w-0 w-full group/card-title">
+              {isEditing ? (
+                <div className="flex items-center gap-2 w-full max-w-[200px]">
+                  <input
+                    type="text"
+                    value={tempTitle}
+                    onChange={(e) => setTempTitle(e.target.value)}
+                    onClick={handleInputClick}
+                    className="input input-xs focus:border-0 focus:h-auto focus:rounded bg-base-100"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveTitle(e);
+                      e.stopPropagation();
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    className="btn btn-xs btn-square btn-success"
+                    onClick={handleSaveTitle}
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <h3
+                  className="card-title text-base font-bold text-base-content flex gap-2 items-center"
+                  title={title}
+                >
+                  <span className="truncate">{title}</span>
+
+                  {onEditTitle && (
+                    <button
+                      onClick={handleEditClick}
+                      className="opacity-0 group-hover/card-title:opacity-100 transition-opacity p-1 hover:bg-base-content/10 rounded"
+                    >
+                      <PenLine className="w-3 h-3 text-base-content/60" />
+                    </button>
+                  )}
+
+                  {error && (
+                    <div className="flex-shrink-0">
+                      <ToolTipWarning
+                        absolutePos
+                        tooltipPos="tooltip-left"
+                        message={error}
+                      />
+                    </div>
+                  )}
+                </h3>
+              )}
 
               {subtitle && (
-                <div className="text-xs text-base-content/70">{subtitle}</div>
+                <div className="text-xs text-base-content/70 truncate">
+                  {subtitle}
+                </div>
               )}
             </div>
           </div>
@@ -77,7 +152,6 @@ const SelectableCard = ({
           <div
             className={`flex gap-2 flex-none items-center ${error ? "mr-5" : ""}`}
           >
-            {/* Bouton Supprimer (Affiché seulement si onDelete est fourni) */}
             {onDelete && (
               <button
                 onClick={handleDeleteClick}
@@ -88,16 +162,19 @@ const SelectableCard = ({
               </button>
             )}
 
-            {/* Bouton d'Action Principale */}
             {onAction && (
               <button
                 onClick={onAction}
                 className={`btn btn-sm ${
-                  isSelected ? "btn-secondary" : "btn-outline btn-secondary"
+                  isSelected
+                    ? "btn-outline btn-primary"
+                    : "btn-ghost btn-secondary"
                 }`}
               >
                 {actionIcon}
-                <span className="hidden 2xl:inline">{actionLabel}</span>
+                <span className="hidden 2xl:inline whitespace-nowrap">
+                  {actionLabel}
+                </span>
               </button>
             )}
           </div>

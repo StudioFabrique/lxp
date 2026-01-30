@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   ArrowRight,
   Rocket,
+  Undo2,
 } from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
@@ -74,6 +75,13 @@ const ParcoursSelection = ({
           </div>
         )}
         <button
+          className="btn btn-sm btn-outline mr-5 tooltip"
+          data-tip="Retourner à la prévisualisation des modules"
+          onClick={onGoBack}
+        >
+          <Undo2 />
+        </button>
+        <button
           className="btn btn-sm btn-success gap-2"
           disabled={!canConfirm}
           onClick={() => onConfirm(selectedParcours)}
@@ -137,7 +145,7 @@ const ParcoursSelection = ({
             </h3>
 
             {parcoursList.length === 0 ? (
-              <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
+              <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
                 Aucun parcours disponible pour cette formation.
               </div>
             ) : (
@@ -180,14 +188,6 @@ const ParcoursSelection = ({
           >
             <Ban size={18} />
             Lancer l'importation sans rattacher à un parcours
-          </button>
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={onGoBack}
-            className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-          >
-            Retourner à la prévisualisation des modules
           </button>
         </div>
       </div>

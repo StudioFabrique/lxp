@@ -11,7 +11,6 @@ import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Context } from "../../../store/context.store";
 import { useSelector } from "react-redux";
 import Contact from "../../../utils/interfaces/contact";
-import { ImportIcon } from "lucide-react";
 
 type ContenuProps = {
   modules: Module[];
@@ -57,7 +56,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           </h2>
           {canEditParcoursContent && (
             <div className="flex gap-5">
-              <Link
+              {/* <Link
                 className="btn btn-primary btn-soft"
                 to="import-modules"
                 state={{ parcoursId }}
@@ -66,7 +65,7 @@ const Contenu = ({ modules }: ContenuProps) => {
                   <ImportIcon />
                   Importer des modules
                 </div>
-              </Link>
+              </Link> */}
               <Can action="update" object="parcours">
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=${4}`}

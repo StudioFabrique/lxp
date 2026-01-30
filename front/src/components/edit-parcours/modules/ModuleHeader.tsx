@@ -1,5 +1,4 @@
-import { Copy, ImportIcon, PlusCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Copy, PlusCircle } from "lucide-react";
 
 type ModuleHeaderProps = {
   showForm: boolean;
@@ -14,7 +13,6 @@ type ModuleHeaderProps = {
  */
 export default function ModuleHeader({
   showForm,
-  parcoursId,
   onCreateNew,
   onAddExisting,
 }: ModuleHeaderProps) {
@@ -36,7 +34,7 @@ export default function ModuleHeader({
           <Copy />
           Ajouter un module
         </button>
-        <Link
+        {/* <Link
           className="btn btn-primary btn-soft mr-5"
           to="import-modules"
           state={{ parcoursId }}
@@ -45,7 +43,7 @@ export default function ModuleHeader({
             <ImportIcon />
             Importer des modules
           </div>
-        </Link>
+        </Link> */}
       </span>
     </div>
   );
