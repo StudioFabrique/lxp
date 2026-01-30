@@ -1,6 +1,5 @@
 import {
   GraduationCap,
-  CheckCircle2,
   ArrowRight,
   Rocket,
   Component,
@@ -13,6 +12,7 @@ import Header from "../UI/header";
 import { Link } from "react-router-dom";
 import Module from "../../utils/interfaces/module";
 import { useState } from "react";
+import SelectableSubCard from "../UI/selectable-sub-card";
 
 type Props = {
   formationsList: Formation[];
@@ -57,7 +57,7 @@ const ParcoursSelection = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
+    <div className="flex flex-col gap-4 ml-5 animate-in fade-in duration-500">
       <Header
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
@@ -102,8 +102,8 @@ const ParcoursSelection = ({
         </button>
       </Header>
 
-      <div className="ml-10 flex flex-col gap-8 pb-10">
-        <div className="flex flex-col gap-4">
+      <div className="ml-10 flex flex-col gap-6 pb-10">
+        <div className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300">
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
           </h3>
@@ -111,34 +111,17 @@ const ParcoursSelection = ({
           {formationsList.length === 0 ? (
             <div className="alert">Chargement des formations...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[300px] overflow-y-auto custom-scrollbar p-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {formationsList.map((formation) => {
                 const isSelected = selectedFormation?.id === formation.id;
+
                 return (
-                  <div
-                    key={formation.id}
-                    onClick={() => onSelectFormation(formation)}
-                    className={`card bg-base-300 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${isSelected ? "border-primary ring-1 ring-primary" : "border-base-200 hover:border-primary/50"}`}
-                  >
-                    <div className="card-body p-4 flex flex-row items-center gap-3">
-                      <div
-                        className={`p-2 rounded-full ${isSelected ? "bg-primary text-white" : "bg-base-200 text-base-content/50"}`}
-                      >
-                        <GraduationCap size={20} />
-                      </div>
-                      <span
-                        className={`font-medium text-sm line-clamp-2 ${isSelected ? "text-primary" : "text-base-content"}`}
-                      >
-                        {formation.title}
-                      </span>
-                      {isSelected && (
-                        <CheckCircle2
-                          size={16}
-                          className="text-primary ml-auto"
-                        />
-                      )}
-                    </div>
-                  </div>
+                  <SelectableSubCard
+                    data={formation}
+                    icon={<GraduationCap size={20} />}
+                    isSelected={isSelected}
+                    onSelect={onSelectFormation}
+                  />
                 );
               })}
             </div>
@@ -146,7 +129,7 @@ const ParcoursSelection = ({
         </div>
 
         {selectedFormation && (
-          <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted">
@@ -162,31 +145,14 @@ const ParcoursSelection = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {parcoursList.map((parcours) => {
                   const isSelected = selectedParcours?.id === parcours.id;
+
                   return (
-                    <div
-                      key={parcours.id}
-                      onClick={() => onSelectParcours(parcours)}
-                      className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}`}
-                    >
-                      <div className="card-body p-4 flex flex-row items-center gap-3">
-                        <div
-                          className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
-                        >
-                          <Rocket size={20} />
-                        </div>
-                        <span
-                          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
-                        >
-                          {parcours.title}
-                        </span>
-                        {isSelected && (
-                          <CheckCircle2
-                            size={16}
-                            className="text-primary ml-auto"
-                          />
-                        )}
-                      </div>
-                    </div>
+                    <SelectableSubCard
+                      data={parcours}
+                      icon={<Rocket size={20} />}
+                      isSelected={isSelected}
+                      onSelect={onSelectParcours}
+                    />
                   );
                 })}
               </div>
@@ -195,7 +161,7 @@ const ParcoursSelection = ({
         )}
 
         {selectedParcours && (
-          <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un module pour :
               <Link
@@ -228,30 +194,12 @@ const ParcoursSelection = ({
                 {modulesList?.map((module) => {
                   const isSelected = selectedModule?.id === module.id;
                   return (
-                    <div
-                      key={module.id}
-                      onClick={() => onSelectModule(module)}
-                      className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}`}
-                    >
-                      <div className="card-body p-4 flex flex-row items-center gap-3">
-                        <div
-                          className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
-                        >
-                          <Component size={20} />
-                        </div>
-                        <span
-                          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
-                        >
-                          {module.title}
-                        </span>
-                        {isSelected && (
-                          <CheckCircle2
-                            size={16}
-                            className="text-primary ml-auto"
-                          />
-                        )}
-                      </div>
-                    </div>
+                    <SelectableSubCard
+                      data={module}
+                      icon={<Component size={20} />}
+                      isSelected={isSelected}
+                      onSelect={onSelectModule}
+                    />
                   );
                 })}
               </div>
