@@ -5,12 +5,14 @@ import {
   Rocket,
   Component,
   Undo2,
+  RefreshCw,
 } from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
 import { Link } from "react-router-dom";
 import Module from "../../utils/interfaces/module";
+import { useState } from "react";
 
 type Props = {
   formationsList: Formation[];
@@ -24,6 +26,7 @@ type Props = {
   modulesList: Module[];
   selectedModule: Module | null;
   onSelectModule: (module: Module | null) => void;
+  onRefreshModules: () => void;
 
   onConfirm: (parcours?: Parcours | null) => void;
   onGoBack: () => void;
@@ -39,12 +42,19 @@ const ParcoursSelection = ({
   modulesList,
   selectedModule,
   onSelectModule,
+  onRefreshModules,
   onConfirm,
   onGoBack,
 }: Props) => {
+  const [showReloadModulesButton, setShowReloadModulesButton] = useState(false);
+
   const canConfirm = Boolean(
     selectedFormation && selectedParcours && selectedModule,
   );
+
+  const onClickLink = () => {
+    setShowReloadModulesButton(true);
+  };
 
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
@@ -188,9 +198,25 @@ const ParcoursSelection = ({
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un module pour :
-              <span className="text-primary underline decoration-dotted">
+              <Link
+                to={`/admin/parcours/edit/${selectedParcours.id}?step=4`}
+                target="_blank"
+                data-tip="Ouverture dans un nouvel onglet"
+                className="text-primary underline decoration-dotted tooltip"
+                onClick={onClickLink}
+              >
                 {selectedParcours.title}
-              </span>
+              </Link>
+              {showReloadModulesButton && (
+                <button
+                  type="button"
+                  className="btn btn-xs btn-ghost tooltip"
+                  data-tip="Recharger la liste des modules"
+                  onClick={onRefreshModules}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              )}
             </h3>
 
             {modulesList?.length === 0 ? (

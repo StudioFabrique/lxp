@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import JSZip from "jszip";
 import { marked } from "marked";
 import useHttp from "../../../hooks/use-http";
@@ -53,7 +53,6 @@ export type CourseImport = Course & {
   moduleId?: number;
 };
 
-// --- NOUVELLE FONCTION UTILITAIRE ---
 // Permet de forcer le bon MIME type pour Multer
 const getMimeType = (filename: string): string => {
   const ext = filename.split(".").pop()?.toLowerCase();
@@ -112,86 +111,54 @@ export default function useImportCourses() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
 
-  // --- API LOADERS ---
-  useEffect(() => {
-    if (step === CoursesImportStep.ParcoursSelection) {
-      sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
-    }
-  }, [step, sendRequest]);
-
-  useEffect(() => {
-    if (selectedFormation) {
-      setParcoursList([]);
-      setSelectedParcours(null);
-      setModulesList([]);
-      setSelectedModule(null);
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
-          method: "get",
-        },
-        (data) => setParcoursList(data.data),
-      );
-    }
-  }, [selectedFormation, sendRequest]);
-
-  useEffect(() => {
-    if (selectedParcours) {
-      setModulesList([]);
-      setSelectedModule(null);
-      sendRequest(
-        { path: `/modules/${selectedParcours.id}`, method: "get" },
-        (data) => setModulesList(data.modules),
-      );
-    }
-  }, [selectedParcours, sendRequest]);
-
   // --- UPLOAD HELPERS ---
 
   // Upload d'une image intégrée dans le texte (Blog Image)
-  const uploadBlogImage = async (file: File) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    const response = await sendRequest({
-      path: "/activity/blog-image",
-      method: "post",
-      body: formData,
-    });
-    return response.response || response.url;
-  };
+  const uploadBlogImage = useCallback(
+    async (file: File) => {
+      const formData = new FormData();
+      formData.append("image", file);
+      const response = await sendRequest({
+        path: "/activity/blog-image",
+        method: "post",
+        body: formData,
+      });
+      return response.response || response.url;
+    },
+    [sendRequest],
+  );
 
   // Upload d'une ressource (Fichier Blob/PDF etc) via le endpoint resource
-  const uploadActivityResource = async (
-    lessonId: number,
-    file: File,
-    title: string,
-  ) => {
-    const formData = new FormData();
-    // 1. Ajout du fichier
-    formData.append("files", file);
-    // 2. Construction de l'objet data requis par le backend (jsonParser middleware)
-    const resourceData = {
-      resources: [
-        {
-          label: title,
-          filename: file.name,
-        },
-      ],
-      parent: "lesson",
-    };
-    // 3. Stringify pour le middleware jsonParser
-    formData.append("data", JSON.stringify(resourceData));
+  const uploadActivityResource = useCallback(
+    async (lessonId: number, file: File, title: string) => {
+      const formData = new FormData();
+      // 1. Ajout du fichier
+      formData.append("files", file);
+      // 2. Construction de l'objet data requis par le backend (jsonParser middleware)
+      const resourceData = {
+        resources: [
+          {
+            label: title,
+            filename: file.name,
+          },
+        ],
+        parent: "lesson",
+      };
+      // 3. Stringify pour le middleware jsonParser
+      formData.append("data", JSON.stringify(resourceData));
 
-    await sendRequest({
-      path: `/activity/resource/${lessonId}`,
-      method: "post",
-      body: formData,
-    });
-  };
+      await sendRequest({
+        path: `/activity/resource/${lessonId}`,
+        method: "post",
+        body: formData,
+      });
+    },
+    [sendRequest],
+  );
 
   // --- MAIN IMPORT PROCESS ---
 
-  const processImport = async () => {
+  const processImport = useCallback(async () => {
     if (!importedCourses) return;
 
     let processedCount = 0;
@@ -322,17 +289,15 @@ export default function useImportCourses() {
         "Une erreur est survenue lors du transfert. Vérifiez votre connexion.",
       );
     }
-  };
-
-  // Déclenchement automatique du processus quand on arrive sur l'étape de résultat
-  useEffect(() => {
-    if (step === CoursesImportStep.ImportResult && importedCourses) {
-      processImport();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
-
-  // --- ZIP PARSING LOGIC ---
+  }, [
+    imagesQueue,
+    importedCourses,
+    selectedModule?.id,
+    selectedParcours?.id,
+    sendRequest,
+    uploadActivityResource,
+    uploadBlogImage,
+  ]);
 
   const processHtmlImages = async (
     htmlContent: string,
@@ -593,6 +558,51 @@ export default function useImportCourses() {
     );
   };
 
+  const fetchModules = useCallback(() => {
+    if (selectedParcours) {
+      setModulesList([]);
+      setSelectedModule(null);
+      sendRequest(
+        { path: `/modules/${selectedParcours.id}`, method: "get" },
+        (data) => setModulesList(data.modules),
+      );
+    }
+  }, [selectedParcours, sendRequest]);
+
+  // Déclenchement automatique du processus quand on arrive sur l'étape de résultat
+  useEffect(() => {
+    if (step === CoursesImportStep.ImportResult && importedCourses) {
+      processImport();
+    }
+  }, [importedCourses, processImport, step]);
+
+  // --- API LOADERS ---
+  useEffect(() => {
+    if (step === CoursesImportStep.ParcoursSelection) {
+      sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
+    }
+  }, [step, sendRequest]);
+
+  useEffect(() => {
+    if (selectedFormation) {
+      setParcoursList([]);
+      setSelectedParcours(null);
+      setModulesList([]);
+      setSelectedModule(null);
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
+          method: "get",
+        },
+        (data) => setParcoursList(data.data),
+      );
+    }
+  }, [selectedFormation, sendRequest]);
+
+  useEffect(() => {
+    fetchModules();
+  }, [fetchModules]);
+
   return {
     step,
     importedCourses,
@@ -611,6 +621,7 @@ export default function useImportCourses() {
     setSelectedFormation,
     setSelectedParcours,
     setSelectedModule,
+    fetchModules,
     onImportZip,
     onRemoveCourse,
     onToggleLessonSelection,
