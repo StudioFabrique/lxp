@@ -24,6 +24,7 @@ const ImportCoursesHome = () => {
     setSelectedFormation,
     setSelectedParcours,
     setSelectedModule,
+    fetchModules,
     onImportZip,
     onRemoveCourse,
     onToggleLessonSelection,
@@ -66,6 +67,7 @@ const ImportCoursesHome = () => {
             onSelectModule={setSelectedModule}
             onConfirm={onConfirmParcoursSelection}
             onGoBack={onGoBack}
+            onRefreshModules={fetchModules}
           />
         );
       case CoursesImportStep.ImportResult:
