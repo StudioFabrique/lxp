@@ -8,11 +8,14 @@ import checkToken from "../../../middleware/check-token";
 
 // Import des contrôleurs pour la gestion des cours
 import httpPostCourse from "../../../controllers/course/http-post-course";
+import httpPostImportCourseStructure from "../../../controllers/course/http-post-import-course-structure";
+
 import {
   courseIdAndVisibilityValidator,
   courseIdValidator,
   deleteCourseDatesValidator,
   postCourseValidator,
+  postImportCourseStructureValidator,
   putCourseDatesValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
@@ -110,6 +113,17 @@ courseRouter.put(
  * Nécessite une validation des données du cours
  */
 courseRouter.post("/", postCourseValidator, httpPostCourse);
+
+/**
+ * Cette route est utilisée par le module d'importation de cours (ZIP)
+ * Nécessite les permissions "course"
+ */
+courseRouter.post(
+  "/import-structure",
+  checkPermissions("course"),
+  postImportCourseStructureValidator,
+  httpPostImportCourseStructure,
+);
 
 /**
  * Route GET pour récupérer tous les cours
@@ -368,15 +382,6 @@ courseRouter.get(
   courseIdValidator,
   httpGetCourseScenario,
 );
-
-// Route commentée pour la suppression d'une leçon
-/* courseRouter.delete(
-  "/delete-lesson/:courseId/:lessonId",
-  checkToken,
-  courseIdValidator,
-  deleteCourseLessonValidator,
-  httpDeleteCourseLesson
-); */
 
 /**
  * Route PUT pour associer plusieurs leçons à un cours

@@ -13,14 +13,24 @@ const ImportCoursesHome = () => {
     importedCourses,
     error,
     tooltipErrorTip,
+    uploadProgress,
+    currentAction,
     formationsList,
     selectedFormation,
     parcoursList,
     selectedParcours,
+    modulesList,
+    selectedModule,
     setSelectedFormation,
     setSelectedParcours,
+    setSelectedModule,
+    fetchModules,
     onImportZip,
     onRemoveCourse,
+    onToggleLessonSelection,
+    onUpdateCourseTitle,
+    onUpdateLessonTitle,
+    onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,
@@ -37,6 +47,10 @@ const ImportCoursesHome = () => {
             onImportZip={onImportZip}
             onConfirmZipImport={onConfirmImport}
             onRemoveCourse={onRemoveCourse}
+            onToggleLessonSelection={onToggleLessonSelection}
+            onUpdateCourseTitle={onUpdateCourseTitle}
+            onUpdateLessonTitle={onUpdateLessonTitle}
+            onUpdateActivityTitle={onUpdateActivityTitle}
           />
         );
       case CoursesImportStep.ParcoursSelection:
@@ -48,13 +62,23 @@ const ImportCoursesHome = () => {
             parcoursList={parcoursList}
             selectedParcours={selectedParcours}
             onSelectParcours={setSelectedParcours}
+            modulesList={modulesList}
+            selectedModule={selectedModule}
+            onSelectModule={setSelectedModule}
             onConfirm={onConfirmParcoursSelection}
             onGoBack={onGoBack}
+            onRefreshModules={fetchModules}
           />
         );
       case CoursesImportStep.ImportResult:
         if (!importedCourses) return undefined;
-        return <ImportResult importedCourses={importedCourses} />;
+        return (
+          <ImportResult
+            importedCourses={importedCourses}
+            progress={uploadProgress}
+            currentAction={currentAction}
+          />
+        );
       default:
         return null;
     }
@@ -66,9 +90,11 @@ const ImportCoursesHome = () => {
         title="Import de cours"
         description="Importer des cours ainsi que toutes les leçons et activités associées."
       >
-        <Link to={".."} className="btn btn-outline">
-          Annuler
-        </Link>
+        {step !== CoursesImportStep.ImportResult && (
+          <Link to={".."} className="btn btn-outline">
+            Annuler
+          </Link>
+        )}
       </Header>
       {renderBody()}
     </div>

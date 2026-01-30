@@ -1,8 +1,18 @@
-import { GraduationCap, CheckCircle2, ArrowRight, Rocket } from "lucide-react";
+import {
+  GraduationCap,
+  CheckCircle2,
+  ArrowRight,
+  Rocket,
+  Component,
+  Undo2,
+  RefreshCw,
+} from "lucide-react";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
 import { Link } from "react-router-dom";
+import Module from "../../utils/interfaces/module";
+import { useState } from "react";
 
 type Props = {
   formationsList: Formation[];
@@ -12,6 +22,11 @@ type Props = {
   parcoursList: Parcours[];
   selectedParcours: Parcours | null;
   onSelectParcours: (parcours: Parcours | null) => void;
+
+  modulesList: Module[];
+  selectedModule: Module | null;
+  onSelectModule: (module: Module | null) => void;
+  onRefreshModules: () => void;
 
   onConfirm: (parcours?: Parcours | null) => void;
   onGoBack: () => void;
@@ -24,20 +39,25 @@ const ParcoursSelection = ({
   parcoursList,
   selectedParcours,
   onSelectParcours,
+  modulesList,
+  selectedModule,
+  onSelectModule,
+  onRefreshModules,
   onConfirm,
   onGoBack,
 }: Props) => {
-  // Détermine si le bouton de confirmation d'i,portation est activé
-  const canConfirm = Boolean(selectedFormation && selectedParcours);
+  const [showReloadModulesButton, setShowReloadModulesButton] = useState(false);
 
-  // const handleConfirmWithoutParcours = () => {
-  //   onSelectParcours(null);
-  //   onConfirm(null);
-  // };
+  const canConfirm = Boolean(
+    selectedFormation && selectedParcours && selectedModule,
+  );
+
+  const onClickLink = () => {
+    setShowReloadModulesButton(true);
+  };
 
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
-      {/* Header Etape 1 */}
       <Header
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
@@ -47,26 +67,32 @@ const ParcoursSelection = ({
         onClick={onGoBack}
       />
 
-      {/* Header Etape 2 */}
       <Header
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
         isSubHeader
         alternateBgColor
       >
-        {selectedParcours && (
+        {selectedModule && (
           <div className="flex font-bold text-sm items-center gap-2 mr-5">
-            <span>Parcours choisi :</span>
+            <span>Module choisi :</span>
             <Link
               data-tip="Ouverture dans un nouvel onglet"
               className="link hover:text-secondary tooltip tooltip-bottom"
-              to={`/admin/parcours/view/${selectedParcours.id}`}
+              to={`/admin/parcours/view/${selectedModule.id}`}
               target="_blank"
             >
-              {selectedParcours.title}
+              {selectedModule.title}
             </Link>
           </div>
         )}
+        <button
+          className="btn btn-sm btn-outline mr-5 tooltip"
+          data-tip="Retourner à la prévisualisation des modules"
+          onClick={onGoBack}
+        >
+          <Undo2 />
+        </button>
         <button
           className="btn btn-sm btn-success gap-2"
           disabled={!canConfirm}
@@ -77,7 +103,6 @@ const ParcoursSelection = ({
       </Header>
 
       <div className="ml-10 flex flex-col gap-8 pb-10">
-        {/* --- SECTION 1 : FORMATIONS --- */}
         <div className="flex flex-col gap-4">
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
@@ -120,7 +145,6 @@ const ParcoursSelection = ({
           )}
         </div>
 
-        {/* --- SECTION 2 : PARCOURS (Apparait si formation sélectionnée) --- */}
         {selectedFormation && (
           <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
@@ -131,7 +155,7 @@ const ParcoursSelection = ({
             </h3>
 
             {parcoursList.length === 0 ? (
-              <div className="alert alert-warning bg-warning/10 text-warning-content border-warning/20 text-sm">
+              <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
                 Aucun parcours disponible pour cette formation.
               </div>
             ) : (
@@ -155,6 +179,12 @@ const ParcoursSelection = ({
                         >
                           {parcours.title}
                         </span>
+                        {isSelected && (
+                          <CheckCircle2
+                            size={16}
+                            className="text-primary ml-auto"
+                          />
+                        )}
                       </div>
                     </div>
                   );
@@ -164,26 +194,70 @@ const ParcoursSelection = ({
           </div>
         )}
 
-        {/* --- SECTION 3 : STANDALONE --- */}
-        {/* <div className="divider text-base-content/30 text-xs">OU</div>
+        {selectedParcours && (
+          <div className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
+              Choisir un module pour :
+              <Link
+                to={`/admin/parcours/edit/${selectedParcours.id}?step=4`}
+                target="_blank"
+                data-tip="Ouverture dans un nouvel onglet"
+                className="text-primary underline decoration-dotted tooltip"
+                onClick={onClickLink}
+              >
+                {selectedParcours.title}
+              </Link>
+              {showReloadModulesButton && (
+                <button
+                  type="button"
+                  className="btn btn-xs btn-ghost tooltip"
+                  data-tip="Recharger la liste des modules"
+                  onClick={onRefreshModules}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              )}
+            </h3>
 
-        <div className="flex justify-center">
-          <button
-            onClick={handleConfirmWithoutParcours}
-            className="btn btn-outline hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-          >
-            <Ban size={18} />
-            Lancer l'importation sans rattacher à un parcours
-          </button>
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={onGoBack}
-            className="btn btn-ghost hover:bg-base-200 text-base-content/60 hover:text-error gap-2 normal-case font-normal"
-          >
-            Retourner à la prévisualisation des modules
-          </button>
-        </div> */}
+            {modulesList?.length === 0 ? (
+              <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
+                Aucun module disponible pour ce parcours.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {modulesList?.map((module) => {
+                  const isSelected = selectedModule?.id === module.id;
+                  return (
+                    <div
+                      key={module.id}
+                      onClick={() => onSelectModule(module)}
+                      className={`card bg-base-100 shadow-sm border cursor-pointer transition-all duration-200 ${isSelected ? "border-secondary ring-1 ring-secondary bg-secondary/5" : "border-base-200 hover:border-secondary/50"}`}
+                    >
+                      <div className="card-body p-4 flex flex-row items-center gap-3">
+                        <div
+                          className={`p-2 rounded-full ${isSelected ? "bg-secondary text-white" : "bg-base-200 text-base-content/50"}`}
+                        >
+                          <Component size={20} />
+                        </div>
+                        <span
+                          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
+                        >
+                          {module.title}
+                        </span>
+                        {isSelected && (
+                          <CheckCircle2
+                            size={16}
+                            className="text-primary ml-auto"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

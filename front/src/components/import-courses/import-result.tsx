@@ -1,13 +1,18 @@
-import { CourseImportType } from "../../views/course/hooks/use-import-courses";
+import { AlertCircle, Check } from "lucide-react";
+import { CourseImport } from "../../views/course/hooks/use-import-courses";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
+import { Link } from "react-router-dom";
 
 type Props = {
-  importedCourses: CourseImportType[];
+  importedCourses: CourseImport[];
+  progress: number;
+  currentAction: string;
 };
 
-const ImportResult = ({ importedCourses }: Props) => {
+const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
   const parcoursTitle = importedCourses[0]?.parcours?.title;
+  const isFinished = progress === 100;
 
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
@@ -31,8 +36,51 @@ const ImportResult = ({ importedCourses }: Props) => {
         alternateBgColor
         isSubHeader
       >
-        <Loader />
+        {!isFinished ? <Loader /> : <Check />}
       </Header>
+
+      <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
+        {!isFinished ? (
+          <>
+            <h2 className="text-xl font-bold text-primary">
+              Importation en cours...
+            </h2>
+
+            {/* Barre de progression DaisyUI */}
+            <progress
+              className="progress progress-primary w-full max-w-md h-4"
+              value={progress}
+              max="100"
+            ></progress>
+
+            <div className="flex flex-col items-center gap-1 text-sm text-base-content/70">
+              <span className="font-mono">{Math.round(progress)}%</span>
+              <span>{currentAction}</span>
+            </div>
+
+            <div className="alert alert-outline outline-2 max-w-md text-xs mt-4">
+              <AlertCircle />
+              <span>
+                Ne fermez pas cette page. Les fichiers sont en cours de
+                transfert.
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
+            <div className="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center">
+              <Check className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold text-success">
+              Importation réussie !
+            </h3>
+            <p>Tous les cours et activités ont été créés.</p>
+            <Link className="btn btn-success mt-4" to="/admin/course">
+              Terminer
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

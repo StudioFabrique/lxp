@@ -222,3 +222,48 @@ export const putReorderCoursesValidator = [
     ),
   checkValidatorResult,
 ];
+
+export const postImportCourseStructureValidator = [
+  body("title")
+    .notEmpty()
+    .withMessage("Le titre du cours est requis.")
+    .isString()
+    .withMessage("Le titre doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre contient des caractères non autorisés."),
+
+  body("description")
+    .optional()
+    .isString()
+    .withMessage("La description doit être une chaîne de caractères."),
+
+  body("moduleId")
+    .notEmpty()
+    .withMessage("L'identifiant du module est requis.")
+    .isInt()
+    .withMessage("L'identifiant du module doit être un nombre entier."),
+
+  body("lessons")
+    .isArray()
+    .withMessage("Les leçons doivent être fournies sous forme de tableau."),
+
+  body("lessons.*.title")
+    .notEmpty()
+    .withMessage("Le titre de la leçon est requis.")
+    .isString()
+    .custom(stringValidateGeneric),
+
+  body("lessons.*.isSelected")
+    .isBoolean()
+    .withMessage("Le statut de sélection de la leçon doit être un booléen."),
+
+  body("lessons.*.modalite")
+    .optional()
+    .isString()
+    .isIn(["elearning", "presenciel", "hybride"])
+    .withMessage(
+      "La modalité doit être valide (elearning, presenciel, hybride).",
+    ),
+
+  checkValidatorResult,
+];

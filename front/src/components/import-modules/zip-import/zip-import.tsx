@@ -4,8 +4,8 @@ import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
 import ModuleArborescence from "./module-arborescence";
 import {
-  ActivityImportType,
-  ModuleImportType,
+  ActivityImport,
+  ModuleImport,
 } from "../../../views/module/hooks/use-import-modules";
 import { Eye, Component } from "lucide-react";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
@@ -13,7 +13,7 @@ import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-to
 import SelectableCard from "../../UI/selectable-card";
 
 type Props = {
-  importedModules?: ModuleImportType[];
+  importedModules?: ModuleImport[];
   error?: string;
   tooltipErrorTip?: string;
   onImportZip: (file: File) => void;
@@ -30,12 +30,12 @@ const ZipImport = ({
   onRemoveModule,
 }: Props) => {
   // Module actuellement affiché
-  const [selectedModule, setSelectedModule] = useState<ModuleImportType | null>(
+  const [selectedModule, setSelectedModule] = useState<ModuleImport | null>(
     null,
   );
   // Activité sélectionnée pour la prévisualisation
   const [selectedActivity, setSelectedActivity] =
-    useState<ActivityImportType | null>(null);
+    useState<ActivityImport | null>(null);
 
   const headerDescription = error
     ? error
@@ -44,7 +44,7 @@ const ZipImport = ({
       : "Téléverser un dossier compressé de format .zip";
 
   // Gestion du changement de module
-  const handlePreviewModule = (module: ModuleImportType) => {
+  const handlePreviewModule = (module: ModuleImport) => {
     setSelectedModule(module);
     setSelectedActivity(null);
   };

@@ -50,11 +50,6 @@ export const items = (editor: Editor) => [
     action: () => editor.chain().focus().setHorizontalRule().run(),
   },
   {
-    icon: "text-wrap",
-    title: "Saut de ligne",
-    action: () => editor.chain().focus().setHardBreak().run(),
-  },
-  {
     icon: "format-clear",
     title: "Effacer le format",
     action: () => editor.chain().focus().clearNodes().unsetAllMarks().run(),
