@@ -65,16 +65,19 @@ export default function DrawerChatbot() {
 
           <div className="bg-base-200 text-base-content w-[40rem] min-h-full flex flex-col p-4">
             {/* Header fixe */}
-            <div className="flex-shrink-0 text-center">
-              <h2 className="text-2xl font-bold">Une question ?</h2>
-              <div className="flex justify-center">
-                <img src={chatbot} alt="Chatbot" width={200} />
+            <div className="flex-shrink-0 text-center bg-secondary rounded-lg p-2 flex items-center">
+              <div className="ml-4 flex justify-start items-center">
+                <img src={chatbot} alt="Chatbot" width={75} />{" "}
+                <span className="flex flex-col items-start">
+                  <h3 className="text-xl font-bold">A.L.A.A. répond</h3>
+                  <p className="text-xs">
+                    (Advanced Learning Automated Answer)
+                  </p>
+                </span>
               </div>
-              <h3 className="text-xl font-bold">A.L.A.A. répond</h3>
-              <p className="text-xs mt-2">
-                (Advanced Learning Automated Answer)
-              </p>
             </div>
+
+            <div className="divider m-0"></div>
 
             {/* Zone de chat avec scroll */}
             <div className="flex-1 flex flex-col mt-4 justify-between">
@@ -151,7 +154,8 @@ export default function DrawerChatbot() {
                     name="prompt"
                     data={data}
                   />
-                  <div className="text-right p-4">
+                  <div className="text-right p-4 flex items-center justify-between">
+                    <p className="text-xs">Crédits : 1000 / 1000</p>
                     <button
                       className="w-8 h-8 btn btn-circle btn-primary"
                       type="submit"
