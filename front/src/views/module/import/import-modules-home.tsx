@@ -69,6 +69,7 @@ const ImportModulesHome = () => {
         return (
           <ImportResult
             importedModules={importedModules}
+            error={error}
             progress={uploadProgress}
             currentAction={currentAction}
           />

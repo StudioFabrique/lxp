@@ -100,7 +100,7 @@ const sanitizeFilename = (filename: string): string => {
 };
 
 export default function useImportModules() {
-  const { sendRequest } = useHttp();
+  const { sendRequest, error: apiRequestError } = useHttp();
 
   const [step, setImportStep] = useState<ModulesImportStep>(
     ModulesImportStep.ZipImport,
@@ -189,9 +189,9 @@ export default function useImportModules() {
           duration:
             module.duration && module.duration > 0 ? module.duration : 1,
           formationId: selectedFormation.id,
-          parcoursId: selectedParcours?.id, // undefined si pas de parcours, c'est OK
-          contacts: [], // Backend attend 'contacts', pas 'contactsIds'
-          skills: [], // Backend attend 'skills', pas 'bonusSkillsIds'
+          parcoursId: selectedParcours?.id,
+          contacts: [],
+          skills: [],
         };
 
         const formData = new FormData();
@@ -209,18 +209,13 @@ export default function useImportModules() {
           body: formData,
         });
 
-        // Le contrôleur retourne { message: "...", data: response }
-        // Vérifiez ce que retourne exactement sendRequest (parfois il déballe data, parfois non)
-        const responseData = apiResponse.data || apiResponse;
+        const responseData = apiResponse?.data || apiResponse;
 
-        console.log("Réponse Création Module:", responseData);
-
-        // On récupère moduleId (grâce au correctif backend)
-        const createdModuleId = responseData.id;
+        const createdModuleId = responseData?.id;
 
         if (!createdModuleId) {
           throw new Error(
-            "L'API n'a pas renvoyé l'ID du module (moduleId manquant).",
+            "Un problème est survenu lors de la création du module",
           );
         }
 
@@ -356,7 +351,6 @@ export default function useImportModules() {
         (globalError as Error).message ||
         "Une erreur est survenue pendant l'import.";
       setError(message);
-      setCurrentAction("Erreur critique.");
       setIsLoading(false);
     }
   }, [
@@ -658,6 +652,17 @@ export default function useImportModules() {
       );
     }
   }, [selectedFormation, sendRequest]);
+
+  // Vérification apiRequestError avec le message d'erreur conernant les modules
+  useEffect(() => {
+    if (!apiRequestError) return;
+    const errorMessage =
+      apiRequestError === "MODULE_ALREADY_EXISTS"
+        ? "Le module est déjà existant"
+        : "Un problème est survenu";
+
+    setError(errorMessage);
+  }, [apiRequestError]);
 
   return {
     step,

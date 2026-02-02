@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 
 type Props = {
   importedModules: ModuleImport[];
+  error: string;
   progress?: number;
   currentAction?: string;
 };
 
 const ImportResult = ({
   importedModules,
+  error,
   progress = 0,
   currentAction = "",
 }: Props) => {
@@ -41,7 +43,15 @@ const ImportResult = ({
         alternateBgColor
         isSubHeader
       >
-        {!isFinished ? <Loader /> : <Check />}
+        {error ? (
+          <Link to={".."} className="btn btn-sm btn-primary btn-soft">
+            Quitter
+          </Link>
+        ) : !isFinished ? (
+          <Loader />
+        ) : (
+          <Check />
+        )}
       </Header>
 
       <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
@@ -60,6 +70,7 @@ const ImportResult = ({
             <div className="flex flex-col items-center gap-1 text-sm text-base-content/70">
               <span className="font-mono">{Math.round(progress)}%</span>
               <span>{currentAction}</span>
+              {error && <span className="text-error">{error}</span>}
             </div>
 
             <div className="alert alert-outline outline-2 max-w-md text-xs mt-4">
