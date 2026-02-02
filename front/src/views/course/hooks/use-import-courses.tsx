@@ -11,6 +11,7 @@ import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import Module from "../../../utils/interfaces/module";
+import { BASE_URL } from "../../../config/urls";
 
 export enum CoursesImportStep {
   ZipImport,
@@ -53,10 +54,24 @@ export type CourseImport = Course & {
   moduleId?: number;
 };
 
-// Permet de forcer le bon MIME type pour Multer
 const getMimeType = (filename: string): string => {
   const ext = filename.split(".").pop()?.toLowerCase();
   switch (ext) {
+    // Images
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "gif":
+      return "image/gif";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    case "bmp":
+      return "image/bmp";
+    // Documents
     case "pdf":
       return "application/pdf";
     case "ppt":
@@ -80,10 +95,14 @@ const getMimeType = (filename: string): string => {
   }
 };
 
+const sanitizeFilename = (filename: string): string => {
+  return filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+};
+
 export default function useImportCourses() {
   const { sendRequest } = useHttp();
 
-  // Navigation & Data
+  // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
     CoursesImportStep.ZipImport,
   );
@@ -111,52 +130,29 @@ export default function useImportCourses() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
 
-  // --- UPLOAD HELPERS ---
-
-  // Upload d'une image intégrée dans le texte (Blog Image)
-  const uploadBlogImage = useCallback(
-    async (file: File) => {
-      const formData = new FormData();
-      formData.append("image", file);
-      const response = await sendRequest({
-        path: "/activity/blog-image",
-        method: "post",
-        body: formData,
-      });
-      return response.response || response.url;
-    },
-    [sendRequest],
-  );
-
-  // Upload d'une ressource (Fichier Blob/PDF etc) via le endpoint resource
   const uploadActivityResource = useCallback(
     async (lessonId: number, file: File, title: string) => {
-      const formData = new FormData();
-      // 1. Ajout du fichier
-      formData.append("files", file);
-      // 2. Construction de l'objet data requis par le backend (jsonParser middleware)
-      const resourceData = {
-        resources: [
-          {
-            label: title,
-            filename: file.name,
-          },
-        ],
-        parent: "lesson",
-      };
-      // 3. Stringify pour le middleware jsonParser
-      formData.append("data", JSON.stringify(resourceData));
+      try {
+        const formData = new FormData();
+        formData.append("files", file);
+        const resourceData = {
+          resources: [{ label: title, filename: file.name }],
+          parent: "lesson",
+        };
+        formData.append("data", JSON.stringify(resourceData));
 
-      await sendRequest({
-        path: `/activity/resource/${lessonId}`,
-        method: "post",
-        body: formData,
-      });
+        await sendRequest({
+          path: `/activity/resource/${lessonId}`,
+          method: "post",
+          body: formData,
+        });
+      } catch (e) {
+        console.error(`Erreur upload ressource:`, e);
+        throw e;
+      }
     },
     [sendRequest],
   );
-
-  // --- MAIN IMPORT PROCESS ---
 
   const processImport = useCallback(async () => {
     if (!importedCourses) return;
@@ -164,13 +160,12 @@ export default function useImportCourses() {
     let processedCount = 0;
     let totalItems = 0;
 
-    // Calcul du nombre total d'éléments à traiter pour la barre de progression
     importedCourses.forEach((c) => {
-      totalItems++; // 1 pour la structure du cours
+      totalItems++;
       c.lessons.forEach((l) => {
         if (l.isSelected) {
-          totalItems++; // 1 pour la leçon
-          if (l.activities) totalItems += l.activities.length; // N pour les activités
+          totalItems++;
+          if (l.activities) totalItems += l.activities.length;
         }
       });
     });
@@ -179,7 +174,8 @@ export default function useImportCourses() {
       for (const course of importedCourses) {
         setCurrentAction(`Création du cours : ${course.title}`);
 
-        // 1. Création de la Structure (Cours + Leçons) via transaction
+        await new Promise((r) => setTimeout(r, 50));
+
         const structurePayload = {
           title: course.title,
           description: course.description,
@@ -201,47 +197,65 @@ export default function useImportCourses() {
           body: structurePayload,
         });
 
-        // Mise à jour progression (Cours + Leçons créées)
         processedCount += 1 + structurePayload.lessons.length;
         setUploadProgress((processedCount / totalItems) * 100);
 
         const {
           lessonsMap,
         }: { lessonsMap: { tempId: number; realId: number }[] } =
-          structureResponse; // Map
+          structureResponse;
 
-        // 2. Traitement des Activités pour chaque leçon
         for (const lesson of course.lessons) {
           if (!lesson.isSelected) continue;
 
-          // Récupération du vrai ID de la leçon
           const mapping = lessonsMap.find((m) => m.tempId === lesson.id);
           if (!mapping) continue;
           const realLessonId = mapping.realId;
 
           for (const activity of lesson.activities) {
-            setCurrentAction(`Téléversement : ${activity.title}`);
+            setCurrentAction(`Traitement : ${activity.title}`);
 
             if (
               activity.type === "text" &&
               typeof activity.value === "string"
             ) {
-              // --- CAS A : Activité Texte (HTML) ---
               let finalHtml = activity.value;
 
-              // Remplacement des images blob: par des URLs serveur
-              for (const img of imagesQueue) {
-                if (finalHtml.includes(`data-temp-id="${img.tempId}"`)) {
+              const imagesToProcess = imagesQueue.filter((img) =>
+                finalHtml.includes(img.tempId),
+              );
+
+              if (imagesToProcess.length > 0) {
+                for (let i = 0; i < imagesToProcess.length; i++) {
+                  const img = imagesToProcess[i];
+                  setCurrentAction(
+                    `Upload image ${i + 1}/${imagesToProcess.length} pour : ${activity.title}`,
+                  );
+
+                  await new Promise((r) => setTimeout(r, 20));
+
                   try {
-                    const serverUrl = await uploadBlogImage(img.file);
-                    finalHtml = finalHtml.replace(img.blobUrl, serverUrl);
+                    const formData = new FormData();
+                    formData.append("image", img.file, img.file.name);
+
+                    const response = await sendRequest({
+                      path: "/activity/blog-image",
+                      method: "post",
+                      body: formData,
+                    });
+
+                    const serverUrl = response.response || response.url;
+                    const fullUrl = serverUrl.startsWith("http")
+                      ? serverUrl
+                      : `${BASE_URL}${serverUrl}`;
+
+                    finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
                   } catch (err) {
                     console.error("Erreur upload image blog", err);
                   }
                 }
               }
 
-              // Création de l'activité texte
               await sendRequest({
                 path: `/activity/text/${realLessonId}`,
                 method: "post",
@@ -253,25 +267,21 @@ export default function useImportCourses() {
                 },
               });
             } else if (activity.value instanceof Blob) {
-              // --- CAS B : Activité Fichier (PDF, etc.) ---
-              // On utilise le endpoint /activity/resource/:lessonId
+              setCurrentAction(`Téléversement ressource : ${activity.title}`);
 
-              const fileName =
+              const rawName =
                 activity.url.split("/").pop() || `${activity.title}.pdf`;
+              const cleanName = sanitizeFilename(rawName);
+              const mimeType = getMimeType(cleanName);
 
-              // *** CORRECTION ICI ***
-              // On détecte le MIME type correct basé sur l'extension du fichier
-              const mimeType = getMimeType(fileName);
-
-              // On force le 'type' lors de la création du File pour que Multer l'accepte
-              const fileToSend = new File([activity.value], fileName, {
+              const fileToSend = new File([activity.value], cleanName, {
                 type: mimeType,
               });
 
               await uploadActivityResource(
                 realLessonId,
                 fileToSend,
-                activity.title || fileName,
+                activity.title || cleanName,
               );
             }
 
@@ -283,11 +293,11 @@ export default function useImportCourses() {
 
       setCurrentAction("Importation terminée avec succès !");
       setUploadProgress(100);
-    } catch (error) {
-      console.error("Erreur fatale import", error);
-      setError(
-        "Une erreur est survenue lors du transfert. Vérifiez votre connexion.",
-      );
+    } catch (globalError) {
+      console.error(globalError);
+      setError("Une erreur est survenue pendant l'import.");
+      setCurrentAction("Erreur critique.");
+      setIsLoading(false);
     }
   }, [
     imagesQueue,
@@ -296,7 +306,6 @@ export default function useImportCourses() {
     selectedParcours?.id,
     sendRequest,
     uploadActivityResource,
-    uploadBlogImage,
   ]);
 
   const processHtmlImages = async (
@@ -318,8 +327,16 @@ export default function useImportCourses() {
 
         if (fileInZip) {
           const blob = await fileInZip.async("blob");
-          const fileName = cleanSrc.split("/").pop() || "image.png";
-          const file = new File([blob], fileName, { type: blob.type });
+
+          const rawName = cleanSrc.split("/").pop() || "image.png";
+          const cleanFileName = sanitizeFilename(rawName);
+
+          // CORRECTION ICI : Détermination explicite du MIME type
+          const mimeType = getMimeType(cleanFileName);
+
+          // Injection du MIME type correct dans le constructeur File
+          const file = new File([blob], cleanFileName, { type: mimeType });
+
           const blobUrl = URL.createObjectURL(blob);
           const tempId = `temp-${Date.now()}-${Math.random()}`;
 
@@ -441,7 +458,6 @@ export default function useImportCourses() {
               activity.value = newHtml;
               allExtractedImages.push(...newImages);
             } else {
-              // Stockage du blob pour upload ultérieur
               activity.value = await fileInZip.async("blob");
             }
           }
@@ -458,8 +474,6 @@ export default function useImportCourses() {
       setIsLoading(false);
     }
   };
-
-  // --- STATE ACTIONS ---
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(
@@ -546,7 +560,6 @@ export default function useImportCourses() {
           lessons: c.lessons.filter((l) => l.isSelected),
         }))
         .filter((c) => c.lessons.length > 0);
-
       setImportedCourses(finalCourses as CourseImport[]);
     }
     setImportStep(CoursesImportStep.ImportResult);
@@ -569,14 +582,12 @@ export default function useImportCourses() {
     }
   }, [selectedParcours, sendRequest]);
 
-  // Déclenchement automatique du processus quand on arrive sur l'étape de résultat
   useEffect(() => {
     if (step === CoursesImportStep.ImportResult && importedCourses) {
       processImport();
     }
   }, [importedCourses, processImport, step]);
 
-  // --- API LOADERS ---
   useEffect(() => {
     if (step === CoursesImportStep.ParcoursSelection) {
       sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
