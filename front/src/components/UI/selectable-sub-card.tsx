@@ -28,7 +28,7 @@ const SelectableSubCard = <T extends { id?: number | string; title: string }>({
           {icon}
         </div>
         <span
-          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
+          className={`font-medium text-sm capitalize ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
         >
           {data.title}
         </span>
