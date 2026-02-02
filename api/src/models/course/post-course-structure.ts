@@ -1,4 +1,4 @@
-import { Course, Lesson } from "@prisma/client";
+import { Lesson } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 async function postCourseStructure(
@@ -38,8 +38,6 @@ async function postCourseStructure(
     const createdLessons = [];
     for (let i = 0; i < lessons.length; i++) {
       const lessonImport = lessons[i];
-
-      if (!lessonImport.isSelected) continue;
 
       const newLesson = await tx.lesson.create({
         data: {
