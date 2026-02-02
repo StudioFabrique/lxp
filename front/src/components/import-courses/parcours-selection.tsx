@@ -117,6 +117,7 @@ const ParcoursSelection = ({
 
                 return (
                   <SelectableSubCard
+                    key={formation.id}
                     data={formation}
                     icon={<GraduationCap size={20} />}
                     isSelected={isSelected}
@@ -148,6 +149,7 @@ const ParcoursSelection = ({
 
                   return (
                     <SelectableSubCard
+                      key={parcours.id}
                       data={parcours}
                       icon={<Rocket size={20} />}
                       isSelected={isSelected}
@@ -195,6 +197,7 @@ const ParcoursSelection = ({
                   const isSelected = selectedModule?.id === module.id;
                   return (
                     <SelectableSubCard
+                      key={module.id}
                       data={module}
                       icon={<Component size={20} />}
                       isSelected={isSelected}
