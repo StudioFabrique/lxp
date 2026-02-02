@@ -133,7 +133,7 @@ const ParcoursSelection = ({
           <div className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300">
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un parcours pour :
-              <span className="text-primary underline decoration-dotted">
+              <span className="text-primary underline decoration-dotted capitalize">
                 {selectedFormation.title}
               </span>
             </h3>
@@ -170,7 +170,7 @@ const ParcoursSelection = ({
                 to={`/admin/parcours/edit/${selectedParcours.id}?step=4`}
                 target="_blank"
                 data-tip="Ouverture dans un nouvel onglet"
-                className="text-primary underline decoration-dotted tooltip"
+                className="text-primary underline decoration-dotted tooltip capitalize"
                 onClick={onClickLink}
               >
                 {selectedParcours.title}
