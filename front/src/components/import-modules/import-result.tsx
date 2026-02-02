@@ -57,9 +57,15 @@ const ImportResult = ({
       <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
         {!isFinished ? (
           <>
-            <h2 className="text-xl font-bold text-primary">
-              Importation en cours...
-            </h2>
+            {error ? (
+              <h2 className="text-xl font-bold text-error">
+                Erreur d'importation
+              </h2>
+            ) : (
+              <h2 className="text-xl font-bold text-primary">
+                Importation en cours...
+              </h2>
+            )}
 
             <progress
               className="progress progress-primary w-full max-w-md h-4"
@@ -73,13 +79,15 @@ const ImportResult = ({
               {error && <span className="text-error">{error}</span>}
             </div>
 
-            <div className="alert alert-outline outline-2 max-w-md text-xs mt-4">
-              <AlertCircle />
-              <span>
-                Ne fermez pas cette page. Les fichiers sont en cours de
-                transfert.
-              </span>
-            </div>
+            {!error && (
+              <div className="alert alert-outline outline-2 max-w-md text-xs mt-4">
+                <AlertCircle />
+                <span>
+                  Ne fermez pas cette page. Les fichiers sont en cours de
+                  transfert.
+                </span>
+              </div>
+            )}
           </>
         ) : (
           <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
