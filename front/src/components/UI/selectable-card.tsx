@@ -117,7 +117,7 @@ const SelectableCard = ({
                   className="card-title text-base font-bold text-base-content flex gap-2 items-center"
                   title={title}
                 >
-                  <span className="truncate">{title}</span>
+                  <span className="truncate capitalize">{title}</span>
 
                   {onEditTitle && (
                     <button

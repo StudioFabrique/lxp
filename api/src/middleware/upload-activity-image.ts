@@ -3,7 +3,6 @@ import { Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { prisma } from "../utils/db";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 
 export const uploadActivityImage = () => {
@@ -11,7 +10,7 @@ export const uploadActivityImage = () => {
     destination: function (req, file, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "images")
+        path.join(__dirname, "..", "..", "uploads", "activities", "images"),
       );
     },
     filename: async function (req: CustomRequest, file, cb) {

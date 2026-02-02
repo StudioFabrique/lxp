@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import JSZip from "jszip";
+import { marked } from "marked";
+import useHttp from "../../../hooks/use-http";
+import { cleanPath } from "../../../utils/zip-utils";
+
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
-import { cleanPath } from "../../../utils/zip-utils";
 import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
-import useHttp from "../../../hooks/use-http";
-import { marked } from "marked";
+import { BASE_URL } from "../../../config/urls";
 
 export enum ModulesImportStep {
   ZipImport,
@@ -22,7 +24,6 @@ export type ActivityImport = Activity & {
   hasError?: boolean;
 };
 
-// AJOUT : Interface pour les images extraites du HTML
 export interface QueuedImage {
   file: File;
   blobUrl: string;
@@ -43,70 +44,326 @@ type JsonFileFormat = {
 export type ModuleImport = Module & {
   hasError?: boolean;
   courses: (Course & {
+    id: number; // Temporaire ID pour le front
     hasError?: boolean;
     lessons: (Lesson & {
+      id: number; // Temporaire ID pour le front
       hasError?: boolean;
       activities: ActivityImport[];
     })[];
   })[];
 };
 
+// --- UTILS ---
+
+const getMimeType = (filename: string): string => {
+  const ext = filename.split(".").pop()?.toLowerCase();
+  switch (ext) {
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "gif":
+      return "image/gif";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    case "bmp":
+      return "image/bmp";
+    case "pdf":
+      return "application/pdf";
+    case "ppt":
+      return "application/vnd.ms-powerpoint";
+    case "pptx":
+      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    case "txt":
+      return "text/plain";
+    case "doc":
+      return "application/msword";
+    case "docx":
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case "xls":
+      return "application/vnd.ms-excel";
+    case "xlsx":
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case "md":
+      return "text/markdown";
+    default:
+      return "application/octet-stream";
+  }
+};
+
+const sanitizeFilename = (filename: string): string => {
+  return filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+};
+
 export default function useImportModules() {
-  const { sendRequest } = useHttp();
+  const { sendRequest, error: apiRequestError } = useHttp();
 
   const [step, setImportStep] = useState<ModulesImportStep>(
     ModulesImportStep.ZipImport,
   );
-
   const [importedModules, setImportedModules] = useState<ModuleImport[]>();
-
-  // AJOUT : State pour stocker les images extraites
   const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
 
-  // États pour la sélection Formation/Parcours
+  // Selection Data
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
     null,
   );
-
   const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
   const [selectedParcours, setSelectedParcours] = useState<Parcours | null>(
     null,
   );
 
+  // UI State
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [tooltipErrorTip, setTooltipErrorTip] = useState<string>("");
 
-  // --- LOGIQUE API ---
-  useEffect(() => {
-    if (step === ModulesImportStep.ParcoursSelection) {
-      const processData = (data: Formation[]) => {
-        setFormationsList(data);
-      };
-      sendRequest({ path: "/formation" }, processData);
+  // Progress State
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [currentAction, setCurrentAction] = useState("");
+
+  // --- API HELPERS ---
+
+  const uploadActivityResource = useCallback(
+    async (lessonId: number, file: File, title: string) => {
+      try {
+        const formData = new FormData();
+        formData.append("files", file);
+        const resourceData = {
+          resources: [{ label: title, filename: file.name }],
+          parent: "lesson",
+        };
+        formData.append("data", JSON.stringify(resourceData));
+
+        await sendRequest({
+          path: `/activity/resource/${lessonId}`,
+          method: "post",
+          body: formData,
+        });
+      } catch (e) {
+        console.error(`Erreur upload ressource:`, e);
+        throw e;
+      }
+    },
+    [sendRequest],
+  );
+
+  // --- PROCESS MAIN ---
+
+  const processImport = useCallback(async () => {
+    if (!importedModules) return;
+
+    if (!selectedFormation) {
+      setError("Une formation doit être sélectionnée.");
+      return;
     }
-  }, [step, sendRequest]);
 
-  useEffect(() => {
-    if (selectedFormation) {
-      setParcoursList([]);
-      setSelectedParcours(null);
+    let processedCount = 0;
+    let totalItems = 0;
 
-      const processData = (data: { data: Parcours[] }) => {
-        setParcoursList(data.data);
-      };
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
-          method: "get",
-        },
-        processData,
-      );
+    importedModules.forEach((m) => {
+      totalItems++;
+      m.courses.forEach((c) => {
+        totalItems++;
+        c.lessons.forEach((l) => {
+          if (l.activities) totalItems += l.activities.length;
+        });
+      });
+    });
+
+    try {
+      for (const module of importedModules) {
+        setCurrentAction(`Création du module : ${module.title}`);
+        await new Promise((r) => setTimeout(r, 50));
+
+        // 1. Création du Module
+        // IMPORTANT : Le backend attend "module" comme clé racine dans le JSON stringifié
+        const modulePayload = {
+          title: module.title,
+          description: module.description || "",
+          duration:
+            module.duration && module.duration > 0 ? module.duration : 1,
+          formationId: selectedFormation.id,
+          parcoursId: selectedParcours?.id,
+          contacts: [],
+          skills: [],
+        };
+
+        const formData = new FormData();
+        // Le middleware jsonParser fait : JSON.parse(req.body.module)
+        // Donc on envoie l'objet stringifié dans la clé 'module'
+        formData.append("module", JSON.stringify(modulePayload));
+
+        // Note: Pas d'image pour l'instant
+
+        console.log("Envoi Module:", modulePayload);
+
+        const apiResponse = await sendRequest({
+          path: "/formation/new-module",
+          method: "post",
+          body: formData,
+        });
+
+        const responseData = apiResponse?.data || apiResponse;
+
+        const createdModuleId = responseData?.id;
+
+        if (!createdModuleId) {
+          throw new Error(
+            "Un problème est survenu lors de la création du module",
+          );
+        }
+
+        processedCount++;
+        setUploadProgress((processedCount / totalItems) * 100);
+
+        // 2. Traitement des Cours
+        for (const course of module.courses) {
+          setCurrentAction(`Création du cours : ${course.title}`);
+          await new Promise((r) => setTimeout(r, 50));
+
+          const structurePayload = {
+            title: course.title,
+            description: course.description,
+            moduleId: createdModuleId,
+            parcoursId: selectedParcours?.id,
+            lessons: course.lessons.map((l) => ({
+              id: l.id,
+              title: l.title,
+              modalite: l.modalite,
+              isSelected: true,
+            })),
+          };
+
+          const structureResponse = await sendRequest({
+            path: "/course/import-structure",
+            method: "post",
+            body: structurePayload,
+          });
+
+          // Sécurité sur la réponse structure
+          if (!structureResponse) {
+            throw new Error(
+              "Erreur lors de la création de la structure du cours.",
+            );
+          }
+
+          processedCount++;
+          setUploadProgress((processedCount / totalItems) * 100);
+
+          const {
+            lessonsMap,
+          }: { lessonsMap: { tempId: number; realId: number }[] } =
+            structureResponse;
+
+          // 3. Traitement des Leçons
+          for (const lesson of course.lessons) {
+            const mapping = lessonsMap.find((m) => m.tempId === lesson.id);
+            if (!mapping) continue;
+            const realLessonId = mapping.realId;
+
+            for (const activity of lesson.activities) {
+              setCurrentAction(`Traitement : ${activity.title}`);
+
+              if (
+                activity.type === "text" &&
+                typeof activity.value === "string"
+              ) {
+                let finalHtml = activity.value;
+                const imagesToProcess = imagesQueue.filter((img) =>
+                  finalHtml.includes(img.tempId),
+                );
+
+                if (imagesToProcess.length > 0) {
+                  for (let i = 0; i < imagesToProcess.length; i++) {
+                    const img = imagesToProcess[i];
+                    setCurrentAction(
+                      `Upload image ${i + 1}/${imagesToProcess.length} pour : ${activity.title}`,
+                    );
+                    await new Promise((r) => setTimeout(r, 20));
+
+                    try {
+                      const formData = new FormData();
+                      formData.append("image", img.file, img.file.name);
+
+                      const response = await sendRequest({
+                        path: "/activity/blog-image",
+                        method: "post",
+                        body: formData,
+                      });
+
+                      const serverUrl = response.response || response.url;
+                      const fullUrl = serverUrl.startsWith("http")
+                        ? serverUrl
+                        : `${BASE_URL}${serverUrl}`;
+                      finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
+                    } catch (err) {
+                      console.error("Erreur upload image", err);
+                    }
+                  }
+                }
+
+                await sendRequest({
+                  path: `/activity/text/${realLessonId}`,
+                  method: "post",
+                  body: {
+                    title: activity.title,
+                    description: "",
+                    value: finalHtml,
+                    parent: "lesson",
+                  },
+                });
+              } else if (activity.value instanceof Blob) {
+                setCurrentAction(`Téléversement ressource : ${activity.title}`);
+                const rawName =
+                  activity.url.split("/").pop() || `${activity.title}.pdf`;
+                const cleanName = sanitizeFilename(rawName);
+                const mimeType = getMimeType(cleanName);
+
+                const fileToSend = new File([activity.value], cleanName, {
+                  type: mimeType,
+                });
+
+                await uploadActivityResource(
+                  realLessonId,
+                  fileToSend,
+                  activity.title || cleanName,
+                );
+              }
+
+              processedCount++;
+              setUploadProgress((processedCount / totalItems) * 100);
+            }
+          }
+        }
+      }
+
+      setCurrentAction("Importation terminée avec succès !");
+      setUploadProgress(100);
+    } catch (globalError) {
+      console.error(globalError);
+      const message =
+        (globalError as Error).message ||
+        "Une erreur est survenue pendant l'import.";
+      setError(message);
+      setIsLoading(false);
     }
-  }, [selectedFormation, sendRequest]);
+  }, [
+    importedModules,
+    selectedFormation,
+    selectedParcours?.id,
+    imagesQueue,
+    sendRequest,
+    uploadActivityResource,
+  ]);
 
-  // --- AJOUT : FONCTION DE TRAITEMENT DES IMAGES HTML ---
+  // --- ZIP & IMAGES PROCESSING ---
+
   const processHtmlImages = async (
     htmlContent: string,
     zip: JSZip,
@@ -119,8 +376,6 @@ export default function useImportModules() {
 
     for (const img of Array.from(imgTags)) {
       const src = img.getAttribute("src");
-
-      // Vérifie si l'image est locale (commence par ./files ou files/)
       if (src && (src.startsWith("./files") || src.startsWith("files/"))) {
         const cleanSrc = cleanPath(src);
         const fullPath = rootPath + cleanSrc;
@@ -128,42 +383,30 @@ export default function useImportModules() {
 
         if (fileInZip) {
           const blob = await fileInZip.async("blob");
-          const fileName = cleanSrc.split("/").pop() || "image.png";
-          const file = new File([blob], fileName, { type: blob.type });
+          const rawName = cleanSrc.split("/").pop() || "image.png";
+          const cleanFileName = sanitizeFilename(rawName);
+          const mimeType = getMimeType(cleanFileName);
+
+          const file = new File([blob], cleanFileName, { type: mimeType });
           const blobUrl = URL.createObjectURL(blob);
           const tempId = `temp-${Date.now()}-${Math.random()}`;
 
-          extractedImages.push({
-            file,
-            blobUrl,
-            size: "medium",
-            tempId,
-          });
+          extractedImages.push({ file, blobUrl, size: "medium", tempId });
 
-          // Remplace le src relatif par l'URL Blob
           img.setAttribute("src", blobUrl);
           img.setAttribute("data-temp-id", tempId);
-        } else {
-          console.warn(`Image introuvable dans le ZIP : ${fullPath}`);
-          img.style.border = "2px solid red";
-          img.setAttribute("title", "Image manquante");
         }
       }
     }
-
-    return {
-      newHtml: doc.body.innerHTML,
-      newImages: extractedImages,
-    };
+    return { newHtml: doc.body.innerHTML, newImages: extractedImages };
   };
 
-  // --- LOGIQUE ZIP ---
   const onImportZip = async (file: File) => {
     setError("");
     setTooltipErrorTip("");
     setIsLoading(true);
     setImportedModules(undefined);
-    setImagesQueue([]); // Reset queue
+    setImagesQueue([]);
 
     try {
       const zip = new JSZip();
@@ -175,46 +418,48 @@ export default function useImportModules() {
           !f.name.split("/").pop()?.startsWith("._"),
       );
 
-      if (!exportFile)
-        throw new Error("Fichier index.json introuvable dans l'archive.");
+      if (!exportFile) throw new Error("Fichier index.json introuvable.");
 
       const rootPath = exportFile.name.replace("index.json", "");
       const jsonContent = await exportFile.async("string");
       const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
 
       const modulesMap = new Map<string, ModuleImport>();
-      const allExtractedImages: QueuedImage[] = []; // Liste temporaire
+      const allExtractedImages: QueuedImage[] = [];
 
       for (const item of flatActivities) {
         if (!modulesMap.has(item.module)) {
           modulesMap.set(item.module, {
+            id: Math.random(),
             title: item.module,
             description: "",
             courses: [],
             contacts: [],
             bonusSkills: [],
+            duration: 1,
             tags: [],
-            duration: 0,
             parcours: {} as Parcours,
           } as ModuleImport);
         }
         const currentModule = modulesMap.get(item.module)!;
 
-        let currentCourse: (Course & { hasError?: boolean }) | undefined =
-          currentModule.courses.find((c) => c.title === item.course);
+        let currentCourse = currentModule.courses.find(
+          (c) => c.title === item.course,
+        );
         if (!currentCourse) {
           currentCourse = {
             id: Math.random(),
             title: item.course,
             module: currentModule,
-            lessons: [] as Lesson[],
+            lessons: [],
             isPublished: false,
-          } as Course & { lessons: Lesson[] };
+          } as unknown as Course & { id: number; lessons: Lesson[] };
           currentModule.courses.push(currentCourse);
         }
-        let currentLesson: (Lesson & { hasError?: boolean }) | undefined =
-          currentCourse.lessons.find((l) => l.title === item.lesson);
 
+        let currentLesson = currentCourse.lessons.find(
+          (l) => l.title === item.lesson,
+        );
         if (!currentLesson) {
           currentLesson = {
             id: Math.random(),
@@ -223,14 +468,14 @@ export default function useImportModules() {
             tag: {} as Tag,
             adminId: 0,
             course: currentCourse,
-            activities: [] as Activity[],
-          } as Lesson;
+            activities: [],
+          } as unknown as Lesson;
           currentCourse.lessons.push(currentLesson);
         }
+
         if (item.path) {
           const fullZipPath = rootPath + cleanPath(item.path);
           const fileInZip = loadedZip.file(fullZipPath);
-
           const activity: ActivityImport = {
             id: Math.random(),
             title: item.title,
@@ -240,34 +485,21 @@ export default function useImportModules() {
           } as ActivityImport;
 
           if (!fileInZip) {
-            const newError = `Fichier introuvable: ${fullZipPath}`;
-            console.warn(newError);
-            setTooltipErrorTip(
-              "Les fichiers manquant sont indiqués dans la previsualisation en bas.",
-            );
+            setTooltipErrorTip("Fichiers manquants.");
             setError("Un ou plusieurs fichiers sont manquants.");
-
             activity.hasError = true;
-            currentLesson.hasError = true;
-            currentCourse.hasError = true;
-            currentModule.hasError = true;
           } else {
             if (item.type === "text") {
-              // Si c'est du texte, on lit la string Markdown
               const markdownContent = await fileInZip.async("string");
               const htmlContent = await marked.parse(markdownContent);
-
-              // --- AJOUT : Traitement des images HTML ---
               const { newHtml, newImages } = await processHtmlImages(
                 htmlContent,
                 loadedZip,
                 rootPath,
               );
-
               activity.value = newHtml;
               allExtractedImages.push(...newImages);
             } else {
-              // Si c'est un fichier binaire (image, pdf...), on garde le blob
               activity.value = await fileInZip.async("blob");
             }
           }
@@ -275,53 +507,162 @@ export default function useImportModules() {
         }
       }
       setImportedModules(Array.from(modulesMap.values()));
-      setImagesQueue(allExtractedImages); // Sauvegarde des images extraites
+      setImagesQueue(allExtractedImages);
     } catch (error) {
-      console.error("Erreur import ZIP", error);
+      console.error(error);
       setError((error as Error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Supprime un module de la liste des modules importés
-   */
   const onRemoveModule = (moduleTitle: string) => {
-    setImportedModules((prevModules) => {
-      if (!prevModules) return undefined;
-      const updatedList = prevModules.filter((m) => m.title !== moduleTitle);
-      // Si la liste est vide, on retourne undefined pour reset l'état du UI
-      return updatedList.length > 0 ? updatedList : undefined;
-    });
+    setImportedModules(
+      (prev) => prev?.filter((m) => m.title !== moduleTitle) || undefined,
+    );
   };
 
-  const onConfirmImport = () => {
+  const onUpdateModuleTitle = (moduleId: number, newTitle: string) => {
+    setImportedModules((prev) =>
+      prev?.map((m) => (m.id === moduleId ? { ...m, title: newTitle } : m)),
+    );
+  };
+
+  const onUpdateCourseTitle = (
+    moduleId: number,
+    courseId: number,
+    newTitle: string,
+  ) => {
+    setImportedModules(
+      (prev) =>
+        prev?.map((m) =>
+          m.id === moduleId
+            ? {
+                ...m,
+                courses: m.courses.map((c) =>
+                  c.id === courseId ? { ...c, title: newTitle } : c,
+                ),
+              }
+            : m,
+        ) as ModuleImport[],
+    );
+  };
+
+  const onUpdateLessonTitle = (
+    moduleId: number,
+    courseId: number,
+    lessonId: number,
+    newTitle: string,
+  ) => {
+    setImportedModules(
+      (prev) =>
+        prev?.map((m) =>
+          m.id === moduleId
+            ? {
+                ...m,
+                courses: m.courses.map((c) =>
+                  c.id === courseId
+                    ? {
+                        ...c,
+                        lessons: c.lessons.map((l) =>
+                          l.id === lessonId ? { ...l, title: newTitle } : l,
+                        ),
+                      }
+                    : c,
+                ),
+              }
+            : m,
+        ) as ModuleImport[],
+    );
+  };
+
+  const onUpdateActivityTitle = (
+    moduleId: number,
+    courseId: number,
+    lessonId: number,
+    activityId: number,
+    newTitle: string,
+  ) => {
+    setImportedModules(
+      (prev) =>
+        prev?.map((m) =>
+          m.id === moduleId
+            ? {
+                ...m,
+                courses: m.courses.map((c) =>
+                  c.id === courseId
+                    ? {
+                        ...c,
+                        lessons: c.lessons.map((l) =>
+                          l.id === lessonId
+                            ? {
+                                ...l,
+                                activities: l.activities?.map((a) =>
+                                  a.id === activityId
+                                    ? { ...a, title: newTitle }
+                                    : a,
+                                ),
+                              }
+                            : l,
+                        ),
+                      }
+                    : c,
+                ),
+              }
+            : m,
+        ) as ModuleImport[],
+    );
+  };
+
+  const onConfirmImport = () =>
     setImportStep(ModulesImportStep.ParcoursSelection);
-  };
 
-  const onConfirmParcoursSelection = (explicitParcours?: Parcours | null) => {
-    if (importedModules) {
-      const parcoursToApply =
-        explicitParcours !== undefined ? explicitParcours : selectedParcours;
-
-      const updatedModules = importedModules.map((mod) => ({
-        ...mod,
-        parcours: parcoursToApply ? parcoursToApply : ({} as Parcours),
-        parcoursId: parcoursToApply?.id,
-      }));
-
-      setImportedModules(updatedModules);
-    }
+  const onConfirmParcoursSelection = () => {
     setImportStep(ModulesImportStep.ImportResult);
   };
 
   const onGoBack = () => {
-    setImportStep((currentStep) => {
-      if (currentStep <= ModulesImportStep.ZipImport) return currentStep;
-      return currentStep - 1;
-    });
+    setImportStep((curr) =>
+      curr <= ModulesImportStep.ZipImport ? curr : curr - 1,
+    );
   };
+
+  useEffect(() => {
+    if (step === ModulesImportStep.ImportResult && importedModules) {
+      processImport();
+    }
+  }, [importedModules, processImport, step]);
+
+  useEffect(() => {
+    if (step === ModulesImportStep.ParcoursSelection) {
+      sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
+    }
+  }, [step, sendRequest]);
+
+  useEffect(() => {
+    if (selectedFormation) {
+      setParcoursList([]);
+      setSelectedParcours(null);
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
+          method: "get",
+        },
+        (data) => setParcoursList(data.data),
+      );
+    }
+  }, [selectedFormation, sendRequest]);
+
+  // Vérification apiRequestError avec le message d'erreur conernant les modules
+  useEffect(() => {
+    if (!apiRequestError) return;
+    const errorMessage =
+      apiRequestError === "MODULE_ALREADY_EXISTS"
+        ? "Le module est déjà existant"
+        : "Un problème est survenu";
+
+    setError(errorMessage);
+  }, [apiRequestError]);
 
   return {
     step,
@@ -329,15 +670,20 @@ export default function useImportModules() {
     isLoading,
     error,
     tooltipErrorTip,
-    imagesQueue, // Exposé si besoin par le composant parent
+    uploadProgress,
+    currentAction,
     formationsList,
     selectedFormation,
     parcoursList,
     selectedParcours,
-    setSelectedParcours,
     setSelectedFormation,
+    setSelectedParcours,
     onImportZip,
     onRemoveModule,
+    onUpdateModuleTitle,
+    onUpdateCourseTitle,
+    onUpdateLessonTitle,
+    onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,

@@ -1,17 +1,27 @@
 import { ModuleImport } from "../../views/module/hooks/use-import-modules";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
+import { Check, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type Props = {
   importedModules: ModuleImport[];
+  error: string;
+  progress?: number;
+  currentAction?: string;
 };
 
-const ImportResult = ({ importedModules }: Props) => {
-  const parcoursTitle = importedModules[0].parcours.title;
+const ImportResult = ({
+  importedModules,
+  error,
+  progress = 0,
+  currentAction = "",
+}: Props) => {
+  const parcoursTitle = importedModules[0]?.parcours?.title;
+  const isFinished = progress === 100;
 
   return (
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
-      {/* Header étape 1 */}
       <Header
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
@@ -19,7 +29,6 @@ const ImportResult = ({ importedModules }: Props) => {
         isSubHeader
         disabled
       />
-      {/* Header étape 2 */}
       <Header
         title="Seconde étape"
         description="Selectionner le parcours auquels les modules seront rattachés"
@@ -27,15 +36,74 @@ const ImportResult = ({ importedModules }: Props) => {
         isSubHeader
         disabled
       />
-      {/* Header étape 3 (actuelle) */}
+
       <Header
         title="Traitement de l'importation..."
         description={`Les modules selectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`}
         alternateBgColor
         isSubHeader
       >
-        <Loader />
+        {error ? (
+          <Link to={".."} className="btn btn-sm btn-primary btn-soft">
+            Quitter
+          </Link>
+        ) : !isFinished ? (
+          <Loader />
+        ) : (
+          <Check />
+        )}
       </Header>
+
+      <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
+        {!isFinished ? (
+          <>
+            {error ? (
+              <h2 className="text-xl font-bold text-error">
+                Erreur d'importation
+              </h2>
+            ) : (
+              <h2 className="text-xl font-bold text-primary">
+                Importation en cours...
+              </h2>
+            )}
+
+            <progress
+              className="progress progress-primary w-full max-w-md h-4"
+              value={progress}
+              max="100"
+            ></progress>
+
+            <div className="flex flex-col items-center gap-1 text-sm text-base-content/70">
+              <span className="font-mono">{Math.round(progress)}%</span>
+              <span>{currentAction}</span>
+              {error && <span className="text-error">{error}</span>}
+            </div>
+
+            {!error && (
+              <div className="alert alert-outline outline-2 max-w-md text-xs mt-4">
+                <AlertCircle />
+                <span>
+                  Ne fermez pas cette page. Les fichiers sont en cours de
+                  transfert.
+                </span>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
+            <div className="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center">
+              <Check className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold text-success">
+              Importation réussie !
+            </h3>
+            <p>Tous les modules, cours et activités ont été créés.</p>
+            <Link className="btn btn-success mt-4" to="/admin/module">
+              Terminer
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -13,6 +13,8 @@ const ImportModulesHome = () => {
     importedModules,
     error,
     tooltipErrorTip,
+    uploadProgress,
+    currentAction,
     // Data & Selection states
     formationsList,
     selectedFormation,
@@ -23,6 +25,10 @@ const ImportModulesHome = () => {
     // Actions
     onImportZip,
     onRemoveModule,
+    onUpdateModuleTitle,
+    onUpdateCourseTitle,
+    onUpdateLessonTitle,
+    onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
     onGoBack,
@@ -38,7 +44,11 @@ const ImportModulesHome = () => {
             tooltipErrorTip={tooltipErrorTip}
             onImportZip={onImportZip}
             onConfirmZipImport={onConfirmImport}
-            onRemoveModule={onRemoveModule} // Passage de la prop
+            onRemoveModule={onRemoveModule}
+            onUpdateModuleTitle={onUpdateModuleTitle}
+            onUpdateCourseTitle={onUpdateCourseTitle}
+            onUpdateLessonTitle={onUpdateLessonTitle}
+            onUpdateActivityTitle={onUpdateActivityTitle}
           />
         );
       case ModulesImportStep.ParcoursSelection:
@@ -56,7 +66,14 @@ const ImportModulesHome = () => {
         );
       case ModulesImportStep.ImportResult:
         if (!importedModules) return undefined;
-        return <ImportResult importedModules={importedModules} />;
+        return (
+          <ImportResult
+            importedModules={importedModules}
+            error={error}
+            progress={uploadProgress}
+            currentAction={currentAction}
+          />
+        );
       default:
         return null;
     }
@@ -68,9 +85,11 @@ const ImportModulesHome = () => {
         title="Import de modules"
         description="Importer des modules ainsi que tous les cours, leçons et activités associés."
       >
-        <Link to={".."} className="btn btn-outline">
-          Annuler
-        </Link>
+        {step !== ModulesImportStep.ImportResult && (
+          <Link to={".."} className="btn btn-outline">
+            Annuler
+          </Link>
+        )}
       </Header>
       {renderBody()}
     </div>
