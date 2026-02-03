@@ -1,40 +1,83 @@
-2026-01-27 17:27:31,950 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
-2026-01-28 09:50:33,924 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
-2026-01-28 09:50:33,924 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
-2026-01-28 16:47:00,203 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) server closed the connection unexpectedly
-	This probably means the server terminated abnormally
-	before or while processing the request.
-
-[SQL: SELECT "Module".id AS "Module_id", "Module".title AS "Module_title", "Module".description AS "Module_description", "Module".image AS "Module_image", "Module".thumb AS "Module_thumb", "Module"."createdAt" AS "Module_createdAt", "Module"."updatedAt" AS "Module_updatedAt", "Module".author AS "Module_author", "Module"."adminId" AS "Module_adminId" 
-FROM "Module"]
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-2026-01-28 16:47:00,209 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-2026-01-28 16:47:00,215 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-2026-01-28 16:47:00,221 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-2026-01-29 13:32:26,519 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:33:11,706 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:33:12,813 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:33:14,029 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:33:24,401 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:38:16,833 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:38:18,010 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:38:18,696 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:38:48,704 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:38:52,164 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:39:27,507 - CMV_GATEWAY - WARNING - Not Found FROM: None
-2026-01-29 13:39:34,163 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-02-03 12:31:21,975 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:31:23,681 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:43:57,445 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:44:08,737 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:44:08,913 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:58:12,252 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 12:58:13,532 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:40,332 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:40,547 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:40,921 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,086 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,257 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,440 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,619 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,799 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:41,976 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:42,141 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:42,331 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:42,523 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:42,708 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:42,884 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:43,060 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:43,326 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:43,605 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:43,801 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:43,970 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:02:44,134 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:03:52,736 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:36,968 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:37,232 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:37,394 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:37,583 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:37,768 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:37,958 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:38,145 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:38,336 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:38,500 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:38,686 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:38,866 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,064 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,232 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,447 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,607 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,770 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:39,936 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:05:40,119 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:06:24,566 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:09:05,666 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:09:05,798 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:23,362 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:23,514 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:23,869 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:24,728 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:24,948 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:25,138 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:25,317 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:25,491 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:25,686 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:25,844 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:12:26,046 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:02,937 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:03,941 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:14,837 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:16,698 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:17,409 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:17,858 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:18,125 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:18,334 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:18,528 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:14:18,730 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:28:27,787 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:28:27,956 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:28:28,165 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:28:54,205 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:28:54,355 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:04,516 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:06,758 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:07,535 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:08,047 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:08,315 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:30,563 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:31,223 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None
+2026-02-03 13:29:32,316 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {'user_id': '6925973462adfc4bc700bfaf', 'max_tokens': 100}}] FROM: None

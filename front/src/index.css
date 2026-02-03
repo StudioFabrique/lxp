@@ -1,7 +1,19 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   exclude: rootscrollgutter;
-  themes: "nord" --default, "autumn", "corporate", "cupcake", "lofi", "nord",
-    "wireframe", "business", "coffee", "dracula", "forest", "night", "synthwave";
+  themes:
+    "nord" --default,
+    "autumn",
+    "corporate",
+    "cupcake",
+    "lofi",
+    "nord",
+    "wireframe",
+    "business",
+    "coffee",
+    "dracula",
+    "forest",
+    "night",
+    "synthwave";
 }
 @plugin '@tailwindcss/typography';
