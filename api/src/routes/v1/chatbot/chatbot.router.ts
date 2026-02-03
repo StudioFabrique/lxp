@@ -3,6 +3,8 @@ import { http } from "winston";
 import httpPostPrompt from "../../../controllers/chatbot/http-post-prompt";
 import checkToken from "../../../middleware/check-token";
 import { fastApiAgent } from "../../../server";
+import httpPutDialogs from "../../../controllers/chatbot/http-put-dialogs";
+import httpGetDialogs from "../../../controllers/chatbot/http-get-dialogs";
 
 const chatbotRouter = Router();
 
@@ -55,5 +57,9 @@ chatbotRouter.get("/test-pg", checkToken, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch data from FastAPI" });
   }
 });
+
+chatbotRouter.put("/dialogs", checkToken, httpPutDialogs);
+
+chatbotRouter.get("/dialogs", checkToken, httpGetDialogs);
 
 export default chatbotRouter;

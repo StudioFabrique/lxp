@@ -5,6 +5,7 @@ This module defines the FastAPI router for the chatbot endpoint, which streams r
 """
 
 import asyncio
+import random
 from typing import Annotated
 from openai import AsyncOpenAI
 from fastapi import APIRouter, Request, Body
@@ -38,17 +39,32 @@ async def chat_bot_stream_response(
     """
     prompt = data.prompt
 
-    async def generate_stream():
-        """
-        Async generator that yields chatbot response tokens.
-        """
-        if not _client:
-            # Demo mode: yield mock tokens with a short delay
-            for token in ("[DEMO] ", "Réponse ", "mock ", "pour ", prompt, "\n"):
-                yield token
-                await asyncio.sleep(0.02)
-            return
+    nombre = random.randint(1, 6)
 
+    match nombre:
+        case 1:
+            prompt = "il est en télévacances."
+        case 2:
+            prompt = "il est en formation."
+        case 3:
+            prompt = "il est en réunion au quatrième."
+        case 4:
+            prompt = "il est malade."
+        case 5:
+            prompt = "il est en RTT."
+        case 6:
+            prompt = "il est au travail (lol)."
+
+    async def generate_stream():
+        # Async generator that yields chatbot response tokens.
+
+        print("Demo mode activated.")
+        # Demo mode: yield mock tokens with a short delay
+        for token in ("A.L.A.A ne peut pas vous répondre, ", prompt, "\n"):
+            yield token
+            await asyncio.sleep(0.02)
+        return
+        """
         # Call OpenAI API and stream the response tokens
         stream = await _client.chat.completions.create(
             model=OPENAI_MODEL,
@@ -66,6 +82,7 @@ async def chat_bot_stream_response(
             # Yield each token as it arrives
             if token := event.choices[0].delta.content:
                 yield token
+"""
 
     # Return a streaming response with markdown content type
     return StreamingResponse(generate_stream(), media_type="text/markdown")
