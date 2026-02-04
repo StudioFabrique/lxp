@@ -1,10 +1,13 @@
 import Router, { Request } from "express";
-import { http } from "winston";
 import httpPostPrompt from "../../../controllers/chatbot/http-post-prompt";
 import checkToken from "../../../middleware/check-token";
 import { fastApiAgent } from "../../../server";
 import httpPutDialogs from "../../../controllers/chatbot/http-put-dialogs";
 import httpGetDialogs from "../../../controllers/chatbot/http-get-dialogs";
+import {
+  postDialogsValidator,
+  postPromptValidator,
+} from "./chatbot-validators";
 
 const chatbotRouter = Router();
 
@@ -17,12 +20,10 @@ const getFastApiHeaders = (req: Request) => ({
     : {}),
 });
 
-chatbotRouter.post("/prompt", checkToken, httpPostPrompt);
+chatbotRouter.post("/prompt", checkToken, postPromptValidator, httpPostPrompt);
 
 // Ces routes nécessitent une authentification pour forwarder le token utilisateur
 chatbotRouter.get("/test-mongo", checkToken, async (req, res) => {
-  console.log("HELLO MONGO!");
-
   try {
     const result = await fetch("https://localhost:8443/test-mongo", {
       method: "GET",
@@ -40,8 +41,6 @@ chatbotRouter.get("/test-mongo", checkToken, async (req, res) => {
 });
 
 chatbotRouter.get("/test-pg", checkToken, async (req, res) => {
-  console.log("HELLO PG!");
-
   try {
     const result = await fetch("https://localhost:8443/test-pg", {
       method: "GET",
@@ -58,7 +57,12 @@ chatbotRouter.get("/test-pg", checkToken, async (req, res) => {
   }
 });
 
-chatbotRouter.put("/dialogs", checkToken, httpPutDialogs);
+chatbotRouter.post(
+  "/dialogs",
+  checkToken,
+  postDialogsValidator,
+  httpPutDialogs,
+);
 
 chatbotRouter.get("/dialogs", checkToken, httpGetDialogs);
 

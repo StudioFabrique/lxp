@@ -11,8 +11,6 @@ export const AvatarSmall: FC<{
   noImgClassName = "text-xs flex justify-center items-center p-4 w-6 h-6 rounded-full bg-accent text-secondary-content",
   imgClassName = "w-8 h-8 rounded-full object-cover",
 }) => {
-  console.log(user);
-
   return (
     <>
       {!user.avatar || user.avatar === undefined || user.avatar === "" ? (

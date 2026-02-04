@@ -1,8 +1,7 @@
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { Response, NextFunction } from "express";
-import putDialogs from "../../models/chatbot/put-dialogs";
-import { stat } from "fs";
 import { serverIssue } from "../../utils/constantes";
+import postDialogs from "../../models/chatbot/post-dialogs";
 
 export default async function httpPutDialogs(
   req: CustomRequest,
@@ -17,7 +16,7 @@ export default async function httpPutDialogs(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    await putDialogs(userId, lastDialogs);
+    await postDialogs(userId, lastDialogs);
 
     next({
       statusCode: 201,

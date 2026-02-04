@@ -16,8 +16,6 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
   const { user } = useContext(Context);
   const ref = useRef<HTMLDivElement>(null);
 
-  console.log({ dialog });
-
   useEffect(() => {
     if (ref && ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
@@ -66,7 +64,7 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
                   </div>
 
                   <div
-                    className={`chat-bubble ${message.origin === "user" ? "chat-bubble-info" : "chat-bubble-accent"} text-base-200 max-w-[40rem]`}
+                    className={`chat-bubble ${message.origin === "user" ? "chat-bubble-secondary" : "chat-bubble-primary"} text-base-200 max-w-[40rem]`}
                   >
                     <div className="prose prose-sm !max-w-none [&>*]:!flex-col [&>ol]:!flex [&>ol]:!flex-col [&>ul]:!flex [&>ul]:!flex-col">
                       <ReactMarkdown
@@ -117,12 +115,18 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
             <form onSubmit={handleSubmit}>
               <div className="relative">
                 <textarea
-                  className="w-full textarea textarea focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 pr-12"
+                  className="w-full textarea focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 pr-12"
                   name="prompt"
                   placeholder="Posez votre question au chatbot..."
                   rows={3}
                   onChange={(e) => setPrompt(e.currentTarget.value)}
                   value={prompt}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
                 />
                 <button
                   className="w-8 h-8 btn btn-primary absolute right-2 bottom-2 flex items-center justify-center p-0"
