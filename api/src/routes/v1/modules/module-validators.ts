@@ -42,6 +42,16 @@ export const moduleIdValidator = [
   checkValidatorResult,
 ];
 
+export const studentIdValidator = [
+  param("studentId")
+    .notEmpty()
+    .withMessage("L'identifiant du module est requis")
+    .isString()
+    .isUUID()
+    .withMessage("L'identifiant du module n'est pas requis"),
+  checkValidatorResult,
+];
+
 export const moduleIdFromBodyValidator = [
   body("moduleId")
     .isNumeric()
@@ -134,13 +144,13 @@ export const postModuleFromScratchValidator = [
   body("module.formationId")
     .isInt({ gt: 0 })
     .withMessage(
-      "L'identifiant de formation doit être un nombre entier positif."
+      "L'identifiant de formation doit être un nombre entier positif.",
     ),
   body("module.parcoursId")
     .optional() // Optionnel
     .isInt({ gt: 0 })
     .withMessage(
-      "L'identifiant de parcours doit être un nombre entier positif."
+      "L'identifiant de parcours doit être un nombre entier positif.",
     ),
   body("module.contactsIds")
     .optional() // Optionnel
@@ -148,10 +158,10 @@ export const postModuleFromScratchValidator = [
     .withMessage("contactsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de contactsIds doit être un entier positif."
+      "Chaque identifiant de contactsIds doit être un entier positif.",
     ),
   body("module.bonusSkillsIds")
     .optional() // Optionnel
@@ -159,10 +169,10 @@ export const postModuleFromScratchValidator = [
     .withMessage("bonusSkillsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de bonusSkillsIds doit être un entier positif."
+      "Chaque identifiant de bonusSkillsIds doit être un entier positif.",
     ),
   checkValidatorResult,
 ];
@@ -193,20 +203,20 @@ export const putModuleValidator = [
     .withMessage("contactsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de contactsIds doit être un entier positif."
+      "Chaque identifiant de contactsIds doit être un entier positif.",
     ),
   body("module.bonusSkillsIds")
     .isArray()
     .withMessage("bonusSkillsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de bonusSkillsIds doit être un entier positif."
+      "Chaque identifiant de bonusSkillsIds doit être un entier positif.",
     ),
 ];
 
@@ -236,20 +246,20 @@ export const putModuleParcoursValidator = [
     .withMessage("contactsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de contactsIds doit être un entier positif."
+      "Chaque identifiant de contactsIds doit être un entier positif.",
     ),
   body("module.bonusSkillsIds")
     .isArray()
     .withMessage("bonusSkillsIds doit être un tableau.")
     .bail()
     .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0)
+      value.every((id: number) => Number.isInteger(id) && id > 0),
     )
     .withMessage(
-      "Chaque identifiant de bonusSkillsIds doit être un entier positif."
+      "Chaque identifiant de bonusSkillsIds doit être un entier positif.",
     ),
   checkValidatorResult,
 ];
