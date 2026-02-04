@@ -11,6 +11,7 @@ interface UserConnectionProps {
   parcoursCompletion: number;
   student: User;
   parcours: Parcours | null;
+  totalTokens: number;
 }
 
 export default function UserConnection({
@@ -19,14 +20,13 @@ export default function UserConnection({
   parcoursCompletion,
   student,
   parcours,
+  totalTokens,
 }: UserConnectionProps) {
   const style = {
     "--value": parcoursCompletion,
     "--size": "5rem",
     "--thickness": "8px",
   } as React.CSSProperties;
-
-  console.log({ student });
 
   return (
     <article className="flex-1">
@@ -43,6 +43,9 @@ export default function UserConnection({
           </StatsUser>
           <StatsUser label="Temps de connexion">
             {totalConnectionTime} heures
+          </StatsUser>
+          <StatsUser label="Token utilisés">
+            {totalTokens} tokens utilisés
           </StatsUser>
         </span>
         <span className="flex gap-4 flex-col lg:flex-row">
