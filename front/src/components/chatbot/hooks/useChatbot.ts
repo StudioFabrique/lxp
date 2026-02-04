@@ -1,7 +1,15 @@
-import z from "zod";
-import useForm from "../../UI/forms/hooks/use-form";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
+import { z } from "zod";
+import { regexGeneric } from "../../../utils/constantes";
+
+const dialogSchema = z.object({
+  origin: z.enum(["user", "bot"]),
+  message: z
+    .string({ required_error: "Le message est requis." })
+    .regex(regexGeneric, { message: "Format de message invalide." }),
+  date: z.coerce.date(),
+});
 
 type ChatbotValues = {
   origin: "user" | "bot";
@@ -10,33 +18,26 @@ type ChatbotValues = {
 };
 
 const useChatbot = () => {
-  const promptSchema = z
-    .string()
-    .min(2, { message: "Prompt must be between 2 and 255 characters long." })
-    .max(255, { message: "Prompt must be between 2 and 255 characters long." });
-
-  const {
-    errors,
-    values,
-    onChangeValue,
-    onValidationErrors,
-    onResetForm,
-    onValidateForm,
-  } = useForm({}, promptSchema);
+  const [prompt, setPrompt] = useState<string>("");
 
   const [dialog, setDialog] = useState<ChatbotValues[]>([]);
 
   const { sendRequest, error, isLoading } = useHttp();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    let message = "";
     e.preventDefault();
-    onValidateForm();
+    message = prompt.trim();
+    if (message.length === 0 || message.length > 255) {
+      return;
+    }
+    const beginningDate = new Date();
     setDialog((prevState) => [
       ...prevState,
-      { origin: "user", message: values.prompt, date: new Date() },
+      { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const applyData = async (data: string) => {
+    const applyData = (data: string) => {
       // Solution plus robuste pour éviter les sauts de ligne
       const processedText = data;
 
@@ -44,19 +45,52 @@ const useChatbot = () => {
         ...prevState,
         { origin: "bot", message: processedText, date: new Date() },
       ]);
-      onResetForm();
+      setPrompt("");
+      const lastDialogs = [
+        {
+          origin: "user" as "user" | "bot",
+          message: message,
+          date: beginningDate,
+        },
+        {
+          origin: "bot" as "user" | "bot",
+          message: processedText,
+          date: new Date(),
+        },
+      ];
+      postDialog(lastDialogs);
     };
 
     sendRequest(
       {
         path: "/chatbot/prompt",
         method: "post",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        body: { prompt: message },
       },
-      applyData
+      applyData,
+    );
+  };
+
+  const postDialog = (lastDialogs: ChatbotValues[]) => {
+    console.log("TRIGGERED");
+
+    try {
+      dialogSchema.array().parse(lastDialogs);
+    } catch (err) {
+      console.error("Dialog validation failed:", err);
+      return;
+    }
+
+    const applyData = (data: string) => {
+      console.log("Dialog saved:", data);
+    };
+    sendRequest(
+      {
+        path: `/chatbot/dialogs`,
+        method: "post",
+        body: { lastDialogs },
+      },
+      applyData,
     );
   };
 
@@ -75,13 +109,26 @@ const useChatbot = () => {
     }
   }, [error]);
 
+  const getConversationData = useCallback(() => {
+    const applyData = (data: {
+      success: boolean;
+      dialogs: ChatbotValues[];
+    }) => {
+      if (data.success) {
+        setDialog(data.dialogs);
+      }
+    };
+    sendRequest({ path: `/chatbot/dialogs`, method: "get" }, applyData);
+  }, [sendRequest]);
+
+  useEffect(() => {
+    getConversationData();
+  }, [getConversationData]);
+
   return {
+    prompt,
+    setPrompt,
     isLoading,
-    errors,
-    values,
-    onChangeValue,
-    onValidationErrors,
-    onResetForm,
     dialog,
     setDialog,
     handleSubmit,
