@@ -33,6 +33,11 @@ export default interface User {
   parcours?: string;
   formation?: string;
   permissions?: Array<string>;
+  promptStats?: Array<{
+    _id: string;
+    date: string;
+    tokensUsed: number;
+  }>;
 }
 
 export interface UserSelection extends User {

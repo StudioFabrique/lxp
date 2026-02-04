@@ -1,5 +1,7 @@
+import randomInRange from "../../helpers/randomInRange";
 import { DialogEntry } from "../../routes/v1/chatbot/chatbot-validators";
 import ChatDialogs from "../../utils/interfaces/db/chat-dialogs";
+import PromptStats from "../../utils/interfaces/db/prompt-stats";
 import User from "../../utils/interfaces/db/user";
 
 export default async function postDialogs(
@@ -40,7 +42,35 @@ export default async function postDialogs(
     },
   });
 
-  await newDialog.save();
+  const tmp = await newDialog.save();
+
+  const promptStats = await PromptStats.findOne({
+    userId,
+    date: new Date().toISOString().slice(0, 10),
+  });
+
+  const rng = randomInRange(1, 10);
+
+  if (promptStats) {
+    // PromptStats existe déjà pour aujourd'hui, on met juste à jour les tokens
+    promptStats.tokensUsed += rng;
+    await promptStats.save();
+  } else {
+    // Nouveau PromptStats pour aujourd'hui
+    const newPromptStats = new PromptStats({
+      userId,
+      date: new Date().toISOString().slice(0, 10),
+      tokensUsed: rng,
+    });
+    const savedPromptStats = await newPromptStats.save();
+
+    // Ajouter la référence uniquement pour les nouveaux PromptStats
+    if (savedPromptStats) {
+      await User.findByIdAndUpdate(userId, {
+        $push: { promptStats: savedPromptStats._id },
+      });
+    }
+  }
 
   const promptCount = await User.findById(userId).select("promptCount");
   if (promptCount) {

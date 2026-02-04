@@ -9,6 +9,7 @@ const useTeacher = (studentId: string) => {
   const [parcours, setParcours] = useState<Parcours | null>(null);
   const [parcoursCompletion, setParcoursCompletion] = useState(0);
   const [imageUrl, setImageUrl] = useState("/images/parcours-default.webp");
+  const [totaltokens, setTotalTokens] = useState(0);
 
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
@@ -18,10 +19,12 @@ const useTeacher = (studentId: string) => {
       user: User;
       parcours: Parcours;
       parcoursCompletion: number;
+      totalTokens: number;
     }) => {
       setStudent(data.user);
       setParcours(data.parcours ?? null);
       setParcoursCompletion(data.parcoursCompletion ?? 0);
+      setTotalTokens(data.totalTokens ?? 0);
     };
     sendRequest(
       {
@@ -60,6 +63,7 @@ const useTeacher = (studentId: string) => {
     parcours,
     parcoursCompletion,
     getTotalConnectionTime,
+    totaltokens,
   };
 };
 
