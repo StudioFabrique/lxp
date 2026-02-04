@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { Link, useLocation } from "react-router-dom";
+import { createSearchParams, Link } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import Role from "../../../utils/interfaces/role";
 import { RefreshCcw } from "lucide-react";
@@ -19,7 +19,6 @@ const TypeUtilisateur: FC<{
   onSetRoleId: Dispatch<SetStateAction<string | null>>;
   editMode?: boolean;
 }> = ({ roleId, sendEmail, onSetSendEmail, onSetRoleId, editMode }) => {
-  const { pathname } = useLocation();
   const { sendRequest, isLoading } = useHttp();
 
   const [roles, setRoles] = useState([]);
@@ -47,11 +46,16 @@ const TypeUtilisateur: FC<{
         <h2 className="font-bold text-xl">Type d'utilisateur</h2>
         <div className="flex gap-2 items-center">
           <Link
-            className="btn btn-accent btn-sm normal-case"
+            className="btn btn-accent btn-sm normal-case tooltip"
             type="button"
-            to={{ pathname: "/admin/roles" }}
-            state={{ from: pathname }}
+            to={{
+              pathname: "/admin/roles",
+              search: createSearchParams({
+                callback: "true",
+              }).toString(),
+            }}
             onClick={onClickManageRoles}
+            data-tip="Ouverture dans un nouvel onglet"
             target="_blank"
           >
             Gérer les roles
