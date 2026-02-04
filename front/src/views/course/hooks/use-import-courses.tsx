@@ -12,6 +12,7 @@ import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import Module from "../../../utils/interfaces/module";
 import { BASE_URL } from "../../../config/urls";
+import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 export enum CoursesImportStep {
   ZipImport,
@@ -250,6 +251,7 @@ export default function useImportCourses() {
                       : `${BASE_URL}${serverUrl}`;
 
                     finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
+                    finalHtml = replaceActivityTextContent(finalHtml);
                   } catch (err) {
                     console.error("Erreur upload image blog", err);
                   }
@@ -331,7 +333,6 @@ export default function useImportCourses() {
           const rawName = cleanSrc.split("/").pop() || "image.png";
           const cleanFileName = sanitizeFilename(rawName);
 
-          // CORRECTION ICI : Détermination explicite du MIME type
           const mimeType = getMimeType(cleanFileName);
 
           // Injection du MIME type correct dans le constructeur File
@@ -449,7 +450,11 @@ export default function useImportCourses() {
           } else {
             if (item.type === "text") {
               const markdownContent = await fileInZip.async("string");
-              const htmlContent = await marked.parse(markdownContent);
+              let htmlContent = await marked.parse(markdownContent);
+              htmlContent = replaceActivityTextContent(htmlContent);
+
+              console.log({ htmlContent });
+
               const { newHtml, newImages } = await processHtmlImages(
                 htmlContent,
                 loadedZip,

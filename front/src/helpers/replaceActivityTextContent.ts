@@ -1,31 +1,36 @@
-/**
- * Clean up HTML text content for activity descriptions.
- * Handles Tiptap hardbreaks (<br>) inside paragraphs and distinct empty paragraphs.
- */
 export const replaceActivityTextContent = (content: string): string => {
   if (!content) return "";
 
-  // Regex pour identifier un paragraphe considéré comme "vide"
-  const emptyParagraphPattern =
-    "(?:<p[^>]*>(?:\\s*<br\\s*\\/?>\\s*|\\s)*<\\/p>)";
+  // 1. Nettoyage préliminaire (espaces début/fin)
+  let cleaned = content.trim();
 
-  let cleaned = content;
+  // Définitions des patterns
+  const brTag = "<br[^>]*>"; // Capture <br>, <br/>, <br class="...">
+  const emptyParagraphPattern = `(?:<p[^>]*>(?:\\s*${brTag}\\s*|\\s)*<\\/p>)`;
+  const orphanCloseTag = `(?:\\s*<\\/p>)`;
 
-  // Supprimer les paragraphes entièrement vides au début et à la fin
-  // On utilise 'gi' pour case-insensitive et global
-  cleaned = cleaned
-    .replace(new RegExp(`^${emptyParagraphPattern}+`, "gi"), "")
-    .replace(new RegExp(`${emptyParagraphPattern}+$`, "gi"), "");
+  // ÉTAPE A : Nettoyer les paragraphes vides/orphelins à la FIN
+  // Ex: "...texte</p><p></p></p>" -> "...texte</p>"
+  cleaned = cleaned.replace(
+    new RegExp(`(?:${emptyParagraphPattern}|${orphanCloseTag})+$`, "gi"),
+    "",
+  );
 
-  // Supprimer les <br> traînants à l'INTÉRIEUR du dernier paragraphe restant
-  // Cas typique Tiptap : "...texte<br><br></p>" doit devenir "...texte</p>"
-  cleaned = cleaned.replace(/(?:<br\s*\/?>\s*)+<\/p>$/i, "</p>");
+  // ÉTAPE B : Nettoyer les paragraphes vides au DÉBUT
+  // Ex: "<p></p><p>Texte..." -> "<p>Texte..."
+  cleaned = cleaned.replace(
+    new RegExp(`^\\s*(?:${emptyParagraphPattern}\\s*)+`, "gi"),
+    "",
+  );
 
-  // Supprimer les <br> au tout début du premier paragraphe restant
-  // Cas : "<p><br>Texte..." devient "<p>Texte..."
-  cleaned = cleaned.replace(/^<p[^>]*>(?:<br\s*\/?>\s*)+/i, (match) => {
-    return match.replace(/(?:<br\s*\/?>\s*)+/i, "");
-  });
+  // ÉTAPE C : Nettoyer les <br> traînants (Le correctif pour votre cas actuel)
+  // On cible les <br> qui sont suivis par :
+  // - SOIT une balise fermante </p>
+  // - SOIT la fin de la chaîne ($)
+  cleaned = cleaned.replace(
+    new RegExp(`(?:${brTag}\\s*)+(?=<\\/p>|$)`, "gi"),
+    "",
+  );
 
   return cleaned;
 };

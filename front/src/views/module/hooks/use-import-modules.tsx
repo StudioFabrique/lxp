@@ -12,6 +12,7 @@ import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import { BASE_URL } from "../../../config/urls";
+import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 export enum ModulesImportStep {
   ZipImport,
@@ -302,6 +303,7 @@ export default function useImportModules() {
                         ? serverUrl
                         : `${BASE_URL}${serverUrl}`;
                       finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
+                      finalHtml = replaceActivityTextContent(finalHtml);
                     } catch (err) {
                       console.error("Erreur upload image", err);
                     }
@@ -491,7 +493,8 @@ export default function useImportModules() {
           } else {
             if (item.type === "text") {
               const markdownContent = await fileInZip.async("string");
-              const htmlContent = await marked.parse(markdownContent);
+              let htmlContent = await marked.parse(markdownContent);
+              htmlContent = replaceActivityTextContent(htmlContent);
               const { newHtml, newImages } = await processHtmlImages(
                 htmlContent,
                 loadedZip,
