@@ -35,7 +35,7 @@ export default interface User {
   permissions?: Array<string>;
   promptStats?: Array<{
     _id: string;
-    date: Date;
+    date: string;
     tokensUsed: number;
   }>;
 }
