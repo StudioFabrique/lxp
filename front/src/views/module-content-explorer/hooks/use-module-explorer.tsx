@@ -257,7 +257,7 @@ const useModuleExplorerContent = () => {
 
   const saveTextActivity = async (
     title: string,
-    content: string | undefined,
+    content: string,
   ): Promise<boolean> => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
 
@@ -267,7 +267,9 @@ const useModuleExplorerContent = () => {
     }
 
     // clean empty div at the content beginning and the end
-    const textContent = replaceActivityTextContent(content);
+    const finalContent = replaceActivityTextContent(content);
+
+    console.log({ finalContent });
 
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
@@ -293,7 +295,7 @@ const useModuleExplorerContent = () => {
         method: state.mode === "write" ? "post" : "put",
         body: {
           title,
-          value: textContent,
+          value: finalContent,
           parent: "lesson",
         },
       },
@@ -361,7 +363,7 @@ const useModuleExplorerContent = () => {
         ? state.newActivityTitle?.trim()
         : state.selectedActivity?.title;
 
-    if (!title || !(title?.length > 0)) {
+    if (!title || !(title?.length > 0) || !content) {
       const error = "Le titre est obligatoire";
       toast.error(error);
       dispatch({ type: "set_activity_title_error", error });
@@ -462,7 +464,7 @@ const useModuleExplorerContent = () => {
           method: "put",
           body: {
             activitiesIds: state.selectedLesson.activities.map(
-              (activity) => activity.id
+              (activity) => activity.id,
             ),
           },
         },

@@ -18,6 +18,7 @@ import RoleTypeSelector from "./role-type-selector";
 import Role from "../../../utils/interfaces/role";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import { Context } from "../../../store/context.store";
+import { useSearchParams } from "react-router-dom";
 
 type RoleFormProps = {
   role?: Role;
@@ -26,6 +27,10 @@ type RoleFormProps = {
 };
 
 const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
+  const [searchParams] = useSearchParams();
+
+  console.log({ searchParams });
+
   const { fetchRoles, user, handshake } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
@@ -36,17 +41,17 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   const formClassName = useMemo(() => "flex flex-col gap-y-5", []);
   const inputClassName = useMemo(
     () => (hasError: boolean) => setInputStyle(hasError),
-    []
+    [],
   );
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    role?.role || ""
+    role?.role || "",
   );
 
   const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
-    role?.label || ""
+    role?.label || "",
   );
 
   const cancelForm = useCallback(() => {
@@ -61,16 +66,18 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
       toast.success(data.message);
       onRefreshData && (await onRefreshData());
       handshake();
+      if (searchParams.get("callback")) window.close();
     },
-    [cancelForm, onRefreshData, handshake]
+    [searchParams, cancelForm, handshake, onRefreshData],
   );
 
   const applyDataUpdate = useCallback(
     (data: any) => {
       fetchRoles(user!.roles[0]);
       toast.success(data.message);
+      if (searchParams.get("callback")) window.close();
     },
-    [fetchRoles, user]
+    [fetchRoles, user, searchParams],
   );
 
   const handleMouseEnterFillLabel = () => {
@@ -93,7 +100,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             rank: currentRoleType,
           },
         },
-        role ? applyDataUpdate : applyDataCreate
+        role ? applyDataUpdate : applyDataCreate,
       );
     else toast.error("Le formulaire n'est pas valide");
   }, [
@@ -148,7 +155,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                   name="name"
                   id="name"
                   className={inputClassName(
-                    name.hasError && name.value.length > 0
+                    name.hasError && name.value.length > 0,
                   )}
                   maxLength={50}
                   onChange={name.valueChangeHandler}
@@ -167,7 +174,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                   name="label"
                   id="label"
                   className={inputClassName(
-                    label.hasError && label.value.length > 0
+                    label.hasError && label.value.length > 0,
                   )}
                   maxLength={50}
                   onClick={handleMouseEnterFillLabel}
@@ -189,18 +196,20 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                   disabled={role && role.protection >= 1}
                 />
               </div>
-              <div className="w-full sm:w-auto">
+              <div className="w-full">
                 <button
                   type="button"
-                  className="btn btn-sm btn-primary text-base-100 normal-case px-10 w-full"
+                  className="btn btn-sm btn-primary text-base-100 normal-case w-full"
                   onClick={handleSubmitRole}
                 >
-                  <div className="flex items-center justify-center gap-2 min-w-[80px]">
-                    {role ? "Valider" : "Ajouter"}
-                    {isRequestLoading && (
-                      <span className="loading loading-spinner" />
-                    )}
-                  </div>
+                  {searchParams?.get("callback")
+                    ? "Ajouter le role et revenir"
+                    : role
+                      ? "Valider"
+                      : "Ajouter"}
+                  {isRequestLoading && (
+                    <span className="loading loading-spinner" />
+                  )}
                 </button>
               </div>
             </div>
