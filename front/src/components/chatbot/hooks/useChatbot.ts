@@ -27,11 +27,10 @@ const useChatbot = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     let message = "";
     e.preventDefault();
-    message = prompt;
-    if (message.trim().length === 0 || message.trim().length > 255) {
+    message = prompt.trim();
+    if (message.length === 0 || message.length > 255) {
       return;
     }
-    message = message.trim();
     const beginningDate = new Date();
     setDialog((prevState) => [
       ...prevState,
@@ -66,7 +65,7 @@ const useChatbot = () => {
       {
         path: "/chatbot/prompt",
         method: "post",
-        body: { prompt },
+        body: { prompt: message },
       },
       applyData,
     );
@@ -88,7 +87,7 @@ const useChatbot = () => {
     sendRequest(
       {
         path: `/chatbot/dialogs`,
-        method: "put",
+        method: "post",
         body: { lastDialogs },
       },
       applyData,
