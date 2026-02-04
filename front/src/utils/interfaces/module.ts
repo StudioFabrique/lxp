@@ -19,4 +19,5 @@ export default interface Module {
   parcours: Parcours;
   courses: Array<Course>;
   tags: Array<Tag>;
+  stats?: { progress?: number };
 }

@@ -16,6 +16,7 @@ import {
   postModuleMetadataValidator,
   putModuleParcoursValidator,
   putModuleValidator,
+  studentIdValidator,
   updateDatesModulesValidator,
   updateDurationValidator,
 } from "./module-validators";
@@ -42,6 +43,7 @@ import httpPostDuplicateModule from "../../../controllers/module/http-post-dupli
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
 import httpPostModuleMetadata from "../../../controllers/module/http-post-module-metadata";
 import postModuleMetadata from "../../../models/module/post-module-metadata";
+import httpGetModulesCompletionByStudent from "../../../controllers/module/http-get-modules-completion-by-student";
 
 const modules = Router();
 
@@ -66,14 +68,14 @@ modules.post(
   "/metadata",
   checkPermissions("module"),
   postModuleMetadataValidator,
-  httpPostModuleMetadata
+  httpPostModuleMetadata,
 );
 
 modules.get(
   "/parcours-modules/:parcoursId",
   checkPermissions("module"),
   parcoursIdValidator,
-  httpGetParcoursModules
+  httpGetParcoursModules,
 );
 
 // retourne la liste de tous les modules
@@ -121,7 +123,7 @@ modules.get(
       }),
     checkValidatorResult,
   ],
-  httpGetModulesTimeline
+  httpGetModulesTimeline,
 );
 
 modules.put(
@@ -129,44 +131,44 @@ modules.put(
   checkPermissions("module"),
   moduleIdValidator,
   parcoursIdValidator,
-  httpPutAddModule
+  httpPutAddModule,
 );
 modules.get(
   "/formation/:formationId/:duplicate",
   checkPermissions("module"),
   getModuleFormationValidator,
-  httpGetModuleFormation
+  httpGetModuleFormation,
 );
 modules.post(
   "/duplicate/:moduleId",
   checkPermissions("module"),
-  httpPostDuplicateModule
+  httpPostDuplicateModule,
 );
 modules.put(
   "/calendar/dates",
   checkPermissions("module"),
   moduleIdFromBodyValidator,
   updateDatesModulesValidator,
-  httpUpdateDatesModule
+  httpUpdateDatesModule,
 );
 modules.put(
   "/calendar/duration",
   checkPermissions("module"),
   updateDurationValidator,
-  httpUpdateDurationModule
+  httpUpdateDurationModule,
 );
 modules.put(
   "/:parcoursId",
   checkPermissions("module"),
   parcoursIdValidator,
   idsArrayValidator,
-  httpParcoursModules
+  httpParcoursModules,
 );
 modules.delete(
   "/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteModule
+  httpDeleteModule,
 );
 modules.put(
   "/new-module",
@@ -174,20 +176,40 @@ modules.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   putModuleParcoursValidator,
-  httpPutModuleParcours
+  httpPutModuleParcours,
 );
 modules.put(
   "/new-module/update",
   checkPermissions("module"),
   putModuleValidator,
-  httpPutModule
+  httpPutModule,
 );
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
   getModulesFromParcoursValidator,
-  httpGetModulesFromParcours
+  httpGetModulesFromParcours,
+);
+
+/**
+ * Retourne tous les modules entamés par l'étudiant
+ * Le corps de la réponse (dans un tableau) : {
+      id: 1,
+      metadataId: 1,
+      title: "titleTitle",
+      description: "descriptionDescription",
+      thumb: "machintructoto...",
+      stats: {
+        progress: 0.5,
+      },
+    };
+ */
+modules.get(
+  "/progression/:studentId",
+  checkPermissions("module"),
+  studentIdValidator,
+  httpGetModulesCompletionByStudent,
 );
 
 // supprime définitvement un module attaché à une formation
@@ -195,7 +217,7 @@ modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteFormationModule
+  httpDeleteFormationModule,
 );
 
 // retourne les détails d'un module pour les afficher dans l'interface de gestion des modules
@@ -203,21 +225,21 @@ modules.get(
   "/detail/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetModuleDetail
+  httpGetModuleDetail,
 );
 
 modules.get(
   "/detail/limited/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetLimitedModuleDetail
+  httpGetLimitedModuleDetail,
 );
 
 modules.get(
   "/image/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetModuleImage
+  httpGetModuleImage,
 );
 
 modules.post(
@@ -226,14 +248,14 @@ modules.post(
   upload.single("image"),
   jsonParser,
   postModuleFromScratchValidator,
-  httpPostModuleFromScratch
+  httpPostModuleFromScratch,
 );
 
 modules.delete(
   "/parcours/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteModule
+  httpDeleteModule,
 );
 
 export default modules;
