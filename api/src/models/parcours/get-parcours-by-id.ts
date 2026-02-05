@@ -1,19 +1,15 @@
-import { Contact, Module } from "../../../generated/prisma/client";
+import { Contact } from "../../../generated/prisma/client";
+import { calculateModuleProgress } from "../../helpers/calculate-module-progress";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 /**
  * Récupère les détails d'un parcours par son ID
- * @param parcoursId - L'ID du parcours à récupérer
- * @param userId - L'ID de l'utilisateur qui fait la requête
- * @returns Les détails du parcours avec les relations associées
  */
 async function getParcoursById(parcoursId: number, userId: string) {
-  console.log("HELLO WORLD!");
-
-  // Récupère le parcours avec toutes ses relations (formation, tags, contacts, etc.)
+  // 1. Récupération des données brutes
   const parcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId /* , adminId: admin.id */ },
+    where: { id: parcoursId },
     select: {
       id: true,
       title: true,
@@ -24,7 +20,6 @@ async function getParcoursById(parcoursId: number, userId: string) {
       virtualClass: true,
       isPublished: true,
       visibility: true,
-      // Sélectionne les informations de la formation associée
       formation: {
         select: {
           id: true,
@@ -37,21 +32,17 @@ async function getParcoursById(parcoursId: number, userId: string) {
           level: true,
         },
       },
-      // Sélectionne les tags associés au parcours
       tags: {
         select: { tag: { select: { id: true, name: true, color: true } } },
       },
-      // Sélectionne les contacts associés au parcours
       contacts: {
         select: {
           contact: true,
         },
       },
-      // Sélectionne les compétences requises et bonus
       skills: { include: { skill: true } },
       bonusSkills: { select: { id: true, description: true, badge: true } },
       objectives: { select: { id: true, description: true } },
-      // Sélectionne les modules avec leurs cours et leçons
       modules: {
         select: {
           id: true,
@@ -83,7 +74,6 @@ async function getParcoursById(parcoursId: number, userId: string) {
           },
         },
       },
-      // Sélectionne les groupes associés
       groups: {
         select: {
           group: {
@@ -94,12 +84,11 @@ async function getParcoursById(parcoursId: number, userId: string) {
           },
         },
       },
-      // Sélectionne l'administrateur du parcours
       admin: { select: { id: true, idMdb: true } },
     },
   });
 
-  // Si le parcours n'existe pas, lance une erreur
+  // 2. Gestion d'erreur (Guard Clause)
   if (!parcours) {
     const error: any = {
       message: "Le parcours n'existe pas.",
@@ -108,54 +97,55 @@ async function getParcoursById(parcoursId: number, userId: string) {
     throw error;
   }
 
-  let result: any = parcours;
-  if (parcours) {
-    // Convertit l'image en base64 si elle existe
+  // 3. Initialisation de l'objet résultat
+  // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
+  let result: any = { ...parcours };
 
-    result = {
-      ...result,
-      image: parcours.image
-        ? Buffer.from(parcours.image as any).toString("base64")
-        : null,
-    };
+  // 4. Traitement de l'image principale
+  result.image = parcours.image
+    ? Buffer.from(parcours.image as any).toString("base64")
+    : null;
 
-    // Convertit les miniatures des modules en base64 si elles existent
-    if (parcours.modules) {
-      const updatedModules = parcours.modules.map((item: any) => ({
+  // 5. Traitement des contacts (aplatissement)
+  // Transforme [{ contact: {...} }] en [{...}]
+  result.contacts = parcours.contacts.map((c) => c.contact);
+
+  // 6. Traitement des modules (si présents)
+  if (parcours.modules && parcours.modules.length > 0) {
+    result.modules = parcours.modules.map((item: any) => {
+      // Image du module
+      const thumb = item.module.thumb
+        ? Buffer.from(item.module.thumb as any).toString("base64")
+        : null;
+
+      // Contacts du module (aplatissement)
+      const moduleContacts = item.contacts.map((c: any) => c.contact);
+
+      return {
         ...item,
         module: {
           ...item.module,
-          thumb: item.module.thumb
-            ? Buffer.from(item.module.thumb as any).toString("base64")
-            : null,
+          thumb: thumb,
         },
-      }));
-      result = { ...result, modules: updatedModules };
-      // récupère la liste des utilisateurs de chaque groupe afin de faire la somme du nombre d'etudiants présents
-      if (parcours.groups.length > 0) {
-        const usersCount = await User.count({
-          group: { $in: parcours.groups.map((g: any) => g.group.idMdb) },
-        });
-        result = { ...result, studentCount: usersCount };
-      }
-      return {
-        ...result,
-        contacts: result.contacts.map(
-          (contact: { contact: Contact }) => contact.contact,
-        ),
-        modules: result.modules.map(
-          (module: { contacts: { contact: Contact }[] }) => ({
-            ...module,
-            contacts: module.contacts.map((contact) => contact.contact),
-          }),
-        ),
+        // Calcul de la progression via la fonction helper
+        stats: {
+          progress: calculateModuleProgress(item),
+        },
+        contacts: moduleContacts,
       };
-    }
-    return {
-      ...parcours,
-      contacts: parcours.contacts.map((contact) => contact.contact),
-    };
+    });
   }
+
+  // 7. Calcul du nombre d'étudiants
+  if (parcours.groups && parcours.groups.length > 0) {
+    const usersCount = await User.count({
+      group: { $in: parcours.groups.map((g: any) => g.group.idMdb) },
+    });
+    result.studentCount = usersCount;
+  }
+
+  // 8. Retour unique
+  return result;
 }
 
 export default getParcoursById;
