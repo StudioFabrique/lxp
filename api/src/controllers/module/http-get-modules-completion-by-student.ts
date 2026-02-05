@@ -7,7 +7,10 @@ async function httpGetModulesCompletionByStudent(req: Request, res: Response) {
 
   try {
     const response = await getModulesCompletionByStudent(studentId);
-    return res.status(200).json(response);
+    return res.status(200).json({
+      data: response,
+      message: `La progression des modules de l'étudiant ${studentId} a bien été récupéré`,
+    });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)
