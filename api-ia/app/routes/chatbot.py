@@ -53,7 +53,7 @@ async def chat_bot_stream_response(
         case 5:
             prompt = "il est en RTT."
         case 6:
-            prompt = "il est au travail (lol)."
+            prompt = "il est au travail."
 
     async def generate_stream():
         # Async generator that yields chatbot response tokens.

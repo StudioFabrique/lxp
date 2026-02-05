@@ -24,7 +24,7 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 w-96 max-w-full top-[35%] bg-base-200 z-50 rounded-2xl shadow-lg p-2 border border-primary/10 flex flex-col justify-between">
+      <div className="fixed bottom-4 right-4 w-96 max-w-full 2xl:top-[35%] top-[25%] bg-base-200 z-50 rounded-2xl shadow-lg p-2 border border-primary/10 flex flex-col justify-between">
         <div className="relative">
           <span className="flex items-center justify-between absolute left-2 right-2 pr-2 top-2 w-full">
             <h2 className="flex items-end text-xl font-bold text-primary">
