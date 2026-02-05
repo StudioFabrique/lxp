@@ -56,7 +56,7 @@ export function TokensUsed(props: Props) {
         categories={categories}
         series={[
           {
-            name: "heures",
+            name: "tokens",
             data: series,
           },
         ]}
