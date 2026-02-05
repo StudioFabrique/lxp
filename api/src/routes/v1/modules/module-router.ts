@@ -34,7 +34,7 @@ import httpGetModuleDetail from "../../../controllers/module/http-get-module-det
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
 import { checkValidatorResult } from "../../../middleware/validators";
-import { check, query } from "express-validator";
+import { query } from "express-validator";
 import jsonParser from "../../../middleware/json-parser";
 import multer from "multer";
 import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
@@ -42,7 +42,6 @@ import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-lim
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
 import httpPostModuleMetadata from "../../../controllers/module/http-post-module-metadata";
-import postModuleMetadata from "../../../models/module/post-module-metadata";
 import httpGetModulesCompletionByStudent from "../../../controllers/module/http-get-modules-completion-by-student";
 
 const modules = Router();
@@ -193,17 +192,19 @@ modules.get(
 );
 
 /**
- * Retourne tous les modules entamés par l'étudiant
- * Le corps de la réponse (dans un tableau) : {
+ * Retourne tous les modules entamés par l'étudiant accompagné de leur progression
+ * Le corps de la réponse (dans un tableau représentant chaque module) : {
       id: 1,
       metadataId: 1,
       title: "titleTitle",
       description: "descriptionDescription",
-      thumb: "machintructoto...",
+      thumb: "machintructoto... thumbThumb",
       stats: {
-        progress: 0.5,
+        progress: un nombre de 0 à 100,
       },
     };
+
+    Retourne null si il n'y a rien
  */
 modules.get(
   "/progression/:studentId",

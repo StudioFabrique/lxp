@@ -45,10 +45,9 @@ export const moduleIdValidator = [
 export const studentIdValidator = [
   param("studentId")
     .notEmpty()
-    .withMessage("L'identifiant du module est requis")
+    .withMessage("L'identifiant mongodb de l'étudiant est requis")
     .isString()
-    .isUUID()
-    .withMessage("L'identifiant du module n'est pas requis"),
+    .withMessage("L'identifiant mongodb passé n'est pas un string"),
   checkValidatorResult,
 ];
 
