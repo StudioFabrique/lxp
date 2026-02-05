@@ -40,7 +40,7 @@ const ContenuDetail: FC<{
       {
         path: `/course/${moduleId}`,
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, moduleId]);
 
@@ -60,12 +60,18 @@ const ContenuDetail: FC<{
             <span className="text-sm font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
-            <Link
-              to={`/${currentRoute[0]}/course/edit/${course.id}`}
-              className="h-6 w-6 flex-shrink-0"
+            <button
+              className="btn btn-sm btn-ghost"
+              type="button"
+              onClick={(e) => e.stopPropagation()}
             >
-              <EditIcon />
-            </Link>
+              <Link
+                to={`/${currentRoute[0]}/course/edit/${course.id}`}
+                className="h-6 w-6 flex-shrink-0"
+              >
+                <EditIcon />
+              </Link>
+            </button>
           </Can>
           {!course.isPublished || !course.visibility ? (
             <div

@@ -139,18 +139,6 @@ export default function useParcoursView() {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    const applyData = (data) => {
-      console.log({ data });
-    };
-    sendRequest(
-      {
-        path: "/module/progression/69835a669e38a17d487aebcd",
-      },
-      applyData,
-    );
-  }, [sendRequest]);
-
   return {
     isLoading,
     error,
