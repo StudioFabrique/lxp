@@ -24,11 +24,11 @@ export default function useParcoursView() {
 
   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos
+    (state: any) => state.parcoursInformations.infos,
   );
   const modules = useSelector(
     (state: { parcoursModules: { modules: Module[] } }) =>
-      state.parcoursModules.modules
+      state.parcoursModules.modules,
   );
 
   useEffect(() => {
@@ -43,13 +43,13 @@ export default function useParcoursView() {
         parcoursInformationsAction.updateParcoursInfos({
           title: data.title,
           description: data.description,
-        })
+        }),
       );
       dispatch(
         parcoursInformationsAction.updateParcoursDates({
           startDate: data.startDate,
           endDate: data.endDate,
-        })
+        }),
       );
       dispatch(parcoursAction.setParcoursFormation(data.formation));
 
@@ -58,13 +58,13 @@ export default function useParcoursView() {
       }
       if (data.tags.length > 0) {
         dispatch(
-          tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag))
+          tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag)),
         );
       } else {
         dispatch(
           tagsAction.setCurrentTags(
-            data.formation.tags.map((item: any) => item.tag)
-          )
+            data.formation.tags.map((item: any) => item.tag),
+          ),
         );
       }
 
@@ -78,8 +78,8 @@ export default function useParcoursView() {
       if (data.skills.length > 0) {
         dispatch(
           parcoursSkillsAction.setSkillsList(
-            data.skills.map((item: any) => item.skill)
-          )
+            data.skills.map((item: any) => item.skill),
+          ),
         );
       }
 
@@ -90,8 +90,8 @@ export default function useParcoursView() {
       if (data.objectives.length > 0) {
         dispatch(
           parcoursObjectivesAction.addImportedObjectivesToObjectives(
-            data.objectives
-          )
+            data.objectives,
+          ),
         );
       }
 
@@ -104,9 +104,11 @@ export default function useParcoursView() {
                 title: module.module.title,
                 description: module.module.description,
                 thumb: module.module.thumb,
+                // MAPPING DE LA STATS CALCULÉE PAR LE BACKEND
+                stats: module.stats,
               };
-            })
-          )
+            }),
+          ),
         );
       }
 
@@ -119,7 +121,7 @@ export default function useParcoursView() {
         {
           path: `/parcours/parcours-by-id/${id}`,
         },
-        processData
+        processData,
       );
       setIsInitial(false);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Module from "../../utils/interfaces/module";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import { CSSProperties } from "react";
@@ -25,25 +24,8 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
             {modules
               ?.filter((_x, i) => i < 4)
               .map((module) => {
-                const moduleProgress =
-                  (module.courses.length > 0
-                    ? module.courses.reduce(
-                        (sum, course) =>
-                          sum +
-                          (course.lessons.length > 0
-                            ? course.lessons.reduce(
-                                (sum, lesson) =>
-                                  sum +
-                                  (lesson?.lessonsRead &&
-                                  lesson.lessonsRead[0]?.finishedAt
-                                    ? 1
-                                    : 0),
-                                0
-                              ) / course.lessons.length
-                            : 0),
-                        0
-                      ) / module.courses.length
-                    : 0) * 100;
+                // Utilisation directe de la valeur calculée par le backend
+                const moduleProgress = module.stats?.progress ?? 0;
 
                 return (
                   <div
@@ -53,14 +35,12 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-base-content">{module.title}</p>
-                      <p className="text-3xl text-primary">{`${Math.round(
-                        moduleProgress
-                      )} %`}</p>
+                      <p className="text-3xl text-primary">{`${moduleProgress} %`}</p>
                     </div>
 
                     <progress
                       className="progress progress-primary w-full"
-                      value={Math.round(moduleProgress)}
+                      value={moduleProgress}
                       max="100"
                       style={radialStyle(moduleProgress)}
                     />
