@@ -33,12 +33,21 @@ export default async function getUserData(userId: string) {
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 }) // Include user roles
     .populate("hobbies")
     .populate("links")
+    .populate("promptStats")
     .lean()) as IUser;
 
   // Validate user existence
   if (!user) {
     throw { message: "L'apprenant n'existe pas.", statusCode: 404 };
   }
+
+  console.log({ user });
+
+  const totalTokens =
+    user.promptStats?.reduce((acc, stat) => acc + (stat.tokensUsed || 0), 0) ||
+    0;
+
+  console.log("user.promptStats", user.promptStats, totalTokens);
 
   // Process connection information for the last 15 days
   // Guard against missing connectionInfos
@@ -194,5 +203,6 @@ export default async function getUserData(userId: string) {
     user,
     parcours: parcours ?? null,
     parcoursCompletion: Math.floor(parcoursCompletion),
+    totalTokens,
   };
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Import des dépendances nécessaires
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 // Import des composants et du contexte
@@ -8,7 +8,8 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import { Socket } from "socket.io-client";
 import Login from "../../components/login/login.component";
 import { Context } from "../../store/context.store";
-//import DrawerChatbot from "../../components/chatbot/DrawerChatbot";
+import DrawerChatbot from "../../components/chatbot/DrawerChatbot";
+import chatbot from "../../assets/images/chatbot.png";
 
 // Variables globales pour le state initial et le socket
 let initialState = true;
@@ -20,6 +21,7 @@ const RootLayout = () => {
   const { user, initTheme, isLoggedIn, handshake } = useContext(Context);
   const nav = useNavigate();
   const location = useLocation();
+  const [showChatbot, setShowChatbot] = useState(false);
 
   // Mémorisation du rôle et du rang
   const userRole = useMemo(() => user?.roles?.[0], [user?.roles]);
@@ -71,7 +73,32 @@ const RootLayout = () => {
       <div className="h-screen w-full p-2 overflow-clip">
         <Outlet />
       </div>
-      {/* <DrawerChatbot /> */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "30px",
+          right: "30px",
+          width: "64px",
+          height: "64px",
+          background: "white",
+          borderRadius: "50%",
+          padding: "12px",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+          cursor: "pointer",
+        }}
+      >
+        <button
+          onClick={() => setShowChatbot(true)}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <img
+            src={chatbot}
+            alt="Icône chatbot"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </button>
+      </div>
+      {showChatbot ? <DrawerChatbot setShowChatbot={setShowChatbot} /> : null}
     </FadeWrapper>
   );
 };

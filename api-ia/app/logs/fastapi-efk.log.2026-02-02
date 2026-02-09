@@ -1,0 +1,40 @@
+2026-01-27 17:27:31,950 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
+2026-01-28 09:50:33,924 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
+2026-01-28 09:50:33,924 - CMV_GATEWAY - WARNING - authorization_not_found FROM: None
+2026-01-28 16:47:00,203 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+
+[SQL: SELECT "Module".id AS "Module_id", "Module".title AS "Module_title", "Module".description AS "Module_description", "Module".image AS "Module_image", "Module".thumb AS "Module_thumb", "Module"."createdAt" AS "Module_createdAt", "Module"."updatedAt" AS "Module_updatedAt", "Module".author AS "Module_author", "Module"."adminId" AS "Module_adminId" 
+FROM "Module"]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-01-28 16:47:00,209 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-01-28 16:47:00,215 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-01-28 16:47:00,221 - CMV_GATEWAY - DEBUG - (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5500 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-01-29 13:32:26,519 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:11,706 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:12,813 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:14,029 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:33:24,401 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:16,833 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:18,010 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:18,696 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:48,704 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:38:52,164 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:39:27,507 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2026-01-29 13:39:34,163 - CMV_GATEWAY - WARNING - Not Found FROM: None

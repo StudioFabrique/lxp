@@ -7,6 +7,7 @@ import useTeacher from "./hooks/useTeacher";
 import UserConnection from "../../components/stats/user-connection";
 import bgImageGradient from "../../utils/bg-image-gradient";
 import Header from "../../components/UI/header";
+
 export default function UserData() {
   const { studentId } = useParams();
   const {
@@ -15,6 +16,7 @@ export default function UserData() {
     parcoursCompletion,
     imageUrl,
     getTotalConnectionTime,
+    totaltokens,
   } = useTeacher(studentId!);
 
   const totalConnectionTime = useMemo(() => {
@@ -31,6 +33,8 @@ export default function UserData() {
     borderRadius: "0.75rem",
   };
 
+  console.log(student?.promptStats);
+
   return (
     <main className="flex flex-col gap-y-4">
       <Header title="Informations de l'apprenant" />
@@ -46,6 +50,8 @@ export default function UserData() {
                 totalConnectionTime={totalConnectionTime}
                 connectionInfos={student.connectionInfos}
                 parcoursCompletion={parcoursCompletion}
+                totalTokens={totaltokens}
+                tokenStats={student.promptStats}
               />
             ) : null}
           </section>
