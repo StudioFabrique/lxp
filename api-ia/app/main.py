@@ -4,7 +4,12 @@ main.py
 This module initializes the FastAPI application, configures middleware, exception handlers, logging, and includes the chatbot router.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from app.dependancies.pg_session import get_db
+from app.dependancies.mg_session import get_mg_database, connect_db, close_db
+from app.dependancies.require_auth import require_auth
+from contextlib import asynccontextmanager
 from fastapi.exception_handlers import (
     http_exception_handler,
     request_validation_exception_handler,
@@ -17,15 +22,54 @@ from app.utils.limiter import limiter
 from slowapi.errors import RateLimitExceeded
 
 # Import configuration, logging, and routes
-from app.utils.config import ALLOWED_ORIGINS
 from app.utils.logging_setup import LoggerSetup
 from app.routes import chatbot
+
+from bson import ObjectId
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic.functional_serializers import PlainSerializer
+from typing import Annotated, Optional
+from app.utils.database import Module
+from app.models.pydantic.auth import TokenPayload
+from app.middlewares.exceptions_handler import ExceptionHandlerMiddleware
+from app.middlewares.security_headers import SecurityHeadersMiddleware
+
+
+# Custom type for ObjectId that serializes to string
+PyObjectId = Annotated[ObjectId, PlainSerializer(lambda x: str(x), return_type=str)]
+
+
+class UserModel(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    id: PyObjectId = Field(alias="_id")
+    # Ajoute ici les autres champs de ton modèle User
+    # email: str
+    # name: Optional[str] = None
+    email: str
+    isActive: bool
+    lastname: Optional[str] = None
+
 
 # Initialize the logger
 logger = LoggerSetup()
 
+
+# Lifespan: connexion/déconnexion MongoDB au démarrage/arrêt
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    print("🍃 Connecting to MongoDB...")
+    await connect_db()
+    print("🍃 MongoDB connected!")
+    yield
+    # Shutdown
+    print("🍃 Closing MongoDB connection...")
+    await close_db()
+
+
 # Create FastAPI app instance
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # Include chatbot router
 app.include_router(chatbot.router)
@@ -37,13 +81,20 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Add CORS middleware for security and cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,  # Allowed origins from config
+    allow_origins=[
+        "https://localhost:5173",
+        "http://localhost:5173",
+    ],  # Allowed origins from config
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
     expose_headers=["Content-Disposition"],
     max_age=600,
 )
+
+# Ajout des middlewares de gestion des exceptions et de sécurité
+app.add_middleware(ExceptionHandlerMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 
 # Custom handler for HTTP exceptions
@@ -76,3 +127,32 @@ async def health_check():
     Returns service status for health checks.
     """
     return {"status": "ok"}
+
+
+@app.get("/test-mongo")
+async def read_mongo(
+    current_user: Annotated[TokenPayload, Depends(require_auth("GET", "test-mongo"))],
+    mongo_db=Depends(get_mg_database),
+):
+    print("Current user ID:", current_user.userId)
+    cursor = mongo_db.users.find()
+    documents = await cursor.to_list(length=100)
+    print("Documents from MongoDB:", len(documents))
+    # Pydantic gère automatiquement la sérialisation des ObjectId
+    return [UserModel.model_validate(doc) for doc in documents]
+
+
+@app.get("/test-pg")
+async def read_pg(
+    current_user: Annotated[
+        TokenPayload, Depends(require_auth(action="GET", resource="test-pg"))
+    ],
+    db: Session = Depends(get_db),
+):
+    result = db.query(Module).all()
+    modules_list = [{"id": row.id, "title": row.title} for row in result]
+    print("Documents from PostgreSQL:", len(modules_list))
+    print("Current user ID:", current_user.userId)
+    for r in current_user.userRoles:
+        print("User role:", r.label)
+    return modules_list

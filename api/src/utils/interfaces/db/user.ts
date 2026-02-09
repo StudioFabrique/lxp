@@ -6,6 +6,7 @@ import { IHobby } from "./hobby";
 import { ILink } from "./link";
 import { IConnectionInfos } from "./connection-infos";
 import { IStudentFeedback } from "./student-feedback";
+import { IPromptStats } from "./prompt-stats";
 
 export interface IUser extends Document {
   email: string;
@@ -32,6 +33,8 @@ export interface IUser extends Document {
   studentFeedbacks?: IStudentFeedback["_id"];
   emailVerified: boolean;
   invitationSent: boolean;
+  promptCount: number;
+  promptStats?: IPromptStats["_id"][];
 }
 
 const userSchema: Schema = new Schema(
@@ -52,6 +55,13 @@ const userSchema: Schema = new Schema(
     phoneNumber: { type: String, required: false },
     emailVerified: { type: Boolean, default: false },
     invitationSent: { type: Boolean, default: false },
+    promptCount: { type: Number, default: 0 },
+
+    promptStats: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "PromptStats",
+      required: false,
+    },
 
     connectionInfos: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -95,7 +105,7 @@ const userSchema: Schema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model<IUser>("User", userSchema);

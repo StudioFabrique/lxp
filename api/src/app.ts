@@ -11,17 +11,23 @@ import responseHandler from "./middleware/response-handler";
 
 const app = express();
 
+const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
+
 const origins =
-  process.env.NODE_ENV === "production"
+  process.env.ENVIRONMENT === "production"
     ? []
     : [
-        "https://localhost:5173",
-        "https://localhost:5174",
-        "https://localhost:5175",
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:5175",
+        // Toujours inclure HTTPS en dev pour éviter les problèmes de CORS
+        "https://localhost:5173",
+        "https://localhost:5174",
+        "https://localhost:5175",
       ];
+
+console.log("🌐 CORS origins autorisées:", origins);
+console.log("🔒 HTTPS enabled:", HTTPS_ENABLED);
 app
   .use(
     helmet({
@@ -49,13 +55,13 @@ app
       crossOriginOpenerPolicy: true,
       referrerPolicy: false,
       originAgentCluster: false,
-    })
+    }),
   )
   .use(
     cors({
       origin: origins,
       credentials: true,
-    })
+    }),
   )
   .use(cookieParser())
   .use(morgan("combined"))
