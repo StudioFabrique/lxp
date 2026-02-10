@@ -22,7 +22,7 @@ type Props = {
 export default function ModuleCreateForm(props: Props) {
   return (
     <>
-      <h2 className="text-sm">
+      <h2 className="text-sm font-bold">
         Choisissez une formation à laquelle attacher le module
       </h2>
       <Selecter
@@ -30,6 +30,7 @@ export default function ModuleCreateForm(props: Props) {
         list={props.formationList}
         title="Choisissez une formation"
         onSelectItem={props.onPickFormation}
+        size="md"
       />
 
       <form onSubmit={props.onSubmit} ref={null}>
