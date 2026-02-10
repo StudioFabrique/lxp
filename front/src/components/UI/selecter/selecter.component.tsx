@@ -9,6 +9,7 @@ type Props = {
   list: Array<Item>;
   title: string;
   defaultItem?: Item;
+  size?: "sm" | "md" | "lg";
   onSelectItem: (id: number) => void;
 };
 
@@ -17,8 +18,11 @@ const Selecter: FC<Props> = ({
   title,
   defaultItem = { id: 0, title: "" },
   onSelectItem,
+  size,
 }) => {
   const [listItem, setListItem] = useState<number>(defaultItem.id);
+
+  const selectSize = size ? "select-" + size : "select-sm";
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
@@ -33,7 +37,10 @@ const Selecter: FC<Props> = ({
     <>
       {list ? (
         <select
-          className="w-full select select-sm border border-neutral/50 focus:outline-none"
+          className={
+            "w-full select select-primary border border-neutral/50 focus:outline-none " +
+            selectSize
+          }
           name="menu"
           id="menu"
           value={listItem}

@@ -3,6 +3,17 @@ import useHttp from "../../../hooks/use-http";
 import Parcours from "../../../utils/interfaces/parcours";
 import User from "../../../utils/interfaces/user";
 
+export type ProgressionData = {
+  id: number;
+  metadataId: number;
+  title: string;
+  description: string;
+  thumb: string;
+  stats: {
+    progress: number;
+  };
+};
+
 const useTeacher = (studentId: string) => {
   const { sendRequest } = useHttp();
   const [student, setStudent] = useState<User | null>(null);
@@ -10,6 +21,9 @@ const useTeacher = (studentId: string) => {
   const [parcoursCompletion, setParcoursCompletion] = useState(0);
   const [imageUrl, setImageUrl] = useState("/images/parcours-default.webp");
   const [totaltokens, setTotalTokens] = useState(0);
+  const [completionModules, setCompletionModules] = useState<
+    ProgressionData[] | null
+  >(null);
 
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
@@ -47,9 +61,23 @@ const useTeacher = (studentId: string) => {
     return Math.ceil(total / 3600000);
   }, [student]);
 
+  const getCompletion = useCallback(() => {
+    const applyData = (data: { message: string; data: ProgressionData[] }) => {
+      console.log({ data });
+      setCompletionModules(data.data ? data.data : []);
+    };
+    sendRequest(
+      {
+        path: `/modules/progression/${studentId}`,
+      },
+      applyData,
+    );
+  }, [sendRequest, studentId]);
+
   useEffect(() => {
     getStudentData();
-  }, [getStudentData]);
+    getCompletion();
+  }, [getStudentData, getCompletion]);
 
   useEffect(() => {
     if (parcours && parcours.image) {
@@ -64,6 +92,7 @@ const useTeacher = (studentId: string) => {
     parcoursCompletion,
     getTotalConnectionTime,
     totaltokens,
+    completionModules,
   };
 };
 
