@@ -4,6 +4,9 @@ import StatsConnection, { TokensUsed } from "./stats-connection";
 import StudentCard from "../teacher/student-data/student-card";
 import Parcours from "../../utils/interfaces/parcours";
 import User from "../../utils/interfaces/user";
+import { ProgressionData } from "../../views/teacher/hooks/useTeacher";
+import ElementNotFound from "../UI/element-not-found";
+import StatsProgression from "./stats-progression";
 
 export type TokenStat = {
   _id: string;
@@ -19,6 +22,7 @@ interface UserConnectionProps {
   parcours: Parcours | null;
   totalTokens: number;
   tokenStats?: TokenStat[];
+  completionModules: ProgressionData[] | null;
 }
 
 export default function UserConnection({
@@ -29,14 +33,15 @@ export default function UserConnection({
   parcours,
   totalTokens,
   tokenStats,
+  completionModules,
 }: UserConnectionProps) {
   const style = {
     "--value": parcoursCompletion,
-    "--size": "5rem",
-    "--thickness": "8px",
+    "--size": "3rem",
+    "--thickness": "4px",
   } as React.CSSProperties;
 
-  console.log({ tokenStats });
+  console.log({ completionModules });
 
   return (
     <article className="flex-1">
@@ -54,17 +59,47 @@ export default function UserConnection({
             />
           </Wrapper>
           <div className="col-span-2">
-            <StatsUser label="Complétion du parcours" positionY="top">
-              <span className="flex justify-center items-center">
-                <div
-                  className="radial-progress text-primary md:mt-0 mt-2"
-                  style={style}
-                  role="progressbar"
-                >
-                  <p className="font-bold text-xs">{parcoursCompletion} %</p>
+            <Wrapper>
+              <div className="flex justify-between items-start">
+                <h2 className="font-bold text-xl">
+                  Progression de l'apprentissage
+                </h2>
+              </div>
+              <div className="flex flex-col gap-y-2">
+                <div className="flex flex-col gap-y-1 mt-4">
+                  {completionModules && completionModules.length > 0 ? (
+                    <>
+                      <div className="h-[9rem] overflow-auto">
+                        <StatsProgression
+                          completionModules={completionModules}
+                          parcoursCompletion={parcoursCompletion}
+                        />
+                        <div className="flex gap-x-4 items-center justify-between"></div>{" "}
+                      </div>
+                      <div className="divider" />
+                      <div className="flex justify-between items-center pr-3">
+                        <h2 className="font-bold">Progression du parcours :</h2>
+                        <span>
+                          <div
+                            className={
+                              "radial-progress text-primary md:mt-0 mt-2"
+                            }
+                            style={style}
+                            role="progressbar"
+                          >
+                            <p style={{ fontSize: "10px" }}>
+                              {parcoursCompletion} %
+                            </p>
+                          </div>
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <ElementNotFound message="Aucun module complété pour le moment" />
+                  )}
                 </div>
-              </span>
-            </StatsUser>
+              </div>
+            </Wrapper>
           </div>
         </div>
         <span className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -10,13 +10,16 @@ const ContenuItem: FC<{
   selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
-  const minDate: { day: number; month: string } = useMemo(
-    () => ({
-      day: new Date(module.minDate!).getDate(),
-      month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 3),
-    }),
-    [module.minDate]
-  );
+  const minDate: { day: number | null; month: string } = useMemo(() => {
+    if (!module.minDate) {
+      return { day: null, month: "" };
+    }
+    const date = new Date(module.minDate);
+    return {
+      day: date.getDate(),
+      month: getMonth(date.getMonth())?.substring(0, 3) ?? "",
+    };
+  }, [module.minDate]);
 
   const navigate = useNavigate();
 

@@ -213,7 +213,7 @@ pipeline {
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js || pm2 start /home/$USER/$TARGET/dist/src/server.js --name lxp-server"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 delete lxp-server || true && pm2 start /home/$USER/$TARGET/dist/src/server.js --name lxp-server"
                     '''
 
                     echo "✅ Deployment to DEMO completed successfully!"

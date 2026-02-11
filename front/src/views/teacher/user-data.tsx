@@ -17,6 +17,7 @@ export default function UserData() {
     imageUrl,
     getTotalConnectionTime,
     totaltokens,
+    completionModules,
   } = useTeacher(studentId!);
 
   const totalConnectionTime = useMemo(() => {
@@ -52,6 +53,7 @@ export default function UserData() {
                 parcoursCompletion={parcoursCompletion}
                 totalTokens={totaltokens}
                 tokenStats={student.promptStats}
+                completionModules={completionModules}
               />
             ) : null}
           </section>
