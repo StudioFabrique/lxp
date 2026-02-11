@@ -35,6 +35,7 @@ const ParcoursView = () => {
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  // const { sendRequest } = useHttp();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const handleClickResume = () => {
@@ -50,6 +51,20 @@ const ParcoursView = () => {
 
     navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
   };
+
+  // useEffect(() => {
+  //   const applyData = (data: any) => {
+  //     console.log({ data });
+  //   };
+
+  //   sendRequest(
+  //     {
+  //       path: "/modules/progression/698c7273c7f6e03d53e78a50",
+  //       method: "get",
+  //     },
+  //     applyData,
+  //   );
+  // }, [sendRequest]);
 
   return (
     <div className="w-full flex flex-col gap-6">
