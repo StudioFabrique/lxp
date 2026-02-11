@@ -7,29 +7,22 @@ export default async function getModulesCompletionByStudent(
 ) {
   const student = await User.findById(studentMdbId);
 
-  if (!student) return null;
+  if (!student || !student.group) return null;
 
-  // 1. On récupère les métadonnées de modules (l'instance du module avec les cours)
-  // On filtre pour ne prendre que ceux où l'étudiant a au moins une leçon finie.
+  // 2. On récupère les modules liés aux parcours des groupes de l'étudiant
   const modulesMetadata = await prisma.moduleMetadata.findMany({
     where: {
-      courses: {
-        some: {
-          lessons: {
-            some: {
-              lessonsRead: {
-                some: {
-                  student: { idMdb: student.id },
-                  finishedAt: { not: null }, // On cherche uniquement s'il y a une date de fin
-                },
-              },
+      parcours: {
+        groups: {
+          some: {
+            group: {
+              idMdb: { in: student.group.id },
             },
           },
         },
       },
     },
     include: {
-      // On récupère les infos génériques du module (titre, image)
       module: {
         select: {
           id: true,
@@ -38,7 +31,6 @@ export default async function getModulesCompletionByStudent(
           thumb: true,
         },
       },
-      // On récupère la structure des cours/leçons pour le calcul
       courses: {
         select: {
           lessons: {
@@ -58,15 +50,12 @@ export default async function getModulesCompletionByStudent(
     },
   });
 
-  // 2. On transforme les données et on applique le calcul de progression
   const result = modulesMetadata.map((meta) => {
-    // Gestion de l'image (Buffer -> Base64)
     const thumb = meta.module.thumb
       ? Buffer.from(meta.module.thumb).toString("base64")
       : null;
 
-    // Calcul de la progression via votre fonction helper
-    // L'objet 'meta' respecte la structure attendue : { courses: [ { lessons: [ { lessonsRead: [...] } ] } ] }
+    // Calcul de la progression
     const progress = calculateModuleProgress(meta);
 
     return {
