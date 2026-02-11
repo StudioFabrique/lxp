@@ -198,7 +198,7 @@ modules.get(
       metadataId: 1,
       title: "titleTitle",
       description: "descriptionDescription",
-      thumb: "machintructoto... thumbThumb",
+      thumb: "thumbThumb",
       stats: {
         progress: un nombre de 0 à 100,
       },
