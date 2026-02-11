@@ -1,5 +1,5 @@
 import { prisma } from "../../utils/db";
-import { calculateModuleProgress } from "../../helpers/calculate-module-progress"; // Assurez-vous que le chemin est bon
+import { calculateModuleProgress } from "../../helpers/calculate-module-progress";
 import User from "../../utils/interfaces/db/user";
 
 export default async function getModulesCompletionByStudent(
@@ -9,7 +9,6 @@ export default async function getModulesCompletionByStudent(
 
   if (!student || !student.group) return null;
 
-  // 2. On récupère les modules liés aux parcours des groupes de l'étudiant
   const modulesMetadata = await prisma.moduleMetadata.findMany({
     where: {
       parcours: {
