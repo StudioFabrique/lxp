@@ -22,7 +22,7 @@ export default function FeedbacksHome() {
       {
         path: "/user/last-feedbacks/true",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -33,11 +33,11 @@ export default function FeedbacksHome() {
   return (
     <div>
       <h1 className="text-2xl font-bold">Feedbacks des apprenants</h1>
-      <section>
+      <section className="w-full overflow-auto">
         {feedbacks.length > 0 ? (
           <FeedbacksList feedbacks={feedbacks} />
         ) : (
-          <div className="w-fit mt-2">
+          <div className="w-full mt-2">
             <Wrapper>
               <p>
                 Vous n'avez reçu aucun feedback de la part de vos apprenants.

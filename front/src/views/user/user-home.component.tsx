@@ -80,7 +80,7 @@ const UserHome = () => {
               userSearchOptions={userSearchOptions}
               onSendManyInvitations={handleManyInvitations}
             >
-              <div className="w-full">
+              <div className="w-full overflow-y-auto">
                 <UserList
                   isLoading={isLoading}
                   allChecked={allChecked}
