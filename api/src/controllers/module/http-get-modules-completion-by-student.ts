@@ -9,7 +9,7 @@ async function httpGetModulesCompletionByStudent(req: Request, res: Response) {
     const response = await getModulesCompletionByStudent(studentId);
     return res.status(200).json({
       data: response,
-      message: `La progression des modules de l'étudiant ${studentId} a bien été récupéré`,
+      message: `La progression des modules de l'étudiant ${studentId} a bien été récupérée.`,
     });
   } catch (error: any) {
     return res
