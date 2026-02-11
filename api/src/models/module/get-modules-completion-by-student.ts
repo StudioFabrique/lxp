@@ -1,6 +1,7 @@
 import { prisma } from "../../utils/db";
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress";
 import User from "../../utils/interfaces/db/user";
+import Group, { IGroup } from "../../utils/interfaces/db/group";
 
 export default async function getModulesCompletionByStudent(
   studentMdbId: string,
@@ -9,13 +10,19 @@ export default async function getModulesCompletionByStudent(
 
   if (!student || !student.group) return null;
 
+  const groupIds = student.group.map(
+    (g: IGroup) => g._id?.toString() || g.toString(),
+  );
+
+  console.log({ groupIds });
+
   const modulesMetadata = await prisma.moduleMetadata.findMany({
     where: {
       parcours: {
         groups: {
           some: {
             group: {
-              idMdb: { in: student.group.id },
+              idMdb: { in: groupIds },
             },
           },
         },
@@ -36,7 +43,7 @@ export default async function getModulesCompletionByStudent(
             select: {
               lessonsRead: {
                 where: {
-                  student: { idMdb: student.id },
+                  student: { idMdb: studentMdbId },
                 },
                 select: {
                   finishedAt: true,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Error404 from "../../components/error404";
@@ -21,6 +21,7 @@ import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
 import Header from "../../components/UI/header";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
+import useHttp from "../../hooks/use-http";
 
 const ParcoursView = () => {
   const {
@@ -35,7 +36,7 @@ const ParcoursView = () => {
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  // const { sendRequest } = useHttp();
+  const { sendRequest } = useHttp();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const handleClickResume = () => {
@@ -52,19 +53,19 @@ const ParcoursView = () => {
     navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
   };
 
-  // useEffect(() => {
-  //   const applyData = (data: any) => {
-  //     console.log({ data });
-  //   };
+  useEffect(() => {
+    const applyData = (data: any) => {
+      console.log({ data });
+    };
 
-  //   sendRequest(
-  //     {
-  //       path: "/modules/progression/698c7273c7f6e03d53e78a50",
-  //       method: "get",
-  //     },
-  //     applyData,
-  //   );
-  // }, [sendRequest]);
+    sendRequest(
+      {
+        path: "/modules/progression/698c7273c7f6e03d53e78a50",
+        method: "get",
+      },
+      applyData,
+    );
+  }, [sendRequest]);
 
   return (
     <div className="w-full flex flex-col gap-6">
