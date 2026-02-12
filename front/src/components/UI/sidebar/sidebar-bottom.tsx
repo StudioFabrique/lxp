@@ -51,13 +51,17 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </Link>
       </li>
 
-      <li>
+      <li
+        className="cursor-pointer text-sm flex gap-2 p-2 rounded-lg hover:bg-primary/50"
+        data-tip="Déconnexion"
+      >
         <Link
           to="/admin/dashboard-ia"
-          className="flex gap-x-2 items-center pl-2"
+          className="flex gap-x-2 items-center tooltip tooltip-right"
+          data-tip="Dashboard IA"
         >
           <Toilet className="w-4 h-4" />
-          <h2>Consommation IA</h2>
+          <h2 className="xl:block hidden">Consommation IA</h2>
         </Link>
       </li>
 
