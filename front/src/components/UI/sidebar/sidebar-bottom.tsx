@@ -1,4 +1,4 @@
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, Toilet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
@@ -48,6 +48,16 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             />
           )}
           <span className="xl:block hidden">{`${user?.firstname} ${user?.lastname}`}</span>
+        </Link>
+      </li>
+
+      <li>
+        <Link
+          to="/admin/dashboard-ia"
+          className="flex gap-x-2 items-center pl-2"
+        >
+          <Toilet className="w-4 h-4" />
+          <h2>Consommation IA</h2>
         </Link>
       </li>
 
