@@ -33,7 +33,7 @@ export default function FeedbacksHome() {
   return (
     <div>
       <h1 className="text-2xl font-bold">Feedbacks des apprenants</h1>
-      <section className="w-full overflow-auto">
+      <section className="w-full">
         {feedbacks.length > 0 ? (
           <FeedbacksList feedbacks={feedbacks} />
         ) : (
