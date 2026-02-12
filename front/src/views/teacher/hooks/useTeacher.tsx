@@ -37,7 +37,6 @@ const useTeacher = (studentId: string) => {
     }) => {
       setStudent(data.user);
       setParcours(data.parcours ?? null);
-      setParcoursCompletion(data.parcoursCompletion ?? 0);
       setTotalTokens(data.totalTokens ?? 0);
     };
     sendRequest(
@@ -62,9 +61,16 @@ const useTeacher = (studentId: string) => {
   }, [student]);
 
   const getCompletion = useCallback(() => {
-    const applyData = (data: { message: string; data: ProgressionData[] }) => {
+    const applyData = (data: {
+      message: string;
+      data: {
+        result: ProgressionData[];
+        parcoursCompletion: number;
+      };
+    }) => {
       console.log({ data });
-      setCompletionModules(data.data ? data.data : []);
+      setCompletionModules(data.data ? data.data.result : []);
+      setParcoursCompletion(data.data ? data.data.parcoursCompletion : 0);
     };
     sendRequest(
       {
