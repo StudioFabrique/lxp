@@ -64,6 +64,15 @@ export default function UserConnection({
                 <h2 className="font-bold text-xl">
                   Progression de l'apprentissage
                 </h2>
+                <span>
+                  <div
+                    className={"radial-progress text-primary md:mt-0 mt-2"}
+                    style={style}
+                    role="progressbar"
+                  >
+                    <p style={{ fontSize: "10px" }}>{parcoursCompletion} %</p>
+                  </div>
+                </span>
               </div>
               <div className="flex flex-col gap-y-2">
                 <div className="flex flex-col gap-y-1 mt-4">
@@ -75,23 +84,6 @@ export default function UserConnection({
                           parcoursCompletion={parcoursCompletion}
                         />
                         <div className="flex gap-x-4 items-center justify-between"></div>{" "}
-                      </div>
-                      <div className="divider" />
-                      <div className="flex justify-between items-center pr-3">
-                        <h2 className="font-bold">Progression du parcours :</h2>
-                        <span>
-                          <div
-                            className={
-                              "radial-progress text-primary md:mt-0 mt-2"
-                            }
-                            style={style}
-                            role="progressbar"
-                          >
-                            <p style={{ fontSize: "10px" }}>
-                              {parcoursCompletion} %
-                            </p>
-                          </div>
-                        </span>
                       </div>
                     </>
                   ) : (
