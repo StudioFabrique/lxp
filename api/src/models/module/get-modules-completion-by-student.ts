@@ -69,5 +69,13 @@ export default async function getModulesCompletionByStudent(
     };
   });
 
-  return result;
+  const completedModulesSum = result.filter((m) => {
+    console.log(m.stats.progress);
+
+    return m.stats.progress === 100;
+  }).length;
+  const parcoursCompletion =
+    result.length > 0 ? (completedModulesSum / result.length) * 100 : 0;
+
+  return { result, parcoursCompletion };
 }
