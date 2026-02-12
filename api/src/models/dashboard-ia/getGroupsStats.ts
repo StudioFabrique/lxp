@@ -1,5 +1,3 @@
-import { log } from "console";
-import { prisma } from "../../utils/db";
 import Group from "../../utils/interfaces/db/group";
 import PromptStats from "../../utils/interfaces/db/prompt-stats";
 import GroupStats from "../../utils/interfaces/db/groups-stats";
