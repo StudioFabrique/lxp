@@ -42,7 +42,9 @@ export default async function postDialogs(
     },
   });
 
-  const tmp = await newDialog.save();
+  await newDialog.save();
+
+  const user = await User.findById(userId).select("group");
 
   const promptStats = await PromptStats.findOne({
     userId,
@@ -61,6 +63,7 @@ export default async function postDialogs(
       userId,
       date: new Date().toISOString().slice(0, 10),
       tokensUsed: rng,
+      groupId: user?.group._id.toString() || null,
     });
     const savedPromptStats = await newPromptStats.save();
 

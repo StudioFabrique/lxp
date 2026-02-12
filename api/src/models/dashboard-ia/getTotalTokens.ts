@@ -3,6 +3,7 @@
  * This module queries the PromptStats collection to calculate total token consumption.
  */
 
+import Group from "../../utils/interfaces/db/group";
 import PromptStats from "../../utils/interfaces/db/prompt-stats";
 
 /**
