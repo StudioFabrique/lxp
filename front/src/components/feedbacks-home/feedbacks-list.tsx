@@ -29,7 +29,7 @@ export default function FeedbacksList({ feedbacks }: FeedbacksListProps) {
 
   const content = useMemo(() => {
     return (
-      <table className="table w-full xl:w-3/6 border-separate border-spacing-y-2">
+      <table className="table w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
             <th>
