@@ -29,6 +29,14 @@ export default async function putGroup(
     const updatedGroup = await Group.findOneAndUpdate(
       { _id: id },
       { $set: updateData },
+      { new: true },
+    );
+
+    await User.updateMany({ group: id }, { $pull: { group: id } });
+
+    await User.updateMany(
+      { _id: { $in: usersId } },
+      { $addToSet: { group: id } },
     );
 
     const existingPrismaGroup = await prisma.group.findFirst({
