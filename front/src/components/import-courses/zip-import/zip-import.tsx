@@ -30,6 +30,11 @@ type Props = {
     activityId: number,
     newTitle: string,
   ) => void;
+  onRemoveActivity: (
+    courseId: number,
+    lessonId: number,
+    activityId: number,
+  ) => void;
 };
 
 const ZipImport = ({
@@ -43,6 +48,7 @@ const ZipImport = ({
   onUpdateCourseTitle,
   onUpdateLessonTitle,
   onUpdateActivityTitle,
+  onRemoveActivity,
 }: Props) => {
   const [selectedCourse, setSelectedCourse] = useState<CourseImport | null>(
     null,
@@ -209,6 +215,7 @@ const ZipImport = ({
                   onToggleLessonSelection={onToggleLessonSelection}
                   onUpdateLessonTitle={onUpdateLessonTitle}
                   onUpdateActivityTitle={onUpdateActivityTitle}
+                  onRemoveActivity={onRemoveActivity}
                 />
               </div>
 

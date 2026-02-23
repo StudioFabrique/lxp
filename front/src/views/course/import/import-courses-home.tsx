@@ -26,6 +26,7 @@ const ImportCoursesHome = () => {
     setSelectedModule,
     fetchModules,
     onImportZip,
+    onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,
     onUpdateCourseTitle,
@@ -51,6 +52,7 @@ const ImportCoursesHome = () => {
             onUpdateCourseTitle={onUpdateCourseTitle}
             onUpdateLessonTitle={onUpdateLessonTitle}
             onUpdateActivityTitle={onUpdateActivityTitle}
+            onRemoveActivity={onRemoveActivity}
           />
         );
       case CoursesImportStep.ParcoursSelection:
