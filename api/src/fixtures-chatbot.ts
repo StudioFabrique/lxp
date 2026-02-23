@@ -4,6 +4,7 @@ import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
 import PromptStats from "./utils/interfaces/db/prompt-stats";
 import Group from "./utils/interfaces/db/group";
+import { prisma } from "./utils/db";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
@@ -123,6 +124,13 @@ async function seedChatbotPrompts() {
       { $set: { promptCount: p.prompts || 0 } },
     );
   }
+
+  const groups = await Group.find({}, { _id: 1 });
+  const ids = groups.map((g) => g._id.toString());
+  await prisma.group.createMany({
+    data: ids.map((id) => ({ idMdb: id })),
+    skipDuplicates: true,
+  });
 
   console.log(`\nTotal: ${groupsConfig.length} groupes créés`);
 }

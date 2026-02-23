@@ -1,6 +1,8 @@
+import { useCallback, useEffect, useState } from "react";
 import Header from "../../components/UI/header";
 import SubWrapper from "../../components/UI/sub-wrapper/sub-wrapper.component";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import useHttp from "../../hooks/use-http";
 import useDashboardIA, { GroupsStats } from "./hooks/useDashboardIA";
 
 export default function DashboardIAHome() {
@@ -21,7 +23,7 @@ export default function DashboardIAHome() {
         </div>
       </section>
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-        <article className="flex flex-col gap-y-2">
+        <article className="flex flex-col gap-y-2 h-fit">
           <h2 className="font-semibold pl-1">
             Utilisation des tokens par promotions
           </h2>
@@ -32,7 +34,14 @@ export default function DashboardIAHome() {
             />
           </Wrapper>
         </article>
-        <article className="bg-error">tata</article>
+        <article className="flex flex-col gap-y-2">
+          <h2 className="font-semibold pl-1">
+            Top consommateurs de tokens (5 premiers)
+          </h2>
+          <Wrapper>
+            <TopFiveUsersComponent />
+          </Wrapper>
+        </article>
       </section>
     </main>
   );
@@ -50,26 +59,80 @@ export function GroupsStatsComponent(props: Props) {
     <ul className="flex flex-col gap-y-2">
       {props.stats.map((stat) => (
         <li key={stat._id}>
-          <SubWrapper>
-            <span className="w-full flex gap-x-4 items-center text-xs">
-              <h3 className="w-32">{stat.groupName}</h3>
-              <progress
-                className="progress progress-primary flex-1"
-                value={stat.totalTokens}
-                max={props.groupsTotalTokens}
-              ></progress>
-              <p className="flex">{stat.totalTokens}</p>
-              <p>
-                (
-                {((stat.totalTokens / props.groupsTotalTokens) * 100).toFixed(
-                  2,
-                )}
-                %)
-              </p>
-            </span>
-          </SubWrapper>
+          <ProgressWrapper
+            name={stat.groupName || "Inconnu"}
+            value={stat.totalTokens}
+            max={props.groupsTotalTokens}
+          />
         </li>
       ))}
     </ul>
+  );
+}
+
+type TopUser = {
+  _id: string;
+  name: string;
+  totalTokens: number;
+  //groupName: string | null;
+};
+
+export function TopFiveUsersComponent() {
+  const { sendRequest } = useHttp();
+  const [topUsers, setTopUsers] = useState<TopUser[]>([]);
+
+  const getTopUsers = useCallback(() => {
+    const applyData = (data: TopUser[]) => {
+      setTopUsers(data);
+    };
+
+    sendRequest({ path: "/dashboard-ia/top-five-users" }, applyData);
+  }, [sendRequest]);
+
+  useEffect(() => {
+    getTopUsers();
+  }, [getTopUsers]);
+
+  return (
+    <>
+      {topUsers.length === 0 ? (
+        <p className="text-center text-sm text-gray-500">
+          Aucune donnée disponible
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-y-2">
+          {topUsers.map((user: TopUser) => (
+            <li key={user._id}>
+              <SubWrapper>
+                <span className="w-full flex gap-x-4 items-center text-xs">
+                  <h3 className="w-32">{user.name}</h3>
+
+                  <p>{user.totalTokens}</p>
+                </span>
+              </SubWrapper>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+export function ProgressWrapper(props: {
+  name: string;
+  value: number;
+  max: number;
+}) {
+  return (
+    <SubWrapper>
+      <span className="w-full flex gap-x-4 items-center text-xs">
+        <h3 className="w-32">{props.name}</h3>
+        <p className="flex">{props.value}</p>
+        <p>
+          ({((props.value / props.max) * 100).toFixed(2)}
+          %)
+        </p>
+      </span>
+    </SubWrapper>
   );
 }
