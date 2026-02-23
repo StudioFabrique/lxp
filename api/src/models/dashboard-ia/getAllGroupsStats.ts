@@ -42,5 +42,5 @@ export default async function getAllGroupsStats() {
       },
     },
   ]);
-  return groupsStats;
+  return groupsStats.filter((g) => g._id !== null);
 }
