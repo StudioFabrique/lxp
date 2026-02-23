@@ -28,6 +28,12 @@ export default function DashboardIAHome() {
             Utilisation des tokens par promotions
           </h2>
           <Wrapper>
+            <div className="grid grid-cols-5 text-left">
+              <p className="text-xs font-semibold col-span-2">Promotion</p>
+
+              <p className="text-xs font-semibold col-span-2">Quantité</p>
+              <p className="text-xs font-semibold ml-0">%</p>
+            </div>
             <GroupsStatsComponent
               stats={groupsStats || []}
               groupsTotalTokens={groupsTotalTokens}
@@ -39,6 +45,10 @@ export default function DashboardIAHome() {
             Top consommateurs de tokens (5 premiers)
           </h2>
           <Wrapper>
+            <div className="grid grid-cols-2 text-xs font-semibold">
+              <p>Apprenant</p>
+              <p>Quantité</p>
+            </div>
             <TopFiveUsersComponent />
           </Wrapper>
         </article>
@@ -59,11 +69,26 @@ export function GroupsStatsComponent(props: Props) {
     <ul className="flex flex-col gap-y-2">
       {props.stats.map((stat) => (
         <li key={stat._id}>
-          <ProgressWrapper
-            name={stat.groupName || "Inconnu"}
-            value={stat.totalTokens}
-            max={props.groupsTotalTokens}
-          />
+          <SubWrapper>
+            <span className="w-ful grid grid-cols-5 text-xs gap-2">
+              <h3 className="w-32 col-span-2">{stat.groupName}</h3>
+              <div className="flex items-center gap-x-4 col-span-2">
+                <progress
+                  className="progress progress-primary flex-1"
+                  value={stat.totalTokens}
+                  max={props.groupsTotalTokens}
+                ></progress>
+                <p className="flex">{stat.totalTokens}</p>
+              </div>
+              <p className="text-left">
+                (
+                {((stat.totalTokens / props.groupsTotalTokens) * 100).toFixed(
+                  2,
+                )}
+                %)
+              </p>
+            </span>
+          </SubWrapper>
         </li>
       ))}
     </ul>
@@ -104,7 +129,7 @@ export function TopFiveUsersComponent() {
           {topUsers.map((user: TopUser) => (
             <li key={user._id}>
               <SubWrapper>
-                <span className="w-full flex gap-x-4 items-center text-xs">
+                <span className="w-full grid grid-cols-2 text-xs">
                   <h3 className="w-32">{user.name}</h3>
 
                   <p>{user.totalTokens}</p>
@@ -115,24 +140,5 @@ export function TopFiveUsersComponent() {
         </ul>
       )}
     </>
-  );
-}
-
-export function ProgressWrapper(props: {
-  name: string;
-  value: number;
-  max: number;
-}) {
-  return (
-    <SubWrapper>
-      <span className="w-full flex gap-x-4 items-center text-xs">
-        <h3 className="w-32">{props.name}</h3>
-        <p className="flex">{props.value}</p>
-        <p>
-          ({((props.value / props.max) * 100).toFixed(2)}
-          %)
-        </p>
-      </span>
-    </SubWrapper>
   );
 }
