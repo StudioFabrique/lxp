@@ -63,7 +63,7 @@ export default async function postDialogs(
       userId,
       date: new Date().toISOString().slice(0, 10),
       tokensUsed: rng,
-      groupId: user?.group._id.toString() || null,
+      groupId: user?.group._id?.toString() || null,
     });
     const savedPromptStats = await newPromptStats.save();
 
