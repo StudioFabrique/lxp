@@ -5,6 +5,7 @@ import {
   AlertCircle,
   PenLine,
   Check,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import activityIconType from "../../../utils/activity-icon-type";
@@ -32,6 +33,11 @@ type Props = {
     activityId: number,
     newTitle: string,
   ) => void;
+  onRemoveActivity: (
+    courseId: number,
+    lessonId: number,
+    activityId: number,
+  ) => void;
 };
 
 const CourseArborescence = ({
@@ -41,6 +47,7 @@ const CourseArborescence = ({
   onToggleLessonSelection,
   onUpdateLessonTitle,
   onUpdateActivityTitle,
+  onRemoveActivity,
 }: Props) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tempTitle, setTempTitle] = useState("");
@@ -250,6 +257,21 @@ const CourseArborescence = ({
                               className="opacity-0 group-hover/act:opacity-100 p-1 hover:bg-base-300 rounded cursor-pointer"
                             >
                               <PenLine className="w-3 h-3 text-base-content/60" />
+                            </div>
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (lesson.id) {
+                                  onRemoveActivity(
+                                    activeCourse.id,
+                                    lesson.id,
+                                    activity.id,
+                                  );
+                                }
+                              }}
+                              className="opacity-0 group-hover/act:opacity-100 p-1 hover:bg-error/20 rounded cursor-pointer"
+                            >
+                              <Trash2 className="w-3 h-3 text-error/70" />
                             </div>
                           </button>
                         )}

@@ -486,6 +486,28 @@ export default function useImportCourses() {
     );
   };
 
+  const onRemoveActivity = (cId: number, lId: number, aId: number) => {
+    setImportedCourses(
+      (prev) =>
+        prev?.map((c) =>
+          c.id === cId
+            ? {
+                ...c,
+                lessons: c.lessons.map((l) =>
+                  l.id === lId
+                    ? {
+                        ...l,
+                        activities:
+                          l.activities?.filter((a) => a.id !== aId) || [],
+                      }
+                    : l,
+                ),
+              }
+            : c,
+        ) as CourseImport[],
+    );
+  };
+
   const onToggleLessonSelection = (courseId: number, lessonId: number) => {
     setImportedCourses(
       (prev) =>
@@ -639,6 +661,7 @@ export default function useImportCourses() {
     setSelectedModule,
     fetchModules,
     onImportZip,
+    onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,
     onUpdateCourseTitle,
