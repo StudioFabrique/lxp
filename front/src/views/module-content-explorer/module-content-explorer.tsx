@@ -11,7 +11,7 @@ import CreateCourseItem from "../../components/module-content-explorer/sidebar/c
 import ActivityList from "../../components/module-content-explorer/sidebar/activity-list";
 import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
-import { PenBox } from "lucide-react";
+import { BadgeQuestionMark, PenBox } from "lucide-react";
 import { useCallback, useContext } from "react";
 import ActivityBottomNavigation from "../../components/module-content-explorer/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
@@ -20,6 +20,8 @@ import LessonReaderAndEditor from "../../components/module-content-explorer/prev
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
+import useActivityQuizz from "../../hooks/use-activity-quiz";
+import QuizModal from "../../components/quizzes/quiz-modal";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -61,31 +63,44 @@ const ModuleExplorerContent = () => {
     onSelectActivityType,
   } = useModuleExplorerContent();
 
+  const {
+    isOpen: isQuizOpen,
+    quizzes,
+    currentQuiz,
+    currentIndex: currentQuizIndex,
+    isAnswered: isQuizAnswered,
+    isCorrect: isQuizCorrect,
+    onLoadQuizzes,
+    onCloseQuizzes,
+    onAnswerQuiz,
+    onNextQuiz,
+  } = useActivityQuizz(selectedLesson?.id);
+
   const canEditModule = userBelongsToContacts(user, module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
     user,
-    selectedLesson?.course?.contacts
+    selectedLesson?.course?.contacts,
   );
 
   const editTitle = useCallback(
     (title: string) => {
       dispatch({ type: "update_activity_title", title });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editIframeSrc = useCallback(
     (src: string) => {
       dispatch({ type: "update_activity_iframe_src", src });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editContent = useCallback(
     (content: string) => {
       dispatch({ type: "update_activity_content", content });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleSelectLesson = (lesson: Lesson) => {
@@ -101,6 +116,18 @@ const ModuleExplorerContent = () => {
 
   return (
     <div className="w-full flex flex-col gap-6">
+      <QuizModal
+        isOpen={isQuizOpen}
+        quiz={currentQuiz}
+        currentIndex={currentQuizIndex}
+        totalQuizzes={quizzes?.length || 0}
+        isAnswered={isQuizAnswered}
+        isCorrect={isQuizCorrect}
+        onClose={onCloseQuizzes}
+        onAnswer={onAnswerQuiz}
+        onNext={onNextQuiz}
+      />
+
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && selectedLesson && (
         <LessonCompletionModal
@@ -275,27 +302,40 @@ const ModuleExplorerContent = () => {
                   }
                   onSaveActivity={onSaveActivity}
                 >
-                  {state.mode === "read" && (
-                    <ActivityBottomNavigation
-                      modalVisibility={modalVisibility}
-                      isLessonCompleted={isLessonCompleted}
-                      isFirstActivitySelected={isFirstActivitySelected}
-                      isLastActivitySelected={isLastActivitySelected}
-                      isLastLessonSelected={isLastLessonSelected}
-                      onPrevious={() =>
-                        dispatch({ type: "go_to_previous_activity" })
-                      }
-                      onNext={() => dispatch({ type: "go_to_next_activity" })}
-                      onCompleteLesson={() =>
-                        isLessonCompleted
-                          ? onNextLesson()
-                          : dispatch({
-                              type: "set_modal_visibility",
-                              modalVisibility: "lessonCompletionModal",
-                            })
-                      }
-                    />
-                  )}
+                  <div className="flex flex-col items-end gap-4">
+                    {/* Bouton pour commencer le quizz */}
+                    {isLastActivitySelected && (
+                      <button
+                        className="btn btn-secondary btn-outline"
+                        onClick={onLoadQuizzes}
+                      >
+                        <BadgeQuestionMark />
+                        Je veux me tester
+                      </button>
+                    )}
+
+                    {state.mode === "read" && (
+                      <ActivityBottomNavigation
+                        modalVisibility={modalVisibility}
+                        isLessonCompleted={isLessonCompleted}
+                        isFirstActivitySelected={isFirstActivitySelected}
+                        isLastActivitySelected={isLastActivitySelected}
+                        isLastLessonSelected={isLastLessonSelected}
+                        onPrevious={() =>
+                          dispatch({ type: "go_to_previous_activity" })
+                        }
+                        onNext={() => dispatch({ type: "go_to_next_activity" })}
+                        onCompleteLesson={() =>
+                          isLessonCompleted
+                            ? onNextLesson()
+                            : dispatch({
+                                type: "set_modal_visibility",
+                                modalVisibility: "lessonCompletionModal",
+                              })
+                        }
+                      />
+                    )}
+                  </div>
                 </LessonReaderAndEditor>
               )
             ) : (
