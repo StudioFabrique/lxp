@@ -32,8 +32,8 @@ const ActivityBottomNavigation = ({
     )}
     {isLastActivitySelected ? (
       (!isLastLessonSelected || !isLessonCompleted) && (
-        // Bouton pour terminer la leçon afin d'afficher une modal
         <Can action="component" object="progression">
+          {/* Bouton pour terminer la leçon afin d'afficher une modal*/}
           <FeedbacksButton
             className="btn btn-success text-nowrap text-success-content"
             feedbackType="thumbUp"
