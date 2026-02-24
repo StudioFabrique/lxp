@@ -1,0 +1,38 @@
+import SubWrapper from "../../../components/UI/sub-wrapper/sub-wrapper.component";
+import { GroupsStats } from "../hooks/useDashboardIA";
+
+type Props = {
+  stats: GroupsStats[];
+  groupsTotalTokens: number;
+};
+
+export function GroupsStatsComponent(props: Props) {
+  return (
+    <ul className="flex flex-col gap-y-2">
+      {props.stats.map((stat) => (
+        <li key={stat._id}>
+          <SubWrapper>
+            <span className="w-ful grid grid-cols-5 text-xs gap-2">
+              <h3 className="w-32 col-span-2">{stat.groupName}</h3>
+              <div className="flex items-center gap-x-4 col-span-2">
+                <progress
+                  className="progress progress-primary flex-1"
+                  value={stat.totalTokens}
+                  max={props.groupsTotalTokens}
+                ></progress>
+                <p className="flex">{stat.totalTokens}</p>
+              </div>
+              <p className="text-left">
+                (
+                {((stat.totalTokens / props.groupsTotalTokens) * 100).toFixed(
+                  2,
+                )}
+                %)
+              </p>
+            </span>
+          </SubWrapper>
+        </li>
+      ))}
+    </ul>
+  );
+}
