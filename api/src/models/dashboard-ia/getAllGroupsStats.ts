@@ -42,5 +42,16 @@ export default async function getAllGroupsStats() {
       },
     },
   ]);
-  return groupsStats.filter((g) => g._id !== null);
+  return groupsStats.map((g) => {
+    if (g._id !== null) {
+      return g;
+    } else {
+      return {
+        _id: "admin",
+        totalTokens: g.totalTokens,
+
+        groupName: "Admins & Formateurs",
+      };
+    }
+  });
 }

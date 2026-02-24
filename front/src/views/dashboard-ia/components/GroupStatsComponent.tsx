@@ -16,7 +16,7 @@ export function GroupsStatsComponent(props: Props) {
               <h3 className="w-32 col-span-2">{stat.groupName}</h3>
               <div className="flex items-center gap-x-4 col-span-2">
                 <progress
-                  className="progress progress-primary flex-1"
+                  className="progress progress-primary w-36"
                   value={stat.totalTokens}
                   max={props.groupsTotalTokens}
                 ></progress>
