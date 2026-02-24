@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
 import Header from "../../components/UI/header";
-import SubWrapper from "../../components/UI/sub-wrapper/sub-wrapper.component";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import useHttp from "../../hooks/use-http";
-import useDashboardIA, { GroupsStats } from "./hooks/useDashboardIA";
+import useDashboardIA from "./hooks/useDashboardIA";
+import TopFiveUsers from "./components/TopFiveUsers";
+import { GroupsStatsComponent } from "./components/GroupStatsComponent";
 
 export default function DashboardIAHome() {
   const { totalTokens, groupsStats, groupsTotalTokens } = useDashboardIA();
@@ -49,96 +48,10 @@ export default function DashboardIAHome() {
               <p>Apprenant</p>
               <p>Quantité</p>
             </div>
-            <TopFiveUsersComponent />
+            <TopFiveUsers />
           </Wrapper>
         </article>
       </section>
     </main>
-  );
-}
-
-type Props = {
-  stats: GroupsStats[];
-  groupsTotalTokens: number;
-};
-
-export function GroupsStatsComponent(props: Props) {
-  console.log(props.groupsTotalTokens);
-
-  return (
-    <ul className="flex flex-col gap-y-2">
-      {props.stats.map((stat) => (
-        <li key={stat._id}>
-          <SubWrapper>
-            <span className="w-ful grid grid-cols-5 text-xs gap-2">
-              <h3 className="w-32 col-span-2">{stat.groupName}</h3>
-              <div className="flex items-center gap-x-4 col-span-2">
-                <progress
-                  className="progress progress-primary flex-1"
-                  value={stat.totalTokens}
-                  max={props.groupsTotalTokens}
-                ></progress>
-                <p className="flex">{stat.totalTokens}</p>
-              </div>
-              <p className="text-left">
-                (
-                {((stat.totalTokens / props.groupsTotalTokens) * 100).toFixed(
-                  2,
-                )}
-                %)
-              </p>
-            </span>
-          </SubWrapper>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-type TopUser = {
-  _id: string;
-  name: string;
-  totalTokens: number;
-  //groupName: string | null;
-};
-
-export function TopFiveUsersComponent() {
-  const { sendRequest } = useHttp();
-  const [topUsers, setTopUsers] = useState<TopUser[]>([]);
-
-  const getTopUsers = useCallback(() => {
-    const applyData = (data: TopUser[]) => {
-      setTopUsers(data);
-    };
-
-    sendRequest({ path: "/dashboard-ia/top-five-users" }, applyData);
-  }, [sendRequest]);
-
-  useEffect(() => {
-    getTopUsers();
-  }, [getTopUsers]);
-
-  return (
-    <>
-      {topUsers.length === 0 ? (
-        <p className="text-center text-sm text-gray-500">
-          Aucune donnée disponible
-        </p>
-      ) : (
-        <ul className="flex flex-col gap-y-2">
-          {topUsers.map((user: TopUser) => (
-            <li key={user._id}>
-              <SubWrapper>
-                <span className="w-full grid grid-cols-2 text-xs">
-                  <h3 className="w-32">{user.name}</h3>
-
-                  <p>{user.totalTokens}</p>
-                </span>
-              </SubWrapper>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
   );
 }
