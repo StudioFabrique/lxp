@@ -16,6 +16,7 @@ export type TopUser = {
   totalTokens: number;
   groupName: string | null;
   lastActivity: string;
+  role: string;
 };
 
 const useDashboardIA = () => {
@@ -68,7 +69,7 @@ const useDashboardIA = () => {
   useEffect(() => {
     if (refFirstRender.current && dataList && dataList.length > 0) {
       refFirstRender.current = false;
-      setTop5Users(dataList.slice(0, 5));
+      setTop5Users(dataList.filter((u) => u.role === "student").slice(0, 5));
 
       return;
     } else return;
