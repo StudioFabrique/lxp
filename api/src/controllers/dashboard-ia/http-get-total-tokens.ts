@@ -41,7 +41,10 @@ export default async function httpGetTotalTokens(
     // Pass successful response to the response handler middleware
     next({
       statusCode: 200,
-      data: { response },
+      data: {
+        totalTokens: response.totalTokens,
+        totalCurrentMonthTokens: response.totalCurrentMonthTokens,
+      },
     });
   } catch (error: any) {
     // Forward error to error handling middleware with appropriate status code

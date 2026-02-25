@@ -8,6 +8,6 @@ const router = Router();
 
 router.get("/total-tokens", checkToken, httpGetTotalTokens);
 router.get("/groups-all-stats", checkToken, httpGetAllGroupsStats);
-router.get("/top-five-users", checkToken, httpGetTopFiveUsers);
+router.get("/top-users/:sortBy/:direction", checkToken, httpGetTopFiveUsers);
 
 export default router;

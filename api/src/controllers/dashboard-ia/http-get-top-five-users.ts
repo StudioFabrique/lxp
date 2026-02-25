@@ -3,12 +3,19 @@ import getTopFiveUsers from "../../models/dashboard-ia/getTopFiveUsers";
 import { serverIssue } from "../../utils/constantes";
 
 export default async function httpGetTopFiveUsers(
-  _req: Request,
+  req: Request,
   _res: Response,
   next: NextFunction,
 ) {
   try {
-    const response = await getTopFiveUsers();
+    const { page, limit } = req.query;
+    const { sortBy, direction } = req.params;
+    const response = await getTopFiveUsers(
+      parseInt((limit as string) || "10"),
+      parseInt((page as string) || "1"),
+      sortBy,
+      direction,
+    );
     next({
       statusCode: 200,
       data: response,
