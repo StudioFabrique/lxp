@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import SubWrapper from "../../../components/UI/sub-wrapper/sub-wrapper.component";
 import { TopUser } from "../hooks/useDashboardIA";
 
@@ -18,7 +19,12 @@ export default function TopFiveUsers(props: Props) {
             <li key={user._id}>
               <SubWrapper>
                 <span className="w-full grid grid-cols-2 text-xs">
-                  <h3 className="w-32">{user.name}</h3>
+                  <Link
+                    to={`/admin/teacher/student/${user._id}`}
+                    className="w-32"
+                  >
+                    {user.name}
+                  </Link>
 
                   <p>{user.totalTokens}</p>
                 </span>
