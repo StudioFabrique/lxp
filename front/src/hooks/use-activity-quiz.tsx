@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { ActivityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import { Quiz } from "../utils/interfaces/quiz";
+import useHttp from "./use-http";
 
 export default function useActivityQuizz(selectedLessonId?: number) {
+  const { sendRequest, isLoading } = useHttp();
+
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -11,13 +14,16 @@ export default function useActivityQuizz(selectedLessonId?: number) {
   const [score, setScore] = useState(0);
 
   const onLoadQuizzes = () => {
-    // Ici plus tard, un fetch API basé sur selectedLessonId
-    setQuizzes(ActivityEndingQuizzesFixtures);
-    setCurrentIndex(0);
-    setScore(0);
-    setIsOpen(true);
-    setIsAnswered(false);
-    setIsCorrect(false);
+    const applyData = (data: {}) => {
+      setQuizzes(data);
+      setCurrentIndex(0);
+      setScore(0);
+      setIsOpen(true);
+      setIsAnswered(false);
+      setIsCorrect(false);
+    };
+
+    sendRequest({ path: "/lesson/request-quiz" }, applyData);
   };
 
   const onCloseQuizzes = () => {
@@ -48,6 +54,7 @@ export default function useActivityQuizz(selectedLessonId?: number) {
 
   return {
     isOpen,
+    isLoading,
     quizzes,
     currentQuiz,
     currentIndex,
