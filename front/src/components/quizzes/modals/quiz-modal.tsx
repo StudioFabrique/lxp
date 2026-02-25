@@ -1,8 +1,8 @@
-import { Quiz } from "../../utils/interfaces/quiz";
-import QuizMatching from "./quiz-matching";
-import QuizMcq from "./quiz-mcq";
-import QuizOrdering from "./quiz-ordering";
-import QuizTrueFalse from "./quiz-true-false";
+import { Quiz } from "../../../utils/interfaces/quiz";
+import QuizMatching from "../quiz-matching";
+import QuizMcq from "../quiz-mcq";
+import QuizOrdering from "../quiz-ordering";
+import QuizTrueFalse from "../quiz-true-false";
 
 interface QuizModalProps {
   isOpen: boolean;

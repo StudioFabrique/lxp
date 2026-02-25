@@ -25,7 +25,7 @@ const useModuleExplorerContent = () => {
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
   // ------------
   const navigate = useNavigate();
-  const { sendRequest } = useHttp(true);
+  const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const [state, dispatch] = useReducer(
@@ -508,24 +508,34 @@ const useModuleExplorerContent = () => {
   // Retourne les données et fonctions nécessaires
   return {
     state,
-    isLessonCompleted,
-    isFirstActivitySelected,
-    isLastActivitySelected,
-    isLastLessonSelected,
-    isLoading,
+    computed: {
+      isLessonCompleted,
+      isFirstActivitySelected,
+      isLastActivitySelected,
+      isLastLessonSelected,
+    },
+    isLoading: isLoading || isLoadingRequest,
     dispatch,
-    fetchModuleData,
-    onSaveActivity: saveActivity,
-    onCompleteLesson: completeLesson,
-    onRateContent: rateContent,
-    onEnableCourse: enableCourse,
-    onDeleteCourse: deleteCourse,
-    onDeleteLesson: deleteLesson,
-    onDeleteActivity: deleteActivity,
-    onActivityReorder: activityReorder,
-    onLessonReorder: lessonReorder,
-    onNextLesson: nextLesson,
-    onSelectActivityType: selectActivityType,
+    moduleActions: {
+      fetchModuleData,
+    },
+    courseActions: {
+      enableCourse,
+      deleteCourse,
+    },
+    lessonActions: {
+      completeLesson,
+      rateContent,
+      deleteLesson,
+      lessonReorder,
+      nextLesson,
+    },
+    activityActions: {
+      saveActivity,
+      deleteActivity,
+      activityReorder,
+      selectActivityType,
+    },
   };
 };
 
