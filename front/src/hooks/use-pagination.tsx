@@ -13,7 +13,7 @@ const initialState = {
 
 const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
-  const [stype, setStype] = useState(defaultSortValue ?? "desc");
+  const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
   const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
@@ -75,6 +75,9 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       });
       handleTotalPages(data.total);
       setDataList(data.list);
+      if (path !== defaultUrlPath) {
+        setPath(defaultUrlPath);
+      }
     };
 
     sendRequest(
@@ -94,6 +97,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     sdir,
     path,
     urlComplement,
+    defaultUrlPath,
   ]);
 
   const uncheckAll = () => {
@@ -152,31 +156,31 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   }, [allChecked]);
 
   return {
-    page: page,
-    perPage: perPage,
-    totalPages: totalPages,
-    sdir,
-    stype,
-    dataList,
     allChecked,
-    handlePageNumber,
-    initPagination,
-    handleTotalPages,
-    reset: initPagination,
-    sortData,
-    setStype,
+    dataList,
     getList,
-    setDataList,
-    setPath,
-    setAllChecked,
-    handleRowCheck,
-    setPerPage,
-    setPage,
-    resetList,
-    uncheckAll,
     getSelectedIds,
-    sendInvitation,
+    handlePageNumber,
+    handleRowCheck,
     handleSearch,
+    handleTotalPages,
+    initPagination,
+    page,
+    perPage,
+    reset: initPagination,
+    resetList,
+    sendInvitation,
+    setAllChecked,
+    setDataList,
+    setPage,
+    setPerPage,
+    setPath,
+    setStype,
+    sdir,
+    sortData,
+    stype,
+    totalPages,
+    uncheckAll,
   };
 };
 
