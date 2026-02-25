@@ -21,6 +21,8 @@ export default function DashboardIAHome() {
     sortData,
     sdir,
     stype,
+    setPath,
+    setSearchTerm,
   } = useDashboardIA();
 
   return (
@@ -93,6 +95,8 @@ export default function DashboardIAHome() {
             onSorting={sortData}
             sdir={sdir}
             stype={stype}
+            setPath={setPath}
+            onSearchTerm={setSearchTerm}
           />
         ) : null}
       </section>
