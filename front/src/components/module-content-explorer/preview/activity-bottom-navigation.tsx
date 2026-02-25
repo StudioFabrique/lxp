@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import FeedbacksButton from "../../UI/feedbacks/feedbacks-button";
+import { PropsWithChildren } from "react";
 
 type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
@@ -22,8 +23,11 @@ const ActivityBottomNavigation = ({
   onPrevious,
   onNext,
   onCompleteLesson,
-}: Props) => (
-  <div className="flex gap-2">
+  children,
+}: PropsWithChildren<Props>) => (
+  <div
+    className={`flex gap-2 ${!isLastActivitySelected && isFirstActivitySelected ? "justify-end" : "justify-between"} w-full`}
+  >
     {!isFirstActivitySelected && (
       <button onClick={onPrevious} className="btn btn-primary text-base-100">
         <ArrowLeft />
@@ -33,6 +37,7 @@ const ActivityBottomNavigation = ({
     {isLastActivitySelected ? (
       (!isLastLessonSelected || !isLessonCompleted) && (
         <Can action="component" object="progression">
+          {children}
           {/* Bouton pour terminer la leçon afin d'afficher une modal*/}
           <FeedbacksButton
             className="btn btn-success text-nowrap text-success-content"
