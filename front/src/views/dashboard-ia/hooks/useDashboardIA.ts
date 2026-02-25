@@ -35,7 +35,9 @@ const useDashboardIA = () => {
     setPerPage,
     sortData,
     sdir,
+    setPath,
     stype,
+    setSearchTerm,
   } = usePagination("totalTokens", "/dashboard-ia/top-users");
   const refFirstRender = useRef(true);
 
@@ -102,6 +104,8 @@ const useDashboardIA = () => {
     sortData,
     stype,
     sdir,
+    setPath,
+    setSearchTerm,
   };
 };
 export default useDashboardIA;

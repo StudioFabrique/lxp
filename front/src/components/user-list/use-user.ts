@@ -140,15 +140,12 @@ const useUser = () => {
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     // Filter selected users
     const selectedDataList = dataList.filter(
-      (user: UserSelection) => user.isSelected === true
+      (user: UserSelection) => user.isSelected === true,
     );
     const updatedDataList = Array<string>();
 
     // Check permissions for each selected user
     for (const selectedUser of selectedDataList) {
-      console.log("user role : ", selectedUser!.roles[0].rank);
-      console.log("updated role : ", updatedRoles[0].rank);
-
       if (
         user?.permissions &&
         hasPermission(user?.permissions, "update", updatedRoles[0].role) &&
@@ -186,7 +183,7 @@ const useUser = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -233,7 +230,7 @@ const useUser = () => {
       {
         path: "/user/stats",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -258,7 +255,7 @@ const useUser = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -284,7 +281,7 @@ const useUser = () => {
         path: `/user/${userToDelete}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -306,7 +303,7 @@ const useUser = () => {
         method: "put",
         body: { userId: id, value: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -325,7 +322,7 @@ const useUser = () => {
         method: "post",
         body: { userIds },
       },
-      applyData
+      applyData,
     );
   };
 

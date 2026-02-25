@@ -8,13 +8,14 @@ export default async function httpGetTopFiveUsers(
   next: NextFunction,
 ) {
   try {
-    const { page, limit } = req.query;
+    const { page, limit, searchTerm } = req.query;
     const { sortBy, direction } = req.params;
     const response = await getTopFiveUsers(
       parseInt((limit as string) || "10"),
       parseInt((page as string) || "1"),
       sortBy,
       direction,
+      searchTerm as string,
     );
     next({
       statusCode: 200,
