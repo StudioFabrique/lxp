@@ -40,7 +40,7 @@ const ModuleContentExplorer = () => {
     modalVisibility,
   } = state;
 
-  const quizState = useActivityQuizz(selectedLesson?.id);
+  const quizState = useActivityQuizz();
   const smartQuiz = useSmartQuizPrompt({
     selectedActivity,
     isLastActivitySelected: computed.isLastActivitySelected,
