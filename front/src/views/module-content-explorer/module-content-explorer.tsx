@@ -12,7 +12,7 @@ import { useContext } from "react";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import useActivityQuizz from "../../hooks/use-activity-quiz"; // Attention au nom de l'import (Quizz avec 2 'z' selon ton fichier)
+import useActivityQuizz from "../../hooks/use-activity-quiz";
 import QuizModal from "../../components/quizzes/modals/quiz-modal";
 import QuizRequestModal from "../../components/quizzes/modals/quiz-request-modal";
 import useSmartQuizPrompt from "../../hooks/use-smart-quiz-prompt";
@@ -22,7 +22,8 @@ import ModuleExplorerPreview from "../../components/module-content-explorer/prev
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
 /**
- * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
+ * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant.
+ * La modification de contenu est aussi possible pour le formateur et l'admin.
  */
 const ModuleContentExplorer = () => {
   const { user } = useContext(Context);

@@ -12,7 +12,6 @@ type ModuleContentExplorerWrapperProps = {
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
-  // --- NOUVEAU : Props Nommées (Named Slots) ---
   header: React.ReactNode;
   progressionSide: React.ReactNode;
   topProgressBar: React.ReactNode;
@@ -22,7 +21,7 @@ type ModuleContentExplorerWrapperProps = {
 
 /**
  * Ce composant sert de conteneur (wrapper) structurel pour le composant ModuleContentExplorer.
- * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props nommées.
+ * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props.
  */
 const ModuleContentExplorerWrapper = ({
   selectedLesson,
