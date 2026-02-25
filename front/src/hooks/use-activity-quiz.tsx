@@ -32,6 +32,18 @@ export default function useActivityQuizz(selectedLessonId?: number) {
     setIsCorrect(false);
   };
 
+  const onTriggerRandomQuiz = () => {
+    const randomIndex = Math.floor(
+      Math.random() * activityEndingQuizzesFixtures.length,
+    );
+    setQuizzes([activityEndingQuizzesFixtures[randomIndex]]);
+    setCurrentIndex(0);
+    setScore(0);
+    setIsOpen(true);
+    setIsAnswered(false);
+    setIsCorrect(false);
+  };
+
   const onCloseQuizzes = () => {
     setIsOpen(false);
     setQuizzes(null);
@@ -68,6 +80,7 @@ export default function useActivityQuizz(selectedLessonId?: number) {
     isCorrect,
     score,
     onLoadQuizzes,
+    onTriggerRandomQuiz,
     onCloseQuizzes,
     onAnswerQuiz,
     onNextQuiz,
