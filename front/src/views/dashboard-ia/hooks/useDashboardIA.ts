@@ -26,8 +26,17 @@ const useDashboardIA = () => {
     useState<number>(0);
   const [groupsStats, setGroupsStats] = useState<GroupsStats[] | null>(null);
   const [top5Users, setTop5Users] = useState<TopUser[] | null>(null);
-  const { dataList, perPage, totalPages, page, setPage, setPerPage } =
-    usePagination("totalTokens", "/dashboard-ia/top-users");
+  const {
+    dataList,
+    perPage,
+    totalPages,
+    page,
+    setPage,
+    setPerPage,
+    sortData,
+    sdir,
+    stype,
+  } = usePagination("totalTokens", "/dashboard-ia/top-users");
   const refFirstRender = useRef(true);
 
   const groupsTotalTokens =
@@ -90,6 +99,9 @@ const useDashboardIA = () => {
     perPage,
     totalPages,
     top5Users,
+    sortData,
+    stype,
+    sdir,
   };
 };
 export default useDashboardIA;

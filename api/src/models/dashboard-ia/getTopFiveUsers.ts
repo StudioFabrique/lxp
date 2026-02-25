@@ -1,17 +1,23 @@
-import { totalmem } from "os";
-import getStartAndEndOfMonth from "../../helpers/getStartAndEndOfMonth";
 import PromptStats from "../../utils/interfaces/db/prompt-stats";
 
 export default async function getTopFiveUsers(
   perPage = 2,
   page = 1,
-  sortBy: string,
-  direction: string,
+  sortBy = "totalTokens",
+  direction = "desc",
 ) {
   const skip = (page - 1) * perPage;
 
-  console.log("SKIP", skip);
-  console.log("per page", perPage);
+  // Mapping des champs de tri
+  const sortFieldMap: Record<string, string> = {
+    totalTokens: "totalTokens",
+    lastname: "lastname",
+    role: "role",
+    groupName: "groupName",
+  };
+
+  const sortField = sortFieldMap[sortBy] ?? "totalTokens";
+  const sortDirection = direction === "desc" ? 1 : -1;
 
   const [topUsers, total] = await Promise.all([
     PromptStats.aggregate([
@@ -27,9 +33,7 @@ export default async function getTopFiveUsers(
       },
       {
         $addFields: {
-          userObjectId: {
-            $toObjectId: "$_id.userId",
-          },
+          userObjectId: { $toObjectId: "$_id.userId" },
           groupObjectId: {
             $cond: [
               { $ifNull: ["$_id.groupId", false] },
@@ -48,13 +52,14 @@ export default async function getTopFiveUsers(
         },
       },
       { $unwind: "$userInfo" },
+      { $match: { "userInfo.isActive": true } },
+      // Récupère le premier rôle (ObjectId)
       {
         $addFields: {
           firstRoleId: { $arrayElemAt: ["$userInfo.roles", 0] },
         },
       },
-
-      // 2. Lookup sur la collection "roles"
+      // Lookup roles
       {
         $lookup: {
           from: "roles",
@@ -63,16 +68,7 @@ export default async function getTopFiveUsers(
           as: "roleInfo",
         },
       },
-
-      // 3. Extrait le champ "role" (la string)
-      {
-        $addFields: {
-          role: { $arrayElemAt: ["$roleInfo.role", 0] },
-        },
-      },
-      {
-        $match: { "userInfo.isActive": true },
-      },
+      // Lookup groups
       {
         $lookup: {
           from: "groups",
@@ -81,11 +77,16 @@ export default async function getTopFiveUsers(
           as: "groupInfo",
         },
       },
+      // Construit tous les champs finaux
       {
         $addFields: {
+          firstname: "$userInfo.firstname", // ✅ pas un tableau, pas besoin de $arrayElemAt
+          lastname: "$userInfo.lastname",
           name: {
             $concat: ["$userInfo.firstname", " ", "$userInfo.lastname"],
           },
+          role: { $arrayElemAt: ["$roleInfo.role", 0] },
+          roleRank: { $arrayElemAt: ["$roleInfo.rank", 0] },
           groupName: {
             $cond: [
               { $gt: [{ $size: "$groupInfo" }, 0] },
@@ -95,18 +96,12 @@ export default async function getTopFiveUsers(
           },
         },
       },
-      { $sort: { totalTokens: direction === "desc" ? -1 : 1 } },
+      { $sort: { [sortField]: sortDirection } },
       { $skip: skip },
       { $limit: perPage },
     ]),
-
-    // Compte le nombre total d'utilisateurs distincts pour la pagination
     PromptStats.aggregate([
-      {
-        $group: {
-          _id: "$userId",
-        },
-      },
+      { $group: { _id: "$userId" } },
       { $count: "total" },
     ]),
   ]);
@@ -115,6 +110,8 @@ export default async function getTopFiveUsers(
     list: topUsers.map((user) => ({
       _id: user._id.userId,
       name: user.name,
+      firstname: user.firstname,
+      lastname: user.lastname,
       totalTokens: user.totalTokens,
       groupName: user.groupName,
       lastActivity: user.lastActivity.toLocaleDateString(),
