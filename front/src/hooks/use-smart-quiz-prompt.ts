@@ -5,6 +5,7 @@ import { Context } from "../store/context.store";
 
 type UseSmartQuizPromptProps = {
   selectedActivity?: Activity;
+  isLessonCompleted: boolean;
   isLastActivitySelected: boolean;
   isLastLessonSelected: boolean;
   onTriggerRandomQuiz: () => void;
@@ -13,6 +14,7 @@ type UseSmartQuizPromptProps = {
 
 export default function useSmartQuizPrompt({
   selectedActivity,
+  isLessonCompleted,
   isLastActivitySelected,
   isLastLessonSelected,
   onTriggerRandomQuiz,
@@ -36,7 +38,7 @@ export default function useSmartQuizPrompt({
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
 
-    if (hasBypassedQuizRef.current || userIsAdmin) {
+    if (hasBypassedQuizRef.current || userIsAdmin || isLessonCompleted) {
       onGoToNextActivity();
       return;
     }
@@ -58,6 +60,7 @@ export default function useSmartQuizPrompt({
     activityStartTime,
     selectedActivity,
     isLastActivitySelected,
+    isLessonCompleted,
     isLastLessonSelected,
     onGoToNextActivity,
     user?.permissions,
