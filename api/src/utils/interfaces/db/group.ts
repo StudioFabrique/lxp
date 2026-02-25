@@ -2,6 +2,7 @@ import mongoose, { type Document, Schema, model } from "mongoose";
 import { IRole } from "./role";
 import { IUser } from "./user";
 import { ITag } from "./tag";
+import { IPromptStats } from "./prompt-stats";
 
 export interface IGroup extends Document {
   name: string;
@@ -13,6 +14,7 @@ export interface IGroup extends Document {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  promptStats?: IPromptStats["_id"];
 }
 
 const groupSchema: Schema = new Schema(
@@ -31,6 +33,11 @@ const groupSchema: Schema = new Schema(
     },
     isActive: { type: Boolean, default: false },
     image: { type: Buffer, required: false },
+    promptStats: {
+      type: [Schema.Types.ObjectId],
+      ref: "PromptStats",
+      required: false,
+    },
   },
   { timestamps: true },
 );

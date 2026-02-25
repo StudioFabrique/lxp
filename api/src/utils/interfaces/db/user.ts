@@ -34,7 +34,7 @@ export interface IUser extends Document {
   emailVerified: boolean;
   invitationSent: boolean;
   promptCount: number;
-  promptStats?: IPromptStats["_id"][];
+  promptStats?: IPromptStats["_id"];
 }
 
 const userSchema: Schema = new Schema(
@@ -56,7 +56,6 @@ const userSchema: Schema = new Schema(
     emailVerified: { type: Boolean, default: false },
     invitationSent: { type: Boolean, default: false },
     promptCount: { type: Number, default: 0 },
-
     promptStats: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "PromptStats",
