@@ -5,11 +5,11 @@ import Course from "../../../utils/interfaces/course";
 
 type CourseActionsProps = {
   course: Course;
-  parcoursId: number;
-  moduleId: number;
+  parcoursId?: number;
+  moduleId?: number;
   onOpenModal: (
     modalType: "visibility" | "deleteCourse" | "deleteLesson",
-    e: React.MouseEvent
+    e: React.MouseEvent,
   ) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };

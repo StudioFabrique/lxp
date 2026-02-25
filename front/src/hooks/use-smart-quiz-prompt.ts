@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useContext } from "react";
 import { Activity } from "../utils/interfaces/activity";
+import hasPermission from "../utils/hasPermission";
+import { Context } from "../store/context.store";
 
 type UseSmartQuizPromptProps = {
   selectedActivity?: Activity;
@@ -16,6 +18,8 @@ export default function useSmartQuizPrompt({
   onTriggerRandomQuiz,
   onGoToNextActivity,
 }: UseSmartQuizPromptProps) {
+  const { user } = useContext(Context);
+
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
   const [activityStartTime, setActivityStartTime] = useState(Date.now());
   const hasBypassedQuizRef = useRef(false);
@@ -29,7 +33,10 @@ export default function useSmartQuizPrompt({
   }, [selectedActivity?.id]);
 
   const handleNextActivity = useCallback(() => {
-    if (hasBypassedQuizRef.current) {
+    const userIsAdmin =
+      user?.permissions && hasPermission(user.permissions, "update", "lesson");
+
+    if (hasBypassedQuizRef.current || userIsAdmin) {
       onGoToNextActivity();
       return;
     }
@@ -53,6 +60,7 @@ export default function useSmartQuizPrompt({
     isLastActivitySelected,
     isLastLessonSelected,
     onGoToNextActivity,
+    user?.permissions,
   ]);
 
   const handleDeclineQuiz = () => {

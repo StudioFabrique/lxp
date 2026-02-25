@@ -21,8 +21,8 @@ import { Link } from "react-router-dom";
 
 type CourseItemProps = {
   course: Course;
-  parcoursId: number;
-  moduleId: number;
+  parcoursId?: number;
+  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
