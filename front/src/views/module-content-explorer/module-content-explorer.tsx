@@ -1,10 +1,10 @@
 import SidebarCoursesList from "../../components/module-content-explorer/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/module-content-explorer/progress-bar";
-import useModuleExplorerContent from "./hooks/use-module-explorer";
-import ModuleExplorerContentHeader from "../../components/module-content-explorer/module-content-explorer-header";
+import useModuleContentExplorer from "./hooks/use-module-explorer";
+import ModuleContentExplorerHeader from "../../components/module-content-explorer/module-content-explorer-header";
 import ModuleData from "../../components/module-content-explorer/module-data/module-data";
-import ModuleExplorerContentWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
-import ModuleExplorerContentSkeleton from "./module-content-explorer-skeleton";
+import ModuleContentExplorerWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
+import ModuleContentExplorerSkeleton from "./module-content-explorer-skeleton";
 import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/module-content-explorer/sidebar/create-course-item";
@@ -21,12 +21,13 @@ import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
 import useActivityQuizz from "../../hooks/use-activity-quiz";
-import QuizModal from "../../components/quizzes/quiz-modal";
+import QuizModal from "../../components/quizzes/modals/quiz-modal";
+import QuizRequestModal from "../../components/quizzes/modals/quiz-request-modal";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
-const ModuleExplorerContent = () => {
+const ModuleContentExplorer = () => {
   const { user } = useContext(Context);
 
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ const ModuleExplorerContent = () => {
     onLessonReorder,
     onNextLesson,
     onSelectActivityType,
-  } = useModuleExplorerContent();
+  } = useModuleContentExplorer();
 
   const {
     isOpen: isQuizOpen,
@@ -175,30 +176,11 @@ const ModuleExplorerContent = () => {
       />
 
       {/* MODALE DE PROPOSITION DU QUIZ --- */}
-      {showQuizPrompt && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">
-              💡 Je t'ai préparé un quiz rapide !
-            </h3>
-            <p className="py-4">
-              On dirait que tu as parcouru cette ressource à ton rythme. Veux-tu
-              vérifier rapidement tes acquis avant de passer à la suite ?
-            </p>
-            <div className="modal-action">
-              <button className="btn btn-ghost" onClick={handleDeclineQuiz}>
-                Non merci, continuer
-              </button>
-              <button
-                className="btn btn-primary text-base-100"
-                onClick={handleAcceptQuiz}
-              >
-                Faire le quiz
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <QuizRequestModal
+        isOpen={showQuizPrompt}
+        onAcceptQuiz={handleAcceptQuiz}
+        onDeclineQuiz={handleDeclineQuiz}
+      />
 
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && selectedLesson && (
@@ -240,7 +222,7 @@ const ModuleExplorerContent = () => {
       </Header>
 
       {module && module.parcoursId && module.id ? (
-        <ModuleExplorerContentWrapper
+        <ModuleContentExplorerWrapper
           // parcoursId={module.parcoursId}
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
@@ -249,7 +231,7 @@ const ModuleExplorerContent = () => {
         >
           {[
             // * Header
-            <ModuleExplorerContentHeader key="header" moduleData={module} />,
+            <ModuleContentExplorerHeader key="header" moduleData={module} />,
             // * Le composant affichant la liste des cours avec la progression des cours
             <SidebarCoursesList
               key="progession-side"
@@ -418,12 +400,12 @@ const ModuleExplorerContent = () => {
               les informations complémentaires du cours sont affichés */
             <ModuleData key="module-data" moduleData={module} />,
           ]}
-        </ModuleExplorerContentWrapper>
+        </ModuleContentExplorerWrapper>
       ) : (
-        <ModuleExplorerContentSkeleton />
+        <ModuleContentExplorerSkeleton />
       )}
     </div>
   );
 };
 
-export default ModuleExplorerContent;
+export default ModuleContentExplorer;
