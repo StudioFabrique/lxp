@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import Header from "../../components/UI/header";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import { GroupsStatsComponent } from "./components/GroupStatsComponent";
 import PaginatedTopUsers from "./components/PaginatedTopUsers";
 import TopFiveUsers from "./components/TopFiveUsers";
 import useDashboardIA from "./hooks/useDashboardIA";
+import toast from "react-hot-toast";
 
 export default function DashboardIAHome() {
   const {
@@ -22,8 +24,13 @@ export default function DashboardIAHome() {
     sdir,
     stype,
     setPath,
-    setSearchTerm,
+    handleSearch,
+    error,
   } = useDashboardIA();
+
+  useEffect(() => {
+    if (error.length > 0) toast.error(error);
+  }, [error]);
 
   return (
     <main className="w-full min-h-screen flex flex-col items-center gap-y-8">
@@ -96,7 +103,7 @@ export default function DashboardIAHome() {
             sdir={sdir}
             stype={stype}
             setPath={setPath}
-            onSearchTerm={setSearchTerm}
+            onSearchTerm={handleSearch}
           />
         ) : null}
       </section>

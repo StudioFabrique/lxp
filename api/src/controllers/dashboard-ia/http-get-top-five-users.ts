@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import getTopFiveUsers from "../../models/dashboard-ia/getTopFiveUsers";
-import { serverIssue } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
+import { validationResult } from "express-validator";
 
 export default async function httpGetTopFiveUsers(
   req: Request,
@@ -8,13 +9,22 @@ export default async function httpGetTopFiveUsers(
   next: NextFunction,
 ) {
   try {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      next({
+        statusCode: 400,
+        message: badQuery,
+      });
+    }
+
     const { page, limit, searchTerm } = req.query;
-    const { sortBy, direction } = req.params;
+    const { stype, sdir } = req.params;
     const response = await getTopFiveUsers(
       parseInt((limit as string) || "10"),
       parseInt((page as string) || "1"),
-      sortBy,
-      direction,
+      stype,
+      sdir,
       searchTerm as string,
     );
     next({
