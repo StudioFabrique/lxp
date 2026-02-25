@@ -508,24 +508,34 @@ const useModuleExplorerContent = () => {
   // Retourne les données et fonctions nécessaires
   return {
     state,
-    isLessonCompleted,
-    isFirstActivitySelected,
-    isLastActivitySelected,
-    isLastLessonSelected,
+    computed: {
+      isLessonCompleted,
+      isFirstActivitySelected,
+      isLastActivitySelected,
+      isLastLessonSelected,
+    },
     isLoading,
     dispatch,
-    fetchModuleData,
-    onSaveActivity: saveActivity,
-    onCompleteLesson: completeLesson,
-    onRateContent: rateContent,
-    onEnableCourse: enableCourse,
-    onDeleteCourse: deleteCourse,
-    onDeleteLesson: deleteLesson,
-    onDeleteActivity: deleteActivity,
-    onActivityReorder: activityReorder,
-    onLessonReorder: lessonReorder,
-    onNextLesson: nextLesson,
-    onSelectActivityType: selectActivityType,
+    moduleActions: {
+      fetchModuleData,
+    },
+    courseActions: {
+      enableCourse,
+      deleteCourse,
+    },
+    lessonActions: {
+      completeLesson,
+      rateContent,
+      deleteLesson,
+      lessonReorder,
+      nextLesson,
+    },
+    activityActions: {
+      saveActivity,
+      deleteActivity,
+      activityReorder,
+      selectActivityType,
+    },
   };
 };
 

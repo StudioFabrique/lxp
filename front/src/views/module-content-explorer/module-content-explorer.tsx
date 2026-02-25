@@ -12,7 +12,7 @@ import ActivityList from "../../components/module-content-explorer/sidebar/activ
 import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
 import { BadgeQuestionMark, PenBox } from "lucide-react";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext } from "react";
 import ActivityBottomNavigation from "../../components/module-content-explorer/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
 import ActivityTypeSelection from "../../components/module-content-explorer/preview/activity-type-selection";
@@ -20,21 +20,20 @@ import LessonReaderAndEditor from "../../components/module-content-explorer/prev
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import useActivityQuizz from "../../hooks/use-activity-quiz";
+import useActivityQuizz from "../../hooks/use-activity-quiz"; // Attention au nom de l'import (Quizz avec 2 'z' selon ton fichier)
 import QuizModal from "../../components/quizzes/modals/quiz-modal";
 import QuizRequestModal from "../../components/quizzes/modals/quiz-request-modal";
+import useSmartQuizPrompt from "../../hooks/use-smart-quiz-prompt";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const ModuleContentExplorer = () => {
   const { user } = useContext(Context);
-
   const navigate = useNavigate();
-  // récupération de la premiere valeur de l'url pour déterminer le role de l'utilisateur connecté
   const firstPathSegment = window.location.pathname.split("/")[1];
 
-  // custom hook
+  // 1. Récupération des données groupées
   const {
     state: {
       isPanelClosed,
@@ -45,42 +44,25 @@ const ModuleContentExplorer = () => {
       selectedLesson,
       ...state
     },
-    isLessonCompleted,
-    isFirstActivitySelected,
-    isLastActivitySelected,
-    isLastLessonSelected,
+    computed,
     isLoading,
     dispatch,
-    onCompleteLesson,
-    onRateContent,
-    onEnableCourse,
-    onDeleteCourse,
-    onDeleteLesson,
-    onDeleteActivity,
-    onSaveActivity,
-    onActivityReorder,
-    onLessonReorder,
-    onNextLesson,
-    onSelectActivityType,
+    lessonActions,
+    activityActions,
+    courseActions,
   } = useModuleContentExplorer();
 
-  const {
-    isOpen: isQuizOpen,
-    quizzes,
-    currentQuiz,
-    currentIndex: currentQuizIndex,
-    isAnswered: isQuizAnswered,
-    isCorrect: isQuizCorrect,
-    onLoadQuizzes,
-    onCloseQuizzes,
-    onAnswerQuiz,
-    onNextQuiz,
-    onTriggerRandomQuiz,
-  } = useActivityQuizz(selectedLesson?.id);
+  // 2. Gestion du Quiz "Classique"
+  const quizState = useActivityQuizz(selectedLesson?.id);
 
-  const [showQuizPrompt, setShowQuizPrompt] = useState(false);
-  const [activityStartTime, setActivityStartTime] = useState(Date.now());
-  const hasBypassedQuizRef = useRef(false);
+  // 3. Gestion du Quiz "Intelligent" (Smart Prompt)
+  const smartQuiz = useSmartQuizPrompt({
+    selectedActivity,
+    isLastActivitySelected: computed.isLastActivitySelected,
+    isLastLessonSelected: computed.isLastLessonSelected,
+    onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
+    onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
+  });
 
   const canEditModule = userBelongsToContacts(user, module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
@@ -120,77 +102,35 @@ const ModuleContentExplorer = () => {
     });
   };
 
-  const handleNextActivity = () => {
-    // Si l'utilisateur a déjà refusé ou fait le quiz, on passe à la suite normalement
-    if (hasBypassedQuizRef.current) {
-      dispatch({ type: "go_to_next_activity" });
-      return;
-    }
-
-    const timeSpent = Date.now() - activityStartTime;
-    const isTooFast = timeSpent < 10000; // moins de 10 secondes
-    const isTooSlow = timeSpent > 300000; // plus de 5 minutes (5 * 60 * 1000)
-
-    if (
-      selectedActivity?.type === "text" &&
-      (!isLastActivitySelected || !isLastLessonSelected) &&
-      (isTooFast || isTooSlow)
-    ) {
-      setShowQuizPrompt(true);
-    } else {
-      dispatch({ type: "go_to_next_activity" });
-    }
-  };
-
-  const handleDeclineQuiz = () => {
-    setShowQuizPrompt(false);
-    hasBypassedQuizRef.current = true;
-    dispatch({ type: "go_to_next_activity" }); // On continue l'apprentissage
-  };
-
-  const handleAcceptQuiz = () => {
-    setShowQuizPrompt(false);
-    hasBypassedQuizRef.current = true; // On évite de le reproposer juste après le quiz
-    onTriggerRandomQuiz();
-  };
-
-  useEffect(() => {
-    if (selectedActivity?.id) {
-      setActivityStartTime(Date.now());
-      hasBypassedQuizRef.current = false;
-    }
-  }, [selectedActivity?.id]);
-
   return (
     <div className="w-full flex flex-col gap-6">
       <QuizModal
-        isOpen={isQuizOpen}
-        quiz={currentQuiz}
-        currentIndex={currentQuizIndex}
-        totalQuizzes={quizzes?.length || 0}
-        isAnswered={isQuizAnswered}
-        isCorrect={isQuizCorrect}
-        onClose={onCloseQuizzes}
-        onAnswer={onAnswerQuiz}
-        onNext={onNextQuiz}
+        isOpen={quizState.isOpen}
+        quiz={quizState.currentQuiz}
+        currentIndex={quizState.currentIndex}
+        totalQuizzes={quizState.quizzes?.length || 0}
+        isAnswered={quizState.isAnswered}
+        isCorrect={quizState.isCorrect}
+        onClose={quizState.onCloseQuizzes}
+        onAnswer={quizState.onAnswerQuiz}
+        onNext={quizState.onNextQuiz}
       />
 
-      {/* MODALE DE PROPOSITION DU QUIZ --- */}
       <QuizRequestModal
-        isOpen={showQuizPrompt}
-        onAcceptQuiz={handleAcceptQuiz}
-        onDeclineQuiz={handleDeclineQuiz}
+        isOpen={smartQuiz.showQuizPrompt}
+        onAcceptQuiz={smartQuiz.handleAcceptQuiz}
+        onDeclineQuiz={smartQuiz.handleDeclineQuiz}
       />
 
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && selectedLesson && (
         <LessonCompletionModal
           lesson={selectedLesson}
-          isLessonCompleted={isLessonCompleted}
-          isLastLessonSelected={isLastLessonSelected}
-          isLastActivitySelected={isLastActivitySelected}
-          onRateAndComplete={onCompleteLesson}
-          onClickNextLesson={onNextLesson}
+          isLessonCompleted={computed.isLessonCompleted}
+          isLastLessonSelected={computed.isLastLessonSelected}
+          isLastActivitySelected={computed.isLastActivitySelected}
+          onRateAndComplete={lessonActions.completeLesson}
+          onClickNextLesson={lessonActions.nextLesson}
           onClickMinimizeButton={() =>
             dispatch({
               type: "set_modal_visibility",
@@ -199,6 +139,7 @@ const ModuleContentExplorer = () => {
           }
         />
       )}
+
       {/* Header de la liste des groupes */}
       <Header
         title="Contenu du module"
@@ -223,68 +164,61 @@ const ModuleContentExplorer = () => {
 
       {module && module.parcoursId && module.id ? (
         <ModuleContentExplorerWrapper
-          // parcoursId={module.parcoursId}
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
           onCloseAll={handleCloseAll}
-        >
-          {[
-            // * Header
-            <ModuleContentExplorerHeader key="header" moduleData={module} />,
-            // * Le composant affichant la liste des cours avec la progression des cours
+          // --- UTILISATION DES SLOTS ---
+          header={<ModuleContentExplorerHeader moduleData={module} />}
+          progressionSide={
             <SidebarCoursesList
-              key="progession-side"
               courses={module.courses}
               parcoursId={module.parcoursId}
               moduleId={module.id}
               selectedLesson={selectedLesson}
               onSelectLesson={handleSelectLesson}
-              onDeleteCourse={onDeleteCourse}
-              onEnableCourse={onEnableCourse}
-              onDeleteLesson={onDeleteLesson}
-              onLessonReorder={onLessonReorder}
-              children={[
-                // Bouton pour créer un nouveau cours
-                canEditModule && (
-                  <Can key="create-course" action="write" object="course">
-                    <CreateCourseItem
-                      parcoursId={module.parcoursId}
-                      moduleId={module.id || 0}
-                    />
-                  </Can>
-                ),
-                // Liste des activités
-                <ActivityList
-                  key="activity-list"
-                  canEdit={canEditSelectedLesson}
-                  activities={selectedLesson?.activities}
-                  selectedActivity={selectedActivity}
-                  onActivityReorder={onActivityReorder}
-                  onSelectActivity={(activity) =>
-                    dispatch({ type: "select_activity", activity })
-                  }
-                  newActivityButtonDisabled={state.mode === "write"}
-                  onClickCreateActivity={() =>
-                    dispatch({
-                      type: "select_mode",
-                      mode: "activity_type_selection",
-                    })
-                  }
-                />,
-              ]}
-            />,
-            // La barre de progression du cours
-            <Can key="top-progress-bar" action="component" object="progression">
+              onDeleteCourse={courseActions.deleteCourse}
+              onEnableCourse={courseActions.enableCourse}
+              onDeleteLesson={lessonActions.deleteLesson}
+              onLessonReorder={lessonActions.lessonReorder}
+            >
+              {canEditModule && (
+                <Can action="write" object="course">
+                  <CreateCourseItem
+                    parcoursId={module.parcoursId}
+                    moduleId={module.id || 0}
+                  />
+                </Can>
+              )}
+              <ActivityList
+                canEdit={canEditSelectedLesson}
+                activities={selectedLesson?.activities}
+                selectedActivity={selectedActivity}
+                onActivityReorder={activityActions.activityReorder}
+                onSelectActivity={(activity) =>
+                  dispatch({ type: "select_activity", activity })
+                }
+                newActivityButtonDisabled={state.mode === "write"}
+                onClickCreateActivity={() =>
+                  dispatch({
+                    type: "select_mode",
+                    mode: "activity_type_selection",
+                  })
+                }
+              />
+            </SidebarCoursesList>
+          }
+          topProgressBar={
+            <Can action="component" object="progression">
               <ProgressBar courses={module.courses} />
-            </Can>,
-            // La prévisualisation de la leçon
+            </Can>
+          }
+          previewLesson={
             selectedLesson?.activities?.length ||
             ["activity_type_selection", "write"].includes(state.mode) ? (
               state.mode === "activity_type_selection" ? (
                 <ActivityTypeSelection
-                  key="activity-type-selection"
-                  onSelectType={onSelectActivityType}
+                  onSelectType={activityActions.selectActivityType}
                   onCancel={() =>
                     dispatch({
                       type: "select_last_activity_from_current_lesson",
@@ -292,10 +226,8 @@ const ModuleContentExplorer = () => {
                   }
                 />
               ) : (
-                // Le lecteur et editeur de leçons
                 <LessonReaderAndEditor
-                  key="lesson-reader"
-                  isLessonCompleted={isLessonCompleted}
+                  isLessonCompleted={computed.isLessonCompleted}
                   canEdit={canEditSelectedLesson}
                   mode={state.mode}
                   textActivityContent={textActivityContent}
@@ -339,8 +271,8 @@ const ModuleContentExplorer = () => {
                   onEditTitle={editTitle}
                   onEditContent={editContent}
                   onEditIframeSrc={editIframeSrc}
-                  onRateActivity={onRateContent}
-                  onDeleteActivity={onDeleteActivity}
+                  onRateActivity={lessonActions.rateContent}
+                  onDeleteActivity={activityActions.deleteActivity}
                   onClose={() =>
                     state.mode === "write"
                       ? dispatch({
@@ -354,53 +286,52 @@ const ModuleContentExplorer = () => {
                       mode: "activity_type_selection",
                     })
                   }
-                  onSaveActivity={onSaveActivity}
+                  onSaveActivity={activityActions.saveActivity}
                 >
                   <div className="flex flex-col gap-4 w-full">
                     {state.mode === "read" && (
                       <ActivityBottomNavigation
                         modalVisibility={modalVisibility}
-                        isLessonCompleted={isLessonCompleted}
-                        isFirstActivitySelected={isFirstActivitySelected}
-                        isLastActivitySelected={isLastActivitySelected}
-                        isLastLessonSelected={isLastLessonSelected}
+                        isLessonCompleted={computed.isLessonCompleted}
+                        isFirstActivitySelected={
+                          computed.isFirstActivitySelected
+                        }
+                        isLastActivitySelected={computed.isLastActivitySelected}
+                        isLastLessonSelected={computed.isLastLessonSelected}
                         onPrevious={() =>
                           dispatch({ type: "go_to_previous_activity" })
                         }
-                        onNext={handleNextActivity}
+                        onNext={smartQuiz.handleNextActivity}
                         onCompleteLesson={() =>
-                          isLessonCompleted
-                            ? onNextLesson()
+                          computed.isLessonCompleted
+                            ? lessonActions.nextLesson()
                             : dispatch({
                                 type: "set_modal_visibility",
                                 modalVisibility: "lessonCompletionModal",
                               })
                         }
                       >
-                        {/* Bouton pour commencer le quizz intégré au milieu des deux autres boutons de navigation */}
-                        {isLastActivitySelected && isLastLessonSelected && (
-                          <button
-                            className="btn btn-secondary btn-outline"
-                            onClick={onLoadQuizzes}
-                          >
-                            <BadgeQuestionMark />
-                            Je veux me tester
-                          </button>
-                        )}
+                        {computed.isLastActivitySelected &&
+                          computed.isLastLessonSelected && (
+                            <button
+                              className="btn btn-secondary btn-outline"
+                              onClick={quizState.onLoadQuizzes}
+                            >
+                              <BadgeQuestionMark />
+                              Je veux me tester
+                            </button>
+                          )}
                       </ActivityBottomNavigation>
                     )}
                   </div>
                 </LessonReaderAndEditor>
               )
             ) : (
-              <NoActivityPlaceholder key="no-activity-placeholder" />
-            ),
-
-            /* Dans le cas où aucune leçon n'est affiché,
-              les informations complémentaires du cours sont affichés */
-            <ModuleData key="module-data" moduleData={module} />,
-          ]}
-        </ModuleContentExplorerWrapper>
+              <NoActivityPlaceholder />
+            )
+          }
+          moduleData={<ModuleData moduleData={module} />}
+        />
       ) : (
         <ModuleContentExplorerSkeleton />
       )}
