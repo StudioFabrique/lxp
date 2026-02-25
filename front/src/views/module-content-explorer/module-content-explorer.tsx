@@ -302,18 +302,7 @@ const ModuleExplorerContent = () => {
                   }
                   onSaveActivity={onSaveActivity}
                 >
-                  <div className="flex flex-col items-end gap-4">
-                    {/* Bouton pour commencer le quizz */}
-                    {isLastActivitySelected && (
-                      <button
-                        className="btn btn-secondary btn-outline"
-                        onClick={onLoadQuizzes}
-                      >
-                        <BadgeQuestionMark />
-                        Je veux me tester
-                      </button>
-                    )}
-
+                  <div className="flex flex-col gap-4 w-full">
                     {state.mode === "read" && (
                       <ActivityBottomNavigation
                         modalVisibility={modalVisibility}
@@ -333,7 +322,18 @@ const ModuleExplorerContent = () => {
                                 modalVisibility: "lessonCompletionModal",
                               })
                         }
-                      />
+                      >
+                        {/* Bouton pour commencer le quizz */}
+                        {isLastActivitySelected && isLastLessonSelected && (
+                          <button
+                            className="btn btn-secondary btn-outline"
+                            onClick={onLoadQuizzes}
+                          >
+                            <BadgeQuestionMark />
+                            Je veux me tester
+                          </button>
+                        )}
+                      </ActivityBottomNavigation>
                     )}
                   </div>
                 </LessonReaderAndEditor>
