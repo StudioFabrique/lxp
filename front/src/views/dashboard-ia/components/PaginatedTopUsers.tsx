@@ -1,9 +1,10 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import SortColumnIcon from "../../../components/UI/sort-column-icon.component/sort-column-icon.component";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import { TopUser } from "../hooks/useDashboardIA";
 import Pagination from "../../../components/UI/pagination/pagination";
 import { Link } from "react-router-dom";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
 
 type Props = {
   dataList: TopUser[];
@@ -15,15 +16,37 @@ type Props = {
   onSorting: (stype: string) => void;
   sdir: boolean;
   stype: string;
+  setPath: Dispatch<SetStateAction<string>>;
+  onSearchTerm: Dispatch<SetStateAction<string | null>>;
 };
 
 export default function PaginatedTopUsers(props: Props) {
+  let timer: NodeJS.Timeout | null = null;
+
+  const handleSearch = (value: string) => {
+    console.log("TRIGGERED", value);
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      props.onSearchTerm(value);
+    }, 500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timer]);
+
   return (
     <div>
       <h2 className="font-semibold pl-1 mb-4">
         Consommation tous utilisateurs
       </h2>
       <Wrapper additionalClassname="overflow-x-scroll">
+        <SearchBar
+          placeholder="Rechercher par nom d'utilisateur"
+          onSubmitSearchValue={handleSearch}
+        />
         <table className="w-full table">
           <thead>
             <tr className="text-xs font-semibold text-primary">
