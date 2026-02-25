@@ -1,6 +1,6 @@
 import { Quiz } from "../utils/interfaces/quiz";
 
-export const ActivityEndingQuizzesFixtures: Quiz[] = [
+export const activityEndingQuizzesFixtures: Quiz[] = [
   {
     type: "mcq",
     question: "Que signifie l'acronyme HTML ?",
