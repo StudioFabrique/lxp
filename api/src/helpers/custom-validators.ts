@@ -45,7 +45,7 @@ export function videoUrlValidate(value: string) {
   // Si c'est un fichier local uploadé
   if (value.startsWith("video-")) {
     return /^video-[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\d{17}traffic\.mp4$/.test(
-      value
+      value,
     );
   }
 
@@ -81,23 +81,23 @@ export const paginationValidator = [
   param("stype")
     .isString()
     .withMessage(
-      "La propriété pour le tri du tableau doit être une chaîne de caractères"
+      "La propriété pour le tri du tableau doit être une chaîne de caractères",
     )
     .custom(stringValidateGeneric)
     .withMessage(
-      "La propriété pour le tri du tableau contient des caractères non autorisés."
+      "La propriété pour le tri du tableau contient des caractères non autorisés.",
     ),
   param("sdir")
     .isString()
     .withMessage(
-      "La direction pour le tri du tableau doit être une chaîne de caractères"
+      "La direction pour le tri du tableau doit être une chaîne de caractères",
     )
     .custom((value) => {
       const availableSdir = ["asc", "desc"];
       return availableSdir.includes(value);
     })
     .withMessage(
-      "La direction pour le tri du tableau contient des caractères non autorisés."
+      "La direction pour le tri du tableau contient des caractères non autorisés.",
     ),
   query("page")
     .isNumeric()
@@ -105,8 +105,14 @@ export const paginationValidator = [
   query("limit")
     .isNumeric()
     .withMessage(
-      "Le nombre d'éléments affichés par page doit être un nombre entier."
+      "Le nombre d'éléments affichés par page doit être un nombre entier.",
     ),
+  query("searchTerm")
+    .isString()
+    .withMessage("Le terme de recherche doit être une chaîne de caractères.")
+    .custom(stringValidateOptional)
+    .withMessage("Le terme de recherche contient des caractères non autorisés.")
+    .optional(),
 ];
 
 export const updateVideoValidator = [
@@ -126,11 +132,11 @@ export const updateVideoValidator = [
   body("data.description")
     .isString()
     .withMessage(
-      "La description de la video doit être une chaîne de caractères."
+      "La description de la video doit être une chaîne de caractères.",
     )
     .custom(stringValidateOptional)
     .withMessage(
-      "La description de la video contient des caractères non autorisés."
+      "La description de la video contient des caractères non autorisés.",
     ),
   checkValidatorResult,
 ];

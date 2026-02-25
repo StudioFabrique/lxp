@@ -17,7 +17,7 @@ type Props = {
   sdir: boolean;
   stype: string;
   setPath: Dispatch<SetStateAction<string>>;
-  onSearchTerm: Dispatch<SetStateAction<string | null>>;
+  onSearchTerm: (value: string) => void;
 };
 
 export default function PaginatedTopUsers(props: Props) {
