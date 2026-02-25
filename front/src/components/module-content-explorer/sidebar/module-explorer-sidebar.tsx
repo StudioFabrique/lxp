@@ -5,15 +5,17 @@ import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
 
+type Props = {
+  store: ExplorerStore;
+  canEditModule?: boolean;
+  canEditSelectedLesson?: boolean;
+};
+
 const ModuleExplorerSidebar = ({
   store,
   canEditModule,
   canEditSelectedLesson,
-}: {
-  store: ExplorerStore;
-  canEditModule?: boolean;
-  canEditSelectedLesson?: boolean;
-}) => {
+}: Props) => {
   const { state, dispatch, courseActions, lessonActions, activityActions } =
     store;
   const { module, selectedLesson, selectedActivity } = state;
@@ -54,6 +56,7 @@ const ModuleExplorerSidebar = ({
         onClickCreateActivity={() =>
           dispatch({ type: "select_mode", mode: "activity_type_selection" })
         }
+        isLoading={store.isLoading}
       />
     </SidebarCoursesList>
   );

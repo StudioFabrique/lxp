@@ -25,7 +25,7 @@ const useModuleExplorerContent = () => {
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
   // ------------
   const navigate = useNavigate();
-  const { sendRequest } = useHttp(true);
+  const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const [state, dispatch] = useReducer(
@@ -514,7 +514,7 @@ const useModuleExplorerContent = () => {
       isLastActivitySelected,
       isLastLessonSelected,
     },
-    isLoading,
+    isLoading: isLoading || isLoadingRequest,
     dispatch,
     moduleActions: {
       fetchModuleData,

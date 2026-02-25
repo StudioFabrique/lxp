@@ -121,7 +121,6 @@ const ModuleContentExplorer = () => {
             dispatch({ type: "select_lesson", lesson: undefined });
             navigate(".", { replace: true });
           }}
-          // Utilisation propre de nos sous-composants dédiés :
           header={<ModuleContentExplorerHeader moduleData={module} />}
           progressionSide={
             <ModuleExplorerSidebar
