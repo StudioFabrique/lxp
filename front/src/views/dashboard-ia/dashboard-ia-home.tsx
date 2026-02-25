@@ -21,8 +21,6 @@ export default function DashboardIAHome() {
     top5Users,
   } = useDashboardIA();
 
-  console.log(dataList);
-
   return (
     <main className="w-full min-h-screen flex flex-col items-center gap-y-8">
       <Header
@@ -112,11 +110,12 @@ function PaginatedTopUsers(props: Props) {
       <h2 className="font-semibold pl-1 mb-4">
         Consommation tous utilisateurs
       </h2>
-      <Wrapper>
+      <Wrapper additionalClassname="overflow-x-scroll">
         <table className="w-full table">
           <thead>
-            <tr className="text-xs font-semibold">
+            <tr className="text-xs font-semibold text-primary">
               <th>Apprenant</th>
+              <th>Rôle</th>
               <th>Promotion</th>
               <th>Quantité</th>
               <th>Dernière utilisation</th>
@@ -126,7 +125,12 @@ function PaginatedTopUsers(props: Props) {
             {props.dataList.map((user: TopUser) => (
               <tr key={user._id} className="text-xs">
                 <td>{user.name}</td>
-                <td>{user.groupName ?? "Équipe pédagogique"}</td>
+                <td>
+                  {user.role === "student" ? "Apprenant" : "Équipe pédagogique"}
+                </td>
+                <td className={user.groupName ? "" : "text-center"}>
+                  {user.groupName ?? " - "}
+                </td>
                 <td>{user.totalTokens}</td>
                 <td>{user.lastActivity}</td>
               </tr>

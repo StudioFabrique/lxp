@@ -49,6 +49,28 @@ export default async function getTopFiveUsers(
       },
       { $unwind: "$userInfo" },
       {
+        $addFields: {
+          firstRoleId: { $arrayElemAt: ["$userInfo.roles", 0] },
+        },
+      },
+
+      // 2. Lookup sur la collection "roles"
+      {
+        $lookup: {
+          from: "roles",
+          localField: "firstRoleId",
+          foreignField: "_id",
+          as: "roleInfo",
+        },
+      },
+
+      // 3. Extrait le champ "role" (la string)
+      {
+        $addFields: {
+          role: { $arrayElemAt: ["$roleInfo.role", 0] },
+        },
+      },
+      {
         $match: { "userInfo.isActive": true },
       },
       {
@@ -96,6 +118,7 @@ export default async function getTopFiveUsers(
       totalTokens: user.totalTokens,
       groupName: user.groupName,
       lastActivity: user.lastActivity.toLocaleDateString(),
+      role: user.role,
     })),
     total: total[0]?.total ?? 0,
   };
