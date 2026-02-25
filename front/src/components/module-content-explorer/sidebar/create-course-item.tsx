@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 
-type CreateCourseItemProps = { parcoursId: number; moduleId: number };
+type CreateCourseItemProps = { parcoursId?: number; moduleId: number };
 
-const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
+const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
