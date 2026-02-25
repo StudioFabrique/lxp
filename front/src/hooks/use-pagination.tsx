@@ -24,6 +24,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const { sendRequest } = useHttp();
   const [allChecked, setAllChecked] = useState(false);
   const [urlComplement, setUrlComplement] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   const handlePageNumber = useCallback((value: number) => {
     setPage(value);
@@ -75,13 +76,16 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       });
       handleTotalPages(data.total);
       setDataList(data.list);
+      if (path !== defaultUrlPath) {
+        setPath(defaultUrlPath);
+      }
     };
 
     sendRequest(
       {
         path: `${path}/${stype}/${
           sdir ? "desc" : "asc"
-        }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}`,
+        }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}&searchTerm=${searchTerm ?? ""}`,
       },
       applyData,
     );
@@ -94,6 +98,8 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     sdir,
     path,
     urlComplement,
+    defaultUrlPath,
+    searchTerm,
   ]);
 
   const uncheckAll = () => {
@@ -177,6 +183,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     stype,
     totalPages,
     uncheckAll,
+    setSearchTerm,
   };
 };
 
