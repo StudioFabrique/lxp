@@ -1,4 +1,4 @@
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, Toilet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
@@ -48,6 +48,20 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             />
           )}
           <span className="xl:block hidden">{`${user?.firstname} ${user?.lastname}`}</span>
+        </Link>
+      </li>
+
+      <li
+        className="cursor-pointer text-sm flex gap-2 p-2 rounded-lg hover:bg-primary/50"
+        data-tip="Déconnexion"
+      >
+        <Link
+          to="/admin/dashboard-ia"
+          className="flex gap-x-2 items-center tooltip tooltip-right"
+          data-tip="Dashboard IA"
+        >
+          <Toilet className="w-4 h-4" />
+          <h2 className="xl:block hidden">Consommation IA</h2>
         </Link>
       </li>
 
