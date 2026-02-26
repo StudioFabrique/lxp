@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, EyeOff } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -70,6 +70,8 @@ const CourseItem = ({
           0),
       0,
     ) / course.lessons.length;
+
+  const isCourseCompleted = courseProgress === 1;
 
   const handleToggleCourseTab = () => {
     setCourseOpen(!isCourseOpen);
@@ -191,8 +193,8 @@ const CourseItem = ({
         <div
           className={`flex flex-col w-full cursor-pointer ${
             isCourseOpen
-              ? "bg-secondary"
-              : "bg-secondary/80 hover:bg-secondary/90"
+              ? "bg-secondary/80"
+              : "bg-secondary/60 hover:bg-secondary/75"
           } z-10 rounded-lg`}
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
@@ -212,6 +214,7 @@ const CourseItem = ({
                   {toUpperFirstLetter(course.title)}
                 </h3>
               </span>
+              {isCourseCompleted && <Check className="text-primary" />}
               {canEditCourse && (
                 <Can action="write" object="course">
                   <CourseActions
@@ -226,10 +229,12 @@ const CourseItem = ({
             </div>
           </div>
           <Can action="component" object="progression">
-            <progress
-              className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
-              value={isNaN(courseProgress) ? 0 : courseProgress}
-            />
+            {!isCourseCompleted && (
+              <progress
+                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
+                value={isNaN(courseProgress) ? 0 : courseProgress}
+              />
+            )}
           </Can>
         </div>
         <motion.div

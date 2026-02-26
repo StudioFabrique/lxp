@@ -9,6 +9,12 @@ const StudentAccomplishments = () => {
   const { sendRequest, isLoading } = useHttp();
   const [accomplishments, setAccomplishments] = useState<Accomplishment[]>();
 
+  const handleRemoveItem = (idToRemove: number) => {
+    setAccomplishments((prev) =>
+      prev?.filter((item) => item.id !== idToRemove),
+    );
+  };
+
   useEffect(() => {
     const applyData = (data: { data: any }) => {
       setAccomplishments(data.data);
@@ -25,7 +31,11 @@ const StudentAccomplishments = () => {
           <Loader />
         ) : accomplishments && accomplishments?.length > 0 ? (
           accomplishments.map((item) => (
-            <Item key={item.id} accomplishment={item} />
+            <Item
+              key={item.id}
+              accomplishment={item}
+              onRemove={handleRemoveItem}
+            />
           ))
         ) : (
           <p>Aucun feedback</p>
