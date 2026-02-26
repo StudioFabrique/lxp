@@ -47,16 +47,18 @@ const Pagination: FC<{
   };
 
   return (
-    <div className="flex justify-end mt-4 items-center gap-x-4 bg-transparent rounded-lg px-8 py-4 text-base-content text-sm border border-primary/20">
-      {/* Sélecteur du nombre d'éléments par page */}
-      <PaginationSelect
-        handleSetPerPages={handleSetPerPages}
-        perPage={perPage}
-      />
-      {/* Affichage de la page courante et du total */}
-      <p>
-        Page {page} sur {totalPages}
-      </p>
+    <div className="flex-col md:flex-row gap-2 flex justify-end mt-4 items-center gap-x-4 bg-transparent rounded-lg px-8 py-4 text-base-content text-sm border border-primary/20">
+      <span className="flex gap-2 items-center">
+        {/* Sélecteur du nombre d'éléments par page */}
+        <PaginationSelect
+          handleSetPerPages={handleSetPerPages}
+          perPage={perPage}
+        />
+        {/* Affichage de la page courante et du total */}
+        <p>
+          Page {page} sur {totalPages}
+        </p>
+      </span>
       {/* Boutons de navigation (affichés uniquement s'il y a plus d'une page) */}
       {totalPages && totalPages > 1 ? (
         <div className="btn-group flex gap-x-4">

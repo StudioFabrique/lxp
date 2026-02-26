@@ -41,14 +41,6 @@ export default async function getUserData(userId: string) {
     throw { message: "L'apprenant n'existe pas.", statusCode: 404 };
   }
 
-  console.log({ user });
-
-  const totalTokens =
-    user.promptStats?.reduce((acc, stat) => acc + (stat.tokensUsed || 0), 0) ||
-    0;
-
-  console.log("user.promptStats", user.promptStats, totalTokens);
-
   // Process connection information for the last 15 days
   // Guard against missing connectionInfos
   let tmp: IConnectionInfos[] = (user.connectionInfos ??
@@ -162,27 +154,6 @@ export default async function getUserData(userId: string) {
       }, 0);
     }
 
-    // Find the student record in PostgreSQL using MongoDB user ID
-    const student = await prisma.student.findFirst({
-      where: { idMdb: userId },
-    });
-
-    // If student exists, fetch their finished lessons count safely
-    let finishedLessonsCount = 0;
-    if (student) {
-      const studentWithLessons = await prisma.student.findUnique({
-        where: { id: student.id },
-        select: { lessonsRead: { select: { id: true } } },
-      });
-      finishedLessonsCount = studentWithLessons?.lessonsRead?.length ?? 0;
-    }
-
-    // Calculate completion percentage based on finished vs total lessons
-    parcoursCompletion =
-      totalLessonsCount > 0
-        ? (finishedLessonsCount / totalLessonsCount) * 100
-        : 0;
-
     // Convert parcours image from Buffer to base64 string if it exists
     if (parcours && parcours.image) {
       try {
@@ -202,7 +173,5 @@ export default async function getUserData(userId: string) {
   return {
     user,
     parcours: parcours ?? null,
-    parcoursCompletion: Math.floor(parcoursCompletion),
-    totalTokens,
   };
 }
