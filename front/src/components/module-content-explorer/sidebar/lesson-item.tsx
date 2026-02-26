@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 
 type LessonItemProps = {
   lesson: Lesson;
-  moduleId: number;
+  moduleId?: number;
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
   onSelectLesson: (lesson: Lesson) => void;
@@ -31,7 +31,7 @@ const LessonItem = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const isLessonRead = lesson.lessonsRead?.some(
-    (lessonRead) => lessonRead.finishedAt
+    (lessonRead) => lessonRead.finishedAt,
   );
 
   const handleBeginReadLesson = () => {
@@ -167,7 +167,7 @@ const LessonItem = ({
                           </button>
                         </li>
                       </ul>,
-                      document.body
+                      document.body,
                     )}
                 </Can>
               )}

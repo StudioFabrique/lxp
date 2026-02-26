@@ -1,8 +1,8 @@
-import { Quiz } from "../../utils/interfaces/quiz";
-import QuizMatching from "./quiz-matching";
-import QuizMcq from "./quiz-mcq";
-import QuizOrdering from "./quiz-ordering";
-import QuizTrueFalse from "./quiz-true-false";
+import { Quiz } from "../../../utils/interfaces/quiz";
+import QuizMatching from "../quiz-matching";
+import QuizMcq from "../quiz-mcq";
+import QuizOrdering from "../quiz-ordering";
+import QuizTrueFalse from "../quiz-true-false";
 
 interface QuizModalProps {
   isOpen: boolean;
@@ -90,7 +90,7 @@ const QuizModal = ({
               isCorrect ? "alert-success" : "alert-error"
             } shadow-lg`}
           >
-            <div>
+            <div className="text-base-100">
               <h3 className="font-bold">
                 {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
               </h3>

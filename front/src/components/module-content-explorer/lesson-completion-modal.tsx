@@ -4,6 +4,7 @@ import Modal from "../UI/modal/modal";
 import PortalConfetti from "../UI/portal/portal-confetti";
 import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 import Lesson from "../../utils/interfaces/lesson";
+import { useNavigate } from "react-router-dom";
 
 type LessonCompletionModal = {
   lesson: Lesson;
@@ -24,7 +25,10 @@ const LessonCompletionModal = ({
   onClickNextLesson,
   onClickMinimizeButton,
 }: LessonCompletionModal) => {
+  const navigate = useNavigate();
+
   const [selectedStars, setSelectedStars] = useState<number>(3);
+  const [canShowButton, setShowButton] = useState<boolean>(false);
 
   const handleSelectStarRate = (stars: number) => {
     setSelectedStars(stars);
@@ -32,18 +36,28 @@ const LessonCompletionModal = ({
 
   const handleRateContent = () => {
     onRateAndComplete(selectedStars);
+    setShowButton(true);
   };
+
+  const handleNavigateHome = () => {
+    navigate("..");
+  };
+
+  const canGoToNextLesson =
+    isLessonCompleted && !(isLastActivitySelected && isLastLessonSelected);
 
   return (
     <>
       <PortalConfetti />
       <Modal
         title={`La leçon "${lesson.title}" a été terminée !`}
-        rightLabel="Leçon suivante"
+        rightLabel={canGoToNextLesson ? "Leçon suivante" : "Retour à l'accueil"}
         onRightClick={
-          isLessonCompleted && !(isLastActivitySelected && isLastLessonSelected)
+          canGoToNextLesson
             ? onClickNextLesson
-            : undefined
+            : canShowButton
+              ? handleNavigateHome
+              : undefined
         }
         onMinimizeClick={onClickMinimizeButton}
       >
