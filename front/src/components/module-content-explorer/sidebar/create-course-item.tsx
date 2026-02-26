@@ -102,7 +102,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                 <Link
                   to="/admin/course/import"
                   state={{ parcoursId, moduleId }}
-                  className="btn btn-primary text-base-100 shrink-0 tooltip"
+                  className="btn btn-primary text-base-100 shrink-0 tooltip tooltip-bottom"
                   data-tip="Importer des cours"
                 >
                   <Import size={20} />
