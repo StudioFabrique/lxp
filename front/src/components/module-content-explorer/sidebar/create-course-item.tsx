@@ -1,5 +1,5 @@
-import { Check, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Check, Import, Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 
@@ -55,7 +55,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
     <div className="flex flex-col w-full">
       <div className="flex flex-col w-full cursor-pointer">
         <motion.div
-          className="bg-success rounded-xl flex flex-col gap-4"
+          className={`${isEditing && "bg-success"} rounded-xl flex flex-col gap-4`}
           initial={{ scale: 0.95, padding: 0 }}
           animate={{
             scale: 1,
@@ -90,13 +90,24 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                 </span>
               </div>
             ) : (
-              <button
-                onClick={handleClickAdd}
-                className="btn btn-success rounded-xl text-base-100 w-full flex justify-between items-center gap-2"
-              >
-                Ajouter un cours
-                <Plus />
-              </button>
+              <div className="flex items-center gap-2 w-full">
+                <button
+                  onClick={handleClickAdd}
+                  // Remplacement de w-full par flex-1
+                  className="btn btn-success rounded-xl flex-1 text-base-100 flex justify-between items-center gap-2"
+                >
+                  Ajouter un cours
+                  <Plus />
+                </button>
+                <Link
+                  to="/admin/course/import"
+                  state={{ parcoursId, moduleId }}
+                  className="btn btn-primary text-base-100 shrink-0 tooltip"
+                  data-tip="Importer des cours"
+                >
+                  <Import size={20} />
+                </Link>
+              </div>
             )}
           </div>
         </motion.div>
