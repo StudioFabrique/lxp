@@ -9,8 +9,8 @@ import { OnDragEndResponder } from "react-beautiful-dnd";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
-  parcoursId: number;
-  moduleId: number;
+  parcoursId?: number;
+  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;

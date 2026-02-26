@@ -40,7 +40,12 @@ const starsRewardProperties = (starCount: number = 5) => ({
 const confettiRewardProperties = {
   id: "thumb-up",
   type: "confetti",
-  config: undefined,
+  config: {
+    startVelocity: 15,
+    spread: 90,
+    elementCount: 40,
+    decay: 0.92,
+  },
 };
 
 const balloonsRewardProperties = {
@@ -89,7 +94,7 @@ const FeedbacksButton = <TFunc extends () => void>({
   const { reward, isAnimating } = useReward(
     rewardProperties.id,
     rewardProperties.type as "emoji" | "confetti" | "balloons",
-    rewardProperties.config
+    rewardProperties.config,
   );
 
   const handleClick = () => {

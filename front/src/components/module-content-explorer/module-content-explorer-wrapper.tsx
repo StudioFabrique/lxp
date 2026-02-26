@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import type React from "react";
 import type Lesson from "../../utils/interfaces/lesson";
 import {
   ListChevronsUpDown,
@@ -8,28 +8,32 @@ import {
 import { motion } from "framer-motion";
 
 type ModuleContentExplorerWrapperProps = {
-  // parcoursId: number;
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
+  header: React.ReactNode;
+  progressionSide: React.ReactNode;
+  topProgressBar: React.ReactNode;
+  previewLesson: React.ReactNode;
+  moduleData: React.ReactNode;
 };
 
 /**
  * Ce composant sert de conteneur (wrapper) structurel pour le composant ModuleContentExplorer.
- * Il encapsule la logique de présentation et la mise en page des aperçus de leçons.
+ * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props.
  */
 const ModuleContentExplorerWrapper = ({
-  // parcoursId,
   selectedLesson,
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
-  children,
-}: PropsWithChildren<ModuleContentExplorerWrapperProps>) => {
-  const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
-    children as React.ReactNode[];
-
+  header,
+  progressionSide,
+  topProgressBar,
+  previewLesson,
+  moduleData,
+}: ModuleContentExplorerWrapperProps) => {
   return (
     <div className="w-full overflow-hidden">
       {header}
@@ -75,7 +79,7 @@ const ModuleContentExplorerWrapper = ({
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {progessionSide}
+            {progressionSide}
           </motion.div>
         )}
         <div

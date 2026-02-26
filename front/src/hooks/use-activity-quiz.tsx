@@ -2,7 +2,9 @@ import { useState } from "react";
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import { Quiz } from "../utils/interfaces/quiz";
 
-export default function useActivityQuizz(selectedLessonId?: number) {
+export default function useActivityQuiz() {
+// selectedLessonId?: number,
+// selectedActivityId?: number,
   // const { sendRequest, isLoading } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -25,6 +27,20 @@ export default function useActivityQuizz(selectedLessonId?: number) {
     // sendRequest({ path: "/lesson/request-quiz" }, applyData);
 
     setQuizzes(activityEndingQuizzesFixtures);
+    setCurrentIndex(0);
+    setScore(0);
+    setIsOpen(true);
+    setIsAnswered(false);
+    setIsCorrect(false);
+  };
+
+  const onTriggerRandomQuiz = () => {
+    // sendRequest({ path: "/activity/request-quiz/:activityId" }, applyData);
+
+    const randomIndex = Math.floor(
+      Math.random() * activityEndingQuizzesFixtures.length,
+    );
+    setQuizzes([activityEndingQuizzesFixtures[randomIndex]]);
     setCurrentIndex(0);
     setScore(0);
     setIsOpen(true);
@@ -68,6 +84,7 @@ export default function useActivityQuizz(selectedLessonId?: number) {
     isCorrect,
     score,
     onLoadQuizzes,
+    onTriggerRandomQuiz,
     onCloseQuizzes,
     onAnswerQuiz,
     onNextQuiz,

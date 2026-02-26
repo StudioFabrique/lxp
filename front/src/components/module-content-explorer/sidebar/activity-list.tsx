@@ -19,6 +19,7 @@ type ActivityListProps = {
   selectedActivity?: Activity | null;
   newActivityButtonDisabled?: boolean;
   canEdit?: boolean;
+  isLoading: boolean;
   onActivityReorder: OnDragEndResponder;
   onSelectActivity: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
@@ -29,6 +30,7 @@ export default function ActivityList({
   selectedActivity,
   newActivityButtonDisabled,
   canEdit,
+  isLoading,
   onActivityReorder,
   onSelectActivity,
   onClickCreateActivity,
@@ -53,7 +55,7 @@ export default function ActivityList({
               {...provided.droppableProps}
             >
               {provided.placeholder}
-              {activities?.length ? (
+              {activities && activities.length > 0 ? (
                 activities?.map((activity, index) => (
                   <Draggable
                     key={activity.id}
@@ -98,6 +100,10 @@ export default function ActivityList({
                     )}
                   </Draggable>
                 ))
+              ) : isLoading ? (
+                <span className="animate-pulse text-info text-sm w-[90%]">
+                  Chargement des activités en cours...
+                </span>
               ) : (
                 <Can action="component" object="progression">
                   <p className="text-primary text-sm">Aucune activité</p>
