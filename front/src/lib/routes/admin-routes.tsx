@@ -131,6 +131,10 @@ const ResourcesAdd = React.lazy(
   () => import("../../views/resources/resources-add"),
 );
 
+const DashboardIAHome = React.lazy(
+  () => import("../../views/dashboard-ia/dashboard-ia-home"),
+);
+
 /*
 const ResourcesEdit = React.lazy(
   () => import("../../views/resources/resources-edit")
@@ -146,6 +150,12 @@ const adminRoutes = [
       { path: "edit/:id", element: <RoleEdit /> },
     ],
   },
+
+  {
+    path: "dashboard-ia",
+    element: <DashboardIAHome />,
+  },
+
   {
     path: "formation/:formationId",
     element: <FormationAdd />,
@@ -194,7 +204,7 @@ const adminRoutes = [
         index: true,
         element: <CourseHome />,
       },
-      { path: "import-cours", element: <ImportCoursesHome /> },
+      { path: "import", element: <ImportCoursesHome /> },
       {
         path: "edit/:courseId",
         element: <LayoutCourseEdit />,
