@@ -32,27 +32,21 @@ const ModuleContentExplorer = () => {
 
   const explorerStore = useModuleContentExplorer();
   const { state, computed, dispatch, lessonActions } = explorerStore;
-  const {
-    module,
-    selectedLesson,
-    selectedActivity,
-    isPanelClosed,
-    modalVisibility,
-  } = state;
 
   const quizState = useActivityQuizz();
   const smartQuiz = useSmartQuizPrompt({
-    selectedActivity,
+    selectedActivity: state.selectedActivity,
+    isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
     isLastLessonSelected: computed.isLastLessonSelected,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });
 
-  const canEditModule = userBelongsToContacts(user, module?.contacts);
+  const canEditModule = userBelongsToContacts(user, state.module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
     user,
-    selectedLesson?.course?.contacts,
+    state.selectedLesson?.course?.contacts,
   );
 
   return (
@@ -76,19 +70,23 @@ const ModuleContentExplorer = () => {
         onDeclineQuiz={smartQuiz.handleDeclineQuiz}
       />
 
-      {modalVisibility === "lessonCompletionModal" && selectedLesson && (
-        <LessonCompletionModal
-          lesson={selectedLesson}
-          isLessonCompleted={computed.isLessonCompleted}
-          isLastLessonSelected={computed.isLastLessonSelected}
-          isLastActivitySelected={computed.isLastActivitySelected}
-          onRateAndComplete={lessonActions.completeLesson}
-          onClickNextLesson={lessonActions.nextLesson}
-          onClickMinimizeButton={() =>
-            dispatch({ type: "set_modal_visibility", modalVisibility: "none" })
-          }
-        />
-      )}
+      {state.modalVisibility === "lessonCompletionModal" &&
+        state.selectedLesson && (
+          <LessonCompletionModal
+            lesson={state.selectedLesson}
+            isLessonCompleted={computed.isLessonCompleted}
+            isLastLessonSelected={computed.isLastLessonSelected}
+            isLastActivitySelected={computed.isLastActivitySelected}
+            onRateAndComplete={lessonActions.completeLesson}
+            onClickNextLesson={lessonActions.nextLesson}
+            onClickMinimizeButton={() =>
+              dispatch({
+                type: "set_modal_visibility",
+                modalVisibility: "none",
+              })
+            }
+          />
+        )}
 
       {/* --- Section Header --- */}
       <Header
@@ -103,7 +101,7 @@ const ModuleContentExplorer = () => {
           <Can object="lesson" action="update">
             <Link
               className="btn btn-primary text-base-100 gap-2"
-              to={`/admin/parcours/edit/${module?.parcoursId}?step=4`}
+              to={`/admin/parcours/edit/${state.module?.parcoursId}?step=4`}
             >
               <PenBox /> Modifier le module
             </Link>
@@ -112,16 +110,16 @@ const ModuleContentExplorer = () => {
       </Header>
 
       {/* --- Section Contenu (Wrapper & Slots) --- */}
-      {module && module.parcoursId && module.id ? (
+      {state.module && state.module?.parcoursId && state.module.id ? (
         <ModuleContentExplorerWrapper
-          selectedLesson={selectedLesson}
-          isPanelClosed={isPanelClosed}
+          selectedLesson={state.selectedLesson}
+          isPanelClosed={state.isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
           onCloseAll={() => {
             dispatch({ type: "select_lesson", lesson: undefined });
             navigate(".", { replace: true });
           }}
-          header={<ModuleContentExplorerHeader moduleData={module} />}
+          header={<ModuleContentExplorerHeader moduleData={state.module} />}
           progressionSide={
             <ModuleExplorerSidebar
               store={explorerStore}
@@ -131,7 +129,7 @@ const ModuleContentExplorer = () => {
           }
           topProgressBar={
             <Can action="component" object="progression">
-              <ProgressBar courses={module.courses} />
+              <ProgressBar courses={state.module.courses} />
             </Can>
           }
           previewLesson={
@@ -142,7 +140,7 @@ const ModuleContentExplorer = () => {
               canEditSelectedLesson={canEditSelectedLesson}
             />
           }
-          moduleData={<ModuleData moduleData={module} />}
+          moduleData={<ModuleData moduleData={state.module} />}
         />
       ) : (
         <ModuleContentExplorerSkeleton />

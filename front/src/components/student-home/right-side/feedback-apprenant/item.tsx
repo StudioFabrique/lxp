@@ -4,20 +4,31 @@ import { Accomplishment } from "../../../../utils/interfaces/accomplishment";
 import FeedbacksButton from "../../../UI/feedbacks/feedbacks-button";
 import { Context } from "../../../../store/context.store";
 
-const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
+type ItemProps = {
+  accomplishment: Accomplishment;
+  onRemove: (id: number) => void;
+};
+
+const Item = ({ accomplishment, onRemove }: ItemProps) => {
   const { socket, user } = useContext(Context);
   const [buttonClicked, setButtonClicked] = useState(false);
 
   const handleClick = () => {
     setButtonClicked(true);
-    if (!socket) return;
-    const idMdbUserFrom = user?._id;
 
-    socket.emit("receive-accomplishment", {
-      studentMdbIdToFelicitate: accomplishment.student.idMdb,
-      accomplishmentId: accomplishment.id,
-      idMdbUserFrom,
-    });
+    if (socket) {
+      const idMdbUserFrom = user?._id;
+      socket.emit("receive-accomplishment", {
+        studentMdbIdToFelicitate: accomplishment.student.idMdb,
+        accomplishmentId: accomplishment.id,
+        idMdbUserFrom,
+      });
+    }
+
+    // On laisse 1.5 secondes (1500ms) pour que l'animation se joue avant de démonter le composant
+    setTimeout(() => {
+      onRemove(accomplishment.id);
+    }, 1500);
   };
 
   return (
