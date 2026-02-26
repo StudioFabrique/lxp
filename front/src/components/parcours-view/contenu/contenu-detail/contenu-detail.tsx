@@ -6,7 +6,7 @@ import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { EyeOff } from "lucide-react";
+import { EyeOff, Import, Plus } from "lucide-react";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
@@ -97,13 +97,24 @@ const ContenuDetail: FC<{
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         {canEdit && (
           <Can action="write" object="course">
-            <Link
-              to="/admin/course/add"
-              state={{ parcoursId, moduleId }}
-              className="btn btn-primary btn-sm text-base-100"
-            >
-              Ajouter un cours
-            </Link>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Link
+                to="/admin/course/add"
+                state={{ parcoursId, moduleId }}
+                className="btn btn-primary btn-sm text-base-100"
+              >
+                <Plus size={20} />
+                Ajouter un cours
+              </Link>
+              <Link
+                to="/admin/course/import"
+                state={{ parcoursId, moduleId }}
+                className="btn btn-primary btn-sm text-base-100"
+              >
+                <Import size={20} />
+                Importer
+              </Link>
+            </div>
           </Can>
         )}
       </span>

@@ -18,6 +18,8 @@ import QuizRequestModal from "../../components/quizzes/modals/quiz-request-modal
 import useSmartQuizPrompt from "../../hooks/use-smart-quiz-prompt";
 import ModuleExplorerSidebar from "../../components/module-content-explorer/sidebar/module-explorer-sidebar";
 import ModuleExplorerPreview from "../../components/module-content-explorer/preview/module-explorer-preview";
+import useDiagnosticQuiz from "../../hooks/use-diagnostic-quiz";
+import DiagnosticQuizModal from "../../components/quizzes/modals/diagnostic-quiz-modal";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -34,6 +36,7 @@ const ModuleContentExplorer = () => {
   const { state, computed, dispatch, lessonActions } = explorerStore;
 
   const quizState = useActivityQuizz();
+
   const smartQuiz = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
     isLessonCompleted: computed.isLessonCompleted,
@@ -42,6 +45,12 @@ const ModuleContentExplorer = () => {
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });
+
+  const isModuleLoaded = Boolean(state.module && state.module.id);
+  const diagnosticQuiz = useDiagnosticQuiz(
+    computed.hasStartedModule,
+    isModuleLoaded,
+  );
 
   const canEditModule = userBelongsToContacts(user, state.module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
@@ -52,6 +61,20 @@ const ModuleContentExplorer = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* --- Section Modales --- */}
+      <DiagnosticQuizModal
+        isOpen={diagnosticQuiz.isOpen}
+        isStarted={diagnosticQuiz.isStarted}
+        moduleTitle={state.module?.title}
+        quiz={diagnosticQuiz.currentQuiz}
+        currentIndex={diagnosticQuiz.currentIndex}
+        totalQuizzes={diagnosticQuiz.quizzes?.length || 0}
+        isAnswered={diagnosticQuiz.isAnswered}
+        isCorrect={diagnosticQuiz.isCorrect}
+        onStart={diagnosticQuiz.onStartQuiz}
+        onAnswer={diagnosticQuiz.onAnswerQuiz}
+        onNext={diagnosticQuiz.onNextQuiz}
+      />
+
       <QuizModal
         isOpen={quizState.isOpen}
         quiz={quizState.currentQuiz}

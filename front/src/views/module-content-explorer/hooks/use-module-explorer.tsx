@@ -39,6 +39,18 @@ const useModuleExplorerContent = () => {
     activity: false,
   });
 
+  const hasStartedModule = useMemo(() => {
+    if (!state.module) return false;
+
+    // On parcourt tous les cours et toutes leurs leçons.
+    // s'il y a au moins un objet lessonRead dans au moins une leçon, le module a été commencé.
+    return state.module.courses.some((course) =>
+      course.lessons.some(
+        (lesson) => lesson.lessonsRead && lesson.lessonsRead.length > 0,
+      ),
+    );
+  }, [state.module]);
+
   const isLessonCompleted = useMemo(
     () =>
       Boolean(
@@ -513,6 +525,7 @@ const useModuleExplorerContent = () => {
       isFirstActivitySelected,
       isLastActivitySelected,
       isLastLessonSelected,
+      hasStartedModule,
     },
     isLoading: isLoading || isLoadingRequest,
     dispatch,
