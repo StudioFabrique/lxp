@@ -204,7 +204,7 @@ const adminRoutes = [
         index: true,
         element: <CourseHome />,
       },
-      { path: "import-cours", element: <ImportCoursesHome /> },
+      { path: "import", element: <ImportCoursesHome /> },
       {
         path: "edit/:courseId",
         element: <LayoutCourseEdit />,
