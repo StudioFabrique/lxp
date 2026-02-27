@@ -2,7 +2,6 @@ import fs, { readdirSync } from "fs";
 import path from "path";
 
 import { prisma } from "../../../utils/db";
-import { TransactionClient } from "../../../../generated/prisma/internal/prismaNamespace";
 
 export default async function deleteActivity(
   activityId: number,
@@ -29,7 +28,7 @@ export default async function deleteActivity(
   );
   const filePath = path.join(activityFolder, existingActivity.url);
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     // Delete Activity
     if (parent === "lesson") {
       await tx.activity.delete({ where: { id: activityId } });
