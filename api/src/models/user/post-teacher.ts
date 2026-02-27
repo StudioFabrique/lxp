@@ -1,4 +1,4 @@
-import { Contact } from "../../../generated/prisma/client";
+import { Contact } from "../../../generated/prisma/browser";
 import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import User, { IUser } from "../../utils/interfaces/db/user";
@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 async function postTeacher(teacher: IUser) {
   const existingUser = await User.findOne(
     { email: teacher.email },
-    { email: 1 }
+    { email: 1 },
   );
 
   // vérification de la disponibilité de l'adresse email
@@ -34,7 +34,7 @@ async function postTeacher(teacher: IUser) {
   if (newTeacher) {
     const updatedTeacher = await User.findOne(
       { _id: newTeacher._id },
-      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 },
     ).populate("roles", { label: 1 });
 
     if (updatedTeacher) {
