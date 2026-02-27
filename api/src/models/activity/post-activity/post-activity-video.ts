@@ -1,4 +1,4 @@
-import { Activity, BonusActivity } from "../../../../generated/prisma/client";
+import { Activity, BonusActivity } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 
 export default async function postActivityVideo(
@@ -7,7 +7,7 @@ export default async function postActivityVideo(
   title: string,
   description: string,
   url: string,
-  parentType?: "resource" | "lesson"
+  parentType?: "resource" | "lesson",
 ) {
   let existingParent:
     | { id: number; activities: Activity[] }

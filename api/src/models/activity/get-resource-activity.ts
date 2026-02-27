@@ -3,7 +3,7 @@ import {
   BonusActivity,
   ResourceActivity,
   ResourceBonusActivity,
-} from "../../../generated/prisma/client";
+} from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function getResourceActivity(

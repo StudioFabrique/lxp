@@ -1,9 +1,4 @@
-import {
-  Activity,
-  BonusActivity,
-  Lesson,
-  Resource,
-} from "../../../../generated/prisma/client";
+import { Lesson, Resource, Activity, BonusActivity } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 
 export default async function postIframe(
