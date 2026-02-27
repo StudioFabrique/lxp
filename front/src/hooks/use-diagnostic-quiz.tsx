@@ -7,6 +7,7 @@ import { Context } from "../store/context.store";
 export default function useDiagnosticQuiz(
   hasStartedModule: boolean,
   isModuleLoaded: boolean,
+  onFinishInitialQuiz: () => void, // 💡 Nouvel argument attendu
 ) {
   const { user } = useContext(Context);
 
@@ -18,11 +19,8 @@ export default function useDiagnosticQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Garde en mémoire si le quiz de la session a été terminé pour ne pas le ré-afficher
-  // si le state React se met à jour.
   const [isFinished, setIsFinished] = useState(false);
 
-  // 💡 Fonction pour démarrer le quiz après l'écran d'accueil
   const onStartQuiz = () => {
     setIsStarted(true);
   };
@@ -41,27 +39,23 @@ export default function useDiagnosticQuiz(
       setIsAnswered(false);
       setIsCorrect(false);
     } else {
-      // Fin du diagnostic
       setIsOpen(false);
-      setIsFinished(true); // Empêche le quiz de réapparaître
+      setIsFinished(true);
 
       console.log(`Diagnostic terminé ! Score : ${score}/${quizzes?.length}`);
+      onFinishInitialQuiz();
     }
   };
 
   useEffect(() => {
-    // 1. On attend que les données du module soient chargées depuis l'API
     if (!isModuleLoaded) return;
 
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
 
-    // 2. Si le module n'a jamais été commencé et que le quiz n'est pas déjà fini
     if (!hasStartedModule && !isFinished && !userIsAdmin) {
-      // Génère un nombre de questions entre 3 et 5
       const numQuestions = Math.floor(Math.random() * 3) + 3;
 
-      // Mélange les fixtures et sélectionne le bon nombre de questions
       const shuffled = [...activityEndingQuizzesFixtures].sort(
         () => 0.5 - Math.random(),
       );
@@ -69,9 +63,19 @@ export default function useDiagnosticQuiz(
 
       setIsOpen(true);
     } else {
-      setIsFinished(true);
+      // 💡 Si on n'a pas besoin de faire le diagnostic, on signale tout de suite qu'il est "fini" pour déclencher la lecture
+      if (!isFinished) {
+        setIsFinished(true);
+        onFinishInitialQuiz();
+      }
     }
-  }, [hasStartedModule, isModuleLoaded, user?.permissions, isFinished]);
+  }, [
+    hasStartedModule,
+    isModuleLoaded,
+    user?.permissions,
+    isFinished,
+    onFinishInitialQuiz,
+  ]);
 
   return {
     isOpen,

@@ -1,6 +1,13 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+  useRef,
+} from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -15,18 +22,18 @@ import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
-// Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useModuleExplorerContent = () => {
-  // Params et states de la route active
-  // ------------
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
-  // ------------
+
   const navigate = useNavigate();
   const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
+  const isDiagnosticPassed = useRef(false);
 
   const [state, dispatch] = useReducer(
     moduleExplorerContentReducer,
@@ -41,9 +48,6 @@ const useModuleExplorerContent = () => {
 
   const hasStartedModule = useMemo(() => {
     if (!state.module) return false;
-
-    // On parcourt tous les cours et toutes leurs leçons.
-    // s'il y a au moins un objet lessonRead dans au moins une leçon, le module a été commencé.
     return state.module.courses.some((course) =>
       course.lessons.some(
         (lesson) => lesson.lessonsRead && lesson.lessonsRead.length > 0,
@@ -113,10 +117,16 @@ const useModuleExplorerContent = () => {
     [sendRequest],
   );
 
-  // Marquer une leçon comme terminée et attribuer une note
+  // 💡 Handler pour signaler la fin du quiz et enclencher la lecture
+  const onFinishInitialQuiz = useCallback(async () => {
+    isDiagnosticPassed.current = true;
+    if (state.selectedLesson?.id) {
+      await initiateLesson(state.selectedLesson.id);
+    }
+  }, [state.selectedLesson?.id, initiateLesson]);
+
   const completeLesson = useCallback(
     (rating: number) => {
-      // Fonction de mise à jour des données du module
       const applyData = ({
         lessonRead,
         rating,
@@ -163,14 +173,12 @@ const useModuleExplorerContent = () => {
     );
   }, [sendRequest, state.selectedActivity]);
 
-  // Évaluer le cours en tant que apprenant
   const rateContent = useCallback(
     (rating: number) => {
       const applyData = ({ data }: { data: LessonRating }) => {
         dispatch({ type: "set_lesson_rating", rating: [data] });
       };
 
-      // Edit existing rate
       sendRequest(
         {
           method: "put",
@@ -238,7 +246,6 @@ const useModuleExplorerContent = () => {
 
   const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
-      // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
     };
 
@@ -246,11 +253,16 @@ const useModuleExplorerContent = () => {
     navigate(".", {
       state: { lessonId: state.selectedLesson.id },
     });
+
     await sendRequest(
       { path: `/lesson/${state.selectedLesson.id}` },
       applyData,
     );
-    await initiateLesson(state.selectedLesson.id);
+
+    // 💡 Déclenche automatiquement si le quiz est passé ou bypassé
+    if (isDiagnosticPassed.current) {
+      await initiateLesson(state.selectedLesson.id);
+    }
   }, [state.selectedLesson?.id, sendRequest, initiateLesson, navigate]);
 
   const fetchActivityTextContent = useCallback(() => {
@@ -271,27 +283,20 @@ const useModuleExplorerContent = () => {
     title: string,
     content: string,
   ): Promise<boolean> => {
-    // Si le titre est manquant, avertir l'utilisateur via un toast
-
     if (!content || !(content.length > 0)) {
       toast.error("Le contenu est obligatoire");
       return false;
     }
 
-    // clean empty div at the content beginning and the end
     const finalContent = replaceActivityTextContent(content);
-
-    console.log({ finalContent });
 
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
-
       return true;
     };
 
     const applyDataPut = ({ response: activity }: { response: Activity }) => {
       dispatch({ type: "edit_activity", activity });
-
       return true;
     };
 
@@ -313,24 +318,20 @@ const useModuleExplorerContent = () => {
       },
       state.mode === "write" ? applyDataPost : applyDataPut,
     );
-    // Ajout d'un délai de 1 seconde pour éviter les clignotements
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     setIsLoading(false);
-
     return response;
   };
 
   const saveIframeActivity = async (title: string): Promise<boolean> => {
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
-
       return true;
     };
 
     const applyDataPut = (activity: Activity) => {
       dispatch({ type: "edit_activity", activity });
-
       return true;
     };
 
@@ -355,11 +356,8 @@ const useModuleExplorerContent = () => {
       state.mode === "write" ? applyDataPost : applyDataPut,
     );
 
-    // Ajout d'un délai de 1 seconde pour éviter les clignotements
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     setIsLoading(false);
-
     return response;
   };
 
@@ -451,8 +449,6 @@ const useModuleExplorerContent = () => {
   };
 
   useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url dès que les données du module sont fetch,
-    // une seule fois
     if (state.module && !stateFromUrlCalled) {
       if (stateFromUrl?.lessonId)
         dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
@@ -502,22 +498,17 @@ const useModuleExplorerContent = () => {
   }, [sendRequest, hasOrderChanged, state.selectedLesson, state.module]);
 
   useEffect(() => {
-    // useEffect pour charger les données initiales du module
     fetchModuleData();
   }, [fetchModuleData]);
 
   useEffect(() => {
-    // useEffect pour charger les données et activités
-    // d'une nouvelle leçon selectionnée
     fetchLessonData();
   }, [fetchLessonData]);
 
   useEffect(() => {
-    // useEffect pour récupérer le contenu de l'activité selectionnée
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
 
-  // Retourne les données et fonctions nécessaires
   return {
     state,
     computed: {
@@ -531,6 +522,7 @@ const useModuleExplorerContent = () => {
     dispatch,
     moduleActions: {
       fetchModuleData,
+      onFinishInitialQuiz,
     },
     courseActions: {
       enableCourse,

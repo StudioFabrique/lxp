@@ -33,7 +33,15 @@ const ModuleContentExplorer = () => {
   const firstPathSegment = window.location.pathname.split("/")[1];
 
   const explorerStore = useModuleContentExplorer();
-  const { state, computed, dispatch, lessonActions } = explorerStore;
+  const { state, computed, dispatch, lessonActions, moduleActions } =
+    explorerStore;
+
+  const isModuleLoaded = Boolean(state.module && state.module.id);
+  const diagnosticQuiz = useDiagnosticQuiz(
+    computed.hasStartedModule,
+    isModuleLoaded,
+    moduleActions.onFinishInitialQuiz,
+  );
 
   const quizState = useActivityQuizz();
 
@@ -45,12 +53,6 @@ const ModuleContentExplorer = () => {
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });
-
-  const isModuleLoaded = Boolean(state.module && state.module.id);
-  const diagnosticQuiz = useDiagnosticQuiz(
-    computed.hasStartedModule,
-    isModuleLoaded,
-  );
 
   const canEditModule = userBelongsToContacts(user, state.module?.contacts);
   const canEditSelectedLesson = userBelongsToContacts(
