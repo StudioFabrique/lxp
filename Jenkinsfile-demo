@@ -27,6 +27,7 @@ pipeline {
                     file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
                 ]) {
+                    sh 'rm -rf ./api/dist || true'
                     sh '''
                         echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
                         chmod -R 777 ./front/ || true
