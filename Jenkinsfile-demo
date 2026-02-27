@@ -101,7 +101,7 @@ pipeline {
                         chmod -R 777 ./api/ || true
 
                         # Inject .env in workspace
-                        cp $ENV_FILE ./api/dist/.env
+                        cp $ENV_FILE ./api/.env
 
                         echo "📡 Deploying to Demo..."
                         echo "🔎 Pinging $HOST..."
@@ -114,15 +114,11 @@ pipeline {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/dist
                     '''
 
                     sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
                     '''
 
                     sh '''
