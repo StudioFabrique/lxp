@@ -6,6 +6,7 @@ import PaginatedTopUsers from "./components/PaginatedTopUsers";
 import TopFiveUsers from "./components/TopFiveUsers";
 import useDashboardIA from "./hooks/useDashboardIA";
 import toast from "react-hot-toast";
+import ElementNotFound from "../../components/UI/element-not-found";
 
 export default function DashboardIAHome() {
   const {
@@ -66,31 +67,45 @@ export default function DashboardIAHome() {
               <p className="text-xs font-semibold col-span-2">Quantité</p>
               <p className="text-xs font-semibold ml-0">%</p>
             </div>
-            <GroupsStatsComponent
-              stats={groupsStats || []}
-              groupsTotalTokens={groupsTotalTokens}
-            />
+            {groupsStats && groupsStats.length > 0 ? (
+              <GroupsStatsComponent
+                stats={groupsStats}
+                groupsTotalTokens={groupsTotalTokens}
+              />
+            ) : (
+              <ElementNotFound message="Aucune promotion active trouvée." />
+            )}
           </Wrapper>
-          <p className="text-xs text-justify w-11/12 mx-auto">
-            * Attention, les pourcentages peuvent être approximatifs, par
-            exemple si une promotion a été supprimée durant le mois en cours.
-            Cependant le total, lui, reste précis.
-          </p>
+          {groupsStats && groupsStats.length > 0 ? (
+            <p className="text-xs text-justify w-11/12 mx-auto">
+              * Attention, les pourcentages peuvent être approximatifs, par
+              exemple si une promotion a été supprimée durant le mois en cours.
+              Cependant le total, lui, reste précis.
+            </p>
+          ) : null}
         </article>
         <article className="flex flex-col gap-y-2">
           <h2 className="font-semibold pl-1">
             Top consommateurs de tokens (5 premiers)
           </h2>
+
           <Wrapper>
             <div className="grid grid-cols-2 text-xs font-semibold text-primary">
               <p>Apprenant</p>
               <p>Quantité</p>
-            </div>
-            <TopFiveUsers topUsers={top5Users || []} />
+            </div>{" "}
+            {top5Users && top5Users.length > 0 ? (
+              <TopFiveUsers topUsers={top5Users} />
+            ) : (
+              <ElementNotFound message="Aucune donnée de disponible." />
+            )}
           </Wrapper>
         </article>
       </section>
       <section className="w-full">
+        <h2 className="font-semibold pl-1 mb-4">
+          Consommation tous utilisateurs
+        </h2>
         {totalPages ? (
           <PaginatedTopUsers
             dataList={dataList}
@@ -105,7 +120,11 @@ export default function DashboardIAHome() {
             setPath={setPath}
             onSearchTerm={handleSearch}
           />
-        ) : null}
+        ) : (
+          <Wrapper>
+            <ElementNotFound message="Aucune donnée de disponible." />
+          </Wrapper>
+        )}
       </section>
     </main>
   );
