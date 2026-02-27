@@ -39,9 +39,6 @@ export default function PaginatedTopUsers(props: Props) {
 
   return (
     <div>
-      <h2 className="font-semibold pl-1 mb-4">
-        Consommation tous utilisateurs
-      </h2>
       <Wrapper additionalClassname="overflow-x-scroll">
         <SearchBar
           placeholder="Rechercher par nom d'utilisateur"
