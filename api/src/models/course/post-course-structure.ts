@@ -26,7 +26,7 @@ async function postCourseStructure(
       data: {
         title,
         description: description || "",
-        order: 1,
+        order: existingModule.courses.length,
         author: "Import",
         adminId: adminId,
         moduleId,
@@ -47,7 +47,7 @@ async function postCourseStructure(
           author: "Import",
           adminId: adminId,
           courseId: newCourse.id,
-          order: existingModule.courses.length,
+          order: i,
           tagId: 1,
           isPublished: false,
         },
