@@ -13,6 +13,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
   },
-  "include": ["src/**/*.ts", "prisma.config.ts", "generated/prisma/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"],
 }
