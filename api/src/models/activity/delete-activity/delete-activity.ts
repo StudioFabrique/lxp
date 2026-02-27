@@ -106,10 +106,7 @@ function extraireNomImage(url: string): string | null {
   return parts.length > 0 ? parts[parts.length - 1] : null;
 }
 
-async function updateMediatheque(
-  resources: { url: string }[],
-  tx: TransactionClient,
-) {
+async function updateMediatheque(resources: { url: string }[], tx: any) {
   for (const res of resources) {
     if (!res.url) continue;
 

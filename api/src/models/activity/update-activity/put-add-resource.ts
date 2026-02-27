@@ -1,9 +1,9 @@
 import {
   Activity,
-  BonusActivity,
   ResourceActivity,
+  BonusActivity,
   ResourceBonusActivity,
-} from "../../../../generated/prisma/client";
+} from "@prisma/client";
 import { prisma } from "../../../utils/db";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 
