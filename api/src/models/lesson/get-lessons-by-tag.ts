@@ -1,4 +1,4 @@
-import { Lesson } from "../../../generated/prisma/client";
+import { Lesson } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 type LessonFromDb = {

@@ -1,4 +1,4 @@
-import { Activity, BonusActivity } from "../../../../generated/prisma/client";
+import { Activity, BonusActivity } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 //import path from "path";
 //import fs from "fs";

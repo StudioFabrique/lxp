@@ -1,7 +1,7 @@
 import { prisma } from "../../../utils/db";
 import path from "path";
 import fs from "fs";
-import { Activity, BonusActivity } from "../../../../generated/prisma/browser";
+import { Activity, BonusActivity } from "@prisma/client";
 
 export default async function putActivityVideo(
   activityId: number,
@@ -9,7 +9,7 @@ export default async function putActivityVideo(
   description: string,
   url: string,
   parentType: "lesson" | "resource",
-  userId: string
+  userId: string,
 ) {
   let existingParent: Activity | BonusActivity | null = null;
 
@@ -72,8 +72,8 @@ export default async function putActivityVideo(
           "uploads",
           "activities",
           "videos",
-          existingParent.url
-        )
+          existingParent.url,
+        ),
       );
       console.log("Fichier supprimé :", url);
     }
