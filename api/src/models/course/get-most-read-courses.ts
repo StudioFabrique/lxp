@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 
-import { Course } from "../../../generated/prisma/client";
+import { Course } from "@prisma/client";
 import Group from "../../utils/interfaces/db/group";
 
 /**

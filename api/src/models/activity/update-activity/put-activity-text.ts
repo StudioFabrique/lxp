@@ -3,7 +3,7 @@ import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
 import { prisma } from "../../../utils/db";
-import { Activity, BonusActivity } from "../../../../generated/prisma/client";
+import { BonusActivity, Activity } from "@prisma/client";
 
 /**
  * Updates an activity's text content, title, and description.
@@ -30,7 +30,7 @@ export default async function putActivityText(
   value: string,
   title: string,
   description: string,
-  parent: "resource" | "lesson"
+  parent: "resource" | "lesson",
 ) {
   let existingBonusActivity: BonusActivity | null = null;
   let existingActivity: Activity | null = null;
@@ -63,9 +63,9 @@ export default async function putActivityText(
         "..",
         "uploads",
         "activities",
-        fileName
+        fileName,
       ),
-      value
+      value,
     );
 
     let updatedActivity: Activity | BonusActivity | null = null;
@@ -115,14 +115,14 @@ export default async function putActivityText(
           "activities",
           parent === "lesson"
             ? existingActivity!.url
-            : existingBonusActivity!.url
-        )
+            : existingBonusActivity!.url,
+        ),
       );
     }
     return updatedActivity;
   } catch (error: any) {
     throw new Error(
-      "Le document n'a pas pu être mis à jour, réessayez plus tard svp..."
+      "Le document n'a pas pu être mis à jour, réessayez plus tard svp...",
     );
   }
 }

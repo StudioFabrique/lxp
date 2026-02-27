@@ -1,4 +1,4 @@
-import { ModuleMetadata } from "../../../generated/prisma/client";
+import { ModuleMetadata } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
 

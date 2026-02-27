@@ -1,4 +1,4 @@
-import { Skill } from "../../../generated/prisma/client";
+import { Skill } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {

@@ -1,9 +1,4 @@
-import {
-  Activity,
-  BonusActivity,
-  Lesson,
-  Resource,
-} from "../../../../generated/prisma/client";
+import { Activity, BonusActivity, Lesson, Resource } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 
 /**

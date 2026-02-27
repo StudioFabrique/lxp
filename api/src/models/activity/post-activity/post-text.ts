@@ -1,9 +1,4 @@
-import {
-  Activity,
-  BonusActivity,
-  Lesson,
-  Resource,
-} from "../../../../generated/prisma/client";
+import { Activity, BonusActivity } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 
 import fs from "fs";
@@ -16,7 +11,7 @@ export default async function postActivityText(
   title: string,
   description: string,
   value: string,
-  parent: "lesson" | "resource"
+  parent: "lesson" | "resource",
 ) {
   console.log({ parent });
 
@@ -57,9 +52,9 @@ export default async function postActivityText(
         "..",
         "uploads",
         "activities",
-        fileName
+        fileName,
       ),
-      value
+      value,
     );
   } catch (error: any) {
     throw {
