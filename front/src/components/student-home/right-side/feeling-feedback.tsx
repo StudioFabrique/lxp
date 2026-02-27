@@ -8,7 +8,7 @@ import StudentFeedback from "../../../utils/interfaces/student-feedback";
 import { Context } from "../../../store/context.store";
 
 const FeelingFeedback = () => {
-  const { sendRequest, isLoading } = useHttp(true);
+  const { sendRequest, isLoading } = useHttp();
   const { socket } = useContext(Context);
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);

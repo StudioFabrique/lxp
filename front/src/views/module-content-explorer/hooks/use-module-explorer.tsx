@@ -117,7 +117,7 @@ const useModuleExplorerContent = () => {
     [sendRequest],
   );
 
-  // 💡 Handler pour signaler la fin du quiz et enclencher la lecture
+  // Handler pour signaler la fin du quiz et enclencher la lecture
   const onFinishInitialQuiz = useCallback(async () => {
     isDiagnosticPassed.current = true;
     if (state.selectedLesson?.id) {
@@ -259,7 +259,7 @@ const useModuleExplorerContent = () => {
       applyData,
     );
 
-    // 💡 Déclenche automatiquement si le quiz est passé ou bypassé
+    // Déclenche automatiquement si le quiz est passé ou bypassé
     if (isDiagnosticPassed.current) {
       await initiateLesson(state.selectedLesson.id);
     }
