@@ -11,7 +11,7 @@
     "test:run": "echo '🚀 Starting Jest...' && dotenv -e .env.test -- jest --clearCache && dotenv -e .env.test -- jest",
     "test:cleanup": "npm run docker:down",
     "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
-    "build": "prisma generate && tsc --project ./",
+    "build": "tsc --project ./",
     "start:dev": "NODE_ENV=development nodemon src/server.ts",
     "start:prod": "NODE_ENV=production node dist/src/server.js",
     "reset-mongo": "npx ts-node src/fixtures.ts",
@@ -21,8 +21,7 @@
     "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts",
     "prisma-generate": "npx prisma generate",
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
-    "test:list": "jest --listTests",
-    "postinstall": "prisma generate"
+    "test:list": "jest --listTests"
   },
   "author": "studio@step.eco",
   "license": "ISC",
