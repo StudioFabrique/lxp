@@ -1,13 +1,20 @@
 import { Router } from "express";
-import httpPostRequestQuizFromContent from "../../../controllers/activity/http-post-request-quiz-from-content";
+import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz";
+import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream";
 
 /**
  * Routeur dédié à la génération de quiz
  */
 const quizRouter = Router();
 
-// Récupérer un quiz (1 question) en passant un contenu textuel.
-quizRouter.post("/content", httpPostRequestQuizFromContent);
+// Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream.
+quizRouter.get(
+  "/course/ending/stream/:courseId",
+  httpGetEndingCourseQuizStream,
+);
+
+// Récupérer un quiz aléatoire (1 question) génèré par l'IA en passant un contenu textuel (activité en cours par exemple).
+quizRouter.post("/content", httpPostRequestRandomQuiz);
 
 /**
  * Recupérer un set de quiz pour un module.
@@ -17,5 +24,4 @@ quizRouter.post("/content", httpPostRequestQuizFromContent);
  */
 quizRouter.post("/module/starting");
 
-// Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours
-quizRouter.post("/course/:courseId");
+export default quizRouter;
