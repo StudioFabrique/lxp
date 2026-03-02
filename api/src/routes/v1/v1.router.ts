@@ -21,6 +21,7 @@ import courseRouter from "./course/course.router";
 import lessonRouter from "./lesson/lesson.router";
 import checkPermissions from "../../middleware/check-permissions";
 import activityRouter from "./activity/activityRouter";
+import quizRouter from "./quiz/quiz.router";
 
 // Import des routeurs pour la recherche
 import searchRouter from "./search/search.router";
@@ -64,6 +65,10 @@ v1Router.use("/stats", statsRouter);
 v1Router.use("/evaluation", evaluationRouter);
 v1Router.use("/media", mediaRouter);
 v1Router.use("/resources", resourcesRouter);
+
+// Route pour les quiz
+
+v1Router.use("/quiz", quizRouter);
 
 /**
  * Routes de recherche dédié à elastic search :
