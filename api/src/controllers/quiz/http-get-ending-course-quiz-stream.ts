@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { Readable } from "stream";
 import getCourseById from "../../models/course/get-course-by-id";
+import dotenv from "dotenv";
+dotenv.config();
 
 /**
  * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream : GET /quiz/course/ending/stream/:courseId
