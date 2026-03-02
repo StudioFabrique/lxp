@@ -126,7 +126,7 @@ const ModuleExplorerPreview = ({
             }
           >
             {computed.isLastActivitySelected &&
-              computed.isLastLessonSelected && (
+              computed.isLastLessonOfCurrentCourse && (
                 <button
                   className="btn btn-secondary btn-outline"
                   onClick={quizState.onLoadQuizzes}
