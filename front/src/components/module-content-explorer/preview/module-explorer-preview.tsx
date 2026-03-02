@@ -34,7 +34,6 @@ const ModuleExplorerPreview = ({
     mode,
   } = state;
 
-  // Ces fonctions n'ont d'utilité que dans l'éditeur, on les encapsule ici !
   const editTitle = (title: string) =>
     dispatch({ type: "update_activity_title", title });
   const editIframeSrc = (src: string) =>
