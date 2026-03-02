@@ -1,10 +1,9 @@
 /**
+ * POST /quiz/random
  * Récupérer dans le body
- * - content
+ * - content : une valeur de type texte sans aucune balise.
  *
- * "content" sera une valeur de type texte sans aucune balise.
- *
- * Appeler l'api du docker IA et envoyer le content tout en appelant les constantes (treshold etc..) définis dans le code : POST /quiz/random
+ * Appeler l'api du docker IA et envoyer le "content" tout en définissant des constantes (treshold etc..)
  *
  */
 export default function httpPostRequestRandomQuiz() {}
