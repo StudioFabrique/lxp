@@ -10,6 +10,7 @@ export default async function getLessonDetail(
     select: {
       id: true,
       title: true,
+      courseId: true,
       course: {
         select: {
           id: true,

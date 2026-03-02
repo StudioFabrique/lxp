@@ -1,0 +1,55 @@
+import { prisma } from "../../utils/db";
+
+export default async function getCourseById(
+  courseId: number,
+): Promise<{ id: number; title: string; content: string } | null> {
+  // Récupération des données imbriquées avec Prisma
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    include: {
+      lessons: {
+        orderBy: { order: "asc" }, // On garde l'ordre pédagogique
+        include: {
+          activities: {
+            orderBy: { order: "asc" },
+          },
+        },
+      },
+    },
+  });
+
+  if (!course) {
+    return null;
+  }
+
+  // Construction "intelligente" du contenu textuel (en Markdown)
+  let markdownContent = `# ${course.title}\n\n`;
+  if (course.description) {
+    markdownContent += `${course.description}\n\n`;
+  }
+
+  // On boucle sur chaque leçon
+  for (const lesson of course.lessons) {
+    markdownContent += `## Leçon : ${lesson.title}\n`;
+    if (lesson.description) {
+      markdownContent += `${lesson.description}\n\n`;
+    }
+
+    // On boucle sur les activités de la leçon
+    if (lesson.activities.length > 0) {
+      markdownContent += `### Activités abordées :\n`;
+      for (const activity of lesson.activities) {
+        const activityTitle = activity.title || "Activité";
+        markdownContent += `- **${activityTitle}** (Format : ${activity.type})\n`;
+      }
+      markdownContent += `\n`;
+    }
+  }
+
+  // On retourne l'objet attendu par ton contrôleur Express
+  return {
+    id: course.id,
+    title: course.title,
+    content: markdownContent,
+  };
+}
