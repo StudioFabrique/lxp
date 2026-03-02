@@ -1,4 +1,4 @@
-import { Contact } from "../../../generated/prisma/client";
+import { Contact } from "@prisma/client";
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";

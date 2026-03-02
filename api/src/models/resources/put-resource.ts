@@ -1,4 +1,4 @@
-import { Admin, Resource, Tag } from "../../../generated/prisma/client";
+import { Admin, Resource, Tag } from "@prisma/client";
 import { getSoftColor } from "../../helpers/getSoftColors";
 import { prisma } from "../../utils/db";
 import { IRole } from "../../utils/interfaces/db/role";

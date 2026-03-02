@@ -3,7 +3,7 @@ import {
   Contact,
   ModuleMetadata,
   Parcours,
-} from "../../../generated/prisma/client";
+} from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 import { Metadata } from "sharp";

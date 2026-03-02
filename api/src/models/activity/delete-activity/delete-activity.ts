@@ -2,7 +2,6 @@ import fs, { readdirSync } from "fs";
 import path from "path";
 
 import { prisma } from "../../../utils/db";
-import { TransactionClient } from "../../../../generated/prisma/internal/prismaNamespace";
 
 export default async function deleteActivity(
   activityId: number,
@@ -29,7 +28,7 @@ export default async function deleteActivity(
   );
   const filePath = path.join(activityFolder, existingActivity.url);
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: any) => {
     // Delete Activity
     if (parent === "lesson") {
       await tx.activity.delete({ where: { id: activityId } });
@@ -107,10 +106,7 @@ function extraireNomImage(url: string): string | null {
   return parts.length > 0 ? parts[parts.length - 1] : null;
 }
 
-async function updateMediatheque(
-  resources: { url: string }[],
-  tx: TransactionClient,
-) {
+async function updateMediatheque(resources: { url: string }[], tx: any) {
   for (const res of resources) {
     if (!res.url) continue;
 

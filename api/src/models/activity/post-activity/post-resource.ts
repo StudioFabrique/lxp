@@ -1,10 +1,4 @@
-import { log } from "console";
-import {
-  Activity,
-  BonusActivity,
-  Lesson,
-  Resource,
-} from "../../../../generated/prisma/client";
+import { Lesson, Activity, Resource, BonusActivity } from "@prisma/client";
 import { prisma } from "../../../utils/db";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 
