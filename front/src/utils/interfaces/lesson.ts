@@ -16,6 +16,7 @@ export default interface Lesson {
   author?: string;
   adminId: number;
   course: Course;
+  courseId?: number;
   activities?: Activity[];
   order?: number;
   lessonsRead?: LessonRead[];

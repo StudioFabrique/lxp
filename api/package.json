@@ -29,7 +29,6 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.10.0",
     "prisma": "6.19.0",
-    "@prisma/client": "6.19.0",
     "@tiptap/extension-placeholder": "^2.11.7",
     "@types/jsonwebtoken": "^9.0.1",
     "accesscontrol": "^2.2.1",

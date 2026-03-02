@@ -5,7 +5,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const MostReadCourses = () => {
-  const { sendRequest } = useHttp(true);
+  const { sendRequest } = useHttp();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 

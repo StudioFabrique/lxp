@@ -27,6 +27,7 @@ pipeline {
                     file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
                 ]) {
+                    sh 'rm -rf ./api/dist || true'
                     sh '''
                         echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
                         chmod -R 777 ./front/ || true
@@ -114,31 +115,19 @@ pipeline {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/dist
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma.config.ts $USER@$HOST:/home/$USER/$TARGET/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma migrate deploy"
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npx prisma generate"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"
                 '''
 
                     sh '''
