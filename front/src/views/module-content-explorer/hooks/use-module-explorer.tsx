@@ -99,6 +99,22 @@ const useModuleExplorerContent = () => {
     [state.module?.courses, state.selectedLesson],
   );
 
+  const isLastLessonOfCurrentCourse = useMemo(() => {
+    if (!state.selectedLesson || !state.module) return false;
+
+    // On trouve le cours auquel appartient la leçon sélectionnée
+    const currentCourse = state.module.courses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === state.selectedLesson?.id),
+    );
+
+    if (!currentCourse || !currentCourse.lessons.length) return false;
+
+    // On compare l'ID de la leçon actuelle avec l'ID de la dernière leçon de ce cours
+    const lastLessonInCourse =
+      currentCourse.lessons[currentCourse.lessons.length - 1];
+    return lastLessonInCourse.id === state.selectedLesson.id;
+  }, [state.selectedLesson, state.module]);
+
   const fetchModuleData = useCallback(() => {
     const applyData = ({ data }: { data: Module & { parcours: string } }) => {
       dispatch({ type: "update_module_data", module: data });
@@ -517,6 +533,7 @@ const useModuleExplorerContent = () => {
       isLastActivitySelected,
       isLastLessonSelected,
       hasStartedModule,
+      isLastLessonOfCurrentCourse,
     },
     isLoading: isLoading || isLoadingRequest,
     dispatch,
