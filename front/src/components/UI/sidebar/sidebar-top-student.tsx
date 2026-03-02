@@ -8,6 +8,7 @@ type SharedSideBarProps = {
 const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => {
   const sidebarItems = [
     <SidebarItem
+      key="home"
       itemPath={undefined}
       currentRoute={currentRoute}
       icon={<Home className="w-4" />}
