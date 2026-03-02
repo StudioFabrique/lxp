@@ -51,7 +51,6 @@ export default async function httpGetEndingCourseQuizStream(
     res.setHeader("Transfer-Encoding", "chunked");
 
     // Conversion du stream Web (fetch) en stream Node et envoi au client
-    // Readable.fromWeb est disponible à partir de Node.js 17/18
     const nodeStream = Readable.fromWeb(response.body as any);
     nodeStream.pipe(res);
   } catch (error) {
