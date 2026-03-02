@@ -43,7 +43,7 @@ const ModuleContentExplorer = () => {
     moduleActions.onFinishInitialQuiz,
   );
 
-  const quizState = useActivityQuizz();
+  const quizState = useActivityQuizz(state.selectedLesson?.course?.id);
 
   const smartQuiz = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
@@ -87,6 +87,7 @@ const ModuleContentExplorer = () => {
         totalQuizzes={quizState.quizzes?.length || 0}
         isAnswered={quizState.isAnswered}
         isCorrect={quizState.isCorrect}
+        isStreaming={quizState.isStreaming}
         onClose={quizState.onCloseQuizzes}
         onAnswer={quizState.onAnswerQuiz}
         onNext={quizState.onNextQuiz}

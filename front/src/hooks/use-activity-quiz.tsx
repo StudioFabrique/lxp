@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import { Quiz } from "../utils/interfaces/quiz";
+import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
+import useHttp from "./use-http";
+import { BASE_API_URL } from "../config/urls";
 
-export default function useActivityQuiz() {
-// selectedLessonId?: number,
-// selectedActivityId?: number,
-  // const { sendRequest, isLoading } = useHttp();
+export default function useActivityQuiz(
+  courseId?: number, // id du cours à fournir pour la génération de quiz de fin de cours
+) {
+  const { axiosInstance: axios } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -14,29 +16,76 @@ export default function useActivityQuiz() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
 
-  const onLoadQuizzes = () => {
-    // const applyData = (data: {}) => {
-    //   setQuizzes(data);
-    //   setCurrentIndex(0);
-    //   setScore(0);
-    //   setIsOpen(true);
-    //   setIsAnswered(false);
-    //   setIsCorrect(false);
-    // };
+  // Nouvel état pour suivre le chargement du stream
+  const [isStreaming, setIsStreaming] = useState(false);
 
-    // sendRequest({ path: "/lesson/request-quiz" }, applyData);
-
-    setQuizzes(activityEndingQuizzesFixtures);
+  const onLoadQuizzes = async () => {
+    setQuizzes([]); // On vide les anciens quiz
     setCurrentIndex(0);
     setScore(0);
-    setIsOpen(true);
+    setIsOpen(true); // On ouvre la modale (qui affichera un loader en attendant la 1ère question)
     setIsAnswered(false);
     setIsCorrect(false);
+    setIsStreaming(true);
+
+    if (!courseId) {
+      console.warn("Course ID is required to load quizzes from the API.");
+      setIsStreaming(false);
+      return;
+    }
+
+    try {
+      const response = await axios({
+        method: "get",
+        url: `${BASE_API_URL}/quiz/course/ending/stream/${courseId}`,
+        responseType: "stream",
+        adapter: "fetch",
+      });
+
+      // Typage natif du stream web
+      const stream = response.data as unknown as ReadableStream<Uint8Array>;
+      const reader = stream.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      let done = false;
+      let buffer = "";
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          buffer += chunk;
+
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || ""; // On garde la ligne incomplète
+
+          for (const line of lines) {
+            if (line.trim() !== "") {
+              try {
+                const parsedQuiz = JSON.parse(line) as Quiz;
+
+                setQuizzes((prev) => {
+                  return prev ? [...prev, parsedQuiz] : [parsedQuiz];
+                });
+              } catch (e) {
+                console.error("Erreur de parsing sur un chunk :", line);
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération du stream:", error);
+      // Optionnel : Gérer l'affichage d'une erreur dans l'UI
+    } finally {
+      setIsStreaming(false); // La génération est terminée !
+    }
   };
 
   const onTriggerRandomQuiz = () => {
-    // sendRequest({ path: "/activity/request-quiz/:activityId" }, applyData);
-
+    // Gardé tel quel pour tes autres usages
     const randomIndex = Math.floor(
       Math.random() * activityEndingQuizzesFixtures.length,
     );
@@ -51,6 +100,8 @@ export default function useActivityQuiz() {
   const onCloseQuizzes = () => {
     setIsOpen(false);
     setQuizzes(null);
+    // Si on ferme pendant le stream, il faudrait idéalement abort le fetch,
+    // mais on garde simple pour l'instant.
   };
 
   const onAnswerQuiz = (correct: boolean) => {
@@ -66,8 +117,8 @@ export default function useActivityQuiz() {
       setCurrentIndex((prev) => prev + 1);
       setIsAnswered(false);
       setIsCorrect(false);
-    } else {
-      // Fin du quiz
+    } else if (!isStreaming) {
+      // Fin du quiz uniquement si le stream est terminé
       setIsOpen(false);
     }
   };
@@ -76,7 +127,7 @@ export default function useActivityQuiz() {
 
   return {
     isOpen,
-    // isLoading,
+    isStreaming, // Exposé pour la modale
     quizzes,
     currentQuiz,
     currentIndex,
