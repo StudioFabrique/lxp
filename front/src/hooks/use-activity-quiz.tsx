@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { Quiz } from "../utils/interfaces/quiz";
+import {
+  Quiz,
+  QuizMcq,
+  QuizTrFa,
+  QuizMatching,
+  QuizOrdering,
+  Pair,
+  ExternalApiQuiz,
+  ExternalApiStreamPayload,
+} from "../utils/interfaces/quiz";
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 
-export default function useActivityQuiz(
-  courseId?: number, // id du cours à fournir pour la génération de quiz de fin de cours
-) {
+export default function useActivityQuiz(courseId?: number) {
   const { axiosInstance: axios } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -15,15 +22,76 @@ export default function useActivityQuiz(
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
-
-  // Nouvel état pour suivre le chargement du stream
   const [isStreaming, setIsStreaming] = useState(false);
 
+  /**
+   * Mappe le payload externe de la réponse de l'api externe strictement typé pour l'interface interne.
+   */
+  const mapExternalQuizToInternalQuiz = (
+    externalQuiz: ExternalApiQuiz,
+  ): Quiz | null => {
+    const baseFields = {
+      question: externalQuiz.prompt,
+      trueExplanation: externalQuiz.explanation_correct,
+      falseExplanation: externalQuiz.explanation_wrong,
+    };
+
+    switch (externalQuiz.type) {
+      case "mcq":
+        return {
+          ...baseFields,
+          type: "mcq",
+          data: {
+            options: externalQuiz.choices,
+            answerIndex: externalQuiz.answer_key,
+          } satisfies QuizMcq,
+        };
+
+      case "true_false":
+        return {
+          ...baseFields,
+          type: "true_false",
+          data: {
+            answer: externalQuiz.answer_key,
+          } satisfies QuizTrFa,
+        };
+
+      case "matching": {
+        const pairs: Pair[] = externalQuiz.choices.left.map(
+          (leftStr, index) => ({
+            left: leftStr,
+            right: externalQuiz.choices.right[externalQuiz.answer_key[index]],
+          }),
+        );
+        return {
+          ...baseFields,
+          type: "matching",
+          data: { pairs } satisfies QuizMatching,
+        };
+      }
+
+      case "ordering":
+        return {
+          ...baseFields,
+          type: "ordering",
+          data: {
+            items: externalQuiz.choices,
+            order: externalQuiz.answer_key,
+          } satisfies QuizOrdering,
+        };
+
+      default:
+        // Pour gérer l'exhaustivité de façon stricte au cas où l'API évolue.
+        console.warn("Type de quiz inconnu.");
+        return null;
+    }
+  };
+
   const onLoadQuizzes = async () => {
-    setQuizzes([]); // On vide les anciens quiz
+    setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
-    setIsOpen(true); // On ouvre la modale (qui affichera un loader en attendant la 1ère question)
+    setIsOpen(true);
     setIsAnswered(false);
     setIsCorrect(false);
     setIsStreaming(true);
@@ -42,8 +110,7 @@ export default function useActivityQuiz(
         adapter: "fetch",
       });
 
-      // Typage natif du stream web
-      const stream = response.data as unknown as ReadableStream<Uint8Array>;
+      const stream = response.data as ReadableStream<Uint8Array>;
       const reader = stream.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -55,37 +122,57 @@ export default function useActivityQuiz(
         done = readerDone;
 
         if (value) {
-          const chunk = decoder.decode(value, { stream: true });
-          buffer += chunk;
-
+          buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n");
-          buffer = lines.pop() || ""; // On garde la ligne incomplète
+
+          buffer = lines.pop() || "";
 
           for (const line of lines) {
-            if (line.trim() !== "") {
-              try {
-                const parsedQuiz = JSON.parse(line) as Quiz;
+            const cleanLine = line.trim();
 
-                setQuizzes((prev) => {
-                  return prev ? [...prev, parsedQuiz] : [parsedQuiz];
-                });
-              } catch (e) {
-                console.error("Erreur de parsing sur un chunk :", line);
+            if (!cleanLine.startsWith("data:")) continue;
+
+            try {
+              const jsonString = cleanLine.substring(5).trim();
+
+              // On type le parse initial vers notre type commun (Payload ou Done)
+              const payload = JSON.parse(
+                jsonString,
+              ) as ExternalApiStreamPayload;
+
+              if ("event" in payload) {
+                console.log(
+                  `Stream IA terminé : ${payload.total_questions} questions.`,
+                );
+                done = true;
+                break;
               }
+
+              const mappedQuiz = mapExternalQuizToInternalQuiz(payload);
+
+              if (mappedQuiz) {
+                setQuizzes((prev) =>
+                  prev ? [...prev, mappedQuiz] : [mappedQuiz],
+                );
+              }
+            } catch (e) {
+              console.error(
+                "Erreur de parsing JSON sur le chunk :",
+                cleanLine,
+                e,
+              );
             }
           }
         }
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du stream:", error);
-      // Optionnel : Gérer l'affichage d'une erreur dans l'UI
     } finally {
-      setIsStreaming(false); // La génération est terminée !
+      setIsStreaming(false);
     }
   };
 
   const onTriggerRandomQuiz = () => {
-    // Gardé tel quel pour tes autres usages
     const randomIndex = Math.floor(
       Math.random() * activityEndingQuizzesFixtures.length,
     );
@@ -100,8 +187,6 @@ export default function useActivityQuiz(
   const onCloseQuizzes = () => {
     setIsOpen(false);
     setQuizzes(null);
-    // Si on ferme pendant le stream, il faudrait idéalement abort le fetch,
-    // mais on garde simple pour l'instant.
   };
 
   const onAnswerQuiz = (correct: boolean) => {
@@ -118,7 +203,6 @@ export default function useActivityQuiz(
       setIsAnswered(false);
       setIsCorrect(false);
     } else if (!isStreaming) {
-      // Fin du quiz uniquement si le stream est terminé
       setIsOpen(false);
     }
   };
@@ -127,7 +211,7 @@ export default function useActivityQuiz(
 
   return {
     isOpen,
-    isStreaming, // Exposé pour la modale
+    isStreaming,
     quizzes,
     currentQuiz,
     currentIndex,

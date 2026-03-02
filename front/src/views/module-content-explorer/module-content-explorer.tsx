@@ -43,7 +43,7 @@ const ModuleContentExplorer = () => {
     moduleActions.onFinishInitialQuiz,
   );
 
-  const quizState = useActivityQuizz(state.selectedLesson?.course?.id);
+  const quizState = useActivityQuizz(state.selectedLesson?.courseId);
 
   const smartQuiz = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
