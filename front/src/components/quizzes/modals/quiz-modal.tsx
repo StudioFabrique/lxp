@@ -68,10 +68,6 @@ const QuizModal = ({
     }
   };
 
-  // Savoir si on attend la question suivante
-  const isWaitingForNextQuestion =
-    isAnswered && isStreaming && currentIndex === totalQuizzes - 1;
-
   return (
     <div className={`modal modal-open`}>
       <div className="modal-box w-11/12 max-w-3xl flex flex-col gap-6">
@@ -79,7 +75,9 @@ const QuizModal = ({
         <div className="flex justify-between items-center border-b pb-4">
           <h3 className="font-bold text-lg text-primary flex items-center gap-2">
             Quiz d'auto-évaluation{" "}
-            {totalQuizzes > 0 ? `${currentIndex + 1} / ${totalQuizzes}` : ""}
+            {quiz && totalQuizzes > 0
+              ? `${currentIndex + 1} / ${Math.max(totalQuizzes, currentIndex + 1)}`
+              : ""}
             {isStreaming && (
               <span className="loading loading-spinner loading-sm text-primary ml-2"></span>
             )}
@@ -89,13 +87,29 @@ const QuizModal = ({
           </button>
         </div>
 
-        {/* État de chargement initial (avant la 1ère question) */}
+        {/* État de chargement (avant la 1ère question ou en attendant la suivante) */}
         {!quiz && isStreaming && (
           <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
             <Loader2 className="animate-spin text-primary" size={48} />
             <p className="text-lg font-medium text-secondary">
-              L'IA prépare vos questions sur mesure...
+              {currentIndex > 0
+                ? "Génération de la question suivante en cours..."
+                : "L'IA prépare vos questions sur mesure..."}
             </p>
+          </div>
+        )}
+
+        {/* Cas de secours : si le stream s'est arrêté de façon inattendue alors qu'on attendait */}
+        {!quiz && !isStreaming && (
+          <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
+            <p className="text-lg font-medium text-secondary">
+              {currentIndex > 0
+                ? "Vous avez terminé le quiz."
+                : "Aucune question n'a pu être générée."}
+            </p>
+            <button className="btn btn-primary mt-4" onClick={onClose}>
+              Fermer
+            </button>
           </div>
         )}
 
@@ -126,21 +140,10 @@ const QuizModal = ({
         {/* Actions */}
         <div className="modal-action">
           {isAnswered && quiz && (
-            <button
-              className="btn btn-primary"
-              onClick={onNext}
-              disabled={isWaitingForNextQuestion} // Désactivé si l'IA n'a pas encore streamé la suite
-            >
-              {isWaitingForNextQuestion ? (
-                <>
-                  Génération en cours{" "}
-                  <span className="loading loading-dots loading-xs"></span>
-                </>
-              ) : currentIndex === totalQuizzes - 1 && !isStreaming ? (
-                "Terminer"
-              ) : (
-                "Question suivante"
-              )}
+            <button className="btn btn-primary" onClick={onNext}>
+              {currentIndex === totalQuizzes - 1 && !isStreaming
+                ? "Terminer"
+                : "Question suivante"}
             </button>
           )}
         </div>

@@ -13,7 +13,6 @@ import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 
-// On ajoute activityContent en paramètre
 export default function useActivityQuiz(
   courseId?: number,
   activityContent?: string,
@@ -28,7 +27,6 @@ export default function useActivityQuiz(
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
 
-  // Mappe le stream (fin de cours) - inchangé
   const mapExternalQuizToInternalQuiz = (
     externalQuiz: ExternalApiQuiz,
   ): Quiz | null => {
@@ -89,7 +87,6 @@ export default function useActivityQuiz(
   };
 
   const onLoadQuizzes = async () => {
-    // ... [Ton code original de onLoadQuizzes reste strictement inchangé ici]
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -172,9 +169,7 @@ export default function useActivityQuiz(
     }
   };
 
-  // --- Appel au endpoint Random Quiz ---
   const onTriggerRandomQuiz = async () => {
-    // Si pas de contenu texte, on remet les fixtures (ou on annule)
     if (!activityContent || activityContent.trim() === "") {
       const randomIndex = Math.floor(
         Math.random() * activityEndingQuizzesFixtures.length,
@@ -193,7 +188,7 @@ export default function useActivityQuiz(
     setIsCorrect(false);
     setCurrentIndex(0);
     setScore(0);
-    // On utilise isStreaming pour afficher un loader en attendant la réponse de l'IA
+    setQuizzes(null);
     setIsStreaming(true);
 
     try {
@@ -213,7 +208,6 @@ export default function useActivityQuiz(
 
       let mappedQuiz: Quiz | null = null;
 
-      // Le format renvoyé par `/quiz/random` a une structure data légèrement différente (doc Random Quiz.md)
       switch (externalQuiz.type) {
         case "mcq":
           mappedQuiz = {
@@ -282,10 +276,18 @@ export default function useActivityQuiz(
   };
 
   const onNextQuiz = () => {
-    if (quizzes && currentIndex < quizzes.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-      setIsAnswered(false);
-      setIsCorrect(false);
+    if (quizzes) {
+      if (currentIndex < quizzes.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+        setIsAnswered(false);
+        setIsCorrect(false);
+      } else if (isStreaming) {
+        setCurrentIndex((prev) => prev + 1);
+        setIsAnswered(false);
+        setIsCorrect(false);
+      } else {
+        setIsOpen(false);
+      }
     } else if (!isStreaming) {
       setIsOpen(false);
     }
