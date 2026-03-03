@@ -14,7 +14,7 @@ quizRouter.get(
 );
 
 // Récupérer un quiz aléatoire (1 question) génèré par l'IA en passant un contenu textuel (activité en cours par exemple).
-quizRouter.post("/content", httpPostRequestRandomQuiz);
+quizRouter.post("/random", httpPostRequestRandomQuiz);
 
 /**
  * Recupérer un set de quiz pour un module.

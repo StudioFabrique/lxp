@@ -32,7 +32,7 @@ export default async function httpGetEndingCourseQuizStream(
 
     // Appel de l'API externe avec le fetch natif de Node
     const response = await fetch(
-      `https://${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
+      `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
       {
         method: "POST",
         headers: {
