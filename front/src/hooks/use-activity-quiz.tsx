@@ -28,6 +28,7 @@ export default function useActivityQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [additionalQuizCount, setAdditionalQuizCount] = useState(0);
 
   const toastWarning = (message: string) => {
     toast.error(message, {
@@ -268,7 +269,7 @@ export default function useActivityQuiz(
       }
 
       if (mappedQuiz) {
-        setQuizzes([mappedQuiz]);
+        setQuizzes((prev) => (prev ? [...prev, mappedQuiz] : [mappedQuiz]));
       } else {
         setIsOpen(false);
       }
@@ -291,6 +292,9 @@ export default function useActivityQuiz(
     setIsAnswered(true);
     if (correct) {
       setScore((prev) => prev + 1);
+    } else if (additionalQuizCount < 2) {
+      setAdditionalQuizCount((prev) => prev + 1);
+      onTriggerRandomQuiz();
     }
   };
 
