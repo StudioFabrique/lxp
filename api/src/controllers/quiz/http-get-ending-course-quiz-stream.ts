@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream : GET /quiz/course/ending/stream/:courseId
+ * GET /quiz/course/ending/stream/:courseId
+ * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream
  * - courseId sera utilisé pour contextualiser les questions du quiz (le titre du cours ,quelles sont les notions abordées dans le cours, etc..)
  *
  * L'endpoint doit répondre en streamant les questions une par une au fur et à mesure de leur génération par l'IA.
@@ -31,7 +32,7 @@ export default async function httpGetEndingCourseQuizStream(
 
     // Appel de l'API externe avec le fetch natif de Node
     const response = await fetch(
-      `https://${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
+      `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
       {
         method: "POST",
         headers: {

@@ -26,14 +26,6 @@ export default function useSmartQuizPrompt({
   const [activityStartTime, setActivityStartTime] = useState(Date.now());
   const hasBypassedQuizRef = useRef(false);
 
-  // Réinitialiser le timer à chaque changement d'activité
-  useEffect(() => {
-    if (selectedActivity?.id) {
-      setActivityStartTime(Date.now());
-      hasBypassedQuizRef.current = false;
-    }
-  }, [selectedActivity?.id]);
-
   const handleNextActivity = useCallback(() => {
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
@@ -77,6 +69,14 @@ export default function useSmartQuizPrompt({
     hasBypassedQuizRef.current = true;
     onTriggerRandomQuiz();
   };
+
+  // Réinitialiser le timer à chaque changement d'activité
+  useEffect(() => {
+    if (selectedActivity?.id) {
+      setActivityStartTime(Date.now());
+      hasBypassedQuizRef.current = false;
+    }
+  }, [selectedActivity?.id]);
 
   return {
     showQuizPrompt,
