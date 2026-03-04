@@ -12,8 +12,13 @@ import {
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
+import toast from "react-hot-toast";
+import { Info } from "lucide-react";
 
-export default function useActivityQuiz(courseId?: number) {
+export default function useActivityQuiz(
+  courseId?: number,
+  activityContent?: string,
+) {
   const { axiosInstance: axios } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -24,9 +29,21 @@ export default function useActivityQuiz(courseId?: number) {
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
 
-  /**
-   * Mappe le payload externe de la réponse de l'api externe strictement typé pour l'interface interne.
-   */
+  const toastWarning = (message: string) => {
+    toast.error(message, {
+      icon: <Info />,
+      style: {
+        border: "1px solid #EA580C",
+        padding: "16px",
+        color: "#EA580C",
+      },
+      iconTheme: {
+        primary: "#EA580C",
+        secondary: "#FFEDD5",
+      },
+    });
+  };
+
   const mapExternalQuizToInternalQuiz = (
     externalQuiz: ExternalApiQuiz,
   ): Quiz | null => {
@@ -81,7 +98,6 @@ export default function useActivityQuiz(courseId?: number) {
         };
 
       default:
-        // Pour gérer l'exhaustivité de façon stricte au cas où l'API évolue.
         console.warn("Type de quiz inconnu.");
         return null;
     }
@@ -134,8 +150,6 @@ export default function useActivityQuiz(courseId?: number) {
 
             try {
               const jsonString = cleanLine.substring(5).trim();
-
-              // On type le parse initial vers notre type commun (Payload ou Done)
               const payload = JSON.parse(
                 jsonString,
               ) as ExternalApiStreamPayload;
@@ -167,21 +181,104 @@ export default function useActivityQuiz(courseId?: number) {
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du stream:", error);
+      toastWarning("Une erreur est survenue lors du chargement des quiz.");
     } finally {
       setIsStreaming(false);
     }
   };
 
-  const onTriggerRandomQuiz = () => {
-    const randomIndex = Math.floor(
-      Math.random() * activityEndingQuizzesFixtures.length,
-    );
-    setQuizzes([activityEndingQuizzesFixtures[randomIndex]]);
-    setCurrentIndex(0);
-    setScore(0);
+  const onTriggerRandomQuiz = async () => {
+    if (!activityContent || activityContent.trim() === "") {
+      const randomIndex = Math.floor(
+        Math.random() * activityEndingQuizzesFixtures.length,
+      );
+      setQuizzes([activityEndingQuizzesFixtures[randomIndex]]);
+      setCurrentIndex(0);
+      setScore(0);
+      setIsOpen(true);
+      setIsAnswered(false);
+      setIsCorrect(false);
+      return;
+    }
+
     setIsOpen(true);
     setIsAnswered(false);
     setIsCorrect(false);
+    setCurrentIndex(0);
+    setScore(0);
+    setQuizzes(null);
+    setIsStreaming(true);
+
+    try {
+      const response = await axios({
+        method: "post",
+        url: `${BASE_API_URL}/quiz/random`,
+        data: { content: activityContent },
+      });
+
+      const externalQuiz = response.data;
+
+      const baseFields = {
+        question: externalQuiz.question_text,
+        trueExplanation: externalQuiz.True_explanation,
+        falseExplanation: externalQuiz.False_explanation,
+      };
+
+      let mappedQuiz: Quiz | null = null;
+
+      switch (externalQuiz.type) {
+        case "mcq":
+          mappedQuiz = {
+            ...baseFields,
+            type: "mcq",
+            data: {
+              options: externalQuiz.data.options,
+              answerIndex: externalQuiz.data.answer_index,
+            },
+          } as Quiz;
+          break;
+        case "true_false":
+          mappedQuiz = {
+            ...baseFields,
+            type: "true_false",
+            data: {
+              answer: externalQuiz.data.answer,
+            },
+          } as Quiz;
+          break;
+        case "matching":
+          mappedQuiz = {
+            ...baseFields,
+            type: "matching",
+            data: {
+              pairs: externalQuiz.data.pairs,
+            },
+          } as Quiz;
+          break;
+        case "ordering":
+          mappedQuiz = {
+            ...baseFields,
+            type: "ordering",
+            data: {
+              items: externalQuiz.data.items,
+              order: externalQuiz.data.order,
+            },
+          } as Quiz;
+          break;
+      }
+
+      if (mappedQuiz) {
+        setQuizzes([mappedQuiz]);
+      } else {
+        setIsOpen(false);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la génération du quiz aléatoire:", error);
+      toastWarning("Une erreur est survenue lors de la génération du quiz.");
+      setIsOpen(false);
+    } finally {
+      setIsStreaming(false);
+    }
   };
 
   const onCloseQuizzes = () => {
@@ -198,10 +295,18 @@ export default function useActivityQuiz(courseId?: number) {
   };
 
   const onNextQuiz = () => {
-    if (quizzes && currentIndex < quizzes.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-      setIsAnswered(false);
-      setIsCorrect(false);
+    if (quizzes) {
+      if (currentIndex < quizzes.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+        setIsAnswered(false);
+        setIsCorrect(false);
+      } else if (isStreaming) {
+        setCurrentIndex((prev) => prev + 1);
+        setIsAnswered(false);
+        setIsCorrect(false);
+      } else {
+        setIsOpen(false);
+      }
     } else if (!isStreaming) {
       setIsOpen(false);
     }
