@@ -27,6 +27,7 @@ const useModuleContentExplorer = () => {
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
+  const isInitialActivityLoaded = useRef(false);
 
   const navigate = useNavigate();
   const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
@@ -467,6 +468,15 @@ const useModuleContentExplorer = () => {
   const scrollTopRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Rien si aucune activité n'est encore sélectionnée
+    if (!state.selectedActivity?.id) return;
+
+    // Si c'est le chargement initial de la page / de la première activité
+    if (!isInitialActivityLoaded.current) {
+      isInitialActivityLoaded.current = true;
+      return;
+    }
+
     if (scrollTopRef.current) {
       setTimeout(() => {
         scrollTopRef.current?.scrollIntoView({

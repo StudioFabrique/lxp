@@ -12,6 +12,7 @@ type ModuleContentExplorerWrapperProps = {
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
+  scrollTopRef: React.RefObject<HTMLDivElement>;
   header: React.ReactNode;
   progressionSide: React.ReactNode;
   topProgressBar: React.ReactNode;
@@ -28,6 +29,7 @@ const ModuleContentExplorerWrapper = ({
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
+  scrollTopRef,
   header,
   progressionSide,
   topProgressBar,
@@ -55,7 +57,10 @@ const ModuleContentExplorerWrapper = ({
             )}
           </button>
         </div>
-        <span className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center">
+        <span
+          ref={scrollTopRef}
+          className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center"
+        >
           {topProgressBar}
         </span>
         {selectedLesson ? (
