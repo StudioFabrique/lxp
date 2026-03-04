@@ -22,29 +22,28 @@ import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
-const useModuleExplorerContent = () => {
+const useModuleContentExplorer = () => {
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
-  const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
+  const stateFromUrlCalled = useRef(false);
+  const isInitialActivityLoaded = useRef(false);
+  // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
+  const isDiagnosticPassed = useRef(false);
+  const isReordering = useRef({
+    course: false,
+    lesson: false,
+    activity: false,
+  });
 
   const navigate = useNavigate();
   const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
-  const isDiagnosticPassed = useRef(false);
-
   const [state, dispatch] = useReducer(
     moduleExplorerContentReducer,
     initialModuleExplorerContentState,
   );
-
-  const [hasOrderChanged, setOrderChanged] = useState({
-    course: false,
-    lesson: false,
-    activity: false,
-  });
 
   const hasStartedModule = useMemo(() => {
     if (!state.module) return false;
@@ -65,39 +64,34 @@ const useModuleExplorerContent = () => {
     [state.selectedLesson?.lessonsRead],
   );
 
-  const isFirstActivitySelected = useMemo(
-    () =>
-      Boolean(
-        state.selectedActivity &&
-        state.selectedLesson?.activities?.indexOf(state.selectedActivity) === 0,
-      ),
-    [state.selectedActivity, state.selectedLesson?.activities],
-  );
+  const isFirstActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !state.selectedActivity?.id) return false;
 
-  const isLastActivitySelected = useMemo(
-    () =>
-      Boolean(
-        state.selectedActivity &&
-        state.selectedLesson?.activities &&
-        state.selectedLesson.activities.indexOf(state.selectedActivity) ===
-          state.selectedLesson.activities.length - 1,
-      ),
-    [state.selectedActivity, state.selectedLesson?.activities],
-  );
+    return activities[0].id === state.selectedActivity.id;
+  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
 
-  const isLastLessonSelected = useMemo(
-    () =>
-      Boolean(
-        ((state.selectedLesson &&
-          state.module?.courses.flatMap((course) => course.lessons).length) ||
-          0) -
-          1 ===
-        state.module?.courses
-          .flatMap((course) => course.lessons)
-          .findIndex((lesson) => lesson.id === state.selectedLesson?.id),
-      ),
-    [state.module?.courses, state.selectedLesson],
-  );
+  const isLastActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !state.selectedActivity?.id) return false;
+
+    return activities[activities.length - 1].id === state.selectedActivity.id;
+  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
+
+  const isLastLessonSelected = useMemo(() => {
+    if (!state.module?.courses?.length || !state.selectedLesson?.id)
+      return false;
+
+    const courses = state.module.courses;
+    const lastCourse = courses[courses.length - 1]; // Le dernier cours
+
+    if (!lastCourse.lessons?.length) return false;
+
+    const lastLesson = lastCourse.lessons[lastCourse.lessons.length - 1]; // La dernière leçon de ce cours
+
+    // On compare juste les IDs
+    return lastLesson.id === state.selectedLesson.id;
+  }, [state.module?.courses, state.selectedLesson?.id]);
 
   const isLastLessonOfCurrentCourse = useMemo(() => {
     if (!state.selectedLesson || !state.module) return false;
@@ -407,9 +401,8 @@ const useModuleExplorerContent = () => {
         return false;
     }
   };
-
   const activityReorder: OnDragEndResponder = (result) => {
-    if (hasOrderChanged.activity) {
+    if (isReordering.current.activity) {
       toast("Veuillez patienter");
       return;
     }
@@ -419,21 +412,66 @@ const useModuleExplorerContent = () => {
     if (toId === undefined) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
-    setOrderChanged((prev) => ({ ...prev, activity: true }));
+
+    isReordering.current.activity = true;
+
+    if (state.selectedLesson && state.selectedLesson.activities) {
+      sendRequest(
+        {
+          path: `/activity/reorder/${state.selectedLesson.id}`,
+          method: "put",
+          body: {
+            activitiesIds: state.selectedLesson.activities.map(
+              (activity) => activity.id,
+            ),
+          },
+        },
+        () => {
+          isReordering.current.activity = false;
+        },
+      );
+    }
   };
 
   const lessonReorder: OnDragEndResponder = (result) => {
-    if (hasOrderChanged.activity) {
+    if (isReordering.current.lesson) {
       toast("Veuillez patienter");
       return;
     }
+
     const fromId = result.source.index;
     const toId = result.destination?.index;
 
-    if (toId === undefined) return;
+    if (toId === undefined || fromId === toId) return;
 
     dispatch({ type: "reorder_lesson", fromId, toId });
-    setOrderChanged((prev) => ({ ...prev, lesson: true }));
+
+    isReordering.current.lesson = true;
+
+    const currentCourse = state.module?.courses.find(
+      (course) => state.selectedLesson?.course.id === course.id,
+    );
+
+    if (currentCourse && state.selectedLesson) {
+      const reorderedLessons = Array.from(currentCourse.lessons);
+      const [movedItem] = reorderedLessons.splice(fromId, 1);
+      reorderedLessons.splice(toId, 0, movedItem);
+
+      const newLessonIds = reorderedLessons.map((lesson) => lesson.id);
+
+      sendRequest(
+        {
+          path: `/lesson/reorder/${state.selectedLesson.course.id}`,
+          method: "put",
+          body: newLessonIds,
+        },
+        () => {
+          isReordering.current.lesson = false;
+        },
+      );
+    } else {
+      isReordering.current.lesson = false;
+    }
   };
 
   const nextLesson = () => {
@@ -464,54 +502,33 @@ const useModuleExplorerContent = () => {
     }
   };
 
+  const scrollTopRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (state.module && !stateFromUrlCalled) {
+    if (!state.selectedActivity?.id) return;
+
+    if (!isInitialActivityLoaded.current) {
+      isInitialActivityLoaded.current = true;
+      return;
+    }
+
+    if (scrollTopRef.current) {
+      setTimeout(() => {
+        scrollTopRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [state.selectedActivity?.id]);
+
+  useEffect(() => {
+    if (state.module && !stateFromUrlCalled.current) {
       if (stateFromUrl?.lessonId)
         dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-      setStateFromUrlCalled(true);
+      stateFromUrlCalled.current = true;
     }
-  }, [state.module, stateFromUrl?.lessonId, stateFromUrlCalled]);
-
-  useEffect(() => {
-    if (
-      hasOrderChanged.activity &&
-      state.selectedLesson &&
-      state.selectedLesson.activities
-    ) {
-      const applyData = () => {
-        setOrderChanged((prev) => ({ ...prev, activity: false }));
-      };
-
-      sendRequest(
-        {
-          path: `/activity/reorder/${state.selectedLesson.id}`,
-          method: "put",
-          body: {
-            activitiesIds: state.selectedLesson.activities.map(
-              (activity) => activity.id,
-            ),
-          },
-        },
-        applyData,
-      );
-    }
-    if (hasOrderChanged.lesson && state.module) {
-      const applyData = () => {
-        setOrderChanged((prev) => ({ ...prev, lesson: false }));
-      };
-
-      sendRequest(
-        {
-          path: `/lesson/reorder/${state.selectedLesson?.course.id}`,
-          method: "put",
-          body: state.module.courses
-            .find((course) => state.selectedLesson?.course.id === course.id)
-            ?.lessons.map((lesson) => lesson.id),
-        },
-        applyData,
-      );
-    }
-  }, [sendRequest, hasOrderChanged, state.selectedLesson, state.module]);
+  }, [state.module, stateFromUrl?.lessonId]);
 
   useEffect(() => {
     fetchModuleData();
@@ -558,7 +575,8 @@ const useModuleExplorerContent = () => {
       activityReorder,
       selectActivityType,
     },
+    scrollTopRef,
   };
 };
 
-export default useModuleExplorerContent;
+export default useModuleContentExplorer;
