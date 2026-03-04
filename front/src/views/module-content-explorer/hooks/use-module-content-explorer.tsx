@@ -464,6 +464,19 @@ const useModuleContentExplorer = () => {
     }
   };
 
+  const scrollTopRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollTopRef.current) {
+      setTimeout(() => {
+        scrollTopRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [state.selectedActivity?.id]);
+
   useEffect(() => {
     if (state.module && !stateFromUrlCalled) {
       if (stateFromUrl?.lessonId)
@@ -558,6 +571,7 @@ const useModuleContentExplorer = () => {
       activityReorder,
       selectActivityType,
     },
+    scrollTopRef,
   };
 };
 
