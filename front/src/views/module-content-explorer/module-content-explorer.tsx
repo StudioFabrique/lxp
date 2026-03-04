@@ -87,7 +87,7 @@ const ModuleContentExplorer = () => {
   }
 
   return (
-    <div ref={scrollTopRef} className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       {/* --- Section Modales --- */}
       <QuizModal
         isOpen={quizState.isOpen}
@@ -150,6 +150,7 @@ const ModuleContentExplorer = () => {
       {/* --- Section Contenu (Wrapper & Slots) --- */}
       {state.module && state.module?.parcoursId && state.module.id ? (
         <ModuleContentExplorerWrapper
+          scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
           isPanelClosed={state.isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
