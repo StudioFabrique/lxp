@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import { Quiz } from "../utils/interfaces/quiz";
 import hasPermission from "../utils/hasPermission";
@@ -19,7 +19,7 @@ export default function useDiagnosticQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
 
-  const [isFinished, setIsFinished] = useState(false);
+  const isFinished = useRef(false);
 
   const onStartQuiz = () => {
     setIsStarted(true);
@@ -40,7 +40,7 @@ export default function useDiagnosticQuiz(
       setIsCorrect(false);
     } else {
       setIsOpen(false);
-      setIsFinished(true);
+      isFinished.current = true;
 
       console.log(`Diagnostic terminé ! Score : ${score}/${quizzes?.length}`);
       onFinishInitialQuiz();
@@ -62,18 +62,14 @@ export default function useDiagnosticQuiz(
       setQuizzes(shuffled.slice(0, numQuestions));
 
       setIsOpen(true);
-    } else {
-      // 💡 Si on n'a pas besoin de faire le diagnostic, on signale tout de suite qu'il est "fini" pour déclencher la lecture
-      if (!isFinished) {
-        setIsFinished(true);
-        onFinishInitialQuiz();
-      }
+    } else if (!isFinished.current) {
+      isFinished.current = true;
+      onFinishInitialQuiz();
     }
   }, [
     hasStartedModule,
     isModuleLoaded,
     user?.permissions,
-    isFinished,
     onFinishInitialQuiz,
   ]);
 
