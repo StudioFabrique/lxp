@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Quiz,
   QuizMcq,
@@ -28,7 +28,7 @@ export default function useActivityQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [additionalQuizCount, setAdditionalQuizCount] = useState(0);
+  const additionalQuizCount = useRef(0);
 
   const toastWarning = (message: string) => {
     toast.error(message, {
@@ -112,7 +112,7 @@ export default function useActivityQuiz(
     setIsAnswered(false);
     setIsCorrect(false);
     setIsStreaming(true);
-    setAdditionalQuizCount(0);
+    additionalQuizCount.current = 0;
 
     // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
     setQuizzes((prev) =>
@@ -207,7 +207,7 @@ export default function useActivityQuiz(
       setCurrentIndex(0);
       setScore(0);
       setQuizzes([]);
-      setAdditionalQuizCount(0);
+      additionalQuizCount.current = 0;
     }
     setIsStreaming(true);
 
@@ -305,8 +305,8 @@ export default function useActivityQuiz(
 
     if (correct) {
       setScore((prev) => prev + 1);
-    } else if (additionalQuizCount < 2) {
-      setAdditionalQuizCount((prev) => prev + 1);
+    } else if (additionalQuizCount.current < 2) {
+      additionalQuizCount.current += 1;
       onTriggerRandomQuiz(true);
     }
   };
