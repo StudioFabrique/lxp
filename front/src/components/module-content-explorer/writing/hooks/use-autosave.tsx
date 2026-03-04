@@ -19,7 +19,7 @@ type Props = {
 // Fonction debounce personnalisée
 function debounce<T extends (...args: AutosaveData[]) => void>(
   func: T,
-  delay: number
+  delay: number,
 ): T & { cancel: () => void } {
   let timeoutId: NodeJS.Timeout;
 
@@ -58,7 +58,8 @@ export default function useAutosave({
   // Sauvegarde les données dans le localStorage
   const saveToStorage = (data: AutosaveData) => {
     try {
-      localStorage.setItem(getStorageKey(), JSON.stringify(data));
+      const freshKey = `autosave_new_activity_${data.activityId}`;
+      localStorage.setItem(freshKey, JSON.stringify(data));
       setLastAutosaveTime(new Date());
       setHasAutosavedContent(true);
     } catch (error) {
@@ -81,7 +82,7 @@ export default function useAutosave({
     } catch (error) {
       console.error(
         "Erreur lors de la récupération de la sauvegarde automatique:",
-        error
+        error,
       );
       return null;
     }
@@ -96,7 +97,7 @@ export default function useAutosave({
     } catch (error) {
       console.error(
         "Erreur lors de la suppression de la sauvegarde automatique:",
-        error
+        error,
       );
     }
   };
@@ -127,7 +128,7 @@ export default function useAutosave({
     } catch (error) {
       console.error(
         "Erreur lors du nettoyage des anciennes sauvegardes:",
-        error
+        error,
       );
     }
   };
@@ -158,7 +159,7 @@ export default function useAutosave({
   const debouncedSave = useRef(
     debounce((data: AutosaveData) => {
       saveToStorage(data);
-    }, 2000)
+    }, 2000),
   ).current;
 
   // Effet pour restaurer le contenu autosauvegardé au chargement

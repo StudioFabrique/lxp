@@ -155,7 +155,7 @@ export const useMenuContentTypes = (
       console.error("Error uploading images:", error);
       throw error;
     }
-  }, [imageQueue, editor, sendRequest]);
+  }, [editor, sendRequest]);
 
   useEffect(() => {
     const current = imageInputRef.current;

@@ -49,7 +49,6 @@ export default function useSmartQuizPrompt({
       onGoToNextActivity();
     }
   }, [
-    activityStartTime,
     selectedActivity,
     isLastActivitySelected,
     isLessonCompleted,

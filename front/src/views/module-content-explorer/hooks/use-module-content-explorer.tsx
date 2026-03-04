@@ -28,24 +28,22 @@ const useModuleContentExplorer = () => {
     useLocation();
   const stateFromUrlCalled = useRef(false);
   const isInitialActivityLoaded = useRef(false);
-
-  const navigate = useNavigate();
-  const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
-  const [isLoading, setIsLoading] = useState(false);
-
   // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
   const isDiagnosticPassed = useRef(false);
-
-  const [state, dispatch] = useReducer(
-    moduleExplorerContentReducer,
-    initialModuleExplorerContentState,
-  );
-
   const isReordering = useRef({
     course: false,
     lesson: false,
     activity: false,
   });
+
+  const navigate = useNavigate();
+  const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [state, dispatch] = useReducer(
+    moduleExplorerContentReducer,
+    initialModuleExplorerContentState,
+  );
 
   const hasStartedModule = useMemo(() => {
     if (!state.module) return false;
@@ -66,39 +64,34 @@ const useModuleContentExplorer = () => {
     [state.selectedLesson?.lessonsRead],
   );
 
-  const isFirstActivitySelected = useMemo(
-    () =>
-      Boolean(
-        state.selectedActivity &&
-        state.selectedLesson?.activities?.indexOf(state.selectedActivity) === 0,
-      ),
-    [state.selectedActivity, state.selectedLesson?.activities],
-  );
+  const isFirstActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !state.selectedActivity?.id) return false;
 
-  const isLastActivitySelected = useMemo(
-    () =>
-      Boolean(
-        state.selectedActivity &&
-        state.selectedLesson?.activities &&
-        state.selectedLesson.activities.indexOf(state.selectedActivity) ===
-          state.selectedLesson.activities.length - 1,
-      ),
-    [state.selectedActivity, state.selectedLesson?.activities],
-  );
+    return activities[0].id === state.selectedActivity.id;
+  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
 
-  const isLastLessonSelected = useMemo(
-    () =>
-      Boolean(
-        ((state.selectedLesson &&
-          state.module?.courses.flatMap((course) => course.lessons).length) ||
-          0) -
-          1 ===
-        state.module?.courses
-          .flatMap((course) => course.lessons)
-          .findIndex((lesson) => lesson.id === state.selectedLesson?.id),
-      ),
-    [state.module?.courses, state.selectedLesson],
-  );
+  const isLastActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !state.selectedActivity?.id) return false;
+
+    return activities[activities.length - 1].id === state.selectedActivity.id;
+  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
+
+  const isLastLessonSelected = useMemo(() => {
+    if (!state.module?.courses?.length || !state.selectedLesson?.id)
+      return false;
+
+    const courses = state.module.courses;
+    const lastCourse = courses[courses.length - 1]; // Le dernier cours
+
+    if (!lastCourse.lessons?.length) return false;
+
+    const lastLesson = lastCourse.lessons[lastCourse.lessons.length - 1]; // La dernière leçon de ce cours
+
+    // On compare juste les IDs
+    return lastLesson.id === state.selectedLesson.id;
+  }, [state.module?.courses, state.selectedLesson?.id]);
 
   const isLastLessonOfCurrentCourse = useMemo(() => {
     if (!state.selectedLesson || !state.module) return false;
