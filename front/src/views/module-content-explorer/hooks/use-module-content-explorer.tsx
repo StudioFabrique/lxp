@@ -22,7 +22,7 @@ import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
-const useModuleExplorerContent = () => {
+const useModuleContentExplorer = () => {
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
@@ -561,4 +561,4 @@ const useModuleExplorerContent = () => {
   };
 };
 
-export default useModuleExplorerContent;
+export default useModuleContentExplorer;

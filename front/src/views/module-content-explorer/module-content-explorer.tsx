@@ -1,5 +1,5 @@
 import ProgressBar from "../../components/module-content-explorer/progress-bar";
-import useModuleContentExplorer from "./hooks/use-module-explorer";
+import useModuleContentExplorer from "./hooks/use-module-content-explorer";
 import ModuleContentExplorerHeader from "../../components/module-content-explorer/module-content-explorer-header";
 import ModuleData from "../../components/module-content-explorer/module-data/module-data";
 import ModuleContentExplorerWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
@@ -8,7 +8,7 @@ import LessonCompletionModal from "../../components/module-content-explorer/less
 import Can from "../../components/UI/can/can.component";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
@@ -48,7 +48,7 @@ const ModuleContentExplorer = () => {
     state.textActivityContent,
   );
 
-  const smartQuiz = useSmartQuizPrompt({
+  const smartQuizState = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
     isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
@@ -62,6 +62,16 @@ const ModuleContentExplorer = () => {
     user,
     state.selectedLesson?.course?.contacts,
   );
+
+  const topRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (topRef.current) {
+      setTimeout(() => {
+        topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [state.selectedActivity?.id]);
 
   if (diagnosticQuiz.isOpen) {
     return (
@@ -81,7 +91,7 @@ const ModuleContentExplorer = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div ref={topRef} className="w-full flex flex-col gap-6">
       {/* --- Section Modales --- */}
       <QuizModal
         isOpen={quizState.isOpen}
@@ -97,9 +107,9 @@ const ModuleContentExplorer = () => {
       />
 
       <QuizRequestModal
-        isOpen={smartQuiz.showQuizPrompt}
-        onAcceptQuiz={smartQuiz.handleAcceptQuiz}
-        onDeclineQuiz={smartQuiz.handleDeclineQuiz}
+        isOpen={smartQuizState.showQuizPrompt}
+        onAcceptQuiz={smartQuizState.handleAcceptQuiz}
+        onDeclineQuiz={smartQuizState.handleDeclineQuiz}
       />
 
       {state.modalVisibility === "lessonCompletionModal" &&
@@ -168,7 +178,7 @@ const ModuleContentExplorer = () => {
             <ModuleExplorerPreview
               store={explorerStore}
               quizState={quizState}
-              smartQuiz={smartQuiz}
+              smartQuizState={smartQuizState}
               canEditSelectedLesson={canEditSelectedLesson}
             />
           }
