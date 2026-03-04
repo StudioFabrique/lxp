@@ -12,6 +12,8 @@ import {
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
+import toast from "react-hot-toast";
+import { Info } from "lucide-react";
 
 export default function useActivityQuiz(
   courseId?: number,
@@ -26,6 +28,21 @@ export default function useActivityQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
+
+  const toastWarning = (message: string) => {
+    toast.error(message, {
+      icon: <Info />,
+      style: {
+        border: "1px solid #EA580C",
+        padding: "16px",
+        color: "#EA580C",
+      },
+      iconTheme: {
+        primary: "#EA580C",
+        secondary: "#FFEDD5",
+      },
+    });
+  };
 
   const mapExternalQuizToInternalQuiz = (
     externalQuiz: ExternalApiQuiz,
@@ -164,6 +181,7 @@ export default function useActivityQuiz(
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du stream:", error);
+      toastWarning("Une erreur est survenue lors du chargement des quiz.");
     } finally {
       setIsStreaming(false);
     }
@@ -256,6 +274,7 @@ export default function useActivityQuiz(
       }
     } catch (error) {
       console.error("Erreur lors de la génération du quiz aléatoire:", error);
+      toastWarning("Une erreur est survenue lors de la génération du quiz.");
       setIsOpen(false);
     } finally {
       setIsStreaming(false);
