@@ -8,7 +8,7 @@ import LessonCompletionModal from "../../components/module-content-explorer/less
 import Can from "../../components/UI/can/can.component";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
@@ -33,8 +33,14 @@ const ModuleContentExplorer = () => {
   const firstPathSegment = window.location.pathname.split("/")[1];
 
   const explorerStore = useModuleContentExplorer();
-  const { state, computed, dispatch, lessonActions, moduleActions } =
-    explorerStore;
+  const {
+    state,
+    computed,
+    dispatch,
+    lessonActions,
+    moduleActions,
+    scrollTopRef,
+  } = explorerStore;
 
   const isModuleLoaded = Boolean(state.module && state.module.id);
   const diagnosticQuiz = useDiagnosticQuiz(
@@ -63,16 +69,6 @@ const ModuleContentExplorer = () => {
     state.selectedLesson?.course?.contacts,
   );
 
-  const topRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (topRef.current) {
-      setTimeout(() => {
-        topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-    }
-  }, [state.selectedActivity?.id]);
-
   if (diagnosticQuiz.isOpen) {
     return (
       <DiagnosticQuizView
@@ -91,7 +87,7 @@ const ModuleContentExplorer = () => {
   }
 
   return (
-    <div ref={topRef} className="w-full flex flex-col gap-6">
+    <div ref={scrollTopRef} className="w-full flex flex-col gap-6">
       {/* --- Section Modales --- */}
       <QuizModal
         isOpen={quizState.isOpen}
