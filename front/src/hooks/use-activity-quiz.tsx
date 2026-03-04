@@ -14,7 +14,6 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
-import { set } from "zod";
 
 export default function useActivityQuiz(
   courseId?: number,
@@ -115,6 +114,7 @@ export default function useActivityQuiz(
     setIsStreaming(true);
     setAdditionalQuizCount(0);
 
+    // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
     setQuizzes((prev) =>
       prev
         ? [...prev, ...activityEndingQuizzesFixtures]
@@ -122,6 +122,7 @@ export default function useActivityQuiz(
     );
 
     setIsStreaming(false);
+    // --- Fin utilisation de fixtures ---
 
     // if (!courseId) {
     //   console.warn("Course ID is required to load quizzes from the API.");
@@ -210,6 +211,7 @@ export default function useActivityQuiz(
     }
     setIsStreaming(true);
 
+    // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
     setQuizzes((prev) =>
       prev
         ? [...prev, activityEndingQuizzesFixtures[0]]
@@ -217,6 +219,7 @@ export default function useActivityQuiz(
     );
 
     setIsStreaming(false);
+    // --- Fin utilisation de fixtures ---
 
     // try {
     //   const response = await axios({
