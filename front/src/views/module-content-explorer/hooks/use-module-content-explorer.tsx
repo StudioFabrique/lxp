@@ -26,7 +26,7 @@ const useModuleContentExplorer = () => {
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
-  const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
+  const stateFromUrlCalled = useRef(false);
   const isInitialActivityLoaded = useRef(false);
 
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const useModuleContentExplorer = () => {
     initialModuleExplorerContentState,
   );
 
-  const [hasOrderChanged, setOrderChanged] = useState({
+  const isReordering = useRef({
     course: false,
     lesson: false,
     activity: false,
@@ -408,9 +408,8 @@ const useModuleContentExplorer = () => {
         return false;
     }
   };
-
   const activityReorder: OnDragEndResponder = (result) => {
-    if (hasOrderChanged.activity) {
+    if (isReordering.current.activity) {
       toast("Veuillez patienter");
       return;
     }
@@ -420,21 +419,66 @@ const useModuleContentExplorer = () => {
     if (toId === undefined) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
-    setOrderChanged((prev) => ({ ...prev, activity: true }));
+
+    isReordering.current.activity = true;
+
+    if (state.selectedLesson && state.selectedLesson.activities) {
+      sendRequest(
+        {
+          path: `/activity/reorder/${state.selectedLesson.id}`,
+          method: "put",
+          body: {
+            activitiesIds: state.selectedLesson.activities.map(
+              (activity) => activity.id,
+            ),
+          },
+        },
+        () => {
+          isReordering.current.activity = false;
+        },
+      );
+    }
   };
 
   const lessonReorder: OnDragEndResponder = (result) => {
-    if (hasOrderChanged.activity) {
+    if (isReordering.current.lesson) {
       toast("Veuillez patienter");
       return;
     }
+
     const fromId = result.source.index;
     const toId = result.destination?.index;
 
-    if (toId === undefined) return;
+    if (toId === undefined || fromId === toId) return;
 
     dispatch({ type: "reorder_lesson", fromId, toId });
-    setOrderChanged((prev) => ({ ...prev, lesson: true }));
+
+    isReordering.current.lesson = true;
+
+    const currentCourse = state.module?.courses.find(
+      (course) => state.selectedLesson?.course.id === course.id,
+    );
+
+    if (currentCourse && state.selectedLesson) {
+      const reorderedLessons = Array.from(currentCourse.lessons);
+      const [movedItem] = reorderedLessons.splice(fromId, 1);
+      reorderedLessons.splice(toId, 0, movedItem);
+
+      const newLessonIds = reorderedLessons.map((lesson) => lesson.id);
+
+      sendRequest(
+        {
+          path: `/lesson/reorder/${state.selectedLesson.course.id}`,
+          method: "put",
+          body: newLessonIds,
+        },
+        () => {
+          isReordering.current.lesson = false;
+        },
+      );
+    } else {
+      isReordering.current.lesson = false;
+    }
   };
 
   const nextLesson = () => {
@@ -468,10 +512,8 @@ const useModuleContentExplorer = () => {
   const scrollTopRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Rien si aucune activité n'est encore sélectionnée
     if (!state.selectedActivity?.id) return;
 
-    // Si c'est le chargement initial de la page / de la première activité
     if (!isInitialActivityLoaded.current) {
       isInitialActivityLoaded.current = true;
       return;
@@ -488,53 +530,12 @@ const useModuleContentExplorer = () => {
   }, [state.selectedActivity?.id]);
 
   useEffect(() => {
-    if (state.module && !stateFromUrlCalled) {
+    if (state.module && !stateFromUrlCalled.current) {
       if (stateFromUrl?.lessonId)
         dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-      setStateFromUrlCalled(true);
+      stateFromUrlCalled.current = true;
     }
-  }, [state.module, stateFromUrl?.lessonId, stateFromUrlCalled]);
-
-  useEffect(() => {
-    if (
-      hasOrderChanged.activity &&
-      state.selectedLesson &&
-      state.selectedLesson.activities
-    ) {
-      const applyData = () => {
-        setOrderChanged((prev) => ({ ...prev, activity: false }));
-      };
-
-      sendRequest(
-        {
-          path: `/activity/reorder/${state.selectedLesson.id}`,
-          method: "put",
-          body: {
-            activitiesIds: state.selectedLesson.activities.map(
-              (activity) => activity.id,
-            ),
-          },
-        },
-        applyData,
-      );
-    }
-    if (hasOrderChanged.lesson && state.module) {
-      const applyData = () => {
-        setOrderChanged((prev) => ({ ...prev, lesson: false }));
-      };
-
-      sendRequest(
-        {
-          path: `/lesson/reorder/${state.selectedLesson?.course.id}`,
-          method: "put",
-          body: state.module.courses
-            .find((course) => state.selectedLesson?.course.id === course.id)
-            ?.lessons.map((lesson) => lesson.id),
-        },
-        applyData,
-      );
-    }
-  }, [sendRequest, hasOrderChanged, state.selectedLesson, state.module]);
+  }, [state.module, stateFromUrl?.lessonId]);
 
   useEffect(() => {
     fetchModuleData();
