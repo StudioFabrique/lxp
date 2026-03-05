@@ -178,6 +178,7 @@ const CourseItem = ({
         onCancel={handleCloseModal}
         onConfirm={handleConfirmAction}
       />
+
       <div className="flex flex-col w-full relative select-none">
         {!course.isPublished || !course.visibility ? (
           <div

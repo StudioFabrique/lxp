@@ -121,7 +121,7 @@ const ZipImport = ({
         />
 
         <button
-          className="btn btn-sm btn-success hover:text-base-100 ml-5 mr-2"
+          className="btn btn-sm btn-success ml-5 mr-2"
           disabled={!importedModules || Boolean(error)}
           onClick={onConfirmZipImport}
         >

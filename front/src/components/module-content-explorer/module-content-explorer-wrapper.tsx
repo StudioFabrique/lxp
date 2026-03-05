@@ -48,7 +48,7 @@ const ModuleContentExplorerWrapper = ({
           <button
             type="button"
             onClick={onTogglePanel}
-            className="btn w-fit hover:bg-primary hover:text-base-100 border-secondary/20"
+            className="btn btn-primary w-fit border-secondary/20"
           >
             {isPanelClosed ? (
               <PanelLeftOpen className="w-6 h-6" />
@@ -66,7 +66,7 @@ const ModuleContentExplorerWrapper = ({
         {selectedLesson ? (
           <button
             type="button"
-            className="btn hover:bg-primary hover:text-base-100 tooltip tooltip-left border-secondary/20"
+            className="btn tooltip tooltip-left border-secondary/20"
             aria-label="Tout réduire"
             data-tip="Tout réduire"
             onClick={onCloseAll}

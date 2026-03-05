@@ -28,7 +28,7 @@ const Profile = () => {
 
   const handleChangeTab = (event: MouseEvent<HTMLAnchorElement>) => {
     const value = event.currentTarget.getAttribute(
-      "data-value"
+      "data-value",
     ) as keyof typeof Tab;
     if (!(value in Tab)) return;
     setCurrentTab(Tab[value]);

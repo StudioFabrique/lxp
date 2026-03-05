@@ -50,24 +50,24 @@ const ContenuDetail: FC<{
         <div
           onClick={() => handleNavigate(course)}
           key={course?.id}
-          className="relative flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg cursor-pointer"
+          className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content border-l-4 border-primary p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
-          <span className="w-12 h-12 flex-shrink-0">
+          <span className="w-12 h-12 flex-shrink-0 text-primary">
             <BookIcon />
           </span>
           <div className="flex flex-col truncate w-full px-4">
-            <span className="truncate">{`Cours ${i + 1}`}</span>
-            <span className="text-sm font-bold truncate">{course.title}</span>
+            <span className="truncate text-sm opacity-70">{`Cours ${i + 1}`}</span>
+            <span className="text-base font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
             <button
-              className="btn btn-sm btn-ghost"
+              className="btn btn-sm btn-ghost text-base-content/70 hover:text-primary"
               type="button"
               onClick={(e) => e.stopPropagation()}
             >
               <Link
                 to={`/${currentRoute[0]}/course/edit/${course.id}`}
-                className="h-6 w-6 flex-shrink-0"
+                className="h-5 w-5 flex-shrink-0"
               >
                 <EditIcon />
               </Link>
@@ -75,20 +75,20 @@ const ContenuDetail: FC<{
           </Can>
           {!course.isPublished || !course.visibility ? (
             <div
-              className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
+              className="badge badge-error absolute -top-3 -left-2 tooltip tooltip-right z-[11]"
               data-tip={`Le cours est ${
                 !course.visibility ? "invisible" : ""
               } ${!course.visibility && !course.isPublished ? "et" : ""} ${
                 !course.isPublished ? "non publié" : ""
               }`}
             >
-              <EyeOff className="w-4 h-4 stroke-base-100" />
+              <EyeOff className="w-4 h-4" />
             </div>
           ) : null}
         </div>
       ))
     ) : (
-      <p className="ml-4">Aucun cours publié</p>
+      <p className="ml-4 opacity-70">Aucun cours publié</p>
     );
 
   return (
