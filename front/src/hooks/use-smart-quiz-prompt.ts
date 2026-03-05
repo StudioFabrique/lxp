@@ -23,7 +23,7 @@ export default function useSmartQuizPrompt({
   const { user } = useContext(Context);
 
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
-  const [activityStartTime, setActivityStartTime] = useState(Date.now());
+  const activityStartTime = useRef(Date.now());
   const hasBypassedQuizRef = useRef(false);
 
   const handleNextActivity = useCallback(() => {
@@ -35,7 +35,7 @@ export default function useSmartQuizPrompt({
       return;
     }
 
-    const timeSpent = Date.now() - activityStartTime;
+    const timeSpent = Date.now() - activityStartTime.current;
     const isTooFast = timeSpent < 10 * 1000;
     const isTooSlow = timeSpent > 5 * 60 * 1000;
 
@@ -49,7 +49,6 @@ export default function useSmartQuizPrompt({
       onGoToNextActivity();
     }
   }, [
-    activityStartTime,
     selectedActivity,
     isLastActivitySelected,
     isLessonCompleted,
@@ -73,7 +72,7 @@ export default function useSmartQuizPrompt({
   // Réinitialiser le timer à chaque changement d'activité
   useEffect(() => {
     if (selectedActivity?.id) {
-      setActivityStartTime(Date.now());
+      activityStartTime.current = Date.now();
       hasBypassedQuizRef.current = false;
     }
   }, [selectedActivity?.id]);

@@ -4,10 +4,12 @@ type QuickStatItemProps = {
 };
 
 const QuickStatItem = ({ title, item }: QuickStatItemProps) => (
-  <div className="bg-secondary card w-full h-24 flex flex-col justify-center items-center text-base-content">
-    <div className="card-body text-center">
-      <h2 className="card-title justify-center text-xl font-bold">{title}</h2>
-      <p className="text-lg font-bold">{item}</p>
+  <div className="card bg-base-200 border border-base-300 w-full h-24 flex flex-col justify-center items-center text-base-content transition-colors hover:bg-base-300">
+    <div className="card-body justify-center text-center flex flex-col gap-1">
+      <h2 className="text-sm font-semibold opacity-70 uppercase tracking-wide">
+        {title}
+      </h2>
+      <p className="text-2xl font-bold text-primary">{item}</p>
     </div>
   </div>
 );

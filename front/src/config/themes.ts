@@ -1,15 +1,15 @@
 export const themes = {
-  light: "nord",
-  dark: "night",
+  light: "classic",
+  dark: "slate",
 };
 
-export const lightThemes = ["autumn", "corporate", "cupcake", "lofi", "nord"];
-
-export const darkThemes = [
-  "business",
-  "coffee",
-  "dracula",
-  "forest",
-  "night",
-  "synthwave",
+export const lightThemes = [
+  "classic",
+  "pro",
+  "campus",
+  "paper",
+  "ocean",
+  "sunset",
 ];
+
+export const darkThemes = ["slate", "carbon", "midnight", "pine"];

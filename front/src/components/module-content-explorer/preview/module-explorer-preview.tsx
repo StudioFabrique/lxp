@@ -9,12 +9,12 @@ import NoActivityPlaceholder from "./no-activity-placeholder";
 
 const ModuleExplorerPreview = ({
   store,
-  smartQuiz,
+  smartQuizState,
   quizState,
   canEditSelectedLesson,
 }: {
   store: ExplorerStore;
-  smartQuiz: ReturnType<typeof useSmartQuizPrompt>;
+  smartQuizState: ReturnType<typeof useSmartQuizPrompt>;
   quizState: ReturnType<typeof useActivityQuiz>;
   canEditSelectedLesson?: boolean;
 }) => {
@@ -115,7 +115,7 @@ const ModuleExplorerPreview = ({
             isLastActivitySelected={computed.isLastActivitySelected}
             isLastLessonSelected={computed.isLastLessonSelected}
             onPrevious={() => dispatch({ type: "go_to_previous_activity" })}
-            onNext={smartQuiz.handleNextActivity}
+            onNext={smartQuizState.handleNextActivity}
             onCompleteLesson={() =>
               computed.isLessonCompleted
                 ? lessonActions.nextLesson()

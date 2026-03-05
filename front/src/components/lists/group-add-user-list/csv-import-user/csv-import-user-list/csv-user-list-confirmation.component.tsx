@@ -39,8 +39,8 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
     setAllSelected(
       props.usersFromCsv.length > 0 &&
         props.usersFromCsv.every((user) =>
-          props.usersToAdd.some((u) => u.email === user.email)
-        )
+          props.usersToAdd.some((u) => u.email === user.email),
+        ),
     );
   }, [props.usersFromCsv, props.usersToAdd]);
 
@@ -84,9 +84,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
           </button>
           <button
             onClick={handleConfirm}
-            className={`btn btn-primary text-base-100 ${
-              props.isLoading && "loading"
-            }`}
+            className={`btn btn-primary ${props.isLoading && "loading"}`}
           >
             Confirmer
           </button>
