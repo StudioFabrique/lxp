@@ -25,7 +25,7 @@ const QuizRequestModal = ({ isOpen, onAcceptQuiz, onDeclineQuiz }: Props) => {
             Non merci, continuer
           </button>
           <button
-            className="btn btn-primary text-neutral-content"
+            className="btn btn-primary text-base-100"
             onClick={onAcceptQuiz}
           >
             Faire le quiz

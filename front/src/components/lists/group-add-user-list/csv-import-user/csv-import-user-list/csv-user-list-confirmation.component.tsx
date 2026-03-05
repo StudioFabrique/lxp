@@ -84,7 +84,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
           </button>
           <button
             onClick={handleConfirm}
-            className={`btn btn-primary text-neutral-content ${
+            className={`btn btn-primary text-base-100 ${
               props.isLoading && "loading"
             }`}
           >

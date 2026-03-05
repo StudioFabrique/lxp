@@ -71,7 +71,7 @@ const LessonCompletionModal = ({
           />
 
           <FeedbacksButton
-            className="btn btn-primary text-neutral-content btn-sm text-nowrap"
+            className="btn btn-primary text-base-100 btn-sm text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
             onClick={handleRateContent}

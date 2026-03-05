@@ -29,10 +29,7 @@ const ActivityBottomNavigation = ({
     className={`flex gap-2 ${!isLastActivitySelected && isFirstActivitySelected ? "justify-end" : "justify-between"} w-full`}
   >
     {!isFirstActivitySelected && (
-      <button
-        onClick={onPrevious}
-        className="btn btn-primary text-neutral-content"
-      >
+      <button onClick={onPrevious} className="btn btn-primary text-base-100">
         <ArrowLeft />
         Activité précédente
       </button>
@@ -64,7 +61,7 @@ const ActivityBottomNavigation = ({
         </Can>
       )
     ) : (
-      <button onClick={onNext} className="btn btn-primary text-neutral-content">
+      <button onClick={onNext} className="btn btn-primary text-base-100">
         Activité suivante
         <ArrowRight />
       </button>

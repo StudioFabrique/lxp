@@ -35,7 +35,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
           onKeyDown={handleClick}
           className={`${
             isSelected ? "bg-primary" : "bg-secondary/80"
-          } flex items-center gap-x-3 w-max text-neutral-content p-3 rounded-lg hover:bg-primary-focus hover:cursor-pointer relative`}
+          } flex items-center gap-x-3 w-max text-base-100 p-3 rounded-lg hover:bg-primary-focus hover:cursor-pointer relative`}
         >
           {notValid && (
             <ToolTipWarning absolutePos message={notValidModuleTooltip} />

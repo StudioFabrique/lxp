@@ -97,7 +97,7 @@ const RatingPanel = ({
             Annuler
           </button>
           <FeedbacksButton
-            className="btn btn-primary btn-sm text-neutral-content text-nowrap"
+            className="btn btn-primary btn-sm text-base-100 text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
             showFeedback

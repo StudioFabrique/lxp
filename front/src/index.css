@@ -1,19 +1,93 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 @plugin "daisyui" {
   exclude: rootscrollgutter;
   themes:
-    "nord" --default,
-    "autumn",
-    "corporate",
-    "cupcake",
-    "lofi",
-    "nord",
-    "wireframe",
-    "business",
-    "coffee",
-    "dracula",
-    "forest",
-    "night",
-    "synthwave";
+    /* Custom theme listed here */
+    edu-light --default,
+    edu-dark,
+    edu-campus;
 }
-@plugin '@tailwindcss/typography';
+
+/* Define custom themes here */
+@plugin "daisyui/theme" {
+  name: "edu-light";
+  color-scheme: light;
+
+  --color-primary: #1d4ed8; /* Bleu roi profond */
+  --color-primary-content: #ffffff;
+  --color-secondary: #0f766e; /* Sarcelle (Teal) sombre et calme */
+  --color-secondary-content: #ffffff;
+  --color-accent: #f59e0b; /* Ambre doux pour attirer l'attention (boutons importants) */
+  --color-accent-content: #451a03;
+  --color-neutral: #334155; /* Gris ardoise */
+  --color-neutral-content: #f8fafc;
+  --color-base-100: #f8fafc; /* Blanc cassé très doux */
+  --color-base-200: #f1f5f9; /* Gris très clair pour les cartes */
+  --color-base-300: #e2e8f0; /* Bordures et séparateurs */
+  --color-base-content: #0f172a; /* Texte principal sombre, fort contraste */
+
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #451a03;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+}
+
+@plugin "daisyui/theme" {
+  name: "edu-dark";
+  color-scheme: dark;
+
+  --color-primary: #60a5fa; /* Bleu clair, lisible sur fond sombre */
+  --color-primary-content: #0f172a;
+  --color-secondary: #2dd4bf; /* Sarcelle clair (Teal) */
+  --color-secondary-content: #134e4a;
+  --color-accent: #fbbf24; /* Ambre clair */
+  --color-accent-content: #451a03;
+  --color-neutral: #475569; /* Gris ardoise moyen */
+  --color-neutral-content: #f1f5f9;
+  --color-base-100: #0f172a; /* Ardoise très foncée (non noir) */
+  --color-base-200: #1e293b; /* Un ton au-dessus pour les cartes */
+  --color-base-300: #334155; /* Bordures */
+  --color-base-content: #f8fafc; /* Texte principal blanc cassé */
+
+  --color-info: #60a5fa;
+  --color-info-content: #0f172a;
+  --color-success: #34d399;
+  --color-success-content: #022c22;
+  --color-warning: #fbbf24;
+  --color-warning-content: #451a03;
+  --color-error: #f87171;
+  --color-error-content: #450a0a;
+}
+
+@plugin "daisyui/theme" {
+  name: "edu-campus";
+  color-scheme: light;
+
+  --color-primary: #15803d; /* Vert forêt sérieux */
+  --color-primary-content: #ffffff;
+  --color-secondary: #b45309; /* Terre cuite / Orange brûlé */
+  --color-secondary-content: #ffffff;
+  --color-accent: #4338ca; /* Indigo doux */
+  --color-accent-content: #ffffff;
+  --color-neutral: #292524; /* Ton pierre sombre */
+  --color-neutral-content: #fafaf9;
+  --color-base-100: #fafaf9; /* Blanc "coquille d'œuf" (anti-reflet) */
+  --color-base-200: #f5f5f4; /* Pierre très clair */
+  --color-base-300: #e7e5e4;
+  --color-base-content: #1c1917; /* Texte presque noir */
+
+  --color-info: #0284c7;
+  --color-info-content: #ffffff;
+  --color-success: #16a34a;
+  --color-success-content: #ffffff;
+  --color-warning: #d97706;
+  --color-warning-content: #ffffff;
+  --color-error: #dc2626;
+  --color-error-content: #ffffff;
+}

@@ -43,7 +43,7 @@ const ActivityCreationOptionsButtons = ({
               className={`btn ${
                 isDisabled
                   ? "cursor-not-allowed tooltip"
-                  : "btn-primary text-neutral-content"
+                  : "btn-primary text-base-100"
               }`}
               type="button"
               data-tip="Une activité est déja en cours d'édition"
@@ -60,9 +60,7 @@ const ActivityCreationOptionsButtons = ({
             <div className="flex gap-2 transition-opacity">
               <button
                 className={`btn ${
-                  isDisabled
-                    ? "btn-disabled"
-                    : "btn-primary text-neutral-content"
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
                 onClick={onClickShowTipTapEditor}
                 onKeyDown={onClickShowTipTapEditor}
@@ -73,9 +71,7 @@ const ActivityCreationOptionsButtons = ({
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=video&parent=${parent}`}
                 className={`btn ${
-                  isDisabled
-                    ? "btn-disabled"
-                    : "btn-primary text-neutral-content"
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
               >
                 Vidéo
@@ -83,9 +79,7 @@ const ActivityCreationOptionsButtons = ({
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
                 className={`btn ${
-                  isDisabled
-                    ? "btn-disabled"
-                    : "btn-primary text-neutral-content"
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
               >
                 Image
@@ -93,9 +87,7 @@ const ActivityCreationOptionsButtons = ({
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
                 className={`btn ${
-                  isDisabled
-                    ? "btn-disabled"
-                    : "btn-primary text-neutral-content"
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
               >
                 Fichier

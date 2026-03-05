@@ -33,7 +33,7 @@ const MostReadCourses = () => {
             key={course.id}
             to={`/${currentRoute}/parcours/module/${course.module.id}`}
             state={{ lessonId: course.lessons[0].id }}
-            className="w-full flex justify-between gap-5 bg-primary text-neutral-content rounded-lg p-2 px-4"
+            className="w-full flex justify-between gap-5 bg-primary text-base-100 rounded-lg p-2 px-4"
           >
             <div className="flex flex-col w-[70%]">
               <span data-tip={`${course.title}`} className="tooltip flex">

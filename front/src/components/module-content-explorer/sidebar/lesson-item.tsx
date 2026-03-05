@@ -109,8 +109,8 @@ const LessonItem = ({
         onClick={handleBeginReadLesson}
         className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
           isLessonSelected
-            ? "bg-primary text-neutral-content"
-            : "bg-primary/50 text-neutral-content hover:bg-primary/80"
+            ? "bg-primary text-base-100"
+            : "bg-primary/50 text-base-100 hover:bg-primary/80"
         }`}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
@@ -123,7 +123,7 @@ const LessonItem = ({
                     ref={buttonRef}
                     tabIndex={0}
                     type="button"
-                    className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-neutral-content"
+                    className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
                     onClick={handleDropdownToggle}
                   >
                     <EllipsisIcon className="w-4 h-4" />

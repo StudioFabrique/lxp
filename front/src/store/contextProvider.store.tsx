@@ -33,7 +33,7 @@ const ContextProvider = (props: PropsWithChildren) => {
           email,
           password,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setUser(response.data);
     } catch (err: any) {
@@ -53,7 +53,7 @@ const ContextProvider = (props: PropsWithChildren) => {
         `${BASE_API_URL}/auth/handshake`,
         {
           withCredentials: true,
-        }
+        },
       );
       setUser(response.data);
     } catch (err) {
@@ -84,7 +84,7 @@ const ContextProvider = (props: PropsWithChildren) => {
     if (lightTheme) {
       themes.light = lightTheme;
     } else {
-      localStorage.setItem("lightTheme", "nord");
+      localStorage.setItem("lightTheme", "edu-light");
     }
 
     if (darkTheme) {
@@ -121,7 +121,7 @@ const ContextProvider = (props: PropsWithChildren) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme]
+    [theme],
   );
 
   const toggleTheme = () => {
@@ -153,10 +153,10 @@ const ContextProvider = (props: PropsWithChildren) => {
         {
           path: "/auth/roles",
         },
-        applyData
+        applyData,
       );
     },
-    [sendRequest]
+    [sendRequest],
   );
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const ContextProvider = (props: PropsWithChildren) => {
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark
+        theme === "light" ? themes.light : themes.dark,
       );
   }, [theme]);
 
@@ -180,7 +180,7 @@ const ContextProvider = (props: PropsWithChildren) => {
               userId: user._id,
             },
             withCredentials: true,
-          })
+          }),
         );
       }
     }

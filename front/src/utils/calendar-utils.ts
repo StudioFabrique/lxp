@@ -138,14 +138,14 @@ export const getColorByAlternateId = (
   alternateId: number,
 ): { bgColor: string; textColor: string } => {
   const colorOrder = [
-    { bgColor: "bg-primary", textColor: "text-neutral-content" },
-    { bgColor: "bg-secondary", textColor: "text-neutral-content" },
-    { bgColor: "bg-accent", textColor: "text-neutral-content" },
-    { bgColor: "bg-neutral", textColor: "text-neutral-content" },
-    { bgColor: "bg-info", textColor: "text-neutral-content" },
-    { bgColor: "bg-success", textColor: "text-neutral-content" },
+    { bgColor: "bg-primary", textColor: "text-base-100" },
+    { bgColor: "bg-secondary", textColor: "text-base-100" },
+    { bgColor: "bg-accent", textColor: "text-base-100" },
+    { bgColor: "bg-neutral", textColor: "text-base-100" },
+    { bgColor: "bg-info", textColor: "text-base-100" },
+    { bgColor: "bg-success", textColor: "text-base-100" },
     { bgColor: "bg-warning", textColor: "text-neutral" },
-    { bgColor: "bg-error", textColor: "text-neutral-content" },
+    { bgColor: "bg-error", textColor: "text-base-100" },
     { bgColor: "bg-base-300", textColor: "text-neutral" },
     { bgColor: "bg-neutral-content", textColor: "text-neutral" },
   ];

@@ -136,7 +136,7 @@ const Profile = () => {
         <div className="flex justify-end mt-4">
           <button
             type="button"
-            className="btn btn-sm btn-primary text-neutral-content"
+            className="btn btn-sm btn-primary text-base-100"
             onClick={() => formRef.current?.requestSubmit()}
           >
             Sauvegarder

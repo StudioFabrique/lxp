@@ -50,7 +50,7 @@ const ContenuDetail: FC<{
         <div
           onClick={() => handleNavigate(course)}
           key={course?.id}
-          className="relative flex justify-between items-center bg-primary hover:bg-primary/80 text-neutral-content p-4 rounded-lg cursor-pointer"
+          className="relative flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg cursor-pointer"
         >
           <span className="w-12 h-12 flex-shrink-0">
             <BookIcon />
@@ -101,7 +101,7 @@ const ContenuDetail: FC<{
               <Link
                 to="/admin/course/add"
                 state={{ parcoursId, moduleId }}
-                className="btn btn-primary btn-sm text-neutral-content"
+                className="btn btn-primary btn-sm text-base-100"
               >
                 <Plus size={20} />
                 Ajouter un cours
@@ -109,7 +109,7 @@ const ContenuDetail: FC<{
               <Link
                 to="/admin/course/import"
                 state={{ parcoursId, moduleId }}
-                className="btn btn-primary btn-sm text-neutral-content"
+                className="btn btn-primary btn-sm text-base-100"
               >
                 <Import size={20} />
                 Importer
