@@ -63,10 +63,10 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border-1 rounded-lg p-5 border-secondary/20 select-none">
+    <div className="border border-base-300 bg-base-200 rounded-lg p-5 select-none shadow-sm">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center mb-5">
           {courses.length > 0 ? (
             <>
               <h2 className="text-xl font-bold w-28 text-primary">
@@ -75,19 +75,19 @@ const SidebarCoursesList = ({
 
               <FadeWrapper>
                 <span
-                  className="radial-progress self-end mb-5"
+                  className="radial-progress self-end text-primary"
                   style={radialStyle(
                     !Number.isNaN(moduleProgress) ? moduleProgress : 0,
                   )}
                 >
-                  <p className="text-base-content font font-bold">
+                  <p className="text-base-content font-bold text-sm">
                     {!Number.isNaN(moduleProgress)
                       ? Math.round(moduleProgress * 100)
                       : 0}
                     %
                   </p>
                   <span
-                    className="absolute radial-progress text-primary/40"
+                    className="absolute radial-progress text-primary/20"
                     style={radialStyle(1)}
                   />
                 </span>
