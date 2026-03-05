@@ -3,6 +3,13 @@ export const themes = {
   dark: "slate",
 };
 
-export const lightThemes = ["classic", "pro", "campus", "paper"];
+export const lightThemes = [
+  "classic",
+  "pro",
+  "campus",
+  "paper",
+  "ocean",
+  "sunset",
+];
 
-export const darkThemes = ["slate", "carbon"];
+export const darkThemes = ["slate", "carbon", "midnight", "pine"];
