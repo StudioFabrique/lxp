@@ -61,7 +61,7 @@ const ContenuItem: FC<{
           <p className="text-base font-semibold">{module.title}</p>
         </div>
         <Link
-          className={`btn btn-sm btn-ghost self-end ${isSelected ? "text-primary-content hover:bg-primary-focus" : ""}`}
+          className={`btn btn-sm btn-ghost self-end`}
           to={`../module/${module.id}`}
         >
           <ArrowRightCircle />
