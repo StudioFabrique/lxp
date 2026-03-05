@@ -409,27 +409,38 @@ const useModuleContentExplorer = () => {
     const fromId = result.source.index;
     const toId = result.destination?.index;
 
-    if (toId === undefined) return;
+    if (toId === undefined || fromId === toId) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
 
     isReordering.current.activity = true;
 
     if (state.selectedLesson && state.selectedLesson.activities) {
+      // On clone le tableau actuel et on applique le déplacement
+      const reorderedActivities = Array.from(state.selectedLesson.activities);
+      const [movedItem] = reorderedActivities.splice(fromId, 1);
+      reorderedActivities.splice(toId, 0, movedItem);
+
+      // On extrait les IDs du NOUVEAU tableau
+      const newActivitiesIds = reorderedActivities.map(
+        (activity) => activity.id,
+      );
+
+      // On envoie le nouveau tableau au backend
       sendRequest(
         {
           path: `/activity/reorder/${state.selectedLesson.id}`,
           method: "put",
           body: {
-            activitiesIds: state.selectedLesson.activities.map(
-              (activity) => activity.id,
-            ),
+            activitiesIds: newActivitiesIds,
           },
         },
         () => {
           isReordering.current.activity = false;
         },
       );
+    } else {
+      isReordering.current.activity = false;
     }
   };
 
