@@ -126,7 +126,7 @@ const QuizModal = ({
           <div
             className={`alert ${isCorrect ? "alert-success" : "alert-error"} shadow-lg`}
           >
-            <div className="text-neutral-content">
+            <div className="text-base-100">
               <h3 className="font-bold">
                 {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
               </h3>

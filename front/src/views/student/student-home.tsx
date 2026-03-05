@@ -36,10 +36,10 @@ const StudentHome = () => {
         classname="capitalize"
       >
         <div className="flex gap-4 w-full">
-          <button className="btn btn-outline btn-primary hover:text-neutral-content text-primary">
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
             <Search />
           </button>
-          <button className="btn btn-outline btn-primary hover:text-neutral-content text-primary">
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
             <Bell />
           </button>
         </div>

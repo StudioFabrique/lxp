@@ -24,7 +24,7 @@ const TablePagination = (props: TablePaginationProps) => {
   const isSinglePage = props.maxPage === 1;
 
   return (
-    <div className="bg-primary text-neutral-content w-full rounded-lg px-4 py-2">
+    <div className="bg-primary text-base-100 w-full rounded-lg px-4 py-2">
       <div className="flex gap-4 flex-row items-center justify-between">
         {/* Section Gauche : Texte informatif */}
         <div className="text-center md:text-left">
@@ -39,7 +39,7 @@ const TablePagination = (props: TablePaginationProps) => {
               <button
                 onClick={props.onSetPreviousPage}
                 disabled={isFirstPage}
-                className="join-item btn btn-sm btn-ghost disabled:bg-transparent disabled:text-neutral-content/30"
+                className="join-item btn btn-sm btn-ghost disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page précédente"
               >
                 <ChevronLeft size={20} />
@@ -57,7 +57,7 @@ const TablePagination = (props: TablePaginationProps) => {
               <button
                 onClick={props.onSetNextPage}
                 disabled={isLastPage}
-                className="join-item btn btn-sm btn-ghost disabled:bg-transparent disabled:text-neutral-content/30"
+                className="join-item btn btn-sm btn-ghost disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page suivante"
               >
                 <ChevronRight size={20} />

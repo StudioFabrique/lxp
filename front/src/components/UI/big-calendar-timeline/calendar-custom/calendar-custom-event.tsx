@@ -8,7 +8,7 @@ const makeCustomEvent =
   ({ event }: { event: LessonData }) => {
     const colors = event.alternateId
       ? getColorByAlternateId(event.alternateId)
-      : { bgColor: "bg-primary", textColor: "text-neutral-content" };
+      : { bgColor: "bg-primary", textColor: "text-base-100" };
 
     if (isMonth) {
       return (

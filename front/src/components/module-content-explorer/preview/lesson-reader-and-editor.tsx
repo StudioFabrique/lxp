@@ -111,7 +111,7 @@ const LessonReaderAndEditor = ({
             {canEdit &&
               (mode === "write" || mode === "edit" ? (
                 <button
-                  className="btn btn-sm btn-error self-end text-neutral-content"
+                  className="btn btn-sm btn-error self-end text-base-100"
                   onClick={mode === "write" ? onBack : onClose}
                   disabled={isLoading}
                 >

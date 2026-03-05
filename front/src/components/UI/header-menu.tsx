@@ -30,7 +30,7 @@ const HeaderMenu = ({
             <Can action="write" object="group">
               <Link
                 to={`/${location.pathname.split("/")[1]}/group`}
-                className="btn btn-primary btn-sm text-neutral-content py-1"
+                className="btn btn-primary btn-sm text-base-100 py-1"
               >
                 <GroupIcon />
               </Link>
@@ -42,7 +42,7 @@ const HeaderMenu = ({
                 <button
                   onClick={onClickResume}
                   type="button"
-                  className="btn btn-primary text-neutral-content gap-2 self-end"
+                  className="btn btn-primary text-base-100 gap-2 self-end"
                 >
                   <span className="w-5 h-5">
                     <PlayCircleIcon />

@@ -120,7 +120,7 @@ const RoleEdit = () => {
         </div>
         <button
           type="button"
-          className="btn btn-primary text-neutral-content"
+          className="btn btn-primary text-base-100"
           onClick={onClickPreviousPage}
         >
           Valider

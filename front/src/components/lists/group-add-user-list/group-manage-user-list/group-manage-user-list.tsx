@@ -139,7 +139,7 @@ const GroupManageUserList: FC<{
       isOpen={drawerOptions?.isOpen}
       buttonTitle="Ajouter des étudiants"
       icon={<UserPlus />}
-      buttonClassname="drawer-button btn btn-primary text-neutral-content text-nowrap"
+      buttonClassname="drawer-button btn btn-primary text-base-100 text-nowrap"
     >
       <div className="h-[80vh] w-[35rm]">
         <div className="flex flex-col gap-y-5 items-center">

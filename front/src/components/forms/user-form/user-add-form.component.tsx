@@ -161,7 +161,7 @@ const UserAddForm: FC<{
         <button
           onClick={handleSubmit}
           type="button"
-          className="btn btn-primary text-neutral-content normal-case"
+          className="btn btn-primary text-base-100 normal-case"
           disabled={props.fieldsDisabled || props.isLoading}
         >
           {props.isLoading ? (

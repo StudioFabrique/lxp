@@ -1,15 +1,8 @@
 export const themes = {
-  light: "nord",
-  dark: "night",
+  light: "edu-light",
+  dark: "edu-dark",
 };
 
-export const lightThemes = ["autumn", "corporate", "cupcake", "lofi", "nord"];
+export const lightThemes = ["edu-light", "edu-campus"];
 
-export const darkThemes = [
-  "business",
-  "coffee",
-  "dracula",
-  "forest",
-  "night",
-  "synthwave",
-];
+export const darkThemes = ["edu-dark"];

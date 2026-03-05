@@ -31,8 +31,8 @@ const RightSideDrawer: FC<Props> = ({
   const btnStyle = buttonClassname
     ? buttonClassname
     : buttonTitle !== undefined
-      ? "drawer-button btn btn-sm bg-primary border-none text-neutral-content hover:brightness-75 hover:bg-primary focus:outline-none"
-      : "drawer-button btn btn-square btn-sm bg-primary border-none text-neutral-content hover:brightness-75 hover:bg-primary focus:outline-none";
+      ? "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
+      : "drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none";
 
   const handleCloseDrawer = () => {
     if (onCloseDrawer) {

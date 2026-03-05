@@ -90,7 +90,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               <Link
                 to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
                 state={{ lessonId: lastLesson.lesson.id }}
-                className="z-[9] btn btn-primary text-neutral-content flex"
+                className="z-[9] btn btn-primary text-base-100 flex"
               >
                 <PlayCircleIcon />
                 <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>

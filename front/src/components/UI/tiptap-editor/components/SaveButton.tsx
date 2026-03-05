@@ -9,7 +9,7 @@ type SaveButtonProps = {
 const SaveButton = ({ pending, onSave }: SaveButtonProps) => {
   return (
     <button
-      className="self-center btn btn-sm btn-primary text-neutral-content"
+      className="self-center btn btn-sm btn-primary text-base-100"
       type="button"
       onClick={onSave}
       disabled={pending}

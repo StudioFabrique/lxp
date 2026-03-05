@@ -32,7 +32,7 @@ const Item = ({ accomplishment, onRemove }: ItemProps) => {
   };
 
   return (
-    <div className="flex justify-between gap-2 items-center w-full bg-primary text-neutral-content rounded-lg p-2 md:p-3">
+    <div className="flex justify-between gap-2 items-center w-full bg-primary text-base-100 rounded-lg p-2 md:p-3">
       <div className="flex gap-2 md:gap-4 flex-1 min-w-0">
         <span className="flex flex-col items-start overflow-hidden flex-1">
           <p className="font-semibold truncate w-full">{accomplishment.name}</p>

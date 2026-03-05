@@ -82,7 +82,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
               </Link>
               <button
                 onClick={handleClose}
-                className="btn btn-secondary btn-sm text-neutral-content"
+                className="btn btn-secondary btn-sm text-base-100"
               >
                 Fermer
               </button>
