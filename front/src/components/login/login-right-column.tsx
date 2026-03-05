@@ -1,39 +1,46 @@
 import bgPhoto from "../../assets/images/login/photo.jpeg";
 
 const LoginRightColumn = () => {
-  const generateSquaresTransparency = (size: number) => {
-    const squares = [];
-    const squareSize = 100; // Taille de chaque carré
-    const gap = 20; // Espace entre les carrés
+  // Constantes sorties de la boucle pour faciliter les réglages
+  const gridSize = 10;
+  const squareSize = 200;
+  const gap = 16;
 
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        squares.push(
-          <div
+  const generateGridMask = () => {
+    const rects = [];
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        rects.push(
+          <rect
             key={`${i}-${j}`}
-            className="absolute bg-white opacity-90 rounded-lg pointer-events-none"
-            style={{
-              width: `${squareSize}px`,
-              height: `${squareSize}px`,
-              top: `${i * (squareSize + gap)}px`,
-              left: `${j * (squareSize + gap)}px`,
-            }}
+            x={j * (squareSize + gap)}
+            y={i * (squareSize + gap)}
+            width={squareSize}
+            height={squareSize}
+            rx="24"
           />,
         );
       }
     }
-
-    return squares;
+    return rects;
   };
 
   return (
-    <div className="hidden xl:flex flex-col justify-center items-end relative col-span-2 w-full h-full">
+    <div className="hidden xl:flex flex-col justify-center items-end relative col-span-2 w-full h-full bg-white">
+      {/* Définition du masque de découpe (invisible en soi) */}
+      <svg className="absolute">
+        <defs>
+          <clipPath id="image-grid-mask">{generateGridMask()}</clipPath>
+        </defs>
+      </svg>
+
+      {/* L'image à laquelle on applique le masque */}
       <img
         src={bgPhoto}
         alt="Décoration"
-        className="w-auto h-full max-h-[85vh] min-h-[600px] object-contain rounded-l-2xl"
+        className="w-auto h-full max-h-[85vh] min-h-[600px] object-cover"
+        style={{ clipPath: "url(#image-grid-mask)" }}
       />
-      {generateSquaresTransparency(10)}
     </div>
   );
 };
