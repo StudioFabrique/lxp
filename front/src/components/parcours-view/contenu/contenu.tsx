@@ -56,16 +56,6 @@ const Contenu = ({ modules }: ContenuProps) => {
           </h2>
           {canEditParcoursContent && (
             <div className="flex gap-5">
-              {/* <Link
-                className="btn btn-primary btn-soft"
-                to="import-modules"
-                state={{ parcoursId }}
-              >
-                <div className="flex gap-x-2 items-center">
-                  <ImportIcon />
-                  Importer des modules
-                </div>
-              </Link> */}
               <Can action="update" object="parcours">
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=${4}`}

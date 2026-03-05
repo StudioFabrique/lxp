@@ -54,15 +54,15 @@ const ParcoursView = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       <Header
-        title={`Aperçu du parcours`}
+        title="Aperçu du parcours"
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
             reprenez là où vous vous êtes arrêté."
       >
         <div className="flex gap-4 w-full">
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+          <button className="btn btn-outline btn-primary">
             <Search />
           </button>
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+          <button className="btn btn-outline btn-primary">
             <Bell />
           </button>
         </div>

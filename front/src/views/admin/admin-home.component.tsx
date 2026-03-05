@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
 import Can from "../../components/UI/can/can.component";
@@ -10,38 +10,14 @@ import TeacherLessonsQualityStats from "../../components/admin-home/teacher-less
 import { Context } from "../../store/context.store";
 
 const links = [
-  {
-    path: "/admin/formation",
-    label: "Créer une formation",
-  },
-  {
-    path: "/admin/parcours/créer-un-parcours",
-    label: "Créer un parcours",
-  },
-  {
-    path: "/admin/module/add",
-    label: "Créer un module",
-  },
-  {
-    path: "/admin/course/add",
-    label: "Créer un cours",
-  },
-  {
-    path: "/admin/lesson/Add",
-    label: "Créer une leçon",
-  },
-  {
-    path: "/admin/user/add",
-    label: "Créer un utilisateur",
-  },
-  {
-    path: "/admin/feedbacks",
-    label: "Voir les feedbacks",
-  },
-  {
-    path: "/admin/teacher/evaluations",
-    label: "Evaluer un apprenant",
-  },
+  { path: "/admin/formation", label: "Créer une formation" },
+  { path: "/admin/parcours/créer-un-parcours", label: "Créer un parcours" },
+  { path: "/admin/module/add", label: "Créer un module" },
+  { path: "/admin/course/add", label: "Créer un cours" },
+  { path: "/admin/lesson/Add", label: "Créer une leçon" },
+  { path: "/admin/user/add", label: "Créer un utilisateur" },
+  { path: "/admin/feedbacks", label: "Voir les feedbacks" },
+  { path: "/admin/teacher/evaluations", label: "Evaluer un apprenant" },
 ];
 
 const AdminHome = () => {
@@ -49,7 +25,6 @@ const AdminHome = () => {
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
-  // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
   const getParcours = useCallback(() => {
     const applyData = (data: {
       message: string;
@@ -58,12 +33,7 @@ const AdminHome = () => {
     }) => {
       setParcours(data.response);
     };
-    sendRequest(
-      {
-        path: "/user/last-parcours",
-      },
-      applyData
-    );
+    sendRequest({ path: "/user/last-parcours" }, applyData);
   }, [sendRequest]);
 
   useEffect(() => {
@@ -71,60 +41,71 @@ const AdminHome = () => {
   }, [getParcours]);
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      <section className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center">
-        <article className="w-full">
-          <span className="w-full flex flex-1 flex-col gap-y-2">
-            <h2 className="w-full text-3xl font-extrabold capitalize">
-              Bonjour, {user?.firstname} {user?.lastname} !
-            </h2>
-            <p>
-              Bienvenue dans votre panneau d'administration, l'outil central
-              pour gérer et surveiller tous les aspects de l'apprentissage des
-              vos apprenants.
-            </p>
-          </span>
-        </article>
+    <div className="w-full flex flex-col gap-6">
+      {/* --- Bannière de bienvenue --- */}
+      <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
+        <h2 className="text-3xl font-extrabold capitalize text-primary mb-2">
+          Bonjour, {user?.firstname} {user?.lastname} !
+        </h2>
+        <p className="text-base-content opacity-80 max-w-3xl">
+          Bienvenue dans votre panneau d'administration, l'outil central pour
+          gérer et surveiller tous les aspects de l'apprentissage de vos
+          apprenants.
+        </p>
       </section>
+
+      {/* --- Boutons d'actions rapides --- */}
       <section>
-        <ul className="flex flex-wrap items-center gap-2">
+        <ul className="flex flex-wrap items-center gap-3">
           <Can action="write" object="formation">
-            <li key={0}>
-              <Link className="btn btn-primary" to={links[0].path}>
+            <li>
+              <Link
+                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
+                to={links[0].path}
+              >
                 {links[0].label}
               </Link>
             </li>
           </Can>
           <Can action="write" object="parcours">
-            <li key={1}>
-              <Link className="btn btn-primary" to={links[1].path}>
+            <li>
+              <Link
+                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
+                to={links[1].path}
+              >
                 {links[1].label}
               </Link>
             </li>
           </Can>
           <Can action="write" object="module">
             <li>
-              <Link className="btn btn-primary" to={links[2].path}>
+              <Link
+                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
+                to={links[2].path}
+              >
                 {links[2].label}
               </Link>
             </li>
           </Can>
-          {links.map((item, index) => (
-            <React.Fragment key={item.label}>
-              {index > 2 ? (
-                <li>
-                  <Link className="btn btn-primary" to={item.path}>
-                    {item.label}
-                  </Link>
-                </li>
-              ) : null}
-            </React.Fragment>
-          ))}
+          {links.map((item, index) =>
+            index > 2 ? (
+              <li key={item.label}>
+                <Link
+                  className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
+                  to={item.path}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ) : null,
+          )}
         </ul>
       </section>
-      <section className="w-full flex flex-col 2xl:flex-row gap-4">
-        <span className="flex-1 flex flex-col gap-4">
-          <article className="w-full flex flex-col gap-y-2">
+
+      {/* --- Contenu Principal --- */}
+      <section className="w-full flex flex-col 2xl:flex-row gap-6">
+        <div className="flex-1 flex flex-col gap-6">
+          <article className="w-full flex flex-col gap-y-4">
             {user?.roles.find((role) => role.role === "teacher") &&
             parcours &&
             parcours.length > 0 ? (
@@ -132,13 +113,8 @@ const AdminHome = () => {
             ) : null}
             <LastParcours />
           </article>
-          <article className="w-full flex flex-col xl:flex-row gap-4">
-            {/*<Wrapper>
-              <div className="w-full h-full flex flex-col items-center xl:items:start">
-                <StatsBar />
-                <StatsDonut />
-              </div>
-            </Wrapper>*/}
+
+          <article className="w-full flex flex-col xl:flex-row gap-6">
             <Can action="component" object="last-feedback">
               <LastFeedback />
             </Can>
@@ -146,33 +122,8 @@ const AdminHome = () => {
               <TeacherLessonsQualityStats />
             </Can>
           </article>
-        </span>
-        {/* <article>
-          <ul className="w-full grid grid-cols-1 gap-4 place-items-center">
-            <li className="w-fit lg:w-full">
-              <Wrapper>
-                <StatsLine />
-              </Wrapper>
-            </li>
-            <li className="w-fit lg:w-full">
-              <Wrapper>
-                <StatsLine />
-              </Wrapper>
-            </li>
-          </ul>
-        </article> */}
+        </div>
       </section>
-      <div>
-        <section className="w-full flex flex-col xl:flex-row gap-x-4 gap-y-4">
-          <article></article>
-        </section>
-        <section>
-          <article></article>
-        </section>
-        <section>
-          <article></article>
-        </section>
-      </div>
     </div>
   );
 };

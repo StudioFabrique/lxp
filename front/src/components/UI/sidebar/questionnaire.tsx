@@ -11,7 +11,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   useEffect(() => {
     setTimeout(() => {
       const hasClosedQuestionnaire = localStorage.getItem(
-        "hasClosedQuestionnaire"
+        "hasClosedQuestionnaire",
       );
       if (!hasClosedQuestionnaire) {
         setShowTooltip(true);
