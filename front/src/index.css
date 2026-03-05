@@ -6,15 +6,19 @@
   themes:
     /* Thèmes Clairs */
     classic --default,
-    /* ex edu-light */ pro,
-    /* ex edu-pro */ campus,
-    /* ex edu-campus */ paper,
-    /* NOUVEAU */ /* Thèmes Sombres */ slate,
-    /* ex edu-dark */ carbon; /* NOUVEAU */
+    pro,
+    campus,
+    paper,
+    ocean,
+    sunset,
+    /* Thèmes Sombres */ slate,
+    carbon,
+    midnight,
+    pine;
 }
 
 /* =================================== */
-/* THÈMES CLAIRS           */
+/* THÈMES CLAIRS                       */
 /* =================================== */
 
 @plugin "daisyui/theme" {
@@ -51,25 +55,26 @@
 @plugin "daisyui/theme" {
   name: "pro";
   color-scheme: light;
-  --color-primary: #1d4ed8;
+  /* Thème très épuré, type "Notion" ou "Linear" */
+  --color-primary: #0f172a; /* Presque noir */
   --color-primary-content: #ffffff;
-  --color-secondary: #0f766e;
+  --color-secondary: #64748b; /* Gris moyen */
   --color-secondary-content: #ffffff;
-  --color-accent: #f59e0b;
-  --color-accent-content: #451a03;
-  --color-neutral: #334155;
-  --color-neutral-content: #f8fafc;
-  --color-base-100: #ffffff;
-  --color-base-200: #f8fafc;
+  --color-accent: #2563eb; /* Bleu vif pour les actions clés */
+  --color-accent-content: #ffffff;
+  --color-neutral: #1e293b;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff; /* Blanc pur */
+  --color-base-200: #f8fafc; /* Gris ultra léger */
   --color-base-300: #e2e8f0;
-  --color-base-content: #0f172a;
-  --color-info: #3b82f6;
+  --color-base-content: #020617;
+  --color-info: #0ea5e9;
   --color-info-content: #ffffff;
-  --color-success: #10b981;
+  --color-success: #16a34a;
   --color-success-content: #ffffff;
-  --color-warning: #f59e0b;
-  --color-warning-content: #451a03;
-  --color-error: #ef4444;
+  --color-warning: #ea580c;
+  --color-warning-content: #ffffff;
+  --color-error: #dc2626;
   --color-error-content: #ffffff;
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
@@ -113,18 +118,18 @@
 @plugin "daisyui/theme" {
   name: "paper";
   color-scheme: light;
-  --color-primary: #7c3aed; /* Violet académique doux */
+  --color-primary: #7c3aed;
   --color-primary-content: #ffffff;
-  --color-secondary: #0d9488; /* Sarcelle vif */
+  --color-secondary: #0d9488;
   --color-secondary-content: #ffffff;
-  --color-accent: #e11d48; /* Rose/Rouge d'accentuation */
+  --color-accent: #e11d48;
   --color-accent-content: #ffffff;
-  --color-neutral: #44403c; /* Gris chaud taupe */
+  --color-neutral: #44403c;
   --color-neutral-content: #f5f5f4;
-  --color-base-100: #fdfbf7; /* Blanc crème/papier, anti-fatigue */
-  --color-base-200: #f4f0ea; /* Fond de carte chaleureux */
+  --color-base-100: #fdfbf7; /* Sépia très léger */
+  --color-base-200: #f4f0ea;
   --color-base-300: #e7e5e4;
-  --color-base-content: #292524; /* Texte brun très foncé (moins dur que le noir) */
+  --color-base-content: #292524;
   --color-info: #0ea5e9;
   --color-info-content: #ffffff;
   --color-success: #10b981;
@@ -141,8 +146,72 @@
   --noise: 0;
 }
 
+@plugin "daisyui/theme" {
+  name: "ocean";
+  color-scheme: light;
+  /* Tons bleus très frais, invite à la concentration */
+  --color-primary: #0369a1; /* Bleu océan profond */
+  --color-primary-content: #ffffff;
+  --color-secondary: #0891b2; /* Cyan */
+  --color-secondary-content: #ffffff;
+  --color-accent: #059669; /* Émeraude */
+  --color-accent-content: #ffffff;
+  --color-neutral: #164e63;
+  --color-neutral-content: #f0f9ff;
+  --color-base-100: #f0f9ff; /* Fond très légèrement bleuté */
+  --color-base-200: #e0f2fe;
+  --color-base-300: #bae6fd;
+  --color-base-content: #082f49;
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #ffffff;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "sunset";
+  color-scheme: light;
+  /* Tons chauds et vibrants, idéal pour des plateformes créatives */
+  --color-primary: #ea580c; /* Orange brûlé */
+  --color-primary-content: #ffffff;
+  --color-secondary: #be123c; /* Rose poudré sombre */
+  --color-secondary-content: #ffffff;
+  --color-accent: #d97706; /* Ambre */
+  --color-accent-content: #ffffff;
+  --color-neutral: #451a03;
+  --color-neutral-content: #fffbeb;
+  --color-base-100: #fffbeb; /* Fond très légèrement jaune/chaud */
+  --color-base-200: #fef3c7;
+  --color-base-300: #fde68a;
+  --color-base-content: #451a03;
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #16a34a;
+  --color-success-content: #ffffff;
+  --color-warning: #ea580c;
+  --color-warning-content: #ffffff;
+  --color-error: #e11d48;
+  --color-error-content: #ffffff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
 /* =================================== */
-/* THÈMES SOMBRES           */
+/* THÈMES SOMBRES                      */
 /* =================================== */
 
 @plugin "daisyui/theme" {
@@ -179,20 +248,84 @@
 @plugin "daisyui/theme" {
   name: "carbon";
   color-scheme: dark;
-  --color-primary: #38bdf8; /* Cyan lumineux */
+  --color-primary: #38bdf8;
   --color-primary-content: #082f49;
-  --color-secondary: #818cf8; /* Indigo doux */
+  --color-secondary: #818cf8;
   --color-secondary-content: #ffffff;
-  --color-accent: #f472b6; /* Rose subtil */
+  --color-accent: #f472b6;
   --color-accent-content: #500724;
-  --color-neutral: #262626; /* Gris très neutre */
+  --color-neutral: #262626;
   --color-neutral-content: #e5e5e5;
-  --color-base-100: #121212; /* Gris presque noir (Standard Material Dark) */
-  --color-base-200: #1e1e1e; /* Gris surélevé pour les cartes */
+  --color-base-100: #121212;
+  --color-base-200: #1e1e1e;
   --color-base-300: #2d2d2d;
-  --color-base-content: #f3f4f6; /* Texte clair */
+  --color-base-content: #f3f4f6;
   --color-info: #38bdf8;
   --color-info-content: #082f49;
+  --color-success: #34d399;
+  --color-success-content: #022c22;
+  --color-warning: #fbbf24;
+  --color-warning-content: #451a03;
+  --color-error: #f87171;
+  --color-error-content: #450a0a;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "midnight";
+  color-scheme: dark;
+  /* Inspiré des thèmes de codeurs (Dracula / Synthwave très allégé) */
+  --color-primary: #a855f7; /* Violet fluo */
+  --color-primary-content: #ffffff;
+  --color-secondary: #f43f5e; /* Rose vif */
+  --color-secondary-content: #ffffff;
+  --color-accent: #06b6d4; /* Cyan */
+  --color-accent-content: #ffffff;
+  --color-neutral: #1e1b4b;
+  --color-neutral-content: #e0e7ff;
+  --color-base-100: #0f172a; /* Bleu nuit très profond */
+  --color-base-200: #1e293b;
+  --color-base-300: #334155;
+  --color-base-content: #f8fafc;
+  --color-info: #38bdf8;
+  --color-info-content: #082f49;
+  --color-success: #34d399;
+  --color-success-content: #022c22;
+  --color-warning: #fbbf24;
+  --color-warning-content: #451a03;
+  --color-error: #f87171;
+  --color-error-content: #450a0a;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "pine";
+  color-scheme: dark;
+  /* Thème sombre élégant, très reposant pour les yeux */
+  --color-primary: #10b981; /* Émeraude */
+  --color-primary-content: #022c22;
+  --color-secondary: #fbbf24; /* Ambre/Or */
+  --color-secondary-content: #451a03;
+  --color-accent: #6ee7b7; /* Vert menthe clair */
+  --color-accent-content: #064e3b;
+  --color-neutral: #064e3b;
+  --color-neutral-content: #d1fae5;
+  --color-base-100: #022c22; /* Vert forêt presque noir */
+  --color-base-200: #064e3b;
+  --color-base-300: #047857;
+  --color-base-content: #ecfdf5;
+  --color-info: #60a5fa;
+  --color-info-content: #0f172a;
   --color-success: #34d399;
   --color-success-content: #022c22;
   --color-warning: #fbbf24;
