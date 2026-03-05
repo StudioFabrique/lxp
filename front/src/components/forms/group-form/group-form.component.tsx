@@ -65,7 +65,7 @@ const GroupForm: FC<{
           <button
             onClick={onSubmit}
             type="button"
-            className="btn btn-primary text-base-100 md:w-32 normal-case"
+            className="btn btn-primary md:w-32 normal-case"
           >
             Sauvegarder
           </button>

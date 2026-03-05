@@ -15,7 +15,7 @@ export const AddUsersButton: FC<{
     return (
       <button
         type="button"
-        className="btn btn-primary text-base-100 self-center"
+        className="btn btn-primary self-center"
         onClick={handleClick}
       >
         ajouter
