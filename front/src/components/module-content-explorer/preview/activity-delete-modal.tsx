@@ -36,7 +36,7 @@ const ActivityDeleteModal = ({
             Annuler
           </button>
           <button
-            className="btn btn-error text-base-100"
+            className="btn btn-error text-neutral-content"
             onClick={onConfirmDelete}
           >
             Supprimer

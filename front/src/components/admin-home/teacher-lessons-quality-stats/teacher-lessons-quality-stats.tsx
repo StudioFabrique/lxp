@@ -25,7 +25,7 @@ const TeacherLessonsQualityStats = () => {
         <BestLessonsStatsList coursesRating={stats?.coursesRating} />
         <Link
           to="/admin/course/stats"
-          className="btn btn-sm btn-secondary text-base-100 self-end"
+          className="btn btn-sm btn-secondary text-neutral-content self-end"
         >
           Afficher plus
         </Link>

@@ -10,7 +10,7 @@ import { ZodError } from "zod";
  */
 const useForm = (data = {}, schema?: any) => {
   // État pour stocker les valeurs des champs du formulaire
-  const [values, setValues] = useState<Record<string, unknown>>(data);
+  const [values, setValues] = useState<Record<string, string>>(data);
   // État pour stocker les erreurs de validation
   const [errors, setErrors] = useState<CustomError[]>([]);
 
@@ -26,7 +26,7 @@ const useForm = (data = {}, schema?: any) => {
         ]);
       setValues((prevValues) => ({
         ...prevValues,
-        [field]: value,
+        [field]: value as string,
       }));
       if (schema) {
         try {
@@ -41,7 +41,7 @@ const useForm = (data = {}, schema?: any) => {
         }
       }
     },
-    [errors, schema]
+    [errors, schema],
   );
 
   /**

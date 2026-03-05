@@ -37,14 +37,14 @@ const ActivityTypeSelection = ({ onSelectType, onCancel }: Props) => {
         {activityTypes.map((type) => (
           <button
             key={type.type}
-            className="btn btn-primary flex flex-col items-center h-28 w-28 text-base-100 justify-center rounded-lg capitalize"
+            className="btn btn-primary flex flex-col items-center h-28 w-28 text-neutral-content justify-center rounded-lg capitalize"
             onClick={() => onSelectType(type.type)}
           >
             <type.icon className="" /> {type.label}
           </button>
         ))}
       </div>
-      <button className="btn btn-error text-base-100" onClick={onCancel}>
+      <button className="btn btn-error text-neutral-content" onClick={onCancel}>
         Annuler
       </button>
     </div>

@@ -110,7 +110,7 @@ const TiptapActivity = ({
       </div>
       {mode !== "read" && onClose && (
         <button
-          className="btn btn-sm btn-error text-base-100 self-end"
+          className="btn btn-sm btn-error text-neutral-content self-end"
           onClick={onClose}
         >
           Annuler

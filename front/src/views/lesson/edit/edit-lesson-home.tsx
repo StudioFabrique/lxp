@@ -31,7 +31,7 @@ export default function EditLessonHome() {
       <section className="w-full flex flex-col gap-y-4">
         <Header title="Activités" description="Ajouter et éditer des activités">
           <button
-            className="btn btn-primary text-base-100"
+            className="btn btn-primary text-neutral-content"
             onClick={() => setCreateActivity((prevState) => !prevState)}
             disabled={createActivity && activityType.length > 0}
           >

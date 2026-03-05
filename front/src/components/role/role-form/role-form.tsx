@@ -199,7 +199,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
               <div className="w-full">
                 <button
                   type="button"
-                  className="btn btn-sm btn-primary text-base-100 normal-case w-full"
+                  className="btn btn-sm btn-primary text-neutral-content normal-case w-full"
                   onClick={handleSubmitRole}
                 >
                   {searchParams?.get("callback")

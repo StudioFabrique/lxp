@@ -11,7 +11,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   useEffect(() => {
     setTimeout(() => {
       const hasClosedQuestionnaire = localStorage.getItem(
-        "hasClosedQuestionnaire"
+        "hasClosedQuestionnaire",
       );
       if (!hasClosedQuestionnaire) {
         setShowTooltip(true);
@@ -82,7 +82,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
               </Link>
               <button
                 onClick={handleClose}
-                className="btn btn-secondary btn-sm text-base-100"
+                className="btn btn-secondary btn-sm text-neutral-content"
               >
                 Fermer
               </button>
