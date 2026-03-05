@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
-import express, { Response } from "express";
+import express from "express";
 import api from "./routes/v1/v1.router";
 import morgan from "morgan";
 import cors from "cors";
