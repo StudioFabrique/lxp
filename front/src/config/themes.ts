@@ -1,8 +1,8 @@
 export const themes = {
-  light: "edu-light",
-  dark: "edu-dark",
+  light: "classic",
+  dark: "slate",
 };
 
-export const lightThemes = ["edu-light", "edu-campus"];
+export const lightThemes = ["classic", "pro", "campus", "paper"];
 
-export const darkThemes = ["edu-dark"];
+export const darkThemes = ["slate", "carbon"];

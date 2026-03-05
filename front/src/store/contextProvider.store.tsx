@@ -84,13 +84,13 @@ const ContextProvider = (props: PropsWithChildren) => {
     if (lightTheme) {
       themes.light = lightTheme;
     } else {
-      localStorage.setItem("lightTheme", "edu-light");
+      localStorage.setItem("lightTheme", "classic");
     }
 
     if (darkTheme) {
       themes.dark = darkTheme;
     } else {
-      localStorage.setItem("darkTheme", "night");
+      localStorage.setItem("darkTheme", "slate");
     }
 
     const activeTheme = localStorage.getItem("activeTheme");

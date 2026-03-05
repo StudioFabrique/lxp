@@ -59,10 +59,10 @@ const ParcoursView = () => {
             reprenez là où vous vous êtes arrêté."
       >
         <div className="flex gap-4 w-full">
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+          <button className="btn btn-outline btn-primary">
             <Search />
           </button>
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+          <button className="btn btn-outline btn-primary">
             <Bell />
           </button>
         </div>
