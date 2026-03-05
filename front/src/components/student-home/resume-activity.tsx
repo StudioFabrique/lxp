@@ -30,7 +30,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       setImage(
         data.data.image
           ? `data:image/jpeg;base64,${data.data.image}`
-          : defaultImage
+          : defaultImage,
       );
     };
 
@@ -38,14 +38,14 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       {
         path: `/modules/image/${lastLesson.lesson.course.module.id}`,
       },
-      applyData
+      applyData,
     );
   }, [lastLesson.lesson.course.module.id, sendRequest]);
 
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={isLoading ? "" : image ?? ""}
+        imageUrl={isLoading ? "" : (image ?? "")}
         title={`Leçon ${
           (lastLesson.lesson.order ?? 0) + 1
         }: ${toUpperFirstLetter(lastLesson.lesson.title)}`}
@@ -81,7 +81,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                           src={skill.badge}
                           alt="illustration badge"
                         />
-                      )
+                      ),
                   )}
             </div>
           </div>,
@@ -90,7 +90,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               <Link
                 to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
                 state={{ lessonId: lastLesson.lesson.id }}
-                className="z-[9] btn btn-primary text-white flex"
+                className="z-[9] btn btn-primary text-neutral-content flex"
               >
                 <PlayCircleIcon />
                 <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>

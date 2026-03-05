@@ -15,7 +15,7 @@ const LessonsQualityRadialProgress = ({
       >
         {value ?? "..."}%
       </div>
-      <span className="text-base-100 w-52 text-center">
+      <span className="text-neutral-content w-52 text-center">
         Qualité globale des cours (selon les étudiants)
       </span>
     </div>

@@ -85,7 +85,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                     <Check className="stroke-base-100 w-5 h-5" />
                   </button>
                 </span>
-                <span className="text-sm font-light italic text-base-100">
+                <span className="text-sm font-light italic text-neutral-content">
                   Vous allez être redirigé vers la page de création de cours
                 </span>
               </div>
@@ -94,7 +94,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                 <button
                   onClick={handleClickAdd}
                   // Remplacement de w-full par flex-1
-                  className="btn btn-success rounded-xl flex-1 text-base-100 flex justify-between items-center gap-2"
+                  className="btn btn-success rounded-xl flex-1 text-neutral-content flex justify-between items-center gap-2"
                 >
                   Ajouter un cours
                   <Plus />
@@ -102,7 +102,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                 <Link
                   to="/admin/course/import"
                   state={{ parcoursId, moduleId }}
-                  className="btn btn-primary text-base-100 shrink-0 tooltip tooltip-bottom"
+                  className="btn btn-primary text-neutral-content shrink-0 tooltip tooltip-bottom"
                   data-tip="Importer des cours"
                 >
                   <Import size={20} />

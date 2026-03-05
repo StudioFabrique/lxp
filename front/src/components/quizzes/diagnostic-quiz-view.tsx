@@ -48,7 +48,7 @@ const DiagnosticQuizView = ({
             </p>
             <div className="card-actions justify-center mt-4">
               <button
-                className="btn btn-primary px-8 text-base-100"
+                className="btn btn-primary px-8 text-neutral-content"
                 onClick={onStart}
               >
                 Commencer l'évaluation
@@ -120,7 +120,7 @@ const DiagnosticQuizView = ({
             <div
               className={`alert ${isCorrect ? "alert-success" : "alert-error"} shadow-sm`}
             >
-              <div className="text-base-100">
+              <div className="text-neutral-content">
                 <h3 className="font-bold">
                   {isCorrect
                     ? "Bonne réponse !"

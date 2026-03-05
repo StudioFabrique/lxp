@@ -51,47 +51,47 @@ const UserAddForm: FC<{
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
-    props.user?.email ?? ""
+    props.user?.email ?? "",
   );
 
   const { value: firstname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.firstname ?? ""
+    props.user?.firstname ?? "",
   );
 
   const { value: lastname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.lastname ?? ""
+    props.user?.lastname ?? "",
   );
 
   const { value: nickname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.nickname
+    props.user?.nickname,
   );
 
   const { value: address } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.address
+    props.user?.address,
   );
 
   const { value: phoneNumber } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.phoneNumber
+    props.user?.phoneNumber,
   );
 
   const { value: postCode } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.postCode
+    props.user?.postCode,
   );
 
   const { value: city } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.city
+    props.user?.city,
   );
 
   const { value: description } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.description
+    props.user?.description,
   );
 
   //  test la validité du form via le custom hook useInput
@@ -101,7 +101,7 @@ const UserAddForm: FC<{
   const handleSubmit = () => {
     if (!formIsValid) {
       toast.error(
-        "Certains champs du formulaire sont manquants ou mal remplis."
+        "Certains champs du formulaire sont manquants ou mal remplis.",
       );
       return;
     } else if (!props.editMode && (!roleId || (roleId && roleId?.length < 1))) {
@@ -161,7 +161,7 @@ const UserAddForm: FC<{
         <button
           onClick={handleSubmit}
           type="button"
-          className="btn btn-primary text-base-100 normal-case"
+          className="btn btn-primary text-neutral-content normal-case"
           disabled={props.fieldsDisabled || props.isLoading}
         >
           {props.isLoading ? (
@@ -229,7 +229,7 @@ const UserAddForm: FC<{
             }}
             onDelete={async (item) => {
               setHobbies((hobbies) =>
-                hobbies.filter((hobby) => hobby.title !== item.title)
+                hobbies.filter((hobby) => hobby.title !== item.title),
               );
               return true;
             }}
@@ -271,7 +271,7 @@ const UserAddForm: FC<{
             }}
             onDelete={async (item) => {
               setLinks((hobbies) =>
-                hobbies.filter((hobby) => hobby.url !== item.url)
+                hobbies.filter((hobby) => hobby.url !== item.url),
               );
               return true;
             }}

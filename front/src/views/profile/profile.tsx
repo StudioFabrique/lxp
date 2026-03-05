@@ -28,7 +28,7 @@ const Profile = () => {
 
   const handleChangeTab = (event: MouseEvent<HTMLAnchorElement>) => {
     const value = event.currentTarget.getAttribute(
-      "data-value"
+      "data-value",
     ) as keyof typeof Tab;
     if (!(value in Tab)) return;
     setCurrentTab(Tab[value]);
@@ -136,7 +136,7 @@ const Profile = () => {
         <div className="flex justify-end mt-4">
           <button
             type="button"
-            className="btn btn-sm btn-primary text-base-100"
+            className="btn btn-sm btn-primary text-neutral-content"
             onClick={() => formRef.current?.requestSubmit()}
           >
             Sauvegarder

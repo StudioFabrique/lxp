@@ -43,7 +43,7 @@ const Certifications: FC<{
       currentGraduation.title
     ) {
       setGraduations((prevGraduations) =>
-        addIdToObject([...prevGraduations, currentGraduation])
+        addIdToObject([...prevGraduations, currentGraduation]),
       );
 
       setCurrentGraduation(initGraduation);
@@ -56,7 +56,7 @@ const Certifications: FC<{
     setEditMode(
       graduation._id
         ? { isActive: true, idToEdit: null, _idToEdit: graduation._id }
-        : { isActive: true, idToEdit: graduation.id ?? null, _idToEdit: null }
+        : { isActive: true, idToEdit: graduation.id ?? null, _idToEdit: null },
     );
   };
 
@@ -73,9 +73,9 @@ const Certifications: FC<{
               ? { ...item, ...currentGraduation }
               : item
             : item.id === editMode.idToEdit
-            ? { ...item, ...currentGraduation }
-            : item
-        )
+              ? { ...item, ...currentGraduation }
+              : item,
+        ),
       );
 
       setCurrentGraduation(initGraduation);
@@ -85,7 +85,7 @@ const Certifications: FC<{
 
   const handleDeleteGraduation = (id: number) => {
     setGraduations((prevGraduations) =>
-      prevGraduations.filter((item) => item.id !== id)
+      prevGraduations.filter((item) => item.id !== id),
     );
     setCurrentGraduation(initGraduation);
     setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
@@ -96,7 +96,7 @@ const Certifications: FC<{
     en fonction de cette valeur, change la propriété de l'objet ayant le nom de cette valeur de l'attribut "name"
   */
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     const name = event.currentTarget.getAttribute("name");
     switch (name) {
@@ -175,7 +175,7 @@ const Certifications: FC<{
           {editMode.isActive ? (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary text-base-100"
+              className="mt-2 normal-case self-start btn btn-primary text-neutral-content"
               onClick={handleEditGraduation}
               disabled={disabled}
             >
@@ -184,7 +184,7 @@ const Certifications: FC<{
           ) : (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary text-base-100"
+              className="mt-2 normal-case self-start btn btn-primary text-neutral-content"
               onClick={handleAddGraduation}
               disabled={disabled}
             >
