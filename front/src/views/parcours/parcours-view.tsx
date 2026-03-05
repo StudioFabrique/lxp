@@ -54,7 +54,7 @@ const ParcoursView = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       <Header
-        title={`Aperçu du parcours`}
+        title="Aperçu du parcours"
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
             reprenez là où vous vous êtes arrêté."
       >

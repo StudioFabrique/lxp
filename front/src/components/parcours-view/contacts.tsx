@@ -9,7 +9,7 @@ import { Context } from "../../store/context.store";
 const Contacts = () => {
   const { user } = useContext(Context);
   const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
+    (state: any) => state.parcoursContacts.currentContacts,
   ) as ContactWithMail[];
 
   const contactsList =
@@ -17,11 +17,11 @@ const Contacts = () => {
       contacts.map((contact) => (
         <div
           key={contact.id}
-          className="flex flex-col bg-secondary p-4 rounded-lg text-base-content"
+          className="flex flex-col bg-base-200 border border-base-300 p-4 rounded-lg text-base-content"
         >
           <span className="flex justify-between items-center">
-            <p className="capitalize font-bold">{contact.name}</p>
-            <p className="capitalize text-xs">{contact.role}</p>
+            <p className="capitalize font-bold text-primary">{contact.name}</p>
+            <p className="capitalize text-xs opacity-70">{contact.role}</p>
           </span>
           <span className="text-xs flex flex-col items-start opacity-80">
             <p className="flex gap-x-2 items-center">

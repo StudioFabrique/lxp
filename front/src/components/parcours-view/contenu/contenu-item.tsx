@@ -11,6 +11,7 @@ const ContenuItem: FC<{
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
   const minDate: { day: number | null; month: string } = useMemo(() => {
+    // ... (garder la logique existante) ...
     if (!module.minDate) {
       return { day: null, month: "" };
     }
@@ -22,31 +23,45 @@ const ContenuItem: FC<{
   }, [module.minDate]);
 
   const navigate = useNavigate();
+  const isSelected = selectedModuleId === module.id;
 
   return (
     <div
       data-testid="contenu-item"
-      className={`flex gap-x-2 items-center ${
-        selectedModuleId === module.id ? "text-base-100" : "text-base-content"
-      }`}
+      className="flex gap-x-3 items-center group cursor-pointer"
       onClick={() => setSelectedModule(module)}
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
-      <div className="flex flex-col items-center text-base-content justify-center bg-secondary p-4 w-24 rounded-lg h-20">
-        <p className="font-bold text-xl">{minDate.day}</p>
-        <p className="font-bold uppercase text-sm">{minDate.month}</p>
-      </div>
+      {/* Boîte de date */}
       <div
-        className={`flex h-20 items-center p-4 justify-between rounded-lg w-full ${
-          selectedModuleId === module.id ? "bg-primary " : "bg-secondary"
-        } hover:bg-primary/90 hover:cursor-pointer select-none `}
+        className={`flex flex-col items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors ${
+          isSelected
+            ? "bg-secondary text-secondary-content"
+            : "bg-base-100 text-base-content group-hover:bg-base-200"
+        }`}
+      >
+        <p className="font-bold text-xl">{minDate.day}</p>
+        <p className="font-bold uppercase text-sm opacity-80">
+          {minDate.month}
+        </p>
+      </div>
+
+      {/* Barre du module */}
+      <div
+        className={`flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
+          isSelected
+            ? "bg-primary text-primary-content shadow-md"
+            : "bg-base-200 text-base-content group-hover:bg-base-300"
+        }`}
       >
         <div>
-          <p className="self-start">{`Module ${iterationCount}`}</p>
-          <p className="self-start text-sm font-semibold">{module.title}</p>
+          <p
+            className={`text-sm opacity-80 ${isSelected ? "text-primary-content" : ""}`}
+          >{`Module ${iterationCount}`}</p>
+          <p className="text-base font-semibold">{module.title}</p>
         </div>
         <Link
-          className="btn btn-sm btn-ghost self-end"
+          className={`btn btn-sm btn-ghost self-end ${isSelected ? "text-primary-content hover:bg-primary-focus" : ""}`}
           to={`../module/${module.id}`}
         >
           <ArrowRightCircle />
