@@ -44,7 +44,7 @@ const LoginRightColumn = () => {
       <img
         src={bgPhoto}
         alt="Décoration"
-        className="h-full max-h-[85vh] min-h-[600px] object-cover rounded-2xl"
+        className="h-full max-h-[85vh] min-h-[600px] object-cover rounded-l-2xl"
         style={{ clipPath: "url(#image-grid-mask)" }}
       />
     </div>
