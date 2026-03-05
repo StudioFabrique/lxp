@@ -97,13 +97,12 @@ const LessonReaderAndEditor = ({
         )}
 
         {/* Rendu de l'activité */}
-        <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
+        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm">
           {/* Header de l'activité : titre et menu contextuel */}
-
-          <div className="font-semibold text-primary flex justify-between items-center">
-            <div className="flex gap-1 items-center w-[92%]">
-              <span className="w-5">{activityIconType(activityType)}</span>
-              <span className="text-2xl px-2 w-fit">
+          <div className="font-semibold text-primary flex justify-between items-center mb-6">
+            <div className="flex gap-3 items-center w-[92%]">
+              <span className="w-6">{activityIconType(activityType)}</span>
+              <span className="text-2xl font-bold w-fit text-base-content">
                 {toUpperFirstLetter(textActivityTitle)}
               </span>
             </div>

@@ -15,17 +15,15 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   const { list, fieldSort, direction, sortData } = useEagerLoadingList(
     parcoursList,
     "title",
-    3
+    3,
   );
   const nav = useNavigate();
 
-  //  redirige l'utilisateur sur l'interface permettant d'éditer le parcours sur lequel il a cliqué
   const handleEditParcours = (event: React.MouseEvent, parcoursId: number) => {
     event.stopPropagation();
     nav(`/admin/parcours/edit/${parcoursId}`);
   };
 
-  //  redirige l'utilisateur sur la vue affichant une aperçu du parcours
   const handleViewParcours = (parcoursId: number) => {
     nav(`/admin/parcours/view/${parcoursId}`);
   };
@@ -33,14 +31,13 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   return (
     <>
       {list && list.length > 0 ? (
-        <table className="table w-4/6 md:w-full border-separate border-spacing-y-2 text-xs text-black">
+        <table className="table w-full border-separate border-spacing-y-2 text-sm text-base-content">
           <thead>
-            <tr className="text-white">
+            {/* Suppression du text-white forcé, on utilise une opacité pour hiérarchiser l'info */}
+            <tr className="text-base-content/70">
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("title");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("title")}
               >
                 <div className="flex items-center gap-x-2">
                   <p>Titre</p>
@@ -52,10 +49,8 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("level");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("level")}
               >
                 <div className="flex items-center gap-x-2">
                   <p>Certificat</p>
@@ -67,10 +62,8 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("students");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("students")}
               >
                 <div className="flex items-center gap-x-2">
                   <p>Apprenants</p>
@@ -82,10 +75,8 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("courses");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("courses")}
               >
                 <div className="flex items-center gap-x-2">
                   <p>Cours</p>
@@ -97,10 +88,8 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("duration");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("duration")}
               >
                 <div className="flex items-center gap-x-2">
                   <p>Heures</p>
@@ -112,13 +101,11 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("startDate");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("startDate")}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Date de démarrage</p>
+                  <p>Démarrage</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="startDate"
@@ -127,13 +114,11 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </div>
               </th>
               <th
-                className="cursor-pointer"
-                onClick={() => {
-                  sortData("isPublished");
-                }}
+                className="cursor-pointer hover:text-base-content transition-colors"
+                onClick={() => sortData("isPublished")}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Etat</p>
+                  <p>État</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="isPublished"
@@ -147,33 +132,42 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
           <tbody>
             {list.map((item) => (
               <tr
-                className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-white bg-white"
+                // Application de la couleur base-100 avec un survol en base-300
+                className="cursor-pointer bg-base-100 hover:bg-base-300 transition-colors shadow-sm"
                 key={item.id}
                 onClick={() => handleViewParcours(item.id)}
               >
-                <td className="bg-transparent rounded-l-lg">
+                <td className="rounded-l-lg font-semibold">
                   <p className="tooltip tooltip-bottom" data-tip={item.title}>
                     {truncateText(item.title, 30)}
                   </p>
                 </td>
-                <td className="bg-transparent truncate">{item.level}</td>
-                <td className="bg-transparent truncate">{item.students}</td>
-                <td className="bg-transparent truncate">{item.courses}</td>
-                <td className="bg-transparent truncate">{item.duration}</td>
-                <td className="bg-transparent truncate">
-                  {localeDate(item.startDate)}
+                <td className="truncate">{item.level}</td>
+                <td className="truncate">{item.students}</td>
+                <td className="truncate">{item.courses}</td>
+                <td className="truncate">{item.duration}</td>
+                <td className="truncate">{localeDate(item.startDate)}</td>
+                <td className="truncate">
+                  {/* Ajout d'un badge DaisyUI pour l'état */}
+                  {item.isPublished ? (
+                    <span className="badge badge-success badge-sm text-success-content">
+                      Publié
+                    </span>
+                  ) : (
+                    <span className="badge badge-ghost badge-sm border-base-content/20">
+                      Brouillon
+                    </span>
+                  )}
                 </td>
-                <td className="bg-transparent truncate">
-                  {item.isPublished ? "Publié" : "Brouillon"}
-                </td>
-                <td className="bg-transparent rounded-r-lg truncate">
+                <td className="rounded-r-lg truncate text-right">
                   <Can action="update" object="parcours">
-                    <span
-                      className="z-50"
+                    {/* Transformation de l'icône en vrai bouton d'action au survol */}
+                    <button
+                      className="btn btn-sm btn-ghost btn-circle text-primary hover:bg-primary/20 z-50"
                       onClick={(event) => handleEditParcours(event, item.id)}
                     >
                       <MoveUpRight className="w-4 h-4" />
-                    </span>
+                    </button>
                   </Can>
                 </td>
               </tr>

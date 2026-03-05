@@ -1,3 +1,5 @@
+import { Lightbulb } from "lucide-react";
+
 type Props = {
   isOpen: boolean;
   onDeclineQuiz: () => void;
@@ -8,9 +10,12 @@ const QuizRequestModal = ({ isOpen, onAcceptQuiz, onDeclineQuiz }: Props) => {
   return isOpen ? (
     <div className="modal modal-open">
       <div className="modal-box">
-        <h3 className="font-bold text-lg">
-          💡 Je t'ai préparé un quiz rapide !
-        </h3>
+        <div className="flex items-center">
+          <Lightbulb className="inline mr-2 text-yellow-500" />
+          <h3 className="font-bold text-lg">
+            Je t'ai préparé un quiz rapide !
+          </h3>
+        </div>
         <p className="py-4">
           On dirait que tu as parcouru cette ressource à ton rythme. Veux-tu
           vérifier rapidement tes acquis avant de passer à la suite ?

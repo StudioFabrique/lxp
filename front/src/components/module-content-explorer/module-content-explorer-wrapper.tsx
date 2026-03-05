@@ -12,6 +12,7 @@ type ModuleContentExplorerWrapperProps = {
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
+  scrollTopRef: React.RefObject<HTMLDivElement>;
   header: React.ReactNode;
   progressionSide: React.ReactNode;
   topProgressBar: React.ReactNode;
@@ -28,6 +29,7 @@ const ModuleContentExplorerWrapper = ({
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
+  scrollTopRef,
   header,
   progressionSide,
   topProgressBar,
@@ -46,7 +48,7 @@ const ModuleContentExplorerWrapper = ({
           <button
             type="button"
             onClick={onTogglePanel}
-            className="btn w-fit hover:bg-primary hover:text-base-100 border-secondary/20"
+            className="btn btn-primary w-fit border-secondary/20"
           >
             {isPanelClosed ? (
               <PanelLeftOpen className="w-6 h-6" />
@@ -55,13 +57,16 @@ const ModuleContentExplorerWrapper = ({
             )}
           </button>
         </div>
-        <span className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center">
+        <span
+          ref={scrollTopRef}
+          className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center"
+        >
           {topProgressBar}
         </span>
         {selectedLesson ? (
           <button
             type="button"
-            className="btn hover:bg-primary hover:text-base-100 tooltip tooltip-left border-secondary/20"
+            className="btn tooltip tooltip-left border-secondary/20"
             aria-label="Tout réduire"
             data-tip="Tout réduire"
             onClick={onCloseAll}

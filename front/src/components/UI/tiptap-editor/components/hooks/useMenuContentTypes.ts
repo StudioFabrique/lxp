@@ -1,6 +1,6 @@
 import { type Editor, useEditorState } from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
 import { BASE_URL } from "../../../../../config/urls";
 
@@ -16,7 +16,7 @@ export const useMenuContentTypes = (
   imageInputRef: React.RefObject<HTMLInputElement>,
 ) => {
   const { sendRequest } = useHttp();
-  const [imageQueue, setImageQueue] = useState<QueuedImage[]>([]);
+  const imageQueue = useRef<QueuedImage[]>([]);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
     "small",
   );
@@ -26,18 +26,12 @@ export const useMenuContentTypes = (
       const tempId = `temp-${Date.now()}-${Math.random()}`;
       const blobUrl = URL.createObjectURL(file);
 
-      // Store in queue BEFORE inserting
-      setImageQueue((prev) => {
-        const newQueue = [
-          ...prev,
-          {
-            file,
-            blobUrl, // Make sure this is the actual blob URL string
-            size: imageSize,
-            tempId,
-          },
-        ];
-        return newQueue;
+      // Ajout direct dans la réf (ZÉRO re-rendu !)
+      imageQueue.current.push({
+        file,
+        blobUrl,
+        size: imageSize,
+        tempId,
       });
 
       // Insert into editor
@@ -78,7 +72,7 @@ export const useMenuContentTypes = (
   );
 
   const uploadAllImages = useCallback(async () => {
-    if (imageQueue.length === 0) {
+    if (imageQueue.current.length === 0) {
       console.log("No new images to upload");
       return;
     }
@@ -87,7 +81,7 @@ export const useMenuContentTypes = (
       const urlMap = new Map<string, string>();
 
       // Upload all images
-      for (const queuedImage of imageQueue) {
+      for (const queuedImage of imageQueue.current) {
         const formData = new FormData();
         formData.append("image", queuedImage.file, queuedImage.file.name);
 
@@ -156,12 +150,12 @@ export const useMenuContentTypes = (
         });
       }
 
-      setImageQueue([]);
+      imageQueue.current = [];
     } catch (error) {
       console.error("Error uploading images:", error);
       throw error;
     }
-  }, [imageQueue, editor, sendRequest]);
+  }, [editor, sendRequest]);
 
   useEffect(() => {
     const current = imageInputRef.current;

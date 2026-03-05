@@ -1,5 +1,5 @@
 import ProgressBar from "../../components/module-content-explorer/progress-bar";
-import useModuleContentExplorer from "./hooks/use-module-explorer";
+import useModuleContentExplorer from "./hooks/use-module-content-explorer";
 import ModuleContentExplorerHeader from "../../components/module-content-explorer/module-content-explorer-header";
 import ModuleData from "../../components/module-content-explorer/module-data/module-data";
 import ModuleContentExplorerWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
@@ -33,8 +33,14 @@ const ModuleContentExplorer = () => {
   const firstPathSegment = window.location.pathname.split("/")[1];
 
   const explorerStore = useModuleContentExplorer();
-  const { state, computed, dispatch, lessonActions, moduleActions } =
-    explorerStore;
+  const {
+    state,
+    computed,
+    dispatch,
+    lessonActions,
+    moduleActions,
+    scrollTopRef,
+  } = explorerStore;
 
   const isModuleLoaded = Boolean(state.module && state.module.id);
   const diagnosticQuiz = useDiagnosticQuiz(
@@ -48,7 +54,7 @@ const ModuleContentExplorer = () => {
     state.textActivityContent,
   );
 
-  const smartQuiz = useSmartQuizPrompt({
+  const smartQuizState = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
     isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
@@ -97,9 +103,9 @@ const ModuleContentExplorer = () => {
       />
 
       <QuizRequestModal
-        isOpen={smartQuiz.showQuizPrompt}
-        onAcceptQuiz={smartQuiz.handleAcceptQuiz}
-        onDeclineQuiz={smartQuiz.handleDeclineQuiz}
+        isOpen={smartQuizState.showQuizPrompt}
+        onAcceptQuiz={smartQuizState.handleAcceptQuiz}
+        onDeclineQuiz={smartQuizState.handleDeclineQuiz}
       />
 
       {state.modalVisibility === "lessonCompletionModal" &&
@@ -144,6 +150,7 @@ const ModuleContentExplorer = () => {
       {/* --- Section Contenu (Wrapper & Slots) --- */}
       {state.module && state.module?.parcoursId && state.module.id ? (
         <ModuleContentExplorerWrapper
+          scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
           isPanelClosed={state.isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
@@ -168,7 +175,7 @@ const ModuleContentExplorer = () => {
             <ModuleExplorerPreview
               store={explorerStore}
               quizState={quizState}
-              smartQuiz={smartQuiz}
+              smartQuizState={smartQuizState}
               canEditSelectedLesson={canEditSelectedLesson}
             />
           }

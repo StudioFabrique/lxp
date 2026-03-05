@@ -1,18 +1,11 @@
 import Module from "../../utils/interfaces/module";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { CSSProperties } from "react";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
 };
 
 const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
-  const radialStyle = (value: number) => {
-    return {
-      "--value": value,
-    } as CSSProperties;
-  };
-
   return (
     <Wrapper>
       <div className="flex flex-col gap-5 justify-between">
@@ -29,20 +22,21 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
 
                 return (
                   <div
-                    className="flex flex-col justify-between gap-2 text-primary-content font-bold tooltip tooltip-bottom border-1 border-primary rounded-xl p-4 py-4 w-full"
+                    className="flex flex-col justify-between gap-4 bg-base-200 border border-base-300 rounded-lg p-4 w-full shadow-sm hover:bg-base-300 transition-colors tooltip tooltip-bottom"
                     data-tip={module.title}
                     key={module.id}
                   >
                     <div className="flex items-center justify-between">
-                      <p className="text-base-content">{module.title}</p>
-                      <p className="text-3xl text-primary">{`${moduleProgress} %`}</p>
+                      <p className="text-base-content text-sm font-semibold truncate w-3/4 text-left">
+                        {module.title}
+                      </p>
+                      <p className="text-2xl text-primary font-bold">{`${moduleProgress}%`}</p>
                     </div>
 
                     <progress
                       className="progress progress-primary w-full"
                       value={moduleProgress}
                       max="100"
-                      style={radialStyle(moduleProgress)}
                     />
                   </div>
                 );
