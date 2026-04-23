@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # Lancement API-IA (Python)
-(
-  cd ./api-ia
-  source venv/bin/activate
-  ./start-dev.sh
-) &
+# (
+#   cd ./api-ia
+#   source venv/bin/activate
+#   ./start-dev.sh
+# ) &
 
 # Lancement API (Node.js)
 (
