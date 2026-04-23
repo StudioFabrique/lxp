@@ -23,39 +23,39 @@ const getFastApiHeaders = (req: Request) => ({
 chatbotRouter.post("/prompt", checkToken, postPromptValidator, httpPostPrompt);
 
 // Ces routes nécessitent une authentification pour forwarder le token utilisateur
-chatbotRouter.get("/test-mongo", checkToken, async (req, res) => {
-  try {
-    const result = await fetch("https://localhost:8443/test-mongo", {
-      method: "GET",
-      headers: getFastApiHeaders(req),
-      // Ajouter l'agent mTLS si configuré pour HTTPS
-      ...(fastApiAgent ? { dispatcher: fastApiAgent } : {}),
-    });
-    const data = await result.json();
-    return res.json(data);
-  } catch (error) {
-    console.log({ error });
+// chatbotRouter.get("/test-mongo", checkToken, async (req, res) => {
+//   try {
+//     const result = await fetch("https://localhost:8443/test-mongo", {
+//       method: "GET",
+//       headers: getFastApiHeaders(req),
+//       // Ajouter l'agent mTLS si configuré pour HTTPS
+//       ...(fastApiAgent ? { dispatcher: fastApiAgent } : {}),
+//     });
+//     const data = await result.json();
+//     return res.json(data);
+//   } catch (error) {
+//     console.log({ error });
 
-    res.status(500).json({ error: "Failed to fetch data from FastAPI" });
-  }
-});
+//     res.status(500).json({ error: "Failed to fetch data from FastAPI" });
+//   }
+// });
 
-chatbotRouter.get("/test-pg", checkToken, async (req, res) => {
-  try {
-    const result = await fetch("https://localhost:8443/test-pg", {
-      method: "GET",
-      headers: getFastApiHeaders(req),
-      // Ajouter l'agent mTLS si configuré pour HTTPS
-      ...(fastApiAgent ? { dispatcher: fastApiAgent } : {}),
-    });
-    const data = await result.json();
-    return res.json(data);
-  } catch (error) {
-    console.log({ error });
+// chatbotRouter.get("/test-pg", checkToken, async (req, res) => {
+//   try {
+//     const result = await fetch("https://localhost:8443/test-pg", {
+//       method: "GET",
+//       headers: getFastApiHeaders(req),
+//       // Ajouter l'agent mTLS si configuré pour HTTPS
+//       ...(fastApiAgent ? { dispatcher: fastApiAgent } : {}),
+//     });
+//     const data = await result.json();
+//     return res.json(data);
+//   } catch (error) {
+//     console.log({ error });
 
-    res.status(500).json({ error: "Failed to fetch data from FastAPI" });
-  }
-});
+//     res.status(500).json({ error: "Failed to fetch data from FastAPI" });
+//   }
+// });
 
 chatbotRouter.post(
   "/dialogs",
