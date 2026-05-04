@@ -33,7 +33,6 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
       {list && list.length > 0 ? (
         <table className="table w-full border-separate border-spacing-y-2 text-sm text-base-content">
           <thead>
-            {/* Suppression du text-white forcé, on utilise une opacité pour hiérarchiser l'info */}
             <tr className="text-base-content/70">
               <th
                 className="cursor-pointer hover:text-base-content transition-colors"
@@ -132,7 +131,6 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
           <tbody>
             {list.map((item) => (
               <tr
-                // Application de la couleur base-100 avec un survol en base-300
                 className="cursor-pointer bg-base-100 hover:bg-base-300 transition-colors shadow-sm"
                 key={item.id}
                 onClick={() => handleViewParcours(item.id)}
@@ -148,7 +146,6 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 <td className="truncate">{item.duration}</td>
                 <td className="truncate">{localeDate(item.startDate)}</td>
                 <td className="truncate">
-                  {/* Ajout d'un badge DaisyUI pour l'état */}
                   {item.isPublished ? (
                     <span className="badge badge-success badge-sm text-success-content">
                       Publié
@@ -161,7 +158,6 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 </td>
                 <td className="rounded-r-lg truncate text-right">
                   <Can action="update" object="parcours">
-                    {/* Transformation de l'icône en vrai bouton d'action au survol */}
                     <button
                       className="btn btn-sm btn-ghost btn-circle text-primary hover:bg-primary/20 z-50"
                       onClick={(event) => handleEditParcours(event, item.id)}
