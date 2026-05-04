@@ -5,7 +5,7 @@ import { Suspense, lazy } from "react";
 import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
-import Login from "./components/login/login";
+import Login from "./views/login/login";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
 import AppLayout from "./components/UI/AppLayout";
