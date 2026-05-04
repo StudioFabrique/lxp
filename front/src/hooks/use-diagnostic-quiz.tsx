@@ -7,7 +7,7 @@ import { Context } from "../store/context.store";
 export default function useDiagnosticQuiz(
   hasStartedModule: boolean,
   isModuleLoaded: boolean,
-  onFinishInitialQuiz: () => void, // 💡 Nouvel argument attendu
+  onFinishInitialQuiz: () => void,
 ) {
   const { user } = useContext(Context);
 
@@ -53,7 +53,9 @@ export default function useDiagnosticQuiz(
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
 
-    if (!hasStartedModule && !isFinished && !userIsAdmin) {
+    console.log({ hasStartedModule, isFinished, userIsAdmin });
+
+    if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       const numQuestions = Math.floor(Math.random() * 3) + 3;
 
       const shuffled = [...activityEndingQuizzesFixtures].sort(
