@@ -13,8 +13,6 @@ const RoleSelect: FC<{
 
   const { roles } = useContext(Context);
 
-  console.log("new roles", newRoles);
-
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
       const updatedNewRoles = newRoles.filter(

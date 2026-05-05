@@ -33,13 +33,12 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     () => ({
       worker: true,
     }),
-    []
+    [],
   );
 
   const handleSelectedFile = (event: ChangeEvent<HTMLInputElement>) => {
     setFileError(null);
     const files = event.target.files;
-    console.log(files);
 
     if (files && files.length > 0) {
       if (files[0].type !== "text/csv") {
@@ -74,7 +73,7 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const handleDownloadFile = () => {
     downloadFile(
       `${DOWNLOAD_URL}/csv-users-group-modele.csv`,
-      "csv-users-group-modele"
+      "csv-users-group-modele",
     );
   };
 
@@ -107,8 +106,8 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
             fileError
               ? "border-error"
               : selectedFile
-              ? "border-success"
-              : "border-primary/50"
+                ? "border-success"
+                : "border-primary/50"
           } ${origin === "csv" ? "bg-primary" : ""}`}
           onClick={handleFileSelection}
         >
@@ -122,8 +121,8 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
               {fileError
                 ? fileError
                 : selectedFile
-                ? selectedFile.name
-                : "Sélectionner un fichier"}
+                  ? selectedFile.name
+                  : "Sélectionner un fichier"}
             </p>
           </div>
         </div>

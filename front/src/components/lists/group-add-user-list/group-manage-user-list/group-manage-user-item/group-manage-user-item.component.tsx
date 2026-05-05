@@ -65,7 +65,7 @@ const GroupManageUserItem: FC<{
         <button
           type="button"
           disabled={disabled}
-          className="btn btn-square btn-sm bg-primary border-none hover:brightness-75 hover:bg-primary"
+          className="btn btn-secondary btn-md"
           onClick={handleAddUserInstantly}
         >
           <AddIcon2 />

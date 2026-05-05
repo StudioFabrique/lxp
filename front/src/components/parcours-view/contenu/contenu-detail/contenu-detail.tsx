@@ -60,18 +60,16 @@ const ContenuDetail: FC<{
             <span className="text-base font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
-            <button
-              className="btn btn-sm btn-ghost text-base-content/70 hover:text-primary"
+            <Link
+              className="btn btn-ghost text-base-content/70 hover:text-primary"
               type="button"
+              to={`/${currentRoute[0]}/course/edit/${course.id}`}
               onClick={(e) => e.stopPropagation()}
             >
-              <Link
-                to={`/${currentRoute[0]}/course/edit/${course.id}`}
-                className="h-5 w-5 flex-shrink-0"
-              >
+              <div className="w-6 h-6">
                 <EditIcon />
-              </Link>
-            </button>
+              </div>
+            </Link>
           </Can>
           {!course.isPublished || !course.visibility ? (
             <div
@@ -93,7 +91,7 @@ const ContenuDetail: FC<{
 
   return (
     <div className="flex flex-col gap-y-4 mt-5">
-      <span className="flex justify-between">
+      <span className="flex justify-between gap-4">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         {canEdit && (
           <Can action="write" object="course">
