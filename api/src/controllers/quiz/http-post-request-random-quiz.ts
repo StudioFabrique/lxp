@@ -34,6 +34,8 @@ export default async function httpPostRequestRandomQuiz(
       //   past_questions,
     };
 
+    console.log(`${process.env.DOCKER_IA_API_BASE_URL}/quiz/random`);
+
     // Appel de l'API externe (Docker IA) avec le fetch natif de Node
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/random`,
