@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Readable } from "stream";
 import getCourseById from "../../models/course/get-course-by-id";
 import dotenv from "dotenv";
+import { model } from "mongoose";
 dotenv.config();
 
 /**
@@ -27,7 +28,7 @@ export default async function httpGetEndingCourseQuizStream(
     const quizzesRequestPayload = {
       course_name: course.title,
       activity_content: course.content,
-      max_per_level: 3,
+      model: "ministral-14b-2512",
     };
 
     // Appel de l'API externe avec le fetch natif de Node

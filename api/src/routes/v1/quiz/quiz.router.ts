@@ -1,6 +1,7 @@
 import { Router } from "express";
 import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz";
 import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream";
+import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream";
 
 /**
  * Routeur dédié à la génération de quiz
@@ -13,15 +14,11 @@ quizRouter.get(
   httpGetEndingCourseQuizStream,
 );
 
-// Récupérer un quiz aléatoire (1 question) génèré par l'IA en passant un contenu textuel (activité en cours par exemple).
+// Récupérer un quiz aléatoire (1 question) généré par l'IA en passant un contenu textuel (activité en cours par exemple).
 quizRouter.post("/random", httpPostRequestRandomQuiz);
 
-/**
- * Recupérer un set de quiz pour un module.
- * Les question sont orientés pour savoir les connaissance d'un étudiant
- * sur un module.
- * Endpoint utilisée généralement avant que l'étudiant entame un module.
- */
-quizRouter.post("/module/starting");
+// Récupérer un set de quiz diagnostique généré par IA pour le début d'un module sous forme de stream SSE.
+// Les questions testent les prérequis et concepts fondamentaux du module.
+quizRouter.post("/preliminary/stream", httpPostPreliminaryQuizStream);
 
 export default quizRouter;
