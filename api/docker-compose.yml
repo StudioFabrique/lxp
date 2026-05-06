@@ -1,9 +1,5 @@
 name: lxp-api
 
-networks:
-  lxp_network:
-    driver: bridge
-
 volumes:
   pg2:
     driver: local
@@ -19,7 +15,7 @@ services:
     volumes:
       - pg2:/var/lib/postgresql
     networks:
-      - lxp_network
+      - lxp
     ports:
       - "5500:5432"
     environment:
@@ -34,10 +30,15 @@ services:
     volumes:
       - mongo2:/data/db
     networks:
-      - lxp_network
+      - lxp
     ports:
       - "27000:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+
+networks:
+  lxp:
+    driver: bridge
+    name: lxp

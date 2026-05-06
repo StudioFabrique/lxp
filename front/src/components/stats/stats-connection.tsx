@@ -47,8 +47,6 @@ export function TokensUsed(props: Props) {
   const categories = props.tokenStats.map((item) => localeDate(item.date));
   const series = props.tokenStats.map((item) => item.tokensUsed);
 
-  console.log({ props });
-
   return (
     <div className="w-full h-[100%]">
       <h2 className="text-xs font-bold">Tokens utilisés</h2>

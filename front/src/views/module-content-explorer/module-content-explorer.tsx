@@ -46,6 +46,10 @@ const ModuleContentExplorer = () => {
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,
     isModuleLoaded,
+    {
+      title: state.module?.title,
+      description: state.module?.description,
+    },
     moduleActions.onFinishInitialQuiz,
   );
 
@@ -147,7 +151,7 @@ const ModuleContentExplorer = () => {
         )}
       </Header>
 
-      {/* --- Section Contenu (Wrapper & Slots) --- */}
+      {/* --- Section Contenu  --- */}
       {state.module && state.module?.parcoursId && state.module.id ? (
         <ModuleContentExplorerWrapper
           scrollTopRef={scrollTopRef}

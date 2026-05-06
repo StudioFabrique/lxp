@@ -30,7 +30,6 @@ const SearchModal: FC<{
 
   const onSubmitSearch = async () => {
     const applyData = (data: Record<string, string>) => {
-      console.log({ SearchDataObject: data });
       setSearchResultsData(data);
     };
 

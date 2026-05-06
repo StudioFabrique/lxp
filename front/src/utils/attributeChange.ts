@@ -8,10 +8,9 @@ import { ChangeEvent } from "react";
 export default function attributeChange(
   event: ChangeEvent<HTMLInputElement>,
   object: any,
-  stateSetter: (value: React.SetStateAction<any | undefined>) => void
+  stateSetter: (value: React.SetStateAction<any | undefined>) => void,
 ) {
   const attributeName = event.currentTarget.getAttribute("name");
-  console.log(Object.keys(object));
 
   Object.keys(object).forEach((element) => {
     const objectName = Object.keys(element).pop();
@@ -21,10 +20,9 @@ export default function attributeChange(
       stateSetter({
         [object[objectName!]]:
           typeof object[objectName!] === "string"
-            ? object[objectName!] ?? ""
-            : object[objectName!] ?? new Date(),
+            ? (object[objectName!] ?? "")
+            : (object[objectName!] ?? new Date()),
       });
     }
-    console.log(`${attributeName}, ${objectName}`);
   });
 }
