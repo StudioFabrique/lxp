@@ -29,8 +29,6 @@ type RoleFormProps = {
 const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   const [searchParams] = useSearchParams();
 
-  console.log({ searchParams });
-
   const { fetchRoles, user, handshake } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
@@ -81,7 +79,6 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   );
 
   const handleMouseEnterFillLabel = () => {
-    console.log("test");
     if (role || label.value.length > 0) return;
     label.valueChangeHandler({
       currentTarget: { value: name.value },

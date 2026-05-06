@@ -1,14 +1,17 @@
-import { FC, useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import useInput from "../../hooks/use-input";
 import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
+import { Context } from "../../store/context.store";
 
-const LoginForm: FC<{
-  onSubmit: (email: string, password: string) => void;
-  isLoading: boolean;
-  error: string;
-}> = (props) => {
+const LoginForm = () => {
+  const { isLoading, error, login } = useContext(Context);
+
+  const handleSubmit = (email: string, password: string) => {
+    login(email, password);
+  };
+
   const [inputType, setInputType] = useState("password");
 
   const { value: email } = useInput((value: string) =>
@@ -24,7 +27,7 @@ const LoginForm: FC<{
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      props.onSubmit(email.value.trim(), password.value.trim());
+      handleSubmit(email.value.trim(), password.value.trim());
     }
   };
 
@@ -69,16 +72,16 @@ const LoginForm: FC<{
           </div>
         </div>
 
-        {props.error && (
-          <span className="text-sm text-red-500 mt-[-10px]">{props.error}</span>
+        {error && (
+          <span className="text-sm text-red-500 mt-[-10px]">{error}</span>
         )}
 
         <button
           type="submit"
-          disabled={props.isLoading}
+          disabled={isLoading}
           className="btn w-full bg-black hover:bg-gray-800 text-white border-none rounded-lg mt-2 normal-case text-base disabled:bg-gray-400 disabled:text-white"
         >
-          {props.isLoading ? (
+          {isLoading ? (
             <>
               <span className="loading loading-spinner loading-sm"></span>
               Connexion...

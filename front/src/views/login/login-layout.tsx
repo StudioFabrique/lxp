@@ -1,16 +1,8 @@
-import { useContext } from "react";
 import AndriaLogo from "../../assets/images/login/logo.svg";
-import { Context } from "../../store/context.store";
-import LoginRightColumn from "./login-right-column";
-import LoginForm from "./login-form";
+import LoginRightColumn from "../../components/login/login-right-column";
+import { PropsWithChildren } from "react";
 
-const Login = () => {
-  const { isLoading, error, login } = useContext(Context);
-
-  const handleSubmit = (email: string, password: string) => {
-    login(email, password);
-  };
-
+const LoginLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="min-h-screen w-full font-inter bg-white flex items-center py-12">
       <div className="grid grid-cols-1 xl:grid-cols-3 w-full">
@@ -27,13 +19,7 @@ const Login = () => {
             </div>
 
             {/* Formulaire */}
-            <div className="w-full flex-1 flex flex-col">
-              <LoginForm
-                onSubmit={handleSubmit}
-                isLoading={isLoading}
-                error={error}
-              />
-            </div>
+            <div className="w-full flex-1 flex flex-col">{children}</div>
           </div>
         </div>
 
@@ -44,4 +30,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginLayout;

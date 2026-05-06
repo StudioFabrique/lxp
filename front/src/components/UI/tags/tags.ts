@@ -80,7 +80,6 @@ export default function createTag() {
     tab.push({ id: index, name: tag, color: `${tagsColors[index]}` });
     index++;
   });
-  console.log({ tab });
 
   return tab;
 }

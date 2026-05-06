@@ -44,7 +44,7 @@ export type Quiz = QuizBase &
       }
   );
 
-// --- Interfaces pour l'API externe (SSE) ---
+// --- Interfaces pour l'API externe ---
 
 // Base commune à toutes les questions renvoyées par l'API IA
 export interface ExternalApiQuizBase {
@@ -72,17 +72,16 @@ export interface ExternalApiQuizTrueFalse extends ExternalApiQuizBase {
 
 export interface ExternalApiQuizMatching extends ExternalApiQuizBase {
   type: "matching";
-  choices: { left: string[]; right: string[] };
+  pairs: Pair[];
   answer_key: number[];
 }
 
 export interface ExternalApiQuizOrdering extends ExternalApiQuizBase {
   type: "ordering";
-  choices: string[];
-  answer_key: number[];
+  ordering_items: string[];
+  ordering_answer: number[];
 }
 
-// L'union discriminante : TypeScript saura deviner le bon type selon la valeur de `type`
 export type ExternalApiQuiz =
   | ExternalApiQuizMcq
   | ExternalApiQuizTrueFalse
