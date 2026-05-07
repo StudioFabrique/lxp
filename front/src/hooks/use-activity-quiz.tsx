@@ -4,6 +4,8 @@ import {
   Pair,
   ExternalApiQuiz,
   ExternalApiStreamPayload,
+  QuizAttempt,
+  UserAnswer,
 } from "../utils/interfaces/quiz";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
@@ -24,6 +26,8 @@ export default function useActivityQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [showResults, setShowResults] = useState(false);
   const additionalQuizCount = useRef(0);
 
   const toastWarning = (message: string) => {
@@ -101,6 +105,8 @@ export default function useActivityQuiz(
     setIsCorrect(false);
     setIsStreaming(true);
     additionalQuizCount.current = 0;
+    setAttempts([]);
+    setShowResults(false);
 
     // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
     // setQuizzes((prev) =>
@@ -192,9 +198,12 @@ export default function useActivityQuiz(
       setIsOpen(true);
       setQuizzes([]);
       setCurrentIndex(0);
+      setScore(0);
       setIsAnswered(false);
       setIsCorrect(false);
       additionalQuizCount.current = 0;
+      setAttempts([]);
+      setShowResults(false);
     }
     setIsStreaming(true);
 
@@ -232,14 +241,23 @@ export default function useActivityQuiz(
   const onCloseQuizzes = () => {
     setIsOpen(false);
     setQuizzes(null);
+    setScore(0);
     setIsAnswered(false);
     setIsCorrect(false);
+    setAttempts([]);
+    setShowResults(false);
   };
 
-  const onAnswerQuiz = (correct: boolean) => {
+  const onAnswerQuiz = (correct: boolean, userAnswer: UserAnswer) => {
     setIsCorrect(correct);
     setIsAnswered(true);
-
+    const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
+    if (currentQuiz) {
+      setAttempts((prev) => [
+        ...prev,
+        { quiz: currentQuiz, isCorrect: correct, userAnswer },
+      ]);
+    }
     if (correct) {
       setScore((prev) => prev + 1);
     } else if (additionalQuizCount.current < 2) {
@@ -258,7 +276,7 @@ export default function useActivityQuiz(
       setIsAnswered(false);
       setIsCorrect(false);
     } else {
-      setIsOpen(false);
+      setShowResults(true);
     }
   };
 
@@ -273,6 +291,8 @@ export default function useActivityQuiz(
     isAnswered,
     isCorrect,
     score,
+    attempts,
+    showResults,
     onLoadQuizzes,
     onTriggerRandomQuiz,
     onCloseQuizzes,

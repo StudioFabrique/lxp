@@ -18,6 +18,20 @@ export interface QuizOrdering {
   order: number[];
 }
 
+// Réponse brute de l'utilisateur, discriminée par type
+export type UserAnswer =
+  | { type: "mcq"; selectedIndex: number }
+  | { type: "true_false"; selected: boolean }
+  | { type: "matching"; answers: Record<number, string> }
+  | { type: "ordering"; items: { text: string; originalIndex: number }[] };
+
+// Une tentative enregistrée (question + réponse utilisateur + résultat)
+export interface QuizAttempt {
+  quiz: Quiz;
+  isCorrect: boolean;
+  userAnswer: UserAnswer;
+}
+
 export interface QuizBase {
   question: string;
   trueExplanation: string;
