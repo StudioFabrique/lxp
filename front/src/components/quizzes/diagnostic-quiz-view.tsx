@@ -1,8 +1,10 @@
-import { Quiz } from "../../utils/interfaces/quiz";
-import QuizMatching from "./quiz-matching";
-import QuizMcq from "./quiz-mcq";
-import QuizOrdering from "./quiz-ordering";
-import QuizTrueFalse from "./quiz-true-false";
+import { Loader2 } from "lucide-react";
+import { Quiz, QuizAttempt, UserAnswer } from "../../utils/interfaces/quiz";
+import QuizMatching from "./modals/quiz-matching";
+import QuizMcq from "./modals/quiz-mcq";
+import QuizOrdering from "./modals/quiz-ordering";
+import QuizTrueFalse from "./modals/quiz-true-false";
+import QuizResults from "./results/quiz-results";
 
 type Props = {
   isStarted: boolean;
@@ -12,9 +14,15 @@ type Props = {
   totalQuizzes: number;
   isAnswered: boolean;
   isCorrect: boolean;
+  isStreaming: boolean;
+  isWaitingForNext: boolean;
+  showResults: boolean;
+  attempts: QuizAttempt[];
+  score: number;
   onStart: () => void;
-  onAnswer: (isCorrect: boolean) => void;
+  onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onNext: () => void;
+  onContinueFromResults: () => void;
 };
 
 const DiagnosticQuizView = ({
@@ -25,14 +33,20 @@ const DiagnosticQuizView = ({
   totalQuizzes,
   isAnswered,
   isCorrect,
+  isStreaming,
+  isWaitingForNext,
+  showResults,
+  attempts,
+  score,
   onStart,
   onAnswer,
   onNext,
+  onContinueFromResults,
 }: Props) => {
   // Accueil du test
   if (!isStarted) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4">
+      <div className="w-full flex justify-center p-4">
         <div className="card w-full max-w-2xl text-center">
           <div className="card-body gap-6">
             <h3 className="card-title justify-center text-3xl text-primary font-bold">
@@ -53,6 +67,68 @@ const DiagnosticQuizView = ({
               >
                 Commencer l'évaluation
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showResults) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center p-4">
+        <div className="card w-full max-w-3xl bg-base-100">
+          <div className="card-body gap-6">
+            <div className="border-b border-base-200 pb-4">
+              <h3 className="font-bold text-lg text-primary">
+                Résultats du diagnostic
+              </h3>
+            </div>
+            <QuizResults
+              score={score}
+              attempts={attempts}
+              onContinue={onContinueFromResults}
+              continueLabel="Démarrer le module"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Attente du prochain quiz en cours de stream (l'utilisateur a répondu plus
+  // vite que la génération) — on affiche un skeleton plutôt qu'une page blanche.
+  if (isWaitingForNext || (!quiz && isStreaming)) {
+    const upcomingNumber = currentIndex + (isWaitingForNext ? 2 : 1);
+    return (
+      <div className="min-h-[80vh] w-full flex items-center justify-center p-4">
+        <div className="card w-full max-w-3xl bg-base-100">
+          <div className="card-body gap-6">
+            {/* Header */}
+            <div className="flex justify-between items-center border-b border-base-200 pb-4">
+              <h3 className="font-bold text-lg text-primary">
+                Diagnostic initial : Évaluons vos acquis ({upcomingNumber} /{" "}
+                {totalQuizzes || "…"})
+              </h3>
+            </div>
+
+            {/* Skeleton question */}
+            <div className="flex flex-col gap-4 py-4">
+              <div className="skeleton h-6 w-3/4 rounded" />
+              <div className="skeleton h-4 w-1/2 rounded" />
+            </div>
+
+            {/* Skeleton réponses */}
+            <div className="flex flex-col gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="skeleton h-12 w-full rounded-lg" />
+              ))}
+            </div>
+
+            {/* Indicateur de chargement */}
+            <div className="flex items-center gap-2 text-base-content/50 text-sm mt-2">
+              <Loader2 className="animate-spin w-4 h-4" />
+              <span>Génération de la prochaine question…</span>
             </div>
           </div>
         </div>
@@ -97,6 +173,10 @@ const DiagnosticQuizView = ({
     }
   };
 
+  // Le bouton "Démarrer le module" n'est pertinent que si le stream est terminé
+  // et qu'on est réellement à la dernière question.
+  const isLastQuestion = !isStreaming && currentIndex === totalQuizzes - 1;
+
   return (
     <div className="min-h-[80vh] w-full flex items-center justify-center p-4">
       <div className="card w-full max-w-3xl bg-base-100">
@@ -137,9 +217,7 @@ const DiagnosticQuizView = ({
           <div className="card-actions justify-end mt-4">
             {isAnswered && (
               <button className="btn btn-primary" onClick={onNext}>
-                {currentIndex === totalQuizzes - 1
-                  ? "Démarrer le module"
-                  : "Question suivante"}
+                {isLastQuestion ? "Démarrer le module" : "Question suivante"}
               </button>
             )}
           </div>

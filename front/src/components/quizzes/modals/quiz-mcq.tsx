@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Quiz } from "../../utils/interfaces/quiz";
+import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 
 interface Props {
   quiz: Extract<Quiz, { type: "mcq" }>;
-  onAnswer: (isCorrect: boolean) => void;
+  onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   isAnswered: boolean;
 }
 
@@ -12,7 +12,10 @@ const QuizMcq = ({ quiz, onAnswer, isAnswered }: Props) => {
 
   const handleValidate = () => {
     if (selected !== null) {
-      onAnswer(selected === quiz.data.answerIndex);
+      onAnswer(selected === quiz.data.answerIndex, {
+        type: "mcq",
+        selectedIndex: selected,
+      });
     }
   };
 
