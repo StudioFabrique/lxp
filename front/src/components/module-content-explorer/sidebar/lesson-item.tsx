@@ -1,4 +1,5 @@
 import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
+import { cn } from "../../../utils";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -107,11 +108,12 @@ const LessonItem = ({
       <div
         ref={lessonRef}
         onClick={handleBeginReadLesson}
-        className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
+        className={cn(
+          "flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group",
           isLessonSelected
             ? "bg-primary text-primary-content"
-            : "bg-primary/50 text-primary-content hover:bg-primary/80"
-        }`}
+            : "bg-primary/50 text-primary-content hover:bg-primary/80",
+        )}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
           <p className="max-h-14 truncate text-sm">{lesson.title}</p>
@@ -132,7 +134,7 @@ const LessonItem = ({
                   {isOpen &&
                     createPortal(
                       <ul
-                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-[10rem] p-1 z-[9999]"
+                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-40 p-1 z-9999"
                         style={{
                           top: `${dropdownPosition.top}px`,
                           left: `${dropdownPosition.left}px`,
@@ -176,9 +178,7 @@ const LessonItem = ({
         </span>
 
         {isLessonRead && (
-          <Check
-            className={`w-5 h-5 p-1 rounded-full stroke-3 ${"bg-success stroke-success-content"}`}
-          />
+          <Check className="w-5 h-5 p-1 rounded-full stroke-3 bg-success stroke-success-content" />
         )}
       </div>
       {isLessonSelected && children}
