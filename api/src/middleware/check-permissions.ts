@@ -15,7 +15,8 @@ function youShallNotPass() {
 }
 
 /**
- * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé
+ * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé.
+ * Si aucun paramètre n'est fourni, la fonction ne vérifie que le token.
  *
  * @param ressource (optionnel) La ressource sur laquelle l'action est effectué
  * @param action (optionnel) L'action à effectuer
@@ -25,7 +26,7 @@ function youShallNotPass() {
 export default function checkPermissions(
   ressource?: string,
   action?: "read" | "write" | "update" | "delete",
-  failedRedirectPath?: string
+  failedRedirectPath?: string,
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
@@ -90,8 +91,8 @@ export default function checkPermissions(
           rolesToCheck.map((role) =>
             Permission.find({
               roles: role._id,
-            })
-          )
+            }),
+          ),
         );
       } catch (error) {
         console.log({ error });
@@ -107,7 +108,7 @@ export default function checkPermissions(
         !ressource && roleFromParam ? roleFromParam : ressource!
       }`;
       const hasPermission = flattenedPermissions.some(
-        (permission: any) => permission.name === requiredPermissionName
+        (permission: any) => permission.name === requiredPermissionName,
       );
 
       if (hasPermission) {
