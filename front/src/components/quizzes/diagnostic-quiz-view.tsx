@@ -1,4 +1,5 @@
 import { Loader2 } from "lucide-react";
+import { cn } from "../../utils";
 import { Quiz, QuizAttempt, UserAnswer } from "../../utils/interfaces/quiz";
 import QuizMatching from "./modals/quiz-matching";
 import QuizMcq from "./modals/quiz-mcq";
@@ -198,7 +199,10 @@ const DiagnosticQuizView = ({
           {/* Feedback après réponse */}
           {isAnswered && (
             <div
-              className={`alert ${isCorrect ? "alert-success" : "alert-error"} shadow-sm`}
+              className={cn(
+                "alert shadow-sm",
+                isCorrect ? "alert-success" : "alert-error",
+              )}
             >
               <div className="text-base-100">
                 <h3 className="font-bold">

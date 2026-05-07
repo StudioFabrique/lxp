@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "../../../utils";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 
 export interface MatchingDetailProps {
@@ -27,7 +27,7 @@ const MatchingDetail = ({ quiz, userAnswer }: MatchingDetailProps) => {
             <span className="text-base-content/30">→</span>
             <div className="flex flex-col gap-1">
               <div
-                className={clsx(
+                className={cn(
                   "rounded-lg px-3 py-2",
                   isCorrect
                     ? "bg-success text-success-content"

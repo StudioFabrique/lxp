@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "../../../utils";
 import { QuizAttempt } from "../../../utils/interfaces/quiz";
 import DetailsAccordion from "./details-accordion";
 
@@ -18,7 +18,7 @@ const QuizResults = ({
   const total = attempts.length;
   const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
 
-  const scoreColor = clsx(
+  const scoreColor = cn(
     percentage >= 60
       ? "text-success"
       : percentage >= 40
@@ -26,7 +26,7 @@ const QuizResults = ({
         : "text-error",
   );
 
-  const progressColor = clsx(
+  const progressColor = cn(
     percentage >= 60
       ? "progress-success"
       : percentage >= 40
@@ -47,12 +47,12 @@ const QuizResults = ({
     <div className="flex flex-col gap-8">
       {/* Score global */}
       <div className="flex flex-col items-center gap-2 p-6 bg-base-200 rounded-box">
-        <div className={clsx("text-5xl font-bold", scoreColor)}>
+        <div className={cn("text-5xl font-bold", scoreColor)}>
           {score}/{total}
         </div>
         <p className="text-lg font-medium">{message}</p>
         <progress
-          className={clsx("progress w-full mt-3", progressColor)}
+          className={cn("progress w-full mt-3", progressColor)}
           value={percentage}
           max={100}
         />

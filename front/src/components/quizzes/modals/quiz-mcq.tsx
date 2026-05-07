@@ -26,9 +26,7 @@ const QuizMcq = ({ quiz, onAnswer, isAnswered }: Props) => {
           <button
             key={index}
             className={`btn justify-start h-auto min-h-12 normal-case text-left ${
-              selected === index
-                ? "btn-primary"
-                : "btn-outline btn-neutral text-secondary/80"
+              selected === index ? "btn-primary" : "btn-outline btn-neutral"
             }`}
             onClick={() => setSelected(index)}
             disabled={isAnswered}

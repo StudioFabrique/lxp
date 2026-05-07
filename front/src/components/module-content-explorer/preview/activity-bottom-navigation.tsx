@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { cn } from "../../../utils";
 import Can from "../../UI/can/can.component";
 import FeedbacksButton from "../../UI/feedbacks/feedbacks-button";
 import { PropsWithChildren } from "react";
@@ -26,7 +27,12 @@ const ActivityBottomNavigation = ({
   children,
 }: PropsWithChildren<Props>) => (
   <div
-    className={`flex gap-2 ${!isLastActivitySelected && isFirstActivitySelected ? "justify-end" : "justify-between"} w-full`}
+    className={cn(
+      "flex gap-2 w-full",
+      !isLastActivitySelected && isFirstActivitySelected
+        ? "justify-end"
+        : "justify-between",
+    )}
   >
     {!isFirstActivitySelected && (
       <button onClick={onPrevious} className="btn btn-primary text-base-100">
