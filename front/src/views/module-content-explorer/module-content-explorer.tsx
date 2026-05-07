@@ -42,7 +42,9 @@ const ModuleContentExplorer = () => {
     scrollTopRef,
   } = explorerStore;
 
-  const isModuleLoaded = Boolean(state.module && state.module.id);
+  const isModuleLoaded = Boolean(
+    state.module && state.module.id && state.module.courses.length > 0,
+  );
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,
     isModuleLoaded,
