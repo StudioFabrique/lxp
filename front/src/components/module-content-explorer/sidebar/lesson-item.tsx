@@ -134,7 +134,7 @@ const LessonItem = ({
                   {isOpen &&
                     createPortal(
                       <ul
-                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-[10rem] p-1 z-[9999]"
+                        className="menu bg-base-100 rounded-lg shadow-lg fixed min-w-40 p-1 z-9999"
                         style={{
                           top: `${dropdownPosition.top}px`,
                           left: `${dropdownPosition.left}px`,
