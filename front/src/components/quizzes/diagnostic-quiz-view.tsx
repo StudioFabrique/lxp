@@ -6,6 +6,7 @@ import QuizMcq from "./modals/quiz-mcq";
 import QuizOrdering from "./modals/quiz-ordering";
 import QuizTrueFalse from "./modals/quiz-true-false";
 import QuizResults from "./results/quiz-results";
+import QuizMarkdown from "./quiz-markdown";
 
 type Props = {
   isStarted: boolean;
@@ -192,7 +193,9 @@ const DiagnosticQuizView = ({
 
           {/* Question et Composant */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xl font-medium">{quiz.question}</h4>
+            <div className="text-xl font-medium">
+              <QuizMarkdown>{quiz.question}</QuizMarkdown>
+            </div>
             {renderQuizComponent()}
           </div>
 
@@ -211,7 +214,9 @@ const DiagnosticQuizView = ({
                     : "Ce n'est pas tout à fait ça."}
                 </h3>
                 <div className="text-sm">
-                  {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+                  <QuizMarkdown>
+                    {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+                  </QuizMarkdown>
                 </div>
               </div>
             </div>

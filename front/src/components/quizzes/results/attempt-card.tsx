@@ -4,6 +4,7 @@ import McqDetail from "./mcq-detail";
 import TrueFalseDetail from "./true-false-detail";
 import MatchingDetail from "./matching-detail";
 import OrderingDetail from "./ordering-detail";
+import QuizMarkdown from "../quiz-markdown";
 
 export interface AttemptCardProps {
   attempt: QuizAttempt;
@@ -22,12 +23,14 @@ const AttemptCard = ({ attempt, index }: AttemptCardProps) => {
         ) : (
           <XCircle className="text-error shrink-0 mt-0.5" size={20} />
         )}
-        <p className="font-semibold">
-          <span className="text-base-content/40 mr-2">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs text-base-content/40 font-medium">
             Question {index + 1}
           </span>
-          {quiz.question}
-        </p>
+          <div className="font-semibold">
+            <QuizMarkdown>{quiz.question}</QuizMarkdown>
+          </div>
+        </div>
       </div>
 
       {/* Détail selon le type */}
@@ -61,9 +64,11 @@ const AttemptCard = ({ attempt, index }: AttemptCardProps) => {
       </div>
 
       {/* Explication */}
-      <p className="text-sm italic text-base-content/50 pl-8">
-        {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
-      </p>
+      <div className="text-sm italic text-base-content/50 pl-8">
+        <QuizMarkdown>
+          {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+        </QuizMarkdown>
+      </div>
     </div>
   );
 };
