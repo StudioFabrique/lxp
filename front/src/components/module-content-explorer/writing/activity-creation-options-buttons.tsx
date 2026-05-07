@@ -1,4 +1,5 @@
 import { LucidePlus } from "lucide-react";
+import { cn } from "../../../utils";
 import { Link } from "react-router-dom";
 import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
@@ -27,9 +28,10 @@ const ActivityCreationOptionsButtons = ({
 
   return (
     <div
-      className={`${
-        variant === "no-activity" ? "" : "p-10 "
-      }rounded-lg flex justify-center items-center`}
+      className={cn(
+        "rounded-lg flex justify-center items-center",
+        variant !== "no-activity" && "p-10",
+      )}
     >
       <div className="flex flex-col gap-5 items-center w-fit">
         {!showButtons ? (
@@ -40,11 +42,12 @@ const ActivityCreationOptionsButtons = ({
             <button
               onClick={handleShowButtons}
               onKeyDown={handleShowButtons}
-              className={`btn ${
+              className={cn(
+                "btn",
                 isDisabled
                   ? "cursor-not-allowed tooltip"
-                  : "btn-primary text-base-100"
-              }`}
+                  : "btn-primary text-base-100",
+              )}
               type="button"
               data-tip="Une activité est déja en cours d'édition"
             >
@@ -59,9 +62,10 @@ const ActivityCreationOptionsButtons = ({
             </p>
             <div className="flex gap-2 transition-opacity">
               <button
-                className={`btn ${
-                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
-                }`}
+                className={cn(
+                  "btn",
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100",
+                )}
                 onClick={onClickShowTipTapEditor}
                 onKeyDown={onClickShowTipTapEditor}
                 type="button"
@@ -70,25 +74,28 @@ const ActivityCreationOptionsButtons = ({
               </button>
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=video&parent=${parent}`}
-                className={`btn ${
-                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
-                }`}
+                className={cn(
+                  "btn",
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100",
+                )}
               >
                 Vidéo
               </Link>
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
-                className={`btn ${
-                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
-                }`}
+                className={cn(
+                  "btn",
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100",
+                )}
               >
                 Image
               </Link>
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
-                className={`btn ${
-                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
-                }`}
+                className={cn(
+                  "btn",
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100",
+                )}
               >
                 Fichier
               </Link>

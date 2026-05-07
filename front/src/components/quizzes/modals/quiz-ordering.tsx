@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Quiz } from "../../utils/interfaces/quiz";
+import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
-  onAnswer: (isCorrect: boolean) => void;
+  onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   isAnswered: boolean;
 }
 
@@ -42,7 +42,7 @@ const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
     // On compare avec quiz.data.order
     const isCorrect =
       JSON.stringify(currentOrder) === JSON.stringify(quiz.data.order);
-    onAnswer(isCorrect);
+    onAnswer(isCorrect, { type: "ordering", items });
   };
 
   return (
