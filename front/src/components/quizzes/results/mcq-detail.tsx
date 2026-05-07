@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "../../../utils";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 
 export interface McqDetailProps {
@@ -19,7 +19,7 @@ const McqDetail = ({ quiz, userAnswer }: McqDetailProps) => {
         return (
           <div
             key={i}
-            className={clsx(
+            className={cn(
               "rounded-lg px-4 py-2 text-sm",
               isSelected && isCorrect && "bg-success text-success-content",
               isSelected && !isCorrect && "bg-error text-error-content",

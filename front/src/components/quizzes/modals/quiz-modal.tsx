@@ -1,3 +1,4 @@
+import { cn } from "../../../utils";
 import { Quiz, QuizAttempt, UserAnswer } from "../../../utils/interfaces/quiz";
 import QuizMatching from "./quiz-matching";
 import QuizMcq from "./quiz-mcq";
@@ -142,7 +143,10 @@ const QuizModal = ({
             {/* Feedback après réponse */}
             {isAnswered && quiz && (
               <div
-                className={`alert ${isCorrect ? "alert-success" : "alert-error"} shadow-lg`}
+                className={cn(
+                  "alert shadow-lg",
+                  isCorrect ? "alert-success" : "alert-error",
+                )}
               >
                 <div className="text-base-100">
                   <h3 className="font-bold">

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "../../../utils";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 
 export interface TrueFalseDetailProps {
@@ -19,7 +19,7 @@ const TrueFalseDetail = ({ quiz, userAnswer }: TrueFalseDetailProps) => {
         return (
           <div
             key={String(value)}
-            className={clsx(
+            className={cn(
               "flex-1 text-center rounded-lg px-6 py-2 font-medium text-sm",
               isSelected && isCorrect && "bg-success text-success-content",
               isSelected && !isCorrect && "bg-error text-error-content",

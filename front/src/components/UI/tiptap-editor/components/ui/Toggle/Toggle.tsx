@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { cn } from "../../../utils";
+import { cn } from "../../../../../../utils";
 
 export type ToggleProps = {
   active?: boolean;
@@ -19,7 +19,7 @@ export const Toggle = ({
     "inline-flex cursor-pointer items-center rounded-full border-transparent transition-colors",
     !active ? "bg-neutral-200 hover:bg-neutral-300" : "bg-black",
     size === "small" && "h-3 w-6 px-0.5",
-    size === "large" && "h-5 w-9 px-0.5"
+    size === "large" && "h-5 w-9 px-0.5",
   );
 
   const pinClass = cn(
@@ -30,9 +30,9 @@ export const Toggle = ({
     active
       ? cn(
           size === "small" ? "translate-x-3" : "",
-          size === "large" ? "translate-x-4" : ""
+          size === "large" ? "translate-x-4" : "",
         )
-      : "translate-x-0"
+      : "translate-x-0",
   );
 
   const handleChange = useCallback(() => {

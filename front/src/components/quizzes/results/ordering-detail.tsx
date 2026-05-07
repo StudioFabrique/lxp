@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "../../../utils";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 
 export interface OrderingDetailProps {
@@ -19,7 +19,7 @@ const OrderingDetail = ({ quiz, userAnswer }: OrderingDetailProps) => {
         {userItems.map((item, i) => (
           <div
             key={i}
-            className={clsx(
+            className={cn(
               "p-2 rounded-lg text-sm",
               item.originalIndex === quiz.data.order[i]
                 ? "bg-success/15 text-success"
