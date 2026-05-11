@@ -108,7 +108,7 @@ const RoleEdit = () => {
           {role.protection >= 1 && (
             <>
               <button
-                className="btn btn-sm btn-accent text-base-content w-fit"
+                className="btn btn-sm btn-accent w-fit"
                 onClick={onResetPermissions}
               >
                 <TimerReset className="w-4" />
