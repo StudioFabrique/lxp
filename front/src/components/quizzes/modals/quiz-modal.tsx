@@ -1,8 +1,11 @@
-import { Quiz } from "../../../utils/interfaces/quiz";
-import QuizMatching from "../quiz-matching";
-import QuizMcq from "../quiz-mcq";
-import QuizOrdering from "../quiz-ordering";
-import QuizTrueFalse from "../quiz-true-false";
+import { cn } from "../../../utils";
+import { Quiz, QuizAttempt, UserAnswer } from "../../../utils/interfaces/quiz";
+import QuizMatching from "./quiz-matching";
+import QuizMcq from "./quiz-mcq";
+import QuizOrdering from "./quiz-ordering";
+import QuizTrueFalse from "./quiz-true-false";
+import QuizResults from "../results/quiz-results";
+import QuizMarkdown from "../quiz-markdown";
 import { Loader2 } from "lucide-react";
 
 interface QuizModalProps {
@@ -13,8 +16,11 @@ interface QuizModalProps {
   isAnswered: boolean;
   isCorrect: boolean;
   isStreaming: boolean;
+  showResults: boolean;
+  attempts: QuizAttempt[];
+  score: number;
   onClose: () => void;
-  onAnswer: (isCorrect: boolean) => void;
+  onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onNext: () => void;
 }
 
@@ -26,6 +32,9 @@ const QuizModal = ({
   isAnswered,
   isCorrect,
   isStreaming,
+  showResults,
+  attempts,
+  score,
   onClose,
   onAnswer,
   onNext,
@@ -89,66 +98,84 @@ const QuizModal = ({
           </button>
         </div>
 
-        {/* État de chargement (avant la 1ère question ou en attendant la suivante) */}
-        {!quiz && isStreaming && (
-          <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-            <Loader2 className="animate-spin text-primary" size={48} />
-            <p className="text-lg font-medium text-secondary">
-              {currentIndex > 0
-                ? "Génération de la question suivante en cours..."
-                : "L'IA prépare vos questions sur mesure..."}
-            </p>
-          </div>
-        )}
-
-        {/* Cas de secours : si le stream s'est arrêté de façon inattendue alors qu'on attendait */}
-        {!quiz && !isStreaming && (
-          <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-            <p className="text-lg font-medium text-secondary">
-              {currentIndex > 0
-                ? "Vous avez terminé le quiz."
-                : "Aucune question n'a pu être générée."}
-            </p>
-            <button className="btn btn-primary mt-4" onClick={onClose}>
-              Fermer
-            </button>
-          </div>
-        )}
-
-        {/* Question et Composant */}
-        {quiz && (
-          <div className="flex flex-col gap-4">
-            <h4 className="text-xl font-medium">{quiz.question}</h4>
-            {renderQuizComponent()}
-          </div>
-        )}
-
-        {/* Feedback après réponse */}
-        {isAnswered && quiz && (
-          <div
-            className={`alert ${isCorrect ? "alert-success" : "alert-error"} shadow-lg`}
-          >
-            <div className="text-base-100">
-              <h3 className="font-bold">
-                {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
-              </h3>
-              <div className="text-sm">
-                {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+        {showResults ? (
+          <QuizResults
+            score={score}
+            attempts={attempts}
+            onContinue={onClose}
+            continueLabel="Fermer"
+          />
+        ) : (
+          <>
+            {/* État de chargement (avant la 1ère question ou en attendant la suivante) */}
+            {!quiz && isStreaming && (
+              <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
+                <Loader2 className="animate-spin text-primary" size={48} />
+                <p className="text-lg font-medium text-secondary">
+                  {currentIndex > 0
+                    ? "Génération de la question suivante en cours..."
+                    : "L'IA prépare vos questions sur mesure..."}
+                </p>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Actions */}
-        <div className="modal-action">
-          {isAnswered && quiz && (
-            <button className="btn btn-primary" onClick={onNext}>
-              {currentIndex === totalQuizzes - 1 && !isStreaming
-                ? "Terminer"
-                : "Question suivante"}
-            </button>
-          )}
-        </div>
+            {/* Cas de secours : si le stream s'est arrêté de façon inattendue alors qu'on attendait */}
+            {!quiz && !isStreaming && (
+              <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
+                <p className="text-lg font-medium text-secondary">
+                  {currentIndex > 0
+                    ? "Vous avez terminé le quiz."
+                    : "Aucune question n'a pu être générée."}
+                </p>
+                <button className="btn btn-primary mt-4" onClick={onClose}>
+                  Fermer
+                </button>
+              </div>
+            )}
+
+            {/* Question et Composant */}
+            {quiz && (
+              <div className="flex flex-col gap-4">
+                <div className="text-xl font-medium">
+                  <QuizMarkdown>{quiz.question}</QuizMarkdown>
+                </div>
+                {renderQuizComponent()}
+              </div>
+            )}
+
+            {/* Feedback après réponse */}
+            {isAnswered && quiz && (
+              <div
+                className={cn(
+                  "alert shadow-lg",
+                  isCorrect ? "alert-success" : "alert-error",
+                )}
+              >
+                <div className="text-base-100">
+                  <h3 className="font-bold">
+                    {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
+                  </h3>
+                  <div className="text-sm">
+                    <QuizMarkdown>
+                      {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+                    </QuizMarkdown>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="modal-action">
+              {isAnswered && quiz && (
+                <button className="btn btn-primary" onClick={onNext}>
+                  {currentIndex === totalQuizzes - 1 && !isStreaming
+                    ? "Terminer"
+                    : "Question suivante"}
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

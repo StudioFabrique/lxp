@@ -1,6 +1,6 @@
 import { icons } from "lucide-react";
 import { memo } from "react";
-import { cn } from "../../utils";
+import { cn } from "../../../../../utils";
 
 export type IconProps = {
   name: keyof typeof icons;

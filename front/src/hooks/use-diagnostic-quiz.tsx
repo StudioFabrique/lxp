@@ -1,5 +1,11 @@
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { Quiz, Pair, ExternalApiQuiz } from "../utils/interfaces/quiz";
+import {
+  Quiz,
+  Pair,
+  ExternalApiQuiz,
+  QuizAttempt,
+  UserAnswer,
+} from "../utils/interfaces/quiz";
 import hasPermission from "../utils/hasPermission";
 import { Context } from "../store/context.store";
 import useHttp from "./use-http";
@@ -29,6 +35,9 @@ export default function useDiagnosticQuiz(
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isWaitingForNext, setIsWaitingForNext] = useState(false);
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
   const isFinished = useRef(false);
 
@@ -106,6 +115,8 @@ export default function useDiagnosticQuiz(
     setIsAnswered(false);
     setIsCorrect(false);
     setIsStreaming(true);
+    setAttempts([]);
+    setShowResults(false);
 
     if (!moduleInfo.title || !moduleInfo.description) {
       console.warn(
@@ -205,9 +216,16 @@ export default function useDiagnosticQuiz(
     setIsStarted(true);
   };
 
-  const onAnswerQuiz = (correct: boolean) => {
+  const onAnswerQuiz = (correct: boolean, userAnswer: UserAnswer) => {
     setIsCorrect(correct);
     setIsAnswered(true);
+    const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
+    if (currentQuiz) {
+      setAttempts((prev) => [
+        ...prev,
+        { quiz: currentQuiz, isCorrect: correct, userAnswer },
+      ]);
+    }
     if (correct) {
       setScore((prev) => prev + 1);
     }
@@ -219,17 +237,33 @@ export default function useDiagnosticQuiz(
       setIsAnswered(false);
       setIsCorrect(false);
     } else if (isStreaming) {
-      setCurrentIndex((prev) => prev + 1);
+      // Le stream n'a pas encore fourni la prochaine question :
+      // on attend sans incrémenter l'index pour éviter une page blanche.
       setIsAnswered(false);
       setIsCorrect(false);
+      setIsWaitingForNext(true);
     } else {
-      setIsOpen(false);
       isFinished.current = true;
-
-      console.log(`Diagnostic terminé ! Score : ${score}/${quizzes?.length}`);
-      onFinishInitialQuiz();
+      setShowResults(true);
     }
   };
+
+  // Avancer automatiquement dès qu'une nouvelle question arrive pendant l'attente.
+  useEffect(() => {
+    if (!isWaitingForNext) return;
+    if (quizzes && quizzes.length > currentIndex + 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setIsWaitingForNext(false);
+    }
+  }, [quizzes, isWaitingForNext, currentIndex]);
+
+  // Si le stream se termine pendant l'attente, conclure le diagnostic.
+  useEffect(() => {
+    if (!isWaitingForNext || isStreaming) return;
+    setIsWaitingForNext(false);
+    isFinished.current = true;
+    setShowResults(true);
+  }, [isStreaming, isWaitingForNext]);
 
   useEffect(() => {
     if (!isModuleLoaded) return;
@@ -259,18 +293,28 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
   ]);
 
+  const onContinueFromResults = useCallback(() => {
+    setIsOpen(false);
+    setShowResults(false);
+    onFinishInitialQuiz();
+  }, [onFinishInitialQuiz]);
+
   return {
     isOpen,
     isStarted,
     isStreaming,
+    isWaitingForNext,
     quizzes,
     currentQuiz: quizzes ? quizzes[currentIndex] : undefined,
     currentIndex,
     isAnswered,
     isCorrect,
     score,
+    attempts,
+    showResults,
     onStartQuiz,
     onAnswerQuiz,
     onNextQuiz,
+    onContinueFromResults,
   };
 }

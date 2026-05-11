@@ -2,23 +2,42 @@ import { Router } from "express";
 import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz";
 import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream";
 import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream";
+import {
+  endingCourseQuizStreamValidator,
+  preliminaryQuizStreamValidator,
+  randomQuizValidator,
+} from "./quiz-validator";
+import checkToken from "../../../middleware/check-token";
 
 /**
- * Routeur dédié à la génération de quiz
+ * Routeur dédié à la génération de quiz.
  */
 const quizRouter = Router();
+
+// Les routes ne nécessitent pour l'instant pas de permission spécifique, uniquement d'être authentifié.
 
 // Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream.
 quizRouter.get(
   "/course/ending/stream/:courseId",
+  checkToken,
+  endingCourseQuizStreamValidator,
   httpGetEndingCourseQuizStream,
 );
 
 // Récupérer un quiz aléatoire (1 question) généré par l'IA en passant un contenu textuel (activité en cours par exemple).
-quizRouter.post("/random", httpPostRequestRandomQuiz);
+quizRouter.post(
+  "/random",
+  checkToken,
+  randomQuizValidator,
+  httpPostRequestRandomQuiz,
+);
 
 // Récupérer un set de quiz diagnostique généré par IA pour le début d'un module sous forme de stream SSE.
-// Les questions testent les prérequis et concepts fondamentaux du module.
-quizRouter.post("/preliminary/stream", httpPostPreliminaryQuizStream);
+quizRouter.post(
+  "/preliminary/stream",
+  checkToken,
+  preliminaryQuizStreamValidator,
+  httpPostPreliminaryQuizStream,
+);
 
 export default quizRouter;

@@ -42,7 +42,9 @@ const ModuleContentExplorer = () => {
     scrollTopRef,
   } = explorerStore;
 
-  const isModuleLoaded = Boolean(state.module && state.module.id);
+  const isModuleLoaded = Boolean(
+    state.module && state.module.id && state.module.courses.length > 0,
+  );
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,
     isModuleLoaded,
@@ -83,9 +85,15 @@ const ModuleContentExplorer = () => {
         totalQuizzes={diagnosticQuiz.quizzes?.length || 0}
         isAnswered={diagnosticQuiz.isAnswered}
         isCorrect={diagnosticQuiz.isCorrect}
+        isStreaming={diagnosticQuiz.isStreaming}
+        isWaitingForNext={diagnosticQuiz.isWaitingForNext}
+        showResults={diagnosticQuiz.showResults}
+        attempts={diagnosticQuiz.attempts || []}
+        score={diagnosticQuiz.score}
         onStart={diagnosticQuiz.onStartQuiz}
         onAnswer={diagnosticQuiz.onAnswerQuiz}
         onNext={diagnosticQuiz.onNextQuiz}
+        onContinueFromResults={diagnosticQuiz.onContinueFromResults}
       />
     );
   }
@@ -101,6 +109,9 @@ const ModuleContentExplorer = () => {
         isAnswered={quizState.isAnswered}
         isCorrect={quizState.isCorrect}
         isStreaming={quizState.isStreaming}
+        showResults={quizState.showResults}
+        attempts={quizState.attempts || []}
+        score={quizState.score}
         onClose={quizState.onCloseQuizzes}
         onAnswer={quizState.onAnswerQuiz}
         onNext={quizState.onNextQuiz}

@@ -12,7 +12,7 @@ const ModuleContentExplorerSkeleton = () => {
       {/* Main Content Grid */}
       <div className="mt-5 max-xl:flex max-xl:flex-col-reverse xl:grid xl:grid-cols-4 gap-5 w-full">
         {/* Progression Side Skeleton */}
-        <div className="w-full h-[600px] skeleton bg-base-200 rounded-lg p-4">
+        <div className="w-full h-150 skeleton bg-base-200 rounded-lg p-4">
           <div className="flex justify-between mb-4">
             <div className="h-6 w-28 skeleton bg-base-300" />
             <div className="h-12 w-12 rounded-full skeleton bg-base-300" />

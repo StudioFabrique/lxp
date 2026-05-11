@@ -1,4 +1,5 @@
 import { Check, Import, Plus } from "lucide-react";
+import { cn } from "../../../utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
@@ -55,7 +56,10 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
     <div className="flex flex-col w-full">
       <div className="flex flex-col w-full cursor-pointer">
         <motion.div
-          className={`${isEditing && "bg-success"} rounded-xl flex flex-col gap-4`}
+          className={cn(
+            "rounded-xl flex flex-col gap-4",
+            isEditing && "bg-success",
+          )}
           initial={{ scale: 0.95, padding: 0 }}
           animate={{
             scale: 1,
