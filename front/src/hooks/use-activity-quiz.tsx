@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Quiz,
   Pair,
@@ -193,50 +193,53 @@ export default function useActivityQuiz(
     }
   };
 
-  const onTriggerRandomQuiz = async (isAppending = false) => {
-    if (!isAppending) {
-      setIsOpen(true);
-      setQuizzes([]);
-      setCurrentIndex(0);
-      setScore(0);
-      setIsAnswered(false);
-      setIsCorrect(false);
-      additionalQuizCount.current = 0;
-      setAttempts([]);
-      setShowResults(false);
-    }
-    setIsStreaming(true);
-
-    // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
-    // setQuizzes((prev) =>
-    //   prev
-    //     ? [...prev, activityEndingQuizzesFixtures[0]]
-    //     : [activityEndingQuizzesFixtures[0]],
-    // );
-
-    // setIsStreaming(false);
-    // --- Fin utilisation de fixtures ---
-
-    try {
-      const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
-        content: activityContent,
-      });
-
-      const mappedQuiz = mapExternalToInternal(response.data);
-
-      if (mappedQuiz) {
-        setQuizzes((prev) => [...(prev || []), mappedQuiz]);
-      } else if (!isAppending) {
-        setIsOpen(false);
+  const onTriggerRandomQuiz = useCallback(
+    async (isAppending = false) => {
+      if (!isAppending) {
+        setIsOpen(true);
+        setQuizzes([]);
+        setCurrentIndex(0);
+        setScore(0);
+        setIsAnswered(false);
+        setIsCorrect(false);
+        additionalQuizCount.current = 0;
+        setAttempts([]);
+        setShowResults(false);
       }
-    } catch (error) {
-      console.error(error);
-      toastWarning("Erreur lors de la génération du quiz.");
-      if (!isAppending) setIsOpen(false);
-    } finally {
-      setIsStreaming(false);
-    }
-  };
+      setIsStreaming(true);
+
+      // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
+      // setQuizzes((prev) =>
+      //   prev
+      //     ? [...prev, activityEndingQuizzesFixtures[0]]
+      //     : [activityEndingQuizzesFixtures[0]],
+      // );
+
+      // setIsStreaming(false);
+      // --- Fin utilisation de fixtures ---
+
+      try {
+        const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
+          content: activityContent,
+        });
+
+        const mappedQuiz = mapExternalToInternal(response.data);
+
+        if (mappedQuiz) {
+          setQuizzes((prev) => [...(prev || []), mappedQuiz]);
+        } else if (!isAppending) {
+          setIsOpen(false);
+        }
+      } catch (error) {
+        console.error(error);
+        toastWarning("Erreur lors de la génération du quiz.");
+        if (!isAppending) setIsOpen(false);
+      } finally {
+        setIsStreaming(false);
+      }
+    },
+    [activityContent, axios],
+  );
 
   const onCloseQuizzes = () => {
     setIsOpen(false);
