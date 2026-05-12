@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { MessageCircleIcon } from "lucide-react";
 
 const Forum = ({ currentRoute }: { currentRoute: string[] }) => {

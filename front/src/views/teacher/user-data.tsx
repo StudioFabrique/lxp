@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useMemo } from "react";
 
 import Wrapper from "../../components/UI/wrapper/wrapper.component";

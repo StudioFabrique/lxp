@@ -5,7 +5,7 @@ import useHttp from "../../../../hooks/use-http";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router";
 import { EyeOff, Import, Plus } from "lucide-react";
 
 const ContenuDetail: FC<{

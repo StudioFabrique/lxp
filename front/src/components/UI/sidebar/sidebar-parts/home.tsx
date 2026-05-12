@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { HomeIcon } from "lucide-react";
 
 const Home = ({ currentRoute }: { currentRoute: string[] }) => {

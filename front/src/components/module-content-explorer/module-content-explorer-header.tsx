@@ -2,7 +2,7 @@ import { Fragment } from "react/jsx-runtime";
 import ImageHeader from "../image-header";
 import HeaderMenu from "../UI/header-menu";
 import Module from "../../utils/interfaces/module";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { ComponentIcon, RocketIcon } from "lucide-react";
 import defaultImage from "../../assets/images/module-default.jpg";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";

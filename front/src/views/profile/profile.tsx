@@ -3,7 +3,7 @@ import InformationAndSettings from "../../components/user-profile/information/in
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import Header from "../../components/UI/header";
 import Journal from "../../components/user-profile/journal/journal";
 import TeacherCalendar from "../../components/user-profile/teacher-calendar";

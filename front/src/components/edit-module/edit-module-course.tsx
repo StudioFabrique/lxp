@@ -4,7 +4,7 @@ import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Can from "../UI/can/can.component";
 
 interface EditModuleCourseProps {

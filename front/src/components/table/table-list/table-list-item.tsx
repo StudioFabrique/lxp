@@ -75,7 +75,7 @@ const TableListItem = <TData extends Record<string, DataItem>>(
               (comp) => comp.type === cell.type,
             )?.component;
             return CustomComponent ? (
-              <CustomComponent data={cell.value} />
+              <CustomComponent key={key} data={cell.value} />
             ) : null;
           })()
         ),

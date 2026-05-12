@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { LucideIcon } from "lucide-react";
 import { ChangeEvent, MouseEvent } from "react";
 import { TableListActionType } from "./interfaces/table-list-action";

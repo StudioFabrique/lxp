@@ -5,7 +5,7 @@ import Loader from "../../../components/UI/loader";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import useHttp from "../../../hooks/use-http";
 import Lesson from "../../../utils/interfaces/lesson";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router";
 import ImageHeader from "../../../components/image-header";
 import toast from "react-hot-toast";
 import books from "../../../assets/images/bookshelf.jpg";

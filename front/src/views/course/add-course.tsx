@@ -8,7 +8,7 @@ import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
 import bgImage from "../../assets/images/new-parcours-default.jpg";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import bgImageGradient from "../../utils/bg-image-gradient";
 
 // type de données pour les listes

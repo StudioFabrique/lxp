@@ -19,7 +19,7 @@ import User from "../../../utils/interfaces/user";
 import ItemsAdder from "../../UI/items-adder";
 import Header from "../../UI/header";
 import { Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import {
   transformLink,
   urlIsValid,

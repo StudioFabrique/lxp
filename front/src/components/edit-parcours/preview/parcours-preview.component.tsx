@@ -9,7 +9,7 @@ import Objective from "../../../utils/interfaces/objective";
 import PreviewObjectives from "../../preview/preview-objectives";
 import Skill from "../../../utils/interfaces/skill";
 import PreviewSkills from "../../preview/preview-skills";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../views/parcours/parcours-edit/hooks/use-validate-parcours";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";

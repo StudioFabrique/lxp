@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { truncateText } from "../../helpers/truncate-text";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";

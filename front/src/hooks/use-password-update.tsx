@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { regexPassword } from "../utils/constantes";
 import useHttp from "./use-http";
 

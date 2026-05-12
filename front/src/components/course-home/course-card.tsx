@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Pencil, Eye, EyeOff, Trash2 } from "lucide-react";
 
 import Can from "../UI/can/can.component";

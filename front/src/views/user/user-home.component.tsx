@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";

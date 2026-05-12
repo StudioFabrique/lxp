@@ -5,7 +5,7 @@ import useHttp from "../../../hooks/use-http";
 import ActivityHeader from "../../../components/edit-lesson/activities/activity-header";
 import ActivityContent from "../../../components/edit-lesson/activities/activity-content";
 import ActivityMetadata from "../../../components/edit-lesson/activities/activity-metadata";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 /**
  * Composant PreviewActivity

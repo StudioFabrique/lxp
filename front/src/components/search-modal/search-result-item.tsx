@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { resultPropertiesToShow } from "../../config/elastic-search-config";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const SearchResultItem: FC<{ indexName: string; source: any }> = ({
   indexName,

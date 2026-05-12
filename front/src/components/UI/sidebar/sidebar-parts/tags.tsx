@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Tag } from "lucide-react";
 
 const Tags = ({ currentRoute }: { currentRoute: string[] }) => {

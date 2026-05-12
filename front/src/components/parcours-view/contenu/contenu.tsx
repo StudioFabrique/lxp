@@ -5,7 +5,7 @@ import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
 import { useContext, useState } from "react";
 import Can from "../../UI/can/can.component";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import EditIcon from "../../UI/svg/edit-icon";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Context } from "../../../store/context.store";

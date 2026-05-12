@@ -3,7 +3,7 @@ import useForm from "../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../hooks/use-http";
 import toast from "react-hot-toast";
 import { regexGeneric } from "../../../../utils/constantes";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 // Type définissant la structure d'une ressource
 export type Resource = {
