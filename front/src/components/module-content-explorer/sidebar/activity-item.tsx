@@ -5,6 +5,15 @@ import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import { ArrowDownUp } from "lucide-react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { Activity } from "../../../utils/interfaces/activity";
+
+type ActivityItemProps = {
+  activity: Activity;
+  index: number;
+  isSelected: boolean;
+  canEdit: boolean;
+  onSelect: () => void;
+};
 
 export default function ActivityItem({
   activity,
@@ -12,7 +21,7 @@ export default function ActivityItem({
   isSelected,
   canEdit,
   onSelect,
-}: any) {
+}: ActivityItemProps) {
   const ref = useRef<HTMLButtonElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggedOver, setIsDraggedOver] = useState(false);

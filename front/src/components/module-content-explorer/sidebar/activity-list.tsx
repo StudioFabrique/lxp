@@ -10,6 +10,10 @@ import Can from "../../UI/can/can.component";
 import hasPermission from "../../../utils/hasPermission";
 import { Context } from "../../../store/context.store";
 import ActivityItem from "./activity-item";
+import {
+  BaseEventPayload,
+  ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 
 type ActivityListProps = {
   activities?: Activity[];
@@ -17,7 +21,7 @@ type ActivityListProps = {
   newActivityButtonDisabled?: boolean;
   canEdit?: boolean;
   isLoading: boolean;
-  onActivityReorder: (args: any) => void;
+  onActivityReorder: (args: BaseEventPayload<ElementDragType>) => void;
   onSelectActivity: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
 };
