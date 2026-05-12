@@ -20,6 +20,10 @@ import {
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
+import {
+  BaseEventPayload,
+  ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 
 const useModuleContentExplorer = () => {
   const { moduleId } = useParams();
@@ -401,7 +405,10 @@ const useModuleContentExplorer = () => {
     }
   };
 
-  const activityReorder = ({ source, location }: any) => {
+  const activityReorder = ({
+    source,
+    location,
+  }: BaseEventPayload<ElementDragType>) => {
     if (isReordering.current.activity) {
       toast("Veuillez patienter");
       return;
@@ -410,14 +417,12 @@ const useModuleContentExplorer = () => {
     // Extraction des index depuis les données attachées aux éléments
     const fromId = source.data.index as number;
 
-    // On récupère la cible de dépôt (le premier dropTarget sous le curseur)
     const destination = location.current.dropTargets[0];
 
     if (!destination) return;
 
     const toId = destination.data.index as number;
 
-    // Sécurité identique à avant
     if (fromId === undefined || toId === undefined || fromId === toId) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
