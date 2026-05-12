@@ -102,8 +102,8 @@ export default function useSmartQuizPrompt({
         (t) => (
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium">
-              Il semble que vous preniez votre temps ! Souhaitez-vous un quiz
-              aléatoire pour tester vos acquis ?
+              Il semble que tu passes beaucoup de temps sur l'activité ! Générer
+              un quiz aléatoire pour tester tes acquis ?
             </p>
             <div className="flex gap-2 justify-end">
               <button
