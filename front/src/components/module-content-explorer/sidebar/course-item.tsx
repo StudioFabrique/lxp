@@ -16,7 +16,7 @@ import CourseActions from "./course-actions";
 import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type CourseItemProps = {
   course: Course;

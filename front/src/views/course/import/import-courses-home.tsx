@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Header from "../../../components/UI/header";
 import useImportCourses, {
   CoursesImportStep,

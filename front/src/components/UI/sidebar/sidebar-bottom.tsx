@@ -1,5 +1,5 @@
 import { HandCoins, LogOutIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
 import { Context } from "../../../store/context.store";

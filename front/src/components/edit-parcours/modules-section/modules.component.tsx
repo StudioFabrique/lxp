@@ -3,7 +3,7 @@
 
 // Imports React et React Router
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 
 // Imports des hooks personnalisés

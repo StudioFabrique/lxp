@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router";
 import Header from "../../components/UI/header";
 import useManagePermissions from "./hooks/use-manage-permissions";
 import PermissionsListWithDrawer from "../../components/role/permissions/permissions-list-with-drawer";

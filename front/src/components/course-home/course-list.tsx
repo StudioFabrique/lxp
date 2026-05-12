@@ -1,5 +1,5 @@
 // Imports des dépendances React et React Router
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés

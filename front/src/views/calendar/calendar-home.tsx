@@ -12,7 +12,7 @@ import TitleWithSelector from "../../components/UI/calendar/components/title-wit
 import ViewSelector from "../../components/UI/calendar/components/view-selector";
 import TimeSelector from "../../components/UI/calendar/components/time-selector";
 import EventDetailsModal from "../../components/UI/calendar/components/event-details-modal";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const calendarTestEvents: CalendarEvent[] = [
   {

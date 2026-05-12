@@ -3,7 +3,7 @@ import SortColumnIcon from "../../../components/UI/sort-column-icon.component/so
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import { TopUser } from "../hooks/useDashboardIA";
 import Pagination from "../../../components/UI/pagination/pagination";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
 
 type Props = {

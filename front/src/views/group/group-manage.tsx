@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import GroupForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
 import useGroupManage from "./hooks/use-group-manage";

@@ -1,6 +1,6 @@
 import { Edit, Eye, EyeOff, ListPlus, MoreVertical, Trash } from "lucide-react";
 import Can from "../../UI/can/can.component";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Course from "../../../utils/interfaces/course";
 
 type CourseActionsProps = {

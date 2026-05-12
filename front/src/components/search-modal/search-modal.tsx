@@ -11,7 +11,7 @@ import MagnifyIcon from "../UI/svg/magnify-icon";
 import useHttp from "../../hooks/use-http";
 import Loader from "../UI/loader";
 import SearchResults from "./search-results";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 const SearchModal: FC<{
   isModalOpen: boolean;

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SubWrapper from "../../../components/UI/sub-wrapper/sub-wrapper.component";
 import { TopUser } from "../hooks/useDashboardIA";
 

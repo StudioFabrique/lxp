@@ -7,7 +7,7 @@ import type { Activity } from "../../../utils/interfaces/activity"; // Interface
 import toast from "react-hot-toast"; // Notifications toast
 import Wrapper from "../../UI/wrapper/wrapper.component"; // Composant wrapper UI
 import { ACTIVITIES } from "../../../config/urls"; // URLs de l'API
-import { useNavigate } from "react-router-dom"; // Hook de navigation
+import { useNavigate } from "react-router"; // Hook de navigation
 import { marked } from "marked";
 import BlogEditor from "./text-editor/blog-editor";
 

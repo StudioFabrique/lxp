@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import Course from "../../../utils/interfaces/course";
 import { ArrowUpRightIcon } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 
 const MostReadCourses = () => {
   const { sendRequest } = useHttp();
@@ -18,7 +18,6 @@ const MostReadCourses = () => {
 
     sendRequest({ path: "/course/most-read" }, applyData);
   }, [sendRequest]);
-  console.log({ courses });
 
   return (
     <div

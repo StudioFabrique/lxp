@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import { ArrowRightCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 
 const ContenuItem: FC<{
   module: Module;

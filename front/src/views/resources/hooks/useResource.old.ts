@@ -7,7 +7,7 @@ import { regexGeneric } from "../../../utils/constantes";
 import z from "zod";
 import { Activity } from "../../../utils/interfaces/activity";
 import Resource from "../../../utils/interfaces/resource";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { ACTIVITIES } from "../../../config/urls";
 import useTextActivity from "./useTextActivity";
 

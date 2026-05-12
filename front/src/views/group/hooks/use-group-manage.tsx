@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
 import User from "../../../utils/interfaces/user";

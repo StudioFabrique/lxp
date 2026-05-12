@@ -10,7 +10,7 @@
  * ```
  */
 import Header from "../UI/header";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Can from "../UI/can/can.component";
 import { PlusCircle } from "lucide-react";
 

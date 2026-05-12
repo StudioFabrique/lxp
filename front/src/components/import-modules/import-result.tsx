@@ -2,7 +2,7 @@ import { ModuleImport } from "../../views/module/hooks/use-import-modules";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
 import { Check, AlertCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   importedModules: ModuleImport[];

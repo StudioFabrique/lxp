@@ -1,7 +1,7 @@
 import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import { cn } from "../../../utils";
 import Lesson from "../../../utils/interfaces/lesson";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Can from "../../UI/can/can.component";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";

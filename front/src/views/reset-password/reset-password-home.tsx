@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Field from "../../components/UI/forms/field";
 import useResetPasswordHome from "./use-password-home";
 import { Context } from "../../store/context.store";

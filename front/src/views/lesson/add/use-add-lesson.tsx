@@ -2,7 +2,7 @@
 import { useEffect, useReducer } from "react";
 import useHttp from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 // Imports des constantes et interfaces
 import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
@@ -11,7 +11,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 
 // Imports des dépendances externes
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 // Types pour les listes de données
 export type Item = {

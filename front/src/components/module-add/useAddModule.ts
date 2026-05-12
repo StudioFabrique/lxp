@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { ZodError } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Contact from "../../utils/interfaces/contact";
 import Skill from "../../utils/interfaces/skill";
 import {

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { LibraryBigIcon } from "lucide-react";
 
 const Library = ({ currentRoute }: { currentRoute: string[] }) => {

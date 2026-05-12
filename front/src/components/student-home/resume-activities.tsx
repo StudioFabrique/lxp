@@ -1,6 +1,6 @@
 import { ArrowUpRightIcon } from "lucide-react";
 import type LessonRead from "../../utils/interfaces/lesson-read";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useState } from "react";
 

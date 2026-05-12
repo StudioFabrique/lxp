@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Import des dépendances nécessaires
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
 // Import des composants et du contexte
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useHttp from "../../hooks/use-http";
 import UserAddForm from "../../components/forms/user-form/user-add-form.component";
 

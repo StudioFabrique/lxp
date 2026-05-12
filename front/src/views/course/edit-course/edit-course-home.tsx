@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 

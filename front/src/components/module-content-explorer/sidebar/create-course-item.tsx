@@ -1,6 +1,6 @@
 import { Check, Import, Plus } from "lucide-react";
 import { cn } from "../../../utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 

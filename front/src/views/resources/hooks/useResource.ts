@@ -6,7 +6,7 @@ import useHttp from "../../../hooks/use-http";
 import useForm from "../../../components/UI/forms/hooks/use-form";
 import z from "zod";
 import { regexGeneric } from "../../../utils/constantes";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import toast from "react-hot-toast";
 
 /**

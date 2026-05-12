@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import features from "../../lib/features/features-to-be-implemented.json";
 import announcements from "../../lib/features/announcements.json";
 
