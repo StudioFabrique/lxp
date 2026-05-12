@@ -19,7 +19,6 @@ import {
 } from "../store/module-explorer-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
-import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 const useModuleContentExplorer = () => {
@@ -401,32 +400,39 @@ const useModuleContentExplorer = () => {
         return false;
     }
   };
-  const activityReorder: OnDragEndResponder = (result) => {
+
+  const activityReorder = ({ source, location }: any) => {
     if (isReordering.current.activity) {
       toast("Veuillez patienter");
       return;
     }
-    const fromId = result.source.index;
-    const toId = result.destination?.index;
 
-    if (toId === undefined || fromId === toId) return;
+    // Extraction des index depuis les données attachées aux éléments
+    const fromId = source.data.index as number;
+
+    // On récupère la cible de dépôt (le premier dropTarget sous le curseur)
+    const destination = location.current.dropTargets[0];
+
+    if (!destination) return;
+
+    const toId = destination.data.index as number;
+
+    // Sécurité identique à avant
+    if (fromId === undefined || toId === undefined || fromId === toId) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
 
     isReordering.current.activity = true;
 
     if (state.selectedLesson && state.selectedLesson.activities) {
-      // On clone le tableau actuel et on applique le déplacement
       const reorderedActivities = Array.from(state.selectedLesson.activities);
       const [movedItem] = reorderedActivities.splice(fromId, 1);
       reorderedActivities.splice(toId, 0, movedItem);
 
-      // On extrait les IDs du NOUVEAU tableau
       const newActivitiesIds = reorderedActivities.map(
         (activity) => activity.id,
       );
 
-      // On envoie le nouveau tableau au backend
       sendRequest(
         {
           path: `/activity/reorder/${state.selectedLesson.id}`,
@@ -441,47 +447,6 @@ const useModuleContentExplorer = () => {
       );
     } else {
       isReordering.current.activity = false;
-    }
-  };
-
-  const lessonReorder: OnDragEndResponder = (result) => {
-    if (isReordering.current.lesson) {
-      toast("Veuillez patienter");
-      return;
-    }
-
-    const fromId = result.source.index;
-    const toId = result.destination?.index;
-
-    if (toId === undefined || fromId === toId) return;
-
-    dispatch({ type: "reorder_lesson", fromId, toId });
-
-    isReordering.current.lesson = true;
-
-    const currentCourse = state.module?.courses.find(
-      (course) => state.selectedLesson?.course.id === course.id,
-    );
-
-    if (currentCourse && state.selectedLesson) {
-      const reorderedLessons = Array.from(currentCourse.lessons);
-      const [movedItem] = reorderedLessons.splice(fromId, 1);
-      reorderedLessons.splice(toId, 0, movedItem);
-
-      const newLessonIds = reorderedLessons.map((lesson) => lesson.id);
-
-      sendRequest(
-        {
-          path: `/lesson/reorder/${state.selectedLesson.course.id}`,
-          method: "put",
-          body: newLessonIds,
-        },
-        () => {
-          isReordering.current.lesson = false;
-        },
-      );
-    } else {
-      isReordering.current.lesson = false;
     }
   };
 
@@ -577,7 +542,6 @@ const useModuleContentExplorer = () => {
       completeLesson,
       rateContent,
       deleteLesson,
-      lessonReorder,
       nextLesson,
     },
     activityActions: {
