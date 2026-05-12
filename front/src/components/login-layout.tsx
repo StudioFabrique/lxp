@@ -1,5 +1,5 @@
-import AndriaLogo from "../../assets/images/login/logo.svg";
-import LoginRightColumn from "../../components/login/login-right-column";
+import AndriaLogo from "../assets/images/login/logo.svg";
+import LoginRightColumn from "./login/login-right-column";
 import { PropsWithChildren } from "react";
 
 const LoginLayout = ({ children }: PropsWithChildren) => {

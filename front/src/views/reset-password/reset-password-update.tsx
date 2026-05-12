@@ -1,19 +1,32 @@
 /**
- *   Cette vue permet de réinitialiser le mot de passe du
- *   compte d'un utilisateur.
+ * Cette vue permet de réinitialiser le mot de passe du
+ * compte d'un utilisateur.
  */
-
-import image from "../../assets/images/andria-2.png";
+import LoginLayout from "../../components/login-layout";
 import PasswordUpdateHome from "../../components/password-update/password-update-home";
 
 export default function ResetPasswordUpdate() {
   return (
-    <main className="flex flex-col gap-y-8 place-items-center p-2">
-      {/* Header de la page */}
-      <img className="w-96 h-auto" src={image} alt="logo de l'application" />
-      <h1 className="text-3xl font-bold">Réinitialisation du mot de passe</h1>
-      {/* fin du header */}
-      <PasswordUpdateHome message="Votre mot de passe a bien été réinitialisé, vous allez être redirigé automatiquement vers la page de connexion..." />
-    </main>
+    <LoginLayout>
+      <div className="flex flex-col flex-1 w-full">
+        <div className="flex flex-col gap-4 my-auto w-full">
+          <h1 className="text-xl font-bold text-black mb-2">
+            Réinitialisation du mot de passe
+          </h1>
+
+          <p className="text-sm text-gray-600 mb-4">
+            Veuillez saisir votre nouveau mot de passe ci-dessous.
+          </p>
+
+          <PasswordUpdateHome message="Votre mot de passe a bien été réinitialisé, vous allez être redirigé automatiquement vers la page de connexion..." />
+        </div>
+
+        <div className="mt-auto flex justify-center w-full pt-6">
+          <span className="text-sm text-gray-400">
+            Sécurisation de votre compte
+          </span>
+        </div>
+      </div>
+    </LoginLayout>
   );
 }
