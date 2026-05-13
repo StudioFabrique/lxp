@@ -4,7 +4,7 @@ import { ResourceListItem } from "../../views/resources/resources-home";
 import { DOWNLOAD_URL } from "../../config/urls";
 import { Context } from "../../store/context.store";
 import hasPermission from "../../utils/hasPermission";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   resourcesList?: ResourceListItem[] | null;

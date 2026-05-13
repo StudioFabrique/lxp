@@ -7,7 +7,7 @@ import Group from "../../../utils/interfaces/group";
 import useGroupForm from "./use-group-form";
 import FromParcoursWarning from "./components/from-parcours-warning";
 import Header from "../../UI/header";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const GroupForm: FC<{
   onSubmitForm: (data: any, file: File) => void;

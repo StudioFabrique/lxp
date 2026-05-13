@@ -18,11 +18,11 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
           key={course.id}
           className="bg-secondary/20 h-[80%] w-full rounded-lg"
         >
-          <div className="flex gap-x-2 h-full items-center px-2">
+          <div className="flex gap-x-2 h-full items-center px-1 py-[0.5px] rounded-lg">
             {course.lessons.map((lesson) => (
               <span
                 key={lesson.id}
-                className={`h-[70%] w-full ${
+                className={`h-[70%] w-full rounded-lg ${
                   lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
                     ? "bg-primary"
                     : "bg-primary/20"

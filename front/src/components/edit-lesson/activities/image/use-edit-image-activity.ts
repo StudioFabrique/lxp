@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useForm from "../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../hooks/use-http";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import type { Activity } from "../../../../utils/interfaces/activity";
 import { regexGeneric } from "../../../../utils/constantes";
 import { z, ZodError } from "zod";

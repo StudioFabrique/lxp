@@ -1,7 +1,7 @@
 import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 

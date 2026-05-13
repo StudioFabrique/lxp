@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
 
 import CourseDates from "../../../utils/interfaces/course-dates";

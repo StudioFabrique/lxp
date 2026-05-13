@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Tag from "../../../utils/interfaces/tag";
 
 /**

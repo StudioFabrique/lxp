@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import SidebarWrapper from "./sidebar-wrapper";
 import SidebarTopStudent from "./sidebar-top-student";
 import SidebarTopAdmin from "./sidebar-top-admin";

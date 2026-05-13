@@ -9,7 +9,7 @@ import {
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
 import Header from "../UI/header";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Module from "../../utils/interfaces/module";
 import { useState } from "react";
 import SelectableSubCard from "../UI/selectable-sub-card";

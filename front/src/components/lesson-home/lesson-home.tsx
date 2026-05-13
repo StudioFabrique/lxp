@@ -1,5 +1,5 @@
 // Imports des dépendances externes
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { localeDate, localeTime } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Lesson from "../../utils/interfaces/lesson";

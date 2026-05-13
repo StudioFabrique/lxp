@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 import SkillItem from "./skill-item.component";
 import SkillForm from "./skill-form";

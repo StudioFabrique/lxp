@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
 import Can from "../../components/UI/can/can.component";
 import LastParcours from "../../components/admin-home/last-parcours";

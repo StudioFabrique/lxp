@@ -10,7 +10,7 @@ import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import Header from "../../components/UI/header";
 
 // Composant principal pour l'ajout/édition d'une formation

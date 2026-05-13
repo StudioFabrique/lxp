@@ -2,7 +2,7 @@ import { AlertCircle, Check } from "lucide-react";
 import { CourseImport } from "../../views/course/hooks/use-import-courses";
 import Header from "../UI/header";
 import Loader from "../UI/loader";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   importedCourses: CourseImport[];

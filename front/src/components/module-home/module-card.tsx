@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";

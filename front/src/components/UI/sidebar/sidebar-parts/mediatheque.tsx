@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Library } from "lucide-react";
 
 // Composant Mediatheque qui affiche un lien vers la médiathèque dans la sidebar

@@ -1,6 +1,6 @@
 import { LucidePlus } from "lucide-react";
 import { cn } from "../../../utils";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
 import Resource from "../../../utils/interfaces/resource";

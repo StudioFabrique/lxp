@@ -4,7 +4,6 @@ import CourseItem from "./course-item";
 import type Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
-import { OnDragEndResponder } from "react-beautiful-dnd";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -14,7 +13,6 @@ type SidebarCoursesListProps = {
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
-  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   children: React.ReactNode[];
@@ -27,7 +25,6 @@ const SidebarCoursesList = ({
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
-  onLessonReorder,
   onEnableCourse,
   onDeleteLesson,
   children,
@@ -108,7 +105,6 @@ const SidebarCoursesList = ({
               selectedLesson={selectedLesson}
               onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
-              onLessonReorder={onLessonReorder}
               onEnableCourse={onEnableCourse}
               onDeleteLesson={onDeleteLesson}
               children={children[1]}

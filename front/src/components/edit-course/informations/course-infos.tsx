@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 

@@ -5,7 +5,7 @@ import useInput from "./use-input";
 import Tag from "../utils/interfaces/tag";
 import useHttp from "./use-http";
 import toast from "react-hot-toast";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router";
 
 /**
  * Hook personnalisé pour gérer l'édition d'une leçon

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { CourseTimeline } from "../../../utils/interfaces/course";
 import Parcours from "../../../utils/interfaces/parcours";
 

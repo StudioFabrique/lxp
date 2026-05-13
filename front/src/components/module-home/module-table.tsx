@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";

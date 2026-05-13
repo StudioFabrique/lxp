@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import RatingWithStars from "../../UI/lesson-rating/rating-with-stars";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 

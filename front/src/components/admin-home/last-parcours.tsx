@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import ParcoursTable from "./parcours-table";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 

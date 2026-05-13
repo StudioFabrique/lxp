@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";

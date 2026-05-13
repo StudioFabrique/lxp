@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import DeleteModal from "../../UI/modal/delete-modal";
 import { Pen, Trash2 } from "lucide-react";
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import defaultImage from "../../../assets/images/module-default.jpg";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../../components/UI/loader";

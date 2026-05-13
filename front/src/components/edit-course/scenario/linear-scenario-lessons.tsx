@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";

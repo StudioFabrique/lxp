@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
 import { useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 // Import des composants et utilitaires personnalisés
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
