@@ -32,9 +32,7 @@ const CourseActionsModal = ({
       descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
-        className={`btn btn-error btn-md text-warning ${
-          isModalLoading && "loading"
-        }`}
+        className={`btn btn-error btn-md ${isModalLoading && "loading"}`}
         onClick={onConfirm}
       >
         Confirmer

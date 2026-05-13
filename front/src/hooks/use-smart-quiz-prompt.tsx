@@ -19,6 +19,7 @@ type UseSmartQuizPromptProps = {
   isLessonCompleted: boolean;
   isLastActivitySelected: boolean;
   isLastLessonSelected: boolean;
+  isDiagnosticQuizOpen: boolean;
   onTriggerRandomQuiz: () => void;
   onGoToNextActivity: () => void;
 };
@@ -28,6 +29,7 @@ export default function useSmartQuizPrompt({
   isLessonCompleted,
   isLastActivitySelected,
   isLastLessonSelected,
+  isDiagnosticQuizOpen,
   onTriggerRandomQuiz,
   onGoToNextActivity,
 }: UseSmartQuizPromptProps) {
@@ -87,7 +89,7 @@ export default function useSmartQuizPrompt({
 
   // Réinitialisation lors du changement d'activité
   useEffect(() => {
-    if (!selectedActivity?.id) return;
+    if (!selectedActivity?.id || isDiagnosticQuizOpen) return;
 
     activityStartTime.current = Date.now();
     hasBypassedQuizRef.current = false;
@@ -134,6 +136,7 @@ export default function useSmartQuizPrompt({
     canSkipLogic,
     handleAcceptQuiz,
     selectedActivity?.type,
+    isDiagnosticQuizOpen,
   ]);
 
   return {
