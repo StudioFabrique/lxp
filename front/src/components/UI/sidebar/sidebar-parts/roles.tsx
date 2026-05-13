@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { ShieldUser } from "lucide-react";
 import Can from "../../can/can.component";

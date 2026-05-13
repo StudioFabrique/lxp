@@ -2,7 +2,7 @@ import { useState } from "react";
 import GroupIcon from "./svg/group-icon";
 import SearchModal from "../search-modal/search-modal";
 import Can from "./can/can.component";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { PlayCircleIcon } from "lucide-react";
 
 type HeaderMenuProps = {

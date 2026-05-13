@@ -13,11 +13,10 @@ import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
-import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type CourseItemProps = {
   course: Course;
@@ -26,7 +25,6 @@ type CourseItemProps = {
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
-  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
@@ -40,7 +38,6 @@ const CourseItem = ({
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
-  onLessonReorder,
   onEnableCourse,
   onDeleteLesson,
   children,
@@ -249,72 +246,70 @@ const CourseItem = ({
             maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
-          <DragDropContext onDragEnd={onLessonReorder}>
-            <div className="p-4 flex flex-col gap-4">
-              {course.description && (
-                <span className="flex-1 min-w-0">
-                  <p
-                    ref={descriptionRef}
-                    className={`text-sm break-words overflow-hidden min-w-0 ${
-                      !isDescriptionExpanded ? "line-clamp-1" : ""
-                    }`}
+          <div className="p-4 flex flex-col gap-4">
+            {course.description && (
+              <span className="flex-1 min-w-0">
+                <p
+                  ref={descriptionRef}
+                  className={`text-sm break-words overflow-hidden min-w-0 ${
+                    !isDescriptionExpanded ? "line-clamp-1" : ""
+                  }`}
+                >
+                  {toUpperFirstLetter(course.description)}
+                </p>
+
+                {/* Render the button based on the state calculated in useEffect */}
+                {(showDescriptionExpander || isDescriptionExpanded) && (
+                  <span
+                    className="text-xs link cursor-pointer select-"
+                    onClick={handleClickToggleExpandDescription}
                   >
-                    {toUpperFirstLetter(course.description)}
-                  </p>
+                    {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
+                  </span>
+                )}
+              </span>
+            )}
 
-                  {/* Render the button based on the state calculated in useEffect */}
-                  {(showDescriptionExpander || isDescriptionExpanded) && (
-                    <span
-                      className="text-xs link cursor-pointer select-"
-                      onClick={handleClickToggleExpandDescription}
-                    >
-                      {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
-                    </span>
-                  )}
-                </span>
-              )}
-
-              {/* ... Lessons List ... */}
-              {course.lessons.length > 0 ? (
-                course.lessons.map(
-                  (lesson) =>
-                    lesson.id && (
-                      <div className={`w-full`} key={lesson.id}>
-                        <LessonItem
-                          lesson={lesson}
-                          moduleId={moduleId}
-                          selectedLesson={selectedLesson}
-                          canEditLesson={canEditCourse}
-                          onSelectLesson={onSelectLesson}
-                          onOpenModal={handleOpenLessonDeletionModal}
-                        >
-                          {children}
-                        </LessonItem>
-                      </div>
-                    ),
-                )
-              ) : (
-                <div className="text-center">
-                  <p className="text-base-content/60 text-sm">
-                    Aucune leçon disponible pour ce cours
-                  </p>
-                  <Can action="write" object="course">
-                    <Link
-                      to="/admin/lesson/add"
-                      state={{
-                        parcoursId,
-                        moduleId,
-                        courseId: course.id,
-                      }}
-                      className="text-xs link link-hover text-primary"
-                    >
-                      Créer la première leçon
-                    </Link>
-                  </Can>
-                </div>
-              )}
-            </div>
-          </DragDropContext>
+            {/* ... Lessons List ... */}
+            {course.lessons.length > 0 ? (
+              course.lessons.map(
+                (lesson) =>
+                  lesson.id && (
+                    <div className={`w-full`} key={lesson.id}>
+                      <LessonItem
+                        lesson={lesson}
+                        moduleId={moduleId}
+                        selectedLesson={selectedLesson}
+                        canEditLesson={canEditCourse}
+                        onSelectLesson={onSelectLesson}
+                        onOpenModal={handleOpenLessonDeletionModal}
+                      >
+                        {children}
+                      </LessonItem>
+                    </div>
+                  ),
+              )
+            ) : (
+              <div className="text-center">
+                <p className="text-base-content/60 text-sm">
+                  Aucune leçon disponible pour ce cours
+                </p>
+                <Can action="write" object="course">
+                  <Link
+                    to="/admin/lesson/add"
+                    state={{
+                      parcoursId,
+                      moduleId,
+                      courseId: course.id,
+                    }}
+                    className="text-xs link link-hover text-primary"
+                  >
+                    Créer la première leçon
+                  </Link>
+                </Can>
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
     </>

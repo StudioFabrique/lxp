@@ -4,7 +4,7 @@ import Modal from "../UI/modal/modal";
 import PortalConfetti from "../UI/portal/portal-confetti";
 import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 import Lesson from "../../utils/interfaces/lesson";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 type LessonCompletionModal = {
   lesson: Lesson;

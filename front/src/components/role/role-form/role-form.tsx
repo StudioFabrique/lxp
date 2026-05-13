@@ -18,7 +18,7 @@ import RoleTypeSelector from "./role-type-selector";
 import Role from "../../../utils/interfaces/role";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import { Context } from "../../../store/context.store";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 type RoleFormProps = {
   role?: Role;

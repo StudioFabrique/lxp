@@ -6,7 +6,7 @@
  */
 
 import { useContext, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import PasswordUpdateForm from "../../components/password-update/password-update-form";
 import PasswordUpdateSuccess from "../../components/password-update/password-update-success";
 

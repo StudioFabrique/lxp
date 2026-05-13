@@ -3,7 +3,7 @@
 // Import des dépendances nécessaires
 import useHttp from "../../../hooks/use-http";
 import type { Activity } from "../../../utils/interfaces/activity";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";
 import { useState, useCallback, useEffect } from "react";

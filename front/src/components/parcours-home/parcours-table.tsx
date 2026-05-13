@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { localeDate } from "../../helpers/locale-date";
 import Parcours from "../../utils/interfaces/parcours";

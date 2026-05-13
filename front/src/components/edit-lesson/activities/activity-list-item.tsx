@@ -1,6 +1,6 @@
 // Import des icônes et composants nécessaires
 import { GripVertical, Pen, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import type { Activity } from "../../../utils/interfaces/activity";
 import BookIcon from "../../UI/svg/book-icon";
 import Can from "../../UI/can/can.component";

@@ -271,12 +271,6 @@ export default function useDiagnosticQuiz(
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
 
-    console.log({
-      hasStartedModule,
-      isFinished: isFinished.current,
-      userIsAdmin,
-    });
-
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       onLoadPreliminaryQuizzes();
     } else if (!isFinished.current) {

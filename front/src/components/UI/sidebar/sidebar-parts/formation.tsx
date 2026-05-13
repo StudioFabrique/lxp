@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { GraduationCap } from "lucide-react";
 
 const Formation = ({ currentRoute }: { currentRoute: string[] }) => {

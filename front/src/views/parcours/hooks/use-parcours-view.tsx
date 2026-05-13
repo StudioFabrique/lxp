@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import useHttp from "../../../hooks/use-http";
 import { useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";

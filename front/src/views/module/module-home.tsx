@@ -6,7 +6,7 @@ import useHttp from "../../hooks/use-http";
 import ModuleHomeList from "../../components/module-home/module-home";
 import ModalSuppression from "../../components/module-home/modal-suppression";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { stepsParcours } from "../../config/steps/steps-parcours";
 
 const ModuleHome = () => {

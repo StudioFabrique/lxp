@@ -7,7 +7,7 @@ import { courseScenarioActions } from "../../../store/redux-toolkit/course/cours
 import LinearScenarioLessons from "./linear-scenario-lessons";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import courseScenarioFromHttp from "../../../helpers/course/course-scenario-from-http";
 import Lesson from "../../../utils/interfaces/lesson";
 import toast from "react-hot-toast";

@@ -7,7 +7,7 @@ import Loader from "../../components/UI/loader";
 import { sortArray } from "../../utils/sortArray";
 import toast from "react-hot-toast";
 import ParcoursList from "../../components/parcours-home/parcours-home";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 /**
  * Composant principal affichant la liste des parcours

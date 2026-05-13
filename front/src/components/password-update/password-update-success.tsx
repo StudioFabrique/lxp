@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   message: string;

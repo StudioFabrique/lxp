@@ -1,6 +1,6 @@
 import { Component } from "lucide-react";
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 type Props = {
   currentRoute: string[];

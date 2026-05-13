@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Pencil, Eye, EyeOff, Trash2 } from "lucide-react";
 
 import Can from "../UI/can/can.component";
@@ -21,7 +21,7 @@ export default function CourseCard({
 }: CourseCardProps) {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb
+      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb,
     ),
     width: "100%",
     height: "9rem",

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, FC, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";

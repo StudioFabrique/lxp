@@ -1,7 +1,7 @@
 import { FC, useContext, useState } from "react";
 import Role from "../../../utils/interfaces/role";
 import { hasRole } from "../../../utils/hasRole";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { sortArray } from "../../../utils/sortArray";
 import { Context } from "../../../store/context.store";
 

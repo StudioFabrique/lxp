@@ -3,7 +3,7 @@ import { localeDate } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Can from "../UI/can/can.component";
 import { truncateText } from "../../helpers/truncate-text";
 

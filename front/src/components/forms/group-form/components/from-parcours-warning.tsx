@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 type Props = {

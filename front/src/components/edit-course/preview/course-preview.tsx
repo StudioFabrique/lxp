@@ -6,7 +6,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import PreviewLessons from "../../preview/preview-lessons";
 import CourseDates from "../../../utils/interfaces/course-dates";
 import PreviewCalendar from "../../preview/preview-calendar";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router";
 import useValidateCourse from "./hook/use-validate-course";
 import useHttp from "../../../hooks/use-http";
 import { useEffect } from "react";

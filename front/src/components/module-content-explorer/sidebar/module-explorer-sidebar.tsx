@@ -34,7 +34,6 @@ const ModuleExplorerSidebar = ({
       onDeleteCourse={courseActions.deleteCourse}
       onEnableCourse={courseActions.enableCourse}
       onDeleteLesson={lessonActions.deleteLesson}
-      onLessonReorder={lessonActions.lessonReorder}
     >
       {canEditModule && (
         <Can action="write" object="course">

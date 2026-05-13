@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Import des dépendances nécessaires
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 // Import des composants et hooks personnalisés
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";

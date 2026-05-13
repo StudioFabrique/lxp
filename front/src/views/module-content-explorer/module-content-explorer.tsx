@@ -6,7 +6,7 @@ import ModuleContentExplorerWrapper from "../../components/module-content-explor
 import ModuleContentExplorerSkeleton from "./module-content-explorer-skeleton";
 import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { PenBox } from "lucide-react";
 import { useContext } from "react";
 import Header from "../../components/UI/header";
@@ -65,6 +65,7 @@ const ModuleContentExplorer = () => {
     isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
     isLastLessonSelected: computed.isLastLessonSelected,
+    isDiagnosticQuizOpen: diagnosticQuiz.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });

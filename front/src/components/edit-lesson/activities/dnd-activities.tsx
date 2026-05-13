@@ -31,7 +31,7 @@ type Props = {
 export default function DNDAcitivities(props: Props) {
   const [submit, setSubmit] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
-    null
+    null,
   );
 
   const handleReorder = useCallback(() => {

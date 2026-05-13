@@ -9,7 +9,7 @@
  * <LessonHeader />
  * ```
  */
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Header from "../UI/header";
 import { PlusCircle } from "lucide-react";
 

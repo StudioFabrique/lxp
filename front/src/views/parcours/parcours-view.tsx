@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { Fragment } from "react";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
