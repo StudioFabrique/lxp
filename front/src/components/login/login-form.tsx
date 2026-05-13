@@ -70,9 +70,7 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {error && (
-          <span className="text-sm text-red-500 mt-[-10px]">{error}</span>
-        )}
+        {error && <span className="text-sm text-red-500 -mt-2.5">{error}</span>}
 
         <button
           type="submit"

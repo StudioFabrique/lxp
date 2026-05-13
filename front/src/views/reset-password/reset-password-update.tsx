@@ -10,7 +10,7 @@ export default function ResetPasswordUpdate() {
     <LoginLayout>
       <div className="flex flex-col flex-1 w-full">
         <div className="flex flex-col gap-4 my-auto w-full">
-          <h1 className="text-xl font-bold text-black mb-2">
+          <h1 className="font-bold text-black mb-2">
             Réinitialisation du mot de passe
           </h1>
 

@@ -36,7 +36,7 @@ export default function ResetPasswordHome() {
   const emailIsNotValid = (
     <form className="flex flex-col flex-1 w-full" onSubmit={handleCheckEmail}>
       <div className="flex flex-col gap-4 my-auto w-full">
-        <h1 className="text-xl font-bold text-black mb-2">
+        <h1 className="font-bold text-black mb-2">
           Réinitialisation du mot de passe
         </h1>
 
@@ -53,9 +53,7 @@ export default function ResetPasswordHome() {
           />
         </div>
 
-        {error && (
-          <span className="text-sm text-red-500 mt-[-10px]">{error}</span>
-        )}
+        {error && <span className="text-sm text-red-500 -mt-2.5">{error}</span>}
 
         <button
           type="submit"
