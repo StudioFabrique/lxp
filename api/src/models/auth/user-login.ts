@@ -12,12 +12,15 @@ async function userLogin(email: string, password: string) {
       select: "-permissions",
     });
 
+    // Vérifiez si l'utilisateur existe ET s'il possède un mot de passe stocké
+    if (!user || !user.password) {
+      throw { message: credentialsError, status: 401 };
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
     // on vérifie les identifiants et on retourne les informations de l'utilisateur
-    if (
-      user &&
-      (await bcrypt.compare(password, user.password!)) &&
-      user.isActive
-    ) {
+    if (user && isPasswordValid && user.isActive) {
       return {
         _id: user._id.toString(),
         email: user.email,
