@@ -1,4 +1,11 @@
-import { Check, ChevronDown, ChevronRight, Eye, EyeOff } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  CloudOff,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -177,7 +184,15 @@ const CourseItem = ({
         onConfirm={handleConfirmAction}
       />
 
-      <div className="flex flex-col w-full select-none">
+      <div className="flex flex-col w-full relative select-none">
+        {!course.isPublished ? (
+          <div
+            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-11"
+            data-tip="Ce cours n'est pas publié"
+          >
+            <CloudOff className="w-4 h-4 stroke-base-100" />
+          </div>
+        ) : null}
         <div
           className={`flex flex-col w-full cursor-pointer ${
             isCourseOpen
@@ -208,7 +223,8 @@ const CourseItem = ({
                   <button
                     onClick={(e) => handleOpenModal("visibility", e)}
                     className={cn("btn btn-sm tooltip ", {
-                      "btn-primary": !course.visibility,
+                      "btn-info": course.visibility,
+                      "btn-neutral": !course.visibility,
                     })}
                     data-tip={
                       course.visibility
