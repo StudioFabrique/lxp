@@ -1,4 +1,4 @@
-import { Check, ChevronDown, ChevronRight, EyeOff } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Eye, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -17,6 +17,7 @@ import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Link } from "react-router";
+import { cn } from "../../../utils";
 
 type CourseItemProps = {
   course: Course;
@@ -176,18 +177,7 @@ const CourseItem = ({
         onConfirm={handleConfirmAction}
       />
 
-      <div className="flex flex-col w-full relative select-none">
-        {!course.isPublished || !course.visibility ? (
-          <div
-            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
-            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${
-              !course.visibility && !course.isPublished ? "et" : ""
-            } ${!course.isPublished ? "non publié" : ""}`}
-          >
-            <EyeOff className="w-4 h-4 stroke-base-100" />
-          </div>
-        ) : null}
-
+      <div className="flex flex-col w-full select-none">
         <div
           className={`flex flex-col w-full cursor-pointer ${
             isCourseOpen
@@ -213,23 +203,44 @@ const CourseItem = ({
                 </h3>
               </span>
               {isCourseCompleted && <Check className="text-primary" />}
-              {canEditCourse && (
-                <Can action="write" object="course">
-                  <CourseActions
-                    course={course}
-                    parcoursId={parcoursId}
-                    moduleId={moduleId}
-                    onOpenModal={handleOpenModal}
-                    onClickMenu={handleClickMenu}
-                  />
+              <div className="flex gap-1 items-center">
+                <Can action="update" object="course">
+                  <button
+                    onClick={(e) => handleOpenModal("visibility", e)}
+                    className={cn("btn btn-sm tooltip ", {
+                      "btn-primary": !course.visibility,
+                    })}
+                    data-tip={
+                      course.visibility
+                        ? "Rendre le cours invisible"
+                        : "Rendre le cours visible"
+                    }
+                  >
+                    {course.visibility ? (
+                      <Eye className="w-4 h-4" />
+                    ) : (
+                      <EyeOff className="w-4 h-4" />
+                    )}
+                  </button>
                 </Can>
-              )}
+                {canEditCourse && (
+                  <Can action="write" object="course">
+                    <CourseActions
+                      course={course}
+                      parcoursId={parcoursId}
+                      moduleId={moduleId}
+                      onOpenModal={handleOpenModal}
+                      onClickMenu={handleClickMenu}
+                    />
+                  </Can>
+                )}
+              </div>
             </div>
           </div>
           <Can action="component" object="progression">
             {!isCourseCompleted && (
               <progress
-                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
+                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-2"
                 value={isNaN(courseProgress) ? 0 : courseProgress}
               />
             )}
@@ -251,7 +262,7 @@ const CourseItem = ({
               <span className="flex-1 min-w-0">
                 <p
                   ref={descriptionRef}
-                  className={`text-sm break-words overflow-hidden min-w-0 ${
+                  className={`text-sm wrap-break-word overflow-hidden min-w-0 ${
                     !isDescriptionExpanded ? "line-clamp-1" : ""
                   }`}
                 >
