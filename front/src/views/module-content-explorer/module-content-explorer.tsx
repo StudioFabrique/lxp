@@ -65,6 +65,7 @@ const ModuleContentExplorer = () => {
     isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
     isLastLessonSelected: computed.isLastLessonSelected,
+    isDiagnosticQuizOpen: diagnosticQuiz.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });

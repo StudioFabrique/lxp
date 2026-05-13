@@ -1,4 +1,4 @@
-import { HandCoins, LogOutIcon } from "lucide-react";
+import { LogOutIcon, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
@@ -60,7 +60,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           className="flex gap-x-2 items-center tooltip tooltip-right"
           data-tip="Dashboard IA"
         >
-          <HandCoins className="w-4 h-4" />
+          <Sparkles className="w-4 h-4" />
           <h2 className="xl:block hidden">Consommation IA</h2>
         </Link>
       </li>

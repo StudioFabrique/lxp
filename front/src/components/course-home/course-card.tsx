@@ -21,7 +21,7 @@ export default function CourseCard({
 }: CourseCardProps) {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb
+      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb,
     ),
     width: "100%",
     height: "9rem",
