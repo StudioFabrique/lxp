@@ -5,19 +5,29 @@ import TrueFalseDetail from "./true-false-detail";
 import MatchingDetail from "./matching-detail";
 import OrderingDetail from "./ordering-detail";
 import QuizMarkdown from "../quiz-markdown";
+import { useState } from "react";
 
-export interface AttemptCardProps {
+export interface AttemptCardAccordionProps {
   attempt: QuizAttempt;
   index: number;
 }
 
-const AttemptCard = ({ attempt, index }: AttemptCardProps) => {
+const AttemptCardAccordion = ({
+  attempt,
+  index,
+}: AttemptCardAccordionProps) => {
   const { quiz, isCorrect, userAnswer } = attempt;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="rounded-xl bg-base-200/50 p-4 flex flex-col gap-4">
+    <div className="collapse collapse-arrow rounded-xl bg-base-200/60 gap-4">
+      <input
+        type="checkbox"
+        checked={isOpen}
+        onChange={() => setIsOpen((prev) => !prev)}
+      />
       {/* En-tête */}
-      <div className="flex items-start gap-3">
+      <div className="collapse-title flex items-start gap-3">
         {isCorrect ? (
           <CheckCircle2 className="text-success shrink-0 mt-0.5" size={20} />
         ) : (
@@ -34,7 +44,7 @@ const AttemptCard = ({ attempt, index }: AttemptCardProps) => {
       </div>
 
       {/* Détail selon le type */}
-      <div className="pl-8">
+      <div className="collapse-content pl-8">
         {userAnswer.type === "mcq" && (
           <McqDetail
             quiz={quiz as Extract<Quiz, { type: "mcq" }>}
@@ -61,16 +71,15 @@ const AttemptCard = ({ attempt, index }: AttemptCardProps) => {
             userAnswer={userAnswer as Extract<UserAnswer, { type: "ordering" }>}
           />
         )}
-      </div>
-
-      {/* Explication */}
-      <div className="text-sm italic text-base-content/50 pl-8">
-        <QuizMarkdown>
-          {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
-        </QuizMarkdown>
+        {/* Explication */}
+        <div className="text-sm italic text-base-content/50 pt-5">
+          <QuizMarkdown>
+            {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
+          </QuizMarkdown>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AttemptCard;
+export default AttemptCardAccordion;
