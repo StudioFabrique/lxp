@@ -21,8 +21,12 @@ const McqDetail = ({ quiz, userAnswer }: McqDetailProps) => {
             key={i}
             className={cn(
               "rounded-lg px-4 py-2 text-sm",
-              isSelected && isCorrect && "bg-success text-success-content",
-              isSelected && !isCorrect && "bg-error text-error-content",
+              isSelected &&
+                isCorrect &&
+                "bg-success text-success-content border-2 border-primary",
+              isSelected &&
+                !isCorrect &&
+                "bg-error text-error-content border-2 border-primary",
               !isSelected && isCorrect && "bg-success/15 text-success",
               !isSelected && !isCorrect && "bg-base-200 text-base-content/40",
             )}

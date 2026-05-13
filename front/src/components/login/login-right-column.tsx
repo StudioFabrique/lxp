@@ -27,7 +27,7 @@ const LoginRightColumn = () => {
   };
 
   return (
-    <div className="hidden xl:flex flex-col justify-center items-end relative col-span-2 w-full h-full bg-white">
+    <div className="hidden lg:flex flex-col justify-center items-end relative w-full h-full bg-white">
       {/* Définition du masque de découpe (invisible en soi) */}
       <svg className="absolute">
         <defs>
@@ -44,7 +44,7 @@ const LoginRightColumn = () => {
       <img
         src={bgPhoto}
         alt="Décoration"
-        className="h-full max-h-[85vh] min-h-[600px] object-cover rounded-l-2xl"
+        className="h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl"
         style={{ clipPath: "url(#image-grid-mask)" }}
       />
     </div>

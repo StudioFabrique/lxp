@@ -37,10 +37,8 @@ const LoginForm = () => {
 
   return (
     <form className="flex flex-col flex-1 w-full" onSubmit={submitHandler}>
-      <div className="flex flex-col gap-4 my-auto w-full">
-        <h1 className="text-xl font-bold text-black mb-2">
-          Connectez-vous à votre espace
-        </h1>
+      <div className="flex flex-col items-center gap-4 my-auto w-full">
+        <h1 className="font-bold text-black">Connectez-vous à votre espace</h1>
 
         <div className="form-control w-full">
           <input
@@ -72,9 +70,7 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {error && (
-          <span className="text-sm text-red-500 mt-[-10px]">{error}</span>
-        )}
+        {error && <span className="text-sm text-red-500 -mt-2.5">{error}</span>}
 
         <button
           type="submit"
