@@ -21,8 +21,12 @@ const TrueFalseDetail = ({ quiz, userAnswer }: TrueFalseDetailProps) => {
             key={String(value)}
             className={cn(
               "flex-1 text-center rounded-lg px-6 py-2 font-medium text-sm",
-              isSelected && isCorrect && "bg-success text-success-content",
-              isSelected && !isCorrect && "bg-error text-error-content",
+              isSelected &&
+                isCorrect &&
+                "bg-success text-success-content border-2 border-primary",
+              isSelected &&
+                !isCorrect &&
+                "bg-error text-error-content border-2 border-primary",
               !isSelected && isCorrect && "bg-success/15 text-success",
               !isSelected && !isCorrect && "bg-base-200 text-base-content/40",
             )}
