@@ -6,7 +6,7 @@ import QuizOrdering from "./quiz-ordering";
 import QuizTrueFalse from "./quiz-true-false";
 import QuizResults from "../results/quiz-results";
 import QuizMarkdown from "../quiz-markdown";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 interface QuizModalProps {
   isOpen: boolean;
@@ -85,16 +85,18 @@ const QuizModal = ({
         {/* Header Modal */}
         <div className="flex justify-between items-center border-b pb-4">
           <h3 className="font-bold text-lg text-primary flex items-center gap-2">
-            Quiz d'auto-évaluation{" "}
-            {quiz && totalQuizzes > 0
-              ? `${currentIndex + 1} / ${Math.max(totalQuizzes, currentIndex + 1)}`
-              : ""}
+            <span>Quiz d'auto-évaluation</span>
+            <span>
+              {quiz && totalQuizzes > 0
+                ? `${currentIndex + 1} / ${Math.max(totalQuizzes, currentIndex + 1)}`
+                : ""}
+            </span>
             {isStreaming && (
               <span className="loading loading-spinner loading-sm text-primary ml-2"></span>
             )}
           </h3>
           <button className="btn btn-sm btn-circle btn-ghost" onClick={onClose}>
-            ✕
+            <X width={20} />
           </button>
         </div>
 

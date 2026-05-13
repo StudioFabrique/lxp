@@ -45,6 +45,12 @@ const ModuleContentExplorer = () => {
   const isModuleLoaded = Boolean(
     state.module && state.module.id && state.module.courses.length > 0,
   );
+  const canEditModule = userBelongsToContacts(user, state.module?.contacts);
+  const canEditSelectedLesson = userBelongsToContacts(
+    user,
+    state.selectedLesson?.course?.contacts,
+  );
+
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,
     isModuleLoaded,
@@ -65,16 +71,10 @@ const ModuleContentExplorer = () => {
     isLessonCompleted: computed.isLessonCompleted,
     isLastActivitySelected: computed.isLastActivitySelected,
     isLastLessonSelected: computed.isLastLessonSelected,
-    isDiagnosticQuizOpen: diagnosticQuiz.isOpen,
+    isAnyQuizOpen: diagnosticQuiz.isOpen || quizState.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });
-
-  const canEditModule = userBelongsToContacts(user, state.module?.contacts);
-  const canEditSelectedLesson = userBelongsToContacts(
-    user,
-    state.selectedLesson?.course?.contacts,
-  );
 
   if (diagnosticQuiz.isOpen) {
     return (
