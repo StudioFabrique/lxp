@@ -41,8 +41,6 @@ const QuizModal = ({
 }: QuizModalProps) => {
   if (!isOpen) return null;
 
-  console.log({ quiz });
-
   const renderQuizComponent = () => {
     if (!quiz) return null;
     switch (quiz.type) {
