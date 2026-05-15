@@ -217,30 +217,31 @@ const CourseItem = ({
                 </h3>
               </span>
               {isCourseCompleted && <Check className="text-primary" />}
-              <div className="flex gap-1 items-center">
-                {course.isPublished ? (
-                  <Can action="update" object="course">
-                    <button
-                      onClick={(e) => handleOpenModal("visibility", e)}
-                      className={cn("btn btn-sm tooltip ", {
-                        "btn-info": course.visibility,
-                        "btn-neutral": !course.visibility,
-                      })}
-                      data-tip={
-                        course.visibility
-                          ? "Rendre le cours invisible"
-                          : "Rendre le cours visible"
-                      }
-                    >
-                      {course.visibility ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                    </button>
-                  </Can>
-                ) : null}
-                {canEditCourse && (
+              {canEditCourse && (
+                <div className="flex gap-1 items-center">
+                  {course.isPublished ? (
+                    <Can action="update" object="course">
+                      <button
+                        onClick={(e) => handleOpenModal("visibility", e)}
+                        className={cn("btn btn-sm tooltip ", {
+                          "btn-info": course.visibility,
+                          "btn-neutral": !course.visibility,
+                        })}
+                        data-tip={
+                          course.visibility
+                            ? "Rendre le cours invisible"
+                            : "Rendre le cours visible"
+                        }
+                      >
+                        {course.visibility ? (
+                          <Eye className="w-4 h-4" />
+                        ) : (
+                          <EyeOff className="w-4 h-4" />
+                        )}
+                      </button>
+                    </Can>
+                  ) : null}
+
                   <Can action="write" object="course">
                     <CourseActions
                       course={course}
@@ -250,8 +251,8 @@ const CourseItem = ({
                       onClickMenu={handleClickMenu}
                     />
                   </Can>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
           <Can action="component" object="progression">
