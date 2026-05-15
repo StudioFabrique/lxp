@@ -1,16 +1,14 @@
-import { Edit, Eye, EyeOff, ListPlus, MoreVertical, Trash } from "lucide-react";
+import { Edit, ListPlus, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import { Link } from "react-router";
 import Course from "../../../utils/interfaces/course";
+import { ModalCourseType } from "./course-item";
 
 type CourseActionsProps = {
   course: Course;
   parcoursId?: number;
   moduleId?: number;
-  onOpenModal: (
-    modalType: "visibility" | "deleteCourse" | "deleteLesson",
-    e: React.MouseEvent,
-  ) => void;
+  onOpenModal: (modalType: ModalCourseType, e: React.MouseEvent) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
 
@@ -21,8 +19,8 @@ const CourseActions = ({
   onOpenModal,
   onClickMenu,
 }: CourseActionsProps) => {
-  const handleClickEnable = (e: React.MouseEvent) => {
-    onOpenModal("visibility", e);
+  const handleClickPublish = (e: React.MouseEvent) => {
+    onOpenModal("publish", e);
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -32,13 +30,25 @@ const CourseActions = ({
   return (
     <div
       onClick={onClickMenu}
-      className="dropdown dropdown-right z-[9] select-none"
+      className="dropdown dropdown-right z-9 select-none"
     >
       <button className="flex cursor-pointer">
         <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
       </button>
 
       <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-base-300/80 text-base-content rounded-lg w-60 backdrop-blur-sm border border-primary/20">
+        {!course.isPublished && (
+          <Can action="update" object="course">
+            <button
+              onClick={handleClickPublish}
+              className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all last:rounded-b-lg"
+            >
+              <UploadCloud className="w-4 h-4 mr-3" />
+              <span>Publier le cours</span>
+            </button>
+          </Can>
+        )}
+
         <Can action="update" object="course">
           <Link
             to={`/admin/course/edit/${course.id}`}
@@ -80,25 +90,6 @@ const CourseActions = ({
             )}
           </button>
         </Can> */}
-
-        <Can action="update" object="course">
-          <button
-            onClick={handleClickEnable}
-            className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all last:rounded-b-lg"
-          >
-            {course.visibility ? (
-              <>
-                <EyeOff className="w-4 h-4 mr-3" />
-                Rendre le cours invisible
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4 mr-3" />
-                Rendre le cours visible
-              </>
-            )}
-          </button>
-        </Can>
 
         <Can action="delete" object="course">
           <button

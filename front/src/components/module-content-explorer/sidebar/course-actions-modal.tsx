@@ -1,10 +1,11 @@
+import { useMemo } from "react";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import TableActionsModal from "../../table/table-buttons/table-actions-modal";
+import { ModalCourseType } from "./course-item";
 
 type CourseActionsModalProps = {
-  title?: string;
-  description?: string;
+  modalType?: ModalCourseType;
   showModal: boolean;
   isModalLoading: boolean;
   course: Course;
@@ -14,15 +15,44 @@ type CourseActionsModalProps = {
 };
 
 const CourseActionsModal = ({
-  title,
-  description,
   showModal,
   isModalLoading,
   course,
   lesson,
   onCancel,
   onConfirm,
+  modalType,
 }: CourseActionsModalProps) => {
+  const title = useMemo(() => {
+    switch (modalType) {
+      case "visibility":
+        return "Visibilité";
+      case "publish":
+        return "Publier";
+      case "deleteCourse":
+        return "Supprimer le cours";
+      case "deleteLesson":
+        return "Supprimer la leçon";
+      default:
+        return "";
+    }
+  }, [modalType]);
+
+  const description = useMemo(() => {
+    switch (modalType) {
+      case "visibility":
+        return "Changez la visibilité du cours";
+      case "publish":
+        return "Publiquez le cours";
+      case "deleteCourse":
+        return "Supprimez le cours";
+      case "deleteLesson":
+        return "Supprimez la leçon";
+      default:
+        return "";
+    }
+  }, [modalType]);
+
   return (
     <TableActionsModal
       isOpen={showModal}
@@ -32,7 +62,7 @@ const CourseActionsModal = ({
       descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
-        className={`btn btn-error btn-md ${isModalLoading && "loading"}`}
+        className={`btn btn-primary btn-md ${isModalLoading && "loading"}`}
         onClick={onConfirm}
       >
         Confirmer

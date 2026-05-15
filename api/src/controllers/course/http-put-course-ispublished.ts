@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 
 import putCourseIsPublished from "../../models/course/put-course-ispublished";
 import { serverIssue } from "../../utils/constantes";
+import enableCourse from "../../models/course/enable-course";
 
 async function httpPutCourseIsPublished(req: Request, res: Response) {
   const { courseId } = req.params;
 
   try {
+    await enableCourse(+courseId, true);
     await putCourseIsPublished(+courseId);
     return res
       .status(201)

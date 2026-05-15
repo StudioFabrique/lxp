@@ -165,6 +165,7 @@ const ModuleContentExplorer = () => {
 
       {/* --- Section Contenu  --- */}
       {state.module && state.module?.parcoursId && state.module.id ? (
+        /* Wrapper */
         <ModuleContentExplorerWrapper
           scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
@@ -176,17 +177,20 @@ const ModuleContentExplorer = () => {
           }}
           header={<ModuleContentExplorerHeader moduleData={state.module} />}
           progressionSide={
+            /* Sidebar */
             <ModuleExplorerSidebar
               store={explorerStore}
               canEditModule={canEditModule}
               canEditSelectedLesson={canEditSelectedLesson}
             />
           }
+          /* Progress Bar */
           topProgressBar={
             <Can action="component" object="progression">
               <ProgressBar courses={state.module.courses} />
             </Can>
           }
+          /* Preview */
           previewLesson={
             <ModuleExplorerPreview
               store={explorerStore}
@@ -198,6 +202,7 @@ const ModuleContentExplorer = () => {
           moduleData={<ModuleData moduleData={state.module} />}
         />
       ) : (
+        /* Skeleton */
         <ModuleContentExplorerSkeleton />
       )}
     </div>
