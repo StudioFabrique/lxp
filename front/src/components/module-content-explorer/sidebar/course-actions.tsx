@@ -2,15 +2,13 @@ import { Edit, ListPlus, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import { Link } from "react-router";
 import Course from "../../../utils/interfaces/course";
+import { ModalCourseType } from "./course-item";
 
 type CourseActionsProps = {
   course: Course;
   parcoursId?: number;
   moduleId?: number;
-  onOpenModal: (
-    modalType: "visibility" | "publish" | "deleteCourse" | "deleteLesson",
-    e: React.MouseEvent,
-  ) => void;
+  onOpenModal: (modalType: ModalCourseType, e: React.MouseEvent) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
 
