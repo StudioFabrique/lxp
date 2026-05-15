@@ -34,10 +34,11 @@ type CourseItemProps = {
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
 
-type ModalType = "visibility" | "deleteCourse" | "deleteLesson";
+type ModalType = "visibility" | "publish" | "deleteCourse" | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -47,6 +48,7 @@ const CourseItem = ({
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
+  onPublishCourse,
   onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
@@ -116,6 +118,11 @@ const CourseItem = ({
         break;
       case "visibility":
         await onEnableCourse(course.id, !course.visibility);
+        break;
+      case "publish":
+        await onPublishCourse(course.id);
+        break;
+      default:
         break;
     }
     handleCloseModal();

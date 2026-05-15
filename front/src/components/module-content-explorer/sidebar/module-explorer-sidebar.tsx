@@ -33,6 +33,7 @@ const ModuleExplorerSidebar = ({
       }}
       onDeleteCourse={courseActions.deleteCourse}
       onEnableCourse={courseActions.enableCourse}
+      onPublishCourse={courseActions.publishCourse}
       onDeleteLesson={lessonActions.deleteLesson}
     >
       {canEditModule && (
