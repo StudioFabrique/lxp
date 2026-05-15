@@ -1,4 +1,11 @@
-import { Check, ChevronDown, ChevronRight, EyeOff } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  CloudOff,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import {
   PropsWithChildren,
@@ -17,6 +24,7 @@ import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Link } from "react-router";
+import { cn } from "../../../utils";
 
 type CourseItemProps = {
   course: Course;
@@ -26,10 +34,15 @@ type CourseItemProps = {
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
 
-type ModalType = "visibility" | "deleteCourse" | "deleteLesson";
+export type ModalCourseType =
+  | "visibility"
+  | "publish"
+  | "deleteCourse"
+  | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -39,6 +52,7 @@ const CourseItem = ({
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
+  onPublishCourse,
   onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
@@ -48,7 +62,7 @@ const CourseItem = ({
 
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<ModalType>("visibility");
+  const [modalType, setModalType] = useState<ModalCourseType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
     Lesson | undefined
   >(undefined);
@@ -78,7 +92,10 @@ const CourseItem = ({
     e.stopPropagation();
   };
 
-  const handleOpenModal = (modalType: ModalType, e?: React.MouseEvent) => {
+  const handleOpenModal = (
+    modalType: ModalCourseType,
+    e?: React.MouseEvent,
+  ) => {
     e?.stopPropagation();
     setModalType(modalType);
     setShowModal(true);
@@ -108,6 +125,11 @@ const CourseItem = ({
         break;
       case "visibility":
         await onEnableCourse(course.id, !course.visibility);
+        break;
+      case "publish":
+        await onPublishCourse(course.id);
+        break;
+      default:
         break;
     }
     handleCloseModal();
@@ -152,22 +174,7 @@ const CourseItem = ({
   return (
     <>
       <CourseActionsModal
-        title={
-          modalType === "visibility"
-            ? "Visibilité"
-            : modalType === "deleteLesson"
-              ? "Supprimer la leçon"
-              : "Supprimer le cours"
-        }
-        description={
-          modalType === "visibility"
-            ? `Êtes-vous sûr de vouloir  ${
-                course.visibility ? "cacher" : "rendre visible"
-              } ce cours ?`
-            : modalType === "deleteLesson"
-              ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
-              : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
-        }
+        modalType={modalType}
         showModal={showModal}
         isModalLoading={isModalLoading}
         course={course}
@@ -177,17 +184,14 @@ const CourseItem = ({
       />
 
       <div className="flex flex-col w-full relative select-none">
-        {!course.isPublished || !course.visibility ? (
+        {!course.isPublished ? (
           <div
-            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
-            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${
-              !course.visibility && !course.isPublished ? "et" : ""
-            } ${!course.isPublished ? "non publié" : ""}`}
+            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-11"
+            data-tip="Ce cours n'est pas publié"
           >
-            <EyeOff className="w-4 h-4 stroke-base-100" />
+            <CloudOff className="w-4 h-4 stroke-base-100" />
           </div>
         ) : null}
-
         <div
           className={`flex flex-col w-full cursor-pointer ${
             isCourseOpen
@@ -197,7 +201,7 @@ const CourseItem = ({
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
         >
-          {/* ... Header Content ... */}
+          {/* Header Content */}
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span className="flex gap-1 items-center min-w-0">
@@ -213,23 +217,47 @@ const CourseItem = ({
                 </h3>
               </span>
               {isCourseCompleted && <Check className="text-primary" />}
-              {canEditCourse && (
-                <Can action="write" object="course">
-                  <CourseActions
-                    course={course}
-                    parcoursId={parcoursId}
-                    moduleId={moduleId}
-                    onOpenModal={handleOpenModal}
-                    onClickMenu={handleClickMenu}
-                  />
-                </Can>
-              )}
+              <div className="flex gap-1 items-center">
+                {course.isPublished ? (
+                  <Can action="update" object="course">
+                    <button
+                      onClick={(e) => handleOpenModal("visibility", e)}
+                      className={cn("btn btn-sm tooltip ", {
+                        "btn-info": course.visibility,
+                        "btn-neutral": !course.visibility,
+                      })}
+                      data-tip={
+                        course.visibility
+                          ? "Rendre le cours invisible"
+                          : "Rendre le cours visible"
+                      }
+                    >
+                      {course.visibility ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                    </button>
+                  </Can>
+                ) : null}
+                {canEditCourse && (
+                  <Can action="write" object="course">
+                    <CourseActions
+                      course={course}
+                      parcoursId={parcoursId}
+                      moduleId={moduleId}
+                      onOpenModal={handleOpenModal}
+                      onClickMenu={handleClickMenu}
+                    />
+                  </Can>
+                )}
+              </div>
             </div>
           </div>
           <Can action="component" object="progression">
             {!isCourseCompleted && (
               <progress
-                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
+                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-2"
                 value={isNaN(courseProgress) ? 0 : courseProgress}
               />
             )}
@@ -251,7 +279,7 @@ const CourseItem = ({
               <span className="flex-1 min-w-0">
                 <p
                   ref={descriptionRef}
-                  className={`text-sm break-words overflow-hidden min-w-0 ${
+                  className={`text-sm wrap-break-word overflow-hidden min-w-0 ${
                     !isDescriptionExpanded ? "line-clamp-1" : ""
                   }`}
                 >
@@ -270,7 +298,7 @@ const CourseItem = ({
               </span>
             )}
 
-            {/* ... Lessons List ... */}
+            {/* Lessons List */}
             {course.lessons.length > 0 ? (
               course.lessons.map(
                 (lesson) =>

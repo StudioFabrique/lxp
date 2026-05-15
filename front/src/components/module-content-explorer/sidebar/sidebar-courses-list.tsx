@@ -14,6 +14,7 @@ type SidebarCoursesListProps = {
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   children: React.ReactNode[];
 };
@@ -26,6 +27,7 @@ const SidebarCoursesList = ({
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
+  onPublishCourse,
   onDeleteLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
@@ -106,6 +108,7 @@ const SidebarCoursesList = ({
               onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
+              onPublishCourse={onPublishCourse}
               onDeleteLesson={onDeleteLesson}
               children={children[1]}
             />

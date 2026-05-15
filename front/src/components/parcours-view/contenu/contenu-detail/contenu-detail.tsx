@@ -6,7 +6,9 @@ import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
-import { EyeOff, Import, Plus } from "lucide-react";
+import { EyeOff, Import, Plus, UploadCloud } from "lucide-react";
+import { cn } from "../../../../utils";
+import toast from "react-hot-toast";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
@@ -26,6 +28,31 @@ const ContenuDetail: FC<{
         lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
       },
     });
+  };
+
+  const handlePublish = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    course: Course,
+  ) => {
+    e.stopPropagation();
+
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        setCourses(
+          courses.map((c) =>
+            c.id === course.id
+              ? { ...c, isPublished: true, visibility: true }
+              : c,
+          ),
+        );
+      }
+    };
+
+    sendRequest(
+      { path: `/course/publish/${course.id}`, method: "put" },
+      applyData,
+    );
   };
 
   /**
@@ -52,32 +79,51 @@ const ContenuDetail: FC<{
           key={course?.id}
           className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content border-l-4 border-primary p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
-          <span className="w-12 h-12 flex-shrink-0 text-primary">
+          <span className="w-12 h-12 shrink-0 text-primary">
             <BookIcon />
           </span>
           <div className="flex flex-col truncate w-full px-4">
             <span className="truncate text-sm opacity-70">{`Cours ${i + 1}`}</span>
             <span className="text-base font-bold truncate">{course.title}</span>
           </div>
+
           <Can action="update" object="course">
-            <Link
-              className="btn btn-ghost text-base-content/70 hover:text-primary"
-              type="button"
-              to={`/${currentRoute[0]}/course/edit/${course.id}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-6 h-6">
-                <EditIcon />
-              </div>
-            </Link>
+            <div className="flex gap-2">
+              {!course.isPublished && (
+                <button
+                  onClick={(e) => handlePublish(e, course)}
+                  className={cn("btn btn-ghost btn-sm tooltip ")}
+                  data-tip={"Publier le cours"}
+                >
+                  <UploadCloud className="w-6 h-6" />
+                </button>
+              )}
+              <Link
+                className="btn btn-ghost btn-sm text-base-content/70 hover:text-primary"
+                type="button"
+                to={`/${currentRoute[0]}/course/edit/${course.id}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="w-6 h-6">
+                  <EditIcon />
+                </div>
+              </Link>
+            </div>
           </Can>
+
           {!course.isPublished || !course.visibility ? (
             <div
-              className="badge badge-error absolute -top-3 -left-2 tooltip tooltip-right z-[11]"
+              className={cn(
+                "badge absolute -top-3 -left-2 tooltip tooltip-right z-11",
+                { "badge-error": !course.isPublished || !course.visibility },
+                { "badge-warning": !course.visibility && course.isPublished },
+              )}
               data-tip={`Le cours est ${
-                !course.visibility ? "invisible" : ""
-              } ${!course.visibility && !course.isPublished ? "et" : ""} ${
-                !course.isPublished ? "non publié" : ""
+                !course.isPublished
+                  ? "non publié"
+                  : course.visibility
+                    ? "visible"
+                    : "invisible"
               }`}
             >
               <EyeOff className="w-4 h-4" />

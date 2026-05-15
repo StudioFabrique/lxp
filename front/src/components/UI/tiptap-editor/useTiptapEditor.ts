@@ -27,9 +27,7 @@ export default function useTiptapEditor(
 
   const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
-  // Ref pour le conteneur principal
   const menuContainerRef = useRef<HTMLDivElement>(null);
-  // Ref pour la sentinelle invisible
   const stickyMarkerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,18 +37,24 @@ export default function useTiptapEditor(
   }, [editor, editorRef]);
 
   useEffect(() => {
-    if (editor) {
-      editor.setEditable(isEditingActivity);
+    if (editor && !editor.isDestroyed) {
+      queueMicrotask(() => {
+        if (editor.isEditable !== isEditingActivity) {
+          editor.setEditable(isEditingActivity);
+        }
+      });
     }
   }, [editor, isEditingActivity]);
 
   useEffect(() => {
-    if (editor && editor.getHTML() !== initialValue) {
-      editor.commands.setContent(initialValue || "");
+    if (editor && !editor.isDestroyed && editor.getHTML() !== initialValue) {
+      queueMicrotask(() => {
+        editor.commands.setContent(initialValue || "");
+      });
     }
   }, [editor, initialValue]);
 
-  // --- LOGIQUE MENU BAR STICKY (Utilisation de IntersectionObserver) ---
+  // --- LOGIQUE MENU BAR STICKY  ---
   useEffect(() => {
     if (!isEditingActivity || !stickyMarkerRef.current) return;
 

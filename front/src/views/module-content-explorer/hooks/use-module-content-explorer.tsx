@@ -224,6 +224,23 @@ const useModuleContentExplorer = () => {
     [fetchModuleData, sendRequest],
   );
 
+  const publishCourse = useCallback(
+    async (courseId: number) => {
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+          fetchModuleData();
+        }
+      };
+
+      await sendRequest(
+        { path: `/course/publish/${courseId}`, method: "put" },
+        applyData,
+      );
+    },
+    [fetchModuleData, sendRequest],
+  );
+
   const deleteCourse = useCallback(
     async (courseId: number) => {
       const applyData = (data: { success: boolean; message: string }) => {
@@ -541,6 +558,7 @@ const useModuleContentExplorer = () => {
     },
     courseActions: {
       enableCourse,
+      publishCourse,
       deleteCourse,
     },
     lessonActions: {
