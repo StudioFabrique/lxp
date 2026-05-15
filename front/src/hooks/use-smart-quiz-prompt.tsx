@@ -39,6 +39,7 @@ export default function useSmartQuizPrompt({
   const activityStartTime = useRef(Date.now());
   const hasBypassedQuizRef = useRef(false);
   const toastIdRef = useRef<string | null>(null);
+  const prevIsAnyQuizOpenRef = useRef(isAnyQuizOpen);
 
   // Déterminer si l'utilisateur peut passer outre les règles de temps
   const canSkipLogic = useMemo(() => {
@@ -87,9 +88,16 @@ export default function useSmartQuizPrompt({
     onGoToNextActivity,
   ]);
 
-  // Réinitialisation lors du changement d'activité
+  // Réinitialisation lors du changement d'activité ou de fermeture d'un quiz
   useEffect(() => {
+    const quizJustClosed = prevIsAnyQuizOpenRef.current && !isAnyQuizOpen;
+    prevIsAnyQuizOpenRef.current = isAnyQuizOpen;
     if (!selectedActivity?.id || isAnyQuizOpen) return;
+
+    if (quizJustClosed) {
+      hasBypassedQuizRef.current = true;
+      return;
+    }
 
     activityStartTime.current = Date.now();
     hasBypassedQuizRef.current = false;

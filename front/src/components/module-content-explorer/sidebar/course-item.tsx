@@ -38,7 +38,11 @@ type CourseItemProps = {
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
 
-type ModalType = "visibility" | "publish" | "deleteCourse" | "deleteLesson";
+export type ModalCourseType =
+  | "visibility"
+  | "publish"
+  | "deleteCourse"
+  | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -58,7 +62,7 @@ const CourseItem = ({
 
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<ModalType>("visibility");
+  const [modalType, setModalType] = useState<ModalCourseType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
     Lesson | undefined
   >(undefined);
@@ -88,7 +92,10 @@ const CourseItem = ({
     e.stopPropagation();
   };
 
-  const handleOpenModal = (modalType: ModalType, e?: React.MouseEvent) => {
+  const handleOpenModal = (
+    modalType: ModalCourseType,
+    e?: React.MouseEvent,
+  ) => {
     e?.stopPropagation();
     setModalType(modalType);
     setShowModal(true);
@@ -167,22 +174,7 @@ const CourseItem = ({
   return (
     <>
       <CourseActionsModal
-        title={
-          modalType === "visibility"
-            ? "Visibilité"
-            : modalType === "deleteLesson"
-              ? "Supprimer la leçon"
-              : "Supprimer le cours"
-        }
-        description={
-          modalType === "visibility"
-            ? `Êtes-vous sûr de vouloir  ${
-                course.visibility ? "cacher" : "rendre visible"
-              } ce cours ?`
-            : modalType === "deleteLesson"
-              ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
-              : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
-        }
+        modalType={modalType}
         showModal={showModal}
         isModalLoading={isModalLoading}
         course={course}
@@ -209,7 +201,7 @@ const CourseItem = ({
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
         >
-          {/* ... Header Content ... */}
+          {/* Header Content */}
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span className="flex gap-1 items-center min-w-0">
@@ -226,26 +218,28 @@ const CourseItem = ({
               </span>
               {isCourseCompleted && <Check className="text-primary" />}
               <div className="flex gap-1 items-center">
-                <Can action="update" object="course">
-                  <button
-                    onClick={(e) => handleOpenModal("visibility", e)}
-                    className={cn("btn btn-sm tooltip ", {
-                      "btn-info": course.visibility,
-                      "btn-neutral": !course.visibility,
-                    })}
-                    data-tip={
-                      course.visibility
-                        ? "Rendre le cours invisible"
-                        : "Rendre le cours visible"
-                    }
-                  >
-                    {course.visibility ? (
-                      <Eye className="w-4 h-4" />
-                    ) : (
-                      <EyeOff className="w-4 h-4" />
-                    )}
-                  </button>
-                </Can>
+                {course.isPublished ? (
+                  <Can action="update" object="course">
+                    <button
+                      onClick={(e) => handleOpenModal("visibility", e)}
+                      className={cn("btn btn-sm tooltip ", {
+                        "btn-info": course.visibility,
+                        "btn-neutral": !course.visibility,
+                      })}
+                      data-tip={
+                        course.visibility
+                          ? "Rendre le cours invisible"
+                          : "Rendre le cours visible"
+                      }
+                    >
+                      {course.visibility ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                    </button>
+                  </Can>
+                ) : null}
                 {canEditCourse && (
                   <Can action="write" object="course">
                     <CourseActions
@@ -304,7 +298,7 @@ const CourseItem = ({
               </span>
             )}
 
-            {/* ... Lessons List ... */}
+            {/* Lessons List */}
             {course.lessons.length > 0 ? (
               course.lessons.map(
                 (lesson) =>
