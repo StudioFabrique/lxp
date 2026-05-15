@@ -8,7 +8,7 @@ type CourseActionsProps = {
   parcoursId?: number;
   moduleId?: number;
   onOpenModal: (
-    modalType: "visibility" | "deleteCourse" | "deleteLesson",
+    modalType: "visibility" | "publish" | "deleteCourse" | "deleteLesson",
     e: React.MouseEvent,
   ) => void;
   onClickMenu: (e: React.MouseEvent) => void;
@@ -21,8 +21,8 @@ const CourseActions = ({
   onOpenModal,
   onClickMenu,
 }: CourseActionsProps) => {
-  const handleClickEnable = (e: React.MouseEvent) => {
-    onOpenModal("visibility", e);
+  const handleClickPublish = (e: React.MouseEvent) => {
+    onOpenModal("publish", e);
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -42,7 +42,7 @@ const CourseActions = ({
         {!course.isPublished && (
           <Can action="update" object="course">
             <button
-              onClick={handleClickEnable}
+              onClick={handleClickPublish}
               className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all last:rounded-b-lg"
             >
               <UploadCloud className="w-4 h-4 mr-3" />
