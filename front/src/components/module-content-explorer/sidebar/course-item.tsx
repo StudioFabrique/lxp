@@ -193,10 +193,10 @@ const CourseItem = ({
           </div>
         ) : null}
         <div
-          className={`flex flex-col w-full cursor-pointer ${
+          className={`flex flex-col w-full cursor-pointer group ${
             isCourseOpen
-              ? "bg-secondary/80"
-              : "bg-secondary/60 hover:bg-secondary/75"
+              ? "bg-secondary/60 hover:bg-secondary/75"
+              : "bg-secondary/50 hover:bg-secondary/75"
           } z-10 rounded-lg`}
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
@@ -216,7 +216,9 @@ const CourseItem = ({
                   {toUpperFirstLetter(course.title)}
                 </h3>
               </span>
-              {isCourseCompleted && <Check className="text-primary" />}
+              {isCourseCompleted && (
+                <Check className="text-success group-hover:text-primary-content" />
+              )}
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
                   {course.isPublished ? (
