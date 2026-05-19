@@ -21,8 +21,7 @@
     "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts",
     "prisma-generate": "npx prisma generate",
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
-    "test:list": "jest --listTests",
-    "postinstall": "prisma generate"
+    "test:list": "jest --listTests"
   },
   "author": "studio@step.eco",
   "license": "ISC",
