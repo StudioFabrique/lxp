@@ -55,7 +55,7 @@ async function createUser() {
   ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
-    firstname: "jacques",
+    firstname: "jean",
     lastname: "durand",
     address: "12 place royale",
     postCode: "64000",
@@ -162,7 +162,7 @@ async function createUser() {
   const infosIds = newInfos.map((item) => item._id);
   await User.findOneAndUpdate(
     { _id: createdStudent._id },
-    { connectionInfos: infosIds }
+    { connectionInfos: infosIds },
   );
   robotIndex++;
 }
