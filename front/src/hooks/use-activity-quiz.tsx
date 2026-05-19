@@ -195,6 +195,11 @@ export default function useActivityQuiz(
 
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
+      if (import.meta.env.VITE_DISABLE_AI_FEATURES === "true") {
+        toast.error("Les quiz IA sont temporairement désactivés.");
+        return;
+      }
+
       if (!isAppending) {
         setIsOpen(true);
         setQuizzes([]);

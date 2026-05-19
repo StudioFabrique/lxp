@@ -109,6 +109,8 @@ export default function useDiagnosticQuiz(
   };
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
+    console.log({ isAiDisabled });
+
     if (isAiDisabled) {
       console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
       setIsOpen(false);
