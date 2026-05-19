@@ -237,11 +237,12 @@ model Mediatheque {
 }
 
 model Module {
-  id          Int     @id @default(autoincrement())
-  title       String
-  description String?
-  image       Bytes?
-  thumb       Bytes?
+  id               Int     @id @default(autoincrement())
+  title            String
+  description      String?
+  quizInstructions String?
+  image            Bytes?
+  thumb            Bytes?
 
   createdAt  DateTime             @default(now())
   updatedAt  DateTime             @updatedAt
