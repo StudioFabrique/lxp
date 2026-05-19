@@ -12,6 +12,7 @@ import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
+import { isAiDisabled } from "../config/ai";
 
 interface ModuleInfoForDiagnostic {
   title?: string;
@@ -108,6 +109,13 @@ export default function useDiagnosticQuiz(
   };
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
+    if (isAiDisabled) {
+      console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
+      setIsOpen(false);
+      onFinishInitialQuiz(); // Appelle directement la suite (initiateLesson)
+      return;
+    }
+
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -210,7 +218,7 @@ export default function useDiagnosticQuiz(
     } finally {
       setIsStreaming(false);
     }
-  }, [moduleInfo.title, moduleInfo.description, axios]);
+  }, [moduleInfo.title, onFinishInitialQuiz, moduleInfo.description, axios]);
 
   const onStartQuiz = () => {
     setIsStarted(true);
