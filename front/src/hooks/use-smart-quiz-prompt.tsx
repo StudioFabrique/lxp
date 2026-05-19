@@ -35,29 +35,34 @@ export default function useSmartQuizPrompt({
 }: UseSmartQuizPromptProps) {
   const { user } = useContext(Context);
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
+  const [hasBypassedQuiz, setHasBypassedQuiz] = useState(false);
 
   const activityStartTime = useRef(Date.now());
-  const hasBypassedQuizRef = useRef(false);
   const toastIdRef = useRef<string | null>(null);
+
+  // Utilisation d'une ref pour suivre l'ID de l'activité indépendamment des re-renders
+  const currentActivityIdRef = useRef<string | number | undefined>(
+    selectedActivity?.id,
+  );
   const prevIsAnyQuizOpenRef = useRef(isAnyQuizOpen);
 
   // Déterminer si l'utilisateur peut passer outre les règles de temps
   const canSkipLogic = useMemo(() => {
     const userIsAdmin =
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
-    return userIsAdmin || isLessonCompleted || hasBypassedQuizRef.current;
-  }, [user, isLessonCompleted]);
+    return userIsAdmin || isLessonCompleted || hasBypassedQuiz;
+  }, [user, isLessonCompleted, hasBypassedQuiz]);
 
   const handleDeclineQuiz = useCallback(() => {
     setShowQuizPrompt(false);
-    hasBypassedQuizRef.current = true;
+    setHasBypassedQuiz(true);
     if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     onGoToNextActivity();
   }, [onGoToNextActivity]);
 
   const handleAcceptQuiz = useCallback(() => {
     setShowQuizPrompt(false);
-    hasBypassedQuizRef.current = true;
+    setHasBypassedQuiz(true);
     if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     onTriggerRandomQuiz();
   }, [onTriggerRandomQuiz]);
@@ -88,24 +93,25 @@ export default function useSmartQuizPrompt({
     onGoToNextActivity,
   ]);
 
-  // Réinitialisation lors du changement d'activité ou de fermeture d'un quiz
   useEffect(() => {
     const quizJustClosed = prevIsAnyQuizOpenRef.current && !isAnyQuizOpen;
     prevIsAnyQuizOpenRef.current = isAnyQuizOpen;
-    if (!selectedActivity?.id || isAnyQuizOpen) return;
 
     if (quizJustClosed) {
-      hasBypassedQuizRef.current = true;
+      setHasBypassedQuiz(true);
       return;
     }
 
-    activityStartTime.current = Date.now();
-    hasBypassedQuizRef.current = false;
-    if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+    if (!selectedActivity?.id || isAnyQuizOpen) return;
 
-    // Timer pour déclencher le toast après 5 minutes
+    if (currentActivityIdRef.current !== selectedActivity.id) {
+      currentActivityIdRef.current = selectedActivity.id;
+      activityStartTime.current = Date.now();
+      setHasBypassedQuiz(false);
+      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+    }
+
     const timer = setTimeout(() => {
-      // On ne déclenche pas le toast si l'utilisateur est admin ou a déjà fini
       if (canSkipLogic || selectedActivity?.type !== "text") return;
 
       toastIdRef.current = toast(
@@ -137,14 +143,13 @@ export default function useSmartQuizPrompt({
 
     return () => {
       clearTimeout(timer);
-      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     };
   }, [
     selectedActivity?.id,
+    isAnyQuizOpen,
     canSkipLogic,
     handleAcceptQuiz,
     selectedActivity?.type,
-    isAnyQuizOpen,
   ]);
 
   return {
