@@ -193,10 +193,10 @@ const CourseItem = ({
           </div>
         ) : null}
         <div
-          className={`flex flex-col w-full cursor-pointer ${
+          className={`flex flex-col w-full cursor-pointer group ${
             isCourseOpen
-              ? "bg-secondary/80"
-              : "bg-secondary/60 hover:bg-secondary/75"
+              ? "bg-secondary/60 hover:bg-secondary/75"
+              : "bg-secondary/50 hover:bg-secondary/75"
           } z-10 rounded-lg`}
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
@@ -216,31 +216,34 @@ const CourseItem = ({
                   {toUpperFirstLetter(course.title)}
                 </h3>
               </span>
-              {isCourseCompleted && <Check className="text-primary" />}
-              <div className="flex gap-1 items-center">
-                {course.isPublished ? (
-                  <Can action="update" object="course">
-                    <button
-                      onClick={(e) => handleOpenModal("visibility", e)}
-                      className={cn("btn btn-sm tooltip ", {
-                        "btn-info": course.visibility,
-                        "btn-neutral": !course.visibility,
-                      })}
-                      data-tip={
-                        course.visibility
-                          ? "Rendre le cours invisible"
-                          : "Rendre le cours visible"
-                      }
-                    >
-                      {course.visibility ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                    </button>
-                  </Can>
-                ) : null}
-                {canEditCourse && (
+              {isCourseCompleted && (
+                <Check className="text-success group-hover:text-primary-content" />
+              )}
+              {canEditCourse && (
+                <div className="flex gap-1 items-center">
+                  {course.isPublished ? (
+                    <Can action="update" object="course">
+                      <button
+                        onClick={(e) => handleOpenModal("visibility", e)}
+                        className={cn("btn btn-sm tooltip ", {
+                          "btn-info": course.visibility,
+                          "btn-neutral": !course.visibility,
+                        })}
+                        data-tip={
+                          course.visibility
+                            ? "Rendre le cours invisible"
+                            : "Rendre le cours visible"
+                        }
+                      >
+                        {course.visibility ? (
+                          <Eye className="w-4 h-4" />
+                        ) : (
+                          <EyeOff className="w-4 h-4" />
+                        )}
+                      </button>
+                    </Can>
+                  ) : null}
+
                   <Can action="write" object="course">
                     <CourseActions
                       course={course}
@@ -250,8 +253,8 @@ const CourseItem = ({
                       onClickMenu={handleClickMenu}
                     />
                   </Can>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
           <Can action="component" object="progression">
