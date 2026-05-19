@@ -21,4 +21,12 @@ export const moduleCreateSchema = moduleMetadataCreateSchema.extend({
     })
     .nullish()
     .transform((val) => val ?? ""),
+  quizInstructions: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message:
+        "Les instructions du professeur du module contiennent des caractères invalides",
+    })
+    .nullish()
+    .transform((val) => val ?? ""),
 });
