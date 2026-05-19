@@ -147,9 +147,6 @@ export default function useDiagnosticQuiz(
         data: {
           title: moduleInfo.title,
           description: moduleInfo.description,
-          teacher_instructions:
-            // À remplacer par une vraie donnée provenant du module une fois le formulaire des modules mis à jour pour inclure les instructions aux enseignants.
-            "Questionnaire diagnostique en français, ton clair et pédagogique. Priorité aux prérequis et bases avant le module. Inclure uniquement des questions auto-corrigeables. Éviter l'ambiguïté.",
         },
         responseType: "stream",
         adapter: "fetch",

@@ -7,7 +7,6 @@ dotenv.config();
 interface ModuleInfo {
   title: string;
   description: string;
-  teacher_instructions: string;
 }
 
 /**
@@ -16,7 +15,7 @@ interface ModuleInfo {
  *
  * Requête:
  * - Query param: n (int, optionnel, défaut 10) - nombre cible de questions
- * - Body: ModuleInfo { title, description, teacher_instructions }
+ * - Body: ModuleInfo { title, description }
  *
  * Réponse (streaming SSE):
  * - event: question | progress | done | error
@@ -27,23 +26,14 @@ export default async function httpPostPreliminaryQuizStream(
   res: Response,
 ) {
   const { n = 5 } = req.query;
-  const { title, description, teacher_instructions } = req.body as ModuleInfo;
+  const { title, description } = req.body as ModuleInfo;
 
   try {
-    // Validation des entrées requises
-    if (!title || !description || !teacher_instructions) {
-      return res.status(400).json({
-        error:
-          "Les champs title, description et teacher_instructions sont requis",
-      });
-    }
-
     // Préparation du payload pour l'API IA
     const iaPayload = {
       n: Number(n),
       title,
       description,
-      teacher_instructions,
     };
 
     console.log(

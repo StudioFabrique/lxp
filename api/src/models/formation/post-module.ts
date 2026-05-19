@@ -36,7 +36,7 @@ async function postModule(
   moduleToAdd: any,
   thumb: any,
   image: any,
-  userId: string
+  userId: string,
 ) {
   console.log("toto champion", moduleToAdd);
 
@@ -79,7 +79,7 @@ async function postModule(
     formationModules.some(
       (mod) =>
         mod.title.trim().toLowerCase() ===
-        moduleToAdd.title.trim().toLowerCase()
+        moduleToAdd.title.trim().toLowerCase(),
     )
   ) {
     throw {
@@ -129,6 +129,8 @@ async function postModule(
         adminId: existingAdmin!.id,
         // Create the many-to-many relationship with formations
         formations: { create: { formationId: moduleToAdd.formationId } },
+        quizInstructions:
+          "Questionnaire diagnostique en français, ton clair et pédagogique. Priorité aux prérequis et bases avant le module. Inclure uniquement des questions auto-corrigeables. Éviter l'ambiguïté.",
       },
       select: {
         id: true,
@@ -140,6 +142,7 @@ async function postModule(
         updatedAt: true,
         author: true,
         adminId: true,
+        quizInstructions: true,
       },
     });
 
