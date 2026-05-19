@@ -117,12 +117,6 @@ pipeline {
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/
                     '''
 
-                    /*
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma.config.ts $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-                    */
-
                     sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
                     '''
@@ -135,8 +129,9 @@ pipeline {
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
                     '''
 
+                    // FIX 1: Bypass the crashing auto-generation here by using PRISMA_SKIP_POSTINSTALL_GENERATE=true
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && PRISMA_SKIP_POSTINSTALL_GENERATE=true npm ci"
                     '''
 
                     sh '''
@@ -189,7 +184,9 @@ pipeline {
                             cd /home/${USER}/${TARGET}
 
                             echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            DATABASE_URL="${MIGRATION_DATABASE_URL}" npx prisma migrate deploy
+
+                            # FIX 2: Corrected command from 'migrate deploy' to 'generate'
+                            DATABASE_URL="${MIGRATION_DATABASE_URL}" npx prisma generate
 
                             echo "✅ Prisma Client regenerated successfully"
                         '
