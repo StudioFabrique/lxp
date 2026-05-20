@@ -59,6 +59,7 @@ import { query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses";
 import { httpEnableCourse } from "../../../controllers/course/http-enable-course";
+import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz";
 
 const courseRouter = express.Router();
 
@@ -84,7 +85,23 @@ const storage = multer.diskStorage({
 // Configuration de multer avec une limite de taille de fichier de 1MB
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
+const memoryUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 100 * 1024 * 1024 }, // Limite à 100 Mo par exemple pour les gros fichiers de cours
+});
+
 // Routes pour la gestion des cours
+
+/**
+ * Route POST pour importer un cours depuis un fichier MBZ
+ * Nécessite les permissions "course" et une validation du champ "file"
+ */
+courseRouter.post(
+  "/import-mbz",
+  checkPermissions("course"),
+  memoryUpload.single("file"),
+  httpPostImportCourseMbz,
+);
 
 /**
  * Route DELETE pour supprimer un cours d'un module

@@ -37,7 +37,7 @@ type Props = {
   ) => void;
 };
 
-const ZipImport = ({
+const CoursesPreview = ({
   importedCourses,
   error,
   tooltipErrorTip,
@@ -63,7 +63,7 @@ const ZipImport = ({
     ? error
     : importedCourses
       ? `${importedCourses.length > 1 ? importedCourses.length + " c" : "C"}ours prêt${importedCourses.length > 1 ? "s" : ""} à être importé${importedCourses.length > 1 ? "s" : ""}`
-      : "Téléverser un dossier compressé de format .zip";
+      : "Sélectionner le contenu pédagogique à importer";
 
   const handlePreviewCourse = (course: CourseImport) => {
     setSelectedCourse(course);
@@ -108,6 +108,12 @@ const ZipImport = ({
     <div className="flex flex-col gap-6 ml-5">
       <Header
         title="Première étape"
+        description="Importer le fichier d'import de cours en .mbz"
+        disabled
+        isSubHeader
+      />
+      <Header
+        title="Seconde étape"
         isSubHeader
         description={headerDescription}
         alternateBgColor
@@ -228,8 +234,8 @@ const ZipImport = ({
       )}
 
       <Header
-        title="Seconde étape"
-        description="Selectionner le parcours auquels les cours seront rattachés"
+        title="Dernière étape"
+        description="Sélectionner le parcours auquels les cours seront rattachés"
         disabled
         isSubHeader
       />
@@ -237,4 +243,4 @@ const ZipImport = ({
   );
 };
 
-export default ZipImport;
+export default CoursesPreview;

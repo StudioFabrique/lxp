@@ -14,13 +14,18 @@ const allowedExtensions = {
     type: "application/x-zip-compressed",
     pickerAccept: ".zip",
   },
+  mbz: {
+    rgx: /(\.mbz)$/i,
+    type: "application/x-mbz",
+    pickerAccept: ".mbz",
+  },
 };
 
 const FileUpload: FC<{
   maxSize: number;
   label?: string;
   buttonLabel?: string;
-  fileType?: "image" | "zip";
+  fileType?: "image" | "zip" | "mbz";
   variant?: "normal" | "minimized";
   onSetFile: (file: File) => void;
 }> = ({

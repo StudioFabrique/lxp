@@ -1,21 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
-import JSZip from "jszip";
-import { marked } from "marked";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useHttp from "../../../hooks/use-http";
-import { cleanPath } from "../../../utils/zip-utils";
 
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import Parcours from "../../../utils/interfaces/parcours";
-import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import Module from "../../../utils/interfaces/module";
 import { BASE_URL } from "../../../config/urls";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
+import { getMimeType, sanitizeFilename } from "../../../utils/import-mime";
+import { parseCourseZip } from "../../../helpers/course-import-parser";
 
 export enum CoursesImportStep {
-  ZipImport,
+  MbzImport,
+  CoursesPreview,
   ParcoursSelection,
   ImportResult,
 }
@@ -32,15 +31,6 @@ export interface QueuedImage {
   tempId: string;
 }
 
-type JsonFileFormat = {
-  type: "text" | "file";
-  title: string;
-  course: string;
-  lesson: string;
-  order: number;
-  path: string;
-};
-
 export type CourseImport = Course & {
   id: number;
   hasError?: boolean;
@@ -55,60 +45,16 @@ export type CourseImport = Course & {
   moduleId?: number;
 };
 
-const getMimeType = (filename: string): string => {
-  const ext = filename.split(".").pop()?.toLowerCase();
-  switch (ext) {
-    // Images
-    case "png":
-      return "image/png";
-    case "jpg":
-    case "jpeg":
-      return "image/jpeg";
-    case "gif":
-      return "image/gif";
-    case "webp":
-      return "image/webp";
-    case "svg":
-      return "image/svg+xml";
-    case "bmp":
-      return "image/bmp";
-    // Documents
-    case "pdf":
-      return "application/pdf";
-    case "ppt":
-      return "application/vnd.ms-powerpoint";
-    case "pptx":
-      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-    case "txt":
-      return "text/plain";
-    case "doc":
-      return "application/msword";
-    case "docx":
-      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    case "xls":
-      return "application/vnd.ms-excel";
-    case "xlsx":
-      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    case "md":
-      return "text/markdown";
-    default:
-      return "application/octet-stream";
-  }
-};
-
-const sanitizeFilename = (filename: string): string => {
-  return filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-};
-
 export default function useImportCourses() {
   const { sendRequest } = useHttp();
 
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
-    CoursesImportStep.ZipImport,
+    CoursesImportStep.MbzImport,
   );
+
   const [importedCourses, setImportedCourses] = useState<CourseImport[]>();
-  const [imagesQueue, setImagesQueue] = useState<QueuedImage[]>([]);
+  const imagesQueue = useRef<QueuedImage[]>([]);
 
   // Selection Data
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
@@ -131,6 +77,108 @@ export default function useImportCourses() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
 
+  /**
+   * INTERACTION AVEC LE NOUVEAU ENDPOINT BACKEND :
+   * Envoie le .mbz brut, reçoit un flux binaire ZIP, puis le transmet au service de parsing.
+   */
+  const handleImportMbz = useCallback(async (file: File) => {
+    setError("");
+    setTooltipErrorTip("");
+    setIsLoading(true);
+    setImportedCourses(undefined);
+    imagesQueue.current = [];
+    setCurrentAction(
+      "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
+    );
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Appel au endpoint Node personnalisé (utilisation de fetch pour le typage blob de la réponse binaire)
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${BASE_URL}/course/import-mbz`, {
+        method: "POST",
+        body: formData,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(
+          errJson.error ||
+            "Échec du traitement de l'archive MBZ par le serveur backend.",
+        );
+      }
+
+      setCurrentAction(
+        "Package de cours généré. Analyse binaire de la structure...",
+      );
+      const zipBlob = await response.blob();
+
+      // Utilisation du service extrait
+      const {
+        courses,
+        images,
+        error: parseError,
+        tooltipErrorTip: parseTooltip,
+      } = await parseCourseZip(zipBlob);
+
+      if (parseError) setError(parseError);
+      if (parseTooltip) setTooltipErrorTip(parseTooltip);
+
+      setImportedCourses(courses);
+      imagesQueue.current = images;
+      setImportStep(CoursesImportStep.CoursesPreview);
+    } catch (e: any) {
+      console.error(`Erreur import mbz:`, e);
+      setError(
+        e.message ||
+          "Une erreur est survenue lors de l'intégration de votre cours.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  /**
+   * PARSING TRADITIONNEL D'UN ZIP LOCAL
+   */
+  const handleImportZip = useCallback(async (file: File) => {
+    setError("");
+    setTooltipErrorTip("");
+    setIsLoading(true);
+    setImportedCourses(undefined);
+    imagesQueue.current = [];
+
+    try {
+      const {
+        courses,
+        images,
+        error: parseError,
+        tooltipErrorTip: parseTooltip,
+      } = await parseCourseZip(file);
+
+      if (parseError) setError(parseError);
+      if (parseTooltip) setTooltipErrorTip(parseTooltip);
+
+      setImportedCourses(courses);
+      imagesQueue.current = images;
+      setImportStep(CoursesImportStep.CoursesPreview);
+    } catch (err: any) {
+      console.error(err);
+      setError(
+        err.message ||
+          "Le fichier ZIP est corrompu ou ne possède pas d'index valide.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  /**
+   * ENVOI DES RESSOURCES BINAIRES D'ACTIVITÉS (PDF, DOCX, etc.)
+   */
   const uploadActivityResource = useCallback(
     async (lessonId: number, file: File, title: string) => {
       try {
@@ -155,6 +203,9 @@ export default function useImportCourses() {
     [sendRequest],
   );
 
+  /**
+   * PROCESSUS DE PERSISTANCE DES STRUCURES ET MÉDIAS SUR LE SERVEUR DE DONNÉES SQL
+   */
   const processImport = useCallback(async () => {
     if (!importedCourses) return;
 
@@ -174,7 +225,6 @@ export default function useImportCourses() {
     try {
       for (const course of importedCourses) {
         setCurrentAction(`Création du cours : ${course.title}`);
-
         await new Promise((r) => setTimeout(r, 50));
 
         const structurePayload = {
@@ -221,8 +271,7 @@ export default function useImportCourses() {
               typeof activity.value === "string"
             ) {
               let finalHtml = activity.value;
-
-              const imagesToProcess = imagesQueue.filter((img) =>
+              const imagesToProcess = imagesQueue.current.filter((img) =>
                 finalHtml.includes(img.tempId),
               );
 
@@ -232,7 +281,6 @@ export default function useImportCourses() {
                   setCurrentAction(
                     `Upload image ${i + 1}/${imagesToProcess.length} pour : ${activity.title}`,
                   );
-
                   await new Promise((r) => setTimeout(r, 20));
 
                   try {
@@ -279,7 +327,6 @@ export default function useImportCourses() {
               const fileToSend = new File([activity.value], cleanName, {
                 type: mimeType,
               });
-
               await uploadActivityResource(
                 realLessonId,
                 fileToSend,
@@ -297,12 +344,13 @@ export default function useImportCourses() {
       setUploadProgress(100);
     } catch (globalError) {
       console.error(globalError);
-      setError("Une erreur est survenue pendant l'import.");
+      setError(
+        "Une erreur critique est survenue pendant l'importation réseau.",
+      );
       setCurrentAction("Erreur critique.");
       setIsLoading(false);
     }
   }, [
-    imagesQueue,
     importedCourses,
     selectedModule?.id,
     selectedParcours?.id,
@@ -310,175 +358,7 @@ export default function useImportCourses() {
     uploadActivityResource,
   ]);
 
-  const processHtmlImages = async (
-    htmlContent: string,
-    zip: JSZip,
-    rootPath: string,
-  ): Promise<{ newHtml: string; newImages: QueuedImage[] }> => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, "text/html");
-    const imgTags = doc.querySelectorAll("img");
-    const extractedImages: QueuedImage[] = [];
-
-    for (const img of Array.from(imgTags)) {
-      const src = img.getAttribute("src");
-      if (src && (src.startsWith("./files") || src.startsWith("files/"))) {
-        const cleanSrc = cleanPath(src);
-        const fullPath = rootPath + cleanSrc;
-        const fileInZip = zip.file(fullPath);
-
-        if (fileInZip) {
-          const blob = await fileInZip.async("blob");
-
-          const rawName = cleanSrc.split("/").pop() || "image.png";
-          const cleanFileName = sanitizeFilename(rawName);
-
-          const mimeType = getMimeType(cleanFileName);
-
-          // Injection du MIME type correct dans le constructeur File
-          const file = new File([blob], cleanFileName, { type: mimeType });
-
-          const blobUrl = URL.createObjectURL(blob);
-          const tempId = `temp-${Date.now()}-${Math.random()}`;
-
-          extractedImages.push({
-            file,
-            blobUrl,
-            size: "medium",
-            tempId,
-          });
-
-          img.setAttribute("src", blobUrl);
-          img.setAttribute("data-temp-id", tempId);
-        }
-      }
-    }
-
-    return {
-      newHtml: doc.body.innerHTML,
-      newImages: extractedImages,
-    };
-  };
-
-  const onImportZip = async (file: File) => {
-    setError("");
-    setTooltipErrorTip("");
-    setIsLoading(true);
-    setImportedCourses(undefined);
-    setImagesQueue([]);
-
-    try {
-      const zip = new JSZip();
-      const loadedZip = await zip.loadAsync(file);
-      const foundFiles = loadedZip.file(/(export|index)\.json$/);
-      const exportFile = foundFiles.find(
-        (f) =>
-          !f.name.includes("__MACOSX") &&
-          !f.name.split("/").pop()?.startsWith("._"),
-      );
-
-      if (!exportFile) throw new Error("Fichier d'index introuvable.");
-
-      const fileName = exportFile.name.split("/").pop() || "";
-      const rootPath = exportFile.name.replace(fileName, "");
-      const jsonContent = await exportFile.async("string");
-      const flatActivities: JsonFileFormat[] = JSON.parse(jsonContent);
-
-      const coursesMap = new Map<string, CourseImport>();
-      const allExtractedImages: QueuedImage[] = [];
-
-      for (const item of flatActivities) {
-        if (!coursesMap.has(item.course)) {
-          coursesMap.set(item.course, {
-            id: Math.random(),
-            title: item.course,
-            lessons: [],
-            isPublished: false,
-            hasError: false,
-            contacts: [],
-            bonusSkills: [],
-            module: {} as Module,
-            tags: [],
-            dates: [],
-            duration: 0,
-            parcours: {} as Parcours,
-          } as CourseImport);
-        }
-        const currentCourse = coursesMap.get(item.course)!;
-
-        let currentLesson = currentCourse.lessons.find(
-          (l) => l.title === item.lesson,
-        ) as Lesson & { hasError?: boolean; isSelected: boolean };
-
-        if (!currentLesson) {
-          currentLesson = {
-            id: Math.random(),
-            title: item.lesson,
-            description: "",
-            modalite: "hybride",
-            tag: {} as Tag,
-            adminId: 0,
-            course: currentCourse,
-            activities: [],
-            hasError: false,
-            isSelected: true,
-            lessonRating: [],
-          };
-          currentCourse.lessons.push(currentLesson);
-        }
-
-        if (item.path) {
-          const relativePath = cleanPath(item.path);
-          const fullZipPath = rootPath + relativePath;
-          const fileInZip = loadedZip.file(fullZipPath);
-
-          const activity: ActivityImport = {
-            id: Math.random(),
-            title: item.title,
-            type: item.type,
-            order: item.order,
-            url: item.path,
-            hasError: false,
-          } as ActivityImport;
-
-          if (!fileInZip) {
-            setTooltipErrorTip("Fichiers manquants.");
-            setError("Un ou plusieurs fichiers sont manquants.");
-            activity.hasError = true;
-            currentLesson.hasError = true;
-            currentCourse.hasError = true;
-          } else {
-            if (item.type === "text") {
-              const markdownContent = await fileInZip.async("string");
-              let htmlContent = await marked.parse(markdownContent);
-              htmlContent = replaceActivityTextContent(htmlContent);
-
-              console.log({ htmlContent });
-
-              const { newHtml, newImages } = await processHtmlImages(
-                htmlContent,
-                loadedZip,
-                rootPath,
-              );
-              activity.value = newHtml;
-              allExtractedImages.push(...newImages);
-            } else {
-              activity.value = await fileInZip.async("blob");
-            }
-          }
-          currentLesson.activities?.push(activity);
-        }
-      }
-
-      setImportedCourses(Array.from(coursesMap.values()));
-      setImagesQueue(allExtractedImages);
-    } catch (error) {
-      console.error(error);
-      setError((error as Error).message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // --- Fonctions CRUD d'Arborescence & Commits Locaux ---
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(
@@ -562,9 +442,10 @@ export default function useImportCourses() {
                   l.id === lId
                     ? {
                         ...l,
-                        activities: l.activities?.map((a) =>
-                          a.id === aId ? { ...a, title } : a,
-                        ),
+                        activities:
+                          l.activities?.map((a) =>
+                            a.id === aId ? { ...a, title } : a,
+                          ) || [],
                       }
                     : l,
                 ),
@@ -582,10 +463,7 @@ export default function useImportCourses() {
   const onConfirmParcoursSelection = () => {
     if (importedCourses) {
       const finalCourses = importedCourses
-        .map((c) => ({
-          ...c,
-          lessons: c.lessons.filter((l) => l.isSelected),
-        }))
+        .map((c) => ({ ...c, lessons: c.lessons.filter((l) => l.isSelected) }))
         .filter((c) => c.lessons.length > 0);
       setImportedCourses(finalCourses as CourseImport[]);
     }
@@ -594,7 +472,7 @@ export default function useImportCourses() {
 
   const onGoBack = () => {
     setImportStep((curr) =>
-      curr <= CoursesImportStep.ZipImport ? curr : curr - 1,
+      curr <= CoursesImportStep.CoursesPreview ? curr : curr - 1,
     );
   };
 
@@ -608,6 +486,8 @@ export default function useImportCourses() {
       );
     }
   }, [selectedParcours, sendRequest]);
+
+  // --- Effects de Synchronisation & Chargement des Données de Listes ---
 
   useEffect(() => {
     if (step === CoursesImportStep.ImportResult && importedCourses) {
@@ -660,7 +540,8 @@ export default function useImportCourses() {
     setSelectedParcours,
     setSelectedModule,
     fetchModules,
-    onImportZip,
+    handleImportZip,
+    handleImportMbz,
     onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,

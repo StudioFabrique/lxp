@@ -3,11 +3,14 @@ import Header from "../../../components/UI/header";
 import useImportCourses, {
   CoursesImportStep,
 } from "../hooks/use-import-courses";
-import ZipImport from "../../../components/import-courses/zip-import/zip-import";
 import ParcoursSelection from "../../../components/import-courses/parcours-selection";
 import ImportResult from "../../../components/import-courses/import-result";
+import CoursesPreview from "../../../components/import-courses/courses-preview/courses-preview";
+import MbzImport from "../../../components/import-courses/mbz-import";
 
 const ImportCoursesHome = () => {
+  console.log(+"test 1" + +"test 2");
+
   const {
     step,
     importedCourses,
@@ -25,7 +28,8 @@ const ImportCoursesHome = () => {
     setSelectedParcours,
     setSelectedModule,
     fetchModules,
-    onImportZip,
+    handleImportMbz,
+    handleImportZip,
     onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,
@@ -39,13 +43,15 @@ const ImportCoursesHome = () => {
 
   const renderBody = () => {
     switch (step) {
-      case CoursesImportStep.ZipImport:
+      case CoursesImportStep.MbzImport:
+        return <MbzImport onImportMbz={handleImportMbz} />;
+      case CoursesImportStep.CoursesPreview:
         return (
-          <ZipImport
+          <CoursesPreview
             importedCourses={importedCourses}
             error={error}
             tooltipErrorTip={tooltipErrorTip}
-            onImportZip={onImportZip}
+            onImportZip={handleImportZip}
             onConfirmZipImport={onConfirmImport}
             onRemoveCourse={onRemoveCourse}
             onToggleLessonSelection={onToggleLessonSelection}
