@@ -8,6 +8,7 @@ export default interface Module {
   id?: number;
   title: string;
   description: string;
+  quizInstructions?: string;
   contacts: Array<Contact>;
   bonusSkills: Array<Skill>;
   duration: number;

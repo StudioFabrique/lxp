@@ -129,8 +129,7 @@ async function postModule(
         adminId: existingAdmin!.id,
         // Create the many-to-many relationship with formations
         formations: { create: { formationId: moduleToAdd.formationId } },
-        quizInstructions:
-          "Questionnaire diagnostique en français, ton clair et pédagogique. Priorité aux prérequis et bases avant le module. Inclure uniquement des questions auto-corrigeables. Éviter l'ambiguïté.",
+        quizInstructions: moduleToAdd.quizInstructions,
       },
       select: {
         id: true,

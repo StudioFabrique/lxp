@@ -10,6 +10,7 @@ type Props = {
   thumb: string | null;
   duration?: number;
   description: string;
+  quizInstructions?: string;
   contacts: Contact[];
   skills: Skill[];
   onUpdate: (module: ModuleData) => void;
@@ -24,6 +25,7 @@ export default function ModulesList(props: Props) {
       thumb: props.thumb,
       duration: props.duration,
       description: props.description,
+      quizInstructions: props.quizInstructions,
       contacts: props.contacts,
       skills: props.skills,
     };

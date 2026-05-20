@@ -46,6 +46,7 @@ async function getModulesFromParcours(parcoursId: number) {
               title: true,
               thumb: true, // Thumbnail image as Buffer
               description: true,
+              quizInstructions: true,
             },
           },
         },
@@ -83,6 +84,7 @@ async function getModulesFromParcours(parcoursId: number) {
         ? Buffer.from(mod.module.thumb as any).toString("base64")
         : null,
       description: mod.module.description,
+      quizInstructions: mod.module.quizInstructions,
       duration: mod.duration, // Duration specific to this parcours instance
       // Flatten contacts from many-to-many relationship
       contacts: mod.contacts.map((c) => ({

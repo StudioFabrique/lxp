@@ -6,7 +6,6 @@ import defaultImage from "../../assets/images/module-default.jpg";
 import Field from "../UI/forms/field";
 import FieldArea from "../UI/forms/field-area";
 import FormUploadImage from "../UI/form-upload-image";
-
 type Props = {
   children?: React.ReactNode;
   mode: "create" | "edit";
@@ -33,7 +32,7 @@ function ModuleMetadatas({
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      image ? image : thumb ? `data:image/jpeg;base64,${thumb}` : defaultImage
+      image ? image : thumb ? `data:image/jpeg;base64,${thumb}` : defaultImage,
     ),
     width: "100px",
     height: "75px",
@@ -71,6 +70,22 @@ function ModuleMetadatas({
           data={data}
           isDisabled={mode === "edit"}
         />
+
+        <div className="flex flex-col gap-2">
+          <FieldArea
+            label="Instructions pour le quiz"
+            tooltip="Utilisez ce champ pour donner des indications à l'IA pour générer le quiz de début de module."
+            name="quizInstructions"
+            data={data}
+            isDisabled={mode === "edit"}
+          />
+          <p className="text-base-content/40 text-xs">
+            Exemple : Questionnaire diagnostique en français, ton clair et
+            pédagogique. Priorité aux prérequis et bases avant le module.
+            Inclure uniquement des questions auto-corrigeables. Éviter
+            l'ambiguïté.
+          </p>
+        </div>
 
         {/* duration */}
 

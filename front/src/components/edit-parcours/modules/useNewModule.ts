@@ -44,6 +44,8 @@ const useNewModule = () => {
 
   const data = { values, onChangeValue, errors };
 
+  console.log({ values });
+
   /**
    * Fetches modules and parcours data from the API
    */
@@ -73,10 +75,10 @@ const useNewModule = () => {
       formationId: state.parcours?.formationId,
       parcoursId: +id!,
       duration:
-        (data.values.duration as number) === 0 ||
-        isNaN(data.values.duration as number)
+        (+data.values.duration as number) === 0 ||
+        isNaN(+data.values.duration as number)
           ? 1
-          : (data.values.duration as number),
+          : (+data.values.duration as number),
       contacts: state.currentContacts.map((item) => item.id),
       skills: state.currentSkills.map((item) => item.id),
     };
@@ -202,25 +204,27 @@ const useNewModule = () => {
       moduleId: module.id,
       title: module.title,
       description: module.description,
+      quizInstructions: module.quizInstructions,
     });
     const drawer = document.getElementById("duplicate_module_drawer");
     (drawer as HTMLDialogElement).click();
   };
 
-  const handleUpdateModule = (moduleToUpddate: ModuleData) => {
+  const handleUpdateModule = (moduleToUpdate: ModuleData) => {
     dispatch({
       type: "UPDATE_MODULE",
       payload: {
-        id: moduleToUpddate.id,
-        contacts: moduleToUpddate.contacts,
-        skills: moduleToUpddate.skills,
-        duration: moduleToUpddate.duration ? +moduleToUpddate.duration : 1,
+        id: moduleToUpdate.id,
+        contacts: moduleToUpdate.contacts,
+        skills: moduleToUpdate.skills,
+        duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
       },
     });
     initValues({
-      title: moduleToUpddate.title,
-      description: moduleToUpddate.description,
-      duration: moduleToUpddate.duration,
+      title: moduleToUpdate.title,
+      description: moduleToUpdate.description,
+      duration: moduleToUpdate.duration,
+      quizInstructions: moduleToUpdate.quizInstructions,
     });
   };
 
@@ -254,7 +258,7 @@ const useNewModule = () => {
             moduleId: data.values.moduleId,
             contactIds: state.currentContacts.map((item) => item.id ?? []),
             skillIds: state.currentSkills.map((item) => item.id ?? []),
-            duration: data.values.duration as number,
+            duration: +data.values.duration as number,
           },
         },
         applyData,
@@ -275,7 +279,7 @@ const useNewModule = () => {
           path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
           method: "post",
           body: {
-            duration: data.values.duration as number,
+            duration: +data.values.duration as number,
             contactsIds: state.currentContacts.map((item) => item.id),
             skillsIds: state.currentSkills.map((item) => item.id),
             parcoursId: +id!,
