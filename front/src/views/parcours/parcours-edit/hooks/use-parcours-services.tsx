@@ -28,13 +28,13 @@ const useParcoursService = () => {
             description: data.description,
             isPublished: data.isPublished,
             visibility: data.visibility,
-          })
+          }),
         );
         dispatch(
           parcoursInformationsAction.updateParcoursDates({
             startDate: data.startDate,
             endDate: data.endDate,
-          })
+          }),
         );
         dispatch(parcoursAction.setParcoursFormation(data.formation));
         if (data.image) {
@@ -42,7 +42,7 @@ const useParcoursService = () => {
         }
         if (data.tags.length > 0) {
           dispatch(
-            tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag))
+            tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag)),
           );
         } else {
           dispatch(tagsAction.setCurrentTags(parentTags));
@@ -50,7 +50,7 @@ const useParcoursService = () => {
         dispatch(tagsAction.setParentTags(parentTags));
         if (data.virtualClass) {
           dispatch(
-            parcoursInformationsAction.setVirtualClass(data.virtualClass)
+            parcoursInformationsAction.setVirtualClass(data.virtualClass),
           );
         }
         if (data.contacts.length > 0) {
@@ -59,8 +59,8 @@ const useParcoursService = () => {
         if (data.skills.length > 0) {
           dispatch(
             parcoursSkillsAction.setSkillsList(
-              data.skills.map((item: any) => item.skill)
-            )
+              data.skills.map((item: any) => item.skill),
+            ),
           );
         }
         if (data.bonusSkills.length > 0) {
@@ -69,8 +69,8 @@ const useParcoursService = () => {
         if (data.objectives.length > 0) {
           dispatch(
             parcoursObjectivesAction.addImportedObjectivesToObjectives(
-              data.objectives
-            )
+              data.objectives,
+            ),
           );
         }
         if (data.modules.length > 0) {
@@ -80,16 +80,17 @@ const useParcoursService = () => {
                 return {
                   ...item,
                   title: item.module.title,
+                  quizInstructions: item.module.quizInstructions,
                   thumb: item.module.thumb,
                   contacts: item.contacts.map(
-                    (itemContact: any) => itemContact.contact
+                    (itemContact: any) => itemContact.contact,
                   ),
                   bonusSkills: item.bonusSkills.map(
-                    (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+                    (itemBonusSkills: any) => itemBonusSkills.bonusSkill,
                   ),
                 };
-              })
-            )
+              }),
+            ),
           );
         } else {
           dispatch(parcoursModulesSliceActions.setModules([]));
@@ -97,8 +98,8 @@ const useParcoursService = () => {
         if (data.groups.length > 0) {
           dispatch(
             parcoursGroupsAction.setGroupsIds(
-              data.groups.map((item: any) => item.group)
-            )
+              data.groups.map((item: any) => item.group),
+            ),
           );
         } else {
           dispatch(parcoursGroupsAction.setGroups([]));
@@ -111,10 +112,10 @@ const useParcoursService = () => {
         {
           path: `/parcours/parcours-by-id/${parcoursId}`,
         },
-        processData
+        processData,
       );
     },
-    [dispatch, sendRequest]
+    [dispatch, sendRequest],
   );
 
   useEffect(() => {
