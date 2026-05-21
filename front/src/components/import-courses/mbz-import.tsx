@@ -3,10 +3,11 @@ import MemoizedFileUpload from "../UI/image-file-upload/image-file-upload";
 
 type Props = {
   error?: string;
+  isLoading?: boolean;
   onImportMbz: (file: File) => void;
 };
 
-const MbzImport = ({ error, onImportMbz }: Props) => {
+const MbzImport = ({ error, isLoading, onImportMbz }: Props) => {
   const headerDescription = error
     ? error
     : "Téléverser un cours compressé au format .mbz";
@@ -26,6 +27,7 @@ const MbzImport = ({ error, onImportMbz }: Props) => {
           maxSize={10000000}
           onSetFile={onImportMbz}
           fileType="mbz"
+          isLoading={isLoading}
         />
       </Header>
       <Header

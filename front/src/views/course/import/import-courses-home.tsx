@@ -15,6 +15,7 @@ const ImportCoursesHome = () => {
     step,
     importedCourses,
     error,
+    isLoading,
     tooltipErrorTip,
     uploadProgress,
     currentAction,
@@ -44,7 +45,13 @@ const ImportCoursesHome = () => {
   const renderBody = () => {
     switch (step) {
       case CoursesImportStep.MbzImport:
-        return <MbzImport onImportMbz={handleImportMbz} />;
+        return (
+          <MbzImport
+            error={error}
+            isLoading={isLoading}
+            onImportMbz={handleImportMbz}
+          />
+        );
       case CoursesImportStep.CoursesPreview:
         return (
           <CoursesPreview
