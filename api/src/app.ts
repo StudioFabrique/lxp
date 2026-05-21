@@ -15,7 +15,7 @@ const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
 
 const origins =
   process.env.ENVIRONMENT === "production"
-    ? []
+    ? ["https://fnp.lxp.andria.ovh"]
     : [
         "http://localhost:5173",
         "http://localhost:5174",
