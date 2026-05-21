@@ -13,8 +13,9 @@ import CourseArborescence from "./course-arborescence";
 type Props = {
   importedCourses?: CourseImport[];
   error?: string;
+  isLoading?: boolean;
   tooltipErrorTip?: string;
-  onImportZip: (file: File) => void;
+  onImportMbz: (file: File) => void;
   onConfirmZipImport: () => void;
   onRemoveCourse?: (courseTitle: string) => void;
   onToggleLessonSelection: (courseId: number, lessonId: number) => void;
@@ -40,8 +41,9 @@ type Props = {
 const CoursesPreview = ({
   importedCourses,
   error,
+  isLoading,
   tooltipErrorTip,
-  onImportZip,
+  onImportMbz,
   onConfirmZipImport,
   onRemoveCourse,
   onToggleLessonSelection,
@@ -119,27 +121,30 @@ const CoursesPreview = ({
         alternateBgColor
         hasError={Boolean(error)}
       >
-        <MemoizedFileUpload
-          buttonLabel="Importer un fichier .zip"
-          variant="minimized"
-          maxSize={10000000}
-          onSetFile={onImportZip}
-          fileType="zip"
-        />
-
-        <button
-          className="btn btn-sm btn-success ml-5 mr-2"
-          disabled={!importedCourses || Boolean(error)}
-          onClick={onConfirmZipImport}
-        >
-          Confirmer l'importation
-        </button>
-        {tooltipErrorTip && (
-          <QuestionMarkTooltip
-            tooltipValue={tooltipErrorTip}
-            tooltipPosition="left"
+        <div className="flex items-center gap-3">
+          <MemoizedFileUpload
+            buttonLabel="Ajouter un fichier .mbz"
+            variant="minimized"
+            maxSize={50 * 1024 * 1024} // 100 Mo
+            onSetFile={onImportMbz}
+            fileType="mbz"
+            isLoading={isLoading}
           />
-        )}
+
+          <button
+            className="btn btn-sm btn-success ml-2 mr-2"
+            disabled={(!importedCourses && Boolean(error)) || isLoading}
+            onClick={onConfirmZipImport}
+          >
+            Confirmer l'importation
+          </button>
+          {tooltipErrorTip && (
+            <QuestionMarkTooltip
+              tooltipValue={tooltipErrorTip}
+              tooltipPosition="left"
+            />
+          )}
+        </div>
       </Header>
 
       {importedCourses && importedCourses.length > 0 && (

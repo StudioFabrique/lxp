@@ -24,7 +24,7 @@ const MbzImport = ({ error, isLoading, onImportMbz }: Props) => {
         <MemoizedFileUpload
           buttonLabel="Importer un fichier .mbz"
           variant="minimized"
-          maxSize={10000000}
+          maxSize={50 * 1024 * 1024} // 100 Mo
           onSetFile={onImportMbz}
           fileType="mbz"
           isLoading={isLoading}

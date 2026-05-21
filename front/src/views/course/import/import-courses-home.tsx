@@ -9,8 +9,6 @@ import CoursesPreview from "../../../components/import-courses/courses-preview/c
 import MbzImport from "../../../components/import-courses/mbz-import";
 
 const ImportCoursesHome = () => {
-  console.log(+"test 1" + +"test 2");
-
   const {
     step,
     importedCourses,
@@ -30,7 +28,6 @@ const ImportCoursesHome = () => {
     setSelectedModule,
     fetchModules,
     handleImportMbz,
-    handleImportZip,
     onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,
@@ -57,8 +54,9 @@ const ImportCoursesHome = () => {
           <CoursesPreview
             importedCourses={importedCourses}
             error={error}
+            isLoading={isLoading}
             tooltipErrorTip={tooltipErrorTip}
-            onImportZip={handleImportZip}
+            onImportMbz={handleImportMbz}
             onConfirmZipImport={onConfirmImport}
             onRemoveCourse={onRemoveCourse}
             onToggleLessonSelection={onToggleLessonSelection}

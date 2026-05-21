@@ -28,7 +28,7 @@ const GroupUserList: FC<{
           item.lastname.toLowerCase().includes(searchTerm)
         );
       }),
-    [filter, usersToAdd]
+    [filter, usersToAdd],
   );
 
   const {
@@ -44,7 +44,7 @@ const GroupUserList: FC<{
     filter && filter?.length > 0 ? usersToAddFiltered : usersToAdd,
     "ASC",
     10,
-    "_id"
+    "_id",
   );
 
   const handleDeleteUsersToAdd = () => {
@@ -113,7 +113,7 @@ const GroupUserList: FC<{
                 <th className="bg-transparent">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-primary"
+                    className="checkbox checkbox-primary checkbox-sm"
                     onChange={(e) => setAllChecked(e.currentTarget.checked)}
                     checked={allChecked}
                   />
