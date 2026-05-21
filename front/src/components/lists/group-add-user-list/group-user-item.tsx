@@ -32,7 +32,7 @@ const GroupUserItem: FC<{
           <div className="flex justify-center items-center">
             <input
               type="checkbox"
-              className="checkbox checkbox-primary mt-1"
+              className="checkbox checkbox-sm checkbox-primary"
               onChange={() => onCheckRow(user._id)}
               checked={user.isSelected}
             />

@@ -46,7 +46,6 @@ export type CourseImport = Course & {
 };
 
 export default function useImportCourses() {
-  // AJOUT : On récupère axiosInstance depuis useHttp
   const { sendRequest, axiosInstance } = useHttp();
 
   // Navigation Data
@@ -79,18 +78,26 @@ export default function useImportCourses() {
   const [currentAction, setCurrentAction] = useState("");
 
   /**
-   * Envoie le .mbz brut via axiosInstance (pour supporter le blob natif),
-   * reçoit un flux binaire ZIP, puis le transmet au service de parsing.
+   * Envoie le .mbz brut via axiosInstance, supporte l'ajout cumulatif si déjà en mode Preview.
    */
   const handleImportMbz = useCallback(
     async (file: File) => {
       setError("");
       setTooltipErrorTip("");
       setIsLoading(true);
-      setImportedCourses(undefined);
-      imagesQueue.current = [];
+
+      // Détection du mode : si on est déjà sur la vue preview, on ajoute au lieu de réinitialiser
+      const isAppending = step === CoursesImportStep.CoursesPreview;
+
+      if (!isAppending) {
+        setImportedCourses(undefined);
+        imagesQueue.current = [];
+      }
+
       setCurrentAction(
-        "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
+        isAppending
+          ? "Téléversement de l'archive Moodle supplémentaire (.mbz) et génération du contenu..."
+          : "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
       );
 
       try {
@@ -119,10 +126,9 @@ export default function useImportCourses() {
           "Package de cours généré. Analyse binaire de la structure...",
         );
 
-        // Utilisation du service extrait
         const {
-          courses,
-          images,
+          courses: newCourses,
+          images: newImages,
           error: parseError,
           tooltipErrorTip: parseTooltip,
         } = await parseCourseZip(zipBlob);
@@ -130,12 +136,66 @@ export default function useImportCourses() {
         if (parseError) setError(parseError);
         if (parseTooltip) setTooltipErrorTip(parseTooltip);
 
-        setImportedCourses(courses);
-        imagesQueue.current = images;
-        setImportStep(CoursesImportStep.CoursesPreview);
+        if (isAppending) {
+          // 1. Cumuler les images dans la queue globale
+          imagesQueue.current = [...imagesQueue.current, ...newImages];
+
+          // 2. Fusionner les cours en adaptant les IDs temporaires pour éviter les doublons
+          setImportedCourses((prev) => {
+            const existing = prev || [];
+
+            // Recherche des ID maximaux déjà utilisés
+            let maxCourseId = Math.max(0, ...existing.map((c) => c.id));
+            let maxLessonId = Math.max(
+              0,
+              ...existing.flatMap((c) => c.lessons.map((l) => l.id as number)),
+            );
+            let maxActivityId = Math.max(
+              0,
+              ...existing.flatMap((c) =>
+                c.lessons.flatMap((l) => l.activities?.map((a) => a.id) || []),
+              ),
+            );
+
+            // Remappage séquentiel des nouveaux cours
+            const adjustedNewCourses = (newCourses || []).map((course) => {
+              maxCourseId++;
+              const currentCourseId = maxCourseId;
+
+              const adjustedLessons = course.lessons.map((lesson) => {
+                maxLessonId++;
+                const currentLessonId = maxLessonId;
+
+                const adjustedActivities =
+                  lesson.activities?.map((activity) => {
+                    maxActivityId++;
+                    return { ...activity, id: maxActivityId };
+                  }) || [];
+
+                return {
+                  ...lesson,
+                  id: currentLessonId,
+                  activities: adjustedActivities,
+                };
+              });
+
+              return {
+                ...course,
+                id: currentCourseId,
+                lessons: adjustedLessons,
+              };
+            }) as CourseImport[];
+
+            return [...existing, ...adjustedNewCourses];
+          });
+        } else {
+          // Premier import classique
+          setImportedCourses(newCourses);
+          imagesQueue.current = newImages;
+          setImportStep(CoursesImportStep.CoursesPreview);
+        }
       } catch (err: any) {
         console.error(`Erreur import mbz:`, err);
-
         let errorMessage =
           "Une erreur est survenue lors de l'intégration de votre cours.";
 
@@ -143,21 +203,15 @@ export default function useImportCourses() {
           try {
             const textError = await err.response.data.text();
             const jsonError = JSON.parse(textError);
-
-            // Reconstitution du message d'erreur du backend (error + details)
             if (jsonError.error) {
               errorMessage = jsonError.error;
               if (jsonError.details) {
-                // Si les details contiennent eux-mêmes un JSON stringifié
                 try {
                   const subJson = JSON.parse(
                     jsonError.details.replace("Erreur API IA (/ingest): ", ""),
                   );
-                  if (subJson.detail) {
-                    errorMessage += ` (${subJson.detail})`;
-                  } else {
-                    errorMessage += ` (${jsonError.details})`;
-                  }
+                  if (subJson.detail) errorMessage += ` (${subJson.detail})`;
+                  else errorMessage += ` (${jsonError.details})`;
                 } catch {
                   errorMessage += ` (${jsonError.details})`;
                 }
@@ -178,43 +232,8 @@ export default function useImportCourses() {
         setIsLoading(false);
       }
     },
-    [axiosInstance],
+    [axiosInstance, step],
   );
-
-  /**
-   * PARSING TRADITIONNEL D'UN ZIP LOCAL
-   */
-  const handleImportZip = useCallback(async (file: File) => {
-    setError("");
-    setTooltipErrorTip("");
-    setIsLoading(true);
-    setImportedCourses(undefined);
-    imagesQueue.current = [];
-
-    try {
-      const {
-        courses,
-        images,
-        error: parseError,
-        tooltipErrorTip: parseTooltip,
-      } = await parseCourseZip(file);
-
-      if (parseError) setError(parseError);
-      if (parseTooltip) setTooltipErrorTip(parseTooltip);
-
-      setImportedCourses(courses);
-      imagesQueue.current = images;
-      setImportStep(CoursesImportStep.CoursesPreview);
-    } catch (err: any) {
-      console.error(err);
-      setError(
-        err.message ||
-          "Le fichier ZIP est corrompu ou ne possède pas d'index valide.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   /**
    * ENVOI DES RESSOURCES BINAIRES D'ACTIVITÉS (PDF, DOCX, etc.)
@@ -580,7 +599,6 @@ export default function useImportCourses() {
     setSelectedParcours,
     setSelectedModule,
     fetchModules,
-    handleImportZip,
     handleImportMbz,
     onRemoveActivity,
     onRemoveCourse,
