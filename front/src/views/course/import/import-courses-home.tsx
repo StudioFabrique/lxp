@@ -3,15 +3,17 @@ import Header from "../../../components/UI/header";
 import useImportCourses, {
   CoursesImportStep,
 } from "../hooks/use-import-courses";
-import ZipImport from "../../../components/import-courses/zip-import/zip-import";
 import ParcoursSelection from "../../../components/import-courses/parcours-selection";
 import ImportResult from "../../../components/import-courses/import-result";
+import CoursesPreview from "../../../components/import-courses/courses-preview/courses-preview";
+import MbzImport from "../../../components/import-courses/mbz-import";
 
 const ImportCoursesHome = () => {
   const {
     step,
     importedCourses,
     error,
+    isLoading,
     tooltipErrorTip,
     uploadProgress,
     currentAction,
@@ -25,7 +27,7 @@ const ImportCoursesHome = () => {
     setSelectedParcours,
     setSelectedModule,
     fetchModules,
-    onImportZip,
+    handleImportMbz,
     onRemoveActivity,
     onRemoveCourse,
     onToggleLessonSelection,
@@ -39,13 +41,22 @@ const ImportCoursesHome = () => {
 
   const renderBody = () => {
     switch (step) {
-      case CoursesImportStep.ZipImport:
+      case CoursesImportStep.MbzImport:
         return (
-          <ZipImport
+          <MbzImport
+            error={error}
+            isLoading={isLoading}
+            onImportMbz={handleImportMbz}
+          />
+        );
+      case CoursesImportStep.CoursesPreview:
+        return (
+          <CoursesPreview
             importedCourses={importedCourses}
             error={error}
+            isLoading={isLoading}
             tooltipErrorTip={tooltipErrorTip}
-            onImportZip={onImportZip}
+            onImportMbz={handleImportMbz}
             onConfirmZipImport={onConfirmImport}
             onRemoveCourse={onRemoveCourse}
             onToggleLessonSelection={onToggleLessonSelection}

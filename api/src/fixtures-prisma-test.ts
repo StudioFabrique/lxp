@@ -250,7 +250,7 @@ async function createSqlContacts() {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
       { roles: { $in: roleId } },
-      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 },
     );
     const contacts = usersId.map((user: any) => {
       return {
@@ -345,7 +345,7 @@ async function createParcours() {
             id: 1,
           },
         },
-        author: "jacques durand",
+        author: "jean durand",
         admin: {
           connect: { id: 1 },
         },
@@ -381,7 +381,7 @@ async function addFeedback() {
   try {
     const student = await User.findOne(
       { email: "apprenant@studio.eco" },
-      { _id: 1 }
+      { _id: 1 },
     );
     const feedback = await StudentFeedback.create({
       user: student!._id,

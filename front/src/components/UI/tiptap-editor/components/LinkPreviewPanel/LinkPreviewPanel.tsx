@@ -1,3 +1,4 @@
+import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 import { Icon } from "../ui/Icon";
 import { Surface } from "../ui/Surface";
 import { Toolbar } from "../ui/Toolbar";
@@ -16,7 +17,9 @@ export const LinkPreviewPanel = ({
 }: LinkPreviewPanelProps) => {
   const sanitizedLink = url?.startsWith("javascript:") ? "" : url;
   return (
-    <Surface className="flex items-center gap-2 p-2">
+    <Surface
+      className={`flex items-center gap-2 p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text} select-none`}
+    >
       <a
         href={sanitizedLink}
         target="_blank"

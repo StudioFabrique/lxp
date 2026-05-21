@@ -11,6 +11,7 @@ import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
+import { isAiDisabled } from "../config/ai";
 // import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 
 export default function useActivityQuiz(
@@ -108,6 +109,12 @@ export default function useActivityQuiz(
     setAttempts([]);
     setShowResults(false);
 
+    if (isAiDisabled) {
+      setIsStreaming(false);
+      toast("Fonctionnalités IA désactivées.");
+      return;
+    }
+
     // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
     // setQuizzes((prev) =>
     //   prev
@@ -195,6 +202,11 @@ export default function useActivityQuiz(
 
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
+      if (import.meta.env.VITE_DISABLE_AI_FEATURES === "true") {
+        toast("Les quiz IA sont temporairement désactivés.");
+        return;
+      }
+
       if (!isAppending) {
         setIsOpen(true);
         setQuizzes([]);

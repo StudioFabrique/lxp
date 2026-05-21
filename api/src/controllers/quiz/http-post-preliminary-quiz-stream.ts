@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { Readable } from "stream";
 import dotenv from "dotenv";
+import { prisma } from "../../utils/db";
 
 dotenv.config();
 
 interface ModuleInfo {
   title: string;
-  description: string;
-  teacher_instructions: string;
 }
 
 /**
@@ -16,7 +15,7 @@ interface ModuleInfo {
  *
  * Requête:
  * - Query param: n (int, optionnel, défaut 10) - nombre cible de questions
- * - Body: ModuleInfo { title, description, teacher_instructions }
+ * - Body: ModuleInfo { title }
  *
  * Réponse (streaming SSE):
  * - event: question | progress | done | error
@@ -27,31 +26,33 @@ export default async function httpPostPreliminaryQuizStream(
   res: Response,
 ) {
   const { n = 5 } = req.query;
-  const { title, description, teacher_instructions } = req.body as ModuleInfo;
+  const { title } = req.body as ModuleInfo;
 
   try {
-    // Validation des entrées requises
-    if (!title || !description || !teacher_instructions) {
-      return res.status(400).json({
-        error:
-          "Les champs title, description et teacher_instructions sont requis",
-      });
+    const module = await prisma.module.findFirst({
+      where: {
+        title: title,
+      },
+      select: {
+        title: true,
+        description: true,
+        quizInstructions: true,
+      },
+    });
+
+    if (!module) {
+      throw new Error("Module non trouvé.");
     }
 
     // Préparation du payload pour l'API IA
     const iaPayload = {
       n: Number(n),
-      title,
-      description,
-      teacher_instructions,
+      title: module.title,
+      description: module.description,
+      teacher_instructions: module.quizInstructions,
     };
 
-    console.log(
-      `Appel API IA pour quiz préliminaire (${process.env.DOCKER_IA_API_BASE_URL}/quiz/preliminary/stream):`,
-      iaPayload,
-    );
-
-    // Appel de l'API externe avec le fetch natif de Node
+    // Appel de l'API externe
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/preliminary/stream`,
       {

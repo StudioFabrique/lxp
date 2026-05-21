@@ -13,8 +13,9 @@ import CourseArborescence from "./course-arborescence";
 type Props = {
   importedCourses?: CourseImport[];
   error?: string;
+  isLoading?: boolean;
   tooltipErrorTip?: string;
-  onImportZip: (file: File) => void;
+  onImportMbz: (file: File) => void;
   onConfirmZipImport: () => void;
   onRemoveCourse?: (courseTitle: string) => void;
   onToggleLessonSelection: (courseId: number, lessonId: number) => void;
@@ -37,11 +38,12 @@ type Props = {
   ) => void;
 };
 
-const ZipImport = ({
+const CoursesPreview = ({
   importedCourses,
   error,
+  isLoading,
   tooltipErrorTip,
-  onImportZip,
+  onImportMbz,
   onConfirmZipImport,
   onRemoveCourse,
   onToggleLessonSelection,
@@ -63,7 +65,7 @@ const ZipImport = ({
     ? error
     : importedCourses
       ? `${importedCourses.length > 1 ? importedCourses.length + " c" : "C"}ours prêt${importedCourses.length > 1 ? "s" : ""} à être importé${importedCourses.length > 1 ? "s" : ""}`
-      : "Téléverser un dossier compressé de format .zip";
+      : "Sélectionner le contenu pédagogique à importer";
 
   const handlePreviewCourse = (course: CourseImport) => {
     setSelectedCourse(course);
@@ -108,32 +110,41 @@ const ZipImport = ({
     <div className="flex flex-col gap-6 ml-5">
       <Header
         title="Première étape"
+        description="Importer le fichier d'import de cours en .mbz"
+        disabled
+        isSubHeader
+      />
+      <Header
+        title="Seconde étape"
         isSubHeader
         description={headerDescription}
         alternateBgColor
         hasError={Boolean(error)}
       >
-        <MemoizedFileUpload
-          buttonLabel="Importer un fichier .zip"
-          variant="minimized"
-          maxSize={10000000}
-          onSetFile={onImportZip}
-          fileType="zip"
-        />
-
-        <button
-          className="btn btn-sm btn-success ml-5 mr-2"
-          disabled={!importedCourses || Boolean(error)}
-          onClick={onConfirmZipImport}
-        >
-          Confirmer l'importation
-        </button>
-        {tooltipErrorTip && (
-          <QuestionMarkTooltip
-            tooltipValue={tooltipErrorTip}
-            tooltipPosition="left"
+        <div className="flex items-center gap-3">
+          <MemoizedFileUpload
+            buttonLabel="Ajouter un fichier .mbz"
+            variant="minimized"
+            maxSize={50 * 1024 * 1024} // 100 Mo
+            onSetFile={onImportMbz}
+            fileType="mbz"
+            isLoading={isLoading}
           />
-        )}
+
+          <button
+            className="btn btn-sm btn-success ml-2 mr-2"
+            disabled={(!importedCourses && Boolean(error)) || isLoading}
+            onClick={onConfirmZipImport}
+          >
+            Confirmer l'importation
+          </button>
+          {tooltipErrorTip && (
+            <QuestionMarkTooltip
+              tooltipValue={tooltipErrorTip}
+              tooltipPosition="left"
+            />
+          )}
+        </div>
       </Header>
 
       {importedCourses && importedCourses.length > 0 && (
@@ -169,9 +180,9 @@ const ZipImport = ({
           </div>
 
           {selectedCourse && (
-            <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
+            <div className="grid grid-cols-12 gap-6 h-150 bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
               <div className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar">
-                <div className="flex items-center gap-2 mb-3 min-h-[32px]">
+                <div className="flex items-center gap-2 mb-3 min-h-8">
                   <h3 className="text-sm capitalize tracking-wide text-primary font-bold whitespace-nowrap">
                     Cours :
                   </h3>
@@ -228,8 +239,8 @@ const ZipImport = ({
       )}
 
       <Header
-        title="Seconde étape"
-        description="Selectionner le parcours auquels les cours seront rattachés"
+        title="Dernière étape"
+        description="Sélectionner le parcours auquels les cours seront rattachés"
         disabled
         isSubHeader
       />
@@ -237,4 +248,4 @@ const ZipImport = ({
   );
 };
 
-export default ZipImport;
+export default CoursesPreview;

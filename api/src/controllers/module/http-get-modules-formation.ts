@@ -62,6 +62,7 @@ async function httpGetModuleFormation(req: Request, res: Response) {
           select: {
             id: true,
             title: true,
+            quizInstructions: true,
             description: true,
             thumb: true,
             metadatas: {
