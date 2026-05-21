@@ -57,21 +57,5 @@ export const preliminaryQuizStreamValidator = [
     .isLength({ max: 200 })
     .withMessage("Le titre ne peut pas dépasser 200 caractères.")
     .trim(),
-  body("description")
-    .notEmpty()
-    .withMessage("La description du module est requise.")
-    .isString()
-    .withMessage("La description doit être une chaîne de caractères.")
-    .isLength({ max: 2_000 })
-    .withMessage("La description ne peut pas dépasser 2 000 caractères.")
-    .trim(),
-  body("teacher_instructions")
-    .notEmpty()
-    .withMessage("Les instructions pédagogiques sont requises.")
-    .isString()
-    .withMessage("Les instructions doivent être une chaîne de caractères.")
-    .isLength({ max: 1_000 })
-    .withMessage("Les instructions ne peuvent pas dépasser 1 000 caractères.")
-    .trim(),
   checkValidatorResult,
 ];

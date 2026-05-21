@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { Readable } from "stream";
 import dotenv from "dotenv";
+import { prisma } from "../../utils/db";
 
 dotenv.config();
 
 interface ModuleInfo {
   title: string;
-  description: string;
 }
 
 /**
@@ -15,7 +15,7 @@ interface ModuleInfo {
  *
  * Requête:
  * - Query param: n (int, optionnel, défaut 10) - nombre cible de questions
- * - Body: ModuleInfo { title, description }
+ * - Body: ModuleInfo { title }
  *
  * Réponse (streaming SSE):
  * - event: question | progress | done | error
@@ -26,22 +26,33 @@ export default async function httpPostPreliminaryQuizStream(
   res: Response,
 ) {
   const { n = 5 } = req.query;
-  const { title, description } = req.body as ModuleInfo;
+  const { title } = req.body as ModuleInfo;
 
   try {
+    const module = await prisma.module.findFirst({
+      where: {
+        title: title,
+      },
+      select: {
+        title: true,
+        description: true,
+        quizInstructions: true,
+      },
+    });
+
+    if (!module) {
+      throw new Error("Module non trouvé.");
+    }
+
     // Préparation du payload pour l'API IA
     const iaPayload = {
       n: Number(n),
-      title,
-      description,
+      title: module.title,
+      description: module.description,
+      teacher_instructions: module.quizInstructions,
     };
 
-    console.log(
-      `Appel API IA pour quiz préliminaire (${process.env.DOCKER_IA_API_BASE_URL}/quiz/preliminary/stream):`,
-      iaPayload,
-    );
-
-    // Appel de l'API externe avec le fetch natif de Node
+    // Appel de l'API externe
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/preliminary/stream`,
       {
