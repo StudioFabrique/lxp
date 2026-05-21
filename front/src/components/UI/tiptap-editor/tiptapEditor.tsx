@@ -92,7 +92,9 @@ export default function TiptapEditor({
             />
           )}
       </div>
-      {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
+      {editor && editor.isEditable && (
+        <LinkMenu editor={editor} appendTo={menuContainerRef} />
+      )}
       {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
     </>
   );
