@@ -26,14 +26,7 @@ const ActivityBottomNavigation = ({
   onCompleteLesson,
   children,
 }: PropsWithChildren<Props>) => (
-  <div
-    className={cn(
-      "flex gap-2 w-full",
-      !isLastActivitySelected && isFirstActivitySelected
-        ? "justify-end"
-        : "justify-between",
-    )}
-  >
+  <div className={cn("flex gap-5 w-full justify-end")}>
     {!isFirstActivitySelected && (
       <button onClick={onPrevious} className="btn btn-primary text-base-100">
         <ArrowLeft />
