@@ -18,7 +18,7 @@ export const useLinkEditorState = ({
 }: LinkEditorPanelProps) => {
   const [url, setUrl] = useState(initialUrl || "");
   const [openInNewTab, setOpenInNewTab] = useState(
-    initialOpenInNewTab || false
+    initialOpenInNewTab || false,
   );
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,7 @@ export const useLinkEditorState = ({
         onSetLink(url, openInNewTab);
       }
     },
-    [url, isValidUrl, openInNewTab, onSetLink]
+    [url, isValidUrl, openInNewTab, onSetLink],
   );
 
   return {
@@ -68,7 +68,7 @@ export const LinkEditorPanel = ({
           <Icon name="Link" className="flex-none" />
           <input
             type="url"
-            className="flex-1 bg-transparent outline-none min-w-[12rem]"
+            className="flex-1 bg-transparent outline-none w-44"
             placeholder="URL du lien"
             value={state.url}
             onChange={state.onChange}
