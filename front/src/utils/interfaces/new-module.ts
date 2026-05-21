@@ -5,6 +5,7 @@ import Skill from "./skill";
 export type ModuleData = {
   id: number;
   title: string;
+  quizInstructions?: string;
   thumb: string | null; // Optional base64 encoded thumbnail
   duration?: number; // Duration in minutes
   description: string;
@@ -32,6 +33,7 @@ export type MetadataList = {
   id: number;
   title: string;
   description: string;
+  quizInstructions?: string;
   thumb: string | null;
   metadatas: Metadatas[];
   moduleId: number | null;

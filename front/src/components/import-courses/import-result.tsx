@@ -18,14 +18,21 @@ const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
     <div className="flex flex-col gap-6 ml-5 animate-in fade-in duration-500">
       <Header
         title="Première étape"
-        description="Téléverser un dossier compressé de format .zip"
+        description="Importer le fichier d'import de cours en .mbz"
         successBgColor
         isSubHeader
         disabled
       />
       <Header
         title="Seconde étape"
-        description="Selectionner le parcours auquels les cours seront rattachés"
+        description="Sélectionner le contenu pédagogique à importer"
+        successBgColor
+        isSubHeader
+        disabled
+      />
+      <Header
+        title="Dernière étape"
+        description="Sélectionner le parcours auquels les cours seront rattachés"
         successBgColor
         isSubHeader
         disabled

@@ -31,6 +31,7 @@ export type NewMddule = {
   id: number;
   title: string;
   description: string;
+  quizInstructions: string;
   thumb: string | null;
 };
 

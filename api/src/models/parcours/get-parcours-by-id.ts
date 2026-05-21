@@ -70,7 +70,13 @@ async function getParcoursById(parcoursId: number, userId: string) {
             },
           },
           module: {
-            select: { id: true, title: true, description: true, thumb: true },
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              quizInstructions: true,
+              thumb: true,
+            },
           },
         },
       },

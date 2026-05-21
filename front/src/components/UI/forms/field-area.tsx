@@ -1,7 +1,9 @@
 import CustomError from "../../../utils/interfaces/custom-error";
+import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 
 interface FieldProps {
   label?: string;
+  tooltip?: string;
   placeholder?: string;
   isDisabled?: boolean;
   name: string;
@@ -15,7 +17,7 @@ interface FieldProps {
 }
 
 const FieldArea = (props: FieldProps) => {
-  const { label, placeholder, name, isDisabled } = props;
+  const { label, tooltip, placeholder, name, isDisabled } = props;
   const rows = props.rows !== undefined ? props.rows : 3;
 
   const baseStyle =
@@ -27,7 +29,10 @@ const FieldArea = (props: FieldProps) => {
 
   return (
     <div className="flex flex-col gap-y-2">
-      <label htmlFor={name}>{label}</label>
+      <div className="flex gap-2 items-center">
+        <label htmlFor={name}>{label}</label>
+        {tooltip && <QuestionMarkTooltip tooltipValue={tooltip} />}
+      </div>
       <textarea
         className={style}
         id={name}

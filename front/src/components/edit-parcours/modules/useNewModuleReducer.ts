@@ -211,7 +211,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
                 skills: action.payload.skills,
                 duration: action.payload.duration,
               }
-            : module
+            : module,
         ),
         currentContacts: [],
         currentSkills: [],

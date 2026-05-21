@@ -2,6 +2,7 @@ import React, { ChangeEvent, FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { maxSizeError } from "../../../helpers/max-size-error";
 import { Edit, Upload } from "lucide-react";
+import Loader from "../loader";
 
 const allowedExtensions = {
   image: {
@@ -14,14 +15,20 @@ const allowedExtensions = {
     type: "application/x-zip-compressed",
     pickerAccept: ".zip",
   },
+  mbz: {
+    rgx: /(\.mbz)$/i,
+    type: "application/x-mbz",
+    pickerAccept: ".mbz",
+  },
 };
 
 const FileUpload: FC<{
   maxSize: number;
   label?: string;
   buttonLabel?: string;
-  fileType?: "image" | "zip";
+  fileType?: "image" | "zip" | "mbz";
   variant?: "normal" | "minimized";
+  isLoading?: boolean;
   onSetFile: (file: File) => void;
 }> = ({
   maxSize,
@@ -30,6 +37,7 @@ const FileUpload: FC<{
   buttonLabel,
   variant = "normal",
   fileType = "image",
+  isLoading = false,
 }) => {
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -74,12 +82,21 @@ const FileUpload: FC<{
       <span className="flex w-full items-center justify-end">
         <button
           onClick={handleSetFile}
+          disabled={isLoading}
           className={`btn btn-sm gap-2 px-5 flex ${
             variant === "normal" ? "justify-center" : "justify-between"
           } items-center cursor-pointer btn-secondary text-center p-2 rounded-l-sm last:rounded-r-sm`}
         >
           {variant === "minimized" &&
-            (!fileName ? <Upload className="w-4" /> : <Edit className="w-5" />)}
+            (isLoading ? (
+              <div className="w-5 h-5 mr-2">
+                <Loader />
+              </div>
+            ) : !fileName ? (
+              <Upload className="w-4" />
+            ) : (
+              <Edit className="w-5" />
+            ))}
           <span>
             {variant === "normal" || !fileName
               ? buttonLabel
@@ -103,6 +120,7 @@ const FileUpload: FC<{
         name="file"
         aria-label="téléverser un fichier"
         id="file"
+        disabled={isLoading}
       />
     </div>
   );

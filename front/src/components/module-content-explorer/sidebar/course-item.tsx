@@ -258,12 +258,12 @@ const CourseItem = ({
             </div>
           </div>
           <Can action="component" object="progression">
-            {!isCourseCompleted && (
-              <progress
-                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-2"
-                value={isNaN(courseProgress) ? 0 : courseProgress}
-              />
-            )}
+            <progress
+              className={cn(
+                "w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all",
+              )}
+              value={isNaN(courseProgress) ? 0 : courseProgress}
+            />
           </Can>
         </div>
         <motion.div

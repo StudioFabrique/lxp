@@ -12,6 +12,7 @@ import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
+import { isAiDisabled } from "../config/ai";
 
 interface ModuleInfoForDiagnostic {
   title?: string;
@@ -108,6 +109,15 @@ export default function useDiagnosticQuiz(
   };
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
+    console.log({ isAiDisabled });
+
+    if (isAiDisabled) {
+      console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
+      setIsOpen(false);
+      onFinishInitialQuiz(); // Appelle directement la suite (initiateLesson)
+      return;
+    }
+
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -136,10 +146,6 @@ export default function useDiagnosticQuiz(
         url: `${BASE_API_URL}/quiz/preliminary/stream?n=10`,
         data: {
           title: moduleInfo.title,
-          description: moduleInfo.description,
-          teacher_instructions:
-            // À remplacer par une vraie donnée provenant du module une fois le formulaire des modules mis à jour pour inclure les instructions aux enseignants.
-            "Questionnaire diagnostique en français, ton clair et pédagogique. Priorité aux prérequis et bases avant le module. Inclure uniquement des questions auto-corrigeables. Éviter l'ambiguïté.",
         },
         responseType: "stream",
         adapter: "fetch",
@@ -210,7 +216,7 @@ export default function useDiagnosticQuiz(
     } finally {
       setIsStreaming(false);
     }
-  }, [moduleInfo.title, moduleInfo.description, axios]);
+  }, [moduleInfo.title, onFinishInitialQuiz, moduleInfo.description, axios]);
 
   const onStartQuiz = () => {
     setIsStarted(true);
