@@ -146,7 +146,6 @@ export default function useDiagnosticQuiz(
         url: `${BASE_API_URL}/quiz/preliminary/stream?n=10`,
         data: {
           title: moduleInfo.title,
-          description: moduleInfo.description,
         },
         responseType: "stream",
         adapter: "fetch",
