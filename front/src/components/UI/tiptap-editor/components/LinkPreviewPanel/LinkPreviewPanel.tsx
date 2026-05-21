@@ -18,7 +18,7 @@ export const LinkPreviewPanel = ({
   const sanitizedLink = url?.startsWith("javascript:") ? "" : url;
   return (
     <Surface
-      className={`flex items-center gap-2 p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text} select-none text-base-content`}
+      className={`flex items-center gap-2 p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text} select-none`}
     >
       <a
         href={sanitizedLink}

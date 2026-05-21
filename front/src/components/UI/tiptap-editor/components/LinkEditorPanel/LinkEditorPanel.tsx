@@ -84,7 +84,7 @@ export const LinkEditorPanel = ({
         </Button>
       </form>
       <div className="mt-3">
-        <label className="flex items-center justify-start gap-2 text-sm font-semibold cursor-pointer select-none text-base-content">
+        <label className="flex items-center justify-start gap-2 text-sm font-semibold cursor-pointer select-none">
           Ouvrir dans un nouvel onglet
           <Toggle
             active={state.openInNewTab}
