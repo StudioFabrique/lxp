@@ -7,7 +7,7 @@ import { Activity } from "../../../utils/interfaces/activity";
 import Parcours from "../../../utils/interfaces/parcours";
 import Formation from "../../../utils/interfaces/formation";
 import Module from "../../../utils/interfaces/module";
-import { BASE_URL } from "../../../config/urls";
+import { BASE_URL, BASE_API_URL } from "../../../config/urls"; // AJOUT DE BASE_API_URL ICI
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 import { getMimeType, sanitizeFilename } from "../../../utils/import-mime";
 import { parseCourseZip } from "../../../helpers/course-import-parser";
@@ -46,7 +46,8 @@ export type CourseImport = Course & {
 };
 
 export default function useImportCourses() {
-  const { sendRequest } = useHttp();
+  // AJOUT : On récupère axiosInstance depuis useHttp
+  const { sendRequest, axiosInstance } = useHttp();
 
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
@@ -78,68 +79,107 @@ export default function useImportCourses() {
   const [currentAction, setCurrentAction] = useState("");
 
   /**
-   * INTERACTION AVEC LE NOUVEAU ENDPOINT BACKEND :
-   * Envoie le .mbz brut, reçoit un flux binaire ZIP, puis le transmet au service de parsing.
+   * Envoie le .mbz brut via axiosInstance (pour supporter le blob natif),
+   * reçoit un flux binaire ZIP, puis le transmet au service de parsing.
    */
-  const handleImportMbz = useCallback(async (file: File) => {
-    setError("");
-    setTooltipErrorTip("");
-    setIsLoading(true);
-    setImportedCourses(undefined);
-    imagesQueue.current = [];
-    setCurrentAction(
-      "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
-    );
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Appel au endpoint Node personnalisé (utilisation de fetch pour le typage blob de la réponse binaire)
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${BASE_URL}/course/import-mbz`, {
-        method: "POST",
-        body: formData,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-
-      if (!response.ok) {
-        const errJson = await response.json().catch(() => ({}));
-        throw new Error(
-          errJson.error ||
-            "Échec du traitement de l'archive MBZ par le serveur backend.",
-        );
-      }
-
+  const handleImportMbz = useCallback(
+    async (file: File) => {
+      setError("");
+      setTooltipErrorTip("");
+      setIsLoading(true);
+      setImportedCourses(undefined);
+      imagesQueue.current = [];
       setCurrentAction(
-        "Package de cours généré. Analyse binaire de la structure...",
+        "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
       );
-      const zipBlob = await response.blob();
 
-      // Utilisation du service extrait
-      const {
-        courses,
-        images,
-        error: parseError,
-        tooltipErrorTip: parseTooltip,
-      } = await parseCourseZip(zipBlob);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      if (parseError) setError(parseError);
-      if (parseTooltip) setTooltipErrorTip(parseTooltip);
+        const response = await axiosInstance.post(
+          `${BASE_API_URL}/course/import-mbz`,
+          formData,
+          {
+            responseType: "blob",
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total,
+                );
+                setUploadProgress(percentCompleted);
+              }
+            },
+          },
+        );
 
-      setImportedCourses(courses);
-      imagesQueue.current = images;
-      setImportStep(CoursesImportStep.CoursesPreview);
-    } catch (e: any) {
-      console.error(`Erreur import mbz:`, e);
-      setError(
-        e.message ||
-          "Une erreur est survenue lors de l'intégration de votre cours.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+        const zipBlob = response.data;
+
+        setCurrentAction(
+          "Package de cours généré. Analyse binaire de la structure...",
+        );
+
+        // Utilisation du service extrait
+        const {
+          courses,
+          images,
+          error: parseError,
+          tooltipErrorTip: parseTooltip,
+        } = await parseCourseZip(zipBlob);
+
+        if (parseError) setError(parseError);
+        if (parseTooltip) setTooltipErrorTip(parseTooltip);
+
+        setImportedCourses(courses);
+        imagesQueue.current = images;
+        setImportStep(CoursesImportStep.CoursesPreview);
+      } catch (err: any) {
+        console.error(`Erreur import mbz:`, err);
+
+        let errorMessage =
+          "Une erreur est survenue lors de l'intégration de votre cours.";
+
+        if (err.response?.data instanceof Blob) {
+          try {
+            const textError = await err.response.data.text();
+            const jsonError = JSON.parse(textError);
+
+            // Reconstitution du message d'erreur du backend (error + details)
+            if (jsonError.error) {
+              errorMessage = jsonError.error;
+              if (jsonError.details) {
+                // Si les details contiennent eux-mêmes un JSON stringifié
+                try {
+                  const subJson = JSON.parse(
+                    jsonError.details.replace("Erreur API IA (/ingest): ", ""),
+                  );
+                  if (subJson.detail) {
+                    errorMessage += ` (${subJson.detail})`;
+                  } else {
+                    errorMessage += ` (${jsonError.details})`;
+                  }
+                } catch {
+                  errorMessage += ` (${jsonError.details})`;
+                }
+              }
+            }
+          } catch (blobParseError) {
+            console.error(`Erreur parsing blob error:`, blobParseError);
+          }
+        } else if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+
+        setError(errorMessage);
+        setUploadProgress(0);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [axiosInstance],
+  );
 
   /**
    * PARSING TRADITIONNEL D'UN ZIP LOCAL

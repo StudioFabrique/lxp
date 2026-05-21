@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import dotenv from "dotenv";
+import { Readable } from "stream"; // 1. IMPORTANT : Importer Readable pour le streaming
 
 dotenv.config();
 
 /**
  * POST /course/import-mbz
- * Étape 1 : Réceptionne le .mbz du front, le pousse à l'IA,
+ * Réceptionne le .mbz du front, le pousse à l'IA,
  * récupère le package .zip généré et le renvoie directement au front.
  */
 export default async function httpPostImportCourseMbz(
@@ -23,12 +24,12 @@ export default async function httpPostImportCourseMbz(
 
     console.log(`[MBZ] Envoi du fichier ${file.originalname} à l'API IA...`);
 
-    // 1. Préparation du FormData pour l'API IA externa
+    // Préparation du FormData pour l'API IA externe
     const formData = new FormData();
     const fileBlob = new Blob([file.buffer], { type: file.mimetype });
     formData.append("file", fileBlob, file.originalname);
 
-    // 2. Appel de l'ingestion IA
+    // Appel de l'ingestion IA
     const ingestResponse = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/ingest`,
       {
@@ -49,7 +50,7 @@ export default async function httpPostImportCourseMbz(
       `[MBZ] Ingestion IA réussie (Slug: ${courseSlug}). Récupération du ZIP...`,
     );
 
-    // 3. Téléchargement du fichier ZIP généré par l'IA
+    // Téléchargement du fichier ZIP généré par l'IA (On garde le flux ouvert)
     const zipResponse = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/export/${courseSlug}.zip`,
     );
@@ -60,17 +61,17 @@ export default async function httpPostImportCourseMbz(
       );
     }
 
-    const zipBuffer = await zipResponse.arrayBuffer();
-
-    // 4. Envoi du fichier ZIP directement au frontend en binaire
+    // Configuration des en-têtes de réponse pour le fichier binaire ZIP
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${courseSlug}.zip"`,
     );
-    res.setHeader("X-Course-Slug", courseSlug); // Optionnel : transmet le slug dans les headers si besoin
+    res.setHeader("X-Course-Slug", courseSlug);
 
-    return res.send(Buffer.from(zipBuffer));
+    // Streaming direct du flux Web (fetch) vers Express (pipe)
+    const nodeStream = Readable.fromWeb(zipResponse.body as any);
+    nodeStream.pipe(res);
   } catch (error) {
     console.error("Erreur lors du traitement de l'archive MBZ:", error);
     return res.status(500).json({
