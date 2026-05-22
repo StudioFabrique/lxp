@@ -1,5 +1,5 @@
-import User from "../../utils/interfaces/user";
-import chatbot from "../../assets/images/chatbot.png";
+import User from "../../../utils/interfaces/user";
+import chatbot from "../../../assets/images/chatbot.png";
 
 type Props = {
   message: {
