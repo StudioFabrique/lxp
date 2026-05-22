@@ -1,4 +1,5 @@
 import { Context } from "../../../store/context.store";
+import { cn } from "../../../utils";
 import { ChatbotValues } from "../hooks/useChatbot";
 import AvatarChatbot from "./avatarChatbot";
 import { useContext } from "react";
@@ -28,11 +29,12 @@ export default function MessageChatbot({
           {isUser ? "Vous" : "Assistant"}
         </div>
         <div
-          className={`chat-bubble text-sm shadow-sm ${
-            isUser
-              ? "chat-bubble-primary text-primary-content"
-              : "chat-bubble-base-200 bg-base-100 text-base-content border border-base-300"
-          }`}
+          className={cn(
+            "chat-bubble text-sm shadow-sm",
+            isUser && "chat-bubble-primary text-primary-content",
+            !isUser &&
+              "chat-bubble-base-200 bg-base-100 text-base-content border border-base-300",
+          )}
         >
           <div className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!">
             <ReactMarkdown>{message.message}</ReactMarkdown>
