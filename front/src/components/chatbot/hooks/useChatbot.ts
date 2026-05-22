@@ -11,7 +11,7 @@ const dialogSchema = z.object({
   date: z.coerce.date(),
 });
 
-type ChatbotValues = {
+export type ChatbotValues = {
   origin: "user" | "bot";
   message: string;
   date: Date;
