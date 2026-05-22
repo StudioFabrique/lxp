@@ -39,8 +39,7 @@ export default function TextInputChatbot({
             aria-label="Envoyer"
             disabled={isLoading || !prompt.trim()}
           >
-            <Send className="w-4 h-4 ml-1" />{" "}
-            {/* ml-1 pour centrer visuellement l'icône Send */}
+            <Send className="w-4 h-4" />
           </button>
         </div>
         <p className="text-[10px] font-medium text-base-content/40 text-right pr-2">
