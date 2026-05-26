@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 
 type Props = {
@@ -13,13 +14,28 @@ export default function TextInputChatbot({
   isLoading,
   handleSubmit,
 }: Props) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Gestion de l'élasticité du textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 140)}px`;
+    }
+  }, [prompt]);
+
   return (
-    <div className="p-3 bg-base-100 border-t border-base-300 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <div className="p-2.5 bg-base-100 border-t border-base-300 shadow-[0_-4px_12px_-2px_rgba(0,0,0,0.05)]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <div className="flex items-end gap-2">
+        {/* Conteneur moderne style "pilule/capsule" */}
+        <div className="relative flex items-end bg-base-200/60 border border-base-300 rounded-2xl p-1.5 transition-all duration-200 focus-within:border-primary focus-within:bg-base-100 focus-within:ring-2 focus-within:ring-primary/10">
           <textarea
-            className="textarea textarea-bordered flex-1 focus:outline-none focus:border-primary resize-none min-h-10 max-h-24 text-sm leading-relaxed py-2.5"
+            ref={textareaRef}
+            className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 resize-none min-h-10 max-h-35 text-sm leading-relaxed pl-3 pr-12 py-2 text-base-content placeholder:text-base-content/40 custom-scrollbar disabled:opacity-50"
             name="prompt"
+            disabled={isLoading}
+            autoFocus
             placeholder="Posez votre question à l'assistant..."
             rows={1}
             onChange={(e) => setPrompt(e.currentTarget.value)}
@@ -27,24 +43,23 @@ export default function TextInputChatbot({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                if (prompt.trim()) {
+                if (prompt.trim() && !isLoading) {
                   handleSubmit(e);
                 }
               }
             }}
           />
+
+          {/* Bouton d'envoi positionné à l'intérieur */}
           <button
-            className="btn btn-primary btn-circle shadow-md shrink-0 mb-1"
+            className="absolute right-2 bottom-2 btn btn-sm btn-primary btn-ghost btn-circle"
             type="submit"
             aria-label="Envoyer"
             disabled={isLoading || !prompt.trim()}
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-3.5 h-3.5" />
           </button>
         </div>
-        <p className="text-[10px] font-medium text-base-content/40 text-right pr-2">
-          Crédits : 0/1000
-        </p>
       </form>
     </div>
   );

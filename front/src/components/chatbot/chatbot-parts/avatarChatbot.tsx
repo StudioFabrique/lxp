@@ -1,5 +1,5 @@
 import User from "../../../utils/interfaces/user";
-import chatbot from "../../../assets/images/chatbot.png";
+import { BotMessageSquare } from "lucide-react";
 
 type Props = {
   message: {
@@ -10,15 +10,10 @@ type Props = {
 };
 
 export default function AvatarChatbot({ message, user }: Props) {
-  if (message.origin === "bot")
-    return (
-      <div className="w-10 rounded-full">
-        <img alt="User avatar" src={chatbot} />
-      </div>
-    );
+  if (message.origin === "bot") return <BotMessageSquare />;
   else
     return (
-      <div className="w-10 rounded-full">
+      <div className="flex items-center w-10 rounded-full">
         {user ? (
           user.avatar ? (
             <img

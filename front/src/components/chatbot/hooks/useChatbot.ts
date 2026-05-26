@@ -24,7 +24,7 @@ const useChatbot = () => {
 
   const { sendRequest, error, isLoading } = useHttp();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     let message = "";
     e.preventDefault();
     message = prompt.trim();
@@ -131,7 +131,7 @@ const useChatbot = () => {
     isLoading,
     dialog,
     setDialog,
-    handleSubmit,
+    onSubmit,
   };
 };
 

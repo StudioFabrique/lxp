@@ -1,5 +1,4 @@
-import { X } from "lucide-react";
-import chatbot from "../../../assets/images/chatbot.png";
+import { Bot, X } from "lucide-react";
 
 type Props = {
   onClose: () => void;
@@ -10,11 +9,7 @@ export default function HeaderChatbot({ onClose }: Props) {
     <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-white rounded-full p-1 shadow-inner">
-          <img
-            src={chatbot}
-            alt="Bot Avatar"
-            className="w-full h-full object-contain"
-          />
+          <Bot className="w-full h-full object-contain text-black" />
         </div>
         <div>
           <h2 className="text-lg font-bold leading-tight">Chatbot ANDRIA</h2>

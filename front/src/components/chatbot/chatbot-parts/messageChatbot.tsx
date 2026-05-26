@@ -7,18 +7,21 @@ import ReactMarkdown from "react-markdown";
 
 type Props = {
   message: ChatbotValues;
+  isLastMessage: boolean;
   isLoading: boolean;
   messageLoader: React.ReactNode;
 };
 
 export default function MessageChatbot({
   message,
+  isLastMessage,
   isLoading,
   messageLoader,
 }: Props) {
   const { user } = useContext(Context);
 
   const isUser = message.origin === "user";
+
   return (
     <>
       <div className={`chat ${isUser ? "chat-end" : "chat-start"}`}>
@@ -43,7 +46,7 @@ export default function MessageChatbot({
       </div>
 
       {/* Indicateur de chargement */}
-      {isLoading && messageLoader}
+      {isLoading && isLastMessage && messageLoader}
     </>
   );
 }
