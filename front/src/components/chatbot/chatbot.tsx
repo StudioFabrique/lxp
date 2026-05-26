@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import chatbot from "../../assets/images/chatbot.png";
 import DrawerChatbot from "./drawerChatbot";
+import { Bot } from "lucide-react";
 
 export default function Chatbot() {
   const [showChatbot, setShowChatbot] = useState(false);
@@ -21,11 +21,7 @@ export default function Chatbot() {
             exit={{ opacity: 0, x: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <img
-              src={chatbot}
-              alt="Icône chatbot"
-              className="w-full h-full object-contain drop-shadow-md"
-            />
+            <Bot className="w-full h-full object-contain text-primary-content" />
           </motion.button>
         )}
       </AnimatePresence>
