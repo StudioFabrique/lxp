@@ -6,6 +6,7 @@ import MessageLoaderChatbot from "./chatbot-parts/messageLoaderChatbot";
 import TextInputChatbot from "./chatbot-parts/textInputChatbot";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 import useChatbotUi from "./hooks/useChatbotUi";
+import PrebuiltPrompt from "./chatbot-parts/prebuiltPrompt";
 
 type Props = {
   setShowChatbot: React.Dispatch<React.SetStateAction<boolean>>;
@@ -59,6 +60,7 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
               />
             );
           })}
+          {!isLoading && <PrebuiltPrompt />}
         </div>
 
         {/* Boutons flottants par dessus le chat */}

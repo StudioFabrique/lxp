@@ -9,7 +9,7 @@ type Props = {
   message: ChatbotValues;
   isLastMessage: boolean;
   isLoading: boolean;
-  messageLoader: React.ReactNode;
+  messageLoader?: React.ReactNode;
 };
 
 export default function MessageChatbot({

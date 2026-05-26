@@ -9,6 +9,7 @@ import Login from "./views/login/login";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
 import AppLayout from "./components/UI/AppLayout";
+import { ChatbotProvider } from "./store/chatbotContext";
 
 const StudentLayout = lazy(
   () => import("./views/student/student-layout.component"),
@@ -98,7 +99,9 @@ function App() {
   return (
     <ContextProvider>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <ChatbotProvider>
+          <RouterProvider router={router} />
+        </ChatbotProvider>
       </ThemeProvider>
     </ContextProvider>
   );

@@ -7,6 +7,7 @@ import {
   useReducer,
   useState,
   useRef,
+  useContext,
 } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -24,8 +25,10 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
+  const { setCurrentActivityName } = useContext(ChatbotContext);
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
@@ -539,6 +542,20 @@ const useModuleContentExplorer = () => {
   useEffect(() => {
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
+
+  // If a activity is selected, select the title and set the chatbot activity name
+  useEffect(() => {
+    if (
+      state.selectedActivity?.title &&
+      state.selectedActivity?.type === "text"
+    ) {
+      setCurrentActivityName(state.selectedActivity.title);
+    }
+  }, [
+    setCurrentActivityName,
+    state.selectedActivity?.title,
+    state.selectedActivity?.type,
+  ]);
 
   return {
     state,
