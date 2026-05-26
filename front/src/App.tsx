@@ -99,9 +99,7 @@ function App() {
   return (
     <ContextProvider>
       <ThemeProvider>
-        <ChatbotProvider>
-          <RouterProvider router={router} />
-        </ChatbotProvider>
+        <RouterProvider router={router} />
       </ThemeProvider>
     </ContextProvider>
   );
