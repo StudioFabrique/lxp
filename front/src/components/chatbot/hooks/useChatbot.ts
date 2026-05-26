@@ -37,9 +37,9 @@ const useChatbot = () => {
       { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const applyData = (data: string) => {
+    const applyData = (data: { answer: { text: string } }) => {
       // Solution plus robuste pour éviter les sauts de ligne
-      const processedText = data;
+      const processedText = data.answer.text;
 
       setDialog((prevState) => [
         ...prevState,
