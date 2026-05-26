@@ -6,10 +6,12 @@ import { Agent } from "undici";
 import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 import { socket } from "./socket/socket";
-
-const PORT = process.env.PORT || 5001;
-const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
-const MTLS_TO_FASTAPI = process.env.MTLS_TO_FASTAPI === "true";
+import {
+  corsOrigins,
+  HTTPS_ENABLED,
+  MTLS_TO_FASTAPI,
+  PORT,
+} from "./config/config";
 
 let server: http.Server | https.Server;
 
@@ -41,25 +43,8 @@ export const fastApiAgent = MTLS_TO_FASTAPI
     })
   : null;
 
-// Reste du code identique...
-const origins =
-  process.env.ENVIRONMENT === "production"
-    ? []
-    : [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        ...(HTTPS_ENABLED
-          ? [
-              "https://localhost:5173",
-              "https://localhost:5174",
-              "https://localhost:5175",
-            ]
-          : []),
-      ];
-
 export const io = new Server(server, {
-  cors: { origin: origins, credentials: true },
+  cors: { origin: corsOrigins, credentials: true },
   cookie: true,
 });
 

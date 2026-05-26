@@ -8,26 +8,10 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import responseHandler from "./middleware/response-handler";
+import { corsOrigins } from "./config/config";
 
 const app = express();
 
-const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
-
-const origins =
-  process.env.ENVIRONMENT === "production"
-    ? ["https://fnp.lxp.andria.ovh"]
-    : [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        // Toujours inclure HTTPS en dev pour éviter les problèmes de CORS
-        "https://localhost:5173",
-        "https://localhost:5174",
-        "https://localhost:5175",
-      ];
-
-console.log("🌐 CORS origins autorisées:", origins);
-console.log("🔒 HTTPS enabled:", HTTPS_ENABLED);
 app
   .use(
     helmet({
@@ -59,7 +43,7 @@ app
   )
   .use(
     cors({
-      origin: origins,
+      origin: corsOrigins,
       credentials: true,
     }),
   )

@@ -11,7 +11,7 @@ const dialogSchema = z.object({
   date: z.coerce.date(),
 });
 
-type ChatbotValues = {
+export type ChatbotValues = {
   origin: "user" | "bot";
   message: string;
   date: Date;
@@ -24,7 +24,7 @@ const useChatbot = () => {
 
   const { sendRequest, error, isLoading } = useHttp();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     let message = "";
     e.preventDefault();
     message = prompt.trim();
@@ -37,9 +37,9 @@ const useChatbot = () => {
       { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const applyData = (data: string) => {
+    const applyData = (data: { answer: { text: string } }) => {
       // Solution plus robuste pour éviter les sauts de ligne
-      const processedText = data;
+      const processedText = data.answer.text;
 
       setDialog((prevState) => [
         ...prevState,
@@ -102,7 +102,7 @@ const useChatbot = () => {
         {
           origin: "bot",
           message:
-            "ALAA ne peut pas vous répondre pour l'instant, réessayez un peu plus tard.",
+            "L'assistant ne peut pas vous répondre pour l'instant, réessayez un peu plus tard.",
           date: new Date(),
         },
       ]);
@@ -131,7 +131,7 @@ const useChatbot = () => {
     isLoading,
     dialog,
     setDialog,
-    handleSubmit,
+    onSubmit,
   };
 };
 
