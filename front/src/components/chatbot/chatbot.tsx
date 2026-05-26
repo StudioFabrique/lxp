@@ -14,9 +14,9 @@ export default function Chatbot() {
           <div className="group fixed bottom-6 right-6 flex items-center z-40">
             {/* Bulle de dialogue moderne au survol */}
             <div className="absolute right-20 mr-2 whitespace-nowrap bg-base-100 text-base-content text-sm font-medium px-4 py-3 rounded-2xl shadow-xl border border-base-200 pointer-events-none opacity-0 translate-x-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block">
-              <span className="text-secondary">Besoin d'aide ?</span>
+              <span className="text-info">Besoin d'aide ?</span>
               <span> Le chatbot </span>
-              <span className="text-primary font-bold">ANDRIA</span>
+              <span className="text-info font-bold">ANDRIA</span>
               <span> est là pour vous aider.</span>
               {/* Petite flèche (triangle) de la bulle pointant vers le bouton */}
               <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-base-100 border-t border-r border-base-200 rotate-45" />
