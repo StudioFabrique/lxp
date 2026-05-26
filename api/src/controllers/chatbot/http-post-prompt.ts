@@ -5,7 +5,7 @@ import { fetch } from "undici";
 
 export default async function httpPostPrompt(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   try {
     res.setHeader("Content-Type", "text/markdown; charset=utf-8");
@@ -13,25 +13,25 @@ export default async function httpPostPrompt(
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
-    const fastApiUrl = process.env.FASTAPI_URL || "http://localhost:8000";
+    const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
     const fetchOptions: any = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: req.body.prompt,
         user_id: req.auth?.userId,
-        max_tokens: req.body.max_tokens || 100,
+        question: req.body.prompt,
+        // max_tokens: req.body.max_tokens || 100,
       }),
     };
 
     // Ajouter l'agent mTLS si configuré pour HTTPS
-    if (fastApiAgent && fastApiUrl.startsWith("https://")) {
+    if (fastApiAgent && dockerIa.startsWith("https://")) {
       fetchOptions.dispatcher = fastApiAgent;
     }
 
-    const response = await fetch(`${fastApiUrl}/chatbot`, fetchOptions);
+    const response = await fetch(`${dockerIa}/ask`, fetchOptions);
     if (!response.ok) {
       return res.status(response.status).json({ error: "FastAPI error" });
     }
