@@ -1,10 +1,12 @@
-import { Bot, X } from "lucide-react";
+import { Bot, Expand, Minimize, Minimize2, X } from "lucide-react";
 
 type Props = {
+  size: "small" | "large" | "full";
   onClose: () => void;
+  onChangeSize: () => void;
 };
 
-export default function HeaderChatbot({ onClose }: Props) {
+export default function HeaderChatbot({ size, onClose, onChangeSize }: Props) {
   return (
     <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
@@ -16,13 +18,28 @@ export default function HeaderChatbot({ onClose }: Props) {
           <p className="text-xs opacity-80">Assistant virtuel</p>
         </div>
       </div>
-      <button
-        className="btn btn-ghost btn-sm btn-circle text-primary-content hover:bg-primary-focus"
-        onClick={() => onClose()}
-        aria-label="Fermer le chatbot"
-      >
-        <X className="w-5 h-5" />
-      </button>
+      <div className="flex item-center gap-2">
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm btn-circle text-primary-content hover:bg-primary-focus"
+          onClick={() => onChangeSize()}
+          aria-label="Fermer le chatbot"
+        >
+          {size === "full" ? (
+            <Minimize2 className="w-5 h-5" />
+          ) : (
+            <Expand className="w-5 h-5" />
+          )}
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm btn-circle text-primary-content hover:bg-primary-focus"
+          onClick={() => onClose()}
+          aria-label="Fermer le chatbot"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 }
