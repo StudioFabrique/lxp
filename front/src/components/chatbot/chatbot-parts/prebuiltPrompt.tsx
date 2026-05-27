@@ -3,20 +3,20 @@ import { ChatbotContext } from "../../../store/chatbotContext";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 
 type Props = {
-  setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  setPrebuiltPrompt: (prompt: string) => void;
 };
 
-export default function PrebuiltPrompt({ setPrompt }: Props) {
+export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
   const { currentActivityName } = useContext(ChatbotContext);
 
   const handleClick = (question: string) => {
-    setPrompt(question);
+    setPrebuiltPrompt(question);
   };
 
   // Liste de questions contextualisées et variées pour l'activité
   const suggestedPrompts = [
     `Quelles sont les notions clés abordées dans l’activité "${currentActivityName}" ?`,
-    `Donne-moi un exemple concret ou une analogie pour mieux comprendre cette activité.`,
+    `Pour mieux comprendre l'activité, donne-moi un exemple concret ou une analogie.`,
     `Par quoi devrais-je commencer pour résoudre l'activité "${currentActivityName}" ?`,
     `Peux-tu me résumer l'objectif principal de cet exercice ?`,
   ];

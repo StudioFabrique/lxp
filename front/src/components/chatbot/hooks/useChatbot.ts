@@ -102,7 +102,7 @@ const useChatbot = () => {
         {
           origin: "bot",
           message:
-            "L'assistant ne peut pas vous répondre pour l'instant, réessayez un peu plus tard.",
+            "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
           date: new Date(),
         },
       ]);
