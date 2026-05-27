@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../../UI/header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
-import { Eye, BookOpen, PenLine, Check } from "lucide-react";
+import { Eye, BookOpen, PenLine, Check, FilePlus2 } from "lucide-react";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import SelectableCard from "../../UI/selectable-card";
@@ -124,6 +124,7 @@ const CoursesPreview = ({
         <div className="flex items-center gap-3">
           <MemoizedFileUpload
             buttonLabel="Ajouter un fichier .mbz"
+            uploadIcon={<FilePlus2 className="w-4" />}
             variant="minimized"
             maxSize={50 * 1024 * 1024} // 100 Mo
             onSetFile={onImportMbz}

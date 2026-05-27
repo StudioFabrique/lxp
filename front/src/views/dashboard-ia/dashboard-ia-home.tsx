@@ -93,7 +93,7 @@ export default function DashboardIAHome() {
             <div className="grid grid-cols-2 text-xs font-semibold text-primary">
               <p>Apprenant</p>
               <p>Quantité</p>
-            </div>{" "}
+            </div>
             {top5Users && top5Users.length > 0 ? (
               <TopFiveUsers topUsers={top5Users} />
             ) : (

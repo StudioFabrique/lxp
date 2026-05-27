@@ -13,6 +13,10 @@ export default async function httpPostPrompt(
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
+    const courseTitle: string = (
+      req.body.courseTitle.replace(" ", "-") as string
+    ).toLowerCase();
+
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
     const fetchOptions: any = {
       method: "POST",
@@ -22,7 +26,7 @@ export default async function httpPostPrompt(
       body: JSON.stringify({
         user_id: req.auth?.userId,
         question: req.body.prompt,
-        course_slug: req.body.courseTitle,
+        course_slug: courseTitle,
         // max_tokens: req.body.max_tokens || 100,
       }),
     };

@@ -51,19 +51,21 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </Link>
       </li>
 
-      <li
-        className="cursor-pointer text-sm flex gap-2 p-2 rounded-lg hover:bg-primary/50"
-        data-tip="Déconnexion"
-      >
-        <Link
-          to="/admin/dashboard-ia"
-          className="flex gap-x-2 items-center tooltip tooltip-right"
-          data-tip="Dashboard IA"
+      {interfaceType === "admin" && (
+        <li
+          className="cursor-pointer text-sm flex gap-2 p-2 rounded-lg hover:bg-primary/50"
+          data-tip="Déconnexion"
         >
-          <Sparkles className="w-4 h-4" />
-          <h2 className="xl:block hidden">Consommation IA</h2>
-        </Link>
-      </li>
+          <Link
+            to="/admin/dashboard-ia"
+            className="flex gap-x-2 items-center tooltip tooltip-right"
+            data-tip="Dashboard IA"
+          >
+            <Sparkles className="w-4 h-4" />
+            <h2 className="xl:block hidden">Consommation IA</h2>
+          </Link>
+        </li>
+      )}
 
       {/* Bouton + modal questionnaire */}
       <Questionnaire />
