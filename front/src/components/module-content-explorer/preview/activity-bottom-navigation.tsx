@@ -26,45 +26,57 @@ const ActivityBottomNavigation = ({
   onCompleteLesson,
   children,
 }: PropsWithChildren<Props>) => (
-  <div className={cn("flex gap-5 w-full justify-end")}>
-    {!isFirstActivitySelected && (
-      <button onClick={onPrevious} className="btn btn-primary text-base-100">
-        <ArrowLeft />
-        Activité précédente
-      </button>
-    )}
-    {isLastActivitySelected ? (
-      (!isLastLessonSelected || !isLessonCompleted) && (
-        <Can action="component" object="progression">
-          {children}
-          {/* Bouton pour terminer la leçon afin d'afficher une modal*/}
-          <FeedbacksButton
-            className="btn btn-success text-nowrap text-success-content"
-            feedbackType="thumbUp"
-            showFeedback={!isLessonCompleted}
-            disabled={modalVisibility !== "none"}
-            onClick={onCompleteLesson}
-          >
-            {isLessonCompleted ? (
-              <>
-                Leçon Suivante
-                <ArrowRight />
-              </>
-            ) : (
-              <>
-                <Check />
-                Marquer comme terminé
-              </>
-            )}
-          </FeedbacksButton>
-        </Can>
-      )
-    ) : (
-      <button onClick={onNext} className="btn btn-primary text-base-100">
-        Activité suivante
-        <ArrowRight />
-      </button>
-    )}
+  <div className={cn("flex justify-between items-center w-full gap-5")}>
+    {/* Bouton Précédent */}
+    <div className="flex-1 flex justify-start">
+      {!isFirstActivitySelected && (
+        <button onClick={onPrevious} className="btn btn-primary text-base-100">
+          <ArrowLeft />
+          Activité précédente
+        </button>
+      )}
+    </div>
+
+    {/* Bouton central */}
+    <div className="flex-initial">
+      <Can action="component" object="progression">
+        {children}
+      </Can>
+    </div>
+
+    {/* Bouton Suivant ou Terminer */}
+    <div className="flex-1 flex justify-end">
+      {isLastActivitySelected ? (
+        (!isLastLessonSelected || !isLessonCompleted) && (
+          <Can action="component" object="progression">
+            <FeedbacksButton
+              className="btn btn-success text-nowrap text-success-content"
+              feedbackType="thumbUp"
+              showFeedback={!isLessonCompleted}
+              disabled={modalVisibility !== "none"}
+              onClick={onCompleteLesson}
+            >
+              {isLessonCompleted ? (
+                <>
+                  Leçon Suivante
+                  <ArrowRight />
+                </>
+              ) : (
+                <>
+                  <Check />
+                  Marquer comme terminé
+                </>
+              )}
+            </FeedbacksButton>
+          </Can>
+        )
+      ) : (
+        <button onClick={onNext} className="btn btn-primary text-base-100">
+          Activité suivante
+          <ArrowRight />
+        </button>
+      )}
+    </div>
   </div>
 );
 

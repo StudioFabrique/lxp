@@ -2,7 +2,7 @@
  * En tête pour les interfaces qui listent les groupes, les users, les parcours, etc...
  */
 
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
 interface HeaderProps {
   title: string;
@@ -14,10 +14,9 @@ interface HeaderProps {
   hasError?: boolean;
   classname?: string;
   onClick?: () => void;
-  children?: ReactNode;
 }
 
-const Header = (props: HeaderProps) => {
+const Header = (props: PropsWithChildren<HeaderProps>) => {
   return (
     <div
       onClick={props.onClick}

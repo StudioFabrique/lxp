@@ -59,7 +59,7 @@ const ModuleContentExplorerWrapper = ({
         </div>
         <span
           ref={scrollTopRef}
-          className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center"
+          className="w-full bg-secondary/20 rounded-lg h-10 px-2 border border-secondary/20 flex items-center"
         >
           {topProgressBar}
         </span>

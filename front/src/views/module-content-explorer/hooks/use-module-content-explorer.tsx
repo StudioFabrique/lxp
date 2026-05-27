@@ -7,6 +7,7 @@ import {
   useReducer,
   useState,
   useRef,
+  useContext,
 } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -24,8 +25,10 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
+  const { setCurrentCourseName } = useContext(ChatbotContext);
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
@@ -539,6 +542,30 @@ const useModuleContentExplorer = () => {
   useEffect(() => {
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
+
+  // If a activity is selected, select the title of the current course and set the chatbot activity name
+  useEffect(() => {
+    if (
+      state.selectedLesson?.courseId &&
+      state.selectedActivity?.type === "text" &&
+      state.module?.courses
+    ) {
+      // Cherche le cours actuel dans la liste du module
+      const currentCourse = state.module.courses.find(
+        (course) => course.id === state.selectedLesson?.courseId,
+      );
+
+      // Attribue le titre/nom du cours au chatbot
+      if (currentCourse?.title) {
+        setCurrentCourseName(currentCourse.title);
+      }
+    }
+  }, [
+    setCurrentCourseName,
+    state.selectedLesson?.courseId,
+    state.selectedActivity?.type,
+    state.module?.courses,
+  ]);
 
   return {
     state,

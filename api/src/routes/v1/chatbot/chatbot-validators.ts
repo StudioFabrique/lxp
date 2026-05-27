@@ -17,6 +17,12 @@ export const postPromptValidator = [
     .withMessage("Le prompt doit être une chaîne de caractères")
     .trim()
     .custom(stringValidateGeneric),
+  body("courseTitle")
+    .optional()
+    .isString()
+    .withMessage("Le titre du cours doit être une chaîne de caractères")
+    .trim()
+    .custom(stringValidateGeneric),
   checkValidatorResult,
 ];
 
