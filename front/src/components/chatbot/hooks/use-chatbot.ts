@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { z } from "zod";
 import { regexGeneric } from "../../../utils/constantes";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 const dialogSchema = z.object({
   origin: z.enum(["user", "bot"]),
@@ -23,6 +24,8 @@ const useChatbot = () => {
   const [dialog, setDialog] = useState<ChatbotValues[]>([]);
 
   const { sendRequest, error, isLoading } = useHttp();
+
+  const { currentCourseName } = useContext(ChatbotContext);
 
   const onSubmit = async (e: React.FormEvent) => {
     let message = "";
@@ -65,7 +68,7 @@ const useChatbot = () => {
       {
         path: "/chatbot/prompt",
         method: "post",
-        body: { prompt: message },
+        body: { prompt: message, courseTitle: currentCourseName || undefined },
       },
       applyData,
     );

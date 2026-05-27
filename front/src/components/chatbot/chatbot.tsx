@@ -11,16 +11,18 @@ export default function Chatbot() {
 
   const [showChatbot, setShowChatbot] = useState(false);
 
+  const handleOpenChatbot = async () => {
+    setShowChatbot(true);
+    // Créer un délai de 100 millisecondes avant de scroll vers le bas
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    chatbotUi.handleScrollToBottom();
+  };
+
   return (
     <>
       {/* Bouton d'ouverture animé */}
       <AnimatePresence>
-        {!showChatbot && (
-          <ChatbotButton
-            showChatbot={showChatbot}
-            setShowChatbot={setShowChatbot}
-          />
-        )}
+        {!showChatbot && <ChatbotButton onOpenChatbot={handleOpenChatbot} />}
       </AnimatePresence>
 
       <AnimatePresence>
