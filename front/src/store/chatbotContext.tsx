@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
 type ChatbotContextType = {
-  currentActivityName: string;
-  setCurrentActivityName: React.Dispatch<React.SetStateAction<string>>;
+  currentCourseName: string;
+  setCurrentCourseName: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ChatbotContext = React.createContext<ChatbotContextType>(
@@ -14,20 +14,17 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
   // Récupérer le chemin actuel de l'URL dans le hook react router
   const { pathname } = useLocation();
 
-  const [currentActivityName, setCurrentActivityName] =
-    useState<string>(pathname);
+  const [currentCourseName, setCurrentCourseName] = useState<string>(pathname);
 
   useEffect(() => {
     if (!pathname.includes("/parcours/module/")) {
-      setCurrentActivityName("");
+      setCurrentCourseName("");
     }
   }, [pathname]);
 
   return (
     <ChatbotContext.Provider
-      value={
-        { currentActivityName, setCurrentActivityName } as ChatbotContextType
-      }
+      value={{ currentCourseName, setCurrentCourseName }}
     >
       {children}
     </ChatbotContext.Provider>

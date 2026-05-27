@@ -28,7 +28,7 @@ import {
 import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
-  const { setCurrentActivityName } = useContext(ChatbotContext);
+  const { setCurrentCourseName } = useContext(ChatbotContext);
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
@@ -543,18 +543,28 @@ const useModuleContentExplorer = () => {
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
 
-  // If a activity is selected, select the title and set the chatbot activity name
+  // If a activity is selected, select the title of the current course and set the chatbot activity name
   useEffect(() => {
     if (
-      state.selectedActivity?.title &&
-      state.selectedActivity?.type === "text"
+      state.selectedLesson?.courseId &&
+      state.selectedActivity?.type === "text" &&
+      state.module?.courses
     ) {
-      setCurrentActivityName(state.selectedActivity.title);
+      // Cherche le cours actuel dans la liste du module
+      const currentCourse = state.module.courses.find(
+        (course) => course.id === state.selectedLesson?.courseId,
+      );
+
+      // Attribue le titre/nom du cours au chatbot
+      if (currentCourse?.title) {
+        setCurrentCourseName(currentCourse.title);
+      }
     }
   }, [
-    setCurrentActivityName,
-    state.selectedActivity?.title,
+    setCurrentCourseName,
+    state.selectedLesson?.courseId,
     state.selectedActivity?.type,
+    state.module?.courses,
   ]);
 
   return {

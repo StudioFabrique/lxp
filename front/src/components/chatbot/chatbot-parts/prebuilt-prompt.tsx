@@ -1,34 +1,33 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { ChatbotContext } from "../../../store/chatbotContext";
 import { Sparkles, ArrowUpRight } from "lucide-react";
+import { prebuiltPrompt } from "../../../config/ai/ai-texts.json";
 
 type Props = {
   setPrebuiltPrompt: (prompt: string) => void;
 };
 
 export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
-  const { currentActivityName } = useContext(ChatbotContext);
+  const { currentCourseName } = useContext(ChatbotContext);
 
   const handleClick = (question: string) => {
     setPrebuiltPrompt(question);
   };
 
-  // Liste de questions contextualisées et variées pour l'activité
-  const suggestedPrompts = [
-    `Quelles sont les notions clés abordées dans l’activité "${currentActivityName}" ?`,
-    `Pour mieux comprendre l'activité, donne-moi un exemple concret ou une analogie.`,
-    `Par quoi devrais-je commencer pour résoudre l'activité "${currentActivityName}" ?`,
-    `Peux-tu me résumer l'objectif principal de cet exercice ?`,
-  ];
+  // Sélectionne 3 questions aléatoires uniques pour générer des suggestions de prompts
+  const suggestedPrompts = useMemo(() => {
+    const allPrompts = [...prebuiltPrompt.suggestedPrompts];
+    return allPrompts.sort(() => 0.5 - Math.random()).slice(0, 3);
+  }, []);
 
-  if (!currentActivityName) return null;
+  if (!currentCourseName) return null;
 
   return (
     <div className="flex flex-col gap-3 p-1">
       {/* En-tête */}
       <div className="flex items-center gap-2 text-xs font-medium text-base-content/60 px-1">
         <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
-        <span>Besoin d'un coup de pouce sur cette activité ?</span>
+        <span>Besoin d'un coup de pouce sur ce cours ?</span>
       </div>
 
       {/* Grille de suggestions */}

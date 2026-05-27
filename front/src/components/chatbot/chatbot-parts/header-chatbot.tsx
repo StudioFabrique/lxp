@@ -1,4 +1,4 @@
-import { Bot, Expand, Minimize, Minimize2, X } from "lucide-react";
+import { Bot, Expand, Minimize2, X } from "lucide-react";
 
 type Props = {
   size: "small" | "large" | "full";

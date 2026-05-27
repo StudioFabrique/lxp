@@ -11,7 +11,7 @@ import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
-import { isAiDisabled } from "../config/ai";
+import { isAiDisabled } from "../config/ai/ai";
 // import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 
 export default function useActivityQuiz(

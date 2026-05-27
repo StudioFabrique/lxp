@@ -1,7 +1,7 @@
 import { Context } from "../../../store/context.store";
 import { cn } from "../../../utils";
-import { ChatbotValues } from "../hooks/useChatbot";
-import AvatarChatbot from "./avatarChatbot";
+import { ChatbotValues } from "../hooks/use-chatbot";
+import AvatarChatbot from "./avatar-chatbot";
 import { useContext } from "react";
 import ReactMarkdown from "react-markdown";
 
