@@ -69,11 +69,6 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
     }
   }, [dialog.length]);
 
-  // Pour le tout premier rendu à l'ouverture, scroller tout en bas
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, []);
-
   return {
     size,
     setSize,
