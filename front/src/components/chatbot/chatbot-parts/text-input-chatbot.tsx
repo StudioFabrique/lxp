@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import { Send } from "lucide-react";
+import { cn } from "../../../utils";
 
 type Props = {
   prompt: string;
+  isSubmitButtonAnimated: boolean;
   setPrompt: (prompt: string) => void;
   isLoading: boolean;
   handleSubmit: (e: React.FormEvent) => void;
@@ -10,6 +12,7 @@ type Props = {
 
 export default function TextInputChatbot({
   prompt,
+  isSubmitButtonAnimated,
   setPrompt,
   isLoading,
   handleSubmit,
@@ -52,7 +55,13 @@ export default function TextInputChatbot({
 
           {/* Bouton d'envoi positionné à l'intérieur */}
           <button
-            className="absolute right-2 bottom-2 btn btn-sm btn-primary btn-ghost btn-circle"
+            className={cn(
+              "absolute right-2 bottom-2 btn btn-sm btn-primary btn-ghost btn-circle",
+              {
+                "animate-pulse transition ease-in-out duration-75":
+                  isSubmitButtonAnimated,
+              },
+            )}
             type="submit"
             aria-label="Envoyer"
             disabled={isLoading || !prompt.trim()}

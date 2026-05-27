@@ -22,6 +22,7 @@ export default async function httpPostPrompt(
       body: JSON.stringify({
         user_id: req.auth?.userId,
         question: req.body.prompt,
+        course_slug: req.body.courseTitle,
         // max_tokens: req.body.max_tokens || 100,
       }),
     };

@@ -9,6 +9,8 @@ import { Socket } from "socket.io-client";
 import Login from "../login/login";
 import { Context } from "../../store/context.store";
 import Chatbot from "../../components/chatbot/chatbot";
+import { ChatbotProvider } from "../../store/chatbotContext";
+import { isAiDisabled } from "../../config/ai/ai";
 
 // Variables globales pour le state initial et le socket
 let initialState = true;
@@ -68,10 +70,12 @@ const RootLayout = () => {
   // Rendu du layout principal avec animation de transition
   return (
     <FadeWrapper>
-      <div className="h-screen w-full p-2 overflow-clip">
-        <Outlet />
-      </div>
-      <Chatbot />
+      <ChatbotProvider>
+        <div className="h-screen w-full p-2 overflow-clip">
+          <Outlet />
+        </div>
+        {!isAiDisabled && <Chatbot />}
+      </ChatbotProvider>
     </FadeWrapper>
   );
 };

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatbotValues } from "./useChatbot";
+import { ChatbotValues } from "./use-chatbot";
 
 const useChatbotUi = (dialog: ChatbotValues[]) => {
   // Taille variable pour le drawer
-  const [size, setSize] = useState<"small" | "large">("small");
+  const [size, setSize] = useState<"small" | "large" | "full">("small");
+  const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
+    useState<boolean>(false);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -70,6 +72,8 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
   return {
     size,
     setSize,
+    isSubmitButtonAnimated,
+    setIsSubmitButtonAnimated,
     showScrollTop,
     showScrollBottom,
     scrollContainerRef,
