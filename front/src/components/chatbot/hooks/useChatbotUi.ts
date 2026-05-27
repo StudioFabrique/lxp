@@ -4,6 +4,8 @@ import { ChatbotValues } from "./useChatbot";
 const useChatbotUi = (dialog: ChatbotValues[]) => {
   // Taille variable pour le drawer
   const [size, setSize] = useState<"small" | "large" | "full">("small");
+  const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
+    useState<boolean>(false);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -70,6 +72,8 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
   return {
     size,
     setSize,
+    isSubmitButtonAnimated,
+    setIsSubmitButtonAnimated,
     showScrollTop,
     showScrollBottom,
     scrollContainerRef,

@@ -19,9 +19,15 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    chatbotUi.setIsSubmitButtonAnimated(false);
     chatbotUi.setSize("large");
     chatbotUi.handleScrollToBottom();
     onSubmit(e);
+  };
+
+  const handleSetPrebuiltPrompt = (prompt: string) => {
+    setPrompt(prompt);
+    chatbotUi.setIsSubmitButtonAnimated(true);
   };
 
   return (
@@ -80,7 +86,9 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
               />
             );
           })}
-          {!isLoading && <PrebuiltPrompt setPrompt={setPrompt} />}
+          {!isLoading && (
+            <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
+          )}
         </div>
 
         {/* Boutons flottants par dessus le chat */}
@@ -115,6 +123,7 @@ export default function DrawerChatbot({ setShowChatbot }: Props) {
       {/* Zone de saisie */}
       <TextInputChatbot
         prompt={prompt}
+        isSubmitButtonAnimated={chatbotUi.isSubmitButtonAnimated}
         setPrompt={setPrompt}
         isLoading={isLoading}
         handleSubmit={handleSubmit}
