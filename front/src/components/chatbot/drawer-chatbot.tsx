@@ -1,21 +1,26 @@
-import useChatbot from "./hooks/useChatbot";
 import { motion } from "framer-motion";
-import HeaderChatbot from "./chatbot-parts/headerChatbot";
-import MessageChatbot from "./chatbot-parts/messageChatbot";
-import MessageLoaderChatbot from "./chatbot-parts/messageLoaderChatbot";
-import TextInputChatbot from "./chatbot-parts/textInputChatbot";
+import HeaderChatbot from "./chatbot-parts/header-chatbot";
+import MessageChatbot from "./chatbot-parts/message-chatbot";
+import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
-import useChatbotUi from "./hooks/useChatbotUi";
-import PrebuiltPrompt from "./chatbot-parts/prebuiltPrompt";
+
+import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
+import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
+import useChatbotUi from "./hooks/use-chatbot-ui";
+import useChatbot from "./hooks/use-chatbot";
 
 type Props = {
+  chatbot: ReturnType<typeof useChatbot>;
+  chatbotUi: ReturnType<typeof useChatbotUi>;
   setShowChatbot: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DrawerChatbot({ setShowChatbot }: Props) {
-  const { dialog, onSubmit, isLoading, prompt, setPrompt } = useChatbot();
-
-  const chatbotUi = useChatbotUi(dialog);
+export default function DrawerChatbot({
+  chatbot,
+  chatbotUi,
+  setShowChatbot,
+}: Props) {
+  const { isLoading, prompt, dialog, setPrompt, onSubmit } = chatbot;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatbotValues } from "./useChatbot";
+import { ChatbotValues } from "./use-chatbot";
 
 const useChatbotUi = (dialog: ChatbotValues[]) => {
   // Taille variable pour le drawer
@@ -68,6 +68,11 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [dialog.length]);
+
+  // Pour le tout premier rendu à l'ouverture, scroller tout en bas
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
 
   return {
     size,
