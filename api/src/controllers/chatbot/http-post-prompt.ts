@@ -8,26 +8,35 @@ export default async function httpPostPrompt(
   res: Response,
 ) {
   try {
-    res.setHeader("Content-Type", "text/markdown; charset=utf-8");
-    res.setHeader("Transfer-Encoding", "chunked");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    const userId = req.auth?.userId || "anonymous_student";
 
-    const courseTitle = req.body.courseTitle
-      ? (req.body.courseTitle.replace(" ", "-") as string).toLowerCase()
-      : undefined;
+    // Formatage du slug du cours
+    // const courseSlug = req.body.courseTitle
+    //   ? req.body.courseTitle.trim().replace(/\s+/g, "-").toLowerCase()
+    //   : undefined;
+
+    const courseSlug = "node-js";
 
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
+
     const fetchOptions: any = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: req.auth?.userId,
+        user_id: userId,
         question: req.body.prompt,
-        course_slug: courseTitle,
-        // max_tokens: req.body.max_tokens || 100,
+        course_slug: courseSlug,
+        student_profile: {
+          user_id: userId,
+          course_id: courseSlug,
+          tempo_label: "normal",
+          experience_label: "intermediaire",
+          weak_concepts: [],
+          preferences: ["exemples concrets"],
+          metrics: {},
+        },
       }),
     };
 
@@ -36,32 +45,32 @@ export default async function httpPostPrompt(
       fetchOptions.dispatcher = fastApiAgent;
     }
 
+    // Appel direct à /ask
     const response = await fetch(`${dockerIa}/ask`, fetchOptions);
+
     if (!response.ok) {
-      return res.status(response.status).json({ error: "FastAPI error" });
+      return res
+        .status(response.status)
+        .json({ error: "Erreur provenant de FastAPI" });
     }
 
-    // Stream la réponse
-    if (response.body) {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+    // Récupération de la réponse JSON complète
+    const data = (await response.json()) as any;
 
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          res.write(chunk);
-        }
-      } finally {
-        reader.releaseLock();
-        res.end();
-      }
+    if (data.answer?.mode === "model_knowledge") {
+      console.warn(
+        `[RAG] Mode fallback activé. Score max: ${data.meta?.retrieval?.best_score}`,
+      );
     }
+
+    const markdownContent =
+      data.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
+
+    // Envoi propre du JSON attendu par ton hook Front-End 'useChatbot'
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(200).json({ text: markdownContent });
   } catch (error) {
-    console.error("Streaming error:", error);
-    res.status(500).json(error);
+    console.error("Erreur dans httpPostPrompt:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

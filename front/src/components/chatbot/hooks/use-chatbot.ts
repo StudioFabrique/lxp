@@ -40,15 +40,15 @@ const useChatbot = () => {
       { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const applyData = (data: { answer: { text: string } }) => {
-      // Solution plus robuste pour éviter les sauts de ligne
-      const processedText = data.answer.text;
+    const applyData = (data: { text: string }) => {
+      const processedText = data.text;
 
       setDialog((prevState) => [
         ...prevState,
         { origin: "bot", message: processedText, date: new Date() },
       ]);
       setPrompt("");
+
       const lastDialogs = [
         {
           origin: "user" as "user" | "bot",
