@@ -13,9 +13,9 @@ export default async function httpPostPrompt(
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
-    const courseTitle: string = (
-      req.body.courseTitle.replace(" ", "-") as string
-    ).toLowerCase();
+    const courseTitle = req.body.courseTitle
+      ? (req.body.courseTitle.replace(" ", "-") as string).toLowerCase()
+      : undefined;
 
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
     const fetchOptions: any = {
