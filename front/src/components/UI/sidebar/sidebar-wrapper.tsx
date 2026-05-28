@@ -44,7 +44,7 @@ const SidebarWrapper = ({
     img.src = COMPANY_LOGO;
 
     fetch(COMPANY_LOGO_COLOR).then(async (response) =>
-      setBgColor(await response.text())
+      setBgColor(await response.text()),
     );
   }, []);
 
@@ -57,7 +57,7 @@ const SidebarWrapper = ({
       <div>
         {showLogo && (
           <img
-            className="self-start xl:h-[50px] xl:w-[50px] h-8 w-8 rounded-full border-slate-700 border-1 object-contain p-1 m-2 mb-3 bg-white"
+            className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border-slate-700 border object-contain p-1 m-2 mb-3 bg-white"
             src={COMPANY_LOGO}
             style={{ backgroundColor: logoBgColor }}
             alt="Company logo"

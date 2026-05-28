@@ -166,10 +166,10 @@ const ZipImport = ({
           </div>
 
           {selectedModule && (
-            <div className="grid grid-cols-12 gap-6 h-[600px] bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
+            <div className="grid grid-cols-12 gap-6 h-150 bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
               <div className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar">
                 {/* Module Title Edit */}
-                <div className="flex items-center gap-2 mb-3 min-h-[32px]">
+                <div className="flex items-center gap-2 mb-3 min-h-8">
                   <h3 className="text-xs uppercase tracking-wide text-primary font-bold whitespace-nowrap">
                     Module :
                   </h3>

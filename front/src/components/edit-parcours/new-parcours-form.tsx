@@ -100,6 +100,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
             onChange={title.valueChangeHandler}
             onBlur={title.valueBlurHandler}
             placeholder="Exemple: CDA - Promo 2023"
+            disabled={!formationId}
           />
         </div>
         <div className="w-full flex justify-end">

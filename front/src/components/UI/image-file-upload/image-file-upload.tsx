@@ -30,6 +30,7 @@ const FileUpload: FC<{
   variant?: "normal" | "minimized";
   isLoading?: boolean;
   onSetFile: (file: File) => void;
+  uploadIcon?: React.ReactNode;
 }> = ({
   maxSize,
   onSetFile,
@@ -38,6 +39,7 @@ const FileUpload: FC<{
   variant = "normal",
   fileType = "image",
   isLoading = false,
+  uploadIcon,
 }) => {
   const [fileName, setFileName] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -93,7 +95,7 @@ const FileUpload: FC<{
                 <Loader />
               </div>
             ) : !fileName ? (
-              <Upload className="w-4" />
+              (uploadIcon ?? <Upload className="w-4" />)
             ) : (
               <Edit className="w-5" />
             ))}
