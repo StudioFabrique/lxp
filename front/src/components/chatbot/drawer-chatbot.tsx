@@ -15,7 +15,8 @@ type Props = {
 };
 
 export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
-  const { isLoading, prompt, dialog, setPrompt, onSubmit } = chatbot;
+  const { isLoading, prompt, dialog, setPrompt, onSubmit, pendingReset } =
+    chatbot;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +64,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
       <HeaderChatbot
         size={chatbotUi.size}
         showFullScreenButton={dialog.length > 1}
+        showNewChatButton={!pendingReset}
         onChangeSize={chatbotUi.handleMaximizeChatbot}
         onNewChat={handleNewChat}
         onClose={chatbotUi.handleCloseChatbot}
