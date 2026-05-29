@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import HeaderChatbot from "./chatbot-parts/header-chatbot";
 import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
-import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, ArrowUpRight } from "lucide-react";
 
 import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
 import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
@@ -85,6 +85,15 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
           {!isLoading && !chatbotUi.isLoadingUi && (
             <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
           )}
+          <button
+            type="button"
+            className="group flex items-start justify-between gap-3 text-left p-3 rounded-xl bg-green-200/50 border border-base-300/70 hover:bg-base-100 hover:border-green-200/40 hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-[0.99]"
+          >
+            <span className="text-xs text-base-content/80 group-hover:text-base-content transition-colors leading-relaxed line-clamp-2">
+              Démarrer une nouvelle conversation
+            </span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-base-content/30 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 mt-0.5" />
+          </button>
         </div>
 
         {/* Boutons flottants par dessus le chat */}
