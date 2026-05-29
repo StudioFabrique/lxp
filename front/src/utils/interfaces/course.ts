@@ -11,6 +11,7 @@ export default interface Course {
   id: number;
   title: string;
   description?: string;
+  courseSlug?: string;
   author?: string;
   createdAt?: string;
   updatedAt?: string;

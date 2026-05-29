@@ -12,14 +12,9 @@ import useChatbot from "./hooks/use-chatbot";
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;
   chatbotUi: ReturnType<typeof useChatbotUi>;
-  setShowChatbot: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DrawerChatbot({
-  chatbot,
-  chatbotUi,
-  setShowChatbot,
-}: Props) {
+export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
   const { isLoading, prompt, dialog, setPrompt, onSubmit } = chatbot;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -28,6 +23,11 @@ export default function DrawerChatbot({
     chatbotUi.setSize("large");
     chatbotUi.handleScrollToBottom();
     onSubmit(e);
+  };
+
+  const handleClose = () => {
+    chatbotUi.setShowChatbot(false);
+    chatbotUi.setSize("small");
   };
 
   const handleSetPrebuiltPrompt = (prompt: string) => {
@@ -69,7 +69,7 @@ export default function DrawerChatbot({
             chatbotUi.setSize("full");
           }
         }}
-        onClose={() => setShowChatbot(false)}
+        onClose={handleClose}
       />
 
       {/* Zone de chat */}

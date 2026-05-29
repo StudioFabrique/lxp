@@ -4,6 +4,7 @@ import { fastApiAgent } from "../../server";
 import { fetch } from "undici";
 import postDialogs from "../../models/chatbot/post-dialogs";
 import { trackTokens } from "../../models/stats/trackTokens";
+import { prisma } from "../../utils/db";
 
 export default async function httpPostPrompt(
   req: CustomRequest,
@@ -12,12 +13,12 @@ export default async function httpPostPrompt(
   try {
     const userId = req.auth?.userId || "anonymous_student";
 
-    // Formatage du slug du cours
-    // const courseSlug = req.body.courseTitle
-    //   ? req.body.courseTitle.trim().replace(/\s+/g, "-").toLowerCase()
-    //   : undefined;
+    const course = await prisma.course.findUnique({
+      where: { id: req.body.courseId },
+      select: { courseSlug: true },
+    });
 
-    const courseSlug = "node-js";
+    const courseSlug = course?.courseSlug || undefined;
 
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
 
@@ -30,7 +31,7 @@ export default async function httpPostPrompt(
         user_id: userId,
         question: req.body.prompt,
         course_slug: courseSlug,
-        threshold: 0.68,
+        threshold: 0.7,
         student_profile: {
           user_id: userId,
           course_id: courseSlug,
