@@ -20,19 +20,19 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     chatbotUi.setIsSubmitButtonAnimated(false);
-    chatbotUi.setSize("large");
+    chatbotUi.handleResizeChatbot();
     chatbotUi.handleScrollToBottom();
     onSubmit(e);
-  };
-
-  const handleClose = () => {
-    chatbotUi.setShowChatbot(false);
-    chatbotUi.setSize("small");
   };
 
   const handleSetPrebuiltPrompt = (prompt: string) => {
     setPrompt(prompt);
     chatbotUi.setIsSubmitButtonAnimated(true);
+  };
+
+  const handleNewChat = () => {
+    chatbot.handleNewChat();
+    chatbotUi.handleMinimizeChatbot();
   };
 
   return (
@@ -47,7 +47,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
             ? "100%"
             : chatbotUi.size === "large"
               ? 750
-              : 380,
+              : 410,
         height:
           chatbotUi.size === "full"
             ? "100vh"
@@ -55,21 +55,17 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
               ? 700
               : 500,
       }}
-      exit={{ opacity: 0, y: 20, scale: 0.95, width: 380, height: 500 }}
+      exit={{ opacity: 0, y: 20, scale: 0.95, width: 410, height: 500 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
     >
       {/* En-tête du Chatbot */}
       <HeaderChatbot
         size={chatbotUi.size}
-        onChangeSize={() => {
-          if (chatbotUi.size === "full") {
-            chatbotUi.setSize("large");
-          } else {
-            chatbotUi.setSize("full");
-          }
-        }}
-        onClose={handleClose}
+        showFullScreenButton={dialog.length > 1}
+        onChangeSize={chatbotUi.handleMaximizeChatbot}
+        onNewChat={handleNewChat}
+        onClose={chatbotUi.handleCloseChatbot}
       />
 
       {/* Zone de chat */}
@@ -79,6 +75,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
         className="flex-1 overflow-y-auto p-4 bg-base-200/30 space-y-4 relative flex flex-col"
       >
         <div className="flex-1 space-y-4">
+          {chatbotUi.isLoadingUi && <MessageLoaderChatbot />}
           {dialog.map((message, index) => {
             const isLastMessage = index === dialog.length - 1;
             return (
@@ -91,7 +88,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
               />
             );
           })}
-          {!isLoading && (
+          {!isLoading && !chatbotUi.isLoadingUi && (
             <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
           )}
         </div>
