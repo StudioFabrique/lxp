@@ -6,21 +6,14 @@ import useChatbotUi from "./hooks/use-chatbot-ui";
 
 export default function Chatbot() {
   const chatbot = useChatbot();
-  const chatbotUi = useChatbotUi(chatbot.dialog);
-
-  const handleOpenChatbot = async () => {
-    chatbotUi.setShowChatbot(true);
-    // Créer un délai de 100 millisecondes avant de scroll vers le bas
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    chatbotUi.handleScrollToBottom();
-  };
+  const chatbotUi = useChatbotUi(chatbot.dialog, chatbot.setDialog);
 
   return (
     <>
       {/* Bouton d'ouverture animé */}
       <AnimatePresence>
         {!chatbotUi.showChatbot && (
-          <ChatbotButton onOpenChatbot={handleOpenChatbot} />
+          <ChatbotButton onOpenChatbot={chatbotUi.handleOpenChatbot} />
         )}
       </AnimatePresence>
 
