@@ -120,6 +120,8 @@ export default function useImportCourses() {
           },
         );
 
+        const courseSlug = response.headers["x-course-slug"] || "";
+
         const zipBlob = response.data;
 
         setCurrentAction(
@@ -131,7 +133,7 @@ export default function useImportCourses() {
           images: newImages,
           error: parseError,
           tooltipErrorTip: parseTooltip,
-        } = await parseCourseZip(zipBlob);
+        } = await parseCourseZip(zipBlob, courseSlug);
 
         if (parseError) setError(parseError);
         if (parseTooltip) setTooltipErrorTip(parseTooltip);
@@ -289,6 +291,7 @@ export default function useImportCourses() {
         const structurePayload = {
           title: course.title,
           description: course.description,
+          courseSlug: course.courseSlug,
           moduleId: selectedModule?.id,
           parcoursId: selectedParcours?.id,
           lessons: course.lessons
@@ -416,8 +419,6 @@ export default function useImportCourses() {
     sendRequest,
     uploadActivityResource,
   ]);
-
-  // --- Fonctions CRUD d'Arborescence & Commits Locaux ---
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(

@@ -45,6 +45,7 @@ app
     cors({
       origin: corsOrigins,
       credentials: true,
+      exposedHeaders: ["X-Course-Slug"],
     }),
   )
   .use(cookieParser())

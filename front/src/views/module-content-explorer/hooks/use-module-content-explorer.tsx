@@ -28,7 +28,7 @@ import {
 import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
-  const { setCurrentCourseName } = useContext(ChatbotContext);
+  const { setCurrentCourseId } = useContext(ChatbotContext);
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
@@ -557,11 +557,11 @@ const useModuleContentExplorer = () => {
 
       // Attribue le titre/nom du cours au chatbot
       if (currentCourse?.title) {
-        setCurrentCourseName(currentCourse.title);
+        setCurrentCourseId(currentCourse.id);
       }
     }
   }, [
-    setCurrentCourseName,
+    setCurrentCourseId,
     state.selectedLesson?.courseId,
     state.selectedActivity?.type,
     state.module?.courses,

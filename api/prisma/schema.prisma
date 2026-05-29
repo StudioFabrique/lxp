@@ -142,6 +142,7 @@ model Course {
   updatedAt       DateTime           @updatedAt
   author          String
   adminId         Int
+  courseSlug      String?
   accomplishments Accomplishment[]
   contacts        ContactsOnCourse[]
   admin           Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
