@@ -1,12 +1,18 @@
-import { Bot, Expand, Minimize2, X } from "lucide-react";
+import { Bot, Expand, Maximize2, Minimize2, X } from "lucide-react";
 
 type Props = {
   size: "small" | "large" | "full";
+  showFullScreenButton: boolean;
   onClose: () => void;
   onChangeSize: () => void;
 };
 
-export default function HeaderChatbot({ size, onClose, onChangeSize }: Props) {
+export default function HeaderChatbot({
+  size,
+  showFullScreenButton,
+  onClose,
+  onChangeSize,
+}: Props) {
   return (
     <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
@@ -27,8 +33,10 @@ export default function HeaderChatbot({ size, onClose, onChangeSize }: Props) {
         >
           {size === "full" ? (
             <Minimize2 className="w-5 h-5" />
+          ) : size === "small" ? (
+            <Maximize2 className="w-5 h-5" />
           ) : (
-            <Expand className="w-5 h-5" />
+            showFullScreenButton && <Expand className="w-5 h-5" />
           )}
         </button>
         <button
