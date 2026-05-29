@@ -14,6 +14,7 @@ export type ChatbotValues = {
   origin: "user" | "bot";
   message: string;
   date: Date;
+  type?: "normal" | "warning" | "error";
 };
 
 const useChatbot = () => {
@@ -58,12 +59,20 @@ const useChatbot = () => {
       setPendingReset(false);
     }
 
-    const applyData = (data: { text: string }) => {
+    const applyData = (data: {
+      text: string;
+      type?: "normal" | "warning" | "error";
+    }) => {
       const processedText = data.text;
 
       setDialog((prevState) => [
         ...prevState,
-        { origin: "bot", message: processedText, date: new Date() },
+        {
+          origin: "bot",
+          message: processedText,
+          date: new Date(),
+          type: data.type || "normal",
+        },
       ]);
       setPrompt("");
     };
@@ -92,6 +101,7 @@ const useChatbot = () => {
           message:
             "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
           date: new Date(),
+          type: "error",
         },
       ]);
     }
@@ -115,6 +125,7 @@ const useChatbot = () => {
 
   return {
     prompt,
+    pendingReset,
     setPrompt,
     isLoading,
     dialog,
