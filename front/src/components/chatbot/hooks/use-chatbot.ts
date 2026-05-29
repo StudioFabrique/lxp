@@ -25,7 +25,7 @@ const useChatbot = () => {
 
   const { sendRequest, error, isLoading } = useHttp();
 
-  const { currentCourseName } = useContext(ChatbotContext);
+  const { currentCourseId } = useContext(ChatbotContext);
 
   const onSubmit = async (e: React.FormEvent) => {
     let message = "";
@@ -54,7 +54,7 @@ const useChatbot = () => {
       {
         path: "/chatbot/prompt",
         method: "post",
-        body: { prompt: message, courseTitle: currentCourseName || undefined },
+        body: { prompt: message, courseId: currentCourseId || undefined },
       },
       applyData,
     );

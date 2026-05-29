@@ -12,6 +12,7 @@ import {
   QueuedImage,
 } from "../views/course/hooks/use-import-courses";
 import { getMimeType, sanitizeFilename } from "../utils/import-mime";
+import Lesson from "../utils/interfaces/lesson";
 
 type JsonFileFormat = {
   type: "text" | "file";
@@ -76,7 +77,10 @@ export async function processHtmlImages(
  * Service unifié de parsing pour les packages ZIP.
  * Prend un File (sélectionné manuellement) ou un Blob (reçu depuis le endpoint de conversion MBZ).
  */
-export async function parseCourseZip(file: File | Blob): Promise<{
+export async function parseCourseZip(
+  file: File | Blob,
+  courseSlug?: string,
+): Promise<{
   courses: CourseImport[];
   images: QueuedImage[];
   error?: string;
@@ -107,11 +111,14 @@ export async function parseCourseZip(file: File | Blob): Promise<{
   const allExtractedImages: QueuedImage[] = [];
   let globalHasError = false;
 
+  console.log("flatActivities", flatActivities);
+
   for (const item of flatActivities) {
     if (!coursesMap.has(item.course)) {
       coursesMap.set(item.course, {
         id: Math.random(),
         title: item.course,
+        courseSlug,
         lessons: [],
         isPublished: false,
         hasError: false,
@@ -128,7 +135,7 @@ export async function parseCourseZip(file: File | Blob): Promise<{
 
     let currentLesson = currentCourse.lessons.find(
       (l) => l.title === item.section,
-    ) as any;
+    ) as Lesson & { hasError?: boolean };
 
     if (!currentLesson) {
       currentLesson = {
