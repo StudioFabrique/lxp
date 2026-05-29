@@ -81,6 +81,14 @@ export default async function httpPostPrompt(
 
     const data = (await response.json()) as any;
 
+    // Détermination du type de message en fonction du statut de l'API RAG
+    let messageType: "normal" | "warning" | "error" = "normal";
+    if (data.status?.type === "refusal") {
+      messageType = "warning"; // Cas TOXIC_INPUT ou TOXIC_OUTPUT
+    } else if (data.status?.type === "error") {
+      messageType = "error"; // Cas d'erreur de génération interne
+    }
+
     console.warn(
       `[RAG] Mode (${data.answer?.mode}). Score max: ${data.meta?.retrieval?.best_score}`,
     );
@@ -104,7 +112,7 @@ export default async function httpPostPrompt(
     }
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
-    return res.status(200).json({ text: markdownContent });
+    return res.status(200).json({ text: markdownContent, type: messageType });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });
