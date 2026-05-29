@@ -23,7 +23,22 @@ const useChatbot = () => {
 
   const [dialog, setDialog] = useState<ChatbotValues[]>([]);
 
+  const [pendingReset, setPendingReset] = useState<boolean>(false);
+
   const { currentCourseId } = useContext(ChatbotContext);
+
+  const handleNewChat = useCallback(() => {
+    setDialog([
+      {
+        origin: "bot",
+        message:
+          "Discussion réinitialisée ! Comment puis-je vous aider à présent ?",
+        date: new Date(),
+      },
+    ]);
+    setPrompt("");
+    setPendingReset(true);
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     let message = "";
@@ -37,6 +52,11 @@ const useChatbot = () => {
       ...prevState,
       { origin: "user", message: message, date: beginningDate },
     ]);
+
+    const clearHistoryPayload = pendingReset;
+    if (pendingReset) {
+      setPendingReset(false);
+    }
 
     const applyData = (data: { text: string }) => {
       const processedText = data.text;
@@ -52,7 +72,11 @@ const useChatbot = () => {
       {
         path: "/chatbot/prompt",
         method: "post",
-        body: { prompt: message, courseId: currentCourseId || undefined },
+        body: {
+          prompt: message,
+          courseId: currentCourseId || undefined,
+          clearHistory: clearHistoryPayload,
+        },
       },
       applyData,
     );
@@ -96,6 +120,7 @@ const useChatbot = () => {
     dialog,
     setDialog,
     onSubmit,
+    handleNewChat,
   };
 };
 
