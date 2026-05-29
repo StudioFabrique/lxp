@@ -40,28 +40,14 @@ const useChatbot = () => {
       { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const applyData = (data: { answer: { text: string } }) => {
-      // Solution plus robuste pour éviter les sauts de ligne
-      const processedText = data.answer.text;
+    const applyData = (data: { text: string }) => {
+      const processedText = data.text;
 
       setDialog((prevState) => [
         ...prevState,
         { origin: "bot", message: processedText, date: new Date() },
       ]);
       setPrompt("");
-      const lastDialogs = [
-        {
-          origin: "user" as "user" | "bot",
-          message: message,
-          date: beginningDate,
-        },
-        {
-          origin: "bot" as "user" | "bot",
-          message: processedText,
-          date: new Date(),
-        },
-      ];
-      postDialog(lastDialogs);
     };
 
     sendRequest(
@@ -69,29 +55,6 @@ const useChatbot = () => {
         path: "/chatbot/prompt",
         method: "post",
         body: { prompt: message, courseTitle: currentCourseName || undefined },
-      },
-      applyData,
-    );
-  };
-
-  const postDialog = (lastDialogs: ChatbotValues[]) => {
-    console.log("TRIGGERED");
-
-    try {
-      dialogSchema.array().parse(lastDialogs);
-    } catch (err) {
-      console.error("Dialog validation failed:", err);
-      return;
-    }
-
-    const applyData = (data: string) => {
-      console.log("Dialog saved:", data);
-    };
-    sendRequest(
-      {
-        path: `/chatbot/dialogs`,
-        method: "post",
-        body: { lastDialogs },
       },
       applyData,
     );
