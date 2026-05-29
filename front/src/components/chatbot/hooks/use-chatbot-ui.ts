@@ -56,9 +56,9 @@ const useChatbotUi = (
   };
 
   const handleOpenChatbot = async () => {
-    setSize(dialog.length === 0 ? "small" : "large");
+    setSize(dialog.length > 1 ? "large" : "small");
     setShowChatbot(true);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     handleScrollToBottom();
   };
 

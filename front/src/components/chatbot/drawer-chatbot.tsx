@@ -42,7 +42,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
             ? "100%"
             : chatbotUi.size === "large"
               ? 750
-              : 400,
+              : 410,
         height:
           chatbotUi.size === "full"
             ? "100vh"
@@ -50,13 +50,14 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
               ? 700
               : 500,
       }}
-      exit={{ opacity: 0, y: 20, scale: 0.95, width: 400, height: 500 }}
+      exit={{ opacity: 0, y: 20, scale: 0.95, width: 410, height: 500 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
     >
       {/* En-tête du Chatbot */}
       <HeaderChatbot
         size={chatbotUi.size}
+        showFullScreenButton={dialog.length > 1}
         onChangeSize={chatbotUi.handleMaximizeChatbot}
         onClose={chatbotUi.handleCloseChatbot}
       />
