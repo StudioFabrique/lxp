@@ -218,9 +218,10 @@ export default function useDiagnosticQuiz(
     }
   }, [moduleInfo.title, onFinishInitialQuiz, moduleInfo.description, axios]);
 
-  const onStartQuiz = () => {
+  const onStartQuiz = useCallback(() => {
     setIsStarted(true);
-  };
+    onLoadPreliminaryQuizzes();
+  }, [onLoadPreliminaryQuizzes]);
 
   const onAnswerQuiz = (correct: boolean, userAnswer: UserAnswer) => {
     setIsCorrect(correct);
@@ -278,7 +279,13 @@ export default function useDiagnosticQuiz(
       user?.permissions && hasPermission(user.permissions, "update", "lesson");
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
-      onLoadPreliminaryQuizzes();
+      if (isAiDisabled) {
+        // Si l'IA est désactivée, passe le diagnostic sans même afficher le bouton
+        isFinished.current = true;
+        onFinishInitialQuiz();
+      } else {
+        setIsOpen(true);
+      }
     } else if (!isFinished.current) {
       isFinished.current = true;
       onFinishInitialQuiz();
@@ -287,9 +294,6 @@ export default function useDiagnosticQuiz(
     hasStartedModule,
     isModuleLoaded,
     user?.permissions,
-    moduleInfo.title,
-    moduleInfo.description,
-    onLoadPreliminaryQuizzes,
     onFinishInitialQuiz,
   ]);
 

@@ -2,66 +2,91 @@ import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { fastApiAgent } from "../../server";
 import { fetch } from "undici";
+import postDialogs from "../../models/chatbot/post-dialogs";
+import { trackTokens } from "../../models/stats/trackTokens";
 
 export default async function httpPostPrompt(
   req: CustomRequest,
   res: Response,
 ) {
   try {
-    res.setHeader("Content-Type", "text/markdown; charset=utf-8");
-    res.setHeader("Transfer-Encoding", "chunked");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    const userId = req.auth?.userId || "anonymous_student";
 
-    const courseTitle = req.body.courseTitle
-      ? (req.body.courseTitle.replace(" ", "-") as string).toLowerCase()
-      : undefined;
+    // Formatage du slug du cours
+    // const courseSlug = req.body.courseTitle
+    //   ? req.body.courseTitle.trim().replace(/\s+/g, "-").toLowerCase()
+    //   : undefined;
+
+    const courseSlug = "node-js";
 
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
+
     const fetchOptions: any = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: req.auth?.userId,
+        user_id: userId,
         question: req.body.prompt,
-        course_slug: courseTitle,
-        // max_tokens: req.body.max_tokens || 100,
+        course_slug: courseSlug,
+        threshold: 0.68,
+        student_profile: {
+          user_id: userId,
+          course_id: courseSlug,
+          tempo_label: "normal",
+          experience_label: "intermediaire",
+          weak_concepts: [],
+          preferences: ["exemples concrets"],
+          metrics: {},
+        },
       }),
     };
 
-    // Ajouter l'agent mTLS si configuré pour HTTPS
     if (fastApiAgent && dockerIa.startsWith("https://")) {
       fetchOptions.dispatcher = fastApiAgent;
     }
 
     const response = await fetch(`${dockerIa}/ask`, fetchOptions);
+
     if (!response.ok) {
-      return res.status(response.status).json({ error: "FastAPI error" });
+      return res
+        .status(response.status)
+        .json({ error: "Erreur provenant de FastAPI" });
     }
 
-    // Stream la réponse
-    if (response.body) {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+    const data = (await response.json()) as any;
 
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
+    console.warn(
+      `[RAG] Mode (${data.answer?.mode}). Score max: ${data.meta?.retrieval?.best_score}`,
+    );
 
-          if (done) break;
+    const markdownContent =
+      data.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
 
-          const chunk = decoder.decode(value, { stream: true });
-          res.write(chunk);
-        }
-      } finally {
-        reader.releaseLock();
-        res.end();
+    // Evite de polluer la BDD si l'étudiant est anonyme
+    if (userId && userId !== "anonymous_student") {
+      const lastDialogs = [
+        { origin: "user" as const, message: req.body.prompt, date: new Date() },
+        { origin: "bot" as const, message: markdownContent, date: new Date() },
+      ];
+
+      // Récupérer les tokens si FastAPI les inclut dans sa réponse JSON
+      const aiTokens = (data.meta.usage.total_tokens as number) || 0;
+
+      console.log({ aiTokens });
+
+      if (aiTokens) {
+        await trackTokens(userId, aiTokens);
       }
+
+      await postDialogs(userId, lastDialogs);
     }
+
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(200).json({ text: markdownContent });
   } catch (error) {
-    console.error("Streaming error:", error);
-    res.status(500).json(error);
+    console.error("Erreur dans httpPostPrompt:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

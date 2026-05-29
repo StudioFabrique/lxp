@@ -1,8 +1,34 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import dotenv from "dotenv";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { trackTokens } from "../../models/stats/trackTokens";
 
 dotenv.config();
+
+type QuizResponse = {
+  id: string;
+  type: string;
+  prompt: string;
+  difficulty: string | null;
+  bloom: string | null;
+  choices: string[] | null;
+  answer_key: string | boolean;
+  choice_feedback: string | null;
+  explanation_correct: string | null;
+  explanation_wrong: string | null;
+  evidence: string | null;
+  tags: string[];
+  tokens: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  session_meta: {
+    user_id: string;
+    course_id: string;
+    past_questions: string[];
+  };
+};
 
 /**
  * POST /quiz/random
@@ -60,16 +86,19 @@ export default async function httpPostRequestRandomQuiz(
       },
     );
 
-    // Récupération de la réponse JSON renvoyée par l'IA
-    const data = await response.json();
+    const data = (await response.json()) as QuizResponse;
 
-    // Gestion des erreurs de l'IA (ex: code 400 si le texte est flaggé comme toxique)
     if (!response.ok) {
       console.error(
         `Erreur API IA au endpoint /quiz/random (${response.status}):`,
         data,
       );
       return res.status(response.status).json(data);
+    }
+
+    // --- ENREGISTREMENT DES TOKENS ---
+    if (userId && data?.tokens?.total_tokens) {
+      await trackTokens(userId, data.tokens.total_tokens);
     }
 
     return res.status(200).json(data);
