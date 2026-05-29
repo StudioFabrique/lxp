@@ -11,6 +11,7 @@ import {
 type Props = {
   size: "small" | "large" | "full";
   showFullScreenButton: boolean;
+  showNewChatButton: boolean;
   onClose: () => void;
   onChangeSize: () => void;
   onNewChat: () => void;
@@ -19,6 +20,7 @@ type Props = {
 export default function HeaderChatbot({
   size,
   showFullScreenButton,
+  showNewChatButton,
   onClose,
   onChangeSize,
   onNewChat,
@@ -36,16 +38,18 @@ export default function HeaderChatbot({
       </div>
 
       <div className="flex items-center gap-1">
-        <button
-          type="button"
-          className="btn btn-ghost tooltip tooltip-left btn-sm btn-circle transition-colors"
-          onClick={onNewChat}
-          title="Nouvelle discussion"
-          aria-label="Nouvelle discussion"
-          data-tip="Nouvelle discussion"
-        >
-          <LucideMessageCirclePlus className="w-5 h-5" />
-        </button>
+        {showNewChatButton && (
+          <button
+            type="button"
+            className="btn btn-ghost tooltip tooltip-left btn-sm btn-circle transition-colors"
+            onClick={onNewChat}
+            title="Nouvelle discussion"
+            aria-label="Nouvelle discussion"
+            data-tip="Nouvelle discussion"
+          >
+            <LucideMessageCirclePlus className="w-5 h-5" />
+          </button>
+        )}
 
         {showFullScreenButton && (
           <button

@@ -19,7 +19,6 @@ export default function MessageChatbot({
   messageLoader,
 }: Props) {
   const { user } = useContext(Context);
-
   const isUser = message.origin === "user";
 
   return (
@@ -31,11 +30,23 @@ export default function MessageChatbot({
         <div className="chat-header text-xs opacity-50 mb-1">
           {isUser ? "Vous" : "Assistant"}
         </div>
+
+        {/* Application dynamique des couleurs ici */}
         <div
           className={cn(
             "chat-bubble text-sm shadow-sm",
+            // Style de l'utilisateur (Bleu/Primaire)
             isUser && "chat-bubble-primary text-primary-content",
+
+            // Styles du bot en fonction du type
             !isUser &&
+              message.type === "warning" &&
+              "chat-bubble-warning text-warning-content",
+            !isUser &&
+              message.type === "error" &&
+              "chat-bubble-error text-error-content",
+            !isUser &&
+              (!message.type || message.type === "normal") &&
               "chat-bubble-base-200 bg-base-100 text-base-content border border-base-300",
           )}
         >
@@ -45,7 +56,6 @@ export default function MessageChatbot({
         </div>
       </div>
 
-      {/* Indicateur de chargement */}
       {isLoading && isLastMessage && messageLoader}
     </>
   );
