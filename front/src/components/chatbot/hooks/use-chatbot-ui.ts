@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
 
-const useChatbotUi = (dialog: ChatbotValues[]) => {
+const useChatbotUi = (
+  dialog: ChatbotValues[],
+  setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
+) => {
   const [showChatbot, setShowChatbot] = useState(false);
+
+  // Loader fake pour simuler le temps de réponse du chatbot au demarrage
+  const [isLoadingUi, setIsLoadingUi] = useState(false);
+
   // Taille variable pour le drawer
   const [size, setSize] = useState<"small" | "large" | "full">("small");
   const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
@@ -29,7 +36,6 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
     }
   };
 
-  // Événement de défilement manuel
   const handleScrollEvent = () => {
     if (!scrollContainerRef.current) return;
 
@@ -44,12 +50,32 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
       setShowScrollBottom(false);
       setShowScrollTop(scrollTop > 150);
     } else {
-      if (showScrollBottom) {
-        setShowScrollTop(false);
-      } else {
-        setShowScrollTop(scrollTop > 150);
-      }
+      setShowScrollBottom(true);
+      setShowScrollTop(false);
     }
+  };
+
+  const handleOpenChatbot = async () => {
+    setSize(dialog.length === 0 ? "small" : "large");
+    setShowChatbot(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    handleScrollToBottom();
+  };
+
+  const handleCloseChatbot = () => {
+    setShowChatbot(false);
+  };
+
+  const handleMaximizeChatbot = () => {
+    setSize(size === "large" ? "full" : "large");
+  };
+
+  const handleResizeChatbot = () => {
+    setSize(dialog.length === 0 ? "small" : "large");
+  };
+
+  const handleMinimizeChatbot = () => {
+    setSize("small");
   };
 
   // Détection de l'arrivée d'un nouveau message
@@ -70,11 +96,30 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
     }
   }, [dialog.length]);
 
+  // Quand l'étudiant ouvre le chatbot pour la première fois et qu'il n'y a pas de message,
+  // pendant 1 seconde, le loader s'affiche puis le chatbot salue l'étudiant de manière engageante
+  useEffect(() => {
+    if (dialog.length === 0 && showChatbot) {
+      setIsLoadingUi(true);
+      const timer = setTimeout(() => {
+        setDialog((prevState) => [
+          ...prevState,
+          {
+            origin: "bot",
+            message: "Bonjour ! Comment puis-je vous aider ?",
+            date: new Date(),
+          },
+        ]);
+        setIsLoadingUi(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [dialog.length, setDialog, showChatbot]);
+
   return {
     showChatbot,
-    setShowChatbot,
+    isLoadingUi,
     size,
-    setSize,
     isSubmitButtonAnimated,
     setIsSubmitButtonAnimated,
     showScrollTop,
@@ -84,6 +129,11 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
     handleScrollToTop,
     handleScrollToBottom,
     handleScrollEvent,
+    handleOpenChatbot,
+    handleCloseChatbot,
+    handleMaximizeChatbot,
+    handleResizeChatbot,
+    handleMinimizeChatbot,
   };
 };
 

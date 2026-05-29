@@ -13,10 +13,12 @@ export default async function httpPostPrompt(
   try {
     const userId = req.auth?.userId || "anonymous_student";
 
-    const course = await prisma.course.findUnique({
-      where: { id: req.body.courseId },
-      select: { courseSlug: true },
-    });
+    const course =
+      req.body.courseId &&
+      (await prisma.course.findUnique({
+        where: { id: req.body.courseId },
+        select: { courseSlug: true },
+      }));
 
     const courseSlug = course?.courseSlug || undefined;
 
