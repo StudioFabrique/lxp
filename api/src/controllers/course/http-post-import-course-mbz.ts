@@ -50,7 +50,7 @@ export default async function httpPostImportCourseMbz(
       `[MBZ] Ingestion IA réussie (Slug: ${courseSlug}). Récupération du ZIP...`,
     );
 
-    // Téléchargement du fichier ZIP généré par l'IA (On garde le flux ouvert)
+    // Téléchargement du fichier ZIP généré par l'IA
     const zipResponse = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/export/${courseSlug}.zip`,
     );

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
 
 const useChatbotUi = (dialog: ChatbotValues[]) => {
+  const [showChatbot, setShowChatbot] = useState(false);
   // Taille variable pour le drawer
   const [size, setSize] = useState<"small" | "large" | "full">("small");
   const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
@@ -70,6 +71,8 @@ const useChatbotUi = (dialog: ChatbotValues[]) => {
   }, [dialog.length]);
 
   return {
+    showChatbot,
+    setShowChatbot,
     size,
     setSize,
     isSubmitButtonAnimated,

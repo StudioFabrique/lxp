@@ -237,6 +237,11 @@ export const postImportCourseStructureValidator = [
     .isString()
     .withMessage("La description doit être une chaîne de caractères."),
 
+  body("courseSlug")
+    .optional()
+    .isString()
+    .withMessage("Le slug du cours doit être une chaîne de caractères."),
+
   body("moduleId")
     .notEmpty()
     .withMessage("L'identifiant du module est requis.")

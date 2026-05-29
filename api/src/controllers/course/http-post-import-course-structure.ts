@@ -8,7 +8,8 @@ export default async function httpPostImportCourseStructure(
   res: Response,
 ) {
   const userId = req.auth?.userId;
-  const { title, description, lessons, parcoursId, moduleId } = req.body;
+  const { title, description, lessons, parcoursId, moduleId, courseSlug } =
+    req.body;
 
   try {
     const admin = await prisma.admin.findFirst({ where: { idMdb: userId } });
@@ -20,6 +21,7 @@ export default async function httpPostImportCourseStructure(
       title,
       description,
       lessons,
+      courseSlug,
     );
 
     return res.status(201).json(result);

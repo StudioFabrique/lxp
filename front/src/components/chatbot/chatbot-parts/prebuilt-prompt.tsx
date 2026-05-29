@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
-  const { currentCourseName } = useContext(ChatbotContext);
+  const { currentCourseId } = useContext(ChatbotContext);
 
   const handleClick = (question: string) => {
     setPrebuiltPrompt(question);
@@ -20,7 +20,7 @@ export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
     return allPrompts.sort(() => 0.5 - Math.random()).slice(0, 3);
   }, []);
 
-  if (!currentCourseName) return null;
+  if (!currentCourseId) return null;
 
   return (
     <div className="flex flex-col gap-3 p-1">
