@@ -77,8 +77,6 @@ export default async function httpPostPrompt(
       // Récupérer les tokens si FastAPI les inclut dans sa réponse JSON
       const aiTokens = (data.meta.usage.total_tokens as number) || 0;
 
-      console.log({ aiTokens });
-
       if (aiTokens) {
         await trackTokens(userId, aiTokens);
       }
