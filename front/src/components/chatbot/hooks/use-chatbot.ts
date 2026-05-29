@@ -1,16 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { z } from "zod";
-import { regexGeneric } from "../../../utils/constantes";
 import { ChatbotContext } from "../../../store/chatbotContext";
 
-const dialogSchema = z.object({
-  origin: z.enum(["user", "bot"]),
-  message: z
-    .string({ required_error: "Le message est requis." })
-    .regex(regexGeneric, { message: "Format de message invalide." }),
-  date: z.coerce.date(),
-});
+// const dialogSchema = z.object({
+//   origin: z.enum(["user", "bot"]),
+//   message: z
+//     .string({ required_error: "Le message est requis." })
+//     .regex(regexGeneric, { message: "Format de message invalide." }),
+//   date: z.coerce.date(),
+// });
 
 export type ChatbotValues = {
   origin: "user" | "bot";
@@ -19,11 +17,11 @@ export type ChatbotValues = {
 };
 
 const useChatbot = () => {
+  const { sendRequest, error, isLoading } = useHttp();
+
   const [prompt, setPrompt] = useState<string>("");
 
   const [dialog, setDialog] = useState<ChatbotValues[]>([]);
-
-  const { sendRequest, error, isLoading } = useHttp();
 
   const { currentCourseId } = useContext(ChatbotContext);
 
