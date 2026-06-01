@@ -34,6 +34,7 @@ model Activity {
   author             Admin              @relation(fields: [authorId], references: [id], onDelete: SetDefault)
   lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   resourceActivities ResourceActivity[]
+  quizzes            Quizz[]
 }
 
 model Admin {
@@ -150,6 +151,7 @@ model Course {
   module          ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   lessons         Lesson[]
   tags            TagsOnCourse[]
+  quizzes         Quizz[]
 }
 
 model Formation {
@@ -252,6 +254,7 @@ model Module {
   admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   formations ModulesOnFormation[]
   metadatas  ModuleMetadata[]
+  quizzes    Quizz[]
 }
 
 model ModuleMetadata {
@@ -445,4 +448,46 @@ model Authorization {
   role     String
   action   String
   resource String
+}
+
+model Quizz {
+  id    Int    @id @default(autoincrement())
+  title String
+  type  String // Ex: "ending_course", "preliminary", "random"
+
+  moduleId   Int?
+  module     Module?   @relation(fields: [moduleId], references: [id])
+  activityId Int?
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  courseId   Int?
+  course     Course?   @relation(fields: [courseId], references: [id])
+
+  questions QuizQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Nouveau modèle pour stocker les questions générées
+model QuizQuestion {
+  id      Int    @id @default(autoincrement())
+  quizzId Int?
+  quizz   Quizz? @relation(fields: [quizzId], references: [id], onDelete: Cascade)
+
+  // Métadonnées de base (communes à toutes les questions)
+  externalId       String?
+  type             String // "mcq", "true_false", "matching", "ordering"
+  difficulty       String   @default("medium")
+  prompt           String // La question posée
+  explanationTrue  String? // Explication si correct
+  explanationWrong String? // Explication si faux
+  tags             String[] // Support natif des tableaux de strings en Postgres
+
+  data Json
+
+  // Hash du contenu d'origine (utile pour le endpoint random pour éviter de regénérer la même question)
+  contentHash String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
