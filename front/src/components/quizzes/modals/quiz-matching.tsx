@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { ArrowBigRightDash, ChevronDown } from "lucide-react";
 import { cn } from "../../../utils";
 import { Pair, Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "matching" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: () => void;
   isAnswered: boolean;
 }
 
-const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [rightOptions, setRightOptions] = useState<string[]>([]);
   // Index de la ligne dont le dropdown est ouvert (null = tous fermés)
@@ -173,13 +175,11 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
       </div>
 
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          disabled={!allAnswered}
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          onValidate={handleValidate}
+          onReport={onReport}
+          isAnswered={allAnswered}
+        />
       )}
     </div>
   );
