@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Readable } from "stream";
 import getCourseById from "../../models/course/get-course-by-id";
 import dotenv from "dotenv";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { trackTokens } from "../../models/stats/trackTokens";
+import { prisma } from "../../utils/db";
 
 dotenv.config();
 
@@ -34,28 +35,60 @@ export default async function httpGetEndingCourseQuizStream(
   res: Response,
 ) {
   const { courseId } = req.params;
-  const { userId } = req.auth ?? {}; // Récupération de l'identifiant utilisateur issu du token
+  const { userId } = req.auth ?? {};
 
   try {
     const course = await getCourseById(+courseId);
+    if (!course) return res.status(404).json({ error: "Cours introuvable" });
 
-    if (!course) {
-      return res.status(404).json({ error: "Cours introuvable" });
+    // 1. Vérification du cache Prisma
+    let quizz = await prisma.quizz.findFirst({
+      where: { courseId: +courseId, type: "ending_course" },
+      include: { questions: true },
+    });
+
+    // 2. Si le quizz existe déjà, on SIMULE le stream pour le client
+    if (quizz && quizz.questions.length > 0) {
+      console.log("Renvoi du Quizz de fin depuis le cache");
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader("Transfer-Encoding", "chunked");
+
+      quizz.questions.forEach((q) => {
+        const payload = {
+          id: q.externalId,
+          type: q.type,
+          prompt: q.prompt,
+          difficulty: q.difficulty,
+          explanation_correct: q.explanationTrue,
+          explanation_wrong: q.explanationWrong,
+          tags: q.tags,
+          ...(q.data as any),
+        };
+        res.write(JSON.stringify(payload) + "\n");
+      });
+
+      // Simuler l'événement de fin
+      res.write(
+        JSON.stringify({
+          event: "done",
+          total_questions: quizz.questions.length,
+          elapsed_sec: 0,
+          tokens: { total_tokens: 0 },
+        }) + "\n",
+      );
+      return res.end();
     }
 
-    // Construction du payload aligné avec la documentation de l'API IA
+    // 3. Sinon, on appelle l'API IA
     const quizzesRequestPayload = {
       course_name: course.title,
       activity_content: course.content,
-      // model: "ministral-14b-2512",
       profile: {
         user_id: userId ? String(userId) : undefined,
         course_id: String(courseId),
-        // Plus tard ajouter : experience_label, weak_concepts, etc.
       },
     };
 
-    // Appel de l'API externe
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
       {
@@ -68,17 +101,15 @@ export default async function httpGetEndingCourseQuizStream(
       },
     );
 
-    if (!response.ok) {
-      throw new Error(`Erreur API externe: ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error(`Erreur API: ${response.statusText}`);
 
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Transfer-Encoding", "chunked");
 
-    const nodeStream = Readable.fromWeb(response.body as any);
-    nodeStream.pipe(res); // Le stream est envoyé directement au client sans attente
+    const nodeStream = Readable.fromWeb(response.body as QuizResponseStream);
+    nodeStream.pipe(res);
 
-    // --- INTERCEPTION DU STREAM EN ARRIÈRE-PLAN POUR LES TOKENS ---
+    // 4. Interception pour sauvegarde en BDD
     let accumulatedData = "";
     nodeStream.on("data", (chunk) => {
       accumulatedData += chunk.toString();
@@ -86,39 +117,66 @@ export default async function httpGetEndingCourseQuizStream(
 
     nodeStream.on("end", async () => {
       try {
-        // Découpage par ligne au cas où c'est du NDJSON / SSE (Server-Sent Events)
         const lines = accumulatedData.split("\n");
+        const generatedQuestions = [];
+
         for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
+          const cleanLine = line.trim().replace(/^data:\s*/, "");
+          if (!cleanLine) continue;
 
-          // Nettoyage si le format utilise un préfixe SSE "data:"
-          const cleanLine = trimmed.startsWith("data:")
-            ? trimmed.replace(/^data:\s*/, "")
-            : trimmed;
+          const parsed = JSON.parse(cleanLine);
 
-          try {
-            const parsed = JSON.parse(cleanLine);
-            // Dès qu'on tombe sur le chunk ou l'événement final contenant les tokens
-            if (parsed?.tokens?.total_tokens) {
+          if (parsed?.event === "done") {
+            if (parsed?.tokens?.total_tokens && userId) {
               await trackTokens(userId, parsed.tokens.total_tokens);
-              break;
             }
-          } catch {
-            // On ignore les lignes incomplètes ou les morceaux de JSON non valides
+          } else if (parsed?.prompt) {
+            // C'est une question, on la prépare pour l'insertion
+            const {
+              id,
+              type,
+              prompt,
+              difficulty,
+              explanation_correct,
+              explanation_wrong,
+              tags,
+              ...specificData
+            } = parsed;
+            generatedQuestions.push({
+              externalId: id,
+              type,
+              prompt,
+              difficulty: difficulty || "medium",
+              explanationTrue: explanation_correct,
+              explanationWrong: explanation_wrong,
+              tags: tags || [],
+              data: specificData,
+            });
           }
+        }
+
+        // 5. Sauvegarde transactionnelle dans Prisma
+        if (generatedQuestions.length > 0) {
+          await prisma.quizz.create({
+            data: {
+              title: `Quiz de fin - ${course.title}`,
+              type: "ending_course",
+              courseId: +courseId,
+              questions: {
+                create: generatedQuestions,
+              },
+            },
+          });
         }
       } catch (streamError) {
         console.error(
-          "Erreur lors de l'extraction des tokens du stream :",
+          "Erreur lors de l'extraction/sauvegarde du stream :",
           streamError,
         );
       }
     });
   } catch (error) {
-    console.error("Erreur backend lors du proxy stream:", error);
-    res
-      .status(500)
-      .json({ error: "Impossible de joindre l'API de génération" });
+    console.error("Erreur backend:", error);
+    res.status(500).json({ error: "Impossible de joindre l'API" });
   }
 }

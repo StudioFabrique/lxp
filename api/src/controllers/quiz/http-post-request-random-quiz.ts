@@ -101,7 +101,7 @@ export default async function httpPostRequestRandomQuiz(
       },
     );
 
-    const data = await response.json();
+    const data = (await response.json()) as QuizResponse;
 
     if (!response.ok) return res.status(response.status).json(data);
 
@@ -124,7 +124,7 @@ export default async function httpPostRequestRandomQuiz(
           externalId: id,
           type,
           prompt,
-          difficulty,
+          difficulty: difficulty || "medium",
           explanationTrue: explanation_correct,
           explanationWrong: explanation_wrong,
           tags: tags || [],
