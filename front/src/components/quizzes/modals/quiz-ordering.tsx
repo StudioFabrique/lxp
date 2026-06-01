@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: () => void;
   isAnswered: boolean;
 }
 
-const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   // On garde les items et leur index d'origine pour vérifier à la fin
   const [items, setItems] = useState<{ text: string; originalIndex: number }[]>(
     [],
@@ -77,12 +79,11 @@ const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
         ))}
       </ul>
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          onValidate={handleValidate}
+          onReport={onReport}
+          isAnswered={isAnswered}
+        />
       )}
     </div>
   );

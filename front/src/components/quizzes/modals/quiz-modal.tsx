@@ -21,6 +21,7 @@ interface QuizModalProps {
   score: number;
   onClose: () => void;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: () => void;
   onNext: () => void;
 }
 
@@ -37,6 +38,7 @@ const QuizModal = ({
   score,
   onClose,
   onAnswer,
+  onReport,
   onNext,
 }: QuizModalProps) => {
   if (!isOpen) return null;
@@ -46,13 +48,19 @@ const QuizModal = ({
     switch (quiz.type) {
       case "mcq":
         return (
-          <QuizMcq quiz={quiz} onAnswer={onAnswer} isAnswered={isAnswered} />
+          <QuizMcq
+            quiz={quiz}
+            onAnswer={onAnswer}
+            onReport={onReport}
+            isAnswered={isAnswered}
+          />
         );
       case "matching":
         return (
           <QuizMatching
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -61,6 +69,7 @@ const QuizModal = ({
           <QuizOrdering
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -69,6 +78,7 @@ const QuizModal = ({
           <QuizTrueFalse
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );

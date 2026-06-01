@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "mcq" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: () => void;
   isAnswered: boolean;
 }
 
-const QuizMcq = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [selected, setSelected] = useState<number | null>(null);
 
   const handleValidate = () => {
@@ -36,13 +38,11 @@ const QuizMcq = ({ quiz, onAnswer, isAnswered }: Props) => {
         ))}
       </div>
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          disabled={selected === null}
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          onValidate={handleValidate}
+          onReport={onReport}
+          isAnswered={isAnswered}
+        />
       )}
     </div>
   );

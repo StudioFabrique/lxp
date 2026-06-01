@@ -144,13 +144,19 @@ const DiagnosticQuizView = ({
     switch (quiz.type) {
       case "mcq":
         return (
-          <QuizMcq quiz={quiz} onAnswer={onAnswer} isAnswered={isAnswered} />
+          <QuizMcq
+            quiz={quiz}
+            onAnswer={onAnswer}
+            onReport={() => {}}
+            isAnswered={isAnswered}
+          />
         );
       case "matching":
         return (
           <QuizMatching
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={() => {}}
             isAnswered={isAnswered}
           />
         );
@@ -159,6 +165,7 @@ const DiagnosticQuizView = ({
           <QuizOrdering
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={() => {}}
             isAnswered={isAnswered}
           />
         );
@@ -167,6 +174,7 @@ const DiagnosticQuizView = ({
           <QuizTrueFalse
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={() => {}}
             isAnswered={isAnswered}
           />
         );
