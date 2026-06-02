@@ -1,10 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useChatbotUi = (
   dialog: ChatbotValues[],
   setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
 ) => {
+  const {
+    hasChatbotClosed,
+    onTriggerTimer,
+    showQuizMessage,
+    onTriggerAQuiz,
+    hasTrigerredAQuiz,
+  } = useContext(ChatbotContext);
+
   const [showChatbot, setShowChatbot] = useState(false);
 
   // Loader fake pour simuler le temps de réponse du chatbot au demarrage
@@ -22,19 +31,19 @@ const useChatbotUi = (
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Scroll vers le haut
-  const handleScrollToTop = () => {
+  const handleScrollToTop = useCallback(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, [scrollContainerRef]);
 
   // Scroll vers le bas
-  const handleScrollToBottom = () => {
+  const handleScrollToBottom = useCallback(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
       setShowScrollBottom(false);
     }
-  };
+  }, [bottomRef]);
 
   const handleScrollEvent = () => {
     if (!scrollContainerRef.current) return;
@@ -55,14 +64,16 @@ const useChatbotUi = (
     }
   };
 
-  const handleOpenChatbot = async () => {
+  const handleOpenChatbot = useCallback(async () => {
     setSize(dialog.length > 1 ? "large" : "small");
     setShowChatbot(true);
+    onTriggerTimer("chatbot");
     await new Promise((resolve) => setTimeout(resolve, 400));
     handleScrollToBottom();
-  };
+  }, [dialog, onTriggerTimer, handleScrollToBottom]);
 
   const handleCloseChatbot = () => {
+    onTriggerTimer("modulePreview");
     setShowChatbot(false);
   };
 
@@ -116,8 +127,17 @@ const useChatbotUi = (
     }
   }, [dialog.length, setDialog, showChatbot]);
 
+  useEffect(() => {
+    if (hasChatbotClosed) {
+      setShowChatbot(false);
+    } else if (showQuizMessage) {
+      handleOpenChatbot();
+    }
+  }, [hasChatbotClosed, showQuizMessage, handleOpenChatbot]);
+
   return {
     showChatbot,
+    showQuizMessage,
     isLoadingUi,
     size,
     isSubmitButtonAnimated,
@@ -134,6 +154,8 @@ const useChatbotUi = (
     handleMaximizeChatbot,
     handleResizeChatbot,
     handleMinimizeChatbot,
+    onTriggerAQuiz,
+    hasTrigerredAQuiz,
   };
 };
 

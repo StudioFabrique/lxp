@@ -178,7 +178,7 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         <QuizModalButtons
           onValidate={handleValidate}
           onReport={onReport}
-          isAnswered={allAnswered}
+          isAnswered={!allAnswered}
         />
       )}
     </div>

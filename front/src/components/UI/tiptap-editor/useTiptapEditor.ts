@@ -1,6 +1,7 @@
-import { Editor, useEditor } from "@tiptap/react";
-import { useEffect, useRef, useState } from "react";
+import { Editor, useEditor, useEditorState } from "@tiptap/react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { tiptapExtensions } from "./tiptapConfig";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 export default function useTiptapEditor(
   className: string,
@@ -9,6 +10,14 @@ export default function useTiptapEditor(
   initialValue?: string,
   onContentChange?: (content: string) => void,
 ) {
+  const { setWordsCount, estimatedActivityReadTimeInMinutes } =
+    useContext(ChatbotContext);
+
+  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
+
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const stickyMarkerRef = useRef<HTMLDivElement>(null);
+
   const editor = useEditor({
     extensions: tiptapExtensions,
     content: initialValue,
@@ -25,10 +34,12 @@ export default function useTiptapEditor(
     },
   });
 
-  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
-
-  const menuContainerRef = useRef<HTMLDivElement>(null);
-  const stickyMarkerRef = useRef<HTMLDivElement>(null);
+  const { wordsCount } = useEditorState({
+    editor,
+    selector: (context) => ({
+      wordsCount: context.editor?.storage.characterCount.words(),
+    }),
+  }) as { wordsCount: number };
 
   useEffect(() => {
     if (editor) {
@@ -54,7 +65,11 @@ export default function useTiptapEditor(
     }
   }, [editor, initialValue]);
 
-  // --- LOGIQUE MENU BAR STICKY  ---
+  useEffect(() => {
+    setWordsCount(wordsCount);
+  }, [wordsCount, setWordsCount]);
+
+  // Menu sticky
   useEffect(() => {
     if (!isEditingActivity || !stickyMarkerRef.current) return;
 
@@ -83,5 +98,6 @@ export default function useTiptapEditor(
     menuContainerRef,
     stickyMarkerRef,
     isMenuBarSticky,
+    estimatedActivityReadTimeInMinutes,
   };
 }
