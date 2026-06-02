@@ -8,6 +8,7 @@ import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
 import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatbot from "./hooks/use-chatbot";
+import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;
@@ -64,7 +65,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
       <HeaderChatbot
         size={chatbotUi.size}
         showFullScreenButton={dialog.length > 1}
-        showNewChatButton={!pendingReset}
+        showNewChatButton={!pendingReset && dialog.length > 1}
         onChangeSize={chatbotUi.handleMaximizeChatbot}
         onNewChat={handleNewChat}
         onClose={chatbotUi.handleCloseChatbot}
@@ -90,9 +91,16 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
               />
             );
           })}
-          {!isLoading && !chatbotUi.isLoadingUi && (
-            <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
-          )}
+          {!isLoading &&
+            !chatbotUi.isLoadingUi &&
+            (chatbotUi.showQuizMessage ? (
+              <MessageQuizChatbot
+                hasTriggeredAQuiz={chatbotUi.hasTrigerredAQuiz}
+                onTriggerAQuiz={chatbotUi.onTriggerAQuiz}
+              />
+            ) : (
+              <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
+            ))}
         </div>
 
         {/* Boutons flottants par dessus le chat */}

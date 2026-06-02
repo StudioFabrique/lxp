@@ -1,9 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router";
+
+// Mots par minute de base pour le calcul du temps de lecture
+const WPM_BASE = 200;
+
+type CourseDifficulty = "easy" | "medium" | "hard";
+type TimerTriggerType = "modulePreview" | "chatbot" | "disabled";
 
 type ChatbotContextType = {
   currentCourseId: number | undefined;
+  estimatedActivityReadTimeInMinutes: number;
+  showQuizMessage: boolean;
+  hasChatbotClosed: boolean;
+  hasTrigerredAQuiz: boolean;
   setCurrentCourseId: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setWordsCount: React.Dispatch<React.SetStateAction<number>>;
+  onChangeActivityDifficulty: (difficulty: CourseDifficulty) => void;
+  onTriggerAQuiz: () => void;
+  onTriggerTimer: (triggerType: TimerTriggerType) => void;
 };
 
 const ChatbotContext = React.createContext<ChatbotContextType>(
@@ -16,14 +30,114 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
 
   const [currentCourseId, setCurrentCourseId] = useState<number | undefined>();
 
+  // states relatifs à la gestion des comportements du chatbot selon le temps écoulé
+  const [wordsCount, setWordsCount] = useState(0);
+  const [triggerType, setTriggerType] = useState<TimerTriggerType>("disabled");
+  const [courseDifficultyFactor, setCourseDifficultyFactor] =
+    useState<number>(0.75);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [showQuizMessage, setShowQuizMessage] = useState(false);
+  const [hasTrigerredAQuiz, setHasTrigerredAQuiz] = useState(false);
+  const [hasChatbotClosed, setHasChatbotClosed] = useState(false);
+
+  const estimatedActivityReadTime =
+    ((wordsCount * courseDifficultyFactor) / WPM_BASE) * 60000;
+
+  console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
+
+  const onChangeActivityDifficulty = (difficulty: CourseDifficulty) => {
+    switch (difficulty) {
+      case "easy":
+        setCourseDifficultyFactor(1);
+        break;
+      case "medium":
+        setCourseDifficultyFactor(0.75);
+        break;
+      case "hard":
+        setCourseDifficultyFactor(0.5);
+        break;
+    }
+  };
+
+  /**
+   * Appel de cette fonction quand le timer doit être déclenché
+   * selon l'action (fermeture du chatbot, fin du module, reset du timer etc.)
+   */
+  const onTriggerTimer = useCallback(
+    (triggerType: TimerTriggerType) => {
+      setTriggerType(triggerType);
+
+      if (triggerType === "disabled") {
+        setTimeRemaining(0);
+        return;
+      }
+      setTimeRemaining(
+        triggerType === "modulePreview"
+          ? estimatedActivityReadTime * 2 // double le temps estimé lorsque le module est prévisualisé et que le chatbot est fermé
+          : 10 * 60000, // 10 minutes si c'est dans le chatbot
+      );
+    },
+    [estimatedActivityReadTime],
+  );
+
+  const onTimerEnd = useCallback(() => {
+    switch (triggerType) {
+      case "modulePreview":
+        console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
+        setShowQuizMessage(true);
+        break;
+      case "chatbot":
+        console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
+        setHasChatbotClosed(true);
+        onTriggerTimer("modulePreview");
+        break;
+      case "disabled":
+        setTimeRemaining(0);
+        break;
+      default:
+        break;
+    }
+  }, [triggerType, onTriggerTimer, estimatedActivityReadTime, timeRemaining]);
+
+  const onTriggerAQuiz = useCallback(() => {
+    setHasTrigerredAQuiz(true);
+  }, []);
+
   useEffect(() => {
     if (!pathname.includes("/parcours/module/")) {
       setCurrentCourseId(undefined);
     }
   }, [pathname]);
 
+  /**
+   * Activation du timer
+   */
+  useEffect(() => {
+    if (timeRemaining > 0) {
+      const timer = setTimeout(() => {
+        onTimerEnd();
+      }, timeRemaining);
+      return () => clearTimeout(timer);
+    }
+  }, [timeRemaining, onTimerEnd]);
+
   return (
-    <ChatbotContext.Provider value={{ currentCourseId, setCurrentCourseId }}>
+    <ChatbotContext.Provider
+      value={{
+        currentCourseId,
+        estimatedActivityReadTimeInMinutes: Math.round(
+          estimatedActivityReadTime / 60000,
+        ),
+        showQuizMessage,
+        hasChatbotClosed,
+        hasTrigerredAQuiz,
+        setCurrentCourseId,
+        setWordsCount,
+        onChangeActivityDifficulty,
+        onTriggerAQuiz,
+        onTriggerTimer,
+      }}
+    >
       {children}
     </ChatbotContext.Provider>
   );

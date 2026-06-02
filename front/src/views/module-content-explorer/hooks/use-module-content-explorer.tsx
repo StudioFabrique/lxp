@@ -28,13 +28,14 @@ import {
 import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
+  // Le contexte du chatbot
   const { setCurrentCourseId } = useContext(ChatbotContext);
+
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
   const stateFromUrlCalled = useRef(false);
   const isInitialActivityLoaded = useRef(false);
-  // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
   const isDiagnosticPassed = useRef(false);
   const isReordering = useRef({
     course: false,
