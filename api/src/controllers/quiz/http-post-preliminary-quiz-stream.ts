@@ -31,7 +31,7 @@ export default async function httpPostPreliminaryQuizStream(
     if (!module) throw new Error("Module non trouvé.");
 
     // 2. Tentative de récupération depuis le cache BDD
-    const existingQuizz = await prisma.quizz.findFirst({
+    const existingQuizz = await prisma.quiz.findFirst({
       where: { moduleId: module.id, type: "preliminary" },
       include: { questions: true },
     });
@@ -136,7 +136,7 @@ export default async function httpPostPreliminaryQuizStream(
         }
 
         if (questionsToSave.length > 0) {
-          await prisma.quizz.create({
+          await prisma.quiz.create({
             data: {
               title: `Quiz préliminaire - ${module.title}`,
               type: "preliminary",

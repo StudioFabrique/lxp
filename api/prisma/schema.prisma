@@ -34,7 +34,7 @@ model Activity {
   author             Admin              @relation(fields: [authorId], references: [id], onDelete: SetDefault)
   lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   resourceActivities ResourceActivity[]
-  quizzes            Quizz[]
+  quizzes            Quiz[]
 }
 
 model Admin {
@@ -151,7 +151,7 @@ model Course {
   module          ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   lessons         Lesson[]
   tags            TagsOnCourse[]
-  quizzes         Quizz[]
+  quizzes         Quiz[]
 }
 
 model Formation {
@@ -254,7 +254,7 @@ model Module {
   admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   formations ModulesOnFormation[]
   metadatas  ModuleMetadata[]
-  quizzes    Quizz[]
+  quizzes    Quiz[]
 }
 
 model ModuleMetadata {
@@ -450,7 +450,7 @@ model Authorization {
   resource String
 }
 
-model Quizz {
+model Quiz {
   id    Int    @id @default(autoincrement())
   title String
   type  String // Ex: "ending_course", "preliminary", "random"
@@ -468,26 +468,31 @@ model Quizz {
   updatedAt DateTime @updatedAt
 }
 
-// Nouveau modèle pour stocker les questions générées
 model QuizQuestion {
-  id      Int    @id @default(autoincrement())
-  quizzId Int?
-  quizz   Quizz? @relation(fields: [quizzId], references: [id], onDelete: Cascade)
+  id     Int   @id @default(autoincrement())
+  quizId Int?
+  quiz   Quiz? @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
-  // Métadonnées de base (communes à toutes les questions)
   externalId       String?
   type             String // "mcq", "true_false", "matching", "ordering"
   difficulty       String   @default("medium")
-  prompt           String // La question posée
-  explanationTrue  String? // Explication si correct
-  explanationWrong String? // Explication si faux
-  tags             String[] // Support natif des tableaux de strings en Postgres
+  prompt           String
+  explanationTrue  String?
+  explanationWrong String?
+  tags             String[]
 
   data Json
 
-  // Hash du contenu d'origine (utile pour le endpoint random pour éviter de regénérer la même question)
   contentHash String? @unique
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  quizQuestionReports QuizQuestionReport[]
+}
+
+model QuizQuestionReport {
+  id             Int           @id @default(autoincrement())
+  quizQuestionId Int?
+  quizQuestion   QuizQuestion? @relation(fields: [quizQuestionId], references: [id], onDelete: Cascade)
+  commentaire    String?
 }
