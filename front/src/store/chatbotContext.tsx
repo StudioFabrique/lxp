@@ -12,11 +12,11 @@ type ChatbotContextType = {
   estimatedActivityReadTimeInMinutes: number;
   showQuizMessage: boolean;
   hasChatbotClosed: boolean;
-  hasTrigerredAQuiz: boolean;
+  hasTrigerredQuiz: boolean;
   setCurrentCourseId: React.Dispatch<React.SetStateAction<number | undefined>>;
   setWordsCount: React.Dispatch<React.SetStateAction<number>>;
   onChangeActivityDifficulty: (difficulty: CourseDifficulty) => void;
-  onTriggerAQuiz: () => void;
+  onTriggerQuiz: () => void;
   onTriggerTimer: (triggerType: TimerTriggerType) => void;
 };
 
@@ -37,13 +37,11 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
     useState<number>(0.75);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showQuizMessage, setShowQuizMessage] = useState(false);
-  const [hasTrigerredAQuiz, setHasTrigerredAQuiz] = useState(false);
+  const [hasTrigerredQuiz, setHasTrigerredQuiz] = useState(false);
   const [hasChatbotClosed, setHasChatbotClosed] = useState(false);
 
   const estimatedActivityReadTime =
     ((wordsCount * courseDifficultyFactor) / WPM_BASE) * 60000;
-
-  console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
 
   const onChangeActivityDifficulty = (difficulty: CourseDifficulty) => {
     switch (difficulty) {
@@ -65,19 +63,24 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
    */
   const onTriggerTimer = useCallback(
     (triggerType: TimerTriggerType) => {
-      setTriggerType(triggerType);
-
-      if (triggerType === "disabled") {
-        setTimeRemaining(0);
-        return;
+      console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
+      switch (triggerType) {
+        case "disabled":
+          setTimeRemaining(0);
+          break;
+        case "modulePreview":
+          setTimeRemaining(estimatedActivityReadTime * 2); // double le temps estimé lorsque le module est prévisualisé et que le chatbot est fermé
+          break;
+        case "chatbot":
+          setTimeRemaining(10 * 60000); // 10 minutes si c'est dans le chatbot
+          break;
+        default:
+          break;
       }
-      setTimeRemaining(
-        triggerType === "modulePreview"
-          ? estimatedActivityReadTime * 2 // double le temps estimé lorsque le module est prévisualisé et que le chatbot est fermé
-          : 10 * 60000, // 10 minutes si c'est dans le chatbot
-      );
+
+      setTriggerType(triggerType);
     },
-    [estimatedActivityReadTime],
+    [estimatedActivityReadTime, timeRemaining],
   );
 
   const onTimerEnd = useCallback(() => {
@@ -92,6 +95,7 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
         onTriggerTimer("modulePreview");
         break;
       case "disabled":
+        console.log({ estimatedActivityReadTime, triggerType, timeRemaining });
         setTimeRemaining(0);
         break;
       default:
@@ -99,8 +103,8 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
     }
   }, [triggerType, onTriggerTimer, estimatedActivityReadTime, timeRemaining]);
 
-  const onTriggerAQuiz = useCallback(() => {
-    setHasTrigerredAQuiz(true);
+  const onTriggerQuiz = useCallback(async () => {
+    setHasTrigerredQuiz(true);
   }, []);
 
   useEffect(() => {
@@ -130,11 +134,11 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
         ),
         showQuizMessage,
         hasChatbotClosed,
-        hasTrigerredAQuiz,
+        hasTrigerredQuiz,
         setCurrentCourseId,
         setWordsCount,
         onChangeActivityDifficulty,
-        onTriggerAQuiz,
+        onTriggerQuiz,
         onTriggerTimer,
       }}
     >

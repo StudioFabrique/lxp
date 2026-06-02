@@ -95,8 +95,8 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
             !chatbotUi.isLoadingUi &&
             (chatbotUi.showQuizMessage ? (
               <MessageQuizChatbot
-                hasTriggeredAQuiz={chatbotUi.hasTrigerredAQuiz}
-                onTriggerAQuiz={chatbotUi.onTriggerAQuiz}
+                hasTriggeredAQuiz={chatbotUi.hasTrigerredQuiz}
+                onTriggerQuiz={chatbotUi.onTriggerQuiz}
               />
             ) : (
               <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />

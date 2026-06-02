@@ -4,11 +4,11 @@ import { cn } from "../../../utils";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext } from "react";
 
-type Props = { hasTriggeredAQuiz: boolean; onTriggerAQuiz: () => void };
+type Props = { hasTriggeredAQuiz: boolean; onTriggerQuiz: () => void };
 
 export default function MessageQuizChatbot({
   hasTriggeredAQuiz,
-  onTriggerAQuiz,
+  onTriggerQuiz,
 }: Props) {
   const { user } = useContext(Context);
 
@@ -40,7 +40,7 @@ export default function MessageQuizChatbot({
           </div>
           <button
             className="btn btn-primary self-end btn-xs w-fit"
-            onClick={onTriggerAQuiz}
+            onClick={onTriggerQuiz}
           >
             Générer un quizz
           </button>

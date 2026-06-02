@@ -45,7 +45,7 @@ const ActivityBottomNavigation = ({
     </div>
 
     {/* Bouton Suivant ou Terminer */}
-    <div className="flex-1 flex justify-end px-5">
+    <div className="flex-1 flex justify-end mx-5">
       {isLastActivitySelected ? (
         (!isLastLessonSelected || !isLessonCompleted) && (
           <Can action="component" object="progression">

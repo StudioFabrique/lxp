@@ -10,8 +10,8 @@ const useChatbotUi = (
     hasChatbotClosed,
     onTriggerTimer,
     showQuizMessage,
-    onTriggerAQuiz,
-    hasTrigerredAQuiz,
+    onTriggerQuiz,
+    hasTrigerredQuiz,
   } = useContext(ChatbotContext);
 
   const [showChatbot, setShowChatbot] = useState(false);
@@ -154,8 +154,8 @@ const useChatbotUi = (
     handleMaximizeChatbot,
     handleResizeChatbot,
     handleMinimizeChatbot,
-    onTriggerAQuiz,
-    hasTrigerredAQuiz,
+    onTriggerQuiz,
+    hasTrigerredQuiz,
   };
 };
 
