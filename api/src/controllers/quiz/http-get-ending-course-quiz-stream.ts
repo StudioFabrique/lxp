@@ -42,7 +42,7 @@ export default async function httpGetEndingCourseQuizStream(
     if (!course) return res.status(404).json({ error: "Cours introuvable" });
 
     // 1. Vérification du cache Prisma
-    let quizz = await prisma.quizz.findFirst({
+    let quizz = await prisma.quiz.findFirst({
       where: { courseId: +courseId, type: "ending_course" },
       include: { questions: true },
     });
@@ -157,7 +157,7 @@ export default async function httpGetEndingCourseQuizStream(
 
         // 5. Sauvegarde transactionnelle dans Prisma
         if (generatedQuestions.length > 0) {
-          await prisma.quizz.create({
+          await prisma.quiz.create({
             data: {
               title: `Quiz de fin - ${course.title}`,
               type: "ending_course",
