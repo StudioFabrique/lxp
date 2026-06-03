@@ -14,7 +14,7 @@ export default function useChatbotQuiz(
   onCloseChatbot: () => void,
 ) {
   const { currentActivity } = useContext(ChatbotContext);
-  const { isOpen: isQuizModalOpened, onTriggerRandomQuiz } = useActivityQuiz(
+  const quizState = useActivityQuiz(
     currentActivity?.courseId,
     currentActivity?.content,
   );
@@ -39,7 +39,7 @@ export default function useChatbotQuiz(
   }, [currentActivity, isChatbotOpened, hasMessageBeenShown]);
 
   const onTriggerQuiz = () => {
-    onTriggerRandomQuiz();
+    quizState.onTriggerRandomQuiz();
     onCloseChatbot();
     setShowQuizMessage(false);
   };
@@ -109,5 +109,11 @@ export default function useChatbotQuiz(
     }
   }, [currentActivity?.courseId, currentActivity?.content]);
 
-  return { onTriggerQuiz, showQuizMessage, isQuizModalOpened, onResetTimer };
+  return {
+    onTriggerQuiz,
+    showQuizMessage,
+    isQuizModalOpened: quizState.isOpen,
+    onResetTimer,
+    quizState,
+  };
 }
