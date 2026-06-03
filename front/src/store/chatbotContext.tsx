@@ -14,6 +14,8 @@ type ChatbotContextType = {
    */
   currentActivity?: Activity;
   setCurrentActivity: Dispatch<SetStateAction<Activity | undefined>>;
+  activityTextSelection: string;
+  setActivityTextSelection: Dispatch<SetStateAction<string>>;
 };
 
 const ChatbotContext = React.createContext<ChatbotContextType>(
@@ -25,6 +27,8 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
   const { pathname } = useLocation();
 
   const [currentActivity, setCurrentActivity] = useState<Activity>();
+  const [activityTextSelection, setActivityTextSelection] =
+    useState<string>("");
 
   useEffect(() => {
     if (!pathname.includes("/parcours/module/")) {
@@ -37,6 +41,8 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
       value={{
         currentActivity,
         setCurrentActivity,
+        activityTextSelection,
+        setActivityTextSelection,
       }}
     >
       {children}
