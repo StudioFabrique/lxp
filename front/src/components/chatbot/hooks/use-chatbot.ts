@@ -26,7 +26,7 @@ const useChatbot = () => {
 
   const [pendingReset, setPendingReset] = useState<boolean>(false);
 
-  const { currentActivity } = useContext(ChatbotContext);
+  const { currentActivity, activityTextSelection } = useContext(ChatbotContext);
 
   const handleNewChat = useCallback(() => {
     setDialog([
@@ -42,19 +42,16 @@ const useChatbot = () => {
   }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
-    let message = "";
     e.preventDefault();
-    message = prompt.trim();
-    if (message.length === 0 || message.length > 255) {
-      return;
-    }
+    const message = activityTextSelection
+      ? `${prompt}. J'ai besoin d'aide concernant : ${activityTextSelection}`
+      : prompt.trim();
     const beginningDate = new Date();
     setDialog((prevState) => [
       ...prevState,
       { origin: "user", message: message, date: beginningDate },
     ]);
 
-    const clearHistoryPayload = pendingReset;
     if (pendingReset) {
       setPendingReset(false);
     }
@@ -84,7 +81,7 @@ const useChatbot = () => {
         body: {
           prompt: message,
           courseId: currentActivity?.courseId,
-          clearHistory: clearHistoryPayload,
+          clearHistory: pendingReset,
         },
       },
       applyData,

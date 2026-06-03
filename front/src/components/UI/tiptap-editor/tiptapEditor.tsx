@@ -11,6 +11,7 @@ import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
 import { useRef, useState } from "react";
+import { AiAskBubbleMenu } from "./components/aiAskBubbleMenu";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
@@ -110,6 +111,7 @@ export default function TiptapEditor({
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
       )}
       {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
+      {editor && <AiAskBubbleMenu mode={mode} editor={editor} />}
     </>
   );
 }
