@@ -387,6 +387,7 @@ model Student {
   accomplishments Accomplishment[]
   lessonRating    LessonRating[]
   lessonsRead     LessonRead[]
+  quizzes         Quiz[]
 }
 
 model Tag {
@@ -466,6 +467,9 @@ model Quiz {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  studentId Int?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
 model QuizQuestion {
