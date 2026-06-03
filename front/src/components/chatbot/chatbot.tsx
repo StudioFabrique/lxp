@@ -4,6 +4,7 @@ import ChatbotButton from "./chatbot-button";
 import useChatbot from "./hooks/use-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatBotQuiz from "./hooks/use-chatbot-quiz";
+import QuizModal from "../quizzes/modals/quiz-modal";
 
 export default function Chatbot() {
   const chatbot = useChatbot();
@@ -13,6 +14,8 @@ export default function Chatbot() {
     chatbotUi.handleOpenChatbot,
     chatbotUi.handleCloseChatbot,
   );
+
+  const { quizState } = chatbotQuiz;
 
   return (
     <>
@@ -34,6 +37,23 @@ export default function Chatbot() {
           />
         )}
       </AnimatePresence>
+
+      <QuizModal
+        isOpen={quizState.isOpen}
+        quiz={quizState.currentQuiz}
+        currentIndex={quizState.currentIndex}
+        totalQuizzes={quizState.quizzes?.length || 0}
+        isAnswered={quizState.isAnswered}
+        isCorrect={quizState.isCorrect}
+        isStreaming={quizState.isStreaming}
+        showResults={quizState.showResults}
+        attempts={quizState.attempts || []}
+        score={quizState.score}
+        onClose={quizState.onCloseQuizzes}
+        onReport={() => {}}
+        onAnswer={quizState.onAnswerQuiz}
+        onNext={quizState.onNextQuiz}
+      />
     </>
   );
 }
