@@ -1,5 +1,5 @@
 import { BadgeQuestionMark } from "lucide-react";
-import useActivityQuiz from "../../../hooks/use-activity-quiz";
+import useCourseQuiz from "../../../hooks/use-course-quiz";
 import useSmartQuizPrompt from "../../../hooks/use-smart-quiz-prompt";
 import { ExplorerStore } from "../../../views/module-content-explorer/module-content-explorer";
 import ActivityBottomNavigation from "./activity-bottom-navigation";
@@ -15,7 +15,7 @@ const ModuleExplorerPreview = ({
 }: {
   store: ExplorerStore;
   smartQuizState: ReturnType<typeof useSmartQuizPrompt>;
-  quizState: ReturnType<typeof useActivityQuiz>;
+  quizState: ReturnType<typeof useCourseQuiz>;
   canEditSelectedLesson?: boolean;
 }) => {
   const {

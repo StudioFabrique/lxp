@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ChatbotContext } from "../../../store/chatbotContext";
-import useActivityQuiz from "../../../hooks/use-activity-quiz";
+import useCourseQuiz from "../../../hooks/use-course-quiz";
 import { chatbotWindowSize } from "./use-chatbot-ui";
 
 // Temps pour lequel le chatbot restera actif jusqu'a se fermer seul
@@ -14,7 +14,7 @@ export default function useChatbotQuiz(
   onCloseChatbot: () => void,
 ) {
   const { currentActivity } = useContext(ChatbotContext);
-  const quizState = useActivityQuiz(
+  const quizState = useCourseQuiz(
     currentActivity?.courseId,
     currentActivity?.content,
   );
