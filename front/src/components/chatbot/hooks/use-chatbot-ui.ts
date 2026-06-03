@@ -58,8 +58,10 @@ const useChatbotUi = (
   };
 
   const handleOpenChatbot = useCallback(
-    async (size?: chatbotWindowSize) => {
-      setSize(size || dialog.length > 1 ? "large" : "small");
+    async (
+      overrideSize: chatbotWindowSize = dialog.length > 1 ? "large" : "small",
+    ) => {
+      setSize(overrideSize);
       setShowChatbot(true);
       await new Promise((resolve) => setTimeout(resolve, 400));
       handleScrollToBottom();

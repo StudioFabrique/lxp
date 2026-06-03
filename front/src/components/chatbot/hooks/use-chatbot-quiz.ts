@@ -10,7 +10,7 @@ type TimerTriggerType = "modulePreview" | "chatbot" | "disabled";
 
 export default function useChatbotQuiz(
   isChatbotOpened: boolean,
-  onOpenChatbot: (size: chatbotWindowSize) => void,
+  onOpenChatbot: (overrideSize?: chatbotWindowSize) => void,
   onCloseChatbot: () => void,
 ) {
   const { currentActivity } = useContext(ChatbotContext);
@@ -103,10 +103,11 @@ export default function useChatbotQuiz(
   }, [timeRemaining, onTimerEnd, triggerType, timerKey]);
 
   useEffect(() => {
-    if (currentActivity?.courseId) {
+    if (currentActivity?.courseId && currentActivity?.content) {
+      setShowQuizMessage(false);
       setHasMessageBeenShown(false);
     }
-  }, [currentActivity?.courseId]);
+  }, [currentActivity?.courseId, currentActivity?.content]);
 
   return { onTriggerQuiz, showQuizMessage, isQuizModalOpened, onResetTimer };
 }
