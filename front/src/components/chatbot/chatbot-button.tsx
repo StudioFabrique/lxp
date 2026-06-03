@@ -6,6 +6,10 @@ type Props = {
 };
 
 export default function ChatbotButton({ onOpenChatbot }: Props) {
+  const handleOpenChatbot = () => {
+    onOpenChatbot();
+  };
+
   return (
     <div className="group fixed bottom-6 right-6 flex items-center z-40">
       {/* Bulle de dialogue au survol */}
@@ -21,7 +25,7 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
       {/* Bouton du Chatbot */}
       <motion.button
         className="w-16 h-16 bg-primary rounded-full p-3 shadow-xl cursor-pointer flex items-center justify-center hover:shadow-2xl relative"
-        onClick={onOpenChatbot}
+        onClick={handleOpenChatbot}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, x: 40, scale: 0.95 }}
