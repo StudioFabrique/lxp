@@ -1,26 +1,19 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
-import { ChatbotContext } from "../../../store/chatbotContext";
+
+export type chatbotWindowSize = "small" | "large" | "full";
 
 const useChatbotUi = (
   dialog: ChatbotValues[],
   setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
 ) => {
-  const {
-    hasChatbotClosed,
-    onTriggerTimer,
-    showQuizMessage,
-    onTriggerQuiz,
-    hasTrigerredQuiz,
-  } = useContext(ChatbotContext);
-
   const [showChatbot, setShowChatbot] = useState(false);
 
   // Loader fake pour simuler le temps de réponse du chatbot au demarrage
   const [isLoadingUi, setIsLoadingUi] = useState(false);
 
   // Taille variable pour le drawer
-  const [size, setSize] = useState<"small" | "large" | "full">("small");
+  const [size, setSize] = useState<chatbotWindowSize>("small");
   const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
     useState<boolean>(false);
 
@@ -64,18 +57,19 @@ const useChatbotUi = (
     }
   };
 
-  const handleOpenChatbot = useCallback(async () => {
-    setSize(dialog.length > 1 ? "large" : "small");
-    setShowChatbot(true);
-    onTriggerTimer("chatbot");
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    handleScrollToBottom();
-  }, [dialog, onTriggerTimer, handleScrollToBottom]);
+  const handleOpenChatbot = useCallback(
+    async (size?: chatbotWindowSize) => {
+      setSize(size || dialog.length > 1 ? "large" : "small");
+      setShowChatbot(true);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      handleScrollToBottom();
+    },
+    [dialog, handleScrollToBottom],
+  );
 
-  const handleCloseChatbot = () => {
-    onTriggerTimer("modulePreview");
+  const handleCloseChatbot = useCallback(() => {
     setShowChatbot(false);
-  };
+  }, []);
 
   const handleMaximizeChatbot = () => {
     setSize(size === "large" ? "full" : "large");
@@ -127,17 +121,8 @@ const useChatbotUi = (
     }
   }, [dialog.length, setDialog, showChatbot]);
 
-  useEffect(() => {
-    if (hasChatbotClosed) {
-      setShowChatbot(false);
-    } else if (showQuizMessage) {
-      handleOpenChatbot();
-    }
-  }, [hasChatbotClosed, showQuizMessage, handleOpenChatbot]);
-
   return {
     showChatbot,
-    showQuizMessage,
     isLoadingUi,
     size,
     isSubmitButtonAnimated,
@@ -154,8 +139,6 @@ const useChatbotUi = (
     handleMaximizeChatbot,
     handleResizeChatbot,
     handleMinimizeChatbot,
-    onTriggerQuiz,
-    hasTrigerredQuiz,
   };
 };
 
