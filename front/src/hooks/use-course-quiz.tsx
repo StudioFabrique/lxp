@@ -12,9 +12,8 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
-// import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 
-export default function useActivityQuiz(
+export default function useCourseQuiz(
   courseId?: number,
   activityContent?: string,
 ) {
@@ -73,9 +72,7 @@ export default function useActivityQuiz(
 
       case "matching": {
         let pairs: Pair[] = [];
-
         pairs = external.pairs;
-
         return {
           ...base,
           type: "matching",
@@ -115,16 +112,6 @@ export default function useActivityQuiz(
       return;
     }
 
-    // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
-    // setQuizzes((prev) =>
-    //   prev
-    //     ? [...prev, ...activityEndingQuizzesFixtures]
-    //     : activityEndingQuizzesFixtures,
-    // );
-
-    // setIsStreaming(false);
-    // --- Fin utilisation de fixtures ---
-
     if (!courseId) {
       console.warn("Course ID is required to load quizzes from the API.");
       setIsStreaming(false);
@@ -157,15 +144,15 @@ export default function useActivityQuiz(
           buffer = lines.pop() || "";
 
           for (const line of lines) {
-            const cleanLine = line.trim();
+            let cleanLine = line.trim();
+            if (!cleanLine) continue;
 
-            if (!cleanLine.startsWith("data:")) continue;
+            if (cleanLine.startsWith("data:")) {
+              cleanLine = cleanLine.substring(5).trim();
+            }
 
             try {
-              const jsonString = cleanLine.substring(5).trim();
-              const payload = JSON.parse(
-                jsonString,
-              ) as ExternalApiStreamPayload;
+              const payload = JSON.parse(cleanLine) as ExternalApiStreamPayload;
 
               if ("event" in payload) {
                 console.log(
@@ -219,16 +206,6 @@ export default function useActivityQuiz(
         setShowResults(false);
       }
       setIsStreaming(true);
-
-      // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
-      // setQuizzes((prev) =>
-      //   prev
-      //     ? [...prev, activityEndingQuizzesFixtures[0]]
-      //     : [activityEndingQuizzesFixtures[0]],
-      // );
-
-      // setIsStreaming(false);
-      // --- Fin utilisation de fixtures ---
 
       try {
         const response = await axios.post(`${BASE_API_URL}/quiz/random`, {

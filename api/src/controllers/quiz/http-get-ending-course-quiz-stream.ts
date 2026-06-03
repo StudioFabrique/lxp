@@ -28,7 +28,7 @@ type QuizResponseStream = ReadableStream<{
 /**
  * GET /quiz/course/ending/stream/:courseId
  * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream
- * - courseId sera utilisé pour contextualiser les questions du quiz (le titre du cours, quelles sont les notions abordées dans le cours, etc.)
+ * Personnalisé par étudiant pour éviter la duplication et économiser les tokens.
  */
 export default async function httpGetEndingCourseQuizStream(
   req: CustomRequest,
@@ -38,18 +38,36 @@ export default async function httpGetEndingCourseQuizStream(
   const { userId } = req.auth ?? {};
 
   try {
+    if (!userId) {
+      return res.status(401).json({ error: "Utilisateur non authentifié" });
+    }
+
+    // Récupérer le cours
     const course = await getCourseById(+courseId);
     if (!course) return res.status(404).json({ error: "Cours introuvable" });
 
-    // 1. Vérification du cache Prisma
+    const student = await prisma.student.findFirst({
+      where: { idMdb: String(userId) },
+    });
+
+    if (!student) {
+      return res
+        .status(404)
+        .json({ error: "Profil étudiant introuvable dans Postgres" });
+    }
+
+    // Vérification du cache Prisma (Filtré par cours ET par étudiant)
     let quizz = await prisma.quiz.findFirst({
-      where: { courseId: +courseId, type: "ending_course" },
+      where: {
+        courseId: +courseId,
+        type: "ending_course",
+        studentId: student.id,
+      },
       include: { questions: true },
     });
 
-    // 2. Si le quizz existe déjà, on SIMULE le stream pour le client
+    // Si le quizz existe déjà pour cet étudiant, simuler le stream
     if (quizz && quizz.questions.length > 0) {
-      console.log("Renvoi du Quizz de fin depuis le cache");
       res.setHeader("Content-Type", "application/json");
       res.setHeader("Transfer-Encoding", "chunked");
 
@@ -79,12 +97,12 @@ export default async function httpGetEndingCourseQuizStream(
       return res.end();
     }
 
-    // 3. Sinon, on appelle l'API IA
+    // Sinon, on appelle l'API IA
     const quizzesRequestPayload = {
       course_name: course.title,
       activity_content: course.content,
       profile: {
-        user_id: userId ? String(userId) : undefined,
+        user_id: String(userId),
         course_id: String(courseId),
       },
     };
@@ -127,11 +145,10 @@ export default async function httpGetEndingCourseQuizStream(
           const parsed = JSON.parse(cleanLine);
 
           if (parsed?.event === "done") {
-            if (parsed?.tokens?.total_tokens && userId) {
+            if (parsed?.tokens?.total_tokens) {
               await trackTokens(userId, parsed.tokens.total_tokens);
             }
           } else if (parsed?.prompt) {
-            // C'est une question, on la prépare pour l'insertion
             const {
               id,
               type,
@@ -155,13 +172,14 @@ export default async function httpGetEndingCourseQuizStream(
           }
         }
 
-        // 5. Sauvegarde transactionnelle dans Prisma
+        // Sauvegarde transactionnelle dans Prisma (Liée à l'étudiant)
         if (generatedQuestions.length > 0) {
           await prisma.quiz.create({
             data: {
               title: `Quiz de fin - ${course.title}`,
               type: "ending_course",
               courseId: +courseId,
+              studentId: student.id,
               questions: {
                 create: generatedQuestions,
               },
