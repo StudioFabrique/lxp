@@ -36,7 +36,7 @@ export default function TiptapEditor({
     menuContainerRef,
     stickyMarkerRef,
     isMenuBarSticky,
-    estimatedActivityReadTimeInMinutes,
+    readTimeMinutes,
   } = useTiptapEditor(
     "prose min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
     editorRef,
@@ -64,8 +64,8 @@ export default function TiptapEditor({
         <div className="flex justify-end text-gray-500 text-sm">
           <span className="mr-1">Temps estimé de lecture :</span>
           <span>
-            {estimatedActivityReadTimeInMinutes > 0
-              ? `${estimatedActivityReadTimeInMinutes} minutes`
+            {readTimeMinutes > 0
+              ? `${readTimeMinutes} minutes`
               : "moins d'une minute"}
           </span>
         </div>

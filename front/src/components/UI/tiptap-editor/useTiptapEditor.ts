@@ -2,6 +2,7 @@ import { Editor, useEditor, useEditorState } from "@tiptap/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { tiptapExtensions } from "./tiptapConfig";
 import { ChatbotContext } from "../../../store/chatbotContext";
+import { calculateTextReadTime } from "../../../utils/activity-read-time";
 
 export default function useTiptapEditor(
   className: string,
@@ -10,8 +11,9 @@ export default function useTiptapEditor(
   initialValue?: string,
   onContentChange?: (content: string) => void,
 ) {
-  const { setWordsCount, estimatedActivityReadTimeInMinutes } =
-    useContext(ChatbotContext);
+  const { setCurrentActivity } = useContext(ChatbotContext);
+
+  const [readTimeMinutes, setReadTimeMinutes] = useState<number>(0);
 
   const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
@@ -66,8 +68,10 @@ export default function useTiptapEditor(
   }, [editor, initialValue]);
 
   useEffect(() => {
-    setWordsCount(wordsCount);
-  }, [wordsCount, setWordsCount]);
+    const { readTimeMs, readTimeMinutes } = calculateTextReadTime(wordsCount);
+    setCurrentActivity((prev) => prev && { ...prev, readTimeMs });
+    setReadTimeMinutes(readTimeMinutes);
+  }, [setCurrentActivity, wordsCount]);
 
   // Menu sticky
   useEffect(() => {
@@ -98,6 +102,6 @@ export default function useTiptapEditor(
     menuContainerRef,
     stickyMarkerRef,
     isMenuBarSticky,
-    estimatedActivityReadTimeInMinutes,
+    readTimeMinutes,
   };
 }

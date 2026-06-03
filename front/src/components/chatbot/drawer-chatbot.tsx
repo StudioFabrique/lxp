@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import HeaderChatbot from "./chatbot-parts/header-chatbot";
 import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
@@ -9,13 +9,19 @@ import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatbot from "./hooks/use-chatbot";
 import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
+import useChatbotQuiz from "./hooks/use-chatbot-quiz";
 
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;
   chatbotUi: ReturnType<typeof useChatbotUi>;
+  chatbotQuiz: ReturnType<typeof useChatbotQuiz>;
 };
 
-export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
+export default function DrawerChatbot({
+  chatbot,
+  chatbotUi,
+  chatbotQuiz,
+}: Props) {
   const { isLoading, prompt, dialog, setPrompt, onSubmit, pendingReset } =
     chatbot;
 
@@ -35,6 +41,11 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
   const handleNewChat = () => {
     chatbot.handleNewChat();
     chatbotUi.handleMinimizeChatbot();
+  };
+
+  const handleScroll = () => {
+    chatbotQuiz.onResetTimer();
+    chatbotUi.handleScrollEvent();
   };
 
   return (
@@ -74,7 +85,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
       {/* Zone de chat */}
       <div
         ref={chatbotUi.scrollContainerRef}
-        onScroll={chatbotUi.handleScrollEvent}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto p-4 bg-base-200/30 space-y-4 relative flex flex-col"
       >
         <div className="flex-1 space-y-4">
@@ -91,16 +102,15 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
               />
             );
           })}
-          {!isLoading &&
-            !chatbotUi.isLoadingUi &&
-            (chatbotUi.showQuizMessage ? (
-              <MessageQuizChatbot
-                hasTriggeredAQuiz={chatbotUi.hasTrigerredQuiz}
-                onTriggerQuiz={chatbotUi.onTriggerQuiz}
-              />
-            ) : (
-              <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
-            ))}
+          <AnimatePresence>
+            {!isLoading &&
+              !chatbotUi.isLoadingUi &&
+              (chatbotQuiz.showQuizMessage ? (
+                <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
+              ) : (
+                <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
+              ))}
+          </AnimatePresence>
         </div>
 
         {/* Boutons flottants par dessus le chat */}
@@ -139,6 +149,7 @@ export default function DrawerChatbot({ chatbot, chatbotUi }: Props) {
         setPrompt={setPrompt}
         isLoading={isLoading}
         handleSubmit={handleSubmit}
+        handleEveryInputInput={chatbotQuiz.onResetTimer}
       />
     </motion.div>
   );

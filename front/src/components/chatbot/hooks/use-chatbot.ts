@@ -26,7 +26,7 @@ const useChatbot = () => {
 
   const [pendingReset, setPendingReset] = useState<boolean>(false);
 
-  const { currentCourseId } = useContext(ChatbotContext);
+  const { currentActivity } = useContext(ChatbotContext);
 
   const handleNewChat = useCallback(() => {
     setDialog([
@@ -83,7 +83,7 @@ const useChatbot = () => {
         method: "post",
         body: {
           prompt: message,
-          courseId: currentCourseId || undefined,
+          courseId: currentActivity?.courseId,
           clearHistory: clearHistoryPayload,
         },
       },

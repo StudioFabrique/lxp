@@ -20,7 +20,6 @@ import ModuleExplorerSidebar from "../../components/module-content-explorer/side
 import ModuleExplorerPreview from "../../components/module-content-explorer/preview/module-explorer-preview";
 import useDiagnosticQuiz from "../../hooks/use-diagnostic-quiz";
 import DiagnosticQuizView from "../../components/quizzes/diagnostic-quiz-view";
-import useChatBotQuiz from "../../hooks/use-chatbot-quiz";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -77,9 +76,6 @@ const ModuleContentExplorer = () => {
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
   });
-
-  // Gère les quiz proposés par le chatbot
-  useChatBotQuiz(quizState.onTriggerRandomQuiz);
 
   if (diagnosticQuiz.isOpen) {
     return (

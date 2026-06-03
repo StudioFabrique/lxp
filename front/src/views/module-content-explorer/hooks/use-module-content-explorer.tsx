@@ -29,7 +29,7 @@ import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
   // Le contexte du chatbot
-  const { setCurrentCourseId } = useContext(ChatbotContext);
+  const { setCurrentActivity } = useContext(ChatbotContext);
 
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
@@ -556,16 +556,21 @@ const useModuleContentExplorer = () => {
         (course) => course.id === state.selectedLesson?.courseId,
       );
 
-      // Attribue le titre/nom du cours au chatbot
+      // Attribue le titre du cours au chatbot
       if (currentCourse?.title) {
-        setCurrentCourseId(currentCourse.id);
+        setCurrentActivity((prev) => ({
+          ...prev,
+          courseId: currentCourse.id,
+          content: state.textActivityContent,
+        }));
       }
     }
   }, [
-    setCurrentCourseId,
+    setCurrentActivity,
     state.selectedLesson?.courseId,
     state.selectedActivity?.type,
     state.module?.courses,
+    state.textActivityContent,
   ]);
 
   return {
