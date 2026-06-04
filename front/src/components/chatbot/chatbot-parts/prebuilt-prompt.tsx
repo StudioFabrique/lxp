@@ -26,7 +26,7 @@ export default function PrebuiltPrompt({
     const allPrompts = [...prebuiltPromptsMessages];
     return allPrompts
       .sort(() => 0.5 - Math.random())
-      .slice(0, maxPromptsMessagesShown - 1);
+      .slice(0, maxPromptsMessagesShown);
   }, [maxPromptsMessagesShown, prebuiltPromptsMessages]);
 
   if (!currentActivity) return null;

@@ -28,7 +28,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         <button
           className={cn(
             "btn flex-1",
-            selected === true ? "btn-primary" : "btn-outline btn-neutral",
+            selected === true ? "btn-primary" : "btn-outline btn-secondary",
           )}
           onClick={() => setSelected(true)}
           disabled={isAnswered}
@@ -38,7 +38,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         <button
           className={cn(
             "btn flex-1",
-            selected === false ? "btn-primary" : "btn-outline btn-neutral",
+            selected === false ? "btn-primary" : "btn-outline btn-secondary",
           )}
           onClick={() => setSelected(false)}
           disabled={isAnswered}
@@ -47,11 +47,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         </button>
       </div>
       {!isAnswered && (
-        <QuizModalButtons
-          onValidate={handleValidate}
-          onReport={onReport}
-          isAnswered={isAnswered}
-        />
+        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
       )}
     </div>
   );

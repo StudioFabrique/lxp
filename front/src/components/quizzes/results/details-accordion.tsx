@@ -7,7 +7,7 @@ export interface DetailsAccordionProps {
 
 const DetailsAccordion = ({ attempts }: DetailsAccordionProps) => {
   return (
-    <div className="border border-base-300 rounded-lg p-4">
+    <div className="p-4">
       <div className="font-semibold mb-2">Détail des réponses</div>
       <div className="flex flex-col gap-3">
         {attempts.map((attempt, i) => (

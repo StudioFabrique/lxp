@@ -44,7 +44,7 @@ const QuizResults = ({
           : "Des points à travailler...";
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 mt-2">
       {/* Score global */}
       <div className="flex flex-col items-center gap-2 p-6 bg-base-200 rounded-box">
         <div className={cn("text-5xl font-bold", scoreColor)}>

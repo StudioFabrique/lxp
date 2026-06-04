@@ -13,7 +13,8 @@ export default function useChatbotQuiz(
   onOpenChatbot: (overrideSize?: chatbotWindowSize) => void,
   onCloseChatbot: () => void,
 ) {
-  const { currentActivity } = useContext(ChatbotContext);
+  const { currentActivity, setActivityTextSelection } =
+    useContext(ChatbotContext);
   const quizState = useCourseQuiz(
     currentActivity?.courseId,
     currentActivity?.content,
@@ -74,12 +75,13 @@ export default function useChatbotQuiz(
         onOpenChatbot("small");
         setShowQuizMessage(true);
         setHasMessageBeenShown(true);
+        setActivityTextSelection("");
         break;
       case "disabled":
         setShowQuizMessage(false);
         break;
     }
-  }, [triggerType, onOpenChatbot, onCloseChatbot]);
+  }, [triggerType, onOpenChatbot, onCloseChatbot, setActivityTextSelection]);
 
   /**
    * Selon l'état du triggerType, attribuer une nouvelle valeur

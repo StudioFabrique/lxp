@@ -28,7 +28,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
           <button
             key={index}
             className={`btn justify-start h-auto min-h-12 normal-case text-left ${
-              selected === index ? "btn-primary" : "btn-outline btn-neutral"
+              selected === index ? "btn-primary" : "btn-outline btn-secondary"
             }`}
             onClick={() => setSelected(index)}
             disabled={isAnswered}
@@ -38,11 +38,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         ))}
       </div>
       {!isAnswered && (
-        <QuizModalButtons
-          onValidate={handleValidate}
-          onReport={onReport}
-          isAnswered={isAnswered}
-        />
+        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
       )}
     </div>
   );
