@@ -11,7 +11,7 @@ import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
 import { useRef, useState } from "react";
-import { AiAskBubbleMenu } from "./components/aiAskBubbleMenu";
+import { AiAskBubbleMenu } from "./components/AiAskBubbleMenu";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
