@@ -89,7 +89,7 @@ const QuizModal = ({
 
   return (
     <div className={`modal modal-open`}>
-      <div className="modal-box w-11/12 max-w-3xl flex flex-col gap-6">
+      <div className="modal-box w-11/12 max-w-3xl flex flex-col py-4">
         {/* Header Modal */}
         <div className="flex justify-between items-center border-b pb-4">
           <h3 className="font-bold text-lg text-primary flex items-center gap-2">
@@ -145,7 +145,7 @@ const QuizModal = ({
 
             {/* Question et Composant */}
             {quiz && (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 mt-2">
                 <div className="text-xl font-medium">
                   <QuizMarkdown>{quiz.question}</QuizMarkdown>
                 </div>
@@ -157,7 +157,7 @@ const QuizModal = ({
             {isAnswered && quiz && (
               <div
                 className={cn(
-                  "alert shadow-lg",
+                  "alert shadow-lg mt-5",
                   isCorrect ? "alert-success" : "alert-error",
                 )}
               >

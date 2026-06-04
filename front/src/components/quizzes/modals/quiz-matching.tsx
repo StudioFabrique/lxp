@@ -70,7 +70,7 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
     onAnswer(correct, { type: "matching", answers });
   };
 
-  const allAnswered = Object.keys(answers).length === quiz.data.pairs.length;
+  // const allAnswered = Object.keys(answers).length === quiz.data.pairs.length;
 
   return (
     <div className="flex flex-col gap-4">
@@ -175,11 +175,7 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
       </div>
 
       {!isAnswered && (
-        <QuizModalButtons
-          onValidate={handleValidate}
-          onReport={onReport}
-          isAnswered={!allAnswered}
-        />
+        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
       )}
     </div>
   );

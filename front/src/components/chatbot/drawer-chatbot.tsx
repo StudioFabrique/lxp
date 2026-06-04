@@ -111,21 +111,23 @@ export default function DrawerChatbot({
             );
           })}
           <AnimatePresence>
-            {/* Affichage du message de proposition de quiz OU des suggestions de messages de prompts */}
             {!isLoading &&
               !activityTextSelection &&
               !chatbotUi.isLoadingUi &&
-              !isChatEmpty &&
               (chatbotQuiz.showQuizMessage ? (
+                // Afficher des suggestions de messages de prompts pour le cours
                 <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
               ) : (
-                <PrebuiltPrompt
-                  title="Une question sur ce cours ?"
-                  prebuiltPromptsMessages={
-                    prebuiltPrompt.suggestedCoursePrompts
-                  }
-                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
-                />
+                // Affichage du message de proposition de quiz
+                !isChatEmpty && (
+                  <PrebuiltPrompt
+                    title="Une question sur ce cours ?"
+                    prebuiltPromptsMessages={
+                      prebuiltPrompt.suggestedCoursePrompts
+                    }
+                    setPrebuiltPrompt={handleSetPrebuiltPrompt}
+                  />
+                )
               ))}
             {/* Affichage du bloc selectionné pour passer en contexte du chatbot */}
             {activityTextSelection && (
@@ -137,9 +139,10 @@ export default function DrawerChatbot({
                 <PrebuiltPrompt
                   title="Une question sur ce contenu ?"
                   prebuiltPromptsMessages={
-                    prebuiltPrompt.suggestedCoursePrompts
+                    prebuiltPrompt.suggestedContentBlocPrompts
                   }
                   setPrebuiltPrompt={handleSetPrebuiltPrompt}
+                  maxPromptsMessagesShown={2}
                 />
               </>
             )}

@@ -16,15 +16,6 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
     [],
   );
 
-  useEffect(() => {
-    setItems(
-      quiz.data.items.map((text: string, i: number) => ({
-        text,
-        originalIndex: i,
-      })),
-    );
-  }, [quiz]);
-
   const moveItem = (index: number, direction: "up" | "down") => {
     if (isAnswered) return;
     const newItems = [...items];
@@ -45,7 +36,18 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
     const isCorrect =
       JSON.stringify(currentOrder) === JSON.stringify(quiz.data.order);
     onAnswer(isCorrect, { type: "ordering", items });
+
+    return isCorrect;
   };
+
+  useEffect(() => {
+    setItems(
+      quiz.data.items.map((text: string, i: number) => ({
+        text,
+        originalIndex: i,
+      })),
+    );
+  }, [quiz]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -79,11 +81,7 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         ))}
       </ul>
       {!isAnswered && (
-        <QuizModalButtons
-          onValidate={handleValidate}
-          onReport={onReport}
-          isAnswered={isAnswered}
-        />
+        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
       )}
     </div>
   );
