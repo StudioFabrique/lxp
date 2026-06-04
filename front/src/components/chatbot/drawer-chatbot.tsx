@@ -31,7 +31,7 @@ export default function DrawerChatbot({
 
   const { activityTextSelection } = useContext(ChatbotContext);
 
-  const isChatEmpty = dialog.length === 0;
+  const isChatEmpty = dialog.length <= 1;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
