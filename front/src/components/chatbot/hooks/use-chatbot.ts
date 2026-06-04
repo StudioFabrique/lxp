@@ -26,7 +26,8 @@ const useChatbot = () => {
 
   const [pendingReset, setPendingReset] = useState<boolean>(false);
 
-  const { currentActivity, activityTextSelection } = useContext(ChatbotContext);
+  const { currentActivity, activityTextSelection, setActivityTextSelection } =
+    useContext(ChatbotContext);
 
   const handleNewChat = useCallback(() => {
     setDialog([
@@ -49,8 +50,10 @@ const useChatbot = () => {
     const beginningDate = new Date();
     setDialog((prevState) => [
       ...prevState,
-      { origin: "user", message: message, date: beginningDate },
+      { origin: "user", message: prompt, date: beginningDate },
     ]);
+
+    setActivityTextSelection("");
 
     if (pendingReset) {
       setPendingReset(false);

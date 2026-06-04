@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
+import { ChatbotContext } from "../../../store/chatbotContext";
 
 export type chatbotWindowSize = "small" | "large" | "full";
 
@@ -7,6 +8,9 @@ const useChatbotUi = (
   dialog: ChatbotValues[],
   setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
 ) => {
+  const { activityTextSelection, setActivityTextSelection } =
+    useContext(ChatbotContext);
+
   const [showChatbot, setShowChatbot] = useState(false);
 
   // Loader fake pour simuler le temps de réponse du chatbot au demarrage
@@ -85,6 +89,10 @@ const useChatbotUi = (
     setSize("small");
   };
 
+  const handleRemoveTextSelected = () => {
+    setActivityTextSelection("");
+  };
+
   // Détection de l'arrivée d'un nouveau message
   useEffect(() => {
     if (!scrollContainerRef.current || dialog.length === 0) return;
@@ -123,6 +131,10 @@ const useChatbotUi = (
     }
   }, [dialog.length, setDialog, showChatbot]);
 
+  useEffect(() => {
+    if (activityTextSelection) handleOpenChatbot();
+  }, [activityTextSelection, handleOpenChatbot]);
+
   return {
     showChatbot,
     isLoadingUi,
@@ -141,6 +153,7 @@ const useChatbotUi = (
     handleMaximizeChatbot,
     handleResizeChatbot,
     handleMinimizeChatbot,
+    handleRemoveTextSelected,
   };
 };
 
