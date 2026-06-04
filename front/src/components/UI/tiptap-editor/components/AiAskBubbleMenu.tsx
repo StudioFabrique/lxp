@@ -23,19 +23,19 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
       editorProps: {
         ...editor.options.editorProps,
         handleClick: (view, pos, event) => {
-          // 1. Exécuter le comportement précédent si existant
+          // Exécuter le comportement précédent si existant
           if (previousHandleClick && previousHandleClick(view, pos, event)) {
             return true;
           }
 
-          // 2. Si on n'est pas en mode lecture, on laisse Tiptap gérer normalement
+          // Si on n'est pas en mode lecture, on laisse Tiptap gérer normalement
           if (mode !== "read") return false;
 
-          // 3. Résoudre la position du clic dans le document
+          // Résoudre la position du clic dans le document
           const $pos = view.state.doc.resolve(pos);
           const blockNode = $pos.parent;
 
-          // 4. Si on a bien cliqué sur un bloc valide et non vide (ex: Paragraphe, Titre)
+          // Si on a bien cliqué sur un bloc valide et non vide (ex: Paragraphe, Titre)
           if (
             blockNode &&
             blockNode.isBlock &&
@@ -44,7 +44,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
             const start = $pos.start();
             const end = $pos.end();
 
-            // 5. Sélectionner tout le texte du bloc programmatiquement
+            // Sélectionner tout le texte du bloc programmatiquement
             editor.commands.setTextSelection({ from: start, to: end });
 
             return true;
@@ -58,6 +58,8 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
 
   return (
     <BubbleMenu
+      className="z-10"
+      tippyOptions={{ zIndex: 10 }}
       editor={editor}
       // Surcharger les règles strictes de Tiptap
       shouldShow={({ state }) => {

@@ -1,6 +1,22 @@
 {
   "prebuiltPrompt": {
-    "suggestedPrompts": [
+    "suggestedCoursePrompts": [
+      "Quelles sont les notions clés abordées dans ce cours ?",
+      "Pour mieux comprendre, donne-moi un exemple concret ou une analogie.",
+      "Par quoi devrais-je commencer pour réviser ce cours ?",
+      "Peux-tu me résumer l'objectif principal de ce cours en 3 points ?",
+      "Peux-tu m'expliquer ce concept simplement, comme si j'avais 10 ans ?",
+      "Quelles sont les erreurs les plus courantes à éviter sur ce sujet ?",
+      "Comment puis-je appliquer ces connaissances dans un contexte professionnel ?",
+      "Je suis un peu perdu, peux-tu me faire un résumé global de la page ?",
+      "Peux-tu me lister le vocabulaire technique de ce cours et ses définitions ?",
+      "Quels sont les prérequis essentiels pour bien comprendre cette notion ?",
+      "Y a-t-il une règle mnémotechnique pour retenir ces informations plus facilement ?",
+      "Donne-moi un cas pratique ou un exercice pour m'entraîner sur ce sujet.",
+      "Quels concepts de ce cours se ressemblent et ne doivent pas être confondus ?",
+      "Pourquoi cette compétence est-elle importante à maîtriser à long terme ?"
+    ],
+    "suggestedContentBlocPrompts": [
       "Quelles sont les notions clés abordées dans ce cours ?",
       "Pour mieux comprendre, donne-moi un exemple concret ou une analogie.",
       "Par quoi devrais-je commencer pour réviser ce cours ?",

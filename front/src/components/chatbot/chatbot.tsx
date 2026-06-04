@@ -19,8 +19,6 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Ajouter ici la modal de quizz */}
-
       {/* Bouton d'ouverture animé */}
       <AnimatePresence>
         {!chatbotUi.showChatbot && (

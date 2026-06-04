@@ -1,13 +1,20 @@
 import { useContext, useMemo } from "react";
 import { ChatbotContext } from "../../../store/chatbotContext";
 import { Sparkles, ArrowUpRight } from "lucide-react";
-import { prebuiltPrompt } from "../../../config/ai/ai-texts.json";
 
 type Props = {
+  title: string;
+  prebuiltPromptsMessages: string[];
+  maxPromptsMessagesShown?: number;
   setPrebuiltPrompt: (prompt: string) => void;
 };
 
-export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
+export default function PrebuiltPrompt({
+  title,
+  prebuiltPromptsMessages,
+  maxPromptsMessagesShown = 4,
+  setPrebuiltPrompt,
+}: Props) {
   const { currentActivity } = useContext(ChatbotContext);
 
   const handleClick = (question: string) => {
@@ -16,9 +23,11 @@ export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
 
   // Sélectionne 3 questions aléatoires uniques pour générer des suggestions de prompts
   const suggestedPrompts = useMemo(() => {
-    const allPrompts = [...prebuiltPrompt.suggestedPrompts];
-    return allPrompts.sort(() => 0.5 - Math.random()).slice(0, 3);
-  }, []);
+    const allPrompts = [...prebuiltPromptsMessages];
+    return allPrompts
+      .sort(() => 0.5 - Math.random())
+      .slice(0, maxPromptsMessagesShown - 1);
+  }, [maxPromptsMessagesShown, prebuiltPromptsMessages]);
 
   if (!currentActivity) return null;
 
@@ -27,7 +36,7 @@ export default function PrebuiltPrompt({ setPrebuiltPrompt }: Props) {
       {/* En-tête */}
       <div className="flex items-center gap-2 text-xs font-medium text-base-content/60 px-1">
         <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
-        <span>Besoin d'un coup de pouce sur ce cours ?</span>
+        <span>{title}</span>
       </div>
 
       {/* Grille de suggestions */}

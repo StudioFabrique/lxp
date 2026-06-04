@@ -10,6 +10,10 @@ import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatbot from "./hooks/use-chatbot";
 import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 import useChatbotQuiz from "./hooks/use-chatbot-quiz";
+import { useContext } from "react";
+import { ChatbotContext } from "../../store/chatbotContext";
+import SelectedContentBlocChatbot from "./chatbot-parts/selected-content-bloc-chatbot";
+import { prebuiltPrompt } from "../../config/ai/ai-texts.json";
 
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;
@@ -24,6 +28,10 @@ export default function DrawerChatbot({
 }: Props) {
   const { isLoading, prompt, dialog, setPrompt, onSubmit, pendingReset } =
     chatbot;
+
+  const { activityTextSelection } = useContext(ChatbotContext);
+
+  const isChatEmpty = dialog.length === 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,13 +111,38 @@ export default function DrawerChatbot({
             );
           })}
           <AnimatePresence>
+            {/* Affichage du message de proposition de quiz OU des suggestions de messages de prompts */}
             {!isLoading &&
+              !activityTextSelection &&
               !chatbotUi.isLoadingUi &&
+              !isChatEmpty &&
               (chatbotQuiz.showQuizMessage ? (
                 <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
               ) : (
-                <PrebuiltPrompt setPrebuiltPrompt={handleSetPrebuiltPrompt} />
+                <PrebuiltPrompt
+                  title="Une question sur ce cours ?"
+                  prebuiltPromptsMessages={
+                    prebuiltPrompt.suggestedCoursePrompts
+                  }
+                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
+                />
               ))}
+            {/* Affichage du bloc selectionné pour passer en contexte du chatbot */}
+            {activityTextSelection && (
+              <>
+                <SelectedContentBlocChatbot
+                  textSelection={activityTextSelection}
+                  onDismiss={chatbotUi.handleRemoveTextSelected}
+                />
+                <PrebuiltPrompt
+                  title="Une question sur ce contenu ?"
+                  prebuiltPromptsMessages={
+                    prebuiltPrompt.suggestedCoursePrompts
+                  }
+                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
+                />
+              </>
+            )}
           </AnimatePresence>
         </div>
 
