@@ -16,12 +16,13 @@ interface QuizModalProps {
   isAnswered: boolean;
   isCorrect: boolean;
   isStreaming: boolean;
+  isReplacing: boolean;
   showResults: boolean;
   attempts: QuizAttempt[];
   score: number;
   onClose: () => void;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
-  onReport: () => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
   onNext: () => void;
 }
 
@@ -33,6 +34,7 @@ const QuizModal = ({
   isAnswered,
   isCorrect,
   isStreaming,
+  isReplacing,
   showResults,
   attempts,
   score,
@@ -43,12 +45,14 @@ const QuizModal = ({
 }: QuizModalProps) => {
   if (!isOpen) return null;
 
+  // AJOUT DE LA PROPRIÉTÉ key={quiz.id} SUR CHAQUE COMPOSANT[cite: 5]
   const renderQuizComponent = () => {
     if (!quiz) return null;
     switch (quiz.type) {
       case "mcq":
         return (
           <QuizMcq
+            key={quiz.id}
             quiz={quiz}
             onAnswer={onAnswer}
             onReport={onReport}
@@ -58,6 +62,7 @@ const QuizModal = ({
       case "matching":
         return (
           <QuizMatching
+            key={quiz.id}
             quiz={quiz}
             onAnswer={onAnswer}
             onReport={onReport}
@@ -67,6 +72,7 @@ const QuizModal = ({
       case "ordering":
         return (
           <QuizOrdering
+            key={quiz.id}
             quiz={quiz}
             onAnswer={onAnswer}
             onReport={onReport}
@@ -76,6 +82,7 @@ const QuizModal = ({
       case "true_false":
         return (
           <QuizTrueFalse
+            key={quiz.id}
             quiz={quiz}
             onAnswer={onAnswer}
             onReport={onReport}
@@ -107,7 +114,6 @@ const QuizModal = ({
             <X width={20} />
           </button>
         </div>
-
         {showResults ? (
           <QuizResults
             score={score}
@@ -117,73 +123,75 @@ const QuizModal = ({
           />
         ) : (
           <>
-            {/* État de chargement (avant la 1ère question ou en attendant la suivante) */}
-            {!quiz && isStreaming && (
+            {isReplacing || (isStreaming && !quiz) ? (
               <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
                 <Loader2 className="animate-spin text-primary" size={48} />
                 <p className="text-lg font-medium text-secondary">
-                  {currentIndex > 0
-                    ? "Génération de la question suivante en cours..."
+                  {isReplacing
+                    ? "Génération d'une nouvelle question de remplacement..."
                     : "L'IA prépare vos questions sur mesure..."}
                 </p>
               </div>
-            )}
-
-            {/* Cas de secours : si le stream s'est arrêté de façon inattendue alors qu'on attendait */}
-            {!quiz && !isStreaming && (
-              <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                <p className="text-lg font-medium text-secondary">
-                  {currentIndex > 0
-                    ? "Vous avez terminé le quiz."
-                    : "Aucune question n'a pu être générée."}
-                </p>
-                <button className="btn btn-primary mt-4" onClick={onClose}>
-                  Fermer
-                </button>
-              </div>
-            )}
-
-            {/* Question et Composant */}
-            {quiz && (
-              <div className="flex flex-col gap-4 mt-2">
-                <div className="text-xl font-medium">
-                  <QuizMarkdown>{quiz.question}</QuizMarkdown>
-                </div>
-                {renderQuizComponent()}
-              </div>
-            )}
-
-            {/* Feedback après réponse */}
-            {isAnswered && quiz && (
-              <div
-                className={cn(
-                  "alert shadow-lg mt-5",
-                  isCorrect ? "alert-success" : "alert-error",
-                )}
-              >
-                <div className="text-base-100">
-                  <h3 className="font-bold">
-                    {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
-                  </h3>
-                  <div className="text-sm">
-                    <QuizMarkdown>
-                      {isCorrect ? quiz.trueExplanation : quiz.falseExplanation}
-                    </QuizMarkdown>
+            ) : (
+              <>
+                {!quiz && (
+                  <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
+                    <p className="text-lg font-medium text-secondary">
+                      {currentIndex > 0
+                        ? "Vous avez terminé le quiz."
+                        : "Aucune question n'a pu être générée."}
+                    </p>
+                    <button className="btn btn-primary mt-4" onClick={onClose}>
+                      Fermer
+                    </button>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* Actions */}
-            <div className="modal-action">
-              {isAnswered && quiz && (
-                <button className="btn btn-primary" onClick={onNext}>
-                  {currentIndex === totalQuizzes - 1 && !isStreaming
-                    ? "Terminer"
-                    : "Question suivante"}
-                </button>
-              )}
-            </div>
+                {/* Question et Composant  */}
+                {quiz && (
+                  <div className="flex flex-col gap-4 mt-2">
+                    <div className="text-xl font-medium">
+                      <QuizMarkdown>{quiz.question}</QuizMarkdown>
+                    </div>
+                    {renderQuizComponent()}
+                  </div>
+                )}
+
+                {/* Feedback après réponse */}
+                {isAnswered && quiz && (
+                  <div
+                    className={cn(
+                      "alert shadow-lg mt-5",
+                      isCorrect ? "alert-success" : "alert-error",
+                    )}
+                  >
+                    <div className="text-base-100">
+                      <h3 className="font-bold">
+                        {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
+                      </h3>
+                      <div className="text-sm">
+                        <QuizMarkdown>
+                          {isCorrect
+                            ? quiz.trueExplanation
+                            : quiz.falseExplanation}
+                        </QuizMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="modal-action">
+                  {isAnswered && quiz && (
+                    <button className="btn btn-primary" onClick={onNext}>
+                      {currentIndex === totalQuizzes - 1
+                        ? "Terminer"
+                        : "Question suivante"}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

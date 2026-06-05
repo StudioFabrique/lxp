@@ -5,7 +5,7 @@ import QuizModalButtons from "./quiz-modal-buttons";
 interface Props {
   quiz: Extract<Quiz, { type: "mcq" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
-  onReport: () => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
 }
 
@@ -44,6 +44,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
           isValid={isValid}
           onValidate={handleValidate}
           onReport={onReport}
+          externalId={quiz.id}
         />
       )}
     </div>

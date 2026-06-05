@@ -33,6 +33,7 @@ export interface QuizAttempt {
 }
 
 export interface QuizBase {
+  id: string;
   question: string;
   trueExplanation: string;
   falseExplanation: string;
