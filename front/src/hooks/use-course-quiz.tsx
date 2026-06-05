@@ -28,7 +28,9 @@ export default function useCourseQuiz(
   const [isStreaming, setIsStreaming] = useState(false);
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isReplacing, setIsReplacing] = useState(false);
   const additionalQuizCount = useRef(0);
+  const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
 
   const toastWarning = (message: string) => {
     toast.error(message, {
@@ -47,6 +49,7 @@ export default function useCourseQuiz(
 
   const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
     const base = {
+      id: external.id,
       question: external.prompt,
       trueExplanation: external.explanation_correct,
       falseExplanation: external.explanation_wrong,
@@ -272,11 +275,68 @@ export default function useCourseQuiz(
     }
   };
 
-  const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
+  const onReportQuizQuestion = useCallback(
+    async (externalId: string, comment: string) => {
+      setIsReplacing(true);
+
+      try {
+        // Envoi du signalement au backend
+        await axios.post(`${BASE_API_URL}/quiz/question/report`, {
+          externalId,
+          comment,
+        });
+        toast.success("Merci ! Votre signalement a bien été pris en compte.");
+
+        // Si l'étudiant avait déjà répondu avant de signaler, annule l'impact
+        if (isAnswered) {
+          if (isCorrect) {
+            setScore((prev) => Math.max(0, prev - 1));
+          }
+          setAttempts((prev) => prev.slice(0, -1));
+        }
+
+        // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
+        const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
+          content: activityContent,
+        });
+
+        const mappedQuiz = mapExternalToInternal(response.data);
+
+        if (mappedQuiz) {
+          // Remplacer le quiz défectueux par le nouveau à l'index actuel
+          setQuizzes((prev) => {
+            if (!prev) return [mappedQuiz];
+            const updated = [...prev];
+            updated[currentIndex] = mappedQuiz;
+            return updated;
+          });
+
+          // Réinitialiser les états de réponse pour afficher la nouvelle question
+          setIsAnswered(false);
+          setIsCorrect(false);
+        } else {
+          if (quizzes && currentIndex < quizzes.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+          } else {
+            setShowResults(true);
+          }
+          setIsAnswered(false);
+          setIsCorrect(false);
+        }
+      } catch (error) {
+        console.error("Erreur lors du traitement du signalement :", error);
+        toast.error("Impossible de remplacer le quiz pour le moment.");
+      } finally {
+        setIsReplacing(false);
+      }
+    },
+    [axios, activityContent, currentIndex, quizzes, isAnswered, isCorrect],
+  );
 
   return {
     isOpen,
     isStreaming,
+    isReplacing,
     quizzes,
     currentQuiz,
     currentIndex,
@@ -290,5 +350,6 @@ export default function useCourseQuiz(
     onCloseQuizzes,
     onAnswerQuiz,
     onNextQuiz,
+    onReportQuizQuestion,
   };
 }

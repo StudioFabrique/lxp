@@ -44,11 +44,12 @@ export default function Chatbot() {
         isAnswered={quizState.isAnswered}
         isCorrect={quizState.isCorrect}
         isStreaming={quizState.isStreaming}
+        isReplacing={quizState.isReplacing}
         showResults={quizState.showResults}
         attempts={quizState.attempts || []}
         score={quizState.score}
         onClose={quizState.onCloseQuizzes}
-        onReport={() => {}}
+        onReport={quizState.onReportQuizQuestion}
         onAnswer={quizState.onAnswerQuiz}
         onNext={quizState.onNextQuiz}
       />

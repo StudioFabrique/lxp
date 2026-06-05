@@ -40,8 +40,8 @@ const QuizResults = ({
       : percentage >= 60
         ? "Bien joué !"
         : percentage >= 40
-          ? "Le résultat est satisfaisant, mais des notions sont à revoir."
-          : "Des points à travailler...";
+          ? "Acquis partiels. Un travail de consolidation est nécessaire sur les concepts non validés."
+          : "Résultat insuffisant. Une réévaluation ultérieure est conseillée.";
 
   return (
     <div className="flex flex-col gap-8 mt-2">

@@ -59,3 +59,27 @@ export const preliminaryQuizStreamValidator = [
     .trim(),
   checkValidatorResult,
 ];
+
+/**
+ * POST /quiz/question/report
+ * - externalId    : identifiant unique de la question (chaîne de caractères)
+ * - comment        : texte expliquant l'erreur
+ */
+export const reportQuizQuestionValidator = [
+  body("externalId")
+    .notEmpty()
+    .withMessage("L'identifiant de la question est requis.")
+    .isString()
+    .withMessage(
+      "L'identifiant de la question doit être une chaîne de caractères.",
+    ),
+  body("comment")
+    .notEmpty()
+    .withMessage("Le commentaire est requis.")
+    .isString()
+    .withMessage("Le commentaire doit être une chaîne de caractères.")
+    .isLength({ max: 2000 })
+    .withMessage("Le commentaire ne peut pas dépasser 2000 caractères.")
+    .trim(),
+  checkValidatorResult,
+];
