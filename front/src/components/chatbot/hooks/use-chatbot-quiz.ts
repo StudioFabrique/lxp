@@ -27,6 +27,13 @@ export default function useChatbotQuiz(
 
   // définir dans un useMemo
   const triggerType = useMemo((): TimerTriggerType => {
+    // si temps estimé de lecture inferieur a 2 minutes on ne fait rien
+    if (
+      currentActivity?.readTimeMs &&
+      currentActivity?.readTimeMs * 2 < 2 * 60 * 1000
+    )
+      return "disabled";
+
     if (currentActivity && !hasMessageBeenShown) {
       return isChatbotOpened
         ? // Dans le cas le chatbot est actif
