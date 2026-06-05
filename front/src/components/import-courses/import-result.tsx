@@ -8,9 +8,15 @@ type Props = {
   importedCourses: CourseImport[];
   progress: number;
   currentAction: string;
+  moduleId?: number;
 };
 
-const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
+const ImportResult = ({
+  importedCourses,
+  progress,
+  currentAction,
+  moduleId,
+}: Props) => {
   const parcoursTitle = importedCourses[0]?.parcours?.title;
   const isFinished = progress === 100;
 
@@ -46,7 +52,7 @@ const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
         {!isFinished ? <Loader /> : <Check />}
       </Header>
 
-      <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-[300px]">
+      <div className="bg-base-100 p-8 rounded-lg border border-secondary flex flex-col gap-6 items-center justify-center min-h-75">
         {!isFinished ? (
           <>
             <h2 className="text-xl font-bold text-primary">
@@ -82,7 +88,10 @@ const ImportResult = ({ importedCourses, progress, currentAction }: Props) => {
               Importation réussie !
             </h3>
             <p>Tous les cours et activités ont été créés.</p>
-            <Link className="btn btn-success mt-4" to="/admin/course">
+            <Link
+              className="btn btn-success mt-4"
+              to={`/admin/parcours/module/${moduleId}`}
+            >
               Terminer
             </Link>
           </div>
