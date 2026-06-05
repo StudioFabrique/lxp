@@ -90,6 +90,7 @@ const ImportCoursesHome = () => {
             importedCourses={importedCourses}
             progress={uploadProgress}
             currentAction={currentAction}
+            moduleId={selectedModule?.id}
           />
         );
       default:
