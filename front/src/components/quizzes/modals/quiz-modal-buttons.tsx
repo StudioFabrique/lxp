@@ -1,9 +1,10 @@
 type Props = {
+  isValid: boolean;
   onValidate: () => void;
   onReport: () => void;
 };
 
-const QuizModalButtons = ({ onValidate, onReport }: Props) => {
+const QuizModalButtons = ({ isValid, onValidate, onReport }: Props) => {
   return (
     <div className="flex justify-between mt-">
       <div className="self-end flex items-center">
@@ -14,7 +15,11 @@ const QuizModalButtons = ({ onValidate, onReport }: Props) => {
           Signaler un problème
         </button>
       </div>
-      <button className="btn btn-secondary" onClick={onValidate}>
+      <button
+        className="btn btn-secondary"
+        onClick={onValidate}
+        disabled={!isValid}
+      >
         Valider ma réponse
       </button>
     </div>

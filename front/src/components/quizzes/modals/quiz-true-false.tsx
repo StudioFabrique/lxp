@@ -13,8 +13,10 @@ interface Props {
 const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [selected, setSelected] = useState<boolean | null>(null);
 
+  const isValid = selected !== null;
+
   const handleValidate = () => {
-    if (selected !== null) {
+    if (isValid) {
       onAnswer(selected === quiz.data.answer, {
         type: "true_false",
         selected: selected,
@@ -47,7 +49,11 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         </button>
       </div>
       {!isAnswered && (
-        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+        />
       )}
     </div>
   );

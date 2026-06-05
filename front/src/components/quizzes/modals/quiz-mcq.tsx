@@ -12,8 +12,10 @@ interface Props {
 const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [selected, setSelected] = useState<number | null>(null);
 
+  const isValid = selected !== null;
+
   const handleValidate = () => {
-    if (selected !== null) {
+    if (isValid) {
       onAnswer(selected === quiz.data.answerIndex, {
         type: "mcq",
         selectedIndex: selected,
@@ -38,7 +40,11 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         ))}
       </div>
       {!isAnswered && (
-        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+        />
       )}
     </div>
   );
