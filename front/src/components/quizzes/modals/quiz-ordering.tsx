@@ -16,6 +16,8 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
     [],
   );
 
+  const isValid = items.length === quiz.data.items.length;
+
   const moveItem = (index: number, direction: "up" | "down") => {
     if (isAnswered) return;
     const newItems = [...items];
@@ -81,7 +83,11 @@ const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         ))}
       </ul>
       {!isAnswered && (
-        <QuizModalButtons onValidate={handleValidate} onReport={onReport} />
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+        />
       )}
     </div>
   );
