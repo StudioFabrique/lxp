@@ -9,7 +9,6 @@ import {
 import { Activity } from "../utils/interfaces/activity";
 import hasPermission from "../utils/hasPermission";
 import { Context } from "../store/context.store";
-import toast from "react-hot-toast";
 
 const MIN_TIME_MS = 10 * 1000; // 10 secondes
 const MAX_TIME_MS = 5 * 60 * 1000; // 5 minutes
@@ -38,7 +37,6 @@ export default function useSmartQuizPrompt({
   const [hasBypassedQuiz, setHasBypassedQuiz] = useState(false);
 
   const activityStartTime = useRef(Date.now());
-  const toastIdRef = useRef<string | null>(null);
 
   // Utilisation d'une ref pour suivre l'ID de l'activité indépendamment des re-renders
   const currentActivityIdRef = useRef<string | number | undefined>(
@@ -56,14 +54,12 @@ export default function useSmartQuizPrompt({
   const handleDeclineQuiz = useCallback(() => {
     setShowQuizPrompt(false);
     setHasBypassedQuiz(true);
-    if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     onGoToNextActivity();
   }, [onGoToNextActivity]);
 
   const handleAcceptQuiz = useCallback(() => {
     setShowQuizPrompt(false);
     setHasBypassedQuiz(true);
-    if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     onTriggerRandomQuiz();
   }, [onTriggerRandomQuiz]);
 
@@ -108,42 +104,7 @@ export default function useSmartQuizPrompt({
       currentActivityIdRef.current = selectedActivity.id;
       activityStartTime.current = Date.now();
       setHasBypassedQuiz(false);
-      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     }
-
-    const timer = setTimeout(() => {
-      if (canSkipLogic || selectedActivity?.type !== "text") return;
-
-      toastIdRef.current = toast(
-        (t) => (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">
-              Il semble que tu passes beaucoup de temps sur l'activité ! Générer
-              un quiz aléatoire pour tester tes acquis ?
-            </p>
-            <div className="flex gap-2 justify-end">
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={handleAcceptQuiz}
-              >
-                Oui
-              </button>
-              <button
-                className="btn btn-sm"
-                onClick={() => toast.dismiss(t.id)}
-              >
-                Non
-              </button>
-            </div>
-          </div>
-        ),
-        { duration: Infinity },
-      );
-    }, MAX_TIME_MS);
-
-    return () => {
-      clearTimeout(timer);
-    };
   }, [
     selectedActivity?.id,
     isAnyQuizOpen,

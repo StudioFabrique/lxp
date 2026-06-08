@@ -1,17 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
+import { ChatbotContext } from "../../../store/chatbotContext";
+
+export type chatbotWindowSize = "small" | "large" | "full";
 
 const useChatbotUi = (
   dialog: ChatbotValues[],
   setDialog: React.Dispatch<React.SetStateAction<ChatbotValues[]>>,
 ) => {
+  const { activityTextSelection, setActivityTextSelection } =
+    useContext(ChatbotContext);
+
   const [showChatbot, setShowChatbot] = useState(false);
 
   // Loader fake pour simuler le temps de réponse du chatbot au demarrage
   const [isLoadingUi, setIsLoadingUi] = useState(false);
 
   // Taille variable pour le drawer
-  const [size, setSize] = useState<"small" | "large" | "full">("small");
+  const [size, setSize] = useState<chatbotWindowSize>("small");
   const [isSubmitButtonAnimated, setIsSubmitButtonAnimated] =
     useState<boolean>(false);
 
@@ -22,19 +28,19 @@ const useChatbotUi = (
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Scroll vers le haut
-  const handleScrollToTop = () => {
+  const handleScrollToTop = useCallback(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, [scrollContainerRef]);
 
   // Scroll vers le bas
-  const handleScrollToBottom = () => {
+  const handleScrollToBottom = useCallback(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
       setShowScrollBottom(false);
     }
-  };
+  }, [bottomRef]);
 
   const handleScrollEvent = () => {
     if (!scrollContainerRef.current) return;
@@ -55,16 +61,21 @@ const useChatbotUi = (
     }
   };
 
-  const handleOpenChatbot = async () => {
-    setSize(dialog.length > 1 ? "large" : "small");
-    setShowChatbot(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    handleScrollToBottom();
-  };
+  const handleOpenChatbot = useCallback(
+    async (
+      overrideSize: chatbotWindowSize = dialog.length > 1 ? "large" : "small",
+    ) => {
+      setSize(overrideSize);
+      setShowChatbot(true);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      handleScrollToBottom();
+    },
+    [dialog, handleScrollToBottom],
+  );
 
-  const handleCloseChatbot = () => {
+  const handleCloseChatbot = useCallback(() => {
     setShowChatbot(false);
-  };
+  }, []);
 
   const handleMaximizeChatbot = () => {
     setSize(size === "large" ? "full" : "large");
@@ -76,6 +87,10 @@ const useChatbotUi = (
 
   const handleMinimizeChatbot = () => {
     setSize("small");
+  };
+
+  const handleRemoveTextSelected = () => {
+    setActivityTextSelection("");
   };
 
   // Détection de l'arrivée d'un nouveau message
@@ -116,6 +131,10 @@ const useChatbotUi = (
     }
   }, [dialog.length, setDialog, showChatbot]);
 
+  useEffect(() => {
+    if (activityTextSelection) handleOpenChatbot();
+  }, [activityTextSelection, handleOpenChatbot]);
+
   return {
     showChatbot,
     isLoadingUi,
@@ -134,6 +153,7 @@ const useChatbotUi = (
     handleMaximizeChatbot,
     handleResizeChatbot,
     handleMinimizeChatbot,
+    handleRemoveTextSelected,
   };
 };
 

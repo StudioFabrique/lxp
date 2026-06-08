@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { KeyboardEvent, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 import { cn } from "../../../utils";
 
@@ -8,6 +8,7 @@ type Props = {
   setPrompt: (prompt: string) => void;
   isLoading: boolean;
   handleSubmit: (e: React.FormEvent) => void;
+  handleEveryInputInput: () => void;
 };
 
 export default function TextInputChatbot({
@@ -16,8 +17,19 @@ export default function TextInputChatbot({
   setPrompt,
   isLoading,
   handleSubmit,
+  handleEveryInputInput,
 }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (prompt.trim() && !isLoading) {
+        handleSubmit(e);
+      }
+    }
+    handleEveryInputInput();
+  };
 
   // Gestion de l'élasticité du textarea
   useEffect(() => {
@@ -43,14 +55,7 @@ export default function TextInputChatbot({
             rows={1}
             onChange={(e) => setPrompt(e.currentTarget.value)}
             value={prompt}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                if (prompt.trim() && !isLoading) {
-                  handleSubmit(e);
-                }
-              }
-            }}
+            onKeyDown={handleKeyDown}
           />
 
           {/* Bouton d'envoi positionné à l'intérieur */}

@@ -1,27 +1,22 @@
 import { useState, useEffect } from "react";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
 }
 
-const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   // On garde les items et leur index d'origine pour vérifier à la fin
   const [items, setItems] = useState<{ text: string; originalIndex: number }[]>(
     [],
   );
 
-  useEffect(() => {
-    setItems(
-      quiz.data.items.map((text: string, i: number) => ({
-        text,
-        originalIndex: i,
-      })),
-    );
-  }, [quiz]);
+  const isValid = items.length === quiz.data.items.length;
 
   const moveItem = (index: number, direction: "up" | "down") => {
     if (isAnswered) return;
@@ -43,7 +38,18 @@ const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
     const isCorrect =
       JSON.stringify(currentOrder) === JSON.stringify(quiz.data.order);
     onAnswer(isCorrect, { type: "ordering", items });
+
+    return isCorrect;
   };
+
+  useEffect(() => {
+    setItems(
+      quiz.data.items.map((text: string, i: number) => ({
+        text,
+        originalIndex: i,
+      })),
+    );
+  }, [quiz]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -77,12 +83,12 @@ const QuizOrdering = ({ quiz, onAnswer, isAnswered }: Props) => {
         ))}
       </ul>
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+          externalId={quiz.id}
+        />
       )}
     </div>
   );

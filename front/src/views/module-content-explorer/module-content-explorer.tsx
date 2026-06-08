@@ -12,7 +12,7 @@ import { useContext } from "react";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import useActivityQuizz from "../../hooks/use-activity-quiz";
+import useCourseQuiz from "../../hooks/use-course-quiz";
 import QuizModal from "../../components/quizzes/modals/quiz-modal";
 import QuizRequestModal from "../../components/quizzes/modals/quiz-request-modal";
 import useSmartQuizPrompt from "../../hooks/use-smart-quiz-prompt";
@@ -61,11 +61,12 @@ const ModuleContentExplorer = () => {
     moduleActions.onFinishInitialQuiz,
   );
 
-  const quizState = useActivityQuizz(
+  const quizState = useCourseQuiz(
     state.selectedLesson?.courseId,
     state.textActivityContent,
   );
 
+  // Propose automatiquement un quiz aux clics sur les boutons suivant ou précédent
   const smartQuizState = useSmartQuizPrompt({
     selectedActivity: state.selectedActivity,
     isLessonCompleted: computed.isLessonCompleted,
@@ -95,6 +96,7 @@ const ModuleContentExplorer = () => {
         onAnswer={diagnosticQuiz.onAnswerQuiz}
         onNext={diagnosticQuiz.onNextQuiz}
         onContinueFromResults={diagnosticQuiz.onContinueFromResults}
+        onReport={diagnosticQuiz.onReportQuizQuestion}
       />
     );
   }
@@ -110,12 +112,14 @@ const ModuleContentExplorer = () => {
         isAnswered={quizState.isAnswered}
         isCorrect={quizState.isCorrect}
         isStreaming={quizState.isStreaming}
+        isReplacing={quizState.isReplacing}
         showResults={quizState.showResults}
         attempts={quizState.attempts || []}
         score={quizState.score}
         onClose={quizState.onCloseQuizzes}
         onAnswer={quizState.onAnswerQuiz}
         onNext={quizState.onNextQuiz}
+        onReport={quizState.onReportQuizQuestion}
       />
 
       <QuizRequestModal

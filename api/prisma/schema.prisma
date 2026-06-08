@@ -34,6 +34,7 @@ model Activity {
   author             Admin              @relation(fields: [authorId], references: [id], onDelete: SetDefault)
   lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   resourceActivities ResourceActivity[]
+  quizzes            Quiz[]
 }
 
 model Admin {
@@ -150,6 +151,7 @@ model Course {
   module          ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   lessons         Lesson[]
   tags            TagsOnCourse[]
+  quizzes         Quiz[]
 }
 
 model Formation {
@@ -252,6 +254,7 @@ model Module {
   admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   formations ModulesOnFormation[]
   metadatas  ModuleMetadata[]
+  quizzes    Quiz[]
 }
 
 model ModuleMetadata {
@@ -384,6 +387,7 @@ model Student {
   accomplishments Accomplishment[]
   lessonRating    LessonRating[]
   lessonsRead     LessonRead[]
+  quizzes         Quiz[]
 }
 
 model Tag {
@@ -445,4 +449,54 @@ model Authorization {
   role     String
   action   String
   resource String
+}
+
+model Quiz {
+  id    Int    @id @default(autoincrement())
+  title String
+  type  String // Ex: "ending_course", "preliminary", "random"
+
+  moduleId   Int?
+  module     Module?   @relation(fields: [moduleId], references: [id])
+  activityId Int?
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  courseId   Int?
+  course     Course?   @relation(fields: [courseId], references: [id])
+
+  questions QuizQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentId Int?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model QuizQuestion {
+  id     Int   @id @default(autoincrement())
+  quizId Int?
+  quiz   Quiz? @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  externalId       String?
+  type             String // "mcq", "true_false", "matching", "ordering"
+  difficulty       String   @default("medium")
+  prompt           String
+  explanationTrue  String?
+  explanationWrong String?
+  tags             String[]
+
+  data Json
+
+  contentHash String? @unique
+
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  quizQuestionReports QuizQuestionReport[]
+}
+
+model QuizQuestionReport {
+  id             Int           @id @default(autoincrement())
+  quizQuestionId Int?
+  quizQuestion   QuizQuestion? @relation(fields: [quizQuestionId], references: [id], onDelete: Cascade)
+  commentaire    String?
 }
