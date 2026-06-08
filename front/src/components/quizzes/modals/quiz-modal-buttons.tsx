@@ -31,14 +31,14 @@ const QuizModalButtons = ({
 
   if (isReporting) {
     return (
-      <div className="flex flex-col gap-2 mt-4 p-3 bg-base-200 rounded-lg border border-warning/20 transition-all">
+      <div className="flex flex-col gap-2 mt-4 p-3 transition-all">
         <label className="label py-0">
           <span className="label-text font-medium text-sm">
             Pourquoi cette question est-elle incorrecte ?
           </span>
         </label>
         <textarea
-          className="textarea textarea-bordered w-full text-sm bg-base-100 focus:outline-none"
+          className="textarea w-full text-sm bg-base-100 focus:outline-none resize-none"
           placeholder="Ex: Il manque une réponse"
           rows={3}
           draggable={false}

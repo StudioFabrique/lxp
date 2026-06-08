@@ -16,6 +16,8 @@ type ChatbotContextType = {
   setCurrentActivity: Dispatch<SetStateAction<Activity | undefined>>;
   activityTextSelection: string;
   setActivityTextSelection: Dispatch<SetStateAction<string>>;
+  forceHideChatbot: boolean;
+  setForceHideChatbot: Dispatch<SetStateAction<boolean>>;
 };
 
 const ChatbotContext = React.createContext<ChatbotContextType>(
@@ -26,6 +28,7 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
   // Récupérer le chemin actuel de l'URL dans le hook react router
   const { pathname } = useLocation();
 
+  const [forceHideChatbot, setForceHideChatbot] = useState<boolean>(false);
   const [currentActivity, setCurrentActivity] = useState<Activity>();
   const [activityTextSelection, setActivityTextSelection] =
     useState<string>("");
@@ -43,6 +46,8 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
         setCurrentActivity,
         activityTextSelection,
         setActivityTextSelection,
+        forceHideChatbot,
+        setForceHideChatbot,
       }}
     >
       {children}
