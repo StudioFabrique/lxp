@@ -13,6 +13,7 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
+import { ChatbotContext } from "../store/chatbotContext";
 
 interface ModuleInfoForDiagnostic {
   title?: string;
@@ -26,6 +27,7 @@ export default function useDiagnosticQuiz(
   onFinishInitialQuiz: () => void,
 ) {
   const { user } = useContext(Context);
+  const { setForceHideChatbot } = useContext(ChatbotContext);
   const { axiosInstance: axios } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -121,6 +123,7 @@ export default function useDiagnosticQuiz(
     setCurrentIndex(0);
     setScore(0);
     setIsOpen(true);
+
     setIsAnswered(false);
     setIsCorrect(false);
     setIsStreaming(true);
@@ -316,6 +319,7 @@ export default function useDiagnosticQuiz(
         isFinished.current = true;
         onFinishInitialQuiz();
       } else {
+        // Ouvrir la vue de quiz de début de module
         setIsOpen(true);
       }
     } else if (!isFinished.current) {
@@ -334,6 +338,14 @@ export default function useDiagnosticQuiz(
     setShowResults(false);
     onFinishInitialQuiz();
   }, [onFinishInitialQuiz]);
+
+  useEffect(() => {
+    setForceHideChatbot(isOpen);
+
+    // Le destructeur permet de remettre la visibilité du chatbot par défaut
+    // en changeant de vue. Évite que ça reste bloqué.
+    return () => setForceHideChatbot(false);
+  }, [isOpen, setForceHideChatbot]);
 
   return {
     isOpen,

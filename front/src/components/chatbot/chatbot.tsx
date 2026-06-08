@@ -5,8 +5,12 @@ import useChatbot from "./hooks/use-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatBotQuiz from "./hooks/use-chatbot-quiz";
 import QuizModal from "../quizzes/modals/quiz-modal";
+import { useContext } from "react";
+import { ChatbotContext } from "../../store/chatbotContext";
 
 export default function Chatbot() {
+  const { forceHideChatbot } = useContext(ChatbotContext);
+
   const chatbot = useChatbot();
   const chatbotUi = useChatbotUi(chatbot.dialog, chatbot.setDialog);
   const chatbotQuiz = useChatBotQuiz(
@@ -21,13 +25,13 @@ export default function Chatbot() {
     <>
       {/* Bouton d'ouverture animé */}
       <AnimatePresence>
-        {!chatbotUi.showChatbot && (
+        {!chatbotUi.showChatbot && !forceHideChatbot && (
           <ChatbotButton onOpenChatbot={chatbotUi.handleOpenChatbot} />
         )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {chatbotUi.showChatbot && (
+        {chatbotUi.showChatbot && !forceHideChatbot && (
           <DrawerChatbot
             chatbot={chatbot}
             chatbotUi={chatbotUi}
