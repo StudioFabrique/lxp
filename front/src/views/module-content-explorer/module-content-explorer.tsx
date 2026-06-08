@@ -96,6 +96,7 @@ const ModuleContentExplorer = () => {
         onAnswer={diagnosticQuiz.onAnswerQuiz}
         onNext={diagnosticQuiz.onNextQuiz}
         onContinueFromResults={diagnosticQuiz.onContinueFromResults}
+        onReport={diagnosticQuiz.onReportQuizQuestion}
       />
     );
   }

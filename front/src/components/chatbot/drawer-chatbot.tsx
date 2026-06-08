@@ -31,7 +31,7 @@ export default function DrawerChatbot({
 
   const { activityTextSelection } = useContext(ChatbotContext);
 
-  const isChatEmpty = dialog.length <= 1;
+  // const isChatEmpty = dialog.length <= 1;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,15 +119,13 @@ export default function DrawerChatbot({
                 <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
               ) : (
                 // Affichage du message de proposition de quiz
-                !isChatEmpty && (
-                  <PrebuiltPrompt
-                    title="Une question sur ce cours ?"
-                    prebuiltPromptsMessages={
-                      prebuiltPrompt.suggestedCoursePrompts
-                    }
-                    setPrebuiltPrompt={handleSetPrebuiltPrompt}
-                  />
-                )
+                <PrebuiltPrompt
+                  title="Une question sur ce cours ?"
+                  prebuiltPromptsMessages={
+                    prebuiltPrompt.suggestedCoursePrompts
+                  }
+                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
+                />
               ))}
             {/* Affichage du bloc selectionné pour passer en contexte du chatbot */}
             {activityTextSelection && (
