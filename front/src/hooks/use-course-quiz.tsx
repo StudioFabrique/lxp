@@ -12,9 +12,8 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
-// import { activityEndingQuizzesFixtures } from "../lib/quizzes-fixtures";
 
-export default function useActivityQuiz(
+export default function useCourseQuiz(
   courseId?: number,
   activityContent?: string,
 ) {
@@ -29,7 +28,9 @@ export default function useActivityQuiz(
   const [isStreaming, setIsStreaming] = useState(false);
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isReplacing, setIsReplacing] = useState(false);
   const additionalQuizCount = useRef(0);
+  const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
 
   const toastWarning = (message: string) => {
     toast.error(message, {
@@ -48,6 +49,7 @@ export default function useActivityQuiz(
 
   const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
     const base = {
+      id: external.id,
       question: external.prompt,
       trueExplanation: external.explanation_correct,
       falseExplanation: external.explanation_wrong,
@@ -73,9 +75,7 @@ export default function useActivityQuiz(
 
       case "matching": {
         let pairs: Pair[] = [];
-
         pairs = external.pairs;
-
         return {
           ...base,
           type: "matching",
@@ -115,16 +115,6 @@ export default function useActivityQuiz(
       return;
     }
 
-    // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
-    // setQuizzes((prev) =>
-    //   prev
-    //     ? [...prev, ...activityEndingQuizzesFixtures]
-    //     : activityEndingQuizzesFixtures,
-    // );
-
-    // setIsStreaming(false);
-    // --- Fin utilisation de fixtures ---
-
     if (!courseId) {
       console.warn("Course ID is required to load quizzes from the API.");
       setIsStreaming(false);
@@ -157,15 +147,15 @@ export default function useActivityQuiz(
           buffer = lines.pop() || "";
 
           for (const line of lines) {
-            const cleanLine = line.trim();
+            let cleanLine = line.trim();
+            if (!cleanLine) continue;
 
-            if (!cleanLine.startsWith("data:")) continue;
+            if (cleanLine.startsWith("data:")) {
+              cleanLine = cleanLine.substring(5).trim();
+            }
 
             try {
-              const jsonString = cleanLine.substring(5).trim();
-              const payload = JSON.parse(
-                jsonString,
-              ) as ExternalApiStreamPayload;
+              const payload = JSON.parse(cleanLine) as ExternalApiStreamPayload;
 
               if ("event" in payload) {
                 console.log(
@@ -219,16 +209,6 @@ export default function useActivityQuiz(
         setShowResults(false);
       }
       setIsStreaming(true);
-
-      // --- Utilisation de fixtures pour le développement en attendant l'implémentation backend (à supprimer et décommenter la suite du code) ---
-      // setQuizzes((prev) =>
-      //   prev
-      //     ? [...prev, activityEndingQuizzesFixtures[0]]
-      //     : [activityEndingQuizzesFixtures[0]],
-      // );
-
-      // setIsStreaming(false);
-      // --- Fin utilisation de fixtures ---
 
       try {
         const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
@@ -295,11 +275,68 @@ export default function useActivityQuiz(
     }
   };
 
-  const currentQuiz = quizzes ? quizzes[currentIndex] : undefined;
+  const onReportQuizQuestion = useCallback(
+    async (externalId: string, comment: string) => {
+      setIsReplacing(true);
+
+      try {
+        // Envoi du signalement au backend
+        await axios.post(`${BASE_API_URL}/quiz/question/report`, {
+          externalId,
+          comment,
+        });
+        toast.success("Merci ! Votre signalement a bien été pris en compte.");
+
+        // Si l'étudiant avait déjà répondu avant de signaler, annule l'impact
+        if (isAnswered) {
+          if (isCorrect) {
+            setScore((prev) => Math.max(0, prev - 1));
+          }
+          setAttempts((prev) => prev.slice(0, -1));
+        }
+
+        // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
+        const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
+          content: activityContent,
+        });
+
+        const mappedQuiz = mapExternalToInternal(response.data);
+
+        if (mappedQuiz) {
+          // Remplacer le quiz défectueux par le nouveau à l'index actuel
+          setQuizzes((prev) => {
+            if (!prev) return [mappedQuiz];
+            const updated = [...prev];
+            updated[currentIndex] = mappedQuiz;
+            return updated;
+          });
+
+          // Réinitialiser les états de réponse pour afficher la nouvelle question
+          setIsAnswered(false);
+          setIsCorrect(false);
+        } else {
+          if (quizzes && currentIndex < quizzes.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+          } else {
+            setShowResults(true);
+          }
+          setIsAnswered(false);
+          setIsCorrect(false);
+        }
+      } catch (error) {
+        console.error("Erreur lors du traitement du signalement :", error);
+        toast.error("Impossible de remplacer le quiz pour le moment.");
+      } finally {
+        setIsReplacing(false);
+      }
+    },
+    [axios, activityContent, currentIndex, quizzes, isAnswered, isCorrect],
+  );
 
   return {
     isOpen,
     isStreaming,
+    isReplacing,
     quizzes,
     currentQuiz,
     currentIndex,
@@ -313,5 +350,6 @@ export default function useActivityQuiz(
     onCloseQuizzes,
     onAnswerQuiz,
     onNextQuiz,
+    onReportQuizQuestion,
   };
 }

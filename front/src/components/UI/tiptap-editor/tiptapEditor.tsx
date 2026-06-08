@@ -11,6 +11,7 @@ import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
 import { useRef, useState } from "react";
+import { AiAskBubbleMenu } from "./components/AiAskBubbleMenu";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
@@ -22,7 +23,6 @@ type TiptapEditorProps = {
 
 export default function TiptapEditor({
   mode = "read",
-
   initialValue,
   pending,
   onSave,
@@ -32,14 +32,19 @@ export default function TiptapEditor({
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
   const [isImageUploadPending, setImageUploadPending] = useState(false);
 
-  const { editor, menuContainerRef, stickyMarkerRef, isMenuBarSticky } =
-    useTiptapEditor(
-      "prose min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
-      editorRef,
-      mode !== "read",
-      initialValue,
-      onContentChange,
-    );
+  const {
+    editor,
+    menuContainerRef,
+    stickyMarkerRef,
+    isMenuBarSticky,
+    readTimeMinutes,
+  } = useTiptapEditor(
+    "prose min-h-[12vh] m-1 w-full focus:outline-none transition-all duration-200",
+    editorRef,
+    mode !== "read",
+    initialValue,
+    onContentChange,
+  );
 
   const handleSave = async () => {
     if (uploadAllImagesRef.current) {
@@ -56,13 +61,23 @@ export default function TiptapEditor({
 
   return (
     <>
+      {mode === "read" && (
+        <div className="flex justify-end text-gray-500 text-sm">
+          <span className="mr-1">Temps estimé de lecture :</span>
+          <span>
+            {readTimeMinutes > 0
+              ? `${readTimeMinutes} minutes`
+              : "moins d'une minute"}
+          </span>
+        </div>
+      )}
       <div className="editor relative w-[70%] mx-auto" ref={menuContainerRef}>
         <div
           ref={stickyMarkerRef}
           className="absolute -top-6 left-0 w-full h-4 pointer-events-none"
         />
 
-        {/* Espace réservé (Placeholder) pour éviter le saut de contenu quand le menu devient fixed */}
+        {/* Placeholder pour éviter le saut de contenu quand le menu devient fixed */}
         {isMenuBarSticky && <div className="h-14 mb-2 w-full" />}
 
         {editor ? (
@@ -96,6 +111,7 @@ export default function TiptapEditor({
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
       )}
       {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
+      {editor && <AiAskBubbleMenu mode={mode} editor={editor} />}
     </>
   );
 }

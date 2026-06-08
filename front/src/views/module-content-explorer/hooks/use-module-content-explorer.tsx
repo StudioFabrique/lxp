@@ -28,13 +28,14 @@ import {
 import { ChatbotContext } from "../../../store/chatbotContext";
 
 const useModuleContentExplorer = () => {
-  const { setCurrentCourseId } = useContext(ChatbotContext);
+  // Le contexte du chatbot
+  const { setCurrentActivity } = useContext(ChatbotContext);
+
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
   const stateFromUrlCalled = useRef(false);
   const isInitialActivityLoaded = useRef(false);
-  // Réf pour bloquer l'initiation de la leçon tant que le quiz n'est pas fini
   const isDiagnosticPassed = useRef(false);
   const isReordering = useRef({
     course: false,
@@ -555,16 +556,21 @@ const useModuleContentExplorer = () => {
         (course) => course.id === state.selectedLesson?.courseId,
       );
 
-      // Attribue le titre/nom du cours au chatbot
+      // Attribue le titre du cours au chatbot
       if (currentCourse?.title) {
-        setCurrentCourseId(currentCourse.id);
+        setCurrentActivity((prev) => ({
+          ...prev,
+          courseId: currentCourse.id,
+          content: state.textActivityContent,
+        }));
       }
     }
   }, [
-    setCurrentCourseId,
+    setCurrentActivity,
     state.selectedLesson?.courseId,
     state.selectedActivity?.type,
     state.module?.courses,
+    state.textActivityContent,
   ]);
 
   return {

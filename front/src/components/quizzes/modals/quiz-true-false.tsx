@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { cn } from "../../../utils";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "true_false" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
 }
 
-const QuizTrueFalse = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [selected, setSelected] = useState<boolean | null>(null);
 
+  const isValid = selected !== null;
+
   const handleValidate = () => {
-    if (selected !== null) {
+    if (isValid) {
       onAnswer(selected === quiz.data.answer, {
         type: "true_false",
         selected: selected,
@@ -26,7 +30,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, isAnswered }: Props) => {
         <button
           className={cn(
             "btn flex-1",
-            selected === true ? "btn-primary" : "btn-outline btn-neutral",
+            selected === true ? "btn-primary" : "btn-outline btn-secondary",
           )}
           onClick={() => setSelected(true)}
           disabled={isAnswered}
@@ -36,7 +40,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, isAnswered }: Props) => {
         <button
           className={cn(
             "btn flex-1",
-            selected === false ? "btn-primary" : "btn-outline btn-neutral",
+            selected === false ? "btn-primary" : "btn-outline btn-secondary",
           )}
           onClick={() => setSelected(false)}
           disabled={isAnswered}
@@ -45,13 +49,12 @@ const QuizTrueFalse = ({ quiz, onAnswer, isAnswered }: Props) => {
         </button>
       </div>
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          disabled={selected === null}
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+          externalId={quiz.id}
+        />
       )}
     </div>
   );

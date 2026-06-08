@@ -48,7 +48,23 @@ export default function useAutosave({
   const [lastAutosaveTime, setLastAutosaveTime] = useState<Date | null>(null);
   const [showAutosaveIndicator, setShowAutosaveIndicator] =
     useState<boolean>(false);
+
   const initialLoadRef = useRef<boolean>(true);
+  // Refs pour éviter le cycle de rendu infini
+  const onEditTitleRef = useRef(onEditTitle);
+  const onEditContentRef = useRef(onEditContent);
+  const hasRestoredRef = useRef<boolean>(false);
+
+  // Synchronisation des refs avec les props
+  useEffect(() => {
+    onEditTitleRef.current = onEditTitle;
+    onEditContentRef.current = onEditContent;
+  }, [onEditTitle, onEditContent]);
+
+  // Réinitialise le flag de restauration si l'ID d'activité change
+  useEffect(() => {
+    hasRestoredRef.current = false;
+  }, [activityId]);
 
   // Génère une clé unique pour l'activité
   const getStorageKey = useCallback(() => {
@@ -73,7 +89,6 @@ export default function useAutosave({
       const stored = localStorage.getItem(getStorageKey());
       if (stored) {
         const data = JSON.parse(stored) as AutosaveData;
-        // Vérifie que les données correspondent à la même leçon et activité
         if (data.activityId === activityId) {
           return data;
         }
@@ -110,7 +125,9 @@ export default function useAutosave({
         const key = localStorage.key(i);
         if (key && key.startsWith("autosave_")) {
           try {
-            const data = JSON.parse(localStorage.getItem(key) || "");
+            const item = localStorage.getItem(key);
+            if (!item) continue;
+            const data = JSON.parse(item);
             const age = Date.now() - data.timestamp;
             const twentyFourHours = 24 * 60 * 60 * 1000;
 
@@ -118,12 +135,10 @@ export default function useAutosave({
               keysToRemove.push(key);
             }
           } catch {
-            // Si on ne peut pas parser, on supprime
             keysToRemove.push(key);
           }
         }
       }
-
       keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch (error) {
       console.error(
@@ -135,9 +150,7 @@ export default function useAutosave({
 
   // Restaure les données au chargement initial
   const restoreAutosavedContent = useCallback(() => {
-    // Nettoie les anciennes sauvegardes au chargement
     cleanupOldAutosaves();
-
     const autosavedData = getFromStorage();
     if (autosavedData) {
       setHasAutosavedContent(true);
@@ -145,13 +158,13 @@ export default function useAutosave({
       return {
         title: autosavedData.title,
         content: autosavedData.content,
-        wasRestored: true, // Indique qu'il s'agit d'une restauration
+        wasRestored: true,
       };
     }
     return {
       title: "",
       content: "",
-      wasRestored: false, // Pas de restauration
+      wasRestored: false,
     };
   }, [getFromStorage]);
 
@@ -162,46 +175,49 @@ export default function useAutosave({
     }, 2000),
   ).current;
 
-  // Effet pour restaurer le contenu autosauvegardé au chargement
+  // Effet pour restaurer le contenu autosauvegardé
   useEffect(() => {
-    if (!isWriting) return;
+    if (!isWriting || hasRestoredRef.current) return;
 
     const autosavedData = restoreAutosavedContent();
     const autoSavedContentLength =
       autosavedData?.content?.replace(/<[^>]+>/g, "").length || 0;
 
     if (autosavedData.wasRestored) {
-      onEditTitle(autosavedData.title || "");
-      onEditContent(autosavedData.content || "");
-      (autoSavedContentLength > 0 ||
-        (autosavedData.title && autosavedData.title.length > 0)) &&
+      // Utilisation des refs pour éviter le re-render infini
+      onEditTitleRef.current(autosavedData.title || "");
+      onEditContentRef.current(autosavedData.content || "");
+
+      if (
+        autoSavedContentLength > 0 ||
+        (autosavedData.title && autosavedData.title.length > 0)
+      ) {
         setShowAutosaveIndicator(true);
+      }
     }
-  }, [restoreAutosavedContent, onEditTitle, onEditContent, isWriting]);
+
+    hasRestoredRef.current = true;
+  }, [restoreAutosavedContent, isWriting, activityId]);
 
   // Effet pour cacher l'indicateur d'autosave après un délai
   useEffect(() => {
-    if (!isWriting) return;
+    if (!isWriting || !showAutosaveIndicator) return;
 
-    if (showAutosaveIndicator) {
-      const timer = setTimeout(() => {
-        setShowAutosaveIndicator(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      setShowAutosaveIndicator(false);
+    }, 5000);
+    return () => clearTimeout(timer);
   }, [showAutosaveIndicator, isWriting]);
 
   // Effet pour sauvegarder automatiquement lors des changements
   useEffect(() => {
     if (!isWriting) return;
 
-    // Ne pas sauvegarder lors du chargement initial
     if (initialLoadRef.current) {
       initialLoadRef.current = false;
       return;
     }
 
-    // Ne sauvegarde que si il y a du contenu ou un titre
     if (title?.trim() || content?.trim()) {
       const autosaveData: AutosaveData = {
         title,
@@ -209,19 +225,16 @@ export default function useAutosave({
         timestamp: Date.now(),
         activityId,
       };
-
       debouncedSave(autosaveData);
     }
   }, [title, content, activityId, debouncedSave, isWriting]);
 
-  // Nettoie le debounce lors du démontage du composant
+  // Nettoie le debounce lors du démontage
   useEffect(() => {
-    if (!isWriting) return;
-
     return () => {
       debouncedSave.cancel();
     };
-  }, [debouncedSave, isWriting]);
+  }, [debouncedSave]);
 
   return {
     hasAutosavedContent,

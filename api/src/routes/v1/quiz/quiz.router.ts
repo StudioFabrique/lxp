@@ -6,8 +6,10 @@ import {
   endingCourseQuizStreamValidator,
   preliminaryQuizStreamValidator,
   randomQuizValidator,
+  reportQuizQuestionValidator,
 } from "./quiz-validator";
 import checkToken from "../../../middleware/check-token";
+import httpPostReportQuizQuestion from "../../../controllers/quiz/http-post-report-quiz-question";
 
 /**
  * Routeur dédié à la génération de quiz.
@@ -38,6 +40,13 @@ quizRouter.post(
   checkToken,
   preliminaryQuizStreamValidator,
   httpPostPreliminaryQuizStream,
+);
+
+quizRouter.post(
+  "/question/report",
+  checkToken,
+  reportQuizQuestionValidator,
+  httpPostReportQuizQuestion,
 );
 
 export default quizRouter;

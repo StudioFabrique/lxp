@@ -25,6 +25,7 @@ type Props = {
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onNext: () => void;
   onContinueFromResults: () => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
 };
 
 const DiagnosticQuizView = ({
@@ -44,6 +45,7 @@ const DiagnosticQuizView = ({
   onAnswer,
   onNext,
   onContinueFromResults,
+  onReport,
 }: Props) => {
   // Accueil du test
   if (!isStarted) {
@@ -81,10 +83,17 @@ const DiagnosticQuizView = ({
       <div className="min-h-screen w-full flex items-center justify-center p-4">
         <div className="card w-full max-w-3xl bg-base-100">
           <div className="card-body gap-6">
-            <div className="border-b border-base-200 pb-4">
+            <div className="flex justify-between items-center border-b border-base-200 pb-4">
               <h3 className="font-bold text-lg text-primary">
                 Résultats du diagnostic
               </h3>
+              {/* Bouton continuer */}
+              <button
+                className="btn btn-primary"
+                onClick={onContinueFromResults}
+              >
+                Démarrer le module
+              </button>
             </div>
             <QuizResults
               score={score}
@@ -144,13 +153,19 @@ const DiagnosticQuizView = ({
     switch (quiz.type) {
       case "mcq":
         return (
-          <QuizMcq quiz={quiz} onAnswer={onAnswer} isAnswered={isAnswered} />
+          <QuizMcq
+            quiz={quiz}
+            onAnswer={onAnswer}
+            onReport={onReport}
+            isAnswered={isAnswered}
+          />
         );
       case "matching":
         return (
           <QuizMatching
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -159,6 +174,7 @@ const DiagnosticQuizView = ({
           <QuizOrdering
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -167,6 +183,7 @@ const DiagnosticQuizView = ({
           <QuizTrueFalse
             quiz={quiz}
             onAnswer={onAnswer}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );

@@ -1,23 +1,65 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { ArrowBigRightDash, ChevronDown } from "lucide-react";
 import { cn } from "../../../utils";
 import { Pair, Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
+import QuizModalButtons from "./quiz-modal-buttons";
 
 interface Props {
   quiz: Extract<Quiz, { type: "matching" }>;
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
   isAnswered: boolean;
 }
 
-const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
+const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [rightOptions, setRightOptions] = useState<string[]>([]);
-  // Index de la ligne dont le dropdown est ouvert (null = tous fermés)
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const isValid = quiz.data.pairs.length === Object.keys(answers).length;
+
+  const selectedValues = useMemo(
+    () => new Set(Object.values(answers)),
+    [answers],
+  );
+
+  const handleToggle = useCallback(
+    (index: number, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isAnswered) return;
+      setOpenIndex((prev) => (prev === index ? null : index));
+    },
+    [isAnswered],
+  );
+
+  const handleOptionClick = useCallback(
+    (leftIndex: number, value: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+
+      setAnswers((prev) => {
+        if (value === "") {
+          const next = { ...prev };
+          delete next[leftIndex];
+          return next;
+        }
+        return { ...prev, [leftIndex]: value };
+      });
+
+      setOpenIndex(null);
+    },
+    [],
+  );
+
+  const handleValidate = () => {
+    const isCorrect = quiz.data.pairs.every(
+      (pair: Pair, index: number) => answers[index] === pair.right,
+    );
+    onAnswer(isCorrect, { type: "matching", answers });
+  };
 
   useEffect(() => {
     const options = quiz.data.pairs.map((p: Pair) => p.right);
-    setRightOptions(options.sort(() => Math.random() - 0.5));
+    setRightOptions([...options].sort(() => Math.random() - 0.5));
   }, [quiz]);
 
   // Fermer tous les dropdowns quand le quiz est validé
@@ -32,56 +74,13 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
     return () => document.removeEventListener("click", close);
   }, []);
 
-  const handleToggle = (index: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isAnswered) return;
-    setOpenIndex((prev) => (prev === index ? null : index));
-  };
-
-  const handleSelect = (leftIndex: number, value: string) => {
-    if (value === "") {
-      setAnswers((prev) => {
-        const next = { ...prev };
-        delete next[leftIndex];
-        return next;
-      });
-    } else {
-      setAnswers((prev) => ({ ...prev, [leftIndex]: value }));
-    }
-  };
-
-  const handleOptionClick = (
-    leftIndex: number,
-    value: string,
-    e: React.MouseEvent,
-  ) => {
-    e.stopPropagation();
-    handleSelect(leftIndex, value);
-    setOpenIndex(null);
-  };
-
-  const handleValidate = () => {
-    let correct = true;
-    quiz.data.pairs.forEach((pair: Pair, index: number) => {
-      if (answers[index] !== pair.right) correct = false;
-    });
-    onAnswer(correct, { type: "matching", answers });
-  };
-
-  const allAnswered = Object.keys(answers).length === quiz.data.pairs.length;
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         {quiz.data.pairs.map((pair: Pair, index: number) => {
-          const usedByOthers = new Set(
-            Object.entries(answers)
-              .filter(([k]) => Number(k) !== index)
-              .map(([, v]) => v),
-          );
-
           const isRowAnswered = Boolean(answers[index]);
           const isOpen = openIndex === index;
+          const currentAnswer = answers[index];
 
           return (
             <div
@@ -98,12 +97,9 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
                 className="shrink-0 text-primary/50"
               />
 
-              {/* Dropdown DaisyUI contrôlé */}
-              <div
-                className={cn("dropdown w-full", isOpen && "dropdown-open")}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Trigger — stylé comme un select DaisyUI */}
+              {/* Dropdown DaisyUI */}
+              <div className={cn("dropdown w-full", isOpen && "dropdown-open")}>
+                {/* Trigger */}
                 <div
                   tabIndex={0}
                   role="button"
@@ -117,10 +113,10 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
                   <span
                     className={cn(
                       "truncate text-sm",
-                      !answers[index] && "text-base-content/40",
+                      !currentAnswer && "text-base-content/40",
                     )}
                   >
-                    {answers[index] ?? "— Sélectionner —"}
+                    {currentAnswer ?? "— Sélectionner —"}
                   </span>
                   <ChevronDown
                     size={16}
@@ -133,7 +129,6 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
 
                 {/* Liste d'options */}
                 <ul className="dropdown-content menu bg-base-100 rounded-box z-50 w-full mt-1 p-1 shadow-lg border border-base-200">
-                  {/* Option de désélection */}
                   <li>
                     <button
                       type="button"
@@ -145,8 +140,8 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
                   </li>
 
                   {rightOptions.map((opt, i) => {
-                    const isUsed = usedByOthers.has(opt);
-                    const isSelected = answers[index] === opt;
+                    const isSelected = currentAnswer === opt;
+                    const isUsed = selectedValues.has(opt) && !isSelected;
 
                     return (
                       <li key={i}>
@@ -173,13 +168,12 @@ const QuizMatching = ({ quiz, onAnswer, isAnswered }: Props) => {
       </div>
 
       {!isAnswered && (
-        <button
-          className="btn btn-secondary self-end mt-4"
-          disabled={!allAnswered}
-          onClick={handleValidate}
-        >
-          Valider ma réponse
-        </button>
+        <QuizModalButtons
+          isValid={isValid}
+          onValidate={handleValidate}
+          onReport={onReport}
+          externalId={quiz.id}
+        />
       )}
     </div>
   );

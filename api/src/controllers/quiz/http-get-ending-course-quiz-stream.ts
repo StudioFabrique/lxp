@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Readable } from "stream";
 import getCourseById from "../../models/course/get-course-by-id";
 import dotenv from "dotenv";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { trackTokens } from "../../models/stats/trackTokens";
+import { prisma } from "../../utils/db";
 
 dotenv.config();
 
@@ -27,35 +28,85 @@ type QuizResponseStream = ReadableStream<{
 /**
  * GET /quiz/course/ending/stream/:courseId
  * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream
- * - courseId sera utilisé pour contextualiser les questions du quiz (le titre du cours, quelles sont les notions abordées dans le cours, etc.)
+ * Personnalisé par étudiant pour éviter la duplication et économiser les tokens.
  */
 export default async function httpGetEndingCourseQuizStream(
   req: CustomRequest,
   res: Response,
 ) {
   const { courseId } = req.params;
-  const { userId } = req.auth ?? {}; // Récupération de l'identifiant utilisateur issu du token
+  const { userId } = req.auth ?? {};
 
   try {
-    const course = await getCourseById(+courseId);
-
-    if (!course) {
-      return res.status(404).json({ error: "Cours introuvable" });
+    if (!userId) {
+      return res.status(401).json({ error: "Utilisateur non authentifié" });
     }
 
-    // Construction du payload aligné avec la documentation de l'API IA
+    // Récupérer le cours
+    const course = await getCourseById(+courseId);
+    if (!course) return res.status(404).json({ error: "Cours introuvable" });
+
+    const student = await prisma.student.findFirst({
+      where: { idMdb: String(userId) },
+    });
+
+    if (!student) {
+      return res
+        .status(404)
+        .json({ error: "Profil étudiant introuvable dans Postgres" });
+    }
+
+    // Vérification du cache Prisma (Filtré par cours ET par étudiant)
+    let quizz = await prisma.quiz.findFirst({
+      where: {
+        courseId: +courseId,
+        type: "ending_course",
+        studentId: student.id,
+      },
+      include: { questions: true },
+    });
+
+    // Si le quizz existe déjà pour cet étudiant, simuler le stream
+    if (quizz && quizz.questions.length > 0) {
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader("Transfer-Encoding", "chunked");
+
+      quizz.questions.forEach((q) => {
+        const payload = {
+          id: q.externalId,
+          type: q.type,
+          prompt: q.prompt,
+          difficulty: q.difficulty,
+          explanation_correct: q.explanationTrue,
+          explanation_wrong: q.explanationWrong,
+          tags: q.tags,
+          ...(q.data as any),
+        };
+        res.write(JSON.stringify(payload) + "\n");
+      });
+
+      // Simuler l'événement de fin
+      res.write(
+        JSON.stringify({
+          event: "done",
+          total_questions: quizz.questions.length,
+          elapsed_sec: 0,
+          tokens: { total_tokens: 0 },
+        }) + "\n",
+      );
+      return res.end();
+    }
+
+    // Sinon, on appelle l'API IA
     const quizzesRequestPayload = {
       course_name: course.title,
       activity_content: course.content,
-      // model: "ministral-14b-2512",
       profile: {
-        user_id: userId ? String(userId) : undefined,
+        user_id: String(userId),
         course_id: String(courseId),
-        // Plus tard ajouter : experience_label, weak_concepts, etc.
       },
     };
 
-    // Appel de l'API externe
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
       {
@@ -68,17 +119,15 @@ export default async function httpGetEndingCourseQuizStream(
       },
     );
 
-    if (!response.ok) {
-      throw new Error(`Erreur API externe: ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error(`Erreur API: ${response.statusText}`);
 
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Transfer-Encoding", "chunked");
 
-    const nodeStream = Readable.fromWeb(response.body as any);
-    nodeStream.pipe(res); // Le stream est envoyé directement au client sans attente
+    const nodeStream = Readable.fromWeb(response.body as QuizResponseStream);
+    nodeStream.pipe(res);
 
-    // --- INTERCEPTION DU STREAM EN ARRIÈRE-PLAN POUR LES TOKENS ---
+    // 4. Interception pour sauvegarde en BDD
     let accumulatedData = "";
     nodeStream.on("data", (chunk) => {
       accumulatedData += chunk.toString();
@@ -86,39 +135,66 @@ export default async function httpGetEndingCourseQuizStream(
 
     nodeStream.on("end", async () => {
       try {
-        // Découpage par ligne au cas où c'est du NDJSON / SSE (Server-Sent Events)
         const lines = accumulatedData.split("\n");
+        const generatedQuestions = [];
+
         for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
+          const cleanLine = line.trim().replace(/^data:\s*/, "");
+          if (!cleanLine) continue;
 
-          // Nettoyage si le format utilise un préfixe SSE "data:"
-          const cleanLine = trimmed.startsWith("data:")
-            ? trimmed.replace(/^data:\s*/, "")
-            : trimmed;
+          const parsed = JSON.parse(cleanLine);
 
-          try {
-            const parsed = JSON.parse(cleanLine);
-            // Dès qu'on tombe sur le chunk ou l'événement final contenant les tokens
+          if (parsed?.event === "done") {
             if (parsed?.tokens?.total_tokens) {
               await trackTokens(userId, parsed.tokens.total_tokens);
-              break;
             }
-          } catch {
-            // On ignore les lignes incomplètes ou les morceaux de JSON non valides
+          } else if (parsed?.prompt) {
+            const {
+              id,
+              type,
+              prompt,
+              difficulty,
+              explanation_correct,
+              explanation_wrong,
+              tags,
+              ...specificData
+            } = parsed;
+            generatedQuestions.push({
+              externalId: id,
+              type,
+              prompt,
+              difficulty: difficulty || "medium",
+              explanationTrue: explanation_correct,
+              explanationWrong: explanation_wrong,
+              tags: tags || [],
+              data: specificData,
+            });
           }
+        }
+
+        // Sauvegarde transactionnelle dans Prisma (Liée à l'étudiant)
+        if (generatedQuestions.length > 0) {
+          await prisma.quiz.create({
+            data: {
+              title: `Quiz de fin - ${course.title}`,
+              type: "ending_course",
+              courseId: +courseId,
+              studentId: student.id,
+              questions: {
+                create: generatedQuestions,
+              },
+            },
+          });
         }
       } catch (streamError) {
         console.error(
-          "Erreur lors de l'extraction des tokens du stream :",
+          "Erreur lors de l'extraction/sauvegarde du stream :",
           streamError,
         );
       }
     });
   } catch (error) {
-    console.error("Erreur backend lors du proxy stream:", error);
-    res
-      .status(500)
-      .json({ error: "Impossible de joindre l'API de génération" });
+    console.error("Erreur backend:", error);
+    res.status(500).json({ error: "Impossible de joindre l'API" });
   }
 }
