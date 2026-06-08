@@ -59,6 +59,7 @@ export default function useDiagnosticQuiz(
 
   const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
     const base = {
+      id: external.id,
       question: external.prompt,
       trueExplanation: external.explanation_correct,
       falseExplanation: external.explanation_wrong,
@@ -253,6 +254,39 @@ export default function useDiagnosticQuiz(
     }
   };
 
+  const onReportQuizQuestion = useCallback(
+    async (externalId: string, comment: string) => {
+      try {
+        // Envoi du signalement au backend
+        await axios.post(`${BASE_API_URL}/quiz/question/report`, {
+          externalId,
+          comment,
+        });
+        toast.success("Merci ! Votre signalement a bien été pris en compte.");
+
+        // Si l'étudiant avait déjà répondu avant de signaler, annule l'impact
+        if (isAnswered) {
+          if (isCorrect) {
+            setScore((prev) => Math.max(0, prev - 1));
+          }
+          setAttempts((prev) => prev.slice(0, -1));
+        }
+
+        if (quizzes && currentIndex < quizzes.length - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          setShowResults(true);
+        }
+        setIsAnswered(false);
+        setIsCorrect(false);
+      } catch (error) {
+        console.error("Erreur lors du traitement du signalement :", error);
+        toast.error("Impossible de remplacer le quiz pour le moment.");
+      }
+    },
+    [axios, currentIndex, quizzes, isAnswered, isCorrect],
+  );
+
   // Avancer automatiquement dès qu'une nouvelle question arrive pendant l'attente.
   useEffect(() => {
     if (!isWaitingForNext) return;
@@ -318,5 +352,6 @@ export default function useDiagnosticQuiz(
     onAnswerQuiz,
     onNextQuiz,
     onContinueFromResults,
+    onReportQuizQuestion,
   };
 }

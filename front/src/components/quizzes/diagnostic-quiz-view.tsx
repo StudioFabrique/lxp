@@ -25,6 +25,7 @@ type Props = {
   onAnswer: (isCorrect: boolean, userAnswer: UserAnswer) => void;
   onNext: () => void;
   onContinueFromResults: () => void;
+  onReport: (externalId: string, comment: string) => Promise<void>;
 };
 
 const DiagnosticQuizView = ({
@@ -44,6 +45,7 @@ const DiagnosticQuizView = ({
   onAnswer,
   onNext,
   onContinueFromResults,
+  onReport,
 }: Props) => {
   // Accueil du test
   if (!isStarted) {
@@ -154,7 +156,7 @@ const DiagnosticQuizView = ({
           <QuizMcq
             quiz={quiz}
             onAnswer={onAnswer}
-            onReport={() => {}}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -163,7 +165,7 @@ const DiagnosticQuizView = ({
           <QuizMatching
             quiz={quiz}
             onAnswer={onAnswer}
-            onReport={() => {}}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -172,7 +174,7 @@ const DiagnosticQuizView = ({
           <QuizOrdering
             quiz={quiz}
             onAnswer={onAnswer}
-            onReport={() => {}}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );
@@ -181,7 +183,7 @@ const DiagnosticQuizView = ({
           <QuizTrueFalse
             quiz={quiz}
             onAnswer={onAnswer}
-            onReport={() => {}}
+            onReport={onReport}
             isAnswered={isAnswered}
           />
         );

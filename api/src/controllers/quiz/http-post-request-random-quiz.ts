@@ -53,10 +53,10 @@ export default async function httpPostRequestRandomQuiz(
     } = req.body;
     const { userId } = req.auth ?? {};
 
-    // 1. Créer un hash du texte pour chercher dans le cache
+    // Créer un hash du texte pour chercher dans le cache
     const contentHash = crypto.randomUUID().replace(/-/g, "");
 
-    // 2. Vérifier si une question pour ce texte précis existe déjà
+    // Vérifier si une question pour ce texte précis existe déjà
     const cachedQuestion = await prisma.quizQuestion.findUnique({
       where: { contentHash },
     });
@@ -75,11 +75,11 @@ export default async function httpPostRequestRandomQuiz(
         explanation_wrong: cachedQuestion.explanationWrong,
         tags: cachedQuestion.tags,
         ...(cachedQuestion.data as any), // Réinjecte les choix, paires, etc.
-        tokens: { total_tokens: 0 }, // Cache = gratuit
+        tokens: { total_tokens: 0 },
       });
     }
 
-    // 3. Si non trouvée, appel à l'API IA
+    // Si non trouvée, appel à l'API IA
     const iaPayload: Record<string, any> = {
       content,
       temperature,
@@ -105,7 +105,7 @@ export default async function httpPostRequestRandomQuiz(
 
     if (!response.ok) return res.status(response.status).json(data);
 
-    // 4. Sauvegarder la nouvelle question en BDD de manière asynchrone
+    // Sauvegarder la nouvelle question en BDD de manière asynchrone
     const {
       id,
       type,
@@ -128,7 +128,7 @@ export default async function httpPostRequestRandomQuiz(
           explanationTrue: explanation_correct,
           explanationWrong: explanation_wrong,
           tags: tags || [],
-          data: specificData, // Les données polymorphiques (choix, index de réponse, etc.)
+          data: specificData,
           contentHash,
         },
       })
