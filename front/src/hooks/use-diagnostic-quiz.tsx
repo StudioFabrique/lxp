@@ -44,7 +44,7 @@ export default function useDiagnosticQuiz(
 
   const isFinished = useRef(false);
 
-  const toastWarning = (message: string) => {
+  const toastWarning = useCallback((message: string) => {
     toast.error(message, {
       icon: <Info />,
       style: {
@@ -57,7 +57,7 @@ export default function useDiagnosticQuiz(
         secondary: "#FFEDD5",
       },
     });
-  };
+  }, []);
 
   const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
     const base = {
@@ -115,7 +115,7 @@ export default function useDiagnosticQuiz(
     if (isAiDisabled) {
       console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
       setIsOpen(false);
-      onFinishInitialQuiz(); // Appelle directement la suite (initiateLesson)
+      onFinishInitialQuiz();
       return;
     }
 
@@ -216,21 +216,14 @@ export default function useDiagnosticQuiz(
       );
       setIsOpen(false);
     } finally {
-      if (!quizzes?.length) {
-        console.warn("Api error");
-        toastWarning(
-          "Problème lors du chargement du diagnostic initial. Veuillez réessayer plus tard. Les cours sont consultables mais ne pourront pas être terminés sans quizz diagnostic.",
-        );
-        setIsOpen(false);
-      }
       setIsStreaming(false);
     }
   }, [
     moduleInfo.title,
     onFinishInitialQuiz,
+    toastWarning,
     moduleInfo.description,
     axios,
-    quizzes?.length,
   ]);
 
   const onStartQuiz = useCallback(() => {
@@ -303,6 +296,12 @@ export default function useDiagnosticQuiz(
     [axios, currentIndex, quizzes, isAnswered, isCorrect],
   );
 
+  const onContinueFromResults = useCallback(() => {
+    setIsOpen(false);
+    setShowResults(false);
+    onFinishInitialQuiz();
+  }, [onFinishInitialQuiz]);
+
   // Avancer automatiquement dès qu'une nouvelle question arrive pendant l'attente.
   useEffect(() => {
     if (!isWaitingForNext) return;
@@ -346,12 +345,6 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
   ]);
 
-  const onContinueFromResults = useCallback(() => {
-    setIsOpen(false);
-    setShowResults(false);
-    onFinishInitialQuiz();
-  }, [onFinishInitialQuiz]);
-
   useEffect(() => {
     setForceHideChatbot(isOpen);
 
@@ -359,6 +352,19 @@ export default function useDiagnosticQuiz(
     // en changeant de vue. Évite que ça reste bloqué.
     return () => setForceHideChatbot(false);
   }, [isOpen, setForceHideChatbot]);
+
+  // Quand 0 questions sont générées après la fin du stream, affiche un warning et ferme les quizzes
+  useEffect(() => {
+    if (isStreaming) return;
+
+    if (quizzes && quizzes.length === 0) {
+      console.warn("Api error");
+      toastWarning(
+        "Problème lors du chargement du diagnostic initial. Veuillez réessayer plus tard. Les cours sont consultables mais ne pourront pas être terminés sans quizz diagnostic.",
+      );
+      setIsOpen(false);
+    }
+  }, [quizzes, isStreaming, toastWarning]);
 
   return {
     isOpen,
