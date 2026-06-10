@@ -17,19 +17,18 @@ import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy"
 import { ResizableImage } from "./extensions/ResizableImage";
 import { all, createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import HardBreak from "@tiptap/extension-hard-break";
 
 const lowlight = createLowlight(all);
 
 const tiptapExtensions = [
   StarterKit.configure({ codeBlock: false, hardBreak: false }),
-  HardBreak.extend({
-    addKeyboardShortcuts() {
-      return {
-        Enter: () => this.editor.commands.setHardBreak(),
-      };
-    },
-  }),
+  // HardBreak.extend({
+  //   addKeyboardShortcuts() {
+  //     return {
+  //       Enter: () => this.editor.commands.setHardBreak(),
+  //     };
+  //   },
+  // }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
