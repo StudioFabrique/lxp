@@ -21,14 +21,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 const lowlight = createLowlight(all);
 
 const tiptapExtensions = [
-  StarterKit.configure({ codeBlock: false, hardBreak: false }),
-  // HardBreak.extend({
-  //   addKeyboardShortcuts() {
-  //     return {
-  //       Enter: () => this.editor.commands.setHardBreak(),
-  //     };
-  //   },
-  // }),
+  StarterKit.configure({ codeBlock: false }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
