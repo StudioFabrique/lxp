@@ -216,9 +216,22 @@ export default function useDiagnosticQuiz(
       );
       setIsOpen(false);
     } finally {
+      if (!quizzes?.length) {
+        console.warn("Api error");
+        toastWarning(
+          "Problème lors du chargement du diagnostic initial. Veuillez réessayer plus tard. Les cours sont consultables mais ne pourront pas être terminés sans quizz diagnostic.",
+        );
+        setIsOpen(false);
+      }
       setIsStreaming(false);
     }
-  }, [moduleInfo.title, onFinishInitialQuiz, moduleInfo.description, axios]);
+  }, [
+    moduleInfo.title,
+    onFinishInitialQuiz,
+    moduleInfo.description,
+    axios,
+    quizzes?.length,
+  ]);
 
   const onStartQuiz = useCallback(() => {
     setIsStarted(true);
