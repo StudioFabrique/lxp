@@ -25,7 +25,7 @@ Si le script ne fonctionne pas à cause des droits d'execution, utiliser
 sudo chmod 600 ./init.sh
 ```
 
-### Que fais ce script ?
+### Que fait ce script ?
 
 Afin de démarrer dans un environnement de développement propre, un script executable initialise le projet complet de tel façon à l'utiliser directement et exploiter des données prêtes à l'emploi.
 
@@ -43,6 +43,10 @@ Le script execute les commandes suivantes dans l'ordre :
 api : port **3000**
 
 front : port **5173**
+
+### Endpoints accessibles publiquement en mode DEV
+
+http://localhost:3000/activities/{id_activité}
 
 ---
 
