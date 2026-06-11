@@ -12,7 +12,7 @@ export const refreshExpire = "2h";
 
 export const corsOrigins =
   process.env.ENVIRONMENT === "production"
-    ? ["*"]
+    ? []
     : [
         "http://localhost:5173",
         "http://localhost:5174",
