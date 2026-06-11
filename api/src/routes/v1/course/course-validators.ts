@@ -229,7 +229,7 @@ export const postImportCourseStructureValidator = [
     .withMessage("Le titre du cours est requis.")
     .isString()
     .withMessage("Le titre doit être une chaîne de caractères.")
-    .custom(stringValidateGeneric)
+    // .custom(stringValidateGeneric)
     .withMessage("Le titre contient des caractères non autorisés."),
 
   body("description")
@@ -255,8 +255,8 @@ export const postImportCourseStructureValidator = [
   body("lessons.*.title")
     .notEmpty()
     .withMessage("Le titre de la leçon est requis.")
-    .isString()
-    .custom(stringValidateGeneric),
+    .isString(),
+  // .custom(stringValidateGeneric),
 
   body("lessons.*.isSelected")
     .isBoolean()
