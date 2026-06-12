@@ -15,4 +15,7 @@ echo "Migrations bdd"
 npx prisma migrate deploy
 
 echo "Insertions des données"
-docker exec -it lxp-prisma export PGPASSWORD=postgres psql -U postgres -d lxp < dump-fixtures.sql
+docker cp ./dumps/dump.sql lxp-prisma:.
+docker cp ./dumps/dump-mongo lxp-mongo:.
+docker exec -it lxp-prisma PGPASSWORD=postgres psql -U postgres -d lxp < dump.sql
+docker exec -it lxp-mongodb mongorestore --db lxp dump-mongo
