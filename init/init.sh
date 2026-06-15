@@ -34,4 +34,4 @@ echo "Copie des fichiers d'activités en html..."
 cp -R ../init/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
 
 echo -e "\033[0;32m Configuration du projet ANDRIA terminée avec succès."
-echo "Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet"
+echo "Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet."
