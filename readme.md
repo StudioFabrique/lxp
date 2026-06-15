@@ -35,6 +35,7 @@ Le script execute les commandes suivantes dans l'ordre :
 - Démarrage des containers docker PostgreSQL et MongoDB
 - Migrations bdd et generation du code des modèles prisma
 - Récupération données fictives via dump bdd Postgres et Mongodb
+- Déplacement des activités types texte vers le répertoire
 
 ## Documentation détaillé de l'architecture de l'application
 
