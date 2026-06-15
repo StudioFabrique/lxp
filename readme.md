@@ -46,6 +46,19 @@ Une fois que le script init.sh a terminé son initialisation, le serveur peut ê
 npm run dev
 ```
 
+### Identifiants de connexion
+
+#### Admin
+email : admin@studio.eco
+
+mot de passe : Abcdef@123456
+
+#### Etudiant
+
+email : apprenant@studio.eco
+
+mot de passe : Abcdef@123456
+
 ## Documentation détaillé de l'architecture de l'application
 
 ### Ports ouverts par défaut en mode dev
