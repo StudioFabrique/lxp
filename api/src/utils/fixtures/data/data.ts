@@ -24,7 +24,7 @@ export const modulesList = [
   "Responsive Web Design",
   "Front-end Frameworks (e.g., React)",
   "Back-end Development with Node.js",
-  "Database Management (SQL and NoSQL)" /* 
+  "Database Management (SQL and NoSQL)" /*
   "Web Security and Authentication",
   "API Development and Integration",
   "Progressive Web Apps (PWAs)",
@@ -74,7 +74,7 @@ export const lastnames = [
   "Robert",
   "Richard",
   "Petit",
-  "Durand",
+  "Fontaine",
   "Lefebvre",
   "Moreau",
   "Simon",
