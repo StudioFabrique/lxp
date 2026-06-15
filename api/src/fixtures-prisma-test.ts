@@ -345,7 +345,7 @@ async function createParcours() {
             id: 1,
           },
         },
-        author: "jean durand",
+        author: "jean fontaine",
         admin: {
           connect: { id: 1 },
         },
