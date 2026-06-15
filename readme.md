@@ -40,9 +40,13 @@ Le script execute les commandes suivantes dans l'ordre :
 
 ### Ports ouverts par défaut en mode dev
 
-api : port **3000**
+api => port **3000**
 
-front : port **5173**
+front => port **5173**
+
+BDD PostgreSQL => port **5500**
+
+BDD MongoDB => port **27000**
 
 ### Endpoints accessibles publiquement en mode DEV
 
