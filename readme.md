@@ -23,7 +23,7 @@ npm i -g nodemon
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
 ```bash 
-sudo chmod +x ./init.sh
+sudo chmod +x ./init/init.sh
 ```
 
 ### Que fait ce script ?
