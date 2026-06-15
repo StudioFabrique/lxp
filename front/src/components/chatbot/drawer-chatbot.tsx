@@ -114,21 +114,10 @@ export default function DrawerChatbot({
             {!isLoading &&
               !activityTextSelection &&
               !chatbotUi.isLoadingUi &&
-              (chatbotQuiz.showQuizMessage ? (
+              chatbotQuiz.showQuizMessage && (
                 // Affichage du message de proposition de quiz
                 <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
-              ) : (
-                // Afficher des suggestions de messages de prompts pour le cours
-                !isChatEmpty && (
-                  <PrebuiltPrompt
-                    title="Une question sur ce cours ?"
-                    prebuiltPromptsMessages={
-                      prebuiltPrompt.suggestedCoursePrompts
-                    }
-                    setPrebuiltPrompt={handleSetPrebuiltPrompt}
-                  />
-                )
-              ))}
+              )}
             {/* Affichage du bloc selectionné pour passer en contexte du chatbot */}
             {activityTextSelection && (
               <>
