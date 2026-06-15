@@ -9,6 +9,8 @@
 ```bash 
 npm i -g nodemon
 ```
+Cette librairie sert pour le hot reloading.
+
 - **docker** et **docker compose**
 
 ## Initialisation du projet
@@ -37,6 +39,13 @@ Le script execute les commandes suivantes dans l'ordre :
 - Récupération données fictives via dump bdd Postgres et Mongodb
 - Déplacement des activités types texte vers le répertoire
 
+### Démarrage du serveur
+
+Une fois que le script init.sh a terminé son initialisation, le serveur peut être lancé depuis la racine du projet avec la commande
+```bash
+npm run dev
+```
+
 ## Documentation détaillé de l'architecture de l'application
 
 ### Ports ouverts par défaut en mode dev
@@ -49,7 +58,7 @@ BDD PostgreSQL => port **5500**
 
 BDD MongoDB => port **27000**
 
-### Endpoints accessibles publiquement en mode DEV
+### Endpoint accessible publiquement en mode DEV pour récupérer les activités
 
 http://localhost:3000/activities/{id_activité}
 
