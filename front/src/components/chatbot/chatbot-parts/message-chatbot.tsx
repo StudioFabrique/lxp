@@ -4,7 +4,9 @@ import { ChatbotValues } from "../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { BookOpen, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+// Ajout de ChevronDown et ChevronUp pour l'indicateur visuel d'ouverture
+import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
@@ -60,10 +62,30 @@ export default function MessageChatbot({
               "chat-bubble-base-100 bg-base-100 text-base-content border border-base-300",
           )}
         >
+          {/* Conteneur de sélection de texte étensible au clic */}
           {isUser && message.textSelection && (
-            <div className="p-2.5 border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 rounded-r-md opacity-9ation-90 max-w-full">
-              {message.textSelection}
-            </div>
+            <motion.div
+              layout
+              onClick={() => setExpandTextSelection(!expandTextSelection)}
+              className="flex gap-1 p-2.5 border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none"
+            >
+              <span
+                className={cn(
+                  "w-full wrap-break-word transition-all",
+                  !expandTextSelection && "line-clamp-2",
+                )}
+              >
+                "{message.textSelection}"
+              </span>
+
+              <div className="flex justify-end gap-2 font-semibold not-italic text-[10px] uppercase tracking-wider opacity-70">
+                {expandTextSelection ? (
+                  <ChevronUp className="w-3 h-3 shrink-0" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 shrink-0" />
+                )}
+              </div>
+            </motion.div>
           )}
 
           <div className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!">
