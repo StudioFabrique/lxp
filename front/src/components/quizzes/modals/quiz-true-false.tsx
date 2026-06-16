@@ -21,6 +21,7 @@ const QuizTrueFalse = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         type: "true_false",
         selected: selected,
       });
+      setSelected(null);
     }
   };
 
