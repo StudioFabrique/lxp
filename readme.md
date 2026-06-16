@@ -45,6 +45,18 @@ Une fois que le script init.sh a terminé son initialisation, le serveur peut ê
 npm run dev
 ```
 
+### Nettoyage des données
+
+- Utiliser la commande suivante pour nettoyer toutes les données du projet et des containers docker
+```bash 
+./init/clean-project-data.sh
+```
+
+Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+```bash 
+sudo chmod +x ./init-scripts/clean-project-data.sh
+```
+
 ### Identifiants de connexion
 
 #### Admin
