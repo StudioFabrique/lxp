@@ -5,7 +5,6 @@ import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
-// Ajout de ChevronDown et ChevronUp pour l'indicateur visuel d'ouverture
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
@@ -32,6 +31,9 @@ export default function MessageChatbot({
   const isGeneralKnowledge =
     !isUser && message.mode && message.mode !== "course_content";
   const hasSources = !isUser && message.sources && message.sources.length > 0;
+
+  // Conditionne l'animation pour qu'elle ne se joue que sur le dernier message
+  const shouldAnimate = isLastMessage;
 
   return (
     <>
@@ -62,17 +64,26 @@ export default function MessageChatbot({
               "chat-bubble-base-100 bg-base-100 text-base-content border border-base-300",
           )}
         >
-          {/* Conteneur de sélection de texte étensible au clic */}
+          {/* Conteneur de sélection de texte étensible au clic avec apparition fluide zoomée */}
           {isUser && message.textSelection && (
             <motion.div
               layout
+              initial={
+                shouldAnimate ? { opacity: 0, scale: 0.9, y: 10 } : false
+              }
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                layout: { type: "spring", stiffness: 400, damping: 25 },
+                scale: { type: "spring", stiffness: 300, damping: 20 },
+                opacity: { duration: 0.3 },
+              }}
               onClick={() => setExpandTextSelection(!expandTextSelection)}
-              className="flex gap-1 p-2.5 border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none"
+              className="flex gap-1 p-2.5 border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none origin-top-left"
             >
               <span
                 className={cn(
                   "w-full wrap-break-word transition-all",
-                  !expandTextSelection && "line-clamp-2",
+                  !expandTextSelection && "line-clamp-1",
                 )}
               >
                 "{message.textSelection}"
@@ -88,9 +99,18 @@ export default function MessageChatbot({
             </motion.div>
           )}
 
-          <div className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!">
+          <motion.div
+            initial={
+              isUser && shouldAnimate
+                ? { clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" }
+                : { clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }
+            }
+            animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!"
+          >
             <ReactMarkdown>{message.message}</ReactMarkdown>
-          </div>
+          </motion.div>
 
           {hasSources && (
             <div className="mt-2 pt-2 border-t border-base-content/10 text-xs">
