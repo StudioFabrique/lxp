@@ -15,7 +15,7 @@ const QuizModalButtons = ({
 }: Props) => {
   const [isReporting, setIsReporting] = useState(false);
   const [comment, setComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // AJOUT : État de soumission local
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitReport = async () => {
     if (comment && comment.trim() !== "") {

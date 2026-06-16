@@ -114,19 +114,10 @@ export default function DrawerChatbot({
             {!isLoading &&
               !activityTextSelection &&
               !chatbotUi.isLoadingUi &&
-              (chatbotQuiz.showQuizMessage ? (
-                // Afficher des suggestions de messages de prompts pour le cours
-                <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
-              ) : (
+              chatbotQuiz.showQuizMessage && (
                 // Affichage du message de proposition de quiz
-                <PrebuiltPrompt
-                  title="Une question sur ce cours ?"
-                  prebuiltPromptsMessages={
-                    prebuiltPrompt.suggestedCoursePrompts
-                  }
-                  setPrebuiltPrompt={handleSetPrebuiltPrompt}
-                />
-              ))}
+                <MessageQuizChatbot onTriggerQuiz={chatbotQuiz.onTriggerQuiz} />
+              )}
             {/* Affichage du bloc selectionné pour passer en contexte du chatbot */}
             {activityTextSelection && (
               <>

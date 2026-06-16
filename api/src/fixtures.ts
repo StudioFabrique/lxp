@@ -56,7 +56,7 @@ async function createUser() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
     firstname: "jean",
-    lastname: "durand",
+    lastname: "fontaine",
     address: "12 place royale",
     postCode: "64000",
     city: "pau",

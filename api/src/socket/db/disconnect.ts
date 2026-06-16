@@ -4,8 +4,6 @@ import User from "../../utils/interfaces/db/user";
 import UserSocket from "../../utils/interfaces/db/user-socket";
 
 export default async function disconnect(socketId: string) {
-  console.log("hey");
-
   const existingSocket = await UserSocket.findOne({ socketId });
   if (existingSocket) {
     const user = await User.findOne({ _id: existingSocket?.userId });
@@ -23,7 +21,7 @@ export default async function disconnect(socketId: string) {
           await ConnectionInfos.findOneAndUpdate(
             { _id: connInfos._id },
             { duration: duration },
-            { new: true }
+            { new: true },
           );
         }
       }
