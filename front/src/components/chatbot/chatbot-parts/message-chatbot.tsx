@@ -22,17 +22,14 @@ export default function MessageChatbot({
   messageLoader,
 }: Props) {
   const { user } = useContext(Context);
-
+  // Fermé par défaut (false)
   const [expandTextSelection, setExpandTextSelection] =
     useState<boolean>(false);
 
   const isUser = message.origin === "user";
-
   const isGeneralKnowledge =
     !isUser && message.mode && message.mode !== "course_content";
   const hasSources = !isUser && message.sources && message.sources.length > 0;
-
-  // Conditionne l'animation pour qu'elle ne se joue que sur le dernier message
   const shouldAnimate = isLastMessage;
 
   return (
@@ -43,7 +40,6 @@ export default function MessageChatbot({
         </div>
         <div className="chat-header text-xs z-1 opacity-50 mb-1 flex items-center gap-1">
           {isUser ? "Vous" : "Assistant"}
-
           {isGeneralKnowledge && (
             <QuestionMarkTooltip tooltipValue="Cette réponse utilise des connaissances générales externes au cours." />
           )}
@@ -64,37 +60,44 @@ export default function MessageChatbot({
               "chat-bubble-base-100 bg-base-100 text-base-content border border-base-300",
           )}
         >
-          {/* Conteneur de sélection de texte étensible au clic avec apparition fluide zoomée */}
+          {/* Conteneur de sélection de texte étensible */}
           {isUser && message.textSelection && (
             <motion.div
-              layout
               initial={
                 shouldAnimate ? { opacity: 0, scale: 0.9, y: 10 } : false
               }
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{
-                layout: { type: "spring", stiffness: 400, damping: 25 },
-                scale: { type: "spring", stiffness: 300, damping: 20 },
-                opacity: { duration: 0.3 },
-              }}
+              transition={{ duration: 0.3 }}
+              className="border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none overflow-hidden"
               onClick={() => setExpandTextSelection(!expandTextSelection)}
-              className="flex gap-1 p-2.5 border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none origin-top-left"
             >
-              <span
-                className={cn(
-                  "w-full wrap-break-word transition-all",
-                  !expandTextSelection && "line-clamp-1",
-                )}
-              >
-                "{message.textSelection}"
-              </span>
+              <div className="flex gap-2 items-start p-2.5">
+                <div className="w-full wrap-break-word text-left overflow-hidden">
+                  <motion.span
+                    animate={{
+                      maxHeight: expandTextSelection ? "1000px" : "20px",
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                    }}
+                    className={cn(
+                      "block w-full transition-all duration-300",
+                      !expandTextSelection && "line-clamp-1",
+                    )}
+                  >
+                    "{message.textSelection}"
+                  </motion.span>
+                </div>
 
-              <div className="flex justify-end gap-2 font-semibold not-italic text-[10px] uppercase tracking-wider opacity-70">
-                {expandTextSelection ? (
-                  <ChevronUp className="w-3 h-3 shrink-0" />
-                ) : (
-                  <ChevronDown className="w-3 h-3 shrink-0" />
-                )}
+                <div className="flex justify-end gap-2 font-semibold not-italic text-[10px] uppercase tracking-wider opacity-70 mt-0.5 shrink-0">
+                  {expandTextSelection ? (
+                    <ChevronUp className="w-3 h-3" />
+                  ) : (
+                    <ChevronDown className="w-3 h-3" />
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
