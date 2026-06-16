@@ -68,7 +68,7 @@ export default function MessageChatbot({
               }
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors rounded-r-md select-none overflow-hidden"
+              className="border-l-4 border-primary bg-base-300/40 text-xs italic text-primary-content/90 max-w-full cursor-pointer hover:bg-base-300/60 transition-colors select-none overflow-hidden"
               onClick={() => setExpandTextSelection(!expandTextSelection)}
             >
               <div className="flex gap-2 items-start p-2.5">
