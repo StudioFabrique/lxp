@@ -58,7 +58,22 @@ email : apprenant@studio.eco
 
 mot de passe : Abcdef@123456
 
-## Documentation détaillé de l'architecture de l'application
+## Procédures de dump - Sauvegarder les données actuelles sur le repo
+
+### PostgreSQL
+
+```bash
+docker exec -e PGPASSWORD=postgres -t lxp-prisma pg_dump -U postgres -d lxp -a > ./dumps/dump-pgsql.sql
+```
+
+### MongoDB
+
+```bash
+docker exec -t lxp-mongo mongodump --db lxp --out /dump-mongo
+docker cp lxp-mongo:/dump-mongo ./dumps/
+```
+
+## Documentation de l'architecture
 
 ### Ports ouverts par défaut en mode dev
 

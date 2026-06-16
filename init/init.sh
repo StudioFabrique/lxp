@@ -6,14 +6,23 @@ echo "Copie des fichiers .env..."
 cp ./api/env.example ./api/.env && \
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 
+# Chargement des variables d'environnement
+set -o allexport
+source ./api/.env
+set +o allexport
+
+# Naviguer vers le repertoire api pour la suite
+cd api
+
 echo "Démarrage des containers Docker..."
-cd api && docker compose up -d || { echo -e "\033[1;31m Échec: Démarrage des containers"; exit 1; }
+docker compose up -d || { echo -e "\033[1;31m Échec: Démarrage des containers"; exit 1; }
 
 echo "Génération des modèles Prisma..."
 npx prisma generate || { echo -e "\033[1;31m Échec: Génération Prisma"; exit 1; }
 
 echo "Attente de l'initialisation complète de PostgreSQL..."
-until docker exec lxp-prisma pg_isready -U postgres > /dev/null 2>&1; do
+# Utilisation de la variable POSTGRES_USER issue du .env (avec "postgres" comme fallback)
+until docker exec lxp-prisma pg_isready -U "${POSTGRES_USER:-postgres}" > /dev/null 2>&1; do
   echo "PostgreSQL n'est pas encore prêt..."
   sleep 2
 done
@@ -21,17 +30,33 @@ done
 echo "Exécution des migrations..."
 npx prisma migrate deploy || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
 
-echo "Restauration des données..."
-# PostgreSQL
 echo "PostgreSQL est prêt !"
+echo "Restauration des données fictives..."
 
-docker exec -i -e PGPASSWORD=postgres lxp-prisma psql -U postgres -d lxp < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
-# MongoDB
-docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
-docker exec -i lxp-mongo mongorestore --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
+# Restauration PostgreSQL
+if [ -f "./dumps/dump-pgsql.sql" ]; then
+  echo "Dump PostgreSQL trouvé, injection en cours..."
+  docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
+else
+  echo "Aucun fichier ./dumps/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
+fi
+
+# Restauration MongoDB
+if [ -d "./dumps/dump-mongo" ]; then
+  echo "Dossier de dump MongoDB trouvé, injection en cours..."
+  docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
+  docker exec -i lxp-mongo mongorestore --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
+else
+  echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
+fi
 
 echo "Copie des fichiers d'activités en html..."
-cp -R ../init/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
+if [ -d "../init/activities" ]; then
+  mkdir -p ./uploads/
+  cp -R ../init/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
+else
+  echo "\033[1;33m Dossier ../init/activities introuvable, copie ignorée."
+fi
 
-echo -e "\033[0;32m Configuration du projet ANDRIA terminée avec succès."
-echo "Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet."
+echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
+echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
