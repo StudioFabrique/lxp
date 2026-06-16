@@ -58,19 +58,16 @@ email : apprenant@studio.eco
 
 mot de passe : Abcdef@123456
 
-## Procédures de dump - Sauvegarder les données actuelles sur le repo
+## Script automatisé de dump - Sauvegarder les données actuelles des bdd sur le repo
 
-### PostgreSQL
-
-```bash
-docker exec -e PGPASSWORD=postgres -t lxp-prisma pg_dump -U postgres -d lxp -a > ./dumps/dump-pgsql.sql
+- Utiliser la commande suivante pour réaliser deux dumps
+```bash 
+./init/dump-data.sh
 ```
 
-### MongoDB
-
-```bash
-docker exec -t lxp-mongo mongodump --db lxp --out /dump-mongo
-docker cp lxp-mongo:/dump-mongo ./dumps/
+Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+```bash 
+sudo chmod +x ./init/dump-data.sh
 ```
 
 ## Documentation de l'architecture
