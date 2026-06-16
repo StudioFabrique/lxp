@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"socketId":{"$numberInt":"1"}},"name":"socketId_1","background":true,"unique":true}],"uuid":"4c3b230de429429a895301f0f08ce58a","collectionName":"usersockets","type":"collection"}
