@@ -23,7 +23,7 @@ npm i -g nodemon
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
 ```bash 
-sudo chmod +x ./init/init.sh
+sudo chmod +x ./init-scripts/init.sh
 ```
 
 ### Que fait ce script ?
@@ -62,12 +62,12 @@ mot de passe : Abcdef@123456
 
 - Utiliser la commande suivante pour réaliser deux dumps
 ```bash 
-./init/dump-data.sh
+./init-scripts/dump-data.sh
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
 ```bash 
-sudo chmod +x ./init/dump-data.sh
+sudo chmod +x ./init-scripts/dump-data.sh
 ```
 
 ## Documentation de l'architecture

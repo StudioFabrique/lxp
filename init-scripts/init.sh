@@ -51,11 +51,11 @@ else
 fi
 
 echo "Copie des fichiers d'activités en html..."
-if [ -d "../init/activities" ]; then
+if [ -d "../init-scripts/activities" ]; then
   mkdir -p ./uploads/
-  cp -R ../init/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
+  cp -R ../init-scripts/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
 else
-  echo "\033[1;33m Dossier ../init/activities introuvable, copie ignorée."
+  echo "\033[1;33m Dossier ../init-scripts/activities introuvable, copie ignorée."
 fi
 
 echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
