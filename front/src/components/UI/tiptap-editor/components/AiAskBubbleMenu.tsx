@@ -34,25 +34,22 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     return true;
   };
 
-  const isVisible = editor ? shouldShow({ state: editor.state }) : false;
+  // Définir si le menu doit être visible
+  const isVisible = editor && shouldShow({ state: editor.state });
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!editor) return;
-
     const { from, to } = editor.state.selection;
     const text = editor.state.doc.textBetween(from, to, "\n");
     setActivityTextSelection(text);
-
-    // Réinitialisation de la sélection
-    editor.commands.blur();
+    // Réinitialisation de la selection pour
+    editor.commands.setTextSelection(0);
   };
 
-  // Clé unique basée sur la sélection pour forcer l'animation Framer Motion uniquement quand nécessaire
-  const selectionKey =
-    editor && isVisible
-      ? `${editor.state.selection.from}-${editor.state.selection.to}`
-      : "empty";
+  // Créer une clé unique basée sur les coordonnées de la sélection
+  const selectionKey = editor
+    ? `${editor.state.selection.from}-${editor.state.selection.to}`
+    : "empty";
 
   useEffect(() => {
     if (!editor) return;
