@@ -55,6 +55,7 @@ const QuizMatching = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
       (pair: Pair, index: number) => answers[index] === pair.right,
     );
     onAnswer(isCorrect, { type: "matching", answers });
+    setOpenIndex(null);
   };
 
   useEffect(() => {
