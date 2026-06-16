@@ -34,7 +34,7 @@ echo "PostgreSQL est prêt !"
 echo "Restauration des données fictives..."
 
 # Restauration PostgreSQL
-if [ -f "./dumps/dump-pgsql.sql" ]; then
+if [[ -f "./dumps/dump-pgsql.sql" ]]; then
   echo "Dump PostgreSQL trouvé, injection en cours..."
   docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
 else
@@ -42,7 +42,7 @@ else
 fi
 
 # Restauration MongoDB
-if [ -d "./dumps/dump-mongo" ]; then
+if [[ -d "./dumps/dump-mongo" ]]; then
   echo "Dossier de dump MongoDB trouvé, injection en cours..."
   docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
   docker exec -i lxp-mongo mongorestore --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
