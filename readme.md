@@ -1,5 +1,107 @@
 # LXP
 
+# Code de la plateforme ANDRIA
+
+## Prérequis
+
+- Dernière version LTS de **node js** et de **npm**
+- **nodemon** installé globalement avec npm (Cette librairie sert pour le hot reloading.), si ce n'est pas le cas, utiliser la commande :  
+```bash 
+npm i -g nodemon
+```
+
+- **docker** et **docker compose**
+
+## Initialisation du projet
+
+### Script automatisé
+
+- Utiliser la commande suivante pour initialiser le projet
+```bash 
+./init/init.sh
+```
+
+Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+```bash 
+sudo chmod +x ./init-scripts/init.sh
+```
+
+### Que fait ce script ?
+
+Afin de démarrer dans un environnement de développement propre, un script executable initialise le projet complet de tel façon à l'utiliser directement et exploiter des données prêtes à l'emploi.
+
+Le script execute les commandes suivantes dans l'ordre :
+- Installation générale des librairies et des dépendances du front et api avec npm
+- Copier les variables d'environnement env.example dans les .env
+- Démarrage des containers docker PostgreSQL et MongoDB
+- Migrations bdd et generation du code des modèles prisma
+- Récupération données fictives via dump bdd Postgres et Mongodb
+- Déplacement des activités types texte vers le répertoire
+
+### Démarrage du serveur
+
+Une fois que le script init.sh a terminé son initialisation, le serveur peut être lancé depuis la racine du projet avec la commande
+```bash
+npm run dev
+```
+
+### Nettoyage des données
+
+- Utiliser la commande suivante pour nettoyer toutes les données du projet et des containers docker
+```bash 
+./init/clean-project-data.sh
+```
+
+Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+```bash 
+sudo chmod +x ./init-scripts/clean-project-data.sh
+```
+
+### Identifiants de connexion
+
+#### Admin
+email : admin@studio.eco
+
+mot de passe : Abcdef@123456
+
+#### Etudiant
+
+email : apprenant@studio.eco
+
+mot de passe : Abcdef@123456
+
+## Script automatisé de dump - Sauvegarder les données actuelles des bdd sur le repo
+
+- Utiliser la commande suivante pour réaliser deux dumps
+```bash 
+./init-scripts/dump-data.sh
+```
+
+Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+```bash 
+sudo chmod +x ./init-scripts/dump-data.sh
+```
+
+## Documentation de l'architecture
+
+### Ports ouverts par défaut en mode dev
+
+api => port **3000**
+
+front => port **5173**
+
+BDD PostgreSQL => port **5500**
+
+BDD MongoDB => port **27000**
+
+### Endpoint accessible publiquement en mode DEV pour récupérer les activités
+
+http://localhost:3000/activities/{id_activité}
+
+---
+
+## Spécifications du projet
+
 ### Les objectifs du projet
 
 - Améliorer l'efficacité de l'apprentissage : En offrant un contenu de qualité et en permettant aux utilisateurs de personnaliser leur expérience d'apprentissage.
@@ -51,21 +153,6 @@
 - Chat-bots: Cette LXP doit fournir des chat-bots basés sur l'IA qui seront disponibles pour les utilisateurs 24h/24 et 7j/7. Les chat-bots peuvent aider les utilisateurs dans leur tâche actuelle et faire des recommandations intelligentes. Les utilisateurs interagissent avec les chat-bots en tapant des messages dans une zone de discussion textuelle.
 
 - Intégration des applications tierces: Slack, Discord, Github, etc..
-
-# Déploiement sur serveur test avec git actions et docker
-
-- avoir un accès SSH au VPS.
-- avoir un compte dockerhub (gratuit).
-  Dans les réglages du dépôt configurer plusieurs secrets liés aux actions : - APP_ENV : l'intégralité du fichier situé à la racine du projet. - DOCKERHUB_USERNAME: le nom d'utilisateur du compte dockerhub. - DOCKERHUB_TOKEN: le token qui est généré dans la partie sécurité des options du compte dockerhub. - HOST: adresse du VPS. - USERNAME: nom d'utilisateur utilisé pour se connecter au VPS en utilisant SSH. - SSH_KEY: la clé SSH privée qu'on aura généré sur la machine locale à partir de laquelle on effectue le déploiement.
-  Pour générer les clés SSH tapez : ssh-keygen
-  Entrez un nom de fichier quand la question est posée pour ne pas écraser la clé SSH que vous utilisez pour vous connecter à Github par exemple.
-  Sur le VPS créez un répertoire : mkdir .ssh
-  Et un fichier .authorized_keys : touch authorized_keys
-  Dans ce fichier coller le contenu de la clé publique que vous avez généré sur votre machine locale.
-
-Une fois les secrets générés il n'y a plus qu'à push la branche 'stage' du dépôt et à patienter.
-Une fois le déploiement terminé sans erreur, pour vérifier que l'application fonctionne tapez dans le terminal du VPS : docker ps
-Pour installer un jeu de données fictives tapez : docker exec -it lxp-api npm run fixtures
 
 # Migration
 

@@ -1,4 +1,5 @@
 import { BubbleMenu, Editor } from "@tiptap/react";
+import { EditorState, NodeSelection } from "@tiptap/pm/state";
 import { Sparkles } from "lucide-react";
 import { MouseEvent, useContext, useEffect } from "react";
 import { ChatbotContext } from "../../../../store/chatbotContext";
@@ -12,37 +13,51 @@ type Props = {
 export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
   const { setActivityTextSelection } = useContext(ChatbotContext);
 
-  const shouldShow = ({
-    state,
-  }: {
-    state: { selection: { empty: boolean } };
-  }) => {
-    if (mode === "read") {
-      return !state.selection.empty;
+  const shouldShow = ({ state }: { state: EditorState }) => {
+    if (mode !== "read" || !state) return false;
+
+    const { from, to, empty } = state.selection;
+    if (empty || from === to) return false;
+
+    const selectedText = state.doc.textBetween(from, to, "\n").trim();
+    if (selectedText.length === 0) return false;
+
+    if (editor.isActive("video")) return false;
+
+    if (
+      state.selection instanceof NodeSelection &&
+      state.selection.node.type.name === "video"
+    ) {
+      return false;
     }
-    return false;
+
+    return true;
   };
 
-  // Définir si le menu doit être visible
-  const isVisible = editor && shouldShow({ state: editor.state });
+  const isVisible = editor ? shouldShow({ state: editor.state }) : false;
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!editor) return;
+
     const { from, to } = editor.state.selection;
     const text = editor.state.doc.textBetween(from, to, "\n");
     setActivityTextSelection(text);
-    // Réinitialisation de la selection pour
-    editor.commands.setTextSelection(0);
+
+    // Réinitialisation de la sélection
+    editor.commands.blur();
   };
 
-  // Créer une clé unique basée sur les coordonnées de la sélection
-  const selectionKey = editor
-    ? `${editor.state.selection.from}-${editor.state.selection.to}`
-    : "empty";
+  // Clé unique basée sur la sélection pour forcer l'animation Framer Motion uniquement quand nécessaire
+  const selectionKey =
+    editor && isVisible
+      ? `${editor.state.selection.from}-${editor.state.selection.to}`
+      : "empty";
 
   useEffect(() => {
     if (!editor) return;
-    const previousHandleClick = editor.options.editorProps.handleClick;
+
+    const previousHandleClick = editor.options.editorProps?.handleClick;
 
     editor.setOptions({
       editorProps: {
@@ -60,10 +75,18 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
           if (
             blockNode &&
             blockNode.isBlock &&
-            blockNode.textContent.trim().length > 0
+            blockNode.textContent.trim().length > 0 &&
+            blockNode.type.name !== "video"
           ) {
             const start = $pos.start();
             const end = $pos.end();
+
+            if (
+              view.state.selection.from === start &&
+              view.state.selection.to === end
+            ) {
+              return false;
+            }
 
             editor.commands.setTextSelection({ from: start, to: end });
             return true;
@@ -73,6 +96,17 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
         },
       },
     });
+
+    return () => {
+      if (editor && !editor.isDestroyed) {
+        editor.setOptions({
+          editorProps: {
+            ...editor.options.editorProps,
+            handleClick: previousHandleClick,
+          },
+        });
+      }
+    };
   }, [editor, mode]);
 
   return (
@@ -80,6 +114,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
       className="z-10"
       tippyOptions={{
         zIndex: 10,
+        duration: [200, 0],
       }}
       editor={editor}
       shouldShow={shouldShow}
@@ -90,6 +125,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
             key={selectionKey}
             initial={{ opacity: 0, scale: 0.2 }}
             animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.2 }}
             transition={{
               type: "spring",
               stiffness: 350,
