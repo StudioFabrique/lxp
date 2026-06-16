@@ -112,7 +112,19 @@ export default function MessageChatbot({
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="prose prose-sm max-w-none text-inherit *:flex-col! [&>ol]:flex! [&>ul]:flex!"
           >
-            <ReactMarkdown>{message.message}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                a: ({ children, ...props }) => {
+                  if (props.href?.includes("http")) {
+                    props.target = "_blank";
+                    props.rel = "noopener noreferrer";
+                  }
+                  return <a {...props}>{children}</a>;
+                },
+              }}
+            >
+              {message.message}
+            </ReactMarkdown>
           </motion.div>
 
           {hasSources && (
