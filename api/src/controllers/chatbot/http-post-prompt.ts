@@ -5,7 +5,61 @@ import { fetch } from "undici";
 import postDialogs from "../../models/chatbot/post-dialogs";
 import { trackTokens } from "../../models/stats/trackTokens";
 import { prisma } from "../../utils/db";
-import ChatDialogs from "../../utils/interfaces/db/chat-dialogs";
+import ChatDialogs, {
+  CourseSource,
+} from "../../utils/interfaces/db/chat-dialogs";
+
+interface FastApiResponse {
+  request: {
+    user_id: string;
+    session_id: string;
+    question: string;
+    timestamp_utc: string;
+  };
+  status: {
+    type: "ok" | "error" | "refusal";
+    code: string;
+    message: string | null;
+  };
+  answer: {
+    mode: "course_content" | "general_knowledge" | string;
+    text: string;
+    language: string;
+    confidence: number;
+    safety: { input_toxic: boolean; output_toxic: boolean };
+  };
+  warnings: any[];
+  recommendations: { course: any[]; conceptual: any[] };
+  sources: CourseSource[];
+  meta: {
+    usage: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
+    question_type: string | null;
+    topic: string;
+    retrieval: {
+      best_score: number;
+      selected_count: number;
+      index_type: string;
+      windows_ok: boolean;
+      normalize_embeddings: boolean;
+      embedding_model: string;
+      course_filter: string;
+    };
+  };
+}
+
+type SourcesWithIds = CourseSource &
+  Partial<{ moduleId: number; lessonId: number }>;
+
+interface FinalResponse {
+  text: string;
+  type: "error" | "normal" | "warning";
+  mode: string;
+  sources: SourcesWithIds[];
+}
 
 export default async function httpPostPrompt(
   req: CustomRequest,
@@ -13,7 +67,9 @@ export default async function httpPostPrompt(
 ) {
   try {
     const userId = req.auth?.userId || "anonymous_student";
-    const { prompt, courseId, clearHistory } = req.body;
+    // Récupération de textSelection depuis le body
+    const { prompt, fullPrompt, courseId, clearHistory, textSelection } =
+      req.body;
 
     const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
 
@@ -47,12 +103,10 @@ export default async function httpPostPrompt(
 
     const fetchOptions: any = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         user_id: userId,
-        question: prompt,
+        question: fullPrompt || prompt,
         course_slug: courseSlug,
         threshold: 0.7,
         student_profile: {
@@ -79,22 +133,29 @@ export default async function httpPostPrompt(
         .json({ error: "Erreur provenant de FastAPI" });
     }
 
-    const data = (await response.json()) as any;
+    const jsonResponse = (await response.json()) as FastApiResponse;
 
-    // Détermination du type de message en fonction du statut de l'API RAG
     let messageType: "normal" | "warning" | "error" = "normal";
-    if (data.status?.type === "refusal") {
-      messageType = "warning"; // Cas TOXIC_INPUT ou TOXIC_OUTPUT
-    } else if (data.status?.type === "error") {
-      messageType = "error"; // Cas d'erreur de génération interne
+    if (jsonResponse.status?.type === "refusal") {
+      messageType = "warning";
+    } else if (jsonResponse.status?.type === "error") {
+      messageType = "error";
     }
 
     console.warn(
-      `[RAG] Mode (${data.answer?.mode}). Score max: ${data.meta?.retrieval?.best_score}`,
+      `[RAG] Mode (${jsonResponse.answer?.mode}). Score max: ${jsonResponse.meta?.retrieval?.best_score}`,
     );
 
     const markdownContent =
-      data.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
+      jsonResponse.answer?.text ||
+      "Désolé, aucune réponse n'a pu être générée.";
+
+    const data: FinalResponse = {
+      text: markdownContent,
+      type: messageType,
+      mode: jsonResponse.answer?.mode,
+      sources: jsonResponse.sources || [],
+    };
 
     if (userId && userId !== "anonymous_student") {
       const lastDialogs = [
@@ -102,18 +163,42 @@ export default async function httpPostPrompt(
         { origin: "bot" as const, message: markdownContent, date: new Date() },
       ];
 
-      const aiTokens = (data.meta?.usage?.total_tokens as number) || 0;
+      const aiTokens = jsonResponse.meta?.usage?.total_tokens || 0;
 
       if (aiTokens) {
         await trackTokens(userId, aiTokens);
       }
 
-      await postDialogs(userId, lastDialogs);
+      // Transmission du dialogue avec le chatbot avec les sources et textSelection en base de données
+      await postDialogs(
+        userId,
+        lastDialogs,
+        jsonResponse.sources,
+        textSelection,
+      );
+
+      data.sources = await Promise.all(
+        data.sources?.map(async (source) => {
+          const lesson = await prisma.lesson.findFirst({
+            select: {
+              id: true,
+              course: { select: { moduleId: true } },
+            },
+            where: { course: { courseSlug: source.course } },
+          });
+
+          return {
+            ...source,
+            moduleId: lesson?.course.moduleId,
+            lessonId: lesson?.id,
+          };
+        }),
+      );
     }
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
 
-    return res.status(200).json({ text: markdownContent, type: messageType });
+    return res.status(200).json(data);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });

@@ -1,27 +1,51 @@
+import { prisma } from "../../utils/db";
 import ChatDialogs from "../../utils/interfaces/db/chat-dialogs";
 
 export default async function getDialogs(userId: string) {
-  const existingDialogs = await ChatDialogs.find({ userId }).sort({
-    createdAt: 1,
-  });
+  const dialogs = await ChatDialogs.find({ userId }).sort({ createdAt: 1 });
 
-  let result: any[] = [];
+  const formattedDialogs: any[] = [];
 
-  for (const d of existingDialogs) {
-    result = [
-      ...result,
-      {
-        origin: d.question.origin,
-        message: d.question.message,
-        date: d.question.date,
-      },
-      {
-        origin: d.answer.origin,
-        message: d.answer.message,
-        date: d.answer.date,
-      },
-    ];
+  for await (const doc of dialogs) {
+    formattedDialogs.push({
+      origin: "user",
+      message: doc.question.message,
+      date: doc.question.date,
+      textSelection: doc.textSelection || undefined,
+    });
+
+    const sources = doc.sources
+      ? await Promise.all(
+          doc.sources?.map(async (source) => {
+            const lesson = await prisma.lesson.findFirst({
+              select: {
+                id: true,
+                course: { select: { moduleId: true } },
+              },
+              where: { course: { courseSlug: source.course } },
+            });
+
+            return {
+              activity: source.activity,
+              course: source.course,
+              heading_path: source.heading_path,
+              score: source.score,
+              section: source.section,
+              moduleId: lesson?.course.moduleId,
+              lessonId: lesson?.id,
+            };
+          }),
+        )
+      : [];
+
+    formattedDialogs.push({
+      origin: "bot",
+      message: doc.answer.message,
+      date: doc.answer.date,
+      type: "normal",
+      sources,
+    });
   }
 
-  return result;
+  return formattedDialogs;
 }

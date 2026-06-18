@@ -16,6 +16,12 @@ export const postPromptValidator = [
     .isString()
     .withMessage("Le prompt doit être une chaîne de caractères")
     .trim(),
+  body("fullPrompt")
+    .notEmpty()
+    .withMessage("Le prompt complet est requis")
+    .isString()
+    .withMessage("Le prompt complet doit être une chaîne de caractères")
+    .trim(),
   // .custom(stringValidateGeneric),
   body("courseId")
     .optional()

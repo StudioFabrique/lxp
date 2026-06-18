@@ -20,6 +20,7 @@ const QuizMcq = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
         type: "mcq",
         selectedIndex: selected,
       });
+      setSelected(null);
     }
   };
 
