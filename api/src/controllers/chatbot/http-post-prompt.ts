@@ -71,7 +71,8 @@ export default async function httpPostPrompt(
     const { prompt, fullPrompt, courseId, clearHistory, textSelection } =
       req.body;
 
-    const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
+    const dockerIa =
+      process.env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
 
     if (clearHistory && userId !== "anonymous_student") {
       try {
