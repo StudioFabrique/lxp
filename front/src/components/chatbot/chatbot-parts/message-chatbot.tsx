@@ -125,6 +125,12 @@ export default function MessageChatbot({
             >
               {message.message}
             </ReactMarkdown>
+            {isGeneralKnowledge && (
+              <span className="text-xs italic font-light text-neutral/70">
+                Cette réponse utilise des connaissances générales externes au
+                cours.
+              </span>
+            )}
           </motion.div>
 
           {hasSources && (
