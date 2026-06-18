@@ -7,12 +7,14 @@ import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import { Link, useLocation } from "react-router";
 
 type Props = {
   message: ChatbotValues;
   isLastMessage: boolean;
   isLoading: boolean;
   messageLoader?: React.ReactNode;
+  onCloseChatbot: () => void;
 };
 
 export default function MessageChatbot({
@@ -20,8 +22,12 @@ export default function MessageChatbot({
   isLastMessage,
   isLoading,
   messageLoader,
+  onCloseChatbot,
 }: Props) {
+  const { pathname } = useLocation();
+  const currentRoute = pathname.split("/").slice(1) ?? [];
   const { user } = useContext(Context);
+
   // Fermé par défaut (false)
   const [expandTextSelection, setExpandTextSelection] =
     useState<boolean>(false);
@@ -139,23 +145,22 @@ export default function MessageChatbot({
                 <BookOpen className="w-3 h-3" /> Contenus de cours associés :
               </span>
               <div className="flex flex-wrap gap-1.5">
-                {message.sources?.map((src, idx) => {
-                  const targetUrl = `/courses/${src.course}/activities/${src.activity}`;
-
-                  return (
-                    <a
-                      key={idx}
-                      href={targetUrl}
-                      target="_blank"
-                      className="badge badge-sm badge-outline hover:badge-primary transition-all duration-200 py-2.5 px-2 flex items-center gap-1 group no-underline"
-                    >
-                      <span className="truncate max-w-35 font-medium text-base-content">
-                        {src.heading_path || src.section}
-                      </span>
-                      <ExternalLink className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100" />
-                    </a>
-                  );
-                })}
+                {message.sources?.map((src) => (
+                  <Link
+                    key={src.activity}
+                    to={`/${currentRoute[0]}/parcours/module/${src.moduleId}`}
+                    onClick={onCloseChatbot}
+                    state={{
+                      lessonId: src.lessonId,
+                    }}
+                    className="badge badge-sm badge-outline hover:badge-primary transition-all duration-200 py-2.5 px-2 flex items-center gap-1 group no-underline"
+                  >
+                    <span className="truncate max-w-35 font-medium text-base-content">
+                      {src.heading_path || src.section}
+                    </span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100" />
+                  </Link>
+                ))}
               </div>
             </div>
           )}
