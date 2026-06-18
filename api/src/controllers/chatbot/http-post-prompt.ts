@@ -51,6 +51,16 @@ interface FastApiResponse {
   };
 }
 
+type SourcesWithIds = CourseSource &
+  Partial<{ moduleId: number; lessonId: number }>;
+
+interface FinalResponse {
+  text: string;
+  type: "error" | "normal" | "warning";
+  mode: string;
+  sources: SourcesWithIds[];
+}
+
 export default async function httpPostPrompt(
   req: CustomRequest,
   res: Response,
@@ -123,21 +133,29 @@ export default async function httpPostPrompt(
         .json({ error: "Erreur provenant de FastAPI" });
     }
 
-    const data = (await response.json()) as FastApiResponse;
+    const jsonResponse = (await response.json()) as FastApiResponse;
 
     let messageType: "normal" | "warning" | "error" = "normal";
-    if (data.status?.type === "refusal") {
+    if (jsonResponse.status?.type === "refusal") {
       messageType = "warning";
-    } else if (data.status?.type === "error") {
+    } else if (jsonResponse.status?.type === "error") {
       messageType = "error";
     }
 
     console.warn(
-      `[RAG] Mode (${data.answer?.mode}). Score max: ${data.meta?.retrieval?.best_score}`,
+      `[RAG] Mode (${jsonResponse.answer?.mode}). Score max: ${jsonResponse.meta?.retrieval?.best_score}`,
     );
 
     const markdownContent =
-      data.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
+      jsonResponse.answer?.text ||
+      "Désolé, aucune réponse n'a pu être générée.";
+
+    const data: FinalResponse = {
+      text: markdownContent,
+      type: messageType,
+      mode: jsonResponse.answer?.mode,
+      sources: jsonResponse.sources || [],
+    };
 
     if (userId && userId !== "anonymous_student") {
       const lastDialogs = [
@@ -145,24 +163,42 @@ export default async function httpPostPrompt(
         { origin: "bot" as const, message: markdownContent, date: new Date() },
       ];
 
-      const aiTokens = data.meta?.usage?.total_tokens || 0;
+      const aiTokens = jsonResponse.meta?.usage?.total_tokens || 0;
 
       if (aiTokens) {
         await trackTokens(userId, aiTokens);
       }
 
-      // AJOUT : Transmission de sources et textSelection en base de données
-      await postDialogs(userId, lastDialogs, data.sources, textSelection);
+      // Transmission du dialogue avec le chatbot avec les sources et textSelection en base de données
+      await postDialogs(
+        userId,
+        lastDialogs,
+        jsonResponse.sources,
+        textSelection,
+      );
+
+      data.sources = await Promise.all(
+        data.sources?.map(async (source) => {
+          const lesson = await prisma.lesson.findFirst({
+            select: {
+              id: true,
+              course: { select: { moduleId: true } },
+            },
+            where: { course: { courseSlug: source.course } },
+          });
+
+          return {
+            ...source,
+            moduleId: lesson?.course.moduleId,
+            lessonId: lesson?.id,
+          };
+        }),
+      );
     }
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
 
-    return res.status(200).json({
-      text: markdownContent,
-      type: messageType,
-      mode: data.answer?.mode,
-      sources: data.sources || [],
-    });
+    return res.status(200).json(data);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });

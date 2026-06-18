@@ -8,6 +8,8 @@ export type ChatbotSource = {
   activity: string;
   score: number;
   heading_path: string;
+  lessonId?: number;
+  moduleId?: number;
 };
 
 export type ChatbotValues = {

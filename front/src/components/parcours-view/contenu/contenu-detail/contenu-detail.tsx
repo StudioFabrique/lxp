@@ -5,7 +5,7 @@ import useHttp from "../../../../hooks/use-http";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 import { EyeOff, Import, Plus, UploadCloud } from "lucide-react";
 import { cn } from "../../../../utils";
 import toast from "react-hot-toast";
@@ -17,18 +17,9 @@ const ContenuDetail: FC<{
 }> = ({ canEdit, parcoursId, moduleId }) => {
   const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const [courses, setCourses] = useState<Course[]>([]);
-
-  const handleNavigate = (course: Course) => {
-    navigate(`/${currentRoute[0]}/parcours/module/${moduleId}`, {
-      state: {
-        lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
-      },
-    });
-  };
 
   const handlePublish = (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -74,8 +65,11 @@ const ContenuDetail: FC<{
   const contentsList =
     !isLoading && courses.length > 0 ? (
       courses.map((course, i) => (
-        <div
-          onClick={() => handleNavigate(course)}
+        <Link
+          to={`/${currentRoute[0]}/parcours/module/${moduleId}`}
+          state={{
+            lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
+          }}
           key={course?.id}
           className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content border-l-4 border-primary p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
@@ -129,7 +123,7 @@ const ContenuDetail: FC<{
               <EyeOff className="w-4 h-4" />
             </div>
           ) : null}
-        </div>
+        </Link>
       ))
     ) : (
       <p className="ml-4 opacity-70">Aucun cours publié</p>

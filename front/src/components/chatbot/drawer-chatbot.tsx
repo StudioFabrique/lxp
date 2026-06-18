@@ -107,6 +107,7 @@ export default function DrawerChatbot({
                 isLoading={isLoading}
                 messageLoader={<MessageLoaderChatbot />}
                 isLastMessage={isLastMessage}
+                onCloseChatbot={chatbotUi.handleCloseChatbot}
               />
             );
           })}
