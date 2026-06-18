@@ -6,10 +6,20 @@ type Dialog = {
   date: Date;
 };
 
+export type CourseSource = {
+  course: string;
+  section: string;
+  activity: string;
+  score: number;
+  heading_path: string;
+};
+
 export interface IChatDialogs extends Document {
   userId: mongoose.Types.ObjectId;
   question: Dialog;
   answer: Dialog;
+  textSelection?: string | null;
+  sources?: CourseSource[];
 }
 
 const chatDialogsSchema: Schema = new Schema(
@@ -25,6 +35,16 @@ const chatDialogsSchema: Schema = new Schema(
       message: { type: String, required: true },
       date: { type: Date, default: Date.now },
     },
+    textSelection: { type: String, default: null },
+    sources: [
+      {
+        course: { type: String, required: true },
+        section: { type: String, required: true },
+        activity: { type: String, required: true },
+        score: { type: Number, required: true },
+        heading_path: { type: String, required: true },
+      },
+    ],
   },
   { timestamps: true },
 );

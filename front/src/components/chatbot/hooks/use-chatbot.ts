@@ -2,19 +2,24 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { ChatbotContext } from "../../../store/chatbotContext";
 
-// const dialogSchema = z.object({
-//   origin: z.enum(["user", "bot"]),
-//   message: z
-//     .string({ required_error: "Le message est requis." })
-//     .regex(regexGeneric, { message: "Format de message invalide." }),
-//   date: z.coerce.date(),
-// });
+export type ChatbotSource = {
+  course: string;
+  section: string;
+  activity: string;
+  score: number;
+  heading_path: string;
+  lessonId?: number;
+  moduleId?: number;
+};
 
 export type ChatbotValues = {
   origin: "user" | "bot";
   message: string;
   date: Date;
   type?: "normal" | "warning" | "error";
+  mode?: string;
+  sources?: ChatbotSource[];
+  textSelection?: string;
 };
 
 const useChatbot = () => {
@@ -48,11 +53,18 @@ const useChatbot = () => {
       ? `${prompt}. J'ai besoin d'aide concernant : ${activityTextSelection}`
       : prompt.trim();
     const beginningDate = new Date();
+
     setDialog((prevState) => [
       ...prevState,
-      { origin: "user", message: prompt, date: beginningDate },
+      {
+        origin: "user",
+        message: prompt,
+        date: beginningDate,
+        textSelection: activityTextSelection || undefined, // Ajout local immédiat dans l'UI
+      },
     ]);
 
+    const targetTextSelection = activityTextSelection; // Mémoire locale du texte
     setActivityTextSelection("");
 
     if (pendingReset) {
@@ -62,6 +74,8 @@ const useChatbot = () => {
     const applyData = (data: {
       text: string;
       type?: "normal" | "warning" | "error";
+      mode?: string;
+      sources?: ChatbotSource[];
     }) => {
       const processedText = data.text;
 
@@ -72,6 +86,8 @@ const useChatbot = () => {
           message: processedText,
           date: new Date(),
           type: data.type || "normal",
+          mode: data.mode,
+          sources: data.sources,
         },
       ]);
       setPrompt("");
@@ -82,9 +98,11 @@ const useChatbot = () => {
         path: "/chatbot/prompt",
         method: "post",
         body: {
-          prompt: message,
+          prompt: prompt.trim(),
+          fullPrompt: message,
           courseId: currentActivity?.courseId,
           clearHistory: pendingReset,
+          textSelection: targetTextSelection || null,
         },
       },
       applyData,
