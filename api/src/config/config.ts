@@ -1,6 +1,5 @@
 export const PORT = process.env.PORT || 5001;
 export const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
-export const MTLS_TO_FASTAPI = process.env.MTLS_TO_FASTAPI === "true";
 
 export const tokensMaxAge = {
   accessToken: 20 * 60 * 1000,
