@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import dotenv from "dotenv";
 import { Readable } from "stream"; // 1. IMPORTANT : Importer Readable pour le streaming
+import { sign } from "jsonwebtoken";
 
 dotenv.config();
 
@@ -29,11 +30,30 @@ export default async function httpPostImportCourseMbz(
     const fileBlob = new Blob([file.buffer], { type: file.mimetype });
     formData.append("file", fileBlob, file.originalname);
 
+    const secret = process.env.DOCKER_IA_AUTH_SECRET;
+
+    if (!secret)
+      return res.status(500).json({
+        error:
+          "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
+      });
+
+    const token = sign(
+      {
+        sub: "student",
+        userRoles: [{ role: "admin" }],
+      },
+      secret,
+    );
+
     // Appel de l'ingestion IA
     const ingestResponse = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/ingest`,
       {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       },
     );
@@ -53,6 +73,11 @@ export default async function httpPostImportCourseMbz(
     // Téléchargement du fichier ZIP généré par l'IA
     const zipResponse = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/export/${courseSlug}.zip`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
 
     if (!zipResponse.ok) {
