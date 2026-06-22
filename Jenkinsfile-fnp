@@ -126,10 +126,9 @@ pipeline {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
                     '''
 
-                    // FIX 1: Bypass the crashing auto-generation here by using PRISMA_SKIP_POSTINSTALL_GENERATE=true
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && PRISMA_SKIP_POSTINSTALL_GENERATE=true npm ci"
                     '''

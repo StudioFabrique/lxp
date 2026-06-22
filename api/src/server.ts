@@ -6,12 +6,7 @@ import { Agent } from "undici";
 import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 import { socket } from "./socket/socket";
-import {
-  corsOrigins,
-  HTTPS_ENABLED,
-  MTLS_TO_FASTAPI,
-  PORT,
-} from "./config/config";
+import { corsOrigins, HTTPS_ENABLED, PORT } from "./config/config";
 
 let server: http.Server | https.Server;
 
@@ -29,19 +24,6 @@ if (HTTPS_ENABLED) {
   console.log("🌐 Starting HTTP server for frontend...");
   server = http.createServer(app);
 }
-
-// Agent pour Node comme CLIENT (vers FastAPI) - Version Undici
-export const fastApiAgent = MTLS_TO_FASTAPI
-  ? new Agent({
-      connect: {
-        cert: fs.readFileSync("./certs/node-client-cert.pem"),
-        key: fs.readFileSync("./certs/node-client-key.pem"),
-        ca: fs.readFileSync("./certs/ca-cert.pem"),
-        rejectUnauthorized: true,
-        servername: "localhost",
-      },
-    })
-  : null;
 
 export const io = new Server(server, {
   cors: { origin: corsOrigins, credentials: true },
