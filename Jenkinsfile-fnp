@@ -20,6 +20,44 @@ pipeline {
             }
         }
 
+        stage('Docker build & tag') {
+            steps {
+               script {
+                   withDockerRegistry(credentialsId: 'DOCKER_REGISTRY', toolName: 'docker') {
+                        sh 'docker build -t studiostep/lxp:latest .'
+                    }
+               }
+            }
+        }
+
+        stage('Docker Push image') {
+            steps {
+               script {
+                   withDockerRegistry(credentialsId: 'DOCKER_REGISTRY', toolName: 'docker') {
+                        sh 'docker push studiostep/lxp:latest'
+                    }
+               }
+            }
+        }
+
+        stage('Deploy with docker compose on the remote server (with ssh)') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: "yourkeyid", keyFileVariable: 'keyfile')]) {
+                    stage('Run docker compose with ssh on the remote server => contains a private repository') {
+
+                    }
+                }
+            }
+        }
+
+        /*
+            Faciliter la connexion à docker :
+            creer un context (voir si ssh est compatible) => docker context create docker-test --docker host=tcp://docker:2375
+            utiliser docker context => docker --context fnp docker compose up -d
+         */
+
+        /* SUPPRIMER A PARTIR D'ICI POUR INTEGRER LE PULL IMAGES DOCKER */
+
         stage("Build App") {
             steps {
                 withCredentials([

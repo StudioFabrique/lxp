@@ -1,4 +1,4 @@
-name: lxp-api
+name: lxp
 
 services:
   db-pg:
@@ -63,12 +63,18 @@ services:
       - REGISTER_SECRET=${REGISTER_SECRET}
       - FRONT_URL=${FRONT_URL}
       - PORT=${PORT}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   lxp-ai:
     image: studiostep/lxp-ai:latest
     container_name: lxp-ai
     networks:
       - lxp
+    restart: always
     ports:
       - "8000:8000"
     volumes:
