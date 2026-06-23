@@ -1,16 +1,31 @@
 name: lxp
 
 services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    container_name: caddy-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - lxp
+    depends_on:
+      - lxp
+
   db-pg:
     image: postgres:18-alpine
     restart: always
     container_name: lxp-prisma
     volumes:
-      - pg:/var/lib/postgresql
+      - pg:/var/lib/postgresql/data
     networks:
-      - lxp_network
-    ports:
-      - "5500:5432"
+      - lxp
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -24,8 +39,6 @@ services:
       - mongo:/data/db
     networks:
       - lxp
-    ports:
-      - "27000:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
@@ -42,11 +55,6 @@ services:
       - lxp
     restart: always
     container_name: lxp
-    ports:
-      - "6001:6001"
-    links:
-      - db-pg
-      - db-mongo
     depends_on:
       - db-pg
       - db-mongo
@@ -75,8 +83,6 @@ services:
     networks:
       - lxp
     restart: always
-    ports:
-      - "8000:8000"
     volumes:
       - hf_cache:/cache
       - ./data:/app/data
@@ -95,4 +101,12 @@ volumes:
   mongo:
     driver: local
   hf_cache:
+    driver: local
+  api:
+    driver: local
+  logs:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
     driver: local
