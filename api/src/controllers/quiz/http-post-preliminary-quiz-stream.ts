@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Readable, Transform } from "stream";
 import dotenv from "dotenv";
 import { prisma } from "../../utils/db";
+import { sign } from "jsonwebtoken";
 
 dotenv.config();
 
@@ -15,6 +16,25 @@ export default async function httpPostPreliminaryQuizStream(
 ) {
   const { n = 5 } = req.query;
   const { title } = req.body as ModuleInfo;
+
+  const dockerIa =
+    process.env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
+
+  const secret = process.env.DOCKER_IA_AUTH_SECRET;
+
+  if (!secret)
+    return res.status(500).json({
+      error:
+        "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
+    });
+
+  const token = sign(
+    {
+      sub: "student",
+      userRoles: [{ role: "admin" }],
+    },
+    secret,
+  );
 
   try {
     // 1. Recherche du module
@@ -77,6 +97,7 @@ export default async function httpPostPreliminaryQuizStream(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
           Accept: "text/event-stream",
         },
         body: JSON.stringify(iaPayload),

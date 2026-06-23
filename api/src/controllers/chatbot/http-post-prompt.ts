@@ -1,10 +1,9 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { fastApiAgent } from "../../server";
-import { fetch } from "undici";
 import postDialogs from "../../models/chatbot/post-dialogs";
 import { trackTokens } from "../../models/stats/trackTokens";
 import { prisma } from "../../utils/db";
+import { sign } from "jsonwebtoken";
 import ChatDialogs, {
   CourseSource,
 } from "../../utils/interfaces/db/chat-dialogs";
@@ -71,18 +70,35 @@ export default async function httpPostPrompt(
     const { prompt, fullPrompt, courseId, clearHistory, textSelection } =
       req.body;
 
-    const dockerIa = process.env.FASTAPI_URL || "http://localhost:8000";
+    const dockerIa =
+      process.env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
+
+    const secret = process.env.DOCKER_IA_AUTH_SECRET;
+
+    if (!secret)
+      return res.status(500).json({
+        error:
+          "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
+      });
+
+    const token = sign(
+      {
+        sub: userId,
+        userRoles: [{ role: "admin" }],
+      },
+      secret,
+    );
 
     if (clearHistory && userId !== "anonymous_student") {
       try {
         // Reset de la mémoire (STM) dans FastAPI
         await fetch(`${dockerIa}/stm/reset`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ user_id: userId }),
-          ...(fastApiAgent && dockerIa.startsWith("https://")
-            ? { dispatcher: fastApiAgent }
-            : {}),
         });
 
         // Reset de l'historique dans MongoDB
@@ -103,7 +119,10 @@ export default async function httpPostPrompt(
 
     const fetchOptions: any = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         user_id: userId,
         question: fullPrompt || prompt,
@@ -120,10 +139,6 @@ export default async function httpPostPrompt(
         },
       }),
     };
-
-    if (fastApiAgent && dockerIa.startsWith("https://")) {
-      fetchOptions.dispatcher = fastApiAgent;
-    }
 
     const response = await fetch(`${dockerIa}/ask`, fetchOptions);
 
