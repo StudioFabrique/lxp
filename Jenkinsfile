@@ -10,10 +10,6 @@ pipeline {
         nodejs 'NodeJS-22'
     }
 
-    environment {
-        SCANNER_HOME = tool 'SonarQube Scanner'
-    }
-
     stages {
         stage("Checkout") {
             steps {
