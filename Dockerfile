@@ -23,8 +23,7 @@ COPY api/ api/
 RUN npm run deploy
 
 # Copie des assets statiques dans le dossier dist
-RUN mkdir -p api/dist/src/public api/dist/uploads && \
-    cp -r api/src/public/* api/dist/src/public/ 2>/dev/null || true && \
+RUN mkdir -p api/dist/uploads && \
     cp -r api/uploads/* api/dist/uploads/ 2>/dev/null || true
 
 # Démarrage de l'application

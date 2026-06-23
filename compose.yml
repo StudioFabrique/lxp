@@ -10,7 +10,7 @@ services:
       - "443:443"
       - "443:443/udp"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /home/${USER}/${TARGET}/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -48,9 +48,8 @@ services:
     image: studiostep/lxp:latest
     pull_policy: always
     volumes:
-      - api:/app/api/dist/uploads
-      - api:/app/api/dist/src/uploads
-      - logs:/app/api/dist/logs
+      - /home/${USER}/${TARGET}/uploads:/app/api/dist/uploads
+      - /home/${USER}/${TARGET}/logs:/app/api/dist/logs
     networks:
       - lxp
     restart: always
@@ -85,7 +84,7 @@ services:
     restart: always
     volumes:
       - hf_cache:/cache
-      - ./data:/app/data
+      - /home/${USER}/${TARGET}/data:/app/data
     environment:
       - HF_HOME=/cache/huggingface
       - TRANSFORMERS_CACHE=/cache/huggingface
@@ -101,10 +100,6 @@ volumes:
   mongo:
     driver: local
   hf_cache:
-    driver: local
-  api:
-    driver: local
-  logs:
     driver: local
   caddy_data:
     driver: local
