@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    // Définition des paramètres de lancement
+    parameters {
+        choice(name: 'TARGET_ENV', choices: ['demo', 'fnp'], description: 'Choisissez l\'environnement de destination')
+    }
+
     tools {
         nodejs 'NodeJS-22'
     }
@@ -14,140 +19,77 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    def branchName = env.GIT_BRANCH?.split('/')?.last()
-                    echo "Checked out branch: ${branchName}"
+                    echo "🚀 Déploiement ciblé sur l'environnement : ${params.TARGET_ENV.toUpperCase()}"
                 }
             }
         }
 
-        stage("Build App") {
+        stage('Docker build & push app image') {
             steps {
-                withCredentials([
-                    file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
-                    file(credentialsId: 'FNP_ENV', variable: 'API_ENV_FILE'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                ]) {
-                    sh '''
-                        echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
-                        chmod -R 777 ./front/ || true
-                        cp $FRONT_ENV_FILE ./front/.env
-
-                        echo "🔧 Setting backend environment variables from $API_ENV_FILE..."
-                        chmod -R 777 ./api/ || true
-                        cp $API_ENV_FILE ./api/.env
-
-                        echo "✅ Frontend .env and backend .env copied."
-
-                        npm run install
-                        npm run generate
-                        npm run deploy
-                        rm -rf ./api/dist/generated || true
-                        mkdir -p ./api/dist
-                        cp -r ./api/generated ./api/dist/generated
-                    '''
+                script {
+                    withDockerRegistry(credentialsId: 'DOCKER_REGISTRY', toolName: 'docker') {
+                        sh 'docker build -t studiostep/lxp:latest .'
+                        sh 'docker push studiostep/lxp:latest'
+                    }
                 }
             }
         }
 
-        /* stage('Tests backend') {
+        stage("Set Environment Config") {
             steps {
-                sh 'npm -g i dotenv-cli'
-                sh 'mkdir api/uploads || true'
-                sh 'npm run test'
-            }
-            post {
-                always {
-                    sh 'docker volume prune --all --force || true'
-                }
-            }
-        }*/
-
-        /*
-        stage("Sonar Qube") {
-            steps {
-                withCredentials([
-                    string(credentialsId: "SONAR-JENKINS-TOKEN", variable: "SONAR_TOKEN"),
-                    string(credentialsId: "SONAR_QUBE_HOST", variable: "SONAR_QUBE_HOST")
-                ]) {
-                    sh '''
-                        ${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=lxp  \
-                        -Dsonar.projectName=lxp \
-                        -Dsonar.host.url=$SONAR_QUBE_HOST \
-                        -Dsonar.login=$SONAR_TOKEN
-                    '''
+                script {
+                    // Routage dynamique des Credentials selon le paramètre choisi
+                    if (params.TARGET_ENV == 'demo') {
+                        env.CRED_PREFIX = 'DEMO'
+                    } else if (params.TARGET_ENV == 'fnp') {
+                        env.CRED_PREFIX = 'FNP'
+                    } else {
+                        error "Environnement inconnu: ${params.TARGET_ENV}"
+                    }
                 }
             }
         }
-        */
 
-        stage("Deploying to FNP") {
+        stage("Deploy with Docker Context") {
             steps {
+                // Utilisation du préfixe dynamique pour charger les secrets
                 withCredentials([
-                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
-                    string(credentialsId: 'FNP_USER', variable: 'USER'),
-                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                    file(credentialsId: "${env.CRED_PREFIX}_ENV", variable: 'ENV_FILE'),
+                    string(credentialsId: "${env.CRED_PREFIX}_HOST", variable: 'HOST'),
+                    string(credentialsId: "${env.CRED_PREFIX}_USER", variable: 'USER'),
+                    string(credentialsId: "${env.CRED_PREFIX}_PORT", variable: 'PORT'),
+                    string(credentialsId: "${env.CRED_PREFIX}_TARGET", variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: "${env.CRED_PREFIX}_SSH", keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
-                        echo "🔧 Setting environment variables from $ENV_FILE..."
-                        echo FNP_HOST=$HOST
-                        echo FNP_USER=$USER
-                        echo FNP_PORT=$PORT
-                        echo FNP_TARGET=$TARGET
+                        echo "🔧 Configuration de l'accès SSH pour l'environnement $TARGET_ENV..."
+                        mkdir -p ~/.ssh
 
-                        echo "ls -la"
-                        ls -la ./api/dist || true
+                        # Création de l'alias SSH GÉNÉRIQUE "deploy-target"
+                        echo "Host deploy-target" > ~/.ssh/config
+                        echo "  HostName $HOST" >> ~/.ssh/config
+                        echo "  User $USER" >> ~/.ssh/config
+                        echo "  Port $PORT" >> ~/.ssh/config
+                        echo "  IdentityFile $SSH_CRED" >> ~/.ssh/config
+                        echo "  StrictHostKeyChecking no" >> ~/.ssh/config
 
-                        chmod -R 777 ./api/ || true
+                        echo "📁 Préparation des dossiers sur le serveur cible..."
+                        # On utilise l'alias deploy-target pour toutes les commandes SSH/SCP
+                        ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
 
-                        # Inject .env in workspace
-                        cp $ENV_FILE ./api/dist/.env
+                        scp Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
-                        echo "📡 Deploying to Demo..."
-                        echo "🔎 Pinging $HOST..."
+                        cp $ENV_FILE .env
 
-                        ping -c 4 $HOST
-                    '''
+                        # Le DOCKER_HOST pointe maintenant vers l'alias générique
+                        export DOCKER_HOST="ssh://deploy-target"
 
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
-                    '''
+                        echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
+                        docker compose pull
+                        docker compose up -d
 
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-
-                    /*
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma.config.ts $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-                    */
-
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
-                    '''
-
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker network create lxp_network || true"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
+                        echo "🧹 Nettoyage des anciennes images..."
+                        docker image prune -f
                     '''
                 }
             }
@@ -155,71 +97,13 @@ pipeline {
 
         stage('Run Prisma migrations (DDL)') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
-                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
-                    string(credentialsId: 'FNP_USER', variable: 'USER'),
-                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'set -eu
-                            cd /home/${USER}/${TARGET}
+                sh '''
+                    # Réutilisation de l'alias générique
+                    export DOCKER_HOST="ssh://deploy-target"
 
-                            echo "📌 Running Prisma migrations from: \$(pwd)"
-
-                            # Migration avec user DDL (least privilege respecté)
-                            npx prisma migrate deploy
-                        '
-                    """
-                }
-            }
-        }
-
-        stage("Generate Prisma Client") {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
-                    string(credentialsId: 'FNP_USER', variable: 'USER'),
-                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'set -eu
-                            cd /home/${USER}/${TARGET}
-
-                            echo "🔄 Regenerating Prisma Client with correct configuration..."
-                            npx prisma generate
-
-                            echo "✅ Prisma Client regenerated successfully"
-                        '
-                    """
-                }
-            }
-        }
-
-        stage("Starting app") {
-            steps {
-                withCredentials([
-                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
-                    string(credentialsId: 'FNP_USER', variable: 'USER'),
-                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
-                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 delete lxp-server || true && pm2 start /home/$USER/$TARGET/dist/src/server.js --name lxp-server"
-                    '''
-
-                    echo "✅ Deployment to DEMO completed successfully!"
-                }
+                    echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
+                    docker exec lxp npx prisma migrate deploy
+                '''
             }
         }
     }

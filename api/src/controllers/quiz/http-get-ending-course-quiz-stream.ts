@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { trackTokens } from "../../models/stats/trackTokens";
 import { prisma } from "../../utils/db";
+import { sign } from "jsonwebtoken";
 
 dotenv.config();
 
@@ -107,12 +108,29 @@ export default async function httpGetEndingCourseQuizStream(
       },
     };
 
+    const secret = process.env.DOCKER_IA_AUTH_SECRET;
+
+    if (!secret)
+      return res.status(500).json({
+        error:
+          "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
+      });
+
+    const token = sign(
+      {
+        sub: userId,
+        userRoles: [{ role: "admin" }],
+      },
+      secret,
+    );
+
     const response = await fetch(
       `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
         body: JSON.stringify(quizzesRequestPayload),
