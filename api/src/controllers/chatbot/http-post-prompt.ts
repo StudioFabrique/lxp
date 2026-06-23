@@ -1,7 +1,5 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { fastApiAgent } from "../../server";
-import { fetch } from "undici";
 import postDialogs from "../../models/chatbot/post-dialogs";
 import { trackTokens } from "../../models/stats/trackTokens";
 import { prisma } from "../../utils/db";
@@ -101,9 +99,6 @@ export default async function httpPostPrompt(
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ user_id: userId }),
-          ...(fastApiAgent && dockerIa.startsWith("https://")
-            ? { dispatcher: fastApiAgent }
-            : {}),
         });
 
         // Reset de l'historique dans MongoDB
@@ -144,10 +139,6 @@ export default async function httpPostPrompt(
         },
       }),
     };
-
-    if (fastApiAgent && dockerIa.startsWith("https://")) {
-      fetchOptions.dispatcher = fastApiAgent;
-    }
 
     const response = await fetch(`${dockerIa}/ask`, fetchOptions);
 
