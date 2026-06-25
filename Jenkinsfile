@@ -46,22 +46,21 @@ pipeline {
             }
         }
 
-        stage("Deploy with Docker Context") {
+        stage('Deploy with Docker Context') {
             steps {
-                // Utilisation du préfixe dynamique pour charger les secrets
                 withCredentials([
                     file(credentialsId: "${env.CRED_PREFIX}_ENV", variable: 'ENV_FILE'),
                     string(credentialsId: "${env.CRED_PREFIX}_HOST", variable: 'HOST'),
                     string(credentialsId: "${env.CRED_PREFIX}_USER", variable: 'USER'),
                     string(credentialsId: "${env.CRED_PREFIX}_PORT", variable: 'PORT'),
                     string(credentialsId: "${env.CRED_PREFIX}_TARGET", variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: "${env.CRED_PREFIX}_SSH", keyFileVariable: 'SSH_CRED')
+                    sshUserPrivateKey(credentialsId: "${env.CRED_PREFIX}_SSH", keyFileVariable: 'SSH_CRED'),
+                    usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
                 ]) {
                     sh '''
                         echo "🔧 Configuration de l'accès SSH pour l'environnement $TARGET_ENV..."
                         mkdir -p ~/.ssh
 
-                        # Création de l'alias SSH GÉNÉRIQUE "deploy-target"
                         echo "Host deploy-target" > ~/.ssh/config
                         echo "  HostName $HOST" >> ~/.ssh/config
                         echo "  User $USER" >> ~/.ssh/config
@@ -74,19 +73,18 @@ pipeline {
 
                         scp Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
-                        # Supprime l'ancien fichier s'il existe pour éviter l'erreur de permission
                         rm -f .env
-
-                        # Copie le fichier injecté par Jenkins
                         cp $ENV_FILE .env
-
-                        # Ajoute les droits d'écriture au nouveau fichier
                         chmod 600 .env
 
-                        # Injecte le tag dynamique pour Docker Compose
                         echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
 
+                        # Configuration du contexte Docker distant via SSH
                         export DOCKER_HOST="ssh://deploy-target"
+
+                        # Connexion à Docker Hub sur le serveur distant
+                        echo "🔐 Authentification Docker Hub sur le serveur cible..."
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
                         docker compose pull
@@ -94,6 +92,10 @@ pipeline {
 
                         echo "🧹 Nettoyage des anciennes images..."
                         docker image prune -f
+
+                        # 👇 Déconnexion pour des raisons de sécurité
+                        echo "🔐 Déconnexion Docker du serveur cible..."
+                        docker logout
                     '''
                 }
             }
