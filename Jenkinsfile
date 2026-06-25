@@ -68,9 +68,9 @@ pipeline {
                         echo "  IdentityFile $SSH_CRED" >> ~/.ssh/config
                         echo "  StrictHostKeyChecking no" >> ~/.ssh/config
 
-                        echo "📁 Préparation des dossiers sur le serveur cible..."
+                        echo "📁 Préparation des dossiers et synchronisation des templates..."
                         ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
-
+                        sh "rsync -avz api/uploads/ deploy-target:/home/$USER/$TARGET/uploads/"
                         scp Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
                         rm -f .env
