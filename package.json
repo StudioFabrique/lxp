@@ -11,13 +11,12 @@
     "install": "npm run install-server && npm run install-client",
     "server": "npm run start --prefix api",
     "client": "npm dev --prefix front",
-    "watch": "concurrently \"npm run start:dev --prefix api\" \"npm run dev --prefix front\"",
     "test": "npm run test --prefix api",
     "deploy": "npm run build --prefix api && npm run build --prefix front",
     "generate": "npm run prisma-generate --prefix api",
     "start": "npm run start:prod --prefix api",
     "fixtures": "npm run fixtures --prefix api",
-    "dev": "./dev.sh"
+    "dev": "concurrently \"npm run start:dev --prefix api\" \"npm run dev --prefix front\""
   },
   "keywords": [],
   "author": "",
