@@ -77,7 +77,11 @@ pipeline {
                         cp $ENV_FILE .env
                         chmod 600 .env
 
+                        echo "" >> .env
                         echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
+
+                        # Exporte la variable pour forcer Docker Compose à la lire
+                        export IMAGE_TAG="${TARGET_ENV}-latest"
 
                         export DOCKER_HOST="ssh://deploy-target"
 
