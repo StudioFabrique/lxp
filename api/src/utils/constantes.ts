@@ -16,11 +16,11 @@ export const regexPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{8,})/;
 export const regexNumber = /^[0-9]*$/;
 
-export const regexGeneric =
-  /^[a-zA-Z0-9\s,.'’‘"\/\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{1,}$/;
+// Version stricte (doit contenir au moins 1 caractère)
+export const regexGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]+$/u;
 
-export const regexOptionalGeneric =
-  /^[a-zA-Z0-9\s,.'’‘"\/\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{0,}$/;
+// Version optionnelle (peut être vide)
+export const regexOptionalGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]*$/u;
 
 export const regexStringManyMongoId = /^[a-f\d]{24}(,[a-f\d]{24})*$/;
 
