@@ -93,9 +93,8 @@ pipeline {
                         docker compose pull
                         docker compose up -d
 
-                        # 👇 ON DÉPLACE LA MIGRATION PRISMA ICI (avant le logout)
                         echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
-                        docker exec lxp npx prisma migrate deploy
+                        docker exec -w /app/api lxp npx prisma migrate deploy
 
                         echo "🧹 Nettoyage des anciennes images..."
                         docker image prune -f
