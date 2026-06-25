@@ -27,6 +27,7 @@ services:
     networks:
       - lxp
     environment:
+      # --- Identifiants PostgreSQL ---
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -40,6 +41,7 @@ services:
     networks:
       - lxp
     environment:
+      # --- Identifiants MongoDB (Root) ---
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
@@ -47,48 +49,79 @@ services:
   lxp:
     image: studiostep/lxp:${IMAGE_TAG}
     pull_policy: always
-    volumes:
-      - /home/${USER}/${TARGET}/uploads:/app/api/dist/uploads
-      - /home/${USER}/${TARGET}/logs:/app/api/dist/logs
-    networks:
-      - lxp
     restart: always
     container_name: lxp
     depends_on:
       - db-pg
       - db-mongo
+    volumes:
+      - /home/${USER}/${TARGET}/uploads:/app/api/dist/uploads
+      - /home/${USER}/${TARGET}/logs:/app/api/dist/logs
+    networks:
+      - lxp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
+      # --- Base de données ---
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
+
+      # --- Connexion à l'IA ---
+      - DOCKER_IA_API_BASE_URL=${DOCKER_IA_API_BASE_URL}
+      - DOCKER_IA_AUTH_SECRET=${DOCKER_IA_AUTH_SECRET}
+
+      # --- Sécurité & Authentification ---
       - SECRET=${SECRET}
+      - REGISTER_SECRET=${REGISTER_SECRET}
+
+      # --- Configuration App & Réseau ---
+      - ENVIRONMENT=${ENVIRONMENT}
+      - FRONT_URL=${FRONT_URL}
+      - PORT=${PORT}
+      - STATIC_FILES_URL=${STATIC_FILES_URL}
+      - DOWNLOAD_URL=${DOWNLOAD_URL}
+
+      # --- Configuration SMTP / Emails ---
       - EMAIL=${EMAIL}
       - PASSWORD=${PASSWORD}
       - SMTP=${SMTP}
       - SMTP_EMAIL=${SMTP_EMAIL}
       - SMTP_PORT=${SMTP_PORT}
       - FROM=${FROM}
-      - REGISTER_SECRET=${REGISTER_SECRET}
-      - FRONT_URL=${FRONT_URL}
-      - PORT=${PORT}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
   lxp-ai:
     image: studiostep/lxp-ai:latest
     container_name: lxp-ai
+    restart: always
     networks:
       - lxp
-    restart: always
     volumes:
       - hf_cache:/cache
       - /home/${USER}/${TARGET}/data:/app/data
     environment:
+      # --- Caches internes (HuggingFace) ---
       - HF_HOME=/cache/huggingface
       - TRANSFORMERS_CACHE=/cache/huggingface
       - SENTENCE_TRANSFORMERS_HOME=/cache/sentence_transformers
+
+      # --- Sécurité de l'API IA ---
+      - SECRET_KEY=${SECRET_KEY}
+      - DEV_BYPASS_AUTH=${DEV_BYPASS_AUTH}
+
+      # --- Configuration Mistral ---
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - MISTRAL_GEN_MODEL=${MISTRAL_GEN_MODEL}
+
+      # --- Paramètres de génération Quiz ---
+      - QUIZ_TEMPERATURE=${QUIZ_TEMPERATURE}
+      - QUIZ_MAX_TOKENS=${QUIZ_MAX_TOKENS}
+      - QUIZ_MAX_ATTEMPTS=${QUIZ_MAX_ATTEMPTS}
+      - QUIZ_PARALLEL_SLOTS=${QUIZ_PARALLEL_SLOTS}
+      - QUIZ_MIN_PROMPT_LEN=${QUIZ_MIN_PROMPT_LEN}
+      - QUIZ_MIN_EXPLANATION_LEN=${QUIZ_MIN_EXPLANATION_LEN}
 
 networks:
   lxp:
