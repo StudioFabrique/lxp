@@ -38,8 +38,6 @@ async function postModule(
   image: any,
   userId: string,
 ) {
-  console.log("toto champion", moduleToAdd);
-
   // Verify that the formation (parcours) exists before creating/duplicating the module
   const existingFormation = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
