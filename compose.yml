@@ -23,7 +23,7 @@ services:
     restart: always
     container_name: lxp-prisma
     volumes:
-      - pg:/var/lib/postgresql/data
+      - pg:/var/lib/postgresql
     networks:
       - lxp
     environment:
