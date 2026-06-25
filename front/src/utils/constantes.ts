@@ -8,11 +8,11 @@ export const regexNumber = /^[0-9]*$/;
 
 export const regexPhoneNumber = /^\d{10}$/;
 
-export const regexGeneric =
-  /^[a-zA-Z0-9\s,.'’‘"\/\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{1,}$/;
+// Version stricte (doit contenir au moins 1 caractère)
+export const regexGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]+$/u;
 
-export const regexOptionalGeneric =
-  /^[a-zA-Z0-9\s,.'’‘"\/\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{0,}$/;
+// Version optionnelle (peut être vide)
+export const regexOptionalGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]*$/u;
 
 export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 
