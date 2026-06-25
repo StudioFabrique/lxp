@@ -45,7 +45,7 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
 
   lxp:
-    image: studiostep/lxp:latest
+    image: studiostep/lxp:${IMAGE_TAG}
     pull_policy: always
     volumes:
       - /home/${USER}/${TARGET}/uploads:/app/api/dist/uploads
