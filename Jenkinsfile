@@ -24,8 +24,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DOCKER_REGISTRY', url: 'https://index.docker.io/v1/') {
-                        sh 'docker build -t studiostep/lxp:latest .'
-                        sh 'docker push studiostep/lxp:latest'
+                        sh "docker build -t studiostep/lxp:${params.TARGET_ENV.toLowerCase()}-${env.BUILD_NUMBER} -t studiostep/lxp:${params.TARGET_ENV.toLowerCase()}-latest ."
+                        sh "docker push studiostep/lxp:${params.TARGET_ENV.toLowerCase()}-latest"
                     }
                 }
             }
