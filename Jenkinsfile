@@ -77,6 +77,9 @@ pipeline {
 
                         cp $ENV_FILE .env
 
+                        # Add the dynamic image tag to the .env file so Docker Compose can read it
+                        echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
+
                         # Le DOCKER_HOST pointe maintenant vers l'alias générique
                         export DOCKER_HOST="ssh://deploy-target"
 
