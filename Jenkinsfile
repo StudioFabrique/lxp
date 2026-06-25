@@ -46,7 +46,7 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Context') {
+        stage('Deploy and Migrate') {
             steps {
                 withCredentials([
                     file(credentialsId: "${env.CRED_PREFIX}_ENV", variable: 'ENV_FILE'),
@@ -79,10 +79,8 @@ pipeline {
 
                         echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
 
-                        # Configuration du contexte Docker distant via SSH
                         export DOCKER_HOST="ssh://deploy-target"
 
-                        # Connexion à Docker Hub sur le serveur distant
                         echo "🔐 Authentification Docker Hub sur le serveur cible..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
@@ -91,26 +89,17 @@ pipeline {
                         docker compose pull
                         docker compose up -d
 
+                        # 👇 ON DÉPLACE LA MIGRATION PRISMA ICI (avant le logout)
+                        echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
+                        docker exec lxp npx prisma migrate deploy
+
                         echo "🧹 Nettoyage des anciennes images..."
                         docker image prune -f
 
-                        # 👇 Déconnexion pour des raisons de sécurité
                         echo "🔐 Déconnexion Docker du serveur cible..."
                         docker logout
                     '''
                 }
-            }
-        }
-
-        stage('Run Prisma migrations (DDL)') {
-            steps {
-                sh '''
-                    # Réutilisation de l'alias générique
-                    export DOCKER_HOST="ssh://deploy-target"
-
-                    echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
-                    docker exec lxp npx prisma migrate deploy
-                '''
             }
         }
     }
