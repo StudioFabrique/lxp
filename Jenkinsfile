@@ -70,17 +70,22 @@ pipeline {
                         echo "  StrictHostKeyChecking no" >> ~/.ssh/config
 
                         echo "📁 Préparation des dossiers sur le serveur cible..."
-                        # On utilise l'alias deploy-target pour toutes les commandes SSH/SCP
                         ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
 
                         scp Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
+                        # Supprime l'ancien fichier s'il existe pour éviter l'erreur de permission
+                        rm -f .env
+
+                        # Copie le fichier injecté par Jenkins
                         cp $ENV_FILE .env
 
-                        # Add the dynamic image tag to the .env file so Docker Compose can read it
+                        # Ajoute les droits d'écriture au nouveau fichier
+                        chmod 600 .env
+
+                        # Injecte le tag dynamique pour Docker Compose
                         echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
 
-                        # Le DOCKER_HOST pointe maintenant vers l'alias générique
                         export DOCKER_HOST="ssh://deploy-target"
 
                         echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
