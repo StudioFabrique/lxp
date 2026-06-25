@@ -87,6 +87,7 @@ pipeline {
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
+                        docker compose down --remove-orphans || true
                         docker compose pull
                         docker compose up -d
 
