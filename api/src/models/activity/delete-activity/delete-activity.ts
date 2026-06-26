@@ -1,4 +1,4 @@
-import fs, { readdirSync } from "fs";
+import fs from "fs";
 import path from "path";
 
 import { prisma } from "../../../utils/db";
@@ -43,7 +43,6 @@ export default async function deleteActivity(
         [];
       await updateMediatheque(resources, tx);
     } else if (type === "text") {
-      console.log({ filePath });
       if (fs.existsSync(filePath)) {
         const fileContent = fs.readFileSync(filePath, "utf-8");
         const names = extraireURLImages(fileContent)
@@ -52,7 +51,6 @@ export default async function deleteActivity(
 
         // Convert names to objects matching the helper's expected shape
         const resources = names.map((name) => ({ url: name! }));
-        console.log({ resources });
         await updateMediatheque(resources, tx);
       }
     } else if (!(type === "video" && existingActivity.url.startsWith("http"))) {
