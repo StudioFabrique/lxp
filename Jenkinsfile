@@ -57,51 +57,53 @@ pipeline {
                     sshUserPrivateKey(credentialsId: "${env.CRED_PREFIX}_SSH", keyFileVariable: 'SSH_CRED'),
                     usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
                 ]) {
-                    sh '''
-                        echo "🔧 Configuration de l'accès SSH pour l'environnement $TARGET_ENV..."
-                        mkdir -p ~/.ssh
+                    withEnv(["CADDYFILE=${env.CRED_PREFIX}_Caddyfile"]) {
+                        sh '''
+                            echo "🔧 Configuration de l'accès SSH pour l'environnement $TARGET_ENV..."
+                            mkdir -p ~/.ssh
 
-                        echo "Host deploy-target" > ~/.ssh/config
-                        echo "  HostName $HOST" >> ~/.ssh/config
-                        echo "  User $USER" >> ~/.ssh/config
-                        echo "  Port $PORT" >> ~/.ssh/config
-                        echo "  IdentityFile $SSH_CRED" >> ~/.ssh/config
-                        echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+                            echo "Host deploy-target" > ~/.ssh/config
+                            echo "  HostName $HOST" >> ~/.ssh/config
+                            echo "  User $USER" >> ~/.ssh/config
+                            echo "  Port $PORT" >> ~/.ssh/config
+                            echo "  IdentityFile $SSH_CRED" >> ~/.ssh/config
+                            echo "  StrictHostKeyChecking no" >> ~/.ssh/config
 
-                        echo "📁 Préparation des dossiers et synchronisation des templates..."
-                        ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
-                        rsync -avz api/uploads/ deploy-target:/home/$USER/$TARGET/uploads/
-                        scp Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
+                            echo "📁 Préparation des dossiers et synchronisation des templates..."
+                            ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
+                            rsync -avz api/uploads/ deploy-target:/home/$USER/$TARGET/uploads/
+                            scp ${CADDYFILE} deploy-target:/home/$USER/$TARGET/Caddyfile
 
-                        rm -f .env
-                        cp $ENV_FILE .env
-                        chmod 600 .env
+                            rm -f .env
+                            cp $ENV_FILE .env
+                            chmod 600 .env
 
-                        echo "" >> .env
-                        echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
+                            echo "" >> .env
+                            echo "IMAGE_TAG=${TARGET_ENV}-latest" >> .env
 
-                        # Exporte la variable pour forcer Docker Compose à la lire
-                        export IMAGE_TAG="${TARGET_ENV}-latest"
+                            # Exporte la variable pour forcer Docker Compose à la lire
+                            export IMAGE_TAG="${TARGET_ENV}-latest"
 
-                        export DOCKER_HOST="ssh://deploy-target"
+                            export DOCKER_HOST="ssh://deploy-target"
 
-                        echo "🔐 Authentification Docker Hub sur le serveur cible..."
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                            echo "🔐 Authentification Docker Hub sur le serveur cible..."
+                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-                        echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
-                        docker compose down --remove-orphans || true
-                        docker compose pull
-                        docker compose up -d
+                            echo "📡 Lancement du déploiement Docker sur $HOST ($TARGET_ENV)..."
+                            docker compose down --remove-orphans || true
+                            docker compose pull
+                            docker compose up -d
 
-                        echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
-                        docker exec -w /app/api lxp npx prisma migrate deploy
+                            echo "📌 Exécution des migrations Prisma sur $TARGET_ENV..."
+                            docker exec -w /app/api lxp npx prisma migrate deploy
 
-                        echo "🧹 Nettoyage des anciennes images..."
-                        docker image prune -f
+                            echo "🧹 Nettoyage des anciennes images..."
+                            docker image prune -f
 
-                        echo "🔐 Déconnexion Docker du serveur cible..."
-                        docker logout
-                    '''
+                            echo "🔐 Déconnexion Docker du serveur cible..."
+                            docker logout
+                        '''
+                    }
                 }
             }
         }
