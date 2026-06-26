@@ -1,5 +1,6 @@
 import { prisma } from "../../utils/db";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
+import deleteActivity from "../activity/delete-activity/delete-activity";
 
 export default async function deleteLesson(userId: string, lessonId: number) {
   const existingLesson = await prisma.lesson.findFirst({
@@ -23,19 +24,24 @@ export default async function deleteLesson(userId: string, lessonId: number) {
   await userBelongsToContacts(
     userId,
     existingLesson.course.contacts.map((contact) => contact.contact),
-    "Vous n'êtes pas autorisé à supprimer cette leçon."
+    "Vous n'êtes pas autorisé à supprimer cette leçon.",
   );
 
-  const deleteResources = await prisma.$transaction([
-    prisma.lessonRead.deleteMany({
+  const deleteResources = await prisma.$transaction(async (prisma) => [
+    await prisma.lessonRead.deleteMany({
+      where: { lessonId },
+    }),
+    await prisma.lessonRating.deleteMany({
       where: { lessonId: lessonId },
     }),
-    prisma.lessonRating.deleteMany({
-      where: { lessonId: lessonId },
-    }),
-    prisma.lesson.delete({
+    await prisma.lesson.delete({
       where: { id: lessonId },
     }),
+    await Promise.all(
+      (await prisma.activity.findMany({ where: { lessonId } })).map(
+        async (act) => await deleteActivity(act.id, act.type),
+      ),
+    ),
   ]);
 
   return deleteLesson;
