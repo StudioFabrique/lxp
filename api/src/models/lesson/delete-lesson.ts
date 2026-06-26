@@ -27,22 +27,24 @@ export default async function deleteLesson(userId: string, lessonId: number) {
     "Vous n'êtes pas autorisé à supprimer cette leçon.",
   );
 
-  const deleteResources = await prisma.$transaction(async (prisma) => [
-    await prisma.lessonRead.deleteMany({
-      where: { lessonId },
-    }),
-    await prisma.lessonRating.deleteMany({
-      where: { lessonId: lessonId },
-    }),
-    await prisma.lesson.delete({
-      where: { id: lessonId },
-    }),
-    await Promise.all(
-      (await prisma.activity.findMany({ where: { lessonId } })).map(
-        async (act) => await deleteActivity(act.id, act.type),
+  const deleteResources = await prisma.$transaction(async (prisma) => {
+    await Promise.all([
+      await prisma.lessonRead.deleteMany({
+        where: { lessonId },
+      }),
+      await prisma.lessonRating.deleteMany({
+        where: { lessonId: lessonId },
+      }),
+      await prisma.lesson.delete({
+        where: { id: lessonId },
+      }),
+      await Promise.all(
+        (await prisma.activity.findMany({ where: { lessonId } })).map(
+          async (act) => await deleteActivity(act.id, act.type),
+        ),
       ),
-    ),
-  ]);
+    ]);
+  });
 
   return deleteLesson;
 }
