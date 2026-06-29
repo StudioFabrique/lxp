@@ -20,31 +20,35 @@ export default async function deleteLesson(userId: string, lessonId: number) {
     throw error;
   }
 
-  // throw an error when the current user not belonging to contacts in course or is not admin
+  // Vérification des droits
   await userBelongsToContacts(
     userId,
     existingLesson.course.contacts.map((contact) => contact.contact),
     "Vous n'êtes pas autorisé à supprimer cette leçon.",
   );
 
-  const deleteResources = await prisma.$transaction(async (prisma) => {
-    await Promise.all([
-      await prisma.lessonRead.deleteMany({
-        where: { lessonId },
-      }),
-      await prisma.lessonRating.deleteMany({
-        where: { lessonId: lessonId },
-      }),
-      await prisma.lesson.delete({
-        where: { id: lessonId },
-      }),
-      await Promise.all(
-        (await prisma.activity.findMany({ where: { lessonId } })).map(
-          async (act) => await deleteActivity(act.id, act.type),
-        ),
-      ),
-    ]);
+  // Récupérer les activités avant de supprimer la leçon
+  const activities = await prisma.activity.findMany({ where: { lessonId } });
+
+  // Supprimer les activités
+  for (const act of activities) {
+    await deleteActivity(act.id, act.type, "lesson");
+  }
+
+  // Ouvrir la transaction pour nettoyer la leçon et le reste
+  await prisma.$transaction(async (tx) => {
+    await tx.lessonRead.deleteMany({
+      where: { lessonId },
+    });
+
+    await tx.lessonRating.deleteMany({
+      where: { lessonId },
+    });
+
+    await tx.lesson.delete({
+      where: { id: lessonId },
+    });
   });
 
-  return deleteLesson;
+  return true;
 }
