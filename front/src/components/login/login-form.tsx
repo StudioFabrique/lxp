@@ -96,15 +96,6 @@ const LoginForm = () => {
           </Link>
         </div>
       </div>
-
-      <div className="mt-auto flex justify-center w-full pt-6">
-        <button
-          type="button"
-          className="text-sm text-gray-700 hover:text-black transition-colors"
-        >
-          Besoin d'aide ?
-        </button>
-      </div>
     </form>
   );
 };

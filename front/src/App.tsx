@@ -97,9 +97,7 @@ const router = createBrowserRouter(
 function App() {
   return (
     <ContextProvider>
-      <ThemeProvider>
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <RouterProvider router={router} />
     </ContextProvider>
   );
 }

@@ -50,8 +50,6 @@ export const LinkMenu = ({ editor }: MenuProps): JSX.Element => {
       editor={editor}
       pluginKey="textMenu"
       shouldShow={shouldShow}
-      // Plus besoin de tippyOptions ici.
-      // La gestion de la position est automatique avec Floating UI.
     >
       {showEdit ? (
         <LinkEditorPanel
