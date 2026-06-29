@@ -1,7 +1,8 @@
-import { BubbleMenu, Editor } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import { EditorState, NodeSelection } from "@tiptap/pm/state";
 import { Sparkles } from "lucide-react";
-import { MouseEvent, useContext, useEffect } from "react";
 import { ChatbotContext } from "../../../../store/chatbotContext";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -12,6 +13,9 @@ type Props = {
 
 export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
   const { setActivityTextSelection } = useContext(ChatbotContext);
+
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectionKey, setSelectionKey] = useState("empty");
 
   const shouldShow = ({ state }: { state: EditorState }) => {
     if (mode !== "read" || !state) return false;
@@ -34,9 +38,6 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     return true;
   };
 
-  // Définir si le menu doit être visible
-  const isVisible = editor && shouldShow({ state: editor.state });
-
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const { from, to } = editor.state.selection;
@@ -45,11 +46,6 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     // Réinitialisation de la selection pour
     editor.commands.setTextSelection(0);
   };
-
-  // Créer une clé unique basée sur les coordonnées de la sélection
-  const selectionKey = editor
-    ? `${editor.state.selection.from}-${editor.state.selection.to}`
-    : "empty";
 
   useEffect(() => {
     if (!editor) return;
@@ -106,13 +102,28 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     };
   }, [editor, mode]);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateReactState = () => {
+      setIsVisible(shouldShow({ state: editor.state }));
+      setSelectionKey(
+        `${editor.state.selection.from}-${editor.state.selection.to}`,
+      );
+    };
+
+    updateReactState();
+    editor.on("transaction", updateReactState);
+
+    return () => {
+      editor.off("transaction", updateReactState);
+    };
+  }, [editor, mode]);
+
   return (
     <BubbleMenu
       className="z-10"
-      tippyOptions={{
-        zIndex: 10,
-        duration: [200, 0],
-      }}
+      updateDelay={200}
       editor={editor}
       shouldShow={shouldShow}
     >

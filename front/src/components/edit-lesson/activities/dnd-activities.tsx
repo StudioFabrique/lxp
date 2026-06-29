@@ -15,7 +15,7 @@ import {
   Draggable,
   Droppable,
   DropResult,
-} from "react-beautiful-dnd";
+} from "@hello-pangea/dnd";
 import ActivityListItem from "./activity-list-item";
 import type { Activity } from "../../../utils/interfaces/activity";
 import Wrapper from "../../UI/wrapper/wrapper.component";

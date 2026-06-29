@@ -1,52 +1,44 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useId } from "react";
 
+// 1. Types plus flexibles
 type DropdownSelectorProps = {
   valueList: (string | number)[];
   emptyListMessage?: string;
-  onSelect: (value: number) => void;
+  onSelect: (value: string | number) => void;
 };
 
 const DropdownSelector = ({
   valueList,
-  emptyListMessage,
+  emptyListMessage = "Aucune option",
   onSelect,
   children,
 }: PropsWithChildren<DropdownSelectorProps>) => {
-  const [isSelecterOpened, setSelecterOpenState] = useState<boolean>(false);
-
-  const handleClickButton = () => {
-    setSelecterOpenState(true);
-  };
-
-  const handleSelect = (event: React.MouseEvent<HTMLLIElement>) => {
-    onSelect(event.currentTarget.value);
-    setSelecterOpenState(false);
-  };
+  const id = useId();
 
   return (
     <div className="dropdown dropdown-top">
-      <button
-        // tabIndex={0}
+      <div
+        tabIndex={0}
         role="button"
-        onClick={handleClickButton}
-        className="rounded-none btn btn-sm btn-ghost"
+        className="btn btn-sm btn-ghost text-primary-content rounded-none"
       >
         {children ?? "Select a value"}
-      </button>
+      </div>
 
       <ul
         tabIndex={0}
-        className="menu dropdown-content bg-secondary rounded-box z-50 w-10 p-2 mb-2 shadow-sm"
-        hidden={!isSelecterOpened}
+        className="dropdown-content menu bg-secondary rounded-box z-50 p-2 mb-2 shadow-lg"
       >
         {valueList.length > 0 ? (
           valueList.map((value) => (
-            <li key={value} value={value} onClick={handleSelect}>
-              <button className="btn btn-ghost btn-sm px-0">{value}</button>
+            <li key={`${id}-${value}`}>
+              <button className="text-left" onClick={() => onSelect(value)}>
+                {value}
+              </button>
             </li>
           ))
         ) : (
-          <li>{emptyListMessage}</li>
+          <li className="text-gray-400 p-2 text-sm">{emptyListMessage}</li>
         )}
       </ul>
     </div>

@@ -1,6 +1,6 @@
 // Import des types et composants nécessaires
 import { ReactNode } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { DndHandlers } from "../../utils/interfaces/dnd";
 
 /**

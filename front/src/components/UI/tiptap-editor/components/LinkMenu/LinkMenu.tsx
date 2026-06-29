@@ -1,19 +1,16 @@
 import { useCallback, useState, JSX } from "react";
-import {
-  BubbleMenu as BaseBubbleMenu,
-  Editor,
-  useEditorState,
-} from "@tiptap/react";
+import { Editor, useEditorState } from "@tiptap/react";
+import { BubbleMenu as BaseBubbleMenu } from "@tiptap/react/menus";
 import { LinkEditorPanel } from "../LinkEditorPanel";
 import { LinkPreviewPanel } from "../LinkPreviewPanel";
 
 interface MenuProps {
   editor: Editor;
-  appendTo?: React.RefObject<unknown>;
 }
 
-export const LinkMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
+export const LinkMenu = ({ editor }: MenuProps): JSX.Element => {
   const [showEdit, setShowEdit] = useState(false);
+
   const { link, target } = useEditorState({
     editor,
     selector: (ctx) => {
@@ -23,8 +20,7 @@ export const LinkMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
   });
 
   const shouldShow = useCallback(() => {
-    const isActive = editor.isActive("link");
-    return isActive;
+    return editor.isActive("link");
   }, [editor]);
 
   const handleEdit = useCallback(() => {
@@ -47,7 +43,6 @@ export const LinkMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
   const onUnsetLink = useCallback(() => {
     editor.chain().focus().extendMarkRange("link").unsetLink().run();
     setShowEdit(false);
-    return null;
   }, [editor]);
 
   return (
@@ -55,18 +50,8 @@ export const LinkMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
       editor={editor}
       pluginKey="textMenu"
       shouldShow={shouldShow}
-      updateDelay={0}
-      tippyOptions={{
-        popperOptions: {
-          modifiers: [{ name: "flip", enabled: false }],
-        },
-        appendTo: () => {
-          return appendTo?.current as Element;
-        },
-        onHidden: () => {
-          setShowEdit(false);
-        },
-      }}
+      // Plus besoin de tippyOptions ici.
+      // La gestion de la position est automatique avec Floating UI.
     >
       {showEdit ? (
         <LinkEditorPanel
