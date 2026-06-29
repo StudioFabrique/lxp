@@ -15,12 +15,10 @@ import deletaActivity from "../../models/activity/delete-activity/delete-activit
 export default async function httpDeleteImage(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const { activityId, type, parent } = req.params;
-
-    console.log({ activityId, type, parent });
 
     await deletaActivity(+activityId, type, parent);
     next({

@@ -18,7 +18,7 @@ npm i -g nodemon
 
 - Utiliser la commande suivante pour initialiser le projet
 ```bash 
-./init/init.sh
+./init-scripts/init.sh
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
