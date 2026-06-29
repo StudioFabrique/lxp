@@ -1,4 +1,5 @@
-import AndriaLogo from "../assets/images/login/logo.svg";
+import AndriaLogoLightMode from "../assets/images/login/logo.svg";
+import AndriaLogoDarkMode from "../assets/images/new-logo-2.svg";
 import LoginRightColumn from "./login/login-right-column";
 import { PropsWithChildren, useContext, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -18,7 +19,9 @@ const LoginLayout = ({ children }: PropsWithChildren) => {
             <div className="flex flex-col items-center gap-2 mb-8">
               <img
                 className="w-56 h-auto mt-20"
-                src={AndriaLogo}
+                src={
+                  theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode
+                }
                 alt="logo ANDRiA"
               />
               <span className="font-semibold text-black text-xs text-center max-w-xs">
