@@ -41,7 +41,7 @@ export default function HeaderChatbot({
         {showNewChatButton && (
           <button
             type="button"
-            className="btn btn-ghost tooltip tooltip-left btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content tooltip tooltip-left btn-sm btn-circle transition-colors"
             onClick={onNewChat}
             title="Nouvelle discussion"
             aria-label="Nouvelle discussion"
@@ -54,7 +54,7 @@ export default function HeaderChatbot({
         {showFullScreenButton && (
           <button
             type="button"
-            className="btn btn-ghost btn-sm btn-circle transition-colors"
+            className="btn btn-ghost text-primary-content btn-sm btn-circle transition-colors"
             onClick={() => onChangeSize()}
             aria-label="Changer la taille"
           >
@@ -70,7 +70,7 @@ export default function HeaderChatbot({
 
         <button
           type="button"
-          className="btn btn-ghost btn-sm btn-circle"
+          className="btn btn-ghost btn-sm text-primary-content btn-circle"
           onClick={onClose}
           aria-label="Fermer le chatbot"
         >
