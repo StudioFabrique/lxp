@@ -32,7 +32,6 @@ const Contenu = ({ modules }: ContenuProps) => {
   const canEditParcoursContent = userBelongsToContacts(user, contacts);
   const canEditModule = userBelongsToContacts(user, selectedModule?.contacts);
 
-
   return (
     <Wrapper>
       <div className="flex flex-col gap-y-6">
@@ -60,20 +59,21 @@ const Contenu = ({ modules }: ContenuProps) => {
           data-testid="contenu-section"
           className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
         >
-                  <div className="flex flex-col gap-y-2">{
-                      modules?.length > 0 ? (
-            modules.map((module, i) => (
-              <ContenuItem
-                key={module.id}
-                module={module}
-                selectedModuleId={selectedModule?.id}
-                iterationCount={i + 1}
-                setSelectedModule={setSelectedModule}
-              />
-            ))
-          ) : (
-            <p>Aucun modules</p>
-          )}</div>
+          <div className="flex flex-col gap-y-2">
+            {modules?.length > 0 ? (
+              modules.map((module, i) => (
+                <ContenuItem
+                  key={module.id}
+                  module={module}
+                  selectedModuleId={selectedModule?.id}
+                  iterationCount={i + 1}
+                  setSelectedModule={setSelectedModule}
+                />
+              ))
+            ) : (
+              <p>Aucun modules</p>
+            )}
+          </div>
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
               <ContenuDetailHeader

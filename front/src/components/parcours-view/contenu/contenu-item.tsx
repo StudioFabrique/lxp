@@ -3,6 +3,7 @@ import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import { ArrowRightCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router";
+import { cn } from "../../../utils";
 
 const ContenuItem: FC<{
   module: Module;
@@ -61,7 +62,10 @@ const ContenuItem: FC<{
           <p className="text-base font-semibold">{module.title}</p>
         </div>
         <Link
-          className={`btn btn-sm btn-ghost self-end`}
+          className={cn(
+            "btn btn-sm btn-ghost self-end",
+            isSelected ? "text-primary-content" : "",
+          )}
           to={`../module/${module.id}`}
         >
           <ArrowRightCircle />
