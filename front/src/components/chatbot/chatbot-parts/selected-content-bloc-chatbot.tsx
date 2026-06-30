@@ -1,5 +1,5 @@
 import Markdown from "react-markdown";
-import { X } from "lucide-react";
+import { X, FileText } from "lucide-react";
 
 type Props = {
   textSelection: string;
@@ -11,17 +11,27 @@ export default function SelectedContentBlocChatbot({
   onDismiss,
 }: Props) {
   return (
-    <div className="flex flex-col items-end gap-2">
-      <span className="text-[11pt] text-primary/70">
-        Le texte selectionné sera pris en compte dans la question
-      </span>
-      <div className="flex gap-2 p-2 bg-info text-info-content rounded-lg w-[80%] text-[11.5pt]">
-        <Markdown>{textSelection}</Markdown>
+    <div className="flex flex-col items-end gap-1.5 my-2 w-[85%] ml-auto">
+      {/* Label */}
+      <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-base-content/60">
+        <FileText className="w-3.5 h-3.5 text-primary" />
+        <span>Inclus dans votre question</span>
+      </div>
+
+      {/* Bloc de contenu texte */}
+      <div className="relative w-full p-3 bg-base-200/70 backdrop-blur-sm border-primary rounded-xl shadow-sm transition-all duration-200 flex items-start gap-3 group">
+        {/* Contenu Markdown */}
+        <div className="flex-1 text-sm text-base-content/80 leading-relaxed max-h-28 overflow-y-auto pr-1 scrollbar-thin">
+          <Markdown>{textSelection}</Markdown>
+        </div>
+
+        {/* Bouton d'annulation */}
         <button
           onClick={onDismiss}
-          className="btn btn-secondary btn-ghost btn-circle btn-xs"
+          className="btn btn-ghost btn-circle btn-xs shrink-0 text-base-content/40 hover:text-error hover:bg-error/10 transition-colors"
+          title="Supprimer la sélection"
         >
-          <X />
+          <X className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>

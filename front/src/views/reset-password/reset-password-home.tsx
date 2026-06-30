@@ -1,32 +1,22 @@
-import { useContext, useEffect } from "react";
 import { Link } from "react-router";
 import Field from "../../components/UI/forms/field";
 import useResetPasswordHome from "./use-password-home";
-import { Context } from "../../store/context.store";
 import LoginLayout from "../../components/login-layout";
 
 export default function ResetPasswordHome() {
-  const { initTheme } = useContext(Context);
   const { data, emailVerified, error, handleCheckEmail, isLoading } =
     useResetPasswordHome();
 
-  useEffect(() => {
-    initTheme();
-  }, [initTheme]);
-
-  // Vue après envoi de l'email
+  // Vue après envoi de l'email (Succès)
   const emailIsValid = (
     <div className="flex flex-col gap-6 my-auto w-full text-center">
-      <div className="bg-green-50 border border-green-100 p-6 rounded-xl">
-        <h2 className="text-gray-800 leading-relaxed">
+      <div className="bg-success/10 border border-success/20 p-6 rounded-xl">
+        <h2 className="text-success-content leading-relaxed text-sm">
           Un email de réinitialisation a été envoyé. Veuillez consulter votre
           boîte de réception pour poursuivre la procédure.
         </h2>
       </div>
-      <Link
-        className="btn w-full bg-black hover:bg-gray-800 text-white border-none rounded-lg normal-case text-base"
-        to="/"
-      >
+      <Link className="btn btn-outline btn-primary w-full" to="/">
         Retour à la connexion
       </Link>
     </div>
@@ -36,11 +26,11 @@ export default function ResetPasswordHome() {
   const emailIsNotValid = (
     <form className="flex flex-col flex-1 w-full" onSubmit={handleCheckEmail}>
       <div className="flex flex-col gap-4 my-auto w-full">
-        <h1 className="font-bold text-black mb-2">
+        <h1 className="font-bold text-2xl text-base-content mb-2">
           Réinitialisation du mot de passe
         </h1>
 
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-base-content/70 mb-2">
           Entrez l'adresse email associée à votre compte pour recevoir un lien
           de récupération.
         </p>
@@ -53,12 +43,12 @@ export default function ResetPasswordHome() {
           />
         </div>
 
-        {error && <span className="text-sm text-red-500 -mt-2.5">{error}</span>}
+        {error && <span className="text-sm text-error -mt-2.5">{error}</span>}
 
         <button
           type="submit"
           disabled={isLoading}
-          className="btn w-full bg-black hover:bg-gray-800 text-white border-none rounded-lg mt-2 normal-case text-base disabled:bg-gray-400"
+          className="btn btn-primary w-full text-base-100"
         >
           {isLoading ? (
             <>
@@ -73,20 +63,11 @@ export default function ResetPasswordHome() {
         <div className="text-center mt-2">
           <Link
             to="/"
-            className="text-sm text-black hover:underline transition-all"
+            className="text-sm text-base-content hover:underline transition-all"
           >
             Retour à la connexion
           </Link>
         </div>
-      </div>
-
-      <div className="mt-auto flex justify-center w-full pt-6">
-        <button
-          type="button"
-          className="text-sm text-gray-700 hover:text-black transition-colors"
-        >
-          Besoin d'aide ?
-        </button>
       </div>
     </form>
   );

@@ -69,7 +69,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
         >
           <div className="flex justify-between items-center gap-5">
             {isEditing ? (
-              <div className="flex flex-col gap-4">
+              <div className="w-full flex flex-col gap-4">
                 <span className="flex gap-4">
                   <input
                     ref={inputRef}
@@ -78,7 +78,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                     onChange={handleChangeInput}
                     onBlur={handleInputBlur}
                     onKeyDown={handleKeyDown}
-                    className="input input-sm input-bordered w-[80%] max-h-10 text-base font-semibold"
+                    className="input input-sm input-bordered w-full max-h-10 text-base font-semibold"
                   />
                   <button
                     ref={buttonRef}

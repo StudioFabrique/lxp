@@ -6,7 +6,6 @@ import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
 import Login from "./views/login/login";
-import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
 import AppLayout from "./components/UI/AppLayout";
 
@@ -97,9 +96,7 @@ const router = createBrowserRouter(
 function App() {
   return (
     <ContextProvider>
-      <ThemeProvider>
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <RouterProvider router={router} />
     </ContextProvider>
   );
 }

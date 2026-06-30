@@ -27,7 +27,7 @@ const LoginRightColumn = () => {
   };
 
   return (
-    <div className="hidden lg:flex flex-col justify-center items-end relative w-full h-full bg-white">
+    <div className="hidden lg:flex flex-col justify-center items-end relative w-full h-full">
       {/* Définition du masque de découpe (invisible en soi) */}
       <svg className="absolute">
         <defs>

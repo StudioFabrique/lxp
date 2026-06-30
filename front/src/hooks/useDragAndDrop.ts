@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { DropResult } from "react-beautiful-dnd";
+import { DropResult } from "@hello-pangea/dnd";
 
 /**
  * Interface définissant les props du hook useDragAndDrop
@@ -42,7 +42,7 @@ export function useDragAndDrop<T>({
       onReorder(newItems);
       setSubmit(true);
     },
-    [items, onReorder]
+    [items, onReorder],
   );
 
   return {

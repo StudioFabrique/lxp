@@ -65,35 +65,31 @@ const SidebarCoursesList = ({
     <div className="border border-base-300 bg-base-200 rounded-lg p-5 select-none shadow-sm">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
-        <div className="flex justify-between items-center mb-5">
-          {courses.length > 0 ? (
-            <>
-              <h2 className="text-xl font-bold w-28 text-primary">
-                Progression
-              </h2>
+        {courses.length > 0 ? (
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-xl font-bold w-28 text-primary">Progression</h2>
 
-              <FadeWrapper>
+            <FadeWrapper>
+              <span
+                className="radial-progress self-end text-primary"
+                style={radialStyle(
+                  !Number.isNaN(moduleProgress) ? moduleProgress : 0,
+                )}
+              >
+                <p className="text-base-content font-bold text-sm">
+                  {!Number.isNaN(moduleProgress)
+                    ? Math.round(moduleProgress * 100)
+                    : 0}
+                  %
+                </p>
                 <span
-                  className="radial-progress self-end text-primary"
-                  style={radialStyle(
-                    !Number.isNaN(moduleProgress) ? moduleProgress : 0,
-                  )}
-                >
-                  <p className="text-base-content font-bold text-sm">
-                    {!Number.isNaN(moduleProgress)
-                      ? Math.round(moduleProgress * 100)
-                      : 0}
-                    %
-                  </p>
-                  <span
-                    className="absolute radial-progress text-primary/20"
-                    style={radialStyle(1)}
-                  />
-                </span>
-              </FadeWrapper>
-            </>
-          ) : null}
-        </div>
+                  className="absolute radial-progress text-primary/20"
+                  style={radialStyle(1)}
+                />
+              </span>
+            </FadeWrapper>
+          </div>
+        ) : null}
       </Can>
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">

@@ -1,28 +1,46 @@
-import AndriaLogo from "../assets/images/login/logo.svg";
+import AndriaLogoLightMode from "../assets/images/login/logo.svg";
+import AndriaLogoDarkMode from "../assets/images/new-logo-2.svg";
 import LoginRightColumn from "./login/login-right-column";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useContext, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
+import { Context } from "../store/context.store";
 
 const LoginLayout = ({ children }: PropsWithChildren) => {
+  const { theme, toggleTheme, initTheme } = useContext(Context);
+
+  useEffect(() => initTheme(), [initTheme]);
+
   return (
-    <div className="min-h-screen w-full font-inter bg-white flex py-12">
+    <div className="relative min-h-screen w-full font-inter bg-base-100 flex py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-        {/* Colonne Gauche */}
-        <div className="flex flex-col items-center px-8 w-full h-full min-h-150 max-h-[85vh]">
-          {/* Conteneur central pour le logo et le formulaire */}
+        <div className="relative flex flex-col items-center px-8 w-full h-full min-h-150 max-h-[85vh]">
+          <button
+            onClick={toggleTheme}
+            className="absolute top-0 right-4 lg:right-8 btn btn-circle btn-ghost text-base-content/70 hover:text-base-content transition-colors"
+            aria-label="Changer le thème"
+          >
+            {theme === "light" ? (
+              <Moon className="w-5 h-5" />
+            ) : (
+              <Sun className="w-5 h-5" />
+            )}
+          </button>
+
           <div className="flex flex-col w-70 h-full mx-auto">
             <div className="flex flex-col items-center gap-2 mb-8">
               <img
                 className="w-56 h-auto mt-20"
-                src={AndriaLogo}
+                src={
+                  theme === "light" ? AndriaLogoLightMode : AndriaLogoDarkMode
+                }
                 alt="logo ANDRiA"
               />
-              <span className="font-semibold text-black text-xs text-center max-w-xs">
+              <span className="font-semibold text-base-content text-xs text-center max-w-xs mt-2">
                 Apprentissage Numérique & Développement Renforcé par
                 Intelligence Artificielle
               </span>
             </div>
 
-            {/* Formulaire */}
             <div className="w-full flex-1 flex flex-col">{children}</div>
           </div>
         </div>

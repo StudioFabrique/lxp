@@ -5,8 +5,9 @@
 ## Prérequis
 
 - Dernière version LTS de **node js** et de **npm**
-- **nodemon** installé globalement avec npm (Cette librairie sert pour le hot reloading.), si ce n'est pas le cas, utiliser la commande :  
-```bash 
+- **nodemon** installé globalement avec npm (Cette librairie sert pour le hot reloading.), si ce n'est pas le cas, utiliser la commande :
+
+```bash
 npm i -g nodemon
 ```
 
@@ -17,12 +18,14 @@ npm i -g nodemon
 ### Script automatisé
 
 - Utiliser la commande suivante pour initialiser le projet
-```bash 
-./init-scripts/init.sh
+
+```bash
+npm run init
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
-```bash 
+
+```bash
 sudo chmod +x ./init-scripts/init.sh
 ```
 
@@ -31,6 +34,7 @@ sudo chmod +x ./init-scripts/init.sh
 Afin de démarrer dans un environnement de développement propre, un script executable initialise le projet complet de tel façon à l'utiliser directement et exploiter des données prêtes à l'emploi.
 
 Le script execute les commandes suivantes dans l'ordre :
+
 - Installation générale des librairies et des dépendances du front et api avec npm
 - Copier les variables d'environnement env.example dans les .env
 - Démarrage des containers docker PostgreSQL et MongoDB
@@ -41,6 +45,7 @@ Le script execute les commandes suivantes dans l'ordre :
 ### Démarrage du serveur
 
 Une fois que le script init.sh a terminé son initialisation, le serveur peut être lancé depuis la racine du projet avec la commande
+
 ```bash
 npm run dev
 ```
@@ -48,18 +53,21 @@ npm run dev
 ### Nettoyage des données
 
 - Utiliser la commande suivante pour nettoyer toutes les données du projet et des containers docker
-```bash 
+
+```bash
 ./init/clean-project-data.sh
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
-```bash 
+
+```bash
 sudo chmod +x ./init-scripts/clean-project-data.sh
 ```
 
 ### Identifiants de connexion
 
 #### Admin
+
 email : admin@studio.eco
 
 mot de passe : Abcdef@123456
@@ -73,12 +81,14 @@ mot de passe : Abcdef@123456
 ## Script automatisé de dump - Sauvegarder les données actuelles des bdd sur le repo
 
 - Utiliser la commande suivante pour réaliser deux dumps
-```bash 
+
+```bash
 ./init-scripts/dump-data.sh
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
-```bash 
+
+```bash
 sudo chmod +x ./init-scripts/dump-data.sh
 ```
 
