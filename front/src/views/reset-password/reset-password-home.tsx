@@ -69,15 +69,6 @@ export default function ResetPasswordHome() {
           </Link>
         </div>
       </div>
-
-      <div className="mt-auto flex justify-center w-full pt-6">
-        <button
-          type="button"
-          className="text-sm text-base-content/60 hover:text-base-content transition-colors"
-        >
-          Besoin d'aide ?
-        </button>
-      </div>
     </form>
   );
 

@@ -69,7 +69,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
         >
           <div className="flex justify-between items-center gap-5">
             {isEditing ? (
-              <div className="flex flex-col gap-4">
+              <div className="w-full flex flex-col gap-4">
                 <span className="flex gap-4">
                   <input
                     ref={inputRef}

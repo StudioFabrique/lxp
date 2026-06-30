@@ -37,9 +37,13 @@ const LoginForm = () => {
 
   return (
     <form className="flex flex-col flex-1 w-full" onSubmit={submitHandler}>
-      <div className="flex flex-col items-center gap-4 my-auto w-full">
-        <h1 className="font-bold text-black">Connectez-vous à votre espace</h1>
+      <div className="flex flex-col gap-4 my-auto w-full">
+        {/* Titre */}
+        <h1 className="font-bold text-2xl text-base-content mb-2 text-center">
+          Connectez-vous à votre espace
+        </h1>
 
+        {/* Champ email */}
         <div className="form-control w-full">
           <input
             name="email"
@@ -48,10 +52,11 @@ const LoginForm = () => {
             onChange={email.valueChangeHandler}
             onBlur={email.valueBlurHandler}
             placeholder="Adresse mail"
-            className="input input-lg text-sm px-5 w-full bg-[#EAEAF0] text-black placeholder-gray-500 border-none focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
         </div>
 
+        {/* Champ mot de passe */}
         <div className="form-control w-full relative">
           <input
             name="password"
@@ -60,9 +65,9 @@ const LoginForm = () => {
             onChange={password.valueChangeHandler}
             onBlur={password.valueBlurHandler}
             placeholder="Mot de passe"
-            className="input input-lg text-sm px-5 w-full bg-[#EAEAF0] text-black placeholder-gray-500 border-none focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg pr-12"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 flex items-center">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-base-content/50 hover:text-base-content transition-colors flex items-center">
             <PasswordVisible
               inputType={inputType}
               onPasswordVisibility={handlePasswordVisibility}
@@ -70,12 +75,14 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {error && <span className="text-sm text-red-500 -mt-2.5">{error}</span>}
+        {/* Message d'erreur */}
+        {error && <span className="text-sm text-error -mt-2.5">{error}</span>}
 
+        {/* Bouton de soumission */}
         <button
           type="submit"
           disabled={isLoading}
-          className="btn w-full bg-black hover:bg-gray-800 text-white border-none rounded-lg mt-2 normal-case text-base disabled:bg-gray-400 disabled:text-white"
+          className="btn btn-primary w-full text-base-100 rounded-lg mt-2 normal-case text-base"
         >
           {isLoading ? (
             <>
@@ -90,7 +97,7 @@ const LoginForm = () => {
         <div className="text-center mt-2">
           <Link
             to="/reset-password"
-            className="text-sm text-black hover:underline transition-all"
+            className="text-sm text-base-content hover:underline transition-all"
           >
             Mot de passe oublié ?
           </Link>
