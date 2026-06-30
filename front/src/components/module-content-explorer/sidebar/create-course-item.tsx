@@ -78,7 +78,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                     onChange={handleChangeInput}
                     onBlur={handleInputBlur}
                     onKeyDown={handleKeyDown}
-                    className="input input-sm input-bordered w-[80%] max-h-10 text-base font-semibold"
+                    className="input input-sm input-bordered w-full max-h-10 text-base font-semibold"
                   />
                   <button
                     ref={buttonRef}
