@@ -1,5 +1,5 @@
 import React from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";

@@ -2,6 +2,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import SidebarBottom from "./sidebar-bottom";
 import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
+import { cn } from "../../../utils";
 
 const SidebarWrapper = ({
   children,
@@ -54,7 +55,7 @@ const SidebarWrapper = ({
         theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
       }`}
     >
-      <div>
+      <div className={cn(!showLogo && "mt-2")}>
         {showLogo && (
           <img
             className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border-slate-700 border object-contain p-1 m-2 mb-3 bg-white"

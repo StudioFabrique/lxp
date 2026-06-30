@@ -3,7 +3,7 @@ import {
   DroppableProvided,
   DropResult,
   DraggableStateSnapshot,
-} from "react-beautiful-dnd";
+} from "@hello-pangea/dnd";
 
 export interface DndProps {
   provided: DraggableProvided | DroppableProvided;
