@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import apiQueries from "../../../../api-queries";
+import { tableQueries } from "../../../../api-queries/generic/table.api";
 
 function useTablePaginatedData<TData>(
   apiEndpoint: string,
@@ -41,7 +41,7 @@ function useTablePaginatedData<TData>(
   };
 
   const { data, isLoading, isFetching, refetch } = useQuery(
-    apiQueries.table.query.getPaginatedData<TData>(
+    tableQueries.getPaginatedData<TData>(
       apiEndpoint,
       currentPage,
       itemsPerPage,

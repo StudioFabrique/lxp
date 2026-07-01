@@ -1,5 +1,5 @@
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
-import apiClient from "./axios";
+import apiClient from "../../lib/axios";
 
 export interface PaginatedResponse<T> {
   total: number;
@@ -49,7 +49,7 @@ const fetchPaginatedData = async <T>({
   return response.data;
 };
 
-export const paginatedQueries = {
+export const tableQueries = {
   getPaginatedData: <TData>(
     apiEndpoint: string,
     currentPage: number,
