@@ -30,7 +30,7 @@ export interface TableListItemConfig<CellType = string> {
 
 export type TableListItemLabels = TableListItemConfig & { isAction: boolean };
 
-export interface TableListItem {
+interface TableListItem {
   id: string;
   data: Record<string, DataItem>;
   valuesAsLink: ValueAsLink[];

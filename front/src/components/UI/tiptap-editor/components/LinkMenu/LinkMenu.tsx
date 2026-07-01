@@ -8,7 +8,7 @@ interface MenuProps {
   editor: Editor;
 }
 
-export const LinkMenu = ({ editor }: MenuProps): JSX.Element => {
+const LinkMenu = ({ editor }: MenuProps): JSX.Element => {
   const [showEdit, setShowEdit] = useState(false);
 
   const { link, target } = useEditorState({

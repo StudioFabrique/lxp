@@ -5,13 +5,12 @@ import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/Menubar/MenuBar";
 
-import { LinkMenu } from "./components/LinkMenu";
-
 import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
 import { useRef, useState } from "react";
 import { AiAskBubbleMenu } from "./components/AiAskBubbleMenu";
+import LinkMenu from "./components/LinkMenu/LinkMenu";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
