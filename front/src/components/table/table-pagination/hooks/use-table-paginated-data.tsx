@@ -41,7 +41,7 @@ function useTablePaginatedData<TData>(
   };
 
   const { data, isLoading, isFetching, refetch } = useQuery(
-    apiQueries.pagination.getPaginatedData<TData>(
+    apiQueries.table.query.getPaginatedData<TData>(
       apiEndpoint,
       currentPage,
       itemsPerPage,

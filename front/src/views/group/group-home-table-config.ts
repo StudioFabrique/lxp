@@ -4,7 +4,7 @@ import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import { TableListProps } from "../../components/table/table-list/table-list";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-import { PaginatedResponse } from "../../api-queries/pagination.api";
+import { PaginatedResponse } from "../../api-queries/table.api";
 
 export const groupHomeTableItems: TableListItemConfig[] = [
   {

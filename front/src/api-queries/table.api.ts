@@ -11,6 +11,44 @@ export interface SearchParams {
   searchProperty?: string;
 }
 
+const fetchPaginatedData = async <T>({
+  apiEndpoint,
+  currentPage,
+  itemsPerPage,
+  sortProperty,
+  isAscDirection,
+  searchValue,
+  searchOptions,
+  disablePagination,
+}: {
+  apiEndpoint: string;
+  currentPage: number;
+  itemsPerPage: number;
+  sortProperty: string | null;
+  isAscDirection: boolean;
+  searchValue: string | null;
+  searchOptions: SearchParams;
+  disablePagination?: boolean;
+}): Promise<PaginatedResponse<T>> => {
+  // Détermination du chemin de base dynamique
+  const basePath =
+    searchOptions.apiSearchEndpoint && searchValue
+      ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty || "null"}/${searchValue}`
+      : apiEndpoint;
+
+  const sortDirection = isAscDirection ? "asc" : "desc";
+
+  // Construction de l'URL finale
+  let finalPath = basePath;
+  if (!disablePagination && sortProperty) {
+    finalPath = `${basePath}/${sortProperty}/${sortDirection}?page=${currentPage}&limit=${itemsPerPage}`;
+  }
+
+  // Requête
+  const response = await apiClient.get<PaginatedResponse<T>>(finalPath);
+  return response.data;
+};
+
 export const paginatedQueries = {
   getPaginatedData: <TData>(
     apiEndpoint: string,
@@ -52,42 +90,4 @@ export const paginatedQueries = {
         }),
       placeholderData: keepPreviousData,
     }),
-};
-
-const fetchPaginatedData = async <T>({
-  apiEndpoint,
-  currentPage,
-  itemsPerPage,
-  sortProperty,
-  isAscDirection,
-  searchValue,
-  searchOptions,
-  disablePagination,
-}: {
-  apiEndpoint: string;
-  currentPage: number;
-  itemsPerPage: number;
-  sortProperty: string | null;
-  isAscDirection: boolean;
-  searchValue: string | null;
-  searchOptions: SearchParams;
-  disablePagination?: boolean;
-}): Promise<PaginatedResponse<T>> => {
-  // Détermination du chemin de base dynamique
-  const basePath =
-    searchOptions.apiSearchEndpoint && searchValue
-      ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty || "null"}/${searchValue}`
-      : apiEndpoint;
-
-  const sortDirection = isAscDirection ? "asc" : "desc";
-
-  // Construction de l'URL finale
-  let finalPath = basePath;
-  if (!disablePagination && sortProperty) {
-    finalPath = `${basePath}/${sortProperty}/${sortDirection}?page=${currentPage}&limit=${itemsPerPage}`;
-  }
-
-  // Requête
-  const response = await apiClient.get<PaginatedResponse<T>>(finalPath);
-  return response.data;
 };

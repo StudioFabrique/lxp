@@ -1,5 +1,13 @@
-import { paginatedQueries } from "./pagination.api";
+import { groupMutations } from "./group.api";
+import { paginatedQueries } from "./table.api";
 
 export default {
-  pagination: paginatedQueries,
+  group: {
+    // query: groupQueries,
+    mutate: groupMutations,
+  },
+  table: {
+    query: paginatedQueries,
+    // mutate: tableMutation
+  },
 };
