@@ -55,7 +55,7 @@ npm run dev
 - Utiliser la commande suivante pour nettoyer toutes les données du projet et des containers docker
 
 ```bash
-./init/clean-project-data.sh
+npm run clean
 ```
 
 Si le script ne fonctionne pas à cause des droits d'execution, utiliser
