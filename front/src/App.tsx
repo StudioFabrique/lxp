@@ -36,77 +36,66 @@ const ResetPasswordUpdate = lazy(
   () => import("./old-arch/views/reset-password/reset-password-update"),
 );
 
-const router = createBrowserRouter(
-  [
-    {
-      path: "/",
-      element: <RootLayout />,
-      children: [
-        // espace apprenant
-        {
-          path: "student",
-          element: (
-            <AppLayout>
-              <StudentLayout />
-            </AppLayout>
-          ),
-          children: studentRoutes,
-        },
-        // espace admin - formateur
-        {
-          path: "admin",
-          element: (
-            <AppLayout>
-              <AdminLayout />
-            </AppLayout>
-          ),
-          children: adminRoutes,
-        },
-      ],
-    },
-    {
-      path: "/login",
-      element: (
-        <Suspense fallback={<Loader />}>
-          <Login />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/register",
-      element: (
-        <Suspense fallback={<Loader />}>
-          <RegisterHome />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/reset-password",
-      element: (
-        <Suspense fallback={<Loader />}>
-          <ResetPasswordHome />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/reset-update",
-      element: (
-        <Suspense fallback={<Loader />}>
-          <ResetPasswordUpdate />
-        </Suspense>
-      ),
-    },
-  ],
+const router = createBrowserRouter([
   {
-    future: {
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_skipActionErrorRevalidation: true,
-    },
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      // espace apprenant
+      {
+        path: "student",
+        element: (
+          <AppLayout>
+            <StudentLayout />
+          </AppLayout>
+        ),
+        children: studentRoutes,
+      },
+      // espace admin - formateur
+      {
+        path: "admin",
+        element: (
+          <AppLayout>
+            <AdminLayout />
+          </AppLayout>
+        ),
+        children: adminRoutes,
+      },
+    ],
   },
-);
+  {
+    path: "/login",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <RegisterHome />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reset-password",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPasswordHome />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reset-update",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPasswordUpdate />
+      </Suspense>
+    ),
+  },
+]);
 
 function App() {
   return (
