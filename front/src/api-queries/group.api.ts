@@ -1,4 +1,4 @@
-import apiClient from "./axios";
+import apiClient from "../lib/axios";
 
 const deleteMany = async (ids: string[]): Promise<void> => {
   const idsQuery = ids.join(",");

@@ -3,9 +3,9 @@ import {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
-import { PaginatedResponse } from "../../../api-queries/table.api";
-import apiQueries from "../../../api-queries";
 import toast from "react-hot-toast";
+import { groupMutations } from "../../../api-queries/group.api";
+import { PaginatedResponse } from "../../../api-queries/generic/table.api";
 
 /**
  * Custom hook pour gérer les actions groupées sur les groupes
@@ -18,7 +18,7 @@ function useGroupActions(
 ) {
   // Magie de TanStack Query pour les actions d'écriture/suppression
   const mutation = useMutation({
-    mutationFn: () => apiQueries.group.mutate.deleteMany(idsList),
+    mutationFn: () => groupMutations.deleteMany(idsList),
 
     onSuccess: () => {
       toast.success("Groupes supprimés !");
