@@ -32,9 +32,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
     if (path) {
       const applyData = (data: { message?: string }) => {
         if (data.message) toast.success(data.message);
-        props.onSuccessfulSubmit &&
-          props.id &&
-          props.onSuccessfulSubmit(props.id, value);
+        props.onSuccessfulSubmit && props.id && props.onSuccessfulSubmit();
       };
 
       await sendRequest(
@@ -48,7 +46,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
     if (props.request) {
       await handleRequest();
     } else if (props.onSuccessfulSubmit) {
-      props.onSuccessfulSubmit(props.id);
+      props.onSuccessfulSubmit();
     }
   };
 

@@ -32,7 +32,7 @@ export default function StatsProgression(props: Props) {
   );
 }
 
-export function StatsProgressionChart(props: { value: number }) {
+function StatsProgressionChart(props: { value: number }) {
   return (
     <span className="flex gap-x-2 items-center w-full">
       <progress

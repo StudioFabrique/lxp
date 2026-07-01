@@ -10,7 +10,7 @@ export type YoutubeLinkEditorPanelProps = {
   onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
 };
 
-export const useYoutubeLinkEditorState = ({
+const useYoutubeLinkEditorState = ({
   initialUrl,
   onSetLink,
 }: YoutubeLinkEditorPanelProps) => {
@@ -30,7 +30,7 @@ export const useYoutubeLinkEditorState = ({
         onSetLink(url, size);
       }
     },
-    [url, isValidUrl, onSetLink, size]
+    [url, isValidUrl, onSetLink, size],
   );
 
   return {

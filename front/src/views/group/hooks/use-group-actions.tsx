@@ -1,33 +1,41 @@
+import {
+  useMutation,
+  QueryObserverResult,
+  RefetchOptions,
+} from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import useHttp from "../../../hooks/use-http";
+import { groupMutations } from "../../../api-queries/group.api";
+import { PaginatedResponse } from "../../../api-queries/generic/table.api";
 
 /**
- * Custom hook pour gérer les actions groupées sur les groupes :
- * - Gestion de la suppression multiple
- *
- * @param idsList - Tableau d'identifiants des groupes
- * @param onRefreshData - Fonction pour rafraîchir les données après une action
+ * Custom hook pour gérer les actions groupées sur les groupes
  */
 function useGroupActions(
   idsList: string[],
-  onRefreshData: () => Promise<void>,
+  onRefreshData: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<NoInfer<PaginatedResponse<unknown>>, Error>>,
 ) {
-  const { sendRequest } = useHttp(true);
+  // Magie de TanStack Query pour les actions d'écriture/suppression
+  const mutation = useMutation({
+    mutationFn: () => groupMutations.deleteMany(idsList),
+
+    onSuccess: () => {
+      toast.success("Groupes supprimés !");
+      onRefreshData();
+    },
+  });
 
   const handleDeleteSelectedGroups = async () => {
-    const applyData = () => {
-      toast.success("Les groupes ont bien été supprimés avec succès");
-      onRefreshData();
-    };
-    const queryIds = idsList.join(",");
+    if (idsList.length === 0) return;
 
-    await sendRequest(
-      { path: `/group/deleteMany/?ids=${queryIds}`, method: "delete" },
-      applyData,
-    );
+    mutation.mutate();
   };
 
-  return { onDeleteSelectedGroups: handleDeleteSelectedGroups };
+  return {
+    onDeleteSelectedGroups: handleDeleteSelectedGroups,
+    isDeleting: mutation.isPending,
+  };
 }
 
 export default useGroupActions;

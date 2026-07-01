@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { ChatbotContext } from "../../../store/chatbotContext";
 
-export type ChatbotSource = {
+type ChatbotSource = {
   course: string;
   section: string;
   activity: string;
