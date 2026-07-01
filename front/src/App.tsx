@@ -1,13 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 
-import RootLayout from "./views/home/root-layout.component";
+import RootLayout from "./old-arch/views/home/root-layout.component";
 import { Suspense, lazy } from "react";
-import studentRoutes from "./lib/routes/students-routes";
-import adminRoutes from "./lib/routes/admin-routes";
-import Loader from "./components/UI/loader";
-import Login from "./views/login/login";
-import ContextProvider from "./store/contextProvider.store";
-import AppLayout from "./components/UI/AppLayout";
+import studentRoutes from "./old-arch/lib/routes/students-routes";
+import adminRoutes from "./old-arch/lib/routes/admin-routes";
+import Loader from "./old-arch/components/UI/loader";
+import Login from "./old-arch/views/login/login";
+import ContextProvider from "./old-arch/store/contextProvider.store";
+import AppLayout from "./old-arch/components/UI/AppLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
@@ -21,15 +21,19 @@ const queryClient = new QueryClient({
 });
 
 const StudentLayout = lazy(
-  () => import("./views/student/student-layout.component"),
+  () => import("./old-arch/views/student/student-layout.component"),
 );
-const AdminLayout = lazy(() => import("./views/admin/admin-layout.component"));
-const RegisterHome = lazy(() => import("./views/register/register-home"));
+const AdminLayout = lazy(
+  () => import("./old-arch/views/admin/admin-layout.component"),
+);
+const RegisterHome = lazy(
+  () => import("./old-arch/views/register/register-home"),
+);
 const ResetPasswordHome = lazy(
-  () => import("./views/reset-password/reset-password-home"),
+  () => import("./old-arch/views/reset-password/reset-password-home"),
 );
 const ResetPasswordUpdate = lazy(
-  () => import("./views/reset-password/reset-password-update"),
+  () => import("./old-arch/views/reset-password/reset-password-update"),
 );
 
 const router = createBrowserRouter(

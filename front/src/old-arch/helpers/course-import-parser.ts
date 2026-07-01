@@ -5,7 +5,7 @@ import { cleanPath } from "../utils/zip-utils";
 import Module from "../utils/interfaces/module";
 import Parcours from "../utils/interfaces/parcours";
 import Tag from "../utils/interfaces/tag";
-import { replaceActivityTextContent } from "../helpers/replaceActivityTextContent";
+import { replaceActivityTextContent } from "./replaceActivityTextContent";
 import {
   ActivityImport,
   CourseImport,

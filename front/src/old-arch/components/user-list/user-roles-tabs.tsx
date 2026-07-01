@@ -5,7 +5,7 @@ import Tabs from "../UI/tabs/tabs.component";
 import RefreshIcon from "../UI/svg/refresh-icon.component";
 import Can from "../UI/can/can.component";
 import DropdownActionsUser from "../lists/user-list/dropdown-actions-user";
-import SearchUser from "../../components/UI/search/search.component";
+import SearchUser from "../UI/search/search.component";
 import SearchOption from "../../utils/interfaces/search-options";
 
 type Props = {
