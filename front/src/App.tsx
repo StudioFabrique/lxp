@@ -13,8 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Configuration optionnelle globale pour ton LXP
-      refetchOnWindowFocus: false, // Évite de re-télécharger les données à chaque fois que tu changes d'onglet
+      refetchOnWindowFocus: false, // Évite de re-télécharger les données à chaque fois changement d'onglet
       retry: 1, // Si une requête échoue, TanStack la retente 1 seule fois avant d'afficher l'erreur
     },
   },
