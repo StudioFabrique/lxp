@@ -3,6 +3,8 @@ import { TableListItemConfig } from "../../components/table/table-list/interface
 import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import { TableListProps } from "../../components/table/table-list/table-list";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { PaginatedResponse } from "../../api-queries/pagination.api";
 
 export const roleTableItems: TableListItemConfig[] = [
   {
@@ -29,7 +31,9 @@ export const searchBarConfig = (
 });
 
 export const actionsConfig = (
-  onRefreshData: () => Promise<void>,
+  onRefreshData: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<NoInfer<PaginatedResponse<unknown>>, Error>>,
 ): TableListActionConfig[] => [
   {
     property: "edit",

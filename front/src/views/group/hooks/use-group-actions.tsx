@@ -1,5 +1,7 @@
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { PaginatedResponse } from "../../../api-queries/pagination.api";
 
 /**
  * Custom hook pour gérer les actions groupées sur les groupes :
@@ -10,7 +12,9 @@ import useHttp from "../../../hooks/use-http";
  */
 function useGroupActions(
   idsList: string[],
-  onRefreshData: () => Promise<void>,
+  onRefreshData: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<NoInfer<PaginatedResponse<unknown>>, Error>>,
 ) {
   const { sendRequest } = useHttp(true);
 
