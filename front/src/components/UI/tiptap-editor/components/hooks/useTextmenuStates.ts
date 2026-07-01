@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { Editor as CoreEditor } from "@tiptap/core";
 import { EditorState } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
-import { HorizontalRule } from "../../extensions/HorizontalRule";
-import { Link } from "../../extensions/Link";
 import { isTextSelection } from "@tiptap/core";
+import HorizontalRule from "../../extensions/HorizontalRule/HorizontalRule";
+import Link from "../../extensions/Link/Link";
 
 interface ShouldShowProps {
   editor?: CoreEditor;
@@ -57,7 +57,7 @@ const isTextSelected = ({ editor }: { editor: Editor }) => {
   return true;
 };
 
-export const isTableGripSelected = (node: HTMLElement) => {
+const isTableGripSelected = (node: HTMLElement) => {
   let container = node;
 
   while (container && !["TD", "TH"].includes(container.tagName)) {

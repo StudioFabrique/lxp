@@ -2,7 +2,7 @@
 
 import { CalendarView } from "./calendar-configuration";
 
-export const getMinutes = (timeStr: string) => {
+const getMinutes = (timeStr: string) => {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 };
@@ -47,7 +47,7 @@ export const isSameDate = (date1: Date, date2: Date) => {
 export const getRealDayIndex = (
   viewIndex: number,
   view: CalendarView,
-  currentDate: Date
+  currentDate: Date,
 ) => {
   if (view === "week") return viewIndex;
   let dayIndex = currentDate.getDay() - 1;
@@ -59,7 +59,7 @@ export const getEventStyle = (
   start: string,
   end: string,
   calendarStartHour: number,
-  style: { hourHeight: number }
+  style: { hourHeight: number },
 ) => {
   const startMin = getMinutes(start);
   const endMin = getMinutes(end);
@@ -73,7 +73,7 @@ export const getCurrentTimeIndicator = (
   nowTime: Date,
   startHour: number,
   endHour: number,
-  style: { hourHeight: number }
+  style: { hourHeight: number },
 ) => {
   const currentMinutes = nowTime.getHours() * 60 + nowTime.getMinutes();
   const startOffset = startHour * 60;
