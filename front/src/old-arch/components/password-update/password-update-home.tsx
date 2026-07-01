@@ -7,10 +7,10 @@
 
 import { useContext, useEffect } from "react";
 import { useSearchParams } from "react-router";
-import PasswordUpdateForm from "../../components/password-update/password-update-form";
-import PasswordUpdateSuccess from "../../components/password-update/password-update-success";
+import PasswordUpdateForm from "./password-update-form";
+import PasswordUpdateSuccess from "./password-update-success";
 
-import PasswordUpdateError from "../../components/password-update/password-update-error";
+import PasswordUpdateError from "./password-update-error";
 import usePasswordUpdate from "../../hooks/use-password-update";
 import { Context } from "../../store/context.store";
 
