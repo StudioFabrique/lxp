@@ -1,6 +1,6 @@
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { LucideIcon } from "lucide-react";
-import { PaginatedResponse } from "../../../../api-queries/table.api";
+import { PaginatedResponse } from "../../../../api-queries/generic/table.api";
 
 export type TableListActionType = "button" | "link" | "toggle" | "checkbox";
 
