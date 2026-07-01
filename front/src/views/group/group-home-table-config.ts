@@ -3,6 +3,8 @@ import { TableListItemConfig } from "../../components/table/table-list/interface
 import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import { TableListProps } from "../../components/table/table-list/table-list";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { PaginatedResponse } from "../../api-queries/generic/table.api";
 
 export const groupHomeTableItems: TableListItemConfig[] = [
   {
@@ -23,7 +25,7 @@ export const groupHomeTableItems: TableListItemConfig[] = [
 ];
 
 export const searchBarConfig = (
-  onSubmitSearchValue: (value: string) => void
+  onSubmitSearchValue: (value: string) => void,
 ): SearchBarProps => ({
   title: "Groupes",
   placeholder: "Rechercher un groupe",
@@ -31,7 +33,9 @@ export const searchBarConfig = (
 });
 
 export const actionsConfig = (
-  onRefreshData: () => Promise<void>
+  onRefreshData: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<NoInfer<PaginatedResponse<unknown>>, Error>>,
 ): TableListActionConfig[] => [
   /*{
     property: "invite",
@@ -74,7 +78,7 @@ export const tableListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
   isSearching?: boolean,
-  actionsConfig?: TableListActionConfig[]
+  actionsConfig?: TableListActionConfig[],
 ): TableListProps<Record<string, string>> => ({
   idProperty: "_id",
   avatar: { property: "image" },
@@ -87,8 +91,8 @@ export const tableListConfig = <TData>(
       message: isLoading
         ? "Chargement des groupes..."
         : isSearching
-        ? "Aucun groupe ne correspond à votre recherche"
-        : undefined,
+          ? "Aucun groupe ne correspond à votre recherche"
+          : undefined,
       linkableMessage:
         isLoading || isSearching
           ? undefined

@@ -11,7 +11,7 @@ export type LinkEditorPanelProps = {
   onSetLink: (url: string, openInNewTab?: boolean) => void;
 };
 
-export const useLinkEditorState = ({
+const useLinkEditorState = ({
   initialUrl,
   initialOpenInNewTab,
   onSetLink,

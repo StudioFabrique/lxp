@@ -123,11 +123,7 @@ interface StatsUserProps {
   positionY?: "top" | "center" | "bottom";
 }
 
-export function StatsUser({
-  label,
-  children,
-  positionY = "center",
-}: StatsUserProps) {
+function StatsUser({ label, children, positionY = "center" }: StatsUserProps) {
   return (
     <Wrapper>
       <div

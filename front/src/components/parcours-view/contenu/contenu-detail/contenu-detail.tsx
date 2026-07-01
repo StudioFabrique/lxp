@@ -76,7 +76,7 @@ const ContenuDetail: FC<{
             })
           }
           key={course?.id}
-          className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content border-l-4 border-primary p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
+          className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
           <span className="w-12 h-12 shrink-0 text-primary">
             <BookIcon />

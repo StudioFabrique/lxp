@@ -1,4 +1,6 @@
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { LucideIcon } from "lucide-react";
+import { PaginatedResponse } from "../../../../api-queries/generic/table.api";
 
 export type TableListActionType = "button" | "link" | "toggle" | "checkbox";
 
@@ -16,9 +18,8 @@ export interface TableListActionConfig {
   rbacObject?: string;
   rbacAction?: string;
   onSuccessfulSubmit?: (
-    id: string,
-    value?: string | boolean | { message: string },
-  ) => void;
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<NoInfer<PaginatedResponse<unknown>>, Error>>;
   onFailedSubmit?: (id: string, value?: string | boolean) => void;
 }
 
