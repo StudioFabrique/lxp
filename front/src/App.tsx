@@ -8,6 +8,17 @@ import Loader from "./components/UI/loader";
 import Login from "./views/login/login";
 import ContextProvider from "./store/contextProvider.store";
 import AppLayout from "./components/UI/AppLayout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Configuration optionnelle globale pour ton LXP
+      refetchOnWindowFocus: false, // Évite de re-télécharger les données à chaque fois que tu changes d'onglet
+      retry: 1, // Si une requête échoue, TanStack la retente 1 seule fois avant d'afficher l'erreur
+    },
+  },
+});
 
 const StudentLayout = lazy(
   () => import("./views/student/student-layout.component"),
@@ -95,9 +106,12 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    <ContextProvider>
-      <RouterProvider router={router} />
-    </ContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <ContextProvider>
+        <RouterProvider router={router} />
+      </ContextProvider>
+      {/*<ReactQueryDevtools initialIsOpen={false} />*/}
+    </QueryClientProvider>
   );
 }
 

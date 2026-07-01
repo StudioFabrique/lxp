@@ -88,7 +88,6 @@ function extraireURLImages(texte: string): string[] {
     matches.push(match[1]); // match[1] is the captured URL
   }
 
-  console.log({ extractedUrls: matches });
   return matches;
 }
 
