@@ -1,0 +1,115 @@
+export interface QuizMcq {
+  options: string[];
+  answerIndex: number;
+}
+
+export interface QuizTrFa {
+  answer: boolean;
+}
+
+export type Pair = { left: string; right: string };
+
+export interface QuizMatching {
+  pairs: Pair[];
+}
+
+export interface QuizOrdering {
+  items: string[];
+  order: number[];
+}
+
+// Réponse brute de l'utilisateur, discriminée par type
+export type UserAnswer =
+  | { type: "mcq"; selectedIndex: number }
+  | { type: "true_false"; selected: boolean }
+  | { type: "matching"; answers: Record<number, string> }
+  | { type: "ordering"; items: { text: string; originalIndex: number }[] };
+
+// Une tentative enregistrée (question + réponse utilisateur + résultat)
+export interface QuizAttempt {
+  quiz: Quiz;
+  isCorrect: boolean;
+  userAnswer: UserAnswer;
+}
+
+export interface QuizBase {
+  id: string;
+  question: string;
+  trueExplanation: string;
+  falseExplanation: string;
+}
+
+export type Quiz = QuizBase &
+  (
+    | {
+        type: "mcq";
+        data: QuizMcq;
+      }
+    | {
+        type: "true_false";
+        data: QuizTrFa;
+      }
+    | {
+        type: "matching";
+        data: QuizMatching;
+      }
+    | {
+        type: "ordering";
+        data: QuizOrdering;
+      }
+  );
+
+// --- Interfaces pour l'API externe ---
+
+// Base commune à toutes les questions renvoyées par l'API IA
+export interface ExternalApiQuizBase {
+  id: string;
+  difficulty: "easy" | "medium" | "hard";
+  prompt: string;
+  explanation_correct: string;
+  explanation_wrong: string;
+  choice_feedback?: string[];
+  evidence?: string[];
+  tags?: string[];
+}
+
+export interface ExternalApiQuizMcq extends ExternalApiQuizBase {
+  type: "mcq";
+  choices: string[];
+  answer_key: number;
+}
+
+export interface ExternalApiQuizTrueFalse extends ExternalApiQuizBase {
+  type: "true_false";
+  choices: null;
+  answer_key: boolean;
+}
+
+export interface ExternalApiQuizMatching extends ExternalApiQuizBase {
+  type: "matching";
+  pairs: Pair[];
+  answer_key: number[];
+}
+
+export interface ExternalApiQuizOrdering extends ExternalApiQuizBase {
+  type: "ordering";
+  ordering_items: string[];
+  ordering_answer: number[];
+}
+
+export type ExternalApiQuiz =
+  | ExternalApiQuizMcq
+  | ExternalApiQuizTrueFalse
+  | ExternalApiQuizMatching
+  | ExternalApiQuizOrdering;
+
+// L'événement spécial de fin de flux
+export interface ExternalApiDoneEvent {
+  event: "done";
+  total_questions: number;
+  content_richness: string;
+  elapsed_sec: number;
+}
+
+// Le payload brut reçu dans le Stream (soit une question, soit l'événement de fin)
+export type ExternalApiStreamPayload = ExternalApiQuiz | ExternalApiDoneEvent;

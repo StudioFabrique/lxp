@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 import "./index.css";
 
 import { Provider } from "react-redux";
-import store from "./old-arch/store/redux-toolkit/index.ts";
+import store from "../old.src-arch/store/redux-toolkit/index.ts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
