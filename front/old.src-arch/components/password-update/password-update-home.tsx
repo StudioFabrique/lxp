@@ -12,14 +12,14 @@ import PasswordUpdateSuccess from "./password-update-success";
 
 import PasswordUpdateError from "./password-update-error";
 import usePasswordUpdate from "../../hooks/use-password-update";
-import { Context } from "../../store/context.store";
+import { ThemeContext } from "../../../src/store/ThemeProvider";
 
 type Props = {
   message: string;
 };
 
 export default function PasswordUpdateHome(props: Props) {
-  const { chooseTheme } = useContext(Context);
+  const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
   //  custom hook qui gère la logique du composant
   const {
@@ -43,35 +43,27 @@ export default function PasswordUpdateHome(props: Props) {
     checkToken();
   }, [checkToken]);
 
-  return (
-    <>
-      {error.length > 0 ? (
-        // Message d'erreur en cas de lien non valide
-        <section className="flex flex-col gap-y-8 justify-center items-center">
-          <PasswordUpdateError error={error} url="/" />
-        </section>
-      ) : (
-        <>
-          {success ? (
-            // Message si l'activation du compte est réussie
-            <section className="flex flex-col place-items-center">
-              <PasswordUpdateSuccess message={props.message} url="/" />
-            </section>
-          ) : (
-            <section>
-              {/* Formulaire pour saisir le mot de passe et une confirmation */}
-              <PasswordUpdateForm
-                onHandleChange={handleChange}
-                password={password}
-                password2={password2}
-                onHandleSubmit={handleSubmit}
-                isValid={isValid}
-                submitLoader={submitLoader}
-              />
-            </section>
-          )}
-        </>
-      )}
-    </>
+  return error.length > 0 ? (
+    // Message d'erreur en cas de lien non valide
+    <section className="flex flex-col gap-y-8 justify-center items-center">
+      <PasswordUpdateError error={error} url="/" />
+    </section>
+  ) : success ? (
+    // Message si l'activation du compte est réussie
+    <section className="flex flex-col place-items-center">
+      <PasswordUpdateSuccess message={props.message} url="/" />
+    </section>
+  ) : (
+    <section>
+      {/* Formulaire pour saisir le mot de passe et une confirmation */}
+      <PasswordUpdateForm
+        onHandleChange={handleChange}
+        password={password}
+        password2={password2}
+        onHandleSubmit={handleSubmit}
+        isValid={isValid}
+        submitLoader={submitLoader}
+      />
+    </section>
   );
 }
