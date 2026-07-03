@@ -1,18 +1,18 @@
 import { LogOutIcon, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router";
-import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
-import { Context } from "../../../store/context.store";
-import newLogo from "../../../assets/images/new-logo-2.svg";
-import { AvatarSmall } from "../avatar/avatar.component";
+import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
 import Questionnaire from "./Questionnaire";
+import { AuthContext } from "../../store/AuthProvider";
+import { AvatarSmall } from "../avatar/AvatarSmall";
+import ThemeToggle from "../buttons/ThemeToggle";
 
 type SharedSideBarProps = {
   interfaceType: string;
 };
 
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
-  const { user, logout } = useContext(Context);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleClickLogout = () => {
@@ -92,7 +92,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           className="tooltip xl:tooltip-top tooltip-right xl:w-5 w-4"
           data-tip="Mode Clair / Mode Sombre"
         >
-          <ModeToggle />
+          <ThemeToggle />
         </div>
       </li>
     </ul>

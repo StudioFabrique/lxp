@@ -9,13 +9,13 @@ import StudentTimeline from "../../../../old.src-arch/components/student-home/ti
 import FeelingFeedback from "../../../../old.src-arch/components/student-home/right-side/feeling-feedback";
 import StudentAccomplishments from "../../../../old.src-arch/components/student-home/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../../../../old.src-arch/components/student-home/right-side/most-read-courses";
-import { Context } from "../../../../old.src-arch/store/context.store";
 import Header from "../../../../old.src-arch/components/UI/header";
 import { Bell, Search } from "lucide-react";
+import { AuthContext } from "../../../store/AuthProvider";
 
 const StudentDashboard = () => {
   const { sendRequest } = useHttp();
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   const [lastLessons, setLastLessons] = useState<LessonRead[]>();
 

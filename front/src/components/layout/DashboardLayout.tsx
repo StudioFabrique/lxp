@@ -1,28 +1,28 @@
 import { PropsWithChildren, ReactNode, Suspense } from "react";
-import Sidebar from "../sidebar/Sidebar";
 
 type Props = {
+  sidebar: ReactNode;
   loader: ReactNode;
   topbar?: ReactNode;
 };
 
-export const DashboardLayout = ({
+const DashboardLayout = ({
   children,
+  sidebar,
   loader,
   topbar,
 }: PropsWithChildren<Props>) => {
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-base-100">
-      <div className="flex h-full">
-        {/* Sidebar conteneur */}
-        <aside className="h-full z-20">
-          <Sidebar />
-        </aside>
+    <div className="flex flex-col h-screen p-2 bg-base-100 box-border">
+      <div className="flex gap-2 h-full overflow-hidden">
+        {/* Sidebar */}
+        <aside className="h-full z-20">{sidebar}</aside>
 
-        {/* Main Content conteneur */}
-        <main className="flex-1 flex flex-col h-full overflow-y-auto relative">
+        <main className="overflow-y-auto w-full h-full relative">
+          {/* Topbar optionnelle */}
           {topbar && <header className="sticky top-0 z-10">{topbar}</header>}
 
+          {/* Children */}
           <Suspense
             fallback={
               <div className="h-full flex items-center justify-center">
@@ -30,8 +30,10 @@ export const DashboardLayout = ({
               </div>
             }
           >
-            <div className="flex justify-center w-full px-4 py-8">
-              <div className="w-full xl:w-[80%] max-w-7xl">{children}</div>
+            <div className="flex justify-center">
+              <div className="mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+                {children}
+              </div>
             </div>
           </Suspense>
         </main>
@@ -39,3 +41,5 @@ export const DashboardLayout = ({
     </div>
   );
 };
+
+export default DashboardLayout;
