@@ -1,5 +1,5 @@
-import AndriaLogoLightMode from "../assets/logo-lightmode.svg";
-import AndriaLogoDarkMode from "../assets/logo-darkmode.svg";
+import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
+import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
 import { PropsWithChildren, ReactNode, useContext, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";

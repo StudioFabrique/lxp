@@ -1,8 +1,8 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Context } from "../../../store/context.store";
 import SidebarBottom from "./SidebarBottom";
-import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
-import { cn } from "../../../utils";
+import { ThemeContext } from "../../store/ThemeProvider";
+import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../config/urls";
+import { cn } from "../../utils/style-helpers";
 
 const SidebarWrapper = ({
   children,
@@ -11,7 +11,7 @@ const SidebarWrapper = ({
   children: ReactNode;
   interfaceType: string;
 }) => {
-  const { theme } = useContext(Context);
+  const { theme } = useContext(ThemeContext);
 
   const [logoExists, setExists] = useState(true);
   const [loading, setLoading] = useState(true);
