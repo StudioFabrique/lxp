@@ -6,6 +6,7 @@ import { RoleGuard } from "../../utils/router-helpers.tsx";
 import { adminParcoursRoutes } from "../parcours/routes";
 import Loader from "../../components/loaders/Loader.tsx";
 import Sidebar from "../../components/sidebar/Sidebar.tsx";
+import { ROLES_RANKS } from "../../utils/roles-rank.ts";
 
 // const AdminDashboard = lazy(() => import("./view/AdminDashboard"));
 
@@ -14,7 +15,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin",
     element: (
       <DashboardLayout sidebar={<Sidebar />} loader={<Loader />}>
-        <RoleGuard allowedRanks={[1, 2]} />
+        <RoleGuard
+          allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
+        />
       </DashboardLayout>
     ),
     children: [

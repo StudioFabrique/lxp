@@ -6,14 +6,18 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import { RoleGuard } from "../../utils/router-helpers";
 import { studentParcoursRoutes } from "../parcours/routes";
 import Sidebar from "../../components/sidebar/Sidebar";
+import ConfettiLayout from "./components/ConfettiLayout";
+import { ROLES_RANKS } from "../../utils/roles-rank";
 
 export const studentRoutes: RouteObject[] = [
   {
     path: "/student",
     element: (
-      <DashboardLayout sidebar={<Sidebar />} loader={<Loader />}>
-        <RoleGuard allowedRanks={[3]} />
-      </DashboardLayout>
+      <ConfettiLayout>
+        <DashboardLayout sidebar={<Sidebar />} loader={<Loader />}>
+          <RoleGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+        </DashboardLayout>
+      </ConfettiLayout>
     ),
     children: [
       { index: true, element: <p>Dashboard Étudiant</p> },
