@@ -2,7 +2,8 @@ import { lazy } from "react";
 import { RouteObject } from "react-router";
 import AuthLayout from "./components/AuthLayout";
 import LoginRightColumn from "./components/LoginRightColumn";
-import LoginGuard, { withSuspense } from "../../utils/router-helpers";
+import { withSuspense } from "../../utils/router-helpers";
+import LoginGuard from "../../components/guards/LoginGuard";
 
 const Login = lazy(() => import("./views/Login"));
 const RegisterHome = lazy(() => import("./views/Register"));
