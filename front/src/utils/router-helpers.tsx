@@ -2,6 +2,7 @@ import { Suspense, useContext } from "react";
 import Loader from "../components/loaders/Loader";
 import { AuthContext } from "../store/AuthProvider";
 import { Navigate, Outlet } from "react-router";
+import { ROLES_RANKS } from "./roles-rank";
 
 // Permet d'enrober n'importe quel composant lazy-loadé proprement
 // exemple : const Login = lazy(() => import("./views/Login"));
@@ -22,7 +23,16 @@ const LoginGuard = () => {
   if (isLoggedIn && user) {
     const rank = user.roles?.[0]?.rank;
     if (rank !== undefined) {
-      return <Navigate replace to={rank < 3 ? "/admin" : "/student"} />;
+      return (
+        <Navigate
+          replace
+          to={
+            [ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN].includes(rank)
+              ? "/admin"
+              : "/student"
+          }
+        />
+      );
     }
   }
 
@@ -33,7 +43,7 @@ const LoginGuard = () => {
 export default LoginGuard;
 
 interface RoleGuardProps {
-  allowedRanks: number[]; // ex: [1, 2] pour Admin, [3] pour Étudiant
+  allowedRanks: ROLES_RANKS[]; // ex: [1, 2] pour Admin, [3] pour Étudiant
 }
 
 const RoleGuard = ({ allowedRanks }: RoleGuardProps) => {

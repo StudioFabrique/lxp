@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode, Suspense } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 
 type Props = {
   sidebar: ReactNode;
@@ -9,7 +9,6 @@ type Props = {
 const DashboardLayout = ({
   children,
   sidebar,
-  loader,
   topbar,
 }: PropsWithChildren<Props>) => {
   return (
@@ -23,19 +22,12 @@ const DashboardLayout = ({
           {topbar && <header className="sticky top-0 z-10">{topbar}</header>}
 
           {/* Children */}
-          <Suspense
-            fallback={
-              <div className="h-full flex items-center justify-center">
-                {loader}
-              </div>
-            }
-          >
-            <div className="flex justify-center">
-              <div className="mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
-                {children}
-              </div>
+
+          <div className="flex justify-center">
+            <div className="mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+              {children}
             </div>
-          </Suspense>
+          </div>
         </main>
       </div>
     </div>
