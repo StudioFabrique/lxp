@@ -5,7 +5,7 @@ type Props = {
   parcoursId: number;
 };
 
-export default function FromParcoursWarning({ parcoursId }: Props) {
+export default function GroupFormParcoursWarning({ parcoursId }: Props) {
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="w-5/6 flex flex-col gap-y-4">

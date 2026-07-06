@@ -1,4 +1,4 @@
-import { AvatarSmall } from "../../../UI/avatar/avatar.component";
+import { AvatarSmall } from "../../../avatar/AvatarSmall";
 
 type TableListAvatarCell = {
   avatar?: string;

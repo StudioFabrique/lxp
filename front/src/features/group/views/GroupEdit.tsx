@@ -3,7 +3,7 @@ import GroupForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
 import useGroupManage from "../hooks/use-group-manage";
 
-const GroupManage = () => {
+const GroupEdit = () => {
   const [searchParams] = useSearchParams();
   const fromParcours = searchParams.get("parcours");
 
@@ -37,4 +37,4 @@ const GroupManage = () => {
   );
 };
 
-export default GroupManage;
+export default GroupEdit;

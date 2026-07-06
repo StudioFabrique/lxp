@@ -2,7 +2,7 @@ import { RouteObject } from "react-router";
 
 import Loader from "../../components/loaders/Loader";
 import FeaturesList from "./views/FeaturesList";
-import DashboardLayout from "../../components/layout/DashboardLayout";
+import DashboardWrapper from "../../components/wrappers/DashboardWrapper";
 import { studentParcoursRoutes } from "../parcours/routes";
 import Sidebar from "../../components/sidebar/Sidebar";
 import ConfettiLayout from "./components/ConfettiLayout";
@@ -14,9 +14,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student",
     element: (
       <ConfettiLayout>
-        <DashboardLayout sidebar={<Sidebar />} loader={<Loader />}>
+        <DashboardWrapper sidebar={<Sidebar />} loader={<Loader />}>
           <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
-        </DashboardLayout>
+        </DashboardWrapper>
       </ConfettiLayout>
     ),
     children: [

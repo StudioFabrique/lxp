@@ -1,5 +1,7 @@
-import SearchBar, { SearchBarProps } from "../UI/search-bar/search-bar";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import SearchBar, {
+  SearchBarProps,
+} from "../../../src.legacy/components/UI/search-bar/search-bar";
+import Wrapper from "../../../src.legacy/components/UI/wrapper/wrapper.component";
 import TableList, { TableListProps } from "./table-list/table-list";
 import { PropsWithChildren } from "react";
 

@@ -1,9 +1,9 @@
 import { Link, useLocation } from "react-router";
 import {
   actionsConfig,
-  tableListConfig,
+  groupListConfig,
   searchBarConfig,
-} from "./group-home-table-config";
+} from "./group-list-config";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import useGroupActions from "../hooks/use-group-actions";
@@ -27,7 +27,7 @@ import TablePagination from "../../../components/table/table-pagination/table-pa
  *
  * @component
  */
-const GroupHome = () => {
+const GroupList = () => {
   const { state } = useLocation();
 
   // custom hook gestion pagination
@@ -63,7 +63,7 @@ const GroupHome = () => {
   }, [state]);
 
   return (
-    <>
+    <div>
       {/* Header de la liste des groupes */}
       <PageHeader
         title="Liste des groupes"
@@ -83,7 +83,7 @@ const GroupHome = () => {
        */}
       <Table
         searchBarConfig={searchBarConfig(onSubmitSearchValue)}
-        tableListConfig={tableListConfig(
+        tableListConfig={groupListConfig(
           data,
           isLoading,
           Boolean(searchValue),
@@ -125,8 +125,8 @@ const GroupHome = () => {
           />,
         ]}
       </Table>
-    </>
+    </div>
   );
 };
 
-export default GroupHome;
+export default GroupList;

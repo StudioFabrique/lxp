@@ -4,7 +4,7 @@ import { FC, FormEvent, useEffect } from "react";
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
 import Group from "../../../utils/interfaces/group";
-import useGroupForm from "./use-group-form";
+import useGroupForm from "./useGroupForm";
 import FromParcoursWarning from "./components/from-parcours-warning";
 import Header from "../../UI/header";
 import { Link } from "react-router";

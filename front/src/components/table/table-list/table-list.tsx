@@ -7,7 +7,7 @@ import {
 import Head from "./table-list-head";
 import Body from "./table-list-body";
 import TableEmpty, { TableEmptyProps } from "./table-empty";
-import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../wrappers/FadeWrapper";
 
 export type TableListProps<TData> = {
   idProperty: string;
