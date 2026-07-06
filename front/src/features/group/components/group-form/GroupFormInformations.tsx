@@ -8,7 +8,7 @@ import FieldArea from "../../../UI/forms/field-area";
 import CustomError from "../../../../utils/interfaces/custom-error";
 import Group from "../../../../utils/interfaces/group";
 
-const Informations: FC<{
+const GroupFormInformations: FC<{
   values: Record<string, string>;
   onChangeValue: (field: string, value: string) => void;
   errors: CustomError[];
@@ -50,4 +50,4 @@ const Informations: FC<{
   );
 };
 
-export default Informations;
+export default GroupFormInformations;

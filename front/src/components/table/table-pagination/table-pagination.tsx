@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import DropdownSelector from "../../UI/dropdown-selector/dropdown-selector";
-import { SolarAltArrowDownBold } from "../../UI/svg/alt-arrow-icon";
-import iterateNumberToArray from "../../../utils/iterate-number-to-array";
+import DropdownSelector from "../../../../src.legacy/components/UI/dropdown-selector/dropdown-selector";
+import { SolarAltArrowDownBold } from "../../../../src.legacy/components/UI/svg/alt-arrow-icon";
+import iterateNumberToArray from "../../../../src.legacy/utils/iterate-number-to-array";
 
 export type TablePaginationProps = {
   currentPage: number | null;

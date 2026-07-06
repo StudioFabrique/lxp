@@ -14,7 +14,7 @@ type Item = {
   formationId?: number;
 };
 
-const Details: FC<{
+const GroupFormDetails: FC<{
   group?: Group;
   onSelectParcours: (id: number) => void;
   selectedParcoursId?: number | null;
@@ -118,4 +118,4 @@ const Details: FC<{
     </Wrapper>
   );
 };
-export default Details;
+export default GroupFormDetails;

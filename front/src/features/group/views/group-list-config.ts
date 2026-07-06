@@ -1,10 +1,10 @@
 import { Edit, Trash2 } from "lucide-react";
-import { TableListItemConfig } from "../../components/table/table-list/interfaces/table-list-item";
-import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
-import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
-import { TableListProps } from "../../components/table/table-list/table-list";
+import { TableListItemConfig } from "../../../components/table/table-list/interfaces/table-list-item";
+import { SearchBarProps } from "../../../../src.legacy/components/UI/search-bar/search-bar";
+import { TableListActionConfig } from "../../../components/table/table-list/interfaces/table-list-action";
+import { TableListProps } from "../../../components/table/table-list/table-list";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-import { PaginatedResponse } from "../../api-queries/generic/table.api";
+import { PaginatedResponse } from "../../../components/table/table.api";
 
 export const groupHomeTableItems: TableListItemConfig[] = [
   {
@@ -74,7 +74,7 @@ export const actionsConfig = (
   },
 ];
 
-export const tableListConfig = <TData>(
+export const groupListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
   isSearching?: boolean,
