@@ -1,12 +1,70 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 
 import { authRoutes } from "./features/auth/routes";
-import { adminRoutes, studentRoutes } from "./features/dashboard/routes";
+import AppWrapper from "./components/wrappers/AppWrapper";
+import RouteGuard from "./components/guards/RouteGuard";
+import { ROLES_RANKS } from "./utils/roles-rank";
+import Sidebar from "./components/sidebar/Sidebar";
+import Loader from "./components/loaders/Loader";
+import {
+  adminParcoursRoutes,
+  studentParcoursRoutes,
+} from "./features/parcours/routes";
+import { adminGroupRoutes } from "./features/group/routes";
+import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
+import FeaturesList from "./features/dashboard/view/FeaturesList";
+import {
+  adminDashboardRoutes,
+  studentDashboardRoutes,
+} from "./features/dashboard/routes";
+
+const adminRoutes: RouteObject[] = [
+  {
+    path: "/admin",
+    element: (
+      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+        <RouteGuard
+          allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
+        />
+      </AppWrapper>
+    ),
+    children: [
+      { index: true, element: <Navigate to="./dashboard" replace /> },
+      ...adminDashboardRoutes, // /admin/dashboard/*
+      ...adminParcoursRoutes, // /admin/parcours/*
+      ...adminGroupRoutes, // /admin/group/*
+      // ...adminCourseRoutes,
+      // ...adminUserRoutes,
+      { path: "*", element: <p>La page n'existe pas</p> },
+    ],
+  },
+];
+
+const studentRoutes: RouteObject[] = [
+  {
+    path: "/student",
+    element: (
+      <ConfettiWrapper>
+        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+          <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+        </AppWrapper>
+      </ConfettiWrapper>
+    ),
+    children: [
+      { index: true, element: <Navigate to="./dashboard" replace /> },
+      ...studentDashboardRoutes, // /student/dashboard/*
+      ...studentParcoursRoutes, // /student/parcours/*
+
+      // Fallback 404 spécifique à l'espace étudiant
+      { path: "*", element: <FeaturesList /> },
+    ],
+  },
+];
 
 export const router = createBrowserRouter([
   ...authRoutes,
-  ...studentRoutes,
   ...adminRoutes,
+  ...studentRoutes,
   {
     path: "*",
     element: <Navigate replace to="/login" />,
