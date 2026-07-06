@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { tableQueries } from "../../table.api";
+import { tableQueries } from "../table.api";
 
 function useTablePaginatedData<TData>(
   apiEndpoint: string,

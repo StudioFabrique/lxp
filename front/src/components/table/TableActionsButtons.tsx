@@ -1,6 +1,6 @@
 import { RefreshCw } from "lucide-react";
-import ActionsDropdown from "../../../../src.legacy/components/UI/actions-dropdown/actions-dropdown";
-import TableActionsModal from "./table-actions-modal";
+import ActionsDropdown from "../../../src.legacy/components/UI/actions-dropdown/actions-dropdown";
+import TableActionsModal from "./TableActionsModal";
 import { useState } from "react";
 
 type Action<TData> = {
@@ -69,7 +69,7 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
           onCancel={handleCloseModal}
         >
           <button
-            className={`btn btn-error btn-md text-warning ${isModalLoading && "loading"}`}
+            className={`btn btn-error btn-md ${isModalLoading && "loading"}`}
             onClick={handleConfirmAction}
           >
             Confirmer

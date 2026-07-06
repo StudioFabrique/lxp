@@ -41,17 +41,17 @@ const AuthContext = createContext<AuthContextType>({
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAppInitialized, setIsAppInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [roles, setRoles] = useState<Array<Role>>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
+  const isLoggedIn = Boolean(user);
+
   const logout = useCallback(async () => {
     try {
       await apiClient.get("/auth/logout");
-      setIsLoggedIn(false);
       setUser(null);
     } catch (err) {
       console.error("Logout error", err);
@@ -112,7 +112,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (user && user.roles.length > 0) {
       fetchRoles(user.roles[0]);
-      setIsLoggedIn(true);
       setIsLoading(false);
     }
   }, [user, fetchRoles]);
