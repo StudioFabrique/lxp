@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src", "old.src-arch"],
+  "include": ["src", "src.legacy"],
   "references": [{ "path": "./tsconfig.node.json" }],
 }

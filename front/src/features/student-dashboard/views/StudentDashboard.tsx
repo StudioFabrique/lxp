@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import UserTopBar from "../../../../old.src-arch/components/UI/user-top-bar/user-top-bar";
-import ResumeActivity from "../../../../old.src-arch/components/student-home/resume-activity";
-import ResumeActivities from "../../../../old.src-arch/components/student-home/resume-activities";
-import useHttp from "../../../../old.src-arch/hooks/use-http";
-import type LessonRead from "../../../../old.src-arch/utils/interfaces/lesson-read";
-import ResumeParcours from "../../../../old.src-arch/components/student-home/resume-parcours";
-import StudentTimeline from "../../../../old.src-arch/components/student-home/timeline/student-timeline";
-import FeelingFeedback from "../../../../old.src-arch/components/student-home/right-side/feeling-feedback";
-import StudentAccomplishments from "../../../../old.src-arch/components/student-home/right-side/feedback-apprenant/student-accomplishments";
-import MostReadCourses from "../../../../old.src-arch/components/student-home/right-side/most-read-courses";
-import Header from "../../../../old.src-arch/components/UI/header";
+import UserTopBar from "../../../../src.legacy/components/UI/user-top-bar/user-top-bar";
+import ResumeActivity from "../../../../src.legacy/components/student-home/resume-activity";
+import ResumeActivities from "../../../../src.legacy/components/student-home/resume-activities";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import type LessonRead from "../../../../src.legacy/utils/interfaces/lesson-read";
+import ResumeParcours from "../../../../src.legacy/components/student-home/resume-parcours";
+import StudentTimeline from "../../../../src.legacy/components/student-home/timeline/student-timeline";
+import FeelingFeedback from "../../../../src.legacy/components/student-home/right-side/feeling-feedback";
+import StudentAccomplishments from "../../../../src.legacy/components/student-home/right-side/feedback-apprenant/student-accomplishments";
+import MostReadCourses from "../../../../src.legacy/components/student-home/right-side/most-read-courses";
+import Header from "../../../../src.legacy/components/UI/header";
 import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
 

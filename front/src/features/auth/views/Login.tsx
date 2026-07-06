@@ -2,11 +2,11 @@ import { useContext, useState } from "react";
 import {
   regexMail,
   regexPassword,
-} from "../../../../old.src-arch/utils/constantes";
+} from "../../../../src.legacy/utils/constantes";
 import { Link } from "react-router";
-import useInput from "../../../../old.src-arch/hooks/use-input";
-import PasswordVisible from "../../../../old.src-arch/components/UI/password-visible/password-visible";
+import useInput from "../../../../src.legacy/hooks/use-input";
 import { AuthContext } from "../../../store/AuthProvider";
+import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
 
 const Login = () => {
   const { isLoading, error, login } = useContext(AuthContext);
@@ -70,8 +70,8 @@ const Login = () => {
             placeholder="Mot de passe"
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-base-content/50 hover:text-base-content transition-colors flex items-center">
-            <PasswordVisible
+          <div className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer flex items-center">
+            <PasswordVisibilityToggle
               inputType={inputType}
               onPasswordVisibility={handlePasswordVisibility}
             />

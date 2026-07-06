@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
-import features from "../../../../old.src-arch/lib/features/features-to-be-implemented.json";
-import announcements from "../../../../old.src-arch/lib/features/announcements.json";
+import features from "../../../../src.legacy/lib/features/features-to-be-implemented.json";
+import announcements from "../../../../src.legacy/lib/features/announcements.json";
 
 /**
  * Composant parent de la route /features
