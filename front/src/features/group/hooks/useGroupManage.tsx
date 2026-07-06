@@ -49,7 +49,7 @@ function useGroupManage() {
     const formData = new FormData();
     formData.append(
       "data",
-      JSON.stringify({ ...data, users: usersIdWithActiveState })
+      JSON.stringify({ ...data, users: usersIdWithActiveState }),
     );
     formData.append("image", file);
 
@@ -60,7 +60,7 @@ function useGroupManage() {
         path: submitMethod === "post" ? "/group" : `/group/${id}`,
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -81,8 +81,8 @@ function useGroupManage() {
       usersToAdd.map((userToAdd) =>
         userToAdd._id === user._id
           ? { ...userToAdd, isActive: user.isActive }
-          : userToAdd
-      )
+          : userToAdd,
+      ),
     );
   };
 
@@ -92,7 +92,7 @@ function useGroupManage() {
    */
   const handleDeleteUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
-      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id)
+      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
     );
   };
 

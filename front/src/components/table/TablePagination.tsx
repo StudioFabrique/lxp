@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import DropdownSelector from "../../../../src.legacy/components/UI/dropdown-selector/dropdown-selector";
-import { SolarAltArrowDownBold } from "../../../../src.legacy/components/UI/svg/alt-arrow-icon";
-import iterateNumberToArray from "../../../../src.legacy/utils/iterate-number-to-array";
+import DropdownSelector from "../../../src.legacy/components/UI/dropdown-selector/dropdown-selector";
+import { SolarAltArrowDownBold } from "../../../src.legacy/components/UI/svg/alt-arrow-icon";
+import iterateNumberToArray from "../../../src.legacy/utils/iterate-number-to-array";
 
 export type TablePaginationProps = {
   currentPage: number | null;
@@ -47,7 +47,7 @@ const TablePagination = (props: TablePaginationProps) => {
 
               <div className="join-item px-2">
                 <DropdownSelector
-                  onSelect={props.onSetCurrentPage}
+                  onSelect={(val) => props.onSetCurrentPage(Number(val))}
                   valueList={pageValueArray}
                 >
                   {props.currentPage} / {props.maxPage}
@@ -67,7 +67,7 @@ const TablePagination = (props: TablePaginationProps) => {
           {/* Sélecteur d'éléments par page */}
           <div className="flex items-center justify-center gap-2">
             <DropdownSelector
-              onSelect={props.onSetItemsPerPage}
+              onSelect={(val) => props.onSetItemsPerPage(Number(val))}
               valueList={[5, 10, 15]}
             >
               <div className="flex items-center gap-1">

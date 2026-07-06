@@ -17,19 +17,18 @@ const RouteGuard = ({ allowedRanks }: Props) => {
     return <Navigate replace to="/login" />;
   }
 
+  // Dans RouteGuard.tsx
   const userRank = user.roles?.[0]?.rank;
 
-  // Si l'utilisateur n'a pas le bon rang pour cette route
-  if (userRank === undefined || !allowedRanks.includes(userRank)) {
-    return (
-      <Navigate
-        replace
-        to={userRank !== undefined && userRank < 3 ? "/admin" : "/student"}
-      />
-    );
+  if (userRank === undefined) {
+    return <Navigate replace to="/login" />;
   }
 
-  // S'il a le droit, affiche la route layout enfant
+  // Vérification standard des droits
+  if (!allowedRanks.includes(userRank)) {
+    return <Navigate replace to={userRank < 3 ? "/admin" : "/student"} />;
+  }
+
   return <Outlet />;
 };
 

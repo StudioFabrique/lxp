@@ -1,40 +1,39 @@
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router";
 import {
-  actionsConfig,
-  groupListConfig,
-  searchBarConfig,
-} from "./group-list-config";
+  RowSelectionState,
+  SortingState,
+  Updater,
+} from "@tanstack/react-table";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
-import useGroupActions from "../hooks/use-group-actions";
 import { PlusCircle } from "lucide-react";
-import useTablePaginatedData from "../../../components/table/table-pagination/hooks/use-table-paginated-data";
+
 import Group from "../../../utils/interfaces/group";
-import useTableCheckbox from "../../../components/table/table-list/hooks/use-table-checkbox";
+import { useGroupActions } from "../hooks/useGroupActions";
+import { getGroupColumns } from "../components/group-table-columns";
+
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Table from "../../../components/table/table";
-import TableActionsButtons from "../../../components/table/table-buttons/table-actions-buttons";
-import TablePagination from "../../../components/table/table-pagination/table-pagination";
+import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
+import useTablePaginatedData from "../../../components/table/hooks/useTablePaginatedData";
+import { DataTable } from "../../../components/table/DataTable";
+import TablePagination from "../../../components/table/TablePagination";
+import TableActionsButtons from "../../../components/table/TableActionsButtons";
+import TableActionsModal from "../../../components/table/TableActionsModal";
 
-/**
- * Composant GroupHome
- *
- * Affiche une liste de groupes avec des fonctionnalités pour créer,
- * modifier et supprimer des groupes. Utilise un tableau paginé pour
- * présenter les données, avec une barre de recherche intégrée.
- * Gère les notifications toast pour informer l'utilisateur des actions.
- *
- * @component
- */
 const GroupList = () => {
   const { state } = useLocation();
 
-  // custom hook gestion pagination
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const idsList = Object.keys(rowSelection);
+
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
+
   const {
     data,
-    searchValue,
     isLoading,
+    searchValue,
     totalItems,
     sortProperty,
     isAscDirection,
@@ -47,84 +46,124 @@ const GroupList = () => {
     searchProperty: "name",
   });
 
-  // custom hook gestion checkbox
-  const {
-    idsList,
-    onRetreiveItemsValuesByPropertyFromIdList,
-    ...checkboxConfig
-  } = useTableCheckbox<Group>(data, "_id");
+  const refreshAndClearSelection = () => {
+    setRowSelection({});
+    onRefreshData();
+  };
 
-  // custom hook gestion actions groupées
-  const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
+  const { onDeleteSelected, onDeleteOne, isDeleting } = useGroupActions(
+    refreshAndClearSelection,
+  );
 
-  // Si un message du state est présent, alors il s'affiche dans un toaster
+  const groupToDelete = useMemo(
+    () => data.find((g) => g._id === idToDelete),
+    [data, idToDelete],
+  );
+
+  const sorting: SortingState = sortProperty
+    ? [{ id: sortProperty, desc: !isAscDirection }]
+    : [];
+
+  const handleSortingChange = (updater: Updater<SortingState>) => {
+    const newSorting =
+      typeof updater === "function" ? updater(sorting) : updater;
+    if (newSorting.length > 0) onSortProperty(newSorting[0].id);
+  };
+
+  const onRetreiveItemsValues = (property: keyof Group) =>
+    data
+      .filter((item) => item._id && rowSelection[item._id])
+      .map((item) => String(item[property]));
+
+  const columns = useMemo(() => getGroupColumns((id) => setIdToDelete(id)), []);
+
   useEffect(() => {
     if (state?.toastFrom) toast.success(state.toastFrom);
   }, [state]);
 
+  // Fonction pour exécuter la suppression unique
+  const handleConfirmSingleDelete = async () => {
+    if (idToDelete) {
+      await onDeleteOne(idToDelete);
+      setIdToDelete(null); // On ferme la modale après succès
+    }
+  };
+
   return (
     <div>
-      {/* Header de la liste des groupes */}
       <PageHeader
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
       >
         <PermissionGuard object="group" action="write">
           <Link className="btn btn-primary btn-soft" to="/admin/group/add">
-            <PlusCircle />
+            <PlusCircle className="mr-2 h-5 w-5" />
             Créer un nouveau groupe
           </Link>
         </PermissionGuard>
       </PageHeader>
 
-      {/*
-       * Tableau generique utilisé pour la liste des groupes,
-       * utilisation du pattern composition
-       */}
-      <Table
-        searchBarConfig={searchBarConfig(onSubmitSearchValue)}
-        tableListConfig={groupListConfig(
-          data,
-          isLoading,
-          Boolean(searchValue),
-          actionsConfig(onRefreshData),
-        )}
-        checkboxConfig={checkboxConfig}
-        sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
-      >
-        {/* Composants children en haut et en bas du tableau */}
-        {[
-          // haut du tableau, à côté de la barre de recherche
+      <Wrapper additionalClassname="px-10 items-center">
+        <SearchBar
+          title="Groupes"
+          placeholder="Rechercher un groupe"
+          onSubmitSearchValue={onSubmitSearchValue}
+        >
           <TableActionsButtons
-            key={0}
-            isLoading={isLoading}
-            isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
+            isLoading={isLoading || isDeleting}
+            isDisabled={idsList.length === 0}
             onRefreshData={onRefreshData}
             actions={[
               {
-                title: "Supprimer les groupes selectionnés",
-                description: `${idsList.length} ${
-                  idsList.length > 1
-                    ? "groupes vont être supprimés"
-                    : "groupe va être supprimé"
-                }`,
+                title: "Supprimer les groupes sélectionnés",
+                description: `${idsList.length} groupe(s) vont être supprimé(s)`,
                 rightButtonTitle: "Supprimer",
-                onConfirm: onDeleteSelectedGroups,
+                onConfirm: () => onDeleteSelected(idsList),
               },
             ]}
             retreiveItemsProperty="name"
             onRetreiveItemsValuesByPropertyFromIdList={
-              onRetreiveItemsValuesByPropertyFromIdList
+              onRetreiveItemsValues as any
             }
-          />,
-          // bas du tableau
+          />
+        </SearchBar>
+
+        <DataTable
+          columns={columns}
+          data={data}
+          isLoading={isLoading}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+          sorting={sorting}
+          setSorting={handleSortingChange}
+          emptyMessage={
+            searchValue ? "Aucun groupe trouvé" : "Aucun groupe disponible"
+          }
+        />
+
+        <div className="w-full mt-5">
           <TablePagination
-            key={1}
             leftText={`Groupes : ${totalItems}`}
             {...pagination}
-          />,
-        ]}
-      </Table>
+          />
+        </div>
+      </Wrapper>
+
+      <TableActionsModal
+        isOpen={!!idToDelete}
+        onCancel={() => setIdToDelete(null)}
+        title="Confirmation de suppression"
+        description="Êtes-vous sûr de vouloir supprimer ce groupe ?"
+        descList={groupToDelete ? [groupToDelete.name] : undefined}
+      >
+        <button
+          className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
+          onClick={handleConfirmSingleDelete}
+          disabled={isDeleting}
+        >
+          Confirmer
+        </button>
+      </TableActionsModal>
     </div>
   );
 };
