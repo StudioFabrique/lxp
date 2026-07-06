@@ -6,7 +6,7 @@ type Props = {
   topbar?: ReactNode;
 };
 
-const DashboardLayout = ({
+const AppWrapper = ({
   children,
   sidebar,
   topbar,
@@ -34,4 +34,4 @@ const DashboardLayout = ({
   );
 };
 
-export default DashboardLayout;
+export default AppWrapper;

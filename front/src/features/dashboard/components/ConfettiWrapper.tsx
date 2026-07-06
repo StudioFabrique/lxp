@@ -6,7 +6,7 @@ import toTitleCase from "../../../utils/toTitleCase";
 import { AuthContext } from "../../../store/AuthProvider";
 import PortalConfetti from "./portal-confetti";
 
-const ConfettiLayout = ({ children }: PropsWithChildren) => {
+const ConfettiWrapper = ({ children }: PropsWithChildren) => {
   const { user, socket } = useContext(AuthContext);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -55,4 +55,4 @@ const ConfettiLayout = ({ children }: PropsWithChildren) => {
   );
 };
 
-export default ConfettiLayout;
+export default ConfettiWrapper;
