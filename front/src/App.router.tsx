@@ -1,8 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 
 import { authRoutes } from "./features/auth/routes";
-import { adminRoutes } from "./features/admin-dashboard/routes";
-import { studentRoutes } from "./features/student-dashboard/routes";
+import { adminRoutes, studentRoutes } from "./features/dashboard/routes";
 
 export const router = createBrowserRouter([
   ...authRoutes,
