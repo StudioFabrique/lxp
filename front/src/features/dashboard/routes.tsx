@@ -1,14 +1,16 @@
 // src/features/admin-dashboard/routes.tsx
+import { lazy } from "react";
 import { RouteObject } from "react-router";
+import { withSuspense } from "../../utils/router-helpers";
 
-// const AdminDashboard = lazy(() => import("./view/AdminDashboard"));
+const AdminDashboard = lazy(() => import("./views/AdminDashboard"));
+const StudentDashbord = lazy(() => import("./views/StudentDashboard"));
 
 export const adminDashboardRoutes: RouteObject[] = [
   {
     path: "dashboard",
     index: true,
-    element: <p>Dashboard Admin</p>,
-    // { index: true, element: withSuspense(AdminDashboard) },
+    element: withSuspense(AdminDashboard),
   },
 ];
 
@@ -16,7 +18,6 @@ export const studentDashboardRoutes: RouteObject[] = [
   {
     path: "dashboard",
     index: true,
-    element: <p>Dashboard Étudiant</p>,
-    // { index: true, element: withSuspense(StudentDashboard) },
+    element: withSuspense(StudentDashbord),
   },
 ];
