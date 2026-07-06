@@ -1,6 +1,6 @@
 // src/features/admin-dashboard/routes.tsx
 import { RouteObject } from "react-router";
-import DashboardWrapper from "../../components/wrappers/DashboardWrapper.tsx";
+import AppWrapper from "../../components/wrappers/AppWrapper.tsx";
 
 import {
   adminParcoursRoutes,
@@ -11,7 +11,7 @@ import Sidebar from "../../components/sidebar/Sidebar.tsx";
 import { ROLES_RANKS } from "../../utils/roles-rank.ts";
 import RouteGuard from "../../components/guards/RouteGuard.tsx";
 import { adminGroupRoutes } from "../group/routes.tsx";
-import ConfettiLayout from "./components/ConfettiLayout.tsx";
+import ConfettiWrapper from "./components/ConfettiWrapper.tsx";
 import FeaturesList from "./view/FeaturesList.tsx";
 
 // const AdminDashboard = lazy(() => import("./view/AdminDashboard"));
@@ -20,11 +20,11 @@ export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
     element: (
-      <DashboardWrapper sidebar={<Sidebar />} loader={<Loader />}>
+      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
         <RouteGuard
           allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
         />
-      </DashboardWrapper>
+      </AppWrapper>
     ),
     children: [
       { index: true, element: <p>Dashboard Admin</p> },
@@ -42,11 +42,11 @@ export const studentRoutes: RouteObject[] = [
   {
     path: "/student",
     element: (
-      <ConfettiLayout>
-        <DashboardWrapper sidebar={<Sidebar />} loader={<Loader />}>
+      <ConfettiWrapper>
+        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
           <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
-        </DashboardWrapper>
-      </ConfettiLayout>
+        </AppWrapper>
+      </ConfettiWrapper>
     ),
     children: [
       { index: true, element: <p>Dashboard Étudiant</p> },
