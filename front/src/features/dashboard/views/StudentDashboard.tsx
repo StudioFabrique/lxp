@@ -1,17 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import UserTopBar from "../../../../src.legacy/components/UI/user-top-bar/user-top-bar";
-import ResumeActivity from "../../../../src.legacy/components/student-home/resume-activity";
-import ResumeActivities from "../../../../src.legacy/components/student-home/resume-activities";
 import useHttp from "../../../../src.legacy/hooks/use-http";
-import type LessonRead from "../../../../src.legacy/utils/interfaces/lesson-read";
-import ResumeParcours from "../../../../src.legacy/components/student-home/resume-parcours";
-import StudentTimeline from "../../../../src.legacy/components/student-home/timeline/student-timeline";
-import FeelingFeedback from "../../../../src.legacy/components/student-home/right-side/feeling-feedback";
-import StudentAccomplishments from "../../../../src.legacy/components/student-home/right-side/feedback-apprenant/student-accomplishments";
-import MostReadCourses from "../../../../src.legacy/components/student-home/right-side/most-read-courses";
 import Header from "../../../../src.legacy/components/UI/header";
 import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
+import LessonRead from "../../../utils/interfaces/lesson-read";
+import ResumeActivity from "../components/student/resume-activity";
+import ResumeActivities from "../components/student/resume-activities";
+import ResumeParcours from "../components/student/resume-parcours";
+import StudentTimeline from "../components/student/timeline/student-timeline";
+import FeelingFeedback from "../components/student/right-side/feeling-feedback";
+import StudentAccomplishments from "../components/student/right-side/feedback-apprenant/student-accomplishments";
+import MostReadCourses from "../components/student/right-side/most-read-courses";
 
 const StudentDashboard = () => {
   const { sendRequest } = useHttp();
@@ -59,7 +58,7 @@ const StudentDashboard = () => {
           <StudentTimeline />
         </div>
         <div className="flex flex-col gap-5">
-          <UserTopBar />
+          {/*<UserTopBar />*/}
           <FeelingFeedback />
           <StudentAccomplishments />
           <MostReadCourses />
