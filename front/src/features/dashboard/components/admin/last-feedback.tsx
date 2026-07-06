@@ -1,0 +1,100 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Socket } from "socket.io-client";
+import { AuthContext } from "../../../../store/AuthProvider";
+import useHttp from "../../../../../src.legacy/hooks/use-http";
+import StudentFeedback from "../../../../utils/interfaces/student-feedback";
+import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import AvatarCard from "../../../../../src.legacy/components/UI/avatar-card";
+import imageProfileReplacement from "../../../../../src.legacy/config/image-profile-replacement";
+
+export default function LastFeedback() {
+  const { socket } = useContext(AuthContext);
+  const { sendRequest } = useHttp();
+
+  const [feedbacks, setFeedbacks] = useState<StudentFeedback[]>([]);
+
+  const getLastFeedback = useCallback(() => {
+    const applyData = (data: any) => {
+      if (data.success) {
+        setFeedbacks(data.response);
+      }
+    };
+    sendRequest(
+      {
+        path: "/user/last-feedbacks/false",
+      },
+      applyData,
+    );
+  }, [sendRequest]);
+
+  const reviewFeedback = (studentId: string, feedbackId: string) => {
+    if (mySocket) {
+      mySocket.emit("feedback-reviewed", {
+        studentId,
+        feedbackId,
+      });
+    }
+  };
+
+  const mySocket: Socket | null = useMemo(() => {
+    return socket;
+  }, [socket]);
+
+  useEffect(() => {
+    if (mySocket) {
+      mySocket.on("new-feedback-received", (feedback: StudentFeedback) => {
+        setFeedbacks((prevState) => [...prevState, feedback]);
+      });
+      mySocket.on("response-feedback-reviewed", (feedbackId: string) => {
+        setFeedbacks((prevState) =>
+          prevState.map((feedback) => {
+            if (feedback._id === feedbackId) {
+              return { ...feedback, hasBeenReviewed: true };
+            }
+            return feedback;
+          }),
+        );
+      });
+    }
+  }, [mySocket]);
+
+  useEffect(() => {
+    getLastFeedback();
+  }, [getLastFeedback]);
+
+  return (
+    <div className="flex flex-col gap-y-2 w-full">
+      <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
+      {feedbacks.length > 0 ? (
+        <ul className="flex flex-col gap-y-2">
+          {feedbacks.map((item) => (
+            <li key={item._id}>
+              <Wrapper>
+                <AvatarCard
+                  _id={item._id}
+                  avatarSrc={`data:image/jpeg;base64,${
+                    item.avatar ?? imageProfileReplacement
+                  }`}
+                  username={item.name}
+                  message={item.comment ?? "Aucun commentaire."}
+                  feelingLevel={+item.feelingLevel}
+                  feedbackAt={item.feedbackAt}
+                  hasBeenReviewed={item.hasBeenReviewed}
+                  studentId={item.studentId}
+                  onReview={reviewFeedback}
+                />
+              </Wrapper>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="mt-2">
+          <Wrapper>
+            <p>Aucun feedback récent.</p>
+          </Wrapper>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,13 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
-import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
-import Can from "../../components/UI/can/can.component";
-import LastParcours from "../../components/admin-home/last-parcours";
-import LastFeedback from "../../components/admin-home/last-feedback";
-import useHttp from "../../hooks/use-http";
-import Parcours from "../../utils/interfaces/parcours";
-import TeacherLessonsQualityStats from "../../components/admin-home/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
-import { Context } from "../../store/context.store";
+import { AuthContext } from "../../../store/AuthProvider";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import Parcours from "../../../utils/interfaces/parcours";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
+import TeacherLessonsQualityStats from "../components/admin/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
+import TeacherLastParcours from "../components/admin/teacher-last-parcours";
+import LastParcours from "../components/admin/last-parcours";
+import LastFeedback from "../components/admin/last-feedback";
 
 const links = [
   { path: "/admin/formation", label: "Créer une formation" },
@@ -21,7 +21,7 @@ const links = [
 ];
 
 const AdminDashboard = () => {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
       {/* --- Boutons d'actions rapides --- */}
       <section>
         <ul className="flex flex-wrap items-center gap-3">
-          <Can action="write" object="formation">
+          <PermissionGuard action="write" object="formation">
             <li>
               <Link
                 className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
@@ -66,8 +66,8 @@ const AdminDashboard = () => {
                 {links[0].label}
               </Link>
             </li>
-          </Can>
-          <Can action="write" object="parcours">
+          </PermissionGuard>
+          <PermissionGuard action="write" object="parcours">
             <li>
               <Link
                 className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
@@ -76,8 +76,8 @@ const AdminDashboard = () => {
                 {links[1].label}
               </Link>
             </li>
-          </Can>
-          <Can action="write" object="module">
+          </PermissionGuard>
+          <PermissionGuard action="write" object="module">
             <li>
               <Link
                 className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
                 {links[2].label}
               </Link>
             </li>
-          </Can>
+          </PermissionGuard>
           {links.map((item, index) =>
             index > 2 ? (
               <li key={item.label}>
@@ -115,12 +115,12 @@ const AdminDashboard = () => {
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">
-            <Can action="component" object="last-feedback">
+            <PermissionGuard action="component" object="last-feedback">
               <LastFeedback />
-            </Can>
-            <Can action="component" object="lessons-rating-stats">
+            </PermissionGuard>
+            <PermissionGuard action="component" object="lessons-rating-stats">
               <TeacherLessonsQualityStats />
-            </Can>
+            </PermissionGuard>
           </article>
         </div>
       </section>

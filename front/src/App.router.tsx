@@ -12,7 +12,7 @@ import {
 } from "./features/parcours/routes";
 import { adminGroupRoutes } from "./features/group/routes";
 import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
-import FeaturesList from "./features/dashboard/view/FeaturesList";
+import FeaturesList from "./features/dashboard/views/FeaturesList";
 import {
   adminDashboardRoutes,
   studentDashboardRoutes,
