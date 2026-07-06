@@ -1,18 +1,24 @@
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
-
+import { createPortal } from "react-dom";
+import Confetti from "react-confetti";
 import toast from "react-hot-toast";
 import { PartyPopperIcon } from "lucide-react";
-import toTitleCase from "../../../utils/toTitleCase";
-import { AuthContext } from "../../../store/AuthProvider";
-import PortalConfetti from "./portal-confetti";
+
+import toTitleCase from "../../utils/toTitleCase";
+import { AuthContext } from "../../store/AuthProvider";
 
 const ConfettiWrapper = ({ children }: PropsWithChildren) => {
   const { user, socket } = useContext(AuthContext);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Initialisation pour le portail
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Gestion des félicitations en temps réel via websocket
   useEffect(() => {
-    // Fonction appelée lorsqu'un étudiant reçoit des félicitations
     function congratulateUser({
       studentMdbIdToFelicitate,
       nameFrom,
@@ -20,36 +26,38 @@ const ConfettiWrapper = ({ children }: PropsWithChildren) => {
       studentMdbIdToFelicitate: string;
       nameFrom: string;
     }) {
-      // Vérification que l'utilisateur est le destinataire
       if (user && studentMdbIdToFelicitate === user._id) {
-        // Affichage de la notification
         toast(`Vous avez été félicité par ${toTitleCase(nameFrom)} !`, {
           icon: <PartyPopperIcon />,
         });
-        // Déclenchement de l'animation de confettis
         setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 4000);
       }
-
-      // Masquage des confettis après 4 secondes
-      setTimeout(() => setShowConfetti(false), 4000);
     }
 
-    // Si pas de socket, on ne fait rien
     if (!socket) return;
-
-    // Abonnement à l'événement de félicitations
     socket.on("send-accomplishment", congratulateUser);
 
-    // Nettoyage à la destruction du composant
     return () => {
       socket.off("send-accomplishment", congratulateUser);
     };
   }, [socket, user]);
 
+  // Rendu du portail
+  const portalContainer =
+    typeof document !== "undefined" ? document.querySelector("#portal") : null;
+
   return (
     <>
-      {/* Animation de confettis conditionnelle */}
-      {showConfetti && <PortalConfetti />}
+      {showConfetti &&
+        mounted &&
+        portalContainer &&
+        createPortal(
+          <div className="fixed -z-10 top-0 left-0 w-screen h-screen">
+            <Confetti className="fixed" />
+          </div>,
+          portalContainer,
+        )}
       {children}
     </>
   );
