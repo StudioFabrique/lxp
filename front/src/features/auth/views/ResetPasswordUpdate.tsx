@@ -3,7 +3,7 @@
  * compte d'un utilisateur.
  */
 
-import PasswordUpdateHome from "../../../../old.src-arch/components/password-update/password-update-home";
+import PasswordUpdateHome from "../../../../src.legacy/components/password-update/password-update-home";
 
 export default function ResetPasswordUpdate() {
   return (

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import useResetPasswordHome from "../../../../old.src-arch/views/reset-password/use-password-home";
-import Field from "../../../../old.src-arch/components/UI/forms/field";
+import useResetPasswordHome from "../../../../src.legacy/views/reset-password/use-password-home";
+import Field from "../../../../src.legacy/components/UI/forms/field";
 
 export default function ResetPasswordHome() {
   const { data, emailVerified, error, handleCheckEmail, isLoading } =

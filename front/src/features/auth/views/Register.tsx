@@ -6,10 +6,10 @@
 import { useContext, useEffect } from "react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { useSearchParams } from "react-router";
-import usePasswordUpdate from "../../../../old.src-arch/hooks/use-password-update";
-import PasswordUpdateError from "../../../../old.src-arch/components/password-update/password-update-error";
-import PasswordUpdateSuccess from "../../../../old.src-arch/components/password-update/password-update-success";
-import PasswordUpdateForm from "../../../../old.src-arch/components/password-update/password-update-form";
+import usePasswordUpdate from "../../../../src.legacy/hooks/use-password-update";
+import PasswordUpdateError from "../../../../src.legacy/components/password-update/password-update-error";
+import PasswordUpdateSuccess from "../../../../src.legacy/components/password-update/password-update-success";
+import PasswordUpdateForm from "../../../../src.legacy/components/password-update/password-update-form";
 
 export default function RegisterHome() {
   const { chooseTheme } = useContext(ThemeContext);
