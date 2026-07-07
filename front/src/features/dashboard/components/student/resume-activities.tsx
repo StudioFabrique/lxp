@@ -67,7 +67,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                 />
                 <Link
                   key={item.id}
-                  to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
+                  to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
                   state={{ lessonId: item.lesson.id }}
                   className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20"
                 >

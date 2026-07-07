@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../../../src.legacy/components/UI/loader";
 import Error404 from "../../../../src.legacy/components/error404";
@@ -21,6 +21,7 @@ import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src.legacy/components/UI/header";
 import toUpperFirstLetter from "../../../../src.legacy/utils/toUpperFirstLetter";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import { AuthContext } from "../../../store/AuthProvider";
 
 const ParcoursView = () => {
   const {
@@ -36,6 +37,8 @@ const ParcoursView = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
+  const { user } = useContext(AuthContext);
+  const isStudent = user?.roles?.some((role) => role.rank === 3) ?? false;
 
   const handleClickResume = () => {
     const resumeModuleId =
@@ -85,6 +88,7 @@ const ParcoursView = () => {
                     key="header"
                     onClickResume={handleClickResume}
                     hideResumeCourseButton={!(modules?.length > 0)}
+                    isStudent={isStudent}
                   />
                 </PermissionGuard>,
               ]}
@@ -94,10 +98,8 @@ const ParcoursView = () => {
 
           <div className="mt-5 flex flex-col gap-y-5">
             <QuickStatistiques studentCount={studentCount} />
-            {modules?.length > 0 ? (
-              <PermissionGuard action="component" object="progression">
-                <ProgressModulesStats modules={modules} />
-              </PermissionGuard>
+            {isStudent && modules?.length > 0 ? (
+              <ProgressModulesStats modules={modules} />
             ) : null}
             <PermissionGuard object="cursus" action="read">
               <Contenu modules={modules} />

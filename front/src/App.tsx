@@ -6,13 +6,16 @@ import { router } from "./App.router";
 
 import { ThemeProvider } from "./store/ThemeProvider";
 import { AuthProvider } from "./store/AuthProvider";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <RouterProvider router={router} />
+          <ErrorBoundary>
+            <RouterProvider router={router} />
+          </ErrorBoundary>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

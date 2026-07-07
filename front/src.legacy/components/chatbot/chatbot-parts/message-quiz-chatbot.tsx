@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Context } from "../../../store/context.store";
+import { AuthContext } from "../../../../src/store/AuthProvider";
 import { cn } from "../../../utils";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext } from "react";
@@ -7,7 +7,7 @@ import { useContext } from "react";
 type Props = { onTriggerQuiz: () => void };
 
 export default function MessageQuizChatbot({ onTriggerQuiz }: Props) {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   return (
     <motion.div

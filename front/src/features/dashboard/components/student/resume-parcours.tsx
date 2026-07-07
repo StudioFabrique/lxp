@@ -57,7 +57,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
             {parcours ? (
               <div className="flex flex-col h-[17.5em] justify-between gap-5">
                 <Link
-                  to={`/${currentRoute}/parcours`}
+                  to={`/${currentRoute[0]}/parcours`}
                   className="z-20 btn btn-sm"
                 >
                   <List />
@@ -66,8 +66,8 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
                 <Link
                   to={
                     parcours
-                      ? `/${currentRoute}/parcours/view/${parcours.id}`
-                      : `/${currentRoute}/parcours`
+                      ? `/${currentRoute[0]}/parcours/view/${parcours.id}`
+                      : `/${currentRoute[0]}/parcours`
                   }
                   className="z-20 btn btn-primary text-white"
                 >

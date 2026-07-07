@@ -7,6 +7,6 @@ export default function userBelongsToContacts(
 ) {
   return (
     contacts?.some((contact) => contact?.idMdb === user?._id) ||
-    user?.roles.some((role) => role.rank === 1)
+    user?.roles?.some((role) => role.rank === 1)
   );
 }

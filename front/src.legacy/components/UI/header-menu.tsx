@@ -8,11 +8,13 @@ import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 type HeaderMenuProps = {
   hideResumeCourseButton?: boolean;
   onClickResume?: () => void;
+  isStudent?: boolean;
 };
 
 const HeaderMenu = ({
   hideResumeCourseButton,
   onClickResume,
+  isStudent,
 }: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
@@ -36,21 +38,17 @@ const HeaderMenu = ({
               </Link>
             </PermissionGuard>
           </div>
-          {onClickResume ? (
-            hideResumeCourseButton ? null : (
-              <PermissionGuard action="component" object="start-lesson-button">
-                <button
-                  onClick={onClickResume}
-                  type="button"
-                  className="btn btn-primary text-base-100 gap-2 self-end"
-                >
-                  <span className="w-5 h-5">
-                    <PlayCircleIcon />
-                  </span>
-                  <p className="normal-case">Reprendre</p>
-                </button>
-              </PermissionGuard>
-            )
+          {onClickResume && !hideResumeCourseButton && isStudent ? (
+            <button
+              onClick={onClickResume}
+              type="button"
+              className="btn btn-primary text-base-100 gap-2 self-end"
+            >
+              <span className="w-5 h-5">
+                <PlayCircleIcon />
+              </span>
+              <p className="normal-case">Reprendre</p>
+            </button>
           ) : null}
         </div>
       </div>
