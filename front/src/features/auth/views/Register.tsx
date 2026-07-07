@@ -6,10 +6,10 @@
 import { useContext, useEffect } from "react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { useSearchParams } from "react-router";
-import usePasswordUpdate from "../../../../src.legacy/hooks/use-password-update";
-import PasswordUpdateError from "../../../../src.legacy/components/password-update/password-update-error";
-import PasswordUpdateSuccess from "../../../../src.legacy/components/password-update/password-update-success";
-import PasswordUpdateForm from "../../../../src.legacy/components/password-update/password-update-form";
+import { usePasswordUpdate } from "../hooks/usePasswordUpdate";
+import PasswordUpdateError from "../components/PasswordUpdateError";
+import PasswordUpdateSuccess from "../components/PasswordUpdateSuccess";
+import PasswordUpdateForm from "../components/PasswordUpdateForm";
 
 export default function RegisterHome() {
   const { chooseTheme } = useContext(ThemeContext);
@@ -60,10 +60,10 @@ export default function RegisterHome() {
         <section>
           {/* Formulaire pour saisir le mot de passe et une confirmation */}
           <PasswordUpdateForm
-            onHandleChange={handleChange}
+            onChange={handleChange}
             password={password}
             password2={password2}
-            onHandleSubmit={handleSubmit}
+            onSubmit={handleSubmit}
             isValid={isValid}
             submitLoader={submitLoader}
           />

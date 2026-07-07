@@ -1,11 +1,6 @@
-/**
- * Cette vue permet de réinitialiser le mot de passe du
- * compte d'un utilisateur.
- */
+import PasswordUpdateHome from "../components/PasswordUpdateHome";
 
-import PasswordUpdateHome from "../../../../src.legacy/components/password-update/password-update-home";
-
-export default function ResetPasswordUpdate() {
+const ResetPasswordUpdate = () => {
   return (
     <div className="flex flex-col flex-1 w-full">
       <div className="flex flex-col gap-4 my-auto w-full">
@@ -27,4 +22,6 @@ export default function ResetPasswordUpdate() {
       </div>
     </div>
   );
-}
+};
+
+export default ResetPasswordUpdate;

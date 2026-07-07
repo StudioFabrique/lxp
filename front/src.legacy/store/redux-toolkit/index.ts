@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import tagsSlice from "./tags";
 import courseInfosSlice from "./course/course-infos";
 import courseObjectivesSlice from "./course/course-objectives";
 import courseSkillsSlice from "./course/course-skills";
@@ -10,7 +9,6 @@ import lessonSlice from "./lesson/lesson";
 
 const store = configureStore({
   reducer: {
-    tags: tagsSlice.reducer,
     courseInfos: courseInfosSlice.reducer,
     courseObjectives: courseObjectivesSlice.reducer,
     courseSkills: courseSkillsSlice.reducer,
