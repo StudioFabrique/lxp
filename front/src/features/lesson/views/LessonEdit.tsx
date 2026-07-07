@@ -1,73 +1,73 @@
+import { useRef } from "react";
+import LessonForm from "../../course/components/edit/scenario/lesson-form";
+import useEditLesson from "../../../../src.legacy/hooks/use-edit-lesson";
 import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import useLessonHome from "../hooks/useLessonHome";
-import ActivityTypes from "../components/edit/activity-types";
-import DNDAcitivities from "../components/edit/activities/dnd-activities";
-import CurrentBlock from "../components/edit/current-block";
-import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";
-import Header from "../../../../src.legacy/components/UI/header";
+import { Loader2 } from "lucide-react";
 
-export default function EditLessonHome() {
+function EditLesson() {
+  const formRef = useRef<HTMLInputElement>(null);
+
   const {
-    activities,
-    activityType,
-    setActivities,
-    createActivity,
-    setCreateActivity,
-    setActivityType,
-    handleReorderActivities,
-    handleDeleteActivity,
-    onFinish,
-  } = useLessonHome();
+    lesson,
+    isLoading,
+    title,
+    description,
+    mode,
+    setMode,
+    tag,
+    setTag,
+    tagsList,
+    setLessonValues,
+    handleUpdateLesson,
+  } = useEditLesson();
 
   return (
-    <main className="w-full flex flex-col gap-y-6">
-      <section className="w-full flex flex-col gap-y-4">
-        <Header title="Activités" description="Ajouter et éditer des activités">
-          <button
-            className="btn btn-primary text-base-100"
-            onClick={() => setCreateActivity((prevState) => !prevState)}
-            disabled={createActivity && activityType.length > 0}
-          >
-            {createActivity ? "Annuler" : "Ajouter une activité"}
-          </button>
-        </Header>
-
-        {createActivity && activityType.length === 0 ? (
-          <article>
-            <ActivityTypes onActivityType={setActivityType} />
-          </article>
-        ) : null}
+    <main className="w-full p-2">
+      <section className="w-full flex flex-col gap-y-4 mb-4">
+        <article className="w-full flex justify-between items-center">
+          <div className="flex items-center gap-x-4">
+            <h1 className="text-xl font-bold">Mise à jour de la leçon</h1>
+          </div>
+        </article>
       </section>
 
-      {activityType.length !== 0 ? (
-        <article
-          className={`
-            transition-opacity duration-300
-            ${
-              activityType.length !== 0
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
-            }
-          `}
-        >
-          <CurrentBlock activityType={activityType} onFinish={onFinish} />
-        </article>
-      ) : (
-        <article>
-          {activities.length > 0 ? (
-            <DNDAcitivities
-              activities={activities}
-              setActivities={setActivities}
-              onReorderActivities={handleReorderActivities}
-              onDeleteActivity={handleDeleteActivity}
-            />
-          ) : (
-            <Wrapper>
-              <ElementNotFound message="Aucune activité trouvée." />
-            </Wrapper>
-          )}
-        </article>
-      )}
+      <section className="w-full">
+        {lesson ? (
+          <Wrapper>
+            <LessonForm
+              ref={formRef}
+              title={title}
+              description={description}
+              mode={mode}
+              tag={tag}
+              isLoading={isLoading}
+              onSetTag={setTag}
+              tags={tagsList}
+              onSetMode={setMode}
+              onSubmitLesson={() => {}}
+            >
+              <div className="flex justify-end items-center gap-x-4">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setLessonValues(lesson)}
+                >
+                  Réinitialiser
+                </button>
+                <button
+                  className="btn btn-primary flex items-center gap-x-2"
+                  onClick={handleUpdateLesson}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="animate spin" /> : null}
+                  Mettre à jour la leçon
+                </button>
+              </div>
+            </LessonForm>
+          </Wrapper>
+        ) : null}
+      </section>
     </main>
   );
 }
+
+export default EditLesson;

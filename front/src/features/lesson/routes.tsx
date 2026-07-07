@@ -18,7 +18,7 @@ export const adminLessonRoutes: RouteObject[] = [
     children: [
       { index: true, element: wrapLesson(withSuspense(LessonHome)) },
       { path: "add", element: wrapLesson(withSuspense(LessonAdd)) },
-      { path: "edit/:id", element: wrapLesson(withSuspense(LessonEdit)) },
+      { path: "edit/:lessonId", element: wrapLesson(withSuspense(LessonEdit)) },
       {
         path: "preview/:activityId",
         element: wrapLesson(withSuspense(PreviewActivity)),

@@ -1,5 +1,8 @@
 import { Link } from "react-router";
-import { localeDate, localeTime } from "../../../../../src.legacy/helpers/locale-date";
+import {
+  localeDate,
+  localeTime,
+} from "../../../../../src.legacy/helpers/locale-date";
 import useEagerLoadingList from "../../../../../src.legacy/hooks/use-eager-loading-list";
 import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -18,12 +21,11 @@ interface LessonHomeProps {
 }
 
 export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
-  const {
-    list,
-    sortData,
-    fieldSort,
-    direction,
-  } = useEagerLoadingList(lessonsList, "title", 1000);
+  const { list, sortData, fieldSort, direction } = useEagerLoadingList(
+    lessonsList,
+    "title",
+    1000,
+  );
 
   const content = (
     <>
@@ -100,7 +102,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                         data-tip="Modifier la leçon"
                       >
                         <Link
-                          to={`/admin/lesson/edit-lesson/${item.id}`}
+                          to={`/admin/lesson/edit/${item.id}`}
                           className="text-secondary"
                           aria-label="Editer la leçon"
                         >

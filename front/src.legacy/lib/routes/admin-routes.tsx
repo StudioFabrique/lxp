@@ -14,14 +14,6 @@ const Role = React.lazy(() => import("../../views/role/role"));
 const FormationAdd = React.lazy(
   () => import("../../views/formation/formation-add"),
 );
-const UserLayout = React.lazy(
-  () => import("../../views/user/user-layout.component"),
-);
-const UserHome = React.lazy(
-  () => import("../../views/user/user-home.component"),
-);
-const UserAdd = React.lazy(() => import("../../views/user/user-add.component"));
-const UserEdit = React.lazy(() => import("../../views/user/user-edit"));
 const GroupLayout = React.lazy(() => import("../../views/group/group-layout"));
 const GroupHome = React.lazy(() => import("../../views/group/group-home"));
 const GroupManage = React.lazy(() => import("../../views/group/group-manage"));
@@ -164,15 +156,7 @@ const adminRoutes = [
     path: "formation",
     element: <FormationAdd />,
   },
-  {
-    path: "user",
-    element: <UserLayout />,
-    children: [
-      { index: true, element: <UserHome /> },
-      { path: "add", element: <UserAdd /> },
-      { path: "edit/:id", element: <UserEdit /> },
-    ],
-  },
+
   {
     path: "group",
     element: <GroupLayout />,

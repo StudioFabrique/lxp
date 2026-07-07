@@ -1,28 +1,35 @@
 import { Link } from "react-router";
-import useResetPasswordHome from "../../../../src.legacy/views/reset-password/use-password-home";
-import Field from "../../../../src.legacy/components/UI/forms/field";
+import { useResetPassword } from "../hooks/useResetPassword";
+import ResetPasswordFormEmail from "../components/ResetPasswordFormEmail";
 
-export default function ResetPasswordHome() {
-  const { data, emailVerified, error, handleCheckEmail, isLoading } =
-    useResetPasswordHome();
+const ResetPasswordHome = () => {
+  const {
+    email,
+    setEmail,
+    fieldError,
+    error,
+    isLoading,
+    emailVerified,
+    handleCheckEmail,
+  } = useResetPassword();
 
-  // Vue après envoi de l'email (Succès)
-  const emailIsValid = (
-    <div className="flex flex-col gap-6 my-auto w-full text-center">
-      <div className="bg-success/10 border border-success/20 p-6 rounded-xl">
-        <h2 className="text-success-content leading-relaxed text-sm">
-          Un email de réinitialisation a été envoyé. Veuillez consulter votre
-          boîte de réception pour poursuivre la procédure.
-        </h2>
+  if (emailVerified) {
+    return (
+      <div className="flex flex-col gap-6 my-auto w-full text-center">
+        <div className="bg-success/10 border border-success/20 p-6 rounded-xl">
+          <h2 className="text-success-content leading-relaxed text-sm">
+            Un email de réinitialisation a été envoyé. Veuillez consulter votre
+            boîte de réception pour poursuivre la procédure.
+          </h2>
+        </div>
+        <Link className="btn btn-outline btn-primary w-full" to="/">
+          Retour à la connexion
+        </Link>
       </div>
-      <Link className="btn btn-outline btn-primary w-full" to="/">
-        Retour à la connexion
-      </Link>
-    </div>
-  );
+    );
+  }
 
-  // Vue formulaire de saisie
-  const emailIsNotValid = (
+  return (
     <form className="flex flex-col flex-1 w-full" onSubmit={handleCheckEmail}>
       <div className="flex flex-col gap-4 my-auto w-full">
         <h1 className="font-bold text-2xl text-base-content mb-2">
@@ -35,10 +42,10 @@ export default function ResetPasswordHome() {
         </p>
 
         <div className="form-control w-full">
-          <Field
-            placeholder="jean.dupont@exemple.fr"
-            data={data}
-            name="email"
+          <ResetPasswordFormEmail
+            email={email}
+            onChange={setEmail}
+            error={fieldError}
           />
         </div>
 
@@ -70,6 +77,6 @@ export default function ResetPasswordHome() {
       </div>
     </form>
   );
+};
 
-  return !emailVerified ? emailIsNotValid : emailIsValid;
-}
+export default ResetPasswordHome;
