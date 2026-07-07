@@ -13,8 +13,7 @@ import toast from "react-hot-toast";
 
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
 import { ModuleData } from "../../utils/interfaces/new-module";
-import { useDispatch } from "react-redux";
-import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
+
 
 /**
  * Represents a selectable item (formation or parcours)
@@ -205,7 +204,6 @@ const newModuleReducer = (state: State, action: Action): State => {
  */
 const useNewModule = () => {
   const nav = useNavigate();
-  const redux = useDispatch();
   const [state, dispatch] = useReducer(newModuleReducer, initialState);
   const { sendRequest, error, isLoading } = useHttp();
   const { errors, onChangeValue, onValidateForm, values } = useForm(
@@ -267,7 +265,6 @@ const useNewModule = () => {
       const applyData = (result: { data: ModuleData; message: string }) => {
         toast.success(result.message);
         dispatch({ type: "SET_NEW_MODULE_DATA", payload: result.data });
-        redux(parcoursModulesSliceActions.addNewModule(result.data));
       };
 
       sendRequest(
@@ -285,7 +282,6 @@ const useNewModule = () => {
       data.values,
       onValidateForm,
       sendRequest,
-      redux,
     ],
   );
 

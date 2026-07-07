@@ -4,7 +4,7 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { formatDateToYYYYMMDD } from "../../../helpers/convert-date";
-import DatePicker from "../../edit-parcours/calendrier/date-picker";
+import DatePicker from "../../../../src/features/parcours/components/edit/calendrier/date-picker";
 
 type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
