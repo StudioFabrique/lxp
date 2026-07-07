@@ -1,20 +1,23 @@
 import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/router-helpers";
 import { lazy } from "react";
+import { Outlet } from "react-router";
 
-// Import depuis les vues internes de la feature Group
 const GroupList = lazy(() => import("./views/GroupList"));
+const GroupEdit = lazy(() => import("./views/GroupEdit"));
 
-// Routes injectées dans /admin/parcours
 export const adminGroupRoutes: RouteObject[] = [
   {
     path: "group",
-    element: withSuspense(GroupList),
-    // children: [
-    //   { index: true, element: withSuspense(ParcoursHome) },
-    //   { path: "créer-un-parcours", element: withSuspense(ParcoursAdd) },
-    //   { path: "edit/:id", element: withSuspense(ParcoursEdit) },
-    //   { path: "view/:id", element: withSuspense(ParcoursView) },
-    // ],
+    element: (
+      <div className="w-full flex flex-col gap-6">
+        <Outlet />
+      </div>
+    ),
+    children: [
+      { index: true, element: withSuspense(GroupList) },
+      { path: "add", element: withSuspense(GroupEdit) },
+      { path: "edit/:id", element: withSuspense(GroupEdit) },
+    ],
   },
 ];

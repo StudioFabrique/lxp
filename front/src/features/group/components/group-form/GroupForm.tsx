@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, FormEvent, useEffect } from "react";
 
-import Informations from "./components/informations.components";
-import Details from "./components/details.component";
-import Group from "../../../utils/interfaces/group";
+import Informations from "./GroupFormInformations";
+import Details from "./GroupFormDetails";
+import Group from "../../../../utils/interfaces/group";
 import useGroupForm from "./useGroupForm";
-import FromParcoursWarning from "./components/from-parcours-warning";
-import Header from "../../UI/header";
+import FromParcoursWarning from "./GroupFormParcoursWarning";
+import Header from "../../../../../src.legacy/components/UI/header";
 import { Link } from "react-router";
 
 const GroupForm: FC<{

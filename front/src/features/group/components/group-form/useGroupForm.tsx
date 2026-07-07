@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import useForm from "../../UI/forms/hooks/use-form";
-import { validationErrors } from "../../../helpers/validate";
-import { createGroupSchema } from "../../../lib/validation/create-group-schema";
+import useForm from "../../../../../src.legacy/components/UI/forms/hooks/use-form";
+import { validationErrors } from "../../../../../src.legacy/helpers/validate";
+import { createGroupSchema } from "../../../../../src.legacy/lib/validation/create-group-schema";
 import toast from "react-hot-toast";
-import Group from "../../../utils/interfaces/group";
+import Group from "../../../../../src/utils/interfaces/group";
 
 function useGroupForm({
   onSubmitForm,
@@ -17,7 +17,6 @@ function useGroupForm({
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
-  /* const [tags, setTags] = useState<Tag[]>([]); */
 
   const { values, errors, onChangeValue, onValidationErrors, initValues } =
     useForm();

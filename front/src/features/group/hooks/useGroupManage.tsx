@@ -1,51 +1,61 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams, useSearchParams } from "react-router";
-import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
-import User from "../../../utils/interfaces/user";
-import Group from "../../../utils/interfaces/group";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import User from "../../../../src/utils/interfaces/user";
+import Group from "../../../../src/utils/interfaces/group";
+import { groupMutations } from "../group.api";
+import toast from "react-hot-toast";
 
-/**
- * Hook personnalisé pour gérer la création et la modification des groupes
- * Gère l'état des utilisateurs, la soumission du formulaire et les interactions CRUD
- */
 function useGroupManage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLoading, sendRequest } = useHttp(true);
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
-  const [submitMethod, setSubmitMethod] = useState<"put" | "post">("post");
-  const [existingGroup, setExistingGroup] = useState<Group>();
   const [searchParams] = useSearchParams();
   const fromParcours = searchParams.get("parcours");
 
-  /**
-   * Gère la soumission du formulaire de groupe
-   * @param data - Les données du formulaire
-   * @param file - Le fichier image associé au groupe
-   */
-  const handleSubmit = (data: any, file: File) => {
-    const applyData = (_data: any) => {
-      if (fromParcours) navigate(`/admin/parcours/edit/${fromParcours}?step=6`);
-      else
-        navigate("/admin/group", {
-          state: {
-            toastFrom:
-              submitMethod === "post"
-                ? "Groupe créé avec succès"
-                : "Groupe modifié avec succès",
-          },
-        });
-    };
+  const { data: existingGroup, isLoading } = useQuery({
+    queryKey: ["group", id],
+    queryFn: () => groupMutations.getById(id!),
+    enabled: !!id,
+  });
 
-    // Prépare les données des utilisateurs avec leur état actif
+  useEffect(() => {
+    if (existingGroup) {
+      setUsersToAdd(existingGroup.users ?? []);
+    }
+  }, [existingGroup]);
+
+  const handleNavigateAfterSubmit = useCallback(() => {
+    if (fromParcours) {
+      navigate(`/admin/parcours/edit/${fromParcours}?step=6`);
+    } else {
+      navigate("/admin/group", {
+        state: {
+          toastFrom: id
+            ? "Groupe modifié avec succès"
+            : "Groupe créé avec succès",
+        },
+      });
+    }
+  }, [fromParcours, navigate, id]);
+
+  const mutation = useMutation({
+    mutationFn: (formData: FormData) => {
+      if (id) {
+        return groupMutations.update(id, formData);
+      }
+      return groupMutations.create(formData);
+    },
+    onSuccess: handleNavigateAfterSubmit,
+  });
+
+  const handleSubmit = (data: any, file: File) => {
     const usersIdWithActiveState = usersToAdd.map((user) => ({
       _id: user._id,
       isActive: user.isActive,
     }));
 
-    // Crée le FormData avec les données et l'image
     const formData = new FormData();
     formData.append(
       "data",
@@ -53,29 +63,13 @@ function useGroupManage() {
     );
     formData.append("image", file);
 
-    // Envoie la requête au serveur
-    sendRequest(
-      {
-        method: submitMethod,
-        path: submitMethod === "post" ? "/group" : `/group/${id}`,
-        body: formData,
-      },
-      applyData,
-    );
+    mutation.mutate(formData);
   };
 
-  /**
-   * Ajoute de nouveaux utilisateurs à la liste
-   * @param users - Tableau d'utilisateurs à ajouter
-   */
   const handleAddUsers = (users: Array<User>) => {
     setUsersToAdd((currentUsers) => [...currentUsers, ...users]);
   };
 
-  /**
-   * Met à jour l'état d'un utilisateur dans la liste
-   * @param user - L'utilisateur à mettre à jour
-   */
   const handleUpdateUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
       usersToAdd.map((userToAdd) =>
@@ -86,43 +80,16 @@ function useGroupManage() {
     );
   };
 
-  /**
-   * Supprime un utilisateur de la liste
-   * @param user - L'utilisateur à supprimer
-   */
   const handleDeleteUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
       usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
     );
   };
 
-  /**
-   * Récupère les données d'un groupe existant depuis le serveur
-   */
-  const getExistingGroup = useCallback(() => {
-    const applyData = (data: { data: Group }) => {
-      setExistingGroup(data.data);
-      setUsersToAdd(data.data.users ?? []);
-    };
-    sendRequest({ path: `/group/${id}` }, applyData);
-  }, [id, sendRequest]);
-
-  /**
-   * Effet qui s'exécute quand un ID est présent
-   * Configure le mode édition et récupère les données du groupe
-   */
-  useEffect(() => {
-    if (id) {
-      getExistingGroup();
-      setSubmitMethod("put");
-    }
-  }, [id, getExistingGroup]);
-
-  // Retourne les fonctions et états nécessaires
   return {
     existingGroup,
     usersToAdd,
-    isLoading,
+    isLoading: isLoading || mutation.isPending,
     onSubmit: handleSubmit,
     onAddUsers: handleAddUsers,
     onUpdateUser: handleUpdateUser,
