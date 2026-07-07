@@ -3,7 +3,7 @@ import Field from "../UI/forms/field";
 import QuestionMarkTooltip from "../UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle, Loader } from "lucide-react";
 import CustomError from "../../utils/interfaces/custom-error";
-import TagsList from "../formation-home/tags-list";
+import TagsList from "../../../components/tags/TagsList";
 import FieldArea from "../UI/forms/field-area";
 import FormUploadImage from "../UI/form-upload-image";
 import useImageUpload from "../../hooks/use-image-upload";

@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import Tag from "../utils/interfaces/tag";
-import { createTag } from "../helpers/create-tag";
+import type Tag from "../utils/interfaces/tag";
+import { createTag } from "../../src.legacy/helpers/create-tag";
 
 const useTags = (initialTags: Tag[]) => {
   const [notSelected, setNotSelected] = useState<Tag[]>([]);
@@ -11,18 +11,14 @@ const useTags = (initialTags: Tag[]) => {
     setTag(event.currentTarget.value);
   };
 
-  /**
-   * met à jour la liste des tags sélectionnés
-   * @param event: React.FormEvent
-   */
   const handleTagSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const exisitingTag = notSelected.find(
-      (item) => item.name.toLowerCase() === tag.toLowerCase()
+      (item) => item.name.toLowerCase() === tag.toLowerCase(),
     );
     if (!exisitingTag) {
       const exisitingCurrentTag = currentTags.find(
-        (item) => item.name.toLowerCase() === tag.toLowerCase()
+        (item) => item.name.toLowerCase() === tag.toLowerCase(),
       );
       if (!exisitingCurrentTag) {
         setCurrentTags((prevState) => [
@@ -38,22 +34,16 @@ const useTags = (initialTags: Tag[]) => {
   };
 
   const handleRemoveTag = (id: number) => {
-    console.log({ id, currentTags });
-
     setCurrentTags((prevState) => prevState.filter((item) => item.id !== id));
   };
 
   const handleCheckTags = useCallback(() => {
-    let tags = Array<Tag>();
-    currentTags.forEach((item) => {
-      if (
+    return currentTags.filter(
+      (item) =>
         !initialTags.find(
-          (elem) => elem.name.toLowerCase() === item.name.toLowerCase()
-        )
-      )
-        tags = [...tags, item];
-    });
-    return tags;
+          (elem) => elem.name.toLowerCase() === item.name.toLowerCase(),
+        ),
+    );
   }, [currentTags, initialTags]);
 
   const resetTags = () => {
@@ -61,28 +51,26 @@ const useTags = (initialTags: Tag[]) => {
   };
 
   const updatedTags = (newTags: Tag[]) => {
-    let updatedTags = currentTags;
+    let updated = currentTags;
     newTags.forEach((item) => {
-      updatedTags = updatedTags.filter(
-        (elem) => elem.name.toLowerCase() !== item.name.toLowerCase()
+      updated = updated.filter(
+        (elem) => elem.name.toLowerCase() !== item.name.toLowerCase(),
       );
     });
-    return [...updatedTags, ...newTags];
+    return [...updated, ...newTags];
   };
 
   const handleSetCurrentTags = useCallback(
     (ids: number[]) => {
       setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
     },
-    [initialTags]
+    [initialTags],
   );
 
   useEffect(() => {
-    let tags = Array<Tag>();
-    initialTags.forEach((item) => {
-      if (!currentTags.find((elem) => elem.id === item.id))
-        tags = [...tags, item];
-    });
+    const tags = initialTags.filter(
+      (item) => !currentTags.find((elem) => elem.id === item.id),
+    );
     setNotSelected(tags);
   }, [currentTags, initialTags]);
 
