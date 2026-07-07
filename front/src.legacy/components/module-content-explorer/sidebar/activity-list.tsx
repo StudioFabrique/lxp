@@ -6,9 +6,9 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Activity } from "../../../utils/interfaces/activity";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import hasPermission from "../../../utils/hasPermission";
-import { Context } from "../../../store/context.store";
+import { AuthContext } from "../../../../src/store/AuthProvider";
 import ActivityItem from "./activity-item";
 import {
   BaseEventPayload,
@@ -36,7 +36,7 @@ export default function ActivityList({
   onSelectActivity,
   onClickCreateActivity,
 }: ActivityListProps) {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -92,13 +92,13 @@ export default function ActivityList({
             Chargement des activités en cours...
           </span>
         ) : (
-          <Can action="component" object="progression">
+          <PermissionGuard action="component" object="progression">
             <p className="text-primary text-sm">Aucune activité</p>
-          </Can>
+          </PermissionGuard>
         )}
 
         {onClickCreateActivity && canEdit && !isDraggingOver && (
-          <Can action="update" object="lesson">
+          <PermissionGuard action="update" object="lesson">
             <span className="px-4 w-full">
               <button
                 className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] w-full"
@@ -109,7 +109,7 @@ export default function ActivityList({
                 Ajouter une activité
               </button>
             </span>
-          </Can>
+          </PermissionGuard>
         )}
       </div>
     </FadeWrapper>

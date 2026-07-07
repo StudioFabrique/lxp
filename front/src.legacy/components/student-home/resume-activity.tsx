@@ -10,7 +10,7 @@ import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import defaultImage from "../../assets/images/module-default.jpg";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
@@ -85,7 +85,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                   )}
             </div>
           </div>,
-          <Can key="link" action="component" object="start-lesson-button">
+          <PermissionGuard key="link" action="component" object="start-lesson-button">
             <div className="p-5 w-full flex justify-end">
               <Link
                 to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
@@ -96,7 +96,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                 <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
               </Link>
             </div>
-          </Can>,
+          </PermissionGuard>,
         ]}
       />
       {lastLesson.parcoursId ? (

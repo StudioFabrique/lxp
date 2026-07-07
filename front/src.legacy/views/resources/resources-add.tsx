@@ -2,7 +2,7 @@ import ResourcesAddHeader from "../../components/resources-add/ResourcesAddHeade
 import ListHeader from "../../components/UI/list-header";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import ResourceForm from "../../components/resources-add/ResourceForm";
-import Can from "../../components/UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
@@ -111,7 +111,7 @@ export default function ResourceAdd() {
           </section>
 
           <section className="flex-1 flex flex-col gap-4">
-            <Can action="write" object="lesson">
+            <PermissionGuard action="write" object="lesson">
               <ActivityContent
                 activityState={activityState}
                 parentId={resourceId ? +resourceId : 0}
@@ -130,7 +130,7 @@ export default function ResourceAdd() {
               >
                 {placeholder}
               </ActivityContent>
-            </Can>
+            </PermissionGuard>
           </section>
         </div>
         {activityToDelete ? (

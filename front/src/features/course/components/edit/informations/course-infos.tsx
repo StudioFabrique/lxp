@@ -17,6 +17,7 @@ import { regexUrl } from "../../../../../../src.legacy/utils/constantes";
 import ContactsWithDrawer from "../../../../../../src.legacy/components/inherited-items/contacts-with-drawer";
 import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
 import CourseTags from "./course-tags";
+import { ParcoursProvider } from "../../../../parcours/store/ParcoursContext";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
@@ -186,11 +187,13 @@ const CourseInfos = () => {
             />
           </Wrapper>
           <Wrapper>
-            <CourseTags
-              onSubmit={handleUpdateTags}
-              loading={loadingTags}
-              tags={[]}
-            />
+            <ParcoursProvider>
+              <CourseTags
+                onSubmit={handleUpdateTags}
+                loading={loadingTags}
+                tags={currentTags || []}
+              />
+            </ParcoursProvider>
           </Wrapper>
         </div>
       </div>

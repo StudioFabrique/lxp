@@ -1,5 +1,5 @@
 import { Edit, MoreVertical, Trash2 } from "lucide-react";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import { Activity } from "../../../utils/interfaces/activity";
 
 type ActivityActionsMenuProps = {
@@ -16,7 +16,7 @@ const ActivityActionsMenu = ({
   disabled = false,
 }: ActivityActionsMenuProps) => {
   return (
-    <Can action="update" object="lesson">
+    <PermissionGuard action="update" object="lesson">
       <div className="dropdown dropdown-end">
         <button
           tabIndex={0}
@@ -52,7 +52,7 @@ const ActivityActionsMenu = ({
           </li>
         </ul>
       </div>
-    </Can>
+    </PermissionGuard>
   );
 };
 

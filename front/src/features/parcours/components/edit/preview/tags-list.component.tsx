@@ -8,7 +8,7 @@ interface TagsListProps {
 const TagsList = (props: TagsListProps) => {
   return (
     <article className="flex flex-wrap gap-2">
-      {props.tagsList.map((tag) => (
+      {props.tagsList?.map((tag) => (
         <span key={tag.id}>
           <TagItem tag={tag} />
         </span>

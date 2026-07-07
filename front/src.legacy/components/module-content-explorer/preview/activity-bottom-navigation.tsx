@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { cn } from "../../../utils";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import FeedbacksButton from "../../UI/feedbacks/feedbacks-button";
 import { PropsWithChildren } from "react";
 
@@ -39,16 +39,16 @@ const ActivityBottomNavigation = ({
 
     {/* Bouton central */}
     <div className="flex-initial">
-      <Can action="component" object="progression">
+      <PermissionGuard action="component" object="progression">
         {children}
-      </Can>
+      </PermissionGuard>
     </div>
 
     {/* Bouton Suivant ou Terminer */}
     <div className="flex-1 flex justify-end mr-5">
       {isLastActivitySelected ? (
         (!isLastLessonSelected || !isLessonCompleted) && (
-          <Can action="component" object="progression">
+          <PermissionGuard action="component" object="progression">
             <FeedbacksButton
               className="btn btn-success text-nowrap text-success-content"
               feedbackType="thumbUp"
@@ -68,7 +68,7 @@ const ActivityBottomNavigation = ({
                 </>
               )}
             </FeedbacksButton>
-          </Can>
+          </PermissionGuard>
         )
       ) : (
         <button onClick={onNext} className="btn btn-primary text-base-100">

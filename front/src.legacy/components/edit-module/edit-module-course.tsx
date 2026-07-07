@@ -5,7 +5,7 @@ import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import { Link } from "react-router";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 
 interface EditModuleCourseProps {
   courses: Course[];
@@ -83,14 +83,14 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                               </span>
                             </div>
                             <span className="flex items-center gap-x-4">
-                              <Can action="update" object="course">
+                              <PermissionGuard action="update" object="course">
                                 <Link to={`/admin/course/edit/${item.id}`}>
                                   <Pen className="w-4 h-4 text-primary" />
                                 </Link>
-                              </Can>
-                              <Can action="delete" object="course">
+                              </PermissionGuard>
+                              <PermissionGuard action="delete" object="course">
                                 <Trash2 className="w-4 h-4 text-error" />
-                              </Can>
+                              </PermissionGuard>
                             </span>
                           </article>
                         </Wrapper>

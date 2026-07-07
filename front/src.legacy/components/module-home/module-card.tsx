@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { localeDate } from "../../helpers/locale-date";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { useState } from "react";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
@@ -18,6 +18,7 @@ interface ModuleCardProps {
 
 const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const coursesCount = module.courses?.length ?? 0;
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
@@ -41,7 +42,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
           {module.parcoursId ? (
-            <Can action="update" object="parcours">
+            <PermissionGuard action="update" object="parcours">
               <div
                 className="tooltip tooltip-left"
                 data-tip="Editer le module associé au parcours"
@@ -56,7 +57,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
                   </div>
                 </Link>
               </div>
-            </Can>
+            </PermissionGuard>
           ) : null}
         </div>
       </figure>
@@ -104,9 +105,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
               <span className="flex gap-x-1 items-center">
                 <p>Cours :</p>
                 <p className="font-normal">
-                  {module.courses.length === 0
-                    ? "Aucun"
-                    : module.courses.length}
+                  {coursesCount === 0 ? "Aucun" : coursesCount}
                 </p>
               </span>
             </div>
@@ -121,7 +120,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
           </p>
 
           <div className="flex place-items-center gap-x-2">
-            <Can action="read" object="module">
+            <PermissionGuard action="read" object="module">
               <div className="">
                 {module.parcoursId ? (
                   <Link
@@ -142,9 +141,9 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
                   </div>
                 )}
               </div>
-            </Can>
+            </PermissionGuard>
             <div aria-label="suppression du module">
-              <Can action="delete" object="module">
+              <PermissionGuard action="delete" object="module">
                 <div
                   className="tooltip tooltip-bottom flex-items-center"
                   data-tip="Supprimer le module"
@@ -158,7 +157,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
                     </div>
                   </button>
                 </div>
-              </Can>
+              </PermissionGuard>
             </div>
           </div>
         </div>

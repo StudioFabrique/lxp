@@ -18,7 +18,7 @@ export const adminCourseRoutes: RouteObject[] = [
     children: [
       { index: true, element: wrapCourse(withSuspense(CourseHome)) },
       { path: "add", element: wrapCourse(withSuspense(CourseAdd)) },
-      { path: "edit/:id", element: wrapCourse(withSuspense(CourseEdit)) },
+      { path: "edit/:courseId", element: wrapCourse(withSuspense(CourseEdit)) },
       { path: "import", element: wrapCourse(withSuspense(CourseImport)) },
     ],
   },

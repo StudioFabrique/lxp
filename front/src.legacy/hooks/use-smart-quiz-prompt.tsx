@@ -8,7 +8,7 @@ import {
 } from "react";
 import { Activity } from "../utils/interfaces/activity";
 import hasPermission from "../utils/hasPermission";
-import { Context } from "../store/context.store";
+import { AuthContext } from "../../src/store/AuthProvider";
 
 const MIN_TIME_MS = 10 * 1000; // 10 secondes
 const MAX_TIME_MS = 5 * 60 * 1000; // 5 minutes
@@ -32,7 +32,7 @@ export default function useSmartQuizPrompt({
   onTriggerRandomQuiz,
   onGoToNextActivity,
 }: UseSmartQuizPromptProps) {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
   const [hasBypassedQuiz, setHasBypassedQuiz] = useState(false);
 
@@ -47,7 +47,8 @@ export default function useSmartQuizPrompt({
   // Déterminer si l'utilisateur peut passer outre les règles de temps
   const canSkipLogic = useMemo(() => {
     const userIsAdmin =
-      user?.permissions && hasPermission(user.permissions, "update", "lesson");
+      user?.roles?.some((role) => role.rank === 1) ||
+      (user?.permissions && hasPermission(user.permissions, "update", "lesson"));
     return userIsAdmin || isLessonCompleted || hasBypassedQuiz;
   }, [user, isLessonCompleted, hasBypassedQuiz]);
 

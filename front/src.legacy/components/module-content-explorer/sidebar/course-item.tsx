@@ -17,10 +17,10 @@ import {
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
-import { Context } from "../../../store/context.store";
+import { AuthContext } from "../../../../src/store/AuthProvider";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 import { Link } from "react-router";
@@ -56,7 +56,7 @@ const CourseItem = ({
   onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   const canEditCourse = userBelongsToContacts(user, course.contacts);
 
@@ -222,7 +222,7 @@ const CourseItem = ({
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
                   {course.isPublished ? (
-                    <Can action="update" object="course">
+                    <PermissionGuard action="update" object="course">
                       <button
                         onClick={(e) => handleOpenModal("visibility", e)}
                         className={cn("btn btn-sm tooltip ", {
@@ -241,10 +241,10 @@ const CourseItem = ({
                           <EyeOff className="w-4 h-4" />
                         )}
                       </button>
-                    </Can>
+                    </PermissionGuard>
                   ) : null}
 
-                  <Can action="write" object="course">
+                  <PermissionGuard action="write" object="course">
                     <CourseActions
                       course={course}
                       parcoursId={parcoursId}
@@ -252,19 +252,19 @@ const CourseItem = ({
                       onOpenModal={handleOpenModal}
                       onClickMenu={handleClickMenu}
                     />
-                  </Can>
+                  </PermissionGuard>
                 </div>
               )}
             </div>
           </div>
-          <Can action="component" object="progression">
+          <PermissionGuard action="component" object="progression">
             <progress
               className={cn(
                 "w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all",
               )}
               value={isNaN(courseProgress) ? 0 : courseProgress}
             />
-          </Can>
+          </PermissionGuard>
         </div>
         <motion.div
           className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2 pt-2"
@@ -325,7 +325,7 @@ const CourseItem = ({
                 <p className="text-base-content/60 text-sm">
                   Aucune leçon disponible pour ce cours
                 </p>
-                <Can action="write" object="course">
+                <PermissionGuard action="write" object="course">
                   <Link
                     to="/admin/lesson/add"
                     state={{
@@ -337,7 +337,7 @@ const CourseItem = ({
                   >
                     Créer la première leçon
                   </Link>
-                </Can>
+                </PermissionGuard>
               </div>
             )}
           </div>

@@ -5,12 +5,12 @@ import ModuleData from "../../components/module-content-explorer/module-data/mod
 import ModuleContentExplorerWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
 import ModuleContentExplorerSkeleton from "./module-content-explorer-skeleton";
 import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
-import Can from "../../components/UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import { Link, useNavigate } from "react-router";
 import { PenBox } from "lucide-react";
 import { useContext } from "react";
 import Header from "../../components/UI/header";
-import { Context } from "../../store/context.store";
+import { AuthContext } from "../../../src/store/AuthProvider";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
 import useCourseQuiz from "../../hooks/use-course-quiz";
 import QuizModal from "../../components/quizzes/modals/quiz-modal";
@@ -28,7 +28,7 @@ export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
  * La modification de contenu est aussi possible pour le formateur et l'admin.
  */
 const ModuleContentExplorer = () => {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const firstPathSegment = window.location.pathname.split("/")[1];
 
@@ -156,14 +156,14 @@ const ModuleContentExplorer = () => {
         }
       >
         {canEditModule && (
-          <Can object="lesson" action="update">
+          <PermissionGuard object="lesson" action="update">
             <Link
               className="btn btn-primary text-base-100 gap-2"
               to={`/admin/parcours/edit/${state.module?.parcoursId}?step=4`}
             >
               <PenBox /> Modifier le module
             </Link>
-          </Can>
+          </PermissionGuard>
         )}
       </Header>
 
@@ -190,9 +190,9 @@ const ModuleContentExplorer = () => {
           }
           /* Progress Bar */
           topProgressBar={
-            <Can action="component" object="progression">
+            <PermissionGuard action="component" object="progression">
               <ProgressBar courses={state.module.courses} />
-            </Can>
+            </PermissionGuard>
           }
           /* Preview */
           previewLesson={

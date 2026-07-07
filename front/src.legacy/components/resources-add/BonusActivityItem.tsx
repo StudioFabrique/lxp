@@ -1,7 +1,7 @@
 import { EditIcon, Trash2 } from "lucide-react";
 import { Activity } from "../../utils/interfaces/activity";
 import { getActivityIcon } from "../../helpers/getActivityIcon";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 
 type Props = {
   disabled?: boolean;
@@ -32,7 +32,7 @@ export default function BonusActivityItem({
       >
         {activity.title}
       </button>
-      <Can action="write" object="lesson">
+      <PermissionGuard action="write" object="lesson">
         <div
           className={
             "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"
@@ -57,7 +57,7 @@ export default function BonusActivityItem({
             <Trash2 className="w-4 h-4 text-error" />
           </button>
         </div>
-      </Can>
+      </PermissionGuard>
     </div>
   );
 }

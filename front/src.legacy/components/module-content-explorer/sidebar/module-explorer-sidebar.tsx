@@ -1,6 +1,6 @@
 import Lesson from "../../../utils/interfaces/lesson";
 import { ExplorerStore } from "../../../views/module-content-explorer/module-content-explorer";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
@@ -37,12 +37,12 @@ const ModuleExplorerSidebar = ({
       onDeleteLesson={lessonActions.deleteLesson}
     >
       {canEditModule && (
-        <Can action="write" object="course">
+        <PermissionGuard action="write" object="course">
           <CreateCourseItem
             parcoursId={module.parcoursId}
             moduleId={module.id || 0}
           />
-        </Can>
+        </PermissionGuard>
       )}
       <ActivityList
         canEdit={canEditSelectedLesson}

@@ -52,11 +52,11 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           <article className="flex flex-col gap-y-8">
             <Wrapper>
               <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
-              <ContactsList contactsList={course?.contacts} />
+              <ContactsList contactsList={course?.contacts ?? []} />
             </Wrapper>
             <Wrapper>
               <h2 className="text-xl font-bold">Tags</h2>
-              <TagsList tagsList={course?.tags} />
+              <TagsList tagsList={course?.tags ?? []} />
             </Wrapper>
           </article>
         </div>

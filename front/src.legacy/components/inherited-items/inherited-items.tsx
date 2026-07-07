@@ -55,8 +55,8 @@ const InheritedItems = (props: InheritedItemsProps) => {
    */
   const handleAddItem = (ids: number[]) => {
     let updatedItems = currentItems;
-    ids.forEach((item: any) => {
-      const foundItem = props.initialList.find(
+    (ids ?? []).forEach((item: any) => {
+      const foundItem = props.initialList?.find(
         (element: any) => element.id === item
       );
       if (foundItem) {
@@ -83,7 +83,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    */
   useEffect(() => {
     let updatedItems = Array<any>();
-    props.initialList.forEach((item: any) => {
+    (props.initialList ?? []).forEach((item: any) => {
       const foundItem = currentItems.find((element) => element.id === item.id);
       if (!foundItem) {
         updatedItems = [...updatedItems, item];
@@ -96,7 +96,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * met à jour la liste des objets sélectionnés qd les props sont modifiées
    */
   useEffect(() => {
-    setCurrentItems(props.selectedItems);
+    setCurrentItems(props.selectedItems ?? []);
   }, [props.selectedItems]);
 
   return (

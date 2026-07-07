@@ -2,7 +2,7 @@ import { MouseEvent, Ref, useEffect, useRef, useState } from "react";
 import InformationAndSettings from "../../components/user-profile/information/information-and-settings";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
-import Can from "../../components/UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import { useLocation } from "react-router";
 import Header from "../../components/UI/header";
 import Journal from "../../components/user-profile/journal/journal";
@@ -75,7 +75,7 @@ const Profile = () => {
           Informations
         </a>
 
-        <Can action="component" object="calendar">
+        <PermissionGuard action="component" object="calendar">
           <a
             role="tab"
             className={`tab ${currentTab === Tab.Calendar ? "tab-active" : ""}`}
@@ -84,11 +84,11 @@ const Profile = () => {
           >
             Calendrier
           </a>
-        </Can>
+        </PermissionGuard>
 
         {currentRoute[0] === "student" && (
           <>
-            <Can object="parcours" action="read">
+            <PermissionGuard object="parcours" action="read">
               <a
                 role="tab"
                 className={`tab ${
@@ -99,9 +99,9 @@ const Profile = () => {
               >
                 Journal
               </a>
-            </Can>
+            </PermissionGuard>
 
-            <Can object="bonusSkill" action="read">
+            <PermissionGuard object="bonusSkill" action="read">
               <a
                 role="tab"
                 className={`tab ${
@@ -112,7 +112,7 @@ const Profile = () => {
               >
                 Badge & Compétences
               </a>
-            </Can>
+            </PermissionGuard>
           </>
         )}
 

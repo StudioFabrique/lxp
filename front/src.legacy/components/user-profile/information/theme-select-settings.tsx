@@ -1,6 +1,6 @@
 import CompanyPictureUpload from "../../profile-home/company-picture-upload";
 import ThemeSelect from "../../profile-home/theme-select";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { darkThemes, lightThemes } from "../../../config/themes";
 import { useContext } from "react";
@@ -36,9 +36,9 @@ const ThemeSelectSettings = () => {
         </div>
 
         <div>
-          <Can action="component" object="company-picture-upload">
+          <PermissionGuard action="component" object="company-picture-upload">
             <CompanyPictureUpload />
-          </Can>
+          </PermissionGuard>
         </div>
       </div>
     </div>

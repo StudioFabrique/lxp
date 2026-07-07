@@ -1,9 +1,9 @@
 import { Activity } from "../../utils/interfaces/activity";
-import ImageActivityEditor from "../edit-lesson/activities/image/image-activity-editor";
+import ImageActivityEditor from "../../../src/features/lesson/components/edit/activities/image/image-activity-editor";
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
 import toast from "react-hot-toast";
 import useHttp from "../../hooks/use-http";
-import ImageActivityPreview from "../edit-lesson/activities/image/image-activity-preview";
+import ImageActivityPreview from "../../../src/features/lesson/components/edit/activities/image/image-activity-preview";
 
 type Props = {
   activity?: Activity;

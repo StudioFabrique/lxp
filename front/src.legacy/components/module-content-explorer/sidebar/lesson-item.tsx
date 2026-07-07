@@ -2,7 +2,7 @@ import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import { cn } from "../../../utils";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -120,7 +120,7 @@ const LessonItem = ({
           {selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               {canEditLesson && (
-                <Can action="update" object="lesson">
+                <PermissionGuard action="update" object="lesson">
                   <button
                     ref={buttonRef}
                     tabIndex={0}
@@ -143,7 +143,7 @@ const LessonItem = ({
                       >
                         <li>
                           <Link
-                            to={`/admin/lesson/edit-lesson/${lesson.id}`}
+                            to={`/admin/lesson/edit/${lesson.id}`}
                             state={{ moduleId: moduleId }}
                             className="flex items-center gap-2 text-sm text-base-content"
                             onClick={(e) => {
@@ -171,7 +171,7 @@ const LessonItem = ({
                       </ul>,
                       document.body,
                     )}
-                </Can>
+                </PermissionGuard>
               )}
             </div>
           )}

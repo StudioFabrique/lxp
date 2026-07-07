@@ -7,7 +7,7 @@ import {
   UserAnswer,
 } from "../utils/interfaces/quiz";
 import hasPermission from "../utils/hasPermission";
-import { Context } from "../store/context.store";
+import { AuthContext } from "../../src/store/AuthProvider";
 import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
@@ -26,7 +26,7 @@ export default function useDiagnosticQuiz(
   moduleInfo: ModuleInfoForDiagnostic,
   onFinishInitialQuiz: () => void,
 ) {
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
   const { setForceHideChatbot } = useContext(ChatbotContext);
   const { axiosInstance: axios } = useHttp();
 
@@ -323,7 +323,8 @@ export default function useDiagnosticQuiz(
     if (!isModuleLoaded) return;
 
     const userIsAdmin =
-      user?.permissions && hasPermission(user.permissions, "update", "lesson");
+      user?.roles?.some((role) => role.rank === 1) ||
+      (user?.permissions && hasPermission(user.permissions, "update", "lesson"));
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       if (isAiDisabled) {
