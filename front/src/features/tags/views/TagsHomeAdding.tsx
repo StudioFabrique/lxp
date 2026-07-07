@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useMemo } from "react";
-import TagsList from "../../../../src.legacy/components/formation-home/tags-list";
+import TagsList from "../../../components/tags/TagsList";
 import AddTag from "../../../../src.legacy/components/UI/add-tag";
-import useTags from "../../../../src.legacy/hooks/use-tags";
+import useTags from "../../../hooks/useTags";
 import Tag from "../../../../src.legacy/utils/interfaces/tag";
 import toast from "react-hot-toast";
 

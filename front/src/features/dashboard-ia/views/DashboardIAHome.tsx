@@ -1,56 +1,72 @@
-import { useEffect } from "react";
-import Header from "../../components/UI/header";
-import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import { GroupsStatsComponent } from "./components/GroupStatsComponent";
-import PaginatedTopUsers from "./components/PaginatedTopUsers";
-import TopFiveUsers from "./components/TopFiveUsers";
-import useDashboardIA from "./hooks/useDashboardIA";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import ElementNotFound from "../../components/UI/element-not-found";
+import { useEffect } from "react";
+import { dashboardIAApi } from "../dashboard-ia.api";
+import useTopUsers from "../hooks/useTopUsers";
+import GroupsStats from "../components/GroupsStats";
+import TopFiveUsers from "../components/TopFiveUsers";
+import TopUsersTable from "../components/TopUsersTable";
+import Header from "../../../../src.legacy/components/UI/header";
+import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";
 
-export default function DashboardIAHome() {
+const DashboardIAHome = () => {
   const {
-    totalTokens,
-    groupsStats,
-    groupsTotalTokens,
-    totalCurrentMonthTokens,
     dataList,
-    page,
+    totalItems,
     totalPages,
+    page,
     perPage,
-    setPerPage,
+    sortProperty,
+    sortDirection,
+    isLoading,
     setPage,
-    top5Users,
-    sortData,
-    sdir,
-    stype,
-    setPath,
+    setPerPage,
+    handleSort,
     handleSearch,
-    error,
-  } = useDashboardIA();
+  } = useTopUsers();
+
+  const { data: totals, error: totalsError } = useQuery({
+    queryKey: ["dashboard-ia-total-tokens"],
+    queryFn: dashboardIAApi.getTotalTokens,
+  });
+
+  const { data: groupsStats } = useQuery({
+    queryKey: ["dashboard-ia-groups-stats"],
+    queryFn: dashboardIAApi.getGroupsStats,
+  });
 
   useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
+    if (totalsError) toast.error(String(totalsError));
+  }, [totalsError]);
+
+  const groupsTotalTokens =
+    groupsStats?.reduce((acc, g) => acc + g.totalTokens, 0) ?? 0;
+
+  const top5Users = !isLoading
+    ? dataList.filter((u) => u.role === "student").slice(0, 5)
+    : [];
 
   return (
     <main className="w-full min-h-screen flex flex-col items-center gap-y-8">
       <Header
         title="Tableau de bord IA"
         description="Consultez les statistiques de consommation de l'IA par vos apprenants."
-      ></Header>
+      />
       <section className="flex justify-start gap-x-4 items-center w-full">
         <div className="border border-primary/50 rounded-lg p-4">
           <article className="flex gap-x-2 items-center">
             <h2 className="font-semibold">Tokens consommés</h2>
-            <h3 className="text-lg font-bold text-primary">{totalTokens}</h3>
+            <h3 className="text-lg font-bold text-primary">
+              {totals?.totalTokens ?? 0}
+            </h3>
           </article>
         </div>
         <div className="border border-primary/50 rounded-lg p-4">
           <article className="flex gap-x-2 items-center">
             <h2 className="font-semibold">Tokens consommés ce mois-ci</h2>
             <h3 className="text-lg font-bold text-primary">
-              {totalCurrentMonthTokens}
+              {totals?.totalCurrentMonthTokens ?? 0}
             </h3>
           </article>
         </div>
@@ -63,12 +79,11 @@ export default function DashboardIAHome() {
           <Wrapper>
             <div className="grid grid-cols-5 text-left text-primary">
               <p className="text-xs font-semibold col-span-2">Promotion</p>
-
               <p className="text-xs font-semibold col-span-2">Quantité</p>
               <p className="text-xs font-semibold ml-0">%</p>
             </div>
             {groupsStats && groupsStats.length > 0 ? (
-              <GroupsStatsComponent
+              <GroupsStats
                 stats={groupsStats}
                 groupsTotalTokens={groupsTotalTokens}
               />
@@ -88,13 +103,12 @@ export default function DashboardIAHome() {
           <h2 className="font-semibold pl-1">
             Top consommateurs de tokens (5 premiers)
           </h2>
-
           <Wrapper>
             <div className="grid grid-cols-2 text-xs font-semibold text-primary">
               <p>Apprenant</p>
               <p>Quantité</p>
             </div>
-            {top5Users && top5Users.length > 0 ? (
+            {top5Users.length > 0 ? (
               <TopFiveUsers topUsers={top5Users} />
             ) : (
               <ElementNotFound message="Aucune donnée de disponible." />
@@ -106,19 +120,18 @@ export default function DashboardIAHome() {
         <h2 className="font-semibold pl-1 mb-4">
           Consommation tous utilisateurs
         </h2>
-        {totalPages ? (
-          <PaginatedTopUsers
+        {totalPages > 0 || isLoading ? (
+          <TopUsersTable
             dataList={dataList}
             setPerPage={setPerPage}
             setPage={setPage}
             page={page}
             perPage={perPage}
             totalPages={totalPages}
-            onSorting={sortData}
-            sdir={sdir}
-            stype={stype}
-            setPath={setPath}
-            onSearchTerm={handleSearch}
+            onSort={handleSort}
+            sortProperty={sortProperty}
+            sortDirection={sortDirection}
+            onSearch={handleSearch}
           />
         ) : (
           <Wrapper>
@@ -128,4 +141,6 @@ export default function DashboardIAHome() {
       </section>
     </main>
   );
-}
+};
+
+export default DashboardIAHome;

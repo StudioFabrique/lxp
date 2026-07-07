@@ -16,6 +16,9 @@ import { adminLessonRoutes } from "./features/lesson/routes";
 import { adminTagsRoutes } from "./features/tags/routes";
 import { adminRoleRoutes } from "./features/role/routes";
 import { adminUserRoutes } from "./features/user/routes";
+import { adminFormationRoutes } from "./features/formation/routes";
+import { adminFeedbacksRoutes } from "./features/feedbacks/routes";
+import { adminDashboardIARoutes } from "./features/dashboard-ia/routes";
 import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
 import FeaturesList from "./features/dashboard/views/FeaturesList";
 import {
@@ -43,6 +46,9 @@ const adminRoutes: RouteObject[] = [
       ...adminTagsRoutes, // /admin/tags
       ...adminRoleRoutes, // /admin/roles
       ...adminUserRoutes, // /admin/user
+      ...adminFormationRoutes, // /admin/formation
+      ...adminFeedbacksRoutes, // /admin/feedbacks
+      ...adminDashboardIARoutes, // /admin/dashboard-ia
       { path: "*", element: <p>La page n'existe pas</p> },
     ],
   },

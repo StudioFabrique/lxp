@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import useTags from "../../../../../../src.legacy/hooks/use-tags";
-import TagsList from "../../../../../../src.legacy/components/formation-home/tags-list";
+import useTags from "../../../../../hooks/useTags";
+import TagsList from "../../../../../components/tags/TagsList";
 import AddTag from "../../../../../../src.legacy/components/UI/add-tag";
 import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
