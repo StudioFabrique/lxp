@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router";
-import GroupForm from "../../components/forms/group-form/group-form.component";
-import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
+import GroupForm from "../components/group-form/GroupForm";
+import GroupUserList from "../../../../src.legacy/components/lists/group-add-user-list/group-user-list";
 import useGroupManage from "../hooks/useGroupManage";
 
 const GroupEdit = () => {

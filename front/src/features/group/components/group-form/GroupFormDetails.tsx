@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import useHttp from "../../../../hooks/use-http";
-import Group from "../../../../utils/interfaces/group";
-import Formation from "../../../../utils/interfaces/formation";
-import Parcours from "../../../../utils/interfaces/parcours";
-import SelecterWithId from "../../../UI/selecter/selecter-with-id";
+import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import useHttp from "../../../../../src.legacy/hooks/use-http";
+import Group from "../../../../../src/utils/interfaces/group";
+import Formation from "../../../../../src/utils/interfaces/formation";
+import Parcours from "../../../../../src/utils/interfaces/parcours";
+import SelecterWithId from "../../../../../src.legacy/components/UI/selecter/selecter-with-id";
 
-// type de données pour les listes
 type Item = {
   id?: number;
   value: string;
@@ -25,25 +24,14 @@ const GroupFormDetails: FC<{
   const [formationId, setFormationId] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
 
-  /**
-   * sélection d'un formation
-   * @param id number
-   */
   const handleFormation = (id: number) => {
     setFormationId(id);
   };
 
-  /**
-   * sélection d'un parcours lié à la formation sélectionnée
-   * @param id number
-   */
   const handleParcours = (id: number) => {
     onSelectParcours(id);
   };
 
-  /**
-   * requête qui retourne la liste des parcours liés à la formation sélectionnée
-   */
   useEffect(() => {
     if (formationId !== undefined) {
       const processData = (data: { data: Array<Parcours> }) => {
@@ -63,9 +51,6 @@ const GroupFormDetails: FC<{
     }
   }, [formationId, sendRequest]);
 
-  /**
-   * requête pour récupérer la liste des formations dans la bdd
-   */
   useEffect(() => {
     const processData = (data: Array<Formation>) => {
       const formationsItems = data.map((item) => ({

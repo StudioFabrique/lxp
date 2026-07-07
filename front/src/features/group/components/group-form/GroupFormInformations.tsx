@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import { headerImageMaxSize } from "../../../../config/images-sizes";
-import MemoizedImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
-import Field from "../../../UI/forms/field";
-import FieldArea from "../../../UI/forms/field-area";
-import CustomError from "../../../../utils/interfaces/custom-error";
-import Group from "../../../../utils/interfaces/group";
+import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import { headerImageMaxSize } from "../../../../../src.legacy/config/images-sizes";
+import MemoizedImageFileUpload from "../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
+import Field from "../../../../../src.legacy/components/UI/forms/field";
+import FieldArea from "../../../../../src.legacy/components/UI/forms/field-area";
+import CustomError from "../../../../../src/utils/interfaces/custom-error";
+import Group from "../../../../../src/utils/interfaces/group";
 
 const GroupFormInformations: FC<{
   values: Record<string, string>;

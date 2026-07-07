@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 type Props = {
   parcoursId: number;
