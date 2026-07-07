@@ -40,16 +40,22 @@ import {
   adminDashboardRoutes,
   studentDashboardRoutes,
 } from "./features/dashboard/routes";
+import { ChatbotProvider } from "../src.legacy/store/chatbotContext";
+import Chatbot from "../src.legacy/components/chatbot/chatbot";
+import { isAiDisabled } from "../src.legacy/config/ai/ai";
 
 const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
     element: (
-      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-        <RouteGuard
-          allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
-        />
-      </AppWrapper>
+      <ChatbotProvider>
+        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+          <RouteGuard
+            allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
+          />
+        </AppWrapper>
+        {!isAiDisabled && <Chatbot />}
+      </ChatbotProvider>
     ),
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
@@ -78,11 +84,14 @@ const studentRoutes: RouteObject[] = [
   {
     path: "/student",
     element: (
-      <ConfettiWrapper>
-        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-          <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
-        </AppWrapper>
-      </ConfettiWrapper>
+      <ChatbotProvider>
+        <ConfettiWrapper>
+          <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+            <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+          </AppWrapper>
+        </ConfettiWrapper>
+        {!isAiDisabled && <Chatbot />}
+      </ChatbotProvider>
     ),
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },

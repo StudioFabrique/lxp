@@ -15,6 +15,10 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const fullName = user
+    ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
+    : "";
+
   const handleClickLogout = () => {
     logout();
     navigate("/", { replace: true });
@@ -27,14 +31,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         <Link
           to={`/${interfaceType}/profil`}
           className="flex gap-2 items-center text-white capitalize p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
-          data-tip={`${
-            user?.firstname &&
-            user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)
-          }
-            ${
-              user?.lastname &&
-              user?.lastname.charAt(0).toUpperCase() + user?.lastname.slice(1)
-            }`}
+          data-tip={fullName}
         >
           {user && (
             <AvatarSmall
@@ -47,7 +44,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
               imgClassName="w-4 h-4 rounded-full object-cover"
             />
           )}
-          <span className="xl:block hidden">{`${user?.firstname} ${user?.lastname}`}</span>
+          <span className="xl:block hidden">{fullName}</span>
         </Link>
       </li>
 

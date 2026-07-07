@@ -1,4 +1,4 @@
-import { Context } from "../../../store/context.store";
+import { AuthContext } from "../../../../src/store/AuthProvider";
 import { cn } from "../../../utils";
 import { ChatbotValues } from "../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
@@ -26,7 +26,7 @@ export default function MessageChatbot({
 }: Props) {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   // Fermé par défaut (false)
   const [expandTextSelection, setExpandTextSelection] =

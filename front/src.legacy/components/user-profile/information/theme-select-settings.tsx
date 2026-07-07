@@ -4,10 +4,10 @@ import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { darkThemes, lightThemes } from "../../../config/themes";
 import { useContext } from "react";
-import { Context } from "../../../store/context.store";
+import { ThemeContext } from "../../../../src/store/ThemeProvider";
 
 const ThemeSelectSettings = () => {
-  const { chooseTheme } = useContext(Context);
+  const { chooseTheme } = useContext(ThemeContext);
 
   const handleThemeChange = (newTheme: string, mode: string) => {
     chooseTheme(newTheme, mode);

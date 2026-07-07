@@ -47,12 +47,12 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
     if (mode === "light") {
       themes.light = newTheme;
       localStorage.setItem("lightTheme", newTheme);
-      setTheme("light");
     } else {
       themes.dark = newTheme;
       localStorage.setItem("darkTheme", newTheme);
-      setTheme("dark");
     }
+    localStorage.setItem("activeTheme", mode);
+    setTheme(mode as "light" | "dark");
   }, []);
 
   const toggleTheme = useCallback(() => {

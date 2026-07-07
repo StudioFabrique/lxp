@@ -92,7 +92,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
           >
             <div className="p-5 w-full flex justify-end">
               <Link
-                to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
+                to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
                 state={{ lessonId: lastLesson.lesson.id }}
                 className="z-[9] btn btn-primary text-base-100 flex"
               >
