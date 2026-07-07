@@ -1,6 +1,4 @@
-import React, { ReactNode, useContext } from "react";
-import hasPermission from "../../../utils/hasPermission";
-import { Context } from "../../../store/context.store";
+import React, { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
@@ -9,16 +7,6 @@ type Props = {
 };
 
 const Can: React.FC<Props> = ({ children, action, object }) => {
-  const { user } = useContext(Context);
-
-  if (
-    user &&
-    user.permissions &&
-    hasPermission(user.permissions, action, object)
-  ) {
-    return <>{children}</>;
-  }
-
   return null;
 };
 

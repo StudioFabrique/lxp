@@ -11,6 +11,8 @@ import {
   studentParcoursRoutes,
 } from "./features/parcours/routes";
 import { adminGroupRoutes } from "./features/group/routes";
+import { adminCourseRoutes } from "./features/course/routes";
+import { adminLessonRoutes } from "./features/lesson/routes";
 import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
 import FeaturesList from "./features/dashboard/views/FeaturesList";
 import {
@@ -33,8 +35,8 @@ const adminRoutes: RouteObject[] = [
       ...adminDashboardRoutes, // /admin/dashboard/*
       ...adminParcoursRoutes, // /admin/parcours/*
       ...adminGroupRoutes, // /admin/group/*
-      // ...adminCourseRoutes,
-      // ...adminUserRoutes,
+      ...adminCourseRoutes, // /admin/cours/*
+      ...adminLessonRoutes, // /admin/lecons/*
       { path: "*", element: <p>La page n'existe pas</p> },
     ],
   },

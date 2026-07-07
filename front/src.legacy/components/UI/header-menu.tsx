@@ -1,9 +1,9 @@
 import { useState } from "react";
 import GroupIcon from "./svg/group-icon";
 import SearchModal from "../search-modal/search-modal";
-import Can from "./can/can.component";
 import { Link, useLocation } from "react-router";
 import { PlayCircleIcon } from "lucide-react";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 
 type HeaderMenuProps = {
   hideResumeCourseButton?: boolean;
@@ -27,18 +27,18 @@ const HeaderMenu = ({
             {/* <button type="button" className="btn btn-primary btn-sm py-1">
               <CameraIcon />
             </button> */}
-            <Can action="write" object="group">
+            <PermissionGuard action="write" object="group">
               <Link
                 to={`/${location.pathname.split("/")[1]}/group`}
                 className="btn btn-primary btn-sm text-base-100 py-1"
               >
                 <GroupIcon />
               </Link>
-            </Can>
+            </PermissionGuard>
           </div>
           {onClickResume ? (
             hideResumeCourseButton ? null : (
-              <Can action="component" object="start-lesson-button">
+              <PermissionGuard action="component" object="start-lesson-button">
                 <button
                   onClick={onClickResume}
                   type="button"
@@ -49,7 +49,7 @@ const HeaderMenu = ({
                   </span>
                   <p className="normal-case">Reprendre</p>
                 </button>
-              </Can>
+              </PermissionGuard>
             )
           ) : null}
         </div>
