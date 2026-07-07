@@ -26,7 +26,7 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
         </div>
       </span>
       <ul className="w-full flex flex-wrap gap-4 overflow-auto py-2 ">
-        {modules.map((module) => (
+        {modules?.map((module) => (
           <li className="w-[300px]" key={module.id}>
             <PreviewModuleItem module={module} />
           </li>

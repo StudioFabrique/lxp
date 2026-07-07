@@ -19,6 +19,21 @@ import { adminUserRoutes } from "./features/user/routes";
 import { adminFormationRoutes } from "./features/formation/routes";
 import { adminFeedbacksRoutes } from "./features/feedbacks/routes";
 import { adminDashboardIARoutes } from "./features/dashboard-ia/routes";
+import { adminModuleRoutes } from "./features/module/routes";
+import {
+  adminModulePreviewRoutes,
+  studentModulePreviewRoutes,
+} from "./features/module-preview/routes";
+import {
+  adminResourcesRoutes,
+  studentResourcesRoutes,
+} from "./features/resources/routes";
+import { adminMediathequeRoutes } from "./features/mediatheque/routes";
+import { studentCalendarRoutes } from "./features/calendar/routes";
+import {
+  adminProfileRoutes,
+  studentProfileRoutes,
+} from "./features/profile/routes";
 import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
 import FeaturesList from "./features/dashboard/views/FeaturesList";
 import {
@@ -40,7 +55,9 @@ const adminRoutes: RouteObject[] = [
       { index: true, element: <Navigate to="./dashboard" replace /> },
       ...adminDashboardRoutes, // /admin/dashboard/*
       ...adminParcoursRoutes, // /admin/parcours/*
+      ...adminModulePreviewRoutes, // /admin/parcours/module/:moduleId
       ...adminGroupRoutes, // /admin/group/*
+      ...adminModuleRoutes, // /admin/module/*
       ...adminCourseRoutes, // /admin/cours/*
       ...adminLessonRoutes, // /admin/lecons/*
       ...adminTagsRoutes, // /admin/tags
@@ -49,6 +66,9 @@ const adminRoutes: RouteObject[] = [
       ...adminFormationRoutes, // /admin/formation
       ...adminFeedbacksRoutes, // /admin/feedbacks
       ...adminDashboardIARoutes, // /admin/dashboard-ia
+      ...adminMediathequeRoutes, // /admin/mediatheque
+      ...adminResourcesRoutes, // /admin/resources
+      ...adminProfileRoutes, // /admin/profil
       { path: "*", element: <p>La page n'existe pas</p> },
     ],
   },
@@ -68,6 +88,10 @@ const studentRoutes: RouteObject[] = [
       { index: true, element: <Navigate to="./dashboard" replace /> },
       ...studentDashboardRoutes, // /student/dashboard/*
       ...studentParcoursRoutes, // /student/parcours/*
+      ...studentModulePreviewRoutes, // /student/parcours/module/:moduleId
+      ...studentResourcesRoutes, // /student/ressources/*
+      ...studentCalendarRoutes, // /student/calendrier
+      ...studentProfileRoutes, // /student/profil
 
       // Fallback 404 spécifique à l'espace étudiant
       { path: "*", element: <FeaturesList /> },

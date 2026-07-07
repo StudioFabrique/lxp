@@ -21,7 +21,7 @@
  */
 import { FC, useMemo } from "react";
 import Role from "../../../utils/interfaces/role";
-import Can from "../can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import { sortArray } from "../../../utils/sortArray";
 
 const Tabs: FC<{
@@ -63,9 +63,9 @@ const Tabs: FC<{
     >
       {/* Map through sorted roles and render tabs with permission checks */}
       {sortedRoles.map((role) => (
-        <Can key={role._id} action="read" object={role.role}>
+        <PermissionGuard key={role._id} action="read" object={role.role}>
           {setContent(role)}
-        </Can>
+        </PermissionGuard>
       ))}
     </div>
   );

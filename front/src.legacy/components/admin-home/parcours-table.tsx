@@ -4,7 +4,7 @@ import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import { useNavigate } from "react-router";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursTableProps {
@@ -157,14 +157,14 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                   )}
                 </td>
                 <td className="rounded-r-lg truncate text-right">
-                  <Can action="update" object="parcours">
+                  <PermissionGuard action="update" object="parcours">
                     <button
                       className="btn btn-sm btn-ghost btn-circle text-primary hover:bg-primary/20 z-50"
                       onClick={(event) => handleEditParcours(event, item.id)}
                     >
                       <MoveUpRight className="w-4 h-4" />
                     </button>
-                  </Can>
+                  </PermissionGuard>
                 </td>
               </tr>
             ))}

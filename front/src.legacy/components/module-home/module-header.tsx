@@ -10,7 +10,7 @@
  * ```
  */
 import { Link } from "react-router";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import Header from "../UI/header";
 import { ImportIcon, PlusCircle } from "lucide-react";
 
@@ -23,7 +23,7 @@ function ModuleHeader() {
         description="Gérer tous les modules qui sont créés au sein de l'application."
       >
         {/* Permission check - only users with 'write' permission on 'module' can see this button */}
-        <Can action="write" object="module">
+        <PermissionGuard action="write" object="module">
           <Link className="btn btn-primary btn-soft mr-5" to="import-modules">
             <div className="flex gap-x-2 items-center">
               <ImportIcon />
@@ -37,7 +37,7 @@ function ModuleHeader() {
               Créer un module
             </div>
           </Link>
-        </Can>
+        </PermissionGuard>
       </Header>
     </section>
   );

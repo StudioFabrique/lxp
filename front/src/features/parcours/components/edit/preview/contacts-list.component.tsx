@@ -9,7 +9,7 @@ interface ContactListProps {
 const ContactsList = (props: ContactListProps) => {
   return (
     <ul className="flex flex-col gap-y-2">
-      {props.contactsList.map((contact) => (
+      {props.contactsList?.map((contact) => (
         <li key={contact.id}>
           <SubWrapper>
             <ContactItem user={contact} />

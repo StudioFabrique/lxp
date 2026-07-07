@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from "react";
 import { Activity } from "../../utils/interfaces/activity";
 import CustomError from "../../utils/interfaces/custom-error";
-import ResourcePreview from "../edit-lesson/activities/resources/preview/resource-preview";
-import ResourceUpload from "../edit-lesson/activities/resources/resource-upload";
+import ResourcePreview from "../../../src/features/lesson/components/edit/activities/resources/preview/resource-preview";
+import ResourceUpload from "../../../src/features/lesson/components/edit/activities/resources/resource-upload";
 import ActivityWrapper from "./ActivityWrapper";
 import IFrameActivityResource from "./IFrameActivityResource";
 import ImageActivityResource from "./ImageActivityResource";

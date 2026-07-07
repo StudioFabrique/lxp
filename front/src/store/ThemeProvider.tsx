@@ -64,6 +64,10 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
+    initTheme();
+  }, [initTheme]);
+
+  useEffect(() => {
     document
       .querySelector("html")!
       .setAttribute(

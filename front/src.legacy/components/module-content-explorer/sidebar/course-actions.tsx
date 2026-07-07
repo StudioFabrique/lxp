@@ -1,5 +1,5 @@
 import { Edit, ListPlus, MoreVertical, Trash, UploadCloud } from "lucide-react";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import { Link } from "react-router";
 import Course from "../../../utils/interfaces/course";
 import { ModalCourseType } from "./course-item";
@@ -38,7 +38,7 @@ const CourseActions = ({
 
       <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-base-300/80 text-base-content rounded-lg w-60 backdrop-blur-sm border border-primary/20">
         {!course.isPublished && (
-          <Can action="update" object="course">
+          <PermissionGuard action="update" object="course">
             <button
               onClick={handleClickPublish}
               className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all last:rounded-b-lg"
@@ -46,10 +46,10 @@ const CourseActions = ({
               <UploadCloud className="w-4 h-4 mr-3" />
               <span>Publier le cours</span>
             </button>
-          </Can>
+          </PermissionGuard>
         )}
 
-        <Can action="update" object="course">
+        <PermissionGuard action="update" object="course">
           <Link
             to={`/admin/course/edit/${course.id}`}
             className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
@@ -57,7 +57,7 @@ const CourseActions = ({
             <Edit className="w-4 h-4 mr-3" />
             Modifier le cours
           </Link>
-        </Can>
+        </PermissionGuard>
 
         <Link
           to="/admin/lesson/add"
@@ -72,7 +72,7 @@ const CourseActions = ({
           Créer une leçon
         </Link>
 
-        {/* <Can action="update" object="course">
+        {/* <PermissionGuard action="update" object="course">
           <button
             onClick={onClickChangeCourseOrder}
             className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
@@ -89,9 +89,9 @@ const CourseActions = ({
               </>
             )}
           </button>
-        </Can> */}
+        </PermissionGuard> */}
 
-        <Can action="delete" object="course">
+        <PermissionGuard action="delete" object="course">
           <button
             onClick={handleClickDelete}
             className="cursor-default flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg"
@@ -99,7 +99,7 @@ const CourseActions = ({
             <Trash className="w-4 h-4 mr-3" />
             Supprimer le cours
           </button>
-        </Can>
+        </PermissionGuard>
       </div>
     </div>
   );

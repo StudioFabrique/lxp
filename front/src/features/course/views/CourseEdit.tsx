@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router";
+import { Link, useSearchParams, useParams } from "react-router";
 import { useEffect, useState } from "react";
 
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
@@ -11,13 +11,29 @@ import CourseCalendar from "../components/edit/calendar/course-calendar";
 import CoursePreview from "../components/edit/preview/course-preview";
 import Step from "../../../../src.legacy/utils/interfaces/step";
 import { useCourseDispatch } from "../store/CourseContext";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import formatCourseFromHttp from "../../../../src.legacy/helpers/course/course-infos-from-http";
 
 const EditCourseHome = () => {
   const dispatch = useCourseDispatch();
+  const { courseId } = useParams();
+  const { sendRequest } = useHttp();
   const [searchParams] = useSearchParams();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsCourse as Step[]);
   const [step, setStep] = useState<string | null>(searchParams.get("step"));
+
+  /**
+   * charge les informations du cours depuis l'API et les stocke
+   * dans le context global au montage de la page d'édition
+   */
+  useEffect(() => {
+    if (!courseId) return;
+    const applyData = (data: any) => {
+      dispatch({ type: "SET_COURSE", payload: formatCourseFromHttp(data) });
+    };
+    sendRequest({ path: `/course/infos/${courseId}` }, applyData);
+  }, [courseId, dispatch, sendRequest]);
 
   /**
    * actualise le stepper et affiche le composant précédent

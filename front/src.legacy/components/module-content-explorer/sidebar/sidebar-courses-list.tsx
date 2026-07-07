@@ -2,7 +2,7 @@ import type { CSSProperties, PropsWithChildren } from "react";
 import type Course from "../../../utils/interfaces/course";
 import CourseItem from "./course-item";
 import type Lesson from "../../../utils/interfaces/lesson";
-import Can from "../../UI/can/can.component";
+import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
 // Type definition pour les props du composant
@@ -64,7 +64,7 @@ const SidebarCoursesList = ({
   return (
     <div className="border border-base-300 bg-base-200 rounded-lg p-5 select-none shadow-sm">
       {/* En-tête avec le titre et l'indicateur de progression */}
-      <Can action="component" object="progression">
+      <PermissionGuard action="component" object="progression">
         {courses.length > 0 ? (
           <div className="flex justify-between items-center mb-5">
             <h2 className="text-xl font-bold w-28 text-primary">Progression</h2>
@@ -90,7 +90,7 @@ const SidebarCoursesList = ({
             </FadeWrapper>
           </div>
         ) : null}
-      </Can>
+      </PermissionGuard>
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
@@ -110,11 +110,11 @@ const SidebarCoursesList = ({
             />
           ))
         ) : (
-          <Can action="component" object="progression">
+          <PermissionGuard action="component" object="progression">
             <p className="text-lg font-bold text-primary">
               Aucun cours disponible
             </p>
-          </Can>
+          </PermissionGuard>
         )}
         {children[0]}
       </div>
