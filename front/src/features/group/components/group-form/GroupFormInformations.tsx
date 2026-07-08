@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import { headerImageMaxSize } from "../../../../../src.legacy/config/images-sizes";
-import MemoizedImageFileUpload from "../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
 import Field from "../../../../../src.legacy/components/UI/forms/field";
 import FieldArea from "../../../../../src.legacy/components/UI/forms/field-area";
 import CustomError from "../../../../../src/utils/interfaces/custom-error";
@@ -15,7 +13,7 @@ const GroupFormInformations: FC<{
   onSetFile: (file: File) => void;
   group?: Group;
   isLoading?: boolean;
-}> = ({ values, errors, onChangeValue, onSetFile, isLoading }) => {
+}> = ({ values, errors, onChangeValue, isLoading }) => {
   const data = {
     values,
     onChangeValue,
