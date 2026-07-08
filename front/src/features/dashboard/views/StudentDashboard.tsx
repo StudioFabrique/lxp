@@ -50,7 +50,7 @@ const StudentDashboard = () => {
           {lastLessons && lastLessons?.length > 0 ? (
             <>
               <ResumeActivity lastLesson={lastLessons[0]} />
-              <ResumeActivities lastLessons={lastLessons.splice(1)} />
+              <ResumeActivities lastLessons={lastLessons.slice(1)} />
             </>
           ) : (
             <ResumeParcours />
