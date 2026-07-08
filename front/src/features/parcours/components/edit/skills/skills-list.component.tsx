@@ -6,8 +6,8 @@ import { useParcoursSelector, useParcoursDispatch } from "../../../store/Parcour
 
 import SkillItem from "./skill-item.component";
 import SkillForm from "./skill-form";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 import FadeWrapper from "../../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";

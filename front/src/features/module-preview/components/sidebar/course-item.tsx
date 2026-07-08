@@ -6,7 +6,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import Course from "../../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../../src/utils/interfaces/course";
 import {
   PropsWithChildren,
   useContext,
@@ -16,15 +16,15 @@ import {
 } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
-import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
-import toUpperFirstLetter from "../../../../../src.legacy/utils/toUpperFirstLetter";
-import userBelongsToContacts from "../../../../../src.legacy/utils/userBelongsToContacts";
+import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
+import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
 import { Link } from "react-router";
-import { cn } from "../../../../../src.legacy/utils";
+import { cn } from "../../../../utils/cn";
 
 type CourseItemProps = {
   course: Course;

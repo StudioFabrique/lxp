@@ -1,7 +1,7 @@
 import type { CSSProperties, PropsWithChildren } from "react";
-import type Course from "../../../../../src.legacy/utils/interfaces/course";
+import type Course from "../../../../../src/utils/interfaces/course";
 import CourseItem from "./course-item";
-import type Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 

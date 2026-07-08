@@ -1,5 +1,5 @@
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
-import { sortArray } from "../../../../../../src.legacy/utils/sortArray";
+import Tag from "../../../../../../src/utils/interfaces/tag";
+import { sortArray } from "../../../../../../src/utils/helpers/sort-array";
 import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 

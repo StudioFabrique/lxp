@@ -3,10 +3,10 @@ import { useParcoursSelector } from "../../../store/ParcoursContext";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
 import ContactsList from "./contacts-list.component";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagsList from "./tags-list.component";
-import { localeDate } from "../../../../../../src.legacy/helpers/locale-date";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 
 interface ParcoursPreviewInfosProps {

@@ -3,18 +3,18 @@ import { useParams } from "react-router";
 import toast from "react-hot-toast";
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 
-import useInput from "../../../../../../src.legacy/hooks/use-input";
-import { regexGeneric, regexOptionalGeneric } from "../../../../../../src.legacy/utils/constantes";
-import Lesson from "../../../../../../src.legacy/utils/interfaces/lesson";
+import useInput from "../../../../../hooks/useInput";
+import { regexGeneric, regexOptionalGeneric } from "../../../../../config/constantes";
+import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import LessonForm from "./lesson-form";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import Tag from "../../../../../../src/utils/interfaces/tag";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import LessonsList from "./lessons-list";
 import SubmitButton from "../../../../../../src.legacy/components/UI/submit-button";
 import AddIcon from "../../../../../../src.legacy/components/UI/svg/add-icon";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 import Modal from "../../../../../../src.legacy/components/UI/modal/modal";
-import useLessonHTTP from "../../../../../../src.legacy/hooks/use-lesson-http";
+import useLessonHTTP from "../../../../../../src/hooks/useLessonHttp";
 
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];

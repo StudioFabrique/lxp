@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../../../src/hooks/useHttp";
 import type {
   Activity,
   Resource as ActivityResource,
-} from "../../../../../../../../src.legacy/utils/interfaces/activity";
-import { useDragAndDrop } from "../../../../../../../../src.legacy/hooks/useDragAndDrop";
+} from "../../../../../../../../src/utils/interfaces/activity";
+import { useDragAndDrop } from "../../../../../../../../src/hooks/useDragAndDrop";
 import useForm from "../../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
 import toast from "react-hot-toast";
-import { regexGeneric } from "../../../../../../../../src.legacy/utils/constantes";
+import { regexGeneric } from "../../../../../../../config/constantes";
 import { allowedMimeTypes, Resource } from "../useUploadResources";
 
 let timer: NodeJS.Timeout | null = null;

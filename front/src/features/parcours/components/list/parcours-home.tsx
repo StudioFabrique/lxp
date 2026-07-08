@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { parcoursSearchOptions } from "../../../../../src.legacy/config/search-options";
-import Parcours from "../../../../../src.legacy/utils/interfaces/parcours";
+import { parcoursSearchOptions } from "../../../../config/search-options";
+import Parcours from "../../../../../src/utils/interfaces/parcours";
 import ParcoursTable from "./parcours-table";
-import useEagerLoadingList from "../../../../../src.legacy/hooks/use-eager-loading-list";
+import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
 import Pagination from "../../../../../src.legacy/components/UI/pagination/pagination";
 import ParcoursCardsList from "./parcours-cards-list";
 import ToggleList from "../../../../../src.legacy/components/UI/toggle-list";
 import { useEffect, useState } from "react";
-import { searchListParcours } from "../../../../../src.legacy/helpers/parcours/search-list-parcours";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import { searchListParcours } from "../../../../utils/helpers/search-list-parcours";
+import useHttp from "../../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
 import Modal from "../../../../../src.legacy/components/UI/modal/modal";
 import SearchAndRefresh from "../../../../../src.legacy/components/UI/search-and-refresh";

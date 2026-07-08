@@ -1,5 +1,5 @@
-import { displayDate } from "../../../../../../src.legacy/helpers/dispaly-dates";
-import type { Activity } from "../../../../../../src.legacy/utils/interfaces/activity";
+import { displayDate } from "../../../../../utils/helpers/display-dates";
+import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
 
 const ActivityMetadata = ({ activity }: { activity: Activity }) => (

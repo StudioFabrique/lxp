@@ -3,7 +3,7 @@ import { useCourseSelector } from "../../../store/CourseContext";
 import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Course from "../../../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../../../src/utils/interfaces/course";
 import ContactsList from "../../../../parcours/components/edit/preview/contacts-list.component";
 import TagsList from "../../../../parcours/components/edit/preview/tags-list.component";
 

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../../../src/utils/interfaces/contact";
 
 const ContactItem: FC<{
   user: Contact;

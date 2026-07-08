@@ -1,5 +1,5 @@
 import { useLessonSelector } from "../../../../store/LessonContext";
-import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import useCreateBlog from "./use-create-blog";
 import TiptapActivity from "../../../../../module-preview/components/writing/tip-tap-activity";

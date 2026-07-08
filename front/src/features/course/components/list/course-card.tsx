@@ -6,9 +6,9 @@ import CustomCourse from "./interfaces/custom-course";
 import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
 import PublishedIcon from "../../../../../src.legacy/components/UI/svg/published-icon";
 import DraftIcon from "../../../../../src.legacy/components/UI/svg/draft-icon";
-import { localeDate } from "../../../../../src.legacy/helpers/locale-date";
+import { localeDate } from "../../../../utils/helpers/locale-date";
 import defaultThumb from "../../../../../src.legacy/assets/images/module-default-thumb.png";
-import bgImageGradient from "../../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../../utils/helpers/bg-image-gradient";
 
 interface CourseCardProps {
   course: CustomCourse;

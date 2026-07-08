@@ -4,10 +4,10 @@ import {
   dropTargetForElements,
   monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { Activity } from "../../../../../src.legacy/utils/interfaces/activity";
+import { Activity } from "../../../../../src/utils/interfaces/activity";
 import FadeWrapper from "../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import hasPermission from "../../../../../src.legacy/utils/hasPermission";
+import { hasPermission } from "../../../../utils/helpers/rbac-helpers";
 import { AuthContext } from "../../../../store/AuthProvider";
 import ActivityItem from "./activity-item";
 import {

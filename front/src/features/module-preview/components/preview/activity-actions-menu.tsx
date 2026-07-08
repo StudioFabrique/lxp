@@ -1,6 +1,6 @@
 import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import { Activity } from "../../../../../src.legacy/utils/interfaces/activity";
+import { Activity } from "../../../../../src/utils/interfaces/activity";
 
 type ActivityActionsMenuProps = {
   activity: Activity;

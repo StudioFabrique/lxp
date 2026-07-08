@@ -1,5 +1,5 @@
-import { localeDate } from "../../../../../../src.legacy/helpers/locale-date";
-import CourseDates from "../../../../../../src.legacy/utils/interfaces/course-dates";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
+import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 interface DatesCardProps {

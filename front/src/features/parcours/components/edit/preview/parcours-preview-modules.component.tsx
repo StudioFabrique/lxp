@@ -1,7 +1,7 @@
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Module from "../../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../../src/utils/interfaces/module";
 import PreviewModuleItem from "./preview-module-item";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 

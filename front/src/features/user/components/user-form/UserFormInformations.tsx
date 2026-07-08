@@ -1,5 +1,5 @@
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import { avatarImageMaxSize } from "../../../../../src.legacy/config/images-sizes";
+import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import MemoizedImageFileUpload from "../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
 
 type Props = {

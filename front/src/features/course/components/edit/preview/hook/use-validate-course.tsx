@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector } from "../../../../store/CourseContext";
 import type { CourseState } from "../../../../store/CourseContext";
-import Course from "../../../../../../../src.legacy/utils/interfaces/course";
-import Lesson from "../../../../../../../src.legacy/utils/interfaces/lesson";
-import CourseDates from "../../../../../../../src.legacy/utils/interfaces/course-dates";
-import { testStep } from "../../../../../../../src.legacy/helpers/course-steps-validation";
+import Course from "../../../../../../../src/utils/interfaces/course";
+import Lesson from "../../../../../../../src/utils/interfaces/lesson";
+import CourseDates from "../../../../../../../src/utils/interfaces/course-dates";
+import { testStep } from "../../../../../../utils/helpers/course-steps-validation";
 import { useCallback } from "react";
 
 const useValidateCourse = () => {

@@ -12,7 +12,7 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import ActivityListItem from "./activity-list-item";
-import type { Activity } from "../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import Modal from "../../../../../../src.legacy/components/UI/modal/modal";
 

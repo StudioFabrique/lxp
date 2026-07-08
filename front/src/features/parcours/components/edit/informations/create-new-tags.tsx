@@ -3,10 +3,10 @@ import { useParcoursSelector, useParcoursDispatch } from "../../../store/Parcour
 import useTags from "../../../../../hooks/useTags";
 import TagsList from "../../../../../components/tags/TagsList";
 import AddTag from "../../../../../../src.legacy/components/UI/add-tag";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
 
 type Props = {

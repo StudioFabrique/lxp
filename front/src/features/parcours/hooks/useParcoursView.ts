@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import { useEffect, useState } from "react";
-import Module from "../../../../src.legacy/utils/interfaces/module";
-import Parcours from "../../../../src.legacy/utils/interfaces/parcours";
+import Module from "../../../../src/utils/interfaces/module";
+import Parcours from "../../../../src/utils/interfaces/parcours";
 import {
   useParcoursSelector,
   useParcoursDispatch,

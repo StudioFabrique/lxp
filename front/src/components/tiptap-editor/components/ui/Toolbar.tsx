@@ -3,7 +3,7 @@ import { Surface } from "./Surface";
 import Tooltip from "./Tooltip";
 import { Button, ButtonProps } from "./Button";
 import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
-import { cn } from "../../../../../src.legacy/utils";
+import { cn } from "../../../../utils/cn";
 
 export type ToolbarWrapperProps = {
   shouldShowContent?: boolean;

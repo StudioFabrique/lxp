@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { regexGeneric } from "../../../../../src.legacy/utils/constantes";
-import { setInputStyle } from "../../../../../src.legacy/utils/formClasses";
+import { regexGeneric } from "../../../../config/constantes";
+import { setInputStyle } from "../../../../utils/helpers/formClasses";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { roleApi } from "../../api/role.api";
 import RoleTypeSelector from "./RoleTypeSelector";
-import type Role from "../../../../../src.legacy/utils/interfaces/role";
+import type Role from "../../../../../src/utils/interfaces/role";
 import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 

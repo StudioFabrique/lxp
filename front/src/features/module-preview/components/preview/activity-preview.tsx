@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import type {
   Activity,
   Resource,
-} from "../../../../../src.legacy/utils/interfaces/activity";
+} from "../../../../../src/utils/interfaces/activity";
 import {
   ACTIVITIES,
   ACTIVITIES_VIDEOS,
-} from "../../../../../src.legacy/config/urls";
+} from "../../../../config/urls";
 import BaseReactPlayer from "react-player";
 import { ExternalLink, File } from "lucide-react";
 

@@ -4,11 +4,11 @@ import { useParcoursSelector, useParcoursDispatch } from "../../../store/Parcour
 import InheritedItems from "../../../../../../src.legacy/components/inherited-items/inherited-items";
 import InheritedTextList from "../../../../../../src.legacy/components/inherited-items/inherited-text-list";
 import NotSelectedContacts from "./not-selected-contacts";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../../../src/utils/interfaces/contact";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import User from "../../../../../../src/utils/interfaces/user";
 
 interface ContactsWithDrawerProps {
   loading: boolean;

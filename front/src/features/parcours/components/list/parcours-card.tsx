@@ -1,13 +1,13 @@
 // Import des dépendances React et React Router
 import { Link } from "react-router";
-import { localeDate } from "../../../../../src.legacy/helpers/locale-date";
-import Parcours from "../../../../../src.legacy/utils/interfaces/parcours";
+import { localeDate } from "../../../../utils/helpers/locale-date";
+import Parcours from "../../../../../src/utils/interfaces/parcours";
 import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
 import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";
 import { useEffect, useState } from "react";
 import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
-import { truncateText } from "../../../../../src.legacy/helpers/truncate-text";
-import bgImageGradient from "../../../../../src.legacy/utils/bg-image-gradient";
+import { truncateText } from "../../../../utils/helpers/truncate-text";
+import bgImageGradient from "../../../../utils/helpers/bg-image-gradient";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 
 // Interface définissant les props du composant

@@ -1,4 +1,4 @@
-import Parcours from "../../../../../src.legacy/utils/interfaces/parcours";
+import Parcours from "../../../../../src/utils/interfaces/parcours";
 import CardListItem from "../../../../../src.legacy/components/UI/card-list-item";
 import ElementNotFound from "../../../../../src.legacy/components/UI/element-not-found";
 import ParcoursCard from "./parcours-card";

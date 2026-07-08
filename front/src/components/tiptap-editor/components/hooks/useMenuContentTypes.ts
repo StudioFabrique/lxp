@@ -1,7 +1,7 @@
 import { type Editor, useEditorState } from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useRef, useState } from "react";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 import { BASE_URL } from "../../../../config/urls";
 
 interface QueuedImage {

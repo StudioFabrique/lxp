@@ -1,4 +1,4 @@
-import Module from "../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../src/utils/interfaces/module";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 type ProgressModulesStatsProps = {

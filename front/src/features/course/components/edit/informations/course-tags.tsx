@@ -1,4 +1,4 @@
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagsWithDrawer from "../../../../parcours/components/edit/informations/tags-with-drawer";
 
 type Props = {

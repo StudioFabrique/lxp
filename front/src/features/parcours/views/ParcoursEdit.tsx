@@ -21,10 +21,10 @@ import ImportSkills from "../components/edit/skills/import-skills.component";
 import SkillsList from "../components/edit/skills/skills-list.component";
 import Error404 from "../../../../src.legacy/components/error404";
 import ImageHeaderMutable from "../../../../src.legacy/components/image-header/image-header-mutable";
-import { stepsParcours } from "../../../../src.legacy/config/steps/steps-parcours";
-import { testModules } from "../../../../src.legacy/helpers/parcours-steps-validation";
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import useSteps from "../../../../src.legacy/hooks/use-steps";
+import { stepsParcours } from "../../../config/steps/steps-parcours";
+import { testModules } from "../../../utils/helpers/parcours-steps-validation";
+import useHttp from "../../../../src/hooks/useHttp";
+import useSteps from "../../../../src/hooks/useSteps";
 import useParcoursService from "../hooks/useParcoursServices";
 import ModuleComponent from "../components/edit/modules/module";
 

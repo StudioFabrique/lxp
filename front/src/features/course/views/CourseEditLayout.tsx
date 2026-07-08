@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router";
 import toast from "react-hot-toast";
 
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import formatCourseFromHttp from "../../../../src.legacy/helpers/course/course-infos-from-http";
+import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
 import Loader from "../../../../src.legacy/components/UI/loader";
 import ImageHeader from "../../../../src.legacy/components/image-header";
-import Course from "../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../src/utils/interfaces/course";
 import defaultImage from "../../../../src.legacy/assets/images/module-default.jpg";
 import { BookMarked } from "lucide-react";
 import { useCourseSelector, useCourseDispatch } from "../store/CourseContext";

@@ -3,7 +3,7 @@ import ParcoursTable from "./parcours-table";
 import { Link } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
 
 export default function LastParcours() {

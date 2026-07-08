@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 
-import Objective from "../../../../../../src.legacy/utils/interfaces/objective";
+import Objective from "../../../../../../src/utils/interfaces/objective";
 import ObjectiveItem from "./objective-item";
 import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
 import FormObjective from "./form-objective";
 import toast from "react-hot-toast";

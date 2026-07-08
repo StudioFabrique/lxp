@@ -11,8 +11,8 @@ import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
 import Header from "../../../../../src.legacy/components/UI/header";
 import ItemsAdder from "../../../../../src.legacy/components/UI/items-adder";
-import { regexGeneric } from "../../../../../src.legacy/utils/constantes";
-import { transformLink, urlIsValid } from "../../../../../src.legacy/utils/link-transform-service";
+import { regexGeneric } from "../../../../config/constantes";
+import { transformLink, urlIsValid } from "../../../../utils/helpers/link-transform";
 
 type Props = {
   user?: User | null;

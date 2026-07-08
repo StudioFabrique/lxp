@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 import Course from "../../../../utils/interfaces/course";
 
 const MostReadCourses = () => {

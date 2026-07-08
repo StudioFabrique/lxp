@@ -1,4 +1,4 @@
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
 import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
 

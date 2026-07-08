@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import useEagerLoadingList from "../../../../../../src.legacy/hooks/use-eager-loading-list";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
-import Group from "../../../../../../src.legacy/utils/interfaces/group";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
+import User from "../../../../../../src/utils/interfaces/user";
+import Group from "../../../../../../src/utils/interfaces/group";
 import { useState } from "react";
 import Pagination from "../../../../../../src.legacy/components/UI/pagination/pagination";
 import Search from "../../../../../../src.legacy/components/UI/search/search.component";
-import { userInGroupSearchOptions } from "../../../../../../src.legacy/config/search-options";
+import { userInGroupSearchOptions } from "../../../../../config/search-options";
 import RefreshIcon from "../../../../../../src.legacy/components/UI/svg/refresh-icon.component";
 import StudentsListTable from "./students-list-table";
 import { UserX } from "lucide-react";

@@ -1,5 +1,5 @@
 import { PlaneLandingIcon, PlaneTakeoffIcon } from "lucide-react";
-import Course from "../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../src/utils/interfaces/course";
 
 type ProgressBarProps = {
   courses: Course[];

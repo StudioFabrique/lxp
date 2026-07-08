@@ -1,7 +1,7 @@
 import { Edit, ListPlus, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { Link } from "react-router";
-import Course from "../../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../../src/utils/interfaces/course";
 import { ModalCourseType } from "./course-item";
 
 type CourseActionsProps = {

@@ -1,11 +1,11 @@
 import { GripVertical, Pen, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import type { Activity } from "../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import BookIcon from "../../../../../../src.legacy/components/UI/svg/book-icon";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useLessonDispatch } from "../../../store/LessonContext";
 import { useMemo } from "react";
-import { displayDate } from "../../../../../../src.legacy/helpers/dispaly-dates";
+import { displayDate } from "../../../../../utils/helpers/display-dates";
 
 type Props = {
   activity: Activity;

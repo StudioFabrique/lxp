@@ -4,17 +4,17 @@ import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
 import VirtualClass from "../../../../../../src.legacy/components/virtual-class";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import DatesSelecter from "../../../../../../src.legacy/components/UI/dates-selecter/dates-selecter.component";
 
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
-import useInput from "../../../../../../src.legacy/hooks/use-input";
-import { regexUrl } from "../../../../../../src.legacy/utils/constantes";
+import Tag from "../../../../../../src/utils/interfaces/tag";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import useInput from "../../../../../hooks/useInput";
+import { regexUrl } from "../../../../../config/constantes";
 import ContactsWithDrawer from "./contacts-with-drawer";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../../../src/utils/interfaces/contact";
 import TagsWithDrawer from "./tags-with-drawer";
 import useInfosService from "../../../hooks/useInfosService";
 

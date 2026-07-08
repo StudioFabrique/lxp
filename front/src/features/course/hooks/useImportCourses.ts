@@ -1,17 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 
-import Course from "../../../../src.legacy/utils/interfaces/course";
-import Lesson from "../../../../src.legacy/utils/interfaces/lesson";
-import { Activity } from "../../../../src.legacy/utils/interfaces/activity";
-import Parcours from "../../../../src.legacy/utils/interfaces/parcours";
-import Formation from "../../../../src.legacy/utils/interfaces/formation";
-import Module from "../../../../src.legacy/utils/interfaces/module";
-import { BASE_URL, BASE_API_URL } from "../../../../src.legacy/config/urls";
+import Course from "../../../../src/utils/interfaces/course";
+import Lesson from "../../../../src/utils/interfaces/lesson";
+import { Activity } from "../../../../src/utils/interfaces/activity";
+import Parcours from "../../../../src/utils/interfaces/parcours";
+import Formation from "../../../../src/utils/interfaces/formation";
+import Module from "../../../../src/utils/interfaces/module";
+import { BASE_URL, BASE_API_URL } from "../../../config/urls";
 import {
   getMimeType,
   sanitizeFilename,
-} from "../../../../src.legacy/utils/import-mime";
+} from "../../../utils/helpers/import-mime";
 import { parseCourseZip } from "../../../../src.legacy/helpers/course-import-parser";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 

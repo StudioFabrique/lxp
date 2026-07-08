@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { getActivityTypes } from "../../../../../src.legacy/config/lessons-activity-types";
-import type ActivityType from "../../../../../src.legacy/utils/interfaces/activity-type";
+import type ActivityType from "../../../../../src/utils/interfaces/activity-type";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 type ActivityTypeProps = {

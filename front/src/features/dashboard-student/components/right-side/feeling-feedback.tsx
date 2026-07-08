@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 import { AuthContext } from "../../../../store/AuthProvider";
 import StudentFeedback from "../../../../utils/interfaces/student-feedback";
 import FeelingLevel from "../../../../../src.legacy/components/UI/feeling-level";

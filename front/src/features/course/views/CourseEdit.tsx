@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import Stepper from "../../../../src.legacy/components/UI/stepper.-component/stepper.-component";
 import CourseInfos from "../components/edit/informations/course-infos";
-import { stepsCourse } from "../../../../src.legacy/config/steps/steps-course";
-import useSteps from "../../../../src.legacy/hooks/use-steps";
+import { stepsCourse } from "../../../config/steps/steps-course";
+import useSteps from "../../../../src/hooks/useSteps";
 import CourseScenario from "../components/edit/scenario/course-scenario";
 import CourseCalendar from "../components/edit/calendar/course-calendar";
 import CoursePreview from "../components/edit/preview/course-preview";
-import Step from "../../../../src.legacy/utils/interfaces/step";
+import Step from "../../../../src/utils/interfaces/step";
 import { useCourseDispatch } from "../store/CourseContext";
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import formatCourseFromHttp from "../../../../src.legacy/helpers/course/course-infos-from-http";
+import useHttp from "../../../../src/hooks/useHttp";
+import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
 
 const EditCourseHome = () => {
   const dispatch = useCourseDispatch();

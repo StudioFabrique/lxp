@@ -3,9 +3,9 @@ import { useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés
-import useEagerLoadingList from "../../../../../src.legacy/hooks/use-eager-loading-list";
-import { searchListCourse } from "../../../../../src.legacy/helpers/course/search-list-course";
-import { courseSearchOptions } from "../../../../../src.legacy/config/search-options";
+import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
+import { searchListCourse } from "../../../../utils/helpers/search-list-course";
+import { courseSearchOptions } from "../../../../config/search-options";
 
 // Imports des composants UI
 import ToggleList from "../../../../../src.legacy/components/UI/toggle-list";
@@ -13,7 +13,7 @@ import CourseTable from "./course-table";
 import Pagination from "../../../../../src.legacy/components/UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
-import useDeleteCourse from "../../../../../src.legacy/hooks/use-delete-course";
+import useDeleteCourse from "../../../../../src/hooks/useDeleteCourse";
 import ModalDeleteCourse from "../../../../../src.legacy/components/UI/modal-delete-course";
 import SearchAndRefresh from "../../../../../src.legacy/components/UI/search-and-refresh";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";

@@ -3,7 +3,7 @@ import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import Parcours from "../../../utils/interfaces/parcours";
 import ImageHeader from "../../../../src.legacy/components/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";

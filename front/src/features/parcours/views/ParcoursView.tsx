@@ -19,7 +19,7 @@ import ImageHeader from "../../../../src.legacy/components/image-header";
 import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src.legacy/components/UI/header";
-import toUpperFirstLetter from "../../../../src.legacy/utils/toUpperFirstLetter";
+import { toUpperFirstLetter } from "../../../../src/utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
 

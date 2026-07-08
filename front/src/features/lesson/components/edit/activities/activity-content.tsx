@@ -1,4 +1,4 @@
-import type { Activity } from "../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import ImageActivityPreview from "./image/image-activity-preview";
 import ResourcePreview from "./resources/preview/resource-preview";
 import Video from "./video";

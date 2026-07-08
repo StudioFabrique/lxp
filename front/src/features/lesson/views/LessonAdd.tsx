@@ -8,7 +8,7 @@ import useAddLesson from "../hooks/useAddLesson";
 import LessonForm from "../../../features/course/components/edit/scenario/lesson-form";
 import CourseSelecters from "../../../../src.legacy/components/add-lesson/course-selecters";
 import NewLessonActions from "../../../../src.legacy/components/add-lesson/new-lesson-actions";
-import bgImageGradient from "../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
 
 function AddNewLesson() {
   const {

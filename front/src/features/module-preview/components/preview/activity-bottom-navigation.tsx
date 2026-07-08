@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { cn } from "../../../../../src.legacy/utils";
+import { cn } from "../../../../utils/cn";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FeedbacksButton from "../../../../../src.legacy/components/UI/feedbacks/feedbacks-button";
 import { PropsWithChildren } from "react";

@@ -1,9 +1,9 @@
 import { FC, FormEvent, useCallback, useState } from "react";
 
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
-import Badge from "../../../../../../src.legacy/utils/interfaces/badge";
-import useInput from "../../../../../../src.legacy/hooks/use-input";
-import { regexGeneric } from "../../../../../../src.legacy/utils/constantes";
+import Skill from "../../../../../../src/utils/interfaces/skill";
+import Badge from "../../../../../../src/utils/interfaces/badge";
+import useInput from "../../../../../hooks/useInput";
+import { regexGeneric } from "../../../../../config/constantes";
 import DrawerFormButtons from "../../../../../../src.legacy/components/UI/drawer-form-buttons/drawer-form-buttons.component";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import BadgeList from "./badge/badge-list.component";

@@ -2,10 +2,10 @@
 import { useContext } from "react";
 
 import Pagination from "../../../../../../src.legacy/components/UI/pagination/pagination";
-import Group from "../../../../../../src.legacy/utils/interfaces/group";
+import Group from "../../../../../../src/utils/interfaces/group";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import StudentGroupList from "./student-group-list";
-import useEagerLoadingList from "../../../../../../src.legacy/hooks/use-eager-loading-list";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import { GroupList } from "./parcours-students.component";
 import { AuthContext } from "../../../../../../src/store/AuthProvider";
 

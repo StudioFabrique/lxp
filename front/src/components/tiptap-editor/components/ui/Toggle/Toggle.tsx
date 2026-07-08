@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { cn } from "../../../../../../src.legacy/utils";
+import { cn } from "../../../../../utils/cn";
 
 export type ToggleProps = {
   active?: boolean;

@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import Tag from "../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../src/utils/interfaces/tag";
 
 type TagsHomeEditingProps = {
   tag: Tag;

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import Objective from "../../../../../../src.legacy/utils/interfaces/objective";
+import Objective from "../../../../../../src/utils/interfaces/objective";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 import DeleteIcon from "../../../../../../src.legacy/components/UI/svg/delete-icon.component";
 

@@ -24,7 +24,7 @@ import {
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 const useModuleContentExplorer = () => {

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import type { Resource } from "../../../../../../../../src.legacy/utils/interfaces/activity";
+import type { Resource } from "../../../../../../../../src/utils/interfaces/activity";
 import Field from "../../../../../../../../src.legacy/components/UI/forms/field";
 import useForm from "../../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
 import { z, ZodError } from "zod";
-import { regexGeneric } from "../../../../../../../../src.legacy/utils/constantes";
-import { validationErrors } from "../../../../../../../../src.legacy/helpers/validate";
+import { regexGeneric } from "../../../../../../../config/constantes";
+import { validationErrors } from "../../../../../../../utils/helpers/validate";
 
 type Props = {
   resource: Resource;

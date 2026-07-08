@@ -1,4 +1,4 @@
-import Module from "../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../src/utils/interfaces/module";
 import Competences from "./competences";
 import Contacts from "./contacts";
 // import Objectifs from "./objectifs";

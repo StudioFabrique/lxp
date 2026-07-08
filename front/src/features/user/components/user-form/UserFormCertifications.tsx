@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import Graduation from "../../../../utils/interfaces/graduation";
-import { addIdToObject } from "../../../../../src.legacy/utils/add-id-to-objects";
+import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 
 type EditState = {
   isActive: boolean;

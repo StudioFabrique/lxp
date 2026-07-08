@@ -1,6 +1,6 @@
 import { CableCar } from "lucide-react";
-import Skill from "../../../../../src.legacy/utils/interfaces/skill";
-import toUpperFirstLetter from "../../../../../src.legacy/utils/toUpperFirstLetter";
+import Skill from "../../../../../src/utils/interfaces/skill";
+import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 type Props = {

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { PenBox } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../../store/AuthProvider";
-import userBelongsToContacts from "../../../../src.legacy/utils/userBelongsToContacts";
+import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
 import useDiagnosticQuiz from "../../../components/quiz/hooks/use-diagnostic-quiz";
 import useCourseQuiz from "../../../components/quiz/hooks/use-course-quiz";
 import useSmartQuizPrompt from "../../../components/quiz/hooks/use-smart-quiz-prompt";

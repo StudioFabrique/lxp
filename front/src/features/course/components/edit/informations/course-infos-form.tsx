@@ -4,13 +4,13 @@ import { useCourseDispatch } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
 import { ZodError } from "zod";
 
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import Field from "../../../../../../src.legacy/components/UI/forms/field";
 import FieldArea from "../../../../../../src.legacy/components/UI/forms/field-area";
 import { infosCourseSchema } from "../../../../../../src.legacy/lib/validation/course/infos--course-schemas";
 
-import { validationErrors } from "../../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../../utils/helpers/validate";
 import useFormAutoSubmit from "../../../../../../src.legacy/components/UI/forms/hooks/use-form-auto-submit";
 
 interface CourseInfosFormProps {

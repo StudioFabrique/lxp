@@ -1,4 +1,4 @@
-import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../../src/utils/interfaces/lesson";
 import { ExplorerStore } from "../../../../../src.legacy/views/module-content-explorer/module-content-explorer";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";

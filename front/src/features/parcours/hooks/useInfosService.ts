@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
-import Contact from "../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../src/utils/interfaces/contact";
 import { useParcoursDispatch } from "../store/ParcoursContext";
-import User from "../../../../src.legacy/utils/interfaces/user";
+import User from "../../../../src/utils/interfaces/user";
 
 const useInfosService = () => {
   const [loadingContacts, setLoadingContacts] = useState<boolean>(false);

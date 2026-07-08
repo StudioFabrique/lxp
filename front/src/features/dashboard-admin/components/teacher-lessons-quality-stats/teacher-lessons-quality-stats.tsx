@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import BestLessonsStatsList from "./best-courses-list";
 import { Link } from "react-router";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 import LessonsQualityStats from "../../../../utils/interfaces/lessons-quality-stats";
 
 const TeacherLessonsQualityStats = () => {

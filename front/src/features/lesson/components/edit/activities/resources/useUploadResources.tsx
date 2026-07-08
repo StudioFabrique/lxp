@@ -1,8 +1,8 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 import useForm from "../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import useHttp from "../../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
-import { regexGeneric } from "../../../../../../../src.legacy/utils/constantes";
+import { regexGeneric } from "../../../../../../config/constantes";
 import { useParams } from "react-router";
 
 export type Resource = {

@@ -1,4 +1,4 @@
-import { useDragAndDrop } from "../../../../../../../src.legacy/hooks/useDragAndDrop";
+import { useDragAndDrop } from "../../../../../../../src/hooks/useDragAndDrop";
 import { DndWrapper } from "../../../../../../../src.legacy/components/UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import { useMemo } from "react";

@@ -1,11 +1,11 @@
 import { MoveUpRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
-import useEagerLoadingList from "../../../../src.legacy/hooks/use-eager-loading-list";
+import useEagerLoadingList from "../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import { localeDate } from "../../../../src.legacy/helpers/locale-date";
-import { truncateText } from "../../../../src.legacy/helpers/truncate-text";
+import { localeDate } from "../../../utils/helpers/locale-date";
+import { truncateText } from "../../../utils/helpers/truncate-text";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];

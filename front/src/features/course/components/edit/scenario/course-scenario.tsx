@@ -4,14 +4,14 @@ import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.
 
 import LinearScenarioLessons from "./linear-scenario-lessons";
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import { useParams } from "react-router";
-import courseScenarioFromHttp from "../../../../../../src.legacy/helpers/course/course-scenario-from-http";
-import Lesson from "../../../../../../src.legacy/utils/interfaces/lesson";
+import courseScenarioFromHttp from "../../../../../utils/helpers/course-scenario-from-http";
+import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import toast from "react-hot-toast";
 import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import LessonsInDrawer from "./lessons-in-drawer";
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 
 const CourseScenario = () => {
   const { courseId } = useParams();

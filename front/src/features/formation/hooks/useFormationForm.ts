@@ -5,7 +5,7 @@ import { formationApi } from "../api/formation.api";
 import { formationSchema } from "../formation.schema";
 import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../../../utils/interfaces/formation-item";
-import { getRandomNumber } from "../../../../src.legacy/helpers/get-random-number";
+import { getRandomNumber } from "../../../utils/helpers/get-random-number";
 
 const TAG_COLORS = [
   "rgba(255, 0, 0, 0.5)",

@@ -3,9 +3,9 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Socket } from "socket.io-client";
 import StudentFeedback from "../../../utils/interfaces/student-feedback";
 import { AuthContext } from "../../../store/AuthProvider";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import Wrapper from "../../../components/wrappers/BoxWrapper";
-import imageProfileReplacement from "../../../../src.legacy/config/image-profile-replacement";
+import imageProfileReplacement from "../../../config/image-profile-replacement";
 import AvatarCard from "../../../../src.legacy/components/UI/avatar-card";
 
 export default function LastFeedback() {

@@ -1,5 +1,5 @@
 import { ContactIcon } from "lucide-react";
-import Contact from "../../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../../src/utils/interfaces/contact";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 type ContactsProps = {

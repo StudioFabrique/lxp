@@ -1,4 +1,4 @@
-import { cn } from "../../../../src.legacy/utils";
+import { cn } from "../../../utils/cn";
 import { QuizAttempt } from "../../../utils/interfaces/quiz";
 import DetailsAccordion from "./details-accordion";
 
