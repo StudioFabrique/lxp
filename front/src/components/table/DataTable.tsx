@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
                   <th key={header.id} className="text-base-content">
                     {header.isPlaceholder ? null : (
                       <div
-                        className={`flex items-center gap-1 ${
+                        className={`flex items-center gap-1 -ml-2 ${
                           header.column.getCanSort()
                             ? "cursor-pointer select-none"
                             : ""
