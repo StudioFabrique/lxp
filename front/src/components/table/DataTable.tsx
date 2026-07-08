@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
         <thead className="w-full">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {/* Espacement gauche typique de ton design */}
+              {/* Espacement gauche */}
               <th className="p-0 w-0" />
 
               {headerGroup.headers.map((header) => {
@@ -98,19 +98,19 @@ export function DataTable<TData, TValue>({
 
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="bg-base-100 hover:bg-base-100/60 text-base-content rounded-xl transition-colors"
-            >
-              <td className="rounded-l-xl w-0" />
+            <tr key={row.id} className="text-base-content group cursor-pointer">
+              <td className="rounded-l-xl w-0 bg-base-100 group-hover:bg-base-100/60 transition-colors" />
 
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-2">
+                <td
+                  key={cell.id}
+                  className="px-2 bg-base-100 group-hover:bg-base-100/60 transition-colors"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
 
-              <td className="rounded-r-xl w-0" />
+              <td className="rounded-r-xl w-0 bg-base-100 group-hover:bg-base-100/60 transition-colors" />
             </tr>
           ))}
         </tbody>

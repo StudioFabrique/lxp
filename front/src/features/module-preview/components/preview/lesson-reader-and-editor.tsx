@@ -10,10 +10,10 @@ import activityIconType from "../../../../../src.legacy/utils/activity-icon-type
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
-import { ActivitySelectMode } from "../../../../../src.legacy/views/module-content-explorer/store/module-explorer-reducer";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
 import toUpperFirstLetter from "../../../../../src.legacy/utils/toUpperFirstLetter";
+import { ActivitySelectMode } from "../../store/module-explorer-reducer";
 
 type Props = {
   mode: ActivitySelectMode;

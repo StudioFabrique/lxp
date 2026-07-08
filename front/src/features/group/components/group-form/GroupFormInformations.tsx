@@ -39,12 +39,12 @@ const GroupFormInformations: FC<{
           data={data}
           isDisabled={isLoading}
         />
-        <MemoizedImageFileUpload
+        {/*<MemoizedImageFileUpload
           maxSize={headerImageMaxSize}
           onSetFile={onSetFile}
           label="Téléverser une image de groupe"
           variant="minimized"
-        />
+        />*/}
       </span>
     </Wrapper>
   );
