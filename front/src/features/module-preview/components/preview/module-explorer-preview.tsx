@@ -106,38 +106,36 @@ const ModuleExplorerPreview = ({
       }
       onSaveActivity={activityActions.saveActivity}
     >
-      <div className="flex flex-col gap-4 w-full">
-        {mode === "read" && (
-          <ActivityBottomNavigation
-            modalVisibility={modalVisibility}
-            isLessonCompleted={computed.isLessonCompleted}
-            isFirstActivitySelected={computed.isFirstActivitySelected}
-            isLastActivitySelected={computed.isLastActivitySelected}
-            isLastLessonSelected={computed.isLastLessonSelected}
-            onPrevious={() => dispatch({ type: "go_to_previous_activity" })}
-            onNext={smartQuizState.handleNextActivity}
-            onCompleteLesson={() =>
-              computed.isLessonCompleted
-                ? lessonActions.nextLesson()
-                : dispatch({
-                    type: "set_modal_visibility",
-                    modalVisibility: "lessonCompletionModal",
-                  })
-            }
-          >
-            {computed.isLastActivitySelected &&
-              computed.isLastLessonOfCurrentCourse && (
-                <button
-                  className="btn btn-secondary btn-outline"
-                  onClick={quizState.onLoadQuizzes}
-                >
-                  <BadgeQuestionMark />
-                  Je veux me tester
-                </button>
-              )}
-          </ActivityBottomNavigation>
-        )}
-      </div>
+      {mode === "read" && (
+        <ActivityBottomNavigation
+          modalVisibility={modalVisibility}
+          isLessonCompleted={computed.isLessonCompleted}
+          isFirstActivitySelected={computed.isFirstActivitySelected}
+          isLastActivitySelected={computed.isLastActivitySelected}
+          isLastLessonSelected={computed.isLastLessonSelected}
+          onPrevious={() => dispatch({ type: "go_to_previous_activity" })}
+          onNext={smartQuizState.handleNextActivity}
+          onCompleteLesson={() =>
+            computed.isLessonCompleted
+              ? lessonActions.nextLesson()
+              : dispatch({
+                  type: "set_modal_visibility",
+                  modalVisibility: "lessonCompletionModal",
+                })
+          }
+        >
+          {computed.isLastActivitySelected &&
+            computed.isLastLessonOfCurrentCourse && (
+              <button
+                className="btn btn-secondary btn-outline"
+                onClick={quizState.onLoadQuizzes}
+              >
+                <BadgeQuestionMark />
+                Je veux me tester
+              </button>
+            )}
+        </ActivityBottomNavigation>
+      )}
     </LessonReaderAndEditor>
   );
 };
