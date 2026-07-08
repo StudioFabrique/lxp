@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagsList from "./tags-list";
 
 interface Props {

@@ -6,7 +6,7 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import Role from "../../../../../../src.legacy/utils/interfaces/role";
+import Role from "../../../../../../src/utils/interfaces/role";
 import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
 import { GroupList } from "./parcours-students.component";
 

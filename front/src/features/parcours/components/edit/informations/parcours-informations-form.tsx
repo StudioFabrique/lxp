@@ -3,15 +3,15 @@ import { FC, useCallback, useEffect, useRef } from "react";
 import { ZodError } from "zod";
 import { toast } from "react-hot-toast";
 
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
 import useFormAutoSubmit from "../../../../../../src.legacy/components/UI/forms/hooks/use-form-auto-submit";
 import Field from "../../../../../../src.legacy/components/UI/forms/field";
 import FieldArea from "../../../../../../src.legacy/components/UI/forms/field-area";
 import { infosParCoursSchema } from "../../../../../../src.legacy/lib/validation/parcours-edit/infos-parcours-schema";
-import { validationErrors } from "../../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../../utils/helpers/validate";
 
 type Props = {
   parcoursId?: string;

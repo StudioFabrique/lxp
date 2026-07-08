@@ -1,6 +1,6 @@
 import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
-import { cn } from "../../../../../src.legacy/utils";
-import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+import { cn } from "../../../../utils/cn";
+import Lesson from "../../../../../src/utils/interfaces/lesson";
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";

@@ -1,8 +1,8 @@
 import { RefObject } from "react";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
-import CustomError from "../../../../../../src.legacy/utils/interfaces/custom-error";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import Skill from "../../../../../../src/utils/interfaces/skill";
+import CustomError from "../../../../../../src/utils/interfaces/custom-error";
 import FieldNumber from "../../../../../../src.legacy/components/UI/forms/field-number";
 import ModuleMetadatas from "../../../../../../src.legacy/components/module-add/module-metadatas";
 import ModuleToParcours from "../../../../../../src.legacy/components/module-add/module-to-parcours";

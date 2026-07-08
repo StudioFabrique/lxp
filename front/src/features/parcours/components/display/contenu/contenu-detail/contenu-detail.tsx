@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BookIcon from "../../../../../../../src.legacy/components/UI/svg/book-icon";
-import useHttp from "../../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../../src/hooks/useHttp";
 import { FC, useEffect, useState } from "react";
-import Course from "../../../../../../../src.legacy/utils/interfaces/course";
+import Course from "../../../../../../../src/utils/interfaces/course";
 import EditIcon from "../../../../../../../src.legacy/components/UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
 import { EyeOff, Import, Plus, UploadCloud } from "lucide-react";
-import { cn } from "../../../../../../../src.legacy/utils";
+import { cn } from "../../../../../../utils/cn";
 import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
 

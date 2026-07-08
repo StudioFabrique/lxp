@@ -1,11 +1,11 @@
 import { Fragment } from "react/jsx-runtime";
 import ImageHeader from "../../../../src.legacy/components/image-header";
 import HeaderMenu from "../../../../src.legacy/components/UI/header-menu";
-import Module from "../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../src/utils/interfaces/module";
 import { useLocation } from "react-router";
 import { ComponentIcon, RocketIcon } from "lucide-react";
 import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
-import toUpperFirstLetter from "../../../../src.legacy/utils/toUpperFirstLetter";
+import { toUpperFirstLetter } from "../../../../src/utils/helpers/text-helpers";
 
 type ModuleContentExplorerHeaderProps = {
   moduleData: Module & { parcours: string };

@@ -7,8 +7,8 @@ import {
   Trash2,
 } from "lucide-react";
 import Wrapper from "../../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import { Resource } from "../../../../../../../../src.legacy/utils/interfaces/activity";
-import { ACTIVITIES } from "../../../../../../../../src.legacy/config/urls";
+import { Resource } from "../../../../../../../../src/utils/interfaces/activity";
+import { ACTIVITIES } from "../../../../../../../config/urls";
 import { Dispatch, SetStateAction } from "react";
 
 type Props = {

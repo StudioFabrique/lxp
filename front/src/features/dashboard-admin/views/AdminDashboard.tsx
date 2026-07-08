@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "../../../store/AuthProvider";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import Parcours from "../../../utils/interfaces/parcours";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import TeacherLastParcours from "../components/teacher-last-parcours";

@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ActivitySelectMode } from "../../../../../src.legacy/views/module-content-explorer/store/module-explorer-reducer";
-import cleanIframeLink from "../../../../../src.legacy/utils/clean-iframe-link";
+import cleanIframeLink from "../../../../utils/helpers/clean-iframe-link";
 import SaveButton from "../../../../components/tiptap-editor/components/SaveButton";
 import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 

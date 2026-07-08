@@ -2,7 +2,7 @@ import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-si
 
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";
-import { MetadataList, Metadatas } from "../../../../../../src.legacy/utils/interfaces/new-module";
+import { MetadataList, Metadatas } from "../../../../../../src/utils/interfaces/new-module";
 
 type ModuleDrawerProps = {
   metadataList: MetadataList[] | null;

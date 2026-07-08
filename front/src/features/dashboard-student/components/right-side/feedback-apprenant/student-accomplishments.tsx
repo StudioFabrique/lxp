@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Item from "./item";
 import { Accomplishment } from "../../../../../utils/interfaces/accomplishment";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import Loader from "../../../../../components/loaders/Loader";
 
 const StudentAccomplishments = () => {

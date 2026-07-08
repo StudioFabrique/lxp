@@ -1,5 +1,5 @@
-import { ACTIVITIES } from "../../../../../../../src.legacy/config/urls";
-import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
+import { ACTIVITIES } from "../../../../../../config/urls";
+import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import ImageActivityEditor from "./image-activity-editor";
 
 type Props = {

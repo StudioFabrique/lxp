@@ -1,5 +1,5 @@
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import type { Activity } from "../../../../../../src.legacy/utils/interfaces/activity";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import { useParams } from "react-router";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";

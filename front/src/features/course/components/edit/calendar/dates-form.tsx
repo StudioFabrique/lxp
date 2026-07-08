@@ -1,12 +1,12 @@
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import CourseDates from "../../../../../../src.legacy/utils/interfaces/course-dates";
-import useInput from "../../../../../../src.legacy/hooks/use-input";
-import { regexGeneric } from "../../../../../../src.legacy/utils/constantes";
+import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
+import useInput from "../../../../../hooks/useInput";
+import { regexGeneric } from "../../../../../config/constantes";
 import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import toast from "react-hot-toast";
-import Module from "../../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../../src/utils/interfaces/module";
 import { useEffect, useState } from "react";
-import { localeDate } from "../../../../../../src.legacy/helpers/locale-date";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
 
 interface DatesFormProps {
   isLoading: boolean;

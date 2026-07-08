@@ -1,14 +1,14 @@
 import Field from "../../../../../../../src.legacy/components/UI/forms/field";
 import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import defaultImage from "../../../../../../../src.legacy/assets/images/bookshelf.jpg";
-import { activityImageSize } from "../../../../../../../src.legacy/config/images-sizes";
+import { activityImageSize } from "../../../../../../config/images-sizes";
 import MemoizedImageFileUpload from "../../../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
 import SubmitButton from "../../../../../../../src.legacy/components/UI/submit-button";
-import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
-import { ACTIVITIES } from "../../../../../../../src.legacy/config/urls";
+import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
+import { ACTIVITIES } from "../../../../../../config/urls";
 import DialogImages from "../../../../../../../src.legacy/components/mediatheque/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
-import bgImageGradient from "../../../../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../../../../utils/helpers/bg-image-gradient";
 
 type Props = {
   activity?: Activity;

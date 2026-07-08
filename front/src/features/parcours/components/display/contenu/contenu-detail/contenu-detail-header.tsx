@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import defaultImage from "../../../../../../assets/content-image-placeholders/module-default.jpg";
-import bgImageGradient from "../../../../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../../../../utils/helpers/bg-image-gradient";
 
 const ContenuDetailHeader: FC<{
   imageModuleHeader: any;

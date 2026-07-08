@@ -1,8 +1,8 @@
 import { FC, FormEvent, useState } from "react";
 
-import useInput from "../../../../../src.legacy/hooks/use-input";
+import useInput from "../../../../hooks/useInput";
 import { Link } from "react-router";
-import { regexGeneric } from "../../../../../src.legacy/utils/constantes";
+import { regexGeneric } from "../../../../config/constantes";
 import Selecter from "../../../../../src.legacy/components/UI/selecter/selecter.component";
 import toast from "react-hot-toast";
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_API_URL } from "../../src.legacy/config/urls";
+import { BASE_API_URL } from "../config/urls";
 
 // Création de l'instance Axios globale avec la configuration de base
 const apiClient = axios.create({

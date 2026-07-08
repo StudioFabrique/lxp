@@ -2,9 +2,9 @@ import { useContext, useState } from "react";
 import {
   regexMail,
   regexPassword,
-} from "../../../../src.legacy/utils/constantes";
+} from "../../../config/constantes";
 import { Link } from "react-router";
-import useInput from "../../../../src.legacy/hooks/use-input";
+import useInput from "../../../hooks/useInput";
 import { AuthContext } from "../../../store/AuthProvider";
 import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
 

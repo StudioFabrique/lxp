@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 import bgImage from "../../../../src.legacy/assets/images/new-parcours-default.jpg";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import NewParcoursForm from "../components/edit/new-parcours-form";
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../../../src.legacy/components/UI/loader";
@@ -12,7 +12,7 @@ import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.compon
 import Selecter from "../../../../src.legacy/components/UI/selecter/selecter.component";
 import QuestionMarkTooltip from "../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle } from "lucide-react";
-import bgImageGradient from "../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
 
 type Item = {
   id: number;

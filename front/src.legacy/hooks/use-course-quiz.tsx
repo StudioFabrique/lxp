@@ -7,12 +7,11 @@ import {
   QuizAttempt,
   UserAnswer,
 } from "../utils/interfaces/quiz";
-import useHttp from "./use-http";
-import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
 import apiClient from "../../src/lib/axios";
+import { BASE_API_URL } from "../../src/config/urls";
 
 export default function useCourseQuiz(
   courseId?: number,

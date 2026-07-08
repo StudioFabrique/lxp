@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import CustomError from "../../../../../../../src.legacy/utils/interfaces/custom-error";
+import CustomError from "../../../../../../../src/utils/interfaces/custom-error";
 import ResourcesAction from "./resource-actions";
 import ResourceForm from "./resource-form";
 import ResourcesList from "./resources-list";

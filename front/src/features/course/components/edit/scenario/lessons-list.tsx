@@ -2,7 +2,7 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useCourseDispatch } from "../../../store/CourseContext";
 
-import Lesson from "../../../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import LessonItem from "./lesson-item";
 import { CheckCircle, Loader2 } from "lucide-react";

@@ -3,7 +3,7 @@ import type User from "../../../../utils/interfaces/user";
 import type Graduation from "../../../../utils/interfaces/graduation";
 import type { Link as LinkI } from "../../../../utils/interfaces/link";
 import type Hobby from "../../../../utils/interfaces/hobby";
-import { regexGeneric, regexMail, regexNumber } from "../../../../../src.legacy/utils/constantes";
+import { regexGeneric, regexMail, regexNumber } from "../../../../config/constantes";
 
 export function useUserForm(user: User | null) {
   const [email, setEmail] = useState(user?.email ?? "");

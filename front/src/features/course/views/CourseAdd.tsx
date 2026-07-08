@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
 import toast from "react-hot-toast";
@@ -9,7 +9,7 @@ import Selecter from "../../../../src.legacy/components/UI/selecter/selecter.com
 import NewCourseForm from "../components/edit/new-course-form";
 import bgImage from "../../../../src.legacy/assets/images/new-parcours-default.jpg";
 import { useLocation, useNavigate } from "react-router";
-import bgImageGradient from "../../../../src.legacy/utils/bg-image-gradient";
+import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
 
 // type de données pour les listes
 type Item = {

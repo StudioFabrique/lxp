@@ -3,13 +3,13 @@ import VideoPlayer from "../../../../../../src.legacy/components/UI/video-player
 import { toast } from "react-hot-toast";
 import { ZodError } from "zod";
 
-import { maxSizeError } from "../../../../../../src.legacy/helpers/max-size-error";
-import { activityVideoSize } from "../../../../../../src.legacy/config/images-sizes";
+import { maxSizeError } from "../../../../../utils/helpers/max-size-error";
+import { activityVideoSize } from "../../../../../config/images-sizes";
 import useForm from "../../../../../../src.legacy/components/UI/forms/hooks/use-form";
 import Field from "../../../../../../src.legacy/components/UI/forms/field";
 import FieldArea from "../../../../../../src.legacy/components/UI/forms/field-area";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import { validationErrors } from "../../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../../utils/helpers/validate";
 import { Loader2 } from "lucide-react";
 import { activiteMetaDataSchema } from "../../../../../../src.legacy/lib/validation/lesson/activite-video";
 

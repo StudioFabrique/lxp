@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import Loader from "../../../../src.legacy/components/UI/loader";
 import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import useHttp from "../../../../src/hooks/useHttp";
+import Lesson from "../../../../src/utils/interfaces/lesson";
 import { Outlet, useParams } from "react-router";
 import ImageHeader from "../../../../src.legacy/components/image-header";
 import toast from "react-hot-toast";

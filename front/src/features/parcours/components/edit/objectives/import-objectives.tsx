@@ -2,11 +2,11 @@
 import { FC, useCallback } from "react";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import ImportCSVActions from "../../../../../../src.legacy/components/UI/import-csv-actions.component";
-import { DOWNLOAD_URL } from "../../../../../../src.legacy/config/urls";
+import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src.legacy/components/UI/imported-csv-data.component";
-import { objectivesFields } from "../../../../../../src.legacy/config/csv/csv-objectives";
+import { objectivesFields } from "../../../../../config/csv/csv-objectives";
 
 type Props = {
   onCloseDrawer: (id: string) => void;

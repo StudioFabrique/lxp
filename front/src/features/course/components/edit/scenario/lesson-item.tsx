@@ -1,5 +1,5 @@
 import { GripVertical, Trash2 } from "lucide-react";
-import Lesson from "../../../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import DocumentIcon from "../../../../../../src.legacy/components/UI/svg/document-icon";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";

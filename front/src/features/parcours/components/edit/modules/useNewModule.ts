@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import useForm from "../../../../../../src.legacy/components/UI/forms/hooks/use-form";
 import { moduleCreateSchema } from "../../../../../../src.legacy/lib/validation/parcours-edit/module-create-schema";
-import { scrollToTop } from "../../../../../../src.legacy/helpers/scrollToTop";
+import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
 import { moduleReducer, initialState } from "./useNewModuleReducer";
-import SuccessWithMessage from "../../../../../../src.legacy/utils/interfaces/success-with-message";
+import SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
 import {
   MetadataList,
   Metadatas,
   ModuleData,
   Parcours,
-} from "../../../../../../src.legacy/utils/interfaces/new-module";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+} from "../../../../../../src/utils/interfaces/new-module";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
 
 /**

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import useForm from "../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import useHttp from "../../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../../src/hooks/useHttp";
 import { useParams } from "react-router";
-import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
-import { regexGeneric } from "../../../../../../../src.legacy/utils/constantes";
+import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
+import { regexGeneric } from "../../../../../../config/constantes";
 import { z, ZodError } from "zod";
-import { validationErrors } from "../../../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../../../utils/helpers/validate";
 import toast from "react-hot-toast";
-import type SuccessWithMessage from "../../../../../../../src.legacy/utils/interfaces/success-with-message";
+import type SuccessWithMessage from "../../../../../../../src/utils/interfaces/success-with-message";
 
 const useEditImageActivity = (
   activity: Activity | undefined,

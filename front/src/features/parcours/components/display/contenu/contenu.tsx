@@ -1,12 +1,12 @@
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import ContenuItem from "./contenu-item";
-import Module from "../../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../../src/utils/interfaces/module";
 import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
 import { useContext, useState } from "react";
 import { Link, useParams } from "react-router";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
-import userBelongsToContacts from "../../../../../../src.legacy/utils/userBelongsToContacts";
+import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-contacts";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";

@@ -2,7 +2,7 @@
 import React, { FormEvent, ReactNode, useMemo } from "react";
 import toast from "react-hot-toast";
 
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
 import LessonTags from "./lesson-tag";
 

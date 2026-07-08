@@ -1,12 +1,12 @@
 import { Link } from "react-router";
 
-import { localeDate } from "../../../../../src.legacy/helpers/locale-date";
-import Parcours from "../../../../../src.legacy/utils/interfaces/parcours";
+import { localeDate } from "../../../../utils/helpers/locale-date";
+import Parcours from "../../../../../src/utils/interfaces/parcours";
 import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";
 import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
 import SortColumnIcon from "../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
 import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
-import { truncateText } from "../../../../../src.legacy/helpers/truncate-text";
+import { truncateText } from "../../../../utils/helpers/truncate-text";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import React from "react";
 import TableRowWrapper from "../../../../../src.legacy/components/UI/table-row-wrapper";

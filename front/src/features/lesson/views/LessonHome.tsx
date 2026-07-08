@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import LessonHome from "../components/list/lesson-home";
 import toast from "react-hot-toast";
 import Modal from "../../../../src.legacy/components/UI/modal/modal";
-import Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../src/utils/interfaces/lesson";
 import ListHeader from "../../../../src.legacy/components/UI/list-header";
 import LessonHeader from "../components/list/lesson-header";
 import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";

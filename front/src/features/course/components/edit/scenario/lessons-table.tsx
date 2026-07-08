@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 
-import useEagerLoadingList from "../../../../../../src.legacy/hooks/use-eager-loading-list";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
-import { LessonWithActivitiesCount } from "../../../../../../src.legacy/utils/interfaces/lesson";
+import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
 
 interface LessonsTableProps {
   list?: LessonWithActivitiesCount[];

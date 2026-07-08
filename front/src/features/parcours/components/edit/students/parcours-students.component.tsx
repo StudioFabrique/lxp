@@ -7,12 +7,12 @@ import { Link, useParams } from "react-router";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import GroupsList from "./groups-list.component";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import Group from "../../../../../../src.legacy/utils/interfaces/group";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import Group from "../../../../../../src/utils/interfaces/group";
 import StudentsList from "./students-list";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
+import User from "../../../../../../src/utils/interfaces/user";
 
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import toast from "react-hot-toast";
 import QuestionMarkTooltip from "../../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";

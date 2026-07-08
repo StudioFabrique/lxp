@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 import Group from "../../../../../src/utils/interfaces/group";
 import Formation from "../../../../../src/utils/interfaces/formation";
 import Parcours from "../../../../../src/utils/interfaces/parcours";

@@ -5,11 +5,11 @@ import { useCourseSelector } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
 
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import SearchDropdown from "../../../../../../src.legacy/components/UI/search-dropdown/search-dropdown";
 import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
-import { LessonWithActivitiesCount } from "../../../../../../src.legacy/utils/interfaces/lesson";
+import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
 import LessonsTable from "./lessons-table";
 
 interface LessonsInDrawerProps {

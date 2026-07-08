@@ -1,11 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useParcoursDispatch } from "../../../../store/ParcoursContext";
-import { compressImage } from "../../../../../../../src.legacy/helpers/compress-image";
+import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
-import Badge from "../../../../../../../src.legacy/utils/interfaces/badge";
-import { validateImageFile } from "../../../../../../../src.legacy/utils/validate-image-file";
+import Badge from "../../../../../../../src/utils/interfaces/badge";
+import { validateImageFile } from "../../../../../../utils/helpers/validate-image-file";
 import UploadIcon from "../../../../../../../src.legacy/components/UI/svg/upload-icon.component";
-import { badgeMaxSize } from "../../../../../../../src.legacy/config/images-sizes";
+import { badgeMaxSize } from "../../../../../../config/images-sizes";
 
 const maxSize = badgeMaxSize;
 

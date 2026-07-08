@@ -2,9 +2,9 @@
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 
 import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Group from "../../../../../../src.legacy/utils/interfaces/group";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
-import useEagerLoadingList from "../../../../../../src.legacy/hooks/use-eager-loading-list";
+import Group from "../../../../../../src/utils/interfaces/group";
+import User from "../../../../../../src/utils/interfaces/user";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import StudentsListTable from "../students/students-list-table";
 import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
 

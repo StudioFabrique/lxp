@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
 import { useParcoursSelector } from "../../../store/ParcoursContext";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
+import User from "../../../../../../src/utils/interfaces/user";
 import { AvatarSmall } from "../../../../../../src.legacy/components/UI/avatar/avatar.component";
 
 // Interface définissant les props du composant

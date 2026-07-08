@@ -2,13 +2,13 @@
 import { useCourseSelector } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
 import CoursePreviewInfos from "./course-preview-infos";
-import Lesson from "../../../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import PreviewLessons from "../../../../../../src.legacy/components/preview/preview-lessons";
-import CourseDates from "../../../../../../src.legacy/utils/interfaces/course-dates";
+import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
 import PreviewCalendar from "../../../../../../src.legacy/components/preview/preview-calendar";
 import { Link, useNavigate, useParams } from "react-router";
 import useValidateCourse from "./hook/use-validate-course";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import { useEffect } from "react";
 
 interface CoursePreviewProps {

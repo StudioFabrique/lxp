@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useLessonSelector } from "../store/LessonContext";
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import type { Activity } from "../../../../src.legacy/utils/interfaces/activity";
-import type Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import useHttp from "../../../../src/hooks/useHttp";
+import type { Activity } from "../../../../src/utils/interfaces/activity";
+import type Lesson from "../../../../src/utils/interfaces/lesson";
 import { useSearchParams } from "react-router";
 
 const useLessonHome = () => {

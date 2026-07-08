@@ -1,5 +1,5 @@
 import { Check, Import, Plus } from "lucide-react";
-import { cn } from "../../../../../src.legacy/utils";
+import { cn } from "../../../../utils/cn";
 import { Link, useNavigate } from "react-router";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";

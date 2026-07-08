@@ -5,16 +5,16 @@ import toast from "react-hot-toast";
 import ParcoursPreviewInfos from "./parcours-preview-infos.component";
 import ParcoursPreviewModules from "./parcours-preview-modules.component";
 import ParcoursPreviewStudent from "./parcours-preview-student";
-import Objective from "../../../../../../src.legacy/utils/interfaces/objective";
+import Objective from "../../../../../../src/utils/interfaces/objective";
 import PreviewObjectives from "../../../../../../src.legacy/components/preview/preview-objectives";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 import PreviewSkills from "../../../../../../src.legacy/components/preview/preview-skills";
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import { useCallback, useEffect, useState } from "react";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
-import Group from "../../../../../../src.legacy/utils/interfaces/group";
+import User from "../../../../../../src/utils/interfaces/user";
+import Group from "../../../../../../src/utils/interfaces/group";
 
 
 interface ParcoursPreviewProps {

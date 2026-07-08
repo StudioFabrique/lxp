@@ -1,10 +1,10 @@
 import toast from "react-hot-toast";
 import { activiteMetaDataSchema } from "../../../../../../../src.legacy/lib/validation/lesson/activite-video";
-import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import useForm from "../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import useHttp from "../../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../../src/hooks/useHttp";
 import { ZodError } from "zod";
-import { validationErrors } from "../../../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../../../utils/helpers/validate";
 import { useEffect } from "react";
 
 const useCreateBlog = (

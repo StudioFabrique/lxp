@@ -1,5 +1,5 @@
 import type React from "react";
-import type Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import type Lesson from "../../../../src/utils/interfaces/lesson";
 import {
   ListChevronsUpDown,
   PanelLeftClose,

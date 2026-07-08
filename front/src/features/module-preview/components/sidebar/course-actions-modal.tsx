@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import Course from "../../../../../src.legacy/utils/interfaces/course";
-import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+import Course from "../../../../../src/utils/interfaces/course";
+import Lesson from "../../../../../src/utils/interfaces/lesson";
 import TableActionsModal from "../../../../../src.legacy/components/table/table-buttons/table-actions-modal";
 import { ModalCourseType } from "./course-item";
 

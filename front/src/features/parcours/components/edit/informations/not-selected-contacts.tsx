@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo } from "react";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
-import useEagerLoadingList from "../../../../../../src.legacy/hooks/use-eager-loading-list";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
 import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
 import UserQuickCreate from "../../../../../../src.legacy/components/user-quick-create/user-quick-create";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
-import User from "../../../../../../src.legacy/utils/interfaces/user";
+import User from "../../../../../../src/utils/interfaces/user";
 
 interface NotSelectedContactsProps {
   list?: Contact[];

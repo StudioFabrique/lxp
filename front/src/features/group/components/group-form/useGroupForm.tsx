@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import useForm from "../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import { validationErrors } from "../../../../../src.legacy/helpers/validate";
+import { validationErrors } from "../../../../utils/helpers/validate";
 import { createGroupSchema } from "../../../../../src.legacy/lib/validation/create-group-schema";
 import toast from "react-hot-toast";
 import Group from "../../../../../src/utils/interfaces/group";

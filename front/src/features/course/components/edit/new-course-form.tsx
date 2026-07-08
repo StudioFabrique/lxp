@@ -1,5 +1,5 @@
-import useInput from "../../../../../src.legacy/hooks/use-input";
-import { regexGeneric } from "../../../../../src.legacy/utils/constantes";
+import useInput from "../../../../hooks/useInput";
+import { regexGeneric } from "../../../../config/constantes";
 import SubmitButton from "../../../../../src.legacy/components/UI/submit-button";
 
 interface NewCourseFormProps {

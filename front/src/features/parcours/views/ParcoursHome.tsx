@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import Parcours from "../../../../src.legacy/utils/interfaces/parcours";
+import useHttp from "../../../../src/hooks/useHttp";
+import Parcours from "../../../../src/utils/interfaces/parcours";
 import Loader from "../../../../src.legacy/components/UI/loader";
-import { sortArray } from "../../../../src.legacy/utils/sortArray";
+import { sortArray } from "../../../../src/utils/helpers/sort-array";
 import toast from "react-hot-toast";
 import ParcoursList from "../components/list/parcours-home";
 import { useLocation } from "react-router";

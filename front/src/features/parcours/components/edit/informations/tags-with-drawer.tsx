@@ -3,12 +3,12 @@ import {
   useParcoursSelector,
   useParcoursDispatch,
 } from "../../../store/ParcoursContext";
-import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
+import Tag from "../../../../../../src/utils/interfaces/tag";
 import CurrentTags from "../../../../../../src.legacy/components/inherited-items/current-tags";
 import InheritedItems from "../../../../../../src.legacy/components/inherited-items/inherited-items";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { autoSubmitTimer } from "../../../../../../src.legacy/config/auto-submit-timer";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import ParcoursTagsSelecter from "./parcours-tags-selecter";
 import SearchTag from "./search-tag";
 import CreateNewTag from "./create-new-tags";

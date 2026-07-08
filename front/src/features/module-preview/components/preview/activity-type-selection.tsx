@@ -6,7 +6,7 @@ import {
   Text,
   Video,
 } from "lucide-react";
-import { ActivityType } from "../../../../../src.legacy/utils/interfaces/activity";
+import { ActivityType } from "../../../../../src/utils/interfaces/activity";
 
 const activityTypes: {
   type: ActivityType;

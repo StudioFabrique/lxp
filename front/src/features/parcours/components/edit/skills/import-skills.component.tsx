@@ -2,12 +2,12 @@ import { FC, useCallback, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+import useHttp from "../../../../../../src/hooks/useHttp";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 import ImportCSVActions from "../../../../../../src.legacy/components/UI/import-csv-actions.component";
-import { DOWNLOAD_URL } from "../../../../../../src.legacy/config/urls";
+import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src.legacy/components/UI/imported-csv-data.component";
-import { skillsFields } from "../../../../../../src.legacy/config/csv/csv-skills-fields";
+import { skillsFields } from "../../../../../config/csv/csv-skills-fields";
 
 type Props = {
   onCloseDrawer: (id: string) => void;

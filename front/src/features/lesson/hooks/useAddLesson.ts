@@ -1,11 +1,11 @@
 import { useEffect, useReducer } from "react";
-import useHttp from "../../../../src.legacy/hooks/use-http";
-import useInput from "../../../../src.legacy/hooks/use-input";
+import useHttp from "../../../../src/hooks/useHttp";
+import useInput from "../../../hooks/useInput";
 import { useLocation } from "react-router";
 
-import { regexGeneric, regexOptionalGeneric } from "../../../../src.legacy/utils/constantes";
-import Tag from "../../../../src.legacy/utils/interfaces/tag";
-import Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import { regexGeneric, regexOptionalGeneric } from "../../../config/constantes";
+import Tag from "../../../../src/utils/interfaces/tag";
+import Lesson from "../../../../src/utils/interfaces/lesson";
 
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";

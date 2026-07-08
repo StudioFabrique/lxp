@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import { useContext, useEffect, useState } from "react";
-import Module from "../../../../../../src.legacy/utils/interfaces/module";
+import Module from "../../../../../../src/utils/interfaces/module";
 
 import Calendar from "../../../../../../src.legacy/components/UI/calendar/calendar";
 import { ThemeContext as Context } from "../../../../../store/ThemeProvider";

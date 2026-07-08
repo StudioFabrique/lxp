@@ -1,11 +1,11 @@
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
+import Contact from "../../../../../../src/utils/interfaces/contact";
 import {
   MetadataList,
   Metadatas,
   ModuleData,
   Parcours,
-} from "../../../../../../src.legacy/utils/interfaces/new-module";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+} from "../../../../../../src/utils/interfaces/new-module";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 
 type ModuleUpdate = {
   id: number;

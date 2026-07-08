@@ -1,11 +1,11 @@
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { useEffect, useRef, useState } from "react";
-import activityIconType from "../../../../../src.legacy/utils/activity-icon-type";
-import toUpperFirstLetter from "../../../../../src.legacy/utils/toUpperFirstLetter";
+import activityIconType from "../../../../utils/helpers/activity-icon-type";
+import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import { ArrowDownUp } from "lucide-react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { Activity } from "../../../../../src.legacy/utils/interfaces/activity";
+import { Activity } from "../../../../../src/utils/interfaces/activity";
 
 type ActivityItemProps = {
   activity: Activity;

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 import { useEffect, useState } from "react";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
 
-import CourseDates from "../../../../../../src.legacy/utils/interfaces/course-dates";
+import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
 import DatesList from "./dates-list";
 import DatesForm from "./dates-form";
-import setId from "../../../../../../src.legacy/helpers/set-id";
-import Module from "../../../../../../src.legacy/utils/interfaces/module";
+import setId from "../../../../../utils/helpers/set-id";
+import Module from "../../../../../../src/utils/interfaces/module";
 
 const CourseCalendar = () => {
   const dispatch = useCourseDispatch();

@@ -1,5 +1,5 @@
 import { PlusCircle } from "lucide-react";
-import type { Activity } from "../../../../../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../../../../../src/utils/interfaces/activity";
 import { DndWrapper } from "../../../../../../../../src.legacy/components/UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import Modal from "../../../../../../../../src.legacy/components/UI/modal/modal";

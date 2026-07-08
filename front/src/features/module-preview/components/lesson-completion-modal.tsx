@@ -3,7 +3,7 @@ import RatingWithStars from "../../../../src.legacy/components/UI/lesson-rating/
 import Modal from "../../../../src.legacy/components/UI/modal/modal";
 import PortalConfetti from "../../../../src.legacy/components/UI/portal/portal-confetti";
 import FeedbacksButton from "../../../../src.legacy/components/UI/feedbacks/feedbacks-button";
-import Lesson from "../../../../src.legacy/utils/interfaces/lesson";
+import Lesson from "../../../../src/utils/interfaces/lesson";
 import { useNavigate } from "react-router";
 
 type LessonCompletionModal = {

@@ -2,9 +2,9 @@ import { Link } from "react-router";
 import {
   localeDate,
   localeTime,
-} from "../../../../../src.legacy/helpers/locale-date";
-import useEagerLoadingList from "../../../../../src.legacy/hooks/use-eager-loading-list";
-import Lesson from "../../../../../src.legacy/utils/interfaces/lesson";
+} from "../../../../utils/helpers/locale-date";
+import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
+import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
 import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";

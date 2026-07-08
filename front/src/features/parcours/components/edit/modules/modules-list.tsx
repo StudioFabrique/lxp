@@ -1,8 +1,8 @@
 import { Edit2Icon, Trash2 } from "lucide-react";
 import placeholder from "../../../../../../src.legacy/assets/images/cat.webp";
-import { ModuleData } from "../../../../../../src.legacy/utils/interfaces/new-module";
-import Contact from "../../../../../../src.legacy/utils/interfaces/contact";
-import Skill from "../../../../../../src.legacy/utils/interfaces/skill";
+import { ModuleData } from "../../../../../../src/utils/interfaces/new-module";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import Skill from "../../../../../../src/utils/interfaces/skill";
 
 type Props = {
   id: number;

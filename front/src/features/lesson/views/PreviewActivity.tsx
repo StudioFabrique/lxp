@@ -1,6 +1,6 @@
-import type { Activity } from "../../../../src.legacy/utils/interfaces/activity";
+import type { Activity } from "../../../../src/utils/interfaces/activity";
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../src/hooks/useHttp";
 import ActivityHeader from "../components/edit/activities/activity-header";
 import ActivityContent from "../components/edit/activities/activity-content";
 import ActivityMetadata from "../components/edit/activities/activity-metadata";

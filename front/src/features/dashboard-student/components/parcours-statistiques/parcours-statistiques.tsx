@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ParcoursStatistiquesItem from "./parcours-statistiques-item";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
+import useHttp from "../../../../../src/hooks/useHttp";
 
 export interface ParcoursStats {
   diplome: string;

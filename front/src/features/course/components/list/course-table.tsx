@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 
-import { localeDate } from "../../../../../src.legacy/helpers/locale-date";
+import { localeDate } from "../../../../utils/helpers/locale-date";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import SortColumnIcon from "../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
 import CustomCourse from "./interfaces/custom-course";
