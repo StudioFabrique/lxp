@@ -2,7 +2,7 @@ import { useLessonSelector } from "../../../../store/LessonContext";
 import type { Activity } from "../../../../../../../src.legacy/utils/interfaces/activity";
 import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import useCreateBlog from "./use-create-blog";
-import TiptapActivity from "../../../../../../../src.legacy/components/module-content-explorer/writing/tip-tap-activity";
+import TiptapActivity from "../../../../../module-preview/components/writing/tip-tap-activity";
 
 type EditorProps = {
   activity?: Activity;
@@ -16,13 +16,13 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
   const { onChangeValue, handleSubmit } = useCreateBlog(
     lesson?.id?.toString() ?? "",
     activity ?? null,
-    onCancel
+    onCancel,
   );
 
   const handleSubmitForm = async (
     _id?: number | undefined,
     _title?: string | undefined,
-    contentValue?: string | undefined
+    contentValue?: string | undefined,
   ) => {
     await handleSubmit(contentValue || "");
     return true;

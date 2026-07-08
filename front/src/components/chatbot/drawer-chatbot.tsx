@@ -78,7 +78,7 @@ export default function DrawerChatbot({
       }}
       exit={{ opacity: 0, y: 20, scale: 0.95, width: 410, height: 500 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
+      className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
     >
       {/* En-tête du Chatbot */}
       <HeaderChatbot

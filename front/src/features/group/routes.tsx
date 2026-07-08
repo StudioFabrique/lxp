@@ -1,5 +1,5 @@
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/router-helpers";
+import { withSuspense } from "../../utils/helpers/router-helpers";
 import { lazy } from "react";
 import { Outlet } from "react-router";
 

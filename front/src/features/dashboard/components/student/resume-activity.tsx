@@ -7,11 +7,11 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../assets/module-default.jpg";
+import defaultImage from "../../../../assets/content-image-placeholders/module-default.jpg";
 import LessonRead from "../../../../utils/interfaces/lesson-read";
 import useHttp from "../../../../../src.legacy/hooks/use-http";
 import ImageHeader from "../../../../../src.legacy/components/image-header";
-import { toUpperFirstLetter } from "../../../../utils/text-helpers";
+import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 
 type ResumeActivityProps = {
@@ -62,7 +62,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         children={[
           <div
             key="title-and-badges"
-            className="absolute md:-top-[200%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
+            className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
           >
             <div className="flex gap-2">
               <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
@@ -94,7 +94,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               <Link
                 to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
                 state={{ lessonId: lastLesson.lesson.id }}
-                className="z-[9] btn btn-primary text-base-100 flex"
+                className="z-9 btn btn-primary text-base-100 flex"
               >
                 <PlayCircleIcon />
                 <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>

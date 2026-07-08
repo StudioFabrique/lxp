@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { cn } from "../../utils/style-helpers";
+import { cn } from "../../utils/helpers/style-helpers";
 
 interface Props {
   title: string;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
-import defaultImage from "../../../../../../../src.legacy/assets/images/module-default.jpg";
+import defaultImage from "../../../../../../assets/content-image-placeholders/module-default.jpg";
 import bgImageGradient from "../../../../../../../src.legacy/utils/bg-image-gradient";
 
 const ContenuDetailHeader: FC<{
@@ -11,7 +11,7 @@ const ContenuDetailHeader: FC<{
     backgroundImage: bgImageGradient(
       imageModuleHeader
         ? `data:image/jpeg;base64,${imageModuleHeader}`
-        : defaultImage
+        : defaultImage,
     ),
     width: "100%",
     height: "12rem",
