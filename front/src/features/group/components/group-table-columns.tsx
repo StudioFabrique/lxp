@@ -11,7 +11,7 @@ export const getGroupColumns = (
     header: ({ table }) => (
       <input
         type="checkbox"
-        className="checkbox checkbox-sm checkbox-primary"
+        className="checkbox checkbox-sm checkbox-primary -ml-2"
         checked={table.getIsAllPageRowsSelected()}
         onChange={table.getToggleAllPageRowsSelectedHandler()}
       />
