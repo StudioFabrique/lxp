@@ -6,7 +6,7 @@ import { router } from "./App.router";
 
 import { ThemeProvider } from "./store/ThemeProvider";
 import { AuthProvider } from "./store/AuthProvider";
-import ErrorBoundary from "./components/ErrorBoundary";
+import ErrorBoundary from "./components/wrappers/layouts/ErrorBoundary";
 
 function App() {
   return (

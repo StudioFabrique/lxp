@@ -1,24 +1,7 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouteObject,
-  useRouteError,
-} from "react-router";
+import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 
-// --- Imports ---
 import { authRoutes } from "./features/auth/routes";
-import AppWrapper from "./components/wrappers/AppWrapper";
-import RouteGuard from "./components/guards/RouteGuard";
-import { ROLES_RANKS } from "./utils/helpers/roles-rank";
-import Sidebar from "./components/sidebar/Sidebar";
-import Loader from "./components/loaders/Loader";
-import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
-import FeaturesList from "./features/dashboard/views/FeaturesList";
-import Chatbot from "./components/chatbot/chatbot";
-import { isAiDisabled } from "../src.legacy/config/ai/ai";
-import { ChatbotProvider } from "./store/ChatbotProvider";
 
-// --- Feature Routes Imports ---
 import {
   adminParcoursRoutes,
   studentParcoursRoutes,
@@ -51,47 +34,10 @@ import {
   adminDashboardRoutes,
   studentDashboardRoutes,
 } from "./features/dashboard/routes";
-
-// ==========================================
-// LAYOUTS & ERROR HANDLING
-// ==========================================
-
-// Composant d'erreur spécifique au routage
-const RouterErrorBoundary = () => {
-  const error = useRouteError();
-  console.error("Erreur de routage capturée :", error);
-  return (
-    <div>
-      Oups, une erreur inattendue est survenue lors du chargement de cette page.
-    </div>
-  );
-};
-
-// Layout Admin isolé
-const AdminLayout = () => (
-  <ChatbotProvider>
-    <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-      <RouteGuard allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]} />
-    </AppWrapper>
-    {!isAiDisabled && <Chatbot />}
-  </ChatbotProvider>
-);
-
-// Layout Étudiant isolé
-const StudentLayout = () => (
-  <ChatbotProvider>
-    <ConfettiWrapper>
-      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-        <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
-      </AppWrapper>
-    </ConfettiWrapper>
-    {!isAiDisabled && <Chatbot />}
-  </ChatbotProvider>
-);
-
-// ==========================================
-// ROUTES DEFINITION
-// ==========================================
+import StudentLayout from "./components/wrappers/layouts/StudentLayout";
+import AdminLayout from "./components/wrappers/layouts/AdminLayout";
+import RouterErrorBoundary from "./components/wrappers/layouts/RouterErrorBoundary";
+import FeaturesList from "./features/dashboard/views/FeaturesList";
 
 const adminRoutes: RouteObject[] = [
   {
