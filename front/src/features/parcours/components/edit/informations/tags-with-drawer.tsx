@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
+import {
+  useParcoursSelector,
+  useParcoursDispatch,
+} from "../../../store/ParcoursContext";
 import Tag from "../../../../../../src.legacy/utils/interfaces/tag";
 import CurrentTags from "../../../../../../src.legacy/components/inherited-items/current-tags";
 import InheritedItems from "../../../../../../src.legacy/components/inherited-items/inherited-items";
@@ -25,12 +28,8 @@ interface TagsWithDrawerProps {
  * Permet de voir les tags actuels, les tags de la formation et tous les tags disponibles
  */
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
-  const currentTags = useParcoursSelector(
-    (state) => state.tags.currentTags
-  );
-  const initialTags = useParcoursSelector(
-    (state) => state.tags.initialTags
-  );
+  const currentTags = useParcoursSelector((state) => state.tags.currentTags);
+  const initialTags = useParcoursSelector((state) => state.tags.initialTags);
   const dispatch = useParcoursDispatch();
 
   // États locaux
@@ -50,7 +49,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       dispatch({ type: "SET_CURRENT_TAGS", payload: tags });
       setSubmit(true);
     },
-    [dispatch]
+    [dispatch],
   );
 
   /**
@@ -80,7 +79,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
         {
           path: "/tag",
         },
-        processData
+        processData,
       );
     }
   }, [dispatch, sendRequest]);
@@ -102,8 +101,8 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     if (searchTerm.length > 0)
       setFilteredTags(
         initialTags?.filter((item) =>
-          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase())
-        )
+          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
+        ),
       );
     else setFilteredTags(initialTags);
   }, [searchTerm, initialTags]);
@@ -166,7 +165,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
             </ParcoursTagsSelecter>
           </InheritedItems>
           <button
-            className="pl-2 text-xs text-primary underline"
+            className="pl-2 text-xs text-primary btn btn-ghost underline"
             onClick={() => document.getElementById("create-tags")?.click()}
           >
             ou Créer des nouveaux tags

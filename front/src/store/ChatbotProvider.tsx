@@ -40,7 +40,7 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
   }, [pathname]);
 
   return (
-    <ChatbotContext.Provider
+    <ChatbotContext
       value={{
         currentActivity,
         setCurrentActivity,
@@ -51,7 +51,7 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
       }}
     >
       {children}
-    </ChatbotContext.Provider>
+    </ChatbotContext>
   );
 };
 

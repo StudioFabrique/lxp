@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { AuthContext } from "../../../../src/store/AuthProvider";
-import { cn } from "../../../utils";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext } from "react";
+import { cn } from "../../../../src.legacy/utils";
 
 type Props = { onTriggerQuiz: () => void };
 

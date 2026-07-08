@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ChatbotContext } from "../../../store/chatbotContext";
-import useCourseQuiz from "../../../hooks/use-course-quiz";
 import { chatbotWindowSize } from "./use-chatbot-ui";
+import { ChatbotContext } from "../../../store/ChatbotProvider";
+import useCourseQuiz from "../../../../src.legacy/hooks/use-course-quiz";
 
 // Temps pour lequel le chatbot restera actif jusqu'a se fermer seul
 const CHATBOT_REMAINING_TIME = 10 * 60000; // 10 minutes

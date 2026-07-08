@@ -1,7 +1,7 @@
 import useAutosave from "./hooks/use-autosave";
 import { useState, type ChangeEvent } from "react";
 import AutosaveIndicator from "./autosave-indicator";
-import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
+import TiptapEditor from "../../../../src/components/tiptap-editor/tiptapEditor";
 
 type Props = {
   mode: "read" | "write" | "edit" | "activity_type_selection";

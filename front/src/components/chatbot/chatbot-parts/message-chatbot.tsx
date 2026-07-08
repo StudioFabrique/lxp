@@ -1,13 +1,13 @@
 import { AuthContext } from "../../../../src/store/AuthProvider";
-import { cn } from "../../../utils";
 import { ChatbotValues } from "../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
-import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import { Link, useLocation } from "react-router";
+import QuestionMarkTooltip from "../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
+import { cn } from "../../../utils/style-helpers";
 
 type Props = {
   message: ChatbotValues;

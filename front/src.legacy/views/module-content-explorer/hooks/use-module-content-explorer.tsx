@@ -25,7 +25,7 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { ChatbotContext } from "../../../store/chatbotContext";
+import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
 
 const useModuleContentExplorer = () => {
   // Le contexte du chatbot

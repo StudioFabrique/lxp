@@ -8,9 +8,9 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import { Socket } from "socket.io-client";
 import Login from "../login/login";
 import { Context } from "../../store/context.store";
-import Chatbot from "../../components/chatbot/chatbot";
-import { ChatbotProvider } from "../../store/chatbotContext";
+import Chatbot from "../../../src/components/chatbot/chatbot";
 import { isAiDisabled } from "../../config/ai/ai";
+import { ChatbotProvider } from "../../../src/store/chatbotProvider";
 
 // Variables globales pour le state initial et le socket
 let initialState = true;

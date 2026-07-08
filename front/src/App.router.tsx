@@ -40,9 +40,9 @@ import {
   adminDashboardRoutes,
   studentDashboardRoutes,
 } from "./features/dashboard/routes";
-import { ChatbotProvider } from "../src.legacy/store/chatbotContext";
-import Chatbot from "../src.legacy/components/chatbot/chatbot";
+import Chatbot from "./components/chatbot/chatbot";
 import { isAiDisabled } from "../src.legacy/config/ai/ai";
+import { ChatbotProvider } from "./store/ChatbotProvider";
 
 const adminRoutes: RouteObject[] = [
   {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
+import TiptapEditor from "../../../../src/components/tiptap-editor/tiptapEditor";
 import { ActivityImport } from "../../../views/module/hooks/use-import-modules";
 import { ArrowUpRight, EyeIcon } from "lucide-react";
 import activityIconType from "../../../utils/activity-icon-type";

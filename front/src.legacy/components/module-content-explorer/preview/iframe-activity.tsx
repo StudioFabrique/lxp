@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ActivitySelectMode } from "../../../views/module-content-explorer/store/module-explorer-reducer";
 import cleanIframeLink from "../../../utils/clean-iframe-link";
-import SaveButton from "../../UI/tiptap-editor/components/SaveButton";
+import SaveButton from "../../../../src/components/tiptap-editor/components/SaveButton";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
