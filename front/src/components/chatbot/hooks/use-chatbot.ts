@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
-import { ChatbotContext } from "../../../store/chatbotContext";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type ChatbotSource = {
   course: string;

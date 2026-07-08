@@ -1,6 +1,6 @@
 import { KeyboardEvent, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
-import { cn } from "../../../utils";
+import { cn } from "../../../utils/style-helpers";
 
 type Props = {
   prompt: string;

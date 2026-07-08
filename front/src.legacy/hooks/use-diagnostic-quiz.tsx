@@ -12,8 +12,8 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
-import { ChatbotContext } from "../store/chatbotContext";
 import apiClient from "../../src/lib/axios";
+import { ChatbotContext } from "../../src/store/ChatbotProvider";
 
 interface ModuleInfoForDiagnostic {
   title?: string;

@@ -3,8 +3,8 @@ import { MouseEvent, useContext, useEffect, useState } from "react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { EditorState, NodeSelection } from "@tiptap/pm/state";
 import { Sparkles } from "lucide-react";
-import { ChatbotContext } from "../../../../store/chatbotContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type Props = {
   editor: Editor;

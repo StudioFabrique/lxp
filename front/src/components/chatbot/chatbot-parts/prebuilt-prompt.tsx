@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react";
-import { ChatbotContext } from "../../../store/chatbotContext";
 import { Sparkles, ArrowUpRight } from "lucide-react";
+import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type Props = {
   title: string;

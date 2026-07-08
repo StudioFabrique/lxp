@@ -11,9 +11,9 @@ import useChatbot from "./hooks/use-chatbot";
 import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 import useChatbotQuiz from "./hooks/use-chatbot-quiz";
 import { useContext } from "react";
-import { ChatbotContext } from "../../store/chatbotContext";
 import SelectedContentBlocChatbot from "./chatbot-parts/selected-content-bloc-chatbot";
 import { prebuiltPrompt } from "../../config/ai/ai-texts.json";
+import { ChatbotContext } from "../../store/ChatbotProvider";
 
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;

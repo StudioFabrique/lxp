@@ -1,8 +1,8 @@
 import { Editor, useEditor, useEditorState } from "@tiptap/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { tiptapExtensions } from "./tiptapConfig";
-import { ChatbotContext } from "../../../store/chatbotContext";
-import { calculateTextReadTime } from "../../../utils/activity-read-time";
+import { ChatbotContext } from "../../store/ChatbotProvider";
+import { calculateTextReadTime } from "./utils/activity-read-time-helper";
 
 export default function useTiptapEditor(
   className: string,
