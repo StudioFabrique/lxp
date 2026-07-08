@@ -16,8 +16,8 @@ const PermissionGuard = ({
 
   if (
     user &&
-    (user.roles?.some((role) => role.rank === 1) ||
-      (user.permissions && hasPermission(user.permissions, action, object)))
+    user.permissions &&
+    hasPermission(user.permissions, action, object)
   ) {
     return <>{children}</>;
   }

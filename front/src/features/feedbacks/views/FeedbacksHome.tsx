@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { feedbacksApi } from "../feedbacks.api";
+import { feedbacksApi } from "../api/feedbacks.api";
 import FeedbacksList from "../components/FeedbacksList";
 import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
 
 const FeedbacksHome = () => {
   const { data: feedbacks = [] } = useQuery({
     queryKey: ["last-feedbacks"],
-    queryFn: feedbacksApi.getLastFeedbacks,
+    queryFn: feedbacksApi.queries.getLastFeedbacks,
   });
 
   return (

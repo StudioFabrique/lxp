@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { roleMutations } from "../role.api";
+import { roleApi } from "../api/role.api";
 
 export function useRoleActions(onSuccessCallback: () => void) {
   const deleteManyMutation = useMutation({
-    mutationFn: (ids: string[]) => roleMutations.deleteMany(ids),
+    mutationFn: (ids: string[]) => roleApi.mutations.deleteMany(ids),
     onSuccess: () => {
       toast.success("Rôles supprimés avec succès");
       onSuccessCallback();
@@ -17,7 +17,7 @@ export function useRoleActions(onSuccessCallback: () => void) {
   };
 
   const deleteOneMutation = useMutation({
-    mutationFn: (id: string) => roleMutations.deleteOne(id),
+    mutationFn: (id: string) => roleApi.mutations.deleteOne(id),
     onSuccess: () => {
       toast.success("Rôle supprimé avec succès");
       onSuccessCallback();

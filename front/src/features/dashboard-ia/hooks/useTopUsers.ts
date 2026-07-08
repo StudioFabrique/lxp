@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { dashboardIAApi } from "../dashboard-ia.api";
+import { dashboardIAApi } from "../api/dashboardIA.api";
 
 const useTopUsers = () => {
   const [page, setPage] = useState(1);
@@ -21,7 +21,7 @@ const useTopUsers = () => {
   const { data, isLoading, isFetching } = useQuery({
     queryKey,
     queryFn: () =>
-      dashboardIAApi.getTopUsers({
+      dashboardIAApi.queries.getTopUsers({
         sortProperty,
         sortDirection,
         page,

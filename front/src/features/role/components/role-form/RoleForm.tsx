@@ -3,7 +3,7 @@ import { regexGeneric } from "../../../../../src.legacy/utils/constantes";
 import { setInputStyle } from "../../../../../src.legacy/utils/formClasses";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { roleMutations } from "../../role.api";
+import { roleApi } from "../../api/role.api";
 import RoleTypeSelector from "./RoleTypeSelector";
 import type Role from "../../../../../src.legacy/utils/interfaces/role";
 import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
@@ -19,14 +19,13 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
   const [label, setLabel] = useState(role?.label ?? "");
   const [currentRoleType, setCurrentRoleType] = useState(role?.rank ?? 1);
 
-
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const nameHasError = name.length > 0 && !regexGeneric.test(name);
   const labelHasError = label.length > 0 && !regexGeneric.test(label);
 
   const createMutation = useMutation({
     mutationFn: (body: { role: string; label: string; rank: number }) =>
-      roleMutations.createRole(body),
+      roleApi.mutations.createRole(body),
     onSuccess: (data) => {
       toast.success(data.message);
       setName("");
@@ -43,7 +42,7 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
     }: {
       id: string;
       body: { role: string; label: string; rank: number };
-    }) => roleMutations.updateRole(id, body),
+    }) => roleApi.mutations.updateRole(id, body),
     onSuccess: (data) => {
       toast.success(data.message);
     },

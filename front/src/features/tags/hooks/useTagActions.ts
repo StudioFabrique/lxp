@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { tagMutations } from "../tag.api";
+import { tagApi } from "../api/tag.api";
 
 export function useTagActions(onSuccessCallback: () => void) {
   const deleteManyMutation = useMutation({
-    mutationFn: (ids: string[]) => tagMutations.deleteMany(ids),
+    mutationFn: (ids: string[]) => tagApi.mutations.deleteMany(ids),
     onSuccess: () => {
       toast.success("Tags supprimés !");
       onSuccessCallback();
@@ -17,7 +17,7 @@ export function useTagActions(onSuccessCallback: () => void) {
   };
 
   const deleteOneMutation = useMutation({
-    mutationFn: (id: number) => tagMutations.deleteOne(id),
+    mutationFn: (id: number) => tagApi.mutations.deleteOne(id),
     onSuccess: () => {
       toast.success("Tag supprimé !");
       onSuccessCallback();
@@ -30,7 +30,7 @@ export function useTagActions(onSuccessCallback: () => void) {
 
   const createTagsMutation = useMutation({
     mutationFn: (tags: { name: string; color: string }[]) =>
-      tagMutations.createTags(tags),
+      tagApi.mutations.createTags(tags),
     onSuccess: () => {
       toast.success("Tags créés avec succès");
       onSuccessCallback();
@@ -39,7 +39,7 @@ export function useTagActions(onSuccessCallback: () => void) {
 
   const updateTagMutation = useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) =>
-      tagMutations.updateTag(id, name),
+      tagApi.mutations.updateTag(id, name),
     onSuccess: () => {
       toast.success("Tag modifié avec succès");
       onSuccessCallback();

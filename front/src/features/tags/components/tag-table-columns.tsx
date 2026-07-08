@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import type { TagRow } from "../tag.api";
+import type { TagRow } from "../api/tag.api";
 
 export const getTagColumns = (
   onDelete: (id: number) => void,

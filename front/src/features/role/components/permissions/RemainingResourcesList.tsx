@@ -1,5 +1,5 @@
 import PermissionAddItem from "./PermissionAddItem";
-import type { PermissionItem } from "../../role.api";
+import type { PermissionItem } from "../../api/role.api";
 
 type RemainingResourcesListProps = {
   remainingResources?: PermissionItem[];
@@ -33,9 +33,7 @@ const RemainingResourcesList = ({
         </div>
       )}
 
-      {!remainingResources?.length && (
-        <p>Aucune permissions à ajouter</p>
-      )}
+      {!remainingResources?.length && <p>Aucune permissions à ajouter</p>}
     </div>
   );
 };

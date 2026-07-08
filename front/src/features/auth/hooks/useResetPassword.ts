@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { z } from "zod";
-import { passwordApi } from "../api/password.api";
+import { accountApi } from "../api/account.api";
 
 const emailSchema = z
   .string()
@@ -21,13 +21,15 @@ export function useResetPassword() {
 
     const result = emailSchema.safeParse(email);
     if (!result.success) {
-      setFieldError(result.error.issues[0]?.message ?? "Adresse email invalide.");
+      setFieldError(
+        result.error.issues[0]?.message ?? "Adresse email invalide.",
+      );
       return;
     }
 
     setIsLoading(true);
     try {
-      const data = await passwordApi.checkEmail(email);
+      const data = await accountApi.checkEmail(email);
       if (data.success) setEmailVerified(true);
     } catch (err: unknown) {
       const msg =
