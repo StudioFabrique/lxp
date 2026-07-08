@@ -4,13 +4,13 @@ import Header from "../../../../src.legacy/components/UI/header";
 import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
 import LessonRead from "../../../utils/interfaces/lesson-read";
-import ResumeActivity from "../components/student/resume-activity";
-import ResumeActivities from "../components/student/resume-activities";
-import ResumeParcours from "../components/student/resume-parcours";
-import StudentTimeline from "../components/student/timeline/student-timeline";
-import FeelingFeedback from "../components/student/right-side/feeling-feedback";
-import StudentAccomplishments from "../components/student/right-side/feedback-apprenant/student-accomplishments";
-import MostReadCourses from "../components/student/right-side/most-read-courses";
+import ResumeActivity from "../components/resume-activity";
+import ResumeActivities from "../components/resume-activities";
+import ResumeParcours from "../components/resume-parcours";
+import StudentTimeline from "../components/timeline/student-timeline";
+import FeelingFeedback from "../components/right-side/feeling-feedback";
+import StudentAccomplishments from "../components/right-side/feedback-apprenant/student-accomplishments";
+import MostReadCourses from "../components/right-side/most-read-courses";
 
 const StudentDashboard = () => {
   const { sendRequest } = useHttp();

@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import ParcoursTable from "./parcours-table";
 import { Link } from "react-router";
 import { MoveUpRight } from "lucide-react";
-import ParcoursSummary from "../../../../utils/interfaces/parcours-summary";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
-import SubBoxWrapper from "../../../../components/wrappers/SubBoxWrapper";
+import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
 
 export default function LastParcours() {
   const [parcours, setParcours] = useState<ParcoursSummary[] | null>(null);

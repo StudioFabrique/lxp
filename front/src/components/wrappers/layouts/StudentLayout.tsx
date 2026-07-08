@@ -7,12 +7,15 @@ import Loader from "../../loaders/Loader";
 import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
 import ConfettiWrapper from "../ConfettiWrapper";
+import FadeWrapper from "../FadeWrapper";
 
 const StudentLayout = () => (
   <ChatbotProvider>
     <ConfettiWrapper>
       <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-        <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+        <FadeWrapper>
+          <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+        </FadeWrapper>
       </AppWrapper>
     </ConfettiWrapper>
     {!isAiDisabled && <Chatbot />}

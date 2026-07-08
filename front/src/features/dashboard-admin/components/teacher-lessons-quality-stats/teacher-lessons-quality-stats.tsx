@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import BestLessonsStatsList from "./best-courses-list";
 import { Link } from "react-router";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import LessonsQualityStats from "../../../../../utils/interfaces/lessons-quality-stats";
+import useHttp from "../../../../../src.legacy/hooks/use-http";
+import LessonsQualityStats from "../../../../utils/interfaces/lessons-quality-stats";
 
 const TeacherLessonsQualityStats = () => {
   const { sendRequest } = useHttp();

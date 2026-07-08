@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import { AuthContext } from "../../../../../store/AuthProvider";
-import StudentFeedback from "../../../../../utils/interfaces/student-feedback";
-import FeelingLevel from "../../../../../../src.legacy/components/UI/feeling-level";
-import Loader from "../../../../../components/loaders/Loader";
+import useHttp from "../../../../../src.legacy/hooks/use-http";
+import { AuthContext } from "../../../../store/AuthProvider";
+import StudentFeedback from "../../../../utils/interfaces/student-feedback";
+import FeelingLevel from "../../../../../src.legacy/components/UI/feeling-level";
+import Loader from "../../../../components/loaders/Loader";
 
 const FeelingFeedback = () => {
   const { sendRequest, isLoading } = useHttp();
@@ -54,7 +54,7 @@ const FeelingFeedback = () => {
   }, [sendRequest]);
 
   return (
-    <div className="flex flex-col gap-4 bg-base-100 text-base border-1 border-base-300 p-5 rounded-lg">
+    <div className="flex flex-col gap-4 bg-base-100 text-base border border-base-300 p-5 rounded-lg">
       <span className="flex justify-between items-center">
         <p className="font-bold">Comment vous sentez-vous aujourd'hui ?</p>
         <FeelingLevel value={currentProgressValue} />

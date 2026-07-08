@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import useHttp from "../../../../../../src.legacy/hooks/use-http";
-import Course from "../../../../../utils/interfaces/course";
+import useHttp from "../../../../../src.legacy/hooks/use-http";
+import Course from "../../../../utils/interfaces/course";
 
 const MostReadCourses = () => {
   const { sendRequest } = useHttp();
