@@ -1,16 +1,18 @@
-import { PropsWithChildren, useContext } from "react";
+import { PropsWithChildren, ReactNode, useContext } from "react";
 import { AuthContext } from "../../store/AuthProvider";
-import { hasPermission } from "../../utils/rbac-helpers";
+import { hasPermission } from "../../utils/helpers/rbac-helpers";
 
 type Props = {
   action: string;
   object: string;
+  fallback?: ReactNode;
 };
 
 const PermissionGuard = ({
   children,
   action,
   object,
+  fallback,
 }: PropsWithChildren<Props>) => {
   const { user } = useContext(AuthContext);
 
@@ -22,7 +24,7 @@ const PermissionGuard = ({
     return <>{children}</>;
   }
 
-  return null;
+  return fallback;
 };
 
 export default PermissionGuard;

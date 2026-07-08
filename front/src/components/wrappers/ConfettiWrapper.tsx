@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { PartyPopperIcon } from "lucide-react";
 
 import { AuthContext } from "../../store/AuthProvider";
-import { toTitleCase } from "../../utils/text-helpers";
+import { toTitleCase } from "../../utils/helpers/text-helpers";
 
 const ConfettiWrapper = ({ children }: PropsWithChildren) => {
   const { user, socket } = useContext(AuthContext);

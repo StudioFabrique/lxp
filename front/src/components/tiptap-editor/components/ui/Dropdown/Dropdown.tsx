@@ -1,6 +1,6 @@
 import React from "react";
 import { TIPTAP_MENU_BAR_COLORS } from "../../Menubar/MenuBarConfig";
-import { cn } from "../../../../../utils/style-helpers";
+import { cn } from "../../../../../utils/helpers/style-helpers";
 
 export const DropdownCategoryTitle = ({
   children,

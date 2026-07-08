@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import QuestionMarkTooltip from "../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
-import { cn } from "../../../utils/style-helpers";
+import { cn } from "../../../utils/helpers/style-helpers";
 
 type Props = {
   message: ChatbotValues;

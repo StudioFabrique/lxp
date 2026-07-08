@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import { authRoutes } from "./features/auth/routes";
 import AppWrapper from "./components/wrappers/AppWrapper";
 import RouteGuard from "./components/guards/RouteGuard";
-import { ROLES_RANKS } from "./utils/roles-rank";
+import { ROLES_RANKS } from "./utils/helpers/roles-rank";
 import Sidebar from "./components/sidebar/Sidebar";
 import Loader from "./components/loaders/Loader";
 import {

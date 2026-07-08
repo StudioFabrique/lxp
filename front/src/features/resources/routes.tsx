@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/router-helpers";
+import { withSuspense } from "../../utils/helpers/router-helpers";
 
 const ResourcesLayout = lazy(() => import("./views/ResourcesLayout"));
 const ResourcesHome = lazy(() => import("./views/ResourcesHome"));

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import defaultImage from "../../assets/books.jpeg";
 import { Eye } from "lucide-react";
 import Parcours from "../../../../utils/interfaces/parcours";
-import { bgImageGradient } from "../../../../utils/color-helpers";
+import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
 
 interface ParcoursItemProps {
   parcours: Parcours;

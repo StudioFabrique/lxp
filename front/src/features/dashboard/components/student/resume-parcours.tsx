@@ -2,10 +2,10 @@ import { Link, useLocation } from "react-router";
 import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../assets/module-default.jpg";
+import defaultImage from "../../../../assets/content-image-placeholders/module-default.jpg";
 import useHttp from "../../../../../src.legacy/hooks/use-http";
 import Parcours from "../../../../utils/interfaces/parcours";
-import { toUpperFirstLetter } from "../../../../utils/text-helpers";
+import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
 import ImageHeader from "../../../../../src.legacy/components/image-header";
 
@@ -51,7 +51,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
         children={[
           <div
             key="title-and-badges"
-            className="absolute md:-top-[200%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
+            className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
           />,
           <div key="link" className="p-5 w-full flex justify-end">
             {parcours ? (

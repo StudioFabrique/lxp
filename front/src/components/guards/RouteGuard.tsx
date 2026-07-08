@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ROLES_RANKS } from "../../utils/roles-rank";
+import { ROLES_RANKS } from "../../utils/helpers/roles-rank";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
 import { Navigate, Outlet } from "react-router";

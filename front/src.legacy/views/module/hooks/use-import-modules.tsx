@@ -12,7 +12,7 @@ import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import { BASE_URL } from "../../../config/urls";
-import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
+import { replaceActivityTextContent } from "../../../helpers/cleanActivityTextContent";
 
 export enum ModulesImportStep {
   ZipImport,

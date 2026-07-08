@@ -8,9 +8,12 @@ import Parcours from "../../../../src.legacy/utils/interfaces/parcours";
 import Formation from "../../../../src.legacy/utils/interfaces/formation";
 import Module from "../../../../src.legacy/utils/interfaces/module";
 import { BASE_URL, BASE_API_URL } from "../../../../src.legacy/config/urls";
-import { replaceActivityTextContent } from "../../../../src.legacy/helpers/replaceActivityTextContent";
-import { getMimeType, sanitizeFilename } from "../../../../src.legacy/utils/import-mime";
+import {
+  getMimeType,
+  sanitizeFilename,
+} from "../../../../src.legacy/utils/import-mime";
 import { parseCourseZip } from "../../../../src.legacy/helpers/course-import-parser";
+import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 export enum CoursesImportStep {
   MbzImport,
@@ -164,7 +167,7 @@ export default function useImportCourses() {
               maxCourseId++;
               const currentCourseId = maxCourseId;
 
-              const adjustedLessons = course.lessons.map((lesson) => {
+              const adjustedLessons = course.lessons.map((lesson: Lesson) => {
                 maxLessonId++;
                 const currentLessonId = maxLessonId;
 
@@ -361,7 +364,7 @@ export default function useImportCourses() {
                       : `${BASE_URL}${serverUrl}`;
 
                     finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
-                    finalHtml = replaceActivityTextContent(finalHtml);
+                    finalHtml = cleanActivityTextContent(finalHtml);
                   } catch (err) {
                     console.error("Erreur upload image blog", err);
                   }
