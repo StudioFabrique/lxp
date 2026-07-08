@@ -9,10 +9,23 @@ import TeacherLastParcours from "../components/admin/teacher-last-parcours";
 import LastParcours from "../components/admin/last-parcours";
 import LastFeedback from "../components/admin/last-feedback";
 
+// Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [
-  { path: "/admin/formation", label: "Créer une formation" },
-  { path: "/admin/parcours/créer-un-parcours", label: "Créer un parcours" },
-  { path: "/admin/module/add", label: "Créer un module" },
+  {
+    path: "/admin/formation",
+    label: "Créer une formation",
+    permission: { action: "write", object: "formation" },
+  },
+  {
+    path: "/admin/parcours/créer-un-parcours",
+    label: "Créer un parcours",
+    permission: { action: "write", object: "parcours" },
+  },
+  {
+    path: "/admin/module/add",
+    label: "Créer un module",
+    permission: { action: "write", object: "module" },
+  },
   { path: "/admin/course/add", label: "Créer un cours" },
   { path: "/admin/lesson/Add", label: "Créer une leçon" },
   { path: "/admin/user/add", label: "Créer un utilisateur" },
@@ -54,42 +67,12 @@ const AdminDashboard = () => {
         </p>
       </section>
 
-      {/* --- Boutons d'actions rapides --- */}
+      {/* --- Boutons d'actions rapides (Optimisés et Sécurisés) --- */}
       <section>
         <ul className="flex flex-wrap items-center gap-3">
-          <PermissionGuard action="write" object="formation">
-            <li>
-              <Link
-                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
-                to={links[0].path}
-              >
-                {links[0].label}
-              </Link>
-            </li>
-          </PermissionGuard>
-          <PermissionGuard action="write" object="parcours">
-            <li>
-              <Link
-                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
-                to={links[1].path}
-              >
-                {links[1].label}
-              </Link>
-            </li>
-          </PermissionGuard>
-          <PermissionGuard action="write" object="module">
-            <li>
-              <Link
-                className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
-                to={links[2].path}
-              >
-                {links[2].label}
-              </Link>
-            </li>
-          </PermissionGuard>
-          {links.map((item, index) =>
-            index > 2 ? (
-              <li key={item.label}>
+          {links.map((item) => {
+            const content = (
+              <li>
                 <Link
                   className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
                   to={item.path}
@@ -97,8 +80,22 @@ const AdminDashboard = () => {
                   {item.label}
                 </Link>
               </li>
-            ) : null,
-          )}
+            );
+
+            if (item.permission) {
+              return (
+                <PermissionGuard
+                  key={item.label}
+                  action={item.permission.action}
+                  object={item.permission.object}
+                >
+                  {content}
+                </PermissionGuard>
+              );
+            }
+
+            return <span key={item.label}>{content}</span>;
+          })}
         </ul>
       </section>
 

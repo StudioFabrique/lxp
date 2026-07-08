@@ -1,11 +1,24 @@
-import { createBrowserRouter, Navigate, RouteObject } from "react-router";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouteObject,
+  useRouteError,
+} from "react-router";
 
+// --- Imports ---
 import { authRoutes } from "./features/auth/routes";
 import AppWrapper from "./components/wrappers/AppWrapper";
 import RouteGuard from "./components/guards/RouteGuard";
 import { ROLES_RANKS } from "./utils/helpers/roles-rank";
 import Sidebar from "./components/sidebar/Sidebar";
 import Loader from "./components/loaders/Loader";
+import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
+import FeaturesList from "./features/dashboard/views/FeaturesList";
+import Chatbot from "./components/chatbot/chatbot";
+import { isAiDisabled } from "../src.legacy/config/ai/ai";
+import { ChatbotProvider } from "./store/ChatbotProvider";
+
+// --- Feature Routes Imports ---
 import {
   adminParcoursRoutes,
   studentParcoursRoutes,
@@ -34,47 +47,75 @@ import {
   adminProfileRoutes,
   studentProfileRoutes,
 } from "./features/profile/routes";
-import ConfettiWrapper from "./components/wrappers/ConfettiWrapper";
-import FeaturesList from "./features/dashboard/views/FeaturesList";
 import {
   adminDashboardRoutes,
   studentDashboardRoutes,
 } from "./features/dashboard/routes";
-import Chatbot from "./components/chatbot/chatbot";
-import { isAiDisabled } from "../src.legacy/config/ai/ai";
-import { ChatbotProvider } from "./store/ChatbotProvider";
+
+// ==========================================
+// LAYOUTS & ERROR HANDLING
+// ==========================================
+
+// Composant d'erreur spécifique au routage
+const RouterErrorBoundary = () => {
+  const error = useRouteError();
+  console.error("Erreur de routage capturée :", error);
+  return (
+    <div>
+      Oups, une erreur inattendue est survenue lors du chargement de cette page.
+    </div>
+  );
+};
+
+// Layout Admin isolé
+const AdminLayout = () => (
+  <ChatbotProvider>
+    <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+      <RouteGuard allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]} />
+    </AppWrapper>
+    {!isAiDisabled && <Chatbot />}
+  </ChatbotProvider>
+);
+
+// Layout Étudiant isolé
+const StudentLayout = () => (
+  <ChatbotProvider>
+    <ConfettiWrapper>
+      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+        <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
+      </AppWrapper>
+    </ConfettiWrapper>
+    {!isAiDisabled && <Chatbot />}
+  </ChatbotProvider>
+);
+
+// ==========================================
+// ROUTES DEFINITION
+// ==========================================
 
 const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
-    element: (
-      <ChatbotProvider>
-        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-          <RouteGuard
-            allowedRanks={[ROLES_RANKS.SUPER_ADMIN, ROLES_RANKS.ADMIN]}
-          />
-        </AppWrapper>
-        {!isAiDisabled && <Chatbot />}
-      </ChatbotProvider>
-    ),
+    element: <AdminLayout />,
+    errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
-      ...adminDashboardRoutes, // /admin/dashboard/*
-      ...adminParcoursRoutes, // /admin/parcours/*
-      ...adminModulePreviewRoutes, // /admin/parcours/module/:moduleId
-      ...adminGroupRoutes, // /admin/group/*
-      ...adminModuleRoutes, // /admin/module/*
-      ...adminCourseRoutes, // /admin/cours/*
-      ...adminLessonRoutes, // /admin/lecons/*
-      ...adminTagsRoutes, // /admin/tags
-      ...adminRoleRoutes, // /admin/roles
-      ...adminUserRoutes, // /admin/user
-      ...adminFormationRoutes, // /admin/formation
-      ...adminFeedbacksRoutes, // /admin/feedbacks
-      ...adminDashboardIARoutes, // /admin/dashboard-ia
-      ...adminMediathequeRoutes, // /admin/mediatheque
-      ...adminResourcesRoutes, // /admin/resources
-      ...adminProfileRoutes, // /admin/profil
+      ...adminDashboardRoutes,
+      ...adminParcoursRoutes,
+      ...adminModulePreviewRoutes,
+      ...adminGroupRoutes,
+      ...adminModuleRoutes,
+      ...adminCourseRoutes,
+      ...adminLessonRoutes,
+      ...adminTagsRoutes,
+      ...adminRoleRoutes,
+      ...adminUserRoutes,
+      ...adminFormationRoutes,
+      ...adminFeedbacksRoutes,
+      ...adminDashboardIARoutes,
+      ...adminMediathequeRoutes,
+      ...adminResourcesRoutes,
+      ...adminProfileRoutes,
       { path: "*", element: <p>La page n'existe pas</p> },
     ],
   },
@@ -83,26 +124,16 @@ const adminRoutes: RouteObject[] = [
 const studentRoutes: RouteObject[] = [
   {
     path: "/student",
-    element: (
-      <ChatbotProvider>
-        <ConfettiWrapper>
-          <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-            <RouteGuard allowedRanks={[ROLES_RANKS.STUDENT]} />
-          </AppWrapper>
-        </ConfettiWrapper>
-        {!isAiDisabled && <Chatbot />}
-      </ChatbotProvider>
-    ),
+    element: <StudentLayout />,
+    errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
-      ...studentDashboardRoutes, // /student/dashboard/*
-      ...studentParcoursRoutes, // /student/parcours/*
-      ...studentModulePreviewRoutes, // /student/parcours/module/:moduleId
-      ...studentResourcesRoutes, // /student/ressources/*
-      ...studentCalendarRoutes, // /student/calendrier
-      ...studentProfileRoutes, // /student/profil
-
-      // Fallback 404 spécifique à l'espace étudiant
+      ...studentDashboardRoutes,
+      ...studentParcoursRoutes,
+      ...studentModulePreviewRoutes,
+      ...studentResourcesRoutes,
+      ...studentCalendarRoutes,
+      ...studentProfileRoutes,
       { path: "*", element: <FeaturesList /> },
     ],
   },
