@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { userMutations } from "../user.api";
 import UserForm from "../components/user-form/UserForm";
+import { userApi } from "../api/user.api";
 
 const UserAdd = () => {
   const navigate = useNavigate();
@@ -14,14 +14,17 @@ const UserAdd = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userMutations.create(userData, file),
+    }) => userApi.mutations.create(userData, file),
     onSuccess: (data) => {
       toast.success(data.message ?? "Utilisateur créé avec succès");
       navigate("/admin/user");
     },
   });
 
-  const handleSubmit = (userData: Record<string, unknown>, file: File | null) => {
+  const handleSubmit = (
+    userData: Record<string, unknown>,
+    file: File | null,
+  ) => {
     mutate({ userData, file });
   };
 

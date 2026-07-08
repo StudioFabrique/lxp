@@ -1,9 +1,13 @@
 import { useMemo, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
-import { RowSelectionState, SortingState, Updater } from "@tanstack/react-table";
+import {
+  RowSelectionState,
+  SortingState,
+  Updater,
+} from "@tanstack/react-table";
 import { PlusCircle } from "lucide-react";
 
-import type { TagRow } from "../tag.api";
+import type { TagRow } from "../api/tag.api";
 import { useTagActions } from "../hooks/useTagActions";
 import { getTagColumns } from "../components/tag-table-columns";
 
@@ -51,8 +55,14 @@ const TagsHome = () => {
     onRefreshData();
   };
 
-  const { onDeleteSelected, onDeleteOne, onCreateTags, onEditTag, isDeleting, isSubmitting } =
-    useTagActions(refreshAndClearSelection);
+  const {
+    onDeleteSelected,
+    onDeleteOne,
+    onCreateTags,
+    onEditTag,
+    isDeleting,
+    isSubmitting,
+  } = useTagActions(refreshAndClearSelection);
 
   useEffect(() => {
     const openModal = searchParams.get("openModal");
@@ -103,14 +113,22 @@ const TagsHome = () => {
           onLeftClick={handleDismissModal}
           rightLabel="Valider"
           onRightClick={() => {
-            const btn = document.getElementById("modal-submit-btn") as HTMLButtonElement | null;
+            const btn = document.getElementById(
+              "modal-submit-btn",
+            ) as HTMLButtonElement | null;
             btn?.click();
           }}
           isSubmitting={isSubmitting}
         >
           {editId ? (
             <TagsHomeEditing
-              tag={data.find((t) => t.id === +editId) ?? { id: +editId, name: "", color: "" }}
+              tag={
+                data.find((t) => t.id === +editId) ?? {
+                  id: +editId,
+                  name: "",
+                  color: "",
+                }
+              }
               onSubmitTag={(id, name) => {
                 onEditTag(id, name);
                 handleDismissModal();
@@ -119,7 +137,9 @@ const TagsHome = () => {
           ) : (
             <TagsHomeAdding
               onSubmitAllTags={(tags) => {
-                onCreateTags(tags.map((t) => ({ name: t.name, color: t.color })));
+                onCreateTags(
+                  tags.map((t) => ({ name: t.name, color: t.color })),
+                );
                 handleDismissModal();
               }}
             />
@@ -178,10 +198,7 @@ const TagsHome = () => {
         />
 
         <div className="w-full mt-5">
-          <TablePagination
-            leftText={`Tags : ${totalItems}`}
-            {...pagination}
-          />
+          <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
         </div>
       </Wrapper>
 

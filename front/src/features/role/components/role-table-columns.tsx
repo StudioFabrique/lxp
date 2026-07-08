@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import type { RoleCounts } from "../role.api";
+import type { RoleCounts } from "../api/role.api";
 
 export const getRoleColumns = (
   onDelete: (id: string) => void,

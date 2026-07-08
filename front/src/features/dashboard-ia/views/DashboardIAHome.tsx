@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
-import { dashboardIAApi } from "../dashboard-ia.api";
+import { dashboardIAApi } from "../api/dashboardIA.api";
 import useTopUsers from "../hooks/useTopUsers";
 import GroupsStats from "../components/GroupsStats";
 import TopFiveUsers from "../components/TopFiveUsers";
@@ -28,12 +28,12 @@ const DashboardIAHome = () => {
 
   const { data: totals, error: totalsError } = useQuery({
     queryKey: ["dashboard-ia-total-tokens"],
-    queryFn: dashboardIAApi.getTotalTokens,
+    queryFn: dashboardIAApi.queries.getTotalTokens,
   });
 
   const { data: groupsStats } = useQuery({
     queryKey: ["dashboard-ia-groups-stats"],
-    queryFn: dashboardIAApi.getGroupsStats,
+    queryFn: dashboardIAApi.queries.getGroupsStats,
   });
 
   useEffect(() => {

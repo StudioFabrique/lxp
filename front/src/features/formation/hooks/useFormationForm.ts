@@ -1,20 +1,33 @@
 import { useCallback, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { formationApi } from "../formation.api";
+import { formationApi } from "../api/formation.api";
 import { formationSchema } from "../formation.schema";
 import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../../../utils/interfaces/formation-item";
 import { getRandomNumber } from "../../../../src.legacy/helpers/get-random-number";
 
 const TAG_COLORS = [
-  "rgba(255, 0, 0, 0.5)", "rgba(0, 255, 0, 0.5)", "rgba(0, 0, 255, 0.5)",
-  "rgba(255, 255, 0, 0.5)", "rgba(255, 0, 255, 0.5)", "rgba(0, 255, 255, 0.5)",
-  "rgba(128, 0, 0, 0.5)", "rgba(0, 128, 0, 0.5)", "rgba(0, 0, 128, 0.5)",
-  "rgba(128, 128, 0, 0.5)", "rgba(128, 0, 128, 0.5)", "rgba(0, 128, 128, 0.5)",
-  "rgba(255, 165, 0, 0.5)", "rgba(139, 69, 19, 0.5)", "rgba(220, 20, 60, 0.5)",
-  "rgba(46, 139, 87, 0.5)", "rgba(255, 215, 0, 0.5)", "rgba(139, 0, 139, 0.5)",
-  "rgba(0, 100, 0, 0.5)", "rgba(0, 0, 139, 0.5)",
+  "rgba(255, 0, 0, 0.5)",
+  "rgba(0, 255, 0, 0.5)",
+  "rgba(0, 0, 255, 0.5)",
+  "rgba(255, 255, 0, 0.5)",
+  "rgba(255, 0, 255, 0.5)",
+  "rgba(0, 255, 255, 0.5)",
+  "rgba(128, 0, 0, 0.5)",
+  "rgba(0, 128, 0, 0.5)",
+  "rgba(0, 0, 128, 0.5)",
+  "rgba(128, 128, 0, 0.5)",
+  "rgba(128, 0, 128, 0.5)",
+  "rgba(0, 128, 128, 0.5)",
+  "rgba(255, 165, 0, 0.5)",
+  "rgba(139, 69, 19, 0.5)",
+  "rgba(220, 20, 60, 0.5)",
+  "rgba(46, 139, 87, 0.5)",
+  "rgba(255, 215, 0, 0.5)",
+  "rgba(139, 0, 139, 0.5)",
+  "rgba(0, 100, 0, 0.5)",
+  "rgba(0, 0, 139, 0.5)",
 ];
 
 const makeTag = (name: string, value: number): Tag => ({
@@ -30,16 +43,18 @@ export function useFormationForm() {
   const [level, setLevel] = useState("");
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(null);
+  const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
+    null,
+  );
 
   const { data: allTags = [], refetch: refetchTags } = useQuery({
     queryKey: ["formation-tags"],
-    queryFn: formationApi.getTags,
+    queryFn: formationApi.queries.getTags,
   });
 
   const { data: formationsList = [], refetch: refetchFormations } = useQuery({
     queryKey: ["formation-list"],
-    queryFn: formationApi.getFormationList,
+    queryFn: formationApi.queries.getFormationList,
   });
 
   const isEditing = formationToEdit !== null;
@@ -83,8 +98,15 @@ export function useFormationForm() {
           setCurrentTags((prev) => [...prev, existing]);
         }
       } else {
-        if (!currentTags.find((t) => t.name.toLowerCase() === tagInput.toLowerCase())) {
-          setCurrentTags((prev) => [...prev, makeTag(tagInput, allTags.length + prev.length)]);
+        if (
+          !currentTags.find(
+            (t) => t.name.toLowerCase() === tagInput.toLowerCase(),
+          )
+        ) {
+          setCurrentTags((prev) => [
+            ...prev,
+            makeTag(tagInput, allTags.length + prev.length),
+          ]);
         }
       }
       setTagInput("");
@@ -97,9 +119,11 @@ export function useFormationForm() {
   }, []);
 
   const findNewTags = useCallback(
-    () => currentTags.filter(
-      (t) => !allTags.find((at) => at.name.toLowerCase() === t.name.toLowerCase()),
-    ),
+    () =>
+      currentTags.filter(
+        (t) =>
+          !allTags.find((at) => at.name.toLowerCase() === t.name.toLowerCase()),
+      ),
     [currentTags, allTags],
   );
 
@@ -108,16 +132,19 @@ export function useFormationForm() {
       const newTags = findNewTags();
       let resolvedTags = currentTags;
       if (newTags.length > 0) {
-        const created = await formationApi.createTags(
+        const created = await formationApi.mutations.createTags(
           newTags.map((t) => ({ name: t.name, color: t.color })),
         );
         refetchTags();
         resolvedTags = currentTags.map(
-          (t) => created.find((c) => c.name.toLowerCase() === t.name.toLowerCase()) ?? t,
+          (t) =>
+            created.find(
+              (c) => c.name.toLowerCase() === t.name.toLowerCase(),
+            ) ?? t,
         );
       }
       const tagIds = resolvedTags.map((t) => t.id);
-      return formationApi.createFormation({
+      return formationApi.mutations.createFormation({
         title,
         description: description || undefined,
         code: code || undefined,
@@ -125,7 +152,7 @@ export function useFormationForm() {
         tags: tagIds,
       });
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Formation créée avec succès");
       resetForm();
       refetchFormations();
@@ -137,16 +164,19 @@ export function useFormationForm() {
       const newTags = findNewTags();
       let resolvedTags = currentTags;
       if (newTags.length > 0) {
-        const created = await formationApi.createTags(
+        const created = await formationApi.mutations.createTags(
           newTags.map((t) => ({ name: t.name, color: t.color })),
         );
         refetchTags();
         resolvedTags = currentTags.map(
-          (t) => created.find((c) => c.name.toLowerCase() === t.name.toLowerCase()) ?? t,
+          (t) =>
+            created.find(
+              (c) => c.name.toLowerCase() === t.name.toLowerCase(),
+            ) ?? t,
         );
       }
       const tagIds = resolvedTags.map((t) => t.id);
-      return formationApi.updateFormation(formationToEdit!.id, {
+      return formationApi.mutations.updateFormation(formationToEdit!.id, {
         title,
         description: description || undefined,
         code: code || undefined,
@@ -154,7 +184,7 @@ export function useFormationForm() {
         tags: tagIds,
       });
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Formation mise à jour avec succès");
       resetForm();
       refetchFormations();
@@ -162,7 +192,12 @@ export function useFormationForm() {
   });
 
   const handleSubmit = useCallback(() => {
-    const parsed = formationSchema.safeParse({ title, description, level, code });
+    const parsed = formationSchema.safeParse({
+      title,
+      description,
+      level,
+      code,
+    });
     if (!parsed.success) {
       const first = parsed.error.errors[0];
       toast.error(first.message);
@@ -177,15 +212,29 @@ export function useFormationForm() {
     } else {
       createMutation.mutate();
     }
-  }, [title, description, level, code, currentTags, isEditing, createMutation, updateMutation]);
+  }, [
+    title,
+    description,
+    level,
+    code,
+    currentTags,
+    isEditing,
+    createMutation,
+    updateMutation,
+  ]);
 
   return {
-    title, setTitle,
-    description, setDescription,
-    code, setCode,
-    level, setLevel,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    code,
+    setCode,
+    level,
+    setLevel,
     currentTags,
-    tagInput, setTagInput,
+    tagInput,
+    setTagInput,
     formationToEdit,
     isEditing,
     allTags,

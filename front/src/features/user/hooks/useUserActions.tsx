@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { userMutations } from "../user.api";
+import { userApi } from "../api/user.api";
 
 export function useUserActions(onSuccessCallback: () => void) {
   const deleteOneMutation = useMutation({
-    mutationFn: (id: string) => userMutations.deleteOne(id),
+    mutationFn: (id: string) => userApi.mutations.deleteOne(id),
     onSuccess: () => {
       toast.success("Utilisateur supprimé avec succès");
       onSuccessCallback();
@@ -17,7 +17,7 @@ export function useUserActions(onSuccessCallback: () => void) {
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, value }: { id: string; value: boolean }) =>
-      userMutations.updateUserStatus(id, value),
+      userApi.mutations.updateUserStatus(id, value),
     onSuccess: () => {
       onSuccessCallback();
     },
@@ -28,13 +28,8 @@ export function useUserActions(onSuccessCallback: () => void) {
   };
 
   const updateManyStatusMutation = useMutation({
-    mutationFn: ({
-      ids,
-      status,
-    }: {
-      ids: string[];
-      status: string;
-    }) => userMutations.updateManyStatus(ids, status),
+    mutationFn: ({ ids, status }: { ids: string[]; status: string }) =>
+      userApi.mutations.updateManyStatus(ids, status),
     onSuccess: () => {
       toast.success("Statut mis à jour avec succès");
       onSuccessCallback();
@@ -52,7 +47,7 @@ export function useUserActions(onSuccessCallback: () => void) {
     }: {
       userIds: string[];
       roleIds: string[];
-    }) => userMutations.updateUserRoles(userIds, roleIds),
+    }) => userApi.mutations.updateUserRoles(userIds, roleIds),
     onSuccess: () => {
       toast.success("Rôles mis à jour avec succès");
       onSuccessCallback();
@@ -64,7 +59,7 @@ export function useUserActions(onSuccessCallback: () => void) {
   };
 
   const sendInvitationMutation = useMutation({
-    mutationFn: (userId: string) => userMutations.sendInvitation(userId),
+    mutationFn: (userId: string) => userApi.mutations.sendInvitation(userId),
     onSuccess: () => {
       toast.success("Invitation envoyée");
       onSuccessCallback();
@@ -77,7 +72,7 @@ export function useUserActions(onSuccessCallback: () => void) {
 
   const sendManyInvitationsMutation = useMutation({
     mutationFn: (userIds: string[]) =>
-      userMutations.sendManyInvitations(userIds),
+      userApi.mutations.sendManyInvitations(userIds),
     onSuccess: () => {
       toast.success("Invitations envoyées");
       onSuccessCallback();

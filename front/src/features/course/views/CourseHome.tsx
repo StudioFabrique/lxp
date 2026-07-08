@@ -2,10 +2,10 @@
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../src.legacy/hooks/use-http";
 
-import Loader from "../../../../src.legacy/components/UI/loader";
-import CustomResponse from "../../../../src.legacy/utils/interfaces/custom-response";
 import CourseList from "../components/list/course-list";
 import CustomCourse from "../components/list/interfaces/custom-course";
+import Loader from "../../../components/loaders/Loader";
+import CustomResponse from "../../../utils/interfaces/custom-response";
 
 const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();
@@ -21,7 +21,7 @@ const CourseHome = () => {
       {
         path: "/course",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 

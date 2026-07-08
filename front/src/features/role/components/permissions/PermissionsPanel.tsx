@@ -4,7 +4,7 @@ import SubWrapper from "../../../../../src.legacy/components/UI/sub-wrapper/sub-
 import PermissionDeleteItem from "./PermissionDeleteItem";
 import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 import RemainingResourcesList from "./RemainingResourcesList";
-import type { PermissionItem } from "../../role.api";
+import type { PermissionItem } from "../../api/role.api";
 
 type PermissionsPanelProps = {
   drawerId: string;

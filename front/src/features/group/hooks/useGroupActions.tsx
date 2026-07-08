@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { groupMutations } from "../group.api";
+import { groupApi } from "../api/group.api";
 
 export function useGroupActions(onSuccessCallback: () => void) {
   const deleteManyMutation = useMutation({
-    mutationFn: (ids: string[]) => groupMutations.deleteMany(ids),
+    mutationFn: (ids: string[]) => groupApi.mutations.deleteMany(ids),
     onSuccess: () => {
       toast.success("Groupes supprimés !");
       onSuccessCallback();
@@ -17,7 +17,7 @@ export function useGroupActions(onSuccessCallback: () => void) {
   };
 
   const deleteOneMutation = useMutation({
-    mutationFn: (id: string) => groupMutations.deleteOne(id),
+    mutationFn: (id: string) => groupApi.mutations.deleteOne(id),
     onSuccess: () => {
       toast.success("Groupe supprimé !");
       onSuccessCallback();

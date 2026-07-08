@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { passwordApi } from "../api/password.api";
+import { accountApi } from "../api/account.api";
 
 const regexPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{12,})/;
@@ -54,7 +54,7 @@ export function usePasswordUpdate(token: string) {
 
   const checkToken = useCallback(async () => {
     try {
-      await passwordApi.checkInvitation(token);
+      await accountApi.checkInvitation(token);
     } catch {
       setError("Le lien d'activation n'est pas valide ou a expiré.");
     }
@@ -64,7 +64,7 @@ export function usePasswordUpdate(token: string) {
     setSubmitLoader(true);
     setError("");
     try {
-      const data = await passwordApi.activateAccount(token, state.password);
+      const data = await accountApi.activateAccount(token, state.password);
       if (data.success) setSuccess(true);
     } catch (err: unknown) {
       const msg =

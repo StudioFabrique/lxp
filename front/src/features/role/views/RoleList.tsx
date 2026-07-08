@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import apiClient from "../../../lib/axios";
 
-import type { RoleCounts } from "../role.api";
+import type { RoleCounts } from "../api/role.api";
 import { useRoleActions } from "../hooks/useRoleActions";
 import { getRoleColumns } from "../components/role-table-columns";
 import RoleForm from "../components/role-form/RoleForm";
@@ -25,7 +25,11 @@ const RoleList = () => {
 
   const isSearching = searchValue !== null && searchValue.length > 0;
 
-  const { data: rawData, isLoading, refetch } = useQuery({
+  const {
+    data: rawData,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["roles", searchValue],
     queryFn: async () => {
       const path = isSearching
@@ -43,18 +47,16 @@ const RoleList = () => {
     refetch();
   };
 
-  const { onDeleteSelected, onDeleteOne, isDeleting } =
-    useRoleActions(refreshAndClearSelection);
+  const { onDeleteSelected, onDeleteOne, isDeleting } = useRoleActions(
+    refreshAndClearSelection,
+  );
 
   const roleToDelete = useMemo(
     () => data.find((r) => r._id === idToDelete),
     [data, idToDelete],
   );
 
-  const columns = useMemo(
-    () => getRoleColumns((id) => setIdToDelete(id)),
-    [],
-  );
+  const columns = useMemo(() => getRoleColumns((id) => setIdToDelete(id)), []);
 
   const onRetreiveItemsValues = (property: keyof RoleCounts) =>
     data

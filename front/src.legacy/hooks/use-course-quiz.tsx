@@ -12,13 +12,12 @@ import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
+import apiClient from "../../src/lib/axios";
 
 export default function useCourseQuiz(
   courseId?: number,
   activityContent?: string,
 ) {
-  const { axiosInstance: axios } = useHttp();
-
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -122,7 +121,7 @@ export default function useCourseQuiz(
     }
 
     try {
-      const response = await axios({
+      const response = await apiClient({
         method: "get",
         url: `${BASE_API_URL}/quiz/course/ending/stream/${courseId}`,
         responseType: "stream",
@@ -211,7 +210,7 @@ export default function useCourseQuiz(
       setIsStreaming(true);
 
       try {
-        const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
           content: activityContent,
         });
 
@@ -230,7 +229,7 @@ export default function useCourseQuiz(
         setIsStreaming(false);
       }
     },
-    [activityContent, axios],
+    [activityContent],
   );
 
   const onCloseQuizzes = () => {
@@ -281,7 +280,7 @@ export default function useCourseQuiz(
 
       try {
         // Envoi du signalement au backend
-        await axios.post(`${BASE_API_URL}/quiz/question/report`, {
+        await apiClient.post(`${BASE_API_URL}/quiz/question/report`, {
           externalId,
           comment,
         });
@@ -296,7 +295,7 @@ export default function useCourseQuiz(
         }
 
         // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
-        const response = await axios.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
           content: activityContent,
         });
 
@@ -330,7 +329,7 @@ export default function useCourseQuiz(
         setIsReplacing(false);
       }
     },
-    [axios, activityContent, currentIndex, quizzes, isAnswered, isCorrect],
+    [activityContent, currentIndex, quizzes, isAnswered, isCorrect],
   );
 
   return {

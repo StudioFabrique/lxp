@@ -8,12 +8,12 @@ import {
 } from "../utils/interfaces/quiz";
 import hasPermission from "../utils/hasPermission";
 import { AuthContext } from "../../src/store/AuthProvider";
-import useHttp from "./use-http";
 import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import { isAiDisabled } from "../config/ai/ai";
 import { ChatbotContext } from "../store/chatbotContext";
+import apiClient from "../../src/lib/axios";
 
 interface ModuleInfoForDiagnostic {
   title?: string;
@@ -28,7 +28,6 @@ export default function useDiagnosticQuiz(
 ) {
   const { user } = useContext(AuthContext);
   const { setForceHideChatbot } = useContext(ChatbotContext);
-  const { axiosInstance: axios } = useHttp();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -143,7 +142,7 @@ export default function useDiagnosticQuiz(
     }
 
     try {
-      const response = await axios({
+      const response = await apiClient({
         method: "post",
         url: `${BASE_API_URL}/quiz/preliminary/stream?n=10`,
         data: {
@@ -223,7 +222,6 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
     toastWarning,
     moduleInfo.description,
-    axios,
   ]);
 
   const onStartQuiz = useCallback(() => {
@@ -267,7 +265,7 @@ export default function useDiagnosticQuiz(
     async (externalId: string, comment: string) => {
       try {
         // Envoi du signalement au backend
-        await axios.post(`${BASE_API_URL}/quiz/question/report`, {
+        await apiClient.post(`${BASE_API_URL}/quiz/question/report`, {
           externalId,
           comment,
         });
@@ -293,7 +291,7 @@ export default function useDiagnosticQuiz(
         toast.error("Impossible de remplacer le quiz pour le moment.");
       }
     },
-    [axios, currentIndex, quizzes, isAnswered, isCorrect],
+    [apiClient, currentIndex, quizzes, isAnswered, isCorrect],
   );
 
   const onContinueFromResults = useCallback(() => {
@@ -324,7 +322,8 @@ export default function useDiagnosticQuiz(
 
     const userIsAdmin =
       user?.roles?.some((role) => role.rank === 1) ||
-      (user?.permissions && hasPermission(user.permissions, "update", "lesson"));
+      (user?.permissions &&
+        hasPermission(user.permissions, "update", "lesson"));
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       if (isAiDisabled) {

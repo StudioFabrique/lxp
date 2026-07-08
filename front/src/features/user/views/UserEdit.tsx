@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { userMutations, userQueries } from "../user.api";
 import UserForm from "../components/user-form/UserForm";
+import { userApi } from "../api/user.api";
 
 const UserEdit = () => {
   const { id } = useParams();
@@ -10,7 +10,7 @@ const UserEdit = () => {
 
   const { data, isLoading: isFetching } = useQuery({
     queryKey: ["user", id],
-    queryFn: () => userQueries.getUserData(id!),
+    queryFn: () => userApi.queries.getUserData(id!),
     enabled: !!id,
   });
 
@@ -21,14 +21,17 @@ const UserEdit = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userMutations.update(id!, userData, file),
+    }) => userApi.mutations.update(id!, userData, file),
     onSuccess: (res) => {
       toast.success(res.message ?? "Utilisateur mis à jour avec succès");
       navigate("/admin/user");
     },
   });
 
-  const handleSubmit = (userData: Record<string, unknown>, file: File | null) => {
+  const handleSubmit = (
+    userData: Record<string, unknown>,
+    file: File | null,
+  ) => {
     mutate({ userData, file });
   };
 

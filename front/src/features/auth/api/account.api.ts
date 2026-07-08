@@ -22,7 +22,7 @@ const activateAccount = async (
   return res.data;
 };
 
-export const passwordApi = {
+export const accountApi = {
   checkEmail,
   checkInvitation,
   activateAccount,

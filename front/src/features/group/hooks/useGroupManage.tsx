@@ -3,9 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import User from "../../../../src/utils/interfaces/user";
-import Group from "../../../../src/utils/interfaces/group";
-import { groupMutations } from "../group.api";
-import toast from "react-hot-toast";
+import { groupApi } from "../api/group.api";
 
 function useGroupManage() {
   const { id } = useParams();
@@ -16,7 +14,7 @@ function useGroupManage() {
 
   const { data: existingGroup, isLoading } = useQuery({
     queryKey: ["group", id],
-    queryFn: () => groupMutations.getById(id!),
+    queryFn: () => groupApi.queries.getById(id!),
     enabled: !!id,
   });
 
@@ -43,9 +41,9 @@ function useGroupManage() {
   const mutation = useMutation({
     mutationFn: (formData: FormData) => {
       if (id) {
-        return groupMutations.update(id, formData);
+        return groupApi.mutations.update(id, formData);
       }
-      return groupMutations.create(formData);
+      return groupApi.mutations.create(formData);
     },
     onSuccess: handleNavigateAfterSubmit,
   });
