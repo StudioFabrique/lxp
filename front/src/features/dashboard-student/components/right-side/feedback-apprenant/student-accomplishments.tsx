@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import Item from "./item";
-import useHttp from "../../../../../../../src.legacy/hooks/use-http";
-import { Accomplishment } from "../../../../../../utils/interfaces/accomplishment";
-import Loader from "../../../../../../components/loaders/Loader";
+import { Accomplishment } from "../../../../../utils/interfaces/accomplishment";
+import useHttp from "../../../../../../src.legacy/hooks/use-http";
+import Loader from "../../../../../components/loaders/Loader";
 
 const StudentAccomplishments = () => {
   const { sendRequest, isLoading } = useHttp();
@@ -24,7 +24,7 @@ const StudentAccomplishments = () => {
   }, [sendRequest]);
 
   return (
-    <div className="flex flex-col items-center bg-secondary text-secondary-content rounded-lg p-5 gap-5 h-[350px]">
+    <div className="flex flex-col items-center bg-secondary text-secondary-content rounded-lg p-5 gap-5 h-87.5">
       <p className="font-bold self-start">Derniers feedback des apprenants</p>
       <div className="flex flex-col w-full gap-5 carousel carousel-vertical">
         {isLoading ? (

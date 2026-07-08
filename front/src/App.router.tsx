@@ -30,14 +30,12 @@ import {
   adminProfileRoutes,
   studentProfileRoutes,
 } from "./features/profile/routes";
-import {
-  adminDashboardRoutes,
-  studentDashboardRoutes,
-} from "./features/dashboard/routes";
 import StudentLayout from "./components/wrappers/layouts/StudentLayout";
 import AdminLayout from "./components/wrappers/layouts/AdminLayout";
 import RouterErrorBoundary from "./components/wrappers/layouts/RouterErrorBoundary";
-import FeaturesList from "./features/dashboard/views/FeaturesList";
+import { adminDashboardRoutes } from "./features/dashboard-admin/routes";
+import { studentDashboardRoutes } from "./features/dashboard-student/routes";
+import FeaturesList from "./features/dashboard-student/views/FeaturesList";
 
 const adminRoutes: RouteObject[] = [
   {

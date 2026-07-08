@@ -4,10 +4,10 @@ import { AuthContext } from "../../../store/AuthProvider";
 import useHttp from "../../../../src.legacy/hooks/use-http";
 import Parcours from "../../../utils/interfaces/parcours";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import TeacherLessonsQualityStats from "../components/admin/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
-import TeacherLastParcours from "../components/admin/teacher-last-parcours";
-import LastParcours from "../components/admin/last-parcours";
-import LastFeedback from "../components/admin/last-feedback";
+import TeacherLastParcours from "../components/teacher-last-parcours";
+import LastParcours from "../components/last-parcours";
+import LastFeedback from "../components/last-feedback";
+import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 
 // Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [

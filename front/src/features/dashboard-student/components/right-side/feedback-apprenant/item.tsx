@@ -1,8 +1,8 @@
 import { PartyPopperIcon } from "lucide-react";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../../../../../store/AuthProvider";
-import { Accomplishment } from "../../../../../../utils/interfaces/accomplishment";
-import FeedbacksButton from "../../../../../../components/buttons/FeedbacksButton";
+import { Accomplishment } from "../../../../../utils/interfaces/accomplishment";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import FeedbacksButton from "../../../../../components/buttons/FeedbacksButton";
 
 type ItemProps = {
   accomplishment: Accomplishment;

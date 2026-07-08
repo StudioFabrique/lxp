@@ -2,12 +2,12 @@ import { Link, useLocation } from "react-router";
 import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../../../assets/content-image-placeholders/module-default.jpg";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
-import Parcours from "../../../../utils/interfaces/parcours";
-import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
-import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
-import ImageHeader from "../../../../../src.legacy/components/image-header";
+import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import Parcours from "../../../utils/interfaces/parcours";
+import ImageHeader from "../../../../src.legacy/components/image-header";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
+import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 
 /* type ResumeParcoursProps = {
   parcours?: Parcours;

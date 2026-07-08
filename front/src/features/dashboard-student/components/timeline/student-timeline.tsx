@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { ThemeContext } from "../../../../../store/ThemeProvider";
-import { CalendarView } from "../../../../../components/calendar/calendar-configuration";
-import Calendar from "../../../../../components/calendar/calendar";
-import CalendarHeader from "../../../../../components/calendar/calendar-header";
-import TitleWithSelector from "../../../../../components/calendar/components/title-with-selector";
-import TimeSelector from "../../../../../components/calendar/components/time-selector";
-import ViewSelector from "../../../../../components/calendar/components/view-selector";
+import { ThemeContext } from "../../../../store/ThemeProvider";
+import { CalendarView } from "../../../../components/calendar/calendar-configuration";
+import Calendar from "../../../../components/calendar/calendar";
+import CalendarHeader from "../../../../components/calendar/calendar-header";
+import TitleWithSelector from "../../../../components/calendar/components/title-with-selector";
+import TimeSelector from "../../../../components/calendar/components/time-selector";
+import ViewSelector from "../../../../components/calendar/components/view-selector";
 
 const StudentTimeline = () => {
   const { theme } = useContext(ThemeContext);

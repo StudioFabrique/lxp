@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Socket } from "socket.io-client";
-import { AuthContext } from "../../../../store/AuthProvider";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
-import StudentFeedback from "../../../../utils/interfaces/student-feedback";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import AvatarCard from "../../../../../src.legacy/components/UI/avatar-card";
-import imageProfileReplacement from "../../../../../src.legacy/config/image-profile-replacement";
+import StudentFeedback from "../../../utils/interfaces/student-feedback";
+import { AuthContext } from "../../../store/AuthProvider";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import Wrapper from "../../../components/wrappers/BoxWrapper";
+import imageProfileReplacement from "../../../../src.legacy/config/image-profile-replacement";
+import AvatarCard from "../../../../src.legacy/components/UI/avatar-card";
 
 export default function LastFeedback() {
   const { socket } = useContext(AuthContext);

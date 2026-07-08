@@ -7,12 +7,12 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../../../assets/content-image-placeholders/module-default.jpg";
-import LessonRead from "../../../../utils/interfaces/lesson-read";
-import useHttp from "../../../../../src.legacy/hooks/use-http";
-import ImageHeader from "../../../../../src.legacy/components/image-header";
-import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
-import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
+import LessonRead from "../../../utils/interfaces/lesson-read";
+import useHttp from "../../../../src.legacy/hooks/use-http";
+import ImageHeader from "../../../../src.legacy/components/image-header";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
