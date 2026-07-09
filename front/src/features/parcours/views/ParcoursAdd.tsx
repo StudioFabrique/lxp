@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
-import bgImage from "../../../../src.legacy/assets/images/new-parcours-default.jpg";
-import useHttp from "../../../../src/hooks/useHttp";
+import bgImage from "../../../../src/assets/images/new-parcours-default.jpg";
+import { parcoursApi } from "../api/parcours.api";
 import NewParcoursForm from "../components/edit/new-parcours-form";
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Selecter from "../../../../src.legacy/components/UI/selecter/selecter.component";
-import QuestionMarkTooltip from "../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
+import Loader from "../../../../src/components/loaders/Loader";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import Selecter from "../../../components/UI/selecter/selecter.component";
 import { HelpCircle } from "lucide-react";
-import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
+import { bgImageGradient } from "../../../utils/helpers/color-helpers";
+import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type Item = {
   id: number;
@@ -21,13 +21,36 @@ type Item = {
 };
 
 const AddParcours = () => {
-  const [formations, setFormations] = useState<Array<Item>>([]);
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
-  const { sendRequest, error } = useHttp();
-  const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
+
+  const { data: formations } = useQuery({
+    queryKey: ["formations"],
+    queryFn: () => parcoursApi.queries.getFormations(),
+  });
+
+  const { mutate: createParcours, isPending: isCreating } = useMutation({
+    mutationFn: (data: { title: string; formationId: number }) =>
+      parcoursApi.mutations.createParcours({
+        title: data.title,
+        formation: data.formationId,
+      }),
+    onSuccess: (data) => {
+      nav(`/admin/parcours/edit/${data.parcoursId}`);
+    },
+  });
+
+  const { mutate: duplicateParcours } = useMutation({
+    mutationFn: (id: number) => parcoursApi.mutations.duplicateParcours(id),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Parcours dupliqué avec succès");
+        nav(`/admin/parcours/edit/${data.parcoursId}`);
+      }
+    },
+  });
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(bgImage),
@@ -40,26 +63,12 @@ const AddParcours = () => {
     borderRadius: "0.75rem",
   };
 
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    const processData = (data: Array<Item>) => {
-      setFormations(data);
-    };
-    sendRequest(
-      {
-        path: "/formation",
-      },
-      processData,
-    );
-  }, [sendRequest]);
-
   const handleFormation = (id: number) => {
     setFormation(id);
+    parcoursApi.queries
+      .getByFormation(id)
+      .then((data) => setParcoursList(data.data))
+      .catch(() => toast.error("Erreur lors du chargement des parcours"));
   };
 
   const handleParcours = (id: number) => {
@@ -73,58 +82,19 @@ const AddParcours = () => {
     title: string;
     formationId: number;
   }) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const processData = (data: any) => {
-      nav(`/admin/parcours/edit/${data.parcoursId}`);
-    };
-    setIsLoading(true);
-    sendRequest(
-      {
-        path: "/parcours",
-        method: "post",
-        body: { title, formation: formationId },
-      },
-      processData,
-    );
-    setIsLoading(false);
+    createParcours({ title, formationId });
   };
 
   const handleDuplicateParcours = () => {
-    const applyData = (data: { success: true; parcoursId: number }) => {
-      if (data.success) {
-        toast.success("Parcours dupliqué avec succès");
-        nav(`/admin/parcours/edit/${data.parcoursId}`);
-      }
-    };
-    sendRequest(
-      {
-        path: `/parcours/duplicate/${parcours!}`,
-        method: "post",
-      },
-      applyData,
-    );
+    if (parcours !== undefined) duplicateParcours(parcours);
   };
-
-  useEffect(() => {
-    if (formation !== undefined) {
-      const processData = (data: any) => {
-        setParcoursList(data.data);
-      };
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-formation/${formation}`,
-        },
-        processData,
-      );
-    }
-  }, [formation, sendRequest]);
 
   return (
     <FadeWrapper>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto">
         <>
           <div>
-            {isLoading ? (
+            {isCreating ? (
               <div className="h-full grid grid-rows-1">
                 <Loader />
               </div>

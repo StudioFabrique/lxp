@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import useHttp from "../../../../../src/hooks/useHttp";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import apiClient from "../../../../lib/axios";
 import Group from "../../../../../src/utils/interfaces/group";
 import Formation from "../../../../../src/utils/interfaces/formation";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import SelecterWithId from "../../../../../src.legacy/components/UI/selecter/selecter-with-id";
+import SelecterWithId from "../../../../components/UI/selecter/selecter-with-id";
 
 type Item = {
   id?: number;
@@ -18,8 +18,6 @@ const GroupFormDetails: FC<{
   onSelectParcours: (id: number) => void;
   selectedParcoursId?: number | null;
 }> = ({ group, onSelectParcours, selectedParcoursId }) => {
-  const { sendRequest } = useHttp();
-
   const [formations, setFormations] = useState<Array<Item>>([]);
   const [formationId, setFormationId] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
@@ -34,38 +32,39 @@ const GroupFormDetails: FC<{
 
   useEffect(() => {
     if (formationId !== undefined) {
-      const processData = (data: { data: Array<Parcours> }) => {
-        const parcoursItems = data.data.map((item) => ({
+      (async () => {
+        try {
+          const response = await apiClient.get(
+            `/parcours/parcours-by-formation/${formationId}`,
+          );
+          const data = response.data as { data: Array<Parcours> };
+          const parcoursItems = data.data.map((item) => ({
+            ...item,
+            value: item.title,
+          }));
+          setParcoursList(parcoursItems);
+        } catch {
+          // silently fail
+        }
+      })();
+    }
+  }, [formationId]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await apiClient.get("/formation");
+        const data = response.data as Array<Formation>;
+        const formationsItems = data.map((item) => ({
           ...item,
           value: item.title,
         }));
-        setParcoursList(parcoursItems);
-      };
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-formation/${formationId}`,
-          method: "get",
-        },
-        processData,
-      );
-    }
-  }, [formationId, sendRequest]);
-
-  useEffect(() => {
-    const processData = (data: Array<Formation>) => {
-      const formationsItems = data.map((item) => ({
-        ...item,
-        value: item.title,
-      }));
-      setFormations(formationsItems);
-    };
-    sendRequest(
-      {
-        path: "/formation",
-      },
-      processData,
-    );
-  }, [sendRequest]);
+        setFormations(formationsItems);
+      } catch {
+        // silently fail
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (group?.formationId) {

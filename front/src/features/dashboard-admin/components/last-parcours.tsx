@@ -1,30 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
-import ParcoursTable from "./parcours-table";
 import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 import { MoveUpRight } from "lucide-react";
-import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
-import useHttp from "../../../../src/hooks/useHttp";
+import { dashboardAdminApi } from "../api/dashboard-admin.api";
+import ParcoursTable from "./parcours-table";
 import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
 
 export default function LastParcours() {
-  const [parcours, setParcours] = useState<ParcoursSummary[] | null>(null);
-  const { sendRequest } = useHttp();
-
-  const getParcours = useCallback(() => {
-    const applyData = (data: ParcoursSummary[]) => {
-      setParcours(data);
-    };
-    sendRequest(
-      {
-        path: "/parcours/root-parcours",
-      },
-      applyData,
-    );
-  }, [sendRequest]);
-
-  useEffect(() => {
-    getParcours();
-  }, [getParcours]);
+  const { data: parcours } = useQuery({
+    queryKey: ["root-parcours"],
+    queryFn: dashboardAdminApi.queries.getRootParcours,
+  });
 
   return (
     <SubBoxWrapper>

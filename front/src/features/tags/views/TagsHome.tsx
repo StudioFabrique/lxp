@@ -13,9 +13,9 @@ import { getTagColumns } from "../components/tag-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
-import Modal from "../../../../src.legacy/components/UI/modal/modal";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
+import Modal from "../../../components/UI/modal/modal";
 import TagsHomeAdding from "./TagsHomeAdding";
 import TagsHomeEditing from "./TagsHomeEditing";
 import useTablePaginatedData from "../../../components/table/hooks/useTablePaginatedData";

@@ -3,8 +3,8 @@ import useUploadResources from "./useUploadResources";
 import ResourceForm from "./resource-form";
 import ResourcesAction from "./resource-actions";
 import ResourcesList from "./resources-list";
-import ElementNotFound from "../../../../../../../src.legacy/components/UI/element-not-found";
-import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import ElementNotFound from "../../../../../../components/UI/element-not-found";
+import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
   onCancel: (value: boolean) => void;
@@ -14,7 +14,8 @@ type Props = {
 
 export default function ResourceUpload({ onCancel, onSubmit }: Props) {
   const {
-    data,
+    resourceName,
+    setResourceName,
     filesList,
     filesNumber,
     handleFileChange,
@@ -46,10 +47,8 @@ export default function ResourceUpload({ onCancel, onSubmit }: Props) {
       <article className="flex flex-col gap-y-4">
         <Wrapper>
           <ResourceForm
-            data={{
-              ...data,
-              errors: { name: data.errors.map((e) => e.message) },
-            }}
+            value={resourceName}
+            onChange={setResourceName}
             onFileChange={handleFileChange}
           />
           <ResourcesAction

@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  regexGeneric,
-  regexMail,
-  regexOptionalGeneric,
-} from "../../../utils/constantes";
+import { regexGeneric, regexMail, regexOptionalGeneric } from "../../../../src/config/constantes";
 
 export const informationSchema = z.object({
   firstname: z

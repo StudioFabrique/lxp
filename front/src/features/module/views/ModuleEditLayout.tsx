@@ -1,1 +1,5 @@
-export { default } from "../../../../src.legacy/views/module/edit/Layout-edit-module";
+import { Outlet } from "react-router";
+
+export default function LayoutEditModule() {
+  return <Outlet />;
+}

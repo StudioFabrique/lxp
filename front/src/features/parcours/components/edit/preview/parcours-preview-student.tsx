@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Group from "../../../../../../src/utils/interfaces/group";
 import User from "../../../../../../src/utils/interfaces/user";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import StudentsListTable from "../students/students-list-table";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 
 interface ParcoursPreviewStudentProps {
   onEdit: (id: number) => void;

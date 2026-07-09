@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import Loader from "../../components/UI/loader";
 import Module from "../../utils/interfaces/module";
-import useHttp from "../../hooks/use-http";
 import ModuleHomeList from "../../components/module-home/module-home";
 import ModalSuppression from "../../components/module-home/modal-suppression";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { stepsParcours } from "../../config/steps/steps-parcours";
+import useHttp from "../../../src/hooks/useHttp";
 
 const ModuleHome = () => {
   const [modules, setModules] = useState<Module[] | null>(null);

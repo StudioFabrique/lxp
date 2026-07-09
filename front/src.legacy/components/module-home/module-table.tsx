@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router";
-import { localeDate } from "../../helpers/locale-date";
 import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
-import { truncateText } from "../../helpers/truncate-text";
 import { Eye } from "lucide-react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import TableWrapper from "../UI/table-wrapper";
 import ElementNotFound from "../UI/element-not-found";
+import { truncateText } from "../../../src/utils/helpers/truncate-text";
+import { localeDate } from "../../../src/utils/helpers/locale-date";
 
 interface ModuleTableProps {
   modulesList: any[];

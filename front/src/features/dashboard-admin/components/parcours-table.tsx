@@ -2,7 +2,7 @@ import { MoveUpRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
 import useEagerLoadingList from "../../../../src/hooks/useEagerLoadingList";
-import SortColumnIcon from "../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { localeDate } from "../../../utils/helpers/locale-date";
 import { truncateText } from "../../../utils/helpers/truncate-text";

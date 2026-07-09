@@ -2,17 +2,17 @@ import { Link } from "react-router";
 
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";
-import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
-import SortColumnIcon from "../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
-import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
+import EditIcon from "../../../../../src/components/UI/svg/edit-icon";
+import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
+import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
+import ArrowTopRightIcon from "../../../../../src/components/UI/svg/arrow-top-right-icon";
 import { truncateText } from "../../../../utils/helpers/truncate-text";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import React from "react";
-import TableRowWrapper from "../../../../../src.legacy/components/UI/table-row-wrapper";
-import TableWrapper from "../../../../../src.legacy/components/UI/table-wrapper";
-import ElementNotFound from "../../../../../src.legacy/components/UI/element-not-found";
+import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
+import TableWrapper from "../../../../components/UI/table-wrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import ElementNotFound from "../../../../components/UI/element-not-found";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];

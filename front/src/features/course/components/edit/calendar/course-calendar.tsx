@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 import { useEffect, useState } from "react";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
 
@@ -10,11 +10,11 @@ import DatesList from "./dates-list";
 import DatesForm from "./dates-form";
 import setId from "../../../../../utils/helpers/set-id";
 import Module from "../../../../../../src/utils/interfaces/module";
+import { courseApi } from "../../../api/course.api";
 
 const CourseCalendar = () => {
   const dispatch = useCourseDispatch();
   const { courseId } = useParams();
-  const { sendRequest, error } = useHttp();
   const module = useCourseSelector(
     (state) => state.course?.module,
   ) as Module;
@@ -23,11 +23,22 @@ const CourseCalendar = () => {
   ) as CourseDates[];
   const [isLoading, setIsLoading] = useState(false);
 
+  const { data: datesData, error } = useQuery({
+    ...courseApi.queries.dates(courseId!),
+    enabled: !!courseId,
+  });
+
+  useEffect(() => {
+    if (datesData) {
+      dispatch({ type: "SET_COURSE_DATES", payload: datesData.dates });
+    }
+  }, [datesData, dispatch]);
+
   useEffect(() => {
     console.log(module?.duration);
   }, [module]);
 
-  const handleSubmitDates = (values: CourseDates) => {
+  const handleSubmitDates = async (values: CourseDates) => {
     console.log(dates);
 
     if (!dates) {
@@ -35,49 +46,28 @@ const CourseCalendar = () => {
     }
     const tmpDates = { ...values, id: setId(dates) };
     setIsLoading(true);
-    const applyData = () => {
-      setIsLoading(false);
+    try {
+      await courseApi.mutations.addDate(courseId!, tmpDates);
       dispatch({ type: "SET_COURSE_DATES", payload: [...dates, tmpDates] });
-    };
-    sendRequest(
-      {
-        path: `/course/dates/${courseId}`,
-        method: "put",
-        body: tmpDates,
-      },
-      applyData,
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    }
+    setIsLoading(false);
   };
 
-  const handleDeleteItem = (id: number) => {
-    const applyData = () => {
+  const handleDeleteItem = async (id: number) => {
+    try {
+      await courseApi.mutations.deleteDate(courseId!, id);
       dispatch({ type: "DELETE_COURSE_DATES", payload: id });
-    };
-    sendRequest(
-      {
-        path: `/course/dates/${courseId}/${id}`,
-        method: "delete",
-      },
-      applyData,
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    }
   };
 
   useEffect(() => {
-    const applyData = (data: { dates: CourseDates[] }) => {
-      dispatch({ type: "SET_COURSE_DATES", payload: data.dates });
-    };
-    sendRequest(
-      {
-        path: `/course/dates/${courseId}`,
-      },
-      applyData,
-    );
-  }, [courseId, dispatch, sendRequest]);
-
-  useEffect(() => {
-    if (error.length > 0) {
+    if (error) {
       setIsLoading(false);
-      toast.error(error);
+      toast.error((error as any)?.message ?? "Erreur inconnue");
     }
   }, [error]);
 

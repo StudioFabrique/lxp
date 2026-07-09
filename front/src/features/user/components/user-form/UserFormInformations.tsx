@@ -1,6 +1,6 @@
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
-import MemoizedImageFileUpload from "../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
+import MemoizedImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 
 type Props = {
   lastname: string;

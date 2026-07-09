@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import useHttp from "./useHttp";
+import apiClient from "../lib/axios";
 
 interface WithId {
   id: number;
@@ -10,7 +10,6 @@ export default function useDeleteCourse<T extends WithId>(
   onRefreshCourses: () => void,
 ) {
   const [showModal, setShowModal] = useState<T | null>(null);
-  const { sendRequest, error } = useHttp();
 
   const handleShowModal = (course: T) => {
     setShowModal(course);
@@ -22,21 +21,22 @@ export default function useDeleteCourse<T extends WithId>(
 
   const handleDeleteCourse = async () => {
     if (showModal) {
-      const applyData = (data: { success: boolean; message: string }) => {
+      try {
+        const response = await apiClient.delete(
+          `/course/delete-course/${showModal.id}`,
+        );
+        const data = response.data as { success: boolean; message: string };
         if (data.success) toast.success(data.message);
         setShowModal(null);
         onRefreshCourses();
-      };
-      sendRequest(
-        { path: `/course/delete-course/${showModal.id}`, method: "delete" },
-        applyData as (data: Record<string, unknown>) => void,
-      );
+      } catch (err: unknown) {
+        const message =
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? "Erreur inconnue";
+        toast.error(message);
+      }
     }
   };
-
-  useEffect(() => {
-    if (error) toast.error(error);
-  }, [error]);
 
   return {
     showModal,

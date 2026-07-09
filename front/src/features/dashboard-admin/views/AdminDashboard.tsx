@@ -1,8 +1,8 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { AuthContext } from "../../../store/AuthProvider";
-import useHttp from "../../../../src/hooks/useHttp";
-import Parcours from "../../../utils/interfaces/parcours";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import TeacherLastParcours from "../components/teacher-last-parcours";
 import LastParcours from "../components/last-parcours";
@@ -17,7 +17,7 @@ const links = [
     permission: { action: "write", object: "formation" },
   },
   {
-    path: "/admin/parcours/créer-un-parcours",
+    path: "/admin/parcours/new",
     label: "Créer un parcours",
     permission: { action: "write", object: "parcours" },
   },
@@ -35,23 +35,10 @@ const links = [
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const { sendRequest, isLoading } = useHttp();
-  const [parcours, setParcours] = useState<Parcours[] | null>(null);
-
-  const getParcours = useCallback(() => {
-    const applyData = (data: {
-      message: string;
-      success: boolean;
-      response: Parcours[];
-    }) => {
-      setParcours(data.response);
-    };
-    sendRequest({ path: "/user/last-parcours" }, applyData);
-  }, [sendRequest]);
-
-  useEffect(() => {
-    getParcours();
-  }, [getParcours]);
+  const { data: parcours, isLoading } = useQuery({
+    queryKey: ["last-parcours"],
+    queryFn: dashboardAdminApi.queries.getLastParcours,
+  });
 
   return (
     <div className="w-full flex flex-col gap-6">

@@ -1,10 +1,10 @@
-import useHttp from "../../../../../../src/hooks/useHttp";
+import { lessonApi } from "../../../api/lesson.api";
 import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import { useParams } from "react-router";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";
 import { useState, useCallback, useEffect } from "react";
-import VideoPlayer from "../../../../../../src.legacy/components/UI/video-player";
+import VideoPlayer from "../../../../../components/UI/VideoPlayer";
 
 interface VideoProps {
   activity?: Activity;
@@ -19,8 +19,8 @@ const isValidYouTubeUrl = (url: string) => {
 
 export default function Video({ activity, onCancel, isEditing }: VideoProps) {
   const { lessonId } = useParams();
-  const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = useCallback(
     async (value: {
@@ -53,22 +53,27 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
       if (value.fileValue) {
         fd.append("video", value.fileValue);
       }
-      const applyData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-          onCancel();
-        }
-      };
-      sendRequest(
-        {
-          path: `/activity/video/${activity?.id ?? lessonId}`,
-          method: activity ? "put" : "post",
-          body: fd,
-        },
-        applyData,
-      );
+
+      const id = activity?.id ?? lessonId!;
+
+      lessonApi.mutations
+        .upsertVideoActivity(id, fd, activity ? "put" : "post")
+        .then((data: { success: boolean; message: string }) => {
+          if (data.success) {
+            toast.success(data.message);
+            onCancel();
+          }
+        })
+        .catch((err: any) => {
+          setError(
+            err.response?.data?.message ||
+              err.message ||
+              "Une erreur est survenue"
+          );
+        })
+        .finally(() => setLoading(false));
     },
-    [activity, lessonId, onCancel, sendRequest],
+    [activity, lessonId, onCancel],
   );
 
   const renderContent = () => {

@@ -1,5 +1,5 @@
 import Contact from "../../../../../../src/utils/interfaces/contact";
-import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import ContactItem from "../informations/contact-item";
 
 interface ContactListProps {

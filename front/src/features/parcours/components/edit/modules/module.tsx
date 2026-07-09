@@ -1,11 +1,11 @@
 import useNewModule from "./useNewModule";
-import TwoButtonsModal from "../../../../../../src.legacy/components/UI/modal/two-buttons-modal";
 import DuplicateModuleModal from "./duplicate-module-modal";
 import ModuleHeader from "./ModuleHeader";
 import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
 import { useMemo } from "react";
+import TwoButtonsModal from "../../../../../components/UI/modal/two-buttons-modal";
 
 /**
  * Module Component - Main container for module management in a parcours
@@ -25,7 +25,8 @@ export default function ModuleComponent() {
   const {
     currentContacts,
     currentSkills,
-    data,
+    register,
+    errors,
     handleCancelDeletion,
     handleCancelForm,
     handleCloseDuplicateModal,
@@ -93,7 +94,8 @@ export default function ModuleComponent() {
             image={image}
             mode={mode}
             refForm={refForm}
-            data={data}
+            register={register}
+            errors={errors}
             isLoading={isLoading}
             currentContacts={currentContacts ?? []}
             currentSkills={currentSkills ?? []}

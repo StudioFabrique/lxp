@@ -1,80 +1,62 @@
 import { useCallback, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
 import toast from "react-hot-toast";
-import Contact from "../../../../src/utils/interfaces/contact";
+import Contact from "../../../utils/interfaces/contact";
 import { useParcoursDispatch } from "../store/ParcoursContext";
-import User from "../../../../src/utils/interfaces/user";
+import { parcoursApi } from "../api/parcours.api";
 
 const useInfosService = () => {
   const [loadingContacts, setLoadingContacts] = useState<boolean>(false);
   const [loadingTags, setLoadingTags] = useState<boolean>(false);
-  const { sendRequest } = useHttp();
   const dispatch = useParcoursDispatch();
 
-  /**
-   * met à jour la liste des tags associés au parcours dans la bdd
-   */
   const updateParcoursTags = useCallback(
-    (parcoursId: number, tagsIds: number[]) => {
-      const processData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-        }
-        setLoadingTags(false);
-      };
+    async (parcoursId: number, tagsIds: number[]) => {
       setLoadingTags(true);
-      sendRequest(
-        {
-          path: "/parcours/update-tags",
-          method: "put",
-          body: { parcoursId, tags: tagsIds },
-        },
-        processData
-      );
-    },
-    [sendRequest]
-  );
-
-  /**
-   * met àjour la liste des contacts associés au parcours dans la bdd
-   */
-  const updateParcoursContacts = useCallback(
-    (parcoursId: number, contacts: Contact[]) => {
-      const processData = (data: {
-        success: boolean;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data: any;
-        message: string;
-      }) => {
+      try {
+        const data = await parcoursApi.mutations.updateParcoursTags({
+          parcoursId,
+          tags: tagsIds,
+        });
         if (data.success) {
           toast.success(data.message);
         }
-        setLoadingContacts(false);
-      };
-      setLoadingContacts(true);
-      sendRequest(
-        {
-          path: "/parcours/update-contacts",
-          method: "put",
-          body: { parcoursId, contacts },
-        },
-        processData
-      );
+      } catch {
+        toast.error("Erreur lors de la mise à jour des tags");
+      } finally {
+        setLoadingTags(false);
+      }
     },
-    [sendRequest]
+    [],
   );
 
-  const getContacts = useCallback(() => {
-    const applyData = (data: Array<User>) => {
+  const updateParcoursContacts = useCallback(
+    async (parcoursId: number, contacts: Contact[]) => {
+      setLoadingContacts(true);
+      try {
+        const data = await parcoursApi.mutations.updateParcoursContacts({
+          parcoursId,
+          contacts,
+        });
+        if (data.success) {
+          toast.success(data.message);
+        }
+      } catch {
+        toast.error("Erreur lors de la mise à jour des contacts");
+      } finally {
+        setLoadingContacts(false);
+      }
+    },
+    [],
+  );
+
+  const getContacts = useCallback(async () => {
+    try {
+      const data = await parcoursApi.queries.getContacts();
       dispatch({ type: "INIT_CONTACTS", payload: data });
-    };
-    sendRequest(
-      {
-        path: "/user/contacts",
-      },
-      applyData
-    );
-  }, [dispatch, sendRequest]);
+    } catch {
+      toast.error("Erreur lors du chargement des contacts");
+    }
+  }, [dispatch]);
 
   return {
     loadingContacts,

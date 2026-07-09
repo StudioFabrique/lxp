@@ -3,14 +3,15 @@ import { regexGeneric, regexOptionalGeneric } from "../config/constantes";
 import type Lesson from "../utils/interfaces/lesson";
 import useInput from "./useInput";
 import type Tag from "../utils/interfaces/tag";
-import useHttp from "./useHttp";
+import apiClient from "../lib/axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams, useLocation } from "react-router";
 
 const useEditLesson = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const [lesson, setLesson] = useState<Lesson | null>(null);
-  const { sendRequest, error, isLoading } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,9 +38,15 @@ const useEditLesson = () => {
     [newTitle, newDescription],
   );
 
-  const handleUpdateLesson = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const applyData = (data: any) => {
+  const handleUpdateLesson = async () => {
+    try {
+      const response = await apiClient.put("/lesson/update", {
+        id: lesson!.id,
+        title: title.value,
+        description: description.value,
+        tagId: tag!.id,
+        modalite: mode,
+      });
       if (location.state?.moduleId) {
         navigate(`/admin/parcours/module/${location.state.moduleId}`, {
           state: { lessonId: Number(lessonId) },
@@ -48,35 +55,32 @@ const useEditLesson = () => {
         navigate("/admin/lesson");
       }
       toast.success("Leçon mise à jour");
-    };
-
-    sendRequest(
-      {
-        path: "/lesson/update",
-        method: "put",
-        body: {
-          id: lesson!.id,
-          title: title.value,
-          description: description.value,
-          tagId: tag!.id,
-          modalite: mode,
-        },
-      },
-      applyData,
-    );
+      return response.data;
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Erreur inconnue";
+      setError(message);
+      toast.error(message);
+    }
   };
 
-  const getLesson = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const applyData = (data: any) => {
+  const getLesson = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient.get(`/lesson/edit/${lessonId}`);
+      const data = response.data as { lesson: Lesson };
       setLesson(data.lesson);
       setLessonValues(data.lesson);
-    };
-    sendRequest(
-      { path: `/lesson/edit/${lessonId}` },
-      applyData,
-    );
-  }, [lessonId, sendRequest, setLessonValues]);
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Erreur inconnue";
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [lessonId, setLessonValues]);
 
   useEffect(() => {
     getLesson();

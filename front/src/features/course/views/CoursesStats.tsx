@@ -1,4 +1,4 @@
-import Header from "../../../../src.legacy/components/UI/header";
+import Header from "../../../../src/components/headers/Header";
 
 const CoursesStats = () => {
   return (

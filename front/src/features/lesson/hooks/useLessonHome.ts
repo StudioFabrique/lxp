@@ -1,62 +1,53 @@
 import { useState, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useLessonSelector } from "../store/LessonContext";
-import useHttp from "../../../../src/hooks/useHttp";
+import { lessonApi } from "../api/lesson.api";
 import type { Activity } from "../../../../src/utils/interfaces/activity";
 import type Lesson from "../../../../src/utils/interfaces/lesson";
 import { useSearchParams } from "react-router";
 
 const useLessonHome = () => {
-  const { sendRequest, isLoading } = useHttp();
   const lesson = useLessonSelector((state) => state.lesson);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [activityType, setActivityType] = useState("");
   const [createActivity, setCreateActivity] = useState(false);
   const [searchParams] = useSearchParams();
 
   const getActivities = useCallback(() => {
-    const applyData = (data: Lesson) => {
-      setActivities(data.activities!);
-    };
     if (lesson) {
-      sendRequest({ path: `/lesson/${lesson.id}` }, applyData);
+      setIsLoading(true);
+      lessonApi.queries
+        .getLessonById(lesson.id!)
+        .then((data: Lesson) => {
+          setActivities(data.activities!);
+        })
+        .finally(() => setIsLoading(false));
     }
-  }, [lesson, sendRequest]);
+  }, [lesson]);
 
   const handleReorderActivities = (activitiesIds: number[]) => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) {
-        console.log(data);
-        setSuccess(true);
-        toast.success(data.message);
-      }
-    };
     if (!lesson) return;
-    sendRequest(
-      {
-        path: `/activity/reorder/${lesson.id}`,
-        method: "put",
-        body: { activitiesIds },
-      },
-      applyData,
-    );
+    lessonApi.mutations
+      .reorderActivities(lesson.id!, activitiesIds)
+      .then((data) => {
+        if (data.success) {
+          setSuccess(true);
+          toast.success(data.message);
+        }
+      });
   };
 
   const handleDeleteActivity = (activityId: number) => {
     const activity = activities.find((item) => item.id === activityId);
     if (!activity) return;
-    const applyData = (data: { message: string }) => {
-      toast.success(data.message);
-      getActivities();
-    };
-    sendRequest(
-      {
-        path: `/activity/${activity.type}/${activityId}/lesson`,
-        method: "delete",
-      },
-      applyData,
-    );
+    lessonApi.mutations
+      .deleteActivity(activity.type, activityId)
+      .then((data) => {
+        toast.success(data.message);
+        getActivities();
+      });
   };
 
   const handleSubmit = (type: string, data: any) => {
@@ -78,23 +69,17 @@ const useLessonHome = () => {
     title: string;
     type: string;
   }) => {
-    const applyData = (data: any) => {
-      toast.success(data.message);
-    };
     if (!lesson) return;
-    sendRequest(
-      {
-        path: `/activity/${lesson.id}`,
-        method: "post",
-        body: {
-          description: data.description,
-          value: data.value,
-          title: data.title,
-          type: data.type,
-        },
-      },
-      applyData,
-    );
+    lessonApi.mutations
+      .createBlogActivity(lesson.id!, {
+        description: data.description,
+        value: data.value,
+        title: data.title,
+        type: data.type,
+      })
+      .then((data: any) => {
+        toast.success(data.message);
+      });
   };
 
   const handleSubmitVideo = (value: {
@@ -115,24 +100,14 @@ const useLessonHome = () => {
     if (value.fileValue) {
       fd.append("video", value.fileValue);
     }
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: Activity;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-      }
-    };
     if (!lesson) return;
-    sendRequest(
-      {
-        path: `/activity/video/${lesson.id}`,
-        method: "post",
-        body: fd,
-      },
-      applyData,
-    );
+    lessonApi.mutations
+      .upsertVideoActivity(lesson.id!, fd, "post")
+      .then((data) => {
+        if (data.success) {
+          toast.success(data.message);
+        }
+      });
   };
 
   const onFinish = () => {

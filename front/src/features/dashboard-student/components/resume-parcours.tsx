@@ -1,37 +1,22 @@
 import { Link, useLocation } from "react-router";
 import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
-import useHttp from "../../../../src/hooks/useHttp";
-import Parcours from "../../../utils/interfaces/parcours";
-import ImageHeader from "../../../../src.legacy/components/image-header";
+import ImageHeader from "../../../../src/components/image-header/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 
-/* type ResumeParcoursProps = {
-  parcours?: Parcours;
-}; */
-
-const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
-  const { sendRequest } = useHttp();
-  const [parcours, setParcours] = useState<Parcours>();
+const ResumeParcours = () => {
+  const { data: parcours } = useQuery({
+    queryKey: ["parcours-as-student"],
+    queryFn: dashboardStudentApi.queries.getParcoursAsStudent,
+    select: (data) => data[0],
+  });
 
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-
-  useEffect(() => {
-    const applyData = (data: Parcours[]) => {
-      setParcours(data[0]);
-    };
-
-    sendRequest(
-      {
-        path: `/parcours/parcours-as-student`,
-      },
-      applyData,
-    );
-  }, [sendRequest]);
 
   return (
     <div className="flex gap-2">

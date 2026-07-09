@@ -1,10 +1,10 @@
 import { ListPlus } from "lucide-react";
-import RightSideDrawer from "../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import SubWrapper from "../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import RightSideDrawer from "../../../../components/UI/right-side-drawer/right-side-drawer";
+import SubWrapper from "../../../../../src/components/wrappers/SubBoxWrapper";
 import PermissionDeleteItem from "./PermissionDeleteItem";
-import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 import RemainingResourcesList from "./RemainingResourcesList";
 import type { PermissionItem } from "../../api/role.api";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type PermissionsPanelProps = {
   drawerId: string;

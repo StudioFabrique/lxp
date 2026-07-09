@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react";
 import { useParcoursSelector } from "../../../store/ParcoursContext";
-import { formatDate } from "../../../../../../src.legacy/components/UI/calendar/calendar-utils";
+import { formatDate } from "../../../../../components/calendar/calendar-utils";
 import { X } from "lucide-react";
 
 interface Props {

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Header from "../../../../src.legacy/components/UI/header";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import Header from "../../../../src/components/headers/Header";
 import { useFormationForm } from "../hooks/useFormationForm";
 import FormationForm from "../components/FormationForm";
 import FormationsList from "../components/FormationsList";

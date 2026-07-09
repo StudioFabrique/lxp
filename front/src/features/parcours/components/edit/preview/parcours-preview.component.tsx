@@ -6,15 +6,15 @@ import ParcoursPreviewInfos from "./parcours-preview-infos.component";
 import ParcoursPreviewModules from "./parcours-preview-modules.component";
 import ParcoursPreviewStudent from "./parcours-preview-student";
 import Objective from "../../../../../../src/utils/interfaces/objective";
-import PreviewObjectives from "../../../../../../src.legacy/components/preview/preview-objectives";
+import PreviewObjectives from "../../../../../../src/components/preview/preview-objectives";
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import PreviewSkills from "../../../../../../src.legacy/components/preview/preview-skills";
+import PreviewSkills from "../../../../../../src/components/preview/preview-skills";
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
-import useHttp from "../../../../../../src/hooks/useHttp";
 import { useCallback, useEffect, useState } from "react";
 import User from "../../../../../../src/utils/interfaces/user";
 import Group from "../../../../../../src/utils/interfaces/group";
+import { parcoursApi } from "../../../api/parcours.api";
 
 
 interface ParcoursPreviewProps {
@@ -31,40 +31,37 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   ) as Skill[];
   const { validateParcours } = useValidateParcours();
   const nav = useNavigate();
-  const { sendRequest } = useHttp();
   const groups = useParcoursSelector(
     (state) => state.parcoursGroups.groups,
   ) as Group[];
   const [students, setStudents] = useState<User[] | null>(null);
   const dispatch = useParcoursDispatch();
 
-  const handlePublishParcours = (value: boolean) => {
+  const handlePublishParcours = async (value: boolean) => {
     const validationsErrors = validateParcours();
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
     } else {
       dispatch({ type: "PUBLISH_PARCOURS", payload: value });
-      const applyData = (data: { success: boolean; message: string }) => {
+      try {
+        const data = await parcoursApi.mutations.publishParcours(id!, value);
         if (data.success) {
           toast.success(data.message);
           nav(`/admin/parcours/view/${id}`);
         }
-      };
-      sendRequest(
-        {
-          path: `/parcours/publish/${id}`,
-          method: "put",
-          body: { isPublished: value },
-        },
-        applyData,
-      );
+      } catch {
+        toast.error("Erreur lors de la publication");
+      }
     }
   };
 
-  const getStudents = useCallback(() => {
-    const applyData = (data: any) => {
+  const getStudents = useCallback(async () => {
+    try {
+      const data = await parcoursApi.queries.getStudentsByGroupIds(
+        groups.map((item) => item._id).filter(Boolean) as string[]
+      );
       let updatedStudents = Array<User>();
-      data.forEach((item: any) => {
+      (data as any[]).forEach((item: any) => {
         const updatedItem = item.users.map((user: any) => ({
           ...user,
           group: { _id: item._id, name: item.name },
@@ -72,17 +69,10 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         updatedStudents = [...updatedStudents, ...updatedItem];
       });
       setStudents(updatedStudents);
-    };
-
-    sendRequest(
-      {
-        path: `/user/group`,
-        method: "post",
-        body: groups.map((item) => item._id),
-      },
-      applyData,
-    );
-  }, [groups, sendRequest]);
+    } catch {
+      toast.error("Erreur lors du chargement des étudiants");
+    }
+  }, [groups]);
 
   useEffect(() => {
     if (groups) {

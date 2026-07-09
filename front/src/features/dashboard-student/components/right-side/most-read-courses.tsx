@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import useHttp from "../../../../../src/hooks/useHttp";
-import Course from "../../../../utils/interfaces/course";
+import { dashboardStudentApi } from "../../api/dashboard-student.api";
 
 const MostReadCourses = () => {
-  const { sendRequest } = useHttp();
+  const { data: courses } = useQuery({
+    queryKey: ["most-read-courses"],
+    queryFn: dashboardStudentApi.queries.getMostReadCourses,
+  });
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-
-  const [courses, setCourses] = useState<Course[]>();
-
-  useEffect(() => {
-    const applyData = (data: { data: Course[] }) => {
-      setCourses(data.data);
-    };
-
-    sendRequest({ path: "/course/most-read" }, applyData);
-  }, [sendRequest]);
 
   return (
     <div

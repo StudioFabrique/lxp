@@ -3,12 +3,12 @@ import { Pencil, Eye, EyeOff, Trash2 } from "lucide-react";
 
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import CustomCourse from "./interfaces/custom-course";
-import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
-import PublishedIcon from "../../../../../src.legacy/components/UI/svg/published-icon";
-import DraftIcon from "../../../../../src.legacy/components/UI/svg/draft-icon";
+import ArrowTopRightIcon from "../../../../../src/components/UI/svg/arrow-top-right-icon";
+import PublishedIcon from "../../../../../src/components/UI/svg/published-icon";
+import DraftIcon from "../../../../../src/components/UI/svg/draft-icon";
 import { localeDate } from "../../../../utils/helpers/locale-date";
-import defaultThumb from "../../../../../src.legacy/assets/images/module-default-thumb.png";
-import bgImageGradient from "../../../../utils/helpers/bg-image-gradient";
+import defaultThumb from "../../../../../src/assets/images/module-default-thumb.png";
+import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
 
 interface CourseCardProps {
   course: CustomCourse;

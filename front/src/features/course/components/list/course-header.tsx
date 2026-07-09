@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import Header from "../../../../../src.legacy/components/UI/header";
+import Header from "../../../../../src/components/headers/Header";
 import { ImportIcon, PlusCircle } from "lucide-react";
 
 function CourseHeader() {

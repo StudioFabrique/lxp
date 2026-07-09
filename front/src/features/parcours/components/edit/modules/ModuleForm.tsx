@@ -1,20 +1,17 @@
 import { RefObject } from "react";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import CustomError from "../../../../../../src/utils/interfaces/custom-error";
-import FieldNumber from "../../../../../../src.legacy/components/UI/forms/field-number";
-import ModuleMetadatas from "../../../../../../src.legacy/components/module-add/module-metadatas";
-import ModuleToParcours from "../../../../../../src.legacy/components/module-add/module-to-parcours";
+import ModuleMetadatas from "./ModuleMetadatas";
+import ModuleToParcours from "../../../../../components/module-add/module-to-parcours";
+import FormNumberInput from "../../../../../components/form/FormNumberInput";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
   refForm: RefObject<HTMLFormElement>;
-  data: {
-    values: Record<string, unknown>;
-    onChangeValue: (field: string, value: unknown) => void;
-    errors: CustomError[];
-  };
+  register: UseFormRegister<any>;
+  errors: FieldErrors;
   image: string | null;
   isLoading: boolean;
   currentContacts: Contact[];
@@ -36,7 +33,8 @@ export default function ModuleForm({
   mode,
   image,
   refForm,
-  data,
+  register,
+  errors,
   isLoading,
   currentContacts,
   currentSkills,
@@ -58,17 +56,19 @@ export default function ModuleForm({
           <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
             <span className="col-span-5">
               <ModuleMetadatas
-                data={data}
+                register={register}
+                errors={errors}
                 thumb={image}
                 onSetFile={onSetFile}
                 mode={mode}
               >
-                <FieldNumber
+                <FormNumberInput
                   label="Durée du module en heures *"
                   name="duration"
                   placeholder="Ex : 12"
                   min={0}
-                  data={data}
+                  register={register}
+                  error={errors.duration as any}
                 />
               </ModuleMetadatas>
             </span>

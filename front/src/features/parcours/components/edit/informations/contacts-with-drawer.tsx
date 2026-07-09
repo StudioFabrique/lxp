@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import InheritedItems from "../../../../../../src.legacy/components/inherited-items/inherited-items";
-import InheritedTextList from "../../../../../../src.legacy/components/inherited-items/inherited-text-list";
+import InheritedItems from "../../../../../../src/components/inherited-items/inherited-items";
+import InheritedTextList from "../../../../../../src/components/inherited-items/inherited-text-list";
 import NotSelectedContacts from "./not-selected-contacts";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import useHttp from "../../../../../../src/hooks/useHttp";
-import User from "../../../../../../src/utils/interfaces/user";
+import toast from "react-hot-toast";
+import { parcoursApi } from "../../../api/parcours.api";
 
 interface ContactsWithDrawerProps {
   loading: boolean;
@@ -17,9 +15,8 @@ interface ContactsWithDrawerProps {
 
 const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   const [submit, setSubmit] = useState<boolean>(false);
-  const isInitialRender = useRef(true);
+  const hasFetched = useRef(false);
   const dispatch = useParcoursDispatch();
-  const { sendRequest } = useHttp();
   const currentContacts = useParcoursSelector(
     (state) => state.parcoursContacts.currentContacts
   );
@@ -27,9 +24,6 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
     (state) => state.parcoursContacts.initialContacts
   );
 
-  /**
-   * met à jour la liste des contacts associés au parcours dans le state partagé
-   */
   const handleUpdateContacts = useCallback(
     (contacts: Contact[]) => {
       setSubmit(true);
@@ -38,11 +32,6 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
     [dispatch]
   );
 
-  /**
-   * informe le composant parent qu'il peut initier la requête pour
-   * mettre à jour la liste des contacts associés au parcours dans
-   * la base de données
-   */
   useEffect(() => {
     const timer = setTimeout(() => {
       if (submit) {
@@ -53,24 +42,17 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
     return () => clearTimeout(timer);
   }, [props, submit, currentContacts]);
 
-  /**
-   * envoie une requête http pour récup la liste des formateurs et la stocke dans le state
-   */
   useEffect(() => {
-    const applyData = (data: Array<User>) => {
-      dispatch({ type: "INIT_CONTACTS", payload: data });
-    };
-    if (isInitialRender.current) {
-      sendRequest(
-        {
-          path: "/user/contacts",
-        },
-        applyData
-      );
-    } else {
-      isInitialRender.current = false;
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      parcoursApi.queries
+        .getContacts()
+        .then((data) => {
+          dispatch({ type: "INIT_CONTACTS", payload: data });
+        })
+        .catch(() => toast.error("Erreur lors du chargement des contacts"));
     }
-  }, [dispatch, sendRequest]);
+  }, [dispatch]);
 
   return (
     <>

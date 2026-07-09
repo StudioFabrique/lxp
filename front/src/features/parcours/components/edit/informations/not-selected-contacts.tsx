@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
-import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import UserQuickCreate from "../../../../../../src.legacy/components/user-quick-create/user-quick-create";
+import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import UserQuickCreate from "../../../../../../src/components/user-quick-create/user-quick-create";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import User from "../../../../../../src/utils/interfaces/user";
+import { parcoursApi } from "../../../api/parcours.api";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -38,11 +38,22 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     sortData,
   } = useEagerLoadingList(props.list!, "name");
   const dispatch = useParcoursDispatch();
-  const { sendRequest, error } = useHttp();
 
-  /**
-   * gère le coche / décochage de toutes les checkboxes
-   */
+  const { mutate: createTeacher } = useMutation({
+    mutationFn: (teacher: Teacher) =>
+      parcoursApi.mutations.createTeacher(teacher),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "ADD_NEW_CONTACT", payload: data.contact });
+        dispatch({ type: "SET_NOT_SELECTED_CONTACTS" });
+      }
+    },
+    onError: () => {
+      toast.error("Erreur lors de la création du contact");
+    },
+  });
+
   const handleAllChecked = useCallback(() => {
     setAllChecked((prevState) => !prevState);
   }, [setAllChecked]);
@@ -142,36 +153,9 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     document.getElementById(id)?.click();
   };
 
-  /**
-   * envoi d'une requête pour enregistrer dans la bdd un formateur créé à la volée
-   */
   const submitNewTeacher = (teacher: Teacher) => {
-    const processData = (data: {
-      success: boolean;
-      message: string;
-      contact: User;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        dispatch({ type: "ADD_NEW_CONTACT", payload: data.contact });
-        dispatch({ type: "SET_NOT_SELECTED_CONTACTS" });
-      }
-    };
-    sendRequest(
-      {
-        path: "/user/new-teacher",
-        method: "post",
-        body: teacher,
-      },
-      processData
-    );
+    createTeacher(teacher);
   };
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
 
   return (
     <>

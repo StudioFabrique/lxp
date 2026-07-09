@@ -1,10 +1,22 @@
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resource } from "../../../../../../../../src/utils/interfaces/activity";
-import Field from "../../../../../../../../src.legacy/components/UI/forms/field";
-import useForm from "../../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { regexGeneric } from "../../../../../../../config/constantes";
-import { validationErrors } from "../../../../../../../utils/helpers/validate";
+import FormInput from "../../../../../../../components/form/FormInput";
+
+const schema = z.object({
+  label: z
+    .string()
+    .min(1, "Le nom de la ressource est requis.")
+    .regex(regexGeneric, {
+      message:
+        "Le nom de la ressource contient des caractères non autorisés.",
+    }),
+});
+
+type ResourceFormData = z.infer<typeof schema>;
 
 type Props = {
   resource: Resource;
@@ -13,44 +25,30 @@ type Props = {
 };
 
 function ResourceUpdate({ resource, onSubmit, onCancel }: Props) {
-  const { values, errors, initValues, onChangeValue, onValidationErrors } =
-    useForm();
-
-  useEffect(() => {
-    initValues({ label: resource.label });
-  }, [initValues, resource]);
-
-  const data = { values, errors, onChangeValue };
-
-  const schema = z.object({
-    label: z
-      .string()
-      .min(1, "Le nom de la ressource est requis.")
-      .regex(regexGeneric, {
-        message:
-          "Le nom de la ressource contient des caractères non autorisés.",
-      }),
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ResourceFormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { label: "" },
   });
 
-  const handleSubmit = () => {
-    try {
-      schema.parse(values);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
-      }
-    }
-    onSubmit(values.label as string, resource.id);
-  };
+  useEffect(() => {
+    reset({ label: resource.label });
+  }, [reset, resource]);
+
+  const handleSubmit = rhfHandleSubmit((formValues) => {
+    onSubmit(formValues.label, resource.id);
+  });
 
   return (
     <div className="modal modal-open  " role="dialog">
       <div className="modal-box">
         <div className="flex flex-col gap-y-4">
           <h2>Modification du nom de la ressource</h2>
-          <Field name="label" label="" type="text" data={data} />
+          <FormInput name="label" label="" register={register} error={errors.label} />
           <span className="flex justify-center items-center gap-x-2">
             <p className="text-xs">
               Si vous souhaitez modifier le fichier de la ressource : veuillez

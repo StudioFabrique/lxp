@@ -8,13 +8,12 @@ import { regexGeneric, regexOptionalGeneric } from "../../../../../config/consta
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import LessonForm from "./lesson-form";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import useHttp from "../../../../../../src/hooks/useHttp";
 import LessonsList from "./lessons-list";
-import SubmitButton from "../../../../../../src.legacy/components/UI/submit-button";
-import AddIcon from "../../../../../../src.legacy/components/UI/svg/add-icon";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
-import Modal from "../../../../../../src.legacy/components/UI/modal/modal";
-import useLessonHTTP from "../../../../../../src/hooks/useLessonHttp";
+import SubmitButton from "../../../../../components/UI/submit-button";
+import AddIcon from "../../../../../../src/components/UI/svg/add-icon";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
+import { courseApi } from "../../../api/course.api";
+import Modal from "../../../../../components/UI/modal/modal";
 
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];
@@ -25,8 +24,6 @@ interface LinearScenarioLessonsProps {
 const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const { courseId } = useParams();
   const dispatch = useCourseDispatch();
-  const { sendRequest, error } = useHttp();
-  const { deleteLesson } = useLessonHTTP();
   const { value: title, newProps: newTitle } = useInput((value) =>
     regexGeneric.test(value)
   );
@@ -44,47 +41,37 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const [editedLesson, setEditedLesson] = useState<Lesson | null>(null);
   const [lessonToDelete, setLessonToDelete] = useState<number | null>(null);
 
-  const handleSubmitLesson = () => {
-    const applyData = (data: Lesson) => {
+  const handleSubmitLesson = async () => {
+    setIsLoading(true);
+    try {
+      const data = await courseApi.mutations.addLesson(courseId!, {
+        tagId: tag?.id,
+        title: title.value,
+        description: description.value,
+        modalite: mode,
+      });
       dispatch({ type: "NEW_LESSON", payload: data });
       handleResetForm();
-      setIsLoading(false);
-    };
-    setIsLoading(true);
-    sendRequest(
-      {
-        path: `/course/new-lesson/${courseId}`,
-        method: "put",
-        body: {
-          tagId: tag?.id,
-          title: title.value,
-          description: description.value,
-          modalite: mode,
-        },
-      },
-      applyData
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    }
+    setIsLoading(false);
   };
 
-  const handleUpdateLesson = () => {
-    const applyData = (data: Lesson) => {
+  const handleUpdateLesson = async () => {
+    try {
+      const data = await courseApi.mutations.updateLesson({
+        id: editedLesson!.id!,
+        title: title.value,
+        description: description.value,
+        tagId: tag!.id,
+        modalite: mode,
+      });
       dispatch({ type: "UPDATE_LESSON", payload: data });
       handleResetForm();
-    };
-    sendRequest(
-      {
-        path: `/lesson/update`,
-        method: "put",
-        body: {
-          id: editedLesson!.id,
-          title: title.value,
-          description: description.value,
-          tagId: tag!.id,
-          modalite: mode,
-        },
-      },
-      applyData
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    }
   };
 
   const handleEditLesson = (lesson: Lesson) => {
@@ -101,11 +88,15 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   };
 
   const handleDeleteLesson = async () => {
-    const data = await deleteLesson(lessonToDelete!);
-    if (data.success) {
-      dispatch({ type: "DELETE_LESSON", payload: lessonToDelete ?? undefined });
-      toast.success(data.message);
-      setLessonToDelete(null);
+    try {
+      const data = await courseApi.mutations.deleteLesson(lessonToDelete!);
+      if (data.success) {
+        dispatch({ type: "DELETE_LESSON", payload: lessonToDelete ?? undefined });
+        toast.success(data.message);
+        setLessonToDelete(null);
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
     }
   };
 
@@ -125,13 +116,6 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       formRef.current.focus();
     }
   }, [editionMode]);
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-      setIsLoading(false);
-    }
-  }, [error]);
 
   return (
     <>

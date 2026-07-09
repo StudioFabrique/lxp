@@ -1,12 +1,12 @@
 import { PlusCircle } from "lucide-react";
 import type { Activity } from "../../../../../../../../src/utils/interfaces/activity";
-import { DndWrapper } from "../../../../../../../../src.legacy/components/UI/DndWrapper";
+import { DndWrapper } from "../../../../../../../../src/components/UI/DndWrapper";
 import ResourceItem from "./resource-item";
-import Modal from "../../../../../../../../src.legacy/components/UI/modal/modal";
+import Modal from "../../../../../../../components/UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
 import ResourceUpdate from "./resource-update";
 import CreateResource from "../CreateResource";
-import ElementNotFound from "../../../../../../../../src.legacy/components/UI/element-not-found";
+import ElementNotFound from "../../../../../../../components/UI/element-not-found";
 
 type Props = {
   activity: Activity;
@@ -22,7 +22,8 @@ function ResourcePreview({
   onSubmit,
 }: Props) {
   const {
-    data,
+    resourceName,
+    setResourceName,
     handleAddResource,
     handleCancel,
     handleCancelDelete,
@@ -70,7 +71,8 @@ function ResourcePreview({
 
       {isAdding ? (
         <CreateResource
-          data={data}
+          resourceName={resourceName}
+          setResourceName={setResourceName}
           handleFileChange={handleFileChange}
           handleCancel={handleCancel}
           handleAddResource={handleAddResource}

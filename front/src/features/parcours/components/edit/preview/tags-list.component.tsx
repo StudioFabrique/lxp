@@ -1,5 +1,5 @@
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
+import TagItem from "../../../../../components/UI/tag-item/tag-item";
 
 interface TagsListProps {
   tagsList: Tag[];

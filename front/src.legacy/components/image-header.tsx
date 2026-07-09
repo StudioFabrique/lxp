@@ -1,7 +1,7 @@
 import { CornerDownRight } from "lucide-react";
 import { ReactNode } from "react";
 import { Link } from "react-router";
-import bgImageGradient from "../utils/bg-image-gradient";
+import { bgImageGradient } from "../../src/utils/helpers/color-helpers";
 
 interface ImageHeaderProps {
   imageUrl: string;

@@ -1,56 +1,53 @@
 import { useCallback, useEffect, useState } from "react";
 
-import useHttp from "../../../../src/hooks/useHttp";
+import { lessonApi } from "../api/lesson.api";
 import LessonHome from "../components/list/lesson-home";
 import toast from "react-hot-toast";
-import Modal from "../../../../src.legacy/components/UI/modal/modal";
+import Modal from "../../../components/UI/modal/modal";
 import Lesson from "../../../../src/utils/interfaces/lesson";
-import ListHeader from "../../../../src.legacy/components/UI/list-header";
+import ListHeader from "../../../components/UI/list-header";
 import LessonHeader from "../components/list/lesson-header";
-import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import ElementNotFound from "../../../components/UI/element-not-found";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 
 export default function LessonHomePage() {
   const [lessonsList, setLessonsList] = useState<Lesson[] | null>(null);
   const [lessonToDelete, setLessonToDelete] = useState<number | null>(null);
-
-  const { sendRequest, error, isLoading } = useHttp();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const setDeletion = (id: number) => {
     setLessonToDelete(id);
   };
 
   const handleDeleteLesson = async () => {
-    const applyData = (data: { success: boolean; message: string }) => {
+    lessonApi.mutations.deleteLesson(lessonToDelete!).then((data) => {
       if (data.success) {
         toast.success(data.message);
         setLessonToDelete(null);
         fetchData();
       }
-    };
-    sendRequest(
-      { path: `/lesson/${lessonToDelete}`, method: "delete" },
-      applyData
-    );
+    });
   };
 
   const fetchData = useCallback(() => {
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      lessons: Lesson[];
-    }) => {
-      if (data.success) {
-        setLessonsList(data.lessons);
-      }
-    };
-    sendRequest(
-      {
-        path: "/lesson",
-      },
-      applyData
-    );
-  }, [sendRequest]);
+    setIsLoading(true);
+    lessonApi.queries
+      .getAllLessons()
+      .then((data) => {
+        if (data.success) {
+          setLessonsList(data.lessons);
+        }
+      })
+      .catch((err: any) => {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Une erreur est survenue"
+        );
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
 
   useEffect(() => {
     fetchData();

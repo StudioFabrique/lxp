@@ -1,1 +1,11 @@
-export { default } from "../../../../src.legacy/views/module/layout-module";
+import { Outlet } from "react-router";
+
+const LayoutModule = () => {
+  return (
+    <div className="w-full">
+      <Outlet />
+    </div>
+  );
+};
+
+export default LayoutModule;

@@ -16,11 +16,11 @@ import UserStats from "../components/UserStats";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
 
 const UserHome = () => {
   const { roles } = useContext(AuthContext);

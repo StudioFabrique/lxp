@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useParcoursDispatch, useParcoursSelector } from "../../../store/ParcoursContext";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../../src/hooks/useHttp";
 
 import DatePicker from "./date-picker";
+import { parcoursApi } from "../../../api/parcours.api";
 
 interface Props {
   datesParcours: { startDate: Date; endDate: Date };
@@ -20,7 +19,6 @@ const ModuleTimelineDateModal = ({
   onClose,
 }: Props) => {
   const dispatch = useParcoursDispatch();
-  const { sendRequest } = useHttp(true);
   const [error, setError] = useState<string | null>(null);
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -79,11 +77,16 @@ const ModuleTimelineDateModal = ({
     setError(null);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (error) return;
 
-    const applyData = () => {
+    try {
+      await parcoursApi.mutations.updateModuleCalendarDates({
+        moduleId: currentModule.id,
+        minDate: datesModule.minDate,
+        maxDate: datesModule.maxDate,
+      });
       dispatch({ type: "UPDATE_MODULE", payload: {
           module: {
             minDate: datesModule.minDate,
@@ -92,22 +95,10 @@ const ModuleTimelineDateModal = ({
           moduleId: currentModule.id,
         } });
       toast.success("Dates mises à jour");
-      // Close modal
       modalRef.current?.close();
-    };
-
-    sendRequest(
-      {
-        path: "/modules/calendar/dates",
-        method: "put",
-        body: {
-          moduleId: currentModule.id,
-          minDate: datesModule.minDate,
-          maxDate: datesModule.maxDate,
-        },
-      },
-      applyData
-    );
+    } catch {
+      toast.error("Erreur lors de la mise à jour des dates");
+    }
   };
 
   useEffect(() => {

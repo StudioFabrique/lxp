@@ -1,17 +1,16 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import VideoPlayer from "../../../../../../src.legacy/components/UI/video-player";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import VideoPlayer from "../../../../../components/UI/VideoPlayer";
 import { toast } from "react-hot-toast";
-import { ZodError } from "zod";
 
 import { maxSizeError } from "../../../../../utils/helpers/max-size-error";
 import { activityVideoSize } from "../../../../../config/images-sizes";
-import useForm from "../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import Field from "../../../../../../src.legacy/components/UI/forms/field";
-import FieldArea from "../../../../../../src.legacy/components/UI/forms/field-area";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import { validationErrors } from "../../../../../utils/helpers/validate";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import { Loader2 } from "lucide-react";
-import { activiteMetaDataSchema } from "../../../../../../src.legacy/lib/validation/lesson/activite-video";
+import { activiteMetaDataSchema } from "../../../lesson.schema";
+import FormInput from "../../../../../components/form/FormInput";
+import FormTextarea from "../../../../../components/form/FormTextarea";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -29,6 +28,11 @@ interface VideoEditorProps {
 
 const maxSize = activityVideoSize;
 
+type VideoFormData = {
+  title: string;
+  description?: string;
+};
+
 export default function VideoEditor({
   propVideo = "",
   loading,
@@ -42,10 +46,15 @@ export default function VideoEditor({
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState<string>(propVideo);
 
-  const { initValues, errors, values, onChangeValue, onValidationErrors } =
-    useForm();
-
-  const data = { values, errors, onChangeValue };
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<VideoFormData>({
+    resolver: zodResolver(activiteMetaDataSchema),
+    defaultValues: { title: "", description: "" },
+  });
 
   const isValidUrl = (urlString: string): boolean => {
     try {
@@ -85,35 +94,22 @@ export default function VideoEditor({
     setVideo(url);
   }, [url]);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      activiteMetaDataSchema.parse(values);
-      if (origin === "web" && !isValidUrl(url)) {
-        toast.error("L'URL de la vidéo n'est pas valide.");
-        return;
-      }
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
-      }
+  const handleSubmit = rhfHandleSubmit((formData) => {
+    if (origin === "web" && !isValidUrl(url)) {
+      toast.error("L'URL de la vidéo n'est pas valide.");
+      return;
     }
     onSubmit({
-      title: values.title,
-      description: values.description,
+      title: formData.title,
+      description: formData.description ?? null,
       videoValue: file ? "" : video,
       fileValue: file,
     });
-  };
+  });
 
   useEffect(() => {
-    initValues({
-      title,
-      description,
-    });
-  }, [title, description, initValues]);
+    reset({ title: title ?? "", description: description ?? "" });
+  }, [title, description, reset]);
 
   useEffect(() => {
     handleSelectExternalSource();
@@ -125,13 +121,19 @@ export default function VideoEditor({
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <article>
             <form className="flex flex-col gap-y-2">
-              <Field
+              <FormInput
                 label="Titre *"
                 placeholder="Titre de la video"
                 name="title"
-                data={data}
+                register={register}
+                error={errors.title}
               />
-              <FieldArea label="Description" name="description" data={data} />
+              <FormTextarea
+                label="Description"
+                name="description"
+                register={register}
+                error={errors.description}
+              />
             </form>
           </article>
           <article className="flex flex-col gap-y-4 justify-center">

@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { localeDate } from "../../helpers/locale-date";
 import PermissionGuard from "../../../src/components/guards/PermissionGuard";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { useState } from "react";
@@ -7,7 +6,8 @@ import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import defaultImage from "../../assets/images/module-default-thumb.png";
 import { Eye } from "lucide-react";
-import bgImageGradient from "../../utils/bg-image-gradient";
+import { bgImageGradient } from "../../../src/utils/helpers/color-helpers";
+import { localeDate } from "../../../src/utils/helpers/locale-date";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {

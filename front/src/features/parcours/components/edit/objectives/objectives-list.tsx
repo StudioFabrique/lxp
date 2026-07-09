@@ -1,24 +1,54 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
+import { useMutation } from "@tanstack/react-query";
 
 import Objective from "../../../../../../src/utils/interfaces/objective";
 import ObjectiveItem from "./objective-item";
-import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
-import useHttp from "../../../../../../src/hooks/useHttp";
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import FormObjective from "./form-objective";
 import toast from "react-hot-toast";
+import { parcoursApi } from "../../../api/parcours.api";
+import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 
 const ObjectivesList = () => {
   const objectivesList = useParcoursSelector(
     (state) => state.parcoursObjectives.objectives
   );
   const parcoursId = useParcoursSelector((state) => state.parcours.id);
-  const { sendRequest, error } = useHttp();
   const dispatch = useParcoursDispatch();
   const [itemToUpdate, setItemToUpdate] = useState<Objective | null>(null);
+
+  const { mutate: deleteObjective } = useMutation({
+    mutationFn: (id: number) => parcoursApi.mutations.deleteObjective(id),
+    onSuccess: (_data, id) => {
+      dispatch({ type: "DELETE_OBJECTIVE", payload: id });
+    },
+    onError: () => toast.error("Erreur lors de la suppression"),
+  });
+
+  const { mutate: updateObjective } = useMutation({
+    mutationFn: (objective: Record<string, unknown>) =>
+      parcoursApi.mutations.updateObjective(objective),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "EDIT_OBJECTIVE", payload: data.data });
+      }
+    },
+    onError: () => toast.error("Erreur lors de la mise à jour"),
+  });
+
+  const { mutate: addObjective } = useMutation({
+    mutationFn: (description: string) =>
+      parcoursApi.mutations.updateParcoursObjectives({
+        parcoursId: parcoursId!,
+        objectives: [description],
+      }),
+    onSuccess: (data) => {
+      dispatch({ type: "ADD_OBJECTIVE", payload: data.data[0] });
+    },
+    onError: () => toast.error("Erreur lors de l'ajout"),
+  });
 
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
@@ -30,20 +60,7 @@ const ObjectivesList = () => {
   };
 
   const handleDeletion = (id: number) => {
-    const applyData = (_data: {
-      id: number;
-      success: boolean;
-      message: string;
-    }) => {
-      dispatch({ type: "DELETE_OBJECTIVE", payload: id });
-    };
-    sendRequest(
-      {
-        path: `/objective/${id}`,
-        method: "delete",
-      },
-      applyData
-    );
+    deleteObjective(id);
   };
 
   const handleUpdateObjective = (id: number) => {
@@ -58,73 +75,12 @@ const ObjectivesList = () => {
 
   const submitUpdateObjective = (objective: Objective) => {
     setItemToUpdate(null);
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      data: Objective;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        dispatch({ type: "EDIT_OBJECTIVE", payload: data.data });
-      }
-    };
-    sendRequest(
-      {
-        path: "/objective",
-        method: "put",
-        body: { ...objective },
-      },
-      applyData
-    );
+    updateObjective(objective as unknown as Record<string, unknown>);
   };
 
   const handleSubmit = (objective: Objective) => {
-    const applyData = (data: any) => {
-      dispatch({ type: "ADD_OBJECTIVE", payload: data.data[0] });
-    };
-    sendRequest(
-      {
-        path: "/parcours/update-objectives",
-        method: "put",
-        body: { parcoursId, objectives: [objective.description] },
-      },
-      applyData
-    );
+    addObjective(objective.description);
   };
-
-  /*   const handleReorderObjectives = (objectivesId: Array<string>) => {
-    const applyData = (data: any) => {
-      dispatch(parcoursObjectivesAction.setObjectives(data.data.objectives));
-    };
-    sendRequest(
-      {
-        path: "/parcours/reorder-objectives",
-        method: "put",
-        body: { parcoursId, objectivesId },
-      },
-      applyData
-    );
-  }; */
-
-  /*   const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
-
-    // Reorder the objectivesList based on the drag result
-    const reorderedObjectives = Array.from(objectivesList);
-    const [reorderedObjective] = reorderedObjectives.splice(
-      result.source.index,
-      1
-    );
-    reorderedObjectives.splice(result.destination.index, 0, reorderedObjective);
-
-    handleReorderObjectives(reorderedObjectives.map((item: any) => item.id));
-  }; */
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
 
   return (
     <>

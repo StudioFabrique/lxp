@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../src/hooks/useHttp";
+import { dashboardStudentApi } from "../../api/dashboard-student.api";
 import { AuthContext } from "../../../../store/AuthProvider";
-import StudentFeedback from "../../../../utils/interfaces/student-feedback";
-import FeelingLevel from "../../../../../src.legacy/components/UI/feeling-level";
+import FeelingLevel from "../../../../components/UI/feeling-level";
 import Loader from "../../../../components/loaders/Loader";
 
 const FeelingFeedback = () => {
-  const { sendRequest, isLoading } = useHttp();
   const { socket } = useContext(AuthContext);
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
@@ -33,8 +32,10 @@ const FeelingFeedback = () => {
     setFeedbackSent(true);
   };
 
-  useEffect(() => {
-    const applyData = (data: { data: StudentFeedback }) => {
+  const { isLoading } = useQuery({
+    queryKey: ["own-feedback"],
+    queryFn: async () => {
+      const data = await dashboardStudentApi.queries.getOwnFeedback();
       const lastFeedback = data.data;
       const today = new Date();
       if (lastFeedback) {
@@ -48,10 +49,9 @@ const FeelingFeedback = () => {
           setCurrentProgressValue(lastFeedback.feelingLevel);
         }
       }
-    };
-
-    sendRequest({ path: "/user/own-feedback" }, applyData);
-  }, [sendRequest]);
+      return data;
+    },
+  });
 
   return (
     <div className="flex flex-col gap-4 bg-base-100 text-base border border-base-300 p-5 rounded-lg">

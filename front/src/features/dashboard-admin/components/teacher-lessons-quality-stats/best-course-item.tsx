@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
-import RatingWithStars from "../../../../../src.legacy/components/UI/lesson-rating/rating-with-stars";
+import RatingWithStars from "../../../../../src/components/UI/lesson-rating/rating-with-stars";
 
 type BestCourseItemProps = {
   firstLessonId: number;

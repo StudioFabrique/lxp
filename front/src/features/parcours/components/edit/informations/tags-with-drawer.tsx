@@ -1,49 +1,37 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useParcoursSelector,
   useParcoursDispatch,
 } from "../../../store/ParcoursContext";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import CurrentTags from "../../../../../../src.legacy/components/inherited-items/current-tags";
-import InheritedItems from "../../../../../../src.legacy/components/inherited-items/inherited-items";
+import CurrentTags from "../../../../../../src/components/inherited-items/current-tags";
+import InheritedItems from "../../../../../../src/components/inherited-items/inherited-items";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import toast from "react-hot-toast";
 import ParcoursTagsSelecter from "./parcours-tags-selecter";
 import SearchTag from "./search-tag";
 import CreateNewTag from "./create-new-tags";
-import QuestionMarkTooltip from "../../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle } from "lucide-react";
+import { parcoursApi } from "../../../api/parcours.api";
+import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
-// Interface définissant les props du composant
 interface TagsWithDrawerProps {
   loading: boolean;
   onSubmit: (items: any[]) => void;
   tags: Tag[];
 }
 
-/**
- * Composant TagsWithDrawer
- * Gère l'affichage et la sélection des tags avec un système de drawer
- * Permet de voir les tags actuels, les tags de la formation et tous les tags disponibles
- */
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const currentTags = useParcoursSelector((state) => state.tags.currentTags);
   const initialTags = useParcoursSelector((state) => state.tags.initialTags);
   const dispatch = useParcoursDispatch();
 
-  // États locaux
   const [submit, setSubmit] = useState<boolean>(false);
-  const isInitialRender = useRef(true);
-  const { sendRequest } = useHttp();
+  const hasFetchedTags = useRef(false);
   const [parentTags] = useState<Tag[]>(props.tags);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
 
-  /**
-   * Met à jour la liste des tags sélectionnés dans le state
-   * et déclenche la soumission
-   */
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
       dispatch({ type: "SET_CURRENT_TAGS", payload: tags });
@@ -52,10 +40,6 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     [dispatch],
   );
 
-  /**
-   * Effect pour gérer la soumission automatique
-   * Attend autoSubmitTimer ms avant de déclencher la soumission
-   */
   useEffect(() => {
     const timer = setTimeout(() => {
       if (submit) {
@@ -66,23 +50,17 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     return () => clearTimeout(timer);
   }, [props, submit, currentTags]);
 
-  /**
-   * Effect pour charger la liste initiale des tags depuis l'API
-   * Ne s'exécute qu'au premier rendu
-   */
   useEffect(() => {
-    const processData = (data: Array<Tag>) => {
-      dispatch({ type: "INIT_TAGS", payload: data });
-    };
-    if (isInitialRender.current) {
-      sendRequest(
-        {
-          path: "/tag",
-        },
-        processData,
-      );
+    if (!hasFetchedTags.current) {
+      hasFetchedTags.current = true;
+      parcoursApi.queries
+        .getTags()
+        .then((data) => {
+          dispatch({ type: "INIT_TAGS", payload: data });
+        })
+        .catch(() => toast.error("Erreur lors du chargement des tags"));
     }
-  }, [dispatch, sendRequest]);
+  }, [dispatch]);
 
   /**
    * Effect pour mettre à jour les tags de la formation

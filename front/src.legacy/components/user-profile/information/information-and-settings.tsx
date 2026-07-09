@@ -20,7 +20,6 @@ import { Link } from "../../../utils/interfaces/link";
 
 import ThemeSelectSettings from "./theme-select-settings";
 import ItemsAdder from "../../UI/items-adder";
-import { regexGeneric } from "../../../utils/constantes";
 import {
   transformLink,
   urlIsValid,
@@ -29,6 +28,7 @@ import {
   TEST_ID_HOBBIES,
   TEST_ID_LINKS,
 } from "../../../config/tests-config/tests-ids";
+import { regexGeneric } from "../../../../src/config/constantes";
 
 type UserInformation = {
   _id: string;

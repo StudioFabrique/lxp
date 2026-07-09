@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { regexPassword } from "../../../utils/constantes";
+import { regexPassword } from "../../../../src/config/constantes";
 
 export const passwordSchema = z.object({
   oldPass: z

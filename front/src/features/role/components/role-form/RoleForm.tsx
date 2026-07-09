@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 import { roleApi } from "../../api/role.api";
 import RoleTypeSelector from "./RoleTypeSelector";
 import type Role from "../../../../../src/utils/interfaces/role";
-import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type RoleFormProps = {
   role?: Role;

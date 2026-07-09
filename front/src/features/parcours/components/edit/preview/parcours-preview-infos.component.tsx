@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector } from "../../../store/ParcoursContext";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import ContactsList from "./contacts-list.component";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagsList from "./tags-list.component";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 
 interface ParcoursPreviewInfosProps {
   onEdit: (id: number) => void;

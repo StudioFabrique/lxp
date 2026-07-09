@@ -1,6 +1,6 @@
 import { useParcoursSelector } from "../../store/ParcoursContext";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import TagItem from "../../../../../src.legacy/components/UI/tag-item/tag-item";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import TagItem from "../../../../components/UI/tag-item/tag-item";
 
 const Tags = () => {
   const tags = useParcoursSelector((state) => state.tags.currentTags);

@@ -24,7 +24,7 @@ import {
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
-import useHttp from "../../../../src/hooks/useHttp";
+import apiClient from "../../../lib/axios";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 const useModuleContentExplorer = () => {
@@ -44,7 +44,7 @@ const useModuleContentExplorer = () => {
   });
 
   const navigate = useNavigate();
-  const { sendRequest, isLoading: isLoadingRequest } = useHttp(true);
+  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [state, dispatch] = useReducer(
@@ -116,23 +116,26 @@ const useModuleContentExplorer = () => {
     return lastLessonInCourse.id === state.selectedLesson.id;
   }, [state.selectedLesson, state.module]);
 
-  const fetchModuleData = useCallback(() => {
-    const applyData = ({ data }: { data: Module & { parcours: string } }) => {
+  const fetchModuleData = useCallback(async () => {
+    setIsLoadingRequest(true);
+    try {
+      const response = await apiClient.get(
+        `/modules/detail/limited/${moduleId}`,
+      );
+      const { data } = response.data as {
+        data: Module & { parcours: string };
+      };
       dispatch({ type: "update_module_data", module: data });
-    };
+    } catch {
+      // silently fail
+    } finally {
+      setIsLoadingRequest(false);
+    }
+  }, [moduleId]);
 
-    sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
-  }, [moduleId, sendRequest]);
-
-  const initiateLesson = useCallback(
-    async (lessonId: number) => {
-      await sendRequest({
-        path: `/lesson/read/${lessonId}`,
-        method: "post",
-      });
-    },
-    [sendRequest],
-  );
+  const initiateLesson = useCallback(async (lessonId: number) => {
+    await apiClient.post(`/lesson/read/${lessonId}`);
+  }, []);
 
   // Handler pour signaler la fin du quiz et enclencher la lecture
   const onFinishInitialQuiz = useCallback(async () => {
@@ -143,161 +146,142 @@ const useModuleContentExplorer = () => {
   }, [state.selectedLesson?.id, initiateLesson]);
 
   const completeLesson = useCallback(
-    (rating: number) => {
-      const applyData = ({
-        lessonRead,
-        rating,
-      }: {
-        lessonRead: LessonRead;
-        rating: LessonRating;
-      }) => {
-        if (state.selectedLesson) {
+    async (rating: number) => {
+      if (state.selectedLesson) {
+        try {
+          const response = await apiClient.put(
+            `/lesson/read/${state.selectedLesson.id}?rate=${rating}`,
+          );
+          const { lessonRead, rating: lessonRating } = response.data as {
+            lessonRead: LessonRead;
+            rating: LessonRating;
+          };
           dispatch({
             type: "mark_lesson_as_complete",
             lesson: state.selectedLesson,
             lessonRead,
           });
-          dispatch({ type: "set_lesson_rating", rating: [rating] });
+          dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+        } catch {
+          // silently fail
         }
-      };
-
-      if (state.selectedLesson)
-        sendRequest(
-          {
-            path: `/lesson/read/${state.selectedLesson.id}?rate=${rating}`,
-            method: "put",
-          },
-          applyData,
-        );
+      }
     },
-    [sendRequest, state.selectedLesson],
+    [state.selectedLesson],
   );
 
-  const deleteActivity = useCallback(() => {
-    const applyData = () => {
+  const deleteActivity = useCallback(async () => {
+    if (!state.selectedActivity) return;
+    try {
+      await apiClient.delete(
+        `/activity/${state.selectedActivity.type}/${state.selectedActivity.id}/lesson`,
+      );
       dispatch({ type: "delete_selected_activity" });
       toast.success("L'activité a été supprimé");
       dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
-    };
-
-    if (!state.selectedActivity) return;
-    sendRequest(
-      {
-        path: `/activity/${state.selectedActivity.type}/${state.selectedActivity.id}/lesson`,
-        method: "delete",
-      },
-      applyData,
-    );
-  }, [sendRequest, state.selectedActivity]);
+    } catch {
+      // silently fail
+    }
+  }, [state.selectedActivity]);
 
   const rateContent = useCallback(
-    (rating: number) => {
-      const applyData = ({ data }: { data: LessonRating }) => {
+    async (rating: number) => {
+      try {
+        const response = await apiClient.put(
+          `/lesson/rate/${state.selectedLesson?.id}`,
+          { rate: rating },
+        );
+        const { data } = response.data as { data: LessonRating };
         dispatch({ type: "set_lesson_rating", rating: [data] });
-      };
-
-      sendRequest(
-        {
-          method: "put",
-          path: `/lesson/rate/${state.selectedLesson?.id}`,
-          body: { rate: rating },
-        },
-        applyData,
-      );
+      } catch {
+        // silently fail
+      }
     },
-    [sendRequest, state.selectedLesson?.id],
+    [state.selectedLesson?.id],
   );
 
   const enableCourse = useCallback(
     async (courseId: number, visibility: boolean) => {
-      const applyData = (data: { success: boolean; message: string }) => {
+      try {
+        const response = await apiClient.put(
+          `/course/enable-course/${courseId}?visibility=${visibility}`,
+        );
+        const data = response.data as { success: boolean; message: string };
         if (data.success) {
           toast.success(data.message);
           fetchModuleData();
         }
-      };
-
-      await sendRequest(
-        {
-          path: `/course/enable-course/${courseId}?visibility=${visibility}`,
-          method: "put",
-        },
-        applyData,
-      );
+      } catch {
+        // silently fail
+      }
     },
-    [fetchModuleData, sendRequest],
+    [fetchModuleData],
   );
 
   const publishCourse = useCallback(
     async (courseId: number) => {
-      const applyData = (data: { success: boolean; message: string }) => {
+      try {
+        const response = await apiClient.put(`/course/publish/${courseId}`);
+        const data = response.data as { success: boolean; message: string };
         if (data.success) {
           toast.success(data.message);
           fetchModuleData();
         }
-      };
-
-      await sendRequest(
-        { path: `/course/publish/${courseId}`, method: "put" },
-        applyData,
-      );
+      } catch {
+        // silently fail
+      }
     },
-    [fetchModuleData, sendRequest],
+    [fetchModuleData],
   );
 
-  const deleteCourse = useCallback(
-    async (courseId: number) => {
-      const applyData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-          dispatch({ type: "delete_course", id: courseId });
-        }
-      };
-
-      await sendRequest(
-        { path: `/course/delete-course/${courseId}`, method: "delete" },
-        applyData,
+  const deleteCourse = useCallback(async (courseId: number) => {
+    try {
+      const response = await apiClient.delete(
+        `/course/delete-course/${courseId}`,
       );
-    },
-    [sendRequest],
-  );
+      const data = response.data as { success: boolean; message: string };
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "delete_course", id: courseId });
+      }
+    } catch {
+      // silently fail
+    }
+  }, []);
 
-  const deleteLesson = useCallback(
-    async (lessonId: number) => {
-      const applyData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-          dispatch({ type: "delete_lesson", id: lessonId });
-        }
-      };
-      await sendRequest(
-        { path: `/lesson/${lessonId}`, method: "delete" },
-        applyData,
-      );
-    },
-    [sendRequest],
-  );
+  const deleteLesson = useCallback(async (lessonId: number) => {
+    try {
+      const response = await apiClient.delete(`/lesson/${lessonId}`);
+      const data = response.data as { success: boolean; message: string };
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "delete_lesson", id: lessonId });
+      }
+    } catch {
+      // silently fail
+    }
+  }, []);
 
   const fetchLessonData = useCallback(async () => {
-    const applyData = (lesson: Lesson) => {
-      dispatch({ type: "select_lesson", lesson });
-    };
-
     if (!state.selectedLesson?.id) return;
     navigate(".", {
       state: { lessonId: state.selectedLesson.id },
     });
 
-    await sendRequest(
-      { path: `/lesson/${state.selectedLesson.id}` },
-      applyData,
-    );
+    try {
+      const response = await apiClient.get(
+        `/lesson/${state.selectedLesson.id}`,
+      );
+      const lesson = response.data as Lesson;
+      dispatch({ type: "select_lesson", lesson });
+    } catch {
+      // silently fail
+    }
 
-    // Déclenche automatiquement si le quiz est passé ou bypassé
     if (isDiagnosticPassed.current) {
       await initiateLesson(state.selectedLesson.id);
     }
-  }, [state.selectedLesson?.id, sendRequest, initiateLesson, navigate]);
+  }, [state.selectedLesson?.id, initiateLesson, navigate]);
 
   const fetchActivityTextContent = useCallback(() => {
     if (
@@ -324,34 +308,30 @@ const useModuleContentExplorer = () => {
 
     const finalContent = cleanActivityTextContent(content);
 
-    const applyDataPost = (activity: Activity) => {
-      dispatch({ type: "create_activity", activity });
-      return true;
-    };
-
-    const applyDataPut = ({ response: activity }: { response: Activity }) => {
-      dispatch({ type: "edit_activity", activity });
-      return true;
-    };
-
     setIsLoading(true);
 
-    const response: Promise<boolean> = await sendRequest(
-      {
-        path: `/activity/text/${
-          state.mode === "write"
-            ? state.selectedLesson?.id
-            : state.selectedActivity?.id
-        }`,
-        method: state.mode === "write" ? "post" : "put",
-        body: {
-          title,
-          value: finalContent,
-          parent: "lesson",
-        },
-      },
-      state.mode === "write" ? applyDataPost : applyDataPut,
-    );
+    let response: boolean;
+    try {
+      if (state.mode === "write") {
+        const res = await apiClient.post(
+          `/activity/text/${state.selectedLesson?.id}`,
+          { title, value: finalContent, parent: "lesson" },
+        );
+        const activity = res.data as Activity;
+        dispatch({ type: "create_activity", activity });
+        response = true;
+      } else {
+        const res = await apiClient.put(
+          `/activity/text/${state.selectedActivity?.id}`,
+          { title, value: finalContent, parent: "lesson" },
+        );
+        const activity = (res.data as { response: Activity }).response;
+        dispatch({ type: "edit_activity", activity });
+        response = true;
+      }
+    } catch {
+      response = false;
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoading(false);
@@ -359,36 +339,36 @@ const useModuleContentExplorer = () => {
   };
 
   const saveIframeActivity = async (title: string): Promise<boolean> => {
-    const applyDataPost = (activity: Activity) => {
-      dispatch({ type: "create_activity", activity });
-      return true;
-    };
-
-    const applyDataPut = (activity: Activity) => {
-      dispatch({ type: "edit_activity", activity });
-      return true;
-    };
-
     setIsLoading(true);
 
-    const response: Promise<boolean> = await sendRequest(
-      {
-        path: `/activity/iframe/${
-          state.mode === "write"
-            ? state.selectedLesson?.id
-            : state.selectedActivity?.id
-        }`,
-        method: state.mode === "write" ? "post" : "put",
-        body: {
-          title,
-          url:
-            state.mode === "write"
-              ? state.newActivitySrc
-              : state.selectedActivity?.url,
-        },
-      },
-      state.mode === "write" ? applyDataPost : applyDataPut,
-    );
+    let response: boolean;
+    try {
+      if (state.mode === "write") {
+        const res = await apiClient.post(
+          `/activity/iframe/${state.selectedLesson?.id}`,
+          {
+            title,
+            url: state.newActivitySrc,
+          },
+        );
+        const activity = res.data as Activity;
+        dispatch({ type: "create_activity", activity });
+        response = true;
+      } else {
+        const res = await apiClient.put(
+          `/activity/iframe/${state.selectedActivity?.id}`,
+          {
+            title,
+            url: state.selectedActivity?.url,
+          },
+        );
+        const activity = res.data as Activity;
+        dispatch({ type: "edit_activity", activity });
+        response = true;
+      }
+    } catch {
+      response = false;
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoading(false);
@@ -426,7 +406,7 @@ const useModuleContentExplorer = () => {
     }
   };
 
-  const activityReorder = ({
+  const activityReorder = async ({
     source,
     location,
   }: BaseEventPayload<ElementDragType>) => {
@@ -459,18 +439,15 @@ const useModuleContentExplorer = () => {
         (activity) => activity.id,
       );
 
-      sendRequest(
-        {
-          path: `/activity/reorder/${state.selectedLesson.id}`,
-          method: "put",
-          body: {
-            activitiesIds: newActivitiesIds,
-          },
-        },
-        () => {
-          isReordering.current.activity = false;
-        },
-      );
+      try {
+        await apiClient.put(`/activity/reorder/${state.selectedLesson.id}`, {
+          activitiesIds: newActivitiesIds,
+        });
+      } catch {
+        // silently fail
+      } finally {
+        isReordering.current.activity = false;
+      }
     } else {
       isReordering.current.activity = false;
     }

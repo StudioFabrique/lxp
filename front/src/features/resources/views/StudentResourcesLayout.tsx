@@ -1,1 +1,5 @@
-export { default } from "../../../../src.legacy/views/resources/students/student-resources-layout";
+import { Outlet } from "react-router";
+
+export default function StudentResourcesLayout() {
+  return <Outlet />;
+}

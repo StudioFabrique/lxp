@@ -1,38 +1,32 @@
-import React from "react";
-import Field from "../../../../../../../src.legacy/components/UI/forms/field";
-
 type props = {
-  data: {
-    values: Record<string, unknown>;
-    errors: { name: string[] };
-    onChangeValue: (name: string, value: string) => void;
-  };
+  value: string;
+  onChange: (value: string) => void;
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-function ResourceForm({ data, onFileChange }: props) {
+function ResourceForm({ value, onChange, onFileChange }: props) {
   return (
     <span className="h-full flex flex-col gap-y-2">
       <h2 className="text-lg font-bold">Ressources</h2>
       <form className="flex flex-col justify-around h-full gap-y-4">
         <span className="flex flex-col gap-y-4">
-          <Field
+          <label htmlFor="name" className="text-sm font-bold">
+            Nom du lien *
+          </label>
+          <input
+            id="name"
             name="name"
-            label="Nom du lien *"
-            data={{
-              values: { name: data.values.name },
-              errors: [],
-              onChangeValue: data.onChangeValue,
-            }}
+            className="input input-bordered w-full focus:outline-none"
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
           />
         </span>
         <input
           className="file-input file-input-bordered file-input-primary w-full max-w-md"
           type="file"
           onChange={onFileChange}
-          disabled={
-            !data.values.name || Object.keys(data.values.name).length === 0
-          }
+          disabled={!value || value.length === 0}
         />
       </form>
     </span>

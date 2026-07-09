@@ -5,24 +5,23 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import CourseInfosForm from "./course-infos-form";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import useHttp from "../../../../../../src/hooks/useHttp";
-import VirtualClass from "../../../../../../src.legacy/components/virtual-class";
+import VirtualClass from "../../../../../../src/components/virtual-class";
 import useInput from "../../../../../hooks/useInput";
 import { regexUrl } from "../../../../../config/constantes";
-import ContactsWithDrawer from "../../../../../../src.legacy/components/inherited-items/contacts-with-drawer";
-import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import ContactsWithDrawer from "../../../../../../src/components/inherited-items/contacts-with-drawer";
+import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import CourseTags from "./course-tags";
 import { ParcoursProvider } from "../../../../parcours/store/ParcoursContext";
+import { courseApi } from "../../../api/course.api";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
   const dispatch = useCourseDispatch();
-  const { sendRequest, error } = useHttp();
   const [loadingTags, setLoadingTags] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
   const moduleTitle = useCourseSelector(
@@ -54,8 +53,6 @@ const CourseInfos = () => {
   const [submitContacts, setSubmitContacts] = useState<boolean>(false);
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
 
-  console.log("TAGS :", currentTags);
-
   const handleUpdateTags = (tags: Tag[]) => {
     setSubmitTags(true);
     dispatch({ type: "SET_COURSE_TAGS", payload: tags });
@@ -76,65 +73,59 @@ const CourseInfos = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const applyData = (_data: any) => {
-        setLoadingTags(false);
-      };
+    const timer = setTimeout(async () => {
       if (submitTags) {
         setLoadingTags(true);
-        sendRequest(
-          {
-            path: `/course/tags/${courseId}`,
-            method: "put",
-            body: currentTags.map((item) => item.id),
-          },
-          applyData
-        );
+        try {
+          await courseApi.mutations.updateTags(
+            courseId!,
+            currentTags.map((item) => item.id).filter((id): id is number => id !== undefined),
+          );
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+        }
+        setLoadingTags(false);
         setSubmitTags(false);
       }
     }, autoSubmitTimer);
     return () => clearTimeout(timer);
-  }, [courseId, submitTags, currentTags, sendRequest]);
+  }, [courseId, submitTags, currentTags]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const applyData = (_data: any) => {
-        setLoadingContacts(false);
-      };
+    const timer = setTimeout(async () => {
       if (submitContacts) {
         setLoadingContacts(true);
-        sendRequest(
-          {
-            path: `/course/contacts/${courseId}`,
-            method: "put",
-            body: currentContacts.map((item) => item.id),
-          },
-          applyData
-        );
+        try {
+          await courseApi.mutations.updateContacts(
+            courseId!,
+            currentContacts.map((item) => item.id).filter((id): id is number => id !== undefined),
+          );
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+        }
+        setLoadingContacts(false);
         setSubmitContacts(false);
       }
     }, autoSubmitTimer);
 
     return () => clearTimeout(timer);
-  }, [courseId, currentContacts, submitContacts, sendRequest]);
+  }, [courseId, currentContacts, submitContacts]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const applyData = (data: any) => {
-        if (data.success) {
-          toast.success(data.message);
-          dispatch({ type: "SET_COURSE_VIRTUAL_CLASS", payload: virtualClass.value });
-        }
-      };
+    const timer = setTimeout(async () => {
       if (virtualClass.isValid && submitVirtualClass) {
-        sendRequest(
-          {
-            path: `/course/virtual-class/${courseId}`,
-            method: "put",
-            body: { virtualClass: virtualClass.value },
-          },
-          applyData
-        );
+        try {
+          const data = await courseApi.mutations.updateVirtualClass(
+            courseId!,
+            virtualClass.value,
+          );
+          if (data.success) {
+            toast.success(data.message);
+            dispatch({ type: "SET_COURSE_VIRTUAL_CLASS", payload: virtualClass.value });
+          }
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+        }
         setSubmitVirtualClass(false);
       }
     }, autoSubmitTimer);
@@ -142,19 +133,10 @@ const CourseInfos = () => {
   }, [
     courseId,
     dispatch,
-    sendRequest,
     submitVirtualClass,
     virtualClass.isValid,
     virtualClass.value,
   ]);
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-      setLoadingTags(false);
-      setLoadingContacts(false);
-    }
-  }, [error]);
 
   return (
     <div className="w-full flex flex-col gap-y-8">

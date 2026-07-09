@@ -1,156 +1,119 @@
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
-import useHttp from "../../../../../../src/hooks/useHttp";
-import useForm from "../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import { moduleCreateSchema } from "../../../../../../src.legacy/lib/validation/parcours-edit/module-create-schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { moduleCreateSchema } from "../../../parcours.schema";
 import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
 import { moduleReducer, initialState } from "./useNewModuleReducer";
-import SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
-import {
+import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
+import type {
   MetadataList,
   Metadatas,
   ModuleData,
-  Parcours,
 } from "../../../../../../src/utils/interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
+import { parcoursApi } from "../../../api/parcours.api";
 
-/**
- * Custom hook for managing module creation and display within a parcours
- *
- * Refactored to use useReducer for better state management and reduced complexity
- */
 const useNewModule = () => {
   const { id } = useParams();
-  const { sendRequest, isLoading, error } = useHttp();
   const refForm = useRef<HTMLFormElement | null>(null);
   const reduxDispatch = useParcoursDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
 
-  // Single useReducer replaces 11 useState hooks
   const [state, dispatch] = useReducer(moduleReducer, initialState);
 
-  // Form management remains separate (UI-specific logic)
   const {
-    values,
-    onChangeValue,
-    onResetForm,
-    errors,
-    onValidateForm,
-    initValues,
-  } = useForm({}, moduleCreateSchema);
+    register,
+    handleSubmit: _rhfHandleSubmit,
+    reset,
+    formState: { errors },
+    getValues,
+    trigger,
+  } = useForm({
+    resolver: zodResolver(moduleCreateSchema),
+  });
 
-  const data = { values, onChangeValue, errors };
-
-  console.log({ values });
-
-  /**
-   * Fetches modules and parcours data from the API
-   */
-  const getParcoursModules = useCallback(() => {
-    const applyData = (data: {
-      modules: ModuleData[];
-      parcoursData: Parcours;
-    }) => {
+  const getParcoursModules = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await parcoursApi.queries.getModules(+id!);
       dispatch({ type: "SET_MODULES", payload: data.modules });
       dispatch({ type: "SET_PARCOURS", payload: data.parcoursData });
-    };
-    sendRequest({ path: `/modules/${id}` }, applyData);
-  }, [id, sendRequest]);
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ?? "Erreur inconnue";
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
-  /**
-   * Handles form submission for creating a new module
-   */
-  const handleSubmitNewModule = (e: React.FormEvent) => {
+  const handleSubmitNewModule = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!onValidateForm()) return;
+    const isValid = await trigger();
+    if (!isValid) return;
 
     const formData = new FormData();
-    console.log(values);
+    const values = getValues();
 
-    const module = {
-      ...data.values,
+    const duration = values.duration ?? 0;
+    const moduleData = {
+      ...values,
       formationId: state.parcours?.formationId,
       parcoursId: +id!,
-      duration:
-        (+data.values.duration as number) === 0 ||
-        isNaN(+data.values.duration as number)
-          ? 1
-          : (+data.values.duration as number),
+      duration: duration === 0 || isNaN(duration) ? 1 : duration,
       contacts: state.currentContacts.map((item) => item.id),
       skills: state.currentSkills.map((item) => item.id),
     };
 
-    formData.append("module", JSON.stringify(module));
+    formData.append("module", JSON.stringify(moduleData));
     if (state.file) formData.append("image", state.file);
 
-    const applyData = (data: { data: ModuleData; message: string }) => {
-      onResetForm();
-      // Single action handles multiple state updates
+    try {
+      const data = await parcoursApi.mutations.createModule(formData);
+      reset();
       dispatch({ type: "MODULE_CREATED", payload: data.data });
       reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.data });
       scrollToTop();
-    };
-
-    sendRequest(
-      {
-        path: "/formation/new-module",
-        method: "post",
-        body: formData,
-      },
-      applyData,
-    );
+    } catch {
+      toast.error("Erreur lors de la création du module");
+    }
   };
 
-  /**
-   * Handles form cancellation
-   */
   const handleCancelForm = () => {
-    onResetForm();
-    // ✅ Single action handles multiple state updates
+    reset();
     dispatch({ type: "CANCEL_FORM" });
     scrollToTop();
   };
 
-  /**
-   * Shows delete confirmation modal
-   */
   const showDeleteModal = (id: number) => {
     const item = state.modules.find((module) => module.id === id);
     dispatch({ type: "SET_MODULE_TO_DELETE", payload: item ?? null });
   };
 
-  /**
-   * Deletes the selected module
-   */
-  const handleDeleteModule = () => {
-    const applyData = (data: SuccessWithMessage) => {
+  const handleDeleteModule = async () => {
+    try {
+      const data: SuccessWithMessage = await parcoursApi.mutations.deleteModule(
+        state.moduleToDelete!.id
+      );
       dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       dispatch({ type: "CLOSE_DELETE_MODAL" });
       reduxDispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       toast.success(data.message);
-    };
-
-    sendRequest(
-      {
-        path: `/modules/${state.moduleToDelete!.id}`,
-        method: "delete",
-      },
-      applyData,
-    );
+    } catch {
+      toast.error("Erreur lors de la suppression du module");
+    }
   };
 
-  /**
-   * Cancels module deletion
-   */
   const handleCancelDeletion = () => {
     dispatch({ type: "SET_MODULE_TO_DELETE", payload: null });
   };
 
-  /**
-   * Handles module duplication flow
-   */
   const handleDuplicateModule = () => {
     if (!state.metadataList) {
       getMetadataList();
@@ -161,43 +124,32 @@ const useNewModule = () => {
     }
   };
 
-  /**
-   * Fetches list of modules with metadata for duplication
-   */
-  const getMetadataList = () => {
-    const applyData = (data: MetadataList[]) => {
+  const getMetadataList = async () => {
+    try {
+      const data: MetadataList[] =
+        await parcoursApi.queries.getModulesByFormation(
+          state.parcours!.formationId
+        );
       dispatch({ type: "SET_METADATA_LIST", payload: data });
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
-    };
-
-    sendRequest(
-      {
-        path: `/modules/formation/${state.parcours!.formationId}/true`,
-      },
-      applyData,
-    );
+    } catch {
+      toast.error("Erreur lors du chargement des modules");
+    }
   };
 
-  /**
-   * Closes the duplicate warning modal
-   */
   const handleCloseDuplicateModal = () => {
     dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
   };
 
-  /**
-   * Prepares form for duplicating an existing modules
-   */
   const handleCopyModule = (module: MetadataList, metadatas: Metadatas) => {
-    // ✅ Single action handles complex state transition
     dispatch({
       type: "PREPARE_DUPLICATE",
       payload: { metas: metadatas, image: module.thumb },
     });
 
-    initValues({
+    reset({
       moduleId: module.id,
       title: module.title,
       description: module.description,
@@ -217,7 +169,7 @@ const useNewModule = () => {
         duration: moduleToUpdate.duration ? +moduleToUpdate.duration : 1,
       },
     });
-    initValues({
+    reset({
       title: moduleToUpdate.title,
       description: moduleToUpdate.description,
       duration: moduleToUpdate.duration,
@@ -225,10 +177,11 @@ const useNewModule = () => {
     });
   };
 
-  const handleSubmitDuplicateModule = (e: React.FormEvent) => {
+  const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!onValidateForm()) return;
+    const isValid = await trigger();
+    if (!isValid) return;
 
     const isEmptyObject = (obj: unknown) =>
       obj == null ||
@@ -236,66 +189,59 @@ const useNewModule = () => {
         !Array.isArray(obj) &&
         Object.keys(obj).length === 0);
 
-    if (isEmptyObject(state.moduleToDuplicate)) {
-      const applyData = (
-        data: SuccessWithMessage & { response: ModuleData },
-      ) => {
-        onResetForm();
+    try {
+      if (isEmptyObject(state.moduleToDuplicate)) {
+        const data = await parcoursApi.mutations.duplicateModuleByMetadata({
+          parcoursId: +id!,
+          moduleId: getValues().moduleId!,
+          contactIds: state.currentContacts.map((item) => item.id ?? []),
+          skillIds: state.currentSkills.map((item) => item.id ?? []),
+          duration: getValues().duration ?? 0,
+        });
+        reset();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
         toast.success(data.message);
         reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.response });
         scrollToTop();
-      };
-      sendRequest(
-        {
-          path: "/modules/metadata",
-          method: "post",
-          body: {
-            parcoursId: +id!,
-            moduleId: data.values.moduleId,
-            contactIds: state.currentContacts.map((item) => item.id ?? []),
-            skillIds: state.currentSkills.map((item) => item.id ?? []),
-            duration: +data.values.duration as number,
-          },
-        },
-        applyData,
-      );
-    } else {
-      const applyData = (data: {
-        success: boolean;
-        message: string;
-        response: ModuleData;
-      }) => {
-        onResetForm();
-        dispatch({ type: "MODULE_CREATED", payload: data.response });
-        toast.success(data.message);
-        scrollToTop();
-      };
-      sendRequest(
-        {
-          path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
-          method: "post",
-          body: {
-            duration: +data.values.duration as number,
+      } else {
+        const data = await parcoursApi.mutations.duplicateModule(
+          state.moduleToDuplicate!.id,
+          {
+            duration: getValues().duration ?? 0,
             contactsIds: state.currentContacts.map((item) => item.id),
             skillsIds: state.currentSkills.map((item) => item.id),
             parcoursId: +id!,
           },
-        },
-        applyData,
-      );
+        );
+        reset();
+        dispatch({ type: "MODULE_CREATED", payload: data.response });
+        toast.success(data.message);
+        scrollToTop();
+      }
+    } catch {
+      toast.error("Erreur lors de la duplication du module");
     }
   };
 
-  const handleSubmitUpdateModule = (e: React.FormEvent) => {
+  const handleSubmitUpdateModule = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!onValidateForm()) return;
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: ModuleData;
-    }) => {
+    const isValid = await trigger();
+    if (!isValid) return;
+
+    try {
+      const data = await parcoursApi.mutations.updateModule({
+        module: {
+          id: state.moduleToUpdate,
+          ...getValues(),
+          contactsIds: state.currentContacts
+            ? state.currentContacts.map((item) => item.id)
+            : [],
+          bonusSkillsIds: state.currentSkills
+            ? state.currentSkills.map((item) => item.id)
+            : [],
+        },
+      });
       if (data.success) {
         dispatch({
           type: "SUCCESSFUL_MODULE_UPDATE",
@@ -308,36 +254,18 @@ const useNewModule = () => {
         });
         toast.success(data.message);
         reduxDispatch({ type: "REPLACE_MODULE", payload: data.response });
-        onResetForm();
+        reset();
         scrollToTop();
       }
-    };
-    sendRequest(
-      {
-        path: `/modules/new-module/update/`,
-        method: "put",
-        body: {
-          module: {
-            id: state.moduleToUpdate,
-            ...data.values,
-            contactsIds: state.currentContacts
-              ? state.currentContacts.map((item) => item.id)
-              : [],
-            bonusSkillsIds: state.currentSkills
-              ? state.currentSkills.map((item) => item.id)
-              : [],
-          },
-        },
-      },
-      applyData,
-    );
+    } catch {
+      toast.error("Erreur lors de la mise à jour du module");
+    }
   };
 
   useEffect(() => {
     getParcoursModules();
   }, [getParcoursModules]);
 
-  // Effect for delete modal
   useEffect(() => {
     const modal = document.getElementById("delete_module_modal");
     if (state.moduleToDelete) {
@@ -347,14 +275,12 @@ const useNewModule = () => {
     }
   }, [state.moduleToDelete]);
 
-  // Effect for form scrolling
   useEffect(() => {
     if (state.showForm && refForm.current) {
       refForm.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [state.showForm]);
 
-  // Effect for error handling
   useEffect(() => {
     if (error && error.length > 0) {
       if (error === "MODULE_ALREADY_EXISTS") {
@@ -365,7 +291,6 @@ const useNewModule = () => {
     }
   }, [error]);
 
-  // Effect for duplicate modal
   useEffect(() => {
     const modal = document.getElementById("duplicate_module_modal");
     if (state.showDuplicateModal) {
@@ -375,11 +300,12 @@ const useNewModule = () => {
     }
   }, [state.showDuplicateModal]);
 
-  // Return state and handlers
   return {
     id,
-    ...state, //  Spread all state properties
-    data,
+    ...state,
+    register,
+    errors,
+    getValues,
     isLoading,
     refForm,
     handleSubmit: handleSubmitNewModule,

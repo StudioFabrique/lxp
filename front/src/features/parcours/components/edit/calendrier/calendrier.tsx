@@ -3,10 +3,10 @@ import { useParcoursSelector, useParcoursDispatch } from "../../../store/Parcour
 import { useContext, useEffect, useState } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 
-import Calendar from "../../../../../../src.legacy/components/UI/calendar/calendar";
+import Calendar from "../../../../../components/calendar/calendar";
 import { ThemeContext as Context } from "../../../../../store/ThemeProvider";
-import { TimelineEvent } from "../../../../../../src.legacy/components/UI/calendar/calendar-configuration";
-import { formatDate } from "../../../../../../src.legacy/components/UI/calendar/calendar-utils";
+import { TimelineEvent } from "../../../../../components/calendar/calendar-configuration";
+import { formatDate } from "../../../../../components/calendar/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
 

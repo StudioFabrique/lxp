@@ -1,62 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet, useParams } from "react-router";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
-import useHttp from "../../../../src/hooks/useHttp";
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import ImageHeader from "../../../../src.legacy/components/image-header";
+import Loader from "../../../../src/components/loaders/Loader";
+import ImageHeader from "../../../../src/components/image-header/image-header";
 import Course from "../../../../src/utils/interfaces/course";
-import defaultImage from "../../../../src.legacy/assets/images/module-default.jpg";
+import defaultImage from "../../../../src/assets/images/module-default.jpg";
 import { BookMarked } from "lucide-react";
 import { useCourseSelector, useCourseDispatch } from "../store/CourseContext";
+import { courseApi } from "../api/course.api";
 
 const LayoutCourseEdit = () => {
-  const { sendRequest, error } = useHttp();
   const { courseId } = useParams();
-  const [loading, setLoading] = useState(false);
   const dispatch = useCourseDispatch();
   const course = useCourseSelector(
     (state) => state.course
   ) as Course;
 
-  /**
-   * retourne les informations de base d'un parcours et les
-   * stock dans un state global
-   */
+  const { data, isLoading, isError, error } = useQuery({
+    ...courseApi.queries.infos(courseId!),
+    enabled: !!courseId,
+  });
+
   useEffect(() => {
-    const applyData = (data: any) => {
-      setLoading(false);
+    if (data) {
       const loadedCourse = formatCourseFromHttp(data);
       dispatch({ type: "SET_COURSE", payload: loadedCourse });
-    };
-    setLoading(true);
-    sendRequest(
-      {
-        path: `/course/infos/${courseId}`,
-      },
-      applyData
-    );
+    }
+  }, [data, dispatch]);
+
+  useEffect(() => {
+    if (isError && error) {
+      toast.error((error as any)?.response?.data?.message ?? "Erreur inconnue");
+    }
+  }, [isError, error]);
+
+  useEffect(() => {
     return () => {
       dispatch({ type: "RESET_COURSE" });
     };
-  }, [courseId, dispatch, sendRequest]);
-
-  /**
-   * gestion des erreurs HTTP
-   */
-  useEffect(() => {
-    if (error.length > 0) {
-      setLoading(false);
-      toast.error(error);
-    }
-  }, [error]);
+  }, [dispatch]);
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center">
-      {loading ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <FadeWrapper>

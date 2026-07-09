@@ -1,124 +1,84 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useRef } from "react";
-import { ZodError } from "zod";
+import { FC, useCallback, useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 
-import useHttp from "../../../../../../src/hooks/useHttp";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import SubWrapper from "../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
-import useFormAutoSubmit from "../../../../../../src.legacy/components/UI/forms/hooks/use-form-auto-submit";
-import Field from "../../../../../../src.legacy/components/UI/forms/field";
-import FieldArea from "../../../../../../src.legacy/components/UI/forms/field-area";
-import { infosParCoursSchema } from "../../../../../../src.legacy/lib/validation/parcours-edit/infos-parcours-schema";
-import { validationErrors } from "../../../../../utils/helpers/validate";
+import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
+import { infosParCoursSchema } from "../../../parcours.schema";
+import FormInput from "../../../../../../src/components/form/FormInput";
+import FormTextarea from "../../../../../../src/components/form/FormTextarea";
+import useAutoSave from "../../../../../../src/hooks/useAutoSave";
+import { parcoursApi } from "../../../api/parcours.api";
 
 type Props = {
   parcoursId?: string;
 };
 
 const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
-  const formation = useParcoursSelector((state) => state.parcours.formation);
+  const formation = useParcoursSelector((state) => state.parcours.formation) as { id: number; title: string; level: string } | null;
   const parcoursInfos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos
+    (state) => state.parcoursInformations.infos,
   );
-  const { sendRequest } = useHttp();
   const dispatch = useParcoursDispatch();
 
   const isInitialRender = useRef(true);
 
+  const defaultValues = useMemo(
+    () => ({
+      title: parcoursInfos.title ?? "",
+      description: parcoursInfos.description ?? "",
+    }),
+    [parcoursInfos.title, parcoursInfos.description],
+  );
+
   const {
-    errors,
-    values,
-    submit,
-    setSubmit,
-    onChangeValue,
-    onValidationErrors,
-    initValues,
-  } = useFormAutoSubmit();
+    register,
+    watch,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues,
+    resolver: zodResolver(infosParCoursSchema),
+  });
 
-  const data = {
-    values,
-    onChangeValue,
-    errors,
-  };
-
-  /**
-   * initialise le  formulaire avec les données stockées dans le state partagé
-   */
-  useEffect(() => {
-    if (isInitialRender.current) {
-      initValues({
-        title: parcoursInfos.title,
-        description: parcoursInfos.description,
-      });
-      isInitialRender.current = false;
-    }
-  }, [parcoursInfos.title, parcoursInfos.description, initValues]);
-
-  /**
-   * envoi d'une requête http pour mettre à jour les informations du formulaire
-   */
-  const updateInfos = useCallback(() => {
-    try {
-      infosParCoursSchema.parse(values);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        toast.error(errors[0].message);
-      }
-      return;
-    }
-    const processData = (data: { message: string }) => {
-      toast.success(data.message);
-    };
-    sendRequest(
-      {
-        path: "/parcours/update-infos",
-        method: "put",
-        body: {
-          parcoursId,
-          title: values.title,
-          description: values.description,
-          formation: formation.id.toString(),
-        },
-      },
-      processData
-    );
-  }, [values, onValidationErrors, formation, sendRequest, parcoursId]);
-
-  /**
-   * déclenchement avec un délai configuré dans le fichier auto-submit-timer.ts de l'envoi d'une requête http pour la mise à jour des informations du parcours
-   */
-  useEffect(() => {
-    const setInfos = async () => {
+  const saveInfos = useCallback(
+    async (data: { title: string; description?: string }) => {
       dispatch({
         type: "UPDATE_PARCOURS_INFOS",
         payload: {
-          title: values.title,
-          description: values.description,
+          title: data.title,
+          description: data.description,
         },
       });
-      updateInfos();
-      setSubmit(false);
-    };
-    const timer = setTimeout(() => {
-      if (submit) {
-        setInfos();
+
+      try {
+        const response = await parcoursApi.mutations.updateParcoursInfos({
+          parcoursId,
+          title: data.title,
+          description: data.description,
+          formation: String((formation as { id: number }).id),
+        });
+        toast.success(response.message);
+      } catch {
+        toast.error("Erreur lors de la sauvegarde");
       }
-    }, autoSubmitTimer);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [
-    updateInfos,
-    submit,
-    setSubmit,
-    values.title,
-    values.description,
-    dispatch,
-  ]);
+    },
+    [dispatch, formation, parcoursId],
+  );
+
+  const onSave = useCallback(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+    rhfHandleSubmit(saveInfos, (errs) => {
+      const firstError = Object.values(errs)[0];
+      if (firstError?.message) toast.error(firstError.message);
+    })();
+  }, [rhfHandleSubmit, saveInfos]);
+
+  useAutoSave(watch, onSave);
 
   return (
     <>
@@ -132,14 +92,20 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
               </SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">
-              <Field
+              <FormInput
                 label="Titre *"
                 name="title"
+                register={register}
+                error={errors.title}
                 placeholder="Ex : CDA - Promo 2023"
-                data={data}
               />
 
-              <FieldArea label="Description" name="description" data={data} />
+              <FormTextarea
+                label="Description"
+                name="description"
+                register={register}
+                error={errors.description}
+              />
 
               <div className="flex flex-col gap-y-4">
                 <h2 className="font-bold">Niveau du parcours</h2>

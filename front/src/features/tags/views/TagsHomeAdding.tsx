@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, useMemo } from "react";
 import TagsList from "../../../components/tags/TagsList";
-import AddTag from "../../../../src.legacy/components/UI/add-tag";
+import AddTag from "../../../components/UI/add-tag";
 import useTags from "../../../hooks/useTags";
 import Tag from "../../../../src/utils/interfaces/tag";
 import toast from "react-hot-toast";

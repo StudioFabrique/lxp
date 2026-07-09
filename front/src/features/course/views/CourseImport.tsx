@@ -1,12 +1,12 @@
 import { Link } from "react-router";
-import Header from "../../../../src.legacy/components/UI/header";
+import Header from "../../../../src/components/headers/Header";
 import useImportCourses, {
   CoursesImportStep,
 } from "../hooks/useImportCourses";
-import ParcoursSelection from "../../../../src.legacy/components/import-courses/parcours-selection";
-import ImportResult from "../../../../src.legacy/components/import-courses/import-result";
-import CoursesPreview from "../../../../src.legacy/components/import-courses/courses-preview/courses-preview";
-import MbzImport from "../../../../src.legacy/components/import-courses/mbz-import";
+import ParcoursSelection from "../../../../src/components/import-courses/parcours-selection";
+import ImportResult from "../../../../src/components/import-courses/import-result";
+import CoursesPreview from "../../../../src/components/import-courses/courses-preview/courses-preview";
+import MbzImport from "../../../../src/components/import-courses/mbz-import";
 
 const ImportCoursesHome = () => {
   const {

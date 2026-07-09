@@ -6,8 +6,8 @@ import PermissionsPanel from "../components/permissions/PermissionsPanel";
 import RoleForm from "../components/role-form/RoleForm";
 
 import PageHeader from "../../../components/headers/PageHeader";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import QuestionMarkTooltip from "../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
+import Loader from "../../../../src/components/loaders/Loader";
+import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 const toTitleCase = (str: string) =>
   str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());

@@ -1,9 +1,9 @@
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Module from "../../../../../../src/utils/interfaces/module";
 import PreviewModuleItem from "./preview-module-item";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 
 interface ParcoursPreviewModulesProps {
   onEdit: (id: number) => void;

@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import Graduation from "../../../../utils/interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 

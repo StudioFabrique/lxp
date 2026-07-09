@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Course from "../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
-import TableActionsModal from "../../../../../src.legacy/components/table/table-buttons/table-actions-modal";
+import TableActionsModal from "../../../../components/table/TableActionsModal";
 import { ModalCourseType } from "./course-item";
 
 type CourseActionsModalProps = {

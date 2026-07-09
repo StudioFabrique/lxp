@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
+import apiClient from "../../../lib/axios";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 type ChatbotSource = {
@@ -23,7 +23,7 @@ export type ChatbotValues = {
 };
 
 const useChatbot = () => {
-  const { sendRequest, error, isLoading } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [prompt, setPrompt] = useState<string>("");
 
@@ -60,23 +60,32 @@ const useChatbot = () => {
         origin: "user",
         message: prompt,
         date: beginningDate,
-        textSelection: activityTextSelection || undefined, // Ajout local immédiat dans l'UI
+        textSelection: activityTextSelection || undefined,
       },
     ]);
 
-    const targetTextSelection = activityTextSelection; // Mémoire locale du texte
+    const targetTextSelection = activityTextSelection;
     setActivityTextSelection("");
 
     if (pendingReset) {
       setPendingReset(false);
     }
 
-    const applyData = (data: {
-      text: string;
-      type?: "normal" | "warning" | "error";
-      mode?: string;
-      sources?: ChatbotSource[];
-    }) => {
+    try {
+      setIsLoading(true);
+      const response = await apiClient.post("/chatbot/prompt", {
+        prompt: prompt.trim(),
+        fullPrompt: message,
+        courseId: currentActivity?.courseId,
+        clearHistory: pendingReset,
+        textSelection: targetTextSelection || null,
+      });
+      const data = response.data as {
+        text: string;
+        type?: "normal" | "warning" | "error";
+        mode?: string;
+        sources?: ChatbotSource[];
+      };
       const processedText = data.text;
 
       setDialog((prevState) => [
@@ -91,27 +100,7 @@ const useChatbot = () => {
         },
       ]);
       setPrompt("");
-    };
-
-    sendRequest(
-      {
-        path: "/chatbot/prompt",
-        method: "post",
-        body: {
-          prompt: prompt.trim(),
-          fullPrompt: message,
-          courseId: currentActivity?.courseId,
-          clearHistory: pendingReset,
-          textSelection: targetTextSelection || null,
-        },
-      },
-      applyData,
-    );
-  };
-
-  useEffect(() => {
-    if (error && error.length > 0) {
-      console.error("Chatbot error:", error);
+    } catch {
       setDialog((prevState) => [
         ...prevState,
         {
@@ -122,20 +111,25 @@ const useChatbot = () => {
           type: "error",
         },
       ]);
+    } finally {
+      setIsLoading(false);
     }
-  }, [error]);
+  };
 
-  const getConversationData = useCallback(() => {
-    const applyData = (data: {
-      success: boolean;
-      dialogs: ChatbotValues[];
-    }) => {
+  const getConversationData = useCallback(async () => {
+    try {
+      const response = await apiClient.get("/chatbot/dialogs");
+      const data = response.data as {
+        success: boolean;
+        dialogs: ChatbotValues[];
+      };
       if (data.success) {
         setDialog(data.dialogs);
       }
-    };
-    sendRequest({ path: `/chatbot/dialogs`, method: "get" }, applyData);
-  }, [sendRequest]);
+    } catch {
+      // silently fail
+    }
+  }, []);
 
   useEffect(() => {
     getConversationData();

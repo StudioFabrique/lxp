@@ -1,5 +1,5 @@
 import Lesson from "../../../../../src/utils/interfaces/lesson";
-import { ExplorerStore } from "../../../../../src.legacy/views/module-content-explorer/module-content-explorer";
+import { ExplorerStore } from "../../views/ModuleContentExplorer";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";

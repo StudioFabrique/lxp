@@ -1,14 +1,14 @@
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import Header from "../../../../src.legacy/components/UI/header";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import bgImage from "../../../../src.legacy/assets/images/lesson.png";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
+import Header from "../../../../src/components/headers/Header";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import bgImage from "../../../../src/assets/images/lesson.png";
 
 import useAddLesson from "../hooks/useAddLesson";
 
 import LessonForm from "../../../features/course/components/edit/scenario/lesson-form";
-import CourseSelecters from "../../../../src.legacy/components/add-lesson/course-selecters";
-import NewLessonActions from "../../../../src.legacy/components/add-lesson/new-lesson-actions";
-import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
+import CourseSelecters from "../../../../src/components/add-lesson/course-selecters";
+import NewLessonActions from "../../../../src/components/add-lesson/new-lesson-actions";
+import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 
 function AddNewLesson() {
   const {

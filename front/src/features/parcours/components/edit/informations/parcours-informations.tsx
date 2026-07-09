@@ -3,11 +3,10 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
-import VirtualClass from "../../../../../../src.legacy/components/virtual-class";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import VirtualClass from "../../../../../../src/components/virtual-class";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import DatesSelecter from "../../../../../../src.legacy/components/UI/dates-selecter/dates-selecter.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import DatesSelecter from "../../../../../components/UI/dates-selecter/dates-selecter.component";
 
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
@@ -17,6 +16,7 @@ import ContactsWithDrawer from "./contacts-with-drawer";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import TagsWithDrawer from "./tags-with-drawer";
 import useInfosService from "../../../hooks/useInfosService";
+import { parcoursApi } from "../../../api/parcours.api";
 
 type Props = {
   parcoursId: string;
@@ -32,7 +32,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     (state) => state.parcoursInformations.infos.endDate,
   );
   const dispatch = useParcoursDispatch();
-  const { sendRequest, error } = useHttp();
   const {
     loadingContacts,
     loadingTags,
@@ -50,22 +49,21 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   );
 
   const updateDates = useCallback(
-    (startDate: string, endDate: string) => {
-      const processData = (data: { success: boolean; message: string }) => {
+    async (startDate: string, endDate: string) => {
+      try {
+        const data = await parcoursApi.mutations.updateParcoursDates({
+          parcoursId,
+          startDate,
+          endDate,
+        });
         if (data.success) {
           toast.success(data.message);
         }
-      };
-      sendRequest(
-        {
-          path: "/parcours/update-dates",
-          method: "put",
-          body: { parcoursId, startDate, endDate },
-        },
-        processData,
-      );
+      } catch {
+        toast.error("Erreur lors de la mise à jour des dates");
+      }
     },
-    [parcoursId, sendRequest],
+    [parcoursId],
   );
 
   const handleUpdateContacts = useCallback(
@@ -112,28 +110,28 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
 
   // met à jour la classe virtuelle vers la bdd
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       const formIsValid = virtualClass.isValid;
-      const processData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-        } else {
+      if (formIsValid && submitVirtualClass) {
+        try {
+          const data = await parcoursApi.mutations.updateParcoursVirtualClass({
+            parcoursId,
+            virtualClass: virtualClass.value,
+          });
+          if (data.success) {
+            toast.success(data.message);
+          } else {
+            toast.error(
+              "Le lien vers la classe virtuelle n'a pas été mis à jour",
+            );
+          }
+        } catch {
           toast.error(
             "Le lien vers la classe virtuelle n'a pas été mis à jour",
           );
         }
         dispatch(
           { type: "SET_VIRTUAL_CLASS", payload: virtualClass.value },
-        );
-      };
-      if (formIsValid && submitVirtualClass) {
-        sendRequest(
-          {
-            path: "/parcours/update-virtual-class",
-            method: "put",
-            body: { parcoursId, virtualClass: virtualClass.value },
-          },
-          processData,
         );
         setSubmitVirtualClass(false);
       }
@@ -146,18 +144,9 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.isValid,
     submitVirtualClass,
     dispatch,
-    sendRequest,
   ]);
 
-  // gère les erreurs HTTP
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
-
   return (
-    <div className="w-full">
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
@@ -191,7 +180,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           </Wrapper>
         </div>
       </div>
-    </div>
   );
 };
 

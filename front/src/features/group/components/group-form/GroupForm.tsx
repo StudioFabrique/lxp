@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, FormEvent, useEffect } from "react";
 
 import Informations from "./GroupFormInformations";
@@ -6,10 +5,11 @@ import Details from "./GroupFormDetails";
 import Group from "../../../../utils/interfaces/group";
 import useGroupForm from "./useGroupForm";
 import FromParcoursWarning from "./GroupFormParcoursWarning";
-import Header from "../../../../../src.legacy/components/UI/header";
+import Header from "../../../../../src/components/headers/Header";
 import { Link } from "react-router";
 
 const GroupForm: FC<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmitForm: (data: any, file: File) => void;
   isLoading?: boolean;
   group?: Group;
@@ -20,12 +20,11 @@ const GroupForm: FC<{
   fromParcours?: string;
 }> = (props) => {
   const {
+    register,
     errors,
-    onChangeValue,
     onSelectParcours,
     onSetFile,
     onSubmit,
-    values,
     parcoursId,
   } = useGroupForm({
     onSubmitForm: props.onSubmitForm,
@@ -78,10 +77,10 @@ const GroupForm: FC<{
         } max-lg:grid-cols-1 gap-5`}
       >
         <Informations
-          values={values}
-          onChangeValue={onChangeValue}
+          register={register}
           errors={errors}
           onSetFile={onSetFile}
+          isLoading={props.isLoading}
         />
         {!props.fromParcours ? (
           <Details

@@ -2,8 +2,8 @@ import { Download, Trash2 } from "lucide-react";
 import { displaySize } from "../../helpers/sizeUnitConversion";
 import Media from "../../utils/interfaces/media";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { DOWNLOAD_URL } from "../../config/urls";
 import MediaFilterSelect from "./media-filter-select";
+import { DOWNLOAD_URL } from "../../../src/config/urls";
 
 // Props type definition for the component
 type Props = {

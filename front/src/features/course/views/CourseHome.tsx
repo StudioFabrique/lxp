@@ -1,36 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import CourseList from "../components/list/course-list";
-import CustomCourse from "../components/list/interfaces/custom-course";
 import Loader from "../../../components/loaders/Loader";
-import CustomResponse from "../../../utils/interfaces/custom-response";
+import { courseApi } from "../api/course.api";
 
 const CourseHome = () => {
-  const { sendRequest, isLoading } = useHttp();
-  const [coursesList, setCoursesList] = useState<CustomCourse[] | null>(null);
+  const queryClient = useQueryClient();
+  const { data: coursesList, isLoading } = useQuery(courseApi.queries.list());
 
-  const getCourses = useCallback(async () => {
-    const applyData = (data: CustomResponse) => {
-      if (data.success) {
-        setCoursesList(data.response);
-      }
-    };
-    sendRequest(
-      {
-        path: "/course",
-      },
-      applyData,
-    );
-  }, [sendRequest]);
-
-  /**
-   * récupère la liste des cours depuis la bdd
-   */
-  useEffect(() => {
-    getCourses();
-  }, [getCourses]);
+  const handleRefreshCourses = () => {
+    queryClient.invalidateQueries({ queryKey: ["courses"] });
+  };
 
   return (
     <main className="w-full min-h-screen flex justify-center">
@@ -43,7 +24,7 @@ const CourseHome = () => {
           {coursesList ? (
             <CourseList
               coursesList={coursesList}
-              onRefreshCourses={getCourses}
+              onRefreshCourses={handleRefreshCourses}
             />
           ) : null}
         </div>

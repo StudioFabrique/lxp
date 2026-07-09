@@ -1,4 +1,5 @@
-import { localeDate } from "../../helpers/locale-date";
+
+import { localeDate } from "../../../src/utils/helpers/locale-date";
 import CourseDates from "../../utils/interfaces/course-dates";
 import EditIcon from "../UI/svg/edit-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";

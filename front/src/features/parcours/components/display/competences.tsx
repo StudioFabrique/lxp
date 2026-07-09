@@ -1,5 +1,5 @@
 import { useParcoursSelector } from "../../store/ParcoursContext";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 const Competences = () => {
   const skills = useParcoursSelector((state) => state.parcoursSkills.skills);

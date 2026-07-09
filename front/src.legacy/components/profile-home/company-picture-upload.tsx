@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import ColorPicker from "../UI/color-picker";
-import { COMPANY_LOGO } from "../../config/urls";
+import { COMPANY_LOGO } from "../../../src/config/urls";
 
 const CompanyPictureUpload = () => {
   const { sendRequest } = useHttp(true);

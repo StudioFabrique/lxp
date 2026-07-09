@@ -1,21 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardAdminApi } from "../../api/dashboard-admin.api";
 import BestLessonsStatsList from "./best-courses-list";
 import { Link } from "react-router";
-import useHttp from "../../../../../src/hooks/useHttp";
-import LessonsQualityStats from "../../../../utils/interfaces/lessons-quality-stats";
 
 const TeacherLessonsQualityStats = () => {
-  const { sendRequest } = useHttp();
-
-  const [stats, setStats] = useState<LessonsQualityStats>();
-
-  useEffect(() => {
-    const applyData = (data: LessonsQualityStats) => {
-      setStats(data);
-    };
-
-    sendRequest({ path: "/course/best-rated" }, applyData);
-  }, [sendRequest]);
+  const { data: stats } = useQuery({
+    queryKey: ["best-rated-courses"],
+    queryFn: dashboardAdminApi.queries.getBestRatedCourses,
+  });
 
   return (
     <div className="flex flex-col gap-2 w-[40%]">

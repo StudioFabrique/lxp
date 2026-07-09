@@ -1,8 +1,8 @@
 import { Link, useSearchParams, useParams } from "react-router";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import Stepper from "../../../../src.legacy/components/UI/stepper.-component/stepper.-component";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import CourseInfos from "../components/edit/informations/course-infos";
 import { stepsCourse } from "../../../config/steps/steps-course";
 import useSteps from "../../../../src/hooks/useSteps";
@@ -11,29 +11,31 @@ import CourseCalendar from "../components/edit/calendar/course-calendar";
 import CoursePreview from "../components/edit/preview/course-preview";
 import Step from "../../../../src/utils/interfaces/step";
 import { useCourseDispatch } from "../store/CourseContext";
-import useHttp from "../../../../src/hooks/useHttp";
 import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
+import { courseApi } from "../api/course.api";
+import Stepper from "../../../components/UI/stepper-component/stepper-component";
 
 const EditCourseHome = () => {
   const dispatch = useCourseDispatch();
   const { courseId } = useParams();
-  const { sendRequest } = useHttp();
   const [searchParams] = useSearchParams();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsCourse as Step[]);
   const [step, setStep] = useState<string | null>(searchParams.get("step"));
 
-  /**
-   * charge les informations du cours depuis l'API et les stocke
-   * dans le context global au montage de la page d'édition
-   */
+  const { data: courseData } = useQuery({
+    ...courseApi.queries.infos(courseId!),
+    enabled: !!courseId,
+  });
+
   useEffect(() => {
-    if (!courseId) return;
-    const applyData = (data: any) => {
-      dispatch({ type: "SET_COURSE", payload: formatCourseFromHttp(data) });
-    };
-    sendRequest({ path: `/course/infos/${courseId}` }, applyData);
-  }, [courseId, dispatch, sendRequest]);
+    if (courseData) {
+      dispatch({
+        type: "SET_COURSE",
+        payload: formatCourseFromHttp(courseData),
+      });
+    }
+  }, [courseData, dispatch]);
 
   /**
    * actualise le stepper et affiche le composant précédent

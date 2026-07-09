@@ -14,7 +14,7 @@ export const adminParcoursRoutes: RouteObject[] = [
     element: withSuspense(ParcoursLayout),
     children: [
       { index: true, element: withSuspense(ParcoursHome) },
-      { path: "add", element: withSuspense(ParcoursAdd) },
+      { path: "new", element: withSuspense(ParcoursAdd) },
       { path: "edit/:id", element: withSuspense(EditParcours) },
       { path: "view/:id", element: withSuspense(ParcoursView) },
     ],
