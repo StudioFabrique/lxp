@@ -17,7 +17,7 @@ services:
       - lxp
     depends_on:
       - lxp
-   environment:
+    environment:
       # --- Configuration Caddy ---
       - OVH_ENDPOINT=${OVH_ENDPOINT}
       - OVH_APPLICATION_KEY={$OVH_APPLICATION_KEY}
