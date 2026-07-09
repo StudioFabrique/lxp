@@ -2,7 +2,7 @@ name: lxp
 
 services:
   caddy:
-    image: caddy:2-alpine
+    build: ./reverse-proxy-files
     restart: always
     container_name: caddy-proxy
     ports:
