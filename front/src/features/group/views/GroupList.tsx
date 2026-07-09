@@ -14,8 +14,8 @@ import { getGroupColumns } from "../components/group-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
 import useTablePaginatedData from "../../../components/table/hooks/useTablePaginatedData";
 import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";

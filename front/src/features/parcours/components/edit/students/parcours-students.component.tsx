@@ -4,20 +4,19 @@ import { useParcoursSelector, useParcoursDispatch } from "../../../store/Parcour
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import GroupsList from "./groups-list.component";
-import useHttp from "../../../../../../src/hooks/useHttp";
 import Group from "../../../../../../src/utils/interfaces/group";
 import StudentsList from "./students-list";
 import User from "../../../../../../src/utils/interfaces/user";
 
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import toast from "react-hot-toast";
-import QuestionMarkTooltip from "../../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
+import { parcoursApi } from "../../../api/parcours.api";
+import ButtonAdd from "../../../../../components/UI/button-add/button-add";
+import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
-// Interface définissant la structure d'un groupe d'étudiants
 export type GroupList = {
   _id: string;
   name: string;
@@ -29,100 +28,69 @@ export type GroupList = {
   isSelected: boolean;
 };
 
-/**
- * Composant qui gère l'affichage et la gestion des étudiants d'un parcours
- * Les étudiants sont regroupés par groupes qui peuvent être ajoutés ou supprimés du parcours
- */
 const ParcoursStudents = () => {
   const [fetchedGroups, setFetchedGroups] = useState<GroupList[]>([]);
   const dispatch = useParcoursDispatch();
-  // Récupère la liste des groupes depuis le store Redux
   const groups = useParcoursSelector(
     (state) => state.parcoursGroups.groups
   ) as Group[];
-  const { sendRequest } = useHttp();
-  // État local pour stocker la liste des étudiants
   const [students, setStudents] = useState<User[] | null>(null);
-  // Récupère l'id du parcours depuis l'URL
   const { id } = useParams();
-  // Récupère les IDs des groupes depuis le store Redux
   const groupsIds = useParcoursSelector(
     (state) => state.parcoursGroups.groupsIds
-  ) as string[];
-  // Référence pour gérer le premier rendu du composant
+  ) as { idMdb: string }[];
   const isInitialRender = useRef(true);
 
-  /**
-   * Gère l'ouverture et la fermeture du drawer latéral
-   * Charge la liste des groupes d'étudiants à la première ouverture du drawer
-   * @param id - L'identifiant du drawer à ouvrir/fermer
-   */
   const handleDrawer = (id: string) => {
     if (fetchedGroups.length === 0) fetchGroups();
     document.getElementById(id)?.click();
   };
 
-  /**
-   * Charge la liste des groupes d'étudiants à la première ouverture du drawer
-   */
-  const fetchGroups = useCallback(() => {
-    const applyData = (data: {
-      success: true;
-      message: string;
-      data: GroupList[];
-    }) => {
-      if (data.success) {
+  const fetchGroups = useCallback(async () => {
+    try {
+      const res = await parcoursApi.queries.getStudentGroups();
+      if (res.success) {
         setFetchedGroups(
-          data.data.map((item) => ({ ...item, isSelected: false }))
+          res.data.map((item: GroupList) => ({ ...item, isSelected: false }))
         );
       }
-    };
-    sendRequest({ path: "/group/student" }, applyData);
-  }, [sendRequest]);
+    } catch {
+      toast.error("Erreur lors du chargement des groupes");
+    }
+  }, []);
 
-  // envoie une requête pour récupérer la liste des étudiants appartenants aux groupes et une requête pour mettre la liste des groupes attachés au parcours à jour
   useEffect(() => {
     let timer: any;
     if (groups) {
-      // Fonction qui met à jour la liste des étudiants avec leurs groupes respectifs
-      const applyData = (data: any) => {
-        let updatedStudents = Array<User>();
-        data.forEach((item: any) => {
-          const updatedItem = item.users.map((user: any) => ({
-            ...user,
-            group: { _id: item._id, name: item.name },
-          }));
-          updatedStudents = [...updatedStudents, ...updatedItem];
-        });
-        setStudents(updatedStudents);
+      const fetchStudents = async () => {
+        try {
+          const data = await parcoursApi.queries.getStudentsByGroupIds(
+            groups.map((item) => item._id).filter(Boolean) as string[]
+          );
+          let updatedStudents = Array<User>();
+          (data as any[]).forEach((item: any) => {
+            const updatedItem = item.users.map((user: any) => ({
+              ...user,
+              group: { _id: item._id, name: item.name },
+            }));
+            updatedStudents = [...updatedStudents, ...updatedItem];
+          });
+          setStudents(updatedStudents);
+        } catch {
+          toast.error("Erreur lors du chargement des étudiants");
+        }
       };
-      // Requête pour récupérer les étudiants des groupes
-      sendRequest(
-        {
-          path: `/user/group`,
-          method: "post",
-          body: groups.map((item) => item._id),
-        },
-        applyData
-      );
-      // Fonction appelée après la mise à jour des groupes du parcours
-      const processData = (_data: any) => {
-        toast.success("Le parcours a été mis à jour");
-      };
-      // Timer pour l'auto-sauvegarde des modifications
+      fetchStudents();
+
       timer = setTimeout(() => {
         if (!isInitialRender.current) {
-          sendRequest(
-            {
-              path: "/parcours/groups",
-              method: "put",
-              body: {
-                parcoursId: id,
-                groupsIds: groups.map((item) => item._id),
-              },
-            },
-            processData
-          );
+          parcoursApi.mutations
+            .updateParcoursGroups({
+              parcoursId: id!,
+              groupsIds: groups.map((item) => item._id).filter(Boolean) as string[],
+            })
+            .then(() => toast.success("Le parcours a été mis à jour"))
+            .catch(() => toast.error("Erreur lors de la mise à jour"));
         } else {
           isInitialRender.current = false;
         }
@@ -131,27 +99,24 @@ const ParcoursStudents = () => {
     return () => {
       clearTimeout(timer);
     };
-  }, [dispatch, groups, id, sendRequest]);
+  }, [groups, id]);
 
-  // qd le parcours est chargé en mémoire, s'il a déjà des groupes, les ids de ces derniers sont stockés en mémoire
-  // qd ce composant est initialisé, le useEffect récupère la liste des groupes venant venant de la collection Group de la bdd MongoDB
-  // les ids des groupes stockés lors du chargement du parcours en mémoire sont ensuite effacés pour que la requête ne se relance plus
   useEffect(() => {
-    const processData = (data: any) => {
-      dispatch({ type: "SET_GROUPS", payload: data });
-      dispatch({ type: "RESET_GROUPS_IDS" });
+    const fetchGroupsByIds = async () => {
+      try {
+        const data = await parcoursApi.queries.getStudentsByGroupIds(
+          groupsIds.map((item: any) => item.idMdb)
+        );
+        dispatch({ type: "SET_GROUPS", payload: data });
+        dispatch({ type: "RESET_GROUPS_IDS" });
+      } catch {
+        toast.error("Erreur lors du chargement des groupes");
+      }
     };
     if (groupsIds) {
-      sendRequest(
-        {
-          path: "/user/group",
-          method: "post",
-          body: groupsIds.map((item: any) => item.idMdb),
-        },
-        processData
-      );
+      fetchGroupsByIds();
     }
-  }, [groupsIds, dispatch, sendRequest]);
+  }, [groupsIds, dispatch]);
 
   /**
    * Gère l'ouverture du drawer pour ajouter des groupes au parcours

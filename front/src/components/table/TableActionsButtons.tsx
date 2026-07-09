@@ -1,5 +1,5 @@
 import { RefreshCw } from "lucide-react";
-import ActionsDropdown from "../../../src.legacy/components/UI/actions-dropdown/actions-dropdown";
+import ActionsDropdown from "../../components/UI/actions-dropdown/actions-dropdown";
 import TableActionsModal from "./TableActionsModal";
 import { useState } from "react";
 

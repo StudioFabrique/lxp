@@ -8,16 +8,16 @@ import { searchListCourse } from "../../../../utils/helpers/search-list-course";
 import { courseSearchOptions } from "../../../../config/search-options";
 
 // Imports des composants UI
-import ToggleList from "../../../../../src.legacy/components/UI/toggle-list";
+import ToggleList from "../../../../components/UI/toggle-list";
 import CourseTable from "./course-table";
-import Pagination from "../../../../../src.legacy/components/UI/pagination/pagination";
+import Pagination from "../../../../components/UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
 import useDeleteCourse from "../../../../../src/hooks/useDeleteCourse";
-import ModalDeleteCourse from "../../../../../src.legacy/components/UI/modal-delete-course";
-import SearchAndRefresh from "../../../../../src.legacy/components/UI/search-and-refresh";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import ListHeader from "../../../../../src.legacy/components/UI/list-header";
+import ModalDeleteCourse from "../../../../../src/components/UI/modal-delete-course";
+import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import ListHeader from "../../../../components/UI/list-header";
 import CourseHeader from "./course-header";
 
 // Interface définissant les props du composant

@@ -23,7 +23,7 @@ import {
   Turtle,
 } from "lucide-react";
 import { type PropsWithChildren, useMemo } from "react";
-import FadeWrapper from "../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 
 const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
   const iconClassName = "w-40 h-40 text-primary";
@@ -84,7 +84,7 @@ const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
   return (
     <div className="select-none shadow-sm bg-base-200 border border-base-300 rounded-lg">
       <FadeWrapper>
-        <div className="flex flex-col gap-10 min-h-[50vh] justify-center">
+        <div className="flex flex-col items-center gap-10 min-h-[50vh] justify-center">
           {randomIcon}
           {children ? (
             children

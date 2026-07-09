@@ -8,8 +8,8 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import type StudentFeedback from "../../../utils/interfaces/student-feedback";
-import FeelingLevel from "../../../../src.legacy/components/UI/feeling-level";
-import SortColumnIcon from "../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import FeelingLevel from "../../../components/UI/feeling-level";
+import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
 
 type Props = {
   feedbacks: StudentFeedback[];

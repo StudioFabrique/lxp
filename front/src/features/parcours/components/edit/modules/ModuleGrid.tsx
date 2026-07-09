@@ -1,5 +1,5 @@
 import { ModuleData } from "../../../../../../src/utils/interfaces/new-module";
-import ElementNotFound from "../../../../../../src.legacy/components/UI/element-not-found";
+import ElementNotFound from "../../../../../components/UI/element-not-found";
 import ModulesList from "./modules-list";
 
 type ModuleGridProps = {

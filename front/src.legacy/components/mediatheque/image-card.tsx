@@ -1,5 +1,6 @@
-import { ACTIVITIES } from "../../config/urls";
-import bgImageGradient from "../../utils/bg-image-gradient";
+
+import { ACTIVITIES } from "../../../src/config/urls";
+import { bgImageGradient } from "../../../src/utils/helpers/color-helpers";
 import Media from "../../utils/interfaces/media";
 
 type Props = {

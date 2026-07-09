@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 
 import LinearScenarioLessons from "./linear-scenario-lessons";
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import courseScenarioFromHttp from "../../../../../utils/helpers/course-scenario-from-http";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import toast from "react-hot-toast";
-import ButtonAdd from "../../../../../../src.legacy/components/UI/button-add/button-add";
 import LessonsInDrawer from "./lessons-in-drawer";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import { courseApi } from "../../../api/course.api";
+import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 
 const CourseScenario = () => {
   const { courseId } = useParams();
-  const { sendRequest, error } = useHttp();
   const dispatch = useCourseDispatch();
   const scenario = useCourseSelector(
     (state) => state.scenario
@@ -29,49 +29,53 @@ const CourseScenario = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSaveManyLessons = (lessonsIds: number[]) => {
+  const { data: scenarioData, error } = useQuery({
+    ...courseApi.queries.scenario(courseId!),
+    enabled: !!courseId,
+  });
+
+  useEffect(() => {
+    if (scenarioData) {
+      dispatch({
+        type: "INIT_COURSE_DATA",
+        payload: courseScenarioFromHttp(scenarioData),
+      });
+    }
+  }, [scenarioData, dispatch]);
+
+  const handleSaveManyLessons = async (lessonsIds: number[]) => {
     let newLessons = Array<number>();
     lessonsIds.forEach((id) => {
       if (!lessons.find((item) => item.id === id))
         newLessons = [...newLessons, id];
     });
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: { id: number; title: string };
-    }) => {
-      setLoading(false);
+    setLoading(true);
+    try {
+      const data = await courseApi.mutations.duplicateLessons(courseId!, newLessons);
       if (data.success) {
         toast.success(data.message);
         dispatch({ type: "ADD_MANY_LESSONS", payload: [data.response as Lesson] });
       }
-    };
-    setLoading(true);
-    sendRequest(
-      {
-        path: `/lesson/duplicate/${courseId}`,
-        method: "post",
-        body: newLessons,
-      },
-      applyData
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    }
+    setLoading(false);
   };
 
-  const reorderLessons = useCallback(() => {
-    const applyData = (_data: any) => {
+  const reorderLessons = useCallback(async () => {
+    try {
+      await courseApi.mutations.reorderLessons(
+        courseId!,
+        lessons.map((item) => item.id).filter((id): id is number => id !== undefined),
+      );
       setLoading(false);
       setSuccess(true);
-    };
-    sendRequest(
-      {
-        path: `/lesson/reorder/${courseId}`,
-        method: "put",
-        body: lessons.map((item) => item.id),
-      },
-      applyData
-    );
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+      setLoading(false);
+    }
     dispatch({ type: "RESET_SUBMIT" });
-  }, [courseId, dispatch, lessons, sendRequest]);
+  }, [courseId, dispatch, lessons]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -85,18 +89,6 @@ const CourseScenario = () => {
   }, [submit, reorderLessons]);
 
   useEffect(() => {
-    const applyData = (data: any) => {
-      dispatch({ type: "INIT_COURSE_DATA", payload: courseScenarioFromHttp(data) });
-    };
-    sendRequest(
-      {
-        path: `/course/scenario/${courseId}`,
-      },
-      applyData
-    );
-  }, [courseId, dispatch, sendRequest]);
-
-  useEffect(() => {
     let timer: NodeJS.Timeout;
     if (success) {
       timer = setTimeout(() => {
@@ -107,9 +99,8 @@ const CourseScenario = () => {
   }, [success]);
 
   useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-      setLoading(false);
+    if (error) {
+      toast.error((error as any)?.message ?? "Erreur inconnue");
       setLoading(false);
     }
   }, [error]);

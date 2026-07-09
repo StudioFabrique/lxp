@@ -3,13 +3,12 @@ import { useCourseSelector } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
 import CoursePreviewInfos from "./course-preview-infos";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
-import PreviewLessons from "../../../../../../src.legacy/components/preview/preview-lessons";
+import PreviewLessons from "../../../../../../src/components/preview/preview-lessons";
 import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
-import PreviewCalendar from "../../../../../../src.legacy/components/preview/preview-calendar";
+import PreviewCalendar from "../../../../../../src/components/preview/preview-calendar";
 import { Link, useNavigate, useParams } from "react-router";
 import useValidateCourse from "./hook/use-validate-course";
-import useHttp from "../../../../../../src/hooks/useHttp";
-import { useEffect } from "react";
+import { courseApi } from "../../../api/course.api";
 
 interface CoursePreviewProps {
   onEdit: (id: number) => void;
@@ -25,16 +24,16 @@ const CoursePreview = (props: CoursePreviewProps) => {
   const dates = useCourseSelector(
     (state) => state.courseDates
   ) as CourseDates[];
-  const { sendRequest, error } = useHttp();
   const nav = useNavigate();
   const { validateCourse } = useValidateCourse();
 
-  const handlePublishCourse = () => {
+  const handlePublishCourse = async () => {
     const validationsErrors = validateCourse();
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
     } else {
-      const applyData = (data: { success: boolean; message: string }) => {
+      try {
+        const data = await courseApi.mutations.publish(courseId!);
         if (data.success) {
           toast.success(data.message);
           setTimeout(() => {
@@ -43,20 +42,11 @@ const CoursePreview = (props: CoursePreviewProps) => {
             });
           }, 500);
         }
-      };
-      sendRequest(
-        {
-          path: `/course/publish/${courseId}`,
-          method: "put",
-        },
-        applyData
-      );
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+      }
     }
   };
-
-  useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
 
   return (
     <div className="w-full flex flex-col gap-y-8">

@@ -4,10 +4,10 @@ import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList
 import User from "../../../../../../src/utils/interfaces/user";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { useState } from "react";
-import Pagination from "../../../../../../src.legacy/components/UI/pagination/pagination";
-import Search from "../../../../../../src.legacy/components/UI/search/search.component";
+import Pagination from "../../../../../components/UI/pagination/pagination";
+import Search from "../../../../../../src/components/UI/search/search.component";
 import { userInGroupSearchOptions } from "../../../../../config/search-options";
-import RefreshIcon from "../../../../../../src.legacy/components/UI/svg/refresh-icon.component";
+import RefreshIcon from "../../../../../../src/components/UI/svg/refresh-icon.component";
 import StudentsListTable from "./students-list-table";
 import { UserX } from "lucide-react";
 

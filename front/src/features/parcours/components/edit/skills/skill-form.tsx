@@ -4,8 +4,8 @@ import Skill from "../../../../../../src/utils/interfaces/skill";
 import Badge from "../../../../../../src/utils/interfaces/badge";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
-import DrawerFormButtons from "../../../../../../src.legacy/components/UI/drawer-form-buttons/drawer-form-buttons.component";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import BadgeList from "./badge/badge-list.component";
 
 type Props = {

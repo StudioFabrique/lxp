@@ -1,32 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Socket } from "socket.io-client";
 import StudentFeedback from "../../../utils/interfaces/student-feedback";
 import { AuthContext } from "../../../store/AuthProvider";
-import useHttp from "../../../../src/hooks/useHttp";
+import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import Wrapper from "../../../components/wrappers/BoxWrapper";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
-import AvatarCard from "../../../../src.legacy/components/UI/avatar-card";
+import AvatarCard from "../../../components/UI/avatar-card";
 
 export default function LastFeedback() {
   const { socket } = useContext(AuthContext);
-  const { sendRequest } = useHttp();
 
   const [feedbacks, setFeedbacks] = useState<StudentFeedback[]>([]);
 
-  const getLastFeedback = useCallback(() => {
-    const applyData = (data: any) => {
+  useQuery({
+    queryKey: ["last-feedbacks-false"],
+    queryFn: async () => {
+      const data = await dashboardAdminApi.queries.getLastFeedbacks();
       if (data.success) {
-        setFeedbacks(data.response);
+        setFeedbacks(data.response as StudentFeedback[]);
       }
-    };
-    sendRequest(
-      {
-        path: "/user/last-feedbacks/false",
-      },
-      applyData,
-    );
-  }, [sendRequest]);
+      return data;
+    },
+  });
 
   const reviewFeedback = (studentId: string, feedbackId: string) => {
     if (mySocket) {
@@ -58,10 +55,6 @@ export default function LastFeedback() {
       });
     }
   }, [mySocket]);
-
-  useEffect(() => {
-    getLastFeedback();
-  }, [getLastFeedback]);
 
   return (
     <div className="flex flex-col gap-y-2 w-full">

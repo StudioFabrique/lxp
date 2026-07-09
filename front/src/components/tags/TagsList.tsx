@@ -1,5 +1,5 @@
 import type Tag from "../../utils/interfaces/tag";
-import TagItem from "../../../src.legacy/components/UI/tag-item/tag-item";
+import TagItem from "../UI/tag-item/tag-item";
 
 type Props = {
   tagsList: Tag[];

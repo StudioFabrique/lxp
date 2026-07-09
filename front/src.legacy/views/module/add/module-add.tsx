@@ -4,12 +4,12 @@ import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 
 import { useMemo } from "react";
 import defaultImage from "../../../assets/images/module-default.jpg";
-import bgImageGradient from "../../../utils/bg-image-gradient";
 import TwoButtonsModal from "../../../components/UI/modal/two-buttons-modal";
 import ModuleCreateForm from "../../../components/module-add/ModuleCreateForm";
 import AssociateToParcours from "../../../components/module-add/AssociateToParcours";
 import ButtonButton from "../../../components/module-add/ButtonButton";
 import useNewModule from "../../../components/module-add/useAddModule";
+import { bgImageGradient } from "../../../../src/utils/helpers/color-helpers";
 
 export default function ModuleAdd() {
   const {

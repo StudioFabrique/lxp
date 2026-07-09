@@ -1,7 +1,7 @@
 // Import des dépendances nécessaires
 import { useContext } from "react";
 
-import Pagination from "../../../../../../src.legacy/components/UI/pagination/pagination";
+import Pagination from "../../../../../components/UI/pagination/pagination";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import StudentGroupList from "./student-group-list";

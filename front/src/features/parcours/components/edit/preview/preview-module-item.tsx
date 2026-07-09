@@ -1,8 +1,8 @@
-import { notValidModuleTooltip } from "../../../../../../src.legacy/lib/not-valid-module";
+import { notValidModuleTooltip } from "../../../../../../src/config/not-valid-module";
 import Module from "../../../../../../src/utils/interfaces/module";
-import ToolTipWarning from "../../../../../../src.legacy/components/UI/tooltip-warning/tooltip-warning";
-import defaultImage from "../../../../../../src.legacy/assets/images/module-default-thumb.png";
-import bgImageGradient from "../../../../../utils/helpers/bg-image-gradient";
+import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip-warning";
+import defaultImage from "../../../../../../src/assets/images/module-default-thumb.png";
+import { bgImageGradient } from "../../../../../utils/helpers/color-helpers";
 
 interface PreviewModuleItemProps {
   module: Module;

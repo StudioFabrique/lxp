@@ -1,34 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import BookIcon from "../../../../../../../src.legacy/components/UI/svg/book-icon";
-import useHttp from "../../../../../../../src/hooks/useHttp";
+import BookIcon from "../../../../../../../src/components/UI/svg/book-icon";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../../../../src/utils/interfaces/course";
-import EditIcon from "../../../../../../../src.legacy/components/UI/svg/edit-icon";
+import EditIcon from "../../../../../../../src/components/UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
 import { EyeOff, Import, Plus, UploadCloud } from "lucide-react";
 import { cn } from "../../../../../../utils/cn";
 import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
+import { parcoursApi } from "../../../../api/parcours.api";
 
 const ContenuDetail: FC<{
   canEdit?: boolean;
   parcoursId: number;
   moduleId: number;
 }> = ({ canEdit, parcoursId, moduleId }) => {
-  const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handlePublish = (
+  const handlePublish = async (
     e: React.MouseEvent<HTMLButtonElement>,
     course: Course,
   ) => {
     e.stopPropagation();
 
-    const applyData = (data: { success: boolean; message: string }) => {
+    try {
+      const data = await parcoursApi.mutations.publishCourse(course.id);
       if (data.success) {
         toast.success(data.message);
         setCourses(
@@ -39,26 +39,21 @@ const ContenuDetail: FC<{
           ),
         );
       }
-    };
-
-    sendRequest(
-      { path: `/course/publish/${course.id}`, method: "put" },
-      applyData,
-    );
+    } catch {
+      toast.error("Erreur lors de la publication");
+    }
   };
 
   useEffect(() => {
-    const applyData = (data: any) => {
-      const courses = data.response;
-      setCourses(courses);
-    };
-    sendRequest(
-      {
-        path: `/course/${moduleId}`,
-      },
-      applyData,
-    );
-  }, [sendRequest, moduleId]);
+    setIsLoading(true);
+    parcoursApi.queries
+      .getCoursesByModule(moduleId)
+      .then((data) => {
+        setCourses(data.response);
+      })
+      .catch(() => toast.error("Erreur lors du chargement des cours"))
+      .finally(() => setIsLoading(false));
+  }, [moduleId]);
 
   const contentsList =
     !isLoading && courses.length > 0 ? (

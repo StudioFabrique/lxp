@@ -1,7 +1,7 @@
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import { sortArray } from "../../../../../../src/utils/helpers/sort-array";
-import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import TagItem from "../../../../../components/UI/tag-item/tag-item";
 
 type Props = {
   list: Tag[];

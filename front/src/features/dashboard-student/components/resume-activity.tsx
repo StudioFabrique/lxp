@@ -5,12 +5,12 @@ import {
   FileEditIcon,
   PlayCircleIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
-import useHttp from "../../../../src/hooks/useHttp";
-import ImageHeader from "../../../../src.legacy/components/image-header";
+import ImageHeader from "../../../../src/components/image-header/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 
@@ -19,28 +19,18 @@ type ResumeActivityProps = {
 };
 
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
-  const { sendRequest, isLoading } = useHttp();
-  const [image, setImage] = useState<string>();
-
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
-  useEffect(() => {
-    const applyData = (data: { data: { image: string } }) => {
-      setImage(
-        data.data.image
-          ? `data:image/jpeg;base64,${data.data.image}`
-          : defaultImage,
-      );
-    };
+  const { data: imageBlob, isLoading } = useQuery({
+    queryKey: ["module-image", lastLesson.lesson.course.module.id],
+    queryFn: () => dashboardStudentApi.queries.getModuleImage(lastLesson.lesson.course.module.id!),
+    enabled: !!lastLesson.lesson.course.module.id,
+  });
 
-    sendRequest(
-      {
-        path: `/modules/image/${lastLesson.lesson.course.module.id}`,
-      },
-      applyData,
-    );
-  }, [lastLesson.lesson.course.module.id, sendRequest]);
+  const image = imageBlob
+    ? `data:image/jpeg;base64,${imageBlob}`
+    : defaultImage;
 
   return (
     <div className="flex gap-2">

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
+import { regexGeneric, regexOptionalGeneric } from "../../../../src/config/constantes";
 
 export const infosParCoursSchema = z.object({
   title: z

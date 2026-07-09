@@ -9,7 +9,7 @@
  * <ParcoursHeader />
  * ```
  */
-import Header from "../../../../../src.legacy/components/UI/header";
+import Header from "../../../../../src/components/headers/Header";
 import { Link } from "react-router";
 import { PlusCircle } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -25,7 +25,7 @@ function ParcoursHeader() {
         {/* Permission check - only users with 'write' permission on 'parcours' can see this button */}
         <PermissionGuard action="write" object="parcours">
           {/* Create new course button that navigates to creation page */}
-          <Link className="btn btn-primary btn-soft" to="créer-un-parcours">
+          <Link className="btn btn-primary btn-soft" to="new">
             <div className="flex gap-x-2 items-center">
               <PlusCircle />
               Créer un parcours

@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react";
 import ParcoursStatistiquesItem from "./parcours-statistiques-item";
-import useHttp from "../../../../../src/hooks/useHttp";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardStudentApi } from "../../api/dashboard-student.api";
 
-export interface ParcoursStats {
-  diplome: string;
-  totalWeeks: number;
-  totalHours: number;
-  totalModules: number;
-}
-
-/**
- * composant qui affiche les statistiques du parcours de formation
- * - Niveau d'études
- * - durée en semaines
- * - durée en heures
- * - nombre de modules
- */
 const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
-  const { sendRequest } = useHttp(true);
-  const [stats, setStats] = useState<{ title: string; value: string }[]>();
+  const { data: parcoursStats } = useQuery({
+    queryKey: ["parcours-stats", parcoursId],
+    queryFn: () => dashboardStudentApi.queries.getParcoursStats(parcoursId),
+  });
 
-  useEffect(() => {
-    const applyData = (data: { data: ParcoursStats }) => {
-      const parcoursStats = data.data;
-      setStats([
-        { title: "Diplôme", value: `Niveau ${parcoursStats?.diplome}` },
-        { title: "Semaines", value: String(parcoursStats?.totalWeeks) },
-        { title: "Heures", value: String(parcoursStats?.totalHours) },
-        { title: "Modules", value: String(parcoursStats?.totalModules) },
-      ]);
-    };
-
-    sendRequest({ path: `/stats/parcours/${parcoursId}` }, applyData);
-  }, [sendRequest, parcoursId]);
+  const stats = parcoursStats
+    ? [
+        { title: "Diplôme", value: `Niveau ${parcoursStats.diplome}` },
+        { title: "Semaines", value: String(parcoursStats.totalWeeks) },
+        { title: "Heures", value: String(parcoursStats.totalHours) },
+        { title: "Modules", value: String(parcoursStats.totalModules) },
+      ]
+    : undefined;
 
   return (
     <div className="text-primary grid grid-rows-4 gap-2 w-[10%]">

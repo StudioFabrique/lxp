@@ -1,14 +1,14 @@
-import Field from "../../../../../../../src.legacy/components/UI/forms/field";
-import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import defaultImage from "../../../../../../../src.legacy/assets/images/bookshelf.jpg";
+import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
+import defaultImage from "../../../../../../../src/assets/images/bookshelf.jpg";
 import { activityImageSize } from "../../../../../../config/images-sizes";
-import MemoizedImageFileUpload from "../../../../../../../src.legacy/components/UI/image-file-upload/image-file-upload";
-import SubmitButton from "../../../../../../../src.legacy/components/UI/submit-button";
+import MemoizedImageFileUpload from "../../../../../../components/UI/image-file-upload/image-file-upload";
+import SubmitButton from "../../../../../../components/UI/submit-button";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../config/urls";
-import DialogImages from "../../../../../../../src.legacy/components/mediatheque/dialog-images";
+import DialogImages from "../../../../../../../src/components/mediatheque/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
-import bgImageGradient from "../../../../../../utils/helpers/bg-image-gradient";
+import { bgImageGradient } from "../../../../../../utils/helpers/color-helpers";
+import FormInput from "../../../../../../components/form/FormInput";
 
 type Props = {
   activity?: Activity;
@@ -24,10 +24,11 @@ export default function ImageActivityEditor({
   onSubmit = undefined,
 }: Props) {
   const {
-    data,
+    register,
+    errors,
     handleSubmit,
     image,
-    onResetForm,
+    reset,
     setFile,
     showDialog,
     setShowDialog,
@@ -62,7 +63,7 @@ export default function ImageActivityEditor({
           </h2>
           <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
             <span className="flex flex-col gap-y-4">
-              <Field name="title" label="Titre *" data={data} />
+              <FormInput name="title" label="Titre *" register={register} error={errors.title} />
             </span>
             <span className="flex flex-col gap-y-4">
               <MemoizedImageFileUpload
@@ -88,7 +89,7 @@ export default function ImageActivityEditor({
                 Annuler
               </button>
               <span className="flex justify-end items-center gap-x-2">
-                <button className="btn btn-secondary" onClick={onResetForm}>
+                <button className="btn btn-secondary" onClick={() => reset()}>
                   Réinitialiser
                 </button>
                 <SubmitButton

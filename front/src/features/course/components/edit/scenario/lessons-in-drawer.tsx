@@ -3,21 +3,21 @@
 import { useEffect, useState } from "react";
 import { useCourseSelector } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import useHttp from "../../../../../../src/hooks/useHttp";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import SearchDropdown from "../../../../../../src.legacy/components/UI/search-dropdown/search-dropdown";
-import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
+import SearchDropdown from "../../../../../../src/components/UI/search-dropdown/search-dropdown";
 import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
 import LessonsTable from "./lessons-table";
+import { courseApi } from "../../../api/course.api";
+import TagItem from "../../../../../components/UI/tag-item/tag-item";
 
 interface LessonsInDrawerProps {
   onAddNewLessons: (lessonsIds: number[]) => void;
 }
 
 const LessonsInDrawer = (props: LessonsInDrawerProps) => {
-  const { sendRequest, error } = useHttp();
   const tags = useCourseSelector(
     (state) => state.course?.tags
   ) as Tag[];
@@ -26,6 +26,17 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   const [lessonsList, setLessonsList] = useState<
     LessonWithActivitiesCount[] | null
   >(null);
+
+  const { data: lessonsData, error } = useQuery({
+    ...courseApi.queries.lessonsByTag(tag?.id ?? 0),
+    enabled: !!tag,
+  });
+
+  useEffect(() => {
+    if (lessonsData) {
+      setLessonsList(lessonsData.data);
+    }
+  }, [lessonsData]);
 
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
@@ -69,22 +80,8 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   };
 
   useEffect(() => {
-    const applyData = (data: { data: LessonWithActivitiesCount[] }) => {
-      setLessonsList(data.data);
-    };
-    if (tag) {
-      sendRequest(
-        {
-          path: `/lesson/tag/${tag.id}`,
-        },
-        applyData
-      );
-    }
-  }, [tag, sendRequest]);
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
+    if (error) {
+      toast.error((error as any)?.message ?? "Erreur inconnue");
     }
   }, [error]);
 

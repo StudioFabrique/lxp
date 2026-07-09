@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
-import SortColumnIcon from "../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
-import Pagination from "../../../../src.legacy/components/UI/pagination/pagination";
+import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
+import Pagination from "../../../components/UI/pagination/pagination";
 import type { TopUser } from "../types";
 
 type Props = {

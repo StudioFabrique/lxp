@@ -11,7 +11,7 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import ImageFileUpload from "./image-file-upload";
 import { compressImage } from "../../helpers/compress-image";
 import { headerImageMaxSize } from "../../config/images-sizes";
-import bgImageGradient from "../../utils/bg-image-gradient";
+import { bgImageGradient } from "../../../src/utils/helpers/color-helpers";
 
 type Props = {
   image?: string;

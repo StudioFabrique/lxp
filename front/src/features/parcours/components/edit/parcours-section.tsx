@@ -1,8 +1,8 @@
 import React, { FC, ReactElement, ReactNode } from "react";
 
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
 import ParcoursSectionHeader from "./parcours-section-header";
-import RightSideDrawer from "../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
+import RightSideDrawer from "../../../../components/UI/right-side-drawer/right-side-drawer";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 type Props = {
   title: string;
@@ -32,7 +32,7 @@ const ParcoursSection: FC<Props> = ({
   return (
     <div className="w-full">
       <h3 className="text-3xl font-extrabold mb-4">{section}</h3>
-      <Wrapper>
+      <BoxWrapper>
         <ParcoursSectionHeader
           label={title}
           onImport={handleOpenImportDrawer}
@@ -48,7 +48,7 @@ const ParcoursSection: FC<Props> = ({
             onCloseDrawer: handleCloseDrawer,
           })}
         </RightSideDrawer>
-      </Wrapper>
+      </BoxWrapper>
     </div>
   );
 };

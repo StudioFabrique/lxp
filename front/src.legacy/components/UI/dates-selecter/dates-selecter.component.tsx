@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import useInput from "../../../hooks/use-input";
-import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { formatDateToYYYYMMDD } from "../../../helpers/convert-date";
 import DatePicker from "../../../../src/features/parcours/components/edit/calendrier/date-picker";
+import useInput from "../../../../src/hooks/useInput";
+import { regexGeneric } from "../../../../src/config/constantes";
 
 type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;

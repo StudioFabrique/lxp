@@ -1,19 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 
-import useHttp from "../../../../src/hooks/useHttp";
+import { parcoursApi } from "../api/parcours.api";
 import { useParcoursDispatch } from "../store/ParcoursContext";
 
 const useParcoursService = () => {
-  const { error, isLoading, sendRequest } = useHttp();
   const dispatch = useParcoursDispatch();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string>("");
 
   const getParcours = useCallback(
-    (parcoursId: number) => {
-      const processData = (data: any) => {
+    async (parcoursId: number) => {
+      setIsLoading(true);
+      setError("");
+      try {
+        const data = await parcoursApi.queries.getById(parcoursId);
         const parentTags = data.formation.tags.map((item: any) => item.tag);
-        dispatch({ type: "SET_PARCOURS_ID", payload: data.id });
+        dispatch({ type: "SET_PARCOURS_ID", payload: data.id! });
         dispatch({
           type: "UPDATE_PARCOURS_INFOS",
           payload: {
@@ -26,11 +29,11 @@ const useParcoursService = () => {
         dispatch({
           type: "UPDATE_PARCOURS_DATES",
           payload: {
-            startDate: data.startDate,
-            endDate: data.endDate,
+            startDate: data.startDate ?? "",
+            endDate: data.endDate ?? "",
           },
         });
-        dispatch({ type: "SET_PARCOURS_FORMATION", payload: data.formation });
+        dispatch({ type: "SET_PARCOURS_FORMATION", payload: data.formation as unknown as Record<string, unknown> });
         if (data.image) {
           setImage(`data:image/jpeg;base64,${data.image}`);
         }
@@ -93,15 +96,16 @@ const useParcoursService = () => {
         } else {
           dispatch({ type: "SET_GROUPS", payload: [] });
         }
-      };
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-id/${parcoursId}`,
-        },
-        processData,
-      );
+      } catch (err: unknown) {
+        const message =
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? "Erreur inconnue";
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
     },
-    [dispatch, sendRequest],
+    [dispatch],
   );
 
   useEffect(() => {

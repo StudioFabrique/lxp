@@ -1,6 +1,6 @@
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import CardListItem from "../../../../../src.legacy/components/UI/card-list-item";
-import ElementNotFound from "../../../../../src.legacy/components/UI/element-not-found";
+import CardListItem from "../../../../components/UI/card-list-item";
+import ElementNotFound from "../../../../components/UI/element-not-found";
 import ParcoursCard from "./parcours-card";
 
 interface ParcoursCardsListProps {

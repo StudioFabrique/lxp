@@ -3,11 +3,11 @@ import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import SortColumnIcon from "../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
 import CustomCourse from "./interfaces/custom-course";
-import TableRowWrapper from "../../../../../src.legacy/components/UI/table-row-wrapper";
-import ElementNotFound from "../../../../../src.legacy/components/UI/element-not-found";
-import TableWrapper from "../../../../../src.legacy/components/UI/table-wrapper";
+import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
+import TableWrapper from "../../../../components/UI/table-wrapper";
+import ElementNotFound from "../../../../components/UI/element-not-found";
 
 interface CourseTableProps {
   coursesList: CustomCourse[];

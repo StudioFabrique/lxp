@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
+import { useQuery } from "@tanstack/react-query";
 
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import toast from "react-hot-toast";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import Selecter from "../../../../src.legacy/components/UI/selecter/selecter.component";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import Selecter from "../../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../components/edit/new-course-form";
-import bgImage from "../../../../src.legacy/assets/images/new-parcours-default.jpg";
+import bgImage from "../../../../src/assets/images/new-parcours-default.jpg";
 import { useLocation, useNavigate } from "react-router";
-import bgImageGradient from "../../../utils/helpers/bg-image-gradient";
+import { bgImageGradient } from "../../../utils/helpers/color-helpers";
+import { courseApi } from "../api/course.api";
 
 // type de données pour les listes
 type Item = {
@@ -20,7 +21,6 @@ type Item = {
 };
 
 const AddCourse = () => {
-  const { sendRequest, error } = useHttp();
   const location = useLocation();
   const [parcoursList, setParcoursList] = useState<Item[]>([]);
   const [parcoursId, setParcoursId] = useState<number | null>(
@@ -32,6 +32,27 @@ const AddCourse = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
+
+  const { data: parcoursData } = useQuery({
+    ...courseApi.queries.parcoursSelect(),
+  });
+
+  const { data: modulesData } = useQuery({
+    ...courseApi.queries.modulesByParcours(parcoursId!),
+    enabled: !!parcoursId,
+  });
+
+  useEffect(() => {
+    if (parcoursData) {
+      setParcoursList(parcoursData);
+    }
+  }, [parcoursData]);
+
+  useEffect(() => {
+    if (modulesData) {
+      setModulesList(modulesData);
+    }
+  }, [modulesData]);
 
   // Image affichée sur la vue sous forme de background-image
   const classImage: React.CSSProperties = {
@@ -67,71 +88,22 @@ const AddCourse = () => {
    * @param title string
    */
   const handleSubmit = useCallback(
-    (title: string) => {
+    async (title: string) => {
       if (moduleId) {
         setIsLoading(true);
-        const applyData = (data: any) => {
+        try {
+          const data = await courseApi.mutations.create({ title, moduleId });
           setIsLoading(false);
           toast.success(data.message);
           nav(`/admin/course/edit/${data.course.id}`, { replace: true });
-        };
-        sendRequest(
-          {
-            path: "/course",
-            method: "post",
-            body: { title, moduleId },
-          },
-          applyData
-        );
+        } catch (err: any) {
+          setIsLoading(false);
+          toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+        }
       }
     },
-    [moduleId, nav, sendRequest]
+    [moduleId, nav]
   );
-
-  /**
-   * récupération de la liste des parcours
-   */
-  useEffect(() => {
-    const applyData = (data: Item[]) => {
-      setParcoursList(data);
-    };
-    sendRequest(
-      {
-        path: "/parcours/select",
-      },
-      applyData
-    );
-  }, [sendRequest]);
-
-  /**
-   * récupération de la liste des modules associés à un parcours
-   */
-  useEffect(() => {
-    // quand un parcours est séléctionné on envoie une requête pour
-    // récupérer les modules associés au parcours
-    if (parcoursId) {
-      const applyData = (data: any[]) => {
-        setModulesList(data);
-      };
-
-      sendRequest(
-        {
-          path: `/modules/parcours-modules/${parcoursId}`,
-        },
-        applyData
-      );
-    }
-  }, [parcoursId, sendRequest]);
-
-  /**
-   * gestion des erreurs HTTP
-   */
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-      setIsLoading(false);
-    }
-  }, [error]);
 
   /**
    * Submit automatique du cours si les state passées au router

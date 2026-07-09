@@ -1,32 +1,32 @@
-import { useEffect } from "react";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import useHttp from "../../../../src/hooks/useHttp";
+import { useEffect, useState } from "react";
+import Loader from "../../../../src/components/loaders/Loader";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
+import { lessonApi } from "../api/lesson.api";
 import Lesson from "../../../../src/utils/interfaces/lesson";
 import { Outlet, useParams } from "react-router";
-import ImageHeader from "../../../../src.legacy/components/image-header";
+import ImageHeader from "../../../../src/components/image-header/image-header";
 import toast from "react-hot-toast";
-import books from "../../../../src.legacy/assets/images/bookshelf.jpg";
-import DocDuplicateIcon from "../../../../src.legacy/components/UI/svg/doc-duplicate-icon";
+import books from "../../../../src/assets/images/bookshelf.jpg";
+import DocDuplicateIcon from "../../../../src/components/UI/svg/doc-duplicate-icon";
 import { useLessonSelector, useLessonDispatch } from "../store/LessonContext";
 
 export default function LayoutEditLesson() {
   const dispatch = useLessonDispatch();
   const lesson = useLessonSelector((state) => state.lesson);
   const { lessonId } = useParams();
-  const { sendRequest, error } = useHttp();
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const applyData = (data: Lesson) => {
+    lessonApi.queries.getLessonById(lessonId!).then((data: Lesson) => {
       dispatch({ type: "INIT_LESSON", payload: data });
-    };
-    sendRequest(
-      {
-        path: `/lesson/${lessonId}`,
-      },
-      applyData
-    );
-  }, [lessonId, dispatch, sendRequest]);
+    }).catch((err: any) => {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Une erreur est survenue",
+      );
+    });
+  }, [lessonId, dispatch]);
 
   useEffect(() => {
     if (error.length > 0) {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
 
 import Course from "../../../../src/utils/interfaces/course";
 import Lesson from "../../../../src/utils/interfaces/lesson";
@@ -10,10 +9,12 @@ import Module from "../../../../src/utils/interfaces/module";
 import { BASE_URL, BASE_API_URL } from "../../../config/urls";
 import {
   getMimeType,
+  parseCourseZip,
   sanitizeFilename,
-} from "../../../utils/helpers/import-mime";
-import { parseCourseZip } from "../../../../src.legacy/helpers/course-import-parser";
+} from "../../../utils/helpers/import-course-helpers";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
+import apiClient from "../../../lib/axios";
+import { courseApi } from "../api/course.api";
 
 export enum CoursesImportStep {
   MbzImport,
@@ -49,7 +50,6 @@ export type CourseImport = Course & {
 };
 
 export default function useImportCourses() {
-  const { sendRequest, apiClient: axiosInstance } = useHttp();
 
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
@@ -107,7 +107,7 @@ export default function useImportCourses() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await axiosInstance.post(
+        const response = await apiClient.post(
           `${BASE_API_URL}/course/import-mbz`,
           formData,
           {
@@ -237,7 +237,7 @@ export default function useImportCourses() {
         setIsLoading(false);
       }
     },
-    [axiosInstance, step],
+    [step],
   );
 
   /**
@@ -254,17 +254,13 @@ export default function useImportCourses() {
         };
         formData.append("data", JSON.stringify(resourceData));
 
-        await sendRequest({
-          path: `/activity/resource/${lessonId}`,
-          method: "post",
-          body: formData,
-        });
+        await courseApi.mutations.uploadActivityResource(lessonId, formData);
       } catch (e) {
         console.error(`Erreur upload ressource:`, e);
         throw e;
       }
     },
-    [sendRequest],
+    [],
   );
 
   /**
@@ -300,18 +296,14 @@ export default function useImportCourses() {
           lessons: course.lessons
             .filter((l) => l.isSelected)
             .map((l) => ({
-              id: l.id,
+              id: l.id!,
               title: l.title,
               modalite: l.modalite,
               isSelected: true,
             })),
         };
 
-        const structureResponse = await sendRequest({
-          path: "/course/import-structure",
-          method: "post",
-          body: structurePayload,
-        });
+        const structureResponse = await courseApi.mutations.importStructure(structurePayload);
 
         processedCount += 1 + structurePayload.lessons.length;
         setUploadProgress((processedCount / totalItems) * 100);
@@ -352,11 +344,7 @@ export default function useImportCourses() {
                     const formData = new FormData();
                     formData.append("image", img.file, img.file.name);
 
-                    const response = await sendRequest({
-                      path: "/activity/blog-image",
-                      method: "post",
-                      body: formData,
-                    });
+                    const response = await courseApi.mutations.uploadBlogImage(formData);
 
                     const serverUrl = response.response || response.url;
                     const fullUrl = serverUrl.startsWith("http")
@@ -371,15 +359,11 @@ export default function useImportCourses() {
                 }
               }
 
-              await sendRequest({
-                path: `/activity/text/${realLessonId}`,
-                method: "post",
-                body: {
-                  title: activity.title,
-                  description: "",
-                  value: finalHtml,
-                  parent: "lesson",
-                },
+              await courseApi.mutations.createTextActivity(realLessonId, {
+                title: activity.title ?? "",
+                description: "",
+                value: finalHtml,
+                parent: "lesson",
               });
             } else if (activity.value instanceof Blob) {
               setCurrentAction(`Téléversement ressource : ${activity.title}`);
@@ -419,8 +403,6 @@ export default function useImportCourses() {
     importedCourses,
     selectedModule?.id,
     selectedParcours?.id,
-    sendRequest,
-    uploadActivityResource,
   ]);
 
   const onRemoveCourse = (courseTitle: string) => {
@@ -539,16 +521,18 @@ export default function useImportCourses() {
     );
   };
 
-  const fetchModules = useCallback(() => {
+  const fetchModules = useCallback(async () => {
     if (selectedParcours) {
       setModulesList([]);
       setSelectedModule(null);
-      sendRequest(
-        { path: `/modules/${selectedParcours.id}`, method: "get" },
-        (data) => setModulesList(data.modules),
-      );
+      try {
+        const res = await apiClient.get(`/modules/${selectedParcours.id}`);
+        setModulesList(res.data.modules);
+      } catch (err) {
+        console.error("Erreur chargement modules:", err);
+      }
     }
-  }, [selectedParcours, sendRequest]);
+  }, [selectedParcours]);
 
   // --- Effects de Synchronisation & Chargement des Données de Listes ---
 
@@ -560,9 +544,9 @@ export default function useImportCourses() {
 
   useEffect(() => {
     if (step === CoursesImportStep.ParcoursSelection) {
-      sendRequest({ path: "/formation" }, (data) => setFormationsList(data));
+      apiClient.get("/formation").then((res) => setFormationsList(res.data));
     }
-  }, [step, sendRequest]);
+  }, [step]);
 
   useEffect(() => {
     if (selectedFormation) {
@@ -570,15 +554,11 @@ export default function useImportCourses() {
       setSelectedParcours(null);
       setModulesList([]);
       setSelectedModule(null);
-      sendRequest(
-        {
-          path: `/parcours/parcours-by-formation/${selectedFormation.id}`,
-          method: "get",
-        },
-        (data) => setParcoursList(data.data),
-      );
+      apiClient
+        .get(`/parcours/parcours-by-formation/${selectedFormation.id}`)
+        .then((res) => setParcoursList(res.data.data));
     }
-  }, [selectedFormation, sendRequest]);
+  }, [selectedFormation]);
 
   useEffect(() => {
     fetchModules();

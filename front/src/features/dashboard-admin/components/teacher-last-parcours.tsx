@@ -1,4 +1,4 @@
-import Parcours from "../../utils/interfaces/parcours";
+import Parcours from "../../../utils/interfaces/parcours";
 import ParcoursItem from "./parcours-item";
 import { Loader2 } from "lucide-react";
 

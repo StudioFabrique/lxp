@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import SubWrapper from "../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
 import type { TopUser } from "../types";
 
 type Props = {

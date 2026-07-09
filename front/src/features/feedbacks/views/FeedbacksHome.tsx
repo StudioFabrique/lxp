@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { feedbacksApi } from "../api/feedbacks.api";
 import FeedbacksList from "../components/FeedbacksList";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 
 const FeedbacksHome = () => {
   const { data: feedbacks = [] } = useQuery({

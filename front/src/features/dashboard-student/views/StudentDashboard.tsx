@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
-import Header from "../../../../src.legacy/components/UI/header";
+import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardStudentApi } from "../api/dashboard-student.api";
+import Header from "../../../../src/components/headers/Header";
 import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
-import LessonRead from "../../../utils/interfaces/lesson-read";
 import ResumeActivity from "../components/resume-activity";
 import ResumeActivities from "../components/resume-activities";
 import ResumeParcours from "../components/resume-parcours";
@@ -13,18 +13,12 @@ import StudentAccomplishments from "../components/right-side/feedback-apprenant/
 import MostReadCourses from "../components/right-side/most-read-courses";
 
 const StudentDashboard = () => {
-  const { sendRequest } = useHttp();
   const { user } = useContext(AuthContext);
 
-  const [lastLessons, setLastLessons] = useState<LessonRead[]>();
-
-  useEffect(() => {
-    const applyData = (data: { data: LessonRead[] }) => {
-      setLastLessons(data.data);
-    };
-
-    sendRequest({ path: "/lesson/last-read" }, applyData);
-  }, [sendRequest]);
+  const { data: lastLessons } = useQuery({
+    queryKey: ["last-read-lessons"],
+    queryFn: dashboardStudentApi.queries.getLastReadLessons,
+  });
 
   return (
     <div className="w-full flex flex-col gap-6">

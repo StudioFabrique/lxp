@@ -6,9 +6,9 @@ import useTopUsers from "../hooks/useTopUsers";
 import GroupsStats from "../components/GroupsStats";
 import TopFiveUsers from "../components/TopFiveUsers";
 import TopUsersTable from "../components/TopUsersTable";
-import Header from "../../../../src.legacy/components/UI/header";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";
+import Header from "../../../../src/components/headers/Header";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import ElementNotFound from "../../../components/UI/element-not-found";
 
 const DashboardIAHome = () => {
   const {

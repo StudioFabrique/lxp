@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import AddTag from "../../../../src.legacy/components/UI/add-tag";
+import AddTag from "../../../components/UI/add-tag";
 import TagsList from "../../../components/tags/TagsList";
 
 type Props = {

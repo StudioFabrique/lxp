@@ -1,10 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import useForm from "../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import { validationErrors } from "../../../../utils/helpers/validate";
-import { createGroupSchema } from "../../../../../src.legacy/lib/validation/create-group-schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import Group from "../../../../../src/utils/interfaces/group";
+import { createGroupSchema } from "../../group.schema";
+
+type GroupFormData = {
+  name: string;
+  desc?: string;
+};
 
 function useGroupForm({
   onSubmitForm,
@@ -18,8 +22,18 @@ function useGroupForm({
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
 
-  const { values, errors, onChangeValue, onValidationErrors, initValues } =
-    useForm();
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<GroupFormData>({
+    resolver: zodResolver(createGroupSchema),
+    defaultValues: {
+      name: "",
+      desc: "",
+    },
+  });
 
   const handleSetFile = (file: File) => {
     setFile(file);
@@ -29,49 +43,40 @@ function useGroupForm({
     setParcoursId(newParcoursId);
   }, []);
 
-  const handleSubmit = () => {
-    const name = values.name;
-    const desc = values.desc;
-    try {
-      createGroupSchema.parse({
-        name,
-        desc,
-      });
-    } catch (error: any) {
-      console.log(error);
-      const newErrors = validationErrors(error);
-      toast.error(newErrors[0].message);
-      onValidationErrors(newErrors);
-      return;
-    }
-    if (isFileNotRequired || file) {
-      onSubmitForm(
-        {
-          group: {
-            _id: group?._id,
-            name: name,
-            desc: desc,
+  const handleFormSubmit = useCallback(
+    (data: GroupFormData) => {
+      if (isFileNotRequired || file) {
+        onSubmitForm(
+          {
+            group: {
+              _id: group?._id,
+              name: data.name,
+              desc: data.desc,
+            },
+            parcoursId: parcoursId,
           },
-          parcoursId: parcoursId,
-        },
-        file!,
-      );
-    } else {
-      toast.error("Un fichier image pour le groupe est requis");
-    }
-  };
+          file!,
+        );
+      } else {
+        toast.error("Un fichier image pour le groupe est requis");
+      }
+    },
+    [file, isFileNotRequired, onSubmitForm, group, parcoursId],
+  );
 
   useEffect(() => {
     if (group) {
-      initValues(group);
+      reset({
+        name: (group as any).name ?? "",
+        desc: (group as any).desc ?? "",
+      });
     }
-  }, [initValues, group]);
+  }, [group, reset]);
 
   return {
-    onSubmit: handleSubmit,
-    onChangeValue: onChangeValue,
+    onSubmit: rhfHandleSubmit(handleFormSubmit),
     onSetFile: handleSetFile,
-    values,
+    register,
     errors,
     parcoursId,
     onSelectParcours: handleSelectParcours,

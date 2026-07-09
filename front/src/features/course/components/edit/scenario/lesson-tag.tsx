@@ -1,6 +1,6 @@
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
-import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import TagItem from "../../../../../components/UI/tag-item/tag-item";
 
 interface LessonTagsProps {
   list: Tag[];

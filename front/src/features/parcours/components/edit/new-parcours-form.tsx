@@ -3,7 +3,7 @@ import { FC, FormEvent, useState } from "react";
 import useInput from "../../../../hooks/useInput";
 import { Link } from "react-router";
 import { regexGeneric } from "../../../../config/constantes";
-import Selecter from "../../../../../src.legacy/components/UI/selecter/selecter.component";
+import Selecter from "../../../../components/UI/selecter/selecter.component";
 import toast from "react-hot-toast";
 
 type Item = {

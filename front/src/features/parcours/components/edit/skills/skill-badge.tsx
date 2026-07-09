@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import TrophyIcon from "../../../../../../src.legacy/components/UI/svg/trophy-icon.component";
+import TrophyIcon from "../../../../../../src/components/UI/svg/trophy-icon.component";
 
 type Props = {
   badge?: string;

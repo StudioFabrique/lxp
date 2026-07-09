@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import CustomError from "../../utils/interfaces/custom-error";
 import useImageUpload from "../../hooks/use-image-upload";
-import bgImageGradient from "../../utils/bg-image-gradient";
 import defaultImage from "../../assets/images/module-default.jpg";
 import Field from "../UI/forms/field";
 import FieldArea from "../UI/forms/field-area";
 import FormUploadImage from "../UI/form-upload-image";
+import { bgImageGradient } from "../../../src/utils/helpers/color-helpers";
 type Props = {
   children?: React.ReactNode;
   mode: "create" | "edit";

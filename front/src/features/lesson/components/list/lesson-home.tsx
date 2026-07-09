@@ -6,14 +6,14 @@ import {
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
-import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";
+import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
+import EditIcon from "../../../../../src/components/UI/svg/edit-icon";
 import LessonsList from "../../../course/components/edit/scenario/lessons-list";
-import SortColumnIcon from "../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
 import { Activity, Eye } from "lucide-react";
-import TableRowWrapper from "../../../../../src.legacy/components/UI/table-row-wrapper";
-import TableWrapper from "../../../../../src.legacy/components/UI/table-wrapper";
-import ElementNotFound from "../../../../../src.legacy/components/UI/element-not-found";
+import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
+import TableWrapper from "../../../../components/UI/table-wrapper";
+import ElementNotFound from "../../../../components/UI/element-not-found";
 
 interface LessonHomeProps {
   lessonsList: Lesson[];

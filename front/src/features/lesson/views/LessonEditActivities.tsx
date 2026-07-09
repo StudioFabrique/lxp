@@ -1,10 +1,10 @@
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import useLessonHome from "../hooks/useLessonHome";
 import ActivityTypes from "../components/edit/activity-types";
 import DNDAcitivities from "../components/edit/activities/dnd-activities";
 import CurrentBlock from "../components/edit/current-block";
-import ElementNotFound from "../../../../src.legacy/components/UI/element-not-found";
-import Header from "../../../../src.legacy/components/UI/header";
+import ElementNotFound from "../../../components/UI/element-not-found";
+import Header from "../../../../src/components/headers/Header";
 
 export default function EditLessonHome() {
   const {

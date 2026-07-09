@@ -2,13 +2,13 @@
 import { Link } from "react-router";
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import DeleteIcon from "../../../../../src.legacy/components/UI/svg/delete-icon.component";
-import EditIcon from "../../../../../src.legacy/components/UI/svg/edit-icon";
+import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
+import EditIcon from "../../../../../src/components/UI/svg/edit-icon";
 import { useEffect, useState } from "react";
-import ArrowTopRightIcon from "../../../../../src.legacy/components/UI/svg/arrow-top-right-icon";
+import ArrowTopRightIcon from "../../../../../src/components/UI/svg/arrow-top-right-icon";
 import { truncateText } from "../../../../utils/helpers/truncate-text";
-import bgImageGradient from "../../../../utils/helpers/bg-image-gradient";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
 
 // Interface définissant les props du composant
 interface ParcoursCardProps {

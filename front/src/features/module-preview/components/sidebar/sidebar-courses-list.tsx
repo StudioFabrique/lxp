@@ -3,7 +3,7 @@ import type Course from "../../../../../src/utils/interfaces/course";
 import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import FadeWrapper from "../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {

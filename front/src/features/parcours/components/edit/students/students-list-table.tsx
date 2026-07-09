@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import User from "../../../../../../src/utils/interfaces/user";
 import StudentItem from "./student-item";
 import { useMemo } from "react";

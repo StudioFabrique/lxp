@@ -1,11 +1,11 @@
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import ContenuItem from "./contenu-item";
 import Module from "../../../../../../src/utils/interfaces/module";
 import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
 import { useContext, useState } from "react";
 import { Link, useParams } from "react-router";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-contacts";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { useParcoursSelector } from "../../../store/ParcoursContext";

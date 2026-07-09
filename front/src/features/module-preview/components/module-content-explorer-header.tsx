@@ -1,6 +1,6 @@
 import { Fragment } from "react/jsx-runtime";
-import ImageHeader from "../../../../src.legacy/components/image-header";
-import HeaderMenu from "../../../../src.legacy/components/UI/header-menu";
+import ImageHeader from "../../../../src/components/image-header/image-header";
+import HeaderMenu from "../../../components/UI/header-menu";
 import Module from "../../../../src/utils/interfaces/module";
 import { useLocation } from "react-router";
 import { ComponentIcon, RocketIcon } from "lucide-react";

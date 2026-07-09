@@ -1,4 +1,4 @@
-import RightSideDrawer from "../../../../../../src.legacy/components/UI/right-side-drawer/right-side-drawer";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";

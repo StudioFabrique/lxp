@@ -10,11 +10,11 @@ import { getRoleColumns } from "../components/role-table-columns";
 import RoleForm from "../components/role-form/RoleForm";
 
 import PageHeader from "../../../components/headers/PageHeader";
-import Wrapper from "../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import SearchBar from "../../../../src.legacy/components/UI/search-bar/search-bar";
+import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
+import SearchBar from "../../../components/UI/search-bar/search-bar";
 
 const RoleList = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});

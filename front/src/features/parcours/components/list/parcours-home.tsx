@@ -1,19 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { parcoursSearchOptions } from "../../../../config/search-options";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
 import ParcoursTable from "./parcours-table";
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
-import Pagination from "../../../../../src.legacy/components/UI/pagination/pagination";
+import Pagination from "../../../../components/UI/pagination/pagination";
 import ParcoursCardsList from "./parcours-cards-list";
-import ToggleList from "../../../../../src.legacy/components/UI/toggle-list";
-import { useEffect, useState } from "react";
+import ToggleList from "../../../../components/UI/toggle-list";
+import { useState } from "react";
 import { searchListParcours } from "../../../../utils/helpers/search-list-parcours";
-import useHttp from "../../../../../src/hooks/useHttp";
+import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import Modal from "../../../../../src.legacy/components/UI/modal/modal";
-import SearchAndRefresh from "../../../../../src.legacy/components/UI/search-and-refresh";
+import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import ParcoursHeader from "./parcours-header";
-import ListHeader from "../../../../../src.legacy/components/UI/list-header";
+import ListHeader from "../../../../components/UI/list-header";
+import { parcoursApi } from "../../api/parcours.api";
+import Modal from "../../../../components/UI/modal/modal";
 
 interface ParcoursListProps {
   onRefreshParcoursList: () => void;
@@ -33,16 +33,25 @@ const ParcoursList = (props: ParcoursListProps) => {
     resetFilters,
     setPage,
   } = useEagerLoadingList(props.parcoursList, "title", 15);
-  const { error, isLoading, sendRequest } = useHttp();
   const [parcoursToDelete, setParcoursToDelete] = useState<Parcours | null>(
     null
   );
 
-  /**
-   * permet de filtrer les objets affichés dans la liste, gère les propriétés nichées dans d'autres
-   * @param entityToSearch string
-   * @param searchValue string
-   */
+  const { mutate: deleteParcours, isPending: isDeleting } = useMutation({
+    mutationFn: (id: number) => parcoursApi.mutations.deleteParcours(id),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+        setParcoursToDelete(null);
+        setPage(1);
+        props.onRefreshParcoursList();
+      }
+    },
+    onError: () => {
+      toast.error("Erreur lors de la suppression du parcours");
+    },
+  });
+
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     const filters = searchListParcours(entityToSearch, searchValue);
     getFilteredList(filters);
@@ -57,25 +66,8 @@ const ParcoursList = (props: ParcoursListProps) => {
   };
 
   const handleDeleteParcours = () => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) {
-        toast.success(data.message);
-        setParcoursToDelete(null);
-        setPage(1);
-        props.onRefreshParcoursList();
-      }
-    };
-    sendRequest(
-      { path: `/parcours/${parcoursToDelete!.id}`, method: "delete" },
-      applyData
-    );
+    deleteParcours(parcoursToDelete!.id!);
   };
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
 
   return (
     <ListHeader>
@@ -102,7 +94,7 @@ const ParcoursList = (props: ParcoursListProps) => {
                 direction={direction}
                 fieldSort={fieldSort}
                 onDeleteParcours={confirmParcoursToDelete}
-                loading={isLoading}
+                loading={isDeleting}
               >
                 <SearchAndRefresh
                   searchOptions={parcoursSearchOptions}
@@ -114,7 +106,7 @@ const ParcoursList = (props: ParcoursListProps) => {
             ) : (
               <ParcoursCardsList
                 parcoursList={list}
-                loading={isLoading}
+                loading={isDeleting}
                 onDeleteParcours={confirmParcoursToDelete}
               />
             )}

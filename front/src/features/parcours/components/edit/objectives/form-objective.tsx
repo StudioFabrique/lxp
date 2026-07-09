@@ -3,8 +3,8 @@ import { FC, FormEvent, useState } from "react";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
 import Objective from "../../../../../../src/utils/interfaces/objective";
-import Wrapper from "../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
-import DrawerFormButtons from "../../../../../../src.legacy/components/UI/drawer-form-buttons/drawer-form-buttons.component";
+import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
 
 type Props = {
   objective?: Objective;

@@ -1,4 +1,4 @@
-import SubWrapper from "../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import SubWrapper from "../../../../src/components/wrappers/SubBoxWrapper";
 import type { GroupsStats as GroupsStatsType } from "../types";
 
 type Props = {

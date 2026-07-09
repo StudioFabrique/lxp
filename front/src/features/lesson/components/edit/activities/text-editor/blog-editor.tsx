@@ -1,6 +1,6 @@
 import { useLessonSelector } from "../../../../store/LessonContext";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
-import Wrapper from "../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
 import useCreateBlog from "./use-create-blog";
 import TiptapActivity from "../../../../../module-preview/components/writing/tip-tap-activity";
 
@@ -13,7 +13,7 @@ type EditorProps = {
 function BlogEditor({ activity, content, onCancel }: EditorProps) {
   const lesson = useLessonSelector((state) => state.lesson);
 
-  const { onChangeValue, handleSubmit } = useCreateBlog(
+  const { setValue, handleSubmit } = useCreateBlog(
     lesson?.id?.toString() ?? "",
     activity ?? null,
     onCancel,
@@ -29,7 +29,7 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
   };
 
   const handleChangeTitle = (value: string) => {
-    onChangeValue("title", value);
+    setValue("title", value);
   };
 
   const handleChangeContent = (_content: string) => {};

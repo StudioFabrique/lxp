@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import {
@@ -6,10 +5,9 @@ import {
   useParcoursDispatch,
 } from "../store/ParcoursContext";
 
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import Stepper from "../../../../src.legacy/components/UI/stepper.-component/stepper.-component";
-import HeaderIcon from "../../../../src.legacy/components/UI/svg/header-icon";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
+import Loader from "../../../../src/components/loaders/Loader";
+import HeaderIcon from "../../../../src/components/UI/svg/header-icon";
 import Calendrier from "../components/edit/calendrier/calendrier";
 import ParcoursInformations from "../components/edit/informations/parcours-informations";
 import ImportObjectives from "../components/edit/objectives/import-objectives";
@@ -19,21 +17,21 @@ import ParcoursStudents from "../components/edit/students/parcours-students.comp
 import ParcoursPreview from "../components/edit/preview/parcours-preview.component";
 import ImportSkills from "../components/edit/skills/import-skills.component";
 import SkillsList from "../components/edit/skills/skills-list.component";
-import Error404 from "../../../../src.legacy/components/error404";
-import ImageHeaderMutable from "../../../../src.legacy/components/image-header/image-header-mutable";
+import Error404 from "../../../components/error404";
+import ImageHeaderMutable from "../../../../src/components/image-header/image-header-mutable";
 import { stepsParcours } from "../../../config/steps/steps-parcours";
 import { testModules } from "../../../utils/helpers/parcours-steps-validation";
-import useHttp from "../../../../src/hooks/useHttp";
-import useSteps from "../../../../src/hooks/useSteps";
+import useSteps from "../../../hooks/useSteps";
 import useParcoursService from "../hooks/useParcoursServices";
+import { parcoursApi } from "../api/parcours.api";
 import ModuleComponent from "../components/edit/modules/module";
+import Stepper from "../../../components/UI/stepper-component/stepper-component";
 
 let initialState = true;
 
 const EditParcours = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const { sendRequest } = useHttp();
   const dispatch = useParcoursDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsParcours);
@@ -80,18 +78,9 @@ const EditParcours = () => {
       const formData = new FormData();
       formData.append("parcoursId", id!);
       formData.append("image", image);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const processData = (_data: any) => {};
-      sendRequest(
-        {
-          path: `/parcours/update-image/${id}`,
-          method: "put",
-          body: formData,
-        },
-        processData,
-      );
+      parcoursApi.mutations.updateParcoursImage(id!, formData);
     },
-    [id, sendRequest],
+    [id],
   );
 
   const handleUpdateStep = (id: number) => {
@@ -111,9 +100,9 @@ const EditParcours = () => {
   const handleResetImportedObjectives = () => {};
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center">
+    <div className="w-full h-full flex flex-col justify-start">
       {isLoading ? (
-        <div className="h-[100vh] flex items-center">
+        <div className="flex items-center">
           <Loader />
         </div>
       ) : error.length === 0 ? (

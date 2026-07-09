@@ -1,12 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback } from "react";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
+import { useMutation } from "@tanstack/react-query";
 
-import useHttp from "../../../../../../src/hooks/useHttp";
-import ImportCSVActions from "../../../../../../src.legacy/components/UI/import-csv-actions.component";
+import ImportCSVActions from "../../../../../../src/components/UI/import-csv-actions.component";
 import { DOWNLOAD_URL } from "../../../../../config/urls";
-import ImportedCSVData from "../../../../../../src.legacy/components/UI/imported-csv-data.component";
+import ImportedCSVData from "../../../../../../src/components/UI/imported-csv-data.component";
 import { objectivesFields } from "../../../../../config/csv/csv-objectives";
+import { parcoursApi } from "../../../api/parcours.api";
+import toast from "react-hot-toast";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
@@ -19,7 +20,20 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
     (state) => state.parcoursObjectives.importedObjectives
   );
   const parcoursId = useParcoursSelector((state) => state.parcours.id);
-  const { sendRequest } = useHttp();
+
+  const { mutate: importObjectives } = useMutation({
+    mutationFn: (objectives: string[]) =>
+      parcoursApi.mutations.updateParcoursObjectives({
+        parcoursId: parcoursId!,
+        objectives,
+      }),
+    onSuccess: (data) => {
+      dispatch(
+        { type: "ADD_IMPORTED_OBJECTIVES", payload: data.data.objectives }
+      );
+    },
+    onError: () => toast.error("Erreur lors de l'import"),
+  });
 
   const handleCloseDrawer = () => {
     onCloseDrawer("import-data");
@@ -27,23 +41,7 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
 
   const postSelectedObjectives = (objectives: Array<any>) => {
     handleCloseDrawer();
-
-    const applyData = (data: any) => {
-      dispatch(
-        { type: "ADD_IMPORTED_OBJECTIVES", payload: data.data.objectives }
-      );
-    };
-    sendRequest(
-      {
-        path: "/parcours/update-objectives",
-        method: "put",
-        body: {
-          parcoursId,
-          objectives: objectives.map((item: any) => item.description),
-        },
-      },
-      applyData
-    );
+    importObjectives(objectives.map((item: any) => item.description));
   };
 
   const handleFromCSV = useCallback(

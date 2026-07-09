@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
-import SortColumnIcon from "../../../../../../src.legacy/components/UI/sort-column-icon.component/sort-column-icon.component";
+import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import { LessonWithActivitiesCount } from "../../../../../../src/utils/interfaces/lesson";
 
 interface LessonsTableProps {

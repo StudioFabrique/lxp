@@ -4,7 +4,7 @@ import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
 import Badge from "../../../../../../../src/utils/interfaces/badge";
 import { validateImageFile } from "../../../../../../utils/helpers/validate-image-file";
-import UploadIcon from "../../../../../../../src.legacy/components/UI/svg/upload-icon.component";
+import UploadIcon from "../../../../../../../src/components/UI/svg/upload-icon.component";
 import { badgeMaxSize } from "../../../../../../config/images-sizes";
 
 const maxSize = badgeMaxSize;

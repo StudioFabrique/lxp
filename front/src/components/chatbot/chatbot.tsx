@@ -4,7 +4,7 @@ import ChatbotButton from "./chatbot-button";
 import useChatbot from "./hooks/use-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatBotQuiz from "./hooks/use-chatbot-quiz";
-import QuizModal from "../../../src.legacy/components/quizzes/modals/quiz-modal";
+import QuizModal from "../../components/quiz/modals/quiz-modal";
 import { useContext } from "react";
 import { ChatbotContext } from "../../store/ChatbotProvider";
 

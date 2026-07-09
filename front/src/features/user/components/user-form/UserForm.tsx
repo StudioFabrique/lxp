@@ -9,8 +9,8 @@ import UserFormContact from "./UserFormContact";
 import UserFormTypeUser from "./UserFormTypeUser";
 import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
-import Header from "../../../../../src.legacy/components/UI/header";
-import ItemsAdder from "../../../../../src.legacy/components/UI/items-adder";
+import Header from "../../../../../src/components/headers/Header";
+import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
 import { transformLink, urlIsValid } from "../../../../utils/helpers/link-transform";
 

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import RatingWithStars from "../../../../src.legacy/components/UI/lesson-rating/rating-with-stars";
-import Modal from "../../../../src.legacy/components/UI/modal/modal";
-import PortalConfetti from "../../../../src.legacy/components/UI/portal/portal-confetti";
-import FeedbacksButton from "../../../../src.legacy/components/UI/feedbacks/feedbacks-button";
+import RatingWithStars from "../../../../src/components/UI/lesson-rating/rating-with-stars";
+import PortalConfetti from "../../../../src/components/wrappers/ConfettiWrapper";
+import FeedbacksButton from "../../../../src/components/buttons/FeedbacksButton";
 import Lesson from "../../../../src/utils/interfaces/lesson";
 import { useNavigate } from "react-router";
+import Modal from "../../../components/UI/modal/modal";
 
 type LessonCompletionModal = {
   lesson: Lesson;

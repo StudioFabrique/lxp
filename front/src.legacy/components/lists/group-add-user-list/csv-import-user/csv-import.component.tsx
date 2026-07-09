@@ -14,7 +14,7 @@ import { checkCSV } from "../../../../utils/csv/check-csv";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
 import toast from "react-hot-toast";
 import { downloadFile } from "../../../../helpers/download-csv-template";
-import { DOWNLOAD_URL } from "../../../../config/urls";
+import { DOWNLOAD_URL } from "../../../../../src/config/urls";
 
 type Props = {
   origin: string;

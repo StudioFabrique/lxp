@@ -1,8 +1,8 @@
 import { FC } from "react";
 
 import Objective from "../../../../../../src/utils/interfaces/objective";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
-import DeleteIcon from "../../../../../../src.legacy/components/UI/svg/delete-icon.component";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
+import DeleteIcon from "../../../../../../src/components/UI/svg/delete-icon.component";
 
 type Props = {
   objective: Objective;

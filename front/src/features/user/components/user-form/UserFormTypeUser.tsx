@@ -4,7 +4,7 @@ import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
 import apiClient from "../../../../lib/axios";
 import type Role from "../../../../utils/interfaces/role";
-import Wrapper from "../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
   roleId: string | null;

@@ -1,8 +1,8 @@
 import { FC } from "react";
 
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import DeleteIcon from "../../../../../../src.legacy/components/UI/svg/delete-icon.component";
-import EditIcon from "../../../../../../src.legacy/components/UI/svg/edit-icon";
+import DeleteIcon from "../../../../../../src/components/UI/svg/delete-icon.component";
+import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 
 type Props = {
   skill: Skill;

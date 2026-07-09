@@ -1,7 +1,7 @@
 import { type Editor, useEditorState } from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useRef, useState } from "react";
-import useHttp from "../../../../../src/hooks/useHttp";
+import apiClient from "../../../../lib/axios";
 import { BASE_URL } from "../../../../config/urls";
 
 interface QueuedImage {
@@ -15,7 +15,6 @@ export const useMenuContentTypes = (
   editor: Editor,
   imageInputRef: React.RefObject<HTMLInputElement>,
 ) => {
-  const { sendRequest } = useHttp();
   const imageQueue = useRef<QueuedImage[]>([]);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
     "small",
@@ -85,13 +84,9 @@ export const useMenuContentTypes = (
         const formData = new FormData();
         formData.append("image", queuedImage.file, queuedImage.file.name);
 
-        const response = await sendRequest({
-          path: "/activity/blog-image",
-          method: "post",
-          body: formData,
-        });
+        const response = await apiClient.post("/activity/blog-image", formData);
 
-        const imageUrl = `${BASE_URL}${response.response}`;
+        const imageUrl = `${BASE_URL}${response.data.response}`;
         urlMap.set(queuedImage.blobUrl, imageUrl);
       }
 
@@ -155,7 +150,7 @@ export const useMenuContentTypes = (
       console.error("Error uploading images:", error);
       throw error;
     }
-  }, [editor, sendRequest]);
+  }, [editor]);
 
   useEffect(() => {
     const current = imageInputRef.current;

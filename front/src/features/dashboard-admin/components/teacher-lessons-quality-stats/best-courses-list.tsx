@@ -1,4 +1,4 @@
-import { CourseQualityRating } from "../../../../../utils/interfaces/lessons-quality-stats";
+import { CourseQualityRating } from "../../../../utils/interfaces/lessons-quality-stats";
 import BestCourseItem from "./best-course-item";
 
 type BesCoursesListProps = {

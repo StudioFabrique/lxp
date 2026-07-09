@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import useHttp from "../../../../src/hooks/useHttp";
-import Parcours from "../../../../src/utils/interfaces/parcours";
-import Loader from "../../../../src.legacy/components/UI/loader";
+import { parcoursApi } from "../api/parcours.api";
+import Loader from "../../../../src/components/loaders/Loader";
 import { sortArray } from "../../../../src/utils/helpers/sort-array";
-import toast from "react-hot-toast";
 import ParcoursList from "../components/list/parcours-home";
 import { useLocation } from "react-router";
 
@@ -17,34 +15,17 @@ const ParcoursHome = () => {
     [pathname]
   );
 
-  const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
-    null
-  );
+  const asStudent = currentRoute[0] === "student";
 
-  const { sendRequest, isLoading, error } = useHttp();
-
-  const getParcoursList = useCallback(() => {
-    const applyData = (data: any) => {
-      setParcoursList(sortArray(data, "id"));
-    };
-    sendRequest(
-      {
-        path:
-          currentRoute[0] === "student"
-            ? "/parcours/parcours-as-student"
-            : "/parcours",
-      },
-      applyData
-    );
-  }, [currentRoute, sendRequest]);
-
-  useEffect(() => {
-    getParcoursList();
-  }, [currentRoute, getParcoursList]);
-
-  useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
+  const {
+    data: parcoursList,
+    isLoading,
+    refetch: refreshParcoursList,
+  } = useQuery({
+    queryKey: ["parcours", { asStudent }],
+    queryFn: () => parcoursApi.queries.getAll(asStudent),
+    select: (data) => sortArray(data, "id"),
+  });
 
   return (
     <div>
@@ -57,7 +38,7 @@ const ParcoursHome = () => {
           {parcoursList ? (
             <ParcoursList
               parcoursList={parcoursList}
-              onRefreshParcoursList={getParcoursList}
+              onRefreshParcoursList={refreshParcoursList}
             />
           ) : null}
         </>

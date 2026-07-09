@@ -1,8 +1,8 @@
 import { FC } from "react";
 
-import ButtonNoDecorationIcon from "../../../../../src.legacy/components/UI/button-no-decoration-icon/button-no-decoration-icon.component";
+import ButtonNoDecorationIcon from "../../../../components/UI/button-no-decoration-icon/button-no-decoration-icon.component";
 
-import ImportIcon from "../../../../../src.legacy/components/UI/svg/import-icon.component";
+import ImportIcon from "../../../../../src/components/UI/svg/import-icon.component";
 
 type Props = {
   label: string;

@@ -3,8 +3,8 @@ import React, { FormEvent, ReactNode, useMemo } from "react";
 import toast from "react-hot-toast";
 
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import TagItem from "../../../../../../src.legacy/components/UI/tag-item/tag-item";
 import LessonTags from "./lesson-tag";
+import TagItem from "../../../../../components/UI/tag-item/tag-item";
 
 interface LessonFormProps {
   children: ReactNode;

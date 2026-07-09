@@ -1,6 +1,6 @@
 import useInput from "../../../../hooks/useInput";
 import { regexGeneric } from "../../../../config/constantes";
-import SubmitButton from "../../../../../src.legacy/components/UI/submit-button";
+import SubmitButton from "../../../../components/UI/submit-button";
 
 interface NewCourseFormProps {
   moduleAndParcours: boolean;

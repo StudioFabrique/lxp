@@ -5,7 +5,7 @@ import {
   monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Activity } from "../../../../../src/utils/interfaces/activity";
-import FadeWrapper from "../../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
+import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { hasPermission } from "../../../../utils/helpers/rbac-helpers";
 import { AuthContext } from "../../../../store/AuthProvider";

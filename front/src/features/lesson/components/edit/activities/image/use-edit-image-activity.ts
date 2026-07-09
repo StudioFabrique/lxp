@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
-import useForm from "../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import useHttp from "../../../../../../../src/hooks/useHttp";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { lessonApi } from "../../../../api/lesson.api";
 import { useParams } from "react-router";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import { regexGeneric } from "../../../../../../config/constantes";
-import { z, ZodError } from "zod";
-import { validationErrors } from "../../../../../../utils/helpers/validate";
+import { z } from "zod";
 import toast from "react-hot-toast";
 import type SuccessWithMessage from "../../../../../../../src/utils/interfaces/success-with-message";
+
+const imageActivitySchema = z.object({
+  title: z
+    .string()
+    .min(1, "A title is required")
+    .regex(regexGeneric, {
+      message: "The title contains unauthorized characters",
+    }),
+  description: z.string().optional(),
+});
+
+type ImageActivityFormData = z.infer<typeof imageActivitySchema> & {
+  url?: string;
+};
 
 const useEditImageActivity = (
   activity: Activity | undefined,
@@ -15,68 +29,62 @@ const useEditImageActivity = (
   parent: "lesson" | "resource",
   onSubmit?: (fd: FormData) => void,
 ) => {
-  const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm();
-  const data = { values, errors, onChangeValue };
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<ImageActivityFormData>({
+    resolver: zodResolver(imageActivitySchema),
+    defaultValues: { title: "", description: "" },
+  });
 
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { error, isLoading, sendRequest } = useHttp();
   const { lessonId } = useParams();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const imageActivitySchema = z.object({
-    title: z
-      .string()
-      .min(1, "A title is required")
-      .regex(regexGeneric, {
-        message: "The title contains unauthorized characters",
-      }),
-  });
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      imageActivitySchema.parse(values);
-    } catch (error: unknown) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
-      }
-    }
+  const handleSubmit = rhfHandleSubmit((formValues) => {
     if (!activity && !file && !selectedImage) {
       toast.error("A file is required");
       return;
     }
+    const dataToSend: Record<string, unknown> = { ...formValues };
     if (!file && selectedImage) {
-      values.url = selectedImage;
+      dataToSend.url = selectedImage;
     }
     const formData = new FormData();
-    formData.append("data", JSON.stringify(values));
+    formData.append("data", JSON.stringify(dataToSend));
     if (file) {
       formData.append("image", file);
     }
     if (onSubmit) onSubmit(formData);
     else {
-      const applyData = (data: SuccessWithMessage) => {
-        if (data.success) {
-          toast.success(data.message);
-          onCancel(false);
-        }
-      };
-      sendRequest(
-        {
-          path: `/activity/image/${activity?.id ?? lessonId}/${parent}`,
-          method: activity ? "put" : "post",
-          body: formData,
-        },
-        applyData,
-      );
+      setIsLoading(true);
+      const id = activity?.id ?? lessonId!;
+      lessonApi.mutations
+        .upsertImageActivity(id, parent, formData, activity ? "put" : "post")
+        .then((data: SuccessWithMessage) => {
+          if (data.success) {
+            toast.success(data.message);
+            onCancel(false);
+          }
+        })
+        .catch((err: any) => {
+          setError(
+            err.response?.data?.message ||
+              err.message ||
+              "Une erreur est survenue"
+          );
+        })
+        .finally(() => setIsLoading(false));
     }
-  };
+  });
 
   useEffect(() => {
     if (file) {
@@ -92,10 +100,10 @@ const useEditImageActivity = (
 
   useEffect(() => {
     if (activity) {
-      onChangeValue("title", activity.title!);
-      onChangeValue("description", activity.description!);
+      setValue("title", activity.title ?? "");
+      setValue("description", activity.description ?? "");
     }
-  }, [activity, onChangeValue]);
+  }, [activity, setValue]);
 
   useEffect(() => {
     const ecouteur = new BroadcastChannel("clipboardChannel");
@@ -113,13 +121,15 @@ const useEditImageActivity = (
   }, [error]);
 
   return {
-    data,
+    register,
     handleSubmit,
+    errors,
+    setValue,
     image,
     setImage,
     file,
     isLoading,
-    onResetForm,
+    reset,
     setFile,
     showDialog,
     setShowDialog,

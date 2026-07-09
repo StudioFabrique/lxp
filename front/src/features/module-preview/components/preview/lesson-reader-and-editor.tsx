@@ -2,9 +2,8 @@ import {
   Activity,
   ActivityType,
 } from "../../../../../src/utils/interfaces/activity";
-import RatingPanelButton from "../../../../../src.legacy/components/UI/lesson-rating/rating-panel-button";
+import RatingPanelButton from "../../../../../src/components/UI/lesson-rating/rating-panel-button";
 import { type PropsWithChildren, useCallback } from "react";
-import Modal from "../../../../../src.legacy/components/UI/modal/modal";
 import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
@@ -14,6 +13,7 @@ import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
 import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import { ActivitySelectMode } from "../../store/module-explorer-reducer";
+import Modal from "../../../../components/UI/modal/modal";
 
 type Props = {
   mode: ActivitySelectMode;

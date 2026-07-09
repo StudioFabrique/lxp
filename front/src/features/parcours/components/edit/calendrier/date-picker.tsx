@@ -6,7 +6,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import CalendarIcon from "../../../../../../src.legacy/components/UI/svg/calendar-icon";
+import CalendarIcon from "../../../../../../src/components/UI/svg/calendar-icon";
 
 const DatePicker: FC<{
   id: string;

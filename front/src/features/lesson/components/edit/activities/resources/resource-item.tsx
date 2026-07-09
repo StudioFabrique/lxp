@@ -1,6 +1,6 @@
 import { FileText } from "lucide-react";
 import { GripVertical, Trash2 } from "lucide-react";
-import SubWrapper from "../../../../../../../src.legacy/components/UI/sub-wrapper/sub-wrapper.component";
+import SubWrapper from "../../../../../../../src/components/wrappers/SubBoxWrapper";
 import { displaySize } from "../../../../../../utils/helpers/size-unit-conversion";
 import { UploadProgressValues } from "./resources-list";
 import FileUploadStatus from "./file-upload-status";

@@ -1,5 +1,5 @@
 import { Shield, PlusCircle, User } from "lucide-react";
-import QuestionMarkTooltip from "../../../../../src.legacy/components/UI/question-mark-tooltip/question-mark-tooltip";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type PermissionAddItemProps = {
   name: string;

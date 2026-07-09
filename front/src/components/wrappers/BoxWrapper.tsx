@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Wrapper: FC<Props> = ({ additionalClassname, children }) => {
+const BoxWrapper: FC<Props> = ({ additionalClassname, children }) => {
   return (
     <div
       className={`flex flex-col gap-y-4 p-5 rounded-lg bg-secondary/20 h-full relative ${additionalClassname}`}
@@ -15,4 +15,4 @@ const Wrapper: FC<Props> = ({ additionalClassname, children }) => {
   );
 };
 
-export default Wrapper;
+export default BoxWrapper;

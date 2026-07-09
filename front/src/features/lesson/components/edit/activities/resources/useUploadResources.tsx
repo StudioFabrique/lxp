@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
-import useForm from "../../../../../../../src.legacy/components/UI/forms/hooks/use-form";
-import useHttp from "../../../../../../../src/hooks/useHttp";
+import { lessonApi } from "../../../../api/lesson.api";
 import toast from "react-hot-toast";
 import { regexGeneric } from "../../../../../../config/constantes";
 import { useParams } from "react-router";
@@ -28,6 +27,9 @@ const useUploadResources = (
   onSubmit?: () => void,
 ) => {
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
+  const [resourceName, setResourceName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { resourceId } = useParams();
   const { lessonId } = useParams();
@@ -36,10 +38,6 @@ const useUploadResources = (
   if (resourceId) id = parseInt(resourceId);
   else if (lessonId) id = parseInt(lessonId);
 
-  const { errors, values, onChangeValue } = useForm();
-  const data = { values, errors, onChangeValue };
-
-  const { isLoading, sendRequest, uploadProgress } = useHttp();
   const [hasError, setHasError] = useState(false);
 
   const filesNumber = useMemo(
@@ -52,7 +50,7 @@ const useUploadResources = (
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      let error = !regexGeneric.test(values.name as string);
+      let error = !regexGeneric.test(resourceName);
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         filesList?.forEach((file) => {
@@ -64,14 +62,14 @@ const useUploadResources = (
         const resource = [
           ...(filesList ?? []),
           {
-            name: values.name,
+            name: resourceName,
             file: event.target.files[0],
             hasError: error,
           },
         ];
         setFilesList(resource as Resource[]);
         event.target.value = "";
-        onChangeValue("name", "");
+        setResourceName("");
       } else {
         toast.error(
           "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
@@ -87,8 +85,8 @@ const useUploadResources = (
 
   const resetFilesList = useCallback(() => {
     setFilesList(null);
-    onChangeValue("name", "");
-  }, [onChangeValue]);
+    setResourceName("");
+  }, []);
 
   const handleSubmit = () => {
     const controller = new AbortController();
@@ -105,12 +103,6 @@ const useUploadResources = (
       }
     });
 
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) toast.success(data.message);
-      onCancel(false);
-      onSubmit?.();
-    };
-
     let resources: { label: string; filename: string }[] = [];
     for (const item of filesList!) {
       resources = [
@@ -124,18 +116,28 @@ const useUploadResources = (
       JSON.stringify({ resources, parent: lessonId ? "lesson" : "resource" }),
     );
 
-    sendRequest(
-      {
-        path: `/activity/resource/${id}`,
-        method: "post",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-        signal: controller.signal,
-      },
-      applyData,
-    );
+    setIsLoading(true);
+    setUploadProgress(0);
+    lessonApi.mutations
+      .uploadResources(id!, formData, controller.signal, (progressEvent: any) => {
+        const progress = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total,
+        );
+        setUploadProgress(progress);
+      })
+      .then((data: { success: boolean; message: string }) => {
+        if (data.success) toast.success(data.message);
+        onCancel(false);
+        onSubmit?.();
+      })
+      .catch((err: any) => {
+        toast.error(
+          err.response?.data?.message ||
+            err.message ||
+            "Une erreur est survenue",
+        );
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const handleReorder = (
@@ -164,7 +166,8 @@ const useUploadResources = (
   }, [filesList]);
 
   return {
-    data,
+    resourceName,
+    setResourceName,
     filesList,
     filesNumber,
     hasError,

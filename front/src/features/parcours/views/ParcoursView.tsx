@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router";
 import { Fragment, useContext } from "react";
-import FadeWrapper from "../../../../src.legacy/components/UI/fade-wrapper/fade-wrapper";
-import Loader from "../../../../src.legacy/components/UI/loader";
-import Error404 from "../../../../src.legacy/components/error404";
+import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
+import Loader from "../../../../src/components/loaders/Loader";
+import Error404 from "../../../components/error404";
 import Contenu from "../components/display/contenu/contenu";
 import Informations from "../components/display/informations";
 import Description from "../components/display/description";
@@ -14,11 +14,11 @@ import Competences from "../components/display/competences";
 import Objectifs from "../components/display/objectifs";
 import QuickStatistiques from "../components/display/quick-statistiques/quick-statistiques";
 import ProgressModulesStats from "../components/display/progress-stats";
-import HeaderMenu from "../../../../src.legacy/components/UI/header-menu";
-import ImageHeader from "../../../../src.legacy/components/image-header";
+import HeaderMenu from "../../../components/UI/header-menu";
+import ImageHeader from "../../../../src/components/image-header/image-header";
 import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
-import Header from "../../../../src.legacy/components/UI/header";
+import Header from "../../../../src/components/headers/Header";
 import { toUpperFirstLetter } from "../../../../src/utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";

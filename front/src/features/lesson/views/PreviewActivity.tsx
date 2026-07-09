@@ -1,6 +1,6 @@
 import type { Activity } from "../../../../src/utils/interfaces/activity";
 import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
+import { lessonApi } from "../api/lesson.api";
 import ActivityHeader from "../components/edit/activities/activity-header";
 import ActivityContent from "../components/edit/activities/activity-content";
 import ActivityMetadata from "../components/edit/activities/activity-metadata";
@@ -9,17 +9,17 @@ import { useParams } from "react-router";
 function PreviewActivity() {
   const { activityId } = useParams();
   const [activity, setActivity] = useState<Activity | null>(null);
-  const { sendRequest } = useHttp();
   const [isEditing, setIsEditing] = useState(false);
 
   const getActivity = useCallback(() => {
-    const applyData = (data: { success: boolean; activity: Activity }) => {
-      if (data.success) {
-        setActivity(data.activity);
-      }
-    };
-    sendRequest({ path: `/activity/${activityId}` }, applyData);
-  }, [activityId, sendRequest]);
+    lessonApi.queries
+      .getActivity(activityId!)
+      .then((data) => {
+        if (data.success) {
+          setActivity(data.activity);
+        }
+      });
+  }, [activityId]);
 
   const handleSubmitted = (newValue: boolean) => {
     setIsEditing(newValue);

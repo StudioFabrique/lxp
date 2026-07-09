@@ -6,7 +6,7 @@ import {
   GripVertical,
   Trash2,
 } from "lucide-react";
-import Wrapper from "../../../../../../../../src.legacy/components/UI/wrapper/wrapper.component";
+import Wrapper from "../../../../../../../../src/components/wrappers/BoxWrapper";
 import { Resource } from "../../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../../config/urls";
 import { Dispatch, SetStateAction } from "react";

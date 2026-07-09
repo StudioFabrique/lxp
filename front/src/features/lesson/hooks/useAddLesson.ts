@@ -1,5 +1,5 @@
-import { useEffect, useReducer } from "react";
-import useHttp from "../../../../src/hooks/useHttp";
+import { useEffect, useReducer, useState } from "react";
+import { lessonApi } from "../api/lesson.api";
 import useInput from "../../../hooks/useInput";
 import { useLocation } from "react-router";
 
@@ -109,7 +109,7 @@ const lessonReducer = (state: State, action: Action): State => {
 
 const useAddLesson = () => {
   const [state, dispatch] = useReducer(lessonReducer, initialState);
-  const { error, sendRequest } = useHttp();
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -123,7 +123,7 @@ const useAddLesson = () => {
   useEffect(() => {
     if (location.state) {
       const { parcoursId, moduleId, courseId } = location.state;
-      const applyData = (data: CourseItem[]) => {
+      lessonApi.queries.getCoursesByModule(moduleId).then((data) => {
         dispatch({ type: "SET_COURSE_LIST", payload: data });
         const course = data.find((item) => item.id === courseId);
         if (course) {
@@ -133,36 +133,35 @@ const useAddLesson = () => {
         dispatch({ type: "SET_MODULE_ID", payload: moduleId });
         dispatch({ type: "SET_COURSE_ID", payload: courseId });
         handleStep(true);
-      };
-
-      sendRequest({ path: `/course/select/${moduleId}` }, applyData);
+      });
     }
-  }, [location.state, sendRequest]);
+  }, [location.state]);
 
   const handleSubmitLesson = () => {
-    const applyData = (data: Lesson) => {
-      toast.success(`La leçon ${data.title} a été créée avec succès`);
-      dispatch({ type: "SET_LOADING", payload: false });
-      navigate(
-        location.state ? `/admin/parcours/module/${state.moduleId}` : "..",
-        { state: { lessonId: data.id } }
-      );
-    };
-
     dispatch({ type: "SET_LOADING", payload: true });
-    sendRequest(
-      {
-        path: `/course/new-lesson/${state.courseId}`,
-        method: "put",
-        body: {
-          tagId: state.tag?.id,
-          title: title.value,
-          description: description.value,
-          modalite: state.mode,
-        },
-      },
-      applyData
-    );
+    lessonApi.mutations
+      .createLesson(state.courseId!, {
+        tagId: state.tag?.id,
+        title: title.value,
+        description: description.value,
+        modalite: state.mode,
+      })
+      .then((data: Lesson) => {
+        toast.success(`La leçon ${data.title} a été créée avec succès`);
+        dispatch({ type: "SET_LOADING", payload: false });
+        navigate(
+          location.state ? `/admin/parcours/module/${state.moduleId}` : "..",
+          { state: { lessonId: data.id } }
+        );
+      })
+      .catch((err: any) => {
+        dispatch({ type: "SET_LOADING", payload: false });
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Une erreur est survenue"
+        );
+      });
   };
 
   const getItem = <T extends { id: number | null }>(
@@ -189,37 +188,31 @@ const useAddLesson = () => {
   };
 
   useEffect(() => {
-    sendRequest({ path: "/parcours/select" }, (data: Item[]) => {
+    lessonApi.queries.getParcoursSelect().then((data) => {
       dispatch({ type: "SET_PARCOURS_LIST", payload: data });
     });
-  }, [sendRequest]);
+  }, []);
 
   useEffect(() => {
     if (state.parcoursId) {
-      sendRequest(
-        { path: `/modules/parcours-modules/${state.parcoursId}` },
-        (data: Item[]) => {
-          console.log({ data });
-
+      lessonApi.queries
+        .getModulesByParcours(state.parcoursId)
+        .then((data) => {
           dispatch({ type: "SET_MODULES_LIST", payload: data });
-        }
-      );
+        });
     }
-  }, [state.parcoursId, sendRequest]);
+  }, [state.parcoursId]);
 
   useEffect(() => {
     if (state.moduleId) {
-      sendRequest(
-        { path: `/course/select/${state.moduleId}` },
-        (data: CourseItem[]) => {
-          dispatch({ type: "SET_COURSE_LIST", payload: data });
-        }
-      );
+      lessonApi.queries.getCoursesByModule(state.moduleId).then((data) => {
+        dispatch({ type: "SET_COURSE_LIST", payload: data });
+      });
     } else {
       dispatch({ type: "SET_COURSE_LIST", payload: [] });
       dispatch({ type: "SET_COURSE_ID", payload: null });
     }
-  }, [state.moduleId, sendRequest]);
+  }, [state.moduleId]);
 
   useEffect(() => {
     if (state.courseId) {

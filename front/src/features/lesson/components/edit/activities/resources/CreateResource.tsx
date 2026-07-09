@@ -1,16 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
-import CustomError from "../../../../../../../src/utils/interfaces/custom-error";
 import ResourcesAction from "./resource-actions";
 import ResourceForm from "./resource-form";
 import ResourcesList from "./resources-list";
 import { Resource } from "./useUploadResources";
 
 type Props = {
-  data: {
-    values: Record<string, unknown>;
-    errors: CustomError[];
-    onChangeValue: (name: string, value: string) => void;
-  };
+  resourceName: string;
+  setResourceName: (name: string) => void;
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleCancel: () => void;
   handleAddResource: () => void;
@@ -23,7 +19,8 @@ type Props = {
 };
 
 function CreateResource({
-  data,
+  resourceName,
+  setResourceName,
   handleFileChange,
   handleCancel,
   handleAddResource,
@@ -38,10 +35,8 @@ function CreateResource({
     <div className="grid grid-cols-1 gap-4">
       <span className="w-full flex flex-col gap-y-4">
         <ResourceForm
-          data={{
-            ...data,
-            errors: { name: data.errors.map((e) => e.message) },
-          }}
+          value={resourceName}
+          onChange={setResourceName}
           onFileChange={handleFileChange}
         />
         <ResourcesAction
