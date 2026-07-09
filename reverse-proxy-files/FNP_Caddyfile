@@ -1,3 +1,0 @@
-fnp.lxp.andria.ovh {
-    reverse_proxy lxp:3000
-}
