@@ -1,13 +1,13 @@
-import { Context } from "../../../store/context.store";
-import { cn } from "../../../utils";
+import { AuthContext } from "../../../../src/store/AuthProvider";
 import { ChatbotValues } from "../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
-import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import { Link, useLocation } from "react-router";
+import { cn } from "../../../utils/helpers/style-helpers";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
   message: ChatbotValues;
@@ -26,7 +26,7 @@ export default function MessageChatbot({
 }: Props) {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   // Fermé par défaut (false)
   const [expandTextSelection, setExpandTextSelection] =

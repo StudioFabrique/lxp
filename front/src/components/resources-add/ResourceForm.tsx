@@ -1,20 +1,19 @@
 import { ChangeEvent, useState } from "react";
-import Field from "../UI/forms/field";
+import { UseFormRegister } from "react-hook-form";
+import FormInput from "../form/FormInput";
+import FormTextarea from "../form/FormTextarea";
 import QuestionMarkTooltip from "../UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle, Loader } from "lucide-react";
-import CustomError from "../../utils/interfaces/custom-error";
-import TagsList from "../formation-home/tags-list";
-import FieldArea from "../UI/forms/field-area";
+import TagsList from "../../components/tags/TagsList";
+import useImageUpload from "../../../src/hooks/use-image-upload";
 import FormUploadImage from "../UI/form-upload-image";
-import useImageUpload from "../../hooks/use-image-upload";
-import Tag from "../../utils/interfaces/tag";
+import Tag from "../../../src/utils/interfaces/tag";
 
 type Props = {
   mode: "create" | "update";
   data: {
-    values: Record<string, unknown>;
-    errors: CustomError[];
-    onChangeValue: (field: string, value: string) => void;
+    register: UseFormRegister<any>;
+    errors: any;
   };
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
@@ -91,12 +90,12 @@ export default function ResourceForm({
     <>
       <h2 className="text-lg font-bold">Ressource</h2>
       <form className="flex flex-col gap-y-4">
-        <Field
+        <FormInput
           placeholder="Titre de la ressource"
           label="Titre"
           name="title"
-          type="text"
-          data={data}
+          register={data.register}
+          error={data.errors.title}
         />
         <label>Tags</label>
         <span className="flex items-center gap-x-2 w-full">
@@ -121,11 +120,12 @@ export default function ResourceForm({
           l'ajouter à la liste.
         </p>
         <TagsList tagsList={tags} onRemove={removeTag} />
-        <FieldArea
+        <FormTextarea
           placeholder="Description de la ressource"
           label="Description"
           name="description"
-          data={data}
+          register={data.register}
+          error={data.errors.description}
         />
         <FormUploadImage onSetFile={handleFileChange} />
         <div className="w-full flex justify-end">

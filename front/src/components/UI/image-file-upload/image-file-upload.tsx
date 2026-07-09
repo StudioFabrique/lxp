@@ -1,8 +1,8 @@
 import React, { ChangeEvent, FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { maxSizeError } from "../../../helpers/max-size-error";
 import { Edit, Upload } from "lucide-react";
-import Loader from "../loader";
+import Loader from "../../loaders/Loader";
+import { maxSizeError } from "../../../utils/helpers/max-size-error";
 
 const allowedExtensions = {
   image: {

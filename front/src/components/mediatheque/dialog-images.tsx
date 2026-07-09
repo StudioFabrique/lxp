@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { ACTIVITIES } from "../../config/urls";
-import { displaySize } from "../../helpers/sizeUnitConversion";
-import usePaginatedMediatheque from "../../hooks/use-paginated-mediatheque";
+import { displaySize } from "../../utils/helpers/size-unit-conversion";
+import usePaginatedMediatheque from "../../../src/hooks/use-paginated-mediatheque";
 import Media from "../../utils/interfaces/media";
-import Pagination from "../pagination";
+import Pagination from "../../../src/components/pagination";
 
 type Props = {
   onClose: () => void;

@@ -1,0 +1,216 @@
+import { useCallback, useMemo } from "react";
+import Contact from "../../../../../../src/utils/interfaces/contact";
+import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
+import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import UserQuickCreate from "../../../../../../src/components/user-quick-create/user-quick-create";
+import { useParcoursDispatch } from "../../../store/ParcoursContext";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { parcoursApi } from "../../../api/parcours.api";
+
+interface NotSelectedContactsProps {
+  list?: Contact[];
+  onAddItems?: (contactsIds: number[]) => void;
+  onCloseDrawer?: (id: string) => void;
+}
+
+type Teacher = {
+  firstname: string;
+  lastname: string;
+  email: string;
+  nickname?: string;
+  address?: string;
+  city?: string;
+  postCode?: string;
+  phoneNumber?: string;
+  isActive: boolean;
+};
+
+const NotSelectedContacts = (props: NotSelectedContactsProps) => {
+  const {
+    allChecked,
+    list,
+    fieldSort,
+    direction,
+    setAllChecked,
+    handleRowCheck,
+    sortData,
+  } = useEagerLoadingList(props.list!, "name");
+  const dispatch = useParcoursDispatch();
+
+  const { mutate: createTeacher } = useMutation({
+    mutationFn: (teacher: Teacher) =>
+      parcoursApi.mutations.createTeacher(teacher),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "ADD_NEW_CONTACT", payload: data.contact });
+        dispatch({ type: "SET_NOT_SELECTED_CONTACTS" });
+      }
+    },
+    onError: () => {
+      toast.error("Erreur lors de la création du contact");
+    },
+  });
+
+  const handleAllChecked = useCallback(() => {
+    setAllChecked((prevState) => !prevState);
+  }, [setAllChecked]);
+
+  const table = useMemo(() => {
+    return (
+      <table className="table w-full border-separate border-spacing-y-2">
+        <thead>
+          <tr>
+            <th>
+              <input
+                className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+                type="checkbox"
+                checked={allChecked}
+                onChange={handleAllChecked}
+              />
+            </th>
+            <th
+              className="cursor-pointer"
+              onClick={() => {
+                sortData("name");
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <p>Nom</p>
+                <SortColumnIcon
+                  fieldSort={fieldSort}
+                  column="name"
+                  direction={direction}
+                />
+              </div>
+            </th>
+            <th
+              className="cursor-pointer"
+              onClick={() => {
+                sortData("role");
+              }}
+            >
+              <div className="flex items-center gap-x-2">
+                <p>Role</p>
+                <SortColumnIcon
+                  fieldSort={fieldSort}
+                  column="role"
+                  direction={direction}
+                />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {list &&
+            list.map((item) => (
+              <tr
+                className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+                key={item.id}
+              >
+                <td>
+                  <input
+                    className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+                    type="checkbox"
+                    checked={
+                      item.isSelected !== undefined ? item.isSelected : false
+                    }
+                    onChange={() => handleRowCheck(item.id)}
+                  />
+                </td>
+                <td>{item.name}</td>
+                <td>{item.role}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    );
+  }, [
+    allChecked,
+    direction,
+    fieldSort,
+    handleAllChecked,
+    handleRowCheck,
+    list,
+    sortData,
+  ]);
+
+  const handleAddContacts = () => {
+    if (list) {
+      const contacts = list
+        .filter((item) => item.isSelected)
+        .map((item) => item.id);
+      props.onAddItems!(contacts);
+      props.onCloseDrawer!("add-contacts");
+    }
+  };
+
+  const handleCloseDrawer = (id: string) => {
+    console.log("click");
+
+    document.getElementById(id)?.click();
+  };
+
+  const submitNewTeacher = (teacher: Teacher) => {
+    createTeacher(teacher);
+  };
+
+  return (
+    <>
+      {list && list.length > 0 ? (
+        <>
+          {table}
+          <div className="w-full flex justify-between mt-4">
+            <button
+              className="btn btn-accent"
+              onClick={() => handleCloseDrawer("new-contact")}
+            >
+              Créer un contact
+            </button>
+            <button className="btn btn-primary" onClick={handleAddContacts}>
+              Ajouter
+            </button>
+          </div>
+          <RightSideDrawer
+            id="new-contact"
+            title="Ajouter un Formateur"
+            visible={false}
+            //onCloseDrawer={handleCloseDrawer}
+          >
+            <UserQuickCreate
+              onCloseDrawer={handleCloseDrawer}
+              onSubmitUser={submitNewTeacher}
+            />
+          </RightSideDrawer>
+        </>
+      ) : (
+        <div className="flex flex-col gap-y-8">
+          <p>Tous les contacts ont déja été ajoutés</p>
+          <button
+            className="btn btn-accent"
+            onClick={() => {
+              handleCloseDrawer("new-contact");
+            }}
+          >
+            Créer un contact
+          </button>
+          <RightSideDrawer
+            id="new-contact"
+            title="Ajouter un Formateur"
+            visible={false}
+            //onCloseDrawer={handleCloseDrawer}
+          >
+            <UserQuickCreate
+              onCloseDrawer={handleCloseDrawer}
+              onSubmitUser={submitNewTeacher}
+            />
+          </RightSideDrawer>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default NotSelectedContacts;

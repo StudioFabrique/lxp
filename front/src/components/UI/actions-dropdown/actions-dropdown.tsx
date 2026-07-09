@@ -1,4 +1,4 @@
-import EllipsisIcon from "../svg/ellipsis-icon";
+import EllipsisIcon from "../../../../src/components/UI/svg/ellipsis-icon";
 
 interface ActionsDropdownItem<FuncDataT = void> {
   actionTitle: string;

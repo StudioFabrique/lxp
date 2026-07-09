@@ -53,7 +53,7 @@ function Pagination({
   const getContent = (
     <>
       {children
-        ? cloneElement(children, { perPage, onChange: handleChange })
+        ? cloneElement(children, { perPage, onChange: handleChange } as any)
         : null}
       <>
         <button

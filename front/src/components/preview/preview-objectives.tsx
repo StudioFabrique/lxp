@@ -1,7 +1,7 @@
 import Objective from "../../utils/interfaces/objective";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import EditIcon from "../UI/svg/edit-icon";
+import BoxWrapper from "../wrappers/BoxWrapper";
+import SubBoxWrapper from "../wrappers/SubBoxWrapper";
 
 interface ParcoursPreviewObjectivesProps {
   objectives: Objective[];
@@ -13,7 +13,7 @@ const PreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
 
   return (
     <article>
-      <Wrapper>
+      <BoxWrapper>
         <span className="w-full flex justify-between items-center">
           <h2 className="text-xl font-bold">Objectifs du parcours</h2>
           <div
@@ -26,11 +26,11 @@ const PreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
         <ul className="flex flex-col gap-y-2">
           {objectives.map((objective) => (
             <li key={objective.id}>
-              <SubWrapper>{objective.description}</SubWrapper>
+              <SubBoxWrapper>{objective.description}</SubBoxWrapper>
             </li>
           ))}
         </ul>
-      </Wrapper>
+      </BoxWrapper>
     </article>
   );
 };

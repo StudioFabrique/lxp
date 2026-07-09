@@ -26,7 +26,6 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
     onColorChange(color);
-    // Close dropdown after selection
     const elem = document.activeElement as HTMLElement;
     elem?.blur();
   };
@@ -48,7 +47,6 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
         <div className="card-body">
           <h3 className="card-title text-sm">Choisir une couleur</h3>
 
-          {/* Predefined colors grid */}
           <div className="flex flex-wrap gap-5 mb-3">
             {predefinedColors.map((color) => (
               <button
@@ -66,7 +64,6 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
             ))}
           </div>
 
-          {/* Native color input */}
           <div className="form-control flex gap-2">
             <label className="label">
               <span className="label-text text-xs">Couleur personnalisée</span>
@@ -79,7 +76,6 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
             />
           </div>
 
-          {/* Display hex value */}
           <div className="text-center text-xs font-mono mt-2 text-base-content/70">
             {selectedColor}
           </div>

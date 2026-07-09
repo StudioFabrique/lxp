@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
-import User from "../../../utils/interfaces/user";
-import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import User from "../../../../src/utils/interfaces/user";
+import { AvatarSmall } from "../../../components/avatar/AvatarSmall";
 import { Trash2 } from "lucide-react";
 
 const GroupUserItem: FC<{

@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, FC } from "react";
 
-import { regexGeneric } from "../../../utils/constantes";
 import MagnifyIcon from "../svg/magnify-icon";
+import { regexGeneric } from "../../../../src/config/constantes";
 
 const Search: FC<{
   options: Array<{

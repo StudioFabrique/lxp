@@ -1,5 +1,5 @@
 import { cloneElement, ReactElement, useEffect, useState } from "react";
-import { displaySize } from "../../helpers/sizeUnitConversion";
+import { displaySize } from "../../utils/helpers/size-unit-conversion";
 import Media from "../../utils/interfaces/media";
 import { ClipboardCheck, Copy, Trash2 } from "lucide-react";
 
@@ -32,7 +32,7 @@ function CardMedia({ children, media }: Props) {
 
   return (
     <div className="card glass w-64">
-      {cloneElement(children, { handleCopyUrl, copied })}
+      {cloneElement(children, { handleCopyUrl, copied } as any)}
       <div className="card-body text-xs">
         <span className="flex justify-between">
           <p>Taille :</p>

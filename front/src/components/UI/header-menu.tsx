@@ -1,18 +1,20 @@
 import { useState } from "react";
-import GroupIcon from "./svg/group-icon";
-import SearchModal from "../search-modal/search-modal";
-import Can from "./can/can.component";
+import GroupIcon from "../../../src/components/UI/svg/group-icon";
+import SearchModal from "../../../src/components/search-modal/search-modal";
 import { Link, useLocation } from "react-router";
 import { PlayCircleIcon } from "lucide-react";
+import PermissionGuard from "../../components/guards/PermissionGuard";
 
 type HeaderMenuProps = {
   hideResumeCourseButton?: boolean;
   onClickResume?: () => void;
+  isStudent?: boolean;
 };
 
 const HeaderMenu = ({
   hideResumeCourseButton,
   onClickResume,
+  isStudent,
 }: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
@@ -24,33 +26,26 @@ const HeaderMenu = ({
         <div className="flex flex-col gap-4 justify-between z-20">
           <span className="flex-1" />
           <div className="self-end flex flex-col gap-4">
-            {/* <button type="button" className="btn btn-primary btn-sm py-1">
-              <CameraIcon />
-            </button> */}
-            <Can action="write" object="group">
+            <PermissionGuard action="write" object="group">
               <Link
                 to={`/${location.pathname.split("/")[1]}/group`}
                 className="btn btn-primary btn-sm text-base-100 py-1"
               >
                 <GroupIcon />
               </Link>
-            </Can>
+            </PermissionGuard>
           </div>
-          {onClickResume ? (
-            hideResumeCourseButton ? null : (
-              <Can action="component" object="start-lesson-button">
-                <button
-                  onClick={onClickResume}
-                  type="button"
-                  className="btn btn-primary text-base-100 gap-2 self-end"
-                >
-                  <span className="w-5 h-5">
-                    <PlayCircleIcon />
-                  </span>
-                  <p className="normal-case">Reprendre</p>
-                </button>
-              </Can>
-            )
+          {onClickResume && !hideResumeCourseButton && isStudent ? (
+            <button
+              onClick={onClickResume}
+              type="button"
+              className="btn btn-primary text-base-100 gap-2 self-end"
+            >
+              <span className="w-5 h-5">
+                <PlayCircleIcon />
+              </span>
+              <p className="normal-case">Reprendre</p>
+            </button>
           ) : null}
         </div>
       </div>

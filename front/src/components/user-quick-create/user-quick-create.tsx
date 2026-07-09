@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Wrapper from "../UI/wrapper/wrapper.component";
-import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import Field from "../UI/forms/field";
-import React, { useState } from "react";
-import { userQuickCreateSchema } from "../../lib/validation/parcours-edit/user-quick-create-val";
-import { ZodError } from "zod";
-import useForm from "../UI/forms/hooks/use-form";
-import { validationErrors } from "../../helpers/validate";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import DrawerFormButtons from "../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
+import BoxWrapper from "../wrappers/BoxWrapper";
+import FormInput from "../form/FormInput";
+import { userQuickCreateSchema } from "../../../src/config/validation/parcours-edit/user-quick-create-val";
 
 type Props = {
   onSubmitUser: (newUser: any) => void;
@@ -16,48 +15,41 @@ type Props = {
 
 const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   const [isActive, setIsActive] = useState(true);
-  const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm({}, userQuickCreateSchema);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    resolver: zodResolver(userQuickCreateSchema),
+    defaultValues: {
+      lastname: "",
+      firstname: "",
+      nickname: "",
+      email: "",
+      address: "",
+      city: "",
+      postCode: "",
+      phoneNumber: "",
+    },
+  });
 
   // détermine si le compte de l'utilisateur sera activé dès sa création
   const handleToggleIsActive = () => {
     setIsActive((prevState) => !prevState);
   };
 
-  const data = { values, errors, onChangeValue };
-
   // ferme le drawer et reset le formulaire
   const handleCancel = () => {
-    onResetForm();
+    reset();
     onCloseDrawer("new-contact");
   };
 
   // vérifie si le formulaire est valide et le transmet les valeurs des champs au parent
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      userQuickCreateSchema.parse(values);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        console.log({ error });
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
-      }
-    }
-
-    onSubmitUser({ ...values, isActive });
-    onResetForm();
+  const onSubmit = handleSubmit((data: any) => {
+    onSubmitUser({ ...data, isActive });
+    reset();
     onCloseDrawer("new-contact");
-  };
-
-  console.log("creation d'un contact");
-
-  //console.log("data :", values);
+  });
 
   return (
     <div className="flex flex-col">
-      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-y-4" onSubmit={onSubmit}>
         <div className="flex flex-col gap-y-4 px-4">
           <label className="flex gap-x-4 items-center cursor-pointer">
             <span className="text-primary/50">Status</span>
@@ -78,60 +70,73 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Wrapper>
-            <Field
+          <BoxWrapper>
+            <FormInput
               label="Nom *"
               name="lastname"
               placeholder="Dupont"
-              data={data}
+              register={register}
+              error={errors.lastname}
             />
 
-            <Field
+            <FormInput
               label="Prénom *"
               name="firstname"
               placeholder="Jean"
-              data={data}
+              register={register}
+              error={errors.firstname}
             />
 
-            <Field
+            <FormInput
               label="Pseudo"
               name="nickname"
               placeholder="jean64"
-              data={data}
+              register={register}
+              error={errors.nickname}
             />
 
-            <Field
+            <FormInput
               label="Email *"
               name="email"
               type="email"
               placeholder="email@exemple.com"
-              data={data}
+              register={register}
+              error={errors.email}
             />
-          </Wrapper>
-          <Wrapper>
-            <Field
+          </BoxWrapper>
+          <BoxWrapper>
+            <FormInput
               label="Adresse"
               name="address"
               placeholder="2 place royale"
-              data={data}
+              register={register}
+              error={errors.address}
             />
 
-            <Field label="Ville" name="city" placeholder="Paris" data={data} />
+            <FormInput
+              label="Ville"
+              name="city"
+              placeholder="Paris"
+              register={register}
+              error={errors.city}
+            />
 
-            <Field
+            <FormInput
               label="Code Postal"
               name="postCode"
               placeholder="75000"
-              data={data}
+              register={register}
+              error={errors.postCode}
             />
 
-            <Field
+            <FormInput
               label="Numéro de téléphone"
               name="phoneNumber"
               placeholder="01 02 03 04 05"
-              data={data}
+              register={register}
+              error={errors.phoneNumber}
             />
-          </Wrapper>
+          </BoxWrapper>
         </div>
         <div className="w-full flex flex-col gap-y-4">
           <p className="text-xs px-2 mt-2">

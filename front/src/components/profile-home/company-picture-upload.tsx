@@ -1,14 +1,13 @@
 import toast from "react-hot-toast";
-import useHttp from "../../hooks/use-http";
+import apiClient from "../../lib/axios";
 import ProfileImageFileUpload from "../UI/image-file-upload/profile-image-file-upload";
 import { useCallback, useEffect, useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
-import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import ColorPicker from "../UI/color-picker";
 import { COMPANY_LOGO } from "../../config/urls";
+import FadeWrapper from "../wrappers/FadeWrapper";
 
 const CompanyPictureUpload = () => {
-  const { sendRequest } = useHttp(true);
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
     url: string | null;
@@ -26,16 +25,16 @@ const CompanyPictureUpload = () => {
       if (avatar.file) formData.append("image", avatar.file);
       if (bgColor) formData.append("color", bgColor);
 
-      sendRequest(
-        {
-          path: `/company-logo`,
-          method: "post",
-          body: formData,
-        },
-        applyData
-      );
+      apiClient
+        .post(`/company-logo`, formData)
+        .then((response) => applyData(response.data))
+        .catch((err) => {
+          const errorMessage =
+            err?.response?.data?.message ?? "Erreur inconnue";
+          toast.error(errorMessage);
+        });
     },
-    [sendRequest, bgColor]
+    [bgColor]
   );
 
   useEffect(() => {

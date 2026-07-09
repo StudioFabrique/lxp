@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
-import { Context } from "../../store/context.store";
-import { CalendarView } from "../UI/calendar/calendar-configuration";
-import Calendar from "../UI/calendar/calendar";
-import CalendarHeader from "../UI/calendar/calendar-header";
-import TitleWithSelector from "../UI/calendar/components/title-with-selector";
-import TimeSelector from "../UI/calendar/components/time-selector";
-import ViewSelector from "../UI/calendar/components/view-selector";
+import { ThemeContext } from "../../store/ThemeProvider";
+import { CalendarView } from "../calendar/calendar-configuration";
+import Calendar from "../calendar/calendar";
+import CalendarHeader from "../calendar/calendar-header";
+import TitleWithSelector from "../calendar/components/title-with-selector";
+import TimeSelector from "../calendar/components/time-selector";
+import ViewSelector from "../calendar/components/view-selector";
 
 const TeacherCalendar = () => {
-  const { theme } = useContext(Context);
+  const { theme } = useContext(ThemeContext);
   const darkMode = theme === "dark";
 
   const [view, setView] = useState<CalendarView>("week");

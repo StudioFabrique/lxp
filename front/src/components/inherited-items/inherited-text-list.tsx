@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
-import ItemElement from "../item-element.component";
+import SubBoxWrapper from "../wrappers/SubBoxWrapper";
+import ItemElement from "./item-element.component";
 
 interface InheritedTextListProps {
   list?: any[];
@@ -20,14 +20,14 @@ const InheritedTextList = (props: InheritedTextListProps) => {
       {props.list &&
         props.list.map((item: any) => (
           <li key={item.id}>
-            <SubWrapper>
+            <SubBoxWrapper>
               <ItemElement
                 item={item}
                 onRemoveItem={() => handleRemoveItem(item)}
                 property={props.property! ?? "name"}
                 additionalProperty={props.additionalProperty}
               />
-            </SubWrapper>
+            </SubBoxWrapper>
           </li>
         ))}
     </ul>

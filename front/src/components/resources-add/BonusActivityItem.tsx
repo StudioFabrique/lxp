@@ -1,7 +1,7 @@
 import { EditIcon, Trash2 } from "lucide-react";
-import { Activity } from "../../utils/interfaces/activity";
-import { getActivityIcon } from "../../helpers/getActivityIcon";
-import Can from "../UI/can/can.component";
+import { Activity } from "../../../src/utils/interfaces/activity";
+import { getActivityIcon } from "../../../src/utils/helpers/getActivityIcon";
+import PermissionGuard from "../../components/guards/PermissionGuard";
 
 type Props = {
   disabled?: boolean;
@@ -22,7 +22,9 @@ export default function BonusActivityItem({
 
   return (
     <div className={"flex items-center gap-2 w-full"}>
-      <div className={style}>{getActivityIcon(activity.type)}</div>
+      <div
+        className={style}
+      >{getActivityIcon(activity.type as "iframe" | "video" | "image" | "text" | "resource")}</div>
       <button
         className={
           "text-xs text-primary flex-1 text-left hover:cursor-pointer truncate p-2 rounded-sm bg-secondary/10 tooltip tooltip-bottom"
@@ -32,7 +34,7 @@ export default function BonusActivityItem({
       >
         {activity.title}
       </button>
-      <Can action="write" object="lesson">
+      <PermissionGuard action="write" object="lesson">
         <div
           className={
             "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"
@@ -57,7 +59,7 @@ export default function BonusActivityItem({
             <Trash2 className="w-4 h-4 text-error" />
           </button>
         </div>
-      </Can>
+      </PermissionGuard>
     </div>
   );
 }

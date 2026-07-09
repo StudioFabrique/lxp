@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useState } from "react";
-import { csvUsersFields } from "../../../../../config/csv/csv-users-fields";
-import RightSideDrawer from "../../../../UI/right-side-drawer/right-side-drawer";
-import User from "../../../../../utils/interfaces/user";
+import { csvUsersFields } from "../../../../../../src/config/csv/csv-users-fields";
+import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
+import User from "../../../../../../src/utils/interfaces/user";
 import { toast } from "react-hot-toast";
-import useHttp from "../../../../../hooks/use-http";
+import apiClient from "../../../../../lib/axios";
 import CsvUserListConfirmation from "./csv-user-list-confirmation.component";
 import CsvImportUser from "../csv-import.component";
 
@@ -18,7 +18,7 @@ const CsvImportUserList: FC<{
   );
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
-  const { isLoading, sendRequest } = useHttp(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImportCsv = (data: User[]) => {
     if (data) {
@@ -62,14 +62,16 @@ const CsvImportUserList: FC<{
       onAddUsers(data.usersCreated);
       toast.success("étudiants enregistrés");
     };
-    sendRequest(
-      {
-        path: "/user/many",
-        body: selectedUsersToUpload,
-        method: "post",
-      },
-      applyData
-    );
+    setIsLoading(true);
+    apiClient
+      .post("/user/many", selectedUsersToUpload)
+      .then((response) => applyData(response.data))
+      .catch((err) => {
+        const errorMessage =
+          err?.response?.data?.message ?? "Erreur inconnue";
+        toast.error(errorMessage);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const handleAddSelectedUser = (user: User) => {

@@ -103,16 +103,12 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      {/* ✅ Appliquer le z-index ici ET créer un nouveau stacking context */}
       <div className="drawer-side h-screen overflow-hidden" style={{ zIndex }}>
-        {/* ✅ Overlay avec z-index relatif au drawer-side */}
         <label
           htmlFor={!isOpen ? id : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
-        {/* ✅ Contenu du drawer - supprimer le z-[1000] et utiliser relative */}
         <div className="min-w-[35rem] flex flex-col bg-base-200 text-base-content rounded-l-2xl h-screen relative">
-          {/* Header fixe */}
           <div className="flex-shrink-0 py-4 pl-4">
             <div className="flex items-center gap-x-4">
               <div
@@ -137,7 +133,6 @@ const RightSideDrawer: FC<Props> = ({
             <div className="divider divider-vertical"></div>
           </div>
 
-          {/* Contenu scrollable */}
           <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
         </div>
       </div>

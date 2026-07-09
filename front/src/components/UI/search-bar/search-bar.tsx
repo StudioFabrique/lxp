@@ -15,17 +15,6 @@ export type SearchBarProps = {
   onSetFilter?: Dispatch<SetStateAction<string | undefined>>;
 };
 
-/**
- * Composant SearchBar permettant d'effectuer des recherches avec une barre de recherche.
- *
- * @param props.title - Titre optionnel à afficher au-dessus de la barre de recherche
- * @param props.placeholder - Texte placeholder à afficher dans la barre de recherche
- * @param props.onSubmitSearchValue - Fonction callback appelée lors de la soumission du formulaire
- * @param props.onSetFilter - Fonction callback appelée à chaque changement de valeur
- * @param children - Éléments enfants optionnels à afficher à droite de la barre de recherche
- *
- * @component
- */
 const SearchBar = ({
   title,
   placeholder,

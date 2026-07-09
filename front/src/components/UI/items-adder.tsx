@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
-import Wrapper from "./wrapper/wrapper.component";
+import Wrapper from "../wrappers/BoxWrapper";
 import { getRandomLightColor } from "../../utils/random-tailwind-color";
 import { Trash2 } from "lucide-react";
 

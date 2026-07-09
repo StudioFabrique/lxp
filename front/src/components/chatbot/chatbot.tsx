@@ -4,9 +4,9 @@ import ChatbotButton from "./chatbot-button";
 import useChatbot from "./hooks/use-chatbot";
 import useChatbotUi from "./hooks/use-chatbot-ui";
 import useChatBotQuiz from "./hooks/use-chatbot-quiz";
-import QuizModal from "../quizzes/modals/quiz-modal";
+import QuizModal from "../../components/quiz/modals/quiz-modal";
 import { useContext } from "react";
-import { ChatbotContext } from "../../store/chatbotContext";
+import { ChatbotContext } from "../../store/ChatbotProvider";
 
 export default function Chatbot() {
   const { forceHideChatbot } = useContext(ChatbotContext);

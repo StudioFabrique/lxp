@@ -1,20 +1,15 @@
-import { useCallback, useEffect, useReducer } from "react";
-import { ZodError } from "zod";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Contact from "../../utils/interfaces/contact";
 import Skill from "../../utils/interfaces/skill";
-import {
-  moduleCreateSchema,
-  moduleMetadataCreateSchema,
-} from "../../lib/validation/parcours-edit/module-create-schema";
-import useHttp from "../../hooks/use-http";
-import useForm from "../UI/forms/hooks/use-form";
+import { moduleCreateSchema } from "../../features/parcours/parcours.schema";
+import apiClient from "../../lib/axios";
 import toast from "react-hot-toast";
 
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
 import { ModuleData } from "../../utils/interfaces/new-module";
-import { useDispatch } from "react-redux";
-import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 /**
  * Represents a selectable item (formation or parcours)
@@ -194,27 +189,22 @@ const newModuleReducer = (state: State, action: Action): State => {
  * - Image upload and preview
  * - Form validation and submission
  *
- * The workflow is:
- * 1. Select a formation
- * 2. Fill module details (title, description, etc.)
- * 3. Submit module creation
- * 4. Select a parcours
- * 5. Attach metadata (duration, contacts, skills)
- *
  * @returns Object containing state and handlers for module creation
  */
 const useNewModule = () => {
   const nav = useNavigate();
-  const redux = useDispatch();
   const [state, dispatch] = useReducer(newModuleReducer, initialState);
-  const { sendRequest, error, isLoading } = useHttp();
-  const { errors, onChangeValue, onValidateForm, values } = useForm(
-    {},
-    moduleCreateSchema,
-  );
-
-  // Form data object combining values, change handler, and errors
-  const data = { values, onChangeValue, errors };
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    formState: { errors },
+    getValues,
+    trigger,
+    watch,
+  } = useForm({
+    resolver: zodResolver(moduleCreateSchema),
+  });
 
   /**
    * Fetch the list of available formations from the API
@@ -223,8 +213,15 @@ const useNewModule = () => {
     const processData = (formationData: Array<Item>) => {
       dispatch({ type: "SET_FORMATION_LIST", payload: formationData });
     };
-    sendRequest({ path: "/formation" }, processData);
-  }, [sendRequest]);
+    setIsLoading(true);
+    apiClient
+      .get("/formation")
+      .then((res) => processData(res.data as Array<Item>))
+      .catch(
+        (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
+      )
+      .finally(() => setIsLoading(false));
+  }, []);
 
   /**
    * Handle formation selection
@@ -241,7 +238,7 @@ const useNewModule = () => {
    * @param e Form submission event
    */
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
 
       // Validate formation selection
@@ -251,12 +248,13 @@ const useNewModule = () => {
       }
 
       // Validate form fields
-      if (!onValidateForm()) return;
+      const isValid = await trigger();
+      if (!isValid) return;
 
       // Prepare FormData for multipart upload (module metadata + image)
       const formData = new FormData();
       const module = {
-        ...data.values,
+        ...getValues(),
         formationId: state.formationId,
       };
 
@@ -264,29 +262,23 @@ const useNewModule = () => {
       if (state.file) formData.append("image", state.file);
 
       // Handler for successful module creation
-      const applyData = (result: { data: ModuleData; message: string }) => {
-        toast.success(result.message);
-        dispatch({ type: "SET_NEW_MODULE_DATA", payload: result.data });
-        redux(parcoursModulesSliceActions.addNewModule(result.data));
-      };
-
-      sendRequest(
-        {
-          path: "/formation/new-module",
-          method: "post",
-          body: formData,
-        },
-        applyData,
-      );
+      setIsLoading(true);
+      apiClient
+        .post("/formation/new-module", formData)
+        .then((res) => {
+          const result = res.data as { data: ModuleData; message: string };
+          toast.success(result.message);
+          dispatch({
+            type: "SET_NEW_MODULE_DATA",
+            payload: result.data as unknown as NewMddule,
+          });
+        })
+        .catch(
+          (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
+        )
+        .finally(() => setIsLoading(false));
     },
-    [
-      state.formationId,
-      state.file,
-      data.values,
-      onValidateForm,
-      sendRequest,
-      redux,
-    ],
+    [state.formationId, state.file, getValues, trigger],
   );
 
   /**
@@ -310,9 +302,16 @@ const useNewModule = () => {
         dispatch({ type: "SET_PARCOURS_LIST", payload: parcoursData });
       };
 
-      sendRequest({ path: `/parcours/select/${fid}` }, processData);
+      setIsLoading(true);
+      apiClient
+        .get(`/parcours/select/${fid}`)
+        .then((res) => processData(res.data as Item[]))
+        .catch(
+          (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
+        )
+        .finally(() => setIsLoading(false));
     },
-    [state.formationId, sendRequest],
+    [state.formationId],
   );
 
   /**
@@ -333,56 +332,54 @@ const useNewModule = () => {
       dispatch({ type: "SET_PARCOURS_ID", payload: id });
 
       // Fetch contacts and skills for the selected parcours
-      const applyData = (
-        result: SuccessWithMessage & { contacts: Contact[]; skills: Skill[] },
-      ) => {
-        dispatch({
-          type: "SET_SKILLS_AND_CONTACTS",
-          payload: { contacts: result.contacts, skills: result.skills },
-        });
-      };
-
-      sendRequest({ path: `/parcours/skills-contacts/${id}` }, applyData);
+      setIsLoading(true);
+      apiClient
+        .get(`/parcours/skills-contacts/${id}`)
+        .then((res) => {
+          const result = res.data as SuccessWithMessage & {
+            contacts: Contact[];
+            skills: Skill[];
+          };
+          dispatch({
+            type: "SET_SKILLS_AND_CONTACTS",
+            payload: { contacts: result.contacts, skills: result.skills },
+          });
+        })
+        .catch(
+          (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
+        )
+        .finally(() => setIsLoading(false));
     },
-    [sendRequest],
+    [],
   );
 
   /**
    * Submit module metadata (duration, contacts, skills) to attach module to parcours
    * Validates duration using Zod schema before submission
    */
-  const handleMetadataSubmit = useCallback(() => {
-    try {
-      // Validate duration field
-      moduleMetadataCreateSchema.parse({ duration: values.duration });
+  const handleMetadataSubmit = useCallback(async () => {
+    const duration = (getValues("duration") as number) ?? 0;
 
-      const applyData = (result: SuccessWithMessage) => {
+    setIsLoading(true);
+    apiClient
+      .post("/modules/metadata", {
+        parcoursId: state.parcoursId,
+        moduleId: state.newModuleData?.id,
+        duration,
+        contactIds: state.currentContacts.map((c) => c.id ?? []),
+        skillIds: state.currentSkills.map((s) => s.id ?? []),
+      })
+      .then((res) => {
+        const result = res.data as SuccessWithMessage;
         toast.success(result.message);
         nav("/admin/module");
-      };
-
-      sendRequest(
-        {
-          path: "/modules/metadata",
-          method: "post",
-          body: {
-            parcoursId: state.parcoursId,
-            moduleId: state.newModuleData?.id,
-            duration: values.duration,
-            contactIds: state.currentContacts.map((c) => c.id ?? []),
-            skillIds: state.currentSkills.map((s) => s.id ?? []),
-          },
-        },
-        applyData,
-      );
-    } catch (error: unknown) {
-      if (error instanceof ZodError) {
-        toast.error("Des erreurs sont présentes dans le formulaire.");
-      }
-    }
+      })
+      .catch(
+        (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
+      )
+      .finally(() => setIsLoading(false));
   }, [
-    values.duration,
-    sendRequest,
+    getValues,
     state.parcoursId,
     state.newModuleData?.id,
     state.currentContacts,
@@ -463,7 +460,9 @@ const useNewModule = () => {
   return {
     ...state,
     isLoading,
-    data,
+    register,
+    errors,
+    watch,
     handleSubmit,
     handlePickFormation,
     handleSetFile,

@@ -1,8 +1,8 @@
 import Skill from "../../utils/interfaces/skill";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import TrophyIcon from "../UI/svg/trophy-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
+import BoxWrapper from "../wrappers/BoxWrapper";
+import SubBoxWrapper from "../wrappers/SubBoxWrapper";
 
 interface PreviewSkillsProps {
   skills: Skill[];
@@ -13,7 +13,7 @@ const PreviewSkills = (props: PreviewSkillsProps) => {
   const { skills } = props;
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <span className="w-full flex justify-between items-center">
         <h2 className="text-xl font-bold">Compétences du parcours</h2>
         <div className="w-6 h-6 text-primary" onClick={() => props.onEdit(3)}>
@@ -23,7 +23,7 @@ const PreviewSkills = (props: PreviewSkillsProps) => {
       <ul className="flex flex-col gap-y-2">
         {skills.map((skill) => (
           <li className="w-full flex gap-x-2 items-center" key={skill.id}>
-            <SubWrapper>
+            <SubBoxWrapper>
               <div className="w-6 h-6 text-primary cursor-pointer">
                 {skill.badge ? (
                   <img
@@ -35,16 +35,16 @@ const PreviewSkills = (props: PreviewSkillsProps) => {
                   <TrophyIcon />
                 )}
               </div>
-            </SubWrapper>
+            </SubBoxWrapper>
             <div className="flex-1">
-              <SubWrapper>
+              <SubBoxWrapper>
                 <p>{skill.description}</p>
-              </SubWrapper>
+              </SubBoxWrapper>
             </div>
           </li>
         ))}
       </ul>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

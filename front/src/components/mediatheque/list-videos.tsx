@@ -1,8 +1,8 @@
 import ReactPlayer from "react-player";
 import Media from "../../utils/interfaces/media";
-import { ACTIVITIES_VIDEOS } from "../../config/urls";
 import CardMedia from "./card-media";
 import MediaFilterSelect from "./media-filter-select";
+import { ACTIVITIES_VIDEOS } from "../../config/urls";
 
 // Définition du type des props du composant
 type Props = {
@@ -32,7 +32,7 @@ function ListVideos({ options, videos, onSort }: Props) {
                   <figure>
                     {/* Lecteur vidéo React avec contrôles */}
                     <ReactPlayer
-                      url={ACTIVITIES_VIDEOS + item.url}
+                      src={ACTIVITIES_VIDEOS + item.url}
                       controls
                       width="100%"
                       height="auto"

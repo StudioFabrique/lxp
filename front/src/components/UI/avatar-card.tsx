@@ -1,6 +1,6 @@
 import { CheckCircle } from "lucide-react";
-import { localeTime } from "../../helpers/locale-date";
 import FeelingLevel from "./feeling-level";
+import { localeTime } from "../../../src/utils/helpers/locale-date";
 
 interface AvatarCardProps {
   _id: string;

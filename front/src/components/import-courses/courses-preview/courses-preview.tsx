@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import Header from "../../UI/header";
-import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
+import Header from "../../../components/headers/Header";
+import MemoizedFileUpload from "../../../components/UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
 import { Eye, BookOpen, PenLine, Check, FilePlus2 } from "lucide-react";
-import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
-import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
-import SelectableCard from "../../UI/selectable-card";
-import { CourseImport } from "../../../views/course/hooks/use-import-courses";
-import { ActivityImport } from "../../../views/module/hooks/use-import-modules";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
+import QuestionMarkTooltip from "../../../../src/components/UI/question-mark-tooltip/question-mark-tooltip";
+import SelectableCard from "../../../../src/components/UI/selectable-card";
+import { CourseImport } from "../../../features/course/hooks/useImportCourses";
+import { ActivityImport } from "../../../features/module/hooks/useImportModules";
 import CourseArborescence from "./course-arborescence";
 
 type Props = {

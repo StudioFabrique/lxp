@@ -2,7 +2,7 @@
 import { FC, useCallback } from "react";
 
 import CsvImport from "./csv-import/csv-import.component";
-import { downloadFile } from "../../helpers/download-csv-template";
+import { downloadFile } from "../../../src/utils/helpers/download-csv-template";
 
 type Props = {
   fields: Array<string>;

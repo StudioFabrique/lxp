@@ -8,14 +8,14 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import activityIconType from "../../../utils/activity-icon-type";
-import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
-import Lesson from "../../../utils/interfaces/lesson";
-import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
+import activityIconType from "../../../utils/helpers/activity-icon-type";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
+import Lesson from "../../../../src/utils/interfaces/lesson";
+import ToolTipWarning from "../../../components/UI/tooltip-warning/tooltip-warning";
 import {
   ActivityImport,
   CourseImport,
-} from "../../../views/course/hooks/use-import-courses";
+} from "../../../features/course/hooks/useImportCourses";
 
 type Props = {
   activeCourse: CourseImport | null;

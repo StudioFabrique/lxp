@@ -10,10 +10,10 @@ import {
 } from "react";
 import Papa from "papaparse";
 
-import { checkCSV } from "../../../../utils/csv/check-csv";
-import UploadIcon from "../../../UI/svg/upload-icon.component";
+import { checkCSV } from "../../../../config/csv/csv-check";
+import UploadIcon from "../../../../../src/components/UI/svg/upload-icon.component";
 import toast from "react-hot-toast";
-import { downloadFile } from "../../../../helpers/download-csv-template";
+import { downloadFile } from "../../../../../src/utils/helpers/download-csv-template";
 import { DOWNLOAD_URL } from "../../../../config/urls";
 
 type Props = {

@@ -3,9 +3,9 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Wrapper from "../wrappers/BoxWrapper";
 import { Link } from "react-router";
-import Can from "../UI/can/can.component";
+import PermissionGuard from "../guards/PermissionGuard";
 
 interface EditModuleCourseProps {
   courses: Course[];
@@ -13,6 +13,7 @@ interface EditModuleCourseProps {
   success: boolean;
   onSetSubmit: (value: boolean) => void;
   onUpdateCourses: (updatedCourses: Course[]) => void;
+  onRefreshModule?: () => void;
 }
 
 const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
@@ -62,7 +63,7 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                     draggableId={item.id.toString()}
                     index={index}
                   >
-                    {(provided) => (
+                    {(provided: any) => (
                       <li
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -83,14 +84,14 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                               </span>
                             </div>
                             <span className="flex items-center gap-x-4">
-                              <Can action="update" object="course">
+                              <PermissionGuard action="update" object="course">
                                 <Link to={`/admin/course/edit/${item.id}`}>
                                   <Pen className="w-4 h-4 text-primary" />
                                 </Link>
-                              </Can>
-                              <Can action="delete" object="course">
+                              </PermissionGuard>
+                              <PermissionGuard action="delete" object="course">
                                 <Trash2 className="w-4 h-4 text-error" />
-                              </Can>
+                              </PermissionGuard>
                             </span>
                           </article>
                         </Wrapper>

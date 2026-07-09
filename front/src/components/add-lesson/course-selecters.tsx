@@ -1,7 +1,7 @@
 // Import des types et composants nécessaires
-import { CourseItem, Item } from "../../views/lesson/add/use-add-lesson";
-import Selecter from "../UI/selecter/selecter.component";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import { CourseItem, Item } from "../../features/lesson/hooks/useAddLesson";
+import Selecter from "../../components/UI/selecter/selecter.component";
+import Wrapper from "../wrappers/BoxWrapper";
 
 // Props du composant avec leurs types
 type Props = {

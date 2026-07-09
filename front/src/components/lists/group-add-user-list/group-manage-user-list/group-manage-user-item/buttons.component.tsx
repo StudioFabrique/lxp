@@ -1,5 +1,5 @@
 import { FC, FormEventHandler, Ref, useEffect, useRef } from "react";
-import User from "../../../../../utils/interfaces/user";
+import User from "../../../../../../src/utils/interfaces/user";
 
 export const AddUsersButton: FC<{
   isUserSettedUp: boolean;

@@ -1,5 +1,5 @@
 import { PlusCircle } from "lucide-react";
-import Header from "../UI/header";
+import Header from "../headers/Header";
 import { Link } from "react-router";
 
 export default function ResourcesHeader() {

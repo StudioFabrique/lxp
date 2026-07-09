@@ -11,9 +11,9 @@ import useChatbot from "./hooks/use-chatbot";
 import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 import useChatbotQuiz from "./hooks/use-chatbot-quiz";
 import { useContext } from "react";
-import { ChatbotContext } from "../../store/chatbotContext";
 import SelectedContentBlocChatbot from "./chatbot-parts/selected-content-bloc-chatbot";
 import { prebuiltPrompt } from "../../config/ai/ai-texts.json";
+import { ChatbotContext } from "../../store/ChatbotProvider";
 
 type Props = {
   chatbot: ReturnType<typeof useChatbot>;
@@ -78,7 +78,7 @@ export default function DrawerChatbot({
       }}
       exit={{ opacity: 0, y: 20, scale: 0.95, width: 410, height: 500 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
+      className="fixed bottom-5 right-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] bg-base-100 z-50 rounded-2xl shadow-2xl border border-base-300 flex flex-col overflow-hidden"
     >
       {/* En-tête du Chatbot */}
       <HeaderChatbot

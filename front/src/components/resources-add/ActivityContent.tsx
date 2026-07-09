@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from "react";
-import { Activity } from "../../utils/interfaces/activity";
-import CustomError from "../../utils/interfaces/custom-error";
-import ResourcePreview from "../edit-lesson/activities/resources/preview/resource-preview";
-import ResourceUpload from "../edit-lesson/activities/resources/resource-upload";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
+import { Activity } from "../../../src/utils/interfaces/activity";
+import ResourcePreview from "../../features/lesson/components/edit/activities/resources/preview/resource-preview";
+import ResourceUpload from "../../features/lesson/components/edit/activities/resources/resource-upload";
 import ActivityWrapper from "./ActivityWrapper";
 import IFrameActivityResource from "./IFrameActivityResource";
 import ImageActivityResource from "./ImageActivityResource";
@@ -22,10 +22,8 @@ type Props = {
   closePreviewActivity: () => void;
   uploadVideo: (fd: FormData) => void;
   data: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    values: Record<string, unknown>;
-    onChangeValue: (field: string, value: string) => void;
-    errors: CustomError[];
+    register: UseFormRegister<any>;
+    errors: FieldErrors;
   };
   resourceActivitiesSubmitted: () => void;
   submitIframeActivity: (newActivity: { title: string; url: string }) => void;
@@ -48,7 +46,6 @@ export default function ActivityContent(props: PropsWithChildren<Props>) {
             <VideoActivityResource
               activity={props.previewActivity ? props.previewActivity : null}
               mode={props.activityState}
-              values={props.data.values}
               onClose={props.closePreviewActivity}
               onSubmit={props.uploadVideo}
               parent="resource"

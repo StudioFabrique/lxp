@@ -23,8 +23,6 @@ export const injectLogout = (fn: () => void) => {
 const triggerLogout = () => {
   if (logoutHandler) {
     logoutHandler();
-  } else {
-    console.warn("Logout handler non injecté dans l'instance Axios.");
   }
 };
 
