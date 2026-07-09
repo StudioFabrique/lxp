@@ -22,11 +22,19 @@ pipeline {
                     sh '''
                         echo "🔧 Configuration SSH pour $HOST..."
                         mkdir -p ~/.ssh
-                        echo "Host deploy-target\n  HostName $HOST\n  User $USER\n  Port $PORT\n  IdentityFile $SSH_CRED\n  StrictHostKeyChecking no" > ~/.ssh/config
+
+                        cat <<EOF > ~/.ssh/config
+                        Host deploy-target
+                          HostName $HOST
+                          User $USER
+                          Port $PORT
+                          IdentityFile "$SSH_CRED"
+                          StrictHostKeyChecking no
+                        EOF
 
                         echo "📁 Préparation des dossiers..."
                         ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
-                        
+
                         # Envoi du Caddyfile et du compose.yml sur la VM
                         scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
@@ -39,10 +47,10 @@ pipeline {
 
                         echo "🔐 Connexion Docker Hub & Récupération de l'image unique..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        
+
                         # Docker va télécharger l'image "latest" unique mise à jour par le Job 1
                         docker compose down --remove-orphans || true
-                        docker compose pull 
+                        docker compose pull
                         docker compose up -d
 
                         echo "📌 Migrations Prisma..."
