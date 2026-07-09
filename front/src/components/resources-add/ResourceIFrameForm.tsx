@@ -1,5 +1,5 @@
-import CustomError from "../../utils/interfaces/custom-error";
-import Field from "../UI/forms/field";
+import { UseFormRegister } from "react-hook-form";
+import FormInput from "../form/FormInput";
 import ResourceIFramePreview from "./ResourceIFramePreview";
 
 type Props = {
@@ -8,9 +8,8 @@ type Props = {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   data: {
-    values: Record<string, unknown>;
-    onChangeValue: (name: string, value: unknown) => void;
-    errors: CustomError[];
+    register: UseFormRegister<any>;
+    errors: any;
   };
   onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCancel: () => void;
@@ -21,11 +20,12 @@ export default function ResourceIFrameForm(props: Props) {
   return (
     <form className="flex flex-col gap-y-4" onSubmit={props.onSubmit}>
       {/* Title input field with validation */}
-      <Field
-        data={props.data}
+      <FormInput
+        register={props.data.register}
         name="title"
         label="Titre"
         placeholder="Titre de l'activité"
+        error={props.data.errors.title}
       />
 
       {/* URL input field */}

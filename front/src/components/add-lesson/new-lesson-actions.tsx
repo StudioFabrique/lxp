@@ -1,4 +1,4 @@
-import SubmitButton from "../UI/submit-button";
+import SubmitButton from "../../components/UI/submit-button";
 
 // Props du composant avec leurs types
 type Props = {

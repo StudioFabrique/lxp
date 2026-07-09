@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 
-import useHttp from "./use-http";
+import apiClient from "../lib/axios";
 import { rowsPerPage } from "../config/pagination";
 import toast from "react-hot-toast";
 
@@ -21,7 +21,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [path, setPath] = useState(defaultUrlPath);
-  const { sendRequest } = useHttp();
   const [allChecked, setAllChecked] = useState(false);
   const [urlComplement, setUrlComplement] = useState<string | null>(null);
 
@@ -80,16 +79,15 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       }
     };
 
-    sendRequest(
-      {
-        path: `${path}/${stype}/${
+    apiClient
+      .get(
+        `${path}/${stype}/${
           sdir ? "desc" : "asc"
         }?page=${page}&limit=${perPage}${urlComplement ? urlComplement : ""}`,
-      },
-      applyData,
-    );
+      )
+      .then((response) => applyData(response.data))
+      .catch(() => {});
   }, [
-    sendRequest,
     page,
     perPage,
     handleTotalPages,
@@ -129,10 +127,10 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
         getList();
       }
     };
-    sendRequest(
-      { path: `/user/invitation/${userId}`, method: "put" },
-      applyData,
-    );
+    apiClient
+      .put(`/user/invitation/${userId}`)
+      .then((response) => applyData(response.data))
+      .catch(() => {});
   };
 
   const handleSearch = (searchTerm: string) => {

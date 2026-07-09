@@ -1,7 +1,7 @@
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 import Contact from "../../utils/interfaces/contact";
-import CustomError from "../../utils/interfaces/custom-error";
 import Skill from "../../utils/interfaces/skill";
-import FieldNumber from "../UI/forms/field-number";
+import FormNumberInput from "../form/FormNumberInput";
 import Selecter from "../UI/selecter/selecter.component";
 import ModuleToParcours from "./module-to-parcours";
 import { Item } from "./useAddModule";
@@ -10,11 +10,8 @@ type Props = {
   parcoursId: number | null;
   parcoursList: Item[];
   onPickParcours: (id: number) => void;
-  data: {
-    values: Record<string, unknown>;
-    onChangeValue: (field: string, value: unknown) => void;
-    errors: CustomError[];
-  };
+  register: UseFormRegister<any>;
+  errors: FieldErrors;
   contacts: Contact[] | null;
   currentContacts: Contact[] | null;
   skills: Skill[] | null;
@@ -40,12 +37,13 @@ export default function AssociateToParcours(props: Props) {
         title="Choisissez un parcours auquel attacher le module"
         onSelectItem={props.onPickParcours}
       />
-      <FieldNumber
+      <FormNumberInput
         label="Durée du module en heures *"
         name="duration"
         placeholder="Ex : 12"
         min={0}
-        data={props.data}
+        register={props.register}
+        error={props.errors.duration as any}
       />
       <ModuleToParcours
         currentContacts={props.currentContacts ?? []}

@@ -1,14 +1,14 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import useInput from "../../../hooks/use-input";
-import { regexGeneric } from "../../../utils/constantes";
+import { formatDateToYYYYMMDD } from "../../../../src/utils/helpers/convert-date";
+import DatePicker from "../../../features/parcours/components/edit/calendrier/date-picker";
+import useInput from "../../../hooks/useInput";
+import { regexGeneric } from "../../../config/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import { formatDateToYYYYMMDD } from "../../../helpers/convert-date";
-import DatePicker from "../../edit-parcours/calendrier/date-picker";
 
 type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
-  label?: string; // titre du composant personnalisable
+  label?: string;
   startDateProp?: string;
   endDateProp?: string;
 };
@@ -43,9 +43,6 @@ const DatesSelecter: FC<Props> = ({
     };
   }, [startDate.value, endDate.value]);
 
-  /**
-   * vérification de la validité des dates et envoie des données au composant parent pour les mettre à jour dans le state global et la bdd
-   */
   useEffect(() => {
     const timer = setTimeout(() => {
       if (submit) {
@@ -96,16 +93,6 @@ const DatesSelecter: FC<Props> = ({
     <div className="flex flex-col gap-y-4">
       <h3 className="font-bold">{label}</h3>
       <div className="flex flex-col gap-y-4">
-        {/* <div className="flex justify-between items-center">
-          <p className="whitespace-nowrap w-20">Début</p>
-          <input
-            className="ml-2 input input-sm w-5/6"
-            name="startingDate"
-            type="date"
-            value={dates.startDate}
-            onChange={handleChangeStartDate}
-          />
-        </div> */}
         <DatePicker
           id="date1"
           name="startingDate"
@@ -124,8 +111,6 @@ const DatesSelecter: FC<Props> = ({
       {error ? (
         <p className="text-error text-xs mt-4 text-center font-bold">
           La date de début doit être inférieure à la date de fin
-          {/*La date de début doit être comprise entre aujourd'hui et la date de
-          fin de la formation.*/}
         </p>
       ) : null}
     </div>

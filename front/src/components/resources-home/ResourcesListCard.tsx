@@ -1,9 +1,10 @@
 import { Edit, Trash2 } from "lucide-react";
 import React, { useContext } from "react";
-import { ResourceListItem } from "../../views/resources/resources-home";
+import { ResourceListItem } from "../../../src/features/resources/views/ResourcesHome";
 import { DOWNLOAD_URL } from "../../config/urls";
-import { Context } from "../../store/context.store";
-import hasPermission from "../../utils/hasPermission";
+import { AuthContext } from "../../store/AuthProvider";
+import { ThemeContext } from "../../store/ThemeProvider";
+import { hasPermission } from "../../utils/helpers/rbac-helpers";
 import { Link } from "react-router";
 
 type Props = {
@@ -19,9 +20,9 @@ export default function ResourcesListCard({
 }: Props) {
   // Defensive: if resourcesList is not an array treat as empty
   const list = Array.isArray(resourcesList) ? resourcesList : [];
-  const { theme } = useContext(Context);
+  const { theme } = useContext(ThemeContext);
   const baseStyle = "card glass image-full w-62 shadow-sm h-42";
-  const { user } = useContext(Context);
+  const { user } = useContext(AuthContext);
 
   const style = theme === "light" ? baseStyle + " bg-primary/75" : baseStyle;
 

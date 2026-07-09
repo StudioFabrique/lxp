@@ -4,8 +4,8 @@
  * Permet de gérer le chargement, le tri et le filtrage des médias par type
  */
 
-import { useCallback, useEffect, useReducer } from "react";
-import useHttp from "./use-http";
+import { useCallback, useEffect, useReducer, useState } from "react";
+import apiClient from "../lib/axios";
 import toast from "react-hot-toast";
 
 /**
@@ -13,12 +13,12 @@ import toast from "react-hot-toast";
  * @template T Type générique représentant le type des éléments de la liste
  */
 type PaginationState<T> = {
-  page: number; // Numéro de la page courante
-  perPage: number; // Nombre d'éléments affichés par page
-  totalPages: number; // Nombre total de pages disponibles
-  list: T[]; // Liste des éléments de la page courante
-  type: "image" | "video" | "audio" | "resource"; // Type de média à afficher
-  sort: "createdAt" | "size" | "used" | "name"; // Critère de tri des médias
+  page: number;
+  perPage: number;
+  totalPages: number;
+  list: T[];
+  type: "image" | "video" | "audio" | "resource";
+  sort: "createdAt" | "size" | "used" | "name";
 };
 
 /**
@@ -26,16 +26,15 @@ type PaginationState<T> = {
  */
 const initialState = {
   page: 1,
-  perPage: 6, // Affiche 6 éléments par page par défaut
+  perPage: 6,
   totalPages: 0,
   list: [],
-  type: "image", // Type par défaut : image
-  sort: "createdAt", // Tri par défaut : date de création
+  type: "image",
+  sort: "createdAt",
 };
 
 /**
  * Types d'actions possibles pour le reducer
- * Définit toutes les modifications possibles de l'état
  */
 type PaginationAction<T> =
   | { type: "SET_PAGE"; payload: number }
@@ -47,7 +46,6 @@ type PaginationAction<T> =
 
 /**
  * Reducer qui gère les différentes actions de pagination
- * @template T Type générique des éléments de la liste
  */
 const paginationReducer = <T>(
   state: PaginationState<T>,
@@ -57,7 +55,7 @@ const paginationReducer = <T>(
     case "SET_PAGE":
       return { ...state, page: action.payload };
     case "SET_LIMIT":
-      return { ...state, page: 1, perPage: action.payload }; // Reset à la page 1
+      return { ...state, page: 1, perPage: action.payload };
     case "SET_TOTAL_PAGES":
       return { ...state, totalPages: action.payload };
     case "SET_LIST":
@@ -67,9 +65,9 @@ const paginationReducer = <T>(
         totalPages: action.payload.totalPages,
       };
     case "SET_TYPE":
-      return { ...state, page: 1, type: action.payload }; // Reset à la page 1
+      return { ...state, page: 1, type: action.payload };
     case "SET_SORT":
-      return { ...state, page: 1, sort: action.payload }; // Reset à la page 1
+      return { ...state, page: 1, sort: action.payload };
     default:
       return state;
   }
@@ -77,16 +75,15 @@ const paginationReducer = <T>(
 
 /**
  * Hook principal qui gère la pagination des médias
- * @template T Type générique des éléments de la liste
  */
 const usePaginatedMediatheque = <T>() => {
-  const { error, isLoading, sendRequest } = useHttp();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(
     paginationReducer,
     initialState as PaginationState<T>
   );
 
-  // Fonctions mémorisées pour mettre à jour l'état
   const setPage = useCallback((page: number) => {
     dispatch({ type: "SET_PAGE", payload: page });
   }, []);
@@ -120,35 +117,35 @@ const usePaginatedMediatheque = <T>() => {
     []
   );
 
-  /**
-   * Fonction qui récupère la liste paginée depuis l'API
-   * Construit l'URL avec les paramètres de pagination actuels
-   */
   const getPaginatedList = useCallback(() => {
     const applyData = (data: { medias: T[]; totalPages: number }) => {
       setList(data.medias, data.totalPages);
     };
-    sendRequest(
-      {
-        path: `/media?page=${state.page}&limit=${state.perPage}&type=${state.type}&sort=${state.sort}`,
-      },
-      applyData
-    );
-  }, [sendRequest, setList, state.page, state.perPage, state.sort, state.type]);
+    setIsLoading(true);
+    setError("");
+    apiClient
+      .get(
+        `/media?page=${state.page}&limit=${state.perPage}&type=${state.type}&sort=${state.sort}`,
+      )
+      .then((response) => applyData(response.data))
+      .catch((err) => {
+        const errorMessage =
+          err?.response?.data?.message ?? "Erreur inconnue";
+        setError(errorMessage);
+      })
+      .finally(() => setIsLoading(false));
+  }, [setList, state.page, state.perPage, state.sort, state.type]);
 
-  // Charge la liste quand les paramètres de pagination changent
   useEffect(() => {
     getPaginatedList();
   }, [getPaginatedList]);
 
-  // Affiche les erreurs avec toast
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
     }
   }, [error]);
 
-  // Expose les valeurs et fonctions nécessaires
   return {
     isLoading,
     list: state.list,

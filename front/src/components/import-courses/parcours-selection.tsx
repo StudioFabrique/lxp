@@ -6,13 +6,13 @@ import {
   Undo2,
   RefreshCw,
 } from "lucide-react";
-import Parcours from "../../utils/interfaces/parcours";
-import Formation from "../../utils/interfaces/formation";
-import Header from "../UI/header";
+import Parcours from "../../../src/utils/interfaces/parcours";
+import Formation from "../../../src/utils/interfaces/formation";
+import Header from "../../components/headers/Header";
 import { Link } from "react-router";
-import Module from "../../utils/interfaces/module";
+import Module from "../../../src/utils/interfaces/module";
 import { useState } from "react";
-import SelectableSubCard from "../UI/selectable-sub-card";
+import SelectableSubCard from "../../../src/components/UI/selectable-sub-card";
 
 type Props = {
   formationsList: Formation[];

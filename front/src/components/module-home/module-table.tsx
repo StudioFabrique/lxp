@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router";
-import { localeDate } from "../../helpers/locale-date";
-import Can from "../UI/can/can.component";
-import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import PermissionGuard from "../guards/PermissionGuard";
+import SortColumnIcon from "../UI/sort-column-icon/sort-column-icon";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
-import { truncateText } from "../../helpers/truncate-text";
 import { Eye } from "lucide-react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import TableWrapper from "../UI/table-wrapper";
 import ElementNotFound from "../UI/element-not-found";
+import { truncateText } from "../../utils/helpers/truncate-text";
+import { localeDate } from "../../utils/helpers/locale-date";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -63,7 +63,7 @@ const ModuleTable = ({
               <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
               <td className="bg-transparent flex items-center justify-around gap-x-2 rounded-r-lg">
                 <div className="w-6 h-6">
-                  <Can action="read" object="module">
+                  <PermissionGuard action="read" object="module">
                     <div>
                       {item.parcoursId ? (
                         <Link
@@ -84,10 +84,10 @@ const ModuleTable = ({
                         </div>
                       )}
                     </div>
-                  </Can>
+                  </PermissionGuard>
                 </div>
                 <div className="w-6 h-6">
-                  <Can action="update" object="module">
+                  <PermissionGuard action="update" object="module">
                     <div>
                       {item.parcoursId ? (
                         <Link
@@ -108,13 +108,13 @@ const ModuleTable = ({
                         </div>
                       )}
                     </div>
-                  </Can>
+                  </PermissionGuard>
                 </div>
                 <div
                   className="w-6 h-6 text-error"
                   aria-label="suppression du module"
                 >
-                  <Can action="delete" object="module">
+                  <PermissionGuard action="delete" object="module">
                     <div
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le module"
@@ -123,7 +123,7 @@ const ModuleTable = ({
                         <DeleteIcon />
                       </div>
                     </div>
-                  </Can>
+                  </PermissionGuard>
                 </div>
               </td>
             </TableRowWrapper>

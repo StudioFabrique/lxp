@@ -1,5 +1,5 @@
-import Header from "../UI/header";
-import MemoizedFileUpload from "../UI/image-file-upload/image-file-upload";
+import Header from "../../components/headers/Header";
+import MemoizedFileUpload from "../../components/UI/image-file-upload/image-file-upload";
 
 type Props = {
   error?: string;

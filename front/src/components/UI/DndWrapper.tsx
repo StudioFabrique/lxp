@@ -47,13 +47,13 @@ export function DndWrapper<T>({
               >
                 {(provided) => (
                   <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                    ref={provided.innerRef as React.Ref<HTMLDivElement>}
+                    {...(provided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
+                    {...(provided.dragHandleProps as React.HTMLAttributes<HTMLDivElement>)}
                   >
                     {renderItem(item, index)}
                   </div>
-                )}
+                ) as React.ReactElement}
               </Draggable>
             ))}
             {/* Placeholder nécessaire pour maintenir l'espace pendant le drag */}

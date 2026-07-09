@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 import { Link } from "react-router";
-import { truncateText } from "../../helpers/truncate-text";
-import TableRowWrapper from "../UI/table-row-wrapper";
+import { truncateText } from "../../utils/helpers/truncate-text";
+import TableRowWrapper from "../../components/UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import TableWrapper from "../UI/table-wrapper";
-import { ResourceListItem } from "../../views/resources/resources-home";
+import Wrapper from "../wrappers/BoxWrapper";
+import SortColumnIcon from "../../components/UI/sort-column-icon/sort-column-icon";
+import TableWrapper from "../../components/UI/table-wrapper";
+import { ResourceListItem } from "../../../src/features/resources/views/ResourcesHome";
 
 type Props = {
   children: ReactNode;

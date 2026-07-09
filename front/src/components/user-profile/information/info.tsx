@@ -1,27 +1,24 @@
-import { Dispatch, FC, Ref, SetStateAction, useContext } from "react";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import Field from "../../UI/forms/field";
-import CustomError from "../../../utils/interfaces/custom-error";
+import { Dispatch, FC, SetStateAction, useContext } from "react";
+import { UseFormRegister } from "react-hook-form";
+import Wrapper from "../../wrappers/BoxWrapper";
+import FormInput from "../../form/FormInput";
 import ProfileImageFileUpload from "../../UI/image-file-upload/profile-image-file-upload";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
-import { Context } from "../../../store/context.store";
+import { AuthContext } from "../../../store/AuthProvider";
 
 type FormProps = {
-  values: Record<string, string>;
-  errors: CustomError[];
-  onChangeValue: (field: string, value: string) => void;
-  onResetForm: () => void;
+  register: UseFormRegister<any>;
+  errors: any;
 };
 
 const Info: FC<{
   formProps: FormProps;
-  firstInputRef: Ref<HTMLInputElement>;
   temporaryAvatar: { file: File | null; url: string | null };
   setTemporaryAvatar: Dispatch<
     SetStateAction<{ file: File | null; url: string | null }>
   >;
-}> = ({ formProps, firstInputRef, temporaryAvatar, setTemporaryAvatar }) => {
-  const { user } = useContext(Context);
+}> = ({ formProps, temporaryAvatar, setTemporaryAvatar }) => {
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="flex flex-col gap-2">
@@ -29,11 +26,11 @@ const Info: FC<{
       <Wrapper>
         <div className="flex flex-col gap-2">
           <div className="flex gap-10 justify-between">
-            <Field
-              fieldRef={firstInputRef}
-              name="firstname"
+            <FormInput
               label="Prénom"
-              data={formProps}
+              name="firstname"
+              register={formProps.register}
+              error={formProps.errors.firstname}
             />
             <div className="flex flex-col items-center gap-2">
               <h4>Avatar</h4>
@@ -45,15 +42,49 @@ const Info: FC<{
               />
             </div>
           </div>
-          <Field name="lastname" label="Nom" data={formProps} />
-          <Field name="nickname" label="Pseudo" data={formProps} />
-          <Field isDisabled name="email" label="Email" data={formProps} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Field name="address" label="Adresse" data={formProps} />
-          <Field name="city" label="Ville" data={formProps} />
-          <Field name="postCode" label="Code Postal" data={formProps} />
-          <Field name="phoneNumber" label="Telephone" data={formProps} />
+          <FormInput
+            label="Nom"
+            name="lastname"
+            register={formProps.register}
+            error={formProps.errors.lastname}
+          />
+          <FormInput
+            label="Pseudo"
+            name="nickname"
+            register={formProps.register}
+            error={formProps.errors.nickname}
+          />
+          <FormInput
+            label="Email"
+            name="email"
+            register={formProps.register}
+            error={formProps.errors.email}
+            disabled
+          />
+          <FormInput
+            label="Adresse"
+            name="address"
+            register={formProps.register}
+            error={formProps.errors.address}
+          />
+          <FormInput
+            label="Ville"
+            name="city"
+            register={formProps.register}
+            error={formProps.errors.city}
+          />
+          <FormInput
+            label="Code Postal"
+            name="postCode"
+            register={formProps.register}
+            error={formProps.errors.postCode}
+          />
+          <FormInput
+            label="Telephone"
+            name="phoneNumber"
+            register={formProps.register}
+            error={formProps.errors.phoneNumber}
+          />
         </div>
       </Wrapper>
     </div>

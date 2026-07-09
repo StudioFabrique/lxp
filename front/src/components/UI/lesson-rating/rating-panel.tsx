@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import FeedbacksButton from "../feedbacks/feedbacks-button";
 import RatingWithStars from "./rating-with-stars";
+import FeedbacksButton from "../../buttons/FeedbacksButton";
 
 type RatingPanelProps = {
   selectedStars: number;

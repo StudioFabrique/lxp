@@ -6,8 +6,8 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import SortDownIcon from "../../../UI/svg/sort-down-icon.component";
-import SortUpIcon from "../../../UI/svg/sort-up-icon.component";
+import SortDownIcon from "../../../../../src/components/UI/svg/sort-down-icon.component";
+import SortUpIcon from "../../../../../src/components/UI/svg/sort-up-icon.component";
 
 const UserToAddListHeader: FC<{
   filters: { filterValue: string; placeholder: string }[];

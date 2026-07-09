@@ -1,5 +1,5 @@
-import CardsIcon from "./svg/cards-icon";
-import ListIcon from "./svg/list-icon";
+import CardsIcon from "../../../src/components/UI/svg/cards-icon";
+import ListIcon from "../../../src/components/UI/svg/list-icon";
 
 interface ToggleListProps {
   showList: boolean;

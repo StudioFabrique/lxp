@@ -8,9 +8,9 @@ import {
   useState,
 } from "react";
 import Papa from "papaparse";
-
 import UploadIcon from "../svg/upload-icon.component";
-import { checkCSV } from "../../../utils/csv/check-csv";
+import { checkCSV } from "../../../config/csv/csv-check";
+
 
 type Props = {
   origin: string;

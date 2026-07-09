@@ -1,6 +1,6 @@
-import { ModuleImport } from "../../views/module/hooks/use-import-modules";
-import Header from "../UI/header";
-import Loader from "../UI/loader";
+import { ModuleImport } from "../../features/module/hooks/useImportModules";
+import Header from "../headers/Header";
+import Loader from "../loaders/Loader";
 import { Check, AlertCircle } from "lucide-react";
 import { Link } from "react-router";
 

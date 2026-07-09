@@ -1,5 +1,5 @@
 import Skill from "../../utils/interfaces/skill";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Wrapper from "../wrappers/BoxWrapper";
 
 interface EditModuleSkillsProps {
   skills: Skill[];

@@ -1,5 +1,5 @@
 import SearchOption from "../../utils/interfaces/search-options";
-import Search from "./search/search.component";
+import Search from "../../../src/components/UI/search/search.component";
 import RefreshIcon from "./svg/refresh-icon.component";
 
 type Props = {

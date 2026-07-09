@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useRef, useState } from "react";
 
-import toTitleCase from "../../../utils/toTitleCase";
+import { toTitleCase } from "../../../../src/utils/helpers/text-helpers";
 
 type Props = {
   addItem: (name: string, property: string) => void;

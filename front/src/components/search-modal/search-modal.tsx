@@ -8,17 +8,18 @@ import {
   useState,
 } from "react";
 import MagnifyIcon from "../UI/svg/magnify-icon";
-import useHttp from "../../hooks/use-http";
-import Loader from "../UI/loader";
+import apiClient from "../../lib/axios";
+import Loader from "../loaders/Loader";
 import SearchResults from "./search-results";
 import { useParams } from "react-router";
+import toast from "react-hot-toast";
 
 const SearchModal: FC<{
   isModalOpen: boolean;
   setModalState: Dispatch<SetStateAction<boolean>>;
 }> = ({ isModalOpen, setModalState }) => {
   const { id } = useParams();
-  const { sendRequest, isLoading } = useHttp(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResultsData, setSearchResultsData] = useState<Record<
@@ -29,12 +30,18 @@ const SearchModal: FC<{
   const inputRef: Ref<HTMLInputElement> = useRef(null);
 
   const onSubmitSearch = async () => {
-    const applyData = (data: Record<string, string>) => {
-      setSearchResultsData(data);
-    };
-
-    if (searchValue.length > 0)
-      sendRequest({ path: `/search/parcours/${id}/${searchValue}` }, applyData);
+    if (searchValue.length > 0) {
+      setIsLoading(true);
+      apiClient
+        .get(`/search/parcours/${id}/${searchValue}`)
+        .then((response) => setSearchResultsData(response.data))
+        .catch((err) => {
+          const errorMessage =
+            err?.response?.data?.message ?? "Erreur inconnue";
+          toast.error(errorMessage);
+        })
+        .finally(() => setIsLoading(false));
+    }
   };
 
   useEffect(() => {

@@ -1,16 +1,13 @@
-import CustomError from "../../utils/interfaces/custom-error";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 import Selecter from "../UI/selecter/selecter.component";
-import ModuleMetadatas from "./module-metadatas";
+import ModuleMetadatas from "../../features/parcours/components/edit/modules/ModuleMetadatas";
 import { Item } from "./useAddModule";
 
 type Props = {
   formationId: number | null;
   formationList: Item[];
-  data: {
-    values: Record<string, unknown>;
-    onChangeValue: (field: string, value: unknown) => void;
-    errors: CustomError[];
-  };
+  register: UseFormRegister<any>;
+  errors: FieldErrors;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onPickFormation: (id: number) => void;
   onSetFile: (file: File | null) => void;
@@ -35,7 +32,8 @@ export default function ModuleCreateForm(props: Props) {
 
       <form onSubmit={props.onSubmit} ref={null}>
         <ModuleMetadatas
-          data={props.data}
+          register={props.register}
+          errors={props.errors}
           thumb={null}
           onSetFile={props.onSetFile}
           mode="create"

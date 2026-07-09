@@ -1,6 +1,6 @@
-import { localeDate } from "../../helpers/locale-date";
+import { localeDate } from "../../utils/helpers/locale-date";
 import Contact from "../../utils/interfaces/contact";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Wrapper from "../wrappers/BoxWrapper";
 
 interface EditModuleInfosProps {
   minDate: string;

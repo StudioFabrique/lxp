@@ -1,6 +1,6 @@
-import { Activity } from "../../utils/interfaces/activity";
-import useResourceIFrame from "../../views/resources/hooks/useResourceIFrame";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import { Activity } from "../../../src/utils/interfaces/activity";
+import useResourceIFrame from "../../../src/features/resources/hooks/useResourceIFrame";
+import Wrapper from "../wrappers/BoxWrapper";
 import ResourceIFrameForm from "./ResourceIFrameForm";
 import ResourceIFramePreview from "./ResourceIFramePreview";
 

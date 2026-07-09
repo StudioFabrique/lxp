@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, FormEvent } from "react";
-
-import useEagerLoadingList from "../../hooks/use-eager-loading-list";
-import SortColumnIcon from "./sort-column-icon.component/sort-column-icon.component";
+import useEagerLoadingList from "../../hooks/useEagerLoadingList";
 import DrawerFormButtons from "./drawer-form-buttons/drawer-form-buttons.component";
+import SortColumnIcon from "./sort-column-icon/sort-column-icon";
 
 type Props = {
   data: Array<any>;

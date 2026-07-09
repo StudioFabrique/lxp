@@ -2,7 +2,7 @@ import { GraduationCap, Ban, ArrowRight, Rocket, Undo2 } from "lucide-react";
 import { Link } from "react-router";
 import Parcours from "../../utils/interfaces/parcours";
 import Formation from "../../utils/interfaces/formation";
-import Header from "../UI/header";
+import Header from "../headers/Header";
 import SelectableSubCard from "../UI/selectable-sub-card";
 
 type Props = {

@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { maxSizeError } from "../helpers/max-size-error";
+import { maxSizeError } from "../utils/helpers/max-size-error";
 import { ChangeEvent, useRef, useState } from "react";
 
 const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;

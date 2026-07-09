@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
-import { maxSizeError } from "../../../helpers/max-size-error";
+import { maxSizeError } from "../../../utils/helpers/max-size-error";
 import {
   ChangeEvent,
   Dispatch,

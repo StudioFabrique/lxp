@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from "react";
-import useEagerLoadingList from "../../hooks/use-eager-loading-list";
+import useEagerLoadingList from "../../hooks/useEagerLoadingList";
 import Module from "../../utils/interfaces/module";
 import ToggleList from "../UI/toggle-list";
 import Pagination from "../UI/pagination/pagination";
 import ModuleTable from "./module-table";
 import ModuleCardList from "./modules-card-list";
 import { stepsParcours } from "../../config/steps/steps-parcours";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Wrapper from "../wrappers/BoxWrapper";
 import ListHeader from "../UI/list-header";
 import ModuleHeader from "./module-header";
 
@@ -34,7 +34,9 @@ const ModuleHomeList = ({
   } = useEagerLoadingList(modulesList, "title", 15);
 
   const stepId = useMemo(() => {
-    return stepsParcours.find((item: any) => item.label === "Modules").id;
+    return (
+      stepsParcours.find((item: any) => item.label === "Modules") as any
+    )?.id;
   }, []);
 
   /**
@@ -88,7 +90,3 @@ const ModuleHomeList = ({
 };
 
 export default ModuleHomeList;
-
-{
-  /* <ParcoursCardsList parcoursList={list} /> */
-}

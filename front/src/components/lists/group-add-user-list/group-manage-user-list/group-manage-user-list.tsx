@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useState } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
-import usePagination from "../../../../hooks/use-pagination";
-import Pagination from "../../../UI/pagination/pagination";
-import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
-import User from "../../../../utils/interfaces/user";
-import Search from "../../../UI/search/search.component";
+import usePagination from "../../../../../src/hooks/use-pagination";
+import Pagination from "../../../../components/UI/pagination/pagination";
+import RightSideDrawer from "../../../../components/UI/right-side-drawer/right-side-drawer";
+import User from "../../../../../src/utils/interfaces/user";
+import Search from "../../../../../src/components/UI/search/search.component";
 import UserToAddListHeader from "./user-to-add-list-header.component";
 import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
 import { UserPlus } from "lucide-react";

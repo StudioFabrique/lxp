@@ -8,13 +8,13 @@ import {
   PenLine,
   Check,
 } from "lucide-react";
-import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
-import activityIconType from "../../../utils/activity-icon-type";
+import activityIconType from "../../../utils/helpers/activity-icon-type";
 import {
   ActivityImport,
   ModuleImport,
-} from "../../../views/module/hooks/use-import-modules";
+} from "../../../features/module/hooks/useImportModules";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";

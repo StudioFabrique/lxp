@@ -17,8 +17,6 @@ type Props = {
 };
 
 function ElementNotFound({ message = "Aucun objet trouvé" }: Props) {
-  // Render a container with dashed border and centered content
-  // to provide visual feedback when no elements are found
   return (
     <div className="w-full flex items-center justify-center border-dashed border border-secondary/100 rounded-lg p-4">
       <p>{message}</p>

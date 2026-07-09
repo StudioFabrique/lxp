@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ChatbotValues } from "./use-chatbot";
-import { ChatbotContext } from "../../../store/chatbotContext";
+import { ChatbotContext } from "../../../store/ChatbotProvider";
 
 export type chatbotWindowSize = "small" | "large" | "full";
 

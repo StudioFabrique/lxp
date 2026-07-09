@@ -1,13 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
-import User from "../../../utils/interfaces/user";
-import Wrapper from "../../UI/wrapper/wrapper.component";
+import User from "../../../../src/utils/interfaces/user";
+import Wrapper from "../../wrappers/BoxWrapper";
 import GroupUserItem from "./group-user-item";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
-import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
-import Pagination from "../../UI/pagination/pagination";
+import useEagerLoadingList from "../../../hooks/useEagerLoadingList";
+import Pagination from "../../../components/UI/pagination/pagination";
 import SearchBar from "../../UI/search-bar/search-bar";
-import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
+import ActionsDropdown from "../../../components/UI/actions-dropdown/actions-dropdown";
 
 const GroupUserList: FC<{
   usersToAdd: User[];

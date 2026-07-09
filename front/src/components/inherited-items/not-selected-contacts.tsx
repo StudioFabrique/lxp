@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 
 import Contact from "../../utils/interfaces/contact";
-import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import useEagerLoadingList from "../../hooks/use-eager-loading-list";
+import SortColumnIcon from "../../components/UI/sort-column-icon/sort-column-icon";
+import useEagerLoadingList from "../../hooks/useEagerLoadingList";
 
 interface NotSelectedContactsProps {
   list?: Contact[];

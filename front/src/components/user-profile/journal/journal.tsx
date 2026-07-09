@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
-import Loader from "../../UI/loader";
+import apiClient from "../../../lib/axios";
+import Loader from "../../loaders/Loader";
 import Parcours from "../../../utils/interfaces/parcours";
 import JournalTree from "./journal-tree";
 
 const Journal = () => {
-  const { sendRequest, isLoading } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [parcours, setParcours] = useState<Parcours[]>([]);
 
   useEffect(() => {
-    const applyData = (data: { data: Parcours[] }) => {
-      setParcours(data.data ?? []);
-    };
-
-    sendRequest({ path: "/user/my-accomplishment" }, applyData);
-  }, [sendRequest]);
+    setIsLoading(true);
+    apiClient
+      .get("/user/my-accomplishment")
+      .then((response) => setParcours(response.data.data ?? []))
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">

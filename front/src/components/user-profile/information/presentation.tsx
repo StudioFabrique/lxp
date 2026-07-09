@@ -1,13 +1,11 @@
 import { FC } from "react";
-import CustomError from "../../../utils/interfaces/custom-error";
-import FieldArea from "../../UI/forms/field-area";
-import Wrapper from "../../UI/wrapper/wrapper.component";
+import { UseFormRegister } from "react-hook-form";
+import FormTextarea from "../../form/FormTextarea";
+import Wrapper from "../../wrappers/BoxWrapper";
 
 type FormProps = {
-  values: Record<string, string>;
-  errors: CustomError[];
-  onChangeValue: (field: string, value: string) => void;
-  onResetForm: () => void;
+  register: UseFormRegister<any>;
+  errors: any;
 };
 
 const Presentation: FC<{ formProps: FormProps }> = ({ formProps }) => {
@@ -16,7 +14,13 @@ const Presentation: FC<{ formProps: FormProps }> = ({ formProps }) => {
       <h3 className="text-lg font-semibold">Presentation</h3>
       <Wrapper>
         <p>Qui suis-je ?</p>
-        <FieldArea name="description" data={formProps} rows={7} />
+        <FormTextarea
+          name="description"
+          label="Description"
+          register={formProps.register}
+          error={formProps.errors.description}
+          rows={7}
+        />
       </Wrapper>
     </div>
   );

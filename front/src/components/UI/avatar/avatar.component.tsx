@@ -1,5 +1,5 @@
 import { FC } from "react";
-import User from "../../../utils/interfaces/user";
+import User from "../../../../src/utils/interfaces/user";
 
 export const AvatarSmall: FC<{
   user: Partial<User> & { firstname: string; lastname: string };

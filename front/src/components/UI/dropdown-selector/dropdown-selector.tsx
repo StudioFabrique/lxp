@@ -1,6 +1,5 @@
 import { PropsWithChildren, useId } from "react";
 
-// 1. Types plus flexibles
 type DropdownSelectorProps = {
   valueList: (string | number)[];
   emptyListMessage?: string;

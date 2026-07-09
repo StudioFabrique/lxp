@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from "react";
-import User from "../../../../../utils/interfaces/user";
-import { AvatarSmall } from "../../../../UI/avatar/avatar.component";
-import toTitleCase from "../../../../../utils/toTitleCase";
+import User from "../../../../../../src/utils/interfaces/user";
+import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
+import { toTitleCase } from "../../../../../utils/helpers/text-helpers";
 import { SelectionButton } from "./buttons.component";
-import { AddIcon2 } from "../../../../UI/svg/add-icons";
+import { AddIcon2 } from "../../../../../../src/components/UI/svg/add-icons";
 
 const GroupManageUserItem: FC<{
   user: User;

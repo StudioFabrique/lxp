@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import Header from "../../UI/header";
+import Header from "../../headers/Header";
 import MemoizedFileUpload from "../../UI/image-file-upload/image-file-upload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
 import ModuleArborescence from "./module-arborescence";
 import {
   ActivityImport,
   ModuleImport,
-} from "../../../views/module/hooks/use-import-modules";
+} from "../../../features/module/hooks/useImportModules";
 import { Eye, Component, Check, PenLine } from "lucide-react";
-import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import SelectableCard from "../../UI/selectable-card";
 

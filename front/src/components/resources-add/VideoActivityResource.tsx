@@ -1,22 +1,19 @@
 import { ChangeEvent, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { ZodError } from "zod";
 import { activityVideoSize } from "../../config/images-sizes";
-import { isValidUrl } from "../../helpers/isValidUrl";
-import { maxSizeError } from "../../helpers/max-size-error";
-import { validationErrors } from "../../helpers/validate";
-import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
-import { Activity } from "../../utils/interfaces/activity";
+import { maxSizeError } from "../../../src/utils/helpers/max-size-error";
+import { activiteMetaDataSchema } from "../../../src/config/validation/lesson/activite-video";
+import { Activity } from "../../../src/utils/interfaces/activity";
 import ElementNotFound from "../UI/element-not-found";
-import useForm from "../UI/forms/hooks/use-form";
-import VideoPlayer from "../UI/VideoPlayer";
+import VideoPlayer from "../../components/UI/VideoPlayer";
 import VideoForm from "./VideoForm";
 
 type Props = {
   parent: "lesson" | "resource";
   activity: Activity | null;
   mode: "read" | "edit" | "write";
-  values: Record<string, unknown>;
   onClose: () => void;
   onSubmit: (fd: FormData) => void;
 };
@@ -24,10 +21,16 @@ type Props = {
 export default function VideoActivityResource(props: Props) {
   const maxSize = activityVideoSize;
   // Hook personnalisé pour la gestion du formulaire
-  const { initValues, errors, values, onChangeValue, onValidationErrors } =
-    useForm({}, activiteMetaDataSchema);
-
-  const data = { values, errors, onChangeValue };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(activiteMetaDataSchema),
+    defaultValues: { title: "", description: "", url: "" },
+  });
 
   const [file, setFile] = useState<File | null>(null); // Fichier vidéo sélectionné
 
@@ -48,31 +51,14 @@ export default function VideoActivityResource(props: Props) {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      // Validation des données du formulaire
-      activiteMetaDataSchema.parse(values);
-      // Vérification de la validité de l'URL externe
-      if (origin === "web" && !isValidUrl(values.url as string)) {
-        toast.error("L'URL de la vidéo n'est pas valide.");
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
-      }
-    }
+  const submitForm = (data: Record<string, any>) => {
     const fd = new FormData();
     fd.append(
       "data",
       JSON.stringify({
-        title: values.title,
-        description: values.description,
-        url: values.file ? "" : values.url,
+        title: data.title,
+        description: data.description,
+        url: file ? "" : data.url,
         parent: props.parent,
       }),
     );
@@ -80,21 +66,27 @@ export default function VideoActivityResource(props: Props) {
     props.onSubmit(fd);
   };
 
+  const handleSubmitForm = handleSubmit(
+    submitForm,
+    (errs) => {
+      const firstError = Object.values(errs)[0];
+      if (firstError?.message) toast.error(firstError.message);
+    },
+  );
+
   useEffect(() => {
     if (props.activity) {
-      initValues({
-        title: props.activity.title,
-        url: props.activity.url,
-      });
+      setValue("title", props.activity.title ?? "");
+      setValue("url", props.activity.url ?? "");
     }
-  }, [props.activity, initValues]);
+  }, [props.activity, setValue]);
 
   return (
     <div>
       {props.mode === "read" ? (
         <div className="flex justify-center">
-          {values.url ? (
-            <VideoPlayer url={values?.url as string} size="large" />
+          {watch("url") ? (
+            <VideoPlayer url={watch("url") as string} size="large" />
           ) : (
             <ElementNotFound message="Aucun aperçu disponible, choisissez une vidéo." />
           )}
@@ -102,11 +94,11 @@ export default function VideoActivityResource(props: Props) {
       ) : null}
       {props.mode !== "read" ? (
         <VideoForm
-          data={data}
+          data={{ register, errors, watch }}
           mode={props.mode}
           onSetFile={handleSelectFile}
           onClose={props.onClose}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmitForm}
         />
       ) : null}
     </div>

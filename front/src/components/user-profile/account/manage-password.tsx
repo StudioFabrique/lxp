@@ -1,59 +1,37 @@
-import { FC, Ref, useState } from "react";
-import CustomError from "../../../utils/interfaces/custom-error";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import Field from "../../UI/forms/field";
-import { EyeIcon } from "lucide-react";
+import { FC } from "react";
+import { UseFormRegister } from "react-hook-form";
+import Wrapper from "../../wrappers/BoxWrapper";
+import FormPasswordInput from "../../form/FormPasswordInput";
 
 type FormProps = {
-  values: Record<string, string>;
-  errors: CustomError[];
-  onChangeValue: (field: string, value: string) => void;
-  onResetForm: () => void;
+  register: UseFormRegister<any>;
+  errors: any;
 };
 
-const ManagePassword: FC<{
-  formProps: FormProps;
-  firstInputRef: Ref<HTMLInputElement>;
-}> = ({ formProps, firstInputRef }) => {
-  const [showPassword, setShowPassword] = useState(false);
-
+const ManagePassword: FC<{ formProps: FormProps }> = ({ formProps }) => {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Changer le mot de passe</h3>
       <Wrapper>
         <div className="flex flex-col gap-4">
-          <Field
-            fieldRef={firstInputRef}
-            type="password"
-            name="oldPass"
+          <FormPasswordInput
             label="Ancien mot de passe"
-            data={formProps}
+            name="oldPass"
+            register={formProps.register}
+            error={formProps.errors.oldPass}
           />
-          <span className="flex gap-5">
-            <Field
-              name="newPass"
-              type={showPassword ? "text" : "password"}
-              label="Nouveau mot de passe"
-              data={formProps}
-            />
-            <EyeIcon
-              className="translate-y-9 cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            />
-          </span>
-
-          <span className="flex gap-5">
-            <Field
-              name="confirmNewPass"
-              type={showPassword ? "text" : "password"}
-              label="Confirmer le nouveau mot de passe"
-              data={formProps}
-            />
-            <EyeIcon
-              className="translate-y-9 cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            />
-          </span>
+          <FormPasswordInput
+            label="Nouveau mot de passe"
+            name="newPass"
+            register={formProps.register}
+            error={formProps.errors.newPass}
+          />
+          <FormPasswordInput
+            label="Confirmer le nouveau mot de passe"
+            name="confirmNewPass"
+            register={formProps.register}
+            error={formProps.errors.confirmNewPass}
+          />
         </div>
       </Wrapper>
     </div>

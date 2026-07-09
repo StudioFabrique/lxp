@@ -2,14 +2,6 @@ import { ChangeEvent, Dispatch, FC, SetStateAction } from "react";
 
 import PaginationSelect from "./pagination-select.component";
 
-/**
- * Composant de pagination permettant de naviguer entre les pages et de définir le nombre d'éléments par page
- * @param page - Numéro de la page courante
- * @param totalPages - Nombre total de pages
- * @param setPage - Fonction pour changer de page
- * @param setPerPages - Fonction optionnelle pour définir le nombre d'éléments par page
- * @param perPage - Nombre d'éléments par page (optionnel)
- */
 const Pagination: FC<{
   page: number;
   totalPages: number | null;
@@ -17,30 +9,22 @@ const Pagination: FC<{
   setPerPages?: Dispatch<SetStateAction<number>>;
   perPage?: number;
 }> = ({ page, totalPages, setPage, setPerPages, perPage }) => {
-  // Fonction pour aller à la page précédente
   const decrementPage = () => {
     setPage(page - 1);
   };
 
-  // Fonction pour aller à la page suivante
   const incrementPage = () => {
     setPage(page + 1);
   };
 
-  // Fonction pour aller à la première page
   const goToFistPage = () => {
     setPage(1);
   };
 
-  // Fonction pour aller à la dernière page
   const goToLastPage = () => {
     setPage(totalPages!);
   };
 
-  /**
-   * Gère le changement du nombre d'éléments par page
-   * Réinitialise à la première page et met à jour le nombre d'éléments
-   */
   const handleSetPerPages = (event: ChangeEvent<HTMLSelectElement>) => {
     setPage(1);
     setPerPages!(parseInt(event.currentTarget.value) ?? 5);
@@ -49,17 +33,14 @@ const Pagination: FC<{
   return (
     <div className="flex-col md:flex-row gap-2 flex justify-end mt-4 items-center gap-x-4 bg-transparent rounded-lg px-8 py-4 text-base-content text-sm border border-primary/20">
       <span className="flex gap-2 items-center">
-        {/* Sélecteur du nombre d'éléments par page */}
         <PaginationSelect
           handleSetPerPages={handleSetPerPages}
           perPage={perPage}
         />
-        {/* Affichage de la page courante et du total */}
         <p>
           Page {page} sur {totalPages}
         </p>
       </span>
-      {/* Boutons de navigation (affichés uniquement s'il y a plus d'une page) */}
       {totalPages && totalPages > 1 ? (
         <div className="btn-group flex gap-x-4">
           <button

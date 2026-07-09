@@ -2,7 +2,7 @@
 import Lesson from "../../utils/interfaces/lesson";
 import DocumentIcon from "../UI/svg/document-icon";
 import EditIcon from "../UI/svg/edit-icon";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import BoxWrapper from "../wrappers/BoxWrapper";
 
 // Interface définissant les props du composant
 interface PreviewLessonsProps {
@@ -15,7 +15,7 @@ const PreviewLessons = (props: PreviewLessonsProps) => {
   const { lessons } = props;
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       {/* En-tête avec titre et bouton d'édition */}
       <span className="w-full flex justify-between items-center">
         <h2 className="text-xl font-bold">Contenu de cours</h2>
@@ -38,7 +38,7 @@ const PreviewLessons = (props: PreviewLessonsProps) => {
           </li>
         ))}
       </ul>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

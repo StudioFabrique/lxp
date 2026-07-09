@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
+import RightSideDrawer from "../../components/UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../UI/button-add/button-add";
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
+import SubBoxWrapper from "../wrappers/SubBoxWrapper";
 
 interface InheritedItemsProps {
   visibleList?: boolean;
@@ -55,8 +55,8 @@ const InheritedItems = (props: InheritedItemsProps) => {
    */
   const handleAddItem = (ids: number[]) => {
     let updatedItems = currentItems;
-    ids.forEach((item: any) => {
-      const foundItem = props.initialList.find(
+    (ids ?? []).forEach((item: any) => {
+      const foundItem = props.initialList?.find(
         (element: any) => element.id === item
       );
       if (foundItem) {
@@ -83,7 +83,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    */
   useEffect(() => {
     let updatedItems = Array<any>();
-    props.initialList.forEach((item: any) => {
+    (props.initialList ?? []).forEach((item: any) => {
       const foundItem = currentItems.find((element) => element.id === item.id);
       if (!foundItem) {
         updatedItems = [...updatedItems, item];
@@ -96,7 +96,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * met à jour la liste des objets sélectionnés qd les props sont modifiées
    */
   useEffect(() => {
-    setCurrentItems(props.selectedItems);
+    setCurrentItems(props.selectedItems ?? []);
   }, [props.selectedItems]);
 
   return (
@@ -126,12 +126,12 @@ const InheritedItems = (props: InheritedItemsProps) => {
               list: currentItems,
               property: props.property,
               onRemoveItem: handleRemoveItem,
-            })}
+            } as any)}
           </>
         ) : visibleList ? (
-          <SubWrapper>
+          <SubBoxWrapper>
             <p className="text-xs">Aucun objet ajouté</p>
-          </SubWrapper>
+          </SubBoxWrapper>
         ) : null}
       </div>
       <RightSideDrawer
@@ -145,7 +145,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           onAddItems: handleAddItem,
           onCloseDrawer: handleCloseDrawer,
           tooltip: props.tooltip,
-        })}
+        } as any)}
       </RightSideDrawer>
     </section>
   );
