@@ -10,5 +10,5 @@
 }
 
 http://demo.lxp.andria.ovh {
-    reverse_proxy lxp:3000
+    reverse_proxy lxp:64233
 }
