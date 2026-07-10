@@ -7,6 +7,7 @@ type Props = {
   isSubmitButtonAnimated: boolean;
   setPrompt: (prompt: string) => void;
   isLoading: boolean;
+  aiUnavailable: boolean;
   handleSubmit: (e: React.FormEvent) => void;
   handleEveryInputInput: () => void;
 };
@@ -16,6 +17,7 @@ export default function TextInputChatbot({
   isSubmitButtonAnimated,
   setPrompt,
   isLoading,
+  aiUnavailable,
   handleSubmit,
   handleEveryInputInput,
 }: Props) {
@@ -24,7 +26,7 @@ export default function TextInputChatbot({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (prompt.trim() && !isLoading) {
+      if (prompt.trim() && !isLoading && !aiUnavailable) {
         handleSubmit(e);
       }
     }
@@ -49,7 +51,7 @@ export default function TextInputChatbot({
             ref={textareaRef}
             className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 resize-none min-h-10 max-h-35 text-sm leading-relaxed pl-3 pr-12 py-2 text-base-content placeholder:text-base-content/40 custom-scrollbar disabled:opacity-50"
             name="prompt"
-            disabled={isLoading}
+            disabled={isLoading || aiUnavailable}
             autoFocus
             placeholder="Posez votre question à l'assistant..."
             rows={1}
@@ -69,7 +71,7 @@ export default function TextInputChatbot({
             )}
             type="submit"
             aria-label="Envoyer"
-            disabled={isLoading || !prompt.trim()}
+            disabled={isLoading || aiUnavailable || !prompt.trim()}
           >
             <Send className="w-3.5 h-3.5" />
           </button>
