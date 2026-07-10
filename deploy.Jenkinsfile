@@ -33,12 +33,12 @@ pipeline {
                         echo "📁 Préparation des dossiers..."
                         ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
 
-                        # Envoi du Caddyfile et du compose.yml sur la VM
+                        # Envoi du Caddyfile et du compose.yml sur le serveur distant
                         scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
                         # Configuration du .env local
                         rm -f .env
-                        cp $ENV_FILE .env
+                        cp "$ENV_FILE" .env
                         
                         echo "IMAGE_TAG=latest" >> .env
                         chmod 600 .env
