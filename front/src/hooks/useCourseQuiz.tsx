@@ -1,8 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import apiClient from "../lib/axios";
 import { BASE_API_URL } from "../config/urls";
+import { isAiServerError } from "../utils/helpers/ai-helpers";
+import { ChatbotContext } from "../store/ChatbotProvider";
 
 interface Pair {
   left: string;
@@ -68,6 +70,8 @@ export default function useCourseQuiz(
   courseId?: number,
   activityContent?: string,
 ) {
+  const { aiUnavailable, setAiUnavailable } = useContext(ChatbotContext);
+
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -155,6 +159,15 @@ export default function useCourseQuiz(
     setAttempts([]);
     setShowResults(false);
 
+    // Si le serveur IA est déjà indisponible, on n'enchaîne pas une requête
+    // vouée à l'échec : on referme proprement.
+    if (aiUnavailable) {
+      setIsStreaming(false);
+      setIsOpen(false);
+      toastWarning("L'assistant est temporairement indisponible.");
+      return;
+    }
+
     if (!courseId) {
       console.warn("Course ID is required to load quizzes from the API.");
       setIsStreaming(false);
@@ -224,7 +237,13 @@ export default function useCourseQuiz(
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du stream:", error);
-      toastWarning("Une erreur est survenue lors du chargement des quiz.");
+      if (isAiServerError(error)) {
+        setAiUnavailable(true);
+        setIsOpen(false);
+        toastWarning("L'assistant est temporairement indisponible.");
+      } else {
+        toastWarning("Une erreur est survenue lors du chargement des quiz.");
+      }
     } finally {
       setIsStreaming(false);
     }
@@ -234,6 +253,13 @@ export default function useCourseQuiz(
     async (isAppending = false) => {
       if (import.meta.env.VITE_DISABLE_AI_FEATURES === "true") {
         toast("Les quiz IA sont temporairement désactivés.");
+        return;
+      }
+
+      // Si le serveur IA est indisponible, on n'ouvre pas de fenêtre de quiz
+      // vouée à l'échec.
+      if (aiUnavailable) {
+        toastWarning("L'assistant est temporairement indisponible.");
         return;
       }
 
@@ -264,13 +290,19 @@ export default function useCourseQuiz(
         }
       } catch (error) {
         console.error(error);
-        toastWarning("Erreur lors de la génération du quiz.");
-        if (!isAppending) setIsOpen(false);
+        if (isAiServerError(error)) {
+          setAiUnavailable(true);
+          setIsOpen(false);
+          toastWarning("L'assistant est temporairement indisponible.");
+        } else {
+          toastWarning("Erreur lors de la génération du quiz.");
+          if (!isAppending) setIsOpen(false);
+        }
       } finally {
         setIsStreaming(false);
       }
     },
-    [activityContent],
+    [activityContent, aiUnavailable, setAiUnavailable],
   );
 
   const onCloseQuizzes = () => {
@@ -295,9 +327,13 @@ export default function useCourseQuiz(
     }
     if (correct) {
       setScore((prev) => prev + 1);
-    } else if (additionalQuizCount.current < 2) {
+    } else if (!aiUnavailable && additionalQuizCount.current < 2) {
       additionalQuizCount.current += 1;
       onTriggerRandomQuiz(true);
+    } else {
+      // Plus de quiz disponible (serveur IA indisponible ou limite atteinte) :
+      // on affiche directement les résultats plutôt que de bloquer l'étudiant.
+      setShowResults(true);
     }
   };
 
