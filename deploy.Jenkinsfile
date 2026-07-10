@@ -23,14 +23,12 @@ pipeline {
                         echo "🔧 Configuration SSH pour $HOST..."
                         mkdir -p ~/.ssh
 
-                        cat <<EOF > ~/.ssh/config
-                        Host deploy-target
-                          HostName $HOST
-                          User $USER
-                          Port $PORT
-                          IdentityFile "$SSH_CRED"
-                          StrictHostKeyChecking no
-                        EOF
+                        echo "Host deploy-target
+                        HostName $HOST
+                        User $USER
+                        Port $PORT
+                        IdentityFile \\"$SSH_CRED\\"
+                        StrictHostKeyChecking no" > ~/.ssh/config
 
                         echo "📁 Préparation des dossiers..."
                         ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
@@ -38,9 +36,11 @@ pipeline {
                         # Envoi du Caddyfile et du compose.yml sur la VM
                         scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
 
-                        # Installation du .env spécifique au client sur Jenkins pour Docker Compose
+                        # Configuration du .env local
                         rm -f .env
                         cp $ENV_FILE .env
+                        
+                        echo "IMAGE_TAG=latest" >> .env
                         chmod 600 .env
 
                         export DOCKER_HOST="ssh://deploy-target"
@@ -48,7 +48,7 @@ pipeline {
                         echo "🔐 Connexion Docker Hub & Récupération de l'image unique..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-                        # Docker va télécharger l'image "latest" unique mise à jour par le Job 1
+                        echo "📡 Relancement des conteneurs..."
                         docker compose down --remove-orphans || true
                         docker compose pull
                         docker compose up -d
