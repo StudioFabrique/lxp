@@ -41,7 +41,6 @@ pipeline {
                         cp "$ENV_FILE" .env
                         
                         chmod 600 .env
-                        echo "IMAGE_TAG=latest" >> .env
 
                         export DOCKER_HOST="ssh://deploy-target"
 
