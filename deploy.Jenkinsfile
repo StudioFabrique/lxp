@@ -12,29 +12,29 @@ pipeline {
             steps {
                 withCredentials([
                     file(credentialsId: "APP_ENV", variable: 'ENV_FILE'),
-                    string(credentialsId: "APP_HOST", variable: 'HOST'),
-                    string(credentialsId: "APP_USER", variable: 'USER'),
-                    string(credentialsId: "APP_PORT", variable: 'PORT'),
-                    string(credentialsId: "APP_TARGET", variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: "APP_SSH", keyFileVariable: 'SSH_CRED'),
+                    string(credentialsId: "APP_SSH_HOST", variable: 'SSH_HOST'),
+                    string(credentialsId: "SSH_USER", variable: 'SSH_USER'),
+                    string(credentialsId: "SSH_PORT", variable: 'SSH_PORT'),
+                    string(credentialsId: "SSH_TARGET", variable: 'SSH_TARGET'),
+                    sshUserPrivateKey(credentialsId: "SSH_CREDENTIALS", keyFileVariable: 'SSH_CREDENTIALS'),
                     usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
                 ]) {
                     sh '''
-                        echo "🔧 Configuration SSH pour $HOST..."
+                        echo "🔧 Configuration SSH pour $SSH_HOST..."
                         mkdir -p ~/.ssh
 
                         echo "Host deploy-target
-                        HostName $HOST
-                        User $USER
-                        Port $PORT
-                        IdentityFile \\"$SSH_CRED\\"
+                        HostName $SSH_HOST
+                        User $SSH_USER
+                        Port $SSH_PORT
+                        IdentityFile \\"$SSH_CREDENTIALS\\"
                         StrictHostKeyChecking no" > ~/.ssh/config
 
                         echo "📁 Préparation des dossiers..."
-                        ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
+                        ssh deploy-target "mkdir -p /home/$SSH_USER/$SSH_TARGET/data /home/$SSH_USER/$SSH_TARGET/uploads /home/$SSH_USER/$SSH_TARGET/logs"
 
                         # Envoi du Caddyfile sur le serveur distant
-                        scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$USER/$TARGET/Caddyfile
+                        scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$SSH_USER/$SSH_TARGET/Caddyfile
 
                         # Configuration du .env local
                         rm -f .env
