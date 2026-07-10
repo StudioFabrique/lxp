@@ -1,60 +1,34 @@
 name: lxp
 
 services:
-  caddy:
-    build: ./reverse-proxy-files
-    restart: always
-    container_name: caddy-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - /home/${USER}/${TARGET}/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - lxp
-    depends_on:
-      - lxp
-    environment:
-      # --- Configuration Caddy ---
-      - OVH_ENDPOINT=${OVH_ENDPOINT}
-      - OVH_APPLICATION_KEY=${OVH_APPLICATION_KEY}
-      - OVH_APPLICATION_SECRET=${OVH_APPLICATION_SECRET}
-      - OVH_CONSUMER_KEY=${OVH_CONSUMER_KEY}
-      - DOMAIN=${DOMAIN}
-
-  db-pg:
-    image: postgres:18-alpine
-    restart: always
-    container_name: lxp-prisma
-    volumes:
-      - pg:/var/lib/postgresql
-    networks:
-      - lxp
-    environment:
-      # --- Identifiants PostgreSQL ---
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-
-  db-mongo:
-    image: mongo:8.2
-    restart: always
-    container_name: lxp-mongo
-    volumes:
-      - mongo:/data/db
-    networks:
-      - lxp
-    environment:
-      # --- Identifiants MongoDB (Root) ---
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
-      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+  # caddy:
+  #   build: ./reverse-proxy-files
+  #   restart: always
+  #   container_name: caddy-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     - "443:443/udp"
+  #   volumes:
+  #     - /home/${USER}/${TARGET}/Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+  #   networks:
+  #     - lxp
+  #   depends_on:
+  #     - lxp
+  #   environment:
+  #     # --- Configuration Caddy ---
+  #     - OVH_ENDPOINT=${OVH_ENDPOINT}
+  #     - OVH_APPLICATION_KEY=${OVH_APPLICATION_KEY}
+  #     - OVH_APPLICATION_SECRET=${OVH_APPLICATION_SECRET}
+  #     - OVH_CONSUMER_KEY=${OVH_CONSUMER_KEY}
+  #     - DOMAIN=${DOMAIN}
 
   lxp:
     image: studiostep/lxp:latest
+    ports:
+      - "80:${PORT}"
     pull_policy: always
     restart: always
     container_name: lxp
@@ -129,6 +103,34 @@ services:
       - QUIZ_PARALLEL_SLOTS=${QUIZ_PARALLEL_SLOTS}
       - QUIZ_MIN_PROMPT_LEN=${QUIZ_MIN_PROMPT_LEN}
       - QUIZ_MIN_EXPLANATION_LEN=${QUIZ_MIN_EXPLANATION_LEN}
+
+  db-pg:
+    image: postgres:18-alpine
+    restart: always
+    container_name: lxp-prisma
+    volumes:
+      - pg:/var/lib/postgresql
+    networks:
+      - lxp
+    environment:
+      # --- Identifiants PostgreSQL ---
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+  db-mongo:
+    image: mongo:8.2
+    restart: always
+    container_name: lxp-mongo
+    volumes:
+      - mongo:/data/db
+    networks:
+      - lxp
+    environment:
+      # --- Identifiants MongoDB (Root) ---
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
 
 networks:
   lxp:
