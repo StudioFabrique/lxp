@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import apiClient from "../../../lib/axios";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
+import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 
 type ChatbotSource = {
   course: string;
@@ -22,6 +23,9 @@ export type ChatbotValues = {
   textSelection?: string;
 };
 
+const AI_UNAVAILABLE_MESSAGE =
+  "L'assistant est temporairement indisponible. Veuillez réessayer plus tard.";
+
 const useChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,8 +35,13 @@ const useChatbot = () => {
 
   const [pendingReset, setPendingReset] = useState<boolean>(false);
 
-  const { currentActivity, activityTextSelection, setActivityTextSelection } =
-    useContext(ChatbotContext);
+  const {
+    currentActivity,
+    activityTextSelection,
+    setActivityTextSelection,
+    aiUnavailable,
+    setAiUnavailable,
+  } = useContext(ChatbotContext);
 
   const handleNewChat = useCallback(() => {
     setDialog([
@@ -64,6 +73,11 @@ const useChatbot = () => {
       },
     ]);
 
+    // Empêche l'envoi de nouvelles requêtes tant que le serveur IA est
+    // considéré comme indisponible, afin d'éviter de multiplier les
+    // échecs et de polluer la conversation.
+    if (aiUnavailable) return;
+
     const targetTextSelection = activityTextSelection;
     setActivityTextSelection("");
 
@@ -88,33 +102,69 @@ const useChatbot = () => {
       };
       const processedText = data.text;
 
-      setDialog((prevState) => [
-        ...prevState,
-        {
-          origin: "bot",
-          message: processedText,
-          date: new Date(),
-          type: data.type || "normal",
-          mode: data.mode,
-          sources: data.sources,
-        },
-      ]);
+      // Le serveur IA ayant répondu, on considère qu'il est de nouveau
+      // disponible et on purge d'éventuels messages d'erreur restants.
+      setAiUnavailable(false);
+      setDialog((prevState) =>
+        prevState
+          .filter((entry) => !(entry.origin === "bot" && entry.type === "error"))
+          .concat({
+            origin: "bot",
+            message: processedText,
+            date: new Date(),
+            type: data.type || "normal",
+            mode: data.mode,
+            sources: data.sources,
+          }),
+      );
       setPrompt("");
-    } catch {
-      setDialog((prevState) => [
-        ...prevState,
-        {
-          origin: "bot",
-          message:
-            "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
-          date: new Date(),
-          type: "error",
-        },
-      ]);
+    } catch (error) {
+      if (isAiServerError(error)) {
+        setAiUnavailable(true);
+        // N'ajoute le message d'erreur qu'une seule fois pour éviter
+        // d'accumuler des doublons dans la conversation.
+        setDialog((prevState) =>
+          prevState.some(
+            (entry) =>
+              entry.origin === "bot" &&
+              entry.type === "error" &&
+              entry.message === AI_UNAVAILABLE_MESSAGE,
+          )
+            ? prevState
+            : prevState.concat({
+                origin: "bot",
+                message: AI_UNAVAILABLE_MESSAGE,
+                date: new Date(),
+                type: "error",
+              }),
+        );
+      } else {
+        setDialog((prevState) => [
+          ...prevState,
+          {
+            origin: "bot",
+            message:
+              "L'assistant ne peut pas vous répondre pour l'instant, réessayez plus tard.",
+            date: new Date(),
+            type: "error",
+          },
+        ]);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Tente de rétablir la disponibilité du serveur IA (déclenché par le
+  // bouton "Réessayer" de la bannière).
+  const retryAi = useCallback(() => {
+    setAiUnavailable(false);
+    setDialog((prevState) =>
+      prevState.filter(
+        (entry) => !(entry.origin === "bot" && entry.type === "error"),
+      ),
+    );
+  }, []);
 
   const getConversationData = useCallback(async () => {
     try {
@@ -126,8 +176,12 @@ const useChatbot = () => {
       if (data.success) {
         setDialog(data.dialogs);
       }
-    } catch {
-      // silently fail
+    } catch (error) {
+      // Si le serveur IA est indisponible dès l'ouverture, on l'indique
+      // sans pour autant bloquer l'affichage de la conversation.
+      if (isAiServerError(error)) {
+        setAiUnavailable(true);
+      }
     }
   }, []);
 
@@ -144,6 +198,8 @@ const useChatbot = () => {
     setDialog,
     onSubmit,
     handleNewChat,
+    aiUnavailable,
+    retryAi,
   };
 };
 

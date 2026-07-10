@@ -27,7 +27,8 @@ export default function useDiagnosticQuiz(
   onFinishInitialQuiz: () => void,
 ) {
   const { user } = useContext(AuthContext);
-  const { setForceHideChatbot } = useContext(ChatbotContext);
+  const { setForceHideChatbot, aiUnavailable, setAiUnavailable } =
+    useContext(ChatbotContext);
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -42,6 +43,9 @@ export default function useDiagnosticQuiz(
   const [showResults, setShowResults] = useState(false);
 
   const isFinished = useRef(false);
+  // Garantit que le contournement (bypass) du diagnostic n'est déclenché
+  // qu'une seule fois, même si plusieurs effets détectent l'échec.
+  const hasBypassedRef = useRef(false);
 
   const toastWarning = useCallback((message: string) => {
     toast.error(message, {
@@ -57,6 +61,26 @@ export default function useDiagnosticQuiz(
       },
     });
   }, []);
+
+  /**
+   * Contourne proprement le diagnostic quand la génération IA échoue
+   * (clé API invalide, serveur IA indisponible, etc.) : on marque le
+   * diagnostic comme terminé, on ferme la vue, et on appelle
+   * onFinishInitialQuiz() afin que le module reste pleinement fonctionnel
+   * (leçons démarrables et terminables, suivi de progression intact).
+   */
+  const bypassDiagnostic = useCallback(() => {
+    if (hasBypassedRef.current) return;
+    hasBypassedRef.current = true;
+    setAiUnavailable(true);
+    isFinished.current = true;
+    setQuizzes(null);
+    setIsOpen(false);
+    onFinishInitialQuiz();
+    toastWarning(
+      "Le service IA est indisponible : le quiz de diagnostic n'a pas pu être généré. Le module reste accessible normalement.",
+    );
+  }, [onFinishInitialQuiz, setAiUnavailable, toastWarning]);
 
   const mapExternalToInternal = (external: ExternalApiQuiz): Quiz | null => {
     const base = {
@@ -113,6 +137,15 @@ export default function useDiagnosticQuiz(
   const onLoadPreliminaryQuizzes = useCallback(async () => {
     if (isAiDisabled) {
       console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
+      setIsOpen(false);
+      onFinishInitialQuiz();
+      return;
+    }
+
+    // Si le serveur IA est déjà connu comme indisponible, on évite de
+    // relancer une génération vouée à l'échec et on laisse l'étudiant
+    // accéder au module.
+    if (aiUnavailable) {
       setIsOpen(false);
       onFinishInitialQuiz();
       return;
@@ -210,10 +243,9 @@ export default function useDiagnosticQuiz(
         "Erreur lors de la récupération du diagnostic initial:",
         error,
       );
-      toastWarning(
-        "Une erreur est survenue lors du chargement du diagnostic initial.",
-      );
-      setIsOpen(false);
+      // En cas d'échec de génération (serveur IA down, clé API invalide…),
+      // on contourne le diagnostic pour ne pas bloquer l'étudiant.
+      bypassDiagnostic();
     } finally {
       setIsStreaming(false);
     }
@@ -222,6 +254,8 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
     toastWarning,
     moduleInfo.description,
+    aiUnavailable,
+    bypassDiagnostic,
   ]);
 
   const onStartQuiz = useCallback(() => {
@@ -326,8 +360,9 @@ export default function useDiagnosticQuiz(
         hasPermission(user.permissions, "update", "lesson"));
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
-      if (isAiDisabled) {
-        // Si l'IA est désactivée, passe le diagnostic sans même afficher le bouton
+      if (isAiDisabled || aiUnavailable) {
+        // Si l'IA est désactivée ou indisponible, passe le diagnostic sans
+        // même afficher le bouton.
         isFinished.current = true;
         onFinishInitialQuiz();
       } else {
@@ -343,6 +378,7 @@ export default function useDiagnosticQuiz(
     isModuleLoaded,
     user?.permissions,
     onFinishInitialQuiz,
+    aiUnavailable,
   ]);
 
   useEffect(() => {
@@ -353,18 +389,17 @@ export default function useDiagnosticQuiz(
     return () => setForceHideChatbot(false);
   }, [isOpen, setForceHideChatbot]);
 
-  // Quand 0 questions sont générées après la fin du stream, affiche un warning et ferme les quizzes
+  // Quand 0 questions sont générées après la fin du stream (service IA
+  // indisponible, clé invalide, etc.), on contourne le diagnostic plutôt
+  // que de laisser l'étudiant bloqué sur une vue non fonctionnelle.
   useEffect(() => {
     if (isStreaming) return;
 
     if (quizzes && quizzes.length === 0) {
-      console.warn("Api error");
-      toastWarning(
-        "Problème lors du chargement du diagnostic initial. Veuillez réessayer plus tard. Les cours sont consultables mais ne pourront pas être terminés sans quizz diagnostic.",
-      );
-      setIsOpen(false);
+      console.warn("Api error: aucune question de diagnostic générée.");
+      bypassDiagnostic();
     }
-  }, [quizzes, isStreaming, toastWarning]);
+  }, [quizzes, isStreaming, bypassDiagnostic]);
 
   return {
     isOpen,
