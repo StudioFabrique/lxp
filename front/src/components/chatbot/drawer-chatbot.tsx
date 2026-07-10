@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import HeaderChatbot from "./chatbot-parts/header-chatbot";
 import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
-import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, AlertTriangle, RotateCw } from "lucide-react";
 
 import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
 import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
@@ -168,12 +168,31 @@ export default function DrawerChatbot({
         <div ref={chatbotUi.bottomRef} className="h-1 shrink-0" />
       </div>
 
+      {/* Bannière affichée quand le serveur IA est indisponible */}
+      {chatbot.aiUnavailable && (
+        <div className="flex items-center gap-2 px-3 py-2 mx-2.5 mb-1 rounded-xl bg-error/10 border border-error/30 text-error text-xs">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span className="flex-1">
+            L'assistant est temporairement indisponible.
+          </span>
+          <button
+            type="button"
+            onClick={chatbot.retryAi}
+            className="btn btn-xs btn-ghost text-error gap-1"
+          >
+            <RotateCw className="w-3 h-3" />
+            Réessayer
+          </button>
+        </div>
+      )}
+
       {/* Zone de saisie */}
       <TextInputChatbot
         prompt={prompt}
         isSubmitButtonAnimated={chatbotUi.isSubmitButtonAnimated}
         setPrompt={setPrompt}
         isLoading={isLoading}
+        aiUnavailable={chatbot.aiUnavailable}
         handleSubmit={handleSubmit}
         handleEveryInputInput={chatbotQuiz.onResetTimer}
       />

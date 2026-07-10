@@ -18,6 +18,13 @@ type ChatbotContextType = {
   setActivityTextSelection: Dispatch<SetStateAction<string>>;
   forceHideChatbot: boolean;
   setForceHideChatbot: Dispatch<SetStateAction<boolean>>;
+  /**
+   * Indique si le serveur IA est considéré comme indisponible (erreur réseau
+   * ou réponse >= 500). Partagé entre le chatbot et les quiz afin d'éviter
+   * d'enchaîner des requêtes vouées à l'échec et de polluer l'interface.
+   */
+  aiUnavailable: boolean;
+  setAiUnavailable: Dispatch<SetStateAction<boolean>>;
 };
 
 const ChatbotContext = React.createContext<ChatbotContextType>(
@@ -32,6 +39,7 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
   const [currentActivity, setCurrentActivity] = useState<Activity>();
   const [activityTextSelection, setActivityTextSelection] =
     useState<string>("");
+  const [aiUnavailable, setAiUnavailable] = useState<boolean>(false);
 
   useEffect(() => {
     if (!pathname.includes("/parcours/module/")) {
@@ -48,6 +56,8 @@ const ChatbotProvider = ({ children }: React.PropsWithChildren) => {
         setActivityTextSelection,
         forceHideChatbot,
         setForceHideChatbot,
+        aiUnavailable,
+        setAiUnavailable,
       }}
     >
       {children}
