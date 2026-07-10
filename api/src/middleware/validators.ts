@@ -136,6 +136,7 @@ export const userValidator = (isFormData: boolean = false) => {
       validatorSubject + ".graduations",
       validatorSubject + ".links",
     ])
+      .optional()
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
     checkValidatorResult,
@@ -221,6 +222,7 @@ export const userProfileValidator = (isFormData: boolean = false) => {
       validatorSubject + ".graduations",
       validatorSubject + ".links",
     ])
+      .optional()
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
 
