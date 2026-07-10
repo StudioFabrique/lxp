@@ -54,7 +54,7 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
 
   lxp:
-    image: studiostep/lxp:${IMAGE_TAG}
+    image: studiostep/lxp:latest
     pull_policy: always
     restart: always
     container_name: lxp
