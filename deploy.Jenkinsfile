@@ -54,7 +54,7 @@ pipeline {
                         docker compose exec -T -w /app/api app npx prisma migrate deploy
 
                         echo "🔑 Génération de la clé d'activation du premier administrateur..."
-                        docker compose exec lxp npm run generate-activation-key
+                        docker compose exec -T app npm run generate-activation-key
 
                         echo "🧹 Nettoyage..."
                         docker image prune -f
