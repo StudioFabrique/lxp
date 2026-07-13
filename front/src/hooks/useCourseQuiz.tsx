@@ -5,6 +5,7 @@ import apiClient from "../lib/axios";
 import { BASE_API_URL } from "../config/urls";
 import { isAiServerError } from "../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../store/ChatbotProvider";
+import { isAiDisabled } from "../config/ai/ai";
 
 interface Pair {
   left: string;
@@ -251,7 +252,7 @@ export default function useCourseQuiz(
 
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
-      if (import.meta.env.VITE_DISABLE_AI_FEATURES === "true") {
+      if (isAiDisabled) {
         toast("Les quiz IA sont temporairement désactivés.");
         return;
       }
