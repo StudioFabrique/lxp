@@ -51,7 +51,7 @@ pipeline {
                         docker compose up -d
 
                         echo "📌 Migrations Prisma..."
-                        docker exec -w /app/api app npx prisma migrate deploy
+                        docker exec -w /app/api lxp-app npx prisma migrate deploy
 
                         echo "🧹 Nettoyage..."
                         docker image prune -f
