@@ -2,13 +2,12 @@ name: lxp
 
 services:
 
-  lxp:
+  app:
     image: studiostep/lxp:latest
     ports:
       - "80:${PORT}"
     pull_policy: always
     restart: always
-    container_name: lxp
     depends_on:
       - db-pg
       - db-mongo
@@ -53,15 +52,14 @@ services:
       - SMTP_PORT=${SMTP_PORT}
       - FROM=${FROM}
 
-  lxp-ai:
+  ai:
     image: studiostep/lxp-ai:latest
-    container_name: lxp-ai
     restart: always
     networks:
       - lxp
     volumes:
       - hf_cache:/cache
-      - /home/${USER}/${TARGET}/data:/app/data
+      - /home/${SSH_USER}/${SSH_TARGET}/data:/app/data
     environment:
       # --- Caches internes (HuggingFace) ---
       - HF_HOME=/cache/huggingface
@@ -84,10 +82,9 @@ services:
       - QUIZ_MIN_PROMPT_LEN=${QUIZ_MIN_PROMPT_LEN}
       - QUIZ_MIN_EXPLANATION_LEN=${QUIZ_MIN_EXPLANATION_LEN}
 
-  db-pg:
+  pg:
     image: postgres:18-alpine
     restart: always
-    container_name: lxp-prisma
     volumes:
       - pg:/var/lib/postgresql
     networks:
@@ -98,10 +95,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
 
-  db-mongo:
+  mongo:
     image: mongo:8.2
     restart: always
-    container_name: lxp-mongo
     volumes:
       - mongo:/data/db
     networks:
