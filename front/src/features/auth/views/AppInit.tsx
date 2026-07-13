@@ -16,10 +16,7 @@ const AppInit = () => {
         return <TokenForm onNext={onTokenValidated} />;
       case InitStep.SignInForm:
         return (
-          <AdminSignInForm
-            token={token!}
-            onSuccess={() => navigate("/login")}
-          />
+          <AdminSignInForm token={token!} onSuccess={() => navigate("/")} />
         );
       default:
         return <Welcome onNext={onNextStep} />;
