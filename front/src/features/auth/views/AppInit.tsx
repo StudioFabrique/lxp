@@ -1,19 +1,28 @@
+import { useNavigate } from "react-router";
 import Welcome from "../components/Welcome";
+import TokenForm from "../components/TokenForm";
+import AdminSignInForm from "../components/AdminSignInForm";
 import useAppInit, { InitStep } from "../hooks/useAppInit";
 
 const AppInit = () => {
-  const { initStep, onNextStep } = useAppInit();
+  const { initStep, token, onNextStep, onTokenValidated } = useAppInit();
+  const navigate = useNavigate();
 
   const renderStep = () => {
     switch (initStep) {
       case InitStep.Welcome:
         return <Welcome onNext={onNextStep} />;
       case InitStep.TokenForm:
-        return;
+        return <TokenForm onNext={onTokenValidated} />;
       case InitStep.SignInForm:
-        return;
+        return (
+          <AdminSignInForm
+            token={token!}
+            onSuccess={() => navigate("/login")}
+          />
+        );
       default:
-        return;
+        return <Welcome onNext={onNextStep} />;
     }
   };
 
