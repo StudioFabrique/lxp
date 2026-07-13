@@ -37,7 +37,7 @@ pipeline {
                         # Configuration du .env local
                         rm -f .env
                         cp "$ENV_FILE" .env
-                        
+
                         chmod 600 .env
 
                         export DOCKER_HOST="ssh://deploy-target"
@@ -52,6 +52,9 @@ pipeline {
 
                         echo "📌 Migrations Prisma..."
                         docker exec -w /app/api lxp npx prisma migrate deploy
+
+                        echo "🔑 Génération de la clé d'activation du premier administrateur..."
+                        docker exec -w /app lxp npm run generate-activation-key
 
                         echo "🧹 Nettoyage..."
                         docker image prune -f
