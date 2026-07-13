@@ -27,7 +27,7 @@ const mongoUrl = MONGO_URL;
 async function seedRoles() {
   const existingCount = await Role.countDocuments();
   if (existingCount > 0) {
-    console.log(`  ✓ ${existingCount} rôles déjà existants, rien à faire.`);
+    console.log(`  ✓ ${existingCount} rôles déjà existants.`);
     return;
   }
 
@@ -68,9 +68,7 @@ async function seedRoles() {
 async function seedPermissions() {
   const existingCount = await Permission.countDocuments();
   if (existingCount > 0) {
-    console.log(
-      `  ✓ ${existingCount} permissions déjà existantes, rien à faire.`,
-    );
+    console.log(`  ✓ ${existingCount} permissions déjà existantes.`);
     return;
   }
 
