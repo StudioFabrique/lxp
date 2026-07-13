@@ -5,6 +5,7 @@ import LoginRightColumn from "./components/LoginRightColumn";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 import LoginGuard from "../../components/guards/LoginGuard";
 
+const Init = lazy(() => import("./views/AppInit"));
 const Login = lazy(() => import("./views/Login"));
 const RegisterHome = lazy(() => import("./views/Register"));
 const ResetPasswordHome = lazy(() => import("./views/ResetPassword"));
@@ -18,6 +19,7 @@ export const authRoutes: RouteObject[] = [
       </AuthLayout>
     ),
     children: [
+      {path: "/init", element: withSuspense(Init)},
       { path: "/login", element: withSuspense(Login) },
       { path: "/register", element: withSuspense(RegisterHome) },
       { path: "/reset-password", element: withSuspense(ResetPasswordHome) },
