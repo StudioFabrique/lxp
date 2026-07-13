@@ -1,8 +1,5 @@
 import { useContext, useState } from "react";
-import {
-  regexMail,
-  regexPassword,
-} from "../../../config/constantes";
+import { regexMail, regexPassword } from "../../../config/constantes";
 import { Link } from "react-router";
 import useInput from "../../../hooks/useInput";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -39,8 +36,8 @@ const Login = () => {
   };
 
   return (
-    <form className="flex flex-col flex-1 w-full" onSubmit={submitHandler}>
-      <div className="flex flex-col gap-4 my-auto w-full">
+    <form className="flex flex-col flex-1" onSubmit={submitHandler}>
+      <div className="flex flex-col gap-4 my-auto">
         {/* Titre */}
         <h1 className="font-bold text-2xl text-base-content mb-2 text-center">
           Connectez-vous à votre espace
