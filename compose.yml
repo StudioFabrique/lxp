@@ -9,8 +9,8 @@ services:
     pull_policy: always
     restart: always
     depends_on:
-      - pg
-      - mongo
+      - db-pg
+      - db-mongo
     volumes:
       - /home/${SSH_USER}/${SSH_TARGET}/uploads:/app/api/dist/uploads
       - /home/${SSH_USER}/${SSH_TARGET}/logs:/app/api/dist/logs
