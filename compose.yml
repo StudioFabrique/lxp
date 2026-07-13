@@ -1,29 +1,6 @@
 name: lxp
 
 services:
-  # caddy:
-  #   build: ./reverse-proxy-files
-  #   restart: always
-  #   container_name: caddy-proxy
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #     - "443:443/udp"
-  #   volumes:
-  #     - /home/${USER}/${TARGET}/Caddyfile:/etc/caddy/Caddyfile
-  #     - caddy_data:/data
-  #     - caddy_config:/config
-  #   networks:
-  #     - lxp
-  #   depends_on:
-  #     - lxp
-  #   environment:
-  #     # --- Configuration Caddy ---
-  #     - OVH_ENDPOINT=${OVH_ENDPOINT}
-  #     - OVH_APPLICATION_KEY=${OVH_APPLICATION_KEY}
-  #     - OVH_APPLICATION_SECRET=${OVH_APPLICATION_SECRET}
-  #     - OVH_CONSUMER_KEY=${OVH_CONSUMER_KEY}
-  #     - DOMAIN=${DOMAIN}
 
   lxp:
     image: studiostep/lxp:latest
@@ -36,8 +13,8 @@ services:
       - db-pg
       - db-mongo
     volumes:
-      - /home/${USER}/${TARGET}/uploads:/app/api/dist/uploads
-      - /home/${USER}/${TARGET}/logs:/app/api/dist/logs
+      - /home/${SSH_USER}/${SSH_TARGET}/uploads:/app/api/dist/uploads
+      - /home/${SSH_USER}/${SSH_TARGET}/logs:/app/api/dist/logs
     networks:
       - lxp
     logging:
@@ -142,8 +119,4 @@ volumes:
   mongo:
     driver: local
   hf_cache:
-    driver: local
-  caddy_data:
-    driver: local
-  caddy_config:
     driver: local
