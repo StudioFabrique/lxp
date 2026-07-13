@@ -1,16 +1,30 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { ROLES_RANKS } from "../../utils/helpers/roles-rank";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
+import { onboardingApi } from "../../features/auth/api/onboarding.api";
 
 const LoginGuard = () => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
+  const location = useLocation();
+  const [setupChecked, setSetupChecked] = useState(false);
+  const [hasAdmins, setHasAdmins] = useState(true);
 
-  // Attend que l'app sache si l'user est connecté ou non
-  if (!isAppInitialized) return <Loader />;
+  useEffect(() => {
+    if (isAppInitialized && !isLoggedIn) {
+      onboardingApi
+        .getSetupStatus()
+        .then((res) => setHasAdmins(res.hasAdmins))
+        .catch(() => setHasAdmins(true))
+        .finally(() => setSetupChecked(true));
+    } else {
+      setSetupChecked(true);
+    }
+  }, [isAppInitialized, isLoggedIn]);
 
-  // Si connecté, le redirige selon son rang
+  if (!isAppInitialized || (!isLoggedIn && !setupChecked)) return <Loader />;
+
   if (isLoggedIn && user) {
     const rank = user.roles?.[0]?.rank;
     if (rank !== undefined) {
@@ -27,7 +41,14 @@ const LoginGuard = () => {
     }
   }
 
-  // S'il n'est pas connecté, affiche la route publique
+  if (!isLoggedIn && !hasAdmins && location.pathname !== "/init") {
+    return <Navigate replace to="/init" />;
+  }
+
+  if (!isLoggedIn && hasAdmins && location.pathname === "/init") {
+    return <Navigate replace to="/login" />;
+  }
+
   return <Outlet />;
 };
 
