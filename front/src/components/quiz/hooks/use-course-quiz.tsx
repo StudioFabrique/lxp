@@ -210,7 +210,7 @@ export default function useCourseQuiz(
 
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
-      if (import.meta.env.VITE_DISABLE_AI_FEATURES === "true") {
+      if (isAiDisabled) {
         toast("Les quiz IA sont temporairement désactivés.");
         return;
       }
