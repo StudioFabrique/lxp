@@ -30,13 +30,9 @@ pipeline {
                         IdentityFile \\"$SSH_CREDENTIALS\\"
                         StrictHostKeyChecking no" > ~/.ssh/config
 
-                        echo "📁 Préparation des dossiers et synchronisation des templates..."
-                        ssh deploy-target "mkdir -p /home/$USER/$TARGET/data /home/$USER/$TARGET/uploads /home/$USER/$TARGET/logs"
-                        rsync -avz api/uploads/ deploy-target:/home/$USER/$TARGET/uploads/
-                        scp ./reverse-proxy-files/${CADDYFILE} deploy-target:/home/$USER/$TARGET/Caddyfile
-
-                        # Envoi du Caddyfile sur le serveur distant
-                        scp ./reverse-proxy-files/Caddyfile deploy-target:/home/$SSH_USER/$SSH_TARGET/Caddyfile
+                        echo "📁 Préparation des dossiers et synchronisation intelligente des cours..."
+                        ssh deploy-target "mkdir -p /home/$SSH_USER/$SSH_TARGET/data /home/$SSH_USER/$SSH_TARGET/uploads /home/$SSH_USER/$SSH_TARGET/logs"
+                        rsync -avz api/uploads/ deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/
 
                         # Configuration du .env local
                         rm -f .env
