@@ -8,7 +8,7 @@ import LoginRightColumn from "./LoginRightColumn";
 
 const AuthLayout = ({ children }: PropsWithChildren) => {
   const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
-  const background = useAuthBackground();
+  const background = useAuthBackground(theme);
 
   useEffect(() => initTheme(), [initTheme]);
 

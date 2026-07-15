@@ -5,6 +5,16 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const PHOTO_COUNT = 12;
 const SEARCH_QUERY = "abstract architecture minimal";
 
+type BackgroundTheme = "light" | "dark";
+
+const THEME_SEARCH_CONFIG: Record<
+  BackgroundTheme,
+  { query: string; color: "white" | "black" }
+> = {
+  light: { query: `${SEARCH_QUERY} bright`, color: "white" },
+  dark: { query: `${SEARCH_QUERY} dark`, color: "black" },
+};
+
 type UnsplashPhoto = {
   id: string;
   alt_description: string | null;
@@ -35,8 +45,17 @@ type CachedBackgrounds = {
   photos: AuthBackground[];
 };
 
-let cache: CachedBackgrounds | null = null;
-let pendingRequest: Promise<AuthBackground[]> | null = null;
+const cache: Record<BackgroundTheme, CachedBackgrounds | null> = {
+  light: null,
+  dark: null,
+};
+const pendingRequests: Record<
+  BackgroundTheme,
+  Promise<AuthBackground[]> | null
+> = {
+  light: null,
+  dark: null,
+};
 
 const addUnsplashTracking = (url: string) => {
   const trackedUrl = new URL(url);
@@ -45,15 +64,17 @@ const addUnsplashTracking = (url: string) => {
   return trackedUrl.toString();
 };
 
-const fetchBackgrounds = async () => {
+const fetchBackgrounds = async (theme: BackgroundTheme) => {
   const accessKey = process.env.UNSPLASH_ACCESS_KEY;
 
   if (!accessKey) {
     throw new Error("UNSPLASH_ACCESS_KEY is not configured");
   }
 
+  const searchConfig = THEME_SEARCH_CONFIG[theme];
   const url = new URL(UNSPLASH_API_URL);
-  url.searchParams.set("query", SEARCH_QUERY);
+  url.searchParams.set("query", searchConfig.query);
+  url.searchParams.set("color", searchConfig.color);
   url.searchParams.set("orientation", "landscape");
   url.searchParams.set("content_filter", "high");
   url.searchParams.set("per_page", PHOTO_COUNT.toString());
@@ -85,19 +106,20 @@ const fetchBackgrounds = async () => {
   }));
 };
 
-const getBackgrounds = async () => {
-  if (cache && cache.expiresAt > Date.now()) {
-    return cache.photos;
+const getBackgrounds = async (theme: BackgroundTheme) => {
+  const themeCache = cache[theme];
+  if (themeCache && themeCache.expiresAt > Date.now()) {
+    return themeCache.photos;
   }
 
-  if (!pendingRequest) {
-    pendingRequest = fetchBackgrounds()
+  if (!pendingRequests[theme]) {
+    pendingRequests[theme] = fetchBackgrounds(theme)
       .then((photos) => {
         if (photos.length === 0) {
           throw new Error("Unsplash API returned no photos");
         }
 
-        cache = {
+        cache[theme] = {
           expiresAt: Date.now() + CACHE_TTL_MS,
           photos,
         };
@@ -105,25 +127,30 @@ const getBackgrounds = async () => {
         return photos;
       })
       .finally(() => {
-        pendingRequest = null;
+        pendingRequests[theme] = null;
       });
   }
 
-  return pendingRequest;
+  return pendingRequests[theme];
 };
 
 export default async function httpGetAuthBackgrounds(
-  _req: Request,
+  req: Request,
   res: Response,
 ) {
+  const requestedTheme = req.query.theme;
+  if (requestedTheme !== "light" && requestedTheme !== "dark") {
+    return res.status(400).json({ message: "Le thème doit être light ou dark." });
+  }
+
   try {
-    const photos = await getBackgrounds();
+    const photos = await getBackgrounds(requestedTheme);
 
     res.setHeader(
       "Cache-Control",
       "public, max-age=21600, stale-while-revalidate=86400",
     );
-    return res.status(200).json({ photos });
+    return res.status(200).json({ theme: requestedTheme, photos });
   } catch (error) {
     console.error("Unable to load Unsplash auth backgrounds:", error);
     return res.status(503).json({
