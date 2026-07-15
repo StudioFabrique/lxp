@@ -6,11 +6,15 @@ import api from "./routes/v1/v1.router";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 import cookieParser from "cookie-parser";
 import responseHandler from "./middleware/response-handler";
 import { corsOrigins } from "./config/config";
 
 const app = express();
+const publicDirectory = path.join(__dirname, "..", "public");
+const assetsDirectory = path.join(publicDirectory, "assets");
+const uploadsDirectory = path.join(__dirname, "..", "uploads");
 
 app
   .use(
@@ -50,13 +54,40 @@ app
   )
   .use(cookieParser())
   .use(morgan("combined"))
+  .use(
+    compression({
+      filter: (req, res) => {
+        const contentType = res.getHeader("Content-Type")?.toString();
+
+        if (contentType?.startsWith("text/event-stream")) return false;
+
+        return compression.filter(req, res);
+      },
+    }),
+  )
   .use(express.json())
-  .use(express.static(path.join(__dirname, "..", "public")))
-  .use(express.static(path.join(__dirname, "..", "uploads")))
+  .use(
+    "/assets",
+    express.static(assetsDirectory, {
+      immutable: true,
+      maxAge: "1y",
+    }),
+  )
+  .use(
+    express.static(publicDirectory, {
+      setHeaders: (res, filePath) => {
+        if (path.basename(filePath) === "index.html") {
+          res.setHeader("Cache-Control", "no-cache");
+        }
+      },
+    }),
+  )
+  .use(express.static(uploadsDirectory))
   .use("/v1", api)
   .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
   .get("*", (_req, res) => {
-    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(path.join(publicDirectory, "index.html"));
   })
   .use(responseHandler);
 

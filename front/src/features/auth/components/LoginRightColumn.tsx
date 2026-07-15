@@ -55,7 +55,7 @@ const LoginRightColumn = ({ background }: Props) => {
       {/* L'image à laquelle on applique le masque */}
       <img
         key={displayedBackground?.id ?? "fallback"}
-        src={displayedBackground?.url ?? bgPhoto}
+        src={failedBackgroundId !== null ? bgPhoto : displayedBackground?.url}
         alt={displayedBackground?.alt ?? "Décoration"}
         onError={() => setFailedBackgroundId(background?.id ?? null)}
         className="h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl"

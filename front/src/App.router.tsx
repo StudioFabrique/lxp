@@ -30,17 +30,28 @@ import {
   adminProfileRoutes,
   studentProfileRoutes,
 } from "./features/profile/routes";
-import StudentLayout from "./components/wrappers/layouts/StudentLayout";
-import AdminLayout from "./components/wrappers/layouts/AdminLayout";
 import RouterErrorBoundary from "./components/wrappers/layouts/RouterErrorBoundary";
 import { adminDashboardRoutes } from "./features/dashboard-admin/routes";
 import { studentDashboardRoutes } from "./features/dashboard-student/routes";
-import FeaturesList from "./features/dashboard-student/views/FeaturesList";
+import { lazy } from "react";
+import { withSuspense } from "./utils/helpers/router-helpers";
+
+const AdminLayout = lazy(
+  () => import("./components/wrappers/layouts/AdminLayout"),
+);
+
+const StudentLayout = lazy(
+  () => import("./components/wrappers/layouts/StudentLayout"),
+);
+
+const FeaturesList = lazy(
+  () => import("./features/dashboard-student/views/FeaturesList"),
+);
 
 const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: withSuspense( AdminLayout),
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
@@ -68,7 +79,7 @@ const adminRoutes: RouteObject[] = [
 const studentRoutes: RouteObject[] = [
   {
     path: "/student",
-    element: <StudentLayout />,
+    element: withSuspense(StudentLayout),
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
@@ -78,7 +89,7 @@ const studentRoutes: RouteObject[] = [
       ...studentResourcesRoutes,
       ...studentCalendarRoutes,
       ...studentProfileRoutes,
-      { path: "*", element: <FeaturesList /> },
+      { path: "*", element: withSuspense(FeaturesList) },
     ],
   },
 ];
