@@ -7,5 +7,6 @@ front/dist
 .env.*
 **/.env
 **/.env.*
+!front/.env.production
 .git
 design/
