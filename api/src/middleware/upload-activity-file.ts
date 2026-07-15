@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 
 export const uploadActivityFiles = () => {
   const storage = multer.diskStorage({
@@ -25,7 +25,7 @@ export const uploadActivityFiles = () => {
       ];
 
       if (allowedMimeTypes.includes(file.mimetype)) {
-        const uniqueID: string = uuidv4();
+        const uniqueID: string = randomUUID();
         const fileName: string = uniqueID + new Date().getTime();
         const ext = file.originalname.split(".").pop();
 

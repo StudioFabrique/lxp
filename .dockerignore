@@ -1,4 +1,11 @@
+node_modules
 api/node_modules
 api/dist
 front/node_modules
+front/dist
+.env
+.env.*
+**/.env
+**/.env.*
+.git
 design/

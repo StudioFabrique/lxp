@@ -3,7 +3,7 @@ import { prisma } from "../../../utils/db";
 
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 
 export default async function postActivityText(
   parentId: number,
@@ -39,7 +39,7 @@ export default async function postActivityText(
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
-  const uniqueID: string = uuidv4();
+  const uniqueID: string = randomUUID();
   const fileName: string = uniqueID + new Date().getTime() + ".html";
 
   try {

@@ -1,30 +1,43 @@
-FROM node:22-alpine
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Copie des fichiers de configuration
-COPY package*.json ./
-COPY front/package*.json front/
-COPY api/package*.json api/
-COPY api/prisma/ api/prisma/
+# Install build dependencies from each subproject lockfile.
+COPY front/package.json front/package-lock.json ./front/
+COPY api/package.json api/package-lock.json ./api/
+COPY api/prisma ./api/prisma
+RUN npm ci --prefix front
+RUN npm ci --prefix api
 
-# Installation des dépendances
-RUN npm run install-client
-RUN npm run install-server
+# Build the API first; Vite then writes the frontend into api/dist/public.
+COPY front ./front
+COPY api ./api
+RUN npm run build --prefix api && npm run build --prefix front
 
-# Génération du client Prisma intégré à l'image
-RUN npm run generate
-
-# Copie du reste du code source
-COPY front/ front/
-COPY api/ api/
-
-# Build du Front (Vite) et du Back (TypeScript)
-RUN npm run deploy
-
-# Copie des assets statiques dans le dossier dist
+# Seed uploads in the same runtime path used by the API and production volume.
 RUN mkdir -p api/dist/uploads && \
-    cp -r api/uploads/* api/dist/uploads/ 2>/dev/null || true
+    if [ -d api/uploads ]; then cp -R api/uploads/. api/dist/uploads/; fi
 
-# Démarrage de l'application
+FROM node:22-alpine AS api-production-dependencies
+
+WORKDIR /app/api
+
+# Keep Prisma as a runtime dependency for `npx prisma migrate deploy`, while
+# omitting API development dependency groups from the production install.
+COPY api/package.json api/package-lock.json ./
+COPY api/prisma ./prisma
+RUN npm ci --omit=dev && npx --no-install prisma generate
+
+FROM node:22-alpine AS runtime
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+# Root scripts remain the stable runtime/deployment entry points.
+COPY package.json package-lock.json ./
+COPY api/package.json api/package-lock.json ./api/
+COPY --from=api-production-dependencies /app/api/node_modules ./api/node_modules
+COPY --from=build /app/api/dist ./api/dist
+COPY --from=build /app/api/prisma ./api/prisma
+
 CMD ["npm", "run", "start"]

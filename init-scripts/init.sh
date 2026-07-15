@@ -1,6 +1,14 @@
 #!/bin/bash
-echo "Installation des dépendances..."
-npm i || { echo -e "\033[1;31m Échec: Installation des dépendances"; exit 1; }
+echo "Installation des dépendances racine..."
+# Le script lifecycle racine `install` installe aussi les sous-projets. On le
+# désactive ici, puis on lance chaque installation explicitement une seule fois.
+npm ci --ignore-scripts || { echo -e "\033[1;31m Échec: Installation des dépendances racine"; exit 1; }
+
+echo "Installation des dépendances API..."
+npm run install-server || { echo -e "\033[1;31m Échec: Installation des dépendances API"; exit 1; }
+
+echo "Installation des dépendances frontend..."
+npm run install-client || { echo -e "\033[1;31m Échec: Installation des dépendances frontend"; exit 1; }
 
 echo "Copie des fichiers .env..."
 cp ./api/env.example ./api/.env && \
