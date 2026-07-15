@@ -42,7 +42,7 @@ pipeline {
 
                         export DOCKER_HOST="ssh://deploy-target"
 
-                        echo "🔐 Connexion Docker Hub & Récupération de l'image unique..."
+                        echo "🔐 Connexion Docker Hub..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "📡 Relancement des conteneurs..."

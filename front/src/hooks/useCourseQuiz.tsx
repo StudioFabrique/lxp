@@ -2,7 +2,6 @@ import { useCallback, useContext, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
 import apiClient from "../lib/axios";
-import { BASE_API_URL } from "../config/urls";
 import { isAiServerError } from "../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../store/ChatbotProvider";
 import { isAiDisabled } from "../config/ai/ai";
@@ -178,7 +177,7 @@ export default function useCourseQuiz(
     try {
       const response = await apiClient({
         method: "get" as const,
-        url: `${BASE_API_URL}/quiz/course/ending/stream/${courseId}`,
+        url: `/quiz/course/ending/stream/${courseId}`,
         responseType: "stream" as const,
         adapter: "fetch",
       });
@@ -278,7 +277,7 @@ export default function useCourseQuiz(
       setIsStreaming(true);
 
       try {
-        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post("/quiz/random", {
           content: activityContent,
         });
 
@@ -357,7 +356,7 @@ export default function useCourseQuiz(
       setIsReplacing(true);
 
       try {
-        await apiClient.post(`${BASE_API_URL}/quiz/question/report`, {
+        await apiClient.post("/quiz/question/report", {
           externalId,
           comment,
         });
@@ -370,7 +369,7 @@ export default function useCourseQuiz(
           setAttempts((prev) => prev.slice(0, -1));
         }
 
-        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post("/quiz/random", {
           content: activityContent,
         });
 

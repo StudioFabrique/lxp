@@ -6,7 +6,7 @@ import { Activity } from "../../../../src/utils/interfaces/activity";
 import Parcours from "../../../../src/utils/interfaces/parcours";
 import Formation from "../../../../src/utils/interfaces/formation";
 import Module from "../../../../src/utils/interfaces/module";
-import { BASE_URL, BASE_API_URL } from "../../../config/urls";
+import { BASE_URL } from "../../../config/urls";
 import {
   getMimeType,
   parseCourseZip,
@@ -108,7 +108,7 @@ export default function useImportCourses() {
         formData.append("file", file);
 
         const response = await apiClient.post(
-          `${BASE_API_URL}/course/import-mbz`,
+          "/course/import-mbz",
           formData,
           {
             responseType: "blob",

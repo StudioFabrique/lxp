@@ -11,7 +11,6 @@ import {
   UserAnswer,
 } from "../../../utils/interfaces/quiz";
 import apiClient from "../../../lib/axios";
-import { BASE_API_URL } from "../../../config/urls";
 import { isAiDisabled } from "../../../config/ai/ai";
 import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
@@ -136,7 +135,7 @@ export default function useCourseQuiz(
     try {
       const response = await apiClient({
         method: "get",
-        url: `${BASE_API_URL}/quiz/course/ending/stream/${courseId}`,
+        url: `/quiz/course/ending/stream/${courseId}`,
         responseType: "stream",
         adapter: "fetch",
       });
@@ -236,7 +235,7 @@ export default function useCourseQuiz(
       setIsStreaming(true);
 
       try {
-        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post("/quiz/random", {
           content: activityContent,
         });
 
@@ -316,7 +315,7 @@ export default function useCourseQuiz(
 
       try {
         // Envoi du signalement au backend
-        await apiClient.post(`${BASE_API_URL}/quiz/question/report`, {
+        await apiClient.post("/quiz/question/report", {
           externalId,
           comment,
         });
@@ -331,7 +330,7 @@ export default function useCourseQuiz(
         }
 
         // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
-        const response = await apiClient.post(`${BASE_API_URL}/quiz/random`, {
+        const response = await apiClient.post("/quiz/random", {
           content: activityContent,
         });
 
