@@ -12,7 +12,6 @@ import {
 } from "../../../utils/interfaces/quiz";
 import { isAiDisabled } from "../../../config/ai/ai";
 import apiClient from "../../../lib/axios";
-import { BASE_API_URL } from "../../../config/urls";
 import { hasPermission } from "../../../utils/helpers/rbac-helpers";
 
 interface ModuleInfoForDiagnostic {
@@ -177,7 +176,7 @@ export default function useDiagnosticQuiz(
     try {
       const response = await apiClient({
         method: "post",
-        url: `${BASE_API_URL}/quiz/preliminary/stream?n=10`,
+        url: "/quiz/preliminary/stream?n=10",
         data: {
           title: moduleInfo.title,
         },
@@ -299,7 +298,7 @@ export default function useDiagnosticQuiz(
     async (externalId: string, comment: string) => {
       try {
         // Envoi du signalement au backend
-        await apiClient.post(`${BASE_API_URL}/quiz/question/report`, {
+        await apiClient.post("/quiz/question/report", {
           externalId,
           comment,
         });
