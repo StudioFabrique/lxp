@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 import { displaySize } from "../helpers/size-unit-converter";
 
 export const uploadActivityVideo = () => {
@@ -9,12 +9,12 @@ export const uploadActivityVideo = () => {
     destination: function (req, file, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "videos")
+        path.join(__dirname, "..", "..", "uploads", "activities", "videos"),
       );
     },
     filename: function (req, file, cb) {
       if (file.mimetype.startsWith("video")) {
-        const uniqueID: string = uuidv4();
+        const uniqueID: string = randomUUID();
         const fileName: string = uniqueID + new Date().getTime();
         cb(null, fileName + path.extname(file.originalname));
       } else {
@@ -37,7 +37,7 @@ export const uploadActivityVideo = () => {
         if (err.code === "LIMIT_FILE_SIZE") {
           return res.status(400).json({
             message: `La taille du fichier dépasse la limite autorisée de ${displaySize(
-              50 * 1024 * 1024
+              50 * 1024 * 1024,
             )}.`,
           });
         }

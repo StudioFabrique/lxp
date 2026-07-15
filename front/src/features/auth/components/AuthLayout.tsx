@@ -1,18 +1,15 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { PropsWithChildren, ReactNode, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { useAuthBackground } from "../hooks/useAuthBackground";
+import LoginRightColumn from "./LoginRightColumn";
+import LoginGuard from "../../../components/guards/LoginGuard";
 
-type Props = {
-  loginRighColumn: ReactNode;
-};
-
-const AuthLayout = ({
-  loginRighColumn,
-  children,
-}: PropsWithChildren<Props>) => {
+const AuthLayout = () => {
   const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
+  const background = useAuthBackground(theme);
 
   useEffect(() => initTheme(), [initTheme]);
 
@@ -47,12 +44,14 @@ const AuthLayout = ({
               </span>
             </div>
 
-            <div className="w-full flex-1 flex flex-col">{children}</div>
+            <div className="w-full flex-1 flex flex-col">
+              <LoginGuard />
+            </div>
           </div>
         </div>
 
         {/* Colonne Droite */}
-        {loginRighColumn}
+        <LoginRightColumn background={background} />
       </div>
     </div>
   );

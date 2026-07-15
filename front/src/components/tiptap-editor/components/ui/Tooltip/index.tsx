@@ -1,9 +1,9 @@
 "use client";
 
-import Tippy from "@tippyjs/react/headless";
-import { useCallback, JSX } from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { JSX } from "react";
 
-import { TippyProps, TooltipProps } from "./types";
+import { TooltipProps } from "./types";
 
 const isMac =
   typeof window !== "undefined"
@@ -34,45 +34,54 @@ const Tooltip = ({
   enabled = true,
   title,
   shortcut,
+  content,
   tippyOptions = {},
 }: TooltipProps): JSX.Element => {
-  const renderTooltip = useCallback(
-    (attrs: TippyProps) => (
-      <span
-        className="flex items-center gap-2 px-2.5 py-1 bg-white border border-neutral-100 rounded-lg shadow-sm z-[999]"
-        tabIndex={-1}
-        data-placement={attrs["data-placement"]}
-        data-reference-hidden={attrs["data-reference-hidden"]}
-        data-escaped={attrs["data-escaped"]}
-      >
-        {title && (
-          <span className="text-xs font-medium text-neutral-500">{title}</span>
-        )}
-        {shortcut && (
-          <span className="flex items-center gap-0.5">
-            {shortcut.map((shortcutKey) => (
-              <ShortcutKey key={shortcutKey}>{shortcutKey}</ShortcutKey>
-            ))}
-          </span>
-        )}
-      </span>
-    ),
-    [shortcut, title],
-  );
-
   if (enabled) {
+    const {
+      align = "center",
+      avoidCollisions,
+      collisionPadding,
+      delayDuration = 500,
+      side = "top",
+      sideOffset = 8,
+    } = tippyOptions;
+
     return (
-      <Tippy
-        delay={500}
-        offset={[0, 8]}
-        touch={false}
-        zIndex={99999}
-        appendTo={document.body}
-        {...tippyOptions}
-        render={renderTooltip}
-      >
-        <span>{children}</span>
-      </Tippy>
+      <TooltipPrimitive.Provider>
+        <TooltipPrimitive.Root
+          delayDuration={delayDuration}
+          disableHoverableContent
+        >
+          <TooltipPrimitive.Trigger asChild>
+            <span className="inline-flex">{children}</span>
+          </TooltipPrimitive.Trigger>
+          <TooltipPrimitive.Portal>
+            <TooltipPrimitive.Content
+              align={align}
+              avoidCollisions={avoidCollisions}
+              collisionPadding={collisionPadding}
+              side={side}
+              sideOffset={sideOffset}
+              className="z-[99999] flex items-center gap-2 rounded-lg border border-neutral-100 bg-white px-2.5 py-1 shadow-sm"
+            >
+              {content}
+              {title && (
+                <span className="text-xs font-medium text-neutral-500">
+                  {title}
+                </span>
+              )}
+              {shortcut && (
+                <span className="flex items-center gap-0.5">
+                  {shortcut.map((shortcutKey) => (
+                    <ShortcutKey key={shortcutKey}>{shortcutKey}</ShortcutKey>
+                  ))}
+                </span>
+              )}
+            </TooltipPrimitive.Content>
+          </TooltipPrimitive.Portal>
+        </TooltipPrimitive.Root>
+      </TooltipPrimitive.Provider>
     );
   }
 

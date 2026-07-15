@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 
 import { prisma } from "../../../utils/db";
 import { BonusActivity, Activity } from "@prisma/client";
@@ -50,7 +50,7 @@ export default async function putActivityText(
     throw error;
   }
 
-  const uniqueID: string = uuidv4();
+  const uniqueID: string = randomUUID();
   const fileName: string = uniqueID + new Date().getTime() + ".html";
 
   try {

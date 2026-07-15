@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Socket, io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { SOCKET_URL } from "../config/urls";
 import apiClient from "../lib/axios";
 import User from "../utils/interfaces/user";
@@ -87,8 +87,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     try {
       const response = await apiClient.get("/auth/handshake");
       setUser(response.data);
-    } catch (err) {
-      logout();
+    } catch {
+      setUser(null);
     }
   }, [logout]);
 
@@ -125,22 +125,26 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   // Gère la connexion et déconnexion du Socket
   useEffect(() => {
-    let newSocket: Socket | null = null;
+    let cancelled = false;
+    let activeSocket: Socket | null = null;
 
     if (user) {
-      newSocket = io(SOCKET_URL, {
-        query: { userId: user._id },
-        withCredentials: true,
+      void import("socket.io-client").then(({ io }) => {
+        if (cancelled) return;
+
+        activeSocket = io(SOCKET_URL, {
+          query: { userId: user._id },
+          withCredentials: true,
+        });
+
+        setSocket(activeSocket);
       });
-      setSocket(newSocket);
     }
 
-    // Cleanup: se déconnecte si le composant est démonté ou si l'utilisateur change (ex: logout)
     return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-        setSocket(null);
-      }
+      cancelled = true;
+      activeSocket?.disconnect();
+      setSocket(null);
     };
   }, [user]);
 

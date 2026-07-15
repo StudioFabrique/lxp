@@ -1,11 +1,61 @@
-import { icons } from "lucide-react";
+import {
+  ChevronDown,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  ListTodo,
+  Loader,
+  Pilcrow,
+  Plus,
+  TextAlignCenter,
+  TextAlignEnd,
+  TextAlignJustify,
+  TextAlignStart,
+  type LucideIcon,
+} from "lucide-react";
 import { PropsWithChildren, useMemo } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { Toolbar } from "../ui/Toolbar";
-import { Icon } from "../ui/Icon";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
 import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
+
+const pickerIcons = {
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  ListTodo,
+  Pilcrow,
+  Plus,
+  TextAlignCenter,
+  TextAlignEnd,
+  TextAlignJustify,
+  TextAlignStart,
+} satisfies Record<string, LucideIcon>;
+
+type ContentTypeIconName = keyof typeof pickerIcons;
+
+const PickerIcon = ({
+  name,
+  className,
+}: {
+  name: ContentTypeIconName;
+  className?: string;
+}) => {
+  const IconComponent = pickerIcons[name];
+
+  return (
+    <IconComponent
+      aria-hidden="true"
+      className={`h-4 w-4 ${className ?? ""}`}
+      strokeWidth={2.5}
+    />
+  );
+};
 
 export type ContentTypePickerOption = {
   label: string;
@@ -14,7 +64,7 @@ export type ContentTypePickerOption = {
   disabled: () => boolean;
   isActive: () => boolean;
   onClick: () => void;
-  icon: keyof typeof icons;
+  icon: ContentTypeIconName;
 };
 
 export type ContentTypePickerCategory = {
@@ -29,15 +79,15 @@ export type ContentPickerOptions = Array<
 
 export type ContentTypePickerProps = {
   options: ContentPickerOptions;
-  fixedIcon?: keyof typeof icons;
+  fixedIcon?: ContentTypeIconName;
   isLoading?: boolean;
 };
 
 const isOption = (
-  option: ContentTypePickerOption | ContentTypePickerCategory
+  option: ContentTypePickerOption | ContentTypePickerCategory,
 ): option is ContentTypePickerOption => option.type === "option";
 const isCategory = (
-  option: ContentTypePickerOption | ContentTypePickerCategory
+  option: ContentTypePickerOption | ContentTypePickerCategory,
 ): option is ContentTypePickerCategory => option.type === "category";
 
 export const ContentTypePicker = ({
@@ -48,8 +98,11 @@ export const ContentTypePicker = ({
 }: PropsWithChildren<ContentTypePickerProps>) => {
   const activeItem = useMemo(
     () =>
-      options.find((option) => option.type === "option" && option.isActive()),
-    [options]
+      options.find(
+        (option): option is ContentTypePickerOption =>
+          isOption(option) && option.isActive(),
+      ),
+    [options],
   );
 
   return (
@@ -59,20 +112,21 @@ export const ContentTypePicker = ({
           active={activeItem?.id !== "paragraph" && !!activeItem?.type}
         >
           {isLoading ? (
-            <Icon name="Loader" className="animate-spin" />
+            <Loader
+              aria-hidden="true"
+              className="h-4 w-4 animate-spin"
+              strokeWidth={2.5}
+            />
           ) : (
             <>
-              <Icon
+              <PickerIcon
                 className={TIPTAP_MENU_BAR_COLORS.text}
-                name={
-                  (activeItem?.type === "option" && activeItem.icon) ||
-                  fixedIcon ||
-                  "Pilcrow"
-                }
+                name={activeItem?.icon || fixedIcon || "Pilcrow"}
               />
-              <Icon
-                name="ChevronDown"
-                className={`w-2 h-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
+              <ChevronDown
+                aria-hidden="true"
+                className={`h-2 w-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
+                strokeWidth={2.5}
               />
             </>
           )}
@@ -90,9 +144,9 @@ export const ContentTypePicker = ({
                   onClick={option.onClick}
                   isActive={option.isActive()}
                 >
-                  <Icon
+                  <PickerIcon
                     name={option.icon}
-                    className={`w-4 h-4 mr-1 ${TIPTAP_MENU_BAR_COLORS.text}`}
+                    className={`mr-1 ${TIPTAP_MENU_BAR_COLORS.text}`}
                   />
                   <span
                     className={`${TIPTAP_MENU_BAR_COLORS.text} select-none`}

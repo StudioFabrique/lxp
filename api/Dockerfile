@@ -8,8 +8,7 @@ WORKDIR /app
 COPY package*.json tsconfig.json .env ./
 
 # Installation des dépendances
-RUN npm install
-RUN npm i -g nodemon
+RUN npm ci
 
 # Copie du code source dans l'image
 COPY . /app
