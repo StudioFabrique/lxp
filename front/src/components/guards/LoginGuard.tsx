@@ -12,16 +12,32 @@ const LoginGuard = () => {
   const [hasAdmins, setHasAdmins] = useState(true);
 
   useEffect(() => {
-    if (isAppInitialized && !isLoggedIn) {
-      onboardingApi
-        .getSetupStatus()
-        .then((res) => setHasAdmins(res.hasAdmins))
-        .catch(() => setHasAdmins(true))
-        .finally(() => setSetupChecked(true));
-    } else {
+    let active = true;
+
+    if (isLoggedIn) {
       setSetupChecked(true);
+      return;
     }
-  }, [isAppInitialized, isLoggedIn]);
+
+    setSetupChecked(false);
+
+    onboardingApi
+      .getSetupStatus()
+      .then((res) => {
+        if (active) setHasAdmins(res.hasAdmins);
+      })
+      .catch(() => {
+        if (active) setHasAdmins(true);
+      })
+      .finally(() => {
+        if (active) setSetupChecked(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isLoggedIn]);
+
 
   if (!isAppInitialized || (!isLoggedIn && !setupChecked)) return <Loader />;
 

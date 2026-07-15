@@ -13,6 +13,7 @@ import httpGetSetupStatus from "../../../controllers/auth/http-get-setup-status"
 import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-verify-activation-token";
 import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin";
 import rateLimiter from "../../../middleware/rate-limiter";
+import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds";
 
 const authRouter = express.Router();
 
@@ -33,6 +34,9 @@ authRouter.get("/logout", httpLogout);
 authRouter.get("/refresh", refreshTokens);
 authRouter.get("/roles", checkToken, httpGetCurrentRoles);
 authRouter.get("/close", checkToken, httpGetDisconnect);
+
+// Auth screens backgrounds (public, cached)
+authRouter.get("/backgrounds", httpGetAuthBackgrounds);
 
 // Onboarding - setup status (public)
 authRouter.get("/setup-status", httpGetSetupStatus);

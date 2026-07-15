@@ -1,6 +1,6 @@
 import { BadgeQuestionMark } from "lucide-react";
-import useCourseQuiz from "../../../../../src/hooks/useCourseQuiz";
-import useSmartQuizPrompt from "../../../../../src/hooks/useSmartQuizPrompt";
+import useCourseQuiz from "../../../../components/quiz/hooks/use-course-quiz";
+import useSmartQuizPrompt from "../../../../components/quiz/hooks/use-smart-quiz-prompt";
 import ActivityBottomNavigation from "./activity-bottom-navigation";
 import ActivityTypeSelection from "./activity-type-selection";
 import LessonReaderAndEditor from "./lesson-reader-and-editor";
