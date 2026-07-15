@@ -1,18 +1,14 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { PropsWithChildren, ReactNode, useContext, useEffect } from "react";
+import { PropsWithChildren, useContext, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
+import { useAuthBackground } from "../hooks/useAuthBackground";
+import LoginRightColumn from "./LoginRightColumn";
 
-type Props = {
-  loginRighColumn: ReactNode;
-};
-
-const AuthLayout = ({
-  loginRighColumn,
-  children,
-}: PropsWithChildren<Props>) => {
+const AuthLayout = ({ children }: PropsWithChildren) => {
   const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
+  const background = useAuthBackground();
 
   useEffect(() => initTheme(), [initTheme]);
 
@@ -52,7 +48,7 @@ const AuthLayout = ({
         </div>
 
         {/* Colonne Droite */}
-        {loginRighColumn}
+        <LoginRightColumn background={background} />
       </div>
     </div>
   );

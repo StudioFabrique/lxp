@@ -19,7 +19,7 @@ app
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "http://localhost:5001"],
-          imgSrc: ["'self'", "data:"],
+          imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
           scriptSrc: ["'self'", "https://www.youtube.com"],
           frameSrc: [
             "'self'",
