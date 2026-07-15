@@ -86,7 +86,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const handshake = useCallback(async () => {
     try {
       const response = await apiClient.get("/auth/handshake");
-      setUser(response.data);
+      if (response.data?.roles?.length > 0) {
+        setUser(response.data);
+      } else {
+        setUser(null);
+      }
     } catch {
       setUser(null);
     }
@@ -110,7 +114,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   // Déclenche la récupération des rôles quand l'utilisateur est défini
   useEffect(() => {
-    if (user && user.roles.length > 0) {
+    if (user && user.roles?.length > 0) {
       fetchRoles(user.roles[0]);
       setIsLoading(false);
     }
