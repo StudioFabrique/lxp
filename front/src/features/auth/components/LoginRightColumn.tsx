@@ -1,6 +1,18 @@
+import { useState } from "react";
 import bgPhoto from "../assets/bg-photo.jpeg";
+import { AuthBackground } from "../api/backgrounds.api";
 
-const LoginRightColumn = () => {
+type Props = {
+  background: AuthBackground | null;
+};
+
+const LoginRightColumn = ({ background }: Props) => {
+  const [failedBackgroundId, setFailedBackgroundId] = useState<string | null>(
+    null,
+  );
+  const displayedBackground =
+    background?.id === failedBackgroundId ? null : background;
+
   // Constantes sorties de la boucle pour faciliter les réglages
   const gridSize = 10;
   const squareSize = 300;
@@ -42,11 +54,14 @@ const LoginRightColumn = () => {
 
       {/* L'image à laquelle on applique le masque */}
       <img
-        src={bgPhoto}
-        alt="Décoration"
+        key={displayedBackground?.id ?? "fallback"}
+        src={displayedBackground?.url ?? bgPhoto}
+        alt={displayedBackground?.alt ?? "Décoration"}
+        onError={() => setFailedBackgroundId(background?.id ?? null)}
         className="h-full max-h-[85vh] min-h-150 object-cover rounded-l-2xl"
         style={{ clipPath: "url(#image-grid-mask)" }}
       />
+
     </div>
   );
 };

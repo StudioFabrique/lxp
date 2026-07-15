@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router";
 import AuthLayout from "./components/AuthLayout";
-import LoginRightColumn from "./components/LoginRightColumn";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 import LoginGuard from "../../components/guards/LoginGuard";
 
@@ -14,7 +13,7 @@ const ResetPasswordUpdate = lazy(() => import("./views/ResetPasswordUpdate"));
 export const authRoutes: RouteObject[] = [
   {
     element: (
-      <AuthLayout loginRighColumn={<LoginRightColumn />}>
+      <AuthLayout>
         <LoginGuard />
       </AuthLayout>
     ),
