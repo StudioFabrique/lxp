@@ -9,7 +9,7 @@ import LoginGuard from "../../../components/guards/LoginGuard";
 
 const AuthLayout = () => {
   const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
-  const background = useAuthBackground(theme);
+  const { background, isFailed } = useAuthBackground(theme);
 
   useEffect(() => initTheme(), [initTheme]);
 
@@ -51,7 +51,7 @@ const AuthLayout = () => {
         </div>
 
         {/* Colonne Droite */}
-        <LoginRightColumn background={background} />
+        <LoginRightColumn background={background} isFailed={isFailed} />
       </div>
     </div>
   );

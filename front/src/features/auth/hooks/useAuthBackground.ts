@@ -17,14 +17,19 @@ export const useAuthBackground = (theme: AuthBackgroundTheme) => {
   const [indexesByTheme, setIndexesByTheme] = useState<
     Record<AuthBackgroundTheme, number>
   >({ light: 0, dark: 0 });
+  const [failedThemes, setFailedThemes] = useState<
+    Record<AuthBackgroundTheme, boolean>
+  >({ light: false, dark: false });
   const photos = photosByTheme[theme];
+  const isThemeFailed = failedThemes[theme];
 
   useEffect(() => {
     const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
     let isActive = true;
 
     const loadBackgrounds = () => {
-      if (!desktopMediaQuery.matches || photos.length > 0) return;
+      if (!desktopMediaQuery.matches || photos.length > 0 || isThemeFailed)
+        return;
 
       void backgroundApi
         .getAuthBackgrounds(theme)
@@ -41,7 +46,8 @@ export const useAuthBackground = (theme: AuthBackgroundTheme) => {
           }));
         })
         .catch(() => {
-          // The bundled image remains visible when Unsplash is unavailable.
+          if (!isActive) return;
+          setFailedThemes((current) => ({ ...current, [theme]: true }));
         });
     };
 
@@ -52,7 +58,7 @@ export const useAuthBackground = (theme: AuthBackgroundTheme) => {
       isActive = false;
       desktopMediaQuery.removeEventListener("change", loadBackgrounds);
     };
-  }, [photos.length, theme]);
+  }, [photos.length, theme, isThemeFailed]);
 
   useEffect(() => {
     if (photos.length < 2) return;
@@ -67,5 +73,8 @@ export const useAuthBackground = (theme: AuthBackgroundTheme) => {
     return () => window.clearInterval(interval);
   }, [photos.length, theme]);
 
-  return photos[indexesByTheme[theme]] ?? null;
+  return {
+    background: photos[indexesByTheme[theme]] ?? null,
+    isFailed: isThemeFailed,
+  };
 };
