@@ -1,7 +1,6 @@
 name: lxp
 
 services:
-
   app:
     image: studiostep/lxp:latest
     ports:
@@ -38,8 +37,6 @@ services:
       - ENVIRONMENT=${ENVIRONMENT}
       - FRONT_URL=${FRONT_URL}
       - PORT=${PORT}
-      - STATIC_FILES_URL=${STATIC_FILES_URL}
-      - DOWNLOAD_URL=${DOWNLOAD_URL}
 
       # --- Configuration SMTP / Emails ---
       - EMAIL=${EMAIL}
@@ -48,6 +45,9 @@ services:
       - SMTP_EMAIL=${SMTP_EMAIL}
       - SMTP_PORT=${SMTP_PORT}
       - FROM=${FROM}
+
+      # Services apis externes
+      - UNSPLASH_ACCESS_KEY=${UNSPLASH_ACCESS_KEY}
 
   ai:
     image: studiostep/lxp-ai:latest
