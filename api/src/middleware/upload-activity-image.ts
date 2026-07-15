@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 
 import multer from "multer";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 
 export const uploadActivityImage = () => {
@@ -15,7 +15,7 @@ export const uploadActivityImage = () => {
     },
     filename: async function (req: CustomRequest, file, cb) {
       if (file.mimetype.startsWith("image")) {
-        const uniqueID: string = uuidv4();
+        const uniqueID: string = randomUUID();
         const fileName: string = uniqueID;
         const ext = file.mimetype.split("/")[1];
 

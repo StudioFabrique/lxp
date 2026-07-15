@@ -1,17 +1,20 @@
-import React from "react";
-import { Placement, Props } from "tippy.js";
+import type { ReactNode } from "react";
+import type { TooltipContentProps } from "@radix-ui/react-tooltip";
+
+export interface TooltipOptions {
+  align?: TooltipContentProps["align"];
+  avoidCollisions?: TooltipContentProps["avoidCollisions"];
+  collisionPadding?: TooltipContentProps["collisionPadding"];
+  delayDuration?: number;
+  side?: TooltipContentProps["side"];
+  sideOffset?: number;
+}
 
 export interface TooltipProps {
-  children?: string | React.ReactNode;
+  children?: string | ReactNode;
   enabled?: boolean;
   title?: string;
   shortcut?: string[];
-  tippyOptions?: Omit<Partial<Props>, "content">;
-  content?: React.ReactNode;
-}
-
-export interface TippyProps {
-  "data-placement": Placement;
-  "data-reference-hidden"?: string;
-  "data-escaped"?: string;
+  tippyOptions?: TooltipOptions;
+  content?: ReactNode;
 }
