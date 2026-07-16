@@ -16,7 +16,7 @@ export default function ModuleCard({
   const { id, title, thumb } = module;
 
   return (
-    <div className="card h-40 w-full bg-base-100 image-full shadow-sm overflow-hidden">
+    <div className="card h-40 w-80 bg-base-100 image-full shadow-sm overflow-hidden">
       <figure>
         <img
           className="object-cover w-full h-full"
@@ -25,7 +25,7 @@ export default function ModuleCard({
         />
       </figure>
 
-      <div className="card-body justify-between items-center rounded-xl p-5 h-full flex flex-col">
+      <div className="card-body justify-between items-center rounded-xl p-5 flex flex-col">
         <h2
           className="card-title text-center text-base md:text-lg line-clamp-2"
           title={title}
