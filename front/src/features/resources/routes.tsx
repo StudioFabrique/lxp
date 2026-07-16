@@ -2,25 +2,23 @@ import { lazy } from "react";
 import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 
-const ResourcesLayout = lazy(() => import("./views/ResourcesLayout"));
-const ResourcesHome = lazy(() => import("./views/ResourcesHome"));
-const ResourceAdd = lazy(() => import("./views/ResourceAdd"));
-const StudentResourcesLayout = lazy(
-  () => import("./views/StudentResourcesLayout"),
-);
-const StudentResourceHome = lazy(() => import("./views/StudentResourceHome"));
-const StudentResourceDetails = lazy(
-  () => import("./views/StudentResourceDetails"),
-);
-
 export const adminResourcesRoutes: RouteObject[] = [
   {
     path: "resources",
-    element: withSuspense(ResourcesLayout),
+    element: withSuspense(lazy(() => import("./views/ResourcesLayout"))),
     children: [
-      { index: true, element: withSuspense(ResourcesHome) },
-      { path: "add", element: withSuspense(ResourceAdd) },
-      { path: "edit/:resourceId", element: withSuspense(ResourceAdd) },
+      {
+        index: true,
+        element: withSuspense(lazy(() => import("./views/ResourcesHome"))),
+      },
+      {
+        path: "add",
+        element: withSuspense(lazy(() => import("./views/ResourceAdd"))),
+      },
+      {
+        path: "edit/:resourceId",
+        element: withSuspense(lazy(() => import("./views/ResourceAdd"))),
+      },
     ],
   },
 ];
@@ -28,12 +26,19 @@ export const adminResourcesRoutes: RouteObject[] = [
 export const studentResourcesRoutes: RouteObject[] = [
   {
     path: "ressources",
-    element: withSuspense(StudentResourcesLayout),
+    element: withSuspense(lazy(() => import("./views/StudentResourcesLayout"))),
     children: [
-      { index: true, element: withSuspense(StudentResourceHome) },
+      {
+        index: true,
+        element: withSuspense(
+          lazy(() => import("./views/StudentResourceHome")),
+        ),
+      },
       {
         path: "details/:resourceId",
-        element: withSuspense(StudentResourceDetails),
+        element: withSuspense(
+          lazy(() => import("./views/StudentResourceDetails")),
+        ),
       },
     ],
   },
