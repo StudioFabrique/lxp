@@ -46,7 +46,7 @@ pipeline {
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "📡 Relancement des conteneurs..."
-                        docker compose down --remove-orphans --volumes || true
+                        docker compose down --remove-orphans || true
                         docker compose rm -f || true
                         docker compose pull
                         docker compose up -d
