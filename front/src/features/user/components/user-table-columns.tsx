@@ -1,13 +1,15 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Check, Edit, MailCheck, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import UserStatusToggle from "./UserStatusToggle";
+import { cn } from "../../../utils/cn";
 
 export const getUsersColumns = (
   onDelete: (id: string) => void,
   onToggleStatus: (id: string, isActive: boolean) => void,
+  onSendInvitation: (id: string) => void,
 ): ColumnDef<User>[] => [
   {
     id: "select",
@@ -105,7 +107,24 @@ export const getUsersColumns = (
   {
     id: "invitation",
     header: "Invitation",
-    cell: () => <span className="text-base-content/50 text-xs"></span>,
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <button
+          onClick={() => onSendInvitation(user._id)}
+          className={cn("btn btn-ghost btn-sm text-primary", {
+            "text-success": user.invitationSent,
+            disabled: user.invitationSent,
+          })}
+        >
+          {user.invitationSent ? (
+            <MailCheck className="w-4 h-4 text-success" />
+          ) : (
+            <Send className="w-4 h-4 text-primary" />
+          )}
+        </button>
+      );
+    },
     enableSorting: false,
   },
   {
