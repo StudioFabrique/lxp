@@ -4,7 +4,6 @@ import * as Popover from "@radix-ui/react-popover";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { Toolbar } from "./ui/Toolbar";
-import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
 interface TableInsertPopoverProps {
   editor: Editor;
@@ -67,8 +66,10 @@ export const TableInsertPopover = ({
             style={{
               width: "16px",
               height: "16px",
-              border: "1px solid #d1d5db",
-              backgroundColor: isHighlighted ? "#3b82f6" : "white",
+              border: "1px solid oklch(var(--b3))",
+              backgroundColor: isHighlighted
+                ? "oklch(var(--p))"
+                : "oklch(var(--b1))",
               cursor: "pointer",
               transition: "all 0.1s ease",
             }}
@@ -88,8 +89,8 @@ export const TableInsertPopover = ({
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Toolbar.Button className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none">
-          <Icon name="Table" className={`${TIPTAP_MENU_BAR_COLORS.text} w-8`} />
-          <span className={`${TIPTAP_MENU_BAR_COLORS.text} w-full`}>
+          <Icon name="Table" className="text-base-content/60 w-8" />
+          <span className="text-base-content/60 w-full">
             {title}
           </span>
         </Toolbar.Button>
@@ -99,11 +100,9 @@ export const TableInsertPopover = ({
         sideOffset={10}
         asChild
       >
-        <Surface className={`p-4 w-80 ${TIPTAP_MENU_BAR_COLORS.background}`}>
+        <Surface className="p-4 w-80 bg-base-100">
           <div className="space-y-4">
-            <div
-              className={`text-sm font-medium ${TIPTAP_MENU_BAR_COLORS.text}`}
-            >
+            <div className="text-sm font-medium text-base-content">
               {getSelectionText()}
             </div>
 
@@ -112,14 +111,11 @@ export const TableInsertPopover = ({
               onMouseLeave={() => setHoveredCell(null)}
             >
               <div
+                className="rounded-lg border border-base-300 bg-base-200 p-2"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${maxCols}, 1fr)`,
                   gap: "2px",
-                  padding: "8px",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "4px",
-                  backgroundColor: "#f9fafb",
                 }}
               >
                 {renderGrid()}
@@ -127,33 +123,31 @@ export const TableInsertPopover = ({
             </div>
 
             <div className="space-y-2">
-              <div
-                className={`text-xs font-medium ${TIPTAP_MENU_BAR_COLORS.text} uppercase tracking-wide`}
-              >
+              <div className="text-xs font-medium text-base-content/50 uppercase tracking-wider">
                 Tableaux prédéfinis
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleInsertTable(2, 2, false)}
-                  className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                  className="px-3 py-1 text-xs bg-base-200 hover:bg-base-300 rounded-lg transition-colors text-base-content"
                 >
                   2x2
                 </button>
                 <button
                   onClick={() => handleInsertTable(3, 3, true)}
-                  className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                  className="px-3 py-1 text-xs bg-base-200 hover:bg-base-300 rounded-lg transition-colors text-base-content"
                 >
                   3x3
                 </button>
                 <button
                   onClick={() => handleInsertTable(4, 2, true)}
-                  className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                  className="px-3 py-1 text-xs bg-base-200 hover:bg-base-300 rounded-lg transition-colors text-base-content"
                 >
                   4x2
                 </button>
                 <button
                   onClick={() => handleInsertTable(5, 4, true)}
-                  className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                  className="px-3 py-1 text-xs bg-base-200 hover:bg-base-300 rounded-lg transition-colors text-base-content"
                 >
                   5x4
                 </button>
