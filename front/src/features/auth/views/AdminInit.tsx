@@ -2,10 +2,10 @@ import { useNavigate } from "react-router";
 import Welcome from "../components/Welcome";
 import TokenForm from "../components/TokenForm";
 import AdminSignInForm from "../components/AdminSignInForm";
-import useAppInit, { InitStep } from "../hooks/useAppInit";
+import useAdminInit, { InitStep } from "../hooks/useAdminInit";
 
-const AppInit = () => {
-  const { initStep, token, onNextStep, onTokenValidated } = useAppInit();
+const AdminInit = () => {
+  const { initStep, token, onNextStep, onTokenValidated } = useAdminInit();
   const navigate = useNavigate();
 
   const renderStep = () => {
@@ -26,4 +26,4 @@ const AppInit = () => {
   return renderStep();
 };
 
-export default AppInit;
+export default AdminInit;

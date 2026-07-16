@@ -6,7 +6,7 @@ export enum InitStep {
   SignInForm,
 }
 
-export default function useAppInit() {
+export default function useAdminInit() {
   const [initStep, setInitStep] = useState<InitStep>(InitStep.Welcome);
   const [token, setToken] = useState<string | null>(null);
 
