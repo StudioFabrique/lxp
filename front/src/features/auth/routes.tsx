@@ -3,7 +3,7 @@ import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 
 const AuthLayout = lazy(() => import("./components/AuthLayout"));
-const Init = lazy(() => import("./views/AppInit"));
+const AdminInit = lazy(() => import("./views/AdminInit"));
 const Login = lazy(() => import("./views/Login"));
 const RegisterHome = lazy(() => import("./views/Register"));
 const ResetPasswordHome = lazy(() => import("./views/ResetPassword"));
@@ -13,7 +13,7 @@ export const authRoutes: RouteObject[] = [
   {
     element: withSuspense(AuthLayout),
     children: [
-      { path: "/init", element: withSuspense(Init) },
+      { path: "/init", element: withSuspense(AdminInit) },
       { path: "/login", element: withSuspense(Login) },
       { path: "/register", element: withSuspense(RegisterHome) },
       { path: "/reset-password", element: withSuspense(ResetPasswordHome) },

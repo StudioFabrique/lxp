@@ -3,70 +3,94 @@
  *   nouvellement créé.
  */
 
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { useSearchParams } from "react-router";
-import { usePasswordUpdate } from "../hooks/usePasswordUpdate";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { accountApi } from "../api/account.api";
 import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordUpdateSuccess from "../components/PasswordUpdateSuccess";
-import PasswordUpdateForm from "../components/PasswordUpdateForm";
+import PasswordForm from "../components/PasswordForm";
+
+type FormData = {
+  password: string;
+  confirmPassword: string;
+};
 
 export default function RegisterHome() {
   const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
-  //  custom hook qui gère la logique du composant
-  const {
-    checkToken,
-    error,
-    handleChange,
-    handleSubmit,
-    isValid,
-    success,
-    password,
-    password2,
-    submitLoader,
-  } = usePasswordUpdate(searchParams.get("id") ?? "");
+  const token = searchParams.get("id") ?? "";
 
-  //  Choisit un thème clair par défaut et vérifie la validité du lien d'activation
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: { password: "", confirmPassword: "" },
+  });
+
   useEffect(() => {
     chooseTheme("classic", "light");
   }, [chooseTheme]);
 
-  useEffect(() => {
-    checkToken();
-  }, [checkToken]);
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await accountApi.activateAccount(token, data.password);
+      if (res.success) setSuccess(true);
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Une erreur est survenue";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="flex flex-col gap-y-8 place-items-center p-2">
-      {/* Header de la page */}
       <h1 className="text-3xl font-bold">Activation du compte</h1>
-      {/* fin du header */}
+
       {error.length > 0 ? (
-        // Message d'erreur en cas de lien non valide
         <section className="flex flex-col gap-y-8 justify-center items-center">
           <PasswordUpdateError error={error} url="/" />
         </section>
       ) : success ? (
-        // Message si l'activation du compte est réussie
         <section className="flex flex-col place-items-center">
           <PasswordUpdateSuccess
-            message={
-              "Votre compte a été activé, vous allez être redirigé automatiquement vers la page de connexion..."
-            }
+            message="Votre compte a été activé, vous allez être redirigé automatiquement vers la page de connexion..."
             url="/"
           />
         </section>
       ) : (
         <section>
-          {/* Formulaire pour saisir le mot de passe et une confirmation */}
-          <PasswordUpdateForm
-            onChange={handleChange}
-            password={password}
-            password2={password2}
-            onSubmit={handleSubmit}
-            isValid={isValid}
-            submitLoader={submitLoader}
-          />
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-3"
+          >
+            <PasswordForm register={register} watch={watch} errors={errors} />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn btn-primary w-full"
+            >
+              {isLoading ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                "Valider"
+              )}
+            </button>
+          </form>
         </section>
       )}
     </main>
