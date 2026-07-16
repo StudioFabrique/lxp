@@ -4,7 +4,6 @@ import { Toolbar } from "./ui/Toolbar";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "./ui/Dropdown";
-import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
 const FONT_FAMILY_GROUPS = [
   {
@@ -37,7 +36,7 @@ const FONT_FAMILIES = FONT_FAMILY_GROUPS.flatMap((group) => [
 ]).flat();
 
 export type FontFamilyPickerProps = {
-  onChange: (value: string) => void; // eslint-disable-line no-unused-vars
+  onChange: (value: string) => void;
   value: string;
 };
 
@@ -57,18 +56,18 @@ export const FontFamilyPicker = ({
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
         <Toolbar.Button active={!!currentValue?.value}>
-          <span className={`${TIPTAP_MENU_BAR_COLORS.text} select-none`}>
+          <span className="text-base-content/60 select-none text-sm">
             {currentFontLabel}
           </span>
           <Icon
             name="ChevronDown"
-            className={`w-2 h-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
+            className="w-2 h-2 text-base-content/40"
           />
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
         <Surface
-          className={`mt-5 flex flex-col gap-1 px-2 py-4 ${TIPTAP_MENU_BAR_COLORS.background}`}
+          className="mt-4 flex flex-col gap-1 px-2 py-3 bg-base-100"
         >
           {FONT_FAMILY_GROUPS.map((group) => (
             <div

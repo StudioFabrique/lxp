@@ -2,21 +2,27 @@ import { lazy } from "react";
 import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 
-const ParcoursLayout = lazy(() => import("./views/ParcoursLayout"));
-const ParcoursHome = lazy(() => import("./views/ParcoursHome"));
-const ParcoursAdd = lazy(() => import("./views/ParcoursAdd"));
-const ParcoursView = lazy(() => import("./views/ParcoursView"));
-const EditParcours = lazy(() => import("./views/ParcoursEdit"));
-
 export const adminParcoursRoutes: RouteObject[] = [
   {
     path: "parcours",
-    element: withSuspense(ParcoursLayout),
+    element: withSuspense(lazy(() => import("./views/ParcoursLayout"))),
     children: [
-      { index: true, element: withSuspense(ParcoursHome) },
-      { path: "new", element: withSuspense(ParcoursAdd) },
-      { path: "edit/:id", element: withSuspense(EditParcours) },
-      { path: "view/:id", element: withSuspense(ParcoursView) },
+      {
+        index: true,
+        element: withSuspense(lazy(() => import("./views/ParcoursHome"))),
+      },
+      {
+        path: "new",
+        element: withSuspense(lazy(() => import("./views/ParcoursAdd"))),
+      },
+      {
+        path: "edit/:id",
+        element: withSuspense(lazy(() => import("./views/ParcoursEdit"))),
+      },
+      {
+        path: "view/:id",
+        element: withSuspense(lazy(() => import("./views/ParcoursView"))),
+      },
     ],
   },
 ];
@@ -24,10 +30,16 @@ export const adminParcoursRoutes: RouteObject[] = [
 export const studentParcoursRoutes: RouteObject[] = [
   {
     path: "parcours",
-    element: withSuspense(ParcoursLayout),
+    element: withSuspense(lazy(() => import("./views/ParcoursLayout"))),
     children: [
-      { index: true, element: withSuspense(ParcoursHome) },
-      { path: "view/:id", element: withSuspense(ParcoursView) },
+      {
+        index: true,
+        element: withSuspense(lazy(() => import("./views/ParcoursHome"))),
+      },
+      {
+        path: "view/:id",
+        element: withSuspense(lazy(() => import("./views/ParcoursView"))),
+      },
     ],
   },
 ];

@@ -2,18 +2,16 @@ import { lazy } from "react";
 import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 
-const Profile = lazy(() => import("./views/Profile"));
-
 export const adminProfileRoutes: RouteObject[] = [
   {
     path: "profil",
-    element: withSuspense(Profile),
+    element: withSuspense(lazy(() => import("./views/Profile"))),
   },
 ];
 
 export const studentProfileRoutes: RouteObject[] = [
   {
     path: "profil",
-    element: withSuspense(Profile),
+    element: withSuspense(lazy(() => import("./views/Profile"))),
   },
 ];

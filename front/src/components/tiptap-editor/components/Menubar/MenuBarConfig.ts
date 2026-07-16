@@ -1,9 +1,9 @@
 export const TIPTAP_MENU_BAR_COLORS = {
-  background: "bg-slate-200",
-  backgroundActive: "bg-slate-500",
-  backgroundSelected: "bg-slate-500",
-  text: "text-slate-500",
-  fill: "fill-slate-500",
-  textActive: "text-slate-100 fill-slate-100",
-  textSelected: "text-slate-100 fill-slate-100",
+  background: "bg-base-100",
+  backgroundActive: "bg-primary",
+  backgroundSelected: "bg-primary",
+  text: "text-base-content/60",
+  fill: "fill-base-content/60",
+  textActive: "text-primary-content fill-primary-content",
+  textSelected: "text-primary-content fill-primary-content",
 };

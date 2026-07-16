@@ -1,9 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
-import { Link, useParams, useSearchParams } from "react-router";
-import {
-  useParcoursSelector,
-  useParcoursDispatch,
-} from "../store/ParcoursContext";
+import { Link } from "react-router";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -19,85 +14,70 @@ import ImportSkills from "../components/edit/skills/import-skills.component";
 import SkillsList from "../components/edit/skills/skills-list.component";
 import Error404 from "../../../components/error404";
 import ImageHeaderMutable from "../../../../src/components/image-header/image-header-mutable";
-import { stepsParcours } from "../../../config/steps/steps-parcours";
-import { testModules } from "../../../utils/helpers/parcours-steps-validation";
-import useSteps from "../../../hooks/useSteps";
-import useParcoursService from "../hooks/useParcoursServices";
-import { parcoursApi } from "../api/parcours.api";
+
 import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
-
-let initialState = true;
+import { useParcoursEdit } from "../hooks/useParcoursEdit";
 
 const EditParcours = () => {
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const dispatch = useParcoursDispatch();
-  const { actualStep, finalStep, stepsList, updateStep, validateStep } =
-    useSteps(stepsParcours);
-  const infos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos,
-  );
-  const formation = useParcoursSelector((state) => state.parcours.formation);
-  const { image, getParcours, isLoading, error } = useParcoursService();
-  const modules = useParcoursSelector((state) => state.parcoursModules.modules);
-  const checkStep = useRef(true);
+  const {
+    id,
+    actualStep,
+    finalStep,
+    stepsList,
+    updateStep,
+    updateImage,
+    isLoading,
+    error,
+    infos,
+    formation,
+    image,
+    handleResetImportedObjectives,
+    handleResetImportedSkills,
+    handleUpdateStep,
+    handleRetour,
+  } = useParcoursEdit();
 
-  const step = searchParams.get("step");
-
-  useEffect(() => {
-    if (id !== undefined && initialState) {
-      getParcours(+id);
-      initialState = false;
+  const renderActualStep = () => {
+    switch (actualStep.id) {
+      case 1:
+        return id && <ParcoursInformations parcoursId={id} />;
+      case 2:
+        return (
+          <ParcoursSection
+            section="Objectifs"
+            title="Importer une liste d'objectifs"
+            onResetList={handleResetImportedObjectives}
+            children={[
+              <ObjectivesList />,
+              <ImportObjectives onCloseDrawer={() => {}} />,
+            ]}
+          />
+        );
+      case 3:
+        return (
+          <ParcoursSection
+            section="Compétences"
+            title="Importer des compétences"
+            onResetList={handleResetImportedSkills}
+            children={[
+              <SkillsList />,
+              <ImportSkills onCloseDrawer={() => {}} />,
+            ]}
+          />
+        );
+      case 4:
+        return <ModuleComponent />;
+      case 5:
+        return <Calendrier />;
+      case 6:
+        return <ParcoursStudents />;
+      case 7:
+        return <ParcoursPreview onEdit={updateStep} />;
+      default:
+        return null;
     }
-  }, [id, getParcours]);
-
-  useEffect(() => {
-    if (step && checkStep.current) {
-      updateStep(+step);
-      checkStep.current = false;
-    }
-  }, [step, updateStep]);
-
-  useEffect(() => {
-    return () => {
-      initialState = true;
-      dispatch({ type: "RESET_PARCOURS" });
-      dispatch({ type: "RESET_PARCOURS_INFORMATIONS" });
-      dispatch({ type: "RESET_TAGS" });
-      dispatch({ type: "RESET_CONTACTS" });
-      dispatch({ type: "RESET_SKILLS" });
-      dispatch({ type: "RESET_OBJECTIVES" });
-      dispatch({ type: "RESET_MODULES" });
-      dispatch({ type: "RESET_GROUPS" });
-    };
-  }, [dispatch]);
-
-  const updateImage = useCallback(
-    (image: File) => {
-      const formData = new FormData();
-      formData.append("parcoursId", id!);
-      formData.append("image", image);
-      parcoursApi.mutations.updateParcoursImage(id!, formData);
-    },
-    [id],
-  );
-
-  const handleUpdateStep = (id: number) => {
-    validateStep(id, true);
   };
-
-  const handleRetour = () => {
-    if (actualStep.id === 6 && (!modules || !testModules(modules))) {
-      updateStep(4);
-    } else updateStep(actualStep.id - 1);
-  };
-
-  const handleResetImportedSkills = () => {
-    dispatch({ type: "IMPORT_SKILLS", payload: [] });
-  };
-
-  const handleResetImportedObjectives = () => {};
 
   return (
     <div className="w-full h-full flex flex-col justify-start">
@@ -129,37 +109,7 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full mt-16">
-            {actualStep.id === 1 && id ? (
-              <ParcoursInformations parcoursId={id} />
-            ) : null}
-            {actualStep.id === 2 ? (
-              <ParcoursSection
-                section="Objectifs"
-                title="Importer une liste d'objectifs"
-                onResetList={handleResetImportedObjectives}
-              >
-                <ObjectivesList />
-                <ImportObjectives onCloseDrawer={() => {}} />
-              </ParcoursSection>
-            ) : null}
-            {actualStep.id === 3 ? (
-              <ParcoursSection
-                section="Compétences"
-                title="Importer des compétences"
-                onResetList={handleResetImportedSkills}
-              >
-                <SkillsList />
-                <ImportSkills onCloseDrawer={() => {}} />
-              </ParcoursSection>
-            ) : null}
-            {actualStep.id === 4 && id ? <ModuleComponent /> : null}
-            {actualStep.id === 5 ? <Calendrier /> : null}
-            {actualStep.id === 6 ? <ParcoursStudents /> : null}
-            {actualStep.id === 7 ? (
-              <ParcoursPreview onEdit={updateStep} />
-            ) : null}
-          </div>
+          <div className="w-full mt-16">{renderActualStep()}</div>
           <div className="w-full mt-8 flex justify-between">
             {actualStep.id !== stepsList.length ? (
               <>

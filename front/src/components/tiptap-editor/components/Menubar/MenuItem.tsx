@@ -10,7 +10,6 @@ import {
   Undo2,
   type LucideIcon,
 } from "lucide-react";
-import { TIPTAP_MENU_BAR_COLORS } from "./MenuBarConfig";
 import "./MenuItem.scss";
 
 const menuIcons: Partial<Record<string, LucideIcon>> = {
@@ -30,7 +29,6 @@ export default function MenuItem({
   title,
   action,
   isActive = null,
-  color,
   disabled,
 }: {
   icon?: string;
@@ -46,20 +44,14 @@ export default function MenuItem({
   return (
     <button
       type="button"
-      className={`menu-item ${
-        itemIsActive
-          ? `is-active ${TIPTAP_MENU_BAR_COLORS.textActive} ${TIPTAP_MENU_BAR_COLORS.backgroundActive}`
-          : color === "info"
-            ? "fill-info text-info"
-            : "fill-base-content text-base-content"
-      } tooltip disabled:opacity-50`}
+      className={`menu-item tooltip ${itemIsActive ? "is-active" : ""}`}
       aria-label={title || icon || "Editor action"}
       data-tip={title}
       onClick={action}
       title={title}
       disabled={disabled}
     >
-      {IconComponent && <IconComponent aria-hidden="true" strokeWidth={2.5} />}
+      {IconComponent && <IconComponent aria-hidden="true" strokeWidth={2} />}
     </button>
   );
 }

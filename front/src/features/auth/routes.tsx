@@ -2,22 +2,32 @@ import { lazy } from "react";
 import { RouteObject } from "react-router";
 import { withSuspense } from "../../utils/helpers/router-helpers";
 
-const AuthLayout = lazy(() => import("./components/AuthLayout"));
-const AdminInit = lazy(() => import("./views/AdminInit"));
-const Login = lazy(() => import("./views/Login"));
-const RegisterHome = lazy(() => import("./views/Register"));
-const ResetPasswordHome = lazy(() => import("./views/ResetPassword"));
-const ResetPasswordUpdate = lazy(() => import("./views/ResetPasswordUpdate"));
-
 export const authRoutes: RouteObject[] = [
   {
-    element: withSuspense(AuthLayout),
+    element: withSuspense(lazy(() => import("./components/AuthLayout"))),
     children: [
-      { path: "/init", element: withSuspense(AdminInit) },
-      { path: "/login", element: withSuspense(Login) },
-      { path: "/register", element: withSuspense(RegisterHome) },
-      { path: "/reset-password", element: withSuspense(ResetPasswordHome) },
-      { path: "/reset-update", element: withSuspense(ResetPasswordUpdate) },
+      {
+        path: "/init",
+        element: withSuspense(lazy(() => import("./views/AdminInit"))),
+      },
+      {
+        path: "/login",
+        element: withSuspense(lazy(() => import("./views/Login"))),
+      },
+      {
+        path: "/register",
+        element: withSuspense(lazy(() => import("./views/Register"))),
+      },
+      {
+        path: "/reset-password",
+        element: withSuspense(lazy(() => import("./views/ResetPassword"))),
+      },
+      {
+        path: "/reset-update",
+        element: withSuspense(
+          lazy(() => import("./views/ResetPasswordUpdate")),
+        ),
+      },
     ],
   },
 ];

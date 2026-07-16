@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import type Step from "../utils/interfaces/step";
 import { sortArray } from "../utils/helpers/sort-array";
 
-const useSteps = (steps: Array<Step>) => {
+const useSteps = (steps: Step[]) => {
   const [actualStep, setActualStep] = useState<Step>(steps[0]);
   const [stepsList, setStepsList] = useState<Array<Step>>(steps);
   const [finalStep, setFinalStep] = useState<boolean>(false);

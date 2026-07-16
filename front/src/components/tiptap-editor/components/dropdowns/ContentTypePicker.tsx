@@ -20,7 +20,6 @@ import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { Toolbar } from "../ui/Toolbar";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
-import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 
 const pickerIcons = {
   Heading1,
@@ -51,8 +50,8 @@ const PickerIcon = ({
   return (
     <IconComponent
       aria-hidden="true"
-      className={`h-4 w-4 ${className ?? ""}`}
-      strokeWidth={2.5}
+      className={`h-4 w-4 antialiased ${className ?? ""}`}
+      strokeWidth={2}
     />
   );
 };
@@ -115,18 +114,18 @@ export const ContentTypePicker = ({
             <Loader
               aria-hidden="true"
               className="h-4 w-4 animate-spin"
-              strokeWidth={2.5}
+              strokeWidth={2}
             />
           ) : (
             <>
               <PickerIcon
-                className={TIPTAP_MENU_BAR_COLORS.text}
+                className="text-base-content/60"
                 name={activeItem?.icon || fixedIcon || "Pilcrow"}
               />
               <ChevronDown
                 aria-hidden="true"
-                className={`h-2 w-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
-                strokeWidth={2.5}
+                className="h-2 w-2 text-base-content/40"
+                strokeWidth={2}
               />
             </>
           )}
@@ -134,7 +133,7 @@ export const ContentTypePicker = ({
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
         <Surface
-          className={`flex flex-col gap-1 px-2 py-4 my-5 ${TIPTAP_MENU_BAR_COLORS.background}`}
+          className="flex flex-col gap-1 px-2 py-3 mt-4 bg-base-100"
         >
           {options.map((option) => {
             if (isOption(option)) {
@@ -146,11 +145,9 @@ export const ContentTypePicker = ({
                 >
                   <PickerIcon
                     name={option.icon}
-                    className={`mr-1 ${TIPTAP_MENU_BAR_COLORS.text}`}
+                    className="mr-1"
                   />
-                  <span
-                    className={`${TIPTAP_MENU_BAR_COLORS.text} select-none`}
-                  >
+                  <span className="select-none">
                     {option.label}
                   </span>
                 </DropdownButton>
