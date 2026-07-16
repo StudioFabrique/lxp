@@ -38,6 +38,47 @@ const EditParcours = () => {
     handleRetour,
   } = useParcoursEdit();
 
+  const renderActualStep = () => {
+    switch (actualStep.id) {
+      case 1:
+        return id && <ParcoursInformations parcoursId={id} />;
+      case 2:
+        return (
+          <ParcoursSection
+            section="Objectifs"
+            title="Importer une liste d'objectifs"
+            onResetList={handleResetImportedObjectives}
+            children={[
+              <ObjectivesList />,
+              <ImportObjectives onCloseDrawer={() => {}} />,
+            ]}
+          />
+        );
+      case 3:
+        return (
+          <ParcoursSection
+            section="Compétences"
+            title="Importer des compétences"
+            onResetList={handleResetImportedSkills}
+            children={[
+              <SkillsList />,
+              <ImportSkills onCloseDrawer={() => {}} />,
+            ]}
+          />
+        );
+      case 4:
+        return <ModuleComponent />;
+      case 5:
+        return <Calendrier />;
+      case 6:
+        return <ParcoursStudents />;
+      case 7:
+        return <ParcoursPreview onEdit={updateStep} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-start">
       {isLoading ? (
@@ -68,37 +109,7 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full mt-16">
-            {actualStep.id === 1 && id ? (
-              <ParcoursInformations parcoursId={id} />
-            ) : null}
-            {actualStep.id === 2 ? (
-              <ParcoursSection
-                section="Objectifs"
-                title="Importer une liste d'objectifs"
-                onResetList={handleResetImportedObjectives}
-              >
-                <ObjectivesList />
-                <ImportObjectives onCloseDrawer={() => {}} />
-              </ParcoursSection>
-            ) : null}
-            {actualStep.id === 3 ? (
-              <ParcoursSection
-                section="Compétences"
-                title="Importer des compétences"
-                onResetList={handleResetImportedSkills}
-              >
-                <SkillsList />
-                <ImportSkills onCloseDrawer={() => {}} />
-              </ParcoursSection>
-            ) : null}
-            {actualStep.id === 4 && id ? <ModuleComponent /> : null}
-            {actualStep.id === 5 ? <Calendrier /> : null}
-            {actualStep.id === 6 ? <ParcoursStudents /> : null}
-            {actualStep.id === 7 ? (
-              <ParcoursPreview onEdit={updateStep} />
-            ) : null}
-          </div>
+          <div className="w-full mt-16">{renderActualStep()}</div>
           <div className="w-full mt-8 flex justify-between">
             {actualStep.id !== stepsList.length ? (
               <>
