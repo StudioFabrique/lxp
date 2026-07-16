@@ -7,7 +7,6 @@ import { ContentTypePicker } from "../dropdowns/ContentTypePicker.js";
 import { useMenuTextTypes } from "../hooks/useMenuTextTypes.js";
 import { useMenuContentTypes } from "../hooks/useMenuContentTypes.js";
 import { useMenuAlignTextTypes } from "../hooks/useMenuAlignTextTypes.js";
-// import { ColorPicker } from "./Colorpicker/Colorpicker.js";
 import { useTextmenuStates } from "../hooks/useTextmenuStates.js";
 import { useTextmenuCommands } from "../hooks/useTextmenuCommands.js";
 import { Toolbar } from "../ui/Toolbar.js";
@@ -25,11 +24,8 @@ type MenuBarProps = {
   onUploadAllImagesRef?: React.MutableRefObject<(() => Promise<void>) | null>;
 };
 
-// const MemoButton = memo(Toolbar.Button);
 const MemoContentTypePicker = memo(ContentTypePicker);
-// const MemoColorPicker = memo(ColorPicker);
 const MemoFontFamilyPicker = memo(FontFamilyPicker);
-// const MemoFontSizePicker = memo(FontSizePicker);
 
 export default function MenuBar({
   editor,
@@ -63,10 +59,10 @@ export default function MenuBar({
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none flex-wrap min-w-max ${
+      className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max ${
         isSticky
-          ? "fixed top-4 transform shadow-lg rounded-lg border h-fit"
-          : ""
+          ? "fixed top-4 transform shadow-xl shadow-base-content/10 rounded-2xl border border-base-300 h-fit bg-base-100/95 backdrop-blur-md"
+          : "border-b border-base-300"
       }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
@@ -93,45 +89,6 @@ export default function MenuBar({
         onChange={commands.onSetFont}
         value={states.currentFont || ""}
       />
-
-      {/* Color Picker for Text Color */}
-      {/* <Popover.Root>
-        <Popover.Trigger asChild>
-          <MemoButton active={!!states.currentColor} tooltip="Couleur du texte">
-            <Icon name="Palette" className="text-base-content" />
-          </MemoButton>
-        </Popover.Trigger>
-        <Popover.Content side="top" sideOffset={8} asChild>
-          <Surface className="p-4 mt-3">
-            <MemoColorPicker
-              color={states.currentColor}
-              onChange={commands.onChangeColor}
-              onClear={commands.onClearColor}
-            />
-          </Surface>
-        </Popover.Content>
-      </Popover.Root> */}
-
-      {/* Color Picker for Highlight Color */}
-      {/* <Popover.Root>
-        <Popover.Trigger asChild>
-          <MemoButton
-            active={!!states.currentHighlight}
-            tooltip="Surbrillance du texte"
-          >
-            <Icon name="Highlighter" className="text-base-content" />
-          </MemoButton>
-        </Popover.Trigger>
-        <Popover.Content side="top" sideOffset={8} asChild>
-          <Surface className="p-4 mt-3">
-            <MemoColorPicker
-              color={states.currentHighlight}
-              onChange={commands.onChangeHighlight}
-              onClear={commands.onClearHighlight}
-            />
-          </Surface>
-        </Popover.Content>
-      </Popover.Root> */}
 
       {items(editor).map((item) => (
         <MenuItem key={item.title} {...item} />
