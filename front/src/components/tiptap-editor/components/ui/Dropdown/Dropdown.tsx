@@ -1,5 +1,4 @@
 import React from "react";
-import { TIPTAP_MENU_BAR_COLORS } from "../../Menubar/MenuBarConfig";
 import { cn } from "../../../../../utils/helpers/style-helpers";
 
 export const DropdownCategoryTitle = ({
@@ -9,7 +8,7 @@ export const DropdownCategoryTitle = ({
 }) => {
   return (
     <div
-      className={`text-[.65rem] font-semibold mb-1 uppercase ${TIPTAP_MENU_BAR_COLORS.text} select-none px-1.5`}
+      className="text-[.65rem] font-semibold mb-1 uppercase text-base-content/40 select-none px-2 tracking-wider"
     >
       {children}
     </div>
@@ -30,12 +29,11 @@ export const DropdownButton = React.forwardRef<
   ref,
 ) {
   const buttonClass = cn(
-    "flex items-center gap-2 p-1.5 text-sm font-medium text-left bg-transparent w-full rounded",
-    !isActive && !disabled,
-    "hover:bg-neutral-100",
-    isActive && !disabled && "bg-neutral-100",
-    disabled && "cursor-not-allowed dark:text-neutral-600",
-    TIPTAP_MENU_BAR_COLORS.text,
+    "flex items-center gap-2 p-2 text-sm font-medium text-left w-full rounded-lg",
+    "transition-all duration-150 ease-in-out",
+    !isActive && !disabled && "hover:bg-base-200 text-base-content/70 hover:text-base-content",
+    isActive && !disabled && "bg-primary/10 text-primary font-semibold",
+    disabled && "cursor-not-allowed opacity-40",
     className,
   );
 

@@ -4,7 +4,6 @@ import { Icon } from "./ui/Icon";
 import { InsertImagePanel } from "./InsertImagePanel";
 import type { Dispatch, SetStateAction } from "react";
 import { useState, useCallback } from "react";
-import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
 export type InsertImagePopoverProps = {
   title?: string;
@@ -24,14 +23,14 @@ export const InsertImagePopover = ({
   const handleSetLink = useCallback(
     (url: string) => {
       onSetLink(url);
-      setIsOpen(false); // Fermer le popup après insertion
+      setIsOpen(false);
     },
     [onSetLink]
   );
 
   const handleClickUpload = useCallback(() => {
     onClickUpload?.();
-    setIsOpen(false); // Fermer le popup après clic sur le bouton de téléversement
+    setIsOpen(false);
   }, [onClickUpload]);
 
   return (
@@ -41,10 +40,10 @@ export const InsertImagePopover = ({
           className={`flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none`}
         >
           <Icon
-            className={`${TIPTAP_MENU_BAR_COLORS.text} w-8`}
+            className="text-base-content/60 w-8"
             name="PictureInPicture"
           />
-          <span className={`${TIPTAP_MENU_BAR_COLORS.text} w-full`}>
+          <span className="text-base-content/60 w-full">
             {title}
           </span>
         </Toolbar.Button>

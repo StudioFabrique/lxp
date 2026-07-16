@@ -7,18 +7,22 @@ import { router } from "./App.router";
 import { ThemeProvider } from "./store/ThemeProvider";
 import { AuthProvider } from "./store/AuthProvider";
 import ErrorBoundary from "./components/wrappers/layouts/ErrorBoundary";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <ErrorBoundary>
-            <RouterProvider router={router} />
-          </ErrorBoundary>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <>
+      <Toaster />
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <ErrorBoundary>
+              <RouterProvider router={router} />
+            </ErrorBoundary>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </>
   );
 }
 
