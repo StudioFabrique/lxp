@@ -1,6 +1,5 @@
 import * as Popover from "@radix-ui/react-popover";
 import { Toolbar } from "./ui/Toolbar";
-import { Icon } from "./ui/Icon";
 import { YoutubeLinkEditorPanel } from "./YoutubeLinkEditorPanel";
 import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
@@ -17,10 +16,16 @@ export const EditYoutubeLinkPopover = ({
     <Popover.Root>
       <Popover.Trigger asChild>
         <Toolbar.Button className="flex items-center gap-3 p-1.5 text-sm font-medium text-left bg-transparent w-full rounded select-none">
-          <Icon
-            className={`${TIPTAP_MENU_BAR_COLORS.text} w-8`}
-            name="Youtube"
-          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={24}
+            height={24}
+            stroke={TIPTAP_MENU_BAR_COLORS.text}
+            viewBox={"0 0 24 24"}
+          >
+            {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
+            <path d="M21.593 7.203a2.5 2.5 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.23.857.905 1.534 1.763 1.765 1.582.43 7.83.437 7.83.437s6.265.007 7.831-.403a2.52 2.52 0 0 0 1.767-1.763c.414-1.565.417-4.812.417-4.812s.02-3.265-.407-4.831M9.996 15.005l.005-6 5.207 3.005z" />
+          </svg>
           <span className={`${TIPTAP_MENU_BAR_COLORS.text} w-full`}>
             {title}
           </span>
