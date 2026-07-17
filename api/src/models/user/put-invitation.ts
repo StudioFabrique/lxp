@@ -27,6 +27,13 @@ export default async function putInvitation(userId: string) {
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
+  if (existingUser.isActive) {
+    throw {
+      statusCode: 400,
+      message: "Cannot send invitation to an already active user.",
+    };
+  }
+
   // Retrieve the user's role (assumes the first role is the main one)
   const role = await existingUser.roles[0];
 
@@ -48,7 +55,7 @@ export default async function putInvitation(userId: string) {
   // Update the "invitationSent" property in the database if the email was sent successfully
   const updateResult = await User.updateOne(
     { _id: existingUser._id },
-    { $set: { invitationSent: true } }
+    { $set: { invitationSent: true, invitationSentAt: new Date() } }
   );
   return updateResult;
 }

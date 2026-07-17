@@ -54,6 +54,7 @@ import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
 import checkValidation from "../../../middleware/check-validation";
+import rateLimiter from "../../../middleware/rate-limiter";
 import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby";
 import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby";
 import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network";
@@ -279,6 +280,7 @@ userRouter.post(
 // envoie un email d'activation à un utilisateur nouvellement créé'
 userRouter.put(
   "/invitation/:userId",
+  rateLimiter(5, 60_000),
   userIdValidator,
   checkPermissions("user"),
   httpPutInvitation
@@ -303,6 +305,7 @@ userRouter.post(
 // Send activations emails to multiple users
 userRouter.post(
   "/invitations",
+  rateLimiter(3, 60_000),
   checkPermissions("user"),
   httpPostManyInvitations
 );
