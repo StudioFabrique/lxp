@@ -1,13 +1,16 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, MailCheck, RotateCw, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import UserStatusToggle from "./UserStatusToggle";
+import { cn } from "../../../utils/cn";
 
 export const getUsersColumns = (
   onDelete: (id: string) => void,
   onToggleStatus: (id: string, isActive: boolean) => void,
+  onSendInvitation: (id: string) => void,
+  onSendResetPassword: (id: string) => void,
 ): ColumnDef<User>[] => [
   {
     id: "select",
@@ -103,19 +106,38 @@ export const getUsersColumns = (
     enableSorting: false,
   },
   {
-    id: "invitation",
-    header: "Invitation",
-    cell: () => <span className="text-base-content/50 text-xs"></span>,
-    enableSorting: false,
-  },
-  {
     id: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const userId = row.original._id;
+      const user = row.original;
+      const userId = user._id;
       if (!userId) return null;
       return (
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 justify-center items-center">
+          {user.isActive ? (
+            <button
+              onClick={() => onSendResetPassword(userId)}
+              className="btn btn-ghost btn-xs tooltip"
+              data-tip="Envoyer une demande de réinitialisation de mot de passe"
+            >
+              <RotateCw className="w-4 h-4 text-warning" />
+            </button>
+          ) : (
+            <button
+              onClick={() => onSendInvitation(userId)}
+              className={cn("btn btn-ghost btn-sm text-primary", {
+                "text-success btn-disabled": user.invitationSent,
+                tooltip: !user.invitationSent,
+              })}
+              data-tip="Envoyer une invitation"
+            >
+              {user.invitationSent ? (
+                <MailCheck className="w-4 h-4 text-success" />
+              ) : (
+                <Send className="w-4 h-4 text-primary" />
+              )}
+            </button>
+          )}
           <PermissionGuard object="user" action="update">
             <Link
               to={`/admin/user/edit/${userId}`}

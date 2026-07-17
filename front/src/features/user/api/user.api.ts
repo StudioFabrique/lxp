@@ -64,6 +64,10 @@ export const mutations = {
     const res = await apiClient.post("/user/invitations", { userIds });
     return res.data;
   },
+  sendResetPassword: async (userId: string) => {
+    const res = await apiClient.put(`/user/reset-password/${userId}`);
+    return res.data;
+  },
 };
 
 export const userApi = {

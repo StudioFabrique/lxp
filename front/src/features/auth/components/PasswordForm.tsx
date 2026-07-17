@@ -8,9 +8,9 @@ import {
 } from "react-hook-form";
 
 type Props = {
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<FormData>;
   watch: UseFormWatch<FieldValues>;
-  errors: FieldErrors;
+  errors: FieldErrors<FieldValues>;
   passwordFieldName?: string;
   confirmPasswordFieldName?: string;
 };
