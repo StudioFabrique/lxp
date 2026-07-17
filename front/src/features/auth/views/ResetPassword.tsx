@@ -16,12 +16,10 @@ const ResetPasswordHome = () => {
   if (emailVerified) {
     return (
       <div className="flex flex-col gap-6 my-auto w-full text-center">
-        <div className="bg-success/10 border border-success/20 p-6 rounded-xl">
-          <h2 className="text-success-content leading-relaxed text-sm">
-            Un email de réinitialisation a été envoyé. Veuillez consulter votre
-            boîte de réception pour poursuivre la procédure.
-          </h2>
-        </div>
+        <h2 className="leading-relaxed">
+          Un email de réinitialisation a été envoyé. Veuillez consulter votre
+          boîte de réception pour poursuivre la procédure.
+        </h2>
         <Link className="btn btn-outline btn-primary w-full" to="/">
           Retour à la connexion
         </Link>

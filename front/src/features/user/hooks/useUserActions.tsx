@@ -83,6 +83,18 @@ export function useUserActions(onSuccessCallback: () => void) {
     sendManyInvitationsMutation.mutate(userIds);
   };
 
+  const sendResetPasswordMutation = useMutation({
+    mutationFn: (userId: string) => userApi.mutations.sendResetPassword(userId),
+    onSuccess: () => {
+      toast.success("Le mail de réinitialisation a été envoyé.");
+      onSuccessCallback();
+    },
+  });
+
+  const handleSendResetPassword = (userId: string) => {
+    sendResetPasswordMutation.mutate(userId);
+  };
+
   return {
     onDeleteOne: handleDeleteOne,
     isDeleting: deleteOneMutation.isPending,
@@ -91,12 +103,14 @@ export function useUserActions(onSuccessCallback: () => void) {
     onUpdateRoles: handleUpdateRoles,
     onSendInvitation: handleSendInvitation,
     onSendManyInvitations: handleSendManyInvitations,
+    onSendResetPassword: handleSendResetPassword,
     isPending:
       deleteOneMutation.isPending ||
       updateStatusMutation.isPending ||
       updateManyStatusMutation.isPending ||
       updateRolesMutation.isPending ||
       sendInvitationMutation.isPending ||
-      sendManyInvitationsMutation.isPending,
+      sendManyInvitationsMutation.isPending ||
+      sendResetPasswordMutation.isPending,
   };
 }

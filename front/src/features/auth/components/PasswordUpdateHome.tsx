@@ -10,6 +10,8 @@ import PasswordUpdateError from "./PasswordUpdateError";
 
 type Props = {
   message: string;
+  title?: string;
+  description?: string;
 };
 
 type FormData = {
@@ -17,7 +19,7 @@ type FormData = {
   confirmPassword: string;
 };
 
-const PasswordUpdateHome = ({ message }: Props) => {
+const PasswordUpdateHome = ({ message, title, description }: Props) => {
   const { chooseTheme } = useContext(ThemeContext);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("id") ?? "";
@@ -66,12 +68,16 @@ const PasswordUpdateHome = ({ message }: Props) => {
     </section>
   ) : (
     <section>
+      {title && <h1 className="font-bold text-base-content mb-2">{title}</h1>}
+      {description && (
+        <p className="text-sm text-base-content/60 mb-4">{description}</p>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <PasswordForm register={register} watch={watch} errors={errors} />
         <button
           type="submit"
           disabled={isLoading}
-          className="btn btn-primary w-full"
+          className="btn btn-primary w-full mt-2"
         >
           {isLoading ? (
             <span className="loading loading-spinner loading-sm"></span>
