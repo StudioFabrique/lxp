@@ -5,11 +5,6 @@
 ## Prérequis
 
 - Dernière version LTS de **node js** et de **npm**
-- **nodemon** installé globalement avec npm (Cette librairie sert pour le hot reloading.), si ce n'est pas le cas, utiliser la commande :
-
-```bash
-npm i -g nodemon
-```
 
 - **docker** et **docker compose**
 
