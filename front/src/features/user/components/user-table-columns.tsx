@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Check, Edit, MailCheck, Send, Trash2 } from "lucide-react";
+import { Edit, MailCheck, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -110,19 +110,22 @@ export const getUsersColumns = (
     cell: ({ row }) => {
       const user = row.original;
       return (
-        <button
-          onClick={() => onSendInvitation(user._id)}
-          className={cn("btn btn-ghost btn-sm text-primary", {
-            "text-success": user.invitationSent,
-            disabled: user.invitationSent,
-          })}
-        >
-          {user.invitationSent ? (
-            <MailCheck className="w-4 h-4 text-success" />
-          ) : (
-            <Send className="w-4 h-4 text-primary" />
-          )}
-        </button>
+        <div className="flex justify-center items-center">
+          <button
+            onClick={() => onSendInvitation(user._id)}
+            className={cn("btn btn-ghost btn-sm text-primary", {
+              "text-success btn-disabled": user.invitationSent,
+              tooltip: !user.invitationSent,
+            })}
+            data-tip="Envoyer une invitation"
+          >
+            {user.invitationSent ? (
+              <MailCheck className="w-4 h-4 text-success" />
+            ) : (
+              <Send className="w-4 h-4 text-primary" />
+            )}
+          </button>
+        </div>
       );
     },
     enableSorting: false,
