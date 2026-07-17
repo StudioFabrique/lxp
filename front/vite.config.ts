@@ -6,7 +6,7 @@ export default defineConfig(() => {
     plugins: [react()],
     build: {
       manifest: true,
-      rollupOptions: { input: "./index.html" },
+      rolldownOptions: { input: "./index.html" },
       outDir: "../api/dist/public/",
     },
     server: {

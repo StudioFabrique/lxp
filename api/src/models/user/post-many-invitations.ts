@@ -42,7 +42,7 @@ export default async function postManyInvitations(userIds: string[]) {
       await sendPasswordEmail(user.email, token, "activation");
       await User.updateOne(
         { _id: user._id },
-        { $set: { invitationSent: true } }
+        { $set: { invitationSent: true, invitationSentAt: new Date() } }
       );
       i += 1;
     }

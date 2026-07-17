@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import UserStatusToggle from "./UserStatusToggle";
-import { cn } from "../../../utils/cn";
 
 export const getUsersColumns = (
   onDelete: (id: string) => void,
@@ -125,11 +124,12 @@ export const getUsersColumns = (
           ) : (
             <button
               onClick={() => onSendInvitation(userId)}
-              className={cn("btn btn-ghost btn-sm text-primary", {
-                "text-success btn-disabled": user.invitationSent,
-                tooltip: !user.invitationSent,
-              })}
-              data-tip="Envoyer une invitation"
+              className="btn btn-ghost btn-sm tooltip"
+              data-tip={
+                user.invitationSent
+                  ? "L'invitation a déjà été envoyée. Cliquez pour renvoyer."
+                  : "Envoyer une invitation"
+              }
             >
               {user.invitationSent ? (
                 <MailCheck className="w-4 h-4 text-success" />
