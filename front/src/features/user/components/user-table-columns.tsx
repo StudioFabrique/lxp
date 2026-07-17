@@ -113,7 +113,7 @@ export const getUsersColumns = (
       const userId = user._id;
       if (!userId) return null;
       return (
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 justify-center items-center">
           {user.isActive ? (
             <button
               onClick={() => onSendResetPassword(userId)}
