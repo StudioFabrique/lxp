@@ -26,6 +26,7 @@ export default interface User {
   updatedAt?: Date;
   isActive: boolean;
   invitationSent: boolean;
+  invitationSentAt?: string;
   group?: Group;
   hobbies?: Array<Hobby>;
   links?: Array<Link>;

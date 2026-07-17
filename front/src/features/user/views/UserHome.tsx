@@ -43,7 +43,12 @@ const UserHome = () => {
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
-  const [idToResetPassword, setIdToResetPassword] = useState<string | null>(null);
+  const [idToResetPassword, setIdToResetPassword] = useState<string | null>(
+    null,
+  );
+  const [idToResendInvitation, setIdToResendInvitation] = useState<
+    string | null
+  >(null);
 
   const refreshAndClearSelection = useCallback(() => {
     setRowSelection({});
@@ -68,6 +73,11 @@ const UserHome = () => {
     [data, idToResetPassword],
   );
 
+  const userToResendInvitation = useMemo(
+    () => data.find((u) => u._id === idToResendInvitation),
+    [data, idToResendInvitation],
+  );
+
   const sorting: SortingState = sortProperty
     ? [{ id: sortProperty, desc: !isAscDirection }]
     : [];
@@ -83,10 +93,10 @@ const UserHome = () => {
       getUsersColumns(
         (id) => setIdToDelete(id),
         onUpdateStatus,
-        onSendInvitation,
+        (id) => setIdToResendInvitation(id),
         (id) => setIdToResetPassword(id),
       ),
-    [onUpdateStatus, onSendInvitation],
+    [onUpdateStatus],
   );
 
   const handleConfirmSingleDelete = async () => {
@@ -100,6 +110,13 @@ const UserHome = () => {
     if (idToResetPassword) {
       onSendResetPassword(idToResetPassword);
       setIdToResetPassword(null);
+    }
+  };
+
+  const handleConfirmResendInvitation = async () => {
+    if (idToResendInvitation) {
+      onSendInvitation(idToResendInvitation);
+      setIdToResendInvitation(null);
     }
   };
 
@@ -136,18 +153,18 @@ const UserHome = () => {
             {roles
               .filter((r) => !r.role.startsWith("interface:"))
               .map((role) => (
-              <button
-                key={role._id}
-                onClick={() => handleRoleSwitch(role)}
-                className={`btn btn-sm ${
-                  currentRole._id === role._id
-                    ? "btn-primary"
-                    : "btn-outline btn-primary"
-                }`}
-              >
-                {role.label}
-              </button>
-            ))}
+                <button
+                  key={role._id}
+                  onClick={() => handleRoleSwitch(role)}
+                  className={`btn btn-sm ${
+                    currentRole._id === role._id
+                      ? "btn-primary"
+                      : "btn-outline btn-primary"
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
           </div>
         )}
 
@@ -230,13 +247,44 @@ const UserHome = () => {
         description="Êtes-vous sûr de vouloir envoyer un mail de réinitialisation de mot de passe à cet utilisateur ?"
         descList={
           userToResetPassword
-            ? [`${userToResetPassword.firstname} ${userToResetPassword.lastname}`]
+            ? [
+                `${userToResetPassword.firstname} ${userToResetPassword.lastname}`,
+              ]
             : undefined
         }
       >
         <button
           className="btn btn-warning btn-md"
           onClick={handleConfirmResetPassword}
+        >
+          Confirmer
+        </button>
+      </TableActionsModal>
+
+      <TableActionsModal
+        isOpen={!!idToResendInvitation}
+        onCancel={() => setIdToResendInvitation(null)}
+        title={
+          userToResendInvitation?.invitationSent
+            ? "Renvoi d'une invitation"
+            : "Envoi d'une invitation"
+        }
+        description={
+          userToResendInvitation?.invitationSent
+            ? "L'invitation a déjà été envoyée. Voulez-vous la renvoyer ?"
+            : "Êtes-vous sûr de vouloir envoyer une invitation d'activation à cet utilisateur ?"
+        }
+        descList={
+          userToResendInvitation
+            ? [
+                `${userToResendInvitation.firstname} ${userToResendInvitation.lastname}`,
+              ]
+            : undefined
+        }
+      >
+        <button
+          className="btn btn-primary btn-md"
+          onClick={handleConfirmResendInvitation}
         >
           Confirmer
         </button>
