@@ -33,6 +33,7 @@ export interface IUser extends Document {
   studentFeedbacks?: IStudentFeedback["_id"];
   emailVerified: boolean;
   invitationSent: boolean;
+  invitationSentAt?: Date;
   promptCount: number;
   promptStats?: IPromptStats["_id"];
 }
@@ -55,6 +56,7 @@ const userSchema: Schema = new Schema(
     phoneNumber: { type: String, required: false },
     emailVerified: { type: Boolean, default: false },
     invitationSent: { type: Boolean, default: false },
+    invitationSentAt: { type: Date, required: false },
     promptCount: { type: Number, default: 0 },
     promptStats: {
       type: [mongoose.Schema.Types.ObjectId],
