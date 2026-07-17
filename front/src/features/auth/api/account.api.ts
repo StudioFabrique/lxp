@@ -3,7 +3,7 @@ import apiClient from "../../../lib/axios";
 const checkEmail = async (
   email: string,
 ): Promise<{ success: boolean; message: string }> => {
-  const res = await apiClient.post("/user/check-email", { email });
+  const res = await apiClient.put("/user/reset-password", { email });
   return res.data;
 };
 

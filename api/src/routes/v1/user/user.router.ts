@@ -49,7 +49,8 @@ import {
   updateUserStatusValidator,
   userIdValidator,
 } from "./user-validators";
-import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
+import httpPutResetPassword from "../../../controllers/user/http-put-reset-password";
+import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-password-email";
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
 import checkValidation from "../../../middleware/check-validation";
@@ -144,6 +145,13 @@ userRouter.post(
   jsonParser,
   userValidator(true),
   httpCreateUser
+);
+
+//  vérification de l'existence d'un compte utilisateur et envoi du mail de réinitialisation (public)
+userRouter.put(
+  "/reset-password",
+  checkValidation(postCheckEmailValidator),
+  httpPutResetPasswordEmail
 );
 
 userRouter.put(
@@ -276,19 +284,20 @@ userRouter.put(
   httpPutInvitation
 );
 
+// envoie un email de réinitialisation de mot de passe à un utilisateur (admin)
+userRouter.put(
+  "/reset-password/:userId",
+  userIdValidator,
+  checkPermissions("user"),
+  httpPutResetPassword
+);
+
 // vérifie la validité du lien d'activation de compte'
 userRouter.post(
   "/check-invitation",
   tokenValidator,
   activateAccount,
   httpPostCheckActivationToken
-);
-
-//  vérification de l'existence d'un compte utilisateur
-userRouter.post(
-  "/check-email",
-  checkValidation(postCheckEmailValidator),
-  httpPostCheckEmail
 );
 
 // Send activations emails to multiple users

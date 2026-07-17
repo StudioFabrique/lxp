@@ -68,7 +68,7 @@ export default function RegisterHome() {
       ) : success ? (
         <section className="flex flex-col place-items-center">
           <PasswordUpdateSuccess
-            message="Votre compte a été activé, vous allez être redirigé automatiquement vers la page de connexion..."
+            message="Votre compte a été activé avec succès."
             url="/"
           />
         </section>

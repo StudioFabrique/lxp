@@ -6,10 +6,12 @@ import { ThemeContext } from "../../../store/ThemeProvider";
 import { useAuthBackground } from "../hooks/useAuthBackground";
 import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
+import { useNavigate } from "react-router";
 
 const AuthLayout = () => {
   const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
   const { background, isFailed } = useAuthBackground(theme);
+  const navigate = useNavigate();
 
   useEffect(() => initTheme(), [initTheme]);
 
@@ -30,7 +32,10 @@ const AuthLayout = () => {
           </button>
 
           <div className="flex flex-col w-70 h-full mx-auto">
-            <div className="flex flex-col items-center gap-2 mb-8">
+            <div
+              className="flex flex-col items-center gap-2 mb-8  select-none cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <img
                 className="w-56 h-auto mt-20"
                 src={

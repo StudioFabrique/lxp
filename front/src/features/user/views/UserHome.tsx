@@ -43,19 +43,29 @@ const UserHome = () => {
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
+  const [idToResetPassword, setIdToResetPassword] = useState<string | null>(null);
 
   const refreshAndClearSelection = useCallback(() => {
     setRowSelection({});
     onRefreshData();
   }, [onRefreshData]);
 
-  const { onDeleteOne, onUpdateStatus, isDeleting } = useUserActions(
-    refreshAndClearSelection,
-  );
+  const {
+    onDeleteOne,
+    onUpdateStatus,
+    onSendInvitation,
+    onSendResetPassword,
+    isDeleting,
+  } = useUserActions(refreshAndClearSelection);
 
   const userToDelete = useMemo(
     () => data.find((u) => u._id === idToDelete),
     [data, idToDelete],
+  );
+
+  const userToResetPassword = useMemo(
+    () => data.find((u) => u._id === idToResetPassword),
+    [data, idToResetPassword],
   );
 
   const sorting: SortingState = sortProperty
@@ -69,14 +79,27 @@ const UserHome = () => {
   };
 
   const columns = useMemo(
-    () => getUsersColumns((id) => setIdToDelete(id), onUpdateStatus),
-    [onUpdateStatus],
+    () =>
+      getUsersColumns(
+        (id) => setIdToDelete(id),
+        onUpdateStatus,
+        onSendInvitation,
+        (id) => setIdToResetPassword(id),
+      ),
+    [onUpdateStatus, onSendInvitation],
   );
 
   const handleConfirmSingleDelete = async () => {
     if (idToDelete) {
       onDeleteOne(idToDelete);
       setIdToDelete(null);
+    }
+  };
+
+  const handleConfirmResetPassword = async () => {
+    if (idToResetPassword) {
+      onSendResetPassword(idToResetPassword);
+      setIdToResetPassword(null);
     }
   };
 
@@ -195,6 +218,25 @@ const UserHome = () => {
           className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
           onClick={handleConfirmSingleDelete}
           disabled={isDeleting}
+        >
+          Confirmer
+        </button>
+      </TableActionsModal>
+
+      <TableActionsModal
+        isOpen={!!idToResetPassword}
+        onCancel={() => setIdToResetPassword(null)}
+        title="Envoi d'un mail de réinitialisation"
+        description="Êtes-vous sûr de vouloir envoyer un mail de réinitialisation de mot de passe à cet utilisateur ?"
+        descList={
+          userToResetPassword
+            ? [`${userToResetPassword.firstname} ${userToResetPassword.lastname}`]
+            : undefined
+        }
+      >
+        <button
+          className="btn btn-warning btn-md"
+          onClick={handleConfirmResetPassword}
         >
           Confirmer
         </button>
