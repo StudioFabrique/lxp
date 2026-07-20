@@ -16,11 +16,15 @@ export function useParcoursEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { actualStep, finalStep, stepsList, updateStep, validateStep } =
-    useSteps(stepsParcours as Step[]);
+  const { actualStep, stepsList, updateStep, validateStep } = useSteps(
+    stepsParcours as Step[],
+  );
   const parcoursId = id !== undefined ? +id : undefined;
-  const { data: parcours, isLoading, error: queryError } =
-    useParcoursQuery(parcoursId);
+  const {
+    data: parcours,
+    isLoading,
+    error: queryError,
+  } = useParcoursQuery(parcoursId);
   const infos = parcours;
   const formation = parcours?.formation;
   const image = normalizeImageSource(parcours?.image) ?? "";
@@ -74,7 +78,6 @@ export function useParcoursEdit() {
   return {
     id,
     actualStep,
-    finalStep,
     stepsList,
     updateStep,
     validateStep,
