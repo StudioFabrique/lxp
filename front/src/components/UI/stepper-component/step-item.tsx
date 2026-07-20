@@ -21,13 +21,14 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem, updateStep }) => {
       className={cn(
         // Customize line (before) and circle (after)
         "cursor-pointer",
+        "hover:after:bg-info after:border-0 after:font-semibold hover:after:text-info-content",
         "step after:content-[counter(step)] [&:first-child::before]:hidden",
         "min-h-12 md:min-h-auto md:before:h-1.5",
         "before:w-1.5 md:before:w-full",
         isActive ? "step-secondary" : undefined,
         stepItem.id === actualStepId && [
           "before:bg-secondary",
-          "after:bg-info after:border-0 after:font-semibold",
+          "after:bg-info",
           "cursor-auto",
         ],
       )}
