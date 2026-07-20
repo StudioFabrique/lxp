@@ -1,30 +1,37 @@
 import { FC } from "react";
 
 import Step from "../../../utils/interfaces/step";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   stepItem: Step;
-  finalStep: boolean;
   actualStepId: number;
+  updateStep: (stepId: number) => void;
 };
 
-const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
-  const setStepColor = () => {
-    if (stepItem.id < actualStepId && stepItem.isValid) {
-      return "step-secondary";
-    } else if (stepItem.id === actualStepId) {
-      return "step-info";
-    }
-  };
+const StepItem: FC<Props> = ({ actualStepId, stepItem, updateStep }) => {
+  const isActive = stepItem.id <= actualStepId;
 
-  const setCursor = () => {
-    return finalStep ? "cursor-pointer" : "cursor-normal";
+  const handleClick = () => {
+    updateStep(stepItem.id);
   };
 
   return (
     <li
-      className={`step ${setStepColor()} ${setCursor()}`}
-      onClick={() => {}}
+      className={cn(
+        // Customize line (before) and circle (after)
+        "cursor-pointer",
+        "step after:content-[counter(step)] [&:first-child::before]:hidden",
+        "min-h-12 md:min-h-auto md:before:h-1.5",
+        "before:w-1.5 md:before:w-full",
+        isActive ? "step-secondary" : undefined,
+        stepItem.id === actualStepId && [
+          "before:bg-secondary",
+          "after:bg-info after:border-0 after:font-semibold",
+          "cursor-auto",
+        ],
+      )}
+      onClick={handleClick}
       data-content={stepItem.id}
     >
       {stepItem.label}

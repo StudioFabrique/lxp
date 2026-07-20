@@ -34,16 +34,6 @@ export default function ModuleHeader({
           <Copy />
           Ajouter un module
         </button>
-        {/* <Link
-          className="btn btn-primary btn-soft mr-5"
-          to="import-modules"
-          state={{ parcoursId }}
-        >
-          <div className="flex gap-x-2 items-center">
-            <ImportIcon />
-            Importer des modules
-          </div>
-        </Link> */}
       </span>
     </div>
   );

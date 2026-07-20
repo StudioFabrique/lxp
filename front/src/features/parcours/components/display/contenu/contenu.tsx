@@ -8,8 +8,8 @@ import { Link, useParams } from "react-router";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-contacts";
 import { AuthContext } from "../../../../../store/AuthProvider";
-import { useParcoursSelector } from "../../../store/ParcoursContext";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 type ContenuProps = {
   modules: Module[];
@@ -17,17 +17,19 @@ type ContenuProps = {
 
 const Contenu = ({ modules }: ContenuProps) => {
   const { user } = useContext(AuthContext);
-  const contacts = useParcoursSelector(
-    (state) => state.parcoursContacts.currentContacts,
-  );
-
   const { id: parcoursId } = useParams();
+  const { data: parcours } = useParcoursQuery(
+    parcoursId ? Number(parcoursId) : undefined,
+  );
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
     modules ? modules[0] : null,
   );
 
-  const canEditParcoursContent = userBelongsToContacts(user, contacts);
+  const canEditParcoursContent = userBelongsToContacts(
+    user,
+    parcours?.contacts,
+  );
   const canEditModule = userBelongsToContacts(user, selectedModule?.contacts);
 
   return (

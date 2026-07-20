@@ -1,5 +1,4 @@
 import { FC, useCallback } from "react";
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import { useParams } from "react-router";
 
 import ImportCSVActions from "../../../../../../src/components/UI/import-csv-actions.component";
@@ -10,17 +9,20 @@ import toast from "react-hot-toast";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 import type Objective from "../../../../../utils/interfaces/objective";
+import { addIdToObject } from "../../../../../utils/helpers/add-id-to-objects";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
+  importedObjectives: Objective[];
+  onImport: (objectives: Objective[]) => void;
 };
 
-const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
+const ImportObjectives: FC<Props> = ({
+  importedObjectives,
+  onCloseDrawer,
+  onImport,
+}) => {
   const protocol = window.location.href.split("/")[0];
-  const dispatch = useParcoursDispatch();
-  const objectives = useParcoursSelector(
-    (state) => state.parcoursObjectives.importedObjectives
-  );
   const { id } = useParams();
   const parcoursId = Number(id);
   const { data: parcours } = useParcoursQuery(parcoursId);
@@ -50,10 +52,8 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
   };
 
   const handleFromCSV = useCallback(
-    (data: Objective[]) => {
-      dispatch({ type: "IMPORT_OBJECTIVES", payload: data });
-    },
-    [dispatch]
+    (data: Objective[]) => onImport(addIdToObject(data) as Objective[]),
+    [onImport],
   );
 
   return (
@@ -64,9 +64,9 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
         onHandleFromCSV={handleFromCSV}
         fields={objectivesFields}
       />
-      {objectives ? (
+      {importedObjectives.length > 0 ? (
         <ImportedCSVData
-          data={objectives}
+          data={importedObjectives}
           label={"compétences"}
           field="description"
           onCloseDrawer={handleCloseDrawer}
