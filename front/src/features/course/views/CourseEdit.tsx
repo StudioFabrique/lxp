@@ -14,6 +14,7 @@ import { useCourseDispatch } from "../store/CourseContext";
 import formatCourseFromHttp from "../helpers/course-infos-from-http";
 import { courseApi } from "../api/course.api";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
+import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 
 const EditCourseHome = () => {
   const dispatch = useCourseDispatch();
@@ -92,32 +93,32 @@ const EditCourseHome = () => {
         {actualStep.id === 4 ? <CoursePreview onEdit={updateStep} /> : null}
       </div>
 
-      <div className="w-full mt-8 flex justify-between">
-        {actualStep.id !== stepsList.length ? (
-          <>
-            {actualStep.id === 1 ? (
-              <Link className="btn btn-primary btn-outline" to="/admin/course">
+      {actualStep.id !== stepsList.length ? (
+        <FloatingBottomNavigation
+          startActions={
+            actualStep.id === 1 ? (
+              <Link className="btn btn-ghost hover:underline" to="/admin/course">
                 Retour
               </Link>
             ) : (
               <button
-                className="btn btn-primary btn-outline"
+                className="btn btn-ghost hover:underline"
                 onClick={handleRetour}
               >
                 Retour
               </button>
-            )}
-            {actualStep.id !== stepsList.length ? (
-              <button
-                className="btn btn-primary"
-                onClick={() => handleUpdateStep(actualStep.id)}
-              >
-                Etape suivante
-              </button>
-            ) : null}
-          </>
-        ) : null}
-      </div>
+            )
+          }
+          endActions={
+            <button
+              className="btn btn-primary px-6"
+              onClick={() => handleUpdateStep(actualStep.id)}
+            >
+              Étape suivante
+            </button>
+          }
+        />
+      ) : null}
     </FadeWrapper>
   );
 };
