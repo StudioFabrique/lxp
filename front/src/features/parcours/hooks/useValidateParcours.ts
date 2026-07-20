@@ -1,6 +1,6 @@
 import { useParcoursSelector } from "../store/ParcoursContext";
 import { useCallback } from "react";
-import { testStep } from "../../../utils/helpers/parcours-steps-validation";
+import { testParcoursStep } from "../../../utils/helpers/parcours-steps-validation";
 
 const useValidateParcours = () => {
   const infos = useParcoursSelector((state) => state.parcoursInformations.infos);
@@ -12,7 +12,7 @@ const useValidateParcours = () => {
   const groups = useParcoursSelector((state) => state.parcoursGroups.groups);
 
   const validateParcours = useCallback(() => {
-    return testStep({
+    return testParcoursStep({
       infos,
       tags,
       contacts,

@@ -1,6 +1,6 @@
 import { EditIcon, Trash2 } from "lucide-react";
 import { Activity } from "../../../src/utils/interfaces/activity";
-import { getActivityIcon } from "../../../src/utils/helpers/getActivityIcon";
+import activityIconType from "../../../src/utils/helpers/activity-icon-type";
 import PermissionGuard from "../../components/guards/PermissionGuard";
 
 type Props = {
@@ -24,7 +24,7 @@ export default function BonusActivityItem({
     <div className={"flex items-center gap-2 w-full"}>
       <div
         className={style}
-      >{getActivityIcon(activity.type as "iframe" | "video" | "image" | "text" | "resource")}</div>
+      >{activityIconType(activity.type)}</div>
       <button
         className={
           "text-xs text-primary flex-1 text-left hover:cursor-pointer truncate p-2 rounded-sm bg-secondary/10 tooltip tooltip-bottom"

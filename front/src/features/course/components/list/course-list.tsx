@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
-import { searchListCourse } from "../../../../utils/helpers/search-list-course";
+import { createSearchFilter } from "../../../../utils/helpers/search-filter";
 import { courseSearchOptions } from "../../../../config/search-options";
 
 // Imports des composants UI
@@ -66,8 +66,15 @@ export default function CourseList(props: CourseListProps) {
    * @param entityToSearch Propriété sur laquelle effectuer la recherche
    * @param searchValue Valeur recherchée
    */
+  const courseFieldMap: Record<string, { field: string; property: string; value: string }> = {
+    title: { field: "title", property: "", value: "" },
+    module: { field: "module", property: "", value: "" },
+    parcours: { field: "parcours", property: "", value: "" },
+    auteur: { field: "author", property: "", value: "" },
+  };
+
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    const filters = searchListCourse(entityToSearch, searchValue);
+    const filters = createSearchFilter(courseFieldMap, entityToSearch, searchValue);
     getFilteredList(filters);
   };
 

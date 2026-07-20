@@ -4,7 +4,7 @@ import type { CourseState } from "../../../../store/CourseContext";
 import Course from "../../../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../../../src/utils/interfaces/lesson";
 import CourseDates from "../../../../../../../src/utils/interfaces/course-dates";
-import { testStep } from "../../../../../../utils/helpers/course-steps-validation";
+import { testCourseStep } from "../../../../../../utils/helpers/course-steps-validation";
 import { useCallback } from "react";
 
 const useValidateCourse = () => {
@@ -19,7 +19,7 @@ const useValidateCourse = () => {
   ) as CourseDates;
 
   const validateCourse = useCallback(() => {
-    return testStep({
+    return testCourseStep({
       title: course?.title,
       description: course?.description,
       tags: course?.tags,
