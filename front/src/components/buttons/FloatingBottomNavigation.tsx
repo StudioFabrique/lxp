@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Step from "../../../../utils/interfaces/step";
+import Step from "../../utils/interfaces/step";
 
 type Props = {
   actualStep: Step;
@@ -8,7 +8,7 @@ type Props = {
   handleUpdateStep: (id: number) => void;
 };
 
-const FloatingParcoursButtons = ({
+const FloatingBottomNavigation = ({
   actualStep,
   stepsList,
   handleRetour,
@@ -75,4 +75,4 @@ const FloatingParcoursButtons = ({
   );
 };
 
-export default FloatingParcoursButtons;
+export default FloatingBottomNavigation;

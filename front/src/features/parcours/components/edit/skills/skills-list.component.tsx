@@ -8,7 +8,8 @@ import Skill from "../../../../../../src/utils/interfaces/skill";
 import FadeWrapper from "../../../../../../src/components/wrappers/FadeWrapper";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
-import { useParcoursSkillMutations, useParcoursSkills } from "../../../hooks/useParcoursSkills";
+import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
+import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
 
 const SkillsList = () => {
   const { id } = useParams();

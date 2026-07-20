@@ -7,7 +7,8 @@ import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src/components/UI/imported-csv-data.component";
 import { objectivesFields } from "../../../../../config/csv/csv-objectives";
 import toast from "react-hot-toast";
-import { useParcoursQuery, useUpdateParcours } from "../../../hooks/useParcoursQuery";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 import type Objective from "../../../../../utils/interfaces/objective";
 
 type Props = {

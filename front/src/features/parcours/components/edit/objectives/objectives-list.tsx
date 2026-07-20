@@ -7,7 +7,8 @@ import RightSideDrawer from "../../../../../components/UI/right-side-drawer/righ
 import FormObjective from "./form-objective";
 import toast from "react-hot-toast";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
-import { useParcoursQuery, useUpdateParcours } from "../../../hooks/useParcoursQuery";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 const ObjectivesList = () => {
   const { id } = useParams();

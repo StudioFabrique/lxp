@@ -1,5 +1,3 @@
-import { Link } from "react-router";
-
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import HeaderIcon from "../../../../src/components/UI/svg/header-icon";
@@ -18,7 +16,7 @@ import ImageHeaderMutable from "../../../../src/components/image-header/image-he
 import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
-import FloatingParcoursButtons from "../components/edit/floating-parcours-buttons";
+import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 
 const EditParcours = () => {
   const {
@@ -112,7 +110,7 @@ const EditParcours = () => {
           </div>
           <div className="w-full mt-16">{renderActualStep()}</div>
           {actualStep.id !== stepsList.length ? (
-            <FloatingParcoursButtons
+            <FloatingBottomNavigation
               actualStep={actualStep}
               stepsList={stepsList}
               handleRetour={handleRetour}

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import toast from "react-hot-toast";
-import { useUpdateParcours } from "./useParcoursQuery";
+import { useUpdateParcours } from "./useUpdateParcours";
 
 const useInfosService = (parcoursId: number) => {
   const {
