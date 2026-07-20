@@ -1,9 +1,7 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-import { Surface } from "../ui/Surface";
 import { Button } from "../ui/Button";
-import { Icon } from "../ui/Icon";
-import { useInsertImageState } from "./useInsertImageState";
-import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
+import { UrlSizePanel } from "../UrlSizePanel";
+import { useUrlEditorState } from "../useUrlEditorState";
 
 export type InsertImagePanelProps = {
   initialUrl?: string;
@@ -18,7 +16,7 @@ export const InsertImagePanel = ({
   onClickUpload,
   onSetImageSize,
 }: InsertImagePanelProps) => {
-  const state = useInsertImageState({
+  const state = useUrlEditorState({
     onSetLink,
     initialUrl,
   });
@@ -28,67 +26,30 @@ export const InsertImagePanel = ({
   }, [state.size, onSetImageSize]);
 
   return (
-    <Surface
-      className={`flex flex-col p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text}`}
-    >
-      <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/80 cursor-text">
-          <Icon name="Image" className="flex-none" />
-          <input
-            type="url"
-            className="flex-1 bg-transparent outline-none min-w-[12rem] text-sm"
-            placeholder="URL de l'image"
-            value={state.url}
-            onChange={state.onChange}
-          />
-        </label>
-
-        <Button
-          variant="primary"
-          buttonSize="small"
-          type="submit"
-          disabled={!state.isValidUrl}
-        >
-          Insérer l'image
-        </Button>
-      </form>
-      <div className="flex items-center gap-2 my-2">
+    <div className="flex flex-col">
+      <UrlSizePanel
+        onSetLink={onSetLink}
+        initialUrl={initialUrl}
+        iconName="Image"
+        urlPlaceholder="URL de l'image"
+        submitLabel="Insérer l'image"
+      />
+      <div className="flex items-center gap-2 my-2 px-2">
         <hr className="border-base-content/20 w-full" />
         <span className="text-base-content">OU</span>
         <hr className="border-base-content/20 w-full" />
       </div>
 
-      <Button
-        onClick={onClickUpload}
-        variant="primary"
-        buttonSize="small"
-        type="button"
-      >
-        Téléverser une image depuis mon ordinateur
-      </Button>
-      <div className="flex gap-2 mt-3">
+      <div className="px-2">
         <Button
-          variant={state.size === "small" ? "primary" : "secondary"}
+          onClick={onClickUpload}
+          variant="primary"
           buttonSize="small"
-          onClick={() => state.setSize("small")}
+          type="button"
         >
-          Petit
-        </Button>
-        <Button
-          variant={state.size === "medium" ? "primary" : "secondary"}
-          buttonSize="small"
-          onClick={() => state.setSize("medium")}
-        >
-          Moyen
-        </Button>
-        <Button
-          variant={state.size === "large" ? "primary" : "secondary"}
-          buttonSize="small"
-          onClick={() => state.setSize("large")}
-        >
-          Grand
+          Téléverser une image depuis mon ordinateur
         </Button>
       </div>
-    </Surface>
+    </div>
   );
 };

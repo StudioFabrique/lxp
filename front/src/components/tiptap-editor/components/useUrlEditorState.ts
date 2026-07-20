@@ -1,16 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
 
-export type InsertImagePanelProps = {
+export type UrlEditorSize = "small" | "medium" | "large";
+
+export type UseUrlEditorStateProps = {
   initialUrl?: string;
-  onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
+  initialSize?: UrlEditorSize;
+  onSetLink: (url: string, size?: UrlEditorSize) => void;
 };
 
-export const useInsertImageState = ({
+export const useUrlEditorState = ({
   initialUrl,
+  initialSize = "medium",
   onSetLink,
-}: InsertImagePanelProps) => {
+}: UseUrlEditorStateProps) => {
   const [url, setUrl] = useState(initialUrl || "");
-  const [size, setSize] = useState<"small" | "medium" | "large">("medium");
+  const [size, setSize] = useState<UrlEditorSize>(initialSize);
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
@@ -25,7 +29,7 @@ export const useInsertImageState = ({
         onSetLink(url, size);
       }
     },
-    [url, isValidUrl, onSetLink, size]
+    [url, isValidUrl, onSetLink, size],
   );
 
   return {
