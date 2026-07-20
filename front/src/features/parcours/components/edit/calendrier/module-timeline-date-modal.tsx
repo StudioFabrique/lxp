@@ -1,17 +1,21 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { useParcoursDispatch, useParcoursSelector } from "../../../store/ParcoursContext";
 import toast from "react-hot-toast";
 
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { formatDateToYYYYMMDD } from "../../../../../../src/utils/helpers/convert-date";
 import DatePicker from "./date-picker";
 import { parcoursApi } from "../../../api/parcours.api";
+import type Module from "../../../../../utils/interfaces/module";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import { parcoursKeys } from "../../../api/parcours.keys";
 
 interface Props {
   datesParcours: { startDate: Date; endDate: Date };
   modalId: string;
   isOpen: boolean;
   onClose: () => void;
+  currentModule: Module | null;
 }
 
 const ModuleTimelineDateModal = ({
@@ -19,15 +23,13 @@ const ModuleTimelineDateModal = ({
   modalId,
   isOpen,
   onClose,
+  currentModule,
 }: Props) => {
-  const dispatch = useParcoursDispatch();
+  const { id } = useParams();
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
 
   const modalRef = useRef<HTMLDialogElement>(null);
-
-  const currentModule = useParcoursSelector(
-    (state) => state.parcoursModules.currentModule
-  );
 
   const [datesModule, setDatesModule] = useState({
     minDate: "",
@@ -89,13 +91,9 @@ const ModuleTimelineDateModal = ({
         minDate: datesModule.minDate,
         maxDate: datesModule.maxDate,
       });
-      dispatch({ type: "UPDATE_MODULE", payload: {
-          module: {
-            minDate: datesModule.minDate,
-            maxDate: datesModule.maxDate,
-          },
-          moduleId: currentModule.id,
-        } });
+      await queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(Number(id)),
+      });
       toast.success("Dates mises à jour");
       modalRef.current?.close();
     } catch {

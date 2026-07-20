@@ -1,5 +1,4 @@
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
@@ -11,24 +10,23 @@ import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useParcoursModules } from "../../../hooks/useParcoursModules";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
   const darkMode = theme === "dark";
   const currentDate = new Date();
-  const dispatch = useParcoursDispatch();
   const { id } = useParams();
-  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const parcoursId = id ? Number(id) : 0;
+  const { data: parcours } = useParcoursQuery(parcoursId);
+  const { modules } = useParcoursModules(parcoursId);
+  const [currentModule, setCurrentModule] = useState<Module | null>(null);
 
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
     null
   );
   const [detailsCardRectPosition, setDetailsCardRectPosition] =
     useState<DOMRect>();
-
-  const modules: Module[] = useParcoursSelector(
-    (state) => state.parcoursModules.modules
-  );
 
   const datesParcours = {
     startDate: parcours?.startDate
@@ -57,8 +55,7 @@ const Calendrier = () => {
     if (selectedModule) {
       // Set the intended mode
       setActiveModal(mode);
-      // Update Redux
-      dispatch({ type: "SET_CURRENT_MODULE", payload: selectedModule });
+      setCurrentModule(selectedModule);
     }
   };
 
@@ -79,13 +76,8 @@ const Calendrier = () => {
   // --- HANDLER: CLOSE MODALS ---
   const handleCloseModal = () => {
     setActiveModal(null);
+    setCurrentModule(null);
   };
-
-  useEffect(() => {
-    return () => {
-      dispatch({ type: "SET_CURRENT_MODULE", payload: null });
-    };
-  }, [dispatch]);
 
   if (!modules || !parcours) {
     return (
@@ -131,6 +123,7 @@ const Calendrier = () => {
       <ModuleTimelineDetailsPopover
         modalId="module_details_modal"
         isOpen={activeModal === "details"}
+        currentModule={currentModule}
         position={detailsCardRectPosition}
         onClose={handleCloseModal}
       />
@@ -140,6 +133,7 @@ const Calendrier = () => {
         modalId="module_dates_modal"
         datesParcours={datesParcours}
         isOpen={activeModal === "edit"}
+        currentModule={currentModule}
         onClose={handleCloseModal}
       />
     </div>

@@ -2,22 +2,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
-import { useParcoursSelector } from "../../../store/ParcoursContext";
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import { X } from "lucide-react";
+import type Module from "../../../../../utils/interfaces/module";
 
 interface Props {
   modalId: string;
   isOpen: boolean;
   position?: DOMRect;
   onClose: () => void;
+  currentModule: Module | null;
 }
 
-const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
+const ModuleTimelineDetailsPopover = ({
+  isOpen,
+  position,
+  onClose,
+  currentModule,
+}: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const currentModule = useParcoursSelector(
-    (state) => state.parcoursModules.currentModule,
-  );
 
   // Helper to close if clicked outside
   useEffect(() => {

@@ -14,13 +14,14 @@ import type {
 } from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import { parcoursApi } from "../../../api/parcours.api";
+import { useQueryClient } from "@tanstack/react-query";
+import { parcoursKeys } from "../../../api/parcours.keys";
 
 const useNewModule = () => {
   const { id } = useParams();
   const refForm = useRef<HTMLFormElement | null>(null);
-  const reduxDispatch = useParcoursDispatch();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -78,7 +79,9 @@ const useNewModule = () => {
       const data = await parcoursApi.mutations.createModule(formData);
       reset();
       dispatch({ type: "MODULE_CREATED", payload: data.data });
-      reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.data });
+      await queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(+id!),
+      });
       scrollToTop();
     } catch {
       toast.error("Erreur lors de la création du module");
@@ -103,9 +106,8 @@ const useNewModule = () => {
       );
       dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       dispatch({ type: "CLOSE_DELETE_MODAL" });
-      reduxDispatch({
-        type: "REMOVE_MODULE",
-        payload: state.moduleToDelete!.id,
+      await queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(+id!),
       });
       toast.success(data.message);
     } catch {
@@ -204,7 +206,9 @@ const useNewModule = () => {
         reset();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
         toast.success(data.message);
-        reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         scrollToTop();
       } else {
         const data = await parcoursApi.mutations.duplicateModule(
@@ -218,6 +222,9 @@ const useNewModule = () => {
         );
         reset();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         toast.success(data.message);
         scrollToTop();
       }
@@ -256,7 +263,9 @@ const useNewModule = () => {
           },
         });
         toast.success(data.message);
-        reduxDispatch({ type: "REPLACE_MODULE", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         reset();
         scrollToTop();
       }
