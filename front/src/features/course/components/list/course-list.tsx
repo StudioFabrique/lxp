@@ -14,7 +14,7 @@ import Pagination from "../../../../components/UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
 import useDeleteCourse from "../../../../../src/hooks/useDeleteCourse";
-import ModalDeleteCourse from "../../../../../src/components/UI/modal-delete-course";
+import Modal from "../../../../components/UI/modal/modal";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import ListHeader from "../../../../components/UI/list-header";
@@ -153,14 +153,18 @@ export default function CourseList(props: CourseListProps) {
 
       {/* Modal de confirmation de suppression */}
       {showModal ? (
-        <ModalDeleteCourse
-          courseId={showModal.id}
-          courseTitle={showModal.title}
+        <Modal
+          title={`Supprimer le cours : ${showModal.title}`}
+          onLeftClick={handleCloseModal}
+          onRightClick={handleDeleteCourse}
+          leftLabel="Annuler"
           rightLabel="Confirmer"
-          message="Le cours et les ressources qui lui sont associées seront définitivement supprimés."
-          onConfirm={handleDeleteCourse}
-          onCloseModal={handleCloseModal}
-        />
+        >
+          <p className="py-4">
+            Le cours et les ressources qui lui sont associées seront
+            définitivement supprimés.
+          </p>
+        </Modal>
       ) : null}
     </ListHeader>
   );
