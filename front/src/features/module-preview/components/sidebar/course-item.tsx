@@ -23,12 +23,11 @@ import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
-import { Link } from "react-router";
 import { cn } from "../../../../utils/cn";
+import type Tag from "../../../../../src/utils/interfaces/tag";
 
 type CourseItemProps = {
   course: Course;
-  parcoursId?: number;
   moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
@@ -36,6 +35,8 @@ type CourseItemProps = {
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
+  tags: Tag[];
+  onCreateLesson: (courseId: number, title: string, tagId: number) => Promise<boolean>;
 };
 
 export type ModalCourseType =
@@ -46,7 +47,6 @@ export type ModalCourseType =
 
 const CourseItem = ({
   course,
-  parcoursId,
   moduleId,
   selectedLesson,
   onSelectLesson,
@@ -54,6 +54,8 @@ const CourseItem = ({
   onEnableCourse,
   onPublishCourse,
   onDeleteLesson,
+  tags,
+  onCreateLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
@@ -68,6 +70,24 @@ const CourseItem = ({
   >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [isCreatingLesson, setIsCreatingLesson] = useState(false);
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonTagId, setLessonTagId] = useState<number | "">(tags[0]?.id ?? "");
+  const [isSavingLesson, setIsSavingLesson] = useState(false);
+
+  const handleCreateLesson = async (event: React.FormEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!lessonTitle.trim() || !lessonTagId) return;
+    setIsSavingLesson(true);
+    const created = await onCreateLesson(course.id, lessonTitle, +lessonTagId);
+    setIsSavingLesson(false);
+    if (created) {
+      setLessonTitle("");
+      setIsCreatingLesson(false);
+      setCourseOpen(true);
+    }
+  };
 
   // State for the expander button visibility
   const [showDescriptionExpander, setShowDescriptionExpander] = useState(false);
@@ -247,8 +267,6 @@ const CourseItem = ({
                   <PermissionGuard action="write" object="course">
                     <CourseActions
                       course={course}
-                      parcoursId={parcoursId}
-                      moduleId={moduleId}
                       onOpenModal={handleOpenModal}
                       onClickMenu={handleClickMenu}
                     />
@@ -325,21 +343,31 @@ const CourseItem = ({
                 <p className="text-base-content/60 text-sm">
                   Aucune leçon disponible pour ce cours
                 </p>
-                <PermissionGuard action="write" object="course">
-                  <Link
-                    to="/admin/lesson/add"
-                    state={{
-                      parcoursId,
-                      moduleId,
-                      courseId: course.id,
-                    }}
-                    className="text-xs link link-hover text-primary"
-                  >
-                    Créer la première leçon
-                  </Link>
-                </PermissionGuard>
               </div>
             )}
+            <PermissionGuard action="write" object="course">
+              {isCreatingLesson ? (
+                <form className="rounded-lg bg-base-100 p-3 flex flex-col gap-2" onSubmit={handleCreateLesson} onClick={(e) => e.stopPropagation()}>
+                  <input
+                    autoFocus
+                    className="input input-sm input-bordered w-full"
+                    placeholder="Titre de la leçon"
+                    value={lessonTitle}
+                    onChange={(e) => setLessonTitle(e.target.value)}
+                  />
+                  <select className="select select-sm select-bordered w-full" value={lessonTagId} onChange={(e) => setLessonTagId(+e.target.value)}>
+                    <option value="" disabled>Choisir un tag</option>
+                    {tags.map((tag) => <option key={tag.id} value={tag.id}>{tag.name}</option>)}
+                  </select>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" className="btn btn-ghost btn-xs" onClick={() => setIsCreatingLesson(false)}>Annuler</button>
+                    <button className="btn btn-primary btn-xs" disabled={!lessonTitle.trim() || !lessonTagId || isSavingLesson}>{isSavingLesson ? "Création…" : "Créer"}</button>
+                  </div>
+                </form>
+              ) : (
+                <button className="btn btn-ghost btn-xs text-primary" onClick={(e) => { e.stopPropagation(); setIsCreatingLesson(true); }}>+ Ajouter une leçon</button>
+              )}
+            </PermissionGuard>
           </div>
         </motion.div>
       </div>

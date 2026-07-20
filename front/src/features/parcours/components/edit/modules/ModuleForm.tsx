@@ -60,7 +60,6 @@ export default function ModuleForm({
                 errors={errors}
                 thumb={image}
                 onSetFile={onSetFile}
-                mode={mode}
               >
                 <FormNumberInput
                   label="Durée du module en heures *"

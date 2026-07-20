@@ -21,13 +21,6 @@ const links = [
     label: "Créer un parcours",
     permission: { action: "write", object: "parcours" },
   },
-  {
-    path: "/admin/module/add",
-    label: "Créer un module",
-    permission: { action: "write", object: "module" },
-  },
-  { path: "/admin/course/add", label: "Créer un cours" },
-  { path: "/admin/lesson/Add", label: "Créer une leçon" },
   { path: "/admin/user/add", label: "Créer un utilisateur" },
   { path: "/admin/feedbacks", label: "Voir les feedbacks" },
   { path: "/admin/teacher/evaluations", label: "Evaluer un apprenant" },

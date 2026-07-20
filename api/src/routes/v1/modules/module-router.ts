@@ -93,6 +93,8 @@ modules.put(
 modules.put(
   "/new-module/update",
   checkPermissions("module"),
+  createFileUploadMiddleware(headerImageMaxSize),
+  jsonParser,
   putModuleValidator,
   httpPutModule,
 );

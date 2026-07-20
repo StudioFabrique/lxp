@@ -1,13 +1,16 @@
 import { Check, Import, Plus } from "lucide-react";
 import { cn } from "../../../../utils/cn";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 
-type CreateCourseItemProps = { parcoursId?: number; moduleId: number };
+type CreateCourseItemProps = {
+  parcoursId?: number;
+  moduleId: number;
+  onCreate: (title: string) => Promise<boolean>;
+};
 
-const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
-  const navigate = useNavigate();
+const CreateCourseItem = ({ parcoursId, moduleId, onCreate }: CreateCourseItemProps) => {
   const [title, setTitle] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,10 +39,12 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
     }
   };
 
-  const handleClickNavigate = () => {
-    navigate("/admin/course/add", {
-      state: { parcoursId, moduleId, courseTitle: title },
-    });
+  const handleCreate = async () => {
+    if (!title.trim()) return;
+    if (await onCreate(title)) {
+      setTitle("");
+      setIsEditing(false);
+    }
   };
 
   useEffect(() => {
@@ -82,7 +87,8 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                   />
                   <button
                     ref={buttonRef}
-                    onClick={handleClickNavigate}
+                    onClick={handleCreate}
+                    disabled={!title.trim()}
                     className="btn btn-primary btn-sm tooltip tooltip-right"
                     data-tip="Valider"
                   >
@@ -90,7 +96,7 @@ const CreateCourseItem = ({ parcoursId, moduleId }: CreateCourseItemProps) => {
                   </button>
                 </span>
                 <span className="text-sm font-light italic text-base-100">
-                  Vous allez être redirigé vers la page de création de cours
+                  Le cours sera ajouté directement à ce module.
                 </span>
               </div>
             ) : (

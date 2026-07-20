@@ -1,6 +1,7 @@
 import { Module, ModuleMetadata } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
 
 /**
  * Creates a new module or duplicates an existing module with its metadata and associations
@@ -107,6 +108,9 @@ async function postModule(
 
   // Construct full author name for display purposes
   const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
+  const defaultImage = image
+    ? null
+    : await getUnsplashPresentationImage(moduleToAdd.title);
 
   // Declare variables for TypeScript type safety (will be assigned in transaction)
   let newMetadataModule: ModuleMetadata | null = null;
@@ -121,8 +125,8 @@ async function postModule(
       data: {
         title: moduleToAdd.title,
         description: moduleToAdd.description,
-        image, // Full-size image as base64 string
-        thumb, // Thumbnail as base64 string (400x400px)
+        image: image ?? defaultImage,
+        thumb: thumb ?? defaultImage,
         author,
         adminId: existingAdmin!.id,
         // Create the many-to-many relationship with formations
@@ -140,6 +144,7 @@ async function postModule(
         author: true,
         adminId: true,
         quizInstructions: true,
+        duplicationIndex: true,
       },
     });
 
@@ -203,7 +208,7 @@ async function postModule(
       };
     }
 
-    console.log(newModule.thumb);
+    console.log(newModule!.thumb);
     // Fallback return (should reach here if no parcoursId provided, meaning the user did not want yet to link to a parcours)
     return {
       id: newModule!.id,
