@@ -6,7 +6,7 @@ import LinearScenarioLessons from "./linear-scenario-lessons";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import courseScenarioFromHttp from "../../../../../utils/helpers/course-scenario-from-http";
+import courseScenarioFromHttp from "../../../helpers/course-scenario-from-http";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import toast from "react-hot-toast";
 import LessonsInDrawer from "./lessons-in-drawer";

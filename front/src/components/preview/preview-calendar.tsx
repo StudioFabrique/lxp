@@ -1,6 +1,6 @@
 
 import { localeDate } from "../../utils/helpers/locale-date";
-import CourseDates from "../../utils/interfaces/course-dates";
+import CourseDates from "../../features/course/interfaces/course-dates";
 import EditIcon from "../UI/svg/edit-icon";
 import BoxWrapper from "../wrappers/BoxWrapper";
 

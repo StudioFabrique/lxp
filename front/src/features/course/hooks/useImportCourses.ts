@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 import Course from "../../../../src/utils/interfaces/course";
 import Lesson from "../../../../src/utils/interfaces/lesson";
-import { Activity } from "../../../../src/utils/interfaces/activity";
 import Parcours from "../../../../src/utils/interfaces/parcours";
 import Formation from "../../../../src/utils/interfaces/formation";
 import Module from "../../../../src/utils/interfaces/module";
@@ -11,7 +10,7 @@ import {
   getMimeType,
   parseCourseZip,
   sanitizeFilename,
-} from "../../../utils/helpers/import-course-helpers";
+} from "../helpers/import-course-helpers";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 import apiClient from "../../../lib/axios";
 import { courseApi } from "../api/course.api";
@@ -23,17 +22,7 @@ export enum CoursesImportStep {
   ImportResult,
 }
 
-export type ActivityImport = Activity & {
-  value?: string | Blob;
-  hasError?: boolean;
-};
-
-export interface QueuedImage {
-  file: File;
-  blobUrl: string;
-  size: "small" | "medium" | "large";
-  tempId: string;
-}
+import { ActivityImport, QueuedImage } from "../../../utils/interfaces/import-types";
 
 export type CourseImport = Course & {
   id: number;

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import CoursePreviewInfos from "./course-preview-infos";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import PreviewLessons from "../../../../../../src/components/preview/preview-lessons";
-import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
+import CourseDates from "../../../interfaces/course-dates";
 import PreviewCalendar from "../../../../../../src/components/preview/preview-calendar";
 import { Link, useNavigate, useParams } from "react-router";
 import useValidateCourse from "./hook/use-validate-course";

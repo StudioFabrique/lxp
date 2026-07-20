@@ -743,8 +743,6 @@ type ParcoursProviderProps = {
 
 export function ParcoursProvider({ children }: ParcoursProviderProps) {
   const [state, dispatch] = useReducer(parcoursReducer, INITIAL_STATE);
-  const stateRef = useRef(state);
-  stateRef.current = state;
 
   // Cleanup on unmount
   useEffect(() => {

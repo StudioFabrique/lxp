@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react";
 import Course from "../../../utils/interfaces/course";
-import CourseDates from "../../../utils/interfaces/course-dates";
+import CourseDates from "../interfaces/course-dates";
 import Lesson from "../../../utils/interfaces/lesson";
 import Objective from "../../../utils/interfaces/objective";
 import Skill from "../../../utils/interfaces/skill";

@@ -1,4 +1,4 @@
-import { ModuleData } from "../../../../../../src/utils/interfaces/new-module";
+import { ModuleData } from "../../../interfaces/new-module";
 import ElementNotFound from "../../../../../components/UI/element-not-found";
 import ModuleCard from "./ModuleCard";
 

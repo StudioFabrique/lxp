@@ -1,4 +1,4 @@
-import type FormationItem from "../../../utils/interfaces/formation-item";
+import type FormationItem from "../interfaces/formation-item";
 import FormationCard from "./FormationCard";
 
 type Props = {

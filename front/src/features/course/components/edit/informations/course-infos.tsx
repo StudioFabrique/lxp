@@ -13,7 +13,7 @@ import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import VirtualClass from "../../../../../../src/components/virtual-class";
 import useInput from "../../../../../hooks/useInput";
 import { regexUrl } from "../../../../../config/constantes";
-import ContactsWithDrawer from "../../../../../../src/components/inherited-items/contacts-with-drawer";
+import ContactsWithDrawer from "../../../../../../src/components/shared/inherited-items/contacts-with-drawer";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import CourseTags from "./course-tags";
 import { ParcoursProvider } from "../../../../parcours/store/ParcoursContext";

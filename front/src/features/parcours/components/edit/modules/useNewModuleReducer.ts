@@ -4,7 +4,7 @@ import {
   Metadatas,
   ModuleData,
   Parcours,
-} from "../../../../../../src/utils/interfaces/new-module";
+} from "../../../interfaces/new-module";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 
 type ModuleUpdate = {

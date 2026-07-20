@@ -1,6 +1,6 @@
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import InheritedItems from "../../../../../../src/components/inherited-items/inherited-items";
-import InheritedTextList from "../../../../../../src/components/inherited-items/inherited-text-list";
+import InheritedItems from "../../../../../../src/components/shared/inherited-items/inherited-items";
+import InheritedTextList from "../../../../../../src/components/shared/inherited-items/inherited-text-list";
 import NotSelectedContacts from "./not-selected-contacts";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import { useCallback, useEffect, useRef, useState } from "react";

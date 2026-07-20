@@ -11,7 +11,7 @@ import {
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
-import LessonRating from "../../../utils/interfaces/lesson-rating";
+import LessonRating from "../interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
   initialModuleExplorerContentState,

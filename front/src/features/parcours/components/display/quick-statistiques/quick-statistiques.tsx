@@ -1,6 +1,6 @@
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 import Module from "../../../../../../src/utils/interfaces/module";
-import { convertMilisToWeeks } from "../../../../../utils/helpers/date-helpers";
+import { convertMilisToWeeks } from "../../../helpers/date-helpers";
 import QuickStatItem from "./quick-stat-item";
 
 type QuickStatistiquesProps = {

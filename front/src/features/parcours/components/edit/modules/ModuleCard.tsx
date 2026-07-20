@@ -1,6 +1,6 @@
 import { Edit2Icon, Trash2 } from "lucide-react";
 import placeholder from "../../../../../../src/assets/images/cat.webp";
-import { ModuleData } from "../../../../../utils/interfaces/new-module";
+import { ModuleData } from "../../../interfaces/new-module";
 import AppImage from "../../../../../components/UI/image/app-image";
 
 type ModuleCardProps = {

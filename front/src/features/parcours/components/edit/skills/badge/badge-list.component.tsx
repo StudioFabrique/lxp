@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 
 import ImportBadges from "./import-badges.component";
 import BadgeItem from "./badge-item.component";
-import Badge from "../../../../../../../src/utils/interfaces/badge";
+import Badge from "../../../../interfaces/badge";
 
 type Props = {
   badgeProp?: any;

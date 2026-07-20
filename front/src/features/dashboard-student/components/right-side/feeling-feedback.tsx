@@ -6,7 +6,7 @@ import { dashboardStudentApi } from "../../api/dashboard-student.api";
 import { AuthContext } from "../../../../store/AuthProvider";
 import FeelingLevel from "../../../../components/UI/feeling-level";
 import Loader from "../../../../components/loaders/Loader";
-import { isSameDate } from "../../../../components/calendar/calendar-utils";
+import { isSameDate } from "../../../calendar/components/calendar-utils";
 
 const FeelingFeedback = () => {
   const { socket } = useContext(AuthContext);

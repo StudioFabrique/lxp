@@ -11,7 +11,7 @@ import type {
   MetadataList,
   Metadatas,
   ModuleData,
-} from "../../../../../../src/utils/interfaces/new-module";
+} from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import { useParcoursDispatch } from "../../../store/ParcoursContext";

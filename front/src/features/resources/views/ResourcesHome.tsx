@@ -1,9 +1,9 @@
-import ResourcesHeader from "../../../../src/components/resources-home/ResourcesHeader";
-import ResourcesListCard from "../../../../src/components/resources-home/ResourcesListCard";
+import ResourcesHeader from "../components/list/ResourcesHeader";
+import ResourcesListCard from "../components/list/ResourcesListCard";
 import ListHeader from "../../../components/UI/list-header";
 import ToggleList from "../../../components/UI/toggle-list";
 import ElementNotFound from "../../../components/UI/element-not-found";
-import ResourcesListTable from "../../../../src/components/resources-home/ResourcesListTable";
+import ResourcesListTable from "../components/list/ResourcesListTable";
 import Pagination from "../../../components/UI/pagination/pagination";
 import usePagination from "../../../../src/hooks/use-pagination";
 import { useState } from "react";

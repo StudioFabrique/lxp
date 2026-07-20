@@ -3,7 +3,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 import type Course from "../../../utils/interfaces/course";
 import type Lesson from "../../../utils/interfaces/lesson";
-import type CourseDates from "../../../utils/interfaces/course-dates";
+import type CourseDates from "../interfaces/course-dates";
 import type { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson";
 import type CustomCourse from "../components/list/interfaces/custom-course";
 

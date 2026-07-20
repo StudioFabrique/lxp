@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import apiClient from "../../../lib/axios";
 import type User from "../../../utils/interfaces/user";
-import type UsersStats from "../../../utils/interfaces/users-stats";
+import type UsersStats from "../interfaces/users-stats";
 import type Role from "../../../utils/interfaces/role";
 
 export function useUserList(role: Role | null) {

@@ -1,4 +1,4 @@
-import { MetadataList, Metadatas } from "../../../../../../src/utils/interfaces/new-module";
+import { MetadataList, Metadatas } from "../../../interfaces/new-module";
 import ModuleMetadataItem from "./ModuleMetadataItem";
 
 type ModuleListItemProps = {

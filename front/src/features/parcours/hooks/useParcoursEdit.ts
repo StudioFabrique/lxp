@@ -1,5 +1,5 @@
 import { stepsParcours } from "../../../config/steps/steps-parcours";
-import { testModules } from "../../../utils/helpers/parcours-steps-validation";
+import { testModules } from "../helpers/parcours-steps-validation";
 import useSteps from "../../../hooks/useSteps";
 import useParcoursService from "../hooks/useParcoursServices";
 import { parcoursApi } from "../api/parcours.api";

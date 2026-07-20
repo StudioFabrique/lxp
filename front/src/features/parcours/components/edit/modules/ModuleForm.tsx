@@ -4,7 +4,7 @@ import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import ModuleMetadatas from "./ModuleMetadatas";
-import ModuleToParcours from "../../../../../components/module-add/module-to-parcours";
+import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
 
 type ModuleFormProps = {
