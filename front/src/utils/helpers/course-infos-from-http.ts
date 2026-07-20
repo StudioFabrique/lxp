@@ -1,3 +1,4 @@
+import { normalizeImageSource } from "../images/image-source";
 import { sortArray } from "./sort-array";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +28,7 @@ export default function courseInfosFromHttp(course: any) {
       ...updatedData,
       module: {
         ...updatedData.module,
-        image: `data:image/jpeg;base64,${updatedData.module.image}`,
+        image: normalizeImageSource(updatedData.module.image) ?? "",
       },
     };
   }

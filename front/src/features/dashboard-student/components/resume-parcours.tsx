@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router";
 import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/images/module-default.jpg";
@@ -23,7 +24,7 @@ const ResumeParcours = () => {
       <ImageHeader
         imageUrl={
           parcours?.thumb
-            ? `data:image/jpeg;base64,${parcours?.thumb}`
+            ? normalizeImageSource(parcours?.thumb)
             : defaultImage
         }
         title={parcours ? `${toUpperFirstLetter(parcours.title)}` : ""}

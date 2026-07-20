@@ -6,6 +6,7 @@ import { dashboardStudentApi } from "../../api/dashboard-student.api";
 import { AuthContext } from "../../../../store/AuthProvider";
 import FeelingLevel from "../../../../components/UI/feeling-level";
 import Loader from "../../../../components/loaders/Loader";
+import { isSameDate } from "../../../../components/calendar/calendar-utils";
 
 const FeelingFeedback = () => {
   const { socket } = useContext(AuthContext);
@@ -37,13 +38,10 @@ const FeelingFeedback = () => {
     queryFn: async () => {
       const data = await dashboardStudentApi.queries.getOwnFeedback();
       const lastFeedback = data.data;
-      const today = new Date();
       if (lastFeedback) {
         const feedbackDate = new Date(lastFeedback.feedbackAt);
         if (
-          today.getDate() === feedbackDate.getDate() &&
-          today.getMonth() === feedbackDate.getMonth() &&
-          today.getFullYear() === feedbackDate.getFullYear()
+          isSameDate(new Date(), feedbackDate)
         ) {
           setFeedbackSent(true);
           setCurrentProgressValue(lastFeedback.feelingLevel);

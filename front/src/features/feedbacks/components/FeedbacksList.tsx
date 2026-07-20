@@ -10,6 +10,7 @@ import {
 import type StudentFeedback from "../../../utils/interfaces/student-feedback";
 import FeelingLevel from "../../../components/UI/feeling-level";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
+import { localeDate, localeTime } from "../../../utils/helpers/locale-date";
 
 type Props = {
   feedbacks: StudentFeedback[];
@@ -44,8 +45,8 @@ const columns = [
   columnHelper.accessor("feedbackAt", {
     header: "Date",
     cell: (info) => {
-      const date = new Date(info.getValue());
-      return `${date.toLocaleDateString()} à ${date.toLocaleTimeString()}`;
+      const date = info.getValue();
+      return `${localeDate(date)} à ${localeTime(date)}`;
     },
   }),
   columnHelper.accessor("teacher", {

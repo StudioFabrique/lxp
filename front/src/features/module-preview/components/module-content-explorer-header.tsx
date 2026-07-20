@@ -1,4 +1,5 @@
 import { Fragment } from "react/jsx-runtime";
+import { normalizeImageSource } from "../../../../utils/images/image-source";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import HeaderMenu from "../../../components/UI/header-menu";
 import Module from "../../../../src/utils/interfaces/module";
@@ -21,7 +22,7 @@ const ModuleContentExplorerHeader = ({
     <ImageHeader
       imageUrl={
         moduleData.image
-          ? `data:image/jpeg;base64,${moduleData.image}`
+          ? normalizeImageSource(moduleData.image)
           : defaultImage
       }
       title={toUpperFirstLetter(moduleData.title) as string}

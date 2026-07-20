@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import apiClient from "../lib/axios";
 import { rowsPerPage } from "../config/pagination";
+import { localeDate } from "../utils/helpers/locale-date";
 import toast from "react-hot-toast";
 
 const initialState = {
@@ -67,9 +68,9 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     const applyData = (data: { list: Array<any>; total: number }) => {
       data.list.forEach((item: any) => {
         item.createdAt =
-          item?.createdAt && new Date(item.createdAt).toLocaleDateString();
+          item?.createdAt && localeDate(item.createdAt);
         item.updatedAt =
-          item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
+          item?.updatedAt && localeDate(item.updatedAt);
         item.isSelected = false;
       });
       handleTotalPages(data.total);

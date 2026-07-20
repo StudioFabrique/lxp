@@ -1,4 +1,5 @@
 import { PropsWithChildren, useRef } from "react";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 
 interface Props {
   modalId: string;
@@ -35,7 +36,7 @@ const EventDetailsModal = ({
           {item?.img && (
             <figure className="h-48 w-full relative overflow-hidden bg-gray-100">
               <img
-                src={`data:image/jpeg;base64,${item.img}`}
+                src={normalizeImageSource(item.img)}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
               />

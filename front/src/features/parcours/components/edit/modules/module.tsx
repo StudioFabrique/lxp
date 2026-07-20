@@ -4,8 +4,8 @@ import ModuleHeader from "./ModuleHeader";
 import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
+import Modal from "../../../../../components/UI/modal/modal";
 import { useMemo } from "react";
-import TwoButtonsModal from "../../../../../components/UI/modal/two-buttons-modal";
 
 /**
  * Module Component - Main container for module management in a parcours
@@ -111,19 +111,18 @@ export default function ModuleComponent() {
       </div>
 
       {/* Deletion confirmation modal */}
-      <TwoButtonsModal
-        id="delete_module_modal"
+      <Modal
         title="Suppression du module"
         leftLabel="Annuler"
         rightLabel="Supprimer"
-        onRightButtonClick={handleDeleteModule}
-        onLeftButtonClick={handleCancelDeletion}
+        onRightClick={handleDeleteModule}
+        onLeftClick={handleCancelDeletion}
       >
         <>
           <p>Êtes-vous sûr de vouloir supprimer ce module ?</p>
           <p>Cette action est irréversible...</p>
         </>
-      </TwoButtonsModal>
+      </Modal>
 
       {/* Duplicate warning modal */}
       <DuplicateModuleModal

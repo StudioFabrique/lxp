@@ -1,8 +1,10 @@
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { notValidModuleTooltip } from "../../../../../../src/config/not-valid-module";
 import Module from "../../../../../../src/utils/interfaces/module";
 import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip-warning";
 import defaultImage from "../../../../../../src/assets/images/module-default-thumb.png";
 import { bgImageGradient } from "../../../../../utils/helpers/color-helpers";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
 
 interface PreviewModuleItemProps {
   module: Module;
@@ -14,7 +16,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
       props.module.thumb
-        ? "data:image/jpeg;base64," + props.module.thumb
+        ? normalizeImageSource(props.module.thumb)
         : defaultImage,
     ),
     width: "100%",
@@ -32,9 +34,9 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   // teste si un module du parcours est valide (contacts et bonusSkills doivent exister et ne pas être vides)
   const notValid = !module.contacts?.length || !module.bonusSkills?.length;
 
-  const dates = `Du ${new Date(
+  const dates = `Du ${localeDate(
     module.minDate!,
-  ).toLocaleDateString()} au ${new Date(module.maxDate!).toLocaleDateString()}`;
+  )} au ${localeDate(module.maxDate!)}`;
 
   const text =
     module.title.length >= 70

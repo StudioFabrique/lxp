@@ -1,5 +1,6 @@
 import { useParcoursSelector } from "../../store/ParcoursContext";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { localeDate } from "../../../../../src/utils/helpers/locale-date";
 
 const Informations = () => {
   const infos = useParcoursSelector((state) => state.parcoursInformations.infos);
@@ -16,13 +17,13 @@ const Informations = () => {
         <span className="flex gap-x-5">
           <p className="font-bold">Date de début de parcours</p>
           <p className="whitespace-nowrap">
-            {new Date(infos.startDate).toLocaleDateString()}
+            {localeDate(infos.startDate)}
           </p>
         </span>
         <span className="flex gap-x-5">
           <p className="font-bold">Date de fin de parcours</p>
           <p className="whitespace-nowrap">
-            {new Date(infos.endDate).toLocaleDateString()}
+            {localeDate(infos.endDate)}
           </p>
         </span>
       </div>

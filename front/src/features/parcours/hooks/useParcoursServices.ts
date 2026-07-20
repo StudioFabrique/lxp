@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import { parcoursApi } from "../api/parcours.api";
 import { useParcoursDispatch } from "../store/ParcoursContext";
 
@@ -35,7 +36,7 @@ const useParcoursService = () => {
         });
         dispatch({ type: "SET_PARCOURS_FORMATION", payload: data.formation as unknown as Record<string, unknown> });
         if (data.image) {
-          setImage(`data:image/jpeg;base64,${data.image}`);
+          setImage(normalizeImageSource(data.image) ?? "");
         }
         if (data.tags.length > 0) {
           dispatch({

@@ -1,6 +1,7 @@
 // ModuleDetailsModal.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from "react";
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 import { formatDate } from "../../../../../components/calendar/calendar-utils";
 import { X } from "lucide-react";
@@ -86,7 +87,7 @@ const ModuleTimelineDetailsPopover = ({ isOpen, position, onClose }: Props) => {
             <X className="w-3 h-3" />
           </button>
           <img
-            src={`data:image/jpeg;base64,${currentModule.thumb}`}
+            src={normalizeImageSource(currentModule.thumb)}
             alt={currentModule.title}
             className="w-full h-full object-cover"
           />

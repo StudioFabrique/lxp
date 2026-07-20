@@ -2,6 +2,7 @@
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 import User from "../../../../../../src/utils/interfaces/user";
 import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
 
 // Interface définissant les props du composant
 interface StudentItemProps {
@@ -41,7 +42,7 @@ const StudentItem = (props: StudentItemProps) => {
       <td className="bg-transparent">{group!.name}</td>
       {/* Date de création formatée */}
       <td className="bg-transparent">
-        {new Date(createdAt!).toLocaleDateString()}
+        {localeDate(createdAt!)}
       </td>
     </>
   );

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import useImageUpload from "../../../../../../src/hooks/use-image-upload";
 import defaultImage from "../../../../../../src/assets/images/module-default.jpg";
 import { bgImageGradient } from "../../../../../../src/utils/helpers/color-helpers";
@@ -30,7 +31,7 @@ function ModuleMetadatas({
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      image ? image : thumb ? `data:image/jpeg;base64,${thumb}` : defaultImage,
+      image ? image : thumb ? normalizeImageSource(thumb) : defaultImage,
     ),
     width: "100px",
     height: "75px",

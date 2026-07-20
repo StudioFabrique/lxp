@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import { useContext, useEffect, useState } from "react";
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
 import Calendar from "../../../../../components/calendar/calendar";
@@ -45,7 +46,7 @@ const Calendrier = () => {
       title: mod.title,
       startDate: mod.minDate ? new Date(mod.minDate) : undefined,
       endDate: mod.maxDate ? new Date(mod.maxDate) : undefined,
-      image: mod.thumb ? `data:image/jpeg;base64,${mod.thumb}` : undefined,
+      image: mod.thumb ? normalizeImageSource(mod.thumb) : undefined,
     }));
 
   const handleSelectModule = (

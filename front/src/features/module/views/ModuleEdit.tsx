@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultImage from "../../../../src/assets/images/module-default.jpg";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 import Loader from "../../../components/loaders/Loader";
@@ -125,7 +126,7 @@ export default function EditModuleHome() {
                   subTitle={module.parcours}
                   imageUrl={
                     module.image
-                      ? "data:image/jpeg;base64," + module.image
+                      ? normalizeImageSource(module.image)
                       : defaultImage
                   }
                 >

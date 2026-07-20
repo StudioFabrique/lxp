@@ -1,4 +1,5 @@
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 
 type Props = {
   address: string;
@@ -38,7 +39,7 @@ const UserFormContact = ({
         className="input input-sm input-bordered focus:outline-none w-full"
         type="date"
         onChange={(e) => onChangeDate(e.currentTarget.valueAsDate)}
-        value={birthDate ? new Date(birthDate).toISOString().split("T")[0] : ""}
+        value={birthDate ? formatDateToYYYYMMDD(new Date(birthDate)) : ""}
         autoComplete="off"
         disabled={disabled}
       />
