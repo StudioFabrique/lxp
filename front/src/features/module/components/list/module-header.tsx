@@ -1,18 +1,7 @@
-/**
- * ModuleHeader - A component that renders the header section for the modules list page
- *
- * This component displays a header with a title, description, and conditional action button
- * to create a new module. The create button is only shown to users with appropriate permissions.
- *
- * @example
- * ```tsx
- * <ModuleHeader />
- * ```
- */
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import Header from "../../../../components/headers/Header";
-import { ImportIcon, PlusCircle } from "lucide-react";
+import { ImportIcon } from "lucide-react";
 
 function ModuleHeader() {
   return (
@@ -28,13 +17,6 @@ function ModuleHeader() {
             <div className="flex gap-x-2 items-center">
               <ImportIcon />
               Importer des modules
-            </div>
-          </Link>
-          {/* Create new module button that navigates to creation page */}
-          <Link className="btn btn-primary btn-soft" to="add">
-            <div className="flex gap-x-2 items-center">
-              <PlusCircle />
-              Créer un module
             </div>
           </Link>
         </PermissionGuard>

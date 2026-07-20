@@ -34,7 +34,6 @@ const ModuleExplorerSidebar = ({
       onEnableCourse={courseActions.enableCourse}
       onPublishCourse={courseActions.publishCourse}
       onDeleteLesson={lessonActions.deleteLesson}
-      tags={module.tags ?? []}
       onCreateLesson={lessonActions.createLesson}
     >
       {canEditModule && (

@@ -4,7 +4,6 @@ import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
-import type Tag from "../../../../../src/utils/interfaces/tag";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -16,8 +15,7 @@ type SidebarCoursesListProps = {
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
-  tags: Tag[];
-  onCreateLesson: (courseId: number, title: string, tagId: number) => Promise<boolean>;
+  onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
   children: React.ReactNode[];
 };
 
@@ -30,7 +28,6 @@ const SidebarCoursesList = ({
   onEnableCourse,
   onPublishCourse,
   onDeleteLesson,
-  tags,
   onCreateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
@@ -108,7 +105,6 @@ const SidebarCoursesList = ({
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
               onDeleteLesson={onDeleteLesson}
-              tags={tags}
               onCreateLesson={onCreateLesson}
               children={children[1]}
             />

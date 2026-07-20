@@ -2,9 +2,7 @@
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
-import ArrowTopRightIcon from "../../../../components/UI/svg/arrow-top-right-icon";
-import DeleteIcon from "../../../../components/UI/svg/delete-icon.component";
-import { Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
 import TableWrapper from "../../../../components/UI/table-wrapper";
 import ElementNotFound from "../../../../components/UI/element-not-found";
@@ -15,7 +13,6 @@ interface ModuleTableProps {
   modulesList: any[];
   fieldSort: string;
   direction: boolean;
-  stepId: number;
   onSorting: (property: string) => void;
   onDelete: (id: number) => void;
 }
@@ -27,8 +24,6 @@ const ModuleTable = ({
   onSorting,
   onDelete,
 }: ModuleTableProps) => {
-  console.log({ modulesList });
-
   const content = (
     <>
       {modulesList && modulesList.length > 0 ? (
@@ -65,12 +60,12 @@ const ModuleTable = ({
                 <div className="w-6 h-6">
                   <PermissionGuard action="read" object="module">
                     <div>
-                      {item.parcoursId ? (
+                      {item.metadataId ? (
                         <Link
                           className="text-secondary tooltip tooltip-bottom"
                           data-tip="Voir le module"
-                          to={`/admin/module/edit/${item.id}`}
-                          aria-label="Voir les détails du module"
+                          to={`/admin/parcours/module/${item.metadataId}`}
+                          aria-label="Prévisualiser le module"
                         >
                           <Eye />
                         </Link>
@@ -78,7 +73,7 @@ const ModuleTable = ({
                         <div
                           className="text-base-content/50 tooltip tooltip-bottom"
                           data-tip="Vous ne pouvez pas modifier un module
-                            attaché à une formation"
+                            non rattaché à un parcours"
                         >
                           <Eye />
                         </div>
@@ -89,22 +84,22 @@ const ModuleTable = ({
                 <div className="w-6 h-6">
                   <PermissionGuard action="update" object="module">
                     <div>
-                      {item.parcoursId ? (
+                      {item.metadataId ? (
                         <Link
                           className="text-secondary tooltip tooltip-bottom"
                           data-tip="Modifier le module"
                           to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
                           aria-label="Editer le module"
                         >
-                          <ArrowTopRightIcon />
+                          <Pencil />
                         </Link>
                       ) : (
                         <div
                           className="text-base-content/50 tooltip tooltip-bottom"
                           data-tip="Vous ne pouvez pas modifier un module
-                            attaché à une formation"
+                            non rattaché à un parcours"
                         >
-                          <ArrowTopRightIcon />
+                          <Pencil />
                         </div>
                       )}
                     </div>
@@ -119,9 +114,9 @@ const ModuleTable = ({
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le module"
                     >
-                      <div onClick={() => onDelete(item.id)}>
-                        <DeleteIcon />
-                      </div>
+                      <button onClick={() => onDelete(item.id)} aria-label="Supprimer le module">
+                        <Trash2 className="w-5 h-5" />
+                      </button>
                     </div>
                   </PermissionGuard>
                 </div>
@@ -217,6 +212,7 @@ const ModuleTable = ({
                   />
                 </div>
               </th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>{content}</tbody>

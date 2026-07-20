@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import Module from "../../../../utils/interfaces/module";
 import ToggleList from "../../../../components/UI/toggle-list";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import ModuleTable from "./module-table";
 import ModuleCardList from "./modules-card-list";
-import { stepsParcours } from "../../../../config/steps/steps-parcours";
 import Wrapper from "../../../../components/wrappers/BoxWrapper";
 import ListHeader from "../../../../components/UI/list-header";
 import ModuleHeader from "./module-header";
@@ -32,12 +31,6 @@ const ModuleHomeList = ({
     //resetFilters,
     setPage,
   } = useEagerLoadingList(modulesList, "title", 15);
-
-  const stepId = useMemo(() => {
-    return (
-      stepsParcours.find((item: any) => item.label === "Modules") as any
-    )?.id;
-  }, []);
 
   /**
    * stocke en mémoire le module à supprimer
@@ -66,13 +59,11 @@ const ModuleHomeList = ({
                   onSorting={sortData}
                   direction={direction}
                   fieldSort={fieldSort}
-                  stepId={stepId}
                   onDelete={handleConfirmDeleteModule}
                 />
               </Wrapper>
             ) : (
               <ModuleCardList
-                stepId={stepId}
                 modulesList={list}
                 onDelete={handleConfirmDeleteModule}
               />

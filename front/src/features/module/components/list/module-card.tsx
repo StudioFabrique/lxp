@@ -1,23 +1,20 @@
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import ArrowTopRightIcon from "../../../../components/UI/svg/arrow-top-right-icon";
 import { useState } from "react";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
-import DeleteIcon from "../../../../components/UI/svg/delete-icon.component";
 import defaultImage from "../../../../assets/images/module-default-thumb.png";
-import { Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import { normalizeImageSource } from "../../../../utils/images/image-source";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
-  stepId: number;
   module: any;
   onDelete: (id: number) => void;
 }
 
-const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
+const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const coursesCount = module.courses?.length ?? 0;
 
@@ -42,20 +39,18 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
-          {module.parcoursId ? (
-            <PermissionGuard action="update" object="parcours">
+          {module.metadataId ? (
+            <PermissionGuard action="update" object="module">
               <div
                 className="tooltip tooltip-left"
                 data-tip="Editer le module associé au parcours"
               >
                 <Link
                   className="btn btn-sm btn-primary btn-circle rounded-md"
-                  to={`/admin/parcours/edit/${module.parcoursId}?step=${stepId}`}
-                  aria-label="Aperçu du parcours"
+                  to={`/admin/parcours/edit/${module.parcoursId}?step=4`}
+                  aria-label="Modifier le module"
                 >
-                  <div className="w-5 h-5 ">
-                    <ArrowTopRightIcon />
-                  </div>
+                  <Pencil className="w-5 h-5" />
                 </Link>
               </div>
             </PermissionGuard>
@@ -123,12 +118,12 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
           <div className="flex place-items-center gap-x-2">
             <PermissionGuard action="read" object="module">
               <div className="">
-                {module.parcoursId ? (
+                {module.metadataId ? (
                   <Link
                     className="btn btn-sm btn-primary flex justify-center place-items-center btn-circle rounded-md tooltip tooltip-bottom"
                     data-tip="Voir le module"
-                    to={`/admin/module/edit/${module.id}`}
-                    aria-label="Voir les détails du module"
+                    to={`/admin/parcours/module/${module.metadataId}`}
+                    aria-label="Prévisualiser le module"
                   >
                     <Eye />
                   </Link>
@@ -136,7 +131,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
                   <div
                     className="text-base-content/50 tooltip tooltip-bottom"
                     data-tip="Vous ne pouvez pas modifier un module
-                      attaché à une formation"
+                      non rattaché à un parcours"
                   >
                     <Eye />
                   </div>
@@ -153,9 +148,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
                     className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
                     onClick={() => onDelete(module.id)}
                   >
-                    <div className="w-5 h-5">
-                      <DeleteIcon />
-                    </div>
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
               </PermissionGuard>

@@ -3,6 +3,17 @@ import type Parcours from "../../../utils/interfaces/parcours";
 import type ParcoursSummary from "../interfaces/parcours-summary";
 import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
 
+export type ModuleSummary = {
+  id: number;
+  metadataId: number | null;
+  parcoursId: number | null;
+  title: string;
+  parcours: string | null;
+  formation: string | null;
+  coursesCount: number;
+  createdAt: string;
+};
+
 const queries = {
   getLastParcours: async (): Promise<Parcours[] | null> => {
     const res = await apiClient.get("/user/last-parcours");
@@ -19,6 +30,10 @@ const queries = {
   getBestRatedCourses: async (): Promise<LessonsQualityStats> => {
     const res = await apiClient.get("/course/best-rated");
     return res.data;
+  },
+  getLastModules: async (): Promise<ModuleSummary[]> => {
+    const res = await apiClient.get("/modules");
+    return (res.data.response ?? []).slice(0, 5);
   },
 };
 

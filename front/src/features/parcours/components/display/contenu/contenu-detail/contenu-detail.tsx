@@ -134,14 +134,6 @@ const ContenuDetail: FC<{
           <PermissionGuard action="write" object="course">
             <div className="flex flex-wrap justify-end gap-2">
               <Link
-                to="/admin/course/add"
-                state={{ parcoursId, moduleId }}
-                className="btn btn-primary btn-sm text-base-100"
-              >
-                <Plus size={20} />
-                Ajouter un cours
-              </Link>
-              <Link
                 to="/admin/course/import"
                 state={{ parcoursId, moduleId }}
                 className="btn btn-primary btn-sm text-base-100"

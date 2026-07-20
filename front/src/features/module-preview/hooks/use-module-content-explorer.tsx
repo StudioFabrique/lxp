@@ -266,14 +266,12 @@ const useModuleContentExplorer = () => {
   );
 
   const createLesson = useCallback(
-    async (courseId: number, title: string, tagId: number) => {
-      if (!title.trim() || !tagId) return false;
+    async (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => {
+      if (!data.title.trim() || !data.tagId) return false;
       try {
         await apiClient.put(`/course/new-lesson/${courseId}`, {
-          title: title.trim(),
-          description: "",
-          modalite: "distanciel",
-          tagId,
+          ...data,
+          title: data.title.trim(),
         });
         await fetchModuleData();
         toast.success("Leçon créée");
