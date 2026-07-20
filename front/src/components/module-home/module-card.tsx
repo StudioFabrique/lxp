@@ -8,6 +8,7 @@ import defaultImage from "../../assets/images/module-default-thumb.png";
 import { Eye } from "lucide-react";
 import { bgImageGradient } from "../../utils/helpers/color-helpers";
 import { localeDate } from "../../utils/helpers/locale-date";
+import { normalizeImageSource } from "../../utils/images/image-source";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
@@ -22,7 +23,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage,
+      normalizeImageSource(module.thumb) ?? defaultImage,
     ),
     width: "100%",
     height: "9rem",

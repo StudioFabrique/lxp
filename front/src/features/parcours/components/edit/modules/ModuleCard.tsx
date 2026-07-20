@@ -1,6 +1,7 @@
 import { Edit2Icon, Trash2 } from "lucide-react";
 import placeholder from "../../../../../../src/assets/images/cat.webp";
 import { ModuleData } from "../../../../../utils/interfaces/new-module";
+import AppImage from "../../../../../components/UI/image/app-image";
 
 type ModuleCardProps = {
   module: ModuleData;
@@ -18,9 +19,10 @@ export default function ModuleCard({
   return (
     <div className="card h-40 w-80 bg-base-100 image-full shadow-sm overflow-hidden">
       <figure>
-        <img
+        <AppImage
           className="object-cover w-full h-full"
-          src={thumb ? `data:image/jpeg;base64,${thumb}` : placeholder}
+          src={thumb}
+          fallbackSrc={placeholder}
           alt={`Miniature du module : ${title}`}
         />
       </figure>

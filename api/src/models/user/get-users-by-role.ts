@@ -1,5 +1,6 @@
 import Role, { IRole } from "../../utils/interfaces/db/role";
 import User from "../../utils/interfaces/db/user";
+import { imageToDataUrl } from "../../utils/images/image-source";
 import { getPagination } from "../../utils/services/getPagination";
 import { prisma } from "../../utils/db";
 
@@ -115,9 +116,7 @@ async function getUsersByRole(
               (item) => user.group[0]._id.toString() === item.groupId
             ).formation
           : "ND",
-      avatar: user.avatar
-        ? "data:image/jpeg;base64," + user.avatar.toString("base64")
-        : null,
+      avatar: imageToDataUrl(user.avatar),
     };
   });
   return { total, users };

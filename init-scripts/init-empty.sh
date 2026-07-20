@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Nettoyage de données existantes..."
-./clean-project-data.sh
+./init-scripts/clean-project-data.sh
 
 echo "Installation des dépendances racine..."
 # Le script lifecycle racine `install` installe aussi les sous-projets. On le

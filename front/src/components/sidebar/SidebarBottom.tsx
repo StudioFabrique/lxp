@@ -35,11 +35,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         >
           {user && (
             <AvatarSmall
-              user={{
-                ...user,
-                avatar:
-                  user?.avatar && `data:image/jpeg;base64,${user?.avatar}`,
-              }}
+              user={user}
               noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"
               imgClassName="w-4 h-4 rounded-full object-cover"
             />

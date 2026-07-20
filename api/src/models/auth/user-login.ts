@@ -4,6 +4,7 @@ import { credentialsError } from "../../utils/constantes";
 import User from "../../utils/interfaces/db/user";
 import IConnectionInfos from "../../utils/interfaces/db/connection-infos";
 import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
+import { imageToDataUrl } from "../../utils/images/image-source";
 
 async function userLogin(email: string, password: string) {
   try {
@@ -25,7 +26,7 @@ async function userLogin(email: string, password: string) {
         _id: user._id.toString(),
         email: user.email,
         roles: user.roles,
-        avatar: user.avatar?.toString("base64"),
+        avatar: imageToDataUrl(user.avatar),
         createdAt: user.createdAt,
         firstname: user.firstname,
         lastname: user.lastname,

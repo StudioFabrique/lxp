@@ -1,5 +1,6 @@
 import User from "../../../utils/interfaces/user";
 import { BotMessageSquare } from "lucide-react";
+import { AvatarSmall } from "../../avatar/AvatarSmall";
 
 type Props = {
   message: {
@@ -15,16 +16,11 @@ export default function AvatarChatbot({ message, user }: Props) {
     return (
       <div className="flex items-center w-10 rounded-full">
         {user ? (
-          user.avatar ? (
-            <img
-              alt="User avatar"
-              src={`data:image/jpeg;base64,${user.avatar}`}
-            />
-          ) : (
-            <p className="text-xs p-3.5 bg-accent text-base-200">
-              {(user!.firstname[0] + user!.lastname[0]).trim().toUpperCase()}
-            </p>
-          )
+          <AvatarSmall
+            user={user}
+            noImgClassName="text-xs p-3.5 bg-accent text-base-200 rounded-full"
+            imgClassName="w-10 h-10 rounded-full object-cover"
+          />
         ) : null}
       </div>
     );

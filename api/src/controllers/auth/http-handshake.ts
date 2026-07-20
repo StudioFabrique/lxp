@@ -3,6 +3,7 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
 import getUser from "../../models/user/get-user";
 import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
+import { imageToDataUrl } from "../../utils/images/image-source";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {
@@ -15,7 +16,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
           _id: user._id.toString(),
           email: user.email,
           roles: user.roles,
-          avatar: user.avatar?.toString("base64"),
+          avatar: imageToDataUrl(user.avatar),
           createdAt: user.createdAt,
           firstname: user.firstname,
           lastname: user.lastname,

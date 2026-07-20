@@ -9,6 +9,7 @@ import DraftIcon from "../../../../../src/components/UI/svg/draft-icon";
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import defaultThumb from "../../../../../src/assets/images/module-default-thumb.png";
 import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
+import { normalizeImageSource } from "../../../../utils/images/image-source";
 
 interface CourseCardProps {
   course: CustomCourse;
@@ -21,7 +22,7 @@ export default function CourseCard({
 }: CourseCardProps) {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb,
+      normalizeImageSource(course.thumb) ?? defaultThumb,
     ),
     width: "100%",
     height: "9rem",
@@ -30,8 +31,6 @@ export default function CourseCard({
     backgroundPosition: "center",
     position: "relative",
   };
-
-  console.log(course.thumb);
 
   return (
     <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">
