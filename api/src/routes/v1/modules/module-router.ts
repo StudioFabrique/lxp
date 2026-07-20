@@ -1,24 +1,18 @@
 import { Router } from "express";
-import path from "path";
 
 import httpGetModuleFormation from "../../../controllers/module/http-get-modules-formation";
 import httpParcoursModules from "../../../controllers/module/http-parcours-modules";
 import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module";
-import httpUpdateDurationModule from "../../../controllers/module/http-update-duration-module";
 import httpDeleteModule from "../../../controllers/module/http-delete-module";
-import httpPutAddModule from "../../../controllers/parcours/http-put-add-module";
 import {
   getModuleFormationValidator,
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
   moduleIdValidator,
-  postModuleFromScratchValidator,
   postModuleMetadataValidator,
   putModuleParcoursValidator,
   putModuleValidator,
-  studentIdValidator,
   updateDatesModulesValidator,
-  updateDurationValidator,
 } from "./module-validators";
 import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
@@ -31,37 +25,14 @@ import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
 import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
 import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
-import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
-import { checkValidatorResult } from "../../../middleware/validators";
-import { query } from "express-validator";
 import jsonParser from "../../../middleware/json-parser";
-import multer from "multer";
-import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
 import httpPostModuleMetadata from "../../../controllers/module/http-post-module-metadata";
-import httpGetModulesCompletionByStudent from "../../../controllers/module/http-get-modules-completion-by-student";
 
 const modules = Router();
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "..", "..", "..", "uploads"));
-  },
-  filename: function (req, file, cb) {
-    if (file.mimetype.startsWith("image")) {
-      const newFileName =
-        Date.now() + "-" + Math.round(Math.random() * 1e9) + file.originalname;
-      cb(null, file.fieldname + "-" + newFileName);
-    } else {
-      return;
-    }
-  },
-});
-
-const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 modules.post(
   "/metadata",
@@ -81,58 +52,6 @@ modules.get(
 modules.get("/", checkPermissions("module"), httpGetAllModules);
 
 modules.get(
-  "/timeline",
-  checkPermissions("module"),
-  [
-    query("minDate")
-      .exists()
-      .withMessage("minDate est requis")
-      .custom((value) => {
-        try {
-          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
-            return true;
-          }
-          return false;
-        } catch (e) {
-          return false;
-        }
-      })
-      .withMessage("minDate doit être une date de format ISO 8601"),
-
-    query("maxDate")
-      .exists()
-      .withMessage("maxDate est requis")
-      .custom((value) => {
-        try {
-          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
-            return true;
-          }
-          return false;
-        } catch (e) {
-          return false;
-        }
-      })
-      .withMessage("maxDate doit être une date de format ISO 8601")
-      .custom((maxDate, { req }) => {
-        const minDate = req.query?.minDate;
-        if (new Date(maxDate) <= new Date(minDate)) {
-          throw new Error("maxDate doit être plus grand que minDate");
-        }
-        return true;
-      }),
-    checkValidatorResult,
-  ],
-  httpGetModulesTimeline,
-);
-
-modules.put(
-  "/add-module/:parcoursId/:moduleId",
-  checkPermissions("module"),
-  moduleIdValidator,
-  parcoursIdValidator,
-  httpPutAddModule,
-);
-modules.get(
   "/formation/:formationId/:duplicate",
   checkPermissions("module"),
   getModuleFormationValidator,
@@ -149,12 +68,6 @@ modules.put(
   moduleIdFromBodyValidator,
   updateDatesModulesValidator,
   httpUpdateDatesModule,
-);
-modules.put(
-  "/calendar/duration",
-  checkPermissions("module"),
-  updateDurationValidator,
-  httpUpdateDurationModule,
 );
 modules.put(
   "/:parcoursId",
@@ -183,7 +96,7 @@ modules.put(
   putModuleValidator,
   httpPutModule,
 );
-// retourne la liste des modules assocués à un parcours
+// retourne la liste des modules associés à un parcours
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
@@ -191,29 +104,7 @@ modules.get(
   httpGetModulesFromParcours,
 );
 
-/**
- * Retourne tous les modules entamés par l'étudiant accompagné de leur progression
- * Le corps de la réponse (dans un tableau représentant chaque module) : {
-      id: 1,
-      metadataId: 1,
-      title: "titleTitle",
-      description: "descriptionDescription",
-      thumb: "thumbThumb",
-      stats: {
-        progress: un nombre de 0 à 100,
-      },
-    };
-
-    Retourne null si il n'y a rien
- */
-modules.get(
-  "/progression/:studentId",
-  checkPermissions("module"),
-  studentIdValidator,
-  httpGetModulesCompletionByStudent,
-);
-
-// supprime définitvement un module attaché à une formation
+// supprime définitivement un module attaché à une formation
 modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
@@ -241,22 +132,6 @@ modules.get(
   checkPermissions("module"),
   moduleIdValidator,
   httpGetModuleImage,
-);
-
-modules.post(
-  "/new-module",
-  checkPermissions("module"),
-  upload.single("image"),
-  jsonParser,
-  postModuleFromScratchValidator,
-  httpPostModuleFromScratch,
-);
-
-modules.delete(
-  "/parcours/:moduleId",
-  checkPermissions("module"),
-  moduleIdValidator,
-  httpDeleteModule,
 );
 
 export default modules;
