@@ -79,15 +79,14 @@ export default function CreateLessonModal({
         }}
       >
         <div className="flex items-start justify-between gap-4 border-b border-base-300 pb-4">
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <span className="rounded-lg bg-primary/10 p-2 text-primary">
               <BookOpen className="w-5 h-5" />
             </span>
             <div>
-              <h3 className="font-bold text-lg">Ajouter une leçon</h3>
-              <p className="text-sm text-base-content/60">
-                Dans le cours « {courseTitle} »
-              </p>
+              <h3 className="font-bold text-lg">
+                Ajouter une leçon dans le cours « {courseTitle} »
+              </h3>
             </div>
           </div>
           <button
@@ -101,7 +100,7 @@ export default function CreateLessonModal({
         </div>
 
         <div className="grid gap-5 py-5">
-          <label className="form-control gap-2">
+          <label className="flex flex-col gap-2">
             <span className="font-semibold">
               Titre <span className="text-error">*</span>
             </span>
@@ -113,9 +112,9 @@ export default function CreateLessonModal({
               placeholder="Ex. Introduction aux composants React"
             />
           </label>
-          <label className="form-control gap-2">
-            <span className="font-semibold">
-              Description{" "}
+          <label className="flex flex-col gap-2">
+            <span className="flex items-center gap-2 font-semibold">
+              Description
               <span className="font-normal text-base-content/50">
                 (facultative)
               </span>
@@ -128,7 +127,7 @@ export default function CreateLessonModal({
             />
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label className="form-control gap-2">
+            <label className="flex flex-col gap-2">
               <span className="font-semibold">
                 Tag <span className="text-error">*</span>
               </span>
@@ -152,7 +151,7 @@ export default function CreateLessonModal({
                 ))}
               </select>
             </label>
-            <label className="form-control gap-2">
+            <label className="flex flex-col gap-2">
               <span className="font-semibold">Modalité</span>
               <select
                 className="select select-bordered w-full"
