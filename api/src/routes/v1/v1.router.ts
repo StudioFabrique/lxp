@@ -23,10 +23,6 @@ import checkPermissions from "../../middleware/check-permissions";
 import activityRouter from "./activity/activityRouter";
 import quizRouter from "./quiz/quiz.router";
 
-// Import des routeurs pour la recherche
-import searchRouter from "./search/search.router";
-import restrictedSearchRouter from "./search/restricted-search.router";
-
 // Import des routeurs pour les statistiques, évaluations et médias
 import statsRouter from "./stats.router";
 import evaluationRouter from "./evaluation/evaluation.router";
@@ -69,12 +65,6 @@ v1Router.use("/resources", resourcesRouter);
 // Route pour les quiz
 
 v1Router.use("/quiz", quizRouter);
-
-/**
- * Routes de recherche dédié à elastic search :
- */
-v1Router.use("/search", searchRouter); // recherche en tant que admin
-v1Router.use("/restrictedSearch", restrictedSearchRouter); // recherche en tant qu'utilisateur normal
 
 v1Router.post(
   "/company-logo",

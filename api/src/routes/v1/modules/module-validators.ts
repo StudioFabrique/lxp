@@ -42,15 +42,6 @@ export const moduleIdValidator = [
   checkValidatorResult,
 ];
 
-export const studentIdValidator = [
-  param("studentId")
-    .notEmpty()
-    .withMessage("L'identifiant mongodb de l'étudiant est requis")
-    .isString()
-    .withMessage("L'identifiant mongodb passé n'est pas un string"),
-  checkValidatorResult,
-];
-
 export const moduleIdFromBodyValidator = [
   body("moduleId")
     .isNumeric()
@@ -103,76 +94,6 @@ export const updateDatesModulesValidator = [
     .custom(dateValidateGeneric)
     .withMessage("La date de fin du module contient des caractères invalides")
     .escape(),
-  checkValidatorResult,
-];
-
-export const updateDurationValidator = [
-  body("id")
-    .isNumeric()
-    .withMessage("Identifiant de module non valide")
-    .notEmpty()
-    .withMessage("Un identifiant de module est requise")
-    .trim()
-    .escape(),
-  body("duration")
-    .trim()
-    .notEmpty()
-    .withMessage("La durée du module est requise")
-    .isNumeric()
-    .withMessage("La durée du module doit être un nombre d'heures entier")
-    .escape(),
-  checkValidatorResult,
-];
-
-export const postModuleFromScratchValidator = [
-  body("module").isObject().notEmpty(),
-  body("module.title")
-    .isString()
-    .withMessage("Le titre doit être une chaîne de caractères.")
-    .notEmpty()
-    .withMessage("Le titre est obligatoire.")
-    .custom(stringValidateGeneric),
-  body("module.description")
-    .optional() // Optionnel
-    .isString()
-    .withMessage("La description doit être une chaîne de caractères.")
-    .custom(stringValidateOptional),
-  body("module.duration")
-    .isInt({ gt: 0 })
-    .withMessage("La durée doit être un nombre entier positif."),
-  body("module.formationId")
-    .isInt({ gt: 0 })
-    .withMessage(
-      "L'identifiant de formation doit être un nombre entier positif.",
-    ),
-  body("module.parcoursId")
-    .optional() // Optionnel
-    .isInt({ gt: 0 })
-    .withMessage(
-      "L'identifiant de parcours doit être un nombre entier positif.",
-    ),
-  body("module.contactsIds")
-    .optional() // Optionnel
-    .isArray()
-    .withMessage("contactsIds doit être un tableau.")
-    .bail()
-    .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0),
-    )
-    .withMessage(
-      "Chaque identifiant de contactsIds doit être un entier positif.",
-    ),
-  body("module.bonusSkillsIds")
-    .optional() // Optionnel
-    .isArray()
-    .withMessage("bonusSkillsIds doit être un tableau.")
-    .bail()
-    .custom((value) =>
-      value.every((id: number) => Number.isInteger(id) && id > 0),
-    )
-    .withMessage(
-      "Chaque identifiant de bonusSkillsIds doit être un entier positif.",
-    ),
   checkValidatorResult,
 ];
 
