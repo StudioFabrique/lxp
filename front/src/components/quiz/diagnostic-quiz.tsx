@@ -6,7 +6,7 @@ import QuizOrdering from "./modals/quiz-ordering";
 import QuizTrueFalse from "./modals/quiz-true-false";
 import QuizResults from "./results/quiz-results";
 import QuizMarkdown from "./quiz-markdown";
-import { cn } from "../../utils/helpers/style-helpers";
+import { cn } from "../../utils/cn";
 
 type Props = {
   isStarted: boolean;

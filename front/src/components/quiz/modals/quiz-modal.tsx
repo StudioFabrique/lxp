@@ -6,7 +6,7 @@ import QuizTrueFalse from "./quiz-true-false";
 import QuizResults from "../results/quiz-results";
 import QuizMarkdown from "../quiz-markdown";
 import { Loader2, X } from "lucide-react";
-import { cn } from "../../../utils/helpers/style-helpers";
+import { cn } from "../../../utils/cn";
 
 interface QuizModalProps {
   isOpen: boolean;

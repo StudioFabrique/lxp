@@ -8,7 +8,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
+import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
