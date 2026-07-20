@@ -6,8 +6,6 @@ export const regexPassword =
 
 export const regexNumber = /^[0-9]*$/;
 
-export const regexPhoneNumber = /^\d{10}$/;
-
 // Version stricte (doit contenir au moins 1 caractère)
 export const regexGeneric = /^[\p{L}\p{N}\p{P}\p{S}\s]+$/u;
 
@@ -18,6 +16,3 @@ export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 
 export const regexIframe = /(?<=src=").*?(?=")/;
 
-export const setRandomNumber = (min: number, max: number) => {
-  return Math.trunc(Math.random() * (max - min + 1) + min);
-};
