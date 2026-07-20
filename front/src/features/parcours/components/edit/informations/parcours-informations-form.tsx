@@ -9,7 +9,8 @@ import { infosParCoursSchema } from "../../../parcours.schema";
 import FormInput from "../../../../../../src/components/form/FormInput";
 import FormTextarea from "../../../../../../src/components/form/FormTextarea";
 import useAutoSave from "../../../../../../src/hooks/useAutoSave";
-import { useParcoursQuery, useUpdateParcours } from "../../../hooks/useParcoursQuery";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 type Props = {
   parcoursId?: string;

@@ -15,7 +15,8 @@ import ContactsWithDrawer from "./contacts-with-drawer";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import TagsWithDrawer from "./tags-with-drawer";
 import useInfosService from "../../../hooks/useInfosService";
-import { useParcoursQuery, useUpdateParcours } from "../../../hooks/useParcoursQuery";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 type Props = {
   parcoursId: string;

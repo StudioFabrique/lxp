@@ -5,7 +5,7 @@ import NotSelectedContacts from "./not-selected-contacts";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import { useCallback, useEffect, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import { useParcoursContactsQuery } from "../../../hooks/useParcoursQuery";
+import { useParcoursContactsQuery } from "../../../hooks/useParcoursContactsQuery";
 
 interface ContactsWithDrawerProps {
   loading: boolean;

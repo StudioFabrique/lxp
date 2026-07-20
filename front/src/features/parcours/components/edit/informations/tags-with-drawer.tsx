@@ -12,7 +12,7 @@ import SearchTag from "./search-tag";
 import CreateNewTag from "./create-new-tags";
 import { HelpCircle } from "lucide-react";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
-import { useParcoursTagsQuery } from "../../../hooks/useParcoursQuery";
+import { useParcoursTagsQuery } from "../../../hooks/useParcoursTagsQuery";
 
 interface TagsWithDrawerProps {
   loading: boolean;

@@ -7,7 +7,7 @@ import ImportCSVActions from "../../../../../../src/components/UI/import-csv-act
 import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src/components/UI/imported-csv-data.component";
 import { skillsFields } from "../../../../../config/csv/csv-skills-fields";
-import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkills";
+import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
