@@ -5,19 +5,18 @@ import {
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import CurrentTags from "../../../../../../src/components/shared/inherited-items/current-tags";
 import InheritedItems from "../../../../../../src/components/shared/inherited-items/inherited-items";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import toast from "react-hot-toast";
 import ParcoursTagsSelecter from "./parcours-tags-selecter";
 import SearchTag from "./search-tag";
 import CreateNewTag from "./create-new-tags";
 import { HelpCircle } from "lucide-react";
-import { parcoursApi } from "../../../api/parcours.api";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { useParcoursTagsQuery } from "../../../hooks/useParcoursQuery";
 
 interface TagsWithDrawerProps {
   loading: boolean;
-  onSubmit: (items: any[]) => void;
+  onSubmit: (items: Tag[]) => void;
   tags: Tag[];
 }
 
@@ -27,10 +26,18 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const dispatch = useParcoursDispatch();
 
   const [submit, setSubmit] = useState<boolean>(false);
-  const hasFetchedTags = useRef(false);
+  const { data: availableTags } = useParcoursTagsQuery();
   const [parentTags] = useState<Tag[]>(props.tags);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
+  const filteredTags = useMemo(
+    () =>
+      searchTerm.length > 0
+        ? initialTags.filter((item) =>
+            item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
+          )
+        : initialTags,
+    [initialTags, searchTerm],
+  );
 
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
@@ -51,16 +58,10 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   }, [props, submit, currentTags]);
 
   useEffect(() => {
-    if (!hasFetchedTags.current) {
-      hasFetchedTags.current = true;
-      parcoursApi.queries
-        .getTags()
-        .then((data) => {
-          dispatch({ type: "INIT_TAGS", payload: data });
-        })
-        .catch(() => toast.error("Erreur lors du chargement des tags"));
+    if (availableTags) {
+      dispatch({ type: "INIT_TAGS", payload: availableTags });
     }
-  }, [dispatch]);
+  }, [availableTags, dispatch]);
 
   /**
    * Effect pour mettre à jour les tags de la formation
@@ -71,19 +72,6 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       setParentTags(parent.tags.map((item: any) => item.tag));
     }
   }, [formation]);*/
-
-  /**
-   * Effect pour filtrer les tags en fonction du terme de recherche
-   */
-  useEffect(() => {
-    if (searchTerm.length > 0)
-      setFilteredTags(
-        initialTags?.filter((item) =>
-          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
-        ),
-      );
-    else setFilteredTags(initialTags);
-  }, [searchTerm, initialTags]);
 
   // Rendu du composant avec deux sections principales :
   // 1. Les tags actuels et les tags de la formation

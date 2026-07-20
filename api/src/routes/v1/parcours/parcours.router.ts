@@ -15,6 +15,7 @@ import {
   parcoursByIdValidator,
   parcoursIdValidator,
   postParcoursValidator,
+  patchParcoursValidator,
   putParcoursContactsValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
@@ -38,6 +39,7 @@ import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-par
 import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
 import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
 import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts";
+import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -59,6 +61,14 @@ parcoursRouter.post(
   checkPermissions("parcours"),
   postParcoursValidator,
   httpCreateParcours
+);
+
+// Endpoint unifié, introduit progressivement en remplacement des routes PUT granulaires.
+parcoursRouter.patch(
+  "/:parcoursId",
+  checkPermissions("parcours"),
+  patchParcoursValidator,
+  httpPatchParcours,
 );
 
 // Route DELETE pour supprimer un parcours spécifique

@@ -32,12 +32,8 @@ bonusSkillRouter.post(
 bonusSkillRouter.post(
   "/skills",
   checkPermissions("bonusSkill"),
-  //body("parcoursId").isNumeric().notEmpty(),
+  body("parcoursId").isNumeric().notEmpty(),
   body("skills").isArray().notEmpty(),
-  body("skills.*.id")
-    .isNumeric()
-    .notEmpty()
-    .withMessage("Identifiant de compétence absent"),
   body("skills.*.description")
     .isString()
     .notEmpty()

@@ -18,6 +18,7 @@ import ImageHeaderMutable from "../../../../src/components/image-header/image-he
 import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
+import FloatingParcoursButtons from "../components/edit/floating-parcours-buttons";
 
 const EditParcours = () => {
   const {
@@ -110,35 +111,14 @@ const EditParcours = () => {
             </div>
           </div>
           <div className="w-full mt-16">{renderActualStep()}</div>
-          <div className="w-full mt-8 flex justify-between">
-            {actualStep.id !== stepsList.length ? (
-              <>
-                {actualStep.id === 1 ? (
-                  <Link
-                    className="btn btn-primary btn-outline"
-                    to="/admin/parcours"
-                  >
-                    Retour
-                  </Link>
-                ) : (
-                  <button
-                    className="btn btn-primary btn-outline"
-                    onClick={handleRetour}
-                  >
-                    Retour
-                  </button>
-                )}
-                {actualStep.id !== stepsList.length ? (
-                  <button
-                    className="btn btn-primary z-1"
-                    onClick={() => handleUpdateStep(actualStep.id)}
-                  >
-                    Etape suivante
-                  </button>
-                ) : null}
-              </>
-            ) : null}
-          </div>
+          {actualStep.id !== stepsList.length ? (
+            <FloatingParcoursButtons
+              actualStep={actualStep}
+              stepsList={stepsList}
+              handleRetour={handleRetour}
+              handleUpdateStep={handleUpdateStep}
+            />
+          ) : null}
         </FadeWrapper>
       ) : (
         <Error404 />
