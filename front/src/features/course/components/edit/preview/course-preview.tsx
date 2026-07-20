@@ -9,6 +9,7 @@ import PreviewCalendar from "../../../../../../src/components/preview/preview-ca
 import { Link, useNavigate, useParams } from "react-router";
 import useValidateCourse from "./hook/use-validate-course";
 import { courseApi } from "../../../api/course.api";
+import FloatingBottomNavigation from "../../../../../components/buttons/FloatingBottomNavigation";
 
 interface CoursePreviewProps {
   onEdit: (id: number) => void;
@@ -62,22 +63,26 @@ const CoursePreview = (props: CoursePreviewProps) => {
       <section>
         <PreviewCalendar dates={dates} onEdit={props.onEdit} />
       </section>
-      <section className="w-full flex justify-between">
-        <button
-          className="btn btn-primary btn-outline"
-          onClick={() => props.onEdit(5)}
-        >
-          Retour
-        </button>
-        <div className="flex gap-x-4 items-center">
-          <Link className="btn btn-secondary" to="..">
-            Sauvegarder le brouillon
-          </Link>
-          <button className="btn btn-primary" onClick={handlePublishCourse}>
-            Publier
+      <FloatingBottomNavigation
+        startActions={
+          <button
+            className="btn btn-ghost hover:underline"
+            onClick={() => props.onEdit(3)}
+          >
+            Retour
           </button>
-        </div>
-      </section>
+        }
+        endActions={
+          <>
+            <Link className="btn btn-secondary" to="..">
+              Sauvegarder le brouillon
+            </Link>
+            <button className="btn btn-primary" onClick={handlePublishCourse}>
+              Publier
+            </button>
+          </>
+        }
+      />
     </div>
   );
 };

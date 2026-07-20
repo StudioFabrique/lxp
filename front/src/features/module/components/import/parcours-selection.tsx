@@ -4,6 +4,7 @@ import Parcours from "../../../../utils/interfaces/parcours";
 import Formation from "../../../../utils/interfaces/formation";
 import Header from "../../../../components/headers/Header";
 import SelectableSubCard from "../../../../components/UI/selectable-sub-card";
+import FloatingBottomNavigation from "../../../../components/buttons/FloatingBottomNavigation";
 
 type Props = {
   formations: Formation[];
@@ -68,20 +69,6 @@ const ParcoursSelection = ({
             </Link>
           </div>
         )}
-        <button
-          className="btn btn-sm btn-outline mr-5 tooltip"
-          data-tip="Retourner à la prévisualisation des modules"
-          onClick={onGoBack}
-        >
-          <Undo2 />
-        </button>
-        <button
-          className="btn btn-sm btn-success gap-2"
-          disabled={!canConfirm}
-          onClick={() => onConfirm(selectedParcours)}
-        >
-          Lancer l'importation <ArrowRight size={18} />
-        </button>
       </Header>
 
       <div className="ml-10 flex flex-col gap-6 pb-10">
@@ -160,6 +147,22 @@ const ParcoursSelection = ({
           </button>
         </div>
       </div>
+      <FloatingBottomNavigation
+        startActions={
+          <button className="btn btn-ghost hover:underline" onClick={onGoBack}>
+            <Undo2 size={18} /> Retour
+          </button>
+        }
+        endActions={
+          <button
+            className="btn btn-success gap-2"
+            disabled={!canConfirm}
+            onClick={() => onConfirm(selectedParcours)}
+          >
+            Lancer l'importation <ArrowRight size={18} />
+          </button>
+        }
+      />
     </div>
   );
 };

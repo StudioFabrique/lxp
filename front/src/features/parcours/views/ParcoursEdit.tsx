@@ -111,10 +111,22 @@ const EditParcours = () => {
           <div className="w-full mt-16">{renderActualStep()}</div>
           {actualStep.id !== stepsList.length ? (
             <FloatingBottomNavigation
-              actualStep={actualStep}
-              stepsList={stepsList}
-              handleRetour={handleRetour}
-              handleUpdateStep={handleUpdateStep}
+              startActions={
+                <button
+                  className="btn btn-ghost hover:underline"
+                  onClick={handleRetour}
+                >
+                  Retour
+                </button>
+              }
+              endActions={
+                <button
+                  className="btn btn-primary px-6"
+                  onClick={() => handleUpdateStep(actualStep.id)}
+                >
+                  Étape suivante
+                </button>
+              }
             />
           ) : null}
         </FadeWrapper>

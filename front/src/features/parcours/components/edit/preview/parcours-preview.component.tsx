@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import User from "../../../../../../src/utils/interfaces/user";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { parcoursApi } from "../../../api/parcours.api";
+import FloatingBottomNavigation from "../../../../../components/buttons/FloatingBottomNavigation";
 
 
 interface ParcoursPreviewProps {
@@ -108,28 +109,32 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
           <ParcoursPreviewStudent onEdit={props.onEdit} students={students} />
         ) : null}
       </section>
-      <section className="w-full flex justify-between">
-        <button
-          className="btn btn-primary btn-outline"
-          onClick={() => props.onEdit(6)}
-        >
-          Retour
-        </button>
-        <span className="flex gap-x-4 items-center">
+      <FloatingBottomNavigation
+        startActions={
           <button
-            className="btn btn-secondary"
-            onClick={() => handlePublishParcours(false)}
+            className="btn btn-ghost hover:underline"
+            onClick={() => props.onEdit(6)}
           >
-            Sauvegarder comme brouillon
+            Retour
           </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => handlePublishParcours(true)}
-          >
-            Publier
-          </button>
-        </span>
-      </section>
+        }
+        endActions={
+          <>
+            <button
+              className="btn btn-secondary"
+              onClick={() => handlePublishParcours(false)}
+            >
+              Sauvegarder comme brouillon
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => handlePublishParcours(true)}
+            >
+              Publier
+            </button>
+          </>
+        }
+      />
     </div>
   );
 };
