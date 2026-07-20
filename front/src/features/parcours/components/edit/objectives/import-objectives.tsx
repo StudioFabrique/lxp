@@ -1,13 +1,14 @@
 import { FC, useCallback } from "react";
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useMutation } from "@tanstack/react-query";
+import { useParams } from "react-router";
 
 import ImportCSVActions from "../../../../../../src/components/UI/import-csv-actions.component";
 import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src/components/UI/imported-csv-data.component";
 import { objectivesFields } from "../../../../../config/csv/csv-objectives";
-import { parcoursApi } from "../../../api/parcours.api";
 import toast from "react-hot-toast";
+import { useParcoursQuery, useUpdateParcours } from "../../../hooks/useParcoursQuery";
+import type Objective from "../../../../../utils/interfaces/objective";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
@@ -19,33 +20,36 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
   const objectives = useParcoursSelector(
     (state) => state.parcoursObjectives.importedObjectives
   );
-  const parcoursId = useParcoursSelector((state) => state.parcours.id);
+  const { id } = useParams();
+  const parcoursId = Number(id);
+  const { data: parcours } = useParcoursQuery(parcoursId);
+  const updateParcours = useUpdateParcours(parcoursId);
 
-  const { mutate: importObjectives } = useMutation({
-    mutationFn: (objectives: string[]) =>
-      parcoursApi.mutations.updateParcoursObjectives({
-        parcoursId: parcoursId!,
-        objectives,
-      }),
-    onSuccess: (data) => {
-      dispatch(
-        { type: "ADD_IMPORTED_OBJECTIVES", payload: data.data.objectives }
-      );
-    },
-    onError: () => toast.error("Erreur lors de l'import"),
-  });
+  const importObjectives = (objectives: string[]) => {
+    const descriptions = [
+      ...(parcours?.objectives.map((objective) => objective.description) ?? []),
+      ...objectives,
+    ];
+    updateParcours.mutate(
+      { objectives: [...new Set(descriptions)] },
+      {
+        onSuccess: () => toast.success("Objectifs importés"),
+        onError: () => toast.error("Erreur lors de l'import"),
+      },
+    );
+  };
 
   const handleCloseDrawer = () => {
     onCloseDrawer("import-data");
   };
 
-  const postSelectedObjectives = (objectives: Array<any>) => {
+  const postSelectedObjectives = (objectives: Objective[]) => {
     handleCloseDrawer();
-    importObjectives(objectives.map((item: any) => item.description));
+    importObjectives(objectives.map((item) => item.description));
   };
 
   const handleFromCSV = useCallback(
-    (data: Array<any>) => {
+    (data: Objective[]) => {
       dispatch({ type: "IMPORT_OBJECTIVES", payload: data });
     },
     [dispatch]

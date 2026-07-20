@@ -1,22 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useMemo } from "react";
 
 import { normalizeImageSource } from "../../../utils/images/image-source";
-import { parcoursApi } from "../api/parcours.api";
 import { useParcoursDispatch } from "../store/ParcoursContext";
+import { useParcoursQuery } from "./useParcoursQuery";
 
-const useParcoursService = () => {
+const useParcoursService = (parcoursId?: number) => {
   const dispatch = useParcoursDispatch();
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [image, setImage] = useState<string>("");
+  const { data, isLoading, error: queryError } = useParcoursQuery(parcoursId);
 
-  const getParcours = useCallback(
-    async (parcoursId: number) => {
-      setIsLoading(true);
-      setError("");
-      try {
-        const data = await parcoursApi.queries.getById(parcoursId);
-        const parentTags = data.formation.tags.map((item: any) => item.tag);
+  useEffect(() => {
+    if (data) {
+      const parentTags = data.formation.tags.map((item: any) => item.tag);
         dispatch({ type: "SET_PARCOURS_ID", payload: data.id! });
         dispatch({
           type: "UPDATE_PARCOURS_INFOS",
@@ -35,9 +30,6 @@ const useParcoursService = () => {
           },
         });
         dispatch({ type: "SET_PARCOURS_FORMATION", payload: data.formation as unknown as Record<string, unknown> });
-        if (data.image) {
-          setImage(normalizeImageSource(data.image) ?? "");
-        }
         if (data.tags.length > 0) {
           dispatch({
             type: "SET_CURRENT_TAGS",
@@ -97,27 +89,23 @@ const useParcoursService = () => {
         } else {
           dispatch({ type: "SET_GROUPS", payload: [] });
         }
-      } catch (err: unknown) {
-        const message =
-          (err as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message ?? "Erreur inconnue";
-        setError(message);
-      } finally {
-        setIsLoading(false);
       }
-    },
-    [dispatch],
-  );
+  }, [data, dispatch]);
 
-  useEffect(() => {
-    return () => setImage("");
-  }, []);
+  const image = useMemo(
+    () => normalizeImageSource(data?.image) ?? "",
+    [data?.image],
+  );
+  const error = queryError
+    ? ((queryError as { response?: { data?: { message?: string } } })?.response
+        ?.data?.message ?? "Erreur inconnue")
+    : "";
 
   return {
-    getParcours,
     isLoading,
     error,
     image,
+    parcours: data,
   };
 };
 

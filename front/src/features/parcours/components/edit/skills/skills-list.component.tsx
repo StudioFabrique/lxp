@@ -1,67 +1,29 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useParams } from "react-router";
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useMutation } from "@tanstack/react-query";
 
 import SkillItem from "./skill-item.component";
 import SkillForm from "./skill-form";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import FadeWrapper from "../../../../../../src/components/wrappers/FadeWrapper";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
-import { parcoursApi } from "../../../api/parcours.api";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
+import { useParcoursSkillMutations, useParcoursSkills } from "../../../hooks/useParcoursSkills";
 
 const SkillsList = () => {
   const { id } = useParams();
-  const skillList = useParcoursSelector((state) => state.parcoursSkills.skills);
-  const dispatch = useParcoursDispatch();
-  const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
+  const parcoursId = Number(id);
+  const { skills: skillList } = useParcoursSkills(parcoursId);
+  const { createSkill, updateSkill, deleteSkill } =
+    useParcoursSkillMutations(parcoursId);
+  const [itemToUpdate, setItemToUpdate] = useState<Skill | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
 
-  const { mutate: deleteSkill } = useMutation({
-    mutationFn: (skillId: number) => parcoursApi.mutations.deleteBonusSkill(skillId),
-    onSuccess: (_data, skillId) => {
-      dispatch({ type: "DELETE_SKILL", payload: skillId });
-    },
-    onError: () => toast.error("Erreur lors de la suppression"),
-  });
-
-  const { mutate: createSkill } = useMutation({
-    mutationFn: (value: any) =>
-      parcoursApi.mutations.createBonusSkill({
-        parcoursId: id!,
-        skill: { description: value.description, badge: value.badge },
-      }),
-    onSuccess: (data) => {
-      if (data.success) {
-        toast.success("Une nouvelle compétence a été enregistrée");
-        dispatch({ type: "ADD_SKILL", payload: data.skill });
-      }
-    },
-    onError: () => toast.error("Erreur lors de la création"),
-  });
-
-  const { mutate: updateSkill } = useMutation({
-    mutationFn: (skill: any) =>
-      parcoursApi.mutations.updateBonusSkill({
-        skill: {
-          id: skill.id,
-          description: skill.description,
-          badge: skill.badge,
-        },
-      }),
-    onSuccess: (data) => {
-      if (data.success) {
-        toast.success(data.message);
-      }
-    },
-    onError: () => toast.error("Erreur lors de la mise à jour"),
-  });
-
   const handleDeleteSkill = (skillId: number) => {
-    deleteSkill(skillId);
+    deleteSkill.mutate(skillId, {
+      onError: () => toast.error("Erreur lors de la suppression"),
+    });
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -78,27 +40,33 @@ const SkillsList = () => {
   };
 
   const handleUpdateSkill = (id: number) => {
-    setItemToUpdate(skillList.find((item: Skill) => item.id === id));
+    setItemToUpdate(skillList.find((item: Skill) => item.id === id) ?? null);
     setActiveDrawer("update-skill");
     setTitle("Modifier la compétence");
   };
 
-  const handleSubmitAddSkill = (value: any) => {
+  const handleSubmitAddSkill = (value: Skill) => {
     const skill = skillList.find(
-      (item: any) => item.description === value.description
+      (item) => item.description === value.description
     );
     if (!skill) {
       setTimeout(() => {
-        createSkill(value);
+        createSkill.mutate(value, {
+          onSuccess: () =>
+            toast.success("Une nouvelle compétence a été enregistrée"),
+          onError: () => toast.error("Erreur lors de la création"),
+        });
       }, 500);
     } else {
       toast.error("Cette compétence est déjà présente dans la liste");
     }
   };
 
-  const submitUpdateSkill = (skill: any) => {
-    dispatch({ type: "EDIT_SKILL", payload: skill });
-    updateSkill(skill);
+  const submitUpdateSkill = (skill: Skill) => {
+    updateSkill.mutate(skill, {
+      onSuccess: (data) => toast.success(data.message),
+      onError: () => toast.error("Erreur lors de la mise à jour"),
+    });
     handleCloseDrawer("update-skill");
   };
 

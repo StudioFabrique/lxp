@@ -4,36 +4,31 @@ import useSteps from "../../../hooks/useSteps";
 import useParcoursService from "../hooks/useParcoursServices";
 import { parcoursApi } from "../api/parcours.api";
 import { useCallback, useEffect, useRef } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router";
 import {
   useParcoursSelector,
   useParcoursDispatch,
 } from "../store/ParcoursContext";
+import Step from "../../../utils/interfaces/step";
 
 export function useParcoursEdit() {
-  const initialStateRef = useRef(true);
-
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useParcoursDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
-    useSteps(stepsParcours);
+    useSteps(stepsParcours as Step[]);
   const infos = useParcoursSelector(
     (state) => state.parcoursInformations.infos,
   );
   const formation = useParcoursSelector((state) => state.parcours.formation);
-  const { image, getParcours, isLoading, error } = useParcoursService();
+  const { image, isLoading, error } = useParcoursService(
+    id !== undefined ? +id : undefined,
+  );
   const modules = useParcoursSelector((state) => state.parcoursModules.modules);
   const checkStep = useRef(true);
 
   const step = searchParams.get("step");
-
-  useEffect(() => {
-    if (id !== undefined && initialStateRef.current) {
-      getParcours(+id);
-      initialStateRef.current = false;
-    }
-  }, [id, getParcours]);
 
   useEffect(() => {
     if (step && checkStep.current) {
@@ -44,7 +39,6 @@ export function useParcoursEdit() {
 
   useEffect(() => {
     return () => {
-      initialStateRef.current = true;
       dispatch({ type: "RESET_PARCOURS" });
       dispatch({ type: "RESET_PARCOURS_INFORMATIONS" });
       dispatch({ type: "RESET_TAGS" });
@@ -71,6 +65,7 @@ export function useParcoursEdit() {
   };
 
   const handleRetour = () => {
+    if (actualStep.id === 1) navigate("/admin/parcours");
     if (actualStep.id === 6 && (!modules || !testModules(modules))) {
       updateStep(4);
     } else updateStep(actualStep.id - 1);

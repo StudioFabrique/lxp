@@ -3,19 +3,18 @@ import InheritedItems from "../../../../../../src/components/shared/inherited-it
 import InheritedTextList from "../../../../../../src/components/shared/inherited-items/inherited-text-list";
 import NotSelectedContacts from "./not-selected-contacts";
 import Contact from "../../../../../../src/utils/interfaces/contact";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
-import toast from "react-hot-toast";
-import { parcoursApi } from "../../../api/parcours.api";
+import { useParcoursContactsQuery } from "../../../hooks/useParcoursQuery";
 
 interface ContactsWithDrawerProps {
   loading: boolean;
-  onSubmit: (items: any[]) => void;
+  onSubmit: (items: Contact[]) => void;
 }
 
 const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   const [submit, setSubmit] = useState<boolean>(false);
-  const hasFetched = useRef(false);
+  const { data: availableContacts } = useParcoursContactsQuery();
   const dispatch = useParcoursDispatch();
   const currentContacts = useParcoursSelector(
     (state) => state.parcoursContacts.currentContacts
@@ -43,16 +42,10 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   }, [props, submit, currentContacts]);
 
   useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      parcoursApi.queries
-        .getContacts()
-        .then((data) => {
-          dispatch({ type: "INIT_CONTACTS", payload: data });
-        })
-        .catch(() => toast.error("Erreur lors du chargement des contacts"));
+    if (availableContacts) {
+      dispatch({ type: "INIT_CONTACTS", payload: availableContacts });
     }
-  }, [dispatch]);
+  }, [availableContacts, dispatch]);
 
   return (
     <>
