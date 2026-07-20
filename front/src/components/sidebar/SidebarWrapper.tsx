@@ -2,7 +2,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import SidebarBottom from "./SidebarBottom";
 import { ThemeContext } from "../../store/ThemeProvider";
 import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../config/urls";
-import { cn } from "../../utils/helpers/style-helpers";
+import { cn } from "../../utils/cn";
 
 const SidebarWrapper = ({
   children,

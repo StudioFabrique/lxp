@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cn } from "../../../utils/helpers/style-helpers";
+import { cn } from "../../../utils/cn";
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 import QuizModalButtons from "./quiz-modal-buttons";
 

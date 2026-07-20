@@ -5,7 +5,7 @@ import Module from "../interfaces/module";
 import Parcours from "../interfaces/parcours";
 import Lesson from "../interfaces/lesson";
 import { marked } from "marked";
-import { replaceActivityTextContent } from "../../../src/utils/helpers/cleanActivityTextContent";
+import { cleanActivityTextContent } from "./text-helpers";
 import Tag from "../interfaces/tag";
 
 
@@ -216,7 +216,7 @@ export async function parseCourseZip(
         if (item.type === "text") {
           const markdownContent = await fileInZip.async("string");
           let htmlContent = await marked.parse(markdownContent);
-          htmlContent = replaceActivityTextContent(htmlContent);
+          htmlContent = cleanActivityTextContent(htmlContent);
 
           const { newHtml, newImages } = await processHtmlImages(
             htmlContent,

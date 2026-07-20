@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { cn } from "../../../utils/helpers/style-helpers";
+import { cn } from "../../../utils/cn";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {

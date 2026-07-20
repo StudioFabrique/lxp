@@ -3,7 +3,7 @@ import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
+import defaultImage from "../../../assets/images/module-default.jpg";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";

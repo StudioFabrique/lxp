@@ -1,5 +1,5 @@
 import { Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
-import { cn } from "../../../utils/helpers/style-helpers";
+import { cn } from "../../../utils/cn";
 
 export interface TrueFalseDetailProps {
   quiz: Extract<Quiz, { type: "true_false" }>;

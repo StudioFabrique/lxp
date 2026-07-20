@@ -3,7 +3,7 @@ import { ArrowBigRightDash, ChevronDown } from "lucide-react";
 
 import { Pair, Quiz, UserAnswer } from "../../../utils/interfaces/quiz";
 import QuizModalButtons from "./quiz-modal-buttons";
-import { cn } from "../../../utils/helpers/style-helpers";
+import { cn } from "../../../utils/cn";
 
 interface Props {
   quiz: Extract<Quiz, { type: "matching" }>;

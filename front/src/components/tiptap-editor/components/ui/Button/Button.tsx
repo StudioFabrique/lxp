@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../../../../utils/helpers/style-helpers";
+import { cn } from "../../../../../utils/cn";
 
 export type ButtonVariant =
   | "primary"
