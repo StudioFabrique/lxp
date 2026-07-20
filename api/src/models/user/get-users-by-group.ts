@@ -1,6 +1,7 @@
 import Group from "../../utils/interfaces/db/group";
 import mongoose from "mongoose";
 import { IUser } from "../../utils/interfaces/db/user";
+import { imageToDataUrl } from "../../utils/images/image-source";
 
 async function getUsersByGroup(groupsIds: string[]) {
   const ids = groupsIds.map(
@@ -28,9 +29,7 @@ async function getUsersByGroup(groupsIds: string[]) {
           name: item.name,
           users: item.users.map((user: any) => ({
             ...user.toObject(),
-            avatar: user.avatar
-              ? "data:image/jpeg;base64," + user.avatar.toString("base64")
-              : null,
+            avatar: imageToDataUrl(user.avatar),
           })),
         },
       ];

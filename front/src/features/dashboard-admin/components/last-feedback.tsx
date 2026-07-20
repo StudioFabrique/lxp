@@ -66,9 +66,7 @@ export default function LastFeedback() {
               <Wrapper>
                 <AvatarCard
                   _id={item._id}
-                  avatarSrc={`data:image/jpeg;base64,${
-                    item.avatar ?? imageProfileReplacement
-                  }`}
+                  avatarSrc={item.avatar ?? imageProfileReplacement}
                   username={item.name}
                   message={item.comment ?? "Aucun commentaire."}
                   feelingLevel={+item.feelingLevel}

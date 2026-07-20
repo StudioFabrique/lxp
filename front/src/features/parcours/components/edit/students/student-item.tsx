@@ -1,7 +1,7 @@
 // Import des dépendances nécessaires
 import { useParcoursSelector } from "../../../store/ParcoursContext";
 import User from "../../../../../../src/utils/interfaces/user";
-import { AvatarSmall } from "../../../../../components/UI/avatar/avatar.component";
+import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
 
 // Interface définissant les props du composant
 interface StudentItemProps {
@@ -19,7 +19,9 @@ const StudentItem = (props: StudentItemProps) => {
 
   // Récupération du titre de la formation depuis le store Redux
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formation = useParcoursSelector((state) => state.parcours.formation.title);
+  const formation = useParcoursSelector(
+    (state) => state.parcours.formation.title,
+  );
 
   return (
     <>

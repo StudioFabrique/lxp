@@ -1,5 +1,6 @@
 import User from "../../utils/interfaces/db/user";
 import { getPagination } from "../../utils/services/getPagination";
+import { imageToDataUrl } from "../../utils/images/image-source";
 
 async function getAllUsers(
   page: number,
@@ -18,7 +19,7 @@ async function getAllUsers(
 
   const users = data.map((user) => {
     if (user.avatar) {
-      return { ...user, avatar: user.avatar.toString("base64") };
+      return { ...user, avatar: imageToDataUrl(user.avatar) };
     } else {
       return user;
     }

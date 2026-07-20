@@ -1,5 +1,4 @@
 import toast from "react-hot-toast";
-import imageProfileReplacement from "../../../config/image-profile-replacement";
 import { maxSizeError } from "../../../utils/helpers/max-size-error";
 import {
   ChangeEvent,
@@ -7,9 +6,11 @@ import {
   PropsWithChildren,
   Ref,
   SetStateAction,
+  useEffect,
   useRef,
 } from "react";
 import { EditIcon } from "lucide-react";
+import { AvatarSmall } from "../../avatar/AvatarSmall";
 
 type ProfileImageFileUploadProps = {
   temporaryAvatar: { file: File | null; url: string | null };
@@ -30,6 +31,13 @@ const ProfileImageFileUpload = ({
   children,
 }: PropsWithChildren<ProfileImageFileUploadProps>) => {
   const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
+
+  useEffect(() => {
+    const url = temporaryAvatar.url;
+    return () => {
+      if (url?.startsWith("blob:")) URL.revokeObjectURL(url);
+    };
+  }, [temporaryAvatar.url]);
 
   const onClickChangeAvatar = () => {
     fileUploadRef.current?.click();
@@ -63,24 +71,21 @@ const ProfileImageFileUpload = ({
     <button
       type="button"
       onClick={onClickChangeAvatar}
-      className="btn btn-primary p-0 text-white rounded-full h-[60px] w-[60px] bg-white"
+      className="btn btn-ghost p-0 w-fit h-fit text-white rounded-full bg-white"
     >
       {temporaryAvatar.url || !children ? (
-        <img
-          className="h-[58px] w-[58px] rounded-full border-primary object-contain p-1"
-          src={
-            temporaryAvatar.url
-              ? temporaryAvatar.url
-              : `data:image/jpeg;base64,${
-                  existingAvatar ?? imageProfileReplacement
-                }`
-          }
-          alt="User Avatar"
+        <AvatarSmall
+          user={{
+            firstname: "a",
+            lastname: "a",
+            avatar: temporaryAvatar.url ?? existingAvatar,
+          }}
+          size={10}
         />
       ) : (
         children
       )}
-      <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-full backdrop-blur-[2px] opacity-0 hover:opacity-100">
+      <span className="flex justify-end items-end p-1 absolute rounded-full backdrop-blur-[2px] opacity-0 hover:opacity-100">
         <EditIcon className="text-black stroke-[2px] p-1" />
       </span>
       <input

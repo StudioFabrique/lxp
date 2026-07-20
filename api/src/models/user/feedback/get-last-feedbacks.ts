@@ -2,6 +2,7 @@ import { prisma } from "../../../utils/db";
 import Group from "../../../utils/interfaces/db/group";
 import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
 import User from "../../../utils/interfaces/db/user";
+import { imageToDataUrl } from "../../../utils/images/image-source";
 
 export default async function getLastFeedbacks(
   teacherId: string,
@@ -83,7 +84,7 @@ export default async function getLastFeedbacks(
     feelingLevel: item.feelingLevel,
     feedbackAt: item.feedbackAt,
     comment: item.comment,
-    avatar: item.user.avatar ? item.user.avatar.toString("base64") : null,
+    avatar: imageToDataUrl(item.user.avatar),
     name: `${item.user.firstname} ${item.user.lastname}`,
     hasBeenReviewed: item.hasBeenReviewed,
     studentId: item.user._id,
