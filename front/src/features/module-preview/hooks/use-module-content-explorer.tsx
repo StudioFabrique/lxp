@@ -249,6 +249,43 @@ const useModuleContentExplorer = () => {
     }
   }, []);
 
+  const createCourse = useCallback(
+    async (title: string) => {
+      if (!moduleId || !title.trim()) return false;
+      try {
+        await apiClient.post("/course", { title: title.trim(), moduleId: +moduleId });
+        await fetchModuleData();
+        toast.success("Cours créé");
+        return true;
+      } catch {
+        toast.error("Impossible de créer le cours");
+        return false;
+      }
+    },
+    [fetchModuleData, moduleId],
+  );
+
+  const createLesson = useCallback(
+    async (courseId: number, title: string, tagId: number) => {
+      if (!title.trim() || !tagId) return false;
+      try {
+        await apiClient.put(`/course/new-lesson/${courseId}`, {
+          title: title.trim(),
+          description: "",
+          modalite: "distanciel",
+          tagId,
+        });
+        await fetchModuleData();
+        toast.success("Leçon créée");
+        return true;
+      } catch {
+        toast.error("Impossible de créer la leçon");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
+
   const deleteLesson = useCallback(async (lessonId: number) => {
     try {
       const response = await apiClient.delete(`/lesson/${lessonId}`);
@@ -570,12 +607,14 @@ const useModuleContentExplorer = () => {
       enableCourse,
       publishCourse,
       deleteCourse,
+      createCourse,
     },
     lessonActions: {
       completeLesson,
       rateContent,
       deleteLesson,
       nextLesson,
+      createLesson,
     },
     activityActions: {
       saveActivity,

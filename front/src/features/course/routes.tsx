@@ -18,12 +18,6 @@ export const adminCourseRoutes: RouteObject[] = [
         ),
       },
       {
-        path: "add",
-        element: wrapCourse(
-          withSuspense(lazy(() => import("./views/CourseAdd"))),
-        ),
-      },
-      {
         path: "edit/:courseId",
         element: wrapCourse(
           withSuspense(lazy(() => import("./views/CourseEdit"))),

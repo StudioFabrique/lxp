@@ -7,6 +7,7 @@ import {
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 import { Metadata } from "sharp";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
 
 async function putModuleParcours(
   module: any,
@@ -48,14 +49,17 @@ async function putModuleParcours(
   let updatedParcours: Parcours | null = null;
 
   const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
+  const defaultImage = image
+    ? null
+    : await getUnsplashPresentationImage(newModule.title);
 
   const transaction = await prisma.$transaction(async (tx) => {
     const addModule = await tx.module.create({
       data: {
         title: newModule.title,
         description: newModule.description,
-        image,
-        thumb,
+        image: image ?? defaultImage,
+        thumb: thumb ?? defaultImage,
         author,
         adminId: existingAdmin.id,
         formations: {

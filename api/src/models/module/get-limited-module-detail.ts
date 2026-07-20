@@ -24,6 +24,7 @@ export default async function getLimitedModuleDetail(
           title: true,
           id: true,
           objectives: { select: { id: true, description: true } },
+          tags: { select: { tag: true } },
         },
       },
       bonusSkills: { select: { bonusSkill: true } },
@@ -84,6 +85,7 @@ export default async function getLimitedModuleDetail(
     maxDate: existingModule.maxDate,
     parcours: existingModule.parcours.title,
     parcoursId: existingModule.parcours.id,
+    tags: existingModule.parcours.tags.map((item) => item.tag),
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
     courses: existingModule.courses.map((course) => ({

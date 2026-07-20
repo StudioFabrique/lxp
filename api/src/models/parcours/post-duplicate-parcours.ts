@@ -1,6 +1,7 @@
-import { title } from "process";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { getDuplicateIdentity } from "../../helpers/duplication";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
 
 /**
  * Duplicates an existing learning path (parcours) with all its associated data.
@@ -44,6 +45,7 @@ export default async function postDuplicateParcours(
     select: {
       // Select basic parcours information
       title: true,
+      duplicationIndex: true,
       description: true,
       image: true,
       thumb: true,
@@ -114,6 +116,11 @@ export default async function postDuplicateParcours(
               description: true,
               image: true,
               thumb: true,
+              duplicationIndex: true,
+              quizInstructions: true,
+              author: true,
+              adminId: true,
+              formations: { select: { formationId: true } },
             },
           },
           // Courses within modules
@@ -121,6 +128,7 @@ export default async function postDuplicateParcours(
             select: {
               // Course basic information
               title: true,
+              duplicationIndex: true,
               description: true,
               image: true,
               virtualClass: true,
@@ -158,6 +166,7 @@ export default async function postDuplicateParcours(
                 select: {
                   // Lesson basic information
                   title: true,
+                  duplicationIndex: true,
                   description: true,
                   modalite: true,
                   author: true,
@@ -176,6 +185,7 @@ export default async function postDuplicateParcours(
                   activities: {
                     select: {
                       title: true,
+                      duplicationIndex: true,
                       order: true,
                       type: true,
                       url: true,
@@ -184,6 +194,7 @@ export default async function postDuplicateParcours(
                           id: true,
                         },
                       },
+                      resourceActivities: true,
                     },
                   },
                 },
@@ -218,11 +229,44 @@ export default async function postDuplicateParcours(
     ? `${mongoUser.firstname} ${mongoUser.lastname}`
     : "Utilisateur inconnu";
 
+  const parcoursTitles = await prisma.parcours.findMany({ select: { title: true } });
+  const parcoursIdentity = getDuplicateIdentity(
+    existingParcours,
+    parcoursTitles.map(({ title }) => title),
+  );
+
+  const copiedModules = await Promise.all(
+    existingParcours.modules.map(async (metadata) => ({
+      ...metadata,
+      courses: await Promise.all(metadata.courses.map(async (course) => ({
+        ...course,
+        title: `${course.title} ${course.duplicationIndex + 1}`,
+        duplicationIndex: course.duplicationIndex + 1,
+        lessons: await Promise.all(course.lessons.map(async (lesson) => ({
+          ...lesson,
+          title: `${lesson.title} ${lesson.duplicationIndex + 1}`,
+          duplicationIndex: lesson.duplicationIndex + 1,
+          activities: await Promise.all(lesson.activities.map(async (activity) => ({
+            ...activity,
+            title: `${activity.title ?? "Sans titre"} ${activity.duplicationIndex + 1}`,
+            duplicationIndex: activity.duplicationIndex + 1,
+            url: await duplicateActivityFile(activity.url, activity.type),
+            resourceActivities: await Promise.all(activity.resourceActivities.map(async (resource) => ({
+              ...resource,
+              url: await duplicateActivityFile(resource.url, "resource"),
+            }))),
+          }))),
+        }))),
+      }))),
+    })),
+  );
+
   // Create the new parcours with all its relationships
   const parcours = await prisma.parcours.create({
     data: {
       // Basic parcours information
-      title: existingParcours.title + " (copie)",
+      title: parcoursIdentity.title,
+      duplicationIndex: parcoursIdentity.duplicationIndex,
       description: existingParcours.description,
       image: existingParcours.image ? existingParcours.image : null,
       thumb: existingParcours.thumb ? existingParcours.thumb : null,
@@ -289,7 +333,7 @@ export default async function postDuplicateParcours(
 
       // Create modules with all their nested relationships
       modules: {
-        create: existingParcours.modules.map((module) => ({
+        create: copiedModules.map((module) => ({
           duration: module.duration,
           rating: module.rating,
           admin: {
@@ -298,7 +342,17 @@ export default async function postDuplicateParcours(
             },
           },
           module: {
-            connect: { id: module.module.id },
+            create: {
+              title: `${module.module.title} ${module.module.duplicationIndex + 1}`,
+              duplicationIndex: module.module.duplicationIndex + 1,
+              description: module.module.description,
+              image: module.module.image,
+              thumb: module.module.thumb,
+              quizInstructions: module.module.quizInstructions,
+              author: module.module.author,
+              adminId: module.module.adminId,
+              formations: { create: module.module.formations.map(({ formationId }) => ({ formationId })) },
+            },
           },
           // Module relationships
           bonusSkills: {
@@ -319,6 +373,7 @@ export default async function postDuplicateParcours(
           courses: {
             create: module.courses.map((course) => ({
               title: course.title,
+              duplicationIndex: course.duplicationIndex,
               description: course.description,
               image: course.image ?? undefined,
               virtualClass: course.virtualClass,
@@ -343,6 +398,7 @@ export default async function postDuplicateParcours(
               lessons: {
                 create: course.lessons.map((lesson) => ({
                   title: lesson.title,
+                  duplicationIndex: lesson.duplicationIndex,
                   description: lesson.description,
                   modalite: lesson.modalite,
                   author: lesson.author,
@@ -361,6 +417,7 @@ export default async function postDuplicateParcours(
                   activities: {
                     create: lesson.activities.map((activity) => ({
                       title: activity.title,
+                      duplicationIndex: activity.duplicationIndex,
                       order: activity.order,
                       type: activity.type,
                       url: activity.url,
@@ -368,6 +425,9 @@ export default async function postDuplicateParcours(
                         connect: {
                           id: activity.author.id,
                         },
+                      },
+                      resourceActivities: {
+                        create: activity.resourceActivities.map(({ label, order, url }) => ({ label, order, url })),
                       },
                     })),
                   },

@@ -1,5 +1,6 @@
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
 
 async function createParcours(parcours: any, userId: string) {
   console.log({ userId });
@@ -52,6 +53,7 @@ async function createParcours(parcours: any, userId: string) {
     throw error;
   }
 
+  const defaultImage = await getUnsplashPresentationImage(newParcours.title);
   const storedParcours = await prisma.parcours.create({
     data: {
       ...newParcours,
@@ -61,6 +63,8 @@ async function createParcours(parcours: any, userId: string) {
       formation: {
         connect: { id: +newParcours.formation },
       },
+      image: newParcours.image ?? defaultImage,
+      thumb: newParcours.thumb ?? defaultImage,
     },
   });
 

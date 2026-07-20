@@ -12,10 +12,6 @@ export const adminModuleRoutes: RouteObject[] = [
         element: withSuspense(lazy(() => import("./views/ModuleHome"))),
       },
       {
-        path: "add",
-        element: withSuspense(lazy(() => import("./views/ModuleAdd"))),
-      },
-      {
         path: "import",
         element: withSuspense(lazy(() => import("./views/ModuleImport"))),
       },

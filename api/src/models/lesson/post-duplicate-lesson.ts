@@ -1,6 +1,8 @@
 import { Lesson } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { getDuplicateIdentity } from "../../helpers/duplication";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
 
 export default async function postDuplicateLesson(
   courseId: number,
@@ -20,6 +22,7 @@ export default async function postDuplicateLesson(
       lessons: {
         select: {
           title: true,
+          duplicationIndex: true,
           order: true,
         },
       },
@@ -62,6 +65,7 @@ export default async function postDuplicateLesson(
       where: { id: { in: lessonId } },
       select: {
         title: true,
+        duplicationIndex: true,
         description: true,
         modalite: true,
         tagId: true,
@@ -71,6 +75,8 @@ export default async function postDuplicateLesson(
             type: true,
             order: true,
             url: true,
+            duplicationIndex: true,
+            resourceActivities: true,
           },
           orderBy: { order: "asc" },
         },
@@ -81,26 +87,6 @@ export default async function postDuplicateLesson(
       throw { statusCode: 404, message: "Les leçons n'existent pas" };
     }
 
-    // Vérifier qu'aucune leçon avec ces titres n'existe déjà dans le cours
-    const titlesToCheck = lessonsToCopy.map((lesson) => lesson.title);
-    const conflictingLessons = await tx.lesson.findMany({
-      where: {
-        courseId: courseId,
-        title: { in: titlesToCheck },
-      },
-      select: { title: true },
-    });
-
-    if (conflictingLessons.length > 0) {
-      const conflictingTitles = conflictingLessons
-        .map((l) => l.title)
-        .join(", ");
-      throw {
-        statusCode: 409,
-        message: `Les leçons suivantes existent déjà dans ce cours : ${conflictingTitles}`,
-      };
-    }
-
     // Calculer le prochain ordre disponible
     const maxOrder =
       existingCourse.lessons.length > 0
@@ -109,10 +95,27 @@ export default async function postDuplicateLesson(
 
     // Créer les nouvelles leçons avec leurs activités
     newLessons = await Promise.all(
-      lessonsToCopy.map((lessonData, index) =>
-        tx.lesson.create({
+      lessonsToCopy.map(async (lessonData, index) => {
+        const identity = getDuplicateIdentity(
+          lessonData,
+          existingCourse.lessons.map((lesson) => lesson.title),
+        );
+        const activities = await Promise.all(
+          lessonData.activities.map(async (activity) => ({
+            ...activity,
+            url: await duplicateActivityFile(activity.url, activity.type),
+            resourceActivities: await Promise.all(
+              activity.resourceActivities.map(async (resource) => ({
+                ...resource,
+                url: await duplicateActivityFile(resource.url, "resource"),
+              })),
+            ),
+          })),
+        );
+        return tx.lesson.create({
           data: {
-            title: lessonData.title,
+            title: identity.title,
+            duplicationIndex: identity.duplicationIndex,
             description: lessonData.description,
             modalite: lessonData.modalite,
             author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
@@ -121,12 +124,16 @@ export default async function postDuplicateLesson(
             adminId: prismaAdmin.id,
             courseId: courseId,
             activities: {
-              create: lessonData.activities.map((a) => ({
+              create: activities.map((a) => ({
                 title: a.title,
                 type: a.type,
                 order: a.order,
                 url: a.url,
+                duplicationIndex: a.duplicationIndex,
                 authorId: prismaAdmin.id,
+                resourceActivities: {
+                  create: a.resourceActivities.map(({ label, order, url }) => ({ label, order, url })),
+                },
               })),
             },
           },
@@ -136,8 +143,8 @@ export default async function postDuplicateLesson(
               orderBy: { order: "asc" },
             },
           },
-        })
-      )
+        });
+      }),
     );
   });
 

@@ -240,8 +240,7 @@ const useNewModule = () => {
     if (!isValid) return;
 
     try {
-      const data = await parcoursApi.mutations.updateModule({
-        module: {
+      const updatedModule = {
           id: state.moduleToUpdate,
           ...getValues(),
           contactsIds: state.currentContacts
@@ -250,8 +249,11 @@ const useNewModule = () => {
           bonusSkillsIds: state.currentSkills
             ? state.currentSkills.map((item) => item.id)
             : [],
-        },
-      });
+      };
+      const formData = new FormData();
+      formData.append("module", JSON.stringify(updatedModule));
+      if (state.file) formData.append("image", state.file);
+      const data = await parcoursApi.mutations.updateModule(formData);
       if (data.success) {
         dispatch({
           type: "SUCCESSFUL_MODULE_UPDATE",
@@ -260,6 +262,9 @@ const useNewModule = () => {
             contacts: data.response.contacts,
             skills: data.response.skills,
             duration: data.response.duration ? +data.response.duration : 0,
+            title: data.response.title,
+            description: data.response.description,
+            quizInstructions: data.response.quizInstructions,
           },
         });
         toast.success(data.message);

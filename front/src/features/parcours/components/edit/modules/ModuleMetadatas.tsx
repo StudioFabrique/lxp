@@ -10,7 +10,6 @@ import FormUploadImage from "../../../../../components/UI/form-upload-image";
 
 type Props = {
   children?: React.ReactNode;
-  mode: "create" | "edit";
   thumb: string | null;
   register: UseFormRegister<any>;
   errors: FieldErrors;
@@ -21,7 +20,6 @@ type Props = {
 function ModuleMetadatas({
   register,
   errors,
-  mode,
   thumb,
   onSetFile,
   children,
@@ -56,7 +54,6 @@ function ModuleMetadatas({
             placeholder="Ex : Javascript"
             register={register}
             error={errors.title as any}
-            disabled={mode === "edit"}
           />
         </div>
 
@@ -65,7 +62,6 @@ function ModuleMetadatas({
           name="description"
           register={register}
           error={errors.description as any}
-          disabled={mode === "edit"}
         />
 
         <div className="flex flex-col gap-2">
@@ -74,7 +70,6 @@ function ModuleMetadatas({
             name="quizInstructions"
             register={register}
             error={errors.quizInstructions as any}
-            disabled={mode === "edit"}
           />
           <p className="text-base-content/40 text-xs">
             Exemple : Questionnaire diagnostique en français, ton clair et
@@ -89,7 +84,6 @@ function ModuleMetadatas({
         <div className="w-full h-full flex gap-x-4 items-center">
           <FormUploadImage
             onSetFile={handleFileChange}
-            isDisabled={mode === "edit"}
           />
           <span style={classImage} />
         </div>

@@ -1,4 +1,6 @@
 import { prisma } from "../../utils/db";
+import { getDuplicateIdentity } from "../../helpers/duplication";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
 
 /**
  * Duplicates a module metadata instance to a new parcours with all its nested content
@@ -85,6 +87,9 @@ export default async function postDuplicateModule(
           description: true,
           image: true, // Full-size image as Buffer
           thumb: true, // Thumbnail as Buffer
+          duplicationIndex: true,
+          quizInstructions: true,
+          formations: { select: { formationId: true } },
         },
       },
       // Courses within this module (will be deep copied)
@@ -92,6 +97,7 @@ export default async function postDuplicateModule(
         select: {
           // Course basic information
           title: true,
+          duplicationIndex: true,
           description: true,
           image: true, // Course image
           virtualClass: true, // Virtual classroom link
@@ -131,6 +137,7 @@ export default async function postDuplicateModule(
             select: {
               // Lesson basic information
               title: true,
+              duplicationIndex: true,
               description: true,
               modalite: true, // Learning modality (synchronous/asynchronous)
               author: true, // Author name
@@ -149,6 +156,7 @@ export default async function postDuplicateModule(
               activities: {
                 select: {
                   title: true,
+                  duplicationIndex: true,
                   order: true, // Display order within lesson
                   type: true, // Activity type (video, quiz, reading, etc.)
                   url: true, // Link to activity content
@@ -157,6 +165,7 @@ export default async function postDuplicateModule(
                       id: true, // Author of the activity
                     },
                   },
+                  resourceActivities: true,
                 },
               },
             },
@@ -169,6 +178,56 @@ export default async function postDuplicateModule(
   // Guard clause: ensure module metadata exists
   if (!existingModuleMetadata)
     throw { status: 404, message: "Module metadata not found" };
+
+  const allModuleTitles = await prisma.module.findMany({ select: { title: true } });
+  const moduleIdentity = getDuplicateIdentity(
+    existingModuleMetadata.module,
+    allModuleTitles.map(({ title }) => title),
+  );
+  const duplicatedBaseModule = await prisma.module.create({
+    data: {
+      title: moduleIdentity.title,
+      duplicationIndex: moduleIdentity.duplicationIndex,
+      description: existingModuleMetadata.module.description,
+      image: existingModuleMetadata.module.image,
+      thumb: existingModuleMetadata.module.thumb,
+      quizInstructions: existingModuleMetadata.module.quizInstructions,
+      author: existingAdmin.id.toString(),
+      adminId: existingAdmin.id,
+      formations: {
+        create: existingModuleMetadata.module.formations.map(({ formationId }) => ({ formationId })),
+      },
+    },
+  });
+
+  const duplicatedCourses = await Promise.all(
+    existingModuleMetadata.courses.map(async (course) => ({
+      ...course,
+      title: `${course.title} ${course.duplicationIndex + 1}`,
+      duplicationIndex: course.duplicationIndex + 1,
+      lessons: await Promise.all(
+        course.lessons.map(async (lesson) => ({
+          ...lesson,
+          title: `${lesson.title} ${lesson.duplicationIndex + 1}`,
+          duplicationIndex: lesson.duplicationIndex + 1,
+          activities: await Promise.all(
+            lesson.activities.map(async (activity) => ({
+              ...activity,
+              title: `${activity.title ?? "Sans titre"} ${activity.duplicationIndex + 1}`,
+              duplicationIndex: activity.duplicationIndex + 1,
+              url: await duplicateActivityFile(activity.url, activity.type),
+              resourceActivities: await Promise.all(
+                activity.resourceActivities.map(async (resource) => ({
+                  ...resource,
+                  url: await duplicateActivityFile(resource.url, "resource"),
+                })),
+              ),
+            })),
+          ),
+        })),
+      ),
+    })),
+  );
 
   // Create the duplicated module metadata with all nested content
   // This is a single transaction that creates:
@@ -183,7 +242,7 @@ export default async function postDuplicateModule(
       duration: existingModuleMetadata.duration ?? 0,
       // Link to the same base Module (not duplicating the Module itself)
       module: {
-        connect: { id: existingModuleMetadata.module.id },
+        connect: { id: duplicatedBaseModule.id },
       },
       // Link to the current user's admin record (not the original admin)
       admin: {
@@ -209,9 +268,10 @@ export default async function postDuplicateModule(
       },
       // Deep copy all courses and their nested content
       courses: {
-        create: existingModuleMetadata.courses.map((course) => ({
+        create: duplicatedCourses.map((course) => ({
           // Copy course properties
           title: course.title,
+          duplicationIndex: course.duplicationIndex,
           description: course.description,
           admin: { connect: { id: existingAdmin.id } }, // Use current admin
           order: course.order,
@@ -231,6 +291,7 @@ export default async function postDuplicateModule(
             create: course.lessons.map((lesson) => ({
               // Copy lesson properties
               title: lesson.title,
+              duplicationIndex: lesson.duplicationIndex,
               description: lesson.description,
               modalite: lesson.modalite,
               order: lesson.order,
@@ -245,10 +306,14 @@ export default async function postDuplicateModule(
                 create: lesson.activities.map((activity) => ({
                   // Copy activity properties
                   title: activity.title,
+                  duplicationIndex: activity.duplicationIndex,
                   order: activity.order,
                   type: activity.type,
                   url: activity.url,
                   author: { connect: { id: existingAdmin.id } }, // Use current admin
+                  resourceActivities: {
+                    create: activity.resourceActivities.map(({ label, order, url }) => ({ label, order, url })),
+                  },
                 })),
               },
             })),
@@ -280,7 +345,7 @@ export default async function postDuplicateModule(
   // Note: Could add a select clause here to return specific fields if needed
   return {
     id: duplicatedModuleMetadata.id,
-    title: existingModuleMetadata.module.title,
+    title: moduleIdentity.title,
     thumb: existingModuleMetadata.module.image
       ? Buffer.from(existingModuleMetadata.module.image as any).toString(
           "base64"

@@ -249,7 +249,7 @@ const mutations = {
     const res = await apiClient.post(`/modules/duplicate/${id}`, data);
     return res.data;
   },
-  updateModule: async (data: { module: Record<string, unknown> }) => {
+  updateModule: async (data: FormData) => {
     const res = await apiClient.put("/modules/new-module/update/", data);
     return res.data;
   },
