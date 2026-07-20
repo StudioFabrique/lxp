@@ -8,6 +8,7 @@ import TeacherLastParcours from "../components/teacher-last-parcours";
 import LastParcours from "../components/last-parcours";
 import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
+import LastModules from "../components/last-modules";
 
 // Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [
@@ -89,6 +90,7 @@ const AdminDashboard = () => {
               <TeacherLastParcours parcours={parcours} isLoading={isLoading} />
             ) : null}
             <LastParcours />
+            <LastModules />
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">

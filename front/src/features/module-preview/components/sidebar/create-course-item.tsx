@@ -10,7 +10,11 @@ type CreateCourseItemProps = {
   onCreate: (title: string) => Promise<boolean>;
 };
 
-const CreateCourseItem = ({ parcoursId, moduleId, onCreate }: CreateCourseItemProps) => {
+const CreateCourseItem = ({
+  parcoursId,
+  moduleId,
+  onCreate,
+}: CreateCourseItemProps) => {
   const [title, setTitle] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -85,15 +89,17 @@ const CreateCourseItem = ({ parcoursId, moduleId, onCreate }: CreateCourseItemPr
                     onKeyDown={handleKeyDown}
                     className="input input-sm input-bordered w-full max-h-10 text-base font-semibold"
                   />
-                  <button
-                    ref={buttonRef}
-                    onClick={handleCreate}
-                    disabled={!title.trim()}
-                    className="btn btn-primary btn-sm tooltip tooltip-right"
-                    data-tip="Valider"
-                  >
-                    <Check className="stroke-base-100 w-5 h-5" />
-                  </button>
+                  {title.length > 0 && (
+                    <button
+                      ref={buttonRef}
+                      onClick={handleCreate}
+                      disabled={!title.trim()}
+                      className="btn btn-primary btn-sm tooltip tooltip-right"
+                      data-tip="Valider"
+                    >
+                      <Check className="stroke-base-100 w-5 h-5" />
+                    </button>
+                  )}
                 </span>
                 <span className="text-sm font-light italic text-base-100">
                   Le cours sera ajouté directement à ce module.

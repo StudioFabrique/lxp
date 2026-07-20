@@ -4,13 +4,11 @@ import ModuleCard from "./module-card";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardListProp {
-  stepId: number;
   modulesList: any[];
   onDelete: (id: number) => void;
 }
 
 const ModuleCardList = ({
-  stepId,
   modulesList,
   onDelete,
 }: ModuleCardListProp) => {
@@ -20,7 +18,7 @@ const ModuleCardList = ({
         <CardListItem>
           {modulesList.map((item) => (
             <li key={item.id}>
-              <ModuleCard stepId={stepId} module={item} onDelete={onDelete} />
+              <ModuleCard module={item} onDelete={onDelete} />
             </li>
           ))}
         </CardListItem>
