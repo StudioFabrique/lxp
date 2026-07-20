@@ -9,7 +9,7 @@ import FormNumberInput from "../../../../../components/form/FormNumberInput";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
-  refForm: RefObject<HTMLFormElement>;
+  refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<any>;
   errors: FieldErrors;
   image: string | null;

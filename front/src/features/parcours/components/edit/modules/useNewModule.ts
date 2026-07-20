@@ -45,8 +45,8 @@ const useNewModule = () => {
       dispatch({ type: "SET_PARCOURS", payload: data.parcoursData });
     } catch (err: unknown) {
       const message =
-        (err as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message ?? "Erreur inconnue";
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Erreur inconnue";
       setError(message);
     } finally {
       setIsLoading(false);
@@ -99,11 +99,14 @@ const useNewModule = () => {
   const handleDeleteModule = async () => {
     try {
       const data: SuccessWithMessage = await parcoursApi.mutations.deleteModule(
-        state.moduleToDelete!.id
+        state.moduleToDelete!.id,
       );
       dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       dispatch({ type: "CLOSE_DELETE_MODAL" });
-      reduxDispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
+      reduxDispatch({
+        type: "REMOVE_MODULE",
+        payload: state.moduleToDelete!.id,
+      });
       toast.success(data.message);
     } catch {
       toast.error("Erreur lors de la suppression du module");
@@ -128,7 +131,7 @@ const useNewModule = () => {
     try {
       const data: MetadataList[] =
         await parcoursApi.queries.getModulesByFormation(
-          state.parcours!.formationId
+          state.parcours!.formationId,
         );
       dispatch({ type: "SET_METADATA_LIST", payload: data });
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
@@ -267,15 +270,6 @@ const useNewModule = () => {
   }, [getParcoursModules]);
 
   useEffect(() => {
-    const modal = document.getElementById("delete_module_modal");
-    if (state.moduleToDelete) {
-      (modal as HTMLDialogElement).showModal();
-    } else {
-      (modal as HTMLDialogElement).close();
-    }
-  }, [state.moduleToDelete]);
-
-  useEffect(() => {
     if (state.showForm && refForm.current) {
       refForm.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -319,6 +313,7 @@ const useNewModule = () => {
     setShowForm: (show: boolean) =>
       dispatch({ type: "SET_SHOW_FORM", payload: show }),
     showDeleteModal,
+    moduleToDelete: state.moduleToDelete,
     handleDeleteModule,
     handleCancelDeletion,
     handleDuplicateModule,

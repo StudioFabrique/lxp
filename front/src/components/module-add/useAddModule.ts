@@ -424,21 +424,7 @@ const useNewModule = () => {
    */
   const toggleModal = useCallback(() => {
     dispatch({ type: "TOGGLE_MODAL" });
-
-    // Get modal element from DOM (DaisyUI modal element)
-    const modal = document.getElementById(
-      "back_to_module_list_modal",
-    ) as HTMLDialogElement | null;
-
-    if (!modal) return;
-
-    // Control modal visibility using DaisyUI API
-    if (state.showModal) {
-      modal.close();
-    } else {
-      modal.showModal();
-    }
-  }, [state.showModal]);
+  }, []);
 
   /**
    * Initialize: Fetch formations on component mount
@@ -474,6 +460,7 @@ const useNewModule = () => {
     handleBackToModuleList,
     setImageBase64,
     toggleModal,
+    showModal: state.showModal,
   };
 };
 
