@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector } from "../../../store/ParcoursContext";
-
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Group from "../../../../../../src/utils/interfaces/group";
 import User from "../../../../../../src/utils/interfaces/user";
@@ -11,12 +8,11 @@ import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 interface ParcoursPreviewStudentProps {
   onEdit: (id: number) => void;
   students: User[];
+  groups: Group[];
 }
 
 const ParcoursPreviewStudent = (props: ParcoursPreviewStudentProps) => {
-  const groups = useParcoursSelector(
-    (state) => state.parcoursGroups.groups
-  ) as Group[];
+  const groups = props.groups;
   const { list, fieldSort, sortData, direction } = useEagerLoadingList(
     props.students,
     "lastname",

@@ -1,4 +1,3 @@
-import { useParcoursSelector } from "../../../store/ParcoursContext";
 import toast from "react-hot-toast";
 
 import ParcoursPreviewInfos from "./parcours-preview-infos.component";
@@ -9,12 +8,12 @@ import PreviewSkills from "../../../../../../src/components/preview/preview-skil
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
 import { useMemo } from "react";
-import Group from "../../../../../../src/utils/interfaces/group";
 import { parcoursApi } from "../../../api/parcours.api";
 import FloatingBottomNavigation from "../../../../../components/buttons/FloatingBottomNavigation";
 import { useParcoursStudentsQuery } from "../../../hooks/useParcoursStudentsQuery";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
+import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
 
 
 interface ParcoursPreviewProps {
@@ -29,9 +28,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const { skills } = useParcoursSkills(parcoursId);
   const { validateParcours } = useValidateParcours();
   const nav = useNavigate();
-  const groups = useParcoursSelector(
-    (state) => state.parcoursGroups.groups,
-  ) as Group[];
+  const { data: groups = [] } = useParcoursGroupsQuery(parcoursId);
   const groupIds = useMemo(
     () =>
       (groups?.map((group) => group._id).filter(Boolean) as string[]) ?? [],
@@ -81,7 +78,11 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
       {/* étudiants rattachés au parcours */}
       <section>
         {students ? (
-          <ParcoursPreviewStudent onEdit={props.onEdit} students={students} />
+          <ParcoursPreviewStudent
+            onEdit={props.onEdit}
+            students={students}
+            groups={groups}
+          />
         ) : null}
       </section>
       <FloatingBottomNavigation

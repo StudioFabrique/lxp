@@ -1,5 +1,4 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { useParcoursDispatch } from "../../../../store/ParcoursContext";
 import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
 import Badge from "../../../../interfaces/badge";
@@ -16,7 +15,6 @@ type Props = {
 const ImportBadges: FC<Props> = ({ onSubmit }) => {
   const fileSelectRef = useRef<any>(null);
   const [selectedFiles, setSelectedFiles] = useState<any>(null);
-  const dispatch = useParcoursDispatch();
 
   const handleLabelClick = () => {
     fileSelectRef.current.click();
@@ -52,7 +50,7 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
 
       setSelectedFiles(null);
     }
-  }, [selectedFiles, dispatch, onSubmit]);
+  }, [selectedFiles, onSubmit]);
 
   return (
     <>

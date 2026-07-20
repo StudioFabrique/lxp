@@ -1,18 +1,14 @@
 import { stepsParcours } from "../../../config/steps/steps-parcours";
 import { testModules } from "../helpers/parcours-steps-validation";
 import useSteps from "../../../hooks/useSteps";
-import useParcoursService from "../hooks/useParcoursServices";
 import { parcoursApi } from "../api/parcours.api";
 import { normalizeImageSource } from "../../../utils/images/image-source";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router";
-import {
-  useParcoursSelector,
-  useParcoursDispatch,
-} from "../store/ParcoursContext";
 import Step from "../../../utils/interfaces/step";
 import { useParcoursQuery } from "./useParcoursQuery";
 import type Objective from "../../../utils/interfaces/objective";
+import { useParcoursModules } from "./useParcoursModules";
 
 type ImportedSkill = Record<string, unknown> & { description: string };
 
@@ -20,13 +16,11 @@ export function useParcoursEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const dispatch = useParcoursDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsParcours as Step[]);
   const parcoursId = id !== undefined ? +id : undefined;
   const { data: parcours, isLoading, error: queryError } =
     useParcoursQuery(parcoursId);
-  useParcoursService(parcoursId);
   const infos = parcours;
   const formation = parcours?.formation;
   const image = normalizeImageSource(parcours?.image) ?? "";
@@ -34,7 +28,7 @@ export function useParcoursEdit() {
     ? ((queryError as { response?: { data?: { message?: string } } })?.response
         ?.data?.message ?? "Erreur inconnue")
     : "";
-  const modules = useParcoursSelector((state) => state.parcoursModules.modules);
+  const { modules } = useParcoursModules(parcoursId ?? 0);
   const checkStep = useRef(true);
   const [importedSkills, setImportedSkills] = useState<ImportedSkill[]>([]);
   const [importedObjectives, setImportedObjectives] = useState<Objective[]>([]);
@@ -47,13 +41,6 @@ export function useParcoursEdit() {
       checkStep.current = false;
     }
   }, [step, updateStep]);
-
-  useEffect(() => {
-    return () => {
-      dispatch({ type: "RESET_MODULES" });
-      dispatch({ type: "RESET_GROUPS" });
-    };
-  }, [dispatch]);
 
   const updateImage = useCallback(
     (image: File) => {
