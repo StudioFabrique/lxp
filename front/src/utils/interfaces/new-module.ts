@@ -13,14 +13,6 @@ export type ModuleData = {
   skills: Skill[]; // Associated bonus skills
 };
 
-// Type definition for parcours (learning path) with associated resources
-export type Parcours = {
-  id: number;
-  formationId: number;
-  contacts: Contact[]; // Available instructors/contacts for the parcours
-  bonusSkills: Skill[]; // Available bonus skills that can be earned
-};
-
 export type Metadatas = {
   id: number;
   bonusSkills: Skill[];

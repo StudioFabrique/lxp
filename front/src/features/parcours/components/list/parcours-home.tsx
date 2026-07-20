@@ -6,7 +6,7 @@ import Pagination from "../../../../components/UI/pagination/pagination";
 import ParcoursCardsList from "./parcours-cards-list";
 import ToggleList from "../../../../components/UI/toggle-list";
 import { useState } from "react";
-import { searchListParcours } from "../../../../utils/helpers/search-list-parcours";
+import { createSearchFilter } from "../../../../utils/helpers/search-filter";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
@@ -52,8 +52,14 @@ const ParcoursList = (props: ParcoursListProps) => {
     },
   });
 
+  const parcoursFieldMap: Record<string, { field: string; property: string; value: string }> = {
+    formation: { field: "formation", property: "title", value: "" },
+    level: { field: "formation", property: "level", value: "" },
+    author: { field: "author", property: "", value: "" },
+  };
+
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    const filters = searchListParcours(entityToSearch, searchValue);
+    const filters = createSearchFilter(parcoursFieldMap, entityToSearch, searchValue);
     getFilteredList(filters);
   };
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Activity } from "../../../src/utils/interfaces/activity";
-import { getActivityIcon } from "../../../src/utils/helpers/getActivityIcon";
+import activityIconType from "../../../src/utils/helpers/activity-icon-type";
 import { localeDate } from "../../utils/helpers/locale-date";
 import PermissionGuard from "../../components/guards/PermissionGuard";
 
@@ -27,13 +27,8 @@ export default function ActivityWrapper(props: Props) {
           </PermissionGuard>
           <span className="border border-primary/50 flex justify-between p-2 rounded-lg w-full items-center">
             <div className="flex gap-x-4 items-center">
-              {getActivityIcon(
-                props.activity.type as
-                  | "iframe"
-                  | "video"
-                  | "image"
-                  | "text"
-                  | "resource",
+              {activityIconType(
+                props.activity.type,
                 6,
               )}
               <h2>{props.activity?.title}</h2>

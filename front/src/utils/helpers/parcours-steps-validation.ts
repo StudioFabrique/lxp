@@ -56,7 +56,7 @@ const testGroups = (groups: Array<Group>) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function testStep(data: any) {
+export function testParcoursStep(data: any) {
   const validationErrors = Array<any>();
 
   if (!testTitle(data.infos.title)) {

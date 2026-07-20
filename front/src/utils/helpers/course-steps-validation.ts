@@ -23,7 +23,7 @@ const testLessons = (lessons: Lesson[]) => {
   return lessons && lessons.length > 0;
 };
 
-export function testStep(data: Record<string, unknown>) {
+export function testCourseStep(data: Record<string, unknown>) {
   const validationErrors = Array<Record<string, string>>();
 
   if (!testTitle(data.title as string)) {
