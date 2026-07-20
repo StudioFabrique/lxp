@@ -115,9 +115,6 @@ export default function CreateLessonModal({
           <label className="flex flex-col gap-2">
             <span className="flex items-center gap-2 font-semibold">
               Description
-              <span className="font-normal text-base-content/50">
-                (facultative)
-              </span>
             </span>
             <textarea
               className="textarea textarea-bordered min-h-24"
