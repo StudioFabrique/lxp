@@ -43,6 +43,7 @@ export default function ModuleComponent() {
     metadataList,
     mode,
     moduleToDuplicate,
+    moduleToDelete,
     modules,
     parcours,
     refForm,
@@ -111,18 +112,20 @@ export default function ModuleComponent() {
       </div>
 
       {/* Deletion confirmation modal */}
-      <Modal
-        title="Suppression du module"
-        leftLabel="Annuler"
-        rightLabel="Supprimer"
-        onRightClick={handleDeleteModule}
-        onLeftClick={handleCancelDeletion}
-      >
-        <>
-          <p>Êtes-vous sûr de vouloir supprimer ce module ?</p>
-          <p>Cette action est irréversible...</p>
-        </>
-      </Modal>
+      {moduleToDelete ? (
+        <Modal
+          title="Suppression du module"
+          leftLabel="Annuler"
+          rightLabel="Supprimer"
+          onRightClick={handleDeleteModule}
+          onLeftClick={handleCancelDeletion}
+        >
+          <>
+            <p>Êtes-vous sûr de vouloir supprimer ce module ?</p>
+            <p>Cette action est irréversible...</p>
+          </>
+        </Modal>
+      ) : null}
 
       {/* Duplicate warning modal */}
       <DuplicateModuleModal

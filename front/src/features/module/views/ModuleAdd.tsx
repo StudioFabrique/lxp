@@ -39,6 +39,7 @@ export default function ModuleAdd() {
     skills,
     toggleModal,
     toggleShowMetadataForm,
+    showModal,
   } = useNewModule();
 
   const classImage: React.CSSProperties = {
@@ -138,18 +139,20 @@ export default function ModuleAdd() {
           </div>
         </Wrapper>
       </section>
-      <Modal
-        title="Retour à la liste des modules"
-        leftLabel="Fermer"
-        rightLabel="Continuer"
-        onRightClick={handleBackToModuleList}
-        onLeftClick={toggleModal}
-      >
-        <p>
-          Êtes-vous sûr de vouloir revenir à la liste des modules ? Les
-          modifications non enregistrées seront perdues.
-        </p>
-      </Modal>
+      {showModal ? (
+        <Modal
+          title="Retour à la liste des modules"
+          leftLabel="Fermer"
+          rightLabel="Continuer"
+          onRightClick={handleBackToModuleList}
+          onLeftClick={toggleModal}
+        >
+          <p>
+            Êtes-vous sûr de vouloir revenir à la liste des modules ? Les
+            modifications non enregistrées seront perdues.
+          </p>
+        </Modal>
+      ) : null}
     </main>
   );
 }
