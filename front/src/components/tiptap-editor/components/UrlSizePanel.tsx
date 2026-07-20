@@ -1,11 +1,8 @@
-import { Surface } from "../ui/Surface";
-import { Button } from "../ui/Button";
-import { Icon } from "../ui/Icon";
-import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
-import {
-  useUrlEditorState,
-  type UrlEditorSize,
-} from "./useUrlEditorState";
+import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
+import { Button } from "./ui/Button";
+import { Icon } from "./ui/Icon";
+import { Surface } from "./ui/Surface";
+import { useUrlEditorState, type UrlEditorSize } from "./useUrlEditorState";
 
 export type UrlSizePanelProps = {
   initialUrl?: string;

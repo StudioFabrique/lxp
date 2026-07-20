@@ -1,6 +1,6 @@
-import CardListItem from "../../UI/card-list-item";
-import ElementNotFound from "../../UI/element-not-found";
 import { ReactNode } from "react";
+import CardListItem from "./card-list-item";
+import ElementNotFound from "./element-not-found";
 
 export type EntityCardsListProps<T> = {
   items: T[];

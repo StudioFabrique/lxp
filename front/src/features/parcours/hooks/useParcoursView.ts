@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import {
   useParcoursSelector,
   useParcoursDispatch,
 } from "../store/ParcoursContext";
 import { parcoursApi } from "../api/parcours.api";
+import { scrollToTop } from "../../../utils/helpers/scroll-to-top";
 
 export default function useParcoursView() {
   const { id } = useParams();
@@ -25,7 +27,7 @@ export default function useParcoursView() {
   );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    scrollToTop();
   }, []);
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function useParcoursView() {
         dispatch({ type: "SET_PARCOURS_FORMATION", payload: data.formation as any });
 
         if (data.image) {
-          setImage(`data:image/jpeg;base64,${data.image}`);
+          setImage(normalizeImageSource(data.image) ?? "");
         }
         if (data.tags.length > 0) {
           dispatch({

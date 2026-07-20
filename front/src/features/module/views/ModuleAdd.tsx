@@ -9,7 +9,7 @@ import AssociateToParcours from "../../../components/module-add/AssociateToParco
 import ButtonButton from "../../../components/module-add/ButtonButton";
 import useNewModule from "../../../components/module-add/useAddModule";
 import { bgImageGradient } from "../../../../src/utils/helpers/color-helpers";
-import TwoButtonsModal from "../../../components/UI/modal/two-buttons-modal";
+import Modal from "../../../components/UI/modal/modal";
 
 export default function ModuleAdd() {
   const {
@@ -138,19 +138,18 @@ export default function ModuleAdd() {
           </div>
         </Wrapper>
       </section>
-      <TwoButtonsModal
-        id="back_to_module_list_modal"
+      <Modal
         title="Retour à la liste des modules"
         leftLabel="Fermer"
         rightLabel="Continuer"
-        onRightButtonClick={handleBackToModuleList}
-        onLeftButtonClick={toggleModal}
+        onRightClick={handleBackToModuleList}
+        onLeftClick={toggleModal}
       >
         <p>
           Êtes-vous sûr de vouloir revenir à la liste des modules ? Les
           modifications non enregistrées seront perdues.
         </p>
-      </TwoButtonsModal>
+      </Modal>
     </main>
   );
 }

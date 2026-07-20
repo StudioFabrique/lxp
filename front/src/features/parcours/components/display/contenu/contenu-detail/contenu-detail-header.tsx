@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
+import { normalizeImageSource } from "../../../../../utils/images/image-source";
 import defaultImage from "../../../../../../assets/images/module-default.jpg";
 import { bgImageGradient } from "../../../../../../utils/helpers/color-helpers";
 
@@ -9,8 +10,7 @@ const ContenuDetailHeader: FC<{
 }> = ({ imageModuleHeader, title }) => {
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      imageModuleHeader
-        ? `data:image/jpeg;base64,${imageModuleHeader}`
+      normalizeImageSource(imageModuleHeader)
         : defaultImage,
     ),
     width: "100%",

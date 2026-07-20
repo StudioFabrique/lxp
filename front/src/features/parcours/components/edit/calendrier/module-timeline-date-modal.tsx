@@ -2,6 +2,8 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useParcoursDispatch, useParcoursSelector } from "../../../store/ParcoursContext";
 import toast from "react-hot-toast";
 
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
+import { formatDateToYYYYMMDD } from "../../../../../../src/utils/helpers/convert-date";
 import DatePicker from "./date-picker";
 import { parcoursApi } from "../../../api/parcours.api";
 
@@ -36,12 +38,12 @@ const ModuleTimelineDateModal = ({
   const setInitDates = useCallback(() => {
     if (currentModule) {
       setDatesModule({
-        minDate: new Date(currentModule.minDate || datesParcours.startDate)
-          .toISOString()
-          .split("T")[0],
-        maxDate: new Date(currentModule.maxDate || datesParcours.startDate)
-          .toISOString()
-          .split("T")[0],
+        minDate: formatDateToYYYYMMDD(
+          new Date(currentModule.minDate || datesParcours.startDate),
+        ),
+        maxDate: formatDateToYYYYMMDD(
+          new Date(currentModule.maxDate || datesParcours.startDate),
+        ),
       });
     }
   }, [currentModule, datesParcours.startDate]);
@@ -121,7 +123,7 @@ const ModuleTimelineDateModal = ({
           {currentModule.thumb && (
             <figure className="h-48 w-full relative overflow-hidden bg-gray-100">
               <img
-                src={`data:image/jpeg;base64,${currentModule.thumb}`}
+                src={normalizeImageSource(currentModule.thumb)}
                 alt={currentModule.title}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
               />

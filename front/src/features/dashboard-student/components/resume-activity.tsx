@@ -6,6 +6,7 @@ import {
   PlayCircleIcon,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/images/module-default.jpg";
@@ -29,7 +30,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   });
 
   const image = imageBlob
-    ? `data:image/jpeg;base64,${imageBlob}`
+    ? normalizeImageSource(imageBlob)
     : defaultImage;
 
   return (
