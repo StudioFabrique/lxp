@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { regexGeneric } from "../../../../config/constantes";
-import { setInputStyle } from "../../../../utils/helpers/formClasses";
+import { setInputStyle } from "../../helpers/formClasses";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { roleApi } from "../../api/role.api";

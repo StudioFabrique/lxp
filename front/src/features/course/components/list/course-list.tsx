@@ -13,7 +13,7 @@ import CourseTable from "./course-table";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
-import useDeleteCourse from "../../../../../src/hooks/useDeleteCourse";
+import useDeleteCourse from "../../hooks/useDeleteCourse";
 import Modal from "../../../../components/UI/modal/modal";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";

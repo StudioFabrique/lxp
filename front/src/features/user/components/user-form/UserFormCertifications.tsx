@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import Graduation from "../../../../utils/interfaces/graduation";
+import Graduation from "../../interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 

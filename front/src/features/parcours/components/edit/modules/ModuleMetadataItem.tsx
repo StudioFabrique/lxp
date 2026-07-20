@@ -1,5 +1,5 @@
 import { Copy } from "lucide-react";
-import { Metadatas } from "../../../../../../src/utils/interfaces/new-module";
+import { Metadatas } from "../../../interfaces/new-module";
 
 type ModuleMetadataItemProps = {
   metadata: Metadatas;

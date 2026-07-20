@@ -7,29 +7,17 @@ import { cleanPath } from "../../../utils/zip-utils";
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
-import { Activity } from "../../../utils/interfaces/activity";
 import Parcours from "../../../utils/interfaces/parcours";
 import Tag from "../../../utils/interfaces/tag";
 import Formation from "../../../utils/interfaces/formation";
 import { BASE_URL } from "../../../config/urls";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
+import { ActivityImport, QueuedImage } from "../../../utils/interfaces/import-types";
 
 export enum ModulesImportStep {
   ZipImport,
   ParcoursSelection,
   ImportResult,
-}
-
-export type ActivityImport = Activity & {
-  value?: string | Blob;
-  hasError?: boolean;
-};
-
-export interface QueuedImage {
-  file: File;
-  blobUrl: string;
-  size: "small" | "medium" | "large";
-  tempId: string;
 }
 
 type JsonFileFormat = {

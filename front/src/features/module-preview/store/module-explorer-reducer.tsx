@@ -3,7 +3,7 @@ import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
-import LessonRating from "../../../utils/interfaces/lesson-rating";
+import LessonRating from "../interfaces/lesson-rating";
 
 // Identifiant de clé pour stocker la valeur permettant de savoir si le panneau latéral a été fermé par l'utilisateur
 const STORAGE_KEY = "lessons-preview-panel-closed";

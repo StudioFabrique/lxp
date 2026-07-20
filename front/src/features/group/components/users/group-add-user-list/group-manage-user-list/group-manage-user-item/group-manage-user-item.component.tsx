@@ -1,0 +1,78 @@
+import { FC, useEffect, useState } from "react";
+import User from "../../../../../../../utils/interfaces/user";
+import { AvatarSmall } from "../../../../../../../components/avatar/AvatarSmall";
+import { toTitleCase } from "../../../../../../../utils/helpers/text-helpers";
+import { SelectionButton } from "./buttons.component";
+import { AddIcon2 } from "../../../../../../../components/UI/svg/add-icons";
+
+const GroupManageUserItem: FC<{
+  user: User;
+  verificationAttribute?: "id" | "email";
+  allUserSelected: boolean;
+  usersToAdd: User[];
+  onAddSelectedUser: (user: User) => void;
+  onDeleteSelectedUser: (user: User) => void;
+  onAddUserInstantly?: (user: User) => void;
+  forceEnableCheckbox?: boolean;
+}> = ({
+  user,
+  verificationAttribute = "id",
+  allUserSelected,
+  usersToAdd,
+  onAddSelectedUser,
+  onDeleteSelectedUser,
+  onAddUserInstantly,
+}) => {
+  const [disabled, setDisabled] = useState(false);
+
+  const handleAddUserInstantly = () => {
+    onAddUserInstantly && onAddUserInstantly(user);
+  };
+
+  useEffect(() => {
+    if (
+      usersToAdd.filter((item) =>
+        verificationAttribute === "id"
+          ? item._id === user._id
+          : item.email === user.email,
+      ).length > 0
+    ) {
+      setDisabled(true);
+      onDeleteSelectedUser(user);
+    } else setDisabled(false);
+  }, [user, usersToAdd, verificationAttribute, onDeleteSelectedUser]);
+
+  return (
+    <div className="flex justify-between items-center gap-x-2">
+      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary/10 rounded-lg">
+        {disabled ? (
+          <input type="checkbox" className="checkbox" disabled />
+        ) : (
+          <SelectionButton
+            currentUser={user}
+            allUserSelected={allUserSelected}
+            onAddSelectedUser={onAddSelectedUser}
+            onDeleteSelectedUser={onDeleteSelectedUser}
+          />
+        )}
+        {user.avatar && <AvatarSmall user={user} />}
+        <span className="flex gap-x-4">
+          <p>{toTitleCase(user.firstname)}</p>
+          <p>{toTitleCase(user.lastname)}</p>
+        </span>
+      </span>
+      {onAddUserInstantly && (
+        <button
+          type="button"
+          disabled={disabled}
+          className="btn btn-secondary btn-md"
+          onClick={handleAddUserInstantly}
+        >
+          <AddIcon2 />
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default GroupManageUserItem;

@@ -3,8 +3,8 @@ import { useCourseSelector } from "../../../../store/CourseContext";
 import type { CourseState } from "../../../../store/CourseContext";
 import Course from "../../../../../../../src/utils/interfaces/course";
 import Lesson from "../../../../../../../src/utils/interfaces/lesson";
-import CourseDates from "../../../../../../../src/utils/interfaces/course-dates";
-import { testCourseStep } from "../../../../../../utils/helpers/course-steps-validation";
+import CourseDates from "../../../../interfaces/course-dates";
+import { testCourseStep } from "../../../../helpers/course-steps-validation";
 import { useCallback } from "react";
 
 const useValidateCourse = () => {

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { formationApi } from "../api/formation.api";
 import { formationSchema } from "../formation.schema";
 import type Tag from "../../../utils/interfaces/tag";
-import type FormationItem from "../../../utils/interfaces/formation-item";
+import type FormationItem from "../interfaces/formation-item";
 import { getRandomNumber } from "../../../utils/helpers/get-random-number";
 
 const TAG_COLORS = [

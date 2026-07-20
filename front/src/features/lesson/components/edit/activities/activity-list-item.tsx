@@ -5,7 +5,7 @@ import BookIcon from "../../../../../../src/components/UI/svg/book-icon";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useLessonDispatch } from "../../../store/LessonContext";
 import { useMemo } from "react";
-import { displayDate } from "../../../../../utils/helpers/display-dates";
+import { displayDate } from "../../../helpers/display-dates";
 
 type Props = {
   activity: Activity;

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { useParcoursSelector } from "../../../store/ParcoursContext";
-import { formatDate } from "../../../../../components/calendar/calendar-utils";
+import { formatDate } from "../../../../calendar/components/calendar-utils";
 import { X } from "lucide-react";
 
 interface Props {

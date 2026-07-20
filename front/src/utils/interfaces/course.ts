@@ -1,6 +1,6 @@
-import { Accomplishment } from "./accomplishment";
+import { Accomplishment } from "../../features/dashboard-student/interfaces/accomplishment";
 import Contact from "./contact";
-import CourseDates from "./course-dates";
+import CourseDates from "../../features/course/interfaces/course-dates";
 import Lesson from "./lesson";
 import Module from "./module";
 import Objective from "./objective";

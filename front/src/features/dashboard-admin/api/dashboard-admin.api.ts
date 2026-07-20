@@ -1,7 +1,7 @@
 import apiClient from "../../../lib/axios";
 import type Parcours from "../../../utils/interfaces/parcours";
-import type ParcoursSummary from "../../../utils/interfaces/parcours-summary";
-import type LessonsQualityStats from "../../../utils/interfaces/lessons-quality-stats";
+import type ParcoursSummary from "../interfaces/parcours-summary";
+import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
 
 const queries = {
   getLastParcours: async (): Promise<Parcours[] | null> => {

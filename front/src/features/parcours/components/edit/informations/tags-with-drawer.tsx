@@ -3,8 +3,8 @@ import {
   useParcoursDispatch,
 } from "../../../store/ParcoursContext";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import CurrentTags from "../../../../../../src/components/inherited-items/current-tags";
-import InheritedItems from "../../../../../../src/components/inherited-items/inherited-items";
+import CurrentTags from "../../../../../../src/components/shared/inherited-items/current-tags";
+import InheritedItems from "../../../../../../src/components/shared/inherited-items/inherited-items";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import toast from "react-hot-toast";

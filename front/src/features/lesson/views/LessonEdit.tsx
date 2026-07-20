@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import LessonForm from "../../course/components/edit/scenario/lesson-form";
-import useEditLesson from "../../../../src/hooks/useEditLesson";
+import useEditLesson from "../hooks/useEditLesson";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { Loader2 } from "lucide-react";
 

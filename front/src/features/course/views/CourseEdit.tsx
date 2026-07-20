@@ -11,7 +11,7 @@ import CourseCalendar from "../components/edit/calendar/course-calendar";
 import CoursePreview from "../components/edit/preview/course-preview";
 import Step from "../../../../src/utils/interfaces/step";
 import { useCourseDispatch } from "../store/CourseContext";
-import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
+import formatCourseFromHttp from "../helpers/course-infos-from-http";
 import { courseApi } from "../api/course.api";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 

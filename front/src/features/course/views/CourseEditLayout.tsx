@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
-import formatCourseFromHttp from "../../../utils/helpers/course-infos-from-http";
+import formatCourseFromHttp from "../helpers/course-infos-from-http";
 import Loader from "../../../../src/components/loaders/Loader";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import Course from "../../../../src/utils/interfaces/course";

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import Module from "../../../../src/utils/interfaces/module";
-import ModuleHomeList from "../../../components/module-home/module-home";
-import ModalSuppression from "../../../components/module-home/modal-suppression";
+import ModuleHomeList from "../components/list/module-home";
+import ModalSuppression from "../components/list/modal-suppression";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Loader from "../../../components/loaders/Loader";

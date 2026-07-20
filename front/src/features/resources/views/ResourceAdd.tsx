@@ -1,15 +1,15 @@
-import ResourcesAddHeader from "../../../../src/components/resources-add/ResourcesAddHeader";
+import ResourcesAddHeader from "../components/add/ResourcesAddHeader";
 import ListHeader from "../../../components/UI/list-header";
 import Wrapper from "../../../components/wrappers/BoxWrapper";
-import ResourceForm from "../../../../src/components/resources-add/ResourceForm";
+import ResourceForm from "../components/add/ResourceForm";
 import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
-import BonusActivityItem from "../../../../src/components/resources-add/BonusActivityItem";
+import BonusActivityItem from "../components/add/BonusActivityItem";
 import Modal from "../../../components/UI/modal/modal";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import useResource from "../hooks/useResource";
 import { Activity } from "../../../../src/utils/interfaces/activity";
 import ActivityFloatingActionButton from "../../../../src/components/UI/ActivityFloatingActionButton";
-import ActivityContent from "../../../../src/components/resources-add/ActivityContent";
+import ActivityContent from "../components/add/ActivityContent";
 
 export default function ResourceAdd() {
   const {

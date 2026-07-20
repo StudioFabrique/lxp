@@ -1,4 +1,4 @@
-import { displayDate } from "../../../../../utils/helpers/display-dates";
+import { displayDate } from "../../../helpers/display-dates";
 import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 

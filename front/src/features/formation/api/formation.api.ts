@@ -1,5 +1,5 @@
 import apiClient from "../../../lib/axios";
-import type FormationItem from "../../../utils/interfaces/formation-item";
+import type FormationItem from "../interfaces/formation-item";
 import type Tag from "../../../utils/interfaces/tag";
 
 const queries = {

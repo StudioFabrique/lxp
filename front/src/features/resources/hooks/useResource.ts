@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Activity } from "../../../utils/interfaces/activity";
-import Resource from "../../../utils/interfaces/resource";
+import Resource from "../interfaces/resource";
 import Tag from "../../../utils/interfaces/tag";
 import apiClient from "../../../lib/axios";
 import z from "zod";

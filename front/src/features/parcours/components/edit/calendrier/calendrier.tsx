@@ -4,10 +4,10 @@ import { useContext, useEffect, useState } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
-import Calendar from "../../../../../components/calendar/calendar";
+import Calendar from "../../../../calendar/components/calendar";
 import { ThemeContext as Context } from "../../../../../store/ThemeProvider";
-import { TimelineEvent } from "../../../../../components/calendar/calendar-configuration";
-import { formatDate } from "../../../../../components/calendar/calendar-utils";
+import { TimelineEvent } from "../../../../calendar/components/calendar-configuration";
+import { formatDate } from "../../../../calendar/components/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
 

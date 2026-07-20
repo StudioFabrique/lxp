@@ -2,8 +2,8 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useParcoursDispatch } from "../../../../store/ParcoursContext";
 import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
-import Badge from "../../../../../../../src/utils/interfaces/badge";
-import { validateImageFile } from "../../../../../../utils/helpers/validate-image-file";
+import Badge from "../../../../interfaces/badge";
+import { validateImageFile } from "../../../../helpers/validate-image-file";
 import UploadIcon from "../../../../../../../src/components/UI/svg/upload-icon.component";
 import { badgeMaxSize } from "../../../../../../config/images-sizes";
 

@@ -6,8 +6,8 @@ import bgImage from "../../../../src/assets/images/lesson.png";
 import useAddLesson from "../hooks/useAddLesson";
 
 import LessonForm from "../../../features/course/components/edit/scenario/lesson-form";
-import CourseSelecters from "../../../../src/components/add-lesson/course-selecters";
-import NewLessonActions from "../../../../src/components/add-lesson/new-lesson-actions";
+import CourseSelecters from "../components/add/course-selecters";
+import NewLessonActions from "../components/add/new-lesson-actions";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 
 function AddNewLesson() {
