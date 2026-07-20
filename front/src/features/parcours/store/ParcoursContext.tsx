@@ -3,18 +3,12 @@ import {
   useContext,
   useReducer,
   ReactNode,
-  useRef,
   useEffect,
 } from "react";
-import Contact from "../../../utils/interfaces/contact";
-import Skill from "../../../utils/interfaces/skill";
-import Objective from "../../../utils/interfaces/objective";
-import Tag from "../../../utils/interfaces/tag";
 import Module from "../../../utils/interfaces/module";
 import Group from "../../../utils/interfaces/group";
 import User from "../../../utils/interfaces/user";
 import { sortArray } from "../../../utils/helpers/sort-array";
-import { addIdToObject } from "../../../utils/helpers/add-id-to-objects";
 
 // ------------------------------------------------------------------ //
 //  STATE TYPES
@@ -36,25 +30,6 @@ export type ParcoursState = {
       isPublished: boolean;
     };
     isValid: boolean;
-    tagsIsValid: boolean;
-    contactsIsValid: boolean;
-    infosIsValid: boolean;
-  };
-  parcoursContacts: {
-    initialContacts: Contact[];
-    currentContacts: Contact[];
-    notSelectedContacts: Contact[];
-    filteredContacts: Contact[];
-  };
-  parcoursSkills: {
-    informationsAreValid: boolean;
-    importedSkills: Record<string, unknown>[];
-    skills: Skill[];
-  };
-  parcoursObjectives: {
-    informationsAreValid: boolean;
-    importedObjectives: Objective[];
-    objectives: Objective[];
   };
   parcoursModules: {
     modules: Module[] | null;
@@ -65,13 +40,6 @@ export type ParcoursState = {
     groupsIds: Array<{ id: number; idMdb: string }> | null;
     groups: Group[] | null;
     students: User[] | null;
-  };
-  tags: {
-    currentTags: Tag[];
-    notSelectedTags: Tag[];
-    filteredItems: Tag[];
-    initialTags: Tag[];
-    parentTags: Tag[];
   };
 };
 
@@ -88,25 +56,6 @@ const INITIAL_STATE: ParcoursState = {
       isPublished: false,
     },
     isValid: false,
-    tagsIsValid: false,
-    contactsIsValid: false,
-    infosIsValid: false,
-  },
-  parcoursContacts: {
-    initialContacts: [],
-    currentContacts: [],
-    notSelectedContacts: [],
-    filteredContacts: [],
-  },
-  parcoursSkills: {
-    informationsAreValid: false,
-    importedSkills: [],
-    skills: [],
-  },
-  parcoursObjectives: {
-    informationsAreValid: false,
-    importedObjectives: [],
-    objectives: [],
   },
   parcoursModules: {
     modules: null,
@@ -117,13 +66,6 @@ const INITIAL_STATE: ParcoursState = {
     groupsIds: null,
     groups: null,
     students: null,
-  },
-  tags: {
-    currentTags: [],
-    notSelectedTags: [],
-    filteredItems: [],
-    initialTags: [],
-    parentTags: [],
   },
 };
 
@@ -145,41 +87,8 @@ type Action =
       payload: { startDate: string; endDate: string };
     }
   | { type: "PUBLISH_PARCOURS"; payload: boolean }
-  | { type: "SET_TAGS_IS_VALID"; payload: boolean }
   | { type: "SET_VIRTUAL_CLASS"; payload: string }
-  | { type: "SET_CONTACTS_IS_VALID"; payload: boolean }
-  | { type: "VALIDATE_INFOS" }
-  | { type: "VALIDATE_INFOS_FULL" }
   | { type: "RESET_PARCOURS_INFORMATIONS" }
-  // Contacts
-  | { type: "INIT_CONTACTS"; payload: Contact[] }
-  | { type: "SET_CURRENT_CONTACTS"; payload: Contact[] }
-  | { type: "SET_NOT_SELECTED_CONTACTS" }
-  | { type: "FILTER_CONTACTS"; payload: string }
-  | { type: "ADD_CONTACT"; payload: string }
-  | { type: "REMOVE_CONTACT"; payload: string }
-  | { type: "ADD_NEW_CONTACT"; payload: Contact }
-  | { type: "RESET_CONTACTS" }
-  | { type: "RESET_FILTER_CONTACTS" }
-  // Skills
-  | { type: "ADD_SKILL"; payload: Skill }
-  | { type: "DELETE_SKILL"; payload: number | undefined }
-  | { type: "EDIT_SKILL"; payload: Skill }
-  | { type: "SET_SKILLS_LIST"; payload: Skill[] }
-  | { type: "IMPORT_SKILLS"; payload: Record<string, unknown>[] }
-  | { type: "ADD_IMPORTED_SKILLS"; payload: Skill[] }
-  | { type: "RESET_SKILLS" }
-  // Objectives
-  | { type: "IMPORT_OBJECTIVES"; payload: Objective[] }
-  | { type: "ADD_IMPORTED_OBJECTIVES"; payload: Objective[] }
-  | { type: "SET_OBJECTIVES"; payload: Objective[] }
-  | { type: "DELETE_OBJECTIVE"; payload: number | undefined }
-  | { type: "ADD_OBJECTIVE"; payload: Objective }
-  | {
-      type: "EDIT_OBJECTIVE";
-      payload: { id: number | undefined; description: string };
-    }
-  | { type: "RESET_OBJECTIVES" }
   // Modules
   | { type: "SET_MODULES"; payload: Module[] }
   | { type: "ADD_NEW_MODULE"; payload: Module }
@@ -196,17 +105,6 @@ type Action =
   | { type: "SET_GROUPS"; payload: Group[] }
   | { type: "REMOVE_GROUP"; payload: string | undefined }
   | { type: "RESET_GROUPS" }
-  // Tags
-  | { type: "INIT_TAGS"; payload: Tag[] }
-  | { type: "SET_CURRENT_TAGS"; payload: Tag[] }
-  | { type: "SET_PARENT_TAGS"; payload: Tag[] }
-  | { type: "SET_NOT_SELECTED_TAGS" }
-  | { type: "ADD_TAG"; payload: number }
-  | { type: "REMOVE_TAG"; payload: number }
-  | { type: "FILTER_TAGS"; payload: string }
-  | { type: "ADD_NEW_CURRENT_TAGS"; payload: Tag[] }
-  | { type: "RESET_FILTERED_TAGS" }
-  | { type: "RESET_TAGS" }
   // Global reset
   | { type: "RESET_ALL" };
 
@@ -259,46 +157,6 @@ function parcoursReducer(state: ParcoursState, action: Action): ParcoursState {
           },
         },
       };
-    case "VALIDATE_INFOS": {
-      const infos = state.parcoursInformations.infos;
-      const isValid =
-        infos.title.length > 0 &&
-        infos.startDate.length > 0 &&
-        infos.endDate.length > 0 &&
-        state.parcoursInformations.tagsIsValid;
-      return {
-        ...state,
-        parcoursInformations: { ...state.parcoursInformations, isValid },
-      };
-    }
-    case "VALIDATE_INFOS_FULL": {
-      const infos = state.parcoursInformations.infos;
-      const isValid =
-        infos.title.length > 0 &&
-        infos.startDate.length > 0 &&
-        infos.endDate.length > 0 &&
-        state.parcoursInformations.tagsIsValid;
-      const infosIsValid =
-        isValid &&
-        infos.description.length > 0 &&
-        state.parcoursInformations.contactsIsValid;
-      return {
-        ...state,
-        parcoursInformations: {
-          ...state.parcoursInformations,
-          isValid,
-          infosIsValid,
-        },
-      };
-    }
-    case "SET_TAGS_IS_VALID":
-      return {
-        ...state,
-        parcoursInformations: {
-          ...state.parcoursInformations,
-          tagsIsValid: action.payload,
-        },
-      };
     case "SET_VIRTUAL_CLASS":
       return {
         ...state,
@@ -310,231 +168,11 @@ function parcoursReducer(state: ParcoursState, action: Action): ParcoursState {
           },
         },
       };
-    case "SET_CONTACTS_IS_VALID":
-      return {
-        ...state,
-        parcoursInformations: {
-          ...state.parcoursInformations,
-          contactsIsValid: action.payload,
-        },
-      };
     case "RESET_PARCOURS_INFORMATIONS":
       return {
         ...state,
         parcoursInformations: INITIAL_STATE.parcoursInformations,
       };
-
-    // ---- Contacts ---- //
-    case "INIT_CONTACTS":
-      return {
-        ...state,
-        parcoursContacts: {
-          ...state.parcoursContacts,
-          initialContacts: action.payload,
-        },
-      };
-    case "SET_CURRENT_CONTACTS":
-      return {
-        ...state,
-        parcoursContacts: {
-          ...state.parcoursContacts,
-          currentContacts: action.payload,
-        },
-      };
-    case "SET_NOT_SELECTED_CONTACTS": {
-      const currentContacts = state.parcoursContacts.currentContacts;
-      let notSelectedContacts = state.parcoursContacts.initialContacts;
-      for (const c of currentContacts) {
-        notSelectedContacts = notSelectedContacts.filter(
-          (nc) => nc.idMdb !== c.idMdb,
-        );
-      }
-      return {
-        ...state,
-        parcoursContacts: { ...state.parcoursContacts, notSelectedContacts },
-      };
-    }
-    case "FILTER_CONTACTS": {
-      if (action.payload.length > 0) {
-        const filteredContacts = sortArray(
-          state.parcoursContacts.notSelectedContacts.filter((item) =>
-            item.name
-              .toLocaleLowerCase()
-              .includes(action.payload.toLocaleLowerCase()),
-          ),
-          "name",
-        );
-        return {
-          ...state,
-          parcoursContacts: { ...state.parcoursContacts, filteredContacts },
-        };
-      }
-      return state;
-    }
-    case "ADD_CONTACT": {
-      const contact = state.parcoursContacts.notSelectedContacts.find(
-        (item) => item.idMdb === action.payload,
-      );
-      if (contact) {
-        const currentContacts = sortArray(
-          [...state.parcoursContacts.currentContacts, contact],
-          "name",
-        );
-        return {
-          ...state,
-          parcoursContacts: { ...state.parcoursContacts, currentContacts },
-        };
-      }
-      return state;
-    }
-    case "REMOVE_CONTACT": {
-      const currentContacts = state.parcoursContacts.currentContacts.filter(
-        (item) => item.idMdb !== action.payload,
-      );
-      return {
-        ...state,
-        parcoursContacts: { ...state.parcoursContacts, currentContacts },
-      };
-    }
-    case "ADD_NEW_CONTACT": {
-      const initialContacts = sortArray(
-        [...state.parcoursContacts.initialContacts, action.payload],
-        "name",
-      );
-      return {
-        ...state,
-        parcoursContacts: { ...state.parcoursContacts, initialContacts },
-      };
-    }
-    case "RESET_CONTACTS":
-      return { ...state, parcoursContacts: INITIAL_STATE.parcoursContacts };
-    case "RESET_FILTER_CONTACTS":
-      return {
-        ...state,
-        parcoursContacts: { ...state.parcoursContacts, filteredContacts: [] },
-      };
-
-    // ---- Skills ---- //
-    case "ADD_SKILL": {
-      const skill = { ...action.payload, isBonus: true };
-      return {
-        ...state,
-        parcoursSkills: {
-          ...state.parcoursSkills,
-          skills: [...state.parcoursSkills.skills, skill],
-        },
-      };
-    }
-    case "DELETE_SKILL":
-      return {
-        ...state,
-        parcoursSkills: {
-          ...state.parcoursSkills,
-          skills: state.parcoursSkills.skills.filter(
-            (item) => item.id !== action.payload,
-          ),
-        },
-      };
-    case "EDIT_SKILL": {
-      const updatedSkills = state.parcoursSkills.skills.filter(
-        (item) => item.id !== action.payload.id,
-      );
-      updatedSkills.push(action.payload);
-      return {
-        ...state,
-        parcoursSkills: { ...state.parcoursSkills, skills: updatedSkills },
-      };
-    }
-    case "SET_SKILLS_LIST":
-      return {
-        ...state,
-        parcoursSkills: {
-          ...state.parcoursSkills,
-          skills: action.payload.map((item) => ({ ...item, isBonus: true })),
-        },
-      };
-    case "IMPORT_SKILLS":
-      return {
-        ...state,
-        parcoursSkills: {
-          ...state.parcoursSkills,
-          importedSkills: addIdToObject(action.payload),
-        },
-      };
-    case "ADD_IMPORTED_SKILLS": {
-      let skills = state.parcoursSkills.skills;
-      action.payload.forEach((newSkill) => {
-        const exists = skills.find(
-          (s) => newSkill.description === s.description,
-        );
-        if (!exists) {
-          skills = [...skills, newSkill];
-        }
-      });
-      return { ...state, parcoursSkills: { ...state.parcoursSkills, skills } };
-    }
-    case "RESET_SKILLS":
-      return { ...state, parcoursSkills: INITIAL_STATE.parcoursSkills };
-
-    // ---- Objectives ---- //
-    case "IMPORT_OBJECTIVES":
-      return {
-        ...state,
-        parcoursObjectives: {
-          ...state.parcoursObjectives,
-          importedObjectives: sortArray(
-            addIdToObject(action.payload),
-            "description",
-          ),
-        },
-      };
-    case "ADD_IMPORTED_OBJECTIVES":
-      return {
-        ...state,
-        parcoursObjectives: {
-          ...state.parcoursObjectives,
-          objectives: action.payload,
-        },
-      };
-    case "SET_OBJECTIVES":
-      return {
-        ...state,
-        parcoursObjectives: {
-          ...state.parcoursObjectives,
-          objectives: action.payload,
-        },
-      };
-    case "DELETE_OBJECTIVE":
-      return {
-        ...state,
-        parcoursObjectives: {
-          ...state.parcoursObjectives,
-          objectives: state.parcoursObjectives.objectives.filter(
-            (item) => action.payload !== item.id,
-          ),
-        },
-      };
-    case "ADD_OBJECTIVE":
-      return {
-        ...state,
-        parcoursObjectives: {
-          ...state.parcoursObjectives,
-          objectives: [...state.parcoursObjectives.objectives, action.payload],
-        },
-      };
-    case "EDIT_OBJECTIVE": {
-      const objectives = state.parcoursObjectives.objectives.map((item) =>
-        item.id !== action.payload.id
-          ? item
-          : { ...item, description: action.payload.description },
-      );
-      return {
-        ...state,
-        parcoursObjectives: { ...state.parcoursObjectives, objectives },
-      };
-    }
-    case "RESET_OBJECTIVES":
-      return { ...state, parcoursObjectives: INITIAL_STATE.parcoursObjectives };
 
     // ---- Modules ---- //
     case "SET_MODULES":
@@ -654,64 +292,6 @@ function parcoursReducer(state: ParcoursState, action: Action): ParcoursState {
     }
     case "RESET_GROUPS":
       return { ...state, parcoursGroups: INITIAL_STATE.parcoursGroups };
-
-    // ---- Tags ---- //
-    case "INIT_TAGS":
-      return { ...state, tags: { ...state.tags, initialTags: action.payload } };
-    case "SET_CURRENT_TAGS":
-      return {
-        ...state,
-        tags: { ...state.tags, currentTags: sortArray(action.payload, "name") },
-      };
-    case "SET_PARENT_TAGS":
-      return { ...state, tags: { ...state.tags, parentTags: action.payload } };
-    case "SET_NOT_SELECTED_TAGS": {
-      let notSelectedTags = state.tags.initialTags;
-      for (const currentTag of state.tags.currentTags) {
-        notSelectedTags = notSelectedTags.filter(
-          (nt) => nt.id !== currentTag.id,
-        );
-      }
-      return { ...state, tags: { ...state.tags, notSelectedTags } };
-    }
-    case "ADD_TAG": {
-      const tag = state.tags.notSelectedTags.find(
-        (t) => t.id === action.payload,
-      );
-      if (tag) {
-        const currentTags = sortArray([...state.tags.currentTags, tag], "name");
-        return { ...state, tags: { ...state.tags, currentTags } };
-      }
-      return state;
-    }
-    case "REMOVE_TAG": {
-      const currentTags = state.tags.currentTags.filter(
-        (t) => t.id !== action.payload,
-      );
-      return { ...state, tags: { ...state.tags, currentTags } };
-    }
-    case "FILTER_TAGS": {
-      if (action.payload.length > 0) {
-        const filteredItems = sortArray(
-          state.tags.notSelectedTags.filter((item) =>
-            item.name
-              .toLocaleLowerCase()
-              .includes(action.payload.toLocaleLowerCase()),
-          ),
-          "name",
-        );
-        return { ...state, tags: { ...state.tags, filteredItems } };
-      }
-      return state;
-    }
-    case "ADD_NEW_CURRENT_TAGS": {
-      const currentTags = [...state.tags.currentTags, ...action.payload];
-      return { ...state, tags: { ...state.tags, currentTags } };
-    }
-    case "RESET_FILTERED_TAGS":
-      return { ...state, tags: { ...state.tags, filteredItems: [] } };
-    case "RESET_TAGS":
-      return { ...state, tags: INITIAL_STATE.tags };
 
     // ---- Global ---- //
     case "RESET_ALL":

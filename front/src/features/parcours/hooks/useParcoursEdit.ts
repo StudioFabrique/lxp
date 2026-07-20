@@ -3,13 +3,18 @@ import { testModules } from "../helpers/parcours-steps-validation";
 import useSteps from "../../../hooks/useSteps";
 import useParcoursService from "../hooks/useParcoursServices";
 import { parcoursApi } from "../api/parcours.api";
-import { useCallback, useEffect, useRef } from "react";
+import { normalizeImageSource } from "../../../utils/images/image-source";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router";
 import {
   useParcoursSelector,
   useParcoursDispatch,
 } from "../store/ParcoursContext";
 import Step from "../../../utils/interfaces/step";
+import { useParcoursQuery } from "./useParcoursQuery";
+import type Objective from "../../../utils/interfaces/objective";
+
+type ImportedSkill = Record<string, unknown> & { description: string };
 
 export function useParcoursEdit() {
   const { id } = useParams();
@@ -18,15 +23,21 @@ export function useParcoursEdit() {
   const dispatch = useParcoursDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsParcours as Step[]);
-  const infos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos,
-  );
-  const formation = useParcoursSelector((state) => state.parcours.formation);
-  const { image, isLoading, error } = useParcoursService(
-    id !== undefined ? +id : undefined,
-  );
+  const parcoursId = id !== undefined ? +id : undefined;
+  const { data: parcours, isLoading, error: queryError } =
+    useParcoursQuery(parcoursId);
+  useParcoursService(parcoursId);
+  const infos = parcours;
+  const formation = parcours?.formation;
+  const image = normalizeImageSource(parcours?.image) ?? "";
+  const error = queryError
+    ? ((queryError as { response?: { data?: { message?: string } } })?.response
+        ?.data?.message ?? "Erreur inconnue")
+    : "";
   const modules = useParcoursSelector((state) => state.parcoursModules.modules);
   const checkStep = useRef(true);
+  const [importedSkills, setImportedSkills] = useState<ImportedSkill[]>([]);
+  const [importedObjectives, setImportedObjectives] = useState<Objective[]>([]);
 
   const step = searchParams.get("step");
 
@@ -39,12 +50,6 @@ export function useParcoursEdit() {
 
   useEffect(() => {
     return () => {
-      dispatch({ type: "RESET_PARCOURS" });
-      dispatch({ type: "RESET_PARCOURS_INFORMATIONS" });
-      dispatch({ type: "RESET_TAGS" });
-      dispatch({ type: "RESET_CONTACTS" });
-      dispatch({ type: "RESET_SKILLS" });
-      dispatch({ type: "RESET_OBJECTIVES" });
       dispatch({ type: "RESET_MODULES" });
       dispatch({ type: "RESET_GROUPS" });
     };
@@ -72,11 +77,11 @@ export function useParcoursEdit() {
   };
 
   const handleResetImportedSkills = () => {
-    dispatch({ type: "IMPORT_SKILLS", payload: [] });
+    setImportedSkills([]);
   };
 
   const handleResetImportedObjectives = () => {
-    dispatch({ type: "IMPORT_OBJECTIVES", payload: [] });
+    setImportedObjectives([]);
   };
 
   return {
@@ -96,5 +101,9 @@ export function useParcoursEdit() {
     handleRetour,
     handleResetImportedSkills,
     handleResetImportedObjectives,
+    importedSkills,
+    importedObjectives,
+    setImportedSkills,
+    setImportedObjectives,
   };
 }

@@ -57,42 +57,10 @@ export default function useParcoursView() {
         if (data.image) {
           setImage(normalizeImageSource(data.image) ?? "");
         }
-        if (data.tags.length > 0) {
-          dispatch({
-            type: "SET_CURRENT_TAGS",
-            payload: data.tags.map((item: any) => item.tag),
-          });
-        } else {
-          dispatch({
-            type: "SET_CURRENT_TAGS",
-            payload: data.formation.tags.map((item: any) => item.tag),
-          });
-        }
-
         if (data.virtualClass) {
           dispatch({ type: "SET_VIRTUAL_CLASS", payload: data.virtualClass });
         }
 
-        if (data.contacts.length > 0) {
-          dispatch({ type: "SET_CURRENT_CONTACTS", payload: data.contacts });
-        }
-        if (data.skills.length > 0) {
-          dispatch({
-            type: "SET_SKILLS_LIST",
-            payload: data.skills.map((item: any) => item.skill),
-          });
-        }
-
-        if (data.bonusSkills.length > 0) {
-          dispatch({ type: "SET_SKILLS_LIST", payload: data.bonusSkills });
-        }
-
-        if (data.objectives.length > 0) {
-          dispatch({
-            type: "ADD_IMPORTED_OBJECTIVES",
-            payload: data.objectives,
-          });
-        }
 
         if (data.modules.length > 0) {
           dispatch({
@@ -129,10 +97,6 @@ export default function useParcoursView() {
       setIsInitial(true);
       dispatch({ type: "RESET_PARCOURS" });
       dispatch({ type: "RESET_PARCOURS_INFORMATIONS" });
-      dispatch({ type: "RESET_TAGS" });
-      dispatch({ type: "RESET_CONTACTS" });
-      dispatch({ type: "RESET_SKILLS" });
-      dispatch({ type: "RESET_OBJECTIVES" });
     };
   }, [dispatch]);
 

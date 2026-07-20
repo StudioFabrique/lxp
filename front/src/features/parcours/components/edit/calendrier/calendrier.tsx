@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import { useContext, useEffect, useState } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
@@ -10,12 +9,16 @@ import { TimelineEvent } from "../../../../calendar/components/calendar-configur
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
   const darkMode = theme === "dark";
   const currentDate = new Date();
   const dispatch = useParcoursDispatch();
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
 
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
     null
@@ -23,19 +26,16 @@ const Calendrier = () => {
   const [detailsCardRectPosition, setDetailsCardRectPosition] =
     useState<DOMRect>();
 
-  const parcoursInfos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos
-  );
   const modules: Module[] = useParcoursSelector(
     (state) => state.parcoursModules.modules
   );
 
   const datesParcours = {
-    startDate: parcoursInfos?.startDate
-      ? new Date(parcoursInfos.startDate)
+    startDate: parcours?.startDate
+      ? new Date(parcours.startDate)
       : new Date(),
-    endDate: parcoursInfos?.endDate
-      ? new Date(parcoursInfos.endDate)
+    endDate: parcours?.endDate
+      ? new Date(parcours.endDate)
       : new Date(),
   };
 
@@ -87,7 +87,7 @@ const Calendrier = () => {
     };
   }, [dispatch]);
 
-  if (!modules || !parcoursInfos) {
+  if (!modules || !parcours) {
     return (
       <div className="flex flex-col gap-y-5 p-10 items-center justify-center h-full">
         <span className="loading loading-spinner loading-lg text-primary"></span>

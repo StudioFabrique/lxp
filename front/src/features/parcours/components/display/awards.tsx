@@ -1,8 +1,10 @@
-import { useParcoursSelector } from "../../store/ParcoursContext";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { useParams } from "react-router";
+import { useParcoursSkills } from "../../hooks/useParcoursSkills";
 
 const Awards = () => {
-  const skills = useParcoursSelector((state) => state.parcoursSkills.skills);
+  const { id } = useParams();
+  const { skills } = useParcoursSkills(Number(id));
 
   const skillList =
     skills.length > 0 ? (

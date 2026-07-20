@@ -33,6 +33,10 @@ const EditParcours = () => {
     image,
     handleResetImportedObjectives,
     handleResetImportedSkills,
+    importedSkills,
+    importedObjectives,
+    setImportedSkills,
+    setImportedObjectives,
     handleUpdateStep,
     handleRetour,
   } = useParcoursEdit();
@@ -49,7 +53,11 @@ const EditParcours = () => {
             onResetList={handleResetImportedObjectives}
             children={[
               <ObjectivesList />,
-              <ImportObjectives onCloseDrawer={() => {}} />,
+              <ImportObjectives
+                importedObjectives={importedObjectives}
+                onImport={setImportedObjectives}
+                onCloseDrawer={() => {}}
+              />,
             ]}
           />
         );
@@ -61,7 +69,11 @@ const EditParcours = () => {
             onResetList={handleResetImportedSkills}
             children={[
               <SkillsList />,
-              <ImportSkills onCloseDrawer={() => {}} />,
+              <ImportSkills
+                importedSkills={importedSkills}
+                onImport={setImportedSkills}
+                onCloseDrawer={() => {}}
+              />,
             ]}
           />
         );

@@ -5,10 +5,7 @@ type Props = {
   endActions?: ReactNode;
 };
 
-const FloatingBottomNavigation = ({
-  startActions,
-  endActions,
-}: Props) => {
+const FloatingBottomNavigation = ({ startActions, endActions }: Props) => {
   const [isFloating, setIsFloating] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 

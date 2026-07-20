@@ -1,7 +1,3 @@
-import {
-  useParcoursSelector,
-  useParcoursDispatch,
-} from "../../../store/ParcoursContext";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import CurrentTags from "../../../../../../src/components/shared/inherited-items/current-tags";
 import InheritedItems from "../../../../../../src/components/shared/inherited-items/inherited-items";
@@ -13,6 +9,8 @@ import CreateNewTag from "./create-new-tags";
 import { HelpCircle } from "lucide-react";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { useParcoursTagsQuery } from "../../../hooks/useParcoursTagsQuery";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 interface TagsWithDrawerProps {
   loading: boolean;
@@ -21,30 +19,39 @@ interface TagsWithDrawerProps {
 }
 
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
-  const currentTags = useParcoursSelector((state) => state.tags.currentTags);
-  const initialTags = useParcoursSelector((state) => state.tags.initialTags);
-  const dispatch = useParcoursDispatch();
-
   const [submit, setSubmit] = useState<boolean>(false);
   const { data: availableTags } = useParcoursTagsQuery();
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const selectedParcoursTags = useMemo(
+    () => {
+      const tags = parcours?.tags as Array<Tag | { tag: Tag }> | undefined;
+      return tags?.length
+        ? tags.map((item) => ("tag" in item ? item.tag : item))
+        : props.tags;
+    },
+    [parcours?.tags, props.tags],
+  );
+  const [draftTags, setDraftTags] = useState<Tag[] | null>(null);
+  const currentTags = draftTags ?? selectedParcoursTags;
   const [parentTags] = useState<Tag[]>(props.tags);
   const [searchTerm, setSearchTerm] = useState("");
   const filteredTags = useMemo(
     () =>
       searchTerm.length > 0
-        ? initialTags.filter((item) =>
+        ? (availableTags ?? []).filter((item) =>
             item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
           )
-        : initialTags,
-    [initialTags, searchTerm],
+        : (availableTags ?? []),
+    [availableTags, searchTerm],
   );
 
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
-      dispatch({ type: "SET_CURRENT_TAGS", payload: tags });
+      setDraftTags(tags);
       setSubmit(true);
     },
-    [dispatch],
+    [],
   );
 
   useEffect(() => {
@@ -56,12 +63,6 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     }, autoSubmitTimer);
     return () => clearTimeout(timer);
   }, [props, submit, currentTags]);
-
-  useEffect(() => {
-    if (availableTags) {
-      dispatch({ type: "INIT_TAGS", payload: availableTags });
-    }
-  }, [availableTags, dispatch]);
 
   /**
    * Effect pour mettre à jour les tags de la formation
@@ -137,7 +138,9 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
             ou Créer des nouveaux tags
           </button>
         </span>
-        <CreateNewTag onSubmit={setSubmit} />
+        <CreateNewTag
+          onCreated={(tags) => handleUpdateTags([...currentTags, ...tags])}
+        />
       </div>
     </div>
   );

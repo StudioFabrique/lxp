@@ -3,7 +3,6 @@ import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
 import VirtualClass from "../../../../../../src/components/virtual-class";
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DatesSelecter from "../../../../../components/UI/dates-selecter/dates-selecter.component";
 
@@ -30,7 +29,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
 
   const parcoursStartDate = parcours?.startDate ?? "";
   const parcoursEndDate = parcours?.endDate ?? "";
-  const dispatch = useParcoursDispatch();
   const {
     loadingContacts,
     loadingTags,
@@ -41,8 +39,8 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     (value) => regexUrl.test(value),
     parcours?.virtualClass ?? "",
   );
-  const parentTags = useParcoursSelector(
-    (state) => state.tags.parentTags,
+  const parentTags = (parcours?.formation.tags ?? []).map((item) =>
+    "tag" in item ? (item.tag as Tag) : item,
   );
 
   const updateDates = useCallback(
@@ -86,10 +84,9 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   // Callback pour soumettre les dates du parcours
   const submitDates = useCallback(
     (dates: { startDate: string; endDate: string }) => {
-      dispatch({ type: "UPDATE_PARCOURS_DATES", payload: dates });
       updateDates(dates.startDate, dates.endDate);
     },
-    [updateDates, dispatch],
+    [updateDates],
   );
 
   const handleVirtualClassValue = (
@@ -100,10 +97,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     }
     virtualClass.valueChangeHandler(event);
   };
-
-  useEffect(() => {
-    dispatch({ type: "VALIDATE_INFOS" });
-  }, [parcoursStartDate, parcoursEndDate, dispatch]);
 
   // met à jour la classe virtuelle vers la bdd
   useEffect(() => {
@@ -126,9 +119,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
             "Le lien vers la classe virtuelle n'a pas été mis à jour",
           );
         }
-        dispatch(
-          { type: "SET_VIRTUAL_CLASS", payload: virtualClass.value },
-        );
         setSubmitVirtualClass(false);
       }
     }, autoSubmitTimer);
@@ -139,7 +129,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.value,
     virtualClass.isValid,
     submitVirtualClass,
-    dispatch,
     updateParcours,
   ]);
 

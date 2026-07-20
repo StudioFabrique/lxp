@@ -79,7 +79,6 @@ const EditCourseHome = () => {
       <div className="w-full p-4 rounded-xl bg-secondary/20">
         <Stepper
           actualStep={actualStep}
-          finalStep={finalStep}
           stepsList={stepsList}
           updateStep={updateStep}
         />
@@ -97,7 +96,10 @@ const EditCourseHome = () => {
         <FloatingBottomNavigation
           startActions={
             actualStep.id === 1 ? (
-              <Link className="btn btn-ghost hover:underline" to="/admin/course">
+              <Link
+                className="btn btn-ghost hover:underline"
+                to="/admin/course"
+              >
                 Retour
               </Link>
             ) : (

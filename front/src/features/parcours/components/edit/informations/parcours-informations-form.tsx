@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 
-import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import { infosParCoursSchema } from "../../../parcours.schema";
 import FormInput from "../../../../../../src/components/form/FormInput";
@@ -22,7 +21,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
   const formation = parcours?.formation;
   const parcoursInfos = parcours;
-  const dispatch = useParcoursDispatch();
 
   const isInitialRender = useRef(true);
 
@@ -46,14 +44,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
 
   const saveInfos = useCallback(
     async (data: { title: string; description?: string }) => {
-      dispatch({
-        type: "UPDATE_PARCOURS_INFOS",
-        payload: {
-          title: data.title,
-          description: data.description,
-        },
-      });
-
       try {
         const response = await updateParcours({
           title: data.title,
@@ -64,7 +54,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
         toast.error("Erreur lors de la sauvegarde");
       }
     },
-    [dispatch, updateParcours],
+    [updateParcours],
   );
 
   const onSave = useCallback(() => {

@@ -1,6 +1,5 @@
 import { FC, useCallback } from "react";
 import { toast } from "react-hot-toast";
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import { useParams } from "react-router";
 
 import ImportCSVActions from "../../../../../../src/components/UI/import-csv-actions.component";
@@ -8,20 +7,23 @@ import { DOWNLOAD_URL } from "../../../../../config/urls";
 import ImportedCSVData from "../../../../../../src/components/UI/imported-csv-data.component";
 import { skillsFields } from "../../../../../config/csv/csv-skills-fields";
 import { useParcoursSkillMutations } from "../../../hooks/useParcoursSkillMutations";
+import { addIdToObject } from "../../../../../utils/helpers/add-id-to-objects";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
+  importedSkills: ImportedSkill[];
+  onImport: (skills: ImportedSkill[]) => void;
 };
 
 type ImportedSkill = Record<string, unknown> & { description: string };
 
-const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
+const ImportSkills: FC<Props> = ({
+  importedSkills,
+  onCloseDrawer,
+  onImport,
+}) => {
   const protocol = window.location.href.split("/")[0];
 
-  const dispatch = useParcoursDispatch();
-  const skills = useParcoursSelector(
-    (state) => state.parcoursSkills.importedSkills
-  );
   const { id } = useParams();
   const parcoursId = Number(id);
   const { importSkills } = useParcoursSkillMutations(parcoursId);
@@ -43,10 +45,8 @@ const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
   };
 
   const handleFromCSV = useCallback(
-    (data: ImportedSkill[]) => {
-      dispatch({ type: "IMPORT_SKILLS", payload: data });
-    },
-    [dispatch]
+    (data: ImportedSkill[]) => onImport(addIdToObject(data) as ImportedSkill[]),
+    [onImport],
   );
 
   return (
@@ -57,9 +57,9 @@ const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
         onHandleFromCSV={handleFromCSV}
         fields={skillsFields}
       />
-      {skills ? (
+      {importedSkills.length > 0 ? (
         <ImportedCSVData
-          data={skills}
+          data={importedSkills}
           label={"compétences"}
           field="description"
           onCloseDrawer={handleCloseDrawer}

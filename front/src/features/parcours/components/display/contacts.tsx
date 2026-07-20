@@ -1,14 +1,15 @@
-import { useParcoursSelector } from "../../store/ParcoursContext";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { useContext } from "react";
 import { Mail, Phone } from "lucide-react";
 import { AuthContext } from "../../../../store/AuthProvider";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 
 const Contacts = () => {
   const { user } = useContext(AuthContext);
-  const contacts = useParcoursSelector(
-    (state) => state.parcoursContacts.currentContacts,
-  );
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const contacts = parcours?.contacts ?? [];
 
   const contactsList =
     contacts.length > 0 ? (
