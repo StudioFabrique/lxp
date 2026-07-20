@@ -22,7 +22,6 @@ const EditParcours = () => {
   const {
     id,
     actualStep,
-    finalStep,
     stepsList,
     updateStep,
     updateImage,
@@ -99,7 +98,7 @@ const EditParcours = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
-            {infos.title && formation ? (
+            {infos?.title && formation ? (
               <ImageHeaderMutable
                 defaultImage="/images/parcours-default.webp"
                 image={image}
@@ -114,7 +113,6 @@ const EditParcours = () => {
             <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
               <Stepper
                 actualStep={actualStep}
-                finalStep={finalStep}
                 stepsList={stepsList}
                 updateStep={updateStep}
               />
