@@ -17,7 +17,7 @@ export default function ModuleCard({
   const { id, title, thumb } = module;
 
   return (
-    <div className="card h-40 w-80 bg-base-100 image-full shadow-sm overflow-hidden">
+    <article className="card h-44 w-full bg-base-100 image-full shadow-sm overflow-hidden border border-base-300">
       <figure>
         <AppImage
           className="object-cover w-full h-full"
@@ -35,11 +35,11 @@ export default function ModuleCard({
           {title}
         </h2>
 
-        <div className="card-actions mt-4 flex gap-2">
+        <div className="card-actions mt-4 flex w-full justify-center gap-2">
           <button
-            className="btn btn-sm btn-ghost bg-white/90 text-neutral hover:bg-white tooltip tooltip-bottom"
+            className="btn btn-sm btn-ghost bg-white/90 text-neutral hover:bg-white"
             type="button"
-            data-tip="Modifier le module"
+            title="Modifier le module"
             aria-label="Modifier le module"
             onClick={() => onUpdate(module)}
           >
@@ -47,9 +47,9 @@ export default function ModuleCard({
             Modifier
           </button>
           <button
-            className="btn btn-sm btn-ghost bg-white/90 text-error hover:bg-white tooltip tooltip-bottom"
+            className="btn btn-sm btn-ghost bg-white/90 text-error hover:bg-white"
             type="button"
-            data-tip="Supprimer le module"
+            title="Supprimer le module"
             aria-label="Supprimer le module"
             onClick={() => onDelete(id)}
           >
@@ -58,6 +58,6 @@ export default function ModuleCard({
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

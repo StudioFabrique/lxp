@@ -56,69 +56,75 @@ const ModuleTable = ({
 
               <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
               <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
-              <td className="bg-transparent flex items-center justify-around gap-x-2 rounded-r-lg">
-                <div className="w-6 h-6">
-                  <PermissionGuard action="read" object="module">
-                    <div>
-                      {item.metadataId ? (
-                        <Link
-                          className="text-secondary tooltip tooltip-bottom"
-                          data-tip="Voir le module"
-                          to={`/admin/parcours/module/${item.metadataId}`}
-                          aria-label="Prévisualiser le module"
-                        >
-                          <Eye />
-                        </Link>
-                      ) : (
-                        <div
-                          className="text-base-content/50 tooltip tooltip-bottom"
-                          data-tip="Vous ne pouvez pas modifier un module
+              <td className="bg-transparent rounded-r-lg text-center align-middle">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-6 h-6">
+                    <PermissionGuard action="read" object="module">
+                      <div>
+                        {item.metadataId ? (
+                          <Link
+                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
+                            data-tip="Voir le module"
+                            to={`/admin/parcours/module/${item.metadataId}`}
+                            aria-label="Prévisualiser le module"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        ) : (
+                          <div
+                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip tooltip-bottom"
+                            data-tip="Vous ne pouvez pas modifier un module
                             non rattaché à un parcours"
-                        >
-                          <Eye />
-                        </div>
-                      )}
-                    </div>
-                  </PermissionGuard>
-                </div>
-                <div className="w-6 h-6">
-                  <PermissionGuard action="update" object="module">
-                    <div>
-                      {item.metadataId ? (
-                        <Link
-                          className="text-secondary tooltip tooltip-bottom"
-                          data-tip="Modifier le module"
-                          to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
-                          aria-label="Editer le module"
-                        >
-                          <Pencil />
-                        </Link>
-                      ) : (
-                        <div
-                          className="text-base-content/50 tooltip tooltip-bottom"
-                          data-tip="Vous ne pouvez pas modifier un module
+                          >
+                            <Eye className="h-4 w-4" />
+                          </div>
+                        )}
+                      </div>
+                    </PermissionGuard>
+                  </div>
+                  <div className="w-6 h-6">
+                    <PermissionGuard action="update" object="module">
+                      <div>
+                        {item.metadataId ? (
+                          <Link
+                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
+                            data-tip="Modifier le module"
+                            to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
+                            aria-label="Editer le module"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Link>
+                        ) : (
+                          <div
+                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip tooltip-bottom"
+                            data-tip="Vous ne pouvez pas modifier un module
                             non rattaché à un parcours"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </div>
+                        )}
+                      </div>
+                    </PermissionGuard>
+                  </div>
+                  <div
+                    className="w-6 h-6 text-error"
+                    aria-label="suppression du module"
+                  >
+                    <PermissionGuard action="delete" object="module">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Supprimer le module"
+                      >
+                        <button
+                          className="btn btn-ghost btn-xs btn-square text-error"
+                          onClick={() => onDelete(item.id)}
+                          aria-label="Supprimer le module"
                         >
-                          <Pencil />
-                        </div>
-                      )}
-                    </div>
-                  </PermissionGuard>
-                </div>
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression du module"
-                >
-                  <PermissionGuard action="delete" object="module">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le module"
-                    >
-                      <button onClick={() => onDelete(item.id)} aria-label="Supprimer le module">
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </PermissionGuard>
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </PermissionGuard>
+                  </div>
                 </div>
               </td>
             </TableRowWrapper>
@@ -212,7 +218,7 @@ const ModuleTable = ({
                   />
                 </div>
               </th>
-              <th className="text-right">Actions</th>
+              <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>{content}</tbody>

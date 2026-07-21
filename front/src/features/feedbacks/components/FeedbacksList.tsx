@@ -77,8 +77,8 @@ const FeedbacksList = ({ feedbacks }: Props) => {
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table w-full border-separate border-spacing-y-2">
+    <div className="w-full overflow-x-auto">
+      <table className="table w-full border-separate border-spacing-y-5">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -119,7 +119,7 @@ const FeedbacksList = ({ feedbacks }: Props) => {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+              className="text-base-content group cursor-pointer [&>td]:bg-base-100 [&>td]:px-2 [&>td]:transition-colors hover:[&>td]:bg-base-100/60 [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl"
             >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>

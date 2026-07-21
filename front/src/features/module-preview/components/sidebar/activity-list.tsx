@@ -72,10 +72,27 @@ export default function ActivityList({
     <FadeWrapper>
       <div
         ref={containerRef}
-        className={`pt-2 flex flex-col items-center gap-1 w-full select-none transition-all ${
+        className={`flex flex-col items-center gap-1 w-full select-none transition-all ${
           isDraggingOver ? "bg-base-200/50" : ""
         }`}
       >
+        <div className="mb-1 flex w-full items-center justify-between border-b border-base-300 px-1 pb-2">
+          <span className="text-xs font-semibold text-base-content/60">
+            Activités
+          </span>
+          {onClickCreateActivity && canEdit && !isDraggingOver && (
+            <PermissionGuard action="update" object="lesson">
+              <button
+                className="btn btn-primary btn-xs gap-1"
+                disabled={newActivityButtonDisabled}
+                onClick={onClickCreateActivity}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Ajouter
+              </button>
+            </PermissionGuard>
+          )}
+        </div>
         {activities && activities.length > 0 ? (
           activities.map((activity, index) => (
             <ActivityItem
@@ -94,19 +111,6 @@ export default function ActivityList({
         ) : (
           <PermissionGuard action="component" object="progression">
             <p className="text-primary text-sm">Aucune activité</p>
-          </PermissionGuard>
-        )}
-
-        {onClickCreateActivity && canEdit && !isDraggingOver && (
-          <PermissionGuard action="update" object="lesson">
-            <button
-              className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] self-end"
-              disabled={newActivityButtonDisabled}
-              onClick={onClickCreateActivity}
-            >
-              <Plus className="w-4 h-6" />
-              Ajouter une activité
-            </button>
           </PermissionGuard>
         )}
       </div>

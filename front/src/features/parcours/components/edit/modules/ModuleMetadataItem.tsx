@@ -15,8 +15,8 @@ export default function ModuleMetadataItem({
   onCopy,
 }: ModuleMetadataItemProps) {
   return (
-    <div className="flex items-center justify-between hover:brightness-125">
-      <div>
+    <div className="flex items-start justify-between gap-3 rounded-lg border border-base-300 bg-base-100 p-3 hover:bg-base-200/60">
+      <div className="min-w-0 flex-1">
         <p className="font-semibold">
           Parcours : {metadata.parcours?.title ?? "Sans titre"}
         </p>
@@ -32,16 +32,15 @@ export default function ModuleMetadataItem({
           ))}
         </div>
       </div>
-      <div
-        className="tooltip tooltip-left"
-        data-tip="Associer ce module et son contenu au parcours actuel."
+      <button
+        type="button"
+        className="btn btn-primary btn-square btn-sm shrink-0"
+        title="Associer ce module et son contenu au parcours actuel"
+        aria-label="Associer ce module et son contenu au parcours actuel"
+        onClick={onCopy}
       >
-        <Copy
-          className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
-          aria-label="Copier les métadonnées"
-          onClick={onCopy}
-        />
-      </div>
+        <Copy className="h-4 w-4" />
+      </button>
     </div>
   );
 }

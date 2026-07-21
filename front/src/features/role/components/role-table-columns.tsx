@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import type { RoleCounts } from "../api/role.api";
 
 export const getRoleColumns = (
@@ -60,21 +60,19 @@ export const getRoleColumns = (
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
       const roleId = row.original._id;
-      const navigate = useNavigate();
-
       return (
         <div className="flex gap-2 justify-center">
-          <button
-            onClick={() => navigate(`edit/${roleId}`)}
-            className="btn btn-ghost btn-xs tooltip"
+          <Link
+            to={`edit/${roleId}`}
+            className="btn btn-ghost btn-xs btn-square tooltip"
             data-tip="Modifier"
           >
             <Edit className="w-4 h-4" />
-          </button>
+          </Link>
 
           <button
             onClick={() => onDelete(roleId)}
-            className="btn btn-ghost btn-xs text-error tooltip"
+            className="btn btn-ghost btn-xs btn-square text-error tooltip"
             data-tip="Supprimer"
           >
             <Trash2 className="w-4 h-4" />

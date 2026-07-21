@@ -116,7 +116,7 @@ export const getUsersColumns = (
           {user.isActive ? (
             <button
               onClick={() => onSendResetPassword(userId)}
-              className="btn btn-ghost btn-xs tooltip"
+              className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip="Envoyer une demande de réinitialisation de mot de passe"
             >
               <RotateCw className="w-4 h-4 text-warning" />
@@ -124,7 +124,7 @@ export const getUsersColumns = (
           ) : (
             <button
               onClick={() => onSendInvitation(userId)}
-              className="btn btn-ghost btn-sm tooltip"
+              className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip={
                 user.invitationSent
                   ? "L'invitation a déjà été envoyée. Cliquez pour renvoyer."
@@ -141,7 +141,7 @@ export const getUsersColumns = (
           <PermissionGuard object="user" action="update">
             <Link
               to={`/admin/user/edit/${userId}`}
-              className="btn btn-ghost btn-xs tooltip"
+              className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip="Modifier"
             >
               <Edit className="w-4 h-4" />
@@ -150,7 +150,7 @@ export const getUsersColumns = (
           <PermissionGuard object="user" action="delete">
             <button
               onClick={() => onDelete(userId)}
-              className="btn btn-ghost btn-xs text-error tooltip"
+              className="btn btn-ghost btn-xs btn-square text-error tooltip"
               data-tip="Supprimer"
             >
               <Trash2 className="w-4 h-4" />

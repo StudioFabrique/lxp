@@ -28,7 +28,7 @@ export default function ModuleDrawer({
       visible={false}
     >
       {hasModules ? (
-        <ul className="flex flex-col gap-y-2">
+        <ul className="flex flex-col gap-3 pr-1">
           {metadataList.map((module) => (
             <ModuleListItem
               key={module.id}

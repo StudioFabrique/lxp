@@ -44,12 +44,12 @@ export default function CourseTable({
               <div className="flex justify-center">
                 {course.visibility ? (
                   <Eye
-                    className="w-6 h-6"
+                    className="w-4 h-4"
                     aria-label="le cours est visible par les apprenants"
                   />
                 ) : (
                   <EyeOff
-                    className="w-6 h-6"
+                    className="w-4 h-4"
                     aria-label="le cours n'est pas visible par les apprenants"
                   />
                 )}
@@ -57,29 +57,27 @@ export default function CourseTable({
             </td>
             <td className="rounded-r-lg bg-transparent p-2 align-middle">
               <div className="flex items-center gap-x-4 justify-center">
-                <div
-                  className="tooltip tooltip-bottom"
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs btn-square tooltip tooltip-bottom"
                   data-tip="Modifier le cours."
+                  aria-label="Éditer le cours"
+                  onClick={() => onEditCourse(course.id!)}
                 >
                   <Pencil
-                    className="w-6 h-6 text-primary"
-                    aria-label="éditer le cours"
-                    onClick={() => onEditCourse(course.id!)}
+                    className="w-4 h-4 text-primary"
                   />
-                </div>
+                </button>
                 <PermissionGuard action="delete" object="course">
-                  <div
-                    className="tooltip tooltip-bottom"
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs btn-square text-error tooltip tooltip-bottom"
                     data-tip="Supprimer le cours définitivement."
-                    onClick={() => {
-                      onDeleteCourse(course);
-                    }}
+                    aria-label="Supprimer le cours"
+                    onClick={() => onDeleteCourse(course)}
                   >
-                    <Trash2
-                      className="w-6 h-6 text-error"
-                      aria-label="supprimer le cours"
-                    />
-                  </div>
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </PermissionGuard>
               </div>
             </td>
@@ -217,7 +215,7 @@ export default function CourseTable({
                     />
                   </div>
                 </th>
-                <th></th>
+                <th className="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>{content}</tbody>
