@@ -2,7 +2,7 @@ import { Check, Import, Plus } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import { Link } from "react-router";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 type CreateCourseItemProps = {
   parcoursId?: number;

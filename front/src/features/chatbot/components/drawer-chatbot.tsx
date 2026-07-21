@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import HeaderChatbot from "./chatbot-parts/header-chatbot";
 import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";

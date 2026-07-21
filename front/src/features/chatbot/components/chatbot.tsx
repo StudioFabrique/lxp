@@ -1,4 +1,4 @@
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "motion/react";
 import DrawerChatbot from "./drawer-chatbot";
 import ChatbotButton from "./chatbot-button";
 import useChatbot from "../hooks/use-chatbot";

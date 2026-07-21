@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import type { DropResult } from "@hello-pangea/dnd";
 
 interface UseDragAndDropProps<T> {
   items: T[];
@@ -13,12 +12,10 @@ export function useDragAndDrop<T>({
   const [submit, setSubmit] = useState(false);
 
   const handleDragEnd = useCallback(
-    (result: DropResult) => {
-      if (!result.destination) return;
-
+    (sourceIndex: number, destinationIndex: number) => {
       const newItems = Array.from(items);
-      const [movedItem] = newItems.splice(result.source.index, 1);
-      newItems.splice(result.destination.index, 0, movedItem);
+      const [movedItem] = newItems.splice(sourceIndex, 1);
+      newItems.splice(destinationIndex, 0, movedItem);
 
       onReorder(newItems);
       setSubmit(true);
