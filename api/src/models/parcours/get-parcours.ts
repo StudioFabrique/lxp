@@ -21,10 +21,9 @@ async function getParcours() {
   }
   if (parcoursList) {
     const response = parcoursList.map((parcours) => {
-      if (parcours.thumb instanceof Buffer) {
-        const base64thumb = parcours.thumb.toString("base64");
-        const result = { ...parcours, thumb: base64thumb };
-        return result;
+      if (parcours.thumb && typeof parcours.thumb !== "string") {
+        const base64thumb = Buffer.from(parcours.thumb as any).toString("base64");
+        return { ...parcours, thumb: base64thumb };
       }
       return parcours;
     });
