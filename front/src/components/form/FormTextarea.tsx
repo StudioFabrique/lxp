@@ -26,7 +26,7 @@ const FormTextarea = ({
       </label>
       <textarea
         {...register(name)}
-        className={`textarea textarea-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "textarea-error" : ""}`}
+        className={`textarea textarea-bordered w-full focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "textarea-error" : ""}`}
         id={name}
         placeholder={placeholder}
         disabled={disabled}

@@ -35,14 +35,19 @@ type CourseItemProps = {
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
-  onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
+  onCreateLesson: (
+    courseId: number,
+    data: {
+      title: string;
+      description: string;
+      modalite: string;
+      tagId: number;
+    },
+  ) => Promise<boolean>;
 };
 
 export type ModalCourseType =
-  | "visibility"
-  | "publish"
-  | "deleteCourse"
-  | "deleteLesson";
+  "visibility" | "publish" | "deleteCourse" | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -71,7 +76,12 @@ const CourseItem = ({
   const [isCreatingLesson, setIsCreatingLesson] = useState(false);
   const [isSavingLesson, setIsSavingLesson] = useState(false);
 
-  const handleCreateLesson = async (data: { title: string; description: string; modalite: string; tagId: number }) => {
+  const handleCreateLesson = async (data: {
+    title: string;
+    description: string;
+    modalite: string;
+    tagId: number;
+  }) => {
     setIsSavingLesson(true);
     const created = await onCreateLesson(course.id, data);
     setIsSavingLesson(false);
@@ -185,7 +195,13 @@ const CourseItem = ({
 
   return (
     <>
-      <CreateLessonModal open={isCreatingLesson} courseTitle={course.title} isSaving={isSavingLesson} onClose={() => setIsCreatingLesson(false)} onSubmit={handleCreateLesson} />
+      <CreateLessonModal
+        open={isCreatingLesson}
+        courseTitle={course.title}
+        isSaving={isSavingLesson}
+        onClose={() => setIsCreatingLesson(false)}
+        onSubmit={handleCreateLesson}
+      />
       <CourseActionsModal
         modalType={modalType}
         showModal={showModal}
@@ -339,7 +355,17 @@ const CourseItem = ({
               </div>
             )}
             <PermissionGuard action="write" object="course">
-              <button className="btn btn-ghost btn-xs text-primary" onClick={(e) => { e.stopPropagation(); setIsCreatingLesson(true); }}>+ Ajouter une leçon</button>
+              <div className="mt-3 px-2 pt-3">
+                <button
+                  className="btn btn-outline btn-secondary btn-xs w-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsCreatingLesson(true);
+                  }}
+                >
+                  Ajouter une leçon
+                </button>
+              </div>
             </PermissionGuard>
           </div>
         </motion.div>

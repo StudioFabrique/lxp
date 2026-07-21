@@ -99,16 +99,14 @@ export default function ActivityList({
 
         {onClickCreateActivity && canEdit && !isDraggingOver && (
           <PermissionGuard action="update" object="lesson">
-            <span className="px-4 w-full">
-              <button
-                className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] w-full"
-                disabled={newActivityButtonDisabled}
-                onClick={onClickCreateActivity}
-              >
-                <Plus className="w-4 h-6" />
-                Ajouter une activité
-              </button>
-            </span>
+            <button
+              className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] self-end"
+              disabled={newActivityButtonDisabled}
+              onClick={onClickCreateActivity}
+            >
+              <Plus className="w-4 h-6" />
+              Ajouter une activité
+            </button>
           </PermissionGuard>
         )}
       </div>

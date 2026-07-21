@@ -6,6 +6,7 @@ import { formationSchema } from "../formation.schema";
 import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../interfaces/formation-item";
 import { getRandomNumber } from "../../../utils/helpers/get-random-number";
+import type { AxiosError } from "axios";
 
 const TAG_COLORS = [
   "rgba(255, 0, 0, 0.5)",
@@ -44,6 +45,9 @@ export function useFormationForm() {
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
+    null,
+  );
+  const [createdFormation, setCreatedFormation] = useState<FormationItem | null>(
     null,
   );
 
@@ -152,10 +156,26 @@ export function useFormationForm() {
         tags: tagIds,
       });
     },
-    onSuccess: () => {
+    onSuccess: (formation) => {
       toast.success("Formation créée avec succès");
+      setCreatedFormation(formation);
       resetForm();
       refetchFormations();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: formationApi.mutations.deleteFormation,
+    onSuccess: () => {
+      toast.success("Formation supprimée avec succès");
+      resetForm();
+      refetchFormations();
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(
+        error.response?.data.message ??
+          "La formation n'a pas pu être supprimée.",
+      );
     },
   });
 
@@ -236,10 +256,14 @@ export function useFormationForm() {
     tagInput,
     setTagInput,
     formationToEdit,
+    createdFormation,
+    dismissCreatedFormation: () => setCreatedFormation(null),
     isEditing,
     allTags,
     formationsList,
     isPending: createMutation.isPending || updateMutation.isPending,
+    isDeleting: deleteMutation.isPending,
+    deleteFormation: deleteMutation.mutate,
     selectFormation,
     cancelEdit: resetForm,
     handleTagSubmit,

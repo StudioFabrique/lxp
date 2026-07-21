@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 import bgImage from "../../../../src/assets/images/new-parcours-default.jpg";
@@ -21,7 +21,15 @@ type Item = {
 };
 
 const AddParcours = () => {
-  const [formation, setFormation] = useState<number | undefined>(undefined);
+  const [searchParams] = useSearchParams();
+  const requestedFormationId = Number(searchParams.get("formationId"));
+  const initialFormationId =
+    Number.isInteger(requestedFormationId) && requestedFormationId > 0
+      ? requestedFormationId
+      : undefined;
+  const [formation, setFormation] = useState<number | undefined>(
+    initialFormationId,
+  );
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
   const nav = useNavigate();
@@ -154,6 +162,7 @@ const AddParcours = () => {
                 <Wrapper>
                   <NewParcoursForm
                     formations={formations}
+                    initialFormationId={initialFormationId}
                     onSubmit={handleSubmit}
                   />
                 </Wrapper>

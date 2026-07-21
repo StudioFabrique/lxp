@@ -43,6 +43,9 @@ const mutations = {
     const res = await apiClient.put(`/formation/${id}`, { formation: body });
     return res.data.response;
   },
+  deleteFormation: async (id: number): Promise<void> => {
+    await apiClient.delete(`/formation/${id}`);
+  },
 };
 
 export const formationApi = {
