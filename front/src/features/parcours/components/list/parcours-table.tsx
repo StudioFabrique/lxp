@@ -2,10 +2,8 @@ import { Link } from "react-router";
 
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import EditIcon from "../../../../../src/components/UI/svg/edit-icon";
-import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
 import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
-import ArrowTopRightIcon from "../../../../../src/components/UI/svg/arrow-top-right-icon";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { truncateText } from "../../../../utils/helpers/truncate-text";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import React from "react";
@@ -75,55 +73,60 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
-                <div className="w-6 h-6">
+              <td className="bg-transparent rounded-r-lg text-center align-middle">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-6 h-6">
                   <PermissionGuard action="update" object="parcours">
                     <div
                       className="tooltip tooltip-bottom"
                       data-tip="Modifier le parcours"
                     >
                       <Link
+                        className="btn btn-ghost btn-xs btn-square"
                         to={`edit/${item.id}`}
                         aria-label="modifier le parcours"
                       >
-                        <EditIcon />
+                        <Pencil className="h-4 w-4" />
                       </Link>
                     </div>
                   </PermissionGuard>
-                </div>
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression du parcours"
-                >
+                  </div>
+                  <div
+                    className="w-6 h-6 text-error"
+                    aria-label="suppression du parcours"
+                  >
                   <PermissionGuard action="delete" object="parcours">
                     <div
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le parcours"
                     >
-                      <div
-                        className="cursor-pointer"
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs btn-square text-error"
                         onClick={() => handleDeleteParcours(item)}
+                        aria-label="Supprimer le parcours"
                       >
-                        <DeleteIcon />
-                      </div>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </PermissionGuard>
-                </div>
-                <div className="w-6 h-6">
+                  </div>
+                  <div className="w-6 h-6">
                   <PermissionGuard action="read" object="parcours">
                     <div
                       className="tooltip tooltip-bottom"
                       data-tip="Aperçu du parcours"
                     >
                       <Link
-                        className="text-primary"
+                        className="btn btn-ghost btn-xs btn-square text-primary"
                         to={`view/${item.id}`}
                         aria-label="Aperçu du parcours"
                       >
-                        <ArrowTopRightIcon />
+                        <ExternalLink className="h-4 w-4" />
                       </Link>
                     </div>
                   </PermissionGuard>
+                  </div>
                 </div>
               </td>
             </TableRowWrapper>
@@ -232,7 +235,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                   </div>
                 </th>
                 <th>Etat</th>
-                <th></th>
+                <th className="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>{content}</tbody>

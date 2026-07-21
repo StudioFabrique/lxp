@@ -18,7 +18,7 @@ export default function ModuleGrid({
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4">
+    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
       {modules.map((module) => (
         <ModuleCard
           module={module}

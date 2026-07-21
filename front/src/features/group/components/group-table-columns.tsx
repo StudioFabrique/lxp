@@ -64,7 +64,7 @@ export const getGroupColumns = (
         <div className="flex gap-2 justify-center">
           <Link
             to={`/admin/group/edit/${groupId}`}
-            className="btn btn-ghost btn-xs tooltip"
+            className="btn btn-ghost btn-xs btn-square tooltip"
             data-tip="Modifier"
           >
             <Edit className="w-4 h-4" />
@@ -72,7 +72,7 @@ export const getGroupColumns = (
 
           <button
             onClick={() => onDelete(groupId)}
-            className="btn btn-ghost btn-xs text-error tooltip"
+            className="btn btn-ghost btn-xs btn-square text-error tooltip"
             data-tip="Supprimer"
           >
             <Trash2 className="w-4 h-4" />

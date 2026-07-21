@@ -5,6 +5,7 @@ import {
   CloudOff,
   Eye,
   EyeOff,
+  Plus,
 } from "lucide-react";
 import Course from "../../../../../src/utils/interfaces/course";
 import {
@@ -166,6 +167,8 @@ const CourseItem = ({
       selectedLesson &&
       course.lessons.some((lesson) => lesson.id === selectedLesson.id)
     ) {
+      // The open state follows the lesson selected elsewhere in the explorer.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCourseOpen(true);
     } else {
       setCourseOpen(false);
@@ -328,6 +331,24 @@ const CourseItem = ({
               </span>
             )}
 
+            <div className="flex items-center justify-between border-b border-secondary/30 pb-2">
+              <span className="text-xs font-semibold text-base-content/60">
+                Leçons
+              </span>
+              <PermissionGuard action="write" object="course">
+                <button
+                  className="btn btn-secondary btn-xs gap-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsCreatingLesson(true);
+                  }}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Ajouter
+                </button>
+              </PermissionGuard>
+            </div>
+
             {/* Lessons List */}
             {course.lessons.length > 0 ? (
               course.lessons.map(
@@ -354,19 +375,6 @@ const CourseItem = ({
                 </p>
               </div>
             )}
-            <PermissionGuard action="write" object="course">
-              <div className="mt-3 px-2 pt-3">
-                <button
-                  className="btn btn-outline btn-secondary btn-xs w-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsCreatingLesson(true);
-                  }}
-                >
-                  Ajouter une leçon
-                </button>
-              </div>
-            </PermissionGuard>
           </div>
         </motion.div>
       </div>

@@ -74,7 +74,7 @@ Props) {
                     data-tip="Modifier la ressource"
                   >
                     <Link
-                      className="text-primary"
+                      className="btn btn-ghost btn-xs btn-square text-primary"
                       to={`add/${item.id}`}
                       aria-label="modifier la ressource"
                     >
@@ -86,12 +86,14 @@ Props) {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer la ressource"
                     >
-                      <div
-                        className="cursor-pointer"
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs btn-square text-error"
                         onClick={() => deleteRsource(item)}
+                        aria-label="Supprimer la ressource"
                       >
                         <Trash2Icon className="w-4 h-4" />
-                      </div>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -156,7 +158,7 @@ Props) {
                   />
                 </div>
               </th>
-              <th></th>
+              <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>{content}</tbody>
