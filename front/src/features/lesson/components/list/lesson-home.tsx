@@ -1,8 +1,5 @@
 import { Link } from "react-router";
-import {
-  localeDate,
-  localeTime,
-} from "../../../../utils/helpers/locale-date";
+import { localeDate, localeTime } from "../../../../utils/helpers/locale-date";
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -64,22 +61,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                       </Link>
                     </div>
                   </PermissionGuard>
-                  <div className="w-6 h-6">
-                    <PermissionGuard action="write" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Activités"
-                      >
-                        <Link
-                          to={`/admin/lesson/edit/${item.id}`}
-                          className="text-secondary"
-                          aria-label="ajouter une activité"
-                        >
-                          <Activity />
-                        </Link>
-                      </div>
-                    </PermissionGuard>
-                  </div>
+
                   <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression de la leçon"
