@@ -53,6 +53,10 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
     }
   };
 
+  const handleSaveDraft = () => {
+    nav(`/admin/parcours/view/${id}`);
+  };
+
   return (
     /* En tête de l'aperçu */
     <div className="w-full flex flex-col gap-y-8">
@@ -98,7 +102,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
           <>
             <button
               className="btn btn-secondary"
-              onClick={() => handlePublishParcours(false)}
+              onClick={handleSaveDraft}
             >
               Sauvegarder comme brouillon
             </button>

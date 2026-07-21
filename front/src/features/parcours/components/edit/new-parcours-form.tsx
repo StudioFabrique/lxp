@@ -13,6 +13,7 @@ type Item = {
 
 type Props = {
   formations: Array<Item>;
+  initialFormationId?: number;
   onSubmit: ({
     title,
     formationId,
@@ -22,9 +23,15 @@ type Props = {
   }) => void;
 };
 
-const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
+const NewParcoursForm: FC<Props> = ({
+  formations,
+  initialFormationId,
+  onSubmit,
+}) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
-  const [formationId, setFormationId] = useState<number | undefined>(undefined);
+  const [formationId, setFormationId] = useState<number | undefined>(
+    initialFormationId,
+  );
 
   /**
    * sélectionne la formation
@@ -73,6 +80,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
             <Selecter
               list={formations}
               title="A quelle formation souhaitez-vous attacher ce parcours ?"
+              defaultItem={{ id: initialFormationId ?? 0, title: "" }}
               onSelectItem={handleFormation}
             />
             <Link
