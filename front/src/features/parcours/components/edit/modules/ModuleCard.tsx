@@ -1,4 +1,5 @@
-import { Edit2Icon, Trash2 } from "lucide-react";
+import { Edit2Icon, Eye, Trash2 } from "lucide-react";
+import { Link } from "react-router";
 import placeholder from "../../../../../../src/assets/images/cat.webp";
 import { ModuleData } from "../../../interfaces/new-module";
 import AppImage from "../../../../../components/UI/image/app-image";
@@ -46,6 +47,15 @@ export default function ModuleCard({
             <Edit2Icon className="w-4 h-4" />
             Modifier
           </button>
+          <Link
+            className="btn btn-sm btn-ghost bg-white/90 text-primary hover:bg-white"
+            to={`/admin/parcours/module/${module.id}`}
+            title="Prévisualiser le module"
+            aria-label="Prévisualiser le module"
+          >
+            <Eye className="w-4 h-4" />
+            Aperçu
+          </Link>
           <button
             className="btn btn-sm btn-ghost bg-white/90 text-error hover:bg-white"
             type="button"

@@ -80,7 +80,7 @@ const ParcoursSelection = ({
             <Link
               data-tip="Ouverture dans un nouvel onglet"
               className="link hover:text-secondary tooltip tooltip-bottom"
-              to={`/admin/parcours/view/${selectedModule.id}`}
+              to={`/admin/parcours/module/${selectedModule.id}`}
               target="_blank"
             >
               {selectedModule.title}

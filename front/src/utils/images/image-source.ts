@@ -12,7 +12,7 @@ export function normalizeImageSource(
   source: ImageSource,
   mimeType = "image/jpeg",
 ): string | undefined {
-  const value = source?.trim();
+  const value = typeof source === "string" ? source.trim() : undefined;
 
   if (!value) return undefined;
   if (DISPLAYABLE_IMAGE_SOURCE.test(value)) return value;
