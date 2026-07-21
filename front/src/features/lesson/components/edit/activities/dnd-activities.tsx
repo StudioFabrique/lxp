@@ -5,16 +5,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "@hello-pangea/dnd";
 import ActivityListItem from "./activity-list-item";
 import type { Activity } from "../../../../../../src/utils/interfaces/activity";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Modal from "../../../../../components/UI/modal/modal";
+import { DndWrapper } from "../../../../../components/UI/DndWrapper";
 
 type Props = {
   activities: Activity[];
@@ -35,11 +30,10 @@ export default function DNDAcitivities(props: Props) {
     setSubmit(false);
   }, [props]);
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+  const onDragEnd = (sourceIndex: number, destinationIndex: number) => {
     const newActivities = Array.from(props.activities);
-    const [movedActivity] = newActivities.splice(result.source.index, 1);
-    newActivities.splice(result.destination.index, 0, movedActivity);
+    const [movedActivity] = newActivities.splice(sourceIndex, 1);
+    newActivities.splice(destinationIndex, 0, movedActivity);
     props.setActivities(newActivities);
     setSubmit(true);
   };
@@ -61,50 +55,22 @@ export default function DNDAcitivities(props: Props) {
 
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="activities">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-col gap-y-2"
-            >
-              {props.activities.length > 0 ? (
-                <>
-                  {props.activities.map((activity, index) => (
-                    <Draggable
-                      key={activity.id}
-                      draggableId={activity.id!.toString()}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          {...(provided.draggableProps as any)}
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          {...(provided.dragHandleProps as any)}
-                        >
-                          <Wrapper>
-                            <ActivityListItem
-                              activity={activity}
-                              index={index}
-                              onDeleteActivity={() =>
-                                setActivityToDelete(activity)
-                              }
-                            />
-                          </Wrapper>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                </>
-              ) : null}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <DndWrapper
+        droppableId="activities"
+        items={props.activities}
+        isLoading={false}
+        onDragEnd={onDragEnd}
+        getItemId={(activity) => activity.id!}
+        renderItem={(activity, index) => (
+          <Wrapper>
+            <ActivityListItem
+              activity={activity}
+              index={index}
+              onDeleteActivity={() => setActivityToDelete(activity)}
+            />
+          </Wrapper>
+        )}
+      />
       {activityToDelete ? (
         <Modal
           onLeftClick={() => setActivityToDelete(null)}

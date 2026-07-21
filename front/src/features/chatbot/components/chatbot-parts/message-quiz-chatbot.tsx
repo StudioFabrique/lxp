@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { AuthContext } from "../../../../store/AuthProvider";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext } from "react";

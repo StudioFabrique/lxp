@@ -1,11 +1,11 @@
 import React from "react";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import Course from "../../../../utils/interfaces/course";
 import BookIcon from "../../../../components/UI/svg/book-icon";
 import Wrapper from "../../../../components/wrappers/BoxWrapper";
 import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import { DndWrapper } from "../../../../components/UI/DndWrapper";
 
 interface EditModuleCourseProps {
   courses: Course[];
@@ -23,15 +23,10 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
   onSetSubmit,
   onUpdateCourses,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
-    }
-
+  const onDragEnd = (sourceIndex: number, destinationIndex: number) => {
     const newCourses = Array.from(courses);
-    const [movedCourse] = newCourses.splice(result.source.index, 1);
-    newCourses.splice(result.destination.index, 0, movedCourse);
+    const [movedCourse] = newCourses.splice(sourceIndex, 1);
+    newCourses.splice(destinationIndex, 0, movedCourse);
 
     // Mise à jour de l'état avec la nouvelle liste d'éléments
     // Vous devrez adapter cela à votre logique de gestion d'état
@@ -49,27 +44,14 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
         {success ? <CheckCircle className="w-4 h-4 text-success" /> : null}
       </div>
       {courses && courses.length > 0 ? (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="courses">
-            {(provided) => (
-              <ul
-                className="flex flex-col gap-y-2"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {courses.map((item, index) => (
-                  <Draggable
-                    key={item.id}
-                    draggableId={item.id.toString()}
-                    index={index}
-                  >
-                    {(provided: any) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Wrapper>
+        <DndWrapper
+          droppableId="courses"
+          items={courses}
+          isLoading={updating}
+          onDragEnd={onDragEnd}
+          getItemId={(course) => course.id}
+          renderItem={(item, index) => (
+            <Wrapper>
                           <article className="flex justify-between items-center">
                             <div className="flex items-center gap-x-4">
                               <GripVertical className="w-10 h-10 text-primary/50" />
@@ -94,16 +76,9 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                               </PermissionGuard>
                             </span>
                           </article>
-                        </Wrapper>
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
-        </DragDropContext>
+            </Wrapper>
+          )}
+        />
       ) : (
         <p className="text-xs">Aucun cours n'est associé à ce module.</p>
       )}

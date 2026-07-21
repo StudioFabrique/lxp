@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useCourseDispatch } from "../../../store/CourseContext";
 
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import LessonItem from "./lesson-item";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { DndWrapper } from "../../../../../components/UI/DndWrapper";
 
 interface LessonsListProps {
   lessonsList: Lesson[];
@@ -18,14 +17,10 @@ interface LessonsListProps {
 const LessonsList = (props: LessonsListProps) => {
   const dispatch = useCourseDispatch();
 
-  const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
-    }
-
+  const onDragEnd = (sourceIndex: number, destinationIndex: number) => {
     const items = Array.from(props.lessonsList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const [reorderedItem] = items.splice(sourceIndex, 1);
+    items.splice(destinationIndex, 0, reorderedItem);
     dispatch({ type: "REORDER_LESSONS", payload: items });
   };
 
@@ -52,40 +47,20 @@ const LessonsList = (props: LessonsListProps) => {
         </section>
         <section>
           {props.lessonsList && props.lessonsList.length > 0 ? (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="lessons">
-                {(provided: any) => (
-                  <ul
-                    className="flex flex-col gap-y-4"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {props.lessonsList.map((lesson: Lesson, index: number) => (
-                      <Draggable
-                        key={lesson.id}
-                        draggableId={lesson.id!.toString()}
-                        index={index}
-                      >
-                        {(provided: any) => (
-                          <li
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <LessonItem
-                              lesson={lesson}
-                              onEdit={props.onEdit}
-                              onDelete={props.onDelete}
-                            />
-                          </li>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </ul>
-                )}
-              </Droppable>
-            </DragDropContext>
+            <DndWrapper
+              droppableId="lessons"
+              items={props.lessonsList}
+              isLoading={props.loading}
+              onDragEnd={onDragEnd}
+              getItemId={(lesson) => lesson.id!}
+              renderItem={(lesson) => (
+                <LessonItem
+                  lesson={lesson}
+                  onEdit={props.onEdit}
+                  onDelete={props.onDelete}
+                />
+              )}
+            />
           ) : null}
         </section>
       </main>

@@ -3,7 +3,7 @@ import { ChatbotValues } from "../../hooks/use-chatbot";
 import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { cn } from "../../../../utils/cn";
