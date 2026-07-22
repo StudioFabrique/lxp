@@ -21,7 +21,8 @@
     "prisma-generate": "npx prisma generate",
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
     "test:list": "jest --listTests",
-    "generate-activation-key": "npx ts-node src/scripts/generate-activation-key.ts"
+    "generate-activation-key": "npx ts-node src/scripts/generate-activation-key.ts",
+    "notify-triggers": "psql $DATABASE_URL -f src/scripts/andria_notify_triggers.sql"
   },
   "author": "studio@step.eco",
   "license": "ISC",
