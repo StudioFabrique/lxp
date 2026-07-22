@@ -100,8 +100,8 @@ export default async function httpGetEndingCourseQuizStream(
 
     // Sinon, on appelle l'API IA
     const quizzesRequestPayload = {
-      course_name: course.title,
-      activity_content: course.content,
+      course_slug: course.courseSlug,
+      num_questions: 10,
       profile: {
         user_id: String(userId),
         course_id: String(courseId),

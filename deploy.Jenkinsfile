@@ -57,6 +57,9 @@ pipeline {
                         echo "🔑 Génération de la clé d'activation du premier administrateur..."
                         docker compose exec -T app npm run generate-activation-key
 
+                        echo "🔧 Notification des triggers pour le serveur IA..."
+                        docker compose exec -T app npm run notify-triggers
+
                         echo "🧹 Nettoyage..."
                         docker image prune -f
                         docker logout
