@@ -22,7 +22,7 @@
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
     "test:list": "jest --listTests",
     "generate-activation-key": "npx ts-node src/scripts/generate-activation-key.ts",
-    "notify-triggers": "psql $DATABASE_URL -f src/scripts/andria_notify_triggers.sql"
+    "notify-triggers": "docker compose exec -T db-pg psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" < src/scripts/andria_notify_triggers.sql"
   },
   "author": "studio@step.eco",
   "license": "ISC",

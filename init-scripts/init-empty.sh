@@ -41,6 +41,9 @@ done
 echo "Exécution des migrations..."
 npx prisma migrate deploy || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
 
+echo "🔧 Notification des triggers pour le serveur IA..."
+npm run notify-triggers || { echo -e "\033[1;31m Échec: Notification des triggers"; exit 1; }
+
 echo "Génération de la clé JWT de la création du premier utilisateur admin..."
 npm run generate-activation-key
 
