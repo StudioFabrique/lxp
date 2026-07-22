@@ -67,7 +67,7 @@ else
 fi
 
 echo "🔧 Notification des triggers pour le serveur IA..."
-docker compose exec -T app npm run notify-triggers || { echo -e "\033[1;31m Échec: Notification des triggers"; exit 1; }
+npm run notify-triggers || { echo -e "\033[1;31m Échec: Notification des triggers"; exit 1; }
 
 echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
 echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
