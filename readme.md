@@ -1,107 +1,226 @@
-# LXP
+# Plateforme ANDRIA LXP
 
-# Code de la plateforme ANDRIA
+Ce dépôt contient l'API Node.js et le frontend de la plateforme. En mode
+développement, PostgreSQL, PostgreSQL/pgvector et MongoDB tournent dans Docker,
+tandis que l'API et le frontend tournent directement sur la machine. Le service
+IA est fourni par le dépôt frère `ia-lxp` et tourne dans un conteneur séparé.
 
 ## Prérequis
 
-- Dernière version LTS de **node js** et de **npm**
+- Node.js 22 et npm ;
+- Docker avec Docker Compose ;
+- le dépôt `ia-lxp` placé à côté de ce dépôt :
 
-- **docker** et **docker compose**
+```text
+Downloads/
+├── lxp/
+└── ia-lxp/
+```
 
-## Initialisation du projet
+- deux clés API Mistral valides pour utiliser les fonctionnalités IA. En
+  développement, une même clé peut être utilisée pour les deux audiences.
 
-### Script automatisé
+## Initialisation en mode développement
 
-- Utiliser la commande suivante pour initialiser le projet
+Deux modes d'initialisation sont disponibles :
+
+- `npm run init` restaure les données fictives présentes dans les dumps ;
+- `npm run init-empty` repart avec des bases LXP vides.
+
+Les deux scripts installent les dépendances, créent `api/.env` et `front/.env`
+depuis les fichiers `env.example`, démarrent les trois bases Docker, appliquent
+les migrations Prisma et installent les triggers PostgreSQL utilisés par le
+watcher du service IA.
+
+> `npm run init-empty` supprime les données PostgreSQL, MongoDB et les fichiers
+> d'activités existants. Ne pas l'utiliser pour conserver un environnement déjà
+> rempli.
+
+### 1. Initialiser le LXP
+
+Depuis la racine de `lxp` :
+
+```bash
+npm run init-empty
+```
+
+Pour obtenir les données de démonstration à la place :
 
 ```bash
 npm run init
 ```
 
-Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+Si les scripts ne sont pas exécutables :
 
 ```bash
-sudo chmod +x ./init-scripts/init.sh
+chmod +x ./init-scripts/*.sh
 ```
 
-### Que fait ce script ?
+À la fin de l'initialisation, les conteneurs suivants doivent être démarrés :
 
-Afin de démarrer dans un environnement de développement propre, un script executable initialise le projet complet de tel façon à l'utiliser directement et exploiter des données prêtes à l'emploi.
+```bash
+cd api
+docker compose ps
+```
 
-Le script execute les commandes suivantes dans l'ordre :
+Les services attendus sont `lxp-prisma`, `lxp-ai-postgres` et `lxp-mongo`.
 
-- Installation générale des librairies et des dépendances du front et api avec npm
-- Copier les variables d'environnement env.example dans les .env
-- Démarrage des containers docker PostgreSQL et MongoDB
-- Migrations bdd et generation du code des modèles prisma
-- Récupération données fictives via dump bdd Postgres et Mongodb
-- Déplacement des activités types texte vers le répertoire
+### 2. Vérifier la configuration locale du LXP
 
-### Démarrage du serveur
+Le script copie automatiquement `api/env.example` vers `api/.env`. Pour un
+lancement de l'API sur la machine, les connexions principales doivent utiliser
+les ports exposés sur `localhost` :
 
-Une fois que le script init.sh a terminé son initialisation, le serveur peut être lancé depuis la racine du projet avec la commande
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5500/lxp"
+MONGO_LOCAL_URL="mongodb://root:root@localhost:27000/lxp?authSource=admin"
+DOCKER_IA_API_BASE_URL="http://localhost:8000"
+```
+
+Les identifiants présents dans `api/.env` doivent rester cohérents avec ceux des
+services définis dans `api/docker-compose.yml`.
+
+### 3. Démarrer l'API et le frontend
+
+Depuis la racine de `lxp` :
 
 ```bash
 npm run dev
 ```
 
-### Nettoyage des données
+Le frontend devient accessible sur <http://localhost:5173> et l'API sur
+<http://localhost:3000>.
 
-- Utiliser la commande suivante pour nettoyer toutes les données du projet et des containers docker
+### 4. Configurer le service `ia-lxp`
+
+Le service IA tourne dans Docker. Ses URL PostgreSQL doivent donc utiliser les
+noms des conteneurs et le port interne `5432`, jamais `localhost:5500` ou
+`localhost:5501`.
+
+Créer ou compléter `/chemin/vers/ia-lxp/.env` :
+
+```env
+MISTRAL_STUDENT_API_KEY=...
+MISTRAL_CONTENT_API_KEY=...
+MISTRAL_MODEL=mistral-small-latest
+
+DATABASE_URL=postgresql://andria:andria@lxp-ai-postgres:5432/lxp_ai
+ANDRIA_AI_DB_URL=postgresql://andria:andria@lxp-ai-postgres:5432/lxp_ai
+LXP_DB_URL=postgresql://postgres:postgres@lxp-prisma:5432/lxp
+
+LXP_UPLOADS_DIR=/lxp/api/uploads/activities
+LXP_PUBLIC_BASE=http://host.docker.internal:3000
+
+SECRET_KEY=change-me
+DEV_BYPASS_AUTH=True
+```
+
+Les mots de passe doivent correspondre à `ANDRIA_POSTGRES_PASSWORD` et
+`POSTGRES_PASSWORD` dans `lxp/api/.env`. Le Compose de `ia-lxp` charge ce fichier
+avec `env_file: .env` et monte `lxp/api/uploads/activities` en lecture seule.
+
+### 5. Provisionner puis démarrer le service IA
+
+Lors du premier démarrage, ou après suppression du volume `pg_ai`, créer les
+tables `andria_*` avant de lancer durablement le service :
+
+```bash
+cd ../ia-lxp
+docker compose build
+docker compose run --rm ai-service python -m app.db_provision
+docker compose up -d
+docker compose logs -f ai-service
+```
+
+Aux démarrages suivants, si la base `lxp_ai` existe toujours, seule cette commande
+est nécessaire :
+
+```bash
+docker compose up -d
+```
+
+Le réseau Docker externe `lxp` est créé par `lxp/api/docker-compose.yml`. Il faut
+donc toujours initialiser ou démarrer les bases LXP avant le conteneur IA.
+
+### 6. Vérifier l'environnement
+
+```bash
+curl http://localhost:3000
+curl http://localhost:8000/health
+```
+
+Pour vérifier les conteneurs et consulter les erreurs éventuelles :
+
+```bash
+cd /chemin/vers/lxp/api
+docker compose ps
+
+cd /chemin/vers/ia-lxp
+docker compose ps
+docker compose logs --tail=100 ai-service
+```
+
+## Résumé des ports en développement
+
+| Service | Adresse depuis la machine |
+|---|---|
+| Frontend LXP | `http://localhost:5173` |
+| API LXP | `http://localhost:3000` |
+| API IA | `http://localhost:8000` |
+| PostgreSQL LXP | `localhost:5500` |
+| PostgreSQL IA/pgvector | `localhost:5501` |
+| MongoDB | `localhost:27000` |
+
+Depuis les conteneurs, PostgreSQL LXP est accessible via
+`lxp-prisma:5432` et PostgreSQL IA via `lxp-ai-postgres:5432`.
+
+## Nettoyage des données
+
+La commande suivante arrête les bases, supprime les volumes PostgreSQL LXP,
+PostgreSQL IA/pgvector et MongoDB, puis nettoie les fichiers d'activités :
 
 ```bash
 npm run clean
 ```
 
-Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+Après ce nettoyage, il faut relancer le provisionnement des tables `andria_*`
+décrit plus haut avant de démarrer le service IA.
 
-```bash
-sudo chmod +x ./init-scripts/clean-project-data.sh
-```
+## Identifiants de démonstration
 
-### Identifiants de connexion
+Ces comptes sont disponibles uniquement après `npm run init` avec les dumps de
+démonstration.
 
-#### Admin
+### Administrateur
 
-email : admin@studio.eco
+- Email : `admin@studio.eco`
+- Mot de passe : `Abcdef@123456`
 
-mot de passe : Abcdef@123456
+### Étudiant
 
-#### Etudiant
+- Email : `apprenant@studio.eco`
+- Mot de passe : `Abcdef@123456`
 
-email : apprenant@studio.eco
-
-mot de passe : Abcdef@123456
-
-## Script automatisé de dump - Sauvegarder les données actuelles des bdd sur le repo
-
-- Utiliser la commande suivante pour réaliser deux dumps
+## Sauvegarder les bases de développement
 
 ```bash
 ./init-scripts/dump-data.sh
 ```
 
-Si le script ne fonctionne pas à cause des droits d'execution, utiliser
+## Fichiers utiles
 
-```bash
-sudo chmod +x ./init-scripts/dump-data.sh
-```
+- `api/env.example` : exemple de configuration locale ;
+- `api/docker-compose.yml` : bases de développement ;
+- `init-scripts/init.sh` : initialisation avec données fictives ;
+- `init-scripts/init-empty.sh` : initialisation avec bases LXP vides ;
+- `init-scripts/clean-project-data.sh` : nettoyage des données locales ;
+- `api/src/scripts/andria_notify_triggers.sql` : triggers de synchronisation IA.
 
-## Documentation de l'architecture
+### Endpoint public des activités en développement
 
-### Ports ouverts par défaut en mode dev
-
-api => port **3000**
-
-front => port **5173**
-
-BDD PostgreSQL => port **5500**
-
-BDD MongoDB => port **27000**
-
-### Endpoint accessible publiquement en mode DEV pour récupérer les activités
-
+```text
 http://localhost:3000/activities/{id_activité}
+```
 
 ---
 

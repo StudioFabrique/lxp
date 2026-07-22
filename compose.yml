@@ -104,7 +104,8 @@ services:
     image: postgres:18-alpine
     restart: always
     volumes:
-      - pg:/var/lib/postgresql/data
+      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      - pg:/var/lib/postgresql
     networks:
       - lxp
     environment:
@@ -121,7 +122,8 @@ services:
     image: pgvector/pgvector:pg18
     restart: always
     volumes:
-      - pg_ai:/var/lib/postgresql/data
+      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      - pg_ai:/var/lib/postgresql
     networks:
       - lxp
     environment:
