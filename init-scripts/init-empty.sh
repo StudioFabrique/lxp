@@ -33,7 +33,20 @@ npx prisma generate || { echo -e "\033[1;31m Échec: Génération Prisma"; exit 
 
 echo "Attente de l'initialisation complète de PostgreSQL..."
 # Utilisation de la variable POSTGRES_USER issue du .env (avec "postgres" comme fallback)
+tries=0
+max_tries=30
 until docker exec lxp-prisma pg_isready -U "${POSTGRES_USER:-postgres}" > /dev/null 2>&1; do
+  tries=$((tries + 1))
+  if ! docker inspect -f '{{.State.Running}}' lxp-prisma 2>/dev/null | grep -q true; then
+    echo -e "\033[1;31mÉchec: le conteneur PostgreSQL lxp-prisma n'est pas en cours d'exécution.\033[0m"
+    docker compose logs --tail=80 db-pg
+    exit 1
+  fi
+  if [ "$tries" -ge "$max_tries" ]; then
+    echo -e "\033[1;31mÉchec: PostgreSQL n'est pas prêt après $((max_tries * 2)) secondes.\033[0m"
+    docker compose logs --tail=80 db-pg
+    exit 1
+  fi
   echo "PostgreSQL n'est pas encore prêt..."
   sleep 2
 done

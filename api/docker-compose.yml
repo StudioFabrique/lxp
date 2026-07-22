@@ -12,7 +12,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-lxp}
     volumes:
-      - pg2:/var/lib/postgresql/data
+      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      - pg2:/var/lib/postgresql
     networks:
       - lxp
     healthcheck:
@@ -38,7 +39,8 @@ services:
       POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD:-andria}
       POSTGRES_DB: ${ANDRIA_POSTGRES_DB:-lxp_ai}
     volumes:
-      - pg_ai:/var/lib/postgresql/data
+      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      - pg_ai:/var/lib/postgresql
     networks:
       - lxp
     healthcheck:
