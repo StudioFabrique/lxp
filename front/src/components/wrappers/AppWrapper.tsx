@@ -17,7 +17,10 @@ const AppWrapper = ({
         {/* Sidebar */}
         <aside className="h-full z-20">{sidebar}</aside>
 
-        <main className="overflow-y-auto w-full h-full relative">
+        <main
+          id="main-scroll-container"
+          className="overflow-y-auto w-full h-full relative"
+        >
           {/* Topbar optionnelle */}
           {topbar && <header className="sticky top-0 z-10">{topbar}</header>}
 

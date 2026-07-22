@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router";
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import Error404 from "../../../components/error404";
@@ -53,6 +53,13 @@ const ParcoursView = () => {
 
     navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
   };
+
+  useEffect(() => {
+    document.getElementById("main-scroll-container")?.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [pathname]);
 
   return (
     <div className="w-full flex flex-col gap-6">
