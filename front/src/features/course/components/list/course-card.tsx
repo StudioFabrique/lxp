@@ -124,7 +124,7 @@ export default function CourseCard({
             >
               <Link
                 className="btn btn-outline btn-sm btn-circle rounded-md  text-primary"
-                to={`edit/${course.id}`}
+                to={`/admin/parcours/module/${course.moduleId}?editCourseId=${course.id}`}
                 aria-label="modifier le cours"
               >
                 <Pencil className="w-5 h-5" />

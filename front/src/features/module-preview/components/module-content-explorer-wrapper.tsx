@@ -37,7 +37,7 @@ const ModuleContentExplorerWrapper = ({
   moduleData,
 }: ModuleContentExplorerWrapperProps) => {
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-x-clip">
       {header}
 
       <div className="flex items-center gap-5 mt-5">

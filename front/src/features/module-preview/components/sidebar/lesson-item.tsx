@@ -1,27 +1,33 @@
 import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
-import { Link } from "react-router";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import EditLessonModal from "./edit-lesson-modal";
+import type { LessonFormValues } from "./lesson-form.types";
 
 type LessonItemProps = {
   lesson: Lesson;
-  moduleId?: number;
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
+  openEditOnMount?: boolean;
   onSelectLesson: (lesson: Lesson) => void;
   onOpenModal: (lesson: Lesson) => void;
+  onUpdateLesson: (
+    lessonId: number,
+    values: LessonFormValues,
+  ) => Promise<boolean>;
 };
 
 const LessonItem = ({
   lesson,
-  moduleId,
   selectedLesson,
   canEditLesson,
+  openEditOnMount = false,
   onSelectLesson,
   onOpenModal,
+  onUpdateLesson,
   children,
 }: PropsWithChildren<LessonItemProps>) => {
   const isLessonSelected = selectedLesson?.id === lesson.id;
@@ -29,6 +35,8 @@ const LessonItem = ({
 
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditingLesson, setIsEditingLesson] = useState(openEditOnMount);
+  const [isSavingLesson, setIsSavingLesson] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const isLessonRead = lesson.lessonsRead?.some(
@@ -42,6 +50,14 @@ const LessonItem = ({
   const handleDeleteClick = () => {
     setIsOpen(false);
     onOpenModal(lesson);
+  };
+
+  const handleUpdateLesson = async (values: LessonFormValues) => {
+    if (!lesson.id) return false;
+    setIsSavingLesson(true);
+    const updated = await onUpdateLesson(lesson.id, values);
+    setIsSavingLesson(false);
+    return updated;
   };
 
   const handleDropdownToggle = (e: React.MouseEvent) => {
@@ -105,6 +121,14 @@ const LessonItem = ({
 
   return (
     <div className="w-full">
+      {isEditingLesson && (
+        <EditLessonModal
+          lesson={lesson}
+          isSubmitting={isSavingLesson}
+          onClose={() => setIsEditingLesson(false)}
+          onSubmit={handleUpdateLesson}
+        />
+      )}
       <div
         ref={lessonRef}
         onClick={handleBeginReadLesson}
@@ -142,18 +166,18 @@ const LessonItem = ({
                         onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling
                       >
                         <li>
-                          <Link
-                            to={`/admin/lesson/edit/${lesson.id}`}
-                            state={{ moduleId: moduleId }}
+                          <button
+                            type="button"
                             className="flex items-center gap-2 text-sm text-base-content"
                             onClick={(e) => {
                               e.stopPropagation();
                               setIsOpen(false);
+                              setIsEditingLesson(true);
                             }}
                           >
                             <Edit3 className="w-4 h-4" />
                             <span>Éditer les détails</span>
-                          </Link>
+                          </button>
                         </li>
                         <li>
                           <button

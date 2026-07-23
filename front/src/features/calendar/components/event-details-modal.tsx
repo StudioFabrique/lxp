@@ -1,5 +1,5 @@
 import { PropsWithChildren, useRef } from "react";
-import { normalizeImageSource } from "../../../../utils/images/image-source";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 
 interface Props {
   modalId: string;

@@ -1,12 +1,12 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router";
 
-import { queryClient } from "./lib/react-query";
+import { queryClient } from "../lib/react-query";
 import { router } from "./router";
 
-import { ThemeProvider } from "./store/ThemeProvider";
-import { AuthProvider } from "./store/AuthProvider";
-import ErrorBoundary from "./components/wrappers/layouts/ErrorBoundary";
+import { ThemeProvider } from "../store/ThemeProvider";
+import { AuthProvider } from "../store/AuthProvider";
+import ErrorBoundary from "../components/wrappers/layouts/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 
 function App() {

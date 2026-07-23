@@ -1,36 +1,77 @@
-import type { CSSProperties, PropsWithChildren } from "react";
+import {
+  type CSSProperties,
+  type PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type Course from "../../../../../src/utils/interfaces/course";
 import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
+import type { UpdateCourseFormValues } from "./course-form.types";
+import type { LessonFormValues } from "./lesson-form.types";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
-  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
+  onUpdateCourse: (
+    courseId: number,
+    values: UpdateCourseFormValues,
+  ) => Promise<boolean>;
+  editCourseId?: number;
+  editLessonId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
-  onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
+  onCreateLesson: (
+    courseId: number,
+    data: LessonFormValues,
+  ) => Promise<boolean>;
+  onUpdateLesson: (
+    lessonId: number,
+    values: LessonFormValues,
+  ) => Promise<boolean>;
   children: React.ReactNode[];
 };
 
 const SidebarCoursesList = ({
   courses,
-  moduleId,
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   onPublishCourse,
+  onUpdateCourse,
+  editCourseId,
+  editLessonId,
   onDeleteLesson,
   onCreateLesson,
+  onUpdateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
+  const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
+  const actionsSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollContainer = document.getElementById("main-scroll-container");
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsAtNaturalPosition(entry.isIntersecting),
+      {
+        root: scrollContainer,
+        threshold: 0.1,
+      },
+    );
+
+    const sentinel = actionsSentinelRef.current;
+    if (sentinel) observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
     (course) => course.lessons.length > 0,
@@ -98,14 +139,17 @@ const SidebarCoursesList = ({
             <CourseItem
               key={course.id}
               course={course}
-              moduleId={moduleId}
               selectedLesson={selectedLesson}
               onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
+              onUpdateCourse={onUpdateCourse}
+              openEditOnMount={course.id === editCourseId}
+              editLessonId={editLessonId}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
+              onUpdateLesson={onUpdateLesson}
               children={children[1]}
             />
           ))
@@ -116,8 +160,17 @@ const SidebarCoursesList = ({
             </p>
           </PermissionGuard>
         )}
+      </div>
+      <div
+        className={`sticky bottom-1 z-30 mt-5 w-full rounded-xl transition-all duration-300 ${
+          isAtNaturalPosition
+            ? "bg-transparent shadow-none"
+            : "border border-base-300 px-2 py-2 backdrop-blur"
+        }`}
+      >
         {children[0]}
       </div>
+      <div ref={actionsSentinelRef} className="h-px w-full" />
     </div>
   );
 };

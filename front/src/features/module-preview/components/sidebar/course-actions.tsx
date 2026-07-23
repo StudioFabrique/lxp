@@ -1,18 +1,19 @@
 import { Edit, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import { Link } from "react-router";
 import Course from "../../../../../src/utils/interfaces/course";
 import { ModalCourseType } from "./course-item";
 
 type CourseActionsProps = {
   course: Course;
   onOpenModal: (modalType: ModalCourseType, e: React.MouseEvent) => void;
+  onEdit: (event: React.MouseEvent) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
 
 const CourseActions = ({
   course,
   onOpenModal,
+  onEdit,
   onClickMenu,
 }: CourseActionsProps) => {
   const handleClickPublish = (e: React.MouseEvent) => {
@@ -46,13 +47,14 @@ const CourseActions = ({
         )}
 
         <PermissionGuard action="update" object="course">
-          <Link
-            to={`/admin/course/edit/${course.id}`}
+          <button
+            type="button"
+            onClick={onEdit}
             className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
           >
             <Edit className="w-4 h-4 mr-3" />
             Modifier le cours
-          </Link>
+          </button>
         </PermissionGuard>
 
         {/* <PermissionGuard action="update" object="course">

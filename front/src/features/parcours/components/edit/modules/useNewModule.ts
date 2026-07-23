@@ -18,6 +18,14 @@ import { parcoursApi } from "../../../api/parcours.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { parcoursKeys } from "../../../api/parcours.keys";
 
+const emptyModuleFormValues = {
+  moduleId: undefined,
+  title: "",
+  description: "",
+  duration: undefined,
+  quizInstructions: "",
+};
+
 const useNewModule = () => {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +48,7 @@ const useNewModule = () => {
     trigger,
   } = useForm({
     resolver: zodResolver(moduleCreateSchema),
+    defaultValues: emptyModuleFormValues,
   });
 
   const getParcoursModules = useCallback(async () => {
@@ -93,9 +102,14 @@ const useNewModule = () => {
   };
 
   const handleCancelForm = () => {
-    reset();
+    reset(emptyModuleFormValues);
     dispatch({ type: "CANCEL_FORM" });
     scrollToTop();
+  };
+
+  const handleCreateNewModule = () => {
+    reset(emptyModuleFormValues);
+    dispatch({ type: "START_CREATE" });
   };
 
   const showDeleteModal = (id: number) => {
@@ -350,14 +364,13 @@ const useNewModule = () => {
     refForm,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,
+    handleCreateNewModule,
     setCurrentContacts: (contacts: Contact[]) =>
       dispatch({ type: "SET_CURRENT_CONTACTS", payload: contacts }),
     setCurrentSkills: (skills: Skill[]) =>
       dispatch({ type: "SET_CURRENT_SKILLS", payload: skills }),
     setFile: (file: File | null) =>
       dispatch({ type: "SET_FILE", payload: file }),
-    setShowForm: (show: boolean) =>
-      dispatch({ type: "SET_SHOW_FORM", payload: show }),
     showDeleteModal,
     moduleToDelete: state.moduleToDelete,
     handleDeleteModule,

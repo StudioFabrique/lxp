@@ -3,8 +3,8 @@ import { MouseEvent } from "react";
 import { DayPicker } from "react-day-picker";
 import { fr } from "react-day-picker/locale";
 import "react-day-picker/style.css";
-import { CalendarView } from "../calendar-configuration";
-import { formatDate } from "../calendar-utils";
+import { CalendarView } from "./calendar-configuration";
+import { formatDate } from "./calendar-utils";
 
 type Props = {
   view?: CalendarView;
