@@ -77,12 +77,14 @@ else
   echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
 fi
 
-echo "Copie des fichiers d'activités en html..."
-if [ -d "../init-scripts/activities" ]; then
+echo "Restauration des fichiers d'activités..."
+if [[ -d "./dumps/activities" ]]; then
   mkdir -p ./uploads/
-  cp -R ../init-scripts/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers texte html"; exit 1; }
+  rm -rf ./uploads/activities
+  cp -R ./dumps/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
+  echo -e "\033[0;32m Activités restaurées.\033[0m"
 else
-  echo "\033[1;33m Dossier ../init-scripts/activities introuvable, copie ignorée."
+  echo -e "\033[1;33m Dossier ./dumps/activities introuvable, restauration ignorée."
 fi
 
 echo "🔧 Notification des triggers pour le serveur IA..."
