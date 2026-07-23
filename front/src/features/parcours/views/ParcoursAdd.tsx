@@ -10,9 +10,9 @@ import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import Selecter from "../../../components/UI/selecter/selecter.component";
-import { HelpCircle } from "lucide-react";
+import { Copy, Layers3 } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
-import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import Modal from "../../../components/UI/modal/modal";
 
 type Item = {
   id: number;
@@ -32,6 +32,7 @@ const AddParcours = () => {
   );
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
   const nav = useNavigate();
 
   const { data: formations } = useQuery({
@@ -50,7 +51,7 @@ const AddParcours = () => {
     },
   });
 
-  const { mutate: duplicateParcours } = useMutation({
+  const { mutate: duplicateParcours, isPending: isDuplicating } = useMutation({
     mutationFn: (id: number) => parcoursApi.mutations.duplicateParcours(id),
     onSuccess: (data) => {
       if (data.success) {
@@ -97,6 +98,12 @@ const AddParcours = () => {
     if (parcours !== undefined) duplicateParcours(parcours);
   };
 
+  const closeTemplateModal = () => {
+    if (isDuplicating) return;
+    setShowTemplateModal(false);
+    setParcours(undefined);
+  };
+
   return (
     <FadeWrapper>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto">
@@ -107,7 +114,7 @@ const AddParcours = () => {
                 <Loader />
               </div>
             ) : (
-              <div className="grid grid-rows-2 gap-8">
+              <div className="flex flex-col gap-8">
                 <h1 className="text-2xl font-extrabold">
                   Création d'un parcours
                 </h1>
@@ -118,60 +125,95 @@ const AddParcours = () => {
                 </h3>
 
                 <Wrapper>
-                  <div className="h-full flex flex-col justify-around gap-y-4">
-                    <div className="text-sm font-bold">
-                      Créer un parcours à partir d'un modèle
-                    </div>
-                    <div className="flex flex-col gap-y-8">
-                      <span className="w-full flex items-center gap-x-4">
-                        <Selecter
-                          list={formations}
-                          title="Rechercher par formation"
-                          onSelectItem={handleFormation}
-                        />
-                        <QuestionMarkTooltip tooltipValue="Chosissez une formation pour obtenir une liste de parcours dans le menu déroulant ci-dessous">
-                          <HelpCircle className="w-6 h-6 text-info" />
-                        </QuestionMarkTooltip>
-                      </span>
-
-                      <span className="w-full flex items-center gap-x-4">
-                        <Selecter
-                          list={parcoursList}
-                          title="Choisisez le parcours à dupliquer"
-                          onSelectItem={handleParcours}
-                        />
-                        <QuestionMarkTooltip tooltipValue="Les compétences, objectifs, ressources pédagogiques, modules, cours, leçons et activités associés au parcours choisi seront également dupliqués lors de l'opération.">
-                          <HelpCircle className="w-6 h-6 text-info" />
-                        </QuestionMarkTooltip>
-                      </span>
-                    </div>
-                    <div className="w-full flex justify-end mt-4">
-                      <button
-                        className="btn btn-primary"
-                        type="button"
-                        onClick={handleDuplicateParcours}
-                        disabled={parcours === undefined || !formation}
-                      >
-                        Créer
-                      </button>
-                    </div>
-                  </div>
-                </Wrapper>
-
-                <h3>Ou</h3>
-                <Wrapper>
+                  <h2 className="text-lg font-bold">
+                    Créer un nouveau parcours
+                  </h2>
                   <NewParcoursForm
                     formations={formations}
                     initialFormationId={initialFormationId}
                     onSubmit={handleSubmit}
                   />
                 </Wrapper>
+
+                <div className="divider">ou</div>
+
+                <button
+                  className="btn btn-outline btn-secondary w-full min-h-14"
+                  type="button"
+                  onClick={() => setShowTemplateModal(true)}
+                >
+                  <Layers3 className="h-5 w-5" />
+                  Créer un parcours à partir d'un modèle
+                </button>
               </div>
             )}
           </div>
           <div style={classImage} />
         </>
       </div>
+      {showTemplateModal && (
+        <Modal
+          title="Créer un parcours à partir d'un modèle"
+          leftLabel="Annuler"
+          rightLabel="Dupliquer le parcours"
+          onLeftClick={closeTemplateModal}
+          onRightClick={handleDuplicateParcours}
+          isSubmitting={isDuplicating}
+          rightDisabled={parcours === undefined}
+          modalBoxStyle="w-11/12 max-w-3xl"
+        >
+          <div className="mt-6 flex flex-col gap-5">
+            <div>
+              <label className="mb-2 block text-sm font-semibold">
+                Rechercher par formation
+              </label>
+              <Selecter
+                list={formations ?? []}
+                title="Sélectionner une formation"
+                onSelectItem={handleFormation}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold">Parcours disponibles</p>
+              {!formation ? (
+                <p className="rounded-xl border border-dashed border-base-300 p-6 text-center text-sm text-base-content/60">
+                  Sélectionnez une formation pour afficher ses parcours.
+                </p>
+              ) : parcoursList.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-base-300 p-6 text-center text-sm text-base-content/60">
+                  Aucun parcours ne peut être utilisé comme modèle.
+                </p>
+              ) : (
+                <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+                  {parcoursList.map((item) => {
+                    const selected = parcours === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleParcours(item.id)}
+                        className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors ${
+                          selected
+                            ? "border-primary bg-primary/10"
+                            : "border-base-300 bg-base-100 hover:border-primary/50 cursor-pointer"
+                        }`}
+                      >
+                        <Copy className="h-4 w-4 shrink-0 text-primary" />
+                        <span className="font-medium">{item.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="text-xs text-base-content/60">
+                Les objectifs, compétences, contacts, modules, cours, leçons et
+                activités du parcours sélectionné seront dupliqués.
+              </p>
+            </div>
+          </div>
+        </Modal>
+      )}
     </FadeWrapper>
   );
 };

@@ -1,8 +1,8 @@
-import { ChangeEvent } from "react";
+import FileUpload from "./file-upload/FileUpload";
 
 type Props = {
   isDisabled?: boolean;
-  onSetFile: (event: ChangeEvent<HTMLInputElement>) => void;
+  onSetFile: (file: File) => void;
 };
 
 export default function FormUploadImage({
@@ -10,14 +10,11 @@ export default function FormUploadImage({
   onSetFile,
 }: Props) {
   return (
-    <input
-      type="file"
-      className="file-input file-input-primary w-full"
-      accept=".jpg, ;jpeg, .png, .webp, .gif"
-      onChange={onSetFile}
-      name="file"
-      aria-label="téléverser une image"
-      id="file"
+    <FileUpload
+      fileType="image"
+      buttonLabel="Sélectionner une image"
+      helperText="JPG, PNG, WebP ou GIF"
+      onFileSelect={onSetFile}
       disabled={isDisabled}
     />
   );

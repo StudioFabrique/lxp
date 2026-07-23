@@ -20,7 +20,7 @@ function ModuleMetadatas({
   children,
   onSetImageBase64,
 }: Props) {
-  const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
+  const { image, handleSelectedFile } = useImageUpload(5000000, onSetFile);
 
   useEffect(() => {
     if (onSetImageBase64) onSetImageBase64(image);
@@ -65,11 +65,10 @@ function ModuleMetadatas({
 
         <div className="w-full h-full flex flex-col gap-2">
           <p className="text-sm font-bold">Image du module</p>
-          <FormUploadImage onSetFile={handleFileChange} />
+          <FormUploadImage onSetFile={handleSelectedFile} />
           {!image && (
             <p className="text-base-content/40 text-xs">
-              Une image sera généré automatiquement à partir de la première page
-              du module.
+              Une image sera générée automatiquement si aucune n'est importée.
             </p>
           )}
         </div>

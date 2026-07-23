@@ -10,6 +10,7 @@ import {
 import { SortAsc, SortDesc } from "lucide-react";
 import TableEmpty from "./TableEmpty";
 import FadeWrapper from "../wrappers/FadeWrapper";
+import TableOverflowContainer from "./TableOverflowContainer";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,8 +62,8 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="table border-separate border-spacing-y-5">
+    <TableOverflowContainer>
+      <table className="table w-full border-separate border-spacing-y-5">
         <thead className="w-full">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -133,6 +134,6 @@ export function DataTable<TData, TValue>({
           ))}
         </tbody>
       </table>
-    </div>
+    </TableOverflowContainer>
   );
 }
