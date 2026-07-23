@@ -1,9 +1,16 @@
-import type { CSSProperties, PropsWithChildren } from "react";
+import {
+  type CSSProperties,
+  type PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type Course from "../../../../../src/utils/interfaces/course";
 import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
+import type { CourseFormValues } from "./course-form.types";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -14,6 +21,10 @@ type SidebarCoursesListProps = {
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
+  onUpdateCourse: (
+    courseId: number,
+    values: CourseFormValues,
+  ) => Promise<boolean>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
   children: React.ReactNode[];
@@ -27,10 +38,29 @@ const SidebarCoursesList = ({
   onDeleteCourse,
   onEnableCourse,
   onPublishCourse,
+  onUpdateCourse,
   onDeleteLesson,
   onCreateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
+  const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
+  const actionsSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollContainer = document.getElementById("main-scroll-container");
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsAtNaturalPosition(entry.isIntersecting),
+      {
+        root: scrollContainer,
+        threshold: 0.1,
+      },
+    );
+
+    const sentinel = actionsSentinelRef.current;
+    if (sentinel) observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
     (course) => course.lessons.length > 0,
@@ -104,6 +134,7 @@ const SidebarCoursesList = ({
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
+              onUpdateCourse={onUpdateCourse}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
               children={children[1]}
@@ -116,8 +147,17 @@ const SidebarCoursesList = ({
             </p>
           </PermissionGuard>
         )}
+      </div>
+      <div
+        className={`sticky bottom-4 z-30 mt-5 w-full rounded-xl transition-all duration-300 ${
+          isAtNaturalPosition
+            ? "bg-transparent shadow-none"
+            : "border border-base-300 bg-base-200/95 p-2 shadow-xl backdrop-blur"
+        }`}
+      >
         {children[0]}
       </div>
+      <div ref={actionsSentinelRef} className="h-px w-full" />
     </div>
   );
 };

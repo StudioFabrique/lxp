@@ -25,6 +25,10 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
 import apiClient from "../../../lib/axios";
+import type {
+  CourseFormValues,
+  CreateCourseFormValues,
+} from "../components/sidebar/course-form.types";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 const useModuleContentExplorer = () => {
@@ -250,10 +254,44 @@ const useModuleContentExplorer = () => {
   }, []);
 
   const createCourse = useCallback(
-    async (title: string) => {
-      if (!moduleId || !title.trim()) return false;
+    async (values: CreateCourseFormValues) => {
+      if (!moduleId || !values.title.trim()) return false;
       try {
-        await apiClient.post("/course", { title: title.trim(), moduleId: +moduleId });
+        const { data } = await apiClient.post<{
+          course: { id: number };
+        }>("/course", {
+          title: values.title.trim(),
+          moduleId: +moduleId,
+        });
+        await apiClient.put("/course/infos", {
+          id: data.course.id,
+          title: values.title.trim(),
+          description: values.description,
+          visibility: values.visibility,
+        });
+        if (values.tagIds.length > 0) {
+          await apiClient.put(
+            `/course/tags/${data.course.id}`,
+            values.tagIds,
+          );
+        }
+        if (values.lessonTitles.length > 0) {
+          const tagId = values.tagIds[0];
+          for (const lessonTitle of values.lessonTitles) {
+            await apiClient.put(`/course/new-lesson/${data.course.id}`, {
+              title: lessonTitle,
+              description: "",
+              modalite: "distanciel",
+              tagId,
+            });
+          }
+        }
+        if (values.lessonIds.length > 0) {
+          await apiClient.post(
+            `/lesson/duplicate/${data.course.id}`,
+            values.lessonIds,
+          );
+        }
         await fetchModuleData();
         toast.success("Cours créé");
         return true;
@@ -263,6 +301,26 @@ const useModuleContentExplorer = () => {
       }
     },
     [fetchModuleData, moduleId],
+  );
+
+  const updateCourse = useCallback(
+    async (courseId: number, values: CourseFormValues) => {
+      try {
+        await apiClient.put("/course/infos", {
+          id: courseId,
+          title: values.title.trim(),
+          description: values.description,
+          visibility: values.visibility,
+        });
+        await fetchModuleData();
+        toast.success("Cours mis à jour");
+        return true;
+      } catch {
+        toast.error("Impossible de modifier le cours");
+        return false;
+      }
+    },
+    [fetchModuleData],
   );
 
   const createLesson = useCallback(
@@ -606,6 +664,7 @@ const useModuleContentExplorer = () => {
       publishCourse,
       deleteCourse,
       createCourse,
+      updateCourse,
     },
     lessonActions: {
       completeLesson,

@@ -1,13 +1,14 @@
 import { Check, Import, Plus } from "lucide-react";
-import { cn } from "../../../../utils/cn";
 import { Link } from "react-router";
-import { useState, useRef, useEffect, ChangeEvent } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { motion } from "motion/react";
+import type { CreateCourseFormValues } from "./course-form.types";
+import CreateCourseDetailsModal from "./create-course-details-modal";
 
 type CreateCourseItemProps = {
   parcoursId?: number;
   moduleId: number;
-  onCreate: (title: string) => Promise<boolean>;
+  onCreate: (values: CreateCourseFormValues) => Promise<boolean>;
 };
 
 const CreateCourseItem = ({
@@ -15,120 +16,113 @@ const CreateCourseItem = ({
   moduleId,
   onCreate,
 }: CreateCourseItemProps) => {
-  const [title, setTitle] = useState<string>("");
-  const [isEditing, setIsEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [showTitleInput, setShowTitleInput] = useState(false);
+  const [showDetailsForm, setShowDetailsForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [title, setTitle] = useState("");
+  const validationButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handleClickAdd = () => {
-    setIsEditing(true);
-  };
-
-  const handleInputBlur = (e: React.FocusEvent) => {
-    // Prevent blur if clicking the check button
-    if (buttonRef.current?.contains(e.relatedTarget as Node)) return;
-    setIsEditing(false);
-  };
-
-  const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      setIsEditing(false);
-    }
-    if (e.key === "Enter") {
-      buttonRef.current?.click();
-    }
-  };
-
-  const handleCreate = async () => {
+  const handleOpenDetails = (event: FormEvent) => {
+    event.preventDefault();
     if (!title.trim()) return;
-    if (await onCreate(title)) {
-      setTitle("");
-      setIsEditing(false);
-    }
+    setShowDetailsForm(true);
   };
 
-  useEffect(() => {
-    if (isEditing) {
-      inputRef.current?.focus();
-      window.scrollTo({
-        top: inputRef.current?.offsetTop,
-        behavior: "smooth",
-      });
+  const handleCreate = async (values: CreateCourseFormValues) => {
+    setIsSubmitting(true);
+    const success = await onCreate(values);
+    setIsSubmitting(false);
+    if (success) {
+      setTitle("");
+      setShowDetailsForm(false);
+      setShowTitleInput(false);
     }
-  }, [isEditing]);
+    return success;
+  };
+
+  const closeTitleInput = () => {
+    setTitle("");
+    setShowTitleInput(false);
+  };
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex flex-col w-full cursor-pointer">
-        <motion.div
-          className={cn(
-            "rounded-xl flex flex-col gap-4",
-            isEditing && "bg-success",
-          )}
-          initial={{ scale: 0.95, padding: 0 }}
-          animate={{
-            scale: 1,
-            padding: isEditing ? 16 : 0,
-          }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="flex justify-between items-center gap-5">
-            {isEditing ? (
-              <div className="w-full flex flex-col gap-4">
-                <span className="flex gap-4">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={title}
-                    onChange={handleChangeInput}
-                    onBlur={handleInputBlur}
-                    onKeyDown={handleKeyDown}
-                    className="input input-sm input-bordered w-full max-h-10 text-base font-semibold"
-                  />
-                  {title.length > 0 && (
-                    <button
-                      ref={buttonRef}
-                      onClick={handleCreate}
-                      disabled={!title.trim()}
-                      className="btn btn-primary btn-sm tooltip tooltip-right"
-                      data-tip="Valider"
-                    >
-                      <Check className="stroke-base-100 w-5 h-5" />
-                    </button>
-                  )}
-                </span>
-                <span className="text-sm font-light italic text-base-100">
-                  Le cours sera ajouté directement à ce module.
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 w-full">
-                <button
-                  onClick={handleClickAdd}
-                  // Remplacement de w-full par flex-1
-                  className="btn btn-success rounded-xl flex-1 text-base-100 flex justify-between items-center gap-2"
-                >
-                  Ajouter un cours
-                  <Plus />
-                </button>
-                <Link
-                  to="/admin/course/import"
-                  state={{ parcoursId, moduleId }}
-                  className="btn btn-primary text-base-100 shrink-0 tooltip tooltip-bottom"
-                  data-tip="Importer des cours"
-                >
-                  <Import size={20} />
-                </Link>
-              </div>
-            )}
+    <>
+      {showDetailsForm && (
+        <CreateCourseDetailsModal
+          initialTitle={title}
+          isSubmitting={isSubmitting}
+          onClose={() => setShowDetailsForm(false)}
+          onSubmit={handleCreate}
+        />
+      )}
+      <motion.div
+        className={`flex w-full flex-col gap-4 rounded-xl ${
+          showTitleInput ? "bg-success" : ""
+        }`}
+        initial={{ scale: 0.95, padding: 0 }}
+        animate={{
+          scale: 1,
+          padding: showTitleInput ? 16 : 0,
+        }}
+        transition={{ duration: 0.2 }}
+      >
+        {showTitleInput ? (
+          <form onSubmit={handleOpenDetails}>
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                className="input input-sm input-bordered w-full font-semibold"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                onBlur={(event) => {
+                  if (
+                    validationButtonRef.current?.contains(
+                      event.relatedTarget as Node,
+                    )
+                  ) {
+                    return;
+                  }
+                  closeTitleInput();
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") closeTitleInput();
+                }}
+                placeholder="Titre du cours"
+              />
+              <button
+                ref={validationButtonRef}
+                type="submit"
+                disabled={!title.trim()}
+                className="btn btn-primary btn-sm btn-square"
+                aria-label="Continuer"
+              >
+                <Check className="h-4 w-4" />
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex w-full items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTitleInput(true)}
+              className="btn btn-success flex-1 justify-between rounded-xl text-base-100"
+            >
+              Ajouter un cours
+              <Plus />
+            </button>
+            <Link
+              to="/admin/course/import"
+              state={{ parcoursId, moduleId }}
+              className="btn btn-primary shrink-0 text-base-100 tooltip tooltip-left"
+              data-tip="Importer des cours"
+              aria-label="Importer des cours"
+            >
+              <Import size={20} />
+            </Link>
           </div>
-        </motion.div>
-      </div>
-    </div>
+        )}
+      </motion.div>
+    </>
   );
 };
 

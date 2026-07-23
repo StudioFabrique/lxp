@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
-import { authRoutes } from "./features/auth/routes";
+import { authRoutes } from "../features/auth/routes";
 import { adminRoutes } from "./router.admin";
 import { studentRoutes } from "./router.student";
 
