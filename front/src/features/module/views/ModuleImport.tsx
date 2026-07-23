@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import ImportResult from "../../../components/import-modules/import-result";
-import ParcoursSelection from "../../../components/import-modules/parcours-selection";
-import ZipImport from "../../../components/import-modules/zip-import/zip-import";
+import ImportResult from "../components/import/import-result";
+import ParcoursSelection from "../components/import/parcours-selection";
+import ZipImport from "../components/import/zip-import/zip-import";
 import Header from "../../../components/headers/Header";
 import useImportModules, {
   ModulesImportStep,

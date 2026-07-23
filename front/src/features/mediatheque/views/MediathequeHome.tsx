@@ -1,9 +1,9 @@
-import TabsMedia from "../../../../src/components/mediatheque/tabs-media";
+import TabsMedia from "../components/tabs-media";
 import Pagination from "../../../../src/components/pagination";
 import Header from "../../../components/headers/Header";
 import PaginationLimitSelect from "../../../../src/components/UI/pagination-limit-select";
-import usePaginatedMediatheque from "../../../../src/hooks/use-paginated-mediatheque";
-import Media from "../../../../src/utils/interfaces/media";
+import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
+import Media from "../interfaces/media";
 
 /**
  * Composant principal de la page d'accueil de la médiathèque

@@ -1,15 +1,17 @@
 import { FC } from "react";
 import User from "../../utils/interfaces/user";
+import AppImage from "../UI/image/app-image";
 
 export const AvatarSmall: FC<{
   user: Partial<User> & { firstname: string; lastname: string };
-  className?: string;
+  size?: number;
   noImgClassName?: string;
   imgClassName?: string;
 }> = ({
   user,
-  noImgClassName = "text-xs flex justify-center items-center p-4 w-6 h-6 rounded-full bg-accent text-secondary-content",
-  imgClassName = "w-8 h-8 rounded-full object-cover",
+  size = 8,
+  noImgClassName = `w-${size} h-${size} text-xs flex justify-center items-center p-4 rounded-full bg-accent text-secondary-content`,
+  imgClassName = `w-${size} h-${size} rounded-full object-cover`,
 }) => {
   return (
     <>
@@ -18,7 +20,11 @@ export const AvatarSmall: FC<{
           {(user.firstname[0] + user.lastname[0]).trim().toUpperCase()}
         </p>
       ) : (
-        <img src={user.avatar} alt="avatar" className={imgClassName} />
+        <AppImage
+          src={user.avatar}
+          alt={`Avatar de ${user.firstname} ${user.lastname}`}
+          className={imgClassName}
+        />
       )}
     </>
   );

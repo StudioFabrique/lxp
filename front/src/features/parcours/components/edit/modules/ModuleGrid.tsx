@@ -1,4 +1,4 @@
-import { ModuleData } from "../../../../../../src/utils/interfaces/new-module";
+import { ModuleData } from "../../../interfaces/new-module";
 import ElementNotFound from "../../../../../components/UI/element-not-found";
 import ModuleCard from "./ModuleCard";
 
@@ -18,7 +18,7 @@ export default function ModuleGrid({
   }
 
   return (
-    <div className="flex flex-wrap gap-6 items-stretch w-full">
+    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
       {modules.map((module) => (
         <ModuleCard
           module={module}

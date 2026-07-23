@@ -1,16 +1,11 @@
 import { Link } from "react-router";
-import {
-  localeDate,
-  localeTime,
-} from "../../../../utils/helpers/locale-date";
+import { localeDate, localeTime } from "../../../../utils/helpers/locale-date";
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
-import EditIcon from "../../../../../src/components/UI/svg/edit-icon";
 import LessonsList from "../../../course/components/edit/scenario/lessons-list";
 import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
-import { Activity, Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
 import TableWrapper from "../../../../components/UI/table-wrapper";
 import ElementNotFound from "../../../../components/UI/element-not-found";
@@ -57,29 +52,15 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                       data-tip="Aperçu de la leçon"
                     >
                       <Link
+                        className="btn btn-ghost btn-xs btn-square"
                         to={`/admin/parcours/module/${item.course.module.id}`}
                         state={{ lessonId: item.id }}
                       >
-                        <Eye />
+                        <Eye className="h-4 w-4" />
                       </Link>
                     </div>
                   </PermissionGuard>
-                  <div className="w-6 h-6">
-                    <PermissionGuard action="write" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Activités"
-                      >
-                        <Link
-                          to={`/admin/lesson/edit/${item.id}`}
-                          className="text-secondary"
-                          aria-label="ajouter une activité"
-                        >
-                          <Activity />
-                        </Link>
-                      </div>
-                    </PermissionGuard>
-                  </div>
+
                   <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression de la leçon"
@@ -89,9 +70,14 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                         className="tooltip tooltip-bottom flex-items-center"
                         data-tip="Supprimer la leçon"
                       >
-                        <div onClick={() => onDelete(item.id!)}>
-                          <DeleteIcon />
-                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs btn-square text-error"
+                          onClick={() => onDelete(item.id!)}
+                          aria-label="Supprimer la leçon"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </PermissionGuard>
                   </div>
@@ -103,10 +89,10 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                       >
                         <Link
                           to={`/admin/lesson/edit/${item.id}`}
-                          className="text-secondary"
+                          className="btn btn-ghost btn-xs btn-square text-secondary"
                           aria-label="Editer la leçon"
                         >
-                          <EditIcon />
+                          <Pencil className="h-4 w-4" />
                         </Link>
                       </div>
                     </PermissionGuard>
@@ -211,7 +197,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                   />
                 </div>
               </th>
-              <th></th>
+              <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>{content}</tbody>

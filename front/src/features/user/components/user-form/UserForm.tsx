@@ -12,7 +12,7 @@ import UserFormCertifications from "./UserFormCertifications";
 import Header from "../../../../../src/components/headers/Header";
 import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
-import { transformLink, urlIsValid } from "../../../../utils/helpers/link-transform";
+import { transformLink, urlIsValid } from "../../helpers/link-transform";
 
 type Props = {
   user?: User | null;

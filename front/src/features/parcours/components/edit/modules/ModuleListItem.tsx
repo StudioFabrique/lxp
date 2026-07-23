@@ -1,4 +1,4 @@
-import { MetadataList, Metadatas } from "../../../../../../src/utils/interfaces/new-module";
+import { MetadataList, Metadatas } from "../../../interfaces/new-module";
 import ModuleMetadataItem from "./ModuleMetadataItem";
 
 type ModuleListItemProps = {
@@ -40,9 +40,9 @@ export default function ModuleListItem({
 
   // Conditional rendering based on module metadata state
   return (
-    <div className="collapse bg-base-100 border border-base-300">
+    <li className="collapse collapse-arrow rounded-xl bg-base-100 border border-base-300 shadow-sm">
       <input type="radio" name="my-accordion-1" />
-      <div className="collapse-title font-semibold flex flex-col gap-y-1">
+      <div className="collapse-title min-h-0 py-3 pr-10 font-semibold flex flex-col gap-y-1">
         <span>{module.title}</span>
         {!hasMetadatas ? (
           <span className="font-bold text-xs text-base-content/60">
@@ -54,7 +54,7 @@ export default function ModuleListItem({
           </span>
         )}
       </div>
-      <div className="collapse-content text-sm">
+      <div className="collapse-content space-y-2 text-sm">
         {!hasMetadatas ? (
           <div className="py-2">
             <p className="text-base-content/70 mb-3">
@@ -77,6 +77,6 @@ export default function ModuleListItem({
           ))
         )}
       </div>
-    </div>
+    </li>
   );
 }

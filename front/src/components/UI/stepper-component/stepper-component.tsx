@@ -6,15 +6,10 @@ import StepItem from "./step-item";
 type Props = {
   actualStep: Step;
   stepsList: Array<Step>;
-  finalStep: boolean;
   updateStep: (id: number) => void;
 };
 
-const Stepper: FC<Props> = ({
-  actualStep,
-  finalStep,
-  stepsList,
-}) => {
+const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
   const content = (
     <>
       <ul className="w-full rounded-lg steps">
@@ -22,8 +17,8 @@ const Stepper: FC<Props> = ({
           <StepItem
             key={item.id}
             stepItem={item}
-            finalStep={finalStep}
             actualStepId={actualStep.id}
+            updateStep={updateStep}
           />
         ))}
       </ul>

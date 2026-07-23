@@ -158,15 +158,6 @@ export const parcoursIdValidator = [
   checkValidatorResult,
 ];
 
-export const formationIdValidator = [
-  param("formationId")
-    .notEmpty()
-    .withMessage("L'identifiant de la formation est requis")
-    .isNumeric()
-    .withMessage("L'identifiant de la formation doit être un nombre entier"),
-  checkValidatorResult,
-];
-
 export const virtualClassValidator = [
   body("parcoursId")
     .isNumeric()
@@ -179,5 +170,76 @@ export const virtualClassValidator = [
     .withMessage("Url non valide")
     .notEmpty()
     .withMessage("Url absente"),
+  checkValidatorResult,
+];
+
+export const patchParcoursValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours invalide"),
+  body().custom((value) => {
+    const editableFields = [
+      "title",
+      "description",
+      "formationId",
+      "startDate",
+      "endDate",
+      "virtualClass",
+      "tagIds",
+      "contactIds",
+      "objectives",
+    ];
+
+    if (!editableFields.some((field) => value[field] !== undefined)) {
+      throw new Error("Aucune information à mettre à jour");
+    }
+
+    return true;
+  }),
+  body("title")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre du parcours contient des caractères invalides."),
+  body("description")
+    .optional({ nullable: true })
+    .custom((value) => value === null || stringValidateOptional(value))
+    .withMessage("La description contient des caractères invalides."),
+  body("formationId")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de formation invalide"),
+  body(["startDate", "endDate"])
+    .optional({ nullable: true })
+    .isISO8601()
+    .withMessage("Date de parcours invalide"),
+  body("virtualClass")
+    .optional({ nullable: true })
+    .custom(
+      (value) => value === null || value === "" || /^https?:\/\//i.test(value),
+    )
+    .withMessage("Url non valide"),
+  body(["tagIds", "contactIds"])
+    .optional()
+    .isArray()
+    .withMessage("La liste des identifiants est invalide"),
+  body(["tagIds.*", "contactIds.*"])
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de relation est invalide"),
+  body("objectives")
+    .optional()
+    .isArray()
+    .withMessage("La liste des objectifs est invalide"),
+  body("objectives.*")
+    .optional()
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("La description d'un objectif est absente")
+    .custom(stringValidateGeneric)
+    .withMessage("La description d'un objectif contient des caractères invalides"),
   checkValidatorResult,
 ];

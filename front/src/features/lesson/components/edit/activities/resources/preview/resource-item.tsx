@@ -7,14 +7,14 @@ import {
   Trash2,
 } from "lucide-react";
 import Wrapper from "../../../../../../../../src/components/wrappers/BoxWrapper";
-import { Resource } from "../../../../../../../../src/utils/interfaces/activity";
+import { ActivityResource } from "../../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../../config/urls";
 import { Dispatch, SetStateAction } from "react";
 
 type Props = {
-  resource: Resource;
+  resource: ActivityResource;
   onDeleteResource: (id: number) => void;
-  onUpdateResource: Dispatch<SetStateAction<Resource | null>>;
+  onUpdateResource: Dispatch<SetStateAction<ActivityResource | null>>;
 };
 
 function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Props) {

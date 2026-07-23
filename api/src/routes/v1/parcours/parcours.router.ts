@@ -10,12 +10,12 @@ import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-
 import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
 import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
 import {
-  formationIdValidator,
   getParcoursByFormationValidator,
   getParcoursSelectValidator,
   parcoursByIdValidator,
   parcoursIdValidator,
   postParcoursValidator,
+  patchParcoursValidator,
   putParcoursContactsValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
@@ -34,13 +34,12 @@ import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import httpUpdateImage from "../../../controllers/parcours/http-update-image";
 import { headerImageMaxSize } from "../../../config/images-sizes";
-import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teacher-parcours";
 import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
 import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
 import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
 import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
 import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts";
-import httpGetParcoursListFromFormation from "../../../controllers/parcours/http-get-parcours-list-from-formation";
+import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -62,6 +61,14 @@ parcoursRouter.post(
   checkPermissions("parcours"),
   postParcoursValidator,
   httpCreateParcours
+);
+
+// Endpoint unifié, introduit progressivement en remplacement des routes PUT granulaires.
+parcoursRouter.patch(
+  "/:parcoursId",
+  checkPermissions("parcours"),
+  patchParcoursValidator,
+  httpPatchParcours,
 );
 
 // Route DELETE pour supprimer un parcours spécifique
@@ -127,9 +134,6 @@ parcoursRouter.put(
   httpPutParcoursContacts
 );
 
-// Route commentée pour la mise à jour des compétences
-//parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
-
 // Route PUT pour mettre à jour la classe virtuelle d'un parcours
 parcoursRouter.put(
   "/update-virtual-class",
@@ -185,13 +189,6 @@ parcoursRouter.get(
   httpGetRootAdminParcours
 );
 
-// Route GET pour récupérer les parcours d'un formateur
-parcoursRouter.get(
-  "/teacher-parcours",
-  checkPermissions("parcours"),
-  httpGetTeacherParcours
-);
-
 // Route POST pour dupliquer un parcours existant
 parcoursRouter.post(
   "/duplicate/:parcoursId",
@@ -206,14 +203,6 @@ parcoursRouter.get(
   checkPermissions("parcours"),
   parcoursIdValidator,
   httpGetParcoursSkillsContacts
-);
-
-// Route GET pour récupérer une liste simplifiée des parcours d'une formation
-parcoursRouter.get(
-  "/parcours-from-formation/:formationId",
-  checkPermissions("parcours"),
-  formationIdValidator,
-  httpGetParcoursListFromFormation
 );
 
 export default parcoursRouter;

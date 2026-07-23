@@ -1,6 +1,6 @@
 import type { Activity } from "./activity";
 import type Course from "./course";
-import LessonRating from "./lesson-rating";
+import LessonRating from "../../features/module-preview/interfaces/lesson-rating";
 import type LessonRead from "./lesson-read";
 import type Tag from "./tag";
 

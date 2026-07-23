@@ -3,9 +3,9 @@ import Header from "../../../components/headers/Header";
 import ListHeader from "../../../components/UI/list-header";
 import { ArrowLeft } from "lucide-react";
 import useResource from "../hooks/useResource";
-import ActivityContent from "../../../../src/components/resources-add/ActivityContent";
+import ActivityContent from "../components/add/ActivityContent";
 import Wrapper from "../../../components/wrappers/BoxWrapper";
-import BonusActivityItem from "../../../../src/components/resources-add/BonusActivityItem";
+import BonusActivityItem from "../components/add/BonusActivityItem";
 import { Activity } from "../../../../src/utils/interfaces/activity";
 import ElementNotFound from "../../../components/UI/element-not-found";
 

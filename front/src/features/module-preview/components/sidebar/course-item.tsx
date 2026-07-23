@@ -5,6 +5,7 @@ import {
   CloudOff,
   Eye,
   EyeOff,
+  Plus,
 } from "lucide-react";
 import Course from "../../../../../src/utils/interfaces/course";
 import {
@@ -14,7 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -23,12 +24,11 @@ import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
-import { Link } from "react-router";
 import { cn } from "../../../../utils/cn";
+import CreateLessonModal from "./create-lesson-modal";
 
 type CourseItemProps = {
   course: Course;
-  parcoursId?: number;
   moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
@@ -36,17 +36,22 @@ type CourseItemProps = {
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
+  onCreateLesson: (
+    courseId: number,
+    data: {
+      title: string;
+      description: string;
+      modalite: string;
+      tagId: number;
+    },
+  ) => Promise<boolean>;
 };
 
 export type ModalCourseType =
-  | "visibility"
-  | "publish"
-  | "deleteCourse"
-  | "deleteLesson";
+  "visibility" | "publish" | "deleteCourse" | "deleteLesson";
 
 const CourseItem = ({
   course,
-  parcoursId,
   moduleId,
   selectedLesson,
   onSelectLesson,
@@ -54,6 +59,7 @@ const CourseItem = ({
   onEnableCourse,
   onPublishCourse,
   onDeleteLesson,
+  onCreateLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
@@ -68,6 +74,23 @@ const CourseItem = ({
   >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [isCreatingLesson, setIsCreatingLesson] = useState(false);
+  const [isSavingLesson, setIsSavingLesson] = useState(false);
+
+  const handleCreateLesson = async (data: {
+    title: string;
+    description: string;
+    modalite: string;
+    tagId: number;
+  }) => {
+    setIsSavingLesson(true);
+    const created = await onCreateLesson(course.id, data);
+    setIsSavingLesson(false);
+    if (created) {
+      setIsCreatingLesson(false);
+      setCourseOpen(true);
+    }
+  };
 
   // State for the expander button visibility
   const [showDescriptionExpander, setShowDescriptionExpander] = useState(false);
@@ -144,6 +167,8 @@ const CourseItem = ({
       selectedLesson &&
       course.lessons.some((lesson) => lesson.id === selectedLesson.id)
     ) {
+      // The open state follows the lesson selected elsewhere in the explorer.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCourseOpen(true);
     } else {
       setCourseOpen(false);
@@ -173,6 +198,13 @@ const CourseItem = ({
 
   return (
     <>
+      <CreateLessonModal
+        open={isCreatingLesson}
+        courseTitle={course.title}
+        isSaving={isSavingLesson}
+        onClose={() => setIsCreatingLesson(false)}
+        onSubmit={handleCreateLesson}
+      />
       <CourseActionsModal
         modalType={modalType}
         showModal={showModal}
@@ -247,8 +279,6 @@ const CourseItem = ({
                   <PermissionGuard action="write" object="course">
                     <CourseActions
                       course={course}
-                      parcoursId={parcoursId}
-                      moduleId={moduleId}
                       onOpenModal={handleOpenModal}
                       onClickMenu={handleClickMenu}
                     />
@@ -301,6 +331,24 @@ const CourseItem = ({
               </span>
             )}
 
+            <div className="flex items-center justify-between border-b border-secondary/30 pb-2">
+              <span className="text-xs font-semibold text-base-content/60">
+                Leçons
+              </span>
+              <PermissionGuard action="write" object="course">
+                <button
+                  className="btn btn-secondary btn-xs gap-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsCreatingLesson(true);
+                  }}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Ajouter
+                </button>
+              </PermissionGuard>
+            </div>
+
             {/* Lessons List */}
             {course.lessons.length > 0 ? (
               course.lessons.map(
@@ -325,19 +373,6 @@ const CourseItem = ({
                 <p className="text-base-content/60 text-sm">
                   Aucune leçon disponible pour ce cours
                 </p>
-                <PermissionGuard action="write" object="course">
-                  <Link
-                    to="/admin/lesson/add"
-                    state={{
-                      parcoursId,
-                      moduleId,
-                      courseId: course.id,
-                    }}
-                    className="text-xs link link-hover text-primary"
-                  >
-                    Créer la première leçon
-                  </Link>
-                </PermissionGuard>
               </div>
             )}
           </div>

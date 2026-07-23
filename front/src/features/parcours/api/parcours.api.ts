@@ -1,5 +1,36 @@
 import apiClient from "../../../lib/axios";
 import type Parcours from "../../../utils/interfaces/parcours";
+import type Skill from "../../../utils/interfaces/skill";
+
+export type UpdateParcoursPayload = Partial<{
+  title: string;
+  description: string | null;
+  formationId: number;
+  startDate: string | null;
+  endDate: string | null;
+  virtualClass: string | null;
+  tagIds: number[];
+  contactIds: number[];
+  objectives: string[];
+}>;
+
+export type UpdateParcoursResponse = {
+  success: true;
+  message: string;
+  parcours: Pick<
+    Parcours,
+    | "id"
+    | "title"
+    | "description"
+    | "startDate"
+    | "endDate"
+    | "virtualClass"
+    | "formation"
+    | "tags"
+    | "contacts"
+    | "objectives"
+  >;
+};
 
 const queries = {
   getAll: async (asStudent = false): Promise<Parcours[]> => {
@@ -54,6 +85,16 @@ const queries = {
 };
 
 const mutations = {
+  updateParcours: async (
+    id: number,
+    data: UpdateParcoursPayload,
+  ): Promise<UpdateParcoursResponse> => {
+    const res = await apiClient.patch<UpdateParcoursResponse>(
+      `/parcours/${id}`,
+      data,
+    );
+    return res.data;
+  },
   createParcours: async (data: {
     title: string;
     formation: number;
@@ -157,24 +198,24 @@ const mutations = {
   createBonusSkill: async (data: {
     parcoursId: string;
     skill: { description: string; badge?: unknown };
-  }) => {
+  }): Promise<{ success: true; skill: Skill }> => {
     const res = await apiClient.post("/bonus-skill", data);
     return res.data;
   },
   updateBonusSkill: async (data: {
     skill: { id: number; description: string; badge?: unknown };
-  }) => {
+  }): Promise<{ success: true; message: string; updatedSkill: Skill }> => {
     const res = await apiClient.put("/bonus-skill", data);
     return res.data;
   },
-  deleteBonusSkill: async (id: number) => {
+  deleteBonusSkill: async (id: number): Promise<{ success: true }> => {
     const res = await apiClient.delete(`/bonus-skill/${id}`);
     return res.data;
   },
   importSkills: async (data: {
     parcoursId: number;
     skills: { description: string }[];
-  }) => {
+  }): Promise<{ success: true; skills: Skill[] }> => {
     const res = await apiClient.post("/bonus-skill/skills", data);
     return res.data;
   },
@@ -208,7 +249,7 @@ const mutations = {
     const res = await apiClient.post(`/modules/duplicate/${id}`, data);
     return res.data;
   },
-  updateModule: async (data: { module: Record<string, unknown> }) => {
+  updateModule: async (data: FormData) => {
     const res = await apiClient.put("/modules/new-module/update/", data);
     return res.data;
   },

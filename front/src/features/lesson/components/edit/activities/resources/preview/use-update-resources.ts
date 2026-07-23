@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { lessonApi } from "../../../../../api/lesson.api";
 import type {
   Activity,
-  Resource as ActivityResource,
+  ActivityResource,
 } from "../../../../../../../../src/utils/interfaces/activity";
-import { useDragAndDrop } from "../../../../../../../../src/hooks/useDragAndDrop";
+import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
 import toast from "react-hot-toast";
 import { regexGeneric } from "../../../../../../../config/constantes";
 import { allowedMimeTypes, Resource } from "../useUploadResources";

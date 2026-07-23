@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import User from "../../../../../../src/utils/interfaces/user";
 import Group from "../../../../../../src/utils/interfaces/group";
@@ -13,6 +12,8 @@ import { UserX } from "lucide-react";
 
 interface StudentsListProps {
   initalList: User[];
+  groups: Group[];
+  onRemoveGroup: (groupId: string) => void;
 }
 
 const StudentsList = (props: StudentsListProps) => {
@@ -27,11 +28,8 @@ const StudentsList = (props: StudentsListProps) => {
     resetFilters,
     sortData,
   } = useEagerLoadingList(props.initalList, "lastname");
-  const groups = useParcoursSelector(
-    (state) => state.parcoursGroups.groups
-  ) as Group[];
+  const groups = props.groups;
   const [filter, setFilter] = useState<string | null>(null);
-  const dispatch = useParcoursDispatch();
 
   const handleFilterGroups = (_id: string) => {
     if (filter === _id) {
@@ -57,7 +55,7 @@ const StudentsList = (props: StudentsListProps) => {
 
   const handleRemoveGroup = (_id: string) => {
     setFilter(null);
-    dispatch({ type: "REMOVE_GROUP", payload: _id });
+    props.onRemoveGroup(_id);
   };
 
   const handleSearch = (field: string, value: string) => {

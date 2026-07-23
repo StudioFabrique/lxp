@@ -6,9 +6,10 @@ import {
   PlayCircleIcon,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
-import defaultImage from "../../../assets/content-image-placeholders/module-default.jpg";
+import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
@@ -29,7 +30,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   });
 
   const image = imageBlob
-    ? `data:image/jpeg;base64,${imageBlob}`
+    ? normalizeImageSource(imageBlob)
     : defaultImage;
 
   return (

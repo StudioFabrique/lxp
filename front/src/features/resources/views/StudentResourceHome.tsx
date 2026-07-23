@@ -1,4 +1,4 @@
-import ResourcesListCard from "../../../../src/components/resources-home/ResourcesListCard";
+import ResourcesListCard from "../components/list/ResourcesListCard";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import Header from "../../../components/headers/Header";
 import ListHeader from "../../../components/UI/list-header";

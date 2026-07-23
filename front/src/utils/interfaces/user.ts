@@ -1,9 +1,9 @@
 //  admin and teacher
 
-import Graduation from "./graduation";
+import Graduation from "../../features/user/interfaces/graduation";
 import Group from "./group";
-import Hobby from "./hobby";
-import { Link } from "./link";
+import Hobby from "../../features/user/interfaces/hobby";
+import { Link } from "../../features/user/interfaces/link";
 import Role from "./role";
 
 export default interface User {

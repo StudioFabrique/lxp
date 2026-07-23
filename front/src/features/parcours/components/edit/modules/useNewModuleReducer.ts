@@ -4,7 +4,7 @@ import {
   Metadatas,
   ModuleData,
   Parcours,
-} from "../../../../../../src/utils/interfaces/new-module";
+} from "../../../interfaces/new-module";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 
 type ModuleUpdate = {
@@ -62,6 +62,9 @@ type ModuleAction =
         contacts: Contact[];
         skills: Skill[];
         duration: number;
+        title: string;
+        description?: string;
+        quizInstructions?: string;
       };
     };
 
@@ -210,6 +213,9 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
                 contacts: action.payload.contacts,
                 skills: action.payload.skills,
                 duration: action.payload.duration,
+                title: action.payload.title,
+                description: action.payload.description ?? "",
+                quizInstructions: action.payload.quizInstructions,
               }
             : module,
         ),

@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import type Tag from "../utils/interfaces/tag";
-import { createTag } from "../utils/helpers/create-tag";
+import { createTag } from "../features/tags/hooks/create-tag";
 
 const useTags = (initialTags: Tag[]) => {
   const [notSelected, setNotSelected] = useState<Tag[]>([]);

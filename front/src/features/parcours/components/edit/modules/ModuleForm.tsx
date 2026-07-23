@@ -4,12 +4,12 @@ import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 import ModuleMetadatas from "./ModuleMetadatas";
-import ModuleToParcours from "../../../../../components/module-add/module-to-parcours";
+import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
-  refForm: RefObject<HTMLFormElement>;
+  refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<any>;
   errors: FieldErrors;
   image: string | null;
@@ -60,7 +60,6 @@ export default function ModuleForm({
                 errors={errors}
                 thumb={image}
                 onSetFile={onSetFile}
-                mode={mode}
               >
                 <FormNumberInput
                   label="Durée du module en heures *"

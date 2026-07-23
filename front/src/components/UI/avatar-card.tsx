@@ -1,6 +1,7 @@
 import { CheckCircle } from "lucide-react";
 import FeelingLevel from "./feeling-level";
 import { localeTime } from "../../../src/utils/helpers/locale-date";
+import AppImage from "./image/app-image";
 
 interface AvatarCardProps {
   _id: string;
@@ -36,7 +37,7 @@ export default function AvatarCard({
       <span className="text-xs flex items-start gap-x-4" onClick={handleReview}>
         <div className="avatar">
           <div className="w-12 mask mask-squircle">
-            <img src={avatarSrc} />
+            <AppImage src={avatarSrc} alt={`Avatar de ${username}`} />
           </div>
         </div>
         <div className="h-5/6 flex-1 flex flex-col gap-y-2">

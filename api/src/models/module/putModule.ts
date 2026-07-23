@@ -1,7 +1,7 @@
 import { BonusSkill, Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
-async function putModule(module: any) {
+async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
   console.log({ module });
 
   const existingModule = await prisma.moduleMetadata.findFirst({
@@ -46,6 +46,23 @@ async function putModule(module: any) {
             };
           }),
         },
+        module: {
+          update: {
+            data: {
+              title: module.title,
+              description: module.description ?? "",
+              quizInstructions: module.quizInstructions ?? "",
+              ...(image
+                ? {
+                    image: Uint8Array.from(image) as Uint8Array<ArrayBuffer>,
+                    thumb: thumb
+                      ? (Uint8Array.from(thumb) as Uint8Array<ArrayBuffer>)
+                      : undefined,
+                  }
+                : {}),
+            },
+          },
+        },
       },
       select: {
         id: true,
@@ -56,6 +73,7 @@ async function putModule(module: any) {
           select: {
             title: true,
             description: true,
+            quizInstructions: true,
             thumb: true,
           },
         },
@@ -87,6 +105,7 @@ async function putModule(module: any) {
     maxDate: updatedModule.maxDate,
     title: updatedModule.module?.title,
     description: updatedModule.module?.description,
+    quizInstructions: updatedModule.module?.quizInstructions,
     thumb: updatedModule.module?.thumb
       ? Buffer.from(updatedModule.module.thumb).toString("base64")
       : null,

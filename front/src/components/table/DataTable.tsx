@@ -36,7 +36,13 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row: any) => row._id || row.id,
+    getRowId: (row) => {
+      const identifiableRow = row as TData & {
+        _id?: string;
+        id?: string | number;
+      };
+      return String(identifiableRow._id ?? identifiableRow.id);
+    },
     state: {
       rowSelection,
       sorting,
@@ -64,11 +70,21 @@ export function DataTable<TData, TValue>({
               <th className="p-0 w-0" />
 
               {headerGroup.headers.map((header) => {
+                const isActionsColumn = header.column.id === "actions";
                 return (
-                  <th key={header.id} className="text-base-content">
+                  <th
+                    key={header.id}
+                    className={`text-base-content ${
+                      isActionsColumn ? "text-center" : ""
+                    }`}
+                  >
                     {header.isPlaceholder ? null : (
                       <div
-                        className={`flex items-center gap-1 -ml-2 ${
+                        className={`flex items-center gap-1 ${
+                          isActionsColumn
+                            ? "w-full justify-center"
+                            : "-ml-2"
+                        } ${
                           header.column.getCanSort()
                             ? "cursor-pointer select-none"
                             : ""
@@ -104,7 +120,9 @@ export function DataTable<TData, TValue>({
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="px-2 bg-base-100 group-hover:bg-base-100/60 transition-colors"
+                  className={`px-2 bg-base-100 group-hover:bg-base-100/60 transition-colors ${
+                    cell.column.id === "actions" ? "text-center" : ""
+                  }`}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

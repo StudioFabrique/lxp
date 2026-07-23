@@ -1,5 +1,6 @@
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
 
 async function postCourse(userId: string, course: any) {
   const existingModule = await prisma.moduleMetadata.findFirst({
@@ -35,9 +36,11 @@ async function postCourse(userId: string, course: any) {
     throw error;
   }
 
+  const defaultImage = await getUnsplashPresentationImage(course.title);
   const newCourse = await prisma.course.create({
     data: {
       title: course.title,
+      image: defaultImage,
       module: {
         connect: {
           id: course.moduleId,

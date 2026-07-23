@@ -1,12 +1,19 @@
-import type FormationItem from "../../../utils/interfaces/formation-item";
+import type FormationItem from "../interfaces/formation-item";
 import FormationCard from "./FormationCard";
 
 type Props = {
   formationsList: FormationItem[];
   onSelect: (id: number) => void;
+  onCreateParcours: (id: number) => void;
+  onDelete: (id: number) => void;
 };
 
-const FormationsList = ({ formationsList, onSelect }: Props) => (
+const FormationsList = ({
+  formationsList,
+  onSelect,
+  onCreateParcours,
+  onDelete,
+}: Props) => (
   <div className="p-5 flex flex-col gap-y-4">
     <h2 className="font-bold">Formations enregistrées</h2>
     {formationsList.length > 0 && (
@@ -21,6 +28,8 @@ const FormationsList = ({ formationsList, onSelect }: Props) => (
               parcours={item.parcours}
               createdAt={item.createdAt}
               onSelect={onSelect}
+              onCreateParcours={onCreateParcours}
+              onDelete={onDelete}
             />
           </li>
         ))}

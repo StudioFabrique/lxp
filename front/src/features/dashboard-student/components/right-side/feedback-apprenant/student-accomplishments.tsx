@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../../../api/dashboard-student.api";
 import Item from "./item";
-import { Accomplishment } from "../../../../../utils/interfaces/accomplishment";
+import { Accomplishment } from "../../../interfaces/accomplishment";
 import Loader from "../../../../../components/loaders/Loader";
 
 const StudentAccomplishments = () => {

@@ -11,7 +11,7 @@ import {
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
-import LessonRating from "../../../utils/interfaces/lesson-rating";
+import LessonRating from "../interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
   initialModuleExplorerContentState,
@@ -248,6 +248,41 @@ const useModuleContentExplorer = () => {
       // silently fail
     }
   }, []);
+
+  const createCourse = useCallback(
+    async (title: string) => {
+      if (!moduleId || !title.trim()) return false;
+      try {
+        await apiClient.post("/course", { title: title.trim(), moduleId: +moduleId });
+        await fetchModuleData();
+        toast.success("Cours créé");
+        return true;
+      } catch {
+        toast.error("Impossible de créer le cours");
+        return false;
+      }
+    },
+    [fetchModuleData, moduleId],
+  );
+
+  const createLesson = useCallback(
+    async (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => {
+      if (!data.title.trim() || !data.tagId) return false;
+      try {
+        await apiClient.put(`/course/new-lesson/${courseId}`, {
+          ...data,
+          title: data.title.trim(),
+        });
+        await fetchModuleData();
+        toast.success("Leçon créée");
+        return true;
+      } catch {
+        toast.error("Impossible de créer la leçon");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
 
   const deleteLesson = useCallback(async (lessonId: number) => {
     try {
@@ -570,12 +605,14 @@ const useModuleContentExplorer = () => {
       enableCourse,
       publishCourse,
       deleteCourse,
+      createCourse,
     },
     lessonActions: {
       completeLesson,
       rateContent,
       deleteLesson,
       nextLesson,
+      createLesson,
     },
     activityActions: {
       saveActivity,

@@ -8,7 +8,6 @@ import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
-  parcoursId?: number;
   moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
@@ -16,12 +15,12 @@ type SidebarCoursesListProps = {
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
+  onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
   children: React.ReactNode[];
 };
 
 const SidebarCoursesList = ({
   courses,
-  parcoursId,
   moduleId,
   selectedLesson,
   onSelectLesson,
@@ -29,6 +28,7 @@ const SidebarCoursesList = ({
   onEnableCourse,
   onPublishCourse,
   onDeleteLesson,
+  onCreateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
@@ -98,7 +98,6 @@ const SidebarCoursesList = ({
             <CourseItem
               key={course.id}
               course={course}
-              parcoursId={parcoursId}
               moduleId={moduleId}
               selectedLesson={selectedLesson}
               onSelectLesson={onSelectLesson}
@@ -106,6 +105,7 @@ const SidebarCoursesList = ({
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
               onDeleteLesson={onDeleteLesson}
+              onCreateLesson={onCreateLesson}
               children={children[1]}
             />
           ))

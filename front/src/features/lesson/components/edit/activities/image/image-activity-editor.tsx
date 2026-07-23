@@ -5,7 +5,7 @@ import MemoizedImageFileUpload from "../../../../../../components/UI/image-file-
 import SubmitButton from "../../../../../../components/UI/submit-button";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../config/urls";
-import DialogImages from "../../../../../../../src/components/mediatheque/dialog-images";
+import DialogImages from "../../../../../mediatheque/components/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
 import { bgImageGradient } from "../../../../../../utils/helpers/color-helpers";
 import FormInput from "../../../../../../components/form/FormInput";

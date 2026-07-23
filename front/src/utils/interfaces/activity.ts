@@ -7,8 +7,8 @@ export interface Activity {
   description?: string;
   createdAt: string;
   updatedAt: string;
-  resourceActivities?: Resource[];
-  resourceBonusActivities?: Resource[];
+  resourceActivities?: ActivityResource[];
+  resourceBonusActivities?: ActivityResource[];
 }
 
 export type ActivityType =
@@ -19,7 +19,7 @@ export type ActivityType =
   | "resource"
   | "file";
 
-export interface Resource {
+export interface ActivityResource {
   id: number;
   label: string;
   order: number;

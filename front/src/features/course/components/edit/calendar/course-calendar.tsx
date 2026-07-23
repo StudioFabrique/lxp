@@ -5,10 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
 
-import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
+import CourseDates from "../../../interfaces/course-dates";
 import DatesList from "./dates-list";
 import DatesForm from "./dates-form";
-import setId from "../../../../../utils/helpers/set-id";
+import setId from "../../../helpers/set-id";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { courseApi } from "../../../api/course.api";
 

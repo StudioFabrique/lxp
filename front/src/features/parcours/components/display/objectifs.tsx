@@ -1,10 +1,11 @@
-import { useParcoursSelector } from "../../store/ParcoursContext";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 
 const Objectifs = () => {
-  const objectives = useParcoursSelector(
-    (state) => state.parcoursObjectives.objectives,
-  );
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const objectives = parcours?.objectives ?? [];
 
   const objectivesList =
     objectives.length > 0 ? (
