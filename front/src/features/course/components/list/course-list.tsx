@@ -56,9 +56,13 @@ export default function CourseList(props: CourseListProps) {
    */
   const handleEditCourse = useCallback(
     (id: number) => {
-      nav(`/admin/course/edit/${id}`);
+      const course = props.coursesList.find((item) => item.id === id);
+      if (!course) return;
+      nav(
+        `/admin/parcours/module/${course.moduleId}?editCourseId=${course.id}`,
+      );
     },
-    [nav]
+    [nav, props.coursesList],
   );
 
   /**

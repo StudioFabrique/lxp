@@ -8,10 +8,10 @@ import {
   // CalendarEvent,
   CalendarView,
 } from "./calendar-configuration";
-import TitleWithSelector from "./components/title-with-selector";
-import ViewSelector from "./components/view-selector";
-import TimeSelector from "./components/time-selector";
-import EventDetailsModal from "./components/event-details-modal";
+import TitleWithSelector from "./title-with-selector";
+import ViewSelector from "./view-selector";
+import TimeSelector from "./time-selector";
+import EventDetailsModal from "./event-details-modal";
 import { Link } from "react-router";
 
 const calendarTestEvents: CalendarEvent[] = [

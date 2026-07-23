@@ -6,8 +6,6 @@ import {
   Eye,
   EyeOff,
   Plus,
-  Save,
-  X,
 } from "lucide-react";
 import Course from "../../../../../src/utils/interfaces/course";
 import {
@@ -28,11 +26,12 @@ import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helper
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
 import { cn } from "../../../../utils/cn";
 import CreateLessonModal from "./create-lesson-modal";
-import type { CourseFormValues } from "./course-form.types";
+import type { UpdateCourseFormValues } from "./course-form.types";
+import EditCourseModal from "./edit-course-modal";
+import type { LessonFormValues } from "./lesson-form.types";
 
 type CourseItemProps = {
   course: Course;
-  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
@@ -40,8 +39,10 @@ type CourseItemProps = {
   onPublishCourse: (courseId: number) => Promise<void>;
   onUpdateCourse: (
     courseId: number,
-    values: CourseFormValues,
+    values: UpdateCourseFormValues,
   ) => Promise<boolean>;
+  openEditOnMount?: boolean;
+  editLessonId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
@@ -51,6 +52,10 @@ type CourseItemProps = {
       modalite: string;
       tagId: number;
     },
+  ) => Promise<boolean>;
+  onUpdateLesson: (
+    lessonId: number,
+    values: LessonFormValues,
   ) => Promise<boolean>;
 };
 
@@ -62,22 +67,27 @@ export type ModalCourseType =
 
 const CourseItem = ({
   course,
-  moduleId,
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   onPublishCourse,
   onUpdateCourse,
+  openEditOnMount = false,
+  editLessonId,
   onDeleteLesson,
   onCreateLesson,
+  onUpdateLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
 
   const canEditCourse = userBelongsToContacts(user, course.contacts);
 
-  const [isCourseOpen, setCourseOpen] = useState(false);
+  const hasTargetLesson = course.lessons.some(
+    (lesson) => lesson.id === editLessonId,
+  );
+  const [isCourseOpen, setCourseOpen] = useState(hasTargetLesson);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalCourseType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -87,15 +97,8 @@ const CourseItem = ({
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
   const [isCreatingLesson, setIsCreatingLesson] = useState(false);
   const [isSavingLesson, setIsSavingLesson] = useState(false);
-  const [isEditingCourse, setIsEditingCourse] = useState(false);
+  const [isEditingCourse, setIsEditingCourse] = useState(openEditOnMount);
   const [isSavingCourse, setIsSavingCourse] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(course.title);
-  const [editedDescription, setEditedDescription] = useState(
-    course.description ?? "",
-  );
-  const [editedVisibility, setEditedVisibility] = useState(
-    course.visibility ?? true,
-  );
 
   const handleCreateLesson = async (data: {
     title: string;
@@ -112,17 +115,11 @@ const CourseItem = ({
     }
   };
 
-  const handleUpdateCourse = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!editedTitle.trim()) return;
+  const handleUpdateCourse = async (values: UpdateCourseFormValues) => {
     setIsSavingCourse(true);
-    const updated = await onUpdateCourse(course.id, {
-      title: editedTitle.trim(),
-      description: editedDescription.trim(),
-      visibility: editedVisibility,
-    });
+    const updated = await onUpdateCourse(course.id, values);
     setIsSavingCourse(false);
-    if (updated) setIsEditingCourse(false);
+    return updated;
   };
 
   // State for the expander button visibility
@@ -196,6 +193,8 @@ const CourseItem = ({
   };
 
   useEffect(() => {
+    if (hasTargetLesson) return;
+
     if (
       selectedLesson &&
       course.lessons.some((lesson) => lesson.id === selectedLesson.id)
@@ -206,7 +205,7 @@ const CourseItem = ({
     } else {
       setCourseOpen(false);
     }
-  }, [course.lessons, selectedLesson]);
+  }, [course.lessons, hasTargetLesson, selectedLesson]);
 
   useEffect(() => {
     const element = descriptionRef.current;
@@ -238,6 +237,14 @@ const CourseItem = ({
         onClose={() => setIsCreatingLesson(false)}
         onSubmit={handleCreateLesson}
       />
+      {isEditingCourse && (
+        <EditCourseModal
+          course={course}
+          isSubmitting={isSavingCourse}
+          onClose={() => setIsEditingCourse(false)}
+          onSubmit={handleUpdateCourse}
+        />
+      )}
       <CourseActionsModal
         modalType={modalType}
         showModal={showModal}
@@ -249,60 +256,6 @@ const CourseItem = ({
       />
 
       <div className="flex flex-col w-full relative select-none">
-        {isEditingCourse && (
-          <form
-            className="mb-3 flex flex-col gap-3 rounded-xl bg-success p-4"
-            onSubmit={handleUpdateCourse}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center gap-2">
-              <input
-                autoFocus
-                className="input input-sm input-bordered w-full font-semibold"
-                value={editedTitle}
-                onChange={(event) => setEditedTitle(event.target.value)}
-                placeholder="Titre du cours"
-              />
-              <button
-                type="submit"
-                disabled={!editedTitle.trim() || isSavingCourse}
-                className="btn btn-primary btn-sm btn-square"
-                aria-label="Enregistrer le cours"
-              >
-                {isSavingCourse ? (
-                  <span className="loading loading-spinner loading-xs" />
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-              </button>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm btn-square text-base-100"
-                onClick={() => setIsEditingCourse(false)}
-                aria-label="Annuler"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <textarea
-              className="textarea textarea-bordered min-h-16 w-full resize-y text-sm"
-              value={editedDescription}
-              onChange={(event) => setEditedDescription(event.target.value)}
-              placeholder="Description facultative"
-            />
-            <label className="flex cursor-pointer items-center justify-between text-xs text-base-100">
-              Visible par les apprenants
-              <input
-                type="checkbox"
-                className="toggle toggle-sm"
-                checked={editedVisibility}
-                onChange={(event) =>
-                  setEditedVisibility(event.target.checked)
-                }
-              />
-            </label>
-          </form>
-        )}
         {!course.isPublished ? (
           <div
             className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-11"
@@ -369,9 +322,6 @@ const CourseItem = ({
                       onOpenModal={handleOpenModal}
                       onEdit={(event) => {
                         event.stopPropagation();
-                        setEditedTitle(course.title);
-                        setEditedDescription(course.description ?? "");
-                        setEditedVisibility(course.visibility ?? true);
                         setIsEditingCourse(true);
                       }}
                       onClickMenu={handleClickMenu}
@@ -456,11 +406,12 @@ const CourseItem = ({
                     <div className={`w-full`} key={lesson.id}>
                       <LessonItem
                         lesson={lesson}
-                        moduleId={moduleId}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
+                        openEditOnMount={lesson.id === editLessonId}
                         onSelectLesson={onSelectLesson}
                         onOpenModal={handleOpenLessonDeletionModal}
+                        onUpdateLesson={onUpdateLesson}
                       >
                         {children}
                       </LessonItem>

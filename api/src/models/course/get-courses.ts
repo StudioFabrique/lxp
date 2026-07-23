@@ -31,6 +31,8 @@ async function getCourses() {
   const result = courses.map((item) => ({
     id: item.id,
     title: item.title,
+    moduleId: item.module.id,
+    parcoursId: item.module.parcours.id,
     module: item.module.module.title,
     parcours: item.module.parcours.title,
     author: item.author,

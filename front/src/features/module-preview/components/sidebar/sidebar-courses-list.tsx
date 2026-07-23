@@ -10,12 +10,12 @@ import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
-import type { CourseFormValues } from "./course-form.types";
+import type { UpdateCourseFormValues } from "./course-form.types";
+import type { LessonFormValues } from "./lesson-form.types";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
-  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
@@ -23,24 +23,35 @@ type SidebarCoursesListProps = {
   onPublishCourse: (courseId: number) => Promise<void>;
   onUpdateCourse: (
     courseId: number,
-    values: CourseFormValues,
+    values: UpdateCourseFormValues,
   ) => Promise<boolean>;
+  editCourseId?: number;
+  editLessonId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
-  onCreateLesson: (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => Promise<boolean>;
+  onCreateLesson: (
+    courseId: number,
+    data: LessonFormValues,
+  ) => Promise<boolean>;
+  onUpdateLesson: (
+    lessonId: number,
+    values: LessonFormValues,
+  ) => Promise<boolean>;
   children: React.ReactNode[];
 };
 
 const SidebarCoursesList = ({
   courses,
-  moduleId,
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   onPublishCourse,
   onUpdateCourse,
+  editCourseId,
+  editLessonId,
   onDeleteLesson,
   onCreateLesson,
+  onUpdateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
@@ -128,15 +139,17 @@ const SidebarCoursesList = ({
             <CourseItem
               key={course.id}
               course={course}
-              moduleId={moduleId}
               selectedLesson={selectedLesson}
               onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
               onUpdateCourse={onUpdateCourse}
+              openEditOnMount={course.id === editCourseId}
+              editLessonId={editLessonId}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
+              onUpdateLesson={onUpdateLesson}
               children={children[1]}
             />
           ))
@@ -149,10 +162,10 @@ const SidebarCoursesList = ({
         )}
       </div>
       <div
-        className={`sticky bottom-4 z-30 mt-5 w-full rounded-xl transition-all duration-300 ${
+        className={`sticky bottom-1 z-30 mt-5 w-full rounded-xl transition-all duration-300 ${
           isAtNaturalPosition
             ? "bg-transparent shadow-none"
-            : "border border-base-300 bg-base-200/95 p-2 shadow-xl backdrop-blur"
+            : "border border-base-300 px-2 py-2 backdrop-blur"
         }`}
       >
         {children[0]}

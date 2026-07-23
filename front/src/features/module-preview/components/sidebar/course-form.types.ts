@@ -9,3 +9,7 @@ export type CreateCourseFormValues = CourseFormValues & {
   lessonTitles: string[];
   lessonIds: number[];
 };
+
+export type UpdateCourseFormValues = CourseFormValues & {
+  tagIds: number[];
+};
