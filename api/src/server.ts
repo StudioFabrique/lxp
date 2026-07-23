@@ -5,6 +5,7 @@ import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 import { socket } from "./socket/socket";
 import { corsOrigins, PORT } from "./config/config";
+import { authenticateSession } from "./utils/services/auth/authenticate-session";
 
 let server: http.Server | https.Server;
 
@@ -17,9 +18,21 @@ export const io = new Server(server, {
   cookie: true,
 });
 
-io.use((socket, next) => {
-  const cookie = socket.request.headers.cookie;
-  next();
+io.use(async (socket, next) => {
+  try {
+    const cookies = Object.fromEntries(
+      (socket.request.headers.cookie || "")
+        .split(";")
+        .map((part) => part.trim().split("="))
+        .filter(([key, value]) => key && value)
+        .map(([key, value]) => [key, decodeURIComponent(value)]),
+    );
+    socket.data.accessToken = cookies.accessToken;
+    socket.data.auth = await authenticateSession(cookies.accessToken);
+    next();
+  } catch {
+    next(new Error("unauthorized"));
+  }
 });
 
 mongoInit();

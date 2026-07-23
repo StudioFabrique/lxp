@@ -61,11 +61,11 @@ const ModuleTable = ({
                   <div className="w-6 h-6">
                     <PermissionGuard action="read" object="module">
                       <div>
-                        {item.metadataId ? (
+                        {item.parcoursId ? (
                           <Link
                             className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
                             data-tip="Voir le module"
-                            to={`/admin/parcours/module/${item.metadataId}`}
+                            to={`/admin/parcours/module/${item.id}`}
                             aria-label="Prévisualiser le module"
                           >
                             <Eye className="h-4 w-4" />
@@ -85,11 +85,11 @@ const ModuleTable = ({
                   <div className="w-6 h-6">
                     <PermissionGuard action="update" object="module">
                       <div>
-                        {item.metadataId ? (
+                        {item.parcoursId ? (
                           <Link
                             className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
                             data-tip="Modifier le module"
-                            to={`/admin/parcours/edit/${item.parcoursId}?step=4&moduleId=${item.metadataId}`}
+                            to={`/admin/parcours/edit/${item.parcoursId}?step=4&moduleId=${item.id}`}
                             aria-label="Editer le module"
                           >
                             <Pencil className="h-4 w-4" />

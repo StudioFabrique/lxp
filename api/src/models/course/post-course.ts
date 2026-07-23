@@ -4,7 +4,7 @@ import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentatio
 import { slugify } from "../../helpers/slugify";
 
 async function postCourse(userId: string, course: any) {
-  const existingModule = await prisma.moduleMetadata.findFirst({
+  const existingModule = await prisma.module.findFirst({
     where: { id: course.moduleId },
     select: { courses: true },
   });

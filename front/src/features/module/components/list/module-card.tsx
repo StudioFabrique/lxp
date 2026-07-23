@@ -16,7 +16,7 @@ interface ModuleCardProps {
 
 const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const coursesCount = module.courses?.length ?? 0;
+  const coursesCount = module.coursesCount ?? module.courses?.length ?? 0;
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
@@ -39,7 +39,7 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
-          {module.metadataId ? (
+          {module.parcoursId ? (
             <PermissionGuard action="update" object="module">
               <div
                 className="tooltip tooltip-left"
@@ -47,7 +47,7 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
               >
                 <Link
                   className="btn btn-sm btn-primary btn-circle rounded-md"
-                  to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.metadataId}`}
+                  to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
                   aria-label="Modifier le module"
                 >
                   <Pencil className="w-5 h-5" />
@@ -118,11 +118,11 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
           <div className="flex place-items-center gap-x-2">
             <PermissionGuard action="read" object="module">
               <div className="">
-                {module.metadataId ? (
+                {module.parcoursId ? (
                   <Link
                     className="btn btn-sm btn-primary flex justify-center place-items-center btn-circle rounded-md tooltip tooltip-bottom"
                     data-tip="Voir le module"
-                    to={`/admin/parcours/module/${module.metadataId}`}
+                    to={`/admin/parcours/module/${module.id}`}
                     aria-label="Prévisualiser le module"
                   >
                     <Eye />

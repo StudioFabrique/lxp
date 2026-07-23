@@ -69,15 +69,10 @@ async function getParcoursById(parcoursId: number, userId: string) {
               },
             },
           },
-          module: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              quizInstructions: true,
-              thumb: true,
-            },
-          },
+          title: true,
+          description: true,
+          quizInstructions: true,
+          thumb: true,
         },
       },
       groups: {
@@ -121,8 +116,8 @@ async function getParcoursById(parcoursId: number, userId: string) {
   if (parcours.modules && parcours.modules.length > 0) {
     result.modules = parcours.modules.map((item: any) => {
       // Image du module
-      const thumb = item.module.thumb
-        ? Buffer.from(item.module.thumb as any).toString("base64")
+      const thumb = item.thumb
+        ? Buffer.from(item.thumb as any).toString("base64")
         : null;
 
       // Contacts du module (aplatissement)
@@ -130,10 +125,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
       return {
         ...item,
-        module: {
-          ...item.module,
-          thumb: thumb,
-        },
+        thumb,
         // Calcul de la progression via la fonction helper
         stats: {
           progress: calculateModuleProgress(item),

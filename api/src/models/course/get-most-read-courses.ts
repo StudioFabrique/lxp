@@ -22,16 +22,15 @@ export default async function getMostReadCourses(
   FROM "Course" c
   JOIN "Lesson" l ON c.id = l."courseId"
   LEFT JOIN "LessonRead" lr ON l.id = lr."lessonId"
-  JOIN "ModuleMetadata" mm ON c."moduleId" = mm.id
-  JOIN "Module" m ON mm."moduleId" = m.id
-  JOIN "Parcours" p ON mm."parcoursId" = p.id
+  JOIN "Module" m ON c."moduleId" = m.id
+  JOIN "Parcours" p ON m."parcoursId" = p.id
   JOIN "GroupsOnParcours" gp ON p.id = gp."parcoursId"
   JOIN "Group" g ON gp."groupId" = g.id
   WHERE g."idMdb" = ANY(${groupIds})
   AND c."isPublished" = true
   AND c."visibility" = true
   AND p."isPublished" = true
-  GROUP BY c.id, c.title, c."moduleId", mm.id, m.title
+  GROUP BY c.id, c.title, c."moduleId", m.id, m.title
   ORDER BY lessonReadCount DESC
   LIMIT ${max}`;
 

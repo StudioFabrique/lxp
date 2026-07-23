@@ -21,7 +21,7 @@ import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
 import { toUpperFirstLetter } from "../../../../src/utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import { AuthContext } from "../../../store/AuthProvider";
+import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 const ParcoursView = () => {
   const {
@@ -37,8 +37,9 @@ const ParcoursView = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-  const { user } = useContext(AuthContext);
-  const isStudent = user?.roles?.some((role) => role.rank === 3) ?? false;
+  const ability = useContext(AbilityContext);
+  const isStudent =
+    ability.can("layout", "student") && !ability.can("layout", "admin");
 
   const handleClickResume = () => {
     const resumeModuleId =

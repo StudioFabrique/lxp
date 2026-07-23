@@ -18,6 +18,7 @@ import { ChatbotContext } from "../../../store/ChatbotProvider";
 export default function useCourseQuiz(
   courseId?: number,
   activityContent?: string,
+  aiIndexed = true,
 ) {
   const { aiUnavailable, setAiUnavailable } = useContext(ChatbotContext);
 
@@ -100,6 +101,12 @@ export default function useCourseQuiz(
   };
 
   const onLoadQuizzes = async () => {
+    if (!aiIndexed) {
+      toastWarning(
+        "Les quiz IA sont désactivés pour ce cours dupliqué tant que son contenu n’a pas été réindexé.",
+      );
+      return;
+    }
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -209,6 +216,7 @@ export default function useCourseQuiz(
 
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
+      if (!aiIndexed) return;
       if (isAiDisabled) {
         toast("Les quiz IA sont temporairement désactivés.");
         return;
@@ -260,7 +268,7 @@ export default function useCourseQuiz(
         setIsStreaming(false);
       }
     },
-    [activityContent, aiUnavailable, setAiUnavailable],
+    [activityContent, aiUnavailable, aiIndexed, setAiUnavailable],
   );
 
   const onCloseQuizzes = () => {

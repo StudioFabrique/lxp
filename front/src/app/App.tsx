@@ -8,6 +8,7 @@ import { ThemeProvider } from "../store/ThemeProvider";
 import { AuthProvider } from "../store/AuthProvider";
 import ErrorBoundary from "../components/wrappers/layouts/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
+import { AbilityProvider } from "../rbac/AbilityProvider";
 
 function App() {
   return (
@@ -16,9 +17,11 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <ErrorBoundary>
-              <RouterProvider router={router} />
-            </ErrorBoundary>
+            <AbilityProvider>
+              <ErrorBoundary>
+                <RouterProvider router={router} />
+              </ErrorBoundary>
+            </AbilityProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>

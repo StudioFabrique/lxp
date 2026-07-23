@@ -17,6 +17,13 @@ import { adminMediathequeRoutes } from "../features/mediatheque/routes";
 import { adminResourcesRoutes } from "../features/resources/routes";
 import { adminProfileRoutes } from "../features/profile/routes";
 import { adminModulePreviewRoutes } from "../features/module-preview/routes";
+import RequireAbility from "../components/guards/RequireAbility";
+import { AppSubject } from "../rbac/ability";
+
+const guard = (subject: AppSubject, children: RouteObject[]): RouteObject => ({
+  element: <RequireAbility action="read" subject={subject} />,
+  children,
+});
 
 export const adminRoutes: RouteObject[] = [
   {
@@ -25,22 +32,22 @@ export const adminRoutes: RouteObject[] = [
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
-      ...adminDashboardRoutes,
-      ...adminParcoursRoutes,
-      ...adminModulePreviewRoutes,
-      ...adminGroupRoutes,
-      ...adminModuleRoutes,
-      ...adminCourseRoutes,
-      ...adminLessonRoutes,
-      ...adminTagsRoutes,
-      ...adminRoleRoutes,
-      ...adminUserRoutes,
-      ...adminFormationRoutes,
-      ...adminFeedbacksRoutes,
-      ...adminDashboardIARoutes,
-      ...adminMediathequeRoutes,
-      ...adminResourcesRoutes,
-      ...adminProfileRoutes,
+      guard("stats", adminDashboardRoutes),
+      guard("parcours", adminParcoursRoutes),
+      guard("module", adminModulePreviewRoutes),
+      guard("group", adminGroupRoutes),
+      guard("module", adminModuleRoutes),
+      guard("course", adminCourseRoutes),
+      guard("lesson", adminLessonRoutes),
+      guard("tag", adminTagsRoutes),
+      guard("role", adminRoleRoutes),
+      guard("user", adminUserRoutes),
+      guard("formation", adminFormationRoutes),
+      guard("feedback", adminFeedbacksRoutes),
+      guard("dashboardIa", adminDashboardIARoutes),
+      guard("mediatheque", adminMediathequeRoutes),
+      guard("resource", adminResourcesRoutes),
+      guard("cursus", adminProfileRoutes),
       { path: "*", element: <p>La page n'existe pas</p> },
     ],
   },

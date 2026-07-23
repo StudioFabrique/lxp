@@ -10,6 +10,7 @@ import { SOCKET_URL } from "../config/urls";
 import apiClient from "../lib/axios";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
+import { injectAbilityResync, injectLogout } from "../lib/axios";
 
 type AuthContextType = {
   user: User | null;
@@ -52,9 +53,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const logout = useCallback(async () => {
     try {
       await apiClient.get("/auth/logout");
-      setUser(null);
     } catch (err) {
       console.error("Logout error", err);
+    } finally {
+      setUser(null);
     }
   }, []);
 
@@ -114,6 +116,15 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   // Déclenche la récupération des rôles quand l'utilisateur est défini
   useEffect(() => {
+    injectLogout(() => setUser(null));
+    injectAbilityResync((session) => setUser(session as User));
+    return () => {
+      injectLogout(() => {});
+      injectAbilityResync(() => {});
+    };
+  }, []);
+
+  useEffect(() => {
     if (user && user.roles?.length > 0) {
       fetchRoles(user.roles[0]);
       setIsLoading(false);
@@ -137,7 +148,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         if (cancelled) return;
 
         activeSocket = io(SOCKET_URL, {
-          query: { userId: user._id },
           withCredentials: true,
         });
 

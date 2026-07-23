@@ -20,6 +20,7 @@ import ProgressBar from "../components/progress-bar";
 import ModuleExplorerPreview from "../components/preview/module-explorer-preview";
 import ModuleData from "../components/module-data/module-data";
 import Header from "../../../components/headers/Header";
+import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -29,6 +30,7 @@ export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
  */
 const ModuleContentExplorer = () => {
   const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const navigate = useNavigate();
   const firstPathSegment = window.location.pathname.split("/")[1];
 
@@ -45,16 +47,22 @@ const ModuleContentExplorer = () => {
   const isModuleLoaded = Boolean(
     state.module && state.module.id && state.module.courses.length > 0,
   );
-  const canEditModule = userBelongsToContacts(user, state.module?.contacts);
-  const canEditSelectedLesson = userBelongsToContacts(
-    user,
-    state.selectedLesson?.course?.contacts,
+  const canEditModule =
+    ability.can("update", "module") ||
+    userBelongsToContacts(user, state.module?.contacts);
+  const canEditSelectedLesson =
+    ability.can("update", "lesson") ||
+    userBelongsToContacts(user, state.selectedLesson?.course?.contacts);
+  const selectedCourse = state.module?.courses.find(
+    (course) => course.id === state.selectedLesson?.courseId,
   );
+  const isSelectedCourseAiIndexed = selectedCourse?.aiIndexed !== false;
 
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,
     isModuleLoaded,
     {
+      id: state.module?.id,
       title: state.module?.title,
       description: state.module?.description,
     },
@@ -64,6 +72,7 @@ const ModuleContentExplorer = () => {
   const quizState = useCourseQuiz(
     state.selectedLesson?.courseId,
     state.textActivityContent,
+    isSelectedCourseAiIndexed,
   );
 
   // Propose automatiquement un quiz aux clics sur les boutons suivant ou précédent
@@ -75,6 +84,7 @@ const ModuleContentExplorer = () => {
     isAnyQuizOpen: diagnosticQuiz.isOpen || quizState.isOpen,
     onTriggerRandomQuiz: quizState.onTriggerRandomQuiz,
     onGoToNextActivity: () => dispatch({ type: "go_to_next_activity" }),
+    aiIndexed: isSelectedCourseAiIndexed,
   });
 
   if (diagnosticQuiz.isOpen) {
@@ -199,6 +209,7 @@ const ModuleContentExplorer = () => {
             <ModuleExplorerPreview
               store={explorerStore}
               quizState={quizState}
+              aiIndexed={isSelectedCourseAiIndexed}
               smartQuizState={smartQuizState}
               canEditSelectedLesson={canEditSelectedLesson}
             />

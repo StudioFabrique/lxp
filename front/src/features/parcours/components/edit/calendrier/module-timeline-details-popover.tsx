@@ -118,9 +118,9 @@ const ModuleTimelineDetailsPopover = ({
           Module
         </div>
 
-        {currentModule.module?.description && (
+        {currentModule.description && (
           <p className="text-sm py-2 text-gray-600 line-clamp-4">
-            {currentModule.module.description}
+            {currentModule.description}
           </p>
         )}
 

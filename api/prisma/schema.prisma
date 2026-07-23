@@ -39,7 +39,7 @@ model Activity {
 }
 
 model Admin {
-  id              Int              @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   idMdb           String
   activities      Activity[]
   courses         Course[]
@@ -50,7 +50,6 @@ model Admin {
   parcours        Parcours[]
   bonusActivities BonusActivity[]
   resources       Resource[]
-  moduleMetadatas ModuleMetadata[]
 }
 
 model BonusActivity {
@@ -69,36 +68,36 @@ model BonusActivity {
 }
 
 model BonusSkill {
-  id          Int                           @id @default(autoincrement())
+  id          Int                   @id @default(autoincrement())
   description String
-  createdAt   DateTime                      @default(now())
-  updatedAt   DateTime                      @updatedAt
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   badge       String?
   parcoursId  Int
-  parcours    Parcours                      @relation(fields: [parcoursId], references: [id])
-  modules     BonusSkillsOnModuleMetadata[]
+  parcours    Parcours              @relation(fields: [parcoursId], references: [id])
+  modules     BonusSkillsOnModule[]
 }
 
-model BonusSkillsOnModuleMetadata {
+model BonusSkillsOnModule {
   bonusSkillId Int
   moduleId     Int
-  bonusSkill   BonusSkill     @relation(fields: [bonusSkillId], references: [id], onDelete: Cascade)
-  module       ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id], onDelete: Cascade)
+  module       Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([bonusSkillId, moduleId])
 }
 
 model Contact {
-  id        Int                        @id @default(autoincrement())
-  idMdb     String                     @unique
+  id        Int                  @id @default(autoincrement())
+  idMdb     String               @unique
   name      String
   role      String
   email     String?
-  phone     String?                    @default("Non renseigné")
-  createdAt DateTime                   @default(now())
-  updatedAt DateTime                   @updatedAt
+  phone     String?              @default("Non renseigné")
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
   courses   ContactsOnCourse[]
-  modules   ContactsOnModuleMetadata[]
+  modules   ContactsOnModule[]
   parcours  ContactsOnParcours[]
 }
 
@@ -111,11 +110,11 @@ model ContactsOnCourse {
   @@id([contactId, courseId])
 }
 
-model ContactsOnModuleMetadata {
+model ContactsOnModule {
   contactId Int
   moduleId  Int
-  contact   Contact        @relation(fields: [contactId], references: [id])
-  module    ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  contact   Contact @relation(fields: [contactId], references: [id])
+  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([contactId, moduleId])
 }
@@ -149,7 +148,7 @@ model Course {
   contacts         ContactsOnCourse[]
   admin            Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   moduleId         Int
-  module           ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module           Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   lessons          Lesson[]
   tags             TagsOnCourse[]
   quizzes          Quiz[]
@@ -157,16 +156,15 @@ model Course {
 }
 
 model Formation {
-  id          Int                  @id @default(autoincrement())
-  title       String               @unique
+  id          Int               @id @default(autoincrement())
+  title       String            @unique
   description String?
   code        String?
   level       String
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   adminId     Int
-  admin       Admin                @relation(fields: [adminId], references: [id])
-  modules     ModulesOnFormation[]
+  admin       Admin             @relation(fields: [adminId], references: [id])
   parcours    Parcours[]
   tags        TagsOnFormation[]
 }
@@ -243,49 +241,28 @@ model Mediatheque {
 }
 
 model Module {
-  id               Int                  @id @default(autoincrement())
+  id               Int                   @id @default(autoincrement())
   title            String
   description      String?
   quizInstructions String?
   image            Bytes?
   thumb            Bytes?
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
+  duration         Int?
+  rating           Float?
+  minDate          DateTime?
+  maxDate          DateTime?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
   author           String
   adminId          Int
-  admin            Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  formations       ModulesOnFormation[]
-  metadatas        ModuleMetadata[]
+  parcoursId       Int
+  duplicationIndex Int                   @default(0)
+  admin            Admin                 @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  parcours         Parcours              @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
+  contacts         ContactsOnModule[]
+  courses          Course[]
+  bonusSkills      BonusSkillsOnModule[]
   quizzes          Quiz[]
-  duplicationIndex Int                  @default(0)
-}
-
-model ModuleMetadata {
-  id          Int                           @id @default(autoincrement())
-  duration    Int?
-  rating      Float?
-  minDate     DateTime?
-  maxDate     DateTime?
-  moduleId    Int
-  module      Module                        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  createdAt   DateTime                      @default(now())
-  updatedAt   DateTime                      @updatedAt
-  adminId     Int
-  parcoursId  Int
-  parcours    Parcours                      @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
-  contacts    ContactsOnModuleMetadata[]
-  admin       Admin                         @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  courses     Course[]
-  bonusSkills BonusSkillsOnModuleMetadata[]
-}
-
-model ModulesOnFormation {
-  moduleId    Int
-  formationId Int
-  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  module      Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-
-  @@id([moduleId, formationId])
 }
 
 model Objective {
@@ -331,7 +308,7 @@ model Parcours {
   formation        Formation            @relation(fields: [formationId], references: [id])
   skills           SkillsOnParcours[]
   tags             TagsOnParcours[]
-  modules          ModuleMetadata[]
+  modules          Module[]
   duplicationIndex Int                  @default(0)
 }
 

@@ -3,7 +3,7 @@ import { UseFormRegister, FieldErrors } from "react-hook-form";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import ModuleMetadatas from "./ModuleMetadatas";
+import ModuleFields from "./ModuleFields";
 import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
 
@@ -53,7 +53,7 @@ export default function ModuleForm({
         <form onSubmit={onSubmit} ref={refForm}>
           <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
             <span className="col-span-5">
-              <ModuleMetadatas
+              <ModuleFields
                 mode={mode}
                 register={register}
                 errors={errors}
@@ -67,7 +67,7 @@ export default function ModuleForm({
                   register={register}
                   error={errors.duration as any}
                 />
-              </ModuleMetadatas>
+              </ModuleFields>
             </span>
 
             <div className="mx-auto divider divider-vertical lg:divider-horizontal" />

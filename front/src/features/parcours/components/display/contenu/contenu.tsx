@@ -10,6 +10,7 @@ import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-
 import { AuthContext } from "../../../../../store/AuthProvider";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 
 type ContenuProps = {
   modules: Module[];
@@ -17,6 +18,7 @@ type ContenuProps = {
 
 const Contenu = ({ modules }: ContenuProps) => {
   const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const { id: parcoursId } = useParams();
   const { data: parcours } = useParcoursQuery(
     parcoursId ? Number(parcoursId) : undefined,
@@ -26,11 +28,12 @@ const Contenu = ({ modules }: ContenuProps) => {
     modules ? modules[0] : null,
   );
 
-  const canEditParcoursContent = userBelongsToContacts(
-    user,
-    parcours?.contacts,
-  );
-  const canEditModule = userBelongsToContacts(user, selectedModule?.contacts);
+  const canEditParcoursContent =
+    ability.can("update", "parcours") ||
+    userBelongsToContacts(user, parcours?.contacts);
+  const canEditModule =
+    ability.can("update", "module") ||
+    userBelongsToContacts(user, selectedModule?.contacts);
 
   return (
     <Wrapper>

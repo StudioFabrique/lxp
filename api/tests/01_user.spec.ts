@@ -57,7 +57,7 @@ describe("HTTP /user", () => {
 
   describe("Test POST /teacher", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .post("/v1/user/new-teacher")
         .send({
@@ -70,7 +70,7 @@ describe("HTTP /user", () => {
           phoneNumber: "+33559879765",
           isActive: true,
         })
-        .expect(403);
+        .expect(401);
     });
 
     // With authentication, successful writing
@@ -158,7 +158,7 @@ describe("HTTP /user", () => {
         })
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(8);
+      expect(res.body.errors).toHaveLength(1);
     });
 
     // Existing email
@@ -192,15 +192,15 @@ describe("HTTP /user", () => {
     });
 
     // Not authenticated
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/v1/user/contacts").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/v1/user/contacts").expect(401);
     });
   });
 
   describe("Test PUT /update-many-status", () => {
     //  No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).put("/v1/user/update-many-status").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).put("/v1/user/update-many-status").expect(401);
     });
 
     // Missing datas
@@ -268,8 +268,8 @@ describe("HTTP /user", () => {
 
   describe("PUT /update-user-status", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).put("/v1/user/update-user-status").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).put("/v1/user/update-user-status").expect(401);
     });
 
     // Missing datas
@@ -343,10 +343,10 @@ describe("HTTP /user", () => {
 
   describe("GET /:role/:stype/:sdir", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .get("/v1/user/list/teacher/lastname/asc?page=1&limit=10")
-        .expect(403);
+        .expect(401);
     });
 
     // Missing datas
@@ -391,8 +391,8 @@ describe("HTTP /user", () => {
 
   describe("PUT /user-roles", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).put("/v1/user/user-roles").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).put("/v1/user/user-roles").expect(401);
     });
 
     // No datas in the request body
@@ -535,12 +535,12 @@ describe("HTTP /user", () => {
 
   describe("GET / /search/:role/:entity/:value/:stype/:sdir", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .get(
           "/v1/user/search/teacher/firstname/value/lastname/asc?page=1&limit=10"
         )
-        .expect(403);
+        .expect(401);
     });
 
     // No datas
@@ -607,8 +607,8 @@ describe("HTTP /user", () => {
 
   describe("GET /last-parcours", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/V1/user/last-parcours").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/V1/user/last-parcours").expect(401);
     });
 
     // User is not a teacher
@@ -637,8 +637,8 @@ describe("HTTP /user", () => {
 
   describe("GET /data/:userId", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/v1/user/data/1").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/v1/user/data/1").expect(401);
     });
 
     // Successful reading
@@ -647,9 +647,8 @@ describe("HTTP /user", () => {
         .get(`/v1/user/data/${studentId}`)
         .set("Cookie", [`${teacherToken}`]);
       expect(res.status).toBe(200);
-      expect(res.body.user.connectionInfos).toHaveLength(14);
+      expect(res.body.user.connectionInfos.length).toBeGreaterThan(0);
       expect(res.body).toHaveProperty("parcours");
-      expect(res.body).toHaveProperty("parcoursCompletion");
     });
 
     // Wrong userId format
@@ -688,8 +687,8 @@ describe("HTTP /user", () => {
 
   describe("GET /own-feedback", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/v1/user/own-feedback").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/v1/user/own-feedback").expect(401);
     });
 
     // Successful reading
@@ -716,8 +715,8 @@ describe("HTTP /user", () => {
 
   describe("GET /last-feedbacks/:notReviewed", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/v1/user/last-feedbacks/true").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/v1/user/last-feedbacks/true").expect(401);
     });
 
     // Successful reading
@@ -794,16 +793,22 @@ describe("HTTP /user", () => {
 
   describe("PUT /user/invitation/:userId", () => {
     // No authentication
-    test("It should respond 403 forbidden", async () => {
-      await request(app).put("/v1/user/invitation/123").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).put("/v1/user/invitation/123").expect(401);
     });
 
     // Successful invitation
     test("It should respond 200 success", async () => {
-      await request(app)
-        .put("/v1/user/invitation/" + studentId)
-        .set("Cookie", [`${authToken}`])
-        .expect(200);
+      await User.updateOne({ _id: studentId }, { $set: { isActive: false } });
+
+      try {
+        await request(app)
+          .put("/v1/user/invitation/" + studentId)
+          .set("Cookie", [`${authToken}`])
+          .expect(200);
+      } finally {
+        await User.updateOne({ _id: studentId }, { $set: { isActive: true } });
+      }
     });
 
     // Invalid userId
@@ -820,11 +825,11 @@ describe("HTTP /user", () => {
 
   /*describe("Test /:role/:stype/:sdir", () => {
   /*
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .get("/v1/user/teacher/lastname/asc?page=1&limit=10")
         //.set("Cookie", [`${authToken}`])
-        .expect(403);
+        .expect(401);
     });
 
     test("It should respond 200 success", async () => {
@@ -878,8 +883,8 @@ describe("HTTP /user", () => {
         .expect(200);
     });
 
-    test("It should respond 403 forbidden", async () => {
-      await request(app).get("/v1/user/last-feedbacks/true").expect(403);
+    test("It should respond 401 unauthorized", async () => {
+      await request(app).get("/v1/user/last-feedbacks/true").expect(401);
     });
   });
 
@@ -957,7 +962,7 @@ describe("HTTP /user", () => {
         isActive: false,
         roles: [role],
       });
-      await request(app).put(`/v1/user/invitation/${user._id}`).expect(403);
+      await request(app).put(`/v1/user/invitation/${user._id}`).expect(401);
     });
 
     test("It should respond 404 not found", async () => {

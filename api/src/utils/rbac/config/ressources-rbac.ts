@@ -1,6 +1,34 @@
 // Toutes les ressources de permissions
 export const resourcesRbac = [
   {
+    name: "activity",
+    description: "Gestion des activités pédagogiques",
+  },
+  {
+    name: "quiz",
+    description: "Création et utilisation des évaluations",
+  },
+  {
+    name: "chatbot",
+    description: "Utilisation de l'assistant pédagogique",
+  },
+  {
+    name: "dashboardIa",
+    description: "Consultation des statistiques d'intelligence artificielle",
+  },
+  {
+    name: "feedback",
+    description: "Gestion des retours apprenants",
+  },
+  {
+    name: "resource",
+    description: "Gestion des ressources pédagogiques",
+  },
+  {
+    name: "stats",
+    description: "Consultation des statistiques",
+  },
+  {
     name: "role",
     description:
       "Gestion des rôles et niveaux d'accès pour une expérience personnalisée",
@@ -107,6 +135,11 @@ export const componentPermissionsList = [
   "formation",
   "calendar",
   "mediatheque",
+  "last-feedback",
+  "lessons-rating-stats",
+  "progression",
+  "company-picture-upload",
+  "start-lesson-button",
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2
@@ -154,8 +187,12 @@ export const resourcesRbacByRank = {
       "bonusSkill",
       "lesson",
       "cursus",
+      "quiz",
+      "chatbot",
+      "resource",
+      "stats",
     ],
-    write: ["cursus"],
+    write: ["cursus", "quiz", "chatbot", "feedback"],
     update: ["cursus"],
     delete: ["cursus"],
   },

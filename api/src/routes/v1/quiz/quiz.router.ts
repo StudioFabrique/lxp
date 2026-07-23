@@ -8,7 +8,7 @@ import {
   randomQuizValidator,
   reportQuizQuestionValidator,
 } from "./quiz-validator";
-import checkToken from "../../../middleware/check-token";
+import checkPermissions from "../../../middleware/check-permissions";
 import httpPostReportQuizQuestion from "../../../controllers/quiz/http-post-report-quiz-question";
 
 /**
@@ -21,7 +21,7 @@ const quizRouter = Router();
 // Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream.
 quizRouter.get(
   "/course/ending/stream/:courseId",
-  checkToken,
+  checkPermissions("quiz", "read"),
   endingCourseQuizStreamValidator,
   httpGetEndingCourseQuizStream,
 );
@@ -29,7 +29,7 @@ quizRouter.get(
 // Récupérer un quiz aléatoire (1 question) généré par l'IA en passant un contenu textuel (activité en cours par exemple).
 quizRouter.post(
   "/random",
-  checkToken,
+  checkPermissions("quiz", "write"),
   randomQuizValidator,
   httpPostRequestRandomQuiz,
 );
@@ -37,14 +37,14 @@ quizRouter.post(
 // Récupérer un set de quiz diagnostique généré par IA pour le début d'un module sous forme de stream SSE.
 quizRouter.post(
   "/preliminary/stream",
-  checkToken,
+  checkPermissions("quiz", "write"),
   preliminaryQuizStreamValidator,
   httpPostPreliminaryQuizStream,
 );
 
 quizRouter.post(
   "/question/report",
-  checkToken,
+  checkPermissions("quiz", "write"),
   reportQuizQuestionValidator,
   httpPostReportQuizQuestion,
 );

@@ -46,6 +46,13 @@ export default async function httpGetEndingCourseQuizStream(
     // Récupérer le cours
     const course = await getCourseById(+courseId);
     if (!course) return res.status(404).json({ error: "Cours introuvable" });
+    if (!course.courseSlug) {
+      return res.status(409).json({
+        code: "AI_CONTENT_NOT_INDEXED",
+        error:
+          "Les fonctionnalités IA de ce cours copié ne sont pas indexées.",
+      });
+    }
 
     const student = await prisma.student.findFirst({
       where: { idMdb: String(userId) },

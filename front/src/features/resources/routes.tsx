@@ -1,5 +1,6 @@
 import { RouteObject } from "react-router";
 import { lazyRoute } from "../../utils/helpers/router-helpers";
+import RequireAbility from "../../components/guards/RequireAbility";
 
 export const adminResourcesRoutes: RouteObject[] = [
   {
@@ -12,11 +13,23 @@ export const adminResourcesRoutes: RouteObject[] = [
       },
       {
         path: "add",
-        lazy: lazyRoute(() => import("./views/ResourceAdd")),
+        element: <RequireAbility action="write" subject="resource" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/ResourceAdd")),
+          },
+        ],
       },
       {
         path: "edit/:resourceId",
-        lazy: lazyRoute(() => import("./views/ResourceAdd")),
+        element: <RequireAbility action="update" subject="resource" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/ResourceAdd")),
+          },
+        ],
       },
     ],
   },

@@ -4,9 +4,7 @@ import Module from "../../../../src/utils/interfaces/module";
 import ModuleHomeList from "../components/list/module-home";
 import ModalSuppression from "../components/list/modal-suppression";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 import Loader from "../../../components/loaders/Loader";
-import { stepsParcours } from "../../../config/steps/steps-parcours";
 import apiClient from "../../../../src/lib/axios";
 
 const ModuleHome = () => {
@@ -14,7 +12,6 @@ const ModuleHome = () => {
   const [moduleToDelete, setModuleToDelete] = useState<any>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const nav = useNavigate();
 
   // retourne la liste de tous les modules
   const getModules = useCallback(() => {
@@ -50,7 +47,7 @@ const ModuleHome = () => {
   const handleConfirmDelete = useCallback(() => {
     if (!moduleToDelete) return;
     apiClient
-      .delete(`/modules/formation/${moduleToDelete.id}`)
+      .delete(`/modules/${moduleToDelete.id}`)
       .then((res) => {
         const data = res.data as { message: string };
         toast.success(data.message);
@@ -64,17 +61,6 @@ const ModuleHome = () => {
       });
   }, [getModules, moduleToDelete, modules]);
 
-  const handleGotoModule = useCallback(() => {
-    if (moduleToDelete && moduleToDelete.parcours) {
-      const stepId = stepsParcours.find((item) => item.label === "Modules").id;
-      console.log(stepId);
-
-      nav(
-        `/admin/parcours/edit/${moduleToDelete.parcoursId}?step=${stepId}&moduleId=${moduleToDelete.metadataId}`,
-      );
-    }
-  }, [moduleToDelete, nav]);
-
   useEffect(() => {
     getModules();
   }, [getModules]);
@@ -86,22 +72,9 @@ const ModuleHome = () => {
     }
   }, [moduleToDelete]);
 
-  let message: string = "";
-  let rightLabel: string = "";
-
-  if (moduleToDelete) {
-    if (moduleToDelete.parcoursId) {
-      message =
-        "Ce module est associé à un parcours, il ne peut-être supprimer qu'à partir de l'interface d'édition du parcours.";
-      rightLabel = "Voir le module dans le parcours";
-    } else if (moduleToDelete.formation) {
-      message = "Confirmez la suppression définitive du module svp";
-      rightLabel = "Confirmer";
-    }
-  } else {
-    message = "";
-    rightLabel = "";
-  }
+  const message =
+    "Confirmez la suppression définitive du module et de son contenu.";
+  const rightLabel = "Confirmer";
 
   // gère les erreurs HTTP
   useEffect(() => {
@@ -136,9 +109,7 @@ const ModuleHome = () => {
             message={message}
             rightLabel={rightLabel}
             onCloseModal={handleCloseModal}
-            onConfirm={
-              moduleToDelete.parcoursId ? handleGotoModule : handleConfirmDelete
-            }
+            onConfirm={handleConfirmDelete}
           />
         ) : null}
       </section>

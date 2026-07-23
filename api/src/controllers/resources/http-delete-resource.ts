@@ -10,7 +10,7 @@ export default async function httpDeleteResource(
 ) {
   try {
     const { resourceId } = req.params;
-    await deleteResource(+resourceId, req.auth?.userId!, req.auth?.userRoles!);
+    await deleteResource(+resourceId, req.auth?.userId!);
     next({
       statusCode: 200,
       data: {

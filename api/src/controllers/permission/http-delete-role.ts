@@ -15,7 +15,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
 
     // empêcher un utilisateur de supprimer son propre rôle
     for (const role of roles) {
-      if (role._id === id)
+      if (role._id.toString() === id)
         return res
           .status(400)
           .json({ message: "Impossible de supprimer ses propres rôle" });
@@ -56,28 +56,14 @@ export default async function httpDeleteRole(req: Request, res: Response) {
       });
     }
 
-    await Permission.deleteMany({
-      name: {
-        $in: [
-          `write:${roleToDelete.role}`,
-          `read:${roleToDelete.role}`,
-          `delete:${roleToDelete.role}`,
-          `update:${roleToDelete.role}`,
-        ],
-      },
-    });
-
-    await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
-
+    const rolePermissionNames = [
+      `write:${roleToDelete.role}`,
+      `read:${roleToDelete.role}`,
+      `delete:${roleToDelete.role}`,
+      `update:${roleToDelete.role}`,
+    ];
     const permissionsToRemove = await Permission.find({
-      name: {
-        $in: [
-          `write:${roleToDelete.role}`,
-          `read:${roleToDelete.role}`,
-          `delete:${roleToDelete.role}`,
-          `update:${roleToDelete.role}`,
-        ],
-      },
+      name: { $in: rolePermissionNames },
     }).select("_id");
 
     await Role.updateMany(
@@ -86,6 +72,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
         $pull: { permissions: { $in: permissionsToRemove.map((p) => p._id) } },
       },
     );
+    await Permission.deleteMany({ name: { $in: rolePermissionNames } });
 
     await Role.deleteOne({ _id: id });
 
