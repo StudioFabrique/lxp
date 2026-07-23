@@ -8,7 +8,7 @@ type Props = {
 const BoxWrapper: FC<Props> = ({ additionalClassname, children }) => {
   return (
     <div
-      className={`flex flex-col gap-y-4 p-5 rounded-lg bg-secondary/20 h-full relative ${additionalClassname}`}
+      className={`flex min-w-0 flex-col gap-y-4 p-5 rounded-lg bg-secondary/20 h-full relative ${additionalClassname}`}
     >
       {children}
     </div>

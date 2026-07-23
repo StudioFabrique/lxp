@@ -89,7 +89,7 @@ const ModuleTable = ({
                           <Link
                             className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
                             data-tip="Modifier le module"
-                            to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
+                            to={`/admin/parcours/edit/${item.parcoursId}?step=4&moduleId=${item.metadataId}`}
                             aria-label="Editer le module"
                           >
                             <Pencil className="h-4 w-4" />

@@ -63,13 +63,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <TableOverflowContainer>
-      <table className="table w-full border-separate border-spacing-y-5">
+      <table className="table w-full min-w-max xl:min-w-full xl:max-w-full border-separate border-spacing-y-5">
         <thead className="w-full">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {/* Espacement gauche */}
-              <th className="p-0 w-0" />
-
               {headerGroup.headers.map((header) => {
                 const isActionsColumn = header.column.id === "actions";
                 return (
@@ -107,8 +104,6 @@ export function DataTable<TData, TValue>({
                 );
               })}
 
-              {/* Espacement droit */}
-              <th className="px-0" />
             </tr>
           ))}
         </thead>
@@ -116,20 +111,16 @@ export function DataTable<TData, TValue>({
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className="text-base-content group cursor-pointer">
-              <td className="rounded-l-xl w-0 bg-base-100 group-hover:bg-base-100/60 transition-colors" />
-
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className={`px-2 bg-base-100 group-hover:bg-base-100/60 transition-colors ${
+                  className={`px-2 bg-base-100 first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
                     cell.column.id === "actions" ? "text-center" : ""
                   }`}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
-
-              <td className="rounded-r-xl w-0 bg-base-100 group-hover:bg-base-100/60 transition-colors" />
             </tr>
           ))}
         </tbody>

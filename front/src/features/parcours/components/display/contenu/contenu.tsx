@@ -43,7 +43,7 @@ const Contenu = ({ modules }: ContenuProps) => {
             <div className="flex gap-5">
               <PermissionGuard action="update" object="parcours">
                 <Link
-                  to={`/admin/parcours/edit/${parcoursId}?step=${4}`}
+                  to={`/admin/parcours/edit/${parcoursId}?step=4&moduleId=${selectedModule?.id}`}
                   className="btn btn-primary text-base-100"
                 >
                   <span className="h-5 w-5">
