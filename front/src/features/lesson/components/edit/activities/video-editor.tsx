@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { activiteMetaDataSchema } from "../../../lesson.schema";
 import FormInput from "../../../../../components/form/FormInput";
 import FormTextarea from "../../../../../components/form/FormTextarea";
+import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -69,20 +70,17 @@ export default function VideoEditor({
     setOrigin(event.currentTarget.value);
   };
 
-  const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files && event.target.files[0];
-    if (selectedFile) {
-      if (!selectedFile.type.startsWith("video/")) {
-        toast.error("Merci de choisir un fichier de type video.");
-        setFile(null);
-        return;
-      }
-      if (selectedFile.size > maxSize) {
-        toast.error(maxSizeError(maxSize));
-      }
-      setFile(selectedFile);
-      setVideo(URL.createObjectURL(selectedFile));
+  const handleSelectFile = (selectedFile: File) => {
+    if (!selectedFile.type.startsWith("video/")) {
+      toast.error("Merci de choisir un fichier de type video.");
+      setFile(null);
+      return;
     }
+    if (selectedFile.size > maxSize) {
+      toast.error(maxSizeError(maxSize));
+    }
+    setFile(selectedFile);
+    setVideo(URL.createObjectURL(selectedFile));
   };
 
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
@@ -154,12 +152,12 @@ export default function VideoEditor({
             </span>
             <span>
               {origin === "fileSystem" ? (
-                <input
-                  className="w-full file-input file-input-bordered file-input-sm file-input-primary"
-                  type="file"
-                  name="fileUpload"
-                  id="fileUpload"
-                  onChange={handleSelectFile}
+                <FileUpload
+                  compact
+                  fileType="video"
+                  maxSize={maxSize}
+                  buttonLabel="Sélectionner une vidéo"
+                  onFileSelect={handleSelectFile}
                 />
               ) : (
                 <div className="flex items-center gap-x-2">

@@ -48,34 +48,31 @@ const useUploadResources = (
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      let error = !regexGeneric.test(resourceName);
+  const handleFileChange = (selectedFile: File) => {
+    let error = !regexGeneric.test(resourceName);
 
-      if (allowedMimeTypes.includes(event.target.files[0].type)) {
-        filesList?.forEach((file) => {
-          if (file.file.name === event.target.files![0].name) {
-            error = true;
-            toast.error("Ce fichier se trouve déjà dans la liste");
-          }
-        });
-        const resource = [
-          ...(filesList ?? []),
-          {
-            name: resourceName,
-            file: event.target.files[0],
-            hasError: error,
-          },
-        ];
-        setFilesList(resource as Resource[]);
-        event.target.value = "";
-        setResourceName("");
-      } else {
-        toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
-        );
-        return;
-      }
+    if (allowedMimeTypes.includes(selectedFile.type)) {
+      filesList?.forEach((file) => {
+        if (file.file.name === selectedFile.name) {
+          error = true;
+          toast.error("Ce fichier se trouve déjà dans la liste");
+        }
+      });
+      const resource = [
+        ...(filesList ?? []),
+        {
+          name: resourceName,
+          file: selectedFile,
+          hasError: error,
+        },
+      ];
+      setFilesList(resource as Resource[]);
+      setResourceName("");
+    } else {
+      toast.error(
+        "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
+      );
+      return;
     }
   };
 
