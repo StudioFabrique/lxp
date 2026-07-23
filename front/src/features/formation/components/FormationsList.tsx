@@ -16,7 +16,7 @@ const FormationsList = ({
 }: Props) => (
   <div className="p-5 flex flex-col gap-y-4">
     <h2 className="font-bold">Formations enregistrées</h2>
-    {formationsList.length > 0 && (
+    {formationsList.length > 0 ? (
       <ul className="flex flex-col gap-y-4">
         {formationsList.map((item) => (
           <li key={item.id}>
@@ -34,6 +34,8 @@ const FormationsList = ({
           </li>
         ))}
       </ul>
+    ) : (
+      <p className="text-center pt-2">Aucune formation enregistrée.</p>
     )}
   </div>
 );
