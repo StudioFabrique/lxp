@@ -1,4 +1,4 @@
-import { CalendarView, theme } from "../calendar-configuration";
+import { CalendarView, theme } from "../components/calendar-configuration";
 
 type Props = {
   view: CalendarView;

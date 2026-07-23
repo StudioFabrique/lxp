@@ -33,7 +33,7 @@ type ModuleState = {
 
 // Action types
 type ModuleAction =
-  | { type: "SET_SHOW_FORM"; payload: boolean }
+  | { type: "START_CREATE" }
   | { type: "SET_MODE"; payload: "create" | "edit" }
   | { type: "SET_MODULES"; payload: ModuleData[] }
   | { type: "ADD_MODULE"; payload: ModuleData }
@@ -88,8 +88,18 @@ const initialState: ModuleState = {
 // Reducer function with all state transitions
 function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
   switch (action.type) {
-    case "SET_SHOW_FORM":
-      return { ...state, showForm: action.payload };
+    case "START_CREATE":
+      return {
+        ...state,
+        showForm: true,
+        mode: "create",
+        currentContacts: [],
+        currentSkills: [],
+        file: null,
+        moduleToDuplicate: null,
+        moduleToUpdate: null,
+        image: null,
+      };
 
     case "SET_MODE":
       return { ...state, mode: action.payload };
@@ -140,6 +150,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         currentSkills: [],
         file: null,
         moduleToDuplicate: null,
+        moduleToUpdate: null,
         image: null,
       };
 
@@ -154,6 +165,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         file: null,
         image: null,
         moduleToDuplicate: null,
+        moduleToUpdate: null,
       };
 
     // Complex action: Module successfully created

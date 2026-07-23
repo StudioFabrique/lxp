@@ -62,7 +62,7 @@ const CreateCourseItem = ({
         initial={{ scale: 0.95, padding: 0 }}
         animate={{
           scale: 1,
-          padding: showTitleInput ? 16 : 0,
+          padding: showTitleInput ? 8 : 0,
         }}
         transition={{ duration: 0.2 }}
       >
@@ -93,7 +93,7 @@ const CreateCourseItem = ({
                 ref={validationButtonRef}
                 type="submit"
                 disabled={!title.trim()}
-                className="btn btn-primary btn-sm btn-square"
+                className="btn btn-primary/50 disabled:bg-primary/50 btn-sm"
                 aria-label="Continuer"
               >
                 <Check className="h-4 w-4" />

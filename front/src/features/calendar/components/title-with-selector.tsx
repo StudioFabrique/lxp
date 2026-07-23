@@ -4,8 +4,8 @@ import {
   daysOfWeek,
   monthNames,
   theme,
-} from "../calendar-configuration";
-import { getWeekBounds } from "../calendar-utils";
+} from "../components/calendar-configuration";
+import { getWeekBounds } from "../components/calendar-utils";
 
 type Props = {
   currentTitle?: string;

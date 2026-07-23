@@ -26,9 +26,10 @@ import {
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
 import apiClient from "../../../lib/axios";
 import type {
-  CourseFormValues,
   CreateCourseFormValues,
+  UpdateCourseFormValues,
 } from "../components/sidebar/course-form.types";
+import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 const useModuleContentExplorer = () => {
@@ -304,7 +305,7 @@ const useModuleContentExplorer = () => {
   );
 
   const updateCourse = useCallback(
-    async (courseId: number, values: CourseFormValues) => {
+    async (courseId: number, values: UpdateCourseFormValues) => {
       try {
         await apiClient.put("/course/infos", {
           id: courseId,
@@ -312,6 +313,7 @@ const useModuleContentExplorer = () => {
           description: values.description,
           visibility: values.visibility,
         });
+        await apiClient.put(`/course/tags/${courseId}`, values.tagIds);
         await fetchModuleData();
         toast.success("Cours mis à jour");
         return true;
@@ -324,7 +326,7 @@ const useModuleContentExplorer = () => {
   );
 
   const createLesson = useCallback(
-    async (courseId: number, data: { title: string; description: string; modalite: string; tagId: number }) => {
+    async (courseId: number, data: LessonFormValues) => {
       if (!data.title.trim() || !data.tagId) return false;
       try {
         await apiClient.put(`/course/new-lesson/${courseId}`, {
@@ -336,6 +338,27 @@ const useModuleContentExplorer = () => {
         return true;
       } catch {
         toast.error("Impossible de créer la leçon");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const updateLesson = useCallback(
+    async (lessonId: number, data: LessonFormValues) => {
+      if (!data.title.trim() || !data.tagId) return false;
+      try {
+        await apiClient.put("/lesson/update", {
+          id: lessonId,
+          ...data,
+          title: data.title.trim(),
+          description: data.description.trim(),
+        });
+        await fetchModuleData();
+        toast.success("Leçon mise à jour");
+        return true;
+      } catch {
+        toast.error("Impossible de modifier la leçon");
         return false;
       }
     },
@@ -672,6 +695,7 @@ const useModuleContentExplorer = () => {
       deleteLesson,
       nextLesson,
       createLesson,
+      updateLesson,
     },
     activityActions: {
       saveActivity,
