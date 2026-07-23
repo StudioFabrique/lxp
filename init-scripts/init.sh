@@ -1,23 +1,29 @@
 #!/bin/bash
 echo "Installation des dépendances racine..."
-# Le script lifecycle racine `install` installe aussi les sous-projets. On le
-# désactive ici, puis on lance chaque installation explicitement une seule fois.
 npm ci --ignore-scripts || { echo -e "\033[1;31m Échec: Installation des dépendances racine"; exit 1; }
 
 echo "Installation des dépendances API..."
-npm run install-server || { echo -e "\033[1;31m Échec: Installation des dépendances API"; exit 1; }
+npm ci --prefix api || { echo -e "\033[1;31m Échec: Installation des dépendances API"; exit 1; }
 
 echo "Installation des dépendances frontend..."
-npm run install-client || { echo -e "\033[1;31m Échec: Installation des dépendances frontend"; exit 1; }
+npm ci --prefix front || { echo -e "\033[1;31m Échec: Installation des dépendances frontend"; exit 1; }
 
 echo "Copie des fichiers .env..."
-cp ./api/env.example ./api/.env && \
+# If .env in api does not exist, copy .env.example to .env
+if [ ! -f "./api/.env" ]; then
+  cp ./api/env.example ./api/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 
-# Chargement des variables d'environnement
-set -o allexport
-source ./api/.env
-set +o allexport
+# Chargement des variables d'environnement (sélectif pour éviter les erreurs
+# de syntaxe sur des lignes comme SMTP ou FROM qui ne sont pas du bash).
+if [ -f "./api/.env" ]; then
+  POSTGRES_USER=$(grep '^POSTGRES_USER=' ./api/.env | cut -d'=' -f2)
+  POSTGRES_PASSWORD=$(grep '^POSTGRES_PASSWORD=' ./api/.env | cut -d'=' -f2)
+  POSTGRES_DB=$(grep '^POSTGRES_DB=' ./api/.env | cut -d'=' -f2)
+  MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
+  MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
+fi
 
 # Naviguer vers le repertoire api pour la suite
 cd api
@@ -66,7 +72,7 @@ fi
 if [[ -d "./dumps/dump-mongo" ]]; then
   echo "Dossier de dump MongoDB trouvé, injection en cours..."
   docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
-  docker exec -i lxp-mongo mongorestore --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
+  docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
 else
   echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
 fi
