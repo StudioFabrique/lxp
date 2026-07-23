@@ -16,6 +16,27 @@
         pine;
 }
 
+/* Preserve a clear keyboard focus indicator on every interactive control. */
+:where(
+  input:not([type="hidden"]),
+  textarea,
+  select,
+  button,
+  a[href],
+  [role="button"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 1px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+  outline-offset: 1px;
+}
+
+:where(input:not([type="hidden"]), textarea, select):focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--color-primary);
+  border-radius: var(--radius-field);
+}
+
 /* =================================== */
 /* THÈMES CLAIRS                       */
 /* =================================== */

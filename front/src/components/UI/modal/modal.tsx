@@ -8,6 +8,7 @@ type ModalProps = {
   title: string;
   leftLabel?: string;
   rightLabel?: string;
+  rightDisabled?: boolean;
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
@@ -37,7 +38,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             {props.onRightClick && (
               <button
                 className="btn btn-warning flex items-center gap-x-2"
-                disabled={isSubmitting}
+                disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >
                 {isSubmitting ? <Loader2 className="animate-spin" /> : null}
@@ -70,7 +71,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
           {props.onRightClick && (
             <button
               className="btn btn-warning flex items-center gap-x-2"
-              disabled={isSubmitting}
+              disabled={isSubmitting || props.rightDisabled}
               onClick={props.onRightClick}
             >
               {isSubmitting ? <Loader2 className="animate-spin" /> : null}

@@ -1,8 +1,7 @@
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import CurrentTags from "../../../../../../src/components/shared/inherited-items/current-tags";
 import InheritedItems from "../../../../../../src/components/shared/inherited-items/inherited-items";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
+import { useCallback, useMemo, useState } from "react";
 import ParcoursTagsSelecter from "./parcours-tags-selecter";
 import SearchTag from "./search-tag";
 import CreateNewTag from "./create-new-tags";
@@ -19,18 +18,16 @@ interface TagsWithDrawerProps {
 }
 
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
-  const [submit, setSubmit] = useState<boolean>(false);
+  const { onSubmit } = props;
   const { data: availableTags } = useParcoursTagsQuery();
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
   const selectedParcoursTags = useMemo(
     () => {
       const tags = parcours?.tags as Array<Tag | { tag: Tag }> | undefined;
-      return tags?.length
-        ? tags.map((item) => ("tag" in item ? item.tag : item))
-        : props.tags;
+      return (tags ?? []).map((item) => ("tag" in item ? item.tag : item));
     },
-    [parcours?.tags, props.tags],
+    [parcours?.tags],
   );
   const [draftTags, setDraftTags] = useState<Tag[] | null>(null);
   const currentTags = draftTags ?? selectedParcoursTags;
@@ -49,20 +46,10 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
       setDraftTags(tags);
-      setSubmit(true);
+      onSubmit(tags);
     },
-    [],
+    [onSubmit],
   );
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (submit) {
-        props.onSubmit(currentTags);
-        setSubmit(false);
-      }
-    }, autoSubmitTimer);
-    return () => clearTimeout(timer);
-  }, [props, submit, currentTags]);
 
   /**
    * Effect pour mettre à jour les tags de la formation

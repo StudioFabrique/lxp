@@ -1,5 +1,5 @@
 import Header from "../../../../components/headers/Header";
-import MemoizedFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
+import FileUpload from "../../../../components/UI/file-upload/FileUpload";
 
 type Props = {
   error?: string;
@@ -21,11 +21,11 @@ const MbzImport = ({ error, isLoading, onImportMbz }: Props) => {
         alternateBgColor
         hasError={Boolean(error)}
       >
-        <MemoizedFileUpload
+        <FileUpload
+          compact
           buttonLabel="Importer un fichier .mbz"
-          variant="minimized"
           maxSize={50 * 1024 * 1024} // 100 Mo
-          onSetFile={onImportMbz}
+          onFileSelect={onImportMbz}
           fileType="mbz"
           isLoading={isLoading}
         />

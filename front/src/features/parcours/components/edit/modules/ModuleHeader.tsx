@@ -32,7 +32,7 @@ export default function ModuleHeader({
         </button>
         <button className="btn btn-primary" onClick={onAddExisting}>
           <Copy />
-          Ajouter un module
+          Ajouter un module existant
         </button>
       </span>
     </div>

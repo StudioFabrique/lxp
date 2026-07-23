@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, MailCheck, RotateCw, Send, Trash2 } from "lucide-react";
+import { MailCheck, Pencil, RotateCw, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -116,7 +116,7 @@ export const getUsersColumns = (
           {user.isActive ? (
             <button
               onClick={() => onSendResetPassword(userId)}
-              className="btn btn-ghost btn-xs btn-square tooltip"
+              className="btn btn-ghost btn-xs btn-square text-primary tooltip"
               data-tip="Envoyer une demande de réinitialisation de mot de passe"
             >
               <RotateCw className="w-4 h-4 text-warning" />
@@ -144,7 +144,7 @@ export const getUsersColumns = (
               className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip="Modifier"
             >
-              <Edit className="w-4 h-4" />
+              <Pencil className="w-4 h-4" />
             </Link>
           </PermissionGuard>
           <PermissionGuard object="user" action="delete">

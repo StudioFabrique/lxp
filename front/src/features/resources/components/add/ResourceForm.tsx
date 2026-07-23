@@ -39,7 +39,7 @@ export default function ResourceForm({
   onSetFile,
 }: Props) {
   const [inputTag, setInputTag] = useState<string>("");
-  const { handleFileChange } = useImageUpload(5000000, onSetFile);
+  const { handleSelectedFile } = useImageUpload(5000000, onSetFile);
 
   const getSoftColor = () => {
     // Plage entre 40 et 180 pour chaque composante
@@ -127,7 +127,7 @@ export default function ResourceForm({
           register={data.register}
           error={data.errors.description}
         />
-        <FormUploadImage onSetFile={handleFileChange} />
+        <FormUploadImage onSetFile={handleSelectedFile} />
         <div className="w-full flex justify-end">
           <button
             disabled={isLoading}

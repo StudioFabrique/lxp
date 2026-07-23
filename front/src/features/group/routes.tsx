@@ -1,6 +1,5 @@
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
-import { lazy } from "react";
+import { lazyRoute } from "../../utils/helpers/router-helpers";
 import { Outlet } from "react-router";
 
 export const adminGroupRoutes: RouteObject[] = [
@@ -14,15 +13,15 @@ export const adminGroupRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: withSuspense(lazy(() => import("./views/GroupList"))),
+        lazy: lazyRoute(() => import("./views/GroupList")),
       },
       {
         path: "add",
-        element: withSuspense(lazy(() => import("./views/GroupEdit"))),
+        lazy: lazyRoute(() => import("./views/GroupEdit")),
       },
       {
         path: "edit/:id",
-        element: withSuspense(lazy(() => import("./views/GroupEdit"))),
+        lazy: lazyRoute(() => import("./views/GroupEdit")),
       },
     ],
   },

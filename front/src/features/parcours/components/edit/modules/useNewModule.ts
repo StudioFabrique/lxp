@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,11 @@ import { parcoursKeys } from "../../../api/parcours.keys";
 
 const useNewModule = () => {
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const moduleIdParam = searchParams.get("moduleId");
+  const requestedModuleId =
+    moduleIdParam !== null ? Number(moduleIdParam) : null;
+  const handledModuleIdRef = useRef<number | null>(null);
   const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +34,6 @@ const useNewModule = () => {
 
   const {
     register,
-    handleSubmit: _rhfHandleSubmit,
     reset,
     formState: { errors },
     getValues,
@@ -164,7 +168,7 @@ const useNewModule = () => {
     (drawer as HTMLDialogElement).click();
   };
 
-  const handleUpdateModule = (moduleToUpdate: ModuleData) => {
+  const handleUpdateModule = useCallback((moduleToUpdate: ModuleData) => {
     dispatch({
       type: "UPDATE_MODULE",
       payload: {
@@ -180,7 +184,7 @@ const useNewModule = () => {
       duration: moduleToUpdate.duration,
       quizInstructions: moduleToUpdate.quizInstructions,
     });
-  };
+  }, [reset]);
 
   const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,6 +286,34 @@ const useNewModule = () => {
   useEffect(() => {
     getParcoursModules();
   }, [getParcoursModules]);
+
+  useEffect(() => {
+    if (
+      requestedModuleId === null ||
+      !Number.isInteger(requestedModuleId) ||
+      handledModuleIdRef.current === requestedModuleId
+    ) {
+      return;
+    }
+
+    const requestedModule = state.modules.find(
+      (module) => module.id === requestedModuleId,
+    );
+    if (!requestedModule) return;
+
+    handledModuleIdRef.current = requestedModuleId;
+    handleUpdateModule(requestedModule);
+
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete("moduleId");
+    setSearchParams(nextSearchParams, { replace: true });
+  }, [
+    handleUpdateModule,
+    requestedModuleId,
+    searchParams,
+    setSearchParams,
+    state.modules,
+  ]);
 
   useEffect(() => {
     if (state.showForm && refForm.current) {

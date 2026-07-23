@@ -1,7 +1,9 @@
+import FileUpload from "../../../../../../components/UI/file-upload/FileUpload";
+
 type props = {
   value: string;
   onChange: (value: string) => void;
-  onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onFileChange: (file: File) => void;
 };
 
 function ResourceForm({ value, onChange, onFileChange }: props) {
@@ -22,10 +24,12 @@ function ResourceForm({ value, onChange, onFileChange }: props) {
             onChange={(e) => onChange(e.target.value)}
           />
         </span>
-        <input
-          className="file-input file-input-bordered file-input-primary w-full max-w-md"
-          type="file"
-          onChange={onFileChange}
+        <FileUpload
+          compact
+          fileType="document"
+          buttonLabel="Ajouter une ressource"
+          helperText="PDF, Office, texte ou Markdown"
+          onFileSelect={onFileChange}
           disabled={!value || value.length === 0}
         />
       </form>
