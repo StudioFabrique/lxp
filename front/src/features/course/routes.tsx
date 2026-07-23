@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
+import { lazyRouteWithWrapper } from "../../utils/helpers/router-helpers";
 import { CourseProvider } from "./store/CourseContext";
 
 const wrapCourse = (el: React.ReactNode) => (
@@ -13,20 +12,23 @@ export const adminCourseRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: wrapCourse(
-          withSuspense(lazy(() => import("./views/CourseHome"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/CourseHome"),
+          wrapCourse,
         ),
       },
       {
         path: "edit/:courseId",
-        element: wrapCourse(
-          withSuspense(lazy(() => import("./views/CourseEdit"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/CourseEdit"),
+          wrapCourse,
         ),
       },
       {
         path: "import",
-        element: wrapCourse(
-          withSuspense(lazy(() => import("./views/CourseImport"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/CourseImport"),
+          wrapCourse,
         ),
       },
     ],

@@ -11,7 +11,7 @@ type ModuleDrawerProps = {
 };
 
 /**
- * Right side drawer showing available modules from other parcours
+ * Right side drawer showing available modules from the formation
  * Allows users to duplicate existing modules
  */
 export default function ModuleDrawer({
