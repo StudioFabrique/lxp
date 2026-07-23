@@ -1,9 +1,10 @@
 cd api
 
-docker compose down
-
 echo "Nettoyage données volumes docker..."
-docker volume rm lxp-api_mongo2 lxp-api_pg2
+# Supprime uniquement les conteneurs, réseaux et volumes déclarés par le
+# Compose de développement lxp-api. L'option -v évite les erreurs lorsque les
+# volumes n'existent pas encore et inclut la base pgvector `pg_ai`.
+docker compose down --volumes --remove-orphans
 
 echo "Nettoyage des données des fichiers activité..."
 rm ./uploads/activities/* 2> /dev/null

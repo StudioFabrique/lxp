@@ -1,5 +1,6 @@
 import { Lesson } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import { slugify } from "../../helpers/slugify";
 
 async function postCourseStructure(
   adminId: number,
@@ -23,11 +24,12 @@ async function postCourseStructure(
   // Utilisation d'une transaction pour garantir l'intégrité
   const result = await prisma.$transaction(async (tx) => {
     // 1. Création du cours
+    const providedSlug = (courseSlug || "").trim();
     const newCourse = await tx.course.create({
       data: {
         title,
         description: description || "",
-        courseSlug: courseSlug || "",
+        courseSlug: providedSlug,
         order: existingModule.courses.length,
         author: "Import",
         adminId: adminId,
@@ -35,6 +37,15 @@ async function postCourseStructure(
         isPublished: false,
       },
     });
+
+    if (!providedSlug) {
+      const generated = `${slugify(title) || "cours"}-${newCourse.id}`;
+      await tx.course.update({
+        where: { id: newCourse.id },
+        data: { courseSlug: generated },
+      });
+      newCourse.courseSlug = generated;
+    }
 
     // 2. Création des leçons
     const createdLessons = [];

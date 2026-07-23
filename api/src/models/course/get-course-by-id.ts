@@ -1,14 +1,21 @@
 import { prisma } from "../../utils/db";
 
-export default async function getCourseById(
-  courseId: number,
-): Promise<{ id: number; title: string; content: string } | null> {
+export default async function getCourseById(courseId: number): Promise<{
+  id: number;
+  title: string;
+  content: string;
+  courseSlug: string | null;
+} | null> {
   // Récupération des données imbriquées avec Prisma
   const course = await prisma.course.findUnique({
     where: { id: courseId },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      courseSlug: true,
+      description: true,
       lessons: {
-        orderBy: { order: "asc" }, // On garde l'ordre pédagogique
+        orderBy: { order: "asc" },
         include: {
           activities: {
             orderBy: { order: "asc" },
@@ -46,10 +53,10 @@ export default async function getCourseById(
     }
   }
 
-  // On retourne l'objet attendu par ton contrôleur Express
   return {
     id: course.id,
     title: course.title,
     content: markdownContent,
+    courseSlug: course.courseSlug,
   };
 }
