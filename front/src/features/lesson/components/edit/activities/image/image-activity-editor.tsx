@@ -1,7 +1,7 @@
 import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
 import defaultImage from "../../../../../../../src/assets/images/bookshelf.jpg";
 import { activityImageSize } from "../../../../../../config/images-sizes";
-import MemoizedImageFileUpload from "../../../../../../components/UI/image-file-upload/image-file-upload";
+import FileUpload from "../../../../../../components/UI/file-upload/FileUpload";
 import SubmitButton from "../../../../../../components/UI/submit-button";
 import type { Activity } from "../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../config/urls";
@@ -66,9 +66,11 @@ export default function ImageActivityEditor({
               <FormInput name="title" label="Titre *" register={register} error={errors.title} />
             </span>
             <span className="flex flex-col gap-y-4">
-              <MemoizedImageFileUpload
-                onSetFile={setFile}
-                label=""
+              <FileUpload
+                onFileSelect={setFile}
+                fileType="image"
+                buttonLabel="Sélectionner une image"
+                helperText="JPG, PNG, WebP ou GIF"
                 maxSize={activityImageSize}
               />
               <div className="flex justify-end items-center">

@@ -34,9 +34,7 @@ export default function ModuleCreateForm(props: Props) {
         <ModuleMetadatas
           register={props.register}
           errors={props.errors}
-          thumb={null}
           onSetFile={props.onSetFile}
-          mode="create"
           onSetImageBase64={props.setImageBase64}
         />
         <div className="flex justify-end">

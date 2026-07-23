@@ -5,16 +5,13 @@ import { studentCalendarRoutes } from "./features/calendar/routes";
 import { studentProfileRoutes } from "./features/profile/routes";
 import RouterErrorBoundary from "./components/wrappers/layouts/RouterErrorBoundary";
 import { studentDashboardRoutes } from "./features/dashboard-student/routes";
-import { lazy } from "react";
-import { withSuspense } from "./utils/helpers/router-helpers";
+import { lazyRoute } from "./utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
 
 export const studentRoutes: RouteObject[] = [
   {
     path: "/student",
-    element: withSuspense(
-      lazy(() => import("./components/wrappers/layouts/StudentLayout")),
-    ),
+    lazy: lazyRoute(() => import("./components/wrappers/layouts/StudentLayout")),
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
@@ -26,9 +23,7 @@ export const studentRoutes: RouteObject[] = [
       ...studentProfileRoutes,
       {
         path: "*",
-        element: withSuspense(
-          lazy(() => import("./features/dashboard-student/views/FeaturesList")),
-        ),
+        lazy: lazyRoute(() => import("./features/dashboard-student/views/FeaturesList")),
       },
     ],
   },

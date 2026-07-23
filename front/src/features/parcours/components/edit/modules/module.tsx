@@ -92,7 +92,6 @@ export default function ModuleComponent() {
         {/* Module creation form (conditional) */}
         {showForm && (
           <ModuleForm
-            image={image}
             mode={mode}
             refForm={refForm}
             register={register}

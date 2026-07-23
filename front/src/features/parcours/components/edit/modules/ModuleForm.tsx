@@ -12,7 +12,6 @@ type ModuleFormProps = {
   refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<any>;
   errors: FieldErrors;
-  image: string | null;
   isLoading: boolean;
   currentContacts: Contact[];
   currentSkills: Skill[];
@@ -31,7 +30,6 @@ type ModuleFormProps = {
  */
 export default function ModuleForm({
   mode,
-  image,
   refForm,
   register,
   errors,
@@ -58,7 +56,6 @@ export default function ModuleForm({
               <ModuleMetadatas
                 register={register}
                 errors={errors}
-                thumb={image}
                 onSetFile={onSetFile}
               >
                 <FormNumberInput

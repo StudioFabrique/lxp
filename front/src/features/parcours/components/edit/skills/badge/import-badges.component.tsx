@@ -1,10 +1,10 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
 import Badge from "../../../../interfaces/badge";
 import { validateImageFile } from "../../../../helpers/validate-image-file";
-import UploadIcon from "../../../../../../../src/components/UI/svg/upload-icon.component";
 import { badgeMaxSize } from "../../../../../../config/images-sizes";
+import FileUpload from "../../../../../../components/UI/file-upload/FileUpload";
 
 const maxSize = badgeMaxSize;
 
@@ -13,34 +13,21 @@ type Props = {
 };
 
 const ImportBadges: FC<Props> = ({ onSubmit }) => {
-  const fileSelectRef = useRef<any>(null);
   const [selectedFiles, setSelectedFiles] = useState<any>(null);
 
-  const handleLabelClick = () => {
-    fileSelectRef.current.click();
-  };
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-
-    if (files) {
-      if (validateImageFile(files[0], maxSize)) {
-        const file = await compressImage(files[0], 100);
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const imageString = reader.result as string;
-            if (imageString) {
-              setSelectedFiles(imageString);
-            }
-          };
-          reader.readAsDataURL(file);
-        }
+  const handleFileChange = async (selectedFile: File) => {
+    if (validateImageFile(selectedFile, maxSize)) {
+      const file = await compressImage(selectedFile, 100);
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const imageString = reader.result as string;
+          if (imageString) {
+            setSelectedFiles(imageString);
+          }
+        };
+        reader.readAsDataURL(file);
       }
-    } else {
-      setSelectedFiles(null);
     }
   };
 
@@ -53,25 +40,13 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
   }, [selectedFiles, onSubmit]);
 
   return (
-    <>
-      <div className="w-full" onClick={handleLabelClick}>
-        <button
-          className="btn btn-sm btn-primary flex items-center"
-          type="button"
-        >
-          <UploadIcon size={6} />
-          <p>Importer un badge</p>
-        </button>
-      </div>
-      <input
-        className="hidden"
-        name="badges-select"
-        type="file"
-        ref={fileSelectRef}
-        accept=".png"
-        onChange={handleFileChange}
-      />
-    </>
+    <FileUpload
+      compact
+      fileType="png"
+      maxSize={maxSize}
+      buttonLabel="Importer un badge"
+      onFileSelect={handleFileChange}
+    />
   );
 };
 

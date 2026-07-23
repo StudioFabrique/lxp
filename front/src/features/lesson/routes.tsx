@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
+import { lazyRouteWithWrapper } from "../../utils/helpers/router-helpers";
 import { LessonProvider } from "./store/LessonContext";
 
 const wrapLesson = (el: React.ReactNode) => (
@@ -13,20 +12,23 @@ export const adminLessonRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: wrapLesson(
-          withSuspense(lazy(() => import("./views/LessonHome"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/LessonHome"),
+          wrapLesson,
         ),
       },
       {
         path: "edit/:lessonId",
-        element: wrapLesson(
-          withSuspense(lazy(() => import("./views/LessonEdit"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/LessonEdit"),
+          wrapLesson,
         ),
       },
       {
         path: "preview/:activityId",
-        element: wrapLesson(
-          withSuspense(lazy(() => import("./views/PreviewActivity"))),
+        lazy: lazyRouteWithWrapper(
+          () => import("./views/PreviewActivity"),
+          wrapLesson,
         ),
       },
     ],

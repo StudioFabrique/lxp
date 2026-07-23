@@ -69,7 +69,9 @@ const ModuleHome = () => {
       const stepId = stepsParcours.find((item) => item.label === "Modules").id;
       console.log(stepId);
 
-      nav(`/admin/parcours/edit/${moduleToDelete.parcoursId}?step=${stepId}`);
+      nav(
+        `/admin/parcours/edit/${moduleToDelete.parcoursId}?step=${stepId}&moduleId=${moduleToDelete.metadataId}`,
+      );
     }
   }, [moduleToDelete, nav]);
 

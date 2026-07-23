@@ -4,12 +4,13 @@ type Props = {
 
 function TableWrapper({ children }: Props) {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full text-xs xl:text-sm table border-separate border-spacing-y-5">
+    <TableOverflowContainer>
+      <table className="w-full min-w-max xl:min-w-full xl:max-w-full text-xs xl:text-sm table border-separate border-spacing-y-5">
         {children}
       </table>
-    </div>
+    </TableOverflowContainer>
   );
 }
 
 export default TableWrapper;
+import TableOverflowContainer from "../table/TableOverflowContainer";

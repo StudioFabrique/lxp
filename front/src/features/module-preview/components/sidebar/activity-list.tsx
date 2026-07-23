@@ -14,6 +14,7 @@ import {
   BaseEventPayload,
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { cn } from "../../../../utils/cn";
 
 type ActivityListProps = {
   activities?: Activity[];
@@ -72,24 +73,24 @@ export default function ActivityList({
     <FadeWrapper>
       <div
         ref={containerRef}
-        className={`flex flex-col items-center gap-1 w-full select-none px-4 transition-all ${
-          isDraggingOver ? "bg-base-200/50" : ""
-        }`}
+        className={cn(
+          "flex items-center gap-1 w-full select-none px-4 transition-all mt-2",
+          isDraggingOver ? "bg-base-200/50" : "",
+          activities && activities.length === 0 ? "flex-row" : "flex-col",
+        )}
       >
-        <div className="mb-1 flex w-full items-center justify-between pb-1 mt-2">
-          <span className="text-xs font-semibold text-base-content/60">
-            Activités
-          </span>
-          {onClickCreateActivity && canEdit && !isDraggingOver && (
-            <PermissionGuard action="update" object="lesson">
-              <button
-                className="btn btn-success btn-xs gap-1"
-                disabled={newActivityButtonDisabled}
-                onClick={onClickCreateActivity}
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </button>
-            </PermissionGuard>
+        <div className="mb-1 flex w-full items-center justify-between pb-1 mt-2 text-xs font-semibold text-base-content/60">
+          {activities && activities.length > 0 ? (
+            <div className=" flex items-center gap-0.5">
+              <span>Activités</span>
+              <span>
+                {(activities?.length || 0) > 1
+                  ? `(${activities?.length})`
+                  : null}
+              </span>
+            </div>
+          ) : (
+            <p>Aucune activité</p>
           )}
         </div>
         {activities && activities.length > 0 ? (
@@ -107,8 +108,21 @@ export default function ActivityList({
           <span className="animate-pulse text-info text-sm w-[90%]">
             Chargement des activités en cours...
           </span>
-        ) : (
-          <p className="text-primary text-xs">Aucune activité</p>
+        ) : null}
+        {onClickCreateActivity && canEdit && !isDraggingOver && (
+          <PermissionGuard action="update" object="lesson">
+            <button
+              className={cn(
+                "btn btn-success opacity-70 btn-xs gap-1",
+                activities && activities.length === 0 ? "mt-0" : "mt-2",
+              )}
+              disabled={newActivityButtonDisabled}
+              onClick={onClickCreateActivity}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Ajouter une activité
+            </button>
+          </PermissionGuard>
         )}
       </div>
     </FadeWrapper>

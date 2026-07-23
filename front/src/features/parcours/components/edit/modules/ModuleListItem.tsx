@@ -9,30 +9,14 @@ type ModuleListItemProps = {
 
 /**
  * Collapsible module item in the drawer list.
- * Shows module info and metadatas from other parcours.
+ * Shows module info and all its metadatas, including the current parcours.
  */
 export default function ModuleListItem({
   module,
   currentParcoursId,
   onCopyModule,
 }: ModuleListItemProps) {
-  // Filter metadatas to only show those from other parcours
-  const otherParcoursMetadatas = module.metadatas?.filter(
-    (meta: Metadatas) => meta.parcours?.id !== currentParcoursId,
-  );
-
-  // Check if the module has any metadatas
   const hasMetadatas = module.metadatas && module.metadatas.length > 0;
-  const hasOtherParcoursMetadatas =
-    otherParcoursMetadatas && otherParcoursMetadatas.length > 0;
-
-  // Display if the module has no metadatas at all OR has metadatas in other parcours
-  const shouldDisplay = !hasMetadatas || hasOtherParcoursMetadatas;
-
-  // Don't render if module only exists in current parcours
-  if (!shouldDisplay) {
-    return null;
-  }
 
   const handleCopy = (meta: Metadatas) => {
     onCopyModule(module, meta);
@@ -41,7 +25,11 @@ export default function ModuleListItem({
   // Conditional rendering based on module metadata state
   return (
     <li className="collapse collapse-arrow rounded-xl bg-base-100 border border-base-300 shadow-sm">
-      <input type="radio" name="my-accordion-1" />
+      <input
+        type="radio"
+        name="module-duplication-accordion"
+        aria-label={`Afficher les occurrences du module ${module.title}`}
+      />
       <div className="collapse-title min-h-0 py-3 pr-10 font-semibold flex flex-col gap-y-1">
         <span>{module.title}</span>
         {!hasMetadatas ? (
@@ -50,7 +38,7 @@ export default function ModuleListItem({
           </span>
         ) : (
           <span className="font-bold text-xs text-base-content/60">
-            Utilisé dans {otherParcoursMetadatas.length} autre(s) parcours.
+            Utilisé dans {module.metadatas.length} parcours.
           </span>
         )}
       </div>
@@ -68,10 +56,11 @@ export default function ModuleListItem({
             </button>
           </div>
         ) : (
-          otherParcoursMetadatas.map((meta: Metadatas) => (
+          module.metadatas.map((meta: Metadatas) => (
             <ModuleMetadataItem
               key={meta.id}
               metadata={meta}
+              isCurrentParcours={meta.parcours?.id === currentParcoursId}
               onCopy={() => handleCopy(meta)}
             />
           ))

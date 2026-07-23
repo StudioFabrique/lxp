@@ -1,6 +1,7 @@
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
-import MemoizedImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
+import ProfileImageFileUpload from "../../../../components/UI/image-file-upload/profile-image-file-upload";
+import { useEffect, useState } from "react";
 
 type Props = {
   lastname: string;
@@ -30,9 +31,30 @@ const UserFormInformations = ({
   nickname, nicknameError, onNickname,
   email, emailError, onEmail,
   onSetFile, disabled,
-}: Props) => (
-  <Wrapper>
+}: Props) => {
+  const [temporaryAvatar, setTemporaryAvatar] = useState<{
+    file: File | null;
+    url: string | null;
+  }>({ file: null, url: null });
+
+  useEffect(() => {
+    if (temporaryAvatar.file) onSetFile(temporaryAvatar.file);
+  }, [temporaryAvatar.file, onSetFile]);
+
+  return (
+    <Wrapper>
     <h2 className="font-bold text-xl">Informations</h2>
+    <div className="flex flex-col items-center gap-2">
+      <label className="font-medium">Avatar</label>
+      <ProfileImageFileUpload
+        temporaryAvatar={temporaryAvatar}
+        onSetTemporaryAvatar={setTemporaryAvatar}
+        maxSize={avatarImageMaxSize}
+      />
+      <p className="text-xs text-base-content/60">
+        Cliquez sur l'avatar pour ajouter une image
+      </p>
+    </div>
     <span className="flex flex-col gap-y-2">
       <label>Nom *</label>
       <input
@@ -77,12 +99,8 @@ const UserFormInformations = ({
         disabled={disabled}
       />
     </span>
-    <MemoizedImageFileUpload
-      label="Téléverser un avatar"
-      onSetFile={onSetFile}
-      maxSize={avatarImageMaxSize}
-    />
-  </Wrapper>
-);
+    </Wrapper>
+  );
+};
 
 export default UserFormInformations;
