@@ -24,14 +24,9 @@ async function getCoursesByModule(moduleId: number, userMdbId: string) {
               title: true,
             },
           },
-          module: {
-            select: {
-              title: true,
-              description: true,
-              thumb: true,
-              id: true,
-            },
-          },
+          title: true,
+          description: true,
+          thumb: true,
         },
       },
       lessons: {
@@ -56,7 +51,7 @@ async function getCoursesByModule(moduleId: number, userMdbId: string) {
   const result = courses.map((item) => ({
     id: item.id,
     title: item.title,
-    module: item.module.module.title,
+    module: item.module.title,
     parcours: item.module.parcours.title,
     lessons: item.lessons,
     author: item.author,
@@ -64,8 +59,8 @@ async function getCoursesByModule(moduleId: number, userMdbId: string) {
     updatedAt: item.updatedAt,
     isPublished: item.isPublished,
     visibility: item.visibility,
-    thumb: item.module.module.thumb
-      ? Buffer.from(item.module.module.thumb as any).toString("base64")
+    thumb: item.module.thumb
+      ? Buffer.from(item.module.thumb as any).toString("base64")
       : null,
   }));
 

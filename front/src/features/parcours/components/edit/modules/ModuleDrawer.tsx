@@ -2,12 +2,12 @@ import RightSideDrawer from "../../../../../components/UI/right-side-drawer/righ
 
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";
-import { MetadataList, Metadatas } from "../../../interfaces/new-module";
+import { SourceModule } from "../../../interfaces/new-module";
 
 type ModuleDrawerProps = {
-  metadataList: MetadataList[] | null;
+  sourceModules: SourceModule[] | null;
   currentParcoursId: number;
-  onCopyModule: (module: MetadataList, metadatas: Metadatas) => void;
+  onCopyModule: (module: SourceModule) => void;
 };
 
 /**
@@ -15,11 +15,11 @@ type ModuleDrawerProps = {
  * Allows users to duplicate existing modules
  */
 export default function ModuleDrawer({
-  metadataList,
+  sourceModules,
   currentParcoursId,
   onCopyModule,
 }: ModuleDrawerProps) {
-  const hasModules = metadataList && metadataList.length > 0;
+  const hasModules = sourceModules && sourceModules.length > 0;
 
   return (
     <RightSideDrawer
@@ -29,7 +29,7 @@ export default function ModuleDrawer({
     >
       {hasModules ? (
         <ul className="flex flex-col gap-3 pr-1">
-          {metadataList.map((module) => (
+          {sourceModules.map((module) => (
             <ModuleListItem
               key={module.id}
               module={module}

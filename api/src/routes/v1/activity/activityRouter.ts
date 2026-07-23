@@ -58,7 +58,7 @@ const activityRouter = express.Router();
 // Route pour mettre à jour une activité de type vidéo
 activityRouter.put(
   "/video/:activityId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   uploadActivityVideo(),
   jsonParser,
@@ -69,7 +69,7 @@ activityRouter.put(
 // Route pour uploader une image qui sera insérée dans un document de type texte
 activityRouter.post(
   "/blog-image",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   uploadActivityImage(),
   mediatheque("image"),
   httpPostBlogImage,
@@ -78,7 +78,7 @@ activityRouter.post(
 // Route pour créer une nouvelle activité de type vidéo
 activityRouter.post(
   "/video/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   uploadActivityVideo(),
   mediatheque("video"),
   jsonParser,
@@ -90,7 +90,7 @@ activityRouter.post(
 // Route pour créer une activité de type texte et l'associer à une leçon
 activityRouter.post(
   "/text/:parentId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   parentIdValidator,
   updateActivityValidator,
   httpPostActivityText,
@@ -99,7 +99,7 @@ activityRouter.post(
 // Route pour créer une activité de type iframe et l'associer à une leçon
 activityRouter.post(
   "/iframe/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   lessonIdValidator,
   postIframeValidator,
   httpPostActivityIframe,
@@ -108,7 +108,7 @@ activityRouter.post(
 // Route pour créer une activité de type iframe et l'associer à une leçon
 activityRouter.put(
   "/iframe/:activityId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   updateIframeValidator,
   httpPutActivityIframe,
@@ -117,7 +117,7 @@ activityRouter.put(
 // Route pour mettre à jour une activité de type texte existante
 activityRouter.put(
   "/text/:id",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   idValidator,
   updateActivityValidator,
   httpPutActivityText,
@@ -126,7 +126,7 @@ activityRouter.put(
 // Route pour supprimer une activité et toutes ses ressources associées
 activityRouter.delete(
   "/:activityId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   httpDeleteActivity,
 );
@@ -134,7 +134,7 @@ activityRouter.delete(
 // Route pour réorganiser l'ordre des activités dans une leçon
 activityRouter.put(
   "/reorder/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   lessonIdValidator,
   putReorderActivitiesValidator,
   httpPutReorderActivities,
@@ -143,7 +143,7 @@ activityRouter.put(
 // Route pour créer une nouvelle activité de type image
 activityRouter.post(
   "/image/:lessonId/:parent",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
@@ -154,7 +154,7 @@ activityRouter.post(
 // Route pour mettre à jour une activité de type image existante
 activityRouter.put(
   "/image/:activityId/:parent",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
@@ -165,7 +165,7 @@ activityRouter.put(
 // Route pour récupérer les détails d'une activité spécifique
 activityRouter.get(
   "/:activityId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   httpGetActivity,
 );
@@ -173,7 +173,7 @@ activityRouter.get(
 // Route pour ajouter des ressources à une activité
 activityRouter.post(
   "/resource/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   uploadActivityFiles(),
   mediatheque("image"),
   jsonParser,
@@ -184,7 +184,7 @@ activityRouter.post(
 // Route pour ajouter une ressource supplémentaire à une activité existante
 activityRouter.put(
   "/add-resource/:activityId/:parent",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   uploadActivityFiles(),
   jsonParser,
@@ -194,7 +194,7 @@ activityRouter.put(
 // Route pour réorganiser l'ordre des ressources dans une activité
 activityRouter.put(
   "/reorder-resource/:activityId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   putReorderActivitiesValidator,
   httpPutReorderResource,
@@ -203,7 +203,7 @@ activityRouter.put(
 // Route pour récupérer toutes les ressources d'une activité
 activityRouter.get(
   "/resources/:activityId/:parent",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   httpGetResourceActivity,
 );
@@ -211,7 +211,7 @@ activityRouter.get(
 // Route pour supprimer une ressource spécifique
 activityRouter.delete(
   "/activity-resource/:resourceId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   resourceIdValidator,
   httpDeleteResource,
 );
@@ -219,7 +219,7 @@ activityRouter.delete(
 // Route pour mettre à jour une ressource spécifique
 activityRouter.put(
   "/resource/:resourceId",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   resourceIdValidator,
   putResourceValidator,
   httpPutResource,
@@ -227,7 +227,7 @@ activityRouter.put(
 
 activityRouter.delete(
   "/:type/:activityId/:parent",
-  checkPermissions("lesson"),
+  checkPermissions("activity"),
   activityIdValidator,
   httpDeleteActivity,
 );

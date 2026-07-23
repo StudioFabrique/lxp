@@ -9,7 +9,6 @@ import {
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
   moduleIdValidator,
-  postModuleMetadataValidator,
   putModuleParcoursValidator,
   putModuleValidator,
   updateDatesModulesValidator,
@@ -30,16 +29,8 @@ import jsonParser from "../../../middleware/json-parser";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
-import httpPostModuleMetadata from "../../../controllers/module/http-post-module-metadata";
 
 const modules = Router();
-
-modules.post(
-  "/metadata",
-  checkPermissions("module"),
-  postModuleMetadataValidator,
-  httpPostModuleMetadata,
-);
 
 modules.get(
   "/parcours-modules/:parcoursId",

@@ -1,6 +1,7 @@
 import { RouteObject } from "react-router";
 import { lazyRoute } from "../../utils/helpers/router-helpers";
 import { Outlet } from "react-router";
+import RequireAbility from "../../components/guards/RequireAbility";
 
 export const adminGroupRoutes: RouteObject[] = [
   {
@@ -17,11 +18,23 @@ export const adminGroupRoutes: RouteObject[] = [
       },
       {
         path: "add",
-        lazy: lazyRoute(() => import("./views/GroupEdit")),
+        element: <RequireAbility action="write" subject="group" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/GroupEdit")),
+          },
+        ],
       },
       {
         path: "edit/:id",
-        lazy: lazyRoute(() => import("./views/GroupEdit")),
+        element: <RequireAbility action="update" subject="group" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/GroupEdit")),
+          },
+        ],
       },
     ],
   },

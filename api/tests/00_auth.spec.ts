@@ -182,8 +182,8 @@ describe("HTTP auth", () => {
      * Test handshake failure without authentication token
      * Should return 403 forbidden
      */
-    test("It should respond 403 forbidden without auth token", async () => {
-      await request(app).get("/v1/auth/handshake").expect(403);
+    test("It should respond 401 unauthorized without auth token", async () => {
+      await request(app).get("/v1/auth/handshake").expect(401);
     });
   });
 
@@ -207,8 +207,8 @@ describe("HTTP auth", () => {
      * Test token refresh failure without refresh token
      * Should return 403 forbidden
      */
-    test("It should respond 403 forbidden without refresh token", async () => {
-      await request(app).get("/v1/auth/refresh").expect(403);
+    test("It should respond 401 unauthorized without refresh token", async () => {
+      await request(app).get("/v1/auth/refresh").expect(401);
     });
   });
 
@@ -247,11 +247,11 @@ describe("HTTP auth", () => {
      * Test role retrieval failure without authentication
      * Should return 403 forbidden when no auth token is provided
      */
-    test("It should respond 403 forbidden without auth token", async () => {
+    test("It should respond 401 unauthorized without auth token", async () => {
       await request(app)
         .get("/v1/auth/roles")
         // .set("Cookie", [`${authToken}`]) // Intentionally commented out
-        .expect(403);
+        .expect(401);
     });
   });
 

@@ -5,11 +5,10 @@ import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
 
 export type ModuleSummary = {
   id: number;
-  metadataId: number | null;
-  parcoursId: number | null;
+  parcoursId: number;
   title: string;
-  parcours: string | null;
-  formation: string | null;
+  parcours: string;
+  formation: string;
   coursesCount: number;
   createdAt: string;
 };

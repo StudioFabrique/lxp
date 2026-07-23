@@ -44,11 +44,17 @@ export const validationModule = [
   body("module.formationId")
     .isInt()
     .withMessage("L'identifiant de la formation doit être un nombre entier."),
+  body("module.parcoursId")
+    .isInt()
+    .withMessage("Un parcours valide est obligatoire."),
   body("module.title")
     .isString()
     .withMessage("Le titre du module doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
-    .withMessage("Le titre du module contient des caractères invalides."),
+    .withMessage("Le titre du module contient des caractères invalides.")
+    .not()
+    .matches(/[<>]/)
+    .withMessage("Le titre du module contient des balises non autorisées."),
   body("module.description")
     .isString()
     .withMessage("La description du module doit être une chaîne de caractères.")
@@ -56,6 +62,9 @@ export const validationModule = [
     .withMessage(
       "La description du module contient des caractères non autorisés."
     )
+    .not()
+    .matches(/[<>]/)
+    .withMessage("La description du module contient des balises non autorisées.")
     .optional(),
   body("module.duration")
     .isInt({ min: 1 })
@@ -99,7 +108,7 @@ formationRouter.put(
 
 formationRouter.post(
   "/new-module/:moduleId?",
-  checkPermissions("formation"),
+  checkPermissions("module", "write"),
   upload.single("image"),
   jsonParser,
   validationModule,

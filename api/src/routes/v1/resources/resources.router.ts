@@ -17,13 +17,13 @@ const resourcesRouter = Router();
 
 resourcesRouter.get(
   "/:stype/:sdir",
-  checkPermissions("lesson"),
+  checkPermissions("resource"),
   httpGetResourcesList,
 );
 
 resourcesRouter.post(
   "/",
-  checkPermissions("lesson"),
+  checkPermissions("resource"),
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
@@ -33,13 +33,13 @@ resourcesRouter.post(
 
 resourcesRouter.get(
   "/:resourceId",
-  checkPermissions("lesson"),
+  checkPermissions("resource"),
   httpGetResourceDetails,
 );
 
 resourcesRouter.put(
   "/:resourceId",
-  checkPermissions("lesson"),
+  checkPermissions("resource"),
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
@@ -48,7 +48,7 @@ resourcesRouter.put(
 
 resourcesRouter.delete(
   "/:resourceId",
-  checkPermissions("lesson"),
+  checkPermissions("resource"),
   resourceIdValidator,
   httpDeleteResource,
 );

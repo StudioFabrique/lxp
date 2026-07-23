@@ -3,198 +3,39 @@ import User from "../../utils/interfaces/db/user";
 import { getDuplicateIdentity } from "../../helpers/duplication";
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
 
-/**
- * Duplicates an existing learning path (parcours) with all its associated data.
- * Creates a copy of the parcours with all its related modules, courses, lessons, and relationships.
- *
- * @param parcoursId - The ID of the learning path to duplicate
- * @param userId - The ID of the user performing the duplication
- *
- * @throws {Object} 404 error if:
- * - The source parcours doesn't exist
- * - The user performing the action doesn't exist
- *
- * @returns {Promise<Parcours>} The newly created parcours object
- *
- * @remarks
- * The duplication process includes:
- * - Basic parcours information (title, description, image, etc.)
- * - Objectives
- * - Bonus skills
- * - Formation connection
- * - Contact relationships
- * - Tag relationships
- * - Modules with their:
- *   - Courses
- *   - Lessons
- *   - Bonus skills
- *   - Contacts
- *   - Tags
- *   - Objectives
- *
- * The title of the duplicated parcours will be the original title with " (copie)" appended.
- * The author will be set to the current user's full name or "Utilisateur inconnu" if not found.
- */
 export default async function postDuplicateParcours(
   parcoursId: number,
-  userId: string
+  userId: string,
 ) {
-  // Fetch the existing parcours with all its relationships
-  const existingParcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId },
-    select: {
-      // Select basic parcours information
-      title: true,
-      duplicationIndex: true,
-      description: true,
-      image: true,
-      thumb: true,
-      degree: true,
-      formationId: true,
-      bonusSkills: true,
-      // Select objectives with their descriptions
-      objectives: {
-        select: {
-          description: true,
-        },
-      },
-      // Select associated contacts
-      contacts: {
-        select: {
-          contact: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      },
-      // Select associated tags
-      tags: {
-        select: {
-          tag: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      },
-      // Select all modules and their nested relationships
-      modules: {
-        select: {
-          // Module basic information
-
-          duration: true,
-          rating: true,
-          admin: {
-            select: {
-              id: true,
-            },
-          },
-          // Module relationships
-          bonusSkills: {
-            select: {
-              bonusSkill: {
-                select: {
-                  id: true,
-                },
+  const [source, admin, mongoUser] = await Promise.all([
+    prisma.parcours.findUnique({
+      where: { id: parcoursId },
+      include: {
+        objectives: true,
+        bonusSkills: true,
+        contacts: true,
+        tags: true,
+        modules: {
+          include: {
+            contacts: true,
+            bonusSkills: true,
+            quizzes: {
+              where: { courseId: null, activityId: null },
+              include: {
+                questions: { include: { quizQuestionReports: true } },
               },
             },
-          },
-          contacts: {
-            select: {
-              contact: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-          module: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              image: true,
-              thumb: true,
-              duplicationIndex: true,
-              quizInstructions: true,
-              author: true,
-              adminId: true,
-              formations: { select: { formationId: true } },
-            },
-          },
-          // Courses within modules
-          courses: {
-            select: {
-              // Course basic information
-              title: true,
-              duplicationIndex: true,
-              description: true,
-              image: true,
-              virtualClass: true,
-              scenario: true,
-              order: true,
-              author: true,
-              admin: {
-                select: {
-                  id: true,
-                },
-              },
-              // Course relationships
-
-              contacts: {
-                select: {
-                  contact: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                },
-              },
-
-              tags: {
-                select: {
-                  tag: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                },
-              },
-              // Lessons within courses
-              lessons: {
-                select: {
-                  // Lesson basic information
-                  title: true,
-                  duplicationIndex: true,
-                  description: true,
-                  modalite: true,
-                  author: true,
-                  admin: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                  tag: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                  order: true,
-                  // Activities within lessons
-                  activities: {
-                    select: {
-                      title: true,
-                      duplicationIndex: true,
-                      order: true,
-                      type: true,
-                      url: true,
-                      author: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      resourceActivities: true,
+            courses: {
+              orderBy: { order: "asc" },
+              include: {
+                contacts: true,
+                tags: true,
+                lessons: {
+                  orderBy: { order: "asc" },
+                  include: {
+                    activities: {
+                      orderBy: { order: "asc" },
+                      include: { resourceActivities: true },
                     },
                   },
                 },
@@ -203,231 +44,198 @@ export default async function postDuplicateParcours(
           },
         },
       },
-    },
-  });
+    }),
+    prisma.admin.findFirst({ where: { idMdb: userId } }),
+    User.findById(userId),
+  ]);
 
-  // Check if the parcours exists
-  if (!existingParcours) {
+  if (!source) {
     throw { statusCode: 404, message: "Le parcours n'existe pas." };
   }
-
-  // Find the current user in the database
-  const currentUser = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
-
-  // Check if the user exists
-  if (!currentUser) {
+  if (!admin) {
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
   }
 
-  // Get user details from MongoDB
-  const mongoUser = await User.findOne({ _id: userId });
-
-  // Set the author name
-  const author = mongoUser
-    ? `${mongoUser.firstname} ${mongoUser.lastname}`
-    : "Utilisateur inconnu";
-
-  const parcoursTitles = await prisma.parcours.findMany({ select: { title: true } });
+  const existingParcoursTitles = await prisma.parcours.findMany({
+    select: { title: true },
+  });
   const parcoursIdentity = getDuplicateIdentity(
-    existingParcours,
-    parcoursTitles.map(({ title }) => title),
+    source,
+    existingParcoursTitles.map(({ title }) => title),
   );
 
+  const existingModuleTitles = await prisma.module.findMany({
+    where: { parcours: { formationId: source.formationId } },
+    select: { title: true },
+  });
+  const usedModuleTitles = existingModuleTitles.map(({ title }) => title);
+  const moduleIdentities = source.modules.map((module) => {
+    const identity = getDuplicateIdentity(module, usedModuleTitles);
+    usedModuleTitles.push(identity.title);
+    return identity;
+  });
+
   const copiedModules = await Promise.all(
-    existingParcours.modules.map(async (metadata) => ({
-      ...metadata,
-      courses: await Promise.all(metadata.courses.map(async (course) => ({
-        ...course,
-        title: `${course.title} ${course.duplicationIndex + 1}`,
-        duplicationIndex: course.duplicationIndex + 1,
-        lessons: await Promise.all(course.lessons.map(async (lesson) => ({
-          ...lesson,
-          title: `${lesson.title} ${lesson.duplicationIndex + 1}`,
-          duplicationIndex: lesson.duplicationIndex + 1,
-          activities: await Promise.all(lesson.activities.map(async (activity) => ({
-            ...activity,
-            title: `${activity.title ?? "Sans titre"} ${activity.duplicationIndex + 1}`,
-            duplicationIndex: activity.duplicationIndex + 1,
-            url: await duplicateActivityFile(activity.url, activity.type),
-            resourceActivities: await Promise.all(activity.resourceActivities.map(async (resource) => ({
-              ...resource,
-              url: await duplicateActivityFile(resource.url, "resource"),
-            }))),
-          }))),
-        }))),
-      }))),
+    source.modules.map(async (module) => ({
+      ...module,
+      courses: await Promise.all(
+        module.courses.map(async (course) => ({
+          ...course,
+          lessons: await Promise.all(
+            course.lessons.map(async (lesson) => ({
+              ...lesson,
+              activities: await Promise.all(
+                lesson.activities.map(async (activity) => ({
+                  ...activity,
+                  url: await duplicateActivityFile(
+                    activity.url,
+                    activity.type,
+                  ),
+                  resourceActivities: await Promise.all(
+                    activity.resourceActivities.map(async (resource) => ({
+                      ...resource,
+                      url: await duplicateActivityFile(
+                        resource.url,
+                        "resource",
+                      ),
+                    })),
+                  ),
+                })),
+              ),
+            })),
+          ),
+        })),
+      ),
     })),
   );
 
-  // Create the new parcours with all its relationships
-  const parcours = await prisma.parcours.create({
-    data: {
-      // Basic parcours information
-      title: parcoursIdentity.title,
-      duplicationIndex: parcoursIdentity.duplicationIndex,
-      description: existingParcours.description,
-      image: existingParcours.image ? existingParcours.image : null,
-      thumb: existingParcours.thumb ? existingParcours.thumb : null,
-      degree: existingParcours.degree!,
-
-      // Connect to admin
-      admin: {
-        connect: {
-          id: currentUser.id,
+  return prisma.$transaction(async (tx) => {
+    const createdParcours = await tx.parcours.create({
+      data: {
+        title: parcoursIdentity.title,
+        duplicationIndex: parcoursIdentity.duplicationIndex,
+        description: source.description,
+        startDate: source.startDate,
+        endDate: source.endDate,
+        degree: source.degree,
+        image: source.image,
+        thumb: source.thumb,
+        virtualClass: source.virtualClass,
+        visibility: false,
+        isPublished: false,
+        author: mongoUser
+          ? `${mongoUser.firstname} ${mongoUser.lastname}`
+          : source.author,
+        adminId: admin.id,
+        formationId: source.formationId,
+        objectives: {
+          create: source.objectives.map(({ description }) => ({ description })),
+        },
+        contacts: {
+          create: source.contacts.map(({ contactId }) => ({
+            contact: { connect: { id: contactId } },
+          })),
+        },
+        tags: {
+          create: source.tags.map(({ tagId }) => ({
+            tag: { connect: { id: tagId } },
+          })),
         },
       },
+    });
 
-      author,
-
-      // Create objectives
-      objectives: {
-        create: existingParcours.objectives.map((objective) => {
-          return {
-            description: objective.description,
-          };
-        }),
-      },
-
-      // Create bonus skills
-      bonusSkills: {
-        create: existingParcours.bonusSkills.map((bonusSkill) => {
-          return {
-            description: bonusSkill.description,
-            badge: bonusSkill.badge ? bonusSkill.badge : null,
-          };
-        }),
-      },
-
-      // Connect to formation
-      formation: {
-        connect: {
-          id: existingParcours.formationId,
+    const skillMap = new Map<number, number>();
+    for (const skill of source.bonusSkills) {
+      const createdSkill = await tx.bonusSkill.create({
+        data: {
+          description: skill.description,
+          badge: skill.badge,
+          parcoursId: createdParcours.id,
         },
-      },
+      });
+      skillMap.set(skill.id, createdSkill.id);
+    }
 
-      // Create contact relationships
-      contacts: {
-        create: existingParcours.contacts.map((contact) => {
-          return {
-            contact: {
-              connect: {
-                id: contact.contact.id,
-              },
-            },
-          };
-        }),
-      },
-
-      // Create tag relationships
-      tags: {
-        create: existingParcours.tags.map((tag) => {
-          return {
-            tag: {
-              connect: { id: tag.tag.id },
-            },
-          };
-        }),
-      },
-
-      // Create modules with all their nested relationships
-      modules: {
-        create: copiedModules.map((module) => ({
+    for (let index = 0; index < copiedModules.length; index += 1) {
+      const module = copiedModules[index];
+      const identity = moduleIdentities[index];
+      await tx.module.create({
+        data: {
+          title: identity.title,
+          duplicationIndex: identity.duplicationIndex,
+          description: module.description,
+          quizInstructions: module.quizInstructions,
+          image: module.image,
+          thumb: module.thumb,
           duration: module.duration,
           rating: module.rating,
-          admin: {
-            connect: {
-              id: module.admin.id,
-            },
-          },
-          module: {
-            create: {
-              title: `${module.module.title} ${module.module.duplicationIndex + 1}`,
-              duplicationIndex: module.module.duplicationIndex + 1,
-              description: module.module.description,
-              image: module.module.image,
-              thumb: module.module.thumb,
-              quizInstructions: module.module.quizInstructions,
-              author: module.module.author,
-              adminId: module.module.adminId,
-              formations: { create: module.module.formations.map(({ formationId }) => ({ formationId })) },
-            },
-          },
-          // Module relationships
-          bonusSkills: {
-            create: module.bonusSkills.map((skill) => ({
-              bonusSkill: {
-                connect: { id: skill.bonusSkill.id },
-              },
-            })),
-          },
+          minDate: module.minDate,
+          maxDate: module.maxDate,
+          author: module.author,
+          adminId: admin.id,
+          parcoursId: createdParcours.id,
           contacts: {
-            create: module.contacts.map((contact) => ({
-              contact: {
-                connect: { id: contact.contact.id },
-              },
+            create: module.contacts.map(({ contactId }) => ({
+              contact: { connect: { id: contactId } },
             })),
           },
-          // Create courses within modules
+          bonusSkills: {
+            create: module.bonusSkills
+              .map(({ bonusSkillId }) => skillMap.get(bonusSkillId))
+              .filter((id): id is number => id !== undefined)
+              .map((bonusSkillId) => ({
+                bonusSkill: { connect: { id: bonusSkillId } },
+              })),
+          },
           courses: {
             create: module.courses.map((course) => ({
               title: course.title,
-              duplicationIndex: course.duplicationIndex,
               description: course.description,
-              image: course.image ?? undefined,
+              image: course.image,
               virtualClass: course.virtualClass,
+              visibility: course.visibility,
               scenario: course.scenario,
+              dates: course.dates as any,
               order: course.order,
-              // Course relationships
+              isPublished: course.isPublished,
+              author: course.author,
+              adminId: admin.id,
+              courseSlug: null,
+              duplicationIndex: course.duplicationIndex + 1,
               contacts: {
-                create: course.contacts.map((contact) => ({
-                  contact: {
-                    connect: { id: contact.contact.id },
-                  },
+                create: course.contacts.map(({ contactId }) => ({
+                  contact: { connect: { id: contactId } },
                 })),
               },
-
-              author: course.author,
-              admin: {
-                connect: {
-                  id: course.admin.id,
-                },
+              tags: {
+                create: course.tags.map(({ tagId }) => ({
+                  tag: { connect: { id: tagId } },
+                })),
               },
-              // Create lessons within courses
               lessons: {
                 create: course.lessons.map((lesson) => ({
                   title: lesson.title,
-                  duplicationIndex: lesson.duplicationIndex,
                   description: lesson.description,
                   modalite: lesson.modalite,
                   author: lesson.author,
-                  admin: {
-                    connect: {
-                      id: lesson.admin.id,
-                    },
-                  },
-                  tag: {
-                    connect: {
-                      id: lesson.tag.id,
-                    },
-                  },
+                  adminId: admin.id,
+                  tagId: lesson.tagId,
                   order: lesson.order,
-                  // Create activities within lessons
+                  isPublished: lesson.isPublished,
+                  visibility: lesson.visibility,
+                  duplicationIndex: lesson.duplicationIndex + 1,
                   activities: {
                     create: lesson.activities.map((activity) => ({
                       title: activity.title,
-                      duplicationIndex: activity.duplicationIndex,
-                      order: activity.order,
                       type: activity.type,
+                      order: activity.order,
                       url: activity.url,
-                      author: {
-                        connect: {
-                          id: activity.author.id,
-                        },
-                      },
+                      authorId: admin.id,
+                      duplicationIndex: activity.duplicationIndex + 1,
                       resourceActivities: {
-                        create: activity.resourceActivities.map(({ label, order, url }) => ({ label, order, url })),
+                        create: activity.resourceActivities.map(
+                          ({ label, order, url }) => ({ label, order, url }),
+                        ),
                       },
                     })),
                   },
@@ -435,10 +243,34 @@ export default async function postDuplicateParcours(
               },
             })),
           },
-        })),
-      },
-    },
-  });
+          quizzes: {
+            create: module.quizzes.map((quiz) => ({
+              title: quiz.title,
+              type: quiz.type,
+              questions: {
+                create: quiz.questions.map((question) => ({
+                  externalId: question.externalId,
+                  type: question.type,
+                  difficulty: question.difficulty,
+                  prompt: question.prompt,
+                  explanationTrue: question.explanationTrue,
+                  explanationWrong: question.explanationWrong,
+                  tags: question.tags,
+                  data: question.data as any,
+                  contentHash: null,
+                  quizQuestionReports: {
+                    create: question.quizQuestionReports.map(
+                      ({ commentaire }) => ({ commentaire }),
+                    ),
+                  },
+                })),
+              },
+            })),
+          },
+        },
+      });
+    }
 
-  return parcours;
+    return createdParcours;
+  });
 }

@@ -40,11 +40,11 @@ describe("HTTP Formation", () => {
 
   // No authentication
   describe("Test GET /formation", () => {
-    test("It should respond with 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .get("/v1/formation")
         //.set("Cookie", [`${authToken}`])
-        .expect(403);
+        .expect(401);
     });
 
     // Successful retrieval
@@ -58,11 +58,11 @@ describe("HTTP Formation", () => {
 
   // No authentication
   describe("Test PUT /update-tags", () => {
-    test("It should respond with 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .put("/v1/formation/update-tags")
         //.set("Cookie", [`${authToken}`])
-        .expect(403);
+        .expect(401);
     });
 
     // Successful update
@@ -147,15 +147,19 @@ describe("HTTP Formation", () => {
     const filePath = path.join(
       __dirname,
       "..",
-      "uploads",
-      "tests",
-      "test-image.png"
+      "..",
+      "front",
+      "src",
+      "assets",
+      "images",
+      "module-default-thumb.png"
     );
 
     // No authentication
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       const module = {
         formationId: 1,
+        parcoursId: 1,
         title: "Random title",
         description: "Description random",
       };
@@ -164,13 +168,14 @@ describe("HTTP Formation", () => {
         .field("module", JSON.stringify(module))
         .attach("image", filePath)
         //.set("Cookie", [`${authToken}`])
-        .expect(403);
+        .expect(401);
     });
 
     // Successful creation with image
     test("It should respond 201 success", async () => {
       const module = {
         formationId: 1,
+        parcoursId: 1,
         title: "Random title",
         description: "Description random",
       };
@@ -186,7 +191,8 @@ describe("HTTP Formation", () => {
     test("It should response 201 success", async () => {
       const module = {
         formationId: 1,
-        title: "Random title",
+        parcoursId: 1,
+        title: "Second random title",
         description: "Description random",
       };
       await request(app)
@@ -205,13 +211,14 @@ describe("HTTP Formation", () => {
         .attach("image", filePath)
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(2);
+      expect(res.body.errors).toHaveLength(3);
     });
 
     // Wrong data types
     test("It should respond 400 bad request", async () => {
       const module = {
         formationId: "toto",
+        parcoursId: "toto",
         title: 12,
         description: false,
       };
@@ -221,13 +228,14 @@ describe("HTTP Formation", () => {
         .attach("image", filePath)
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(3);
+      expect(res.body.errors).toHaveLength(4);
     });
 
     // Malicious code
     test("It should respond 400 bad request", async () => {
       const module = {
         formationId: 1,
+        parcoursId: 1,
         title: "<hacked>lol</hacked>",
         description: "<malicious>code</malicious>",
       };
@@ -247,7 +255,7 @@ describe("HTTP Formation", () => {
 
   //No authentication
   describe("Test POST /", () => {
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .post("/v1/formation")
         .send({
@@ -257,7 +265,7 @@ describe("HTTP Formation", () => {
           level: "random level",
           tags: [1, 2, 3],
         })
-        .expect(403);
+        .expect(401);
     });
 
     // Already existing formation
@@ -314,7 +322,7 @@ describe("HTTP Formation", () => {
         })
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(5);
+      expect(res.body.errors).toHaveLength(1);
     });
 
     test("It should respond 201 success", async () => {
@@ -353,7 +361,7 @@ describe("HTTP Formation", () => {
     };
 
     // No authentication
-    test("It should respond 403 forbidden", async () => {
+    test("It should respond 401 unauthorized", async () => {
       await request(app)
         .put("/v1/formation/1")
         .send({
@@ -365,7 +373,7 @@ describe("HTTP Formation", () => {
             tags: [1, 2, 3],
           },
         })
-        .expect(403);
+        .expect(401);
     });
 
     // Already existing formation

@@ -116,6 +116,13 @@ export default async function httpPostPrompt(
       }));
 
     const courseSlug = course?.courseSlug || undefined;
+    if (courseId && !courseSlug) {
+      return res.status(409).json({
+        code: "AI_CONTENT_NOT_INDEXED",
+        error:
+          "Les fonctionnalités IA de ce cours copié ne sont pas indexées.",
+      });
+    }
 
     const fetchOptions: any = {
       method: "POST",

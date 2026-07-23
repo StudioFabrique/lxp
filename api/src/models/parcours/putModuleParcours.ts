@@ -1,133 +1,108 @@
-import {
-  BonusSkill,
-  Contact,
-  ModuleMetadata,
-  Parcours,
-} from "@prisma/client";
+import { BonusSkill, Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
-import { Metadata } from "sharp";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
 
 async function putModuleParcours(
-  module: any,
-  thumb: any,
-  image: any,
-  userId: string
+  module: string,
+  thumb: Buffer | string | null,
+  image: Buffer | string | null,
+  userId: string,
 ) {
-  const newModule = JSON.parse(module);
+  const input = JSON.parse(module);
+  const [parcours, user, admin] = await Promise.all([
+    prisma.parcours.findUnique({
+      where: { id: +input.parcoursId },
+      include: {
+        contacts: { select: { contact: { select: { idMdb: true } } } },
+        bonusSkills: { select: { id: true } },
+      },
+    }),
+    User.findById(userId, { firstname: 1, lastname: 1 }),
+    prisma.admin.findFirst({ where: { idMdb: userId } }),
+  ]);
 
-  const existingParcours = await prisma.parcours.findUnique({
-    where: { id: +newModule.parcoursId },
-  });
-
-  if (!existingParcours) {
-    const newError = { message: "Le parcours n'existe pas", statusCode: 404 };
-    throw newError;
+  if (!parcours) {
+    throw { message: "Le parcours n'existe pas", statusCode: 404 };
+  }
+  if (!user || !admin) {
+    throw { message: "Ressource inexistante", statusCode: 404 };
   }
 
-  const existingUser = await User.findById(userId, {
-    firstname: 1,
-    lastname: 1,
-  });
-
-  if (!existingUser) {
-    const error = { message: "Ressource inexistante", statusCode: 404 };
-    throw error;
+  if (
+    Array.isArray(input.formations) &&
+    !input.formations.map(Number).includes(parcours.formationId)
+  ) {
+    throw {
+      message: "Le parcours n'appartient pas à la formation sélectionnée.",
+      statusCode: 400,
+    };
   }
 
-  const existingAdmin = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
-
-  if (!existingAdmin) {
-    const error = { message: "Ressource inexistante", statusCode: 404 };
-    throw error;
+  const allowedContactIds = new Set(
+    parcours.contacts.map(({ contact }) => contact.idMdb),
+  );
+  const allowedSkillIds = new Set(parcours.bonusSkills.map(({ id }) => id));
+  if (
+    (input.contacts ?? []).some(
+      (contact: Contact) => !allowedContactIds.has(contact.idMdb),
+    ) ||
+    (input.bonusSkills ?? []).some(
+      (skill: BonusSkill) => !allowedSkillIds.has(skill.id),
+    )
+  ) {
+    throw {
+      message:
+        "Les contacts et compétences doivent appartenir au parcours sélectionné.",
+      statusCode: 400,
+    };
   }
 
-  let parcoursModule: ModuleMetadata | null = null;
-  let updatedParcours: Parcours | null = null;
-
-  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
   const defaultImage = image
     ? null
-    : await getUnsplashPresentationImage(newModule.title);
+    : await getUnsplashPresentationImage(input.title);
+  const imageBytes = image
+    ? Uint8Array.from(
+        typeof image === "string" ? Buffer.from(image, "base64") : image,
+      )
+    : defaultImage
+      ? Uint8Array.from(defaultImage)
+      : null;
+  const thumbBytes = thumb
+    ? Uint8Array.from(
+        typeof thumb === "string" ? Buffer.from(thumb, "base64") : thumb,
+      )
+    : defaultImage
+      ? Uint8Array.from(defaultImage)
+      : null;
 
-  const transaction = await prisma.$transaction(async (tx) => {
-    const addModule = await tx.module.create({
-      data: {
-        title: newModule.title,
-        description: newModule.description,
-        image: image ?? defaultImage,
-        thumb: thumb ?? defaultImage,
-        author,
-        adminId: existingAdmin.id,
-        formations: {
-          create: newModule.formations.map((item: any) => {
-            return {
-              formation: {
-                connect: { id: item },
-              },
-            };
-          }),
-        },
+  const created = await prisma.module.create({
+    data: {
+      title: input.title,
+      description: input.description,
+      quizInstructions: input.quizInstructions,
+      duration: +input.duration,
+      minDate: input.minDate ? new Date(input.minDate) : null,
+      maxDate: input.maxDate ? new Date(input.maxDate) : null,
+      image: imageBytes as Uint8Array<ArrayBuffer> | null,
+      thumb: thumbBytes as Uint8Array<ArrayBuffer> | null,
+      author: `${user.firstname} ${user.lastname}`,
+      adminId: admin.id,
+      parcoursId: parcours.id,
+      contacts: {
+        create: (input.contacts ?? []).map((item: Contact) => ({
+          contact: { connect: { idMdb: item.idMdb } },
+        })),
       },
-    });
-
-    parcoursModule = await tx.moduleMetadata.create({
-      data: {
-        duration: +newModule.duration,
-        minDate: new Date(newModule.minDate),
-        maxDate: new Date(newModule.maxDate),
-        adminId: existingAdmin.id,
-        moduleId: addModule.id,
-        parcoursId: +newModule.parcoursId,
-        contacts: {
-          create: newModule.contacts.map((item: Contact) => {
-            return {
-              contact: {
-                connect: { idMdb: item.idMdb },
-              },
-            };
-          }),
-        },
-        bonusSkills: {
-          create: newModule.bonusSkills.map((item: BonusSkill) => {
-            return {
-              bonusSkill: {
-                connect: { id: item.id },
-              },
-            };
-          }),
-        },
+      bonusSkills: {
+        create: (input.bonusSkills ?? []).map((item: BonusSkill) => ({
+          bonusSkill: { connect: { id: item.id } },
+        })),
       },
-    });
-
-    updatedParcours = await tx.parcours.update({
-      where: {
-        id: +newModule.parcoursId,
-      },
-      data: {
-        modules: {
-          connect: {
-            id: parcoursModule.id,
-          },
-        },
-      },
-    });
-
-    return updatedParcours;
+    },
   });
 
-  if (!transaction || !parcoursModule) {
-    const error = {
-      message: "Erreur lors de la création du module",
-      statusCode: 500,
-    };
-    throw error;
-  }
-
-  return { updatedParcours: transaction, newModule: parcoursModule };
+  return { updatedParcours: parcours, newModule: created };
 }
 
 export default putModuleParcours;

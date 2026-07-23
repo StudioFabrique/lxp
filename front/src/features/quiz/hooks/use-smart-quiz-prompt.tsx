@@ -7,8 +7,7 @@ import {
   useMemo,
 } from "react";
 import { Activity } from "../../../utils/interfaces/activity";
-import { AuthContext } from "../../../store/AuthProvider";
-import { hasPermission } from "../../../utils/helpers/rbac-helpers";
+import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 const MIN_TIME_MS = 10 * 1000; // 10 secondes
 const MAX_TIME_MS = 5 * 60 * 1000; // 5 minutes
@@ -21,6 +20,7 @@ type UseSmartQuizPromptProps = {
   isAnyQuizOpen: boolean;
   onTriggerRandomQuiz: () => void;
   onGoToNextActivity: () => void;
+  aiIndexed?: boolean;
 };
 
 export default function useSmartQuizPrompt({
@@ -31,8 +31,9 @@ export default function useSmartQuizPrompt({
   isAnyQuizOpen,
   onTriggerRandomQuiz,
   onGoToNextActivity,
+  aiIndexed = true,
 }: UseSmartQuizPromptProps) {
-  const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const [showQuizPrompt, setShowQuizPrompt] = useState(false);
   const [hasBypassedQuiz, setHasBypassedQuiz] = useState(false);
 
@@ -46,12 +47,9 @@ export default function useSmartQuizPrompt({
 
   // Déterminer si l'utilisateur peut passer outre les règles de temps
   const canSkipLogic = useMemo(() => {
-    const userIsAdmin =
-      user?.roles?.some((role) => role.rank === 1) ||
-      (user?.permissions &&
-        hasPermission(user.permissions, "update", "lesson"));
+    const userIsAdmin = ability.can("update", "lesson");
     return userIsAdmin || isLessonCompleted || hasBypassedQuiz;
-  }, [user, isLessonCompleted, hasBypassedQuiz]);
+  }, [ability, isLessonCompleted, hasBypassedQuiz]);
 
   const handleDeclineQuiz = useCallback(() => {
     setShowQuizPrompt(false);
@@ -66,7 +64,7 @@ export default function useSmartQuizPrompt({
   }, [onTriggerRandomQuiz]);
 
   const handleNextActivity = useCallback(() => {
-    if (canSkipLogic) {
+    if (!aiIndexed || canSkipLogic) {
       onGoToNextActivity();
       return;
     }
@@ -85,6 +83,7 @@ export default function useSmartQuizPrompt({
     }
   }, [
     canSkipLogic,
+    aiIndexed,
     selectedActivity,
     isLastActivitySelected,
     isLastLessonSelected,

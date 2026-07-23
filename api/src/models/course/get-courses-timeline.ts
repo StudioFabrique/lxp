@@ -50,15 +50,13 @@ export default async function getCoursesTimeline(
         select: {
           id: true,
           // select parcours only if showAllCourses
-          parcours: showAllCourses
-            ? {
-                select: {
-                  title: true,
-                  formation: { select: { title: true } },
-                },
-              }
-            : false,
-          module: { select: { title: true } },
+          parcours: {
+            select: {
+              title: true,
+              formation: { select: { title: true } },
+            },
+          },
+          title: true,
         },
       },
       lessons: {
@@ -160,18 +158,18 @@ export default async function getCoursesTimeline(
         acc.push({
           id: course.id,
           moduleId: course.module.id,
-          moduleTitle: course.module.module.title,
+          moduleTitle: course.module.title,
           title: course.title,
           minDate: date.minDate,
           maxDate: date.maxDate,
           firstLessonId: course.lessons[0]?.id,
           parcoursTitle:
             showAllCourses && course.module.parcours
-              ? (course.module.parcours as any)[0]?.parcours?.title
+              ? course.module.parcours.title
               : undefined,
           formationTitle:
             showAllCourses && course.module.parcours
-              ? (course.module.parcours as any)[0]?.parcours?.formation?.title
+              ? course.module.parcours.formation.title
               : undefined,
         });
       }

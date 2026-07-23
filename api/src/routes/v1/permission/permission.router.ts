@@ -25,12 +25,16 @@ import httpPutResetRole from "../../../controllers/permission/http-put-reset-rol
 const permissionRouter = Router();
 
 // Obtenir la liste des rôles existants avec le nombre de permissions associés à chaque type d'actions (crud)
-permissionRouter.get("/role", checkPermissions("role"), httpGetRoles);
+permissionRouter.get(
+  "/role",
+  checkPermissions("role", "read"),
+  httpGetRoles,
+);
 
 // Recherche de rôles
 permissionRouter.get(
   "/search/role/:searchValue/",
-  checkPermissions("role"),
+  checkPermissions("role", "read"),
   httpGetSearchRoles
 );
 
@@ -40,7 +44,7 @@ permissionRouter.get(
  **/
 permissionRouter.get(
   "/resources/role/:role",
-  checkPermissions("role"),
+  checkPermissions("role", "read"),
   getPermissionsValidator("role"),
   httpGetResourcesByRole
 );
@@ -51,7 +55,7 @@ permissionRouter.get(
  **/
 permissionRouter.get(
   "/resources/id/:id",
-  checkPermissions("role"),
+  checkPermissions("role", "read"),
   getPermissionsValidator("id"),
   httpGetResourcesById
 );
@@ -59,7 +63,7 @@ permissionRouter.get(
 // Obtenir la liste des permissions associées à un rôle
 permissionRouter.get(
   "/:role",
-  checkPermissions("role"),
+  checkPermissions("role", "read"),
   getPermissionsValidator,
   httpGetPermissions
 );
@@ -67,7 +71,7 @@ permissionRouter.get(
 // Créer un rôle ou copier un rôle avec ses permissions
 permissionRouter.post(
   "/role",
-  checkPermissions("role"),
+  checkPermissions("role", "write"),
   postRoleValidator,
   httpPostRole
 );
@@ -75,7 +79,7 @@ permissionRouter.post(
 // Modifier le nom du rôle ou/et modifier les permissions
 permissionRouter.put(
   "/role/:id",
-  checkPermissions("role"),
+  checkPermissions("role", "update"),
   putRoleValidator,
   httpPutRole
 );
@@ -83,7 +87,7 @@ permissionRouter.put(
 // Réinitialiser les permissions du rôle
 permissionRouter.put(
   "/role/:id/reset",
-  checkPermissions("role"),
+  checkPermissions("role", "update"),
   roleIdValidator,
   httpPutResetRole
 );
@@ -91,7 +95,7 @@ permissionRouter.put(
 // Ajouter une permission spécifique à un rôle
 permissionRouter.post(
   "/role/:roleId/permission/:permission",
-  checkPermissions("role"),
+  checkPermissions("role", "update"),
   removePermissionValidator,
   httpAddPermissionToRole
 );
@@ -99,7 +103,7 @@ permissionRouter.post(
 // Supprimer une permission spécifique d'un rôle
 permissionRouter.delete(
   "/role/:roleId/permission/:permission",
-  checkPermissions("role"),
+  checkPermissions("role", "update"),
   removePermissionValidator,
   httpRemovePermissionFromRole
 );
@@ -107,7 +111,7 @@ permissionRouter.delete(
 // Supprimer un rôle spécifique
 permissionRouter.delete(
   "/role/:roleId",
-  checkPermissions("role"),
+  checkPermissions("role", "delete"),
   deleteRoleValidator,
   httpDeleteRole
 );
@@ -115,7 +119,7 @@ permissionRouter.delete(
 // Supprimer des rôles spécifiques
 permissionRouter.delete(
   "/roles",
-  checkPermissions("role"),
+  checkPermissions("role", "delete"),
   deleteManyRolesValidator,
   httpDeleteManyRoles
 );

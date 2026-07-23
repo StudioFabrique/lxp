@@ -1,5 +1,6 @@
 import { RouteObject } from "react-router";
 import { lazyRoute } from "../../utils/helpers/router-helpers";
+import RequireAbility from "../../components/guards/RequireAbility";
 
 export const adminUserRoutes: RouteObject[] = [
   {
@@ -11,11 +12,23 @@ export const adminUserRoutes: RouteObject[] = [
       },
       {
         path: "add",
-        lazy: lazyRoute(() => import("./views/UserAdd")),
+        element: <RequireAbility action="write" subject="user" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/UserAdd")),
+          },
+        ],
       },
       {
         path: "edit/:id",
-        lazy: lazyRoute(() => import("./views/UserEdit")),
+        element: <RequireAbility action="update" subject="user" />,
+        children: [
+          {
+            index: true,
+            lazy: lazyRoute(() => import("./views/UserEdit")),
+          },
+        ],
       },
     ],
   },

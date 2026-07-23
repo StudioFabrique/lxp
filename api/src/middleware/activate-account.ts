@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
 import CustomRequest from "../utils/interfaces/express/custom-request";
+import { buildAbility } from "../utils/rbac/ability";
 
 export default function activateAccount(
   req: CustomRequest,
@@ -31,7 +32,13 @@ export default function activateAccount(
           if (existingBlacklistedToken) {
             return res.status(400).json({ message });
           }
-          req.auth = { userId: data.userId, userRoles: data.userRoles };
+          const ability = buildAbility([]);
+          req.auth = {
+            userId: data.userId,
+            userRoles: data.userRoles,
+            ability,
+            abilityRules: ability.rules,
+          };
         }
         next();
       }

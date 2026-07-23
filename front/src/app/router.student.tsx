@@ -7,6 +7,13 @@ import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBound
 import { studentDashboardRoutes } from "../features/dashboard-student/routes";
 import { lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
+import RequireAbility from "../components/guards/RequireAbility";
+import { AppSubject } from "../rbac/ability";
+
+const guard = (subject: AppSubject, children: RouteObject[]): RouteObject => ({
+  element: <RequireAbility action="read" subject={subject} />,
+  children,
+});
 
 export const studentRoutes: RouteObject[] = [
   {
@@ -17,12 +24,12 @@ export const studentRoutes: RouteObject[] = [
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
-      ...studentDashboardRoutes,
-      ...studentParcoursRoutes,
-      ...studentModulePreviewRoutes,
-      ...studentResourcesRoutes,
-      ...studentCalendarRoutes,
-      ...studentProfileRoutes,
+      guard("cursus", studentDashboardRoutes),
+      guard("parcours", studentParcoursRoutes),
+      guard("module", studentModulePreviewRoutes),
+      guard("resource", studentResourcesRoutes),
+      guard("cursus", studentCalendarRoutes),
+      guard("cursus", studentProfileRoutes),
       {
         path: "*",
         lazy: lazyRoute(

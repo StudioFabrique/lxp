@@ -15,6 +15,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 const RoleList = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -91,25 +92,27 @@ const RoleList = () => {
             setSearchValue(value.length > 0 ? value : null);
           }}
         >
-          <TableActionsButtons
-            isLoading={isLoading || isDeleting}
-            isDisabled={idsList.length === 0}
-            onRefreshData={refetch}
-            actions={[
-              {
-                title: "Supprimer les rôles sélectionnés",
-                description: `${idsList.length} rôle(s) vont être supprimé(s)`,
-                rightButtonTitle: "Confirmer",
-                alertMessageBottom:
-                  "Attention: Cette opération ne peut pas être annulée",
-                onConfirm: () => onDeleteSelected(idsList),
-              },
-            ]}
-            retreiveItemsProperty="role"
-            onRetreiveItemsValuesByPropertyFromIdList={
-              onRetreiveItemsValues as any
-            }
-          />
+          <PermissionGuard action="delete" object="role">
+            <TableActionsButtons
+              isLoading={isLoading || isDeleting}
+              isDisabled={idsList.length === 0}
+              onRefreshData={refetch}
+              actions={[
+                {
+                  title: "Supprimer les rôles sélectionnés",
+                  description: `${idsList.length} rôle(s) vont être supprimé(s)`,
+                  rightButtonTitle: "Confirmer",
+                  alertMessageBottom:
+                    "Attention: Cette opération ne peut pas être annulée",
+                  onConfirm: () => onDeleteSelected(idsList),
+                },
+              ]}
+              retreiveItemsProperty="role"
+              onRetreiveItemsValuesByPropertyFromIdList={
+                onRetreiveItemsValues as any
+              }
+            />
+          </PermissionGuard>
         </SearchBar>
 
         <DataTable
@@ -130,25 +133,29 @@ const RoleList = () => {
         </div>
       </Wrapper>
 
-      <div className="mt-6">
-        <RoleForm onRoleCreated={handleRoleCreated} />
-      </div>
+      <PermissionGuard action="write" object="role">
+        <div className="mt-6">
+          <RoleForm onRoleCreated={handleRoleCreated} />
+        </div>
+      </PermissionGuard>
 
-      <TableActionsModal
-        isOpen={!!idToDelete}
-        onCancel={() => setIdToDelete(null)}
-        title="Confirmation de suppression"
-        description="Êtes-vous sûr de vouloir supprimer ce rôle ?"
-        descList={roleToDelete ? [roleToDelete.label] : undefined}
-      >
-        <button
-          className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
-          onClick={handleConfirmSingleDelete}
-          disabled={isDeleting}
+      <PermissionGuard action="delete" object="role">
+        <TableActionsModal
+          isOpen={!!idToDelete}
+          onCancel={() => setIdToDelete(null)}
+          title="Confirmation de suppression"
+          description="Êtes-vous sûr de vouloir supprimer ce rôle ?"
+          descList={roleToDelete ? [roleToDelete.label] : undefined}
         >
-          Confirmer
-        </button>
-      </TableActionsModal>
+          <button
+            className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
+            onClick={handleConfirmSingleDelete}
+            disabled={isDeleting}
+          >
+            Confirmer
+          </button>
+        </TableActionsModal>
+      </PermissionGuard>
     </div>
   );
 };

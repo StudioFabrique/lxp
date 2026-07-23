@@ -12,6 +12,7 @@ export default interface Course {
   title: string;
   description?: string;
   courseSlug?: string;
+  aiIndexed?: boolean;
   author?: string;
   createdAt?: string;
   updatedAt?: string;

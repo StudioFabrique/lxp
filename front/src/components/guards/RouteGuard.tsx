@@ -1,34 +1,18 @@
 import { useContext } from "react";
-import { ROLES_RANKS } from "../../utils/helpers/roles-rank";
 import { AuthContext } from "../../store/AuthProvider";
+import { AbilityContext } from "../../rbac/AbilityProvider";
 import Loader from "../loaders/Loader";
 import { Navigate, Outlet } from "react-router";
 
-interface Props {
-  allowedRanks: ROLES_RANKS[]; // ex: [1, 2] pour Admin, [3] pour Étudiant
-}
-
-const RouteGuard = ({ allowedRanks }: Props) => {
+const RouteGuard = ({ layout }: { layout: "admin" | "student" }) => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
 
   if (!isAppInitialized) return <Loader />;
-
-  if (!isLoggedIn || !user) {
-    return <Navigate replace to="/login" />;
+  if (!isLoggedIn || !user) return <Navigate replace to="/login" />;
+  if (!ability.can("layout", layout)) {
+    return <Navigate replace to="/access-denied" />;
   }
-
-  // Dans RouteGuard.tsx
-  const userRank = user.roles?.[0]?.rank;
-
-  if (userRank === undefined) {
-    return <Navigate replace to="/login" />;
-  }
-
-  // Vérification standard des droits
-  if (!allowedRanks.includes(userRank)) {
-    return <Navigate replace to={userRank < 3 ? "/admin" : "/student"} />;
-  }
-
   return <Outlet />;
 };
 

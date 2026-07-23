@@ -49,7 +49,7 @@ export default async function getLastLessonsRead(
               module: {
                 select: {
                   id: true,
-                  module: { select: { title: true } },
+                  title: true,
                   parcours: { select: { id: true } },
                   bonusSkills: {
                     select: {
@@ -101,7 +101,7 @@ export default async function getLastLessonsRead(
             module: {
               select: {
                 id: true,
-                module: { select: { title: true } },
+                title: true,
                 parcours: { select: { id: true } },
               },
             },
@@ -125,7 +125,7 @@ export default async function getLastLessonsRead(
           ...firstLesson.course,
           module: {
             ...firstLesson.course.module,
-            title: firstLesson.course.module.module.title,
+            title: firstLesson.course.module.title,
           },
         },
         parcoursId: firstLesson.course.module.parcours.id,
@@ -147,7 +147,7 @@ export default async function getLastLessonsRead(
           ...lessonRead.lesson,
           course: {
             ...course,
-            module: { ...course.module, title: course.module.module.title },
+            module: { ...course.module, title: course.module.title },
             bonusSkills,
           },
         },

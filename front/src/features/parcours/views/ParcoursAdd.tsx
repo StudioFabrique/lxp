@@ -154,6 +154,8 @@ const AddParcours = () => {
       {showTemplateModal && (
         <Modal
           title="Créer un parcours à partir d'un modèle"
+          titleTooltip="Les objectifs, compétences, contacts, modules, cours, leçons et
+          activités du parcours sélectionné seront dupliqués."
           leftLabel="Annuler"
           rightLabel="Dupliquer le parcours"
           onLeftClick={closeTemplateModal}
@@ -181,7 +183,7 @@ const AddParcours = () => {
                   Sélectionnez une formation pour afficher ses parcours.
                 </p>
               ) : parcoursList.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-base-300 p-6 text-center text-sm text-base-content/60">
+                <p className="rounded-xl p-6 text-center text-sm text-base-content/60">
                   Aucun parcours ne peut être utilisé comme modèle.
                 </p>
               ) : (
@@ -206,10 +208,6 @@ const AddParcours = () => {
                   })}
                 </div>
               )}
-              <p className="text-xs text-base-content/60">
-                Les objectifs, compétences, contacts, modules, cours, leçons et
-                activités du parcours sélectionné seront dupliqués.
-              </p>
             </div>
           </div>
         </Modal>

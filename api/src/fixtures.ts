@@ -329,12 +329,10 @@ async function createPermissions() {
           });
 
           if (existingPermission) {
-            existingPermission.roles = [role];
             bulkPermissions.set(permissionName, existingPermission);
             rolePermissions.push(existingPermission._id);
           } else {
             const newPermission = new Permission({
-              roles: [role],
               name: permissionName,
             });
             bulkPermissions.set(permissionName, newPermission);
@@ -342,7 +340,6 @@ async function createPermissions() {
           }
         } else {
           const permission = bulkPermissions.get(permissionName)!;
-          permission.roles = [...permission.roles, role];
           rolePermissions.push(permission._id);
         }
       }

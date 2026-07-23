@@ -8,9 +8,9 @@ async function getCourses() {
       module: {
         select: {
           id: true,
-          module: {
-            select: { title: true, description: true, thumb: true, id: true },
-          },
+          title: true,
+          description: true,
+          thumb: true,
           parcours: {
             select: {
               id: true,
@@ -33,15 +33,15 @@ async function getCourses() {
     title: item.title,
     moduleId: item.module.id,
     parcoursId: item.module.parcours.id,
-    module: item.module.module.title,
+    module: item.module.title,
     parcours: item.module.parcours.title,
     author: item.author,
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
     isPublished: item.isPublished,
     visibility: item.visibility,
-    thumb: item.module.module.thumb
-      ? Buffer.from(item.module.module.thumb as any).toString("base64")
+    thumb: item.module.thumb
+      ? Buffer.from(item.module.thumb as any).toString("base64")
       : null,
   }));
 

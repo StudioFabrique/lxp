@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
 import { Router } from "express";
-import checkToken from "../../../middleware/check-token";
+import checkPermissions from "../../../middleware/check-permissions";
 import httpGetMedias from "../../../controllers/mediatheque/http-get-medias";
 
 // Création du routeur pour la médiathèque
@@ -8,7 +8,7 @@ const mediaRouter = Router();
 
 // Route GET pour récupérer toutes les images de la médiathèque
 // Nécessite un token d'authentification valide
-mediaRouter.get("/", checkToken, httpGetMedias);
+mediaRouter.get("/", checkPermissions("mediatheque", "read"), httpGetMedias);
 
 // Export du routeur
 export default mediaRouter;

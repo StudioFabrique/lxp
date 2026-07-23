@@ -28,6 +28,7 @@ const FormNumberInput = ({
         {...register(name, { valueAsNumber: true })}
         className={`w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "input-error" : ""}`}
         type="number"
+        defaultValue={0}
         id={name}
         placeholder={placeholder}
         disabled={disabled}
