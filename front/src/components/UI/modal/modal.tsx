@@ -1,11 +1,13 @@
 import type { PropsWithChildren } from "react";
 import { Loader2, Minimize2 } from "lucide-react";
+import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 
 type ModalProps = {
+  title: string;
+  titleTooltip?: string;
   onLeftClick?: () => void;
   onRightClick?: () => void;
   onMinimizeClick?: () => void;
-  title: string;
   leftLabel?: string;
   rightLabel?: string;
   rightDisabled?: boolean;
@@ -49,6 +51,12 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
         )}
         <div className="flex justify-between">
           <h3 className="font-bold text-lg">{props.title}</h3>
+          {props.titleTooltip && (
+            <QuestionMarkTooltip
+              tooltipPosition="left"
+              tooltipValue={props.titleTooltip}
+            />
+          )}
           {props.onMinimizeClick && (
             <button
               className="btn btn-sm btn-ghost"
