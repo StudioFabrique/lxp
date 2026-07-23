@@ -4,10 +4,10 @@ import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import UserQuickCreate from "../../../../../../src/components/user-quick-create/user-quick-create";
-import { useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { parcoursApi } from "../../../api/parcours.api";
+import { parcoursKeys } from "../../../api/parcours.keys";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -37,7 +37,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     handleRowCheck,
     sortData,
   } = useEagerLoadingList(props.list!, "name");
-  const dispatch = useParcoursDispatch();
+  const queryClient = useQueryClient();
 
   const { mutate: createTeacher } = useMutation({
     mutationFn: (teacher: Teacher) =>
@@ -45,8 +45,9 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message);
-        dispatch({ type: "ADD_NEW_CONTACT", payload: data.contact });
-        dispatch({ type: "SET_NOT_SELECTED_CONTACTS" });
+        queryClient.invalidateQueries({
+          queryKey: parcoursKeys.availableContacts(),
+        });
       }
     },
     onError: () => {

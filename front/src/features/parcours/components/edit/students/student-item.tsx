@@ -1,7 +1,9 @@
 // Import des dépendances nécessaires
-import { useParcoursSelector } from "../../../store/ParcoursContext";
 import User from "../../../../../../src/utils/interfaces/user";
-import { AvatarSmall } from "../../../../../components/UI/avatar/avatar.component";
+import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
+import { localeDate } from "../../../../../utils/helpers/locale-date";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 // Interface définissant les props du composant
 interface StudentItemProps {
@@ -17,9 +19,8 @@ const StudentItem = (props: StudentItemProps) => {
   // Destructuration des données de l'étudiant depuis les props
   const { email, lastname, firstname, group, createdAt } = props.studentItem;
 
-  // Récupération du titre de la formation depuis le store Redux
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formation = useParcoursSelector((state) => state.parcours.formation.title);
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
 
   return (
     <>
@@ -34,12 +35,12 @@ const StudentItem = (props: StudentItemProps) => {
       {/* Email de l'étudiant */}
       <td className="bg-transparent">{email}</td>
       {/* Formation de l'étudiant */}
-      <td className="bg-transparent">{formation}</td>
+      <td className="bg-transparent">{parcours?.formation.title}</td>
       {/* Nom du groupe de l'étudiant */}
       <td className="bg-transparent">{group!.name}</td>
       {/* Date de création formatée */}
       <td className="bg-transparent">
-        {new Date(createdAt!).toLocaleDateString()}
+        {localeDate(createdAt!)}
       </td>
     </>
   );

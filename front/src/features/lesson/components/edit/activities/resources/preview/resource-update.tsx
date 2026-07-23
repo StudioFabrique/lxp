@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resource } from "../../../../../../../../src/utils/interfaces/activity";
+import type { ActivityResource } from "../../../../../../../../src/utils/interfaces/activity";
 import { z } from "zod";
 import { regexGeneric } from "../../../../../../../config/constantes";
 import FormInput from "../../../../../../../components/form/FormInput";
@@ -19,7 +19,7 @@ const schema = z.object({
 type ResourceFormData = z.infer<typeof schema>;
 
 type Props = {
-  resource: Resource;
+  resource: ActivityResource;
   onSubmit: (value: string, id: number) => void;
   onCancel: () => void;
 };

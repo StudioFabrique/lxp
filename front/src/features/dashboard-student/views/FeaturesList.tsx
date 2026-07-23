@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import features from "../../../../src/config/features/features-to-be-implemented.json";
 import announcements from "../../../../src/config/features/announcements.json";
+import { scrollToTop } from "../../../../src/utils/helpers/scroll-to-top";
 
 /**
  * Composant parent de la route /features
@@ -12,7 +13,7 @@ import announcements from "../../../../src/config/features/announcements.json";
  */
 const FeaturesList = () => {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    scrollToTop();
   }, []);
 
   return (

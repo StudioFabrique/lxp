@@ -1,27 +1,34 @@
-import { useParcoursSelector } from "../store/ParcoursContext";
 import { useCallback } from "react";
-import { testStep } from "../../../utils/helpers/parcours-steps-validation";
+import { testParcoursStep } from "../helpers/parcours-steps-validation";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "./useParcoursQuery";
+import { useParcoursSkills } from "./useParcoursSkills";
+import { useParcoursGroupsQuery } from "./useParcoursGroupsQuery";
+import { useParcoursModules } from "./useParcoursModules";
 
 const useValidateParcours = () => {
-  const infos = useParcoursSelector((state) => state.parcoursInformations.infos);
-  const tags = useParcoursSelector((state) => state.tags.currentTags);
-  const contacts = useParcoursSelector((state) => state.parcoursContacts.currentContacts);
-  const objectives = useParcoursSelector((state) => state.parcoursObjectives.objectives);
-  const skills = useParcoursSelector((state) => state.parcoursSkills.skills);
-  const modules = useParcoursSelector((state) => state.parcoursModules.modules);
-  const groups = useParcoursSelector((state) => state.parcoursGroups.groups);
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const parcoursId = id ? Number(id) : 0;
+  const { skills } = useParcoursSkills(parcoursId);
+  const { modules } = useParcoursModules(parcoursId);
+  const { data: groups = [] } = useParcoursGroupsQuery(parcoursId);
 
   const validateParcours = useCallback(() => {
-    return testStep({
-      infos,
-      tags,
-      contacts,
-      objectives,
+    return testParcoursStep({
+      infos: {
+        title: parcours?.title ?? "",
+        startDate: parcours?.startDate ?? "",
+        endDate: parcours?.endDate ?? "",
+      },
+      tags: parcours?.tags ?? [],
+      contacts: parcours?.contacts ?? [],
+      objectives: parcours?.objectives ?? [],
       skills,
       modules,
       groups,
     });
-  }, [contacts, groups, infos, modules, objectives, skills, tags]);
+  }, [groups, modules, parcours, skills]);
 
   return { validateParcours };
 };

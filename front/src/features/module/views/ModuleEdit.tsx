@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultImage from "../../../../src/assets/images/module-default.jpg";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 import Loader from "../../../components/loaders/Loader";
 import BookIcon from "../../../../src/components/UI/svg/book-icon";
-import EditModuleCourse from "../../../components/edit-module/edit-module-course";
-import EditModuleInfos from "../../../components/edit-module/edit-module-infos";
-import EditModuleSkills from "../../../components/edit-module/edit-module-skills";
+import EditModuleCourse from "../components/edit/edit-module-course";
+import EditModuleInfos from "../components/edit/edit-module-infos";
+import EditModuleSkills from "../components/edit/edit-module-skills";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import apiClient from "../../../lib/axios";
@@ -125,7 +126,7 @@ export default function EditModuleHome() {
                   subTitle={module.parcours}
                   imageUrl={
                     module.image
-                      ? "data:image/jpeg;base64," + module.image
+                      ? normalizeImageSource(module.image)
                       : defaultImage
                   }
                 >

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés
 import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
-import { searchListCourse } from "../../../../utils/helpers/search-list-course";
+import { createSearchFilter } from "../../../../utils/helpers/search-filter";
 import { courseSearchOptions } from "../../../../config/search-options";
 
 // Imports des composants UI
@@ -13,8 +13,8 @@ import CourseTable from "./course-table";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
-import useDeleteCourse from "../../../../../src/hooks/useDeleteCourse";
-import ModalDeleteCourse from "../../../../../src/components/UI/modal-delete-course";
+import useDeleteCourse from "../../hooks/useDeleteCourse";
+import Modal from "../../../../components/UI/modal/modal";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import ListHeader from "../../../../components/UI/list-header";
@@ -66,8 +66,15 @@ export default function CourseList(props: CourseListProps) {
    * @param entityToSearch Propriété sur laquelle effectuer la recherche
    * @param searchValue Valeur recherchée
    */
+  const courseFieldMap: Record<string, { field: string; property: string; value: string }> = {
+    title: { field: "title", property: "", value: "" },
+    module: { field: "module", property: "", value: "" },
+    parcours: { field: "parcours", property: "", value: "" },
+    auteur: { field: "author", property: "", value: "" },
+  };
+
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    const filters = searchListCourse(entityToSearch, searchValue);
+    const filters = createSearchFilter(courseFieldMap, entityToSearch, searchValue);
     getFilteredList(filters);
   };
 
@@ -146,14 +153,18 @@ export default function CourseList(props: CourseListProps) {
 
       {/* Modal de confirmation de suppression */}
       {showModal ? (
-        <ModalDeleteCourse
-          courseId={showModal.id}
-          courseTitle={showModal.title}
+        <Modal
+          title={`Supprimer le cours : ${showModal.title}`}
+          onLeftClick={handleCloseModal}
+          onRightClick={handleDeleteCourse}
+          leftLabel="Annuler"
           rightLabel="Confirmer"
-          message="Le cours et les ressources qui lui sont associées seront définitivement supprimés."
-          onConfirm={handleDeleteCourse}
-          onCloseModal={handleCloseModal}
-        />
+        >
+          <p className="py-4">
+            Le cours et les ressources qui lui sont associées seront
+            définitivement supprimés.
+          </p>
+        </Modal>
       ) : null}
     </ListHeader>
   );

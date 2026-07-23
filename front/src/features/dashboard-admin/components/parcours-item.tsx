@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 
+import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultImage from "../assets/books.jpeg";
 import { Eye } from "lucide-react";
 import Parcours from "../../../utils/interfaces/parcours";
@@ -19,7 +20,7 @@ export default function ParcoursItem({ parcours }: ParcoursItemProps) {
       if (!parcours.thumb) {
         setBgImage(defaultImage);
       } else {
-        setBgImage(`data:image/jpeg;base64,${parcours.thumb}`);
+        setBgImage(normalizeImageSource(parcours.thumb) ?? defaultImage);
       }
     } else {
       isInitialRender.current = false;

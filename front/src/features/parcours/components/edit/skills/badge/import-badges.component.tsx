@@ -1,9 +1,8 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { useParcoursDispatch } from "../../../../store/ParcoursContext";
 import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
-import Badge from "../../../../../../../src/utils/interfaces/badge";
-import { validateImageFile } from "../../../../../../utils/helpers/validate-image-file";
+import Badge from "../../../../interfaces/badge";
+import { validateImageFile } from "../../../../helpers/validate-image-file";
 import UploadIcon from "../../../../../../../src/components/UI/svg/upload-icon.component";
 import { badgeMaxSize } from "../../../../../../config/images-sizes";
 
@@ -16,7 +15,6 @@ type Props = {
 const ImportBadges: FC<Props> = ({ onSubmit }) => {
   const fileSelectRef = useRef<any>(null);
   const [selectedFiles, setSelectedFiles] = useState<any>(null);
-  const dispatch = useParcoursDispatch();
 
   const handleLabelClick = () => {
     fileSelectRef.current.click();
@@ -52,7 +50,7 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
 
       setSelectedFiles(null);
     }
-  }, [selectedFiles, dispatch, onSubmit]);
+  }, [selectedFiles, onSubmit]);
 
   return (
     <>

@@ -1,20 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
-import Calendar from "../../../../../components/calendar/calendar";
+import Calendar from "../../../../calendar/components/calendar";
 import { ThemeContext as Context } from "../../../../../store/ThemeProvider";
-import { TimelineEvent } from "../../../../../components/calendar/calendar-configuration";
-import { formatDate } from "../../../../../components/calendar/calendar-utils";
+import { TimelineEvent } from "../../../../calendar/components/calendar-configuration";
+import { formatDate } from "../../../../calendar/components/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
+import { useParams } from "react-router";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useParcoursModules } from "../../../hooks/useParcoursModules";
 
 const Calendrier = () => {
   const { theme } = useContext(Context);
   const darkMode = theme === "dark";
   const currentDate = new Date();
-  const dispatch = useParcoursDispatch();
+  const { id } = useParams();
+  const parcoursId = id ? Number(id) : 0;
+  const { data: parcours } = useParcoursQuery(parcoursId);
+  const { modules } = useParcoursModules(parcoursId);
+  const [currentModule, setCurrentModule] = useState<Module | null>(null);
 
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
     null
@@ -22,19 +28,12 @@ const Calendrier = () => {
   const [detailsCardRectPosition, setDetailsCardRectPosition] =
     useState<DOMRect>();
 
-  const parcoursInfos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos
-  );
-  const modules: Module[] = useParcoursSelector(
-    (state) => state.parcoursModules.modules
-  );
-
   const datesParcours = {
-    startDate: parcoursInfos?.startDate
-      ? new Date(parcoursInfos.startDate)
+    startDate: parcours?.startDate
+      ? new Date(parcours.startDate)
       : new Date(),
-    endDate: parcoursInfos?.endDate
-      ? new Date(parcoursInfos.endDate)
+    endDate: parcours?.endDate
+      ? new Date(parcours.endDate)
       : new Date(),
   };
 
@@ -45,7 +44,7 @@ const Calendrier = () => {
       title: mod.title,
       startDate: mod.minDate ? new Date(mod.minDate) : undefined,
       endDate: mod.maxDate ? new Date(mod.maxDate) : undefined,
-      image: mod.thumb ? `data:image/jpeg;base64,${mod.thumb}` : undefined,
+      image: mod.thumb ? normalizeImageSource(mod.thumb) : undefined,
     }));
 
   const handleSelectModule = (
@@ -56,8 +55,7 @@ const Calendrier = () => {
     if (selectedModule) {
       // Set the intended mode
       setActiveModal(mode);
-      // Update Redux
-      dispatch({ type: "SET_CURRENT_MODULE", payload: selectedModule });
+      setCurrentModule(selectedModule);
     }
   };
 
@@ -78,15 +76,10 @@ const Calendrier = () => {
   // --- HANDLER: CLOSE MODALS ---
   const handleCloseModal = () => {
     setActiveModal(null);
+    setCurrentModule(null);
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch({ type: "SET_CURRENT_MODULE", payload: null });
-    };
-  }, [dispatch]);
-
-  if (!modules || !parcoursInfos) {
+  if (!modules || !parcours) {
     return (
       <div className="flex flex-col gap-y-5 p-10 items-center justify-center h-full">
         <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -130,6 +123,7 @@ const Calendrier = () => {
       <ModuleTimelineDetailsPopover
         modalId="module_details_modal"
         isOpen={activeModal === "details"}
+        currentModule={currentModule}
         position={detailsCardRectPosition}
         onClose={handleCloseModal}
       />
@@ -139,6 +133,7 @@ const Calendrier = () => {
         modalId="module_dates_modal"
         datesParcours={datesParcours}
         isOpen={activeModal === "edit"}
+        currentModule={currentModule}
         onClose={handleCloseModal}
       />
     </div>

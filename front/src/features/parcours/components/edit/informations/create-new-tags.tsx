@@ -1,34 +1,32 @@
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import useTags from "../../../../../hooks/useTags";
 import TagsList from "../../../../../components/tags/TagsList";
 import AddTag from "../../../../../components/UI/add-tag";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import { parcoursApi } from "../../../api/parcours.api";
+import { useParcoursTagsQuery } from "../../../hooks/useParcoursTagsQuery";
+import { parcoursKeys } from "../../../api/parcours.keys";
 
 type Props = {
-  onSubmit: Dispatch<SetStateAction<boolean>>;
+  onCreated: (tags: Tag[]) => void;
 };
 
 function CreateNewTag(props: Props) {
-  const initialTags = useParcoursSelector(
-    (state) => state.tags.initialTags
-  );
-  const dispatch = useParcoursDispatch();
-
-  const [showNoTagMessage, setShowNoTagMessage] = useState(false);
+  const { data: initialTags = [] } = useParcoursTagsQuery();
+  const queryClient = useQueryClient();
 
   const { mutate: createTags } = useMutation({
     mutationFn: (payload: { tags: { name: string; color: string }[] }) =>
       parcoursApi.mutations.createTags(payload),
     onSuccess: (data: Tag[]) => {
-      dispatch({ type: "INIT_TAGS", payload: [...initialTags, ...data] });
-      dispatch({ type: "ADD_NEW_CURRENT_TAGS", payload: data });
-      props.onSubmit(true);
+      queryClient.setQueryData<Tag[]>(
+        parcoursKeys.availableTags(),
+        (current = []) => [...current, ...data],
+      );
+      props.onCreated(data);
       handleCancel();
     },
     onError: () => {
@@ -56,7 +54,6 @@ function CreateNewTag(props: Props) {
     const tmpTags = handleCheckTags();
 
     if (!tmpTags || tmpTags.length === 0) {
-      setShowNoTagMessage(true);
       return;
     }
 
@@ -67,10 +64,8 @@ function CreateNewTag(props: Props) {
     createTags(payload);
   };
 
-  useEffect(() => {
-    const tmpTags = handleCheckTags();
-    setShowNoTagMessage(tmpTags.length === 0 && currentTags.length > 0);
-  }, [currentTags, handleCheckTags]);
+  const showNoTagMessage =
+    handleCheckTags().length === 0 && currentTags.length > 0;
 
   return (
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">

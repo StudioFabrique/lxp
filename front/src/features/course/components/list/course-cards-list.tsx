@@ -1,5 +1,4 @@
-import CardListItem from "../../../../components/UI/card-list-item";
-import ElementNotFound from "../../../../components/UI/element-not-found";
+import EntityCardsList from "../../../../components/UI/entity-cards-list";
 import CourseCard from "./course-card";
 import CustomCourse from "./interfaces/custom-course";
 
@@ -13,18 +12,12 @@ export default function CourseCardsList({
   onDeleteCourse,
 }: CourseCardsListProps) {
   return (
-    <>
-      {courseList && courseList.length > 0 ? (
-        <CardListItem>
-          {courseList.map((item) => (
-            <li key={item.id}>
-              <CourseCard course={item} onDeleteCourse={onDeleteCourse} />
-            </li>
-          ))}
-        </CardListItem>
-      ) : (
-        <ElementNotFound message="Aucun cours trouvé." />
+    <EntityCardsList
+      items={courseList}
+      emptyMessage="Aucun cours trouvé."
+      renderItem={(course) => (
+        <CourseCard course={course} onDeleteCourse={onDeleteCourse} />
       )}
-    </>
+    />
   );
 }

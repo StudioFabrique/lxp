@@ -1,33 +1,24 @@
 import Parcours from "../../../../../src/utils/interfaces/parcours";
-import CardListItem from "../../../../components/UI/card-list-item";
-import ElementNotFound from "../../../../components/UI/element-not-found";
+import EntityCardsList from "../../../../components/UI/entity-cards-list";
 import ParcoursCard from "./parcours-card";
 
 interface ParcoursCardsListProps {
   parcoursList: Parcours[];
   onDeleteParcours: (parcours: Parcours) => void;
-  loading: boolean;
 }
 
-const ParcoursCardsList = (props: ParcoursCardsListProps) => {
-  const { parcoursList, onDeleteParcours } = props;
+const ParcoursCardsList = ({
+  parcoursList,
+  onDeleteParcours,
+}: ParcoursCardsListProps) => {
   return (
-    <>
-      {parcoursList && parcoursList.length > 0 ? (
-        <CardListItem>
-          {parcoursList.map((item) => (
-            <li key={item.id}>
-              <ParcoursCard
-                parcours={item}
-                onDeleteParcours={onDeleteParcours}
-              />
-            </li>
-          ))}
-        </CardListItem>
-      ) : (
-        <ElementNotFound message="Aucun parcours trouvé." />
+    <EntityCardsList
+      items={parcoursList}
+      emptyMessage="Aucun parcours trouvé."
+      renderItem={(parcours) => (
+        <ParcoursCard parcours={parcours} onDeleteParcours={onDeleteParcours} />
       )}
-    </>
+    />
   );
 };
 

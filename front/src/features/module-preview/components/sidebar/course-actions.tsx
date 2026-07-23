@@ -1,4 +1,4 @@
-import { Edit, ListPlus, MoreVertical, Trash, UploadCloud } from "lucide-react";
+import { Edit, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { Link } from "react-router";
 import Course from "../../../../../src/utils/interfaces/course";
@@ -6,16 +6,12 @@ import { ModalCourseType } from "./course-item";
 
 type CourseActionsProps = {
   course: Course;
-  parcoursId?: number;
-  moduleId?: number;
   onOpenModal: (modalType: ModalCourseType, e: React.MouseEvent) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
 
 const CourseActions = ({
   course,
-  parcoursId,
-  moduleId,
   onOpenModal,
   onClickMenu,
 }: CourseActionsProps) => {
@@ -58,19 +54,6 @@ const CourseActions = ({
             Modifier le cours
           </Link>
         </PermissionGuard>
-
-        <Link
-          to="/admin/lesson/add"
-          state={{
-            parcoursId,
-            moduleId,
-            courseId: course.id,
-          }}
-          className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
-        >
-          <ListPlus className="w-4 h-4 mr-3" />
-          Créer une leçon
-        </Link>
 
         {/* <PermissionGuard action="update" object="course">
           <button

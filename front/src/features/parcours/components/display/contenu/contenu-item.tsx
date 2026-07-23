@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
-import { getMonth } from "../../../../../utils/helpers/date-helpers";
+import { getMonth } from "../../../helpers/date-helpers";
 import { ArrowRightCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";

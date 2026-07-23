@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 import Course from "../../../../src/utils/interfaces/course";
 import Lesson from "../../../../src/utils/interfaces/lesson";
-import { Activity } from "../../../../src/utils/interfaces/activity";
 import Parcours from "../../../../src/utils/interfaces/parcours";
 import Formation from "../../../../src/utils/interfaces/formation";
 import Module from "../../../../src/utils/interfaces/module";
@@ -11,7 +10,7 @@ import {
   getMimeType,
   parseCourseZip,
   sanitizeFilename,
-} from "../../../utils/helpers/import-course-helpers";
+} from "../helpers/import-course-helpers";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 import apiClient from "../../../lib/axios";
 import { courseApi } from "../api/course.api";
@@ -23,17 +22,7 @@ export enum CoursesImportStep {
   ImportResult,
 }
 
-export type ActivityImport = Activity & {
-  value?: string | Blob;
-  hasError?: boolean;
-};
-
-export interface QueuedImage {
-  file: File;
-  blobUrl: string;
-  size: "small" | "medium" | "large";
-  tempId: string;
-}
+import { ActivityImport, QueuedImage } from "../../../utils/interfaces/import-types";
 
 export type CourseImport = Course & {
   id: number;
@@ -50,7 +39,6 @@ export type CourseImport = Course & {
 };
 
 export default function useImportCourses() {
-
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
     CoursesImportStep.MbzImport,
@@ -107,21 +95,17 @@ export default function useImportCourses() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await apiClient.post(
-          "/course/import-mbz",
-          formData,
-          {
-            responseType: "blob",
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                const percentCompleted = Math.round(
-                  (progressEvent.loaded * 100) / progressEvent.total,
-                );
-                setUploadProgress(percentCompleted);
-              }
-            },
+        const response = await apiClient.post("/course/import-mbz", formData, {
+          responseType: "blob",
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total,
+              );
+              setUploadProgress(percentCompleted);
+            }
           },
-        );
+        });
 
         const courseSlug = response.headers["x-course-slug"] || "";
 
@@ -303,7 +287,8 @@ export default function useImportCourses() {
             })),
         };
 
-        const structureResponse = await courseApi.mutations.importStructure(structurePayload);
+        const structureResponse =
+          await courseApi.mutations.importStructure(structurePayload);
 
         processedCount += 1 + structurePayload.lessons.length;
         setUploadProgress((processedCount / totalItems) * 100);
@@ -344,7 +329,8 @@ export default function useImportCourses() {
                     const formData = new FormData();
                     formData.append("image", img.file, img.file.name);
 
-                    const response = await courseApi.mutations.uploadBlogImage(formData);
+                    const response =
+                      await courseApi.mutations.uploadBlogImage(formData);
 
                     const serverUrl = response.response || response.url;
                     const fullUrl = serverUrl.startsWith("http")
@@ -399,11 +385,7 @@ export default function useImportCourses() {
       setCurrentAction("Erreur critique.");
       setIsLoading(false);
     }
-  }, [
-    importedCourses,
-    selectedModule?.id,
-    selectedParcours?.id,
-  ]);
+  }, [importedCourses, selectedModule?.id, selectedParcours?.id]);
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(

@@ -115,6 +115,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
   // 5. Traitement des contacts (aplatissement)
   // Transforme [{ contact: {...} }] en [{...}]
   result.contacts = parcours.contacts.map((c) => c.contact);
+  result.tags = parcours.tags.map((item) => item.tag);
 
   // 6. Traitement des modules (si présents)
   if (parcours.modules && parcours.modules.length > 0) {

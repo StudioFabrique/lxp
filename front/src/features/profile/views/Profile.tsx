@@ -1,12 +1,12 @@
 import { MouseEvent, Ref, useEffect, useRef, useState } from "react";
-import InformationAndSettings from "../../../components/user-profile/information/information-and-settings";
-import Awards from "../../../components/user-profile/awards/awards";
-import Account from "../../../components/user-profile/account/account";
-import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
+import InformationAndSettings from "../components/information/information-and-settings";
+import Awards from "../components/awards/awards";
+import Account from "../components/account/account";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { useLocation } from "react-router";
 import Header from "../../../components/headers/Header";
-import Journal from "../../../components/user-profile/journal/journal";
-import TeacherCalendar from "../../../components/user-profile/teacher-calendar";
+import Journal from "../components/journal/journal";
+import TeacherCalendar from "../components/teacher-calendar";
 
 enum Tab {
   Info,

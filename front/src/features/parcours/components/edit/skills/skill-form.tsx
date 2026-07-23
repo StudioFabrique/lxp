@@ -1,7 +1,7 @@
 import { FC, FormEvent, useCallback, useState } from "react";
 
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import Badge from "../../../../../../src/utils/interfaces/badge";
+import Badge from "../../../interfaces/badge";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";

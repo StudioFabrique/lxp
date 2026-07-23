@@ -3,7 +3,6 @@ import { useContext } from "react";
 
 import Pagination from "../../../../../components/UI/pagination/pagination";
 import Group from "../../../../../../src/utils/interfaces/group";
-import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import StudentGroupList from "./student-group-list";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import { GroupList } from "./parcours-students.component";
@@ -13,6 +12,7 @@ import { AuthContext } from "../../../../../../src/store/AuthProvider";
 interface GroupsListProps {
   onCancel: (id: string) => void; // Fonction appelée pour annuler/fermer
   groups: GroupList[]; // Liste des groupes à afficher
+  onAdd: (groups: Group[]) => void;
 }
 
 /**
@@ -22,8 +22,6 @@ interface GroupsListProps {
 const GroupsList = (props: GroupsListProps) => {
   // Récupération du contexte pour les rôles utilisateur
   const { roles } = useContext(AuthContext);
-  // Initialisation du dispatch Redux pour les actions
-  const dispatch = useParcoursDispatch();
 
   // Utilisation du hook personnalisé pour gérer la pagination, le tri et la sélection
   const {
@@ -45,7 +43,7 @@ const GroupsList = (props: GroupsListProps) => {
    */
   const handleSubmit = () => {
     const updatedGroups = list!.filter((item: Group) => item.isSelected);
-    dispatch({ type: "SET_GROUPS", payload: updatedGroups });
+    props.onAdd(updatedGroups);
     props.onCancel("add-group");
   };
 

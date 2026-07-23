@@ -11,6 +11,7 @@ import getUserData from "./db/get-user-data";
 import { feedbackReviewed } from "./helpers/feedback-reviewed";
 import { io } from "../server";
 import { logger } from "../utils/logs/logger";
+import { imageToDataUrl } from "../utils/images/image-source";
 
 export function socket(io: Server): void {
   let groupId: string | null;
@@ -69,9 +70,7 @@ export function socket(io: Server): void {
               comment: result.comment,
               feelingLevel: result.feelingLevel,
               name: `${userData.firstname} ${userData.lastname}`,
-              avatar: userData.avatar
-                ? userData.avatar.toString("base64")
-                : null,
+              avatar: imageToDataUrl(userData.avatar),
               hasBeenReviewed: false,
               userId,
             };

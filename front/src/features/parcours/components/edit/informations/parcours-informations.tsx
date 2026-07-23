@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
 import VirtualClass from "../../../../../../src/components/virtual-class";
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DatesSelecter from "../../../../../components/UI/dates-selecter/dates-selecter.component";
 
@@ -16,43 +14,39 @@ import ContactsWithDrawer from "./contacts-with-drawer";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import TagsWithDrawer from "./tags-with-drawer";
 import useInfosService from "../../../hooks/useInfosService";
-import { parcoursApi } from "../../../api/parcours.api";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 type Props = {
   parcoursId: string;
 };
 
 const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
+  const numericParcoursId = Number(parcoursId);
+  const { data: parcours } = useParcoursQuery(numericParcoursId);
+  const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
 
-  const parcoursStartDate = useParcoursSelector(
-    (state) => state.parcoursInformations.infos.startDate,
-  );
-  const parcoursEndDate = useParcoursSelector(
-    (state) => state.parcoursInformations.infos.endDate,
-  );
-  const dispatch = useParcoursDispatch();
+  const parcoursStartDate = parcours?.startDate ?? "";
+  const parcoursEndDate = parcours?.endDate ?? "";
   const {
     loadingContacts,
     loadingTags,
     updateParcoursContacts,
     updateParcoursTags,
-  } = useInfosService();
+  } = useInfosService(numericParcoursId);
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
-    useParcoursSelector(
-      (state) => state.parcoursInformations.infos.virtualClass as string,
-    ),
+    parcours?.virtualClass ?? "",
   );
-  const parentTags = useParcoursSelector(
-    (state) => state.tags.parentTags,
+  const parentTags = (parcours?.formation.tags ?? []).map((item) =>
+    "tag" in item ? (item.tag as Tag) : item,
   );
 
   const updateDates = useCallback(
     async (startDate: string, endDate: string) => {
       try {
-        const data = await parcoursApi.mutations.updateParcoursDates({
-          parcoursId,
+        const data = await updateParcours({
           startDate,
           endDate,
         });
@@ -63,14 +57,18 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
         toast.error("Erreur lors de la mise à jour des dates");
       }
     },
-    [parcoursId],
+    [updateParcours],
   );
 
   const handleUpdateContacts = useCallback(
     (updatedContacts: Contact[]) => {
-      updateParcoursContacts(+parcoursId, updatedContacts);
+      updateParcoursContacts(
+        updatedContacts.flatMap((contact) =>
+          contact.id === undefined ? [] : [contact.id],
+        ),
+      );
     },
-    [parcoursId, updateParcoursContacts],
+    [updateParcoursContacts],
   );
 
   /**
@@ -78,21 +76,17 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
    */
   const handleUpdateTags = useCallback(
     (tags: Array<Tag>) => {
-      updateParcoursTags(
-        +parcoursId,
-        tags.map((item) => item.id),
-      );
+      updateParcoursTags(tags.map((item) => item.id));
     },
-    [parcoursId, updateParcoursTags],
+    [updateParcoursTags],
   );
 
   // Callback pour soumettre les dates du parcours
   const submitDates = useCallback(
     (dates: { startDate: string; endDate: string }) => {
-      dispatch({ type: "UPDATE_PARCOURS_DATES", payload: dates });
       updateDates(dates.startDate, dates.endDate);
     },
-    [updateDates, dispatch],
+    [updateDates],
   );
 
   const handleVirtualClassValue = (
@@ -104,18 +98,13 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.valueChangeHandler(event);
   };
 
-  useEffect(() => {
-    dispatch({ type: "VALIDATE_INFOS" });
-  }, [parcoursStartDate, parcoursEndDate, dispatch]);
-
   // met à jour la classe virtuelle vers la bdd
   useEffect(() => {
     const timer = setTimeout(async () => {
       const formIsValid = virtualClass.isValid;
       if (formIsValid && submitVirtualClass) {
         try {
-          const data = await parcoursApi.mutations.updateParcoursVirtualClass({
-            parcoursId,
+          const data = await updateParcours({
             virtualClass: virtualClass.value,
           });
           if (data.success) {
@@ -130,9 +119,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
             "Le lien vers la classe virtuelle n'a pas été mis à jour",
           );
         }
-        dispatch(
-          { type: "SET_VIRTUAL_CLASS", payload: virtualClass.value },
-        );
         setSubmitVirtualClass(false);
       }
     }, autoSubmitTimer);
@@ -143,7 +129,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.value,
     virtualClass.isValid,
     submitVirtualClass,
-    dispatch,
+    updateParcours,
   ]);
 
   return (

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import type Step from "../utils/interfaces/step";
 import { sortArray } from "../utils/helpers/sort-array";
@@ -6,7 +6,6 @@ import { sortArray } from "../utils/helpers/sort-array";
 const useSteps = (steps: Step[]) => {
   const [actualStep, setActualStep] = useState<Step>(steps[0]);
   const [stepsList, setStepsList] = useState<Array<Step>>(steps);
-  const [finalStep, setFinalStep] = useState<boolean>(false);
 
   const updateStep = useCallback(
     (id: number) => {
@@ -35,13 +34,7 @@ const useSteps = (steps: Step[]) => {
     }
   };
 
-  useEffect(() => {
-    if (actualStep.id === steps.length) {
-      setFinalStep(true);
-    }
-  }, [actualStep.id, steps]);
-
-  return { actualStep, stepsList, finalStep, updateStep, validateStep };
+  return { actualStep, stepsList, updateStep, validateStep };
 };
 
 export default useSteps;

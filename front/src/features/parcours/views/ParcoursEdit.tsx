@@ -1,5 +1,3 @@
-import { Link } from "react-router";
-
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import HeaderIcon from "../../../../src/components/UI/svg/header-icon";
@@ -18,12 +16,12 @@ import ImageHeaderMutable from "../../../../src/components/image-header/image-he
 import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
+import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 
 const EditParcours = () => {
   const {
     id,
     actualStep,
-    finalStep,
     stepsList,
     updateStep,
     updateImage,
@@ -34,6 +32,10 @@ const EditParcours = () => {
     image,
     handleResetImportedObjectives,
     handleResetImportedSkills,
+    importedSkills,
+    importedObjectives,
+    setImportedSkills,
+    setImportedObjectives,
     handleUpdateStep,
     handleRetour,
   } = useParcoursEdit();
@@ -50,7 +52,11 @@ const EditParcours = () => {
             onResetList={handleResetImportedObjectives}
             children={[
               <ObjectivesList />,
-              <ImportObjectives onCloseDrawer={() => {}} />,
+              <ImportObjectives
+                importedObjectives={importedObjectives}
+                onImport={setImportedObjectives}
+                onCloseDrawer={() => {}}
+              />,
             ]}
           />
         );
@@ -62,7 +68,11 @@ const EditParcours = () => {
             onResetList={handleResetImportedSkills}
             children={[
               <SkillsList />,
-              <ImportSkills onCloseDrawer={() => {}} />,
+              <ImportSkills
+                importedSkills={importedSkills}
+                onImport={setImportedSkills}
+                onCloseDrawer={() => {}}
+              />,
             ]}
           />
         );
@@ -88,7 +98,7 @@ const EditParcours = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
-            {infos.title && formation ? (
+            {infos?.title && formation ? (
               <ImageHeaderMutable
                 defaultImage="/images/parcours-default.webp"
                 image={image}
@@ -103,42 +113,32 @@ const EditParcours = () => {
             <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
               <Stepper
                 actualStep={actualStep}
-                finalStep={finalStep}
                 stepsList={stepsList}
                 updateStep={updateStep}
               />
             </div>
           </div>
           <div className="w-full mt-16">{renderActualStep()}</div>
-          <div className="w-full mt-8 flex justify-between">
-            {actualStep.id !== stepsList.length ? (
-              <>
-                {actualStep.id === 1 ? (
-                  <Link
-                    className="btn btn-primary btn-outline"
-                    to="/admin/parcours"
-                  >
-                    Retour
-                  </Link>
-                ) : (
-                  <button
-                    className="btn btn-primary btn-outline"
-                    onClick={handleRetour}
-                  >
-                    Retour
-                  </button>
-                )}
-                {actualStep.id !== stepsList.length ? (
-                  <button
-                    className="btn btn-primary z-1"
-                    onClick={() => handleUpdateStep(actualStep.id)}
-                  >
-                    Etape suivante
-                  </button>
-                ) : null}
-              </>
-            ) : null}
-          </div>
+          {actualStep.id !== stepsList.length ? (
+            <FloatingBottomNavigation
+              startActions={
+                <button
+                  className="btn btn-ghost hover:underline"
+                  onClick={handleRetour}
+                >
+                  Retour
+                </button>
+              }
+              endActions={
+                <button
+                  className="btn btn-primary px-6"
+                  onClick={() => handleUpdateStep(actualStep.id)}
+                >
+                  Étape suivante
+                </button>
+              }
+            />
+          ) : null}
         </FadeWrapper>
       ) : (
         <Error404 />

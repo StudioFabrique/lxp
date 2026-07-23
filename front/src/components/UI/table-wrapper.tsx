@@ -4,9 +4,11 @@ type Props = {
 
 function TableWrapper({ children }: Props) {
   return (
-    <table className="min-w-full text-xs xl:text-sm table border-separate border-spacing-y-2">
-      {children}
-    </table>
+    <div className="w-full overflow-x-auto">
+      <table className="min-w-full text-xs xl:text-sm table border-separate border-spacing-y-5">
+        {children}
+      </table>
+    </div>
   );
 }
 

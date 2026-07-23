@@ -1,6 +1,6 @@
 import { MoveUpRight } from "lucide-react";
 import { useNavigate } from "react-router";
-import ParcoursSummary from "../../../utils/interfaces/parcours-summary";
+import ParcoursSummary from "../interfaces/parcours-summary";
 import useEagerLoadingList from "../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
 import PermissionGuard from "../../../components/guards/PermissionGuard";

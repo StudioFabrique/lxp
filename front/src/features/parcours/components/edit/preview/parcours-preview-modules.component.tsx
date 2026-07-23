@@ -1,18 +1,16 @@
-import { useParcoursSelector } from "../../../store/ParcoursContext";
-
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
-import Module from "../../../../../../src/utils/interfaces/module";
 import PreviewModuleItem from "./preview-module-item";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
+import { useParams } from "react-router";
+import { useParcoursModules } from "../../../hooks/useParcoursModules";
 
 interface ParcoursPreviewModulesProps {
   onEdit: (id: number) => void;
 }
 
 const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
-  const modules = useParcoursSelector(
-    (state) => state.parcoursModules.modules,
-  ) as Module[];
+  const { id } = useParams();
+  const { modules } = useParcoursModules(Number(id));
 
   return (
     <Wrapper>

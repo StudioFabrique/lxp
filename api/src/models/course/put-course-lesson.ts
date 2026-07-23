@@ -67,6 +67,7 @@ async function putCourseLesson(
         modalite: true,
         createdAt: true,
         updatedAt: true,
+        duplicationIndex: true,
         tag: true,
         tagId: true,
         author: true,

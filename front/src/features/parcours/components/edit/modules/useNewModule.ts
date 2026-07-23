@@ -11,16 +11,17 @@ import type {
   MetadataList,
   Metadatas,
   ModuleData,
-} from "../../../../../../src/utils/interfaces/new-module";
+} from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
-import { useParcoursDispatch } from "../../../store/ParcoursContext";
 import { parcoursApi } from "../../../api/parcours.api";
+import { useQueryClient } from "@tanstack/react-query";
+import { parcoursKeys } from "../../../api/parcours.keys";
 
 const useNewModule = () => {
   const { id } = useParams();
   const refForm = useRef<HTMLFormElement | null>(null);
-  const reduxDispatch = useParcoursDispatch();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -45,8 +46,8 @@ const useNewModule = () => {
       dispatch({ type: "SET_PARCOURS", payload: data.parcoursData });
     } catch (err: unknown) {
       const message =
-        (err as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message ?? "Erreur inconnue";
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Erreur inconnue";
       setError(message);
     } finally {
       setIsLoading(false);
@@ -78,7 +79,9 @@ const useNewModule = () => {
       const data = await parcoursApi.mutations.createModule(formData);
       reset();
       dispatch({ type: "MODULE_CREATED", payload: data.data });
-      reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.data });
+      await queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(+id!),
+      });
       scrollToTop();
     } catch {
       toast.error("Erreur lors de la création du module");
@@ -99,11 +102,13 @@ const useNewModule = () => {
   const handleDeleteModule = async () => {
     try {
       const data: SuccessWithMessage = await parcoursApi.mutations.deleteModule(
-        state.moduleToDelete!.id
+        state.moduleToDelete!.id,
       );
       dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
       dispatch({ type: "CLOSE_DELETE_MODAL" });
-      reduxDispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
+      await queryClient.invalidateQueries({
+        queryKey: parcoursKeys.detail(+id!),
+      });
       toast.success(data.message);
     } catch {
       toast.error("Erreur lors de la suppression du module");
@@ -128,7 +133,7 @@ const useNewModule = () => {
     try {
       const data: MetadataList[] =
         await parcoursApi.queries.getModulesByFormation(
-          state.parcours!.formationId
+          state.parcours!.formationId,
         );
       dispatch({ type: "SET_METADATA_LIST", payload: data });
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
@@ -201,7 +206,9 @@ const useNewModule = () => {
         reset();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
         toast.success(data.message);
-        reduxDispatch({ type: "ADD_NEW_MODULE", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         scrollToTop();
       } else {
         const data = await parcoursApi.mutations.duplicateModule(
@@ -215,6 +222,9 @@ const useNewModule = () => {
         );
         reset();
         dispatch({ type: "MODULE_CREATED", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         toast.success(data.message);
         scrollToTop();
       }
@@ -230,8 +240,7 @@ const useNewModule = () => {
     if (!isValid) return;
 
     try {
-      const data = await parcoursApi.mutations.updateModule({
-        module: {
+      const updatedModule = {
           id: state.moduleToUpdate,
           ...getValues(),
           contactsIds: state.currentContacts
@@ -240,8 +249,11 @@ const useNewModule = () => {
           bonusSkillsIds: state.currentSkills
             ? state.currentSkills.map((item) => item.id)
             : [],
-        },
-      });
+      };
+      const formData = new FormData();
+      formData.append("module", JSON.stringify(updatedModule));
+      if (state.file) formData.append("image", state.file);
+      const data = await parcoursApi.mutations.updateModule(formData);
       if (data.success) {
         dispatch({
           type: "SUCCESSFUL_MODULE_UPDATE",
@@ -250,10 +262,15 @@ const useNewModule = () => {
             contacts: data.response.contacts,
             skills: data.response.skills,
             duration: data.response.duration ? +data.response.duration : 0,
+            title: data.response.title,
+            description: data.response.description,
+            quizInstructions: data.response.quizInstructions,
           },
         });
         toast.success(data.message);
-        reduxDispatch({ type: "REPLACE_MODULE", payload: data.response });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
         reset();
         scrollToTop();
       }
@@ -265,15 +282,6 @@ const useNewModule = () => {
   useEffect(() => {
     getParcoursModules();
   }, [getParcoursModules]);
-
-  useEffect(() => {
-    const modal = document.getElementById("delete_module_modal");
-    if (state.moduleToDelete) {
-      (modal as HTMLDialogElement).showModal();
-    } else {
-      (modal as HTMLDialogElement).close();
-    }
-  }, [state.moduleToDelete]);
 
   useEffect(() => {
     if (state.showForm && refForm.current) {
@@ -319,6 +327,7 @@ const useNewModule = () => {
     setShowForm: (show: boolean) =>
       dispatch({ type: "SET_SHOW_FORM", payload: show }),
     showDeleteModal,
+    moduleToDelete: state.moduleToDelete,
     handleDeleteModule,
     handleCancelDeletion,
     handleDuplicateModule,

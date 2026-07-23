@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
@@ -9,13 +6,15 @@ import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import GroupsList from "./groups-list.component";
 import Group from "../../../../../../src/utils/interfaces/group";
 import StudentsList from "./students-list";
-import User from "../../../../../../src/utils/interfaces/user";
 
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import toast from "react-hot-toast";
-import { parcoursApi } from "../../../api/parcours.api";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
+import { useStudentGroupsQuery } from "../../../hooks/useStudentGroupsQuery";
+import { useUpdateParcoursGroups } from "../../../hooks/useUpdateParcoursGroups";
+import { useParcoursStudentsQuery } from "../../../hooks/useParcoursStudentsQuery";
 
 export type GroupList = {
   _id: string;
@@ -29,94 +28,35 @@ export type GroupList = {
 };
 
 const ParcoursStudents = () => {
-  const [fetchedGroups, setFetchedGroups] = useState<GroupList[]>([]);
-  const dispatch = useParcoursDispatch();
-  const groups = useParcoursSelector(
-    (state) => state.parcoursGroups.groups
-  ) as Group[];
-  const [students, setStudents] = useState<User[] | null>(null);
   const { id } = useParams();
-  const groupsIds = useParcoursSelector(
-    (state) => state.parcoursGroups.groupsIds
-  ) as { idMdb: string }[];
-  const isInitialRender = useRef(true);
+  const parcoursId = Number(id);
+  const { data: persistedGroups = [] } = useParcoursGroupsQuery(parcoursId);
+  const { data: fetchedGroups = [], refetch: fetchGroups } =
+    useStudentGroupsQuery();
+  const [draftGroups, setDraftGroups] = useState<Group[] | null>(null);
+  const groups = draftGroups ?? persistedGroups;
+  const groupIds = useMemo(
+    () => groups.map((group) => group._id).filter(Boolean) as string[],
+    [groups],
+  );
+  const { data: students = [] } = useParcoursStudentsQuery(groupIds);
+  const updateGroups = useUpdateParcoursGroups(parcoursId);
 
   const handleDrawer = (id: string) => {
-    if (fetchedGroups.length === 0) fetchGroups();
+    if (fetchedGroups.length === 0) void fetchGroups();
     document.getElementById(id)?.click();
   };
 
-  const fetchGroups = useCallback(async () => {
-    try {
-      const res = await parcoursApi.queries.getStudentGroups();
-      if (res.success) {
-        setFetchedGroups(
-          res.data.map((item: GroupList) => ({ ...item, isSelected: false }))
-        );
-      }
-    } catch {
-      toast.error("Erreur lors du chargement des groupes");
-    }
-  }, []);
-
   useEffect(() => {
-    let timer: any;
-    if (groups) {
-      const fetchStudents = async () => {
-        try {
-          const data = await parcoursApi.queries.getStudentsByGroupIds(
-            groups.map((item) => item._id).filter(Boolean) as string[]
-          );
-          let updatedStudents = Array<User>();
-          (data as any[]).forEach((item: any) => {
-            const updatedItem = item.users.map((user: any) => ({
-              ...user,
-              group: { _id: item._id, name: item.name },
-            }));
-            updatedStudents = [...updatedStudents, ...updatedItem];
-          });
-          setStudents(updatedStudents);
-        } catch {
-          toast.error("Erreur lors du chargement des étudiants");
-        }
-      };
-      fetchStudents();
-
-      timer = setTimeout(() => {
-        if (!isInitialRender.current) {
-          parcoursApi.mutations
-            .updateParcoursGroups({
-              parcoursId: id!,
-              groupsIds: groups.map((item) => item._id).filter(Boolean) as string[],
-            })
-            .then(() => toast.success("Le parcours a été mis à jour"))
-            .catch(() => toast.error("Erreur lors de la mise à jour"));
-        } else {
-          isInitialRender.current = false;
-        }
-      }, autoSubmitTimer);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [groups, id]);
-
-  useEffect(() => {
-    const fetchGroupsByIds = async () => {
-      try {
-        const data = await parcoursApi.queries.getStudentsByGroupIds(
-          groupsIds.map((item: any) => item.idMdb)
-        );
-        dispatch({ type: "SET_GROUPS", payload: data });
-        dispatch({ type: "RESET_GROUPS_IDS" });
-      } catch {
-        toast.error("Erreur lors du chargement des groupes");
-      }
-    };
-    if (groupsIds) {
-      fetchGroupsByIds();
-    }
-  }, [groupsIds, dispatch]);
+    if (!draftGroups) return;
+    const timer = setTimeout(() => {
+      updateGroups.mutate(groupIds, {
+        onSuccess: () => toast.success("Le parcours a été mis à jour"),
+        onError: () => toast.error("Erreur lors de la mise à jour"),
+      });
+    }, autoSubmitTimer);
+    return () => clearTimeout(timer);
+  }, [draftGroups, groupIds, updateGroups]);
 
   /**
    * Gère l'ouverture du drawer pour ajouter des groupes au parcours
@@ -136,7 +76,19 @@ const ParcoursStudents = () => {
           onCloseDrawer={handleDrawer}
         >
           <div className="flex flex-col gap-y-12">
-            <GroupsList onCancel={handleDrawer} groups={fetchedGroups} />
+            <GroupsList
+              onCancel={handleDrawer}
+              groups={fetchedGroups}
+              onAdd={(selectedGroups) =>
+                setDraftGroups([
+                  ...groups,
+                  ...selectedGroups.filter(
+                    (group) =>
+                      !groups.some((current) => current._id === group._id),
+                  ),
+                ])
+              }
+            />
             <span className="flex items-center gap-x-2 text-xs">
               <p className="text-info">
                 Votre groupe ne se trouve pas dans la liste ?
@@ -181,7 +133,13 @@ const ParcoursStudents = () => {
         <>
           <section>
             <Wrapper>
-              <StudentsList initalList={students ?? []} />
+              <StudentsList
+                initalList={students}
+                groups={groups}
+                onRemoveGroup={(groupId) =>
+                  setDraftGroups(groups.filter((group) => group._id !== groupId))
+                }
+              />
               <div className="mt-2">
                 <ButtonAdd
                   label="Ajouter un groupe d'apprenants"

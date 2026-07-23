@@ -1,5 +1,5 @@
 import apiClient from "../../../lib/axios";
-import type FormationItem from "../../../utils/interfaces/formation-item";
+import type FormationItem from "../interfaces/formation-item";
 import type Tag from "../../../utils/interfaces/tag";
 
 const queries = {
@@ -42,6 +42,9 @@ const mutations = {
   ): Promise<FormationItem> => {
     const res = await apiClient.put(`/formation/${id}`, { formation: body });
     return res.data.response;
+  },
+  deleteFormation: async (id: number): Promise<void> => {
+    await apiClient.delete(`/formation/${id}`);
   },
 };
 

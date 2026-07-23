@@ -1,7 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import Graduation from "../../../../utils/interfaces/graduation";
+import Graduation from "../../interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
+import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 
 type EditState = {
   isActive: boolean;
@@ -115,7 +116,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
                 name="date"
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="date"
-                value={new Date(current.date).toISOString().split("T")[0]}
+                value={formatDateToYYYYMMDD(new Date(current.date))}
                 onChange={handleChange}
                 autoComplete="off"
                 disabled={disabled}

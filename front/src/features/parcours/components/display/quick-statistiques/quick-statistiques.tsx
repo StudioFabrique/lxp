@@ -1,22 +1,18 @@
-import { useParcoursSelector } from "../../../store/ParcoursContext";
-import Module from "../../../../../../src/utils/interfaces/module";
-import { convertMilisToWeeks } from "../../../../../utils/helpers/date-helpers";
+import { convertMilisToWeeks } from "../../../helpers/date-helpers";
 import QuickStatItem from "./quick-stat-item";
+import { useParams } from "react-router";
+import { useParcoursModules } from "../../../hooks/useParcoursModules";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 type QuickStatistiquesProps = {
   studentCount?: number;
 };
 
 const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
-  const parcoursInfos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos,
-  );
-
-  const formation = useParcoursSelector((state) => state.parcours.formation);
-
-  const modules = useParcoursSelector(
-    (state) => state.parcoursModules.modules,
-  ) as Module[];
+  const { id } = useParams();
+  const parcoursId = Number(id);
+  const { modules } = useParcoursModules(parcoursId);
+  const { data: parcours } = useParcoursQuery(parcoursId);
 
   const modulesHourSum = () => {
     let hours: number = 0;
@@ -27,14 +23,14 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
   };
 
   const parcoursWeeks = () => {
-    if (!parcoursInfos?.endDate || !parcoursInfos?.startDate) {
+    if (!parcours?.endDate || !parcours?.startDate) {
       return 0;
     }
 
     const weeks = Math.floor(
       convertMilisToWeeks(
-        new Date(parcoursInfos.endDate).getTime() -
-          new Date(parcoursInfos.startDate).getTime(),
+        new Date(parcours.endDate).getTime() -
+          new Date(parcours.startDate).getTime(),
       ),
     );
 
@@ -43,7 +39,10 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
 
   return (
     <div className="grid grid-cols-2 lg:flex justify-between gap-5">
-      <QuickStatItem title="Diplôme" item={`Niveau ${formation?.level}`} />
+      <QuickStatItem
+        title="Diplôme"
+        item={`Niveau ${parcours?.formation.level}`}
+      />
       <QuickStatItem title="Étudiants" item={studentCount || "-"} />
       <QuickStatItem title="Modules" item={modules?.length || 0} />
       <QuickStatItem title="Semaines" item={parcoursWeeks()} />

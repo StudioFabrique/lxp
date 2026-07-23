@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getPagination } from "../utils/helpers/get-pagination";
+import { getPagination } from "./get-pagination";
 import { sortArray } from "../utils/helpers/sort-array";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,6 +1,11 @@
 // Import des types et composants nécessaires
-import { ReactNode } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { ReactNode, useEffect, useId, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { DndHandlers } from "../../utils/interfaces/dnd";
 
 /**
@@ -12,6 +17,58 @@ interface DndWrapperProps<T> extends DndHandlers {
   items: T[]; // Liste des éléments à rendre draggable
   isLoading: boolean;
   renderItem: (item: T, index: number) => ReactNode; // Fonction de rendu pour chaque élément
+  getItemId?: (item: T, index: number) => string | number;
+}
+
+interface SortableItemProps {
+  contextId: string;
+  index: number;
+  disabled: boolean;
+  children: ReactNode;
+}
+
+function SortableItem({
+  contextId,
+  index,
+  disabled,
+  children,
+}: SortableItemProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggedOver, setIsDraggedOver] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || disabled) return;
+
+    return combine(
+      draggable({
+        element,
+        getInitialData: () => ({ contextId, index }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element,
+        getData: () => ({ contextId, index }),
+        canDrop: ({ source }) => source.data.contextId === contextId,
+        onDragEnter: () => setIsDraggedOver(true),
+        onDragLeave: () => setIsDraggedOver(false),
+        onDrop: () => setIsDraggedOver(false),
+      }),
+    );
+  }, [contextId, disabled, index]);
+
+  return (
+    <div
+      ref={ref}
+      className={`${isDragging ? "opacity-30" : "opacity-100"} ${
+        isDraggedOver ? "border-t-2 border-primary" : "border-t-2 border-transparent"
+      }`}
+    >
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -25,42 +82,42 @@ export function DndWrapper<T>({
   onDragEnd,
   renderItem,
   isLoading,
+  getItemId,
 }: DndWrapperProps<T>) {
+  const generatedId = useId();
+  const contextId = `${droppableId}-${generatedId}`;
+
+  useEffect(() => {
+    return monitorForElements({
+      canMonitor: ({ source }) => source.data.contextId === contextId,
+      onDrop: ({ source, location }) => {
+        const target = location.current.dropTargets[0];
+        if (!target || target.data.contextId !== contextId) return;
+
+        const sourceIndex = source.data.index;
+        const destinationIndex = target.data.index;
+        if (
+          typeof sourceIndex !== "number" ||
+          typeof destinationIndex !== "number"
+        )
+          return;
+        if (sourceIndex !== destinationIndex) onDragEnd(sourceIndex, destinationIndex);
+      },
+    });
+  }, [contextId, onDragEnd]);
+
   return (
-    // Contexte global du drag & drop
-    <DragDropContext onDragEnd={onDragEnd}>
-      {/* Zone où les éléments peuvent être déposés */}
-      <Droppable droppableId={droppableId}>
-        {(provided) => (
-          <div
-            className="flex flex-col gap-y-2"
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {/* Mapping sur chaque élément pour le rendre draggable */}
-            {items.map((item, index) => (
-              <Draggable
-                isDragDisabled={isLoading}
-                key={index}
-                draggableId={index.toString()}
-                index={index}
-              >
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef as React.Ref<HTMLDivElement>}
-                    {...(provided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
-                    {...(provided.dragHandleProps as React.HTMLAttributes<HTMLDivElement>)}
-                  >
-                    {renderItem(item, index)}
-                  </div>
-                ) as React.ReactElement}
-              </Draggable>
-            ))}
-            {/* Placeholder nécessaire pour maintenir l'espace pendant le drag */}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <div className="flex flex-col gap-y-2">
+      {items.map((item, index) => (
+        <SortableItem
+          contextId={contextId}
+          disabled={isLoading}
+          index={index}
+          key={getItemId?.(item, index) ?? index}
+        >
+          {renderItem(item, index)}
+        </SortableItem>
+      ))}
+    </div>
   );
 }

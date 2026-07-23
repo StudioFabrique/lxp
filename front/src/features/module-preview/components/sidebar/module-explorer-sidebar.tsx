@@ -25,7 +25,6 @@ const ModuleExplorerSidebar = ({
   return (
     <SidebarCoursesList
       courses={module.courses}
-      parcoursId={module.parcoursId}
       moduleId={module.id}
       selectedLesson={selectedLesson}
       onSelectLesson={(lesson: Lesson) => {
@@ -35,12 +34,14 @@ const ModuleExplorerSidebar = ({
       onEnableCourse={courseActions.enableCourse}
       onPublishCourse={courseActions.publishCourse}
       onDeleteLesson={lessonActions.deleteLesson}
+      onCreateLesson={lessonActions.createLesson}
     >
       {canEditModule && (
         <PermissionGuard action="write" object="course">
           <CreateCourseItem
             parcoursId={module.parcoursId}
             moduleId={module.id || 0}
+            onCreate={courseActions.createCourse}
           />
         </PermissionGuard>
       )}

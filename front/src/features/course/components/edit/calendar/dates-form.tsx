@@ -1,5 +1,5 @@
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
-import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
+import CourseDates from "../../../interfaces/course-dates";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
 import toast from "react-hot-toast";

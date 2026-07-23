@@ -3,33 +3,33 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 
-import { useParcoursSelector, useParcoursDispatch } from "../../../store/ParcoursContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import { infosParCoursSchema } from "../../../parcours.schema";
 import FormInput from "../../../../../../src/components/form/FormInput";
 import FormTextarea from "../../../../../../src/components/form/FormTextarea";
 import useAutoSave from "../../../../../../src/hooks/useAutoSave";
-import { parcoursApi } from "../../../api/parcours.api";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 type Props = {
   parcoursId?: string;
 };
 
 const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
-  const formation = useParcoursSelector((state) => state.parcours.formation) as { id: number; title: string; level: string } | null;
-  const parcoursInfos = useParcoursSelector(
-    (state) => state.parcoursInformations.infos,
-  );
-  const dispatch = useParcoursDispatch();
+  const numericParcoursId = Number(parcoursId);
+  const { data: parcours } = useParcoursQuery(numericParcoursId);
+  const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
+  const formation = parcours?.formation;
+  const parcoursInfos = parcours;
 
   const isInitialRender = useRef(true);
 
   const defaultValues = useMemo(
     () => ({
-      title: parcoursInfos.title ?? "",
-      description: parcoursInfos.description ?? "",
+      title: parcoursInfos?.title ?? "",
+      description: parcoursInfos?.description ?? "",
     }),
-    [parcoursInfos.title, parcoursInfos.description],
+    [parcoursInfos?.title, parcoursInfos?.description],
   );
 
   const {
@@ -44,27 +44,17 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
 
   const saveInfos = useCallback(
     async (data: { title: string; description?: string }) => {
-      dispatch({
-        type: "UPDATE_PARCOURS_INFOS",
-        payload: {
-          title: data.title,
-          description: data.description,
-        },
-      });
-
       try {
-        const response = await parcoursApi.mutations.updateParcoursInfos({
-          parcoursId,
+        const response = await updateParcours({
           title: data.title,
-          description: data.description,
-          formation: String((formation as { id: number }).id),
+          description: data.description ?? "",
         });
         toast.success(response.message);
       } catch {
         toast.error("Erreur lors de la sauvegarde");
       }
     },
-    [dispatch, formation, parcoursId],
+    [updateParcours],
   );
 
   const onSave = useCallback(() => {
@@ -83,7 +73,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   return (
     <>
       <div>
-        {formation && parcoursInfos.title ? (
+        {formation && parcoursInfos?.title ? (
           <>
             <div className="flex flex-col gap-y-4">
               <h2 className="font-bold">Formation</h2>

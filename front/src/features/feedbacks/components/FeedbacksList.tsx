@@ -10,6 +10,7 @@ import {
 import type StudentFeedback from "../../../utils/interfaces/student-feedback";
 import FeelingLevel from "../../../components/UI/feeling-level";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
+import { localeDate, localeTime } from "../../../utils/helpers/locale-date";
 
 type Props = {
   feedbacks: StudentFeedback[];
@@ -44,8 +45,8 @@ const columns = [
   columnHelper.accessor("feedbackAt", {
     header: "Date",
     cell: (info) => {
-      const date = new Date(info.getValue());
-      return `${date.toLocaleDateString()} à ${date.toLocaleTimeString()}`;
+      const date = info.getValue();
+      return `${localeDate(date)} à ${localeTime(date)}`;
     },
   }),
   columnHelper.accessor("teacher", {
@@ -76,8 +77,8 @@ const FeedbacksList = ({ feedbacks }: Props) => {
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table w-full border-separate border-spacing-y-2">
+    <div className="w-full overflow-x-auto">
+      <table className="table w-full border-separate border-spacing-y-5">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -118,7 +119,7 @@ const FeedbacksList = ({ feedbacks }: Props) => {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+              className="text-base-content group cursor-pointer [&>td]:bg-base-100 [&>td]:px-2 [&>td]:transition-colors hover:[&>td]:bg-base-100/60 [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl"
             >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>

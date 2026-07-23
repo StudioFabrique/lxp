@@ -1,5 +1,6 @@
 // Import des dépendances React et React Router
 import { Link } from "react-router";
+import { normalizeImageSource } from "../../../../utils/images/image-source";
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import Parcours from "../../../../../src/utils/interfaces/parcours";
 import DeleteIcon from "../../../../../src/components/UI/svg/delete-icon.component";
@@ -33,7 +34,7 @@ const ParcoursCard = (props: ParcoursCardProps) => {
     if (!parcours.thumb) {
       setImage("/images/parcours-default.jpg");
     } else {
-      setImage(`data:image/jpeg;base64,${parcours.thumb}`);
+      setImage(normalizeImageSource(parcours.thumb) ?? "/images/parcours-default.jpg");
     }
   }, [parcours.thumb]);
 

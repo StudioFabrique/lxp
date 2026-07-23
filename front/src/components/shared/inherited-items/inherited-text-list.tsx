@@ -1,0 +1,37 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import SubBoxWrapper from "../../wrappers/SubBoxWrapper";
+import ItemElement from "./item-element.component";
+
+interface InheritedTextListProps {
+  list?: any[];
+  property?: string;
+  additionalProperty?: string; // propriété additionnelle facultative rajouté
+  onRemoveItem?: (item: any) => void;
+  onDelete?: (id: number) => void;
+}
+
+const InheritedTextList = (props: InheritedTextListProps) => {
+  const handleRemoveItem = (item: any) => {
+    props.onRemoveItem!(item);
+  };
+
+  return (
+    <ul className="flex flex-col gap-y-2">
+      {props.list &&
+        props.list.map((item: any) => (
+          <li key={item.id}>
+            <SubBoxWrapper>
+              <ItemElement
+                item={item}
+                onRemoveItem={() => handleRemoveItem(item)}
+                property={props.property! ?? "name"}
+                additionalProperty={props.additionalProperty}
+              />
+            </SubBoxWrapper>
+          </li>
+        ))}
+    </ul>
+  );
+};
+
+export default InheritedTextList;

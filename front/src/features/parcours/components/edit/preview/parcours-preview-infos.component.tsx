@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParcoursSelector } from "../../../store/ParcoursContext";
+import { useParams } from "react-router";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import ContactsList from "./contacts-list.component";
-import Contact from "../../../../../../src/utils/interfaces/contact";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import TagsList from "./tags-list.component";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
+import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 
 interface ParcoursPreviewInfosProps {
   onEdit: (id: number) => void;
@@ -15,12 +14,12 @@ interface ParcoursPreviewInfosProps {
 
 /* Informations générales du parcours */
 const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
-  const parcours = useParcoursSelector((state) => state.parcours.formation);
-  const infos = useParcoursSelector((state) => state.parcoursInformations.infos);
-  const contacts = useParcoursSelector(
-    (state) => state.parcoursContacts.currentContacts
-  ) as Contact[];
-  const tags = useParcoursSelector((state) => state.tags.currentTags) as Tag[];
+  const { id } = useParams();
+  const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
+  const contacts = parcours?.contacts ?? [];
+  const tags = (parcours?.tags ?? []).map((item) =>
+    "tag" in item ? (item.tag as Tag) : item,
+  );
 
   return (
     <Wrapper>
@@ -39,20 +38,20 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
           <article className="flex flex-col gap-y-4">
             <Wrapper>
               <h2 className="text-xl font-bold">Formation</h2>
-              <SubWrapper>{parcours.title}</SubWrapper>
+              <SubWrapper>{parcours?.formation.title}</SubWrapper>
               <h2 className="text-xl font-bold">Titre du parcours</h2>
-              <SubWrapper>{infos.title}</SubWrapper>
+              <SubWrapper>{parcours?.title}</SubWrapper>
               <h2 className="text-xl font-bold">Description du parcours</h2>
               <div className="text-xs max-h-[35vh] overflow-auto scrollbar scrollbar-thumb-secondary scrollbar-track-primary">
                 <SubWrapper>
-                  <div className="p-4">{infos.description}</div>
+                  <div className="p-4">{parcours?.description}</div>
                 </SubWrapper>
               </div>
               <h2 className="text-xl font-bold">Niveau du parcours</h2>
-              <SubWrapper>{parcours.level}</SubWrapper>
+              <SubWrapper>{parcours?.formation.level}</SubWrapper>
               <h2 className="text-xl font-bold">Classe virtuelle</h2>
               <SubWrapper>
-                <p>{infos.virtualClass || "Non renseigné"}</p>
+                <p>{parcours?.virtualClass || "Non renseigné"}</p>
               </SubWrapper>
             </Wrapper>
           </article>
@@ -71,13 +70,13 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
               <SubWrapper>
                 <span className="flex">
                   <p className="w-24">Début :</p>
-                  <p>{localeDate(infos.startDate)}</p>
+                  <p>{localeDate(parcours?.startDate ?? "")}</p>
                 </span>
               </SubWrapper>
               <SubWrapper>
                 <span className="flex">
                   <p className="w-24">Fin :</p>
-                  <p>{localeDate(infos.endDate)}</p>
+                  <p>{localeDate(parcours?.endDate ?? "")}</p>
                 </span>
               </SubWrapper>
             </Wrapper>

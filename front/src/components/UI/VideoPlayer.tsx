@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-import { extractYouTubeId } from "../../../src/utils/helpers/extractYoutubeId";
+import { extractYouTubeId } from "./extractYoutubeId";
 import ElementNotFound from "./element-not-found";
 
 type Props = {

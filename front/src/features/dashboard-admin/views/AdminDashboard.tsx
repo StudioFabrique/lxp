@@ -8,6 +8,7 @@ import TeacherLastParcours from "../components/teacher-last-parcours";
 import LastParcours from "../components/last-parcours";
 import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
+import LastModules from "../components/last-modules";
 
 // Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [
@@ -21,13 +22,6 @@ const links = [
     label: "Créer un parcours",
     permission: { action: "write", object: "parcours" },
   },
-  {
-    path: "/admin/module/add",
-    label: "Créer un module",
-    permission: { action: "write", object: "module" },
-  },
-  { path: "/admin/course/add", label: "Créer un cours" },
-  { path: "/admin/lesson/Add", label: "Créer une leçon" },
   { path: "/admin/user/add", label: "Créer un utilisateur" },
   { path: "/admin/feedbacks", label: "Voir les feedbacks" },
   { path: "/admin/teacher/evaluations", label: "Evaluer un apprenant" },
@@ -96,6 +90,7 @@ const AdminDashboard = () => {
               <TeacherLastParcours parcours={parcours} isLoading={isLoading} />
             ) : null}
             <LastParcours />
+            <LastModules />
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">

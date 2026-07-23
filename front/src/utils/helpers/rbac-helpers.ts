@@ -1,5 +1,3 @@
-import Role from "../interfaces/role";
-
 /**
  * Cette fonction permet de vérifier si une permission spécifique existe dans un tableau de permissions.
  * Elle combine une action et un objet pour former une chaîne de permission à vérifier.
@@ -18,9 +16,4 @@ function hasPermission(
   return permissions.includes(permissionToCheck);
 }
 
-const hasRole = (role: string, userRoles: Array<Role>) => {
-  const roleFound = userRoles.find((item) => item.role === role);
-  return !!roleFound;
-};
-
-export { hasRole, hasPermission };
+export { hasPermission };

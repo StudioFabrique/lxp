@@ -19,6 +19,7 @@ import {
 } from "./formation-validators";
 import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations";
 import httpPutFormation from "../../../controllers/formation/http-put-formation";
+import httpDeleteFormation from "../../../controllers/formation/http-delete-formation";
 
 const formationRouter = express.Router();
 
@@ -127,6 +128,13 @@ formationRouter.put(
   fomrationIdValidator,
   putFormationValidator,
   httpPutFormation
+);
+
+formationRouter.delete(
+  "/:formationId",
+  checkPermissions("formation"),
+  fomrationIdValidator,
+  httpDeleteFormation
 );
 
 export default formationRouter;

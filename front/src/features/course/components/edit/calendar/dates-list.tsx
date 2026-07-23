@@ -1,4 +1,4 @@
-import CourseDates from "../../../../../../src/utils/interfaces/course-dates";
+import CourseDates from "../../../interfaces/course-dates";
 import DatesCard from "./dates-card";
 
 interface DatesListProps {
