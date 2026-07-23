@@ -18,6 +18,7 @@ interface TagsWithDrawerProps {
 }
 
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
+  const { onSubmit } = props;
   const { data: availableTags } = useParcoursTagsQuery();
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
@@ -47,9 +48,9 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
       setDraftTags(tags);
-      props.onSubmit(tags);
+      onSubmit(tags);
     },
-    [props.onSubmit],
+    [onSubmit],
   );
 
   /**

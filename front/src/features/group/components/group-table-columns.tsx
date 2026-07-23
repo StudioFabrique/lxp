@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router";
 
@@ -64,10 +64,10 @@ export const getGroupColumns = (
         <div className="flex gap-2 justify-center">
           <Link
             to={`/admin/group/edit/${groupId}`}
-            className="btn btn-ghost btn-xs btn-square tooltip"
+            className="btn btn-ghost btn-xs btn-square text-primary tooltip"
             data-tip="Modifier"
           >
-            <Edit className="w-4 h-4" />
+            <Pencil className="w-4 h-4" />
           </Link>
 
           <button

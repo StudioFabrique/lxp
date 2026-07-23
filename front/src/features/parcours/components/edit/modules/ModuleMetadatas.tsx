@@ -1,16 +1,12 @@
 import { useEffect } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import useImageUpload from "../../../../../../src/hooks/use-image-upload";
-import defaultImage from "../../../../../../src/assets/images/module-default.jpg";
-import { bgImageGradient } from "../../../../../../src/utils/helpers/color-helpers";
 import FormInput from "../../../../../components/form/FormInput";
 import FormTextarea from "../../../../../components/form/FormTextarea";
 import FormUploadImage from "../../../../../components/UI/form-upload-image";
 
 type Props = {
   children?: React.ReactNode;
-  thumb: string | null;
   register: UseFormRegister<any>;
   errors: FieldErrors;
   onSetFile: (file: File | null) => void;
@@ -20,25 +16,11 @@ type Props = {
 function ModuleMetadatas({
   register,
   errors,
-  thumb,
   onSetFile,
   children,
   onSetImageBase64,
 }: Props) {
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
-
-  const classImage: React.CSSProperties = {
-    backgroundImage: bgImageGradient(
-      image ? image : thumb ? normalizeImageSource(thumb) : defaultImage,
-    ),
-    width: "100px",
-    height: "75px",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    borderRadius: "5px",
-    marginRight: "10px",
-  };
 
   useEffect(() => {
     if (onSetImageBase64) onSetImageBase64(image);
@@ -81,11 +63,15 @@ function ModuleMetadatas({
 
         {children ? children : null}
 
-        <div className="w-full h-full flex gap-x-4 items-center">
-          <FormUploadImage
-            onSetFile={handleFileChange}
-          />
-          <span style={classImage} />
+        <div className="w-full h-full flex flex-col gap-2">
+          <p className="text-sm font-bold">Image du module</p>
+          <FormUploadImage onSetFile={handleFileChange} />
+          {!image && (
+            <p className="text-base-content/40 text-xs">
+              Une image sera généré automatiquement à partir de la première page
+              du module.
+            </p>
+          )}
         </div>
       </article>
     </div>
