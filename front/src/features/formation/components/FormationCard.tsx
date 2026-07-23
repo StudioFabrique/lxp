@@ -1,4 +1,5 @@
 import { Edit, Plus, Trash2 } from "lucide-react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   id: number;
@@ -35,7 +36,9 @@ const FormationCard = ({
           <Edit className="w-4 h-4 " />
         </button>
         <button
-          className="btn btn-ghost btn-xs btn-error disabled:opacity-30 tooltip"
+          className={cn("btn btn-ghost btn-xs btn-error disabled:opacity-30 ", {
+            tooltip: parcours > 0,
+          })}
           aria-label={`Supprimer la formation ${title}`}
           data-tip="Suppression impossible : des parcours sont associés"
           onClick={() => (parcours > 0 ? null : onDelete(id))}

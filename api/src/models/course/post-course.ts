@@ -1,6 +1,7 @@
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
+import { slugify } from "../../helpers/slugify";
 
 async function postCourse(userId: string, course: any) {
   const existingModule = await prisma.moduleMetadata.findFirst({
@@ -52,6 +53,13 @@ async function postCourse(userId: string, course: any) {
       order: existingModule.courses.length,
     },
     select: { id: true },
+  });
+
+  // Backfill the slug (never set above, would stay NULL) so the course stays
+  // visible to ANDRIA-AI, which filters out courses with no slug.
+  await prisma.course.update({
+    where: { id: newCourse.id },
+    data: { courseSlug: `${slugify(course.title) || "cours"}-${newCourse.id}` },
   });
 
   return newCourse;

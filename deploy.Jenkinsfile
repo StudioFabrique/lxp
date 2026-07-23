@@ -45,17 +45,44 @@ pipeline {
                         echo "🔐 Connexion Docker Hub..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-                        echo "📡 Relancement des conteneurs..."
-                        docker compose down --remove-orphans || true
-                        docker compose rm -f || true
+                        echo "📥 Récupération des images..."
                         docker compose pull
-                        docker compose up -d
 
-                        echo "📌 Migrations Prisma..."
-                        docker compose exec -T -w /app/api app npx prisma migrate deploy
+                        echo "🗄️ Démarrage des bases..."
+                        docker compose up -d db-pg db-ai db-mongo
 
-                        echo "🔑 Génération de la clé d'activation du premier administrateur..."
+                        echo "⏳ Attente des bases..."
+                        until docker compose exec -T db-pg \
+                            pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+                        do
+                            sleep 2
+                        done
+
+                        until docker compose exec -T db-ai \
+                            pg_isready -U "$ANDRIA_POSTGRES_USER" -d "$ANDRIA_POSTGRES_DB"
+                        do
+                            sleep 2
+                        done
+
+                        echo "📌 Migration Prisma..."
+                        docker compose run --rm -w /app/api app npx prisma migrate deploy
+
+                        echo "🔔 Installation des triggers ANDRIA..."
+                        docker compose exec -T db-pg sh -c \
+                            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+                            < api/src/scripts/andria_notify_triggers.sql
+
+                        echo "🧠 Provisionnement de la base IA..."
+                        docker compose run --rm ai python -m app.db_provision
+
+                        echo "🚀 Démarrage des applications..."
+                        docker compose up -d app ai
+
+                        echo "🔑 Génération de la clé d’activation..."
                         docker compose exec -T app npm run generate-activation-key
+
+                        echo "📋 État des services..."
+                        docker compose ps
 
                         echo "🧹 Nettoyage..."
                         docker image prune -f

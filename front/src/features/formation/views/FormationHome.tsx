@@ -16,16 +16,20 @@ const FormationHome = () => {
   const formationId = searchParams.get("formationId");
 
   const {
-    title, setTitle,
-    description, setDescription,
-    code, setCode,
-    level, setLevel,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    code,
+    setCode,
+    level,
+    setLevel,
     currentTags,
-    tagInput, setTagInput,
+    tagInput,
+    setTagInput,
     formationsList,
-    createdFormation,
-    dismissCreatedFormation,
-    isEditing, isPending,
+    isEditing,
+    isPending,
     isDeleting,
     deleteFormation,
     selectFormation,
@@ -94,32 +98,6 @@ const FormationHome = () => {
           />
         </article>
       </section>
-
-      {createdFormation && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="text-lg font-bold">Formation créée</h3>
-            <p className="py-4">
-              Voulez-vous maintenant créer un parcours associé à la formation
-              « {createdFormation.title} » ?
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn btn-outline"
-                onClick={dismissCreatedFormation}
-              >
-                Plus tard
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => openParcoursCreation(createdFormation.id)}
-              >
-                Créer un parcours
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
 
       {formationToDelete !== null && (
         <Modal
