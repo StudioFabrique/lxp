@@ -54,6 +54,7 @@ export default function ModuleForm({
           <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
             <span className="col-span-5">
               <ModuleMetadatas
+                mode={mode}
                 register={register}
                 errors={errors}
                 onSetFile={onSetFile}

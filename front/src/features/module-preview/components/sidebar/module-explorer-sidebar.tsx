@@ -4,6 +4,7 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
+import { useSearchParams } from "react-router";
 
 type Props = {
   store: ExplorerStore;
@@ -19,13 +20,15 @@ const ModuleExplorerSidebar = ({
   const { state, dispatch, courseActions, lessonActions, activityActions } =
     store;
   const { module, selectedLesson, selectedActivity } = state;
+  const [searchParams] = useSearchParams();
+  const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
+  const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
 
   if (!module) return null;
 
   return (
     <SidebarCoursesList
       courses={module.courses}
-      moduleId={module.id}
       selectedLesson={selectedLesson}
       onSelectLesson={(lesson: Lesson) => {
         if (lesson.id) dispatch({ type: "select_lesson_by_id", id: lesson.id });
@@ -33,8 +36,12 @@ const ModuleExplorerSidebar = ({
       onDeleteCourse={courseActions.deleteCourse}
       onEnableCourse={courseActions.enableCourse}
       onPublishCourse={courseActions.publishCourse}
+      onUpdateCourse={courseActions.updateCourse}
+      editCourseId={editCourseId}
+      editLessonId={editLessonId}
       onDeleteLesson={lessonActions.deleteLesson}
       onCreateLesson={lessonActions.createLesson}
+      onUpdateLesson={lessonActions.updateLesson}
     >
       {canEditModule && (
         <PermissionGuard action="write" object="course">

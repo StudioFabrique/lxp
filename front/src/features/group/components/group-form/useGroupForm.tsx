@@ -45,6 +45,10 @@ function useGroupForm({
 
   const handleFormSubmit = useCallback(
     (data: GroupFormData) => {
+      if (!parcoursId) {
+        toast.error("Veuillez sélectionner le parcours associé au groupe");
+        return;
+      }
       if (isFileNotRequired || file) {
         onSubmitForm(
           {

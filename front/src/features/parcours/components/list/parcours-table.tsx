@@ -76,56 +76,56 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent rounded-r-lg text-center align-middle">
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-6 h-6">
-                  <PermissionGuard action="update" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Modifier le parcours"
-                    >
-                      <Link
-                        className="btn btn-ghost btn-xs btn-square"
-                        to={`edit/${item.id}`}
-                        aria-label="modifier le parcours"
+                    <PermissionGuard action="update" object="parcours">
+                      <div
+                        className="tooltip tooltip-bottom"
+                        data-tip="Modifier le parcours"
                       >
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                    </div>
-                  </PermissionGuard>
+                        <Link
+                          className="btn btn-ghost btn-xs btn-square"
+                          to={`edit/${item.id}`}
+                          aria-label="modifier le parcours"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                      </div>
+                    </PermissionGuard>
                   </div>
                   <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression du parcours"
                   >
-                  <PermissionGuard action="delete" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le parcours"
-                    >
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-xs btn-square text-error"
-                        onClick={() => handleDeleteParcours(item)}
-                        aria-label="Supprimer le parcours"
+                    <PermissionGuard action="delete" object="parcours">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Supprimer le parcours"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </PermissionGuard>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs btn-square text-error"
+                          onClick={() => handleDeleteParcours(item)}
+                          aria-label="Supprimer le parcours"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </PermissionGuard>
                   </div>
                   <div className="w-6 h-6">
-                  <PermissionGuard action="read" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Aperçu du parcours"
-                    >
-                      <Link
-                        className="btn btn-ghost btn-xs btn-square text-primary"
-                        to={`view/${item.id}`}
-                        aria-label="Aperçu du parcours"
+                    <PermissionGuard action="read" object="parcours">
+                      <div
+                        className="tooltip tooltip-left"
+                        data-tip="Aperçu du parcours"
                       >
-                        <ExternalLink className="h-4 w-4" />
-                      </Link>
-                    </div>
-                  </PermissionGuard>
+                        <Link
+                          className="btn btn-ghost btn-xs btn-square text-primary"
+                          to={`view/${item.id}`}
+                          aria-label="Aperçu du parcours"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Link>
+                      </div>
+                    </PermissionGuard>
                   </div>
                 </div>
               </td>

@@ -26,15 +26,23 @@ import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helper
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
 import { cn } from "../../../../utils/cn";
 import CreateLessonModal from "./create-lesson-modal";
+import type { UpdateCourseFormValues } from "./course-form.types";
+import EditCourseModal from "./edit-course-modal";
+import type { LessonFormValues } from "./lesson-form.types";
 
 type CourseItemProps = {
   course: Course;
-  moduleId?: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onPublishCourse: (courseId: number) => Promise<void>;
+  onUpdateCourse: (
+    courseId: number,
+    values: UpdateCourseFormValues,
+  ) => Promise<boolean>;
+  openEditOnMount?: boolean;
+  editLessonId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
@@ -44,6 +52,10 @@ type CourseItemProps = {
       modalite: string;
       tagId: number;
     },
+  ) => Promise<boolean>;
+  onUpdateLesson: (
+    lessonId: number,
+    values: LessonFormValues,
   ) => Promise<boolean>;
 };
 
@@ -55,21 +67,27 @@ export type ModalCourseType =
 
 const CourseItem = ({
   course,
-  moduleId,
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   onPublishCourse,
+  onUpdateCourse,
+  openEditOnMount = false,
+  editLessonId,
   onDeleteLesson,
   onCreateLesson,
+  onUpdateLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
 
   const canEditCourse = userBelongsToContacts(user, course.contacts);
 
-  const [isCourseOpen, setCourseOpen] = useState(false);
+  const hasTargetLesson = course.lessons.some(
+    (lesson) => lesson.id === editLessonId,
+  );
+  const [isCourseOpen, setCourseOpen] = useState(hasTargetLesson);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalCourseType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -79,6 +97,8 @@ const CourseItem = ({
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
   const [isCreatingLesson, setIsCreatingLesson] = useState(false);
   const [isSavingLesson, setIsSavingLesson] = useState(false);
+  const [isEditingCourse, setIsEditingCourse] = useState(openEditOnMount);
+  const [isSavingCourse, setIsSavingCourse] = useState(false);
 
   const handleCreateLesson = async (data: {
     title: string;
@@ -93,6 +113,13 @@ const CourseItem = ({
       setIsCreatingLesson(false);
       setCourseOpen(true);
     }
+  };
+
+  const handleUpdateCourse = async (values: UpdateCourseFormValues) => {
+    setIsSavingCourse(true);
+    const updated = await onUpdateCourse(course.id, values);
+    setIsSavingCourse(false);
+    return updated;
   };
 
   // State for the expander button visibility
@@ -166,6 +193,8 @@ const CourseItem = ({
   };
 
   useEffect(() => {
+    if (hasTargetLesson) return;
+
     if (
       selectedLesson &&
       course.lessons.some((lesson) => lesson.id === selectedLesson.id)
@@ -176,7 +205,7 @@ const CourseItem = ({
     } else {
       setCourseOpen(false);
     }
-  }, [course.lessons, selectedLesson]);
+  }, [course.lessons, hasTargetLesson, selectedLesson]);
 
   useEffect(() => {
     const element = descriptionRef.current;
@@ -208,6 +237,14 @@ const CourseItem = ({
         onClose={() => setIsCreatingLesson(false)}
         onSubmit={handleCreateLesson}
       />
+      {isEditingCourse && (
+        <EditCourseModal
+          course={course}
+          isSubmitting={isSavingCourse}
+          onClose={() => setIsEditingCourse(false)}
+          onSubmit={handleUpdateCourse}
+        />
+      )}
       <CourseActionsModal
         modalType={modalType}
         showModal={showModal}
@@ -283,6 +320,10 @@ const CourseItem = ({
                     <CourseActions
                       course={course}
                       onOpenModal={handleOpenModal}
+                      onEdit={(event) => {
+                        event.stopPropagation();
+                        setIsEditingCourse(true);
+                      }}
                       onClickMenu={handleClickMenu}
                     />
                   </PermissionGuard>
@@ -365,11 +406,12 @@ const CourseItem = ({
                     <div className={`w-full`} key={lesson.id}>
                       <LessonItem
                         lesson={lesson}
-                        moduleId={moduleId}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
+                        openEditOnMount={lesson.id === editLessonId}
                         onSelectLesson={onSelectLesson}
                         onOpenModal={handleOpenLessonDeletionModal}
+                        onUpdateLesson={onUpdateLesson}
                       >
                         {children}
                       </LessonItem>

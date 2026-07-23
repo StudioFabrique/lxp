@@ -29,6 +29,7 @@ export default function ModuleComponent() {
     errors,
     handleCancelDeletion,
     handleCancelForm,
+    handleCreateNewModule,
     handleCloseDuplicateModal,
     handleCopyModule,
     handleDeleteModule,
@@ -38,7 +39,6 @@ export default function ModuleComponent() {
     handleSubmitUpdateModule,
     handleUpdateModule,
     id,
-    image,
     isLoading,
     metadataList,
     mode,
@@ -50,7 +50,6 @@ export default function ModuleComponent() {
     setCurrentContacts,
     setCurrentSkills,
     setFile,
-    setShowForm,
     showDeleteModal,
     showForm,
   } = useNewModule();
@@ -78,7 +77,7 @@ export default function ModuleComponent() {
         <ModuleHeader
           showForm={showForm}
           parcoursId={parcours?.id}
-          onCreateNew={() => setShowForm(true)}
+          onCreateNew={handleCreateNewModule}
           onAddExisting={handleDuplicateModule}
         />
 

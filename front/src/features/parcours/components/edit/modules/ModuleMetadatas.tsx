@@ -7,6 +7,7 @@ import FormUploadImage from "../../../../../components/UI/form-upload-image";
 
 type Props = {
   children?: React.ReactNode;
+  mode?: "edit" | "create";
   register: UseFormRegister<any>;
   errors: FieldErrors;
   onSetFile: (file: File | null) => void;
@@ -19,6 +20,7 @@ function ModuleMetadatas({
   onSetFile,
   children,
   onSetImageBase64,
+  mode = "edit",
 }: Props) {
   const { image, handleSelectedFile } = useImageUpload(5000000, onSetFile);
 
@@ -64,9 +66,11 @@ function ModuleMetadatas({
         {children ? children : null}
 
         <div className="w-full h-full flex flex-col gap-2">
-          <p className="text-sm font-bold">Image du module</p>
+          <p className="text-sm font-bold">
+            {mode === "edit" ? "Modifier l'image du module" : "Image du module"}
+          </p>
           <FormUploadImage onSetFile={handleSelectedFile} />
-          {!image && (
+          {!image && mode === "create" && (
             <p className="text-base-content/40 text-xs">
               Une image sera générée automatiquement si aucune n'est importée.
             </p>
