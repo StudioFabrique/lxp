@@ -8,10 +8,11 @@
 
 import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 
-import ImageFileUpload from "./image-file-upload";
 import { bgImageGradient } from "../../utils/helpers/color-helpers";
 import { compressImage } from "../../utils/helpers/compress-image";
 import { headerImageMaxSize } from "../../config/images-sizes";
+import FileUpload from "../UI/file-upload/FileUpload";
+import { ImageUp } from "lucide-react";
 
 type Props = {
   image?: string;
@@ -96,12 +97,15 @@ const ImageHeaderMutable: FC<Props> = ({
                   <h3 className="capitalise text-white">{title}</h3>
                 </div>
               </span>
-              <span className="flex justify-end items-end text-white">
-                <ImageFileUpload
-                  onSetFile={setNewFile}
-                  maxSize={headerImageMaxSize}
-                />
-              </span>
+              <FileUpload
+                ghost
+                compact
+                fileType="image"
+                maxSize={headerImageMaxSize}
+                buttonLabel="Changer l'image"
+                icon={<ImageUp className="h-5 w-5" />}
+                onFileSelect={setNewFile}
+              />
             </div>
           </div>
         </div>

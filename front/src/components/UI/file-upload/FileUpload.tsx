@@ -2,6 +2,7 @@ import { FileCheck2, Loader2, Pencil, Upload } from "lucide-react";
 import { ReactNode, useId, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { maxSizeError } from "../../../utils/helpers/max-size-error";
+import { cn } from "../../../utils/cn";
 
 export type UploadFileType =
   | "image"
@@ -60,6 +61,7 @@ type Props = {
   disabled?: boolean;
   isLoading?: boolean;
   compact?: boolean;
+  ghost?: boolean;
   icon?: ReactNode;
   error?: string | null;
   className?: string;
@@ -75,6 +77,7 @@ export default function FileUpload({
   disabled = false,
   isLoading = false,
   compact = false,
+  ghost = false,
   icon,
   error,
   className = "",
@@ -118,9 +121,14 @@ export default function FileUpload({
             if (inputRef.current) inputRef.current.value = "";
             inputRef.current?.click();
           }}
-          className={`btn btn-sm btn-secondary gap-2 px-5 ${
-            compact ? "" : "shrink-0 rounded-r-none"
-          } ${error ? "btn-error" : ""}`}
+          className={cn(
+            "btn btn-sm btn-secondary gap-2 px-5",
+            compact ? "" : "shrink-0 rounded-r-none",
+            ghost
+              ? "btn-ghost text-white hover:underline hover:bg-transparent hover:border-transparent"
+              : "",
+            error ? "btn-error" : "",
+          )}
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -131,7 +139,7 @@ export default function FileUpload({
               <FileCheck2 className="h-4 w-4" />
             )
           ) : (
-            icon ?? <Upload className="h-4 w-4" />
+            (icon ?? <Upload className="h-4 w-4" />)
           )}
           <span className="max-w-64 truncate">
             {compact && fileName ? fileName : buttonLabel}
