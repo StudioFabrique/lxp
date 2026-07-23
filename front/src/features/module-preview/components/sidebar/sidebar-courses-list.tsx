@@ -12,6 +12,7 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import type { UpdateCourseFormValues } from "./course-form.types";
 import type { LessonFormValues } from "./lesson-form.types";
+import { cn } from "../../../../utils/cn";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -162,11 +163,15 @@ const SidebarCoursesList = ({
         )}
       </div>
       <div
-        className={`sticky bottom-1 z-30 mt-5 w-full rounded-xl transition-all duration-300 ${
-          isAtNaturalPosition
-            ? "bg-transparent shadow-none"
-            : "border border-base-300 px-2 py-2 backdrop-blur"
-        }`}
+        className={cn(
+          "sticky bottom-1 z-30 w-full rounded-xl transition-all duration-300",
+          {
+            "bg-transparent shadow-none": isAtNaturalPosition,
+            "border border-base-300 px-2 py-2 backdrop-blur":
+              !isAtNaturalPosition,
+            "mt-5": courses.length > 0,
+          },
+        )}
       >
         {children[0]}
       </div>

@@ -9,7 +9,6 @@
     "docker:down": "cd tests && docker compose down && cd ..",
     "test:setup": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- npx ts-node src/fixtures.ts && dotenv -e .env.test -- npx ts-node src/fixtures-prisma-test",
     "test:run": "echo '🚀 Starting Jest...' && dotenv -e .env.test -- jest --clearCache && dotenv -e .env.test -- jest",
-    "test:migration": "bash tests/module-migration.integration.sh",
     "test:cleanup": "npm run docker:down",
     "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
     "build": "prisma generate && tsc --project ./",
@@ -19,9 +18,7 @@
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
     "test:list": "jest --listTests",
     "generate-activation-key": "npx ts-node src/scripts/generate-activation-key.ts",
-    "notify-triggers": "docker compose exec -T db-pg sh -c 'psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"' < src/scripts/andria_notify_triggers.sql",
-    "rbac:migrate": "npx ts-node src/scripts/migrate-rbac-casl.ts",
-    "audit:routes": "npx ts-node src/scripts/audit-private-routes.ts"
+    "notify-triggers": "docker compose exec -T db-pg sh -c 'psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"' < src/scripts/andria_notify_triggers.sql"
   },
   "author": "studio@step.eco",
   "license": "ISC",

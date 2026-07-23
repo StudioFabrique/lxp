@@ -92,7 +92,7 @@ export default function CreateCourseDetailsModal({
   };
 
   return createPortal(
-    <dialog className="modal modal-open z-[100]">
+    <dialog className="modal modal-open z-100">
       <div className="modal-box flex max-h-[90vh] w-11/12 max-w-3xl flex-col overflow-hidden p-0">
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
@@ -271,7 +271,7 @@ export default function CreateCourseDetailsModal({
                 {isLoadingLessons ? (
                   <span className="loading loading-spinner loading-sm mx-auto" />
                 ) : contentTagId > 0 && lessons.length === 0 ? (
-                  <p className="text-sm text-base-content/55">
+                  <p className="text-xs text-center text-base-content/55 pt-2">
                     Aucun contenu trouvé pour ce tag.
                   </p>
                 ) : (
@@ -314,7 +314,7 @@ export default function CreateCourseDetailsModal({
                               key={lesson.id}
                               className={cn(
                                 "flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm select-none",
-                                "bg-",
+                                "bg-info/10",
                               )}
                             >
                               <input
@@ -343,7 +343,7 @@ export default function CreateCourseDetailsModal({
           </section>
         </form>
 
-        <div className="flex justify-end gap-3 border-t border-base-300 bg-base-100 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-base-300 px-6 py-4">
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             Annuler
           </button>
