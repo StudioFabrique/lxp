@@ -1,20 +1,13 @@
 import { prisma } from "../../utils/db";
 import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import deleteCourse from "../course/delete-course-from-module";
 import deleteActivity from "../activity/delete-activity/delete-activity";
 
-async function deleteModuleMetadata(metadataId: number, userId: string) {
-  // Récupération avec les relations nécessaires pour trouver les activités
-  const existingMetadata = await prisma.moduleMetadata.findUnique({
-    where: { id: metadataId },
+export default async function deleteModule(moduleId: number, userId: string) {
+  const module = await prisma.module.findUnique({
+    where: { id: moduleId },
     include: {
       courses: {
-        include: {
-          lessons: { include: { activities: true } },
-        },
-      },
-      module: {
-        include: { metadatas: { select: { id: true } } },
+        include: { lessons: { include: { activities: true } } },
       },
       parcours: {
         include: { contacts: { include: { contact: true } } },
@@ -22,48 +15,22 @@ async function deleteModuleMetadata(metadataId: number, userId: string) {
     },
   });
 
-  if (!existingMetadata) {
-    const error = new Error("Le module metadata n'existe pas");
-    (error as any).statusCode = 404;
-    throw error;
+  if (!module) {
+    throw { message: "Le module n'existe pas", statusCode: 404 };
   }
 
-  // Vérification des droits
   await userBelongsToContacts(
     userId,
-    existingMetadata.parcours.contacts.map((c) => c.contact),
+    module.parcours.contacts.map(({ contact }) => contact),
     "Vous n'êtes pas autorisé à supprimer ce module.",
   );
 
-  // Suppression des activités associées aux cours de cette metadata
-  const allActivities = existingMetadata.courses.flatMap((course) =>
+  for (const activity of module.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) => lesson.activities),
-  );
-
-  for (const act of allActivities) {
-    await deleteActivity(act.id, act.type, "lesson");
+  )) {
+    await deleteActivity(activity.id, activity.type, "lesson");
   }
 
-  // Suppression dans une transaction globale
-  await prisma.$transaction(async (tx) => {
-    for (const course of existingMetadata.courses) {
-      await deleteCourse(course.id, userId);
-    }
-
-    // Suppression des métadonnées
-    await tx.moduleMetadata.delete({
-      where: { id: metadataId },
-    });
-
-    // Si c'était la dernière métadonnée, suppression du module parent
-    if (existingMetadata.module.metadatas.length <= 1) {
-      await tx.module.delete({
-        where: { id: existingMetadata.module.id },
-      });
-    }
-  });
-
+  await prisma.module.delete({ where: { id: moduleId } });
   return true;
 }
-
-export default deleteModuleMetadata;

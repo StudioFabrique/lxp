@@ -34,7 +34,7 @@ export default function BonusActivityItem({
       >
         {activity.title}
       </button>
-      <PermissionGuard action="write" object="lesson">
+      <PermissionGuard action="write" object="resource">
         <div
           className={
             "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"

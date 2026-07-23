@@ -6,23 +6,33 @@ import httpUpdateUserPassword from "../../../../controllers/user/profile/http-up
 import { createFileUploadMiddleware } from "../../../../middleware/fileUpload";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import jsonParser from "../../../../middleware/json-parser";
+import checkPermissions from "../../../../middleware/check-permissions";
 
 const userProfileRouter = Router();
 
 /**
  * Récupère les informations de l'utilisateur connecté
  */
-userProfileRouter.get("/information", httpGetUserProfileInformation);
+userProfileRouter.get(
+  "/information",
+  checkPermissions("cursus", "read"),
+  httpGetUserProfileInformation,
+);
 
 userProfileRouter.put(
   "/information",
+  checkPermissions("cursus", "update"),
   createFileUploadMiddleware(avatarImageMaxSize),
   jsonParser,
   userProfileValidator(true),
   httpUpdateUserProfile,
 );
 
-userProfileRouter.put("/password", httpUpdateUserPassword);
+userProfileRouter.put(
+  "/password",
+  checkPermissions("cursus", "update"),
+  httpUpdateUserPassword,
+);
 
 /* userProfileRouter.put(
   "/avatar",

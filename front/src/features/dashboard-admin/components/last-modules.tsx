@@ -31,13 +31,13 @@ export default function LastModules() {
                     <td>{localeDate(module.createdAt)}</td>
                     <td className="rounded-r-lg">
                       <div className="flex justify-end gap-1">
-                        {module.metadataId && module.parcoursId ? (
+                        {module.parcoursId ? (
                           <>
                             <PermissionGuard action="read" object="module">
-                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Prévisualiser" to={`/admin/parcours/module/${module.metadataId}`} aria-label={`Prévisualiser ${module.title}`}><Eye className="w-4 h-4" /></Link>
+                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Prévisualiser" to={`/admin/parcours/module/${module.id}`} aria-label={`Prévisualiser ${module.title}`}><Eye className="w-4 h-4" /></Link>
                             </PermissionGuard>
                             <PermissionGuard action="update" object="module">
-                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Modifier dans le parcours" to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.metadataId}`} aria-label={`Modifier ${module.title}`}><Pencil className="w-4 h-4" /></Link>
+                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Modifier dans le parcours" to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`} aria-label={`Modifier ${module.title}`}><Pencil className="w-4 h-4" /></Link>
                             </PermissionGuard>
                           </>
                         ) : <span className="text-xs text-base-content/50">Non rattaché</span>}

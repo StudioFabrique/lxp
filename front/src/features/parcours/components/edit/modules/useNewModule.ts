@@ -8,9 +8,8 @@ import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
 import { moduleReducer, initialState } from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
 import type {
-  MetadataList,
-  Metadatas,
   ModuleData,
+  SourceModule,
 } from "../../../interfaces/new-module";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Skill from "../../../../../../src/utils/interfaces/skill";
@@ -138,8 +137,8 @@ const useNewModule = () => {
   };
 
   const handleDuplicateModule = () => {
-    if (!state.metadataList) {
-      getMetadataList();
+    if (!state.sourceModules) {
+      getSourceModules();
     } else {
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
@@ -147,13 +146,13 @@ const useNewModule = () => {
     }
   };
 
-  const getMetadataList = async () => {
+  const getSourceModules = async () => {
     try {
-      const data: MetadataList[] =
+      const data: SourceModule[] =
         await parcoursApi.queries.getModulesByFormation(
           state.parcours!.formationId,
         );
-      dispatch({ type: "SET_METADATA_LIST", payload: data });
+      dispatch({ type: "SET_SOURCE_MODULES", payload: data });
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
@@ -166,10 +165,10 @@ const useNewModule = () => {
     dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
   };
 
-  const handleCopyModule = (module: MetadataList, metadatas: Metadatas) => {
+  const handleCopyModule = (module: SourceModule) => {
     dispatch({
       type: "PREPARE_DUPLICATE",
-      payload: { metas: metadatas, image: module.thumb },
+      payload: { source: module, image: module.thumb },
     });
 
     reset({
@@ -213,28 +212,17 @@ const useNewModule = () => {
         Object.keys(obj).length === 0);
 
     try {
-      if (isEmptyObject(state.moduleToDuplicate)) {
-        const data = await parcoursApi.mutations.duplicateModuleByMetadata({
-          parcoursId: +id!,
-          moduleId: getValues().moduleId!,
-          contactIds: state.currentContacts.map((item) => item.id ?? []),
-          skillIds: state.currentSkills.map((item) => item.id ?? []),
-          duration: getValues().duration ?? 0,
-        });
-        reset();
-        dispatch({ type: "MODULE_CREATED", payload: data.response });
-        toast.success(data.message);
-        await queryClient.invalidateQueries({
-          queryKey: parcoursKeys.detail(+id!),
-        });
-        scrollToTop();
-      } else {
+      if (!isEmptyObject(state.moduleToDuplicate)) {
         const data = await parcoursApi.mutations.duplicateModule(
           state.moduleToDuplicate!.id,
           {
             duration: getValues().duration ?? 0,
-            contactsIds: state.currentContacts.map((item) => item.id),
-            skillsIds: state.currentSkills.map((item) => item.id),
+            contactsIds: state.currentContacts
+              .map((item) => item.id)
+              .filter((item): item is number => typeof item === "number"),
+            skillsIds: state.currentSkills
+              .map((item) => item.id)
+              .filter((item): item is number => typeof item === "number"),
             parcoursId: +id!,
           },
         );

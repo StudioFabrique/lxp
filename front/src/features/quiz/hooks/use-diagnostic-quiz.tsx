@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
 import { Info } from "lucide-react";
-import { AuthContext } from "../../../store/AuthProvider";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import {
   ExternalApiQuiz,
@@ -12,9 +11,10 @@ import {
 } from "../interfaces/quiz";
 import { isAiDisabled } from "../../../config/ai/ai";
 import apiClient from "../../../lib/axios";
-import { hasPermission } from "../../../utils/helpers/rbac-helpers";
+import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 interface ModuleInfoForDiagnostic {
+  id?: number;
   title?: string;
   description?: string;
 }
@@ -25,7 +25,7 @@ export default function useDiagnosticQuiz(
   moduleInfo: ModuleInfoForDiagnostic,
   onFinishInitialQuiz: () => void,
 ) {
-  const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const { setForceHideChatbot, aiUnavailable, setAiUnavailable } =
     useContext(ChatbotContext);
 
@@ -161,7 +161,7 @@ export default function useDiagnosticQuiz(
     setAttempts([]);
     setShowResults(false);
 
-    if (!moduleInfo.title || !moduleInfo.description) {
+    if (!moduleInfo.id || !moduleInfo.title || !moduleInfo.description) {
       console.warn(
         "Module info (title, description, teacher_instructions) is required to load preliminary quizzes from the API.",
       );
@@ -178,7 +178,7 @@ export default function useDiagnosticQuiz(
         method: "post",
         url: "/quiz/preliminary/stream?n=10",
         data: {
-          title: moduleInfo.title,
+          moduleId: moduleInfo.id,
         },
         responseType: "stream",
         adapter: "fetch",
@@ -250,6 +250,7 @@ export default function useDiagnosticQuiz(
     }
   }, [
     moduleInfo.title,
+    moduleInfo.id,
     onFinishInitialQuiz,
     toastWarning,
     moduleInfo.description,
@@ -353,10 +354,7 @@ export default function useDiagnosticQuiz(
   useEffect(() => {
     if (!isModuleLoaded) return;
 
-    const userIsAdmin =
-      user?.roles?.some((role) => role.rank === 1) ||
-      (user?.permissions &&
-        hasPermission(user.permissions, "update", "lesson"));
+    const userIsAdmin = ability.can("update", "lesson");
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
       if (isAiDisabled || aiUnavailable) {
@@ -375,7 +373,7 @@ export default function useDiagnosticQuiz(
   }, [
     hasStartedModule,
     isModuleLoaded,
-    user?.permissions,
+    ability,
     onFinishInitialQuiz,
     aiUnavailable,
   ]);

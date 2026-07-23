@@ -37,9 +37,7 @@ export const randomQuizValidator = [
 /**
  * POST /quiz/preliminary/stream?n=<nb>
  * - n (query, optionnel) : nombre de questions souhaité, entier entre 1 et 20
- * - title               : titre du module
- * - description         : description du module
- * - teacher_instructions : consignes pédagogiques
+ * - moduleId : identifiant stable du module
  *
  * Note : même raison que ci-dessus — ces champs sont du texte pédagogique libre
  * (accents, ponctuation variée, etc.) destiné uniquement à l'API IA.
@@ -49,14 +47,11 @@ export const preliminaryQuizStreamValidator = [
     .optional()
     .isInt({ min: 1, max: 20 })
     .withMessage("Le nombre de questions doit être un entier entre 1 et 20."),
-  body("title")
+  body("moduleId")
     .notEmpty()
-    .withMessage("Le titre du module est requis.")
-    .isString()
-    .withMessage("Le titre doit être une chaîne de caractères.")
-    .isLength({ max: 200 })
-    .withMessage("Le titre ne peut pas dépasser 200 caractères.")
-    .trim(),
+    .withMessage("L'identifiant du module est requis.")
+    .isInt({ min: 1 })
+    .withMessage("L'identifiant du module doit être un entier positif."),
   checkValidatorResult,
 ];
 

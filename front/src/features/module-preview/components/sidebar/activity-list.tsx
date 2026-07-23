@@ -7,8 +7,7 @@ import {
 import { Activity } from "../../../../../src/utils/interfaces/activity";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import { hasPermission } from "../../../../utils/helpers/rbac-helpers";
-import { AuthContext } from "../../../../store/AuthProvider";
+import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import ActivityItem from "./activity-item";
 import {
   BaseEventPayload,
@@ -37,13 +36,11 @@ export default function ActivityList({
   onSelectActivity,
   onClickCreateActivity,
 }: ActivityListProps) {
-  const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  const canUserEdit = !!(
-    canEdit && hasPermission(user?.permissions || [], "update", "lesson")
-  );
+  const canUserEdit = Boolean(canEdit && ability.can("update", "lesson"));
 
   useEffect(() => {
     return monitorForElements({

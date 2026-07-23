@@ -23,7 +23,7 @@ export default async function getStudentParcoursWithAccomplishments(
       modules: {
         select: {
           id: true,
-          module: { select: { title: true } },
+          title: true,
           courses: {
             select: {
               id: true,
@@ -47,7 +47,7 @@ export default async function getStudentParcoursWithAccomplishments(
     title: parcours.title,
     modules: parcours.modules.map((mod) => ({
       id: mod.id,
-      title: mod.module.title,
+      title: mod.title,
       courses: mod.courses.map((course) => ({
         id: course.id,
         title: course.title,

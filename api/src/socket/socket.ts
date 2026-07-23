@@ -12,12 +12,34 @@ import { feedbackReviewed } from "./helpers/feedback-reviewed";
 import { io } from "../server";
 import { logger } from "../utils/logs/logger";
 import { imageToDataUrl } from "../utils/images/image-source";
+import { AppAction, AppSubject } from "../utils/rbac/ability";
+import { authenticateSession } from "../utils/services/auth/authenticate-session";
+
+async function authorizeSocket(
+  socket: Socket,
+  action: AppAction,
+  subject: AppSubject,
+) {
+  try {
+    const auth = await authenticateSession(socket.data.accessToken);
+    socket.data.auth = auth;
+    if (!auth.ability.can(action, subject)) {
+      socket.emit("authorization-error", { status: 403 });
+      return null;
+    }
+    return auth;
+  } catch {
+    socket.emit("authorization-error", { status: 401 });
+    socket.disconnect(true);
+    return null;
+  }
+}
 
 export function socket(io: Server): void {
-  let groupId: string | null;
   try {
     io.on("connection", async (socket: Socket) => {
-      const { userId } = socket.handshake.query as { userId: string };
+      const userId = socket.data.auth.userId as string;
+      let groupId: string | null = null;
       try {
         await connect(socket.id, userId);
 
@@ -52,6 +74,7 @@ export function socket(io: Server): void {
       }
 
       socket.on("students-count", async () => {
+        if (!(await authorizeSocket(socket, "read", "user"))) return;
         const count = await countConnectedUser();
         io.emit("students-count", count);
       });
@@ -59,6 +82,7 @@ export function socket(io: Server): void {
       socket.on(
         "receive-student-feedback",
         async ({ feelingLevel, comment }) => {
+          if (!(await authorizeSocket(socket, "write", "cursus"))) return;
           const result = await postFeedBack(userId, feelingLevel, comment);
           const contactsList = await getFeedbacks(userId);
           const userData = await getUserData(userId);
@@ -94,7 +118,10 @@ export function socket(io: Server): void {
         }: {
           studentId: string;
           feedbackId: string;
-        }) => feedbackReviewed(io, socket, studentId, feedbackId)
+        }) => {
+          if (!(await authorizeSocket(socket, "update", "user"))) return;
+          return feedbackReviewed(io, socket, studentId, feedbackId);
+        },
       );
 
       socket.on(
@@ -102,15 +129,16 @@ export function socket(io: Server): void {
         async ({
           studentMdbIdToFelicitate,
           accomplishmentId,
-          idMdbUserFrom,
         }) => {
+          const auth = await authorizeSocket(socket, "write", "cursus");
+          if (!auth) return;
           const accomplishment = await congratulateStudent(
             studentMdbIdToFelicitate,
             accomplishmentId
           );
 
           if (accomplishment) {
-            const userFrom = await User.findOne({ _id: idMdbUserFrom });
+            const userFrom = await User.findById(auth.userId);
             const nameFrom = `${userFrom?.firstname} ${userFrom?.lastname}`;
             if (groupId) {
               io.to(groupId).emit("send-accomplishment", {

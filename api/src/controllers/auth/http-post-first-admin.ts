@@ -111,12 +111,12 @@ export default async function httpPostFirstAdmin(
 
     const accessToken = setTokens(
       createdUser._id,
-      roles.map((r) => ({ _id: r.toString(), role: "admin", label: "administrateur", rank: 1, protection: 2, permissions: [] } as any)),
+      "access",
       accessExpire,
     );
     const refreshToken = setTokens(
       createdUser._id,
-      roles.map((r) => ({ _id: r.toString(), role: "admin", label: "administrateur", rank: 1, protection: 2, permissions: [] } as any)),
+      "refresh",
       refreshExpire,
     );
 

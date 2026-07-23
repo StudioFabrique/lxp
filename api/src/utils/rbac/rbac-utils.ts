@@ -184,17 +184,15 @@ export async function getAllActionsPermissionsForRole(
     | { identifier: "role"; role: string }
 ): Promise<string[]> {
   const roleDoc = await (role.identifier === "_id"
-    ? Role.findById(role._id)
-    : Role.findOne({ role: role }));
+    ? Role.findById(role._id).populate("permissions")
+    : Role.findOne({ role: role.role }).populate("permissions"));
   if (!roleDoc) {
     return [];
   }
 
-  const permissions = await Permission.find({
-    roles: roleDoc._id,
-    name: { $not: { $regex: "^interface:" } },
-  }).select("name -_id");
-  const permissionList = permissions.map((p) => p.name);
+  const permissionList = (roleDoc.permissions as any[])
+    .map((permission) => permission.name)
+    .filter((name) => !name.startsWith("interface:"));
   return permissionList;
 }
 
@@ -206,16 +204,23 @@ export async function getAllActionsPermissionsForRole(
 export async function getAllPermissionsForUser(
   userId: string
 ): Promise<string[]> {
-  const user = await User.findById(userId).populate("roles");
+  const user = await User.findById(userId).populate({
+    path: "roles",
+    populate: { path: "permissions" },
+  });
   if (!user) {
     return [];
   }
 
-  const roleIds = user.roles.map((role: IRole) => role._id);
-  const permissions = await Permission.find({ roles: { $in: roleIds } }).select(
-    "name -_id"
+  const permissionList = Array.from(
+    new Set(
+      (user.roles as unknown as IRole[]).flatMap((role) =>
+        ((role.permissions || []) as any[])
+          .map((permission) => permission.name)
+          .filter(Boolean),
+      ),
+    ),
   );
-  const permissionList = Array.from(new Set(permissions.map((p) => p.name)));
 
   return permissionList;
 }
@@ -249,10 +254,6 @@ export async function removePermissionFromRole(
       $pull: { permissions: permission._id },
     });
 
-    // Remove role from permission
-    await Permission.findByIdAndUpdate(permission._id, {
-      $pull: { roles: roleId },
-    });
   } catch (error) {
     console.error(
       `Error removing permission ${permissionName} from role ${roleId}:`,
@@ -292,10 +293,6 @@ export async function addPermissionToRole(
       $addToSet: { permissions: permission._id },
     });
 
-    // Add role to permission
-    await Permission.findByIdAndUpdate(permission._id, {
-      $addToSet: { roles: roleId },
-    });
   } catch (error) {
     console.error(
       `Error adding permission ${permissionName} to role ${roleId}:`,
@@ -385,17 +382,11 @@ export async function createOrUpdateRoleWithPermissions(
     (permissions !== undefined && foundRole.protection !== 2) ||
     forceUpdatePermissions
   ) {
-    // Remove existing role references from all permissions
-    await Permission.updateMany(
-      { roles: foundRole._id },
-      { $pull: { roles: foundRole._id } }
-    );
-
     const permissionIds = [];
     for (const permissionName of formattedPermissions) {
       const permission = await Permission.findOneAndUpdate(
         { name: permissionName },
-        { $addToSet: { roles: foundRole._id } },
+        { $setOnInsert: { name: permissionName } },
         { upsert: true, new: true }
       );
       permissionIds.push(permission._id);
@@ -449,19 +440,29 @@ export async function createOrUpdateInterfaceRoleWithPermissions(
       ...(componentsPermissions || []),
     ];
 
-    let role = await Role.findOne({ name: formattedRoleName });
+    let role = await Role.findOne({ role: formattedRoleName });
     if (!role) {
-      role = new Role({ name: formattedRoleName });
+      role = new Role({
+        role: formattedRoleName,
+        label: formattedRoleName,
+        rank: layouts?.includes("student") ? 3 : 1,
+        protection: 2,
+      });
       await role.save();
     }
 
+    const permissionIds = [];
     for (const permissionName of allPermissions) {
-      await Permission.findOneAndUpdate(
+      const permission = await Permission.findOneAndUpdate(
         { name: permissionName },
-        { $addToSet: { roles: role._id } },
-        { upsert: true }
+        { $setOnInsert: { name: permissionName } },
+        { upsert: true, new: true }
       );
+      permissionIds.push(permission._id);
     }
+    await Role.findByIdAndUpdate(role._id, {
+      $set: { permissions: permissionIds },
+    });
   } catch (error) {
     console.error(`Error creating interface role ${roleName}:`, error);
     throw new Error(`Failed to create interface role with permissions`);

@@ -1,9 +1,8 @@
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import {
-  MetadataList,
-  Metadatas,
   ModuleData,
-  Parcours,
+  ParcoursModuleResources,
+  SourceModule,
 } from "../../../interfaces/new-module";
 import Skill from "../../../../../../src/utils/interfaces/skill";
 
@@ -20,14 +19,14 @@ type ModuleState = {
   showForm: boolean;
   mode: "create" | "edit";
   modules: ModuleData[];
-  parcours: Parcours | null;
+  parcours: ParcoursModuleResources | null;
   currentContacts: Contact[];
   currentSkills: Skill[];
   file: File | null;
   moduleToDelete: ModuleData | null;
   showDuplicateModal: boolean;
-  metadataList: MetadataList[] | null;
-  moduleToDuplicate: Metadatas | null;
+  sourceModules: SourceModule[] | null;
+  moduleToDuplicate: SourceModule | null;
   moduleToUpdate: number | null;
 };
 
@@ -38,20 +37,20 @@ type ModuleAction =
   | { type: "SET_MODULES"; payload: ModuleData[] }
   | { type: "ADD_MODULE"; payload: ModuleData }
   | { type: "REMOVE_MODULE"; payload: number }
-  | { type: "SET_PARCOURS"; payload: Parcours }
+  | { type: "SET_PARCOURS"; payload: ParcoursModuleResources }
   | { type: "SET_CURRENT_CONTACTS"; payload: Contact[] }
   | { type: "SET_CURRENT_SKILLS"; payload: Skill[] }
   | { type: "SET_FILE"; payload: File | null }
   | { type: "SET_MODULE_TO_DELETE"; payload: ModuleData | null }
   | { type: "SET_SHOW_DUPLICATE_MODAL"; payload: boolean }
-  | { type: "SET_METADATA_LIST"; payload: MetadataList[] | null }
-  | { type: "SET_MODULE_TO_DUPLICATE"; payload: Metadatas | null }
+  | { type: "SET_SOURCE_MODULES"; payload: SourceModule[] | null }
+  | { type: "SET_MODULE_TO_DUPLICATE"; payload: SourceModule | null }
   | { type: "RESET_FORM" }
   | { type: "CANCEL_FORM" }
   | { type: "MODULE_CREATED"; payload: ModuleData }
   | {
       type: "PREPARE_DUPLICATE";
-      payload: { metas: Metadatas; image: string | null };
+      payload: { source: SourceModule; image: string | null };
     }
   | { type: "CLOSE_DELETE_MODAL" }
   | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
@@ -80,7 +79,7 @@ const initialState: ModuleState = {
   file: null,
   moduleToDelete: null,
   showDuplicateModal: false,
-  metadataList: null,
+  sourceModules: null,
   moduleToDuplicate: null,
   moduleToUpdate: null,
 };
@@ -134,8 +133,8 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
     case "SET_SHOW_DUPLICATE_MODAL":
       return { ...state, showDuplicateModal: action.payload };
 
-    case "SET_METADATA_LIST":
-      return { ...state, metadataList: action.payload };
+    case "SET_SOURCE_MODULES":
+      return { ...state, sourceModules: action.payload };
 
     case "SET_MODULE_TO_DUPLICATE":
       return { ...state, moduleToDuplicate: action.payload };
@@ -179,7 +178,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         currentSkills: [],
         file: null,
         moduleToDuplicate: null,
-        metadataList: null,
+        sourceModules: null,
       };
 
     // Complex action: Prepare to duplicate a module
@@ -188,7 +187,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         ...state,
         showForm: true,
         mode: "edit",
-        moduleToDuplicate: action.payload.metas,
+        moduleToDuplicate: action.payload.source,
         image: action.payload.image,
       };
 
@@ -197,7 +196,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
       return {
         ...state,
         moduleToDelete: null,
-        metadataList: null,
+        sourceModules: null,
       };
 
     case "UPDATE_MODULE":

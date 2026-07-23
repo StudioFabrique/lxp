@@ -6,7 +6,6 @@ import type Skill from "../../../utils/interfaces/skill";
 import { useParcoursQuery } from "./useParcoursQuery";
 
 type ModuleRelation = Module & {
-  module?: Partial<Module>;
   contacts?: Array<Contact | { contact: Contact }>;
   bonusSkills?: Array<Skill | { bonusSkill: Skill }>;
 };
@@ -17,7 +16,6 @@ export function useParcoursModules(parcoursId: number) {
     () =>
       ((query.data?.modules ?? []) as ModuleRelation[]).map((item) => ({
         ...item,
-        ...item.module,
         contacts: (item.contacts ?? []).map((contact) =>
           "contact" in contact ? contact.contact : contact,
         ),

@@ -11,6 +11,7 @@ import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger";
 import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
+import { buildAbility } from "../../utils/rbac/ability";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -37,8 +38,8 @@ async function httpLogin(req: Request, res: Response) {
     const permissions = await getAllPermissionsForUser(user._id);
 
     if (user) {
-      const accessToken = setTokens(user._id, user.roles, accessExpire);
-      const refreshToken = setTokens(user._id, user.roles, refreshExpire);
+      const accessToken = setTokens(user._id, "access", accessExpire);
+      const refreshToken = setTokens(user._id, "refresh", refreshExpire);
 
       /*       if (user.roles[0].rank > 2) {
         await userConnectionNotification(
@@ -58,7 +59,7 @@ async function httpLogin(req: Request, res: Response) {
           secure: process.env.NODE_ENV === "production" ? true : false,
         })
         .status(200)
-        .json({ ...user, permissions });
+        .json({ ...user, abilityRules: buildAbility(permissions).rules });
     }
     const error: any = {
       message: credentialsError,

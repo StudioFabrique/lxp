@@ -1,63 +1,67 @@
 import axios from "axios";
 import { BASE_API_URL } from "../config/urls";
 
-// Création de l'instance Axios globale avec la configuration de base
 const apiClient = axios.create({
   baseURL: BASE_API_URL,
   withCredentials: true,
 });
 
-// Intercepteur de requête
-apiClient.interceptors.request.use(
-  (config) => config,
-  (error) => Promise.reject(error),
-);
-
-// Gestionnaire de déconnexion
 let logoutHandler: (() => void) | null = null;
+let abilityResyncHandler: ((user: unknown) => void) | null = null;
+let refreshPromise: Promise<void> | null = null;
+let resyncPromise: Promise<void> | null = null;
 
-export const injectLogout = (fn: () => void) => {
-  logoutHandler = fn;
+export const injectLogout = (handler: () => void) => {
+  logoutHandler = handler;
 };
 
-const triggerLogout = () => {
-  if (logoutHandler) {
-    logoutHandler();
-  }
+export const injectAbilityResync = (handler: (user: unknown) => void) => {
+  abilityResyncHandler = handler;
 };
 
-// Intercepteur de réponse du Refresh Token automatique (403)
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const request = error.config;
+    const status = error.response?.status;
+    const url = String(request?.url || "");
+    const isRefresh = url.includes("/auth/refresh");
+    const isLogin = url.includes("/auth/login");
 
-    // Cas A : Le 403 provient de la route de rafraîchissement elle-même -> Déconnexion immédiate
-    if (
-      error.response?.status === 403 &&
-      originalRequest.url === `${BASE_API_URL}/auth/refresh`
-    ) {
-      triggerLogout();
+    if (status === 401 && isRefresh) {
+      logoutHandler?.();
       return Promise.reject(error);
     }
 
-    // Cas B : Le 403 provient d'une autre route -> Ttente un refresh token une seule fois
-    if (error.response?.status === 403 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        const res = await axios.get(`${BASE_API_URL}/auth/refresh`, {
-          withCredentials: true,
+    if (status === 401 && !isLogin && !request?._retry) {
+      request._retry = true;
+      refreshPromise ??= axios
+        .get(`${BASE_API_URL}/auth/refresh`, { withCredentials: true })
+        .then(() => undefined)
+        .finally(() => {
+          refreshPromise = null;
         });
 
-        if (res.status === 200) {
-          return apiClient(originalRequest);
-        }
+      try {
+        await refreshPromise;
+        return apiClient(request);
       } catch (refreshError) {
-        // Si le rafraîchissement échoue (ex: refresh token expiré), déconnection
-        triggerLogout();
+        logoutHandler?.();
         return Promise.reject(refreshError);
       }
+    }
+
+    if (status === 403 && !url.includes("/auth/handshake")) {
+      resyncPromise ??= axios
+        .get(`${BASE_API_URL}/auth/handshake`, { withCredentials: true })
+        .then((response) => {
+          abilityResyncHandler?.(response.data);
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          resyncPromise = null;
+        });
+      await resyncPromise;
     }
 
     return Promise.reject(error);

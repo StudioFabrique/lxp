@@ -38,14 +38,9 @@ async function getCourseInformations(courseId: number) {
               },
             },
           },
-          module: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              image: true,
-            },
-          },
+          title: true,
+          description: true,
+          image: true,
           parcours: {
             select: {
               id: true,
@@ -82,18 +77,13 @@ async function getCourseInformations(courseId: number) {
 
   if (!course) throw { message: "Le cours n'existe pas.", statusCode: 404 };
 
-  const { module: moduleNested, ...courseWithoutModule } = course.module;
-
-  let image = moduleNested.image;
-
   return {
     ...course,
     module: {
-      ...courseWithoutModule,
-      title: moduleNested.title,
-      description: moduleNested.description,
-      image: image ? Buffer.from(image as any).toString("base64") : null,
-
+      ...course.module,
+      image: course.module.image
+        ? Buffer.from(course.module.image as any).toString("base64")
+        : null,
     },
   };
 }

@@ -58,35 +58,16 @@ export default async function httpDeleteManyRoles(req: Request, res: Response) {
       });
     }
 
-    await Permission.deleteMany({
-      name: {
-        $in: roles
-          .map((role) => [
-            `write:${role.role}`,
-            `read:${role.role}`,
-            `delete:${role.role}`,
-            `update:${role.role}`,
-          ])
-          .flat(),
-      },
-    });
-
-    await Permission.updateMany(
-      { roles: { $in: rolesIds } },
-      { $pull: { roles: { $in: rolesIds } } },
-    );
-
+    const rolePermissionNames = roles
+      .map((role) => [
+        `write:${role.role}`,
+        `read:${role.role}`,
+        `delete:${role.role}`,
+        `update:${role.role}`,
+      ])
+      .flat();
     const permissionsToRemove = await Permission.find({
-      name: {
-        $in: roles
-          .map((role) => [
-            `write:${role.role}`,
-            `read:${role.role}`,
-            `delete:${role.role}`,
-            `update:${role.role}`,
-          ])
-          .flat(),
-      },
+      name: { $in: rolePermissionNames },
     }).select("_id");
 
     await Role.updateMany(
@@ -95,6 +76,7 @@ export default async function httpDeleteManyRoles(req: Request, res: Response) {
         $pull: { permissions: { $in: permissionsToRemove.map((p) => p._id) } },
       },
     );
+    await Permission.deleteMany({ name: { $in: rolePermissionNames } });
 
     await Role.deleteMany({ _id: { $in: rolesIds } });
 

@@ -1,6 +1,5 @@
 import express from "express";
 // Middleware d'authentification
-import checkToken from "../../../middleware/check-token";
 // Contrôleurs pour les opérations sur les leçons
 import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 // Validateurs pour les différentes routes
@@ -68,7 +67,11 @@ lessonRouter.get(
   httpGetLessonDetail
 );
 
-lessonRouter.get("/lesson/:lessonId", checkToken, httpGetLessonDetail);
+lessonRouter.get(
+  "/lesson/:lessonId",
+  checkPermissions("lesson", "read"),
+  httpGetLessonDetail,
+);
 
 // Route pour supprimer une leçon
 lessonRouter.delete(

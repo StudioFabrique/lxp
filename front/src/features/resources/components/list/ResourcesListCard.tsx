@@ -2,9 +2,8 @@ import { Edit, Trash2 } from "lucide-react";
 import React, { useContext } from "react";
 import { ResourceListItem } from "../../views/ResourcesHome";
 import { DOWNLOAD_URL } from "../../../../config/urls";
-import { AuthContext } from "../../../../store/AuthProvider";
+import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { ThemeContext } from "../../../../store/ThemeProvider";
-import { hasPermission } from "../../../../utils/helpers/rbac-helpers";
 import { Link } from "react-router";
 
 type Props = {
@@ -22,14 +21,11 @@ export default function ResourcesListCard({
   const list = Array.isArray(resourcesList) ? resourcesList : [];
   const { theme } = useContext(ThemeContext);
   const baseStyle = "card glass image-full w-62 shadow-sm h-42";
-  const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
 
   const style = theme === "light" ? baseStyle + " bg-primary/75" : baseStyle;
 
-  const isAllowed =
-    user &&
-    user.permissions &&
-    hasPermission(user.permissions, "write", "lesson");
+  const isAllowed = ability.can("update", "resource");
 
   // If no data, render the provided children (fallback UI) if valid
   if (list.length === 0) {

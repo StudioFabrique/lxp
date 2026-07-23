@@ -8,8 +8,6 @@ import { moduleCreateSchema } from "../../../../features/parcours/parcours.schem
 import apiClient from "../../../../lib/axios";
 import toast from "react-hot-toast";
 
-import SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
-import { ModuleData } from "../../../parcours/interfaces/new-module";
 
 /**
  * Represents a selectable item (formation or parcours)
@@ -22,14 +20,6 @@ export type Item = {
 /**
  * Represents a newly created module
  */
-export type NewMddule = {
-  id: number;
-  title: string;
-  description: string;
-  quizInstructions: string;
-  thumb: string | null;
-};
-
 /**
  * State shape for the module creation form
  */
@@ -46,10 +36,6 @@ type State = {
   formationList: Item[];
   /** List of parcours for the selected formation */
   parcoursList: Item[];
-  /** Module data after successful creation */
-  newModuleData: NewMddule | null;
-  /** Toggle to show/hide metadata form */
-  showMetadataForm: boolean;
   /** Contacts selected for the current module metadata */
   currentContacts: Contact[];
   /** Skills selected for the current module metadata */
@@ -78,10 +64,6 @@ type Action =
   | { type: "SET_FORMATION_ID"; payload: number | null }
   /** Set the operation mode (create or edit) */
   | { type: "SET_MODE"; payload: "create" | "edit" }
-  /** Set the newly created module data */
-  | { type: "SET_NEW_MODULE_DATA"; payload: NewMddule | null }
-  /** Toggle the metadata form visibility */
-  | { type: "SET_SHOW_METADATA_FORM" }
   /** Set the uploaded file */
   | { type: "SET_FILE"; payload: File | null }
   /** Set both contacts and skills for the selected parcours */
@@ -107,8 +89,6 @@ const initialState: State = {
   mode: "create",
   formationList: [],
   parcoursList: [],
-  newModuleData: null,
-  showMetadataForm: false,
   file: null,
   currentContacts: [],
   currentSkills: [],
@@ -132,34 +112,34 @@ const newModuleReducer = (state: State, action: Action): State => {
       return { ...state, formationList: action.payload };
 
     case "SET_PARCOURS_LIST":
-      // Auto-show metadata form when parcours list is set
-      return { ...state, parcoursList: action.payload, showMetadataForm: true };
+      return { ...state, parcoursList: action.payload };
 
     case "SET_PARCOURS_ID":
       return { ...state, parcoursId: action.payload };
 
     case "SET_FORMATION_ID":
-      return { ...state, formationId: action.payload };
+      return {
+        ...state,
+        formationId: action.payload,
+        parcoursId: null,
+        parcoursList: [],
+        contacts: null,
+        skills: null,
+        currentContacts: [],
+        currentSkills: [],
+      };
 
     case "SET_MODE":
       return { ...state, mode: action.payload };
 
-    case "SET_NEW_MODULE_DATA":
-      return { ...state, newModuleData: action.payload };
-
     case "SET_FILE":
       return { ...state, file: action.payload };
 
-    case "SET_SHOW_METADATA_FORM":
-      return { ...state, showMetadataForm: !state.showMetadataForm };
-
     case "SET_SKILLS_AND_CONTACTS":
-      // Auto-show metadata form when skills and contacts are fetched
       return {
         ...state,
         contacts: action.payload.contacts,
         skills: action.payload.skills,
-        showMetadataForm: true,
       };
 
     case "SET_CURRENT_CONTACTS":
@@ -229,6 +209,19 @@ const useNewModule = () => {
    */
   const handlePickFormation = useCallback((id: number) => {
     dispatch({ type: "SET_FORMATION_ID", payload: id });
+    setIsLoading(true);
+    apiClient
+      .get(`/parcours/select/${id}`)
+      .then((res) =>
+        dispatch({
+          type: "SET_PARCOURS_LIST",
+          payload: res.data as Item[],
+        }),
+      )
+      .catch((err) =>
+        setError(err?.response?.data?.message ?? "Erreur inconnue"),
+      )
+      .finally(() => setIsLoading(false));
   }, []);
 
   /**
@@ -246,6 +239,10 @@ const useNewModule = () => {
         toast.error("Veuillez sélectionner une formation.");
         return;
       }
+      if (!state.parcoursId) {
+        toast.error("Veuillez sélectionner un parcours.");
+        return;
+      }
 
       // Validate form fields
       const isValid = await trigger();
@@ -256,6 +253,13 @@ const useNewModule = () => {
       const module = {
         ...getValues(),
         formationId: state.formationId,
+        parcoursId: state.parcoursId,
+        contacts: state.currentContacts
+          .map((contact) => contact.id)
+          .filter((id): id is number => typeof id === "number"),
+        skills: state.currentSkills
+          .map((skill) => skill.id)
+          .filter((id): id is number => typeof id === "number"),
       };
 
       formData.append("module", JSON.stringify(module));
@@ -266,19 +270,25 @@ const useNewModule = () => {
       apiClient
         .post("/formation/new-module", formData)
         .then((res) => {
-          const result = res.data as { data: ModuleData; message: string };
+          const result = res.data as { message: string };
           toast.success(result.message);
-          dispatch({
-            type: "SET_NEW_MODULE_DATA",
-            payload: result.data as unknown as NewMddule,
-          });
+          nav("/admin/module");
         })
         .catch(
           (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
         )
         .finally(() => setIsLoading(false));
     },
-    [state.formationId, state.file, getValues, trigger],
+    [
+      state.formationId,
+      state.parcoursId,
+      state.currentContacts,
+      state.currentSkills,
+      state.file,
+      getValues,
+      trigger,
+      nav,
+    ],
   );
 
   /**
@@ -288,40 +298,6 @@ const useNewModule = () => {
   const handleSetFile = useCallback((file: File | null) => {
     dispatch({ type: "SET_FILE", payload: file });
   }, []);
-
-  /**
-   * Fetch the list of parcours for the selected formation
-   * @param formationId Optional formation ID; defaults to current state if not provided
-   */
-  const getParcoursList = useCallback(
-    (formationId?: number) => {
-      const fid = formationId ?? state.formationId;
-      if (!fid) return;
-
-      const processData = (parcoursData: Item[]) => {
-        dispatch({ type: "SET_PARCOURS_LIST", payload: parcoursData });
-      };
-
-      setIsLoading(true);
-      apiClient
-        .get(`/parcours/select/${fid}`)
-        .then((res) => processData(res.data as Item[]))
-        .catch(
-          (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
-        )
-        .finally(() => setIsLoading(false));
-    },
-    [state.formationId],
-  );
-
-  /**
-   * Toggle metadata form visibility and fetch parcours list if needed
-   */
-  const toggleShowMetadataForm = useCallback(() => {
-    if (state.formationId) {
-      getParcoursList(state.formationId);
-    }
-  }, [state.formationId, getParcoursList]);
 
   /**
    * Handle parcours selection and fetch related contacts and skills
@@ -336,7 +312,7 @@ const useNewModule = () => {
       apiClient
         .get(`/parcours/skills-contacts/${id}`)
         .then((res) => {
-          const result = res.data as SuccessWithMessage & {
+          const result = res.data as {
             contacts: Contact[];
             skills: Skill[];
           };
@@ -352,40 +328,6 @@ const useNewModule = () => {
     },
     [],
   );
-
-  /**
-   * Submit module metadata (duration, contacts, skills) to attach module to parcours
-   * Validates duration using Zod schema before submission
-   */
-  const handleMetadataSubmit = useCallback(async () => {
-    const duration = (getValues("duration") as number) ?? 0;
-
-    setIsLoading(true);
-    apiClient
-      .post("/modules/metadata", {
-        parcoursId: state.parcoursId,
-        moduleId: state.newModuleData?.id,
-        duration,
-        contactIds: state.currentContacts.map((c) => c.id ?? []),
-        skillIds: state.currentSkills.map((s) => s.id ?? []),
-      })
-      .then((res) => {
-        const result = res.data as SuccessWithMessage;
-        toast.success(result.message);
-        nav("/admin/module");
-      })
-      .catch(
-        (err) => setError(err?.response?.data?.message ?? "Erreur inconnue"),
-      )
-      .finally(() => setIsLoading(false));
-  }, [
-    getValues,
-    state.parcoursId,
-    state.newModuleData?.id,
-    state.currentContacts,
-    state.currentSkills,
-    nav,
-  ]);
 
   /**
    * Update the selected contacts list
@@ -452,11 +394,9 @@ const useNewModule = () => {
     handleSubmit,
     handlePickFormation,
     handleSetFile,
-    toggleShowMetadataForm,
     handlePickParcours,
     setCurrentContacts,
     setCurrentSkills,
-    handleMetadataSubmit,
     handleBackToModuleList,
     setImageBase64,
     toggleModal,

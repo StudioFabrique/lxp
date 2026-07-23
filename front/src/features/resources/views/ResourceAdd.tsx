@@ -111,7 +111,7 @@ export default function ResourceAdd() {
           </section>
 
           <section className="flex-1 flex flex-col gap-4">
-            <PermissionGuard action="write" object="lesson">
+            <PermissionGuard action="write" object="resource">
               <ActivityContent
                 activityState={activityState}
                 parentId={resourceId ? +resourceId : 0}

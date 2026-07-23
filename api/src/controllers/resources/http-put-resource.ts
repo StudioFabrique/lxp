@@ -15,7 +15,6 @@ export default async function httpPutResource(
     const { data } = req.body;
     const { title, description, tags } = data;
     const file = req.file;
-    const roles = req.auth?.userRoles || [];
 
     const filename = file ? file.filename : null;
 
@@ -26,7 +25,6 @@ export default async function httpPutResource(
       description,
       tags,
       filename ?? null,
-      roles,
     );
     next({
       statusCode: 201,
