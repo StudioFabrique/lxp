@@ -10,14 +10,6 @@ export const adminModuleRoutes: RouteObject[] = [
         index: true,
         lazy: lazyRoute(() => import("./views/ModuleHome")),
       },
-      {
-        path: "import",
-        lazy: lazyRoute(() => import("./views/ModuleImport")),
-      },
-      {
-        path: "import-modules",
-        lazy: lazyRoute(() => import("./views/ModuleImport")),
-      },
     ],
   },
 ];
