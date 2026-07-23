@@ -50,7 +50,7 @@ const TopUsersTable = ({
 
   return (
     <div>
-      <Wrapper additionalClassname="overflow-x-scroll">
+      <Wrapper additionalClassname="overflow-x-auto">
         <SearchBar
           placeholder="Rechercher par nom d'utilisateur"
           onSubmitSearchValue={handleSearch}

@@ -3,6 +3,7 @@ import { Metadatas } from "../../../interfaces/new-module";
 
 type ModuleMetadataItemProps = {
   metadata: Metadatas;
+  isCurrentParcours?: boolean;
   onCopy: () => void;
 };
 
@@ -12,6 +13,7 @@ type ModuleMetadataItemProps = {
  */
 export default function ModuleMetadataItem({
   metadata,
+  isCurrentParcours = false,
   onCopy,
 }: ModuleMetadataItemProps) {
   return (
@@ -19,6 +21,7 @@ export default function ModuleMetadataItem({
       <div className="min-w-0 flex-1">
         <p className="font-semibold">
           Parcours : {metadata.parcours?.title ?? "Sans titre"}
+          {isCurrentParcours ? " (actuel)" : ""}
         </p>
         <div className="text-xs text-base-content/70 mb-2">
           {metadata.courses?.length ?? 0} cours sont associés au module :

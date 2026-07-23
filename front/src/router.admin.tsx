@@ -1,5 +1,4 @@
-import { lazy } from "react";
-import { withSuspense } from "./utils/helpers/router-helpers";
+import { lazyRoute } from "./utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
 import RouterErrorBoundary from "./components/wrappers/layouts/RouterErrorBoundary";
 import { adminGroupRoutes } from "./features/group/routes";
@@ -22,9 +21,7 @@ import { adminModulePreviewRoutes } from "./features/module-preview/routes";
 export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
-    element: withSuspense(
-      lazy(() => import("./components/wrappers/layouts/AdminLayout")),
-    ),
+    lazy: lazyRoute(() => import("./components/wrappers/layouts/AdminLayout")),
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },

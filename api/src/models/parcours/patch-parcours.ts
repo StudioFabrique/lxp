@@ -159,6 +159,7 @@ async function patchParcours(
 
     return {
       ...updated,
+      tags: updated.tags.map(({ tag }) => tag),
       contacts: updated.contacts.map(({ contact }) => contact),
     };
   });

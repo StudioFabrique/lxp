@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
+import { lazyRoute } from "../../utils/helpers/router-helpers";
 
 export const adminRoleRoutes: RouteObject[] = [
   {
@@ -8,11 +7,11 @@ export const adminRoleRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: withSuspense(lazy(() => import("./views/RoleList"))),
+        lazy: lazyRoute(() => import("./views/RoleList")),
       },
       {
         path: "edit/:id",
-        element: withSuspense(lazy(() => import("./views/RoleEdit"))),
+        lazy: lazyRoute(() => import("./views/RoleEdit")),
       },
     ],
   },

@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
+import { lazyRoute } from "../../utils/helpers/router-helpers";
 
 export const adminUserRoutes: RouteObject[] = [
   {
@@ -8,15 +7,15 @@ export const adminUserRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: withSuspense(lazy(() => import("./views/UserHome"))),
+        lazy: lazyRoute(() => import("./views/UserHome")),
       },
       {
         path: "add",
-        element: withSuspense(lazy(() => import("./views/UserAdd"))),
+        lazy: lazyRoute(() => import("./views/UserAdd")),
       },
       {
         path: "edit/:id",
-        element: withSuspense(lazy(() => import("./views/UserEdit"))),
+        lazy: lazyRoute(() => import("./views/UserEdit")),
       },
     ],
   },

@@ -1,6 +1,5 @@
-import { lazy } from "react";
 import { RouteObject } from "react-router";
-import { withSuspense } from "../../utils/helpers/router-helpers";
+import { lazyRoute } from "../../utils/helpers/router-helpers";
 
 export const adminFormationRoutes: RouteObject[] = [
   {
@@ -8,7 +7,7 @@ export const adminFormationRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: withSuspense(lazy(() => import("./views/FormationHome"))),
+        lazy: lazyRoute(() => import("./views/FormationHome")),
       },
     ],
   },
