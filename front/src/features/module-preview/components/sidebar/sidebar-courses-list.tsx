@@ -162,19 +162,21 @@ const SidebarCoursesList = ({
           </PermissionGuard>
         )}
       </div>
-      <div
-        className={cn(
-          "sticky bottom-1 z-30 w-full rounded-xl transition-all duration-300",
-          {
-            "bg-transparent shadow-none": isAtNaturalPosition,
-            "border border-base-300 px-2 py-2 backdrop-blur":
-              !isAtNaturalPosition,
-            "mt-5": courses.length > 0,
-          },
-        )}
-      >
-        {children[0]}
-      </div>
+      <PermissionGuard action="update" object="course">
+        <div
+          className={cn(
+            "sticky bottom-1 z-30 w-full rounded-xl transition-all duration-300",
+            {
+              "bg-transparent shadow-none": isAtNaturalPosition,
+              "border border-base-300 px-2 py-2 backdrop-blur":
+                !isAtNaturalPosition,
+              "mt-5": courses.length > 0,
+            },
+          )}
+        >
+          {children[0]}
+        </div>
+      </PermissionGuard>
       <div ref={actionsSentinelRef} className="h-px w-full" />
     </div>
   );
