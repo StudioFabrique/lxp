@@ -37,4 +37,14 @@ docker exec -i lxp-mongo rm -rf /dump-mongo
 
 echo -e "\033[0;32m Dump MongoDB réussi.\033[0m"
 
+# SAUVEGARDE DES FICHIERS D'ACTIVITÉS
+echo "Sauvegarde des fichiers d'activités..."
+if [ -d "./api/uploads/activities" ]; then
+  rm -rf ./api/dumps/activities
+  cp -R ./api/uploads/activities ./api/dumps/ || { echo -e "\033[1;31m ❌ Échec: Dump activités"; exit 1; }
+  echo -e "\033[0;32m Dump activités réussi.\033[0m"
+else
+  echo -e "\033[1;33m Dossier ./api/uploads/activities introuvable, sauvegarde ignorée.\033[0m"
+fi
+
 echo -e "\033[1;32m Les données ont été sauvegardées avec succès dans le dossier ./api/dumps/ \033[0m"
