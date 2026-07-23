@@ -159,7 +159,7 @@ const ModuleContentExplorer = () => {
           <PermissionGuard object="lesson" action="update">
             <Link
               className="btn btn-primary text-base-100 gap-2"
-              to={`/admin/parcours/edit/${state.module?.parcoursId}?step=4`}
+              to={`/admin/parcours/edit/${state.module?.parcoursId}?step=4&moduleId=${state.module?.id}`}
             >
               <PenBox /> Modifier le module
             </Link>

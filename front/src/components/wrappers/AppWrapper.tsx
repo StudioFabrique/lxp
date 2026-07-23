@@ -19,15 +19,15 @@ const AppWrapper = ({
 
         <main
           id="main-scroll-container"
-          className="overflow-y-auto w-full h-full relative"
+          className="min-w-0 overflow-y-auto w-full h-full relative"
         >
           {/* Topbar optionnelle */}
           {topbar && <header className="sticky top-0 z-10">{topbar}</header>}
 
           {/* Children */}
 
-          <div className="flex justify-center">
-            <div className="mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
+          <div className="flex min-w-0 justify-center">
+            <div className="min-w-0 mt-[8vh] mb-[4vh] xl:w-[80%] w-[90%]">
               {children}
             </div>
           </div>

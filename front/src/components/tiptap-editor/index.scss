@@ -103,6 +103,12 @@
     /* overflow-x: hidden;
         overflow-y: auto; */
     -webkit-overflow-scrolling: touch;
+
+    .ProseMirror:focus,
+    .ProseMirror:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
   }
 
   &__footer {

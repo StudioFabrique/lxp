@@ -48,7 +48,10 @@ type CourseItemProps = {
 };
 
 export type ModalCourseType =
-  "visibility" | "publish" | "deleteCourse" | "deleteLesson";
+  | "visibility"
+  | "publish"
+  | "deleteCourse"
+  | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -257,7 +260,7 @@ const CourseItem = ({
                     <PermissionGuard action="update" object="course">
                       <button
                         onClick={(e) => handleOpenModal("visibility", e)}
-                        className={cn("btn btn-sm tooltip ", {
+                        className={cn("btn btn-xs tooltip ", {
                           "btn-info": course.visibility,
                           "btn-neutral": !course.visibility,
                         })}
@@ -268,9 +271,9 @@ const CourseItem = ({
                         }
                       >
                         {course.visibility ? (
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3 h-3" />
                         ) : (
-                          <EyeOff className="w-4 h-4" />
+                          <EyeOff className="w-3 h-3" />
                         )}
                       </button>
                     </PermissionGuard>
@@ -332,9 +335,14 @@ const CourseItem = ({
             )}
 
             <div className="flex items-center justify-between border-b border-secondary/30 pb-2">
-              <span className="text-xs font-semibold text-base-content/60">
-                Leçons
-              </span>
+              <div className="text-xs font-semibold text-base-content/60 flex items-center gap-0.5">
+                <span>Leçons</span>
+                <span>
+                  {(course.lessons.length || 0) > 1
+                    ? `(${course.lessons.length})`
+                    : null}
+                </span>
+              </div>
               <PermissionGuard action="write" object="course">
                 <button
                   className="btn btn-secondary btn-xs gap-1"
@@ -344,7 +352,7 @@ const CourseItem = ({
                   }}
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  Ajouter
+                  Ajouter une leçon
                 </button>
               </PermissionGuard>
             </div>

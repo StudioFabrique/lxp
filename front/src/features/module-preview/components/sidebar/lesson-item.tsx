@@ -125,7 +125,7 @@ const LessonItem = ({
                     ref={buttonRef}
                     tabIndex={0}
                     type="button"
-                    className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
+                    className="btn btn-sm px-2 btn-ghost text-primary-content w-fit hover:text-primary"
                     onClick={handleDropdownToggle}
                   >
                     <EllipsisIcon className="w-4 h-4" />

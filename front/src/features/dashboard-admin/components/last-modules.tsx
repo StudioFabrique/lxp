@@ -37,7 +37,7 @@ export default function LastModules() {
                               <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Prévisualiser" to={`/admin/parcours/module/${module.metadataId}`} aria-label={`Prévisualiser ${module.title}`}><Eye className="w-4 h-4" /></Link>
                             </PermissionGuard>
                             <PermissionGuard action="update" object="module">
-                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Modifier dans le parcours" to={`/admin/parcours/edit/${module.parcoursId}?step=4`} aria-label={`Modifier ${module.title}`}><Pencil className="w-4 h-4" /></Link>
+                              <Link className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left" data-tip="Modifier dans le parcours" to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.metadataId}`} aria-label={`Modifier ${module.title}`}><Pencil className="w-4 h-4" /></Link>
                             </PermissionGuard>
                           </>
                         ) : <span className="text-xs text-base-content/50">Non rattaché</span>}

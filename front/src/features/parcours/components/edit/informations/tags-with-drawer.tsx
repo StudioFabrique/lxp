@@ -25,11 +25,9 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const selectedParcoursTags = useMemo(
     () => {
       const tags = parcours?.tags as Array<Tag | { tag: Tag }> | undefined;
-      return tags?.length
-        ? tags.map((item) => ("tag" in item ? item.tag : item))
-        : props.tags;
+      return (tags ?? []).map((item) => ("tag" in item ? item.tag : item));
     },
-    [parcours?.tags, props.tags],
+    [parcours?.tags],
   );
   const [draftTags, setDraftTags] = useState<Tag[] | null>(null);
   const currentTags = draftTags ?? selectedParcoursTags;
