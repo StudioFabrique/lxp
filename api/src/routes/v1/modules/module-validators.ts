@@ -6,33 +6,6 @@ import {
   stringValidateOptional,
 } from "../../../helpers/custom-validators";
 
-export const postModuleMetadataValidator = [
-  body("duration")
-    .isInt({ min: 1 })
-    .withMessage("La durée doit être un nombre entier positif.")
-    .optional(),
-  body("contactIds")
-    .isArray()
-    .withMessage("Les contacts doivent être un tableau.")
-    .optional(),
-  body("contactIds.*")
-    .isInt()
-    .withMessage("Chaque identifiant de contact doit être un nombre entier."),
-  body("skillIds")
-    .isArray()
-    .withMessage("Les compétences doivent être un tableau.")
-    .optional(),
-  body("skillIds.*")
-    .isInt()
-    .withMessage("Chaque identifiant de compétence doit être un nombre entier.")
-    .optional(),
-  body("moduleId")
-    .isInt()
-    .withMessage("L'identifiant du module doit être un nombre entier."),
-  body("parcoursId"),
-  checkValidatorResult,
-];
-
 export const moduleIdValidator = [
   param("moduleId")
     .notEmpty()

@@ -1,6 +1,6 @@
 import Router from "express";
 import httpPostPrompt from "../../../controllers/chatbot/http-post-prompt";
-import checkToken from "../../../middleware/check-token";
+import checkPermissions from "../../../middleware/check-permissions";
 import httpPutDialogs from "../../../controllers/chatbot/http-put-dialogs";
 import httpGetDialogs from "../../../controllers/chatbot/http-get-dialogs";
 import {
@@ -10,15 +10,24 @@ import {
 
 const chatbotRouter = Router();
 
-chatbotRouter.post("/prompt", checkToken, postPromptValidator, httpPostPrompt);
+chatbotRouter.post(
+  "/prompt",
+  checkPermissions("chatbot", "write"),
+  postPromptValidator,
+  httpPostPrompt,
+);
 
 chatbotRouter.post(
   "/dialogs",
-  checkToken,
+  checkPermissions("chatbot", "write"),
   postDialogsValidator,
   httpPutDialogs,
 );
 
-chatbotRouter.get("/dialogs", checkToken, httpGetDialogs);
+chatbotRouter.get(
+  "/dialogs",
+  checkPermissions("chatbot", "read"),
+  httpGetDialogs,
+);
 
 export default chatbotRouter;

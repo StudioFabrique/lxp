@@ -10,7 +10,7 @@ async function postCourseStructure(
   lessons: Lesson[],
   courseSlug?: string,
 ) {
-  const existingModule = await prisma.moduleMetadata.findFirst({
+  const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: { courses: true },
   });

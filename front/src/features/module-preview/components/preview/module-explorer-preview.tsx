@@ -13,11 +13,13 @@ const ModuleExplorerPreview = ({
   smartQuizState,
   quizState,
   canEditSelectedLesson,
+  aiIndexed = true,
 }: {
   store: ExplorerStore;
   smartQuizState: ReturnType<typeof useSmartQuizPrompt>;
   quizState: ReturnType<typeof useCourseQuiz>;
   canEditSelectedLesson?: boolean;
+  aiIndexed?: boolean;
 }) => {
   const {
     state,
@@ -127,7 +129,8 @@ const ModuleExplorerPreview = ({
             }
           >
             {computed.isLastActivitySelected &&
-              computed.isLastLessonOfCurrentCourse && (
+              computed.isLastLessonOfCurrentCourse &&
+              aiIndexed && (
                 <button
                   className="btn btn-secondary btn-outline"
                   onClick={quizState.onLoadQuizzes}

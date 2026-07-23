@@ -5,6 +5,7 @@ import Group from "./group";
 import Hobby from "../../features/user/interfaces/hobby";
 import { Link } from "../../features/user/interfaces/link";
 import Role from "./role";
+import { AppAbilityRule } from "../../rbac/ability";
 
 export default interface User {
   _id: string;
@@ -34,7 +35,7 @@ export default interface User {
   connectionInfos?: Array<{ lastConnection: string; duration: number }>;
   parcours?: string;
   formation?: string;
-  permissions?: Array<string>;
+  abilityRules: AppAbilityRule[];
   promptStats?: Array<{
     _id: string;
     date: string;

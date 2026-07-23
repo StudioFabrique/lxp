@@ -8,6 +8,7 @@ import apiClient from "../../../../lib/axios";
 import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/lesson";
 import type { CreateCourseFormValues } from "./course-form.types";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   initialTitle: string;
@@ -29,7 +30,9 @@ export default function CreateCourseDetailsModal({
   const [lessonTitles, setLessonTitles] = useState<string[]>([]);
   const [showExistingContents, setShowExistingContents] = useState(false);
   const [contentTagId, setContentTagId] = useState(0);
-  const [selectedLessonIds, setSelectedLessonIds] = useState<number[]>([]);
+  const [selectedLessons, setSelectedLessons] = useState<
+    LessonWithActivitiesCount[]
+  >([]);
 
   const { data: tags = [] } = useQuery({
     queryKey: ["tags", "course-create"],
@@ -63,11 +66,11 @@ export default function CreateCourseDetailsModal({
     setLessonTitle("");
   };
 
-  const toggleExistingLesson = (lessonId: number) => {
-    setSelectedLessonIds((current) =>
-      current.includes(lessonId)
-        ? current.filter((id) => id !== lessonId)
-        : [...current, lessonId],
+  const toggleExistingLesson = (lesson: LessonWithActivitiesCount) => {
+    setSelectedLessons((current) =>
+      current.includes(lesson)
+        ? current.filter((l) => l !== lesson)
+        : [...current, lesson],
     );
   };
 
@@ -83,7 +86,7 @@ export default function CreateCourseDetailsModal({
       visibility: true,
       tagIds: selectedTagIds,
       lessonTitles,
-      lessonIds: selectedLessonIds,
+      lessonIds: selectedLessons.map((l) => (l.id ? l.id : 0)),
     });
     if (success) onClose();
   };
@@ -239,11 +242,11 @@ export default function CreateCourseDetailsModal({
               onClick={() => setShowExistingContents((current) => !current)}
             >
               <BookOpen className="h-4 w-4" />
-              Ajouter du contenu
+              Importer du contenu
             </button>
 
             {showExistingContents && (
-              <div className="flex flex-col gap-3 border-t border-base-300 pt-4">
+              <div className="flex flex-col gap-3">
                 <label className="flex flex-col gap-2">
                   <span className="flex items-center gap-2 text-xs font-semibold">
                     <Search className="h-3.5 w-3.5" />
@@ -272,24 +275,67 @@ export default function CreateCourseDetailsModal({
                     Aucun contenu trouvé pour ce tag.
                   </p>
                 ) : (
-                  <div className="max-h-48 space-y-2 overflow-y-auto">
-                    {lessons.map((lesson: LessonWithActivitiesCount) => (
-                      <label
-                        key={lesson.id}
-                        className="flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm"
-                      >
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary checkbox-sm"
-                          checked={selectedLessonIds.includes(lesson.id)}
-                          onChange={() => toggleExistingLesson(lesson.id)}
-                        />
-                        <span className="flex-1">{lesson.title}</span>
-                        <span className="text-xs text-base-content/50">
-                          {lesson.activitiesCount ?? 0} activité(s)
-                        </span>
-                      </label>
-                    ))}
+                  <div>
+                    <div className="flex flex-wrap gap-2 overflow-y-auto">
+                      {lessons.map(
+                        (lesson: LessonWithActivitiesCount) =>
+                          !selectedLessons.includes(lesson) && (
+                            <label
+                              key={lesson.id}
+                              className="flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm select-none"
+                            >
+                              <input
+                                type="checkbox"
+                                className="checkbox checkbox-primary checkbox-sm"
+                                checked={selectedLessons.includes(lesson)}
+                                onChange={() => toggleExistingLesson(lesson)}
+                              />
+                              <span className="flex-1">{lesson.title}</span>
+                              <span className="text-xs text-base-content/50">
+                                {lesson.activitiesCount ?? 0} activité(s)
+                              </span>
+                            </label>
+                          ),
+                      )}
+                    </div>
+
+                    {/* Divideur */}
+                    {
+                      <div className="divider divider-start text-xs text-base-content/60">
+                        Contenu selectionnés
+                      </div>
+                    }
+
+                    {selectedLessons.length > 0 ? (
+                      <div className="flex flex-wrap gap-2 overflow-y-auto">
+                        {selectedLessons.map(
+                          (lesson: LessonWithActivitiesCount) => (
+                            <label
+                              key={lesson.id}
+                              className={cn(
+                                "flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm select-none",
+                                "bg-",
+                              )}
+                            >
+                              <input
+                                type="checkbox"
+                                className="checkbox checkbox-primary checkbox-sm"
+                                checked={selectedLessons.includes(lesson)}
+                                onChange={() => toggleExistingLesson(lesson)}
+                              />
+                              <span className="flex-1">{lesson.title}</span>
+                              <span className="text-xs text-base-content/50">
+                                {lesson.activitiesCount ?? 0} activité(s)
+                              </span>
+                            </label>
+                          ),
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-center text-xs">
+                        Aucun contenu sélectionné.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

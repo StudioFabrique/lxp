@@ -13,20 +13,21 @@ export type ModuleData = {
   skills: Skill[]; // Associated bonus skills
 };
 
-export type Metadatas = {
-  id: number;
-  bonusSkills: Skill[];
-  contacts: Contact[];
-  courses: { id: number; title: string }[];
-  parcours: { id: number; title: string };
-};
-
-export type MetadataList = {
+export type SourceModule = {
   id: number;
   title: string;
   description: string;
   quizInstructions?: string;
   thumb: string | null;
-  metadatas: Metadatas[];
-  moduleId: number | null;
+  contacts: Contact[];
+  courses: { id: number; title: string }[];
+  parcours: { id: number; title: string };
+  bonusSkills: Skill[];
+};
+
+export type ParcoursModuleResources = {
+  id: number;
+  formationId: number;
+  contacts: Contact[];
+  bonusSkills: Skill[];
 };

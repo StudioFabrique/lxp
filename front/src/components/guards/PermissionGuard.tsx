@@ -1,10 +1,10 @@
 import { PropsWithChildren, ReactNode, useContext } from "react";
-import { AuthContext } from "../../store/AuthProvider";
-import { hasPermission } from "../../utils/helpers/rbac-helpers";
+import { AbilityContext } from "../../rbac/AbilityProvider";
+import { AppAction, AppSubject } from "../../rbac/ability";
 
 type Props = {
-  action: string;
-  object: string;
+  action: AppAction | string;
+  object: AppSubject | string;
   fallback?: ReactNode;
 };
 
@@ -12,19 +12,12 @@ const PermissionGuard = ({
   children,
   action,
   object,
-  fallback,
+  fallback = null,
 }: PropsWithChildren<Props>) => {
-  const { user } = useContext(AuthContext);
-
-  if (
-    user &&
-    user.permissions &&
-    hasPermission(user.permissions, action, object)
-  ) {
-    return <>{children}</>;
-  }
-
-  return fallback;
+  const ability = useContext(AbilityContext);
+  return ability.can(action as AppAction, object as AppSubject)
+    ? <>{children}</>
+    : fallback;
 };
 
 export default PermissionGuard;

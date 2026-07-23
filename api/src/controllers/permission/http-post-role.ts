@@ -34,16 +34,21 @@ export default async function httpPostRole(req: Request, res: Response) {
           await Permission.create({
             name: `${action}:${createdRole.role}`,
             isRole: true,
-            roles: [adminRole?._id],
           }),
       ),
     );
 
-    await Role.findByIdAndUpdate(
-      createdRole._id,
-      { $push: { permissions: { $each: permissions.map((p) => p._id) } } },
-      { new: true },
-    );
+    if (adminRole) {
+      await Role.findByIdAndUpdate(
+        adminRole._id,
+        {
+          $addToSet: {
+            permissions: { $each: permissions.map((p) => p._id) },
+          },
+        },
+        { new: true },
+      );
+    }
 
     return res.status(201).send({ message: "Rôle créé avec succès" });
   } catch (error: any) {

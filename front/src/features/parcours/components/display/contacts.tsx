@@ -4,9 +4,11 @@ import { Mail, Phone } from "lucide-react";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
+import { AbilityContext } from "../../../../rbac/AbilityProvider";
 
 const Contacts = () => {
   const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
   const contacts = parcours?.contacts ?? [];
@@ -26,7 +28,7 @@ const Contacts = () => {
             <p className="flex gap-x-2 items-center">
               <Mail className="w-3 h-3" /> {contact.email ?? "Non renseigné"}
             </p>
-            {user && user.roles[0].rank < 3 ? (
+            {user && ability.can("update", "parcours") ? (
               <div className="flex items-center gap-x-2">
                 <Phone className="w-3 h-3" />
                 <p>{contact.phone ?? "Non renseigné"}</p>

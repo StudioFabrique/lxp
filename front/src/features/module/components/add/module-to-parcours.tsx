@@ -40,8 +40,6 @@ export default function ModuleToParcours({
   skills,
   isDisabled = false,
 }: Props) {
-  console.log(currentSkills);
-
   return (
     <div className="flex flex-col gap-y-8">
       {/* Composant qui permet de selectionner des contacts */}

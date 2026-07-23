@@ -322,13 +322,7 @@ async function createFormation() {
 }
 
 async function createModules() {
-  await prisma.module.createMany({
-    data: [
-      { title: "Module 1", author: "test", adminId: 1 },
-      { title: "Module 2", author: "test", adminId: 1 },
-      { title: "Module 3", author: "test", adminId: 1 },
-    ],
-  });
+  // Modules are created after their mandatory parcours in createParcours.
 }
 
 async function createParcours() {
@@ -361,6 +355,28 @@ async function createParcours() {
           ],
         },
       },
+    });
+    await prisma.module.createMany({
+      data: [
+        {
+          title: "Module 1",
+          author: "test",
+          adminId: 1,
+          parcoursId: parcours.id,
+        },
+        {
+          title: "Module 2",
+          author: "test",
+          adminId: 1,
+          parcoursId: parcours.id,
+        },
+        {
+          title: "Module 3",
+          author: "test",
+          adminId: 1,
+          parcoursId: parcours.id,
+        },
+      ],
     });
     await prisma.course.create({
       data: {
@@ -402,7 +418,6 @@ async function loadFixtures() {
   await createSqlContacts();
   await createModules();
   await createParcours();
-  //await createModulesOnFormation();
   await disconnect();
 }
 

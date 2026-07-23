@@ -227,16 +227,6 @@ const mutations = {
     const res = await apiClient.delete(`/modules/${id}`);
     return res.data;
   },
-  duplicateModuleByMetadata: async (data: {
-    parcoursId: number;
-    moduleId: number;
-    contactIds: number[];
-    skillIds: number[];
-    duration: number;
-  }) => {
-    const res = await apiClient.post("/modules/metadata", data);
-    return res.data;
-  },
   duplicateModule: async (
     id: number,
     data: {

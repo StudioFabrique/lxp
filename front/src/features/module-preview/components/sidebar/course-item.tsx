@@ -24,6 +24,7 @@ import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
+import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { cn } from "../../../../utils/cn";
 import CreateLessonModal from "./create-lesson-modal";
 import type { UpdateCourseFormValues } from "./course-form.types";
@@ -81,8 +82,11 @@ const CourseItem = ({
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
+  const ability = useContext(AbilityContext);
 
-  const canEditCourse = userBelongsToContacts(user, course.contacts);
+  const canEditCourse =
+    ability.can("update", "course") ||
+    userBelongsToContacts(user, course.contacts);
 
   const hasTargetLesson = course.lessons.some(
     (lesson) => lesson.id === editLessonId,

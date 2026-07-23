@@ -1,152 +1,72 @@
 import { NextFunction, Response } from "express";
 import CustomRequest from "../utils/interfaces/express/custom-request";
-import jwt from "jsonwebtoken";
-import { noAccess, serverIssue } from "../utils/constantes";
-import { IRole } from "../utils/interfaces/db/role";
-import Permission from "../utils/interfaces/db/permission";
-import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
 import {
-  isTokenBlacklisted,
-  letsBlackListAToken,
-} from "../utils/services/auth/set-tokens";
+  AppAction,
+  AppSubject,
+  appSubjects,
+} from "../utils/rbac/ability";
+import {
+  authenticateSession,
+  AuthenticationError,
+} from "../utils/services/auth/authenticate-session";
 
-function youShallNotPass() {
-  console.log("vous ne passerez pas 🧙");
+const knownSubjects = new Set<string>(appSubjects);
+
+function actionForMethod(method: string): AppAction | undefined {
+  switch (method) {
+    case "GET":
+      return "read";
+    case "POST":
+      return "write";
+    case "PATCH":
+    case "PUT":
+      return "update";
+    case "DELETE":
+      return "delete";
+    default:
+      return undefined;
+  }
 }
 
-/**
- * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé.
- * Si aucun paramètre n'est fourni, la fonction ne vérifie que le token.
- *
- * @param ressource (optionnel) La ressource sur laquelle l'action est effectué
- * @param action (optionnel) L'action à effectuer
- * @param failedRedirectPath (optionnel) la route de redirection API en cas d'echec
- * @returns
- */
 export default function checkPermissions(
-  ressource?: string,
-  action?: "read" | "write" | "update" | "delete",
+  resource?: AppSubject,
+  action?: Extract<AppAction, "read" | "write" | "update" | "delete">,
   failedRedirectPath?: string,
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const { role: roleFromParam } = req.params;
+    try {
+      const auth = await authenticateSession(
+        req.cookies.accessToken,
+        "access",
+      );
+      req.auth = auth;
+      res.locals.roles = auth.userRoles;
 
-    if (!ressource && !roleFromParam)
-      return res.status(400).json({
-        message: "Requête invalide",
-      });
+      const dynamicSubject = resource ?? req.params.role;
+      const resolvedAction = action ?? actionForMethod(req.method);
 
-    const authCookie = req.cookies.accessToken;
-
-    if (await isTokenBlacklisted(authCookie))
-      return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette ressource",
-      });
-
-    let actionDefined: string | undefined = action;
-
-    if (!actionDefined)
-      switch (req.method) {
-        case "GET":
-          actionDefined = "read";
-          break;
-        case "POST":
-          actionDefined = "write";
-          break;
-        // merge the both cases
-        case "PATCH":
-        case "PUT":
-          actionDefined = "update";
-          break;
-        case "DELETE":
-          actionDefined = "delete";
-          break;
-        default:
-          break;
-      }
-
-    if (!actionDefined)
-      return res.status(403).json({
-        message: "Vous n'êtes pas autorisé à accéder à cette ressource",
-      });
-
-    jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
-      if (err) {
-        try {
-          await letsBlackListAToken(authCookie);
-        } catch (error) {
-          console.error({ error });
+      if (
+        !resolvedAction ||
+        !dynamicSubject ||
+        !knownSubjects.has(dynamicSubject) ||
+        !auth.ability.can(resolvedAction, dynamicSubject as AppSubject)
+      ) {
+        if (failedRedirectPath) {
+          return res.redirect(
+            failedRedirectPath.replace("[:userId]", auth.userId),
+          );
         }
-        return res.status(403).json({ message: noAccess });
-      }
-
-      const rolesToCheck: Array<IRole> = data.userRoles;
-
-      res.locals.roles = rolesToCheck;
-
-      let allPermissions: any;
-
-      try {
-        allPermissions = await Promise.all(
-          rolesToCheck.map((role) =>
-            Permission.find({
-              roles: role._id,
-            }),
-          ),
-        );
-      } catch (error) {
-        console.log({ error });
-        youShallNotPass();
-        return res.status(500).json({
-          message: serverIssue,
+        return res.status(403).json({
+          message: "Vous n'êtes pas autorisé à accéder à cette ressource",
         });
       }
 
-      const flattenedPermissions = allPermissions.flat();
-
-      const requiredPermissionName = `${actionDefined!}:${
-        !ressource && roleFromParam ? roleFromParam : ressource!
-      }`;
-      const hasPermission = flattenedPermissions.some(
-        (permission: any) => permission.name === requiredPermissionName,
-      );
-
-      if (hasPermission) {
-        req.auth = { userId: data.userId, userRoles: data.userRoles };
-        next();
-      } else {
-        youShallNotPass();
-        if (failedRedirectPath)
-          res.redirect(failedRedirectPath.replace("[:userId]", data.userId));
-        else
-          return res.status(403).json({
-            message: "Vous n'êtes pas autorisé à accéder à cette ressource",
-          });
+      next();
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        return res.status(401).json({ message: "Session absente ou expirée" });
       }
-    });
+      next(error);
+    }
   };
 }
-
-/* async function _authorizeThisRole(
-  role: IRole,
-  action: string,
-  ressource: string,
-): Promise<boolean> {
-  console.log({ role, action, ressource });
-
-  // Check all permissions for the role
-  const permissions = await Permission.find({
-    roles: role._id,
-  });
-
-  // Check if any permission matches the required action and resource
-  const hasRequiredPermission = permissions.some(
-    (permission) => permission.name === `${action}:${ressource}`,
-  );
-
-  if (hasRequiredPermission) {
-    return true;
-  }
-  youShallNotPass();
-  return false;
-} */

@@ -7,7 +7,7 @@ import { sign } from "jsonwebtoken";
 dotenv.config();
 
 interface ModuleInfo {
-  title: string;
+  moduleId: number;
 }
 
 export default async function httpPostPreliminaryQuizStream(
@@ -15,7 +15,7 @@ export default async function httpPostPreliminaryQuizStream(
   res: Response,
 ) {
   const { n = 5 } = req.query;
-  const { title } = req.body as ModuleInfo;
+  const { moduleId } = req.body as ModuleInfo;
 
   const dockerIa =
     process.env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
@@ -38,8 +38,8 @@ export default async function httpPostPreliminaryQuizStream(
 
   try {
     // 1. Recherche du module
-    const module = await prisma.module.findFirst({
-      where: { title: title },
+    const module = await prisma.module.findUnique({
+      where: { id: moduleId },
       select: {
         id: true,
         title: true,

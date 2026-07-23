@@ -40,7 +40,7 @@ export default function ModuleComponent() {
     handleUpdateModule,
     id,
     isLoading,
-    metadataList,
+    sourceModules,
     mode,
     moduleToDuplicate,
     moduleToDelete,
@@ -133,7 +133,7 @@ export default function ModuleComponent() {
 
       {/* Module selection drawer for duplication */}
       <ModuleDrawer
-        metadataList={metadataList}
+        sourceModules={sourceModules}
         currentParcoursId={+id!}
         onCopyModule={handleCopyModule}
       />

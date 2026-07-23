@@ -4,7 +4,6 @@
  */
 
 import express from "express";
-import checkToken from "../../../middleware/check-token";
 
 // Import des contrôleurs pour la gestion des cours
 import httpPostCourse from "../../../controllers/course/http-post-course";
@@ -129,7 +128,12 @@ courseRouter.put(
  * Route POST pour créer un nouveau cours
  * Nécessite une validation des données du cours
  */
-courseRouter.post("/", postCourseValidator, httpPostCourse);
+courseRouter.post(
+  "/",
+  checkPermissions("course", "write"),
+  postCourseValidator,
+  httpPostCourse,
+);
 
 /**
  * Cette route est utilisée par le module d'importation de cours (ZIP)
@@ -360,7 +364,7 @@ courseRouter.get(
 // retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
 courseRouter.get(
   "/bonus-skills/:courseId",
-  checkToken,
+  checkPermissions("course", "read"),
   courseIdValidator,
   httpGetCourseSkills,
 );
@@ -427,7 +431,7 @@ courseRouter.put(
 // efface une plage de dates du cours
 courseRouter.delete(
   "/dates/:courseId/:datesId",
-  checkToken,
+  checkPermissions("course", "delete"),
   courseIdValidator,
   deleteCourseDatesValidator,
   httpDeleteCourseDates,

@@ -1,7 +1,6 @@
 import { Admin, Resource, Tag } from "@prisma/client";
 import { getSoftColor } from "../../helpers/getSoftColors";
 import { prisma } from "../../utils/db";
-import { IRole } from "../../utils/interfaces/db/role";
 import User from "../../utils/interfaces/db/user";
 
 export default async function putResource(
@@ -11,7 +10,6 @@ export default async function putResource(
   description: string,
   tags: string[],
   filename: string | null,
-  roles: IRole[],
 ) {
   let updatedResource: Resource | null = null;
   const existingResource = await prisma.resource.findFirst({
@@ -30,16 +28,6 @@ export default async function putResource(
   const mongoUser = await User.findById(userId);
 
   if (!mongoUser) throw { message: "Utilisateur non trouvé", status: 404 };
-
-  if (
-    existingAuthor.id !== existingResource.adminId &&
-    !roles.find((r) => r.rank === 1)
-  )
-    throw {
-      statusCode: 405,
-      message:
-        "Vous ne pouvez pas modifier une ressource dont vous n'êtes pas l'auteur.",
-    };
 
   const existingTagIds = await prisma.tag.findMany({
     where: { name: { in: tags, mode: "insensitive" } },

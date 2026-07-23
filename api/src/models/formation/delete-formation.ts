@@ -26,9 +26,6 @@ export default async function deleteFormation(formationId: number) {
       };
     }
 
-    await transaction.modulesOnFormation.deleteMany({
-      where: { formationId },
-    });
     await transaction.tagsOnFormation.deleteMany({
       where: { formationId },
     });

@@ -14,7 +14,7 @@ type Props = {
   onSetImageBase64?: (base64: string | null) => void;
 };
 
-function ModuleMetadatas({
+function ModuleFields({
   register,
   errors,
   onSetFile,
@@ -81,4 +81,4 @@ function ModuleMetadatas({
   );
 }
 
-export default ModuleMetadatas;
+export default ModuleFields;
