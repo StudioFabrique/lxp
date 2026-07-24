@@ -1,4 +1,4 @@
-import { Edit, MoreVertical, Trash, UploadCloud } from "lucide-react";
+import { Edit, Eye, EyeOff, MoreVertical, Trash, UploadCloud } from "lucide-react";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import Course from "../../../../../src/utils/interfaces/course";
 import { ModalCourseType } from "./course-item";
@@ -18,6 +18,10 @@ const CourseActions = ({
 }: CourseActionsProps) => {
   const handleClickPublish = (e: React.MouseEvent) => {
     onOpenModal("publish", e);
+  };
+
+  const handleClickVisibility = (e: React.MouseEvent) => {
+    onOpenModal("visibility", e);
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -46,11 +50,27 @@ const CourseActions = ({
           </PermissionGuard>
         )}
 
+        {course.isPublished && (
+          <PermissionGuard action="update" object="course">
+            <button
+              onClick={handleClickVisibility}
+              className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
+            >
+              {course.visibility ? (
+                <EyeOff className="w-4 h-4 mr-3" />
+              ) : (
+                <Eye className="w-4 h-4 mr-3" />
+              )}
+              {course.visibility ? "Rendre invisible" : "Rendre visible"}
+            </button>
+          </PermissionGuard>
+        )}
+
         <PermissionGuard action="update" object="course">
           <button
             type="button"
             onClick={onEdit}
-            className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
+            className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
           >
             <Edit className="w-4 h-4 mr-3" />
             Modifier le cours

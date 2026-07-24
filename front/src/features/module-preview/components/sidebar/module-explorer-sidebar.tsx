@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import { ExplorerStore } from "../../views/ModuleContentExplorer";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -23,6 +24,7 @@ const ModuleExplorerSidebar = ({
   const [searchParams] = useSearchParams();
   const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
   const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
+  const [openedCourseId, setOpenedCourseId] = useState<number>();
 
   if (!module) return null;
 
@@ -39,8 +41,12 @@ const ModuleExplorerSidebar = ({
       onUpdateCourse={courseActions.updateCourse}
       editCourseId={editCourseId}
       editLessonId={editLessonId}
+      openedCourseId={openedCourseId}
       onDeleteLesson={lessonActions.deleteLesson}
       onCreateLesson={lessonActions.createLesson}
+      onLessonCreated={(lessonId) =>
+        dispatch({ type: "select_lesson_by_id", id: lessonId })
+      }
       onUpdateLesson={lessonActions.updateLesson}
     >
       {canEditModule && (
@@ -49,6 +55,7 @@ const ModuleExplorerSidebar = ({
             parcoursId={module.parcoursId}
             moduleId={module.id || 0}
             onCreate={courseActions.createCourse}
+            onCreated={setOpenedCourseId}
           />
         </PermissionGuard>
       )}

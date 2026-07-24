@@ -3,7 +3,6 @@ import {
   ChevronDown,
   ChevronRight,
   CloudOff,
-  Eye,
   EyeOff,
   Plus,
 } from "lucide-react";
@@ -44,6 +43,7 @@ type CourseItemProps = {
   ) => Promise<boolean>;
   openEditOnMount?: boolean;
   editLessonId?: number;
+  autoOpenCourseId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
@@ -53,7 +53,8 @@ type CourseItemProps = {
       modalite: string;
       tagId: number;
     },
-  ) => Promise<boolean>;
+  ) => Promise<number | false>;
+  onLessonCreated?: (lessonId: number) => void;
   onUpdateLesson: (
     lessonId: number,
     values: LessonFormValues,
@@ -76,8 +77,10 @@ const CourseItem = ({
   onUpdateCourse,
   openEditOnMount = false,
   editLessonId,
+  autoOpenCourseId,
   onDeleteLesson,
   onCreateLesson,
+  onLessonCreated,
   onUpdateLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
@@ -109,14 +112,16 @@ const CourseItem = ({
     description: string;
     modalite: string;
     tagId: number;
-  }) => {
+  }): Promise<boolean> => {
     setIsSavingLesson(true);
-    const created = await onCreateLesson(course.id, data);
+    const lessonId = await onCreateLesson(course.id, data);
     setIsSavingLesson(false);
-    if (created) {
+    if (lessonId) {
       setIsCreatingLesson(false);
       setCourseOpen(true);
+      onLessonCreated?.(lessonId);
     }
+    return lessonId !== false;
   };
 
   const handleUpdateCourse = async (values: UpdateCourseFormValues) => {
@@ -232,6 +237,12 @@ const CourseItem = ({
     return () => observer.disconnect();
   }, [isCourseOpen, course.description]);
 
+  useEffect(() => {
+    if (autoOpenCourseId && autoOpenCourseId === course.id) {
+      setCourseOpen(true);
+    }
+  }, [autoOpenCourseId, course.id]);
+
   return (
     <>
       <CreateLessonModal
@@ -291,36 +302,34 @@ const CourseItem = ({
                 <h3 className="font-semibold text-secondary-content/80 truncate">
                   {toUpperFirstLetter(course.title)}
                 </h3>
+                {course.isPublished && !course.visibility && (
+                  <div
+                    className={cn("tooltip ml-1")}
+                    data-tip="Cours invisible"
+                  >
+                    <EyeOff className="w-3 h-3" />
+                  </div>
+                )}
               </span>
               {isCourseCompleted && (
                 <Check className="text-success group-hover:text-primary-content" />
               )}
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
-                  {course.isPublished ? (
-                    <PermissionGuard action="update" object="course">
-                      <button
-                        onClick={(e) => handleOpenModal("visibility", e)}
-                        className={cn("btn btn-xs tooltip ", {
-                          "btn-info": course.visibility,
-                          "btn-neutral": !course.visibility,
-                        })}
-                        data-tip={
-                          course.visibility
-                            ? "Rendre le cours invisible"
-                            : "Rendre le cours visible"
-                        }
-                      >
-                        {course.visibility ? (
-                          <Eye className="w-3 h-3" />
-                        ) : (
-                          <EyeOff className="w-3 h-3" />
-                        )}
-                      </button>
-                    </PermissionGuard>
-                  ) : null}
-
                   <PermissionGuard action="write" object="course">
+                    <button
+                      className="btn btn-success btn-xs gap-1 tooltip"
+                      data-tip="Créer une leçon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsCreatingLesson(true);
+                      }}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </PermissionGuard>
+
+                  <PermissionGuard action="update" object="course">
                     <CourseActions
                       course={course}
                       onOpenModal={handleOpenModal}
@@ -378,29 +387,6 @@ const CourseItem = ({
                 )}
               </span>
             )}
-
-            <div className="flex items-center justify-between border-b border-secondary/30 pb-2">
-              <div className="text-xs font-semibold text-base-content/60 flex items-center gap-0.5">
-                <span>Leçons</span>
-                <span>
-                  {(course.lessons.length || 0) > 1
-                    ? `(${course.lessons.length})`
-                    : null}
-                </span>
-              </div>
-              <PermissionGuard action="write" object="course">
-                <button
-                  className="btn btn-secondary btn-xs gap-1"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsCreatingLesson(true);
-                  }}
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  Ajouter une leçon
-                </button>
-              </PermissionGuard>
-            </div>
 
             {/* Lessons List */}
             {course.lessons.length > 0 ? (

@@ -255,7 +255,7 @@ const useModuleContentExplorer = () => {
   }, []);
 
   const createCourse = useCallback(
-    async (values: CreateCourseFormValues) => {
+    async (values: CreateCourseFormValues): Promise<number | false> => {
       if (!moduleId || !values.title.trim()) return false;
       try {
         const { data } = await apiClient.post<{
@@ -295,7 +295,7 @@ const useModuleContentExplorer = () => {
         }
         await fetchModuleData();
         toast.success("Cours créé");
-        return true;
+        return data.course.id;
       } catch {
         toast.error("Impossible de créer le cours");
         return false;
@@ -326,16 +326,22 @@ const useModuleContentExplorer = () => {
   );
 
   const createLesson = useCallback(
-    async (courseId: number, data: LessonFormValues) => {
+    async (
+      courseId: number,
+      data: LessonFormValues,
+    ): Promise<number | false> => {
       if (!data.title.trim() || !data.tagId) return false;
       try {
-        await apiClient.put(`/course/new-lesson/${courseId}`, {
-          ...data,
-          title: data.title.trim(),
-        });
+        const response = await apiClient.put<{ id: number }>(
+          `/course/new-lesson/${courseId}`,
+          {
+            ...data,
+            title: data.title.trim(),
+          },
+        );
         await fetchModuleData();
         toast.success("Leçon créée");
-        return true;
+        return response.data.id;
       } catch {
         toast.error("Impossible de créer la leçon");
         return false;

@@ -15,7 +15,6 @@ import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
 import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
 
-
 interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
 }
@@ -30,8 +29,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const nav = useNavigate();
   const { data: groups = [] } = useParcoursGroupsQuery(parcoursId);
   const groupIds = useMemo(
-    () =>
-      (groups?.map((group) => group._id).filter(Boolean) as string[]) ?? [],
+    () => (groups?.map((group) => group._id).filter(Boolean) as string[]) ?? [],
     [groups],
   );
   const { data: students } = useParcoursStudentsQuery(groupIds);
@@ -53,7 +51,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
     }
   };
 
-  const handleSaveDraft = () => {
+  const handleNavigateToParcoursPreview = () => {
     nav(`/admin/parcours/view/${id}`);
   };
 
@@ -100,17 +98,23 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         }
         endActions={
           <>
-            <button
-              className="btn btn-secondary"
-              onClick={handleSaveDraft}
-            >
-              Sauvegarder comme brouillon
-            </button>
+            {!parcours?.isPublished && (
+              <button
+                className="btn btn-secondary"
+                onClick={handleNavigateToParcoursPreview}
+              >
+                Sauvegarder comme brouillon
+              </button>
+            )}
             <button
               className="btn btn-primary"
-              onClick={() => handlePublishParcours(true)}
+              onClick={() =>
+                parcours?.isPublished
+                  ? handleNavigateToParcoursPreview()
+                  : handlePublishParcours(true)
+              }
             >
-              Publier
+              {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
             </button>
           </>
         }
