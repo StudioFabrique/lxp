@@ -14,7 +14,7 @@ type Props = {
     description: string;
     modalite: string;
     tagId: number;
-  }) => void;
+  }) => Promise<boolean>;
 };
 
 export default function CreateLessonModal({
@@ -67,15 +67,22 @@ export default function CreateLessonModal({
     >
       <form
         className="modal-box max-w-xl"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
-          if (title.trim() && tagId)
-            onSubmit({
+          if (title.trim() && tagId) {
+            const success = await onSubmit({
               title: title.trim(),
               description: description.trim(),
               modalite,
               tagId: +tagId,
             });
+            if (success) {
+              setTitle("");
+              setDescription("");
+              setModalite("distanciel");
+              setTagId("");
+            }
+          }
         }}
       >
         <div className="flex items-start justify-between gap-4 border-b border-base-300 pb-4">

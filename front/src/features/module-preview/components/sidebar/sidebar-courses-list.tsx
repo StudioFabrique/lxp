@@ -28,11 +28,13 @@ type SidebarCoursesListProps = {
   ) => Promise<boolean>;
   editCourseId?: number;
   editLessonId?: number;
+  openedCourseId?: number;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
     data: LessonFormValues,
-  ) => Promise<boolean>;
+  ) => Promise<number | false>;
+  onLessonCreated?: (lessonId: number) => void;
   onUpdateLesson: (
     lessonId: number,
     values: LessonFormValues,
@@ -50,8 +52,10 @@ const SidebarCoursesList = ({
   onUpdateCourse,
   editCourseId,
   editLessonId,
+  openedCourseId,
   onDeleteLesson,
   onCreateLesson,
+  onLessonCreated,
   onUpdateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
@@ -148,8 +152,10 @@ const SidebarCoursesList = ({
               onUpdateCourse={onUpdateCourse}
               openEditOnMount={course.id === editCourseId}
               editLessonId={editLessonId}
+              autoOpenCourseId={openedCourseId}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
+              onLessonCreated={onLessonCreated}
               onUpdateLesson={onUpdateLesson}
               children={children[1]}
             />

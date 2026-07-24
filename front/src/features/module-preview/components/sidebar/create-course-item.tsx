@@ -8,13 +8,15 @@ import CreateCourseDetailsModal from "./create-course-details-modal";
 type CreateCourseItemProps = {
   parcoursId?: number;
   moduleId: number;
-  onCreate: (values: CreateCourseFormValues) => Promise<boolean>;
+  onCreate: (values: CreateCourseFormValues) => Promise<number | false>;
+  onCreated?: (courseId: number) => void;
 };
 
 const CreateCourseItem = ({
   parcoursId,
   moduleId,
   onCreate,
+  onCreated,
 }: CreateCourseItemProps) => {
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [showDetailsForm, setShowDetailsForm] = useState(false);
@@ -30,14 +32,15 @@ const CreateCourseItem = ({
 
   const handleCreate = async (values: CreateCourseFormValues) => {
     setIsSubmitting(true);
-    const success = await onCreate(values);
+    const courseId = await onCreate(values);
     setIsSubmitting(false);
-    if (success) {
+    if (courseId) {
       setTitle("");
       setShowDetailsForm(false);
       setShowTitleInput(false);
+      onCreated?.(courseId);
     }
-    return success;
+    return courseId !== false;
   };
 
   const closeTitleInput = () => {
