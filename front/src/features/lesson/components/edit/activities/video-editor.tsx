@@ -9,9 +9,9 @@ import { activityVideoSize } from "../../../../../config/images-sizes";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import { Loader2 } from "lucide-react";
 import { activiteMetaDataSchema } from "../../../lesson.schema";
-import FormInput from "../../../../../components/form/FormInput";
 import FormTextarea from "../../../../../components/form/FormTextarea";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
+import ActivityHeader from "./activity-header";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -49,6 +49,7 @@ export default function VideoEditor({
 
   const {
     register,
+    watch,
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
     reset,
@@ -115,17 +116,22 @@ export default function VideoEditor({
 
   return (
     <main className="w-full flex flex-col gap-y-4">
+      <ActivityHeader
+        title={watch("title") ?? ""}
+        activityType="video"
+        titleEditable
+        titleError={errors.title?.message}
+        onEditTitle={(value) =>
+          register("title").onChange({ target: { value } })
+        }
+        titlePlaceholder="Titre de la vidéo"
+        onCancel={onCancel}
+        cancelDisabled={loading}
+      />
       <Wrapper>
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <article>
             <form className="flex flex-col gap-y-2">
-              <FormInput
-                label="Titre *"
-                placeholder="Titre de la video"
-                name="title"
-                register={register}
-                error={errors.title}
-              />
               <FormTextarea
                 label="Description"
                 name="description"
@@ -182,14 +188,7 @@ export default function VideoEditor({
           </section>
         ) : null}
       </Wrapper>
-      <section className="flex justify-between items-center gap-x-2">
-        <button
-          className="btn btn-primary btn-outline"
-          disabled={loading}
-          onClick={onCancel}
-        >
-          Annuler
-        </button>
+      <section className="flex justify-end items-center gap-x-2">
         <button
           className="btn btn-primary flex items-center gap-x-2"
           disabled={loading}
