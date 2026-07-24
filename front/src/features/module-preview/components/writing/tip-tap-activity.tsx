@@ -13,6 +13,7 @@ type Props = {
   onSave: (id?: number, title?: string, content?: string) => Promise<boolean>;
   onFinishSaving?: () => void;
   onClose?: () => void;
+  headerSticky?: boolean;
 };
 
 /**
@@ -35,6 +36,7 @@ const TiptapActivity = ({
   onSave,
   onFinishSaving,
   onClose,
+  headerSticky,
 }: Props) => {
   const [pending, setPending] = useState<boolean>(false);
 
@@ -80,6 +82,7 @@ const TiptapActivity = ({
           pending={pending}
           onSave={handleSave}
           onContentChange={onEditContent}
+          headerSticky={headerSticky}
         />
       </div>
       {mode !== "read" && onClose && (

@@ -4,6 +4,7 @@ import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
 import useCreateBlog from "./use-create-blog";
 import TiptapActivity from "../../../../../module-preview/components/writing/tip-tap-activity";
 import ActivityHeader from "../activity-header";
+import { useCallback, useState } from "react";
 
 type EditorProps = {
   activity?: Activity;
@@ -13,6 +14,7 @@ type EditorProps = {
 
 function BlogEditor({ activity, content, onCancel }: EditorProps) {
   const lesson = useLessonSelector((state) => state.lesson);
+  const [headerSticky, setHeaderSticky] = useState(false);
 
   const { watch, setValue, handleSubmit } = useCreateBlog(
     lesson?.id?.toString() ?? "",
@@ -31,8 +33,12 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
 
   const handleChangeContent = (_content: string) => {};
 
+  const handleStickyChange = useCallback((sticky: boolean) => {
+    setHeaderSticky(sticky);
+  }, []);
+
   return (
-    <div className="my-8 flex flex-col gap-y-4">
+    <div className="my-8 flex flex-col gap-y-4 relative">
       <ActivityHeader
         title={watch("title") ?? ""}
         activityType="text"
@@ -40,6 +46,8 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
         onEditTitle={(value) => setValue("title", value)}
         titlePlaceholder="Titre de l'activité"
         onCancel={onCancel}
+        enableSticky
+        onStickyChange={handleStickyChange}
       />
       <Wrapper>
         <TiptapActivity
@@ -49,6 +57,7 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
           onEditContent={handleChangeContent}
           onEditTitle={(value) => setValue("title", value)}
           onSave={handleSubmitForm}
+          headerSticky={headerSticky}
         />
       </Wrapper>
     </div>

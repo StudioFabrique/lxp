@@ -3,7 +3,7 @@ import {
   ActivityType,
 } from "../../../../../src/utils/interfaces/activity";
 import RatingPanelButton from "../../../../../src/components/UI/lesson-rating/rating-panel-button";
-import { type PropsWithChildren, useCallback } from "react";
+import { type PropsWithChildren, useCallback, useState } from "react";
 import ActivityActionsMenu from "./activity-actions-menu";
 import ActivityHeader from "../../../../features/lesson/components/edit/activities/activity-header";
 import TiptapActivity from "../writing/tip-tap-activity";
@@ -72,6 +72,8 @@ const LessonReaderAndEditor = ({
   onSaveActivity,
   children,
 }: PropsWithChildren<Props>) => {
+  const [headerSticky, setHeaderSticky] = useState(false);
+
   const handleConfirmDelete = useCallback(() => {
     onDeleteActivity();
   }, [onDeleteActivity]);
@@ -100,7 +102,7 @@ const LessonReaderAndEditor = ({
         )}
 
         {/* Rendu de l'activité */}
-        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm">
+        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative">
           {/* Header de l'activité : titre et menu contextuel */}
           {canEdit && (mode === "write" || mode === "edit") ? (
             <ActivityHeader
@@ -115,6 +117,8 @@ const LessonReaderAndEditor = ({
               cancelClassName="btn btn-sm btn-error text-base-100"
               cancelDisabled={isLoading}
               onCancel={mode === "write" ? onBack : onClose}
+              enableSticky
+              onStickyChange={setHeaderSticky}
             />
           ) : (
             <ActivityHeader
@@ -122,6 +126,7 @@ const LessonReaderAndEditor = ({
               activityType={activityType}
               className="font-semibold text-primary flex justify-between items-center mb-6"
               titleClassName="text-2xl font-bold"
+              enableSticky
             >
               {selectedActivity && (
                 <ActivityActionsMenu
@@ -147,6 +152,7 @@ const LessonReaderAndEditor = ({
                 onEditContent={onEditContent}
                 onSave={onSaveActivity}
                 onFinishSaving={onClose}
+                headerSticky={headerSticky}
               />
             </div>
           ) : activityType === "iframe" ? (
