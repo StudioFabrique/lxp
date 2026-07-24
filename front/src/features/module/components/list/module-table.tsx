@@ -30,12 +30,12 @@ const ModuleTable = ({
         <>
           {modulesList.map((item: any) => (
             <TableRowWrapper key={item.id}>
-              <td className="bg-transparent rounded-l-lg max-w-[150px]">
+              <td className="bg-transparent rounded-l-lg max-w-37.5">
                 <span className="tooltip tooltip-bottom" data-tip={item.title}>
                   {truncateText(item.title, 20)}
                 </span>
               </td>
-              <td className="bg-transparent capitalize max-w-[100px]">
+              <td className="bg-transparent capitalize max-w-25">
                 <div>
                   <span
                     className="tooltip tooltip-bottom"
@@ -45,7 +45,7 @@ const ModuleTable = ({
                   </span>
                 </div>
               </td>
-              <td className="bg-transparent max-w-[150px]">
+              <td className="bg-transparent max-w-37.5">
                 <span
                   className="tooltip tooltip-bottom text"
                   data-tip={item.formation || "ND"}

@@ -17,6 +17,7 @@ const useCreateBlog = (
   const {
     formState: { errors },
     getValues,
+    watch,
     setValue,
     trigger,
     reset,
@@ -63,6 +64,7 @@ const useCreateBlog = (
 
   return {
     errors,
+    watch,
     setValue,
     handleSubmit,
     isLoading,

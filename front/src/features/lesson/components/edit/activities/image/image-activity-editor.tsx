@@ -8,7 +8,7 @@ import { ACTIVITIES } from "../../../../../../config/urls";
 import DialogImages from "../../../../../mediatheque/components/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
 import { bgImageGradient } from "../../../../../../utils/helpers/color-helpers";
-import FormInput from "../../../../../../components/form/FormInput";
+import ActivityHeader from "../activity-header";
 
 type Props = {
   activity?: Activity;
@@ -25,6 +25,7 @@ export default function ImageActivityEditor({
 }: Props) {
   const {
     register,
+    watch,
     errors,
     handleSubmit,
     image,
@@ -40,10 +41,10 @@ export default function ImageActivityEditor({
       selectedImage
         ? `${ACTIVITIES}images/${selectedImage}`
         : image
-        ? image
-        : activity?.url
-        ? `${ACTIVITIES}images/${activity.url}`
-        : defaultImage
+          ? image
+          : activity?.url
+            ? `${ACTIVITIES}images/${activity.url}`
+            : defaultImage,
     ),
     width: "100%",
     height: "100%",
@@ -58,13 +59,21 @@ export default function ImageActivityEditor({
     <div className="w-full h-fit gap-8 grid grid-cols-1 3xl:grid-cols-2 p-6">
       <Wrapper>
         <span className="h-full flex flex-col gap-y-2">
+          <ActivityHeader
+            title={watch("title") ?? ""}
+            activityType="image"
+            titleEditable
+            titleError={errors.title?.message}
+            onEditTitle={(value) =>
+              register("title").onChange({ target: { value } })
+            }
+            titlePlaceholder="Titre de l'image"
+            onCancel={() => onCancel(false)}
+          />
           <h2 className="text-lg font-bold">
             Informations à propos de l'image
           </h2>
           <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
-            <span className="flex flex-col gap-y-4">
-              <FormInput name="title" label="Titre *" register={register} error={errors.title} />
-            </span>
             <span className="flex flex-col gap-y-4">
               <FileUpload
                 onFileSelect={setFile}
@@ -83,23 +92,15 @@ export default function ImageActivityEditor({
                 </button>
               </div>
             </span>
-            <div className="flex justify-between items-center">
-              <button
-                className="btn btn-primary btn-outline"
-                onClick={() => onCancel(false)}
-              >
-                Annuler
+            <div className="flex justify-end items-center gap-x-2">
+              <button className="btn btn-secondary" onClick={() => reset()}>
+                Réinitialiser
               </button>
-              <span className="flex justify-end items-center gap-x-2">
-                <button className="btn btn-secondary" onClick={() => reset()}>
-                  Réinitialiser
-                </button>
-                <SubmitButton
-                  label="Sauvegarder"
-                  isLoading={false}
-                  loadingLabel="En cours..."
-                />
-              </span>
+              <SubmitButton
+                label="Sauvegarder"
+                isLoading={false}
+                loadingLabel="En cours..."
+              />
             </div>
           </form>
         </span>
@@ -107,7 +108,7 @@ export default function ImageActivityEditor({
       <div className="flex justify-center">
         <div style={classImage}></div>
       </div>
-      <div className="h-[1rem]" />
+      <div className="h-4" />
       {showDialog ? (
         <DialogImages onClose={() => setShowDialog(false)} />
       ) : null}

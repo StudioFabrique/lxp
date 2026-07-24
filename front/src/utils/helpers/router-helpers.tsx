@@ -1,3 +1,7 @@
+import { RouteObject } from "react-router";
+import { AppSubject } from "../../rbac/ability";
+import RequireAbility from "../../components/guards/RequireAbility";
+
 type LazyRouteModule = { default: React.ComponentType };
 
 /**
@@ -5,11 +9,10 @@ type LazyRouteModule = { default: React.ComponentType };
  * the route module starts loading during route matching, in parallel with its
  * parent route and any loaders.
  */
-export const lazyRoute =
-  (load: () => Promise<LazyRouteModule>) => async () => {
-    const routeModule = await load();
-    return { Component: routeModule.default };
-  };
+export const lazyRoute = (load: () => Promise<LazyRouteModule>) => async () => {
+  const routeModule = await load();
+  return { Component: routeModule.default };
+};
 
 export const lazyRouteWithWrapper =
   (
@@ -21,3 +24,11 @@ export const lazyRouteWithWrapper =
     const Page = routeModule.default;
     return { Component: () => wrap(<Page />) };
   };
+
+export const guard = (
+  subject: AppSubject,
+  children: RouteObject[],
+): RouteObject => ({
+  element: <RequireAbility action="read" subject={subject} />,
+  children,
+});
