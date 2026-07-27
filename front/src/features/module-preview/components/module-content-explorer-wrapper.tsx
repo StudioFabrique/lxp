@@ -76,7 +76,7 @@ const ModuleContentExplorerWrapper = ({
         ) : null}
       </div>
 
-      <div className="mt-5 grid grid-cols-[minmax(7rem,1fr)_minmax(0,2fr)] gap-2 sm:gap-3 lg:grid-cols-3 lg:gap-5 w-full">
+      <div className="mt-5 grid grid-cols-[minmax(7.5rem,1fr)_minmax(0,2fr)] gap-2 sm:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)] sm:gap-3 lg:grid-cols-3 lg:gap-5 w-full">
         {!isPanelClosed && (
           <motion.div
             className="min-w-0"
