@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Readable, Transform } from "stream";
+import { pipeline, Readable, Transform } from "stream";
 import dotenv from "dotenv";
 import { prisma } from "../../utils/db";
 import { sign } from "jsonwebtoken";
@@ -106,69 +106,91 @@ export default async function httpPostPreliminaryQuizStream(
 
     if (!response.ok) throw new Error(`Erreur API IA: ${response.statusText}`);
 
-    // Création d'un stream de capture pour sauvegarder les questions
-    let accumulatedData = "";
+    // Créer le quiz avant de relayer les questions. Chaque question est ensuite
+    // persistée avant que son chunk ne soit envoyé au client : sans cela, un
+    // apprenant pouvait signaler une question déjà affichée alors que la
+    // sauvegarde (effectuée auparavant à la fin du stream) n'avait pas encore
+    // commencé.
+    const generatedQuiz = await prisma.quiz.create({
+      data: {
+        title: `Quiz préliminaire - ${module.title}`,
+        type: "preliminary",
+        moduleId: module.id,
+      },
+    });
+
+    let lineBuffer = "";
+
+    const saveQuestionFromLine = async (line: string) => {
+      if (!line.startsWith("data:")) return;
+
+      const jsonStr = line.replace(/^data:\s*/, "").trim();
+      if (!jsonStr) return;
+
+      try {
+        const parsed = JSON.parse(jsonStr);
+        if (!parsed || parsed.event || !parsed.prompt) return;
+
+        const {
+          id,
+          type,
+          prompt,
+          difficulty,
+          explanation_correct,
+          explanation_wrong,
+          tags,
+          ...specificData
+        } = parsed;
+
+        await prisma.quizQuestion.create({
+          data: {
+            quizId: generatedQuiz.id,
+            externalId: String(id),
+            type,
+            prompt,
+            difficulty: difficulty || "medium",
+            explanationTrue: explanation_correct,
+            explanationWrong: explanation_wrong,
+            tags: tags || [],
+            data: specificData,
+          },
+        });
+      } catch (error) {
+        // Les événements non JSON ne sont pas des questions. Une erreur Prisma,
+        // en revanche, doit interrompre le stream pour ne jamais afficher une
+        // question impossible à signaler.
+        if (error instanceof SyntaxError) return;
+        throw error;
+      }
+    };
+
     const captureStream = new Transform({
       transform(chunk, encoding, callback) {
-        accumulatedData += chunk.toString();
-        this.push(chunk); // On laisse passer le flux pour le client
-        callback();
+        const chunkText = chunk.toString();
+        lineBuffer += chunkText;
+
+        const lines = lineBuffer.split("\n");
+        lineBuffer = lines.pop() || "";
+
+        Promise.all(lines.map(saveQuestionFromLine))
+          .then(() => {
+            this.push(chunk);
+            callback();
+          })
+          .catch(callback);
+      },
+      flush(callback) {
+        saveQuestionFromLine(lineBuffer).then(() => callback(), callback);
       },
     });
 
     const nodeStream = Readable.fromWeb(response.body as any);
-    nodeStream.pipe(captureStream).pipe(res);
-
-    // Sauvegarde asynchrone une fois le stream terminé
-    captureStream.on("finish", async () => {
-      try {
-        const lines = accumulatedData.split("\n");
-        const questionsToSave = [];
-
-        for (const line of lines) {
-          if (!line.startsWith("data:")) continue;
-          const jsonStr = line.replace("data:", "").trim();
-          try {
-            const parsed = JSON.parse(jsonStr);
-            // On filtre les événements de type question
-            if (parsed && !parsed.event && parsed.prompt) {
-              const {
-                id,
-                type,
-                prompt,
-                difficulty,
-                explanation_correct,
-                explanation_wrong,
-                tags,
-                ...specificData
-              } = parsed;
-              questionsToSave.push({
-                externalId: id,
-                type,
-                prompt,
-                difficulty: difficulty || "medium",
-                explanationTrue: explanation_correct,
-                explanationWrong: explanation_wrong,
-                tags: tags || [],
-                data: specificData,
-              });
-            }
-          } catch {}
-        }
-
-        if (questionsToSave.length > 0) {
-          await prisma.quiz.create({
-            data: {
-              title: `Quiz préliminaire - ${module.title}`,
-              type: "preliminary",
-              moduleId: module.id,
-              questions: { create: questionsToSave },
-            },
-          });
-          console.log(`Quiz sauvegardé en BDD pour le module ${module.id}`);
-        }
-      } catch (e) {
-        console.error("Erreur sauvegarde auto-quiz:", e);
+    pipeline(nodeStream, captureStream, res, (streamError) => {
+      if (streamError) {
+        console.error(
+          "Erreur lors de la persistance du quiz préliminaire :",
+          streamError,
+        );
       }
     });
   } catch (error) {

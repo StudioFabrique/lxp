@@ -9,6 +9,7 @@ import LastParcours from "../components/last-parcours";
 import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import LastModules from "../components/last-modules";
+import SidebarRouteIcon from "../../../components/headers/SidebarRouteIcon";
 
 // Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [
@@ -38,8 +39,11 @@ const AdminDashboard = () => {
     <div className="w-full flex flex-col gap-6">
       {/* --- Bannière de bienvenue --- */}
       <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
-        <h2 className="text-3xl font-extrabold capitalize text-primary mb-2">
-          Bonjour, {user?.firstname} {user?.lastname} !
+        <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
+          <SidebarRouteIcon />
+          <span>
+            Bonjour, {user?.firstname} {user?.lastname} !
+          </span>
         </h2>
         <p className="text-base-content opacity-80 max-w-3xl">
           Bienvenue dans votre panneau d'administration, l'outil central pour

@@ -190,9 +190,12 @@ export function moduleExplorerContentReducer(
     }
 
     case "select_content_by_id": {
-      const selectedLesson = state.module?.courses
-        .flatMap((course) => course.lessons)
-        .find((lesson) => lesson.id === action.lessonId);
+      const selectedLesson =
+        state.selectedLesson?.id === action.lessonId
+          ? state.selectedLesson
+          : state.module?.courses
+              .flatMap((course) => course.lessons)
+              .find((lesson) => lesson.id === action.lessonId);
       const selectedActivity =
         selectedLesson?.activities?.find(
           (activity) => activity.id === action.activityId,
