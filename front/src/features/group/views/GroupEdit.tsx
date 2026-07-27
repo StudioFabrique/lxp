@@ -20,6 +20,7 @@ const GroupEdit = () => {
   return (
     <>
       <GroupForm
+        key={existingGroup?._id ?? "loading"}
         title={existingGroup && "Modifier un groupe de formation"}
         group={existingGroup}
         onSubmitForm={onSubmit}

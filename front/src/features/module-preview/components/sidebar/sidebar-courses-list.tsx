@@ -138,12 +138,14 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border border-base-300 bg-base-200 rounded-lg p-5 select-none shadow-sm sticky top-0">
+    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0 overflow-hidden">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <PermissionGuard action="component" object="progression">
         {courses.length > 0 ? (
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="text-xl font-bold w-28 text-primary">Progression</h2>
+          <div className="flex flex-col items-center gap-2 mb-3 sm:flex-row sm:justify-between sm:mb-4 lg:mb-5">
+            <h2 className="hidden text-xl font-bold w-28 text-primary sm:block">
+              Progression
+            </h2>
 
             <FadeWrapper>
               <span
