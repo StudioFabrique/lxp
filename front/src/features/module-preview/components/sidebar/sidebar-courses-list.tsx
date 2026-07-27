@@ -60,7 +60,37 @@ const SidebarCoursesList = ({
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
+  const [openCourseId, setOpenCourseId] = useState<number | undefined>(() => {
+    const courseContainingSelectedLesson = courses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
+    );
+    const courseContainingEditedLesson = courses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === editLessonId),
+    );
+
+    return (
+      courseContainingSelectedLesson?.id ??
+      courseContainingEditedLesson?.id ??
+      openedCourseId
+    );
+  });
   const actionsSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const selectedCourse = courses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
+    );
+    const editedCourse = courses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === editLessonId),
+    );
+    const nextOpenCourseId =
+      selectedCourse?.id ?? editedCourse?.id ?? openedCourseId;
+    if (!nextOpenCourseId) return;
+
+    // L'ouverture automatique doit aussi refermer le cours précédemment ouvert.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpenCourseId(nextOpenCourseId);
+  }, [courses, editLessonId, openedCourseId, selectedLesson]);
 
   useEffect(() => {
     const scrollContainer = document.getElementById("main-scroll-container");
@@ -152,7 +182,13 @@ const SidebarCoursesList = ({
               onUpdateCourse={onUpdateCourse}
               openEditOnMount={course.id === editCourseId}
               editLessonId={editLessonId}
-              autoOpenCourseId={openedCourseId}
+              isOpen={course.id === openCourseId}
+              onToggle={() =>
+                setOpenCourseId((currentId) =>
+                  currentId === course.id ? undefined : course.id,
+                )
+              }
+              onOpen={() => setOpenCourseId(course.id)}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
               onLessonCreated={onLessonCreated}

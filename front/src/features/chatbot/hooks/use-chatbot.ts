@@ -11,6 +11,7 @@ type ChatbotSource = {
   heading_path: string;
   lessonId?: number;
   moduleId?: number;
+  activityId?: number;
 };
 
 export type ChatbotValues = {
