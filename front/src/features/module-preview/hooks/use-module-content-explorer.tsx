@@ -37,9 +37,12 @@ const useModuleContentExplorer = () => {
   const { setCurrentActivity } = useContext(ChatbotContext);
 
   const { moduleId } = useParams();
-  const { state: stateFromUrl }: { state: { lessonId?: number } } =
-    useLocation();
-  const stateFromUrlCalled = useRef(false);
+  const location = useLocation();
+  const stateFromUrl = location.state as {
+    lessonId?: number;
+    activityId?: number;
+  } | null;
+  const handledLocationKey = useRef<string | undefined>(undefined);
   const isInitialActivityLoaded = useRef(false);
   const isDiagnosticPassed = useRef(false);
   const isReordering = useRef({
@@ -386,24 +389,33 @@ const useModuleContentExplorer = () => {
 
   const fetchLessonData = useCallback(async () => {
     if (!state.selectedLesson?.id) return;
-    navigate(".", {
-      state: { lessonId: state.selectedLesson.id },
-    });
+    const selectedLessonId = state.selectedLesson.id;
+    const targetActivityId =
+      stateFromUrl?.lessonId === selectedLessonId
+        ? stateFromUrl.activityId
+        : undefined;
 
     try {
-      const response = await apiClient.get(
-        `/lesson/${state.selectedLesson.id}`,
-      );
+      const response = await apiClient.get(`/lesson/${selectedLessonId}`);
       const lesson = response.data as Lesson;
-      dispatch({ type: "select_lesson", lesson });
+      dispatch({
+        type: "select_lesson",
+        lesson,
+        activityId: targetActivityId,
+      });
     } catch {
       // silently fail
     }
 
     if (isDiagnosticPassed.current) {
-      await initiateLesson(state.selectedLesson.id);
+      await initiateLesson(selectedLessonId);
     }
-  }, [state.selectedLesson?.id, initiateLesson, navigate]);
+  }, [
+    state.selectedLesson?.id,
+    stateFromUrl?.activityId,
+    stateFromUrl?.lessonId,
+    initiateLesson,
+  ]);
 
   const fetchActivityTextContent = useCallback(() => {
     if (
@@ -624,12 +636,28 @@ const useModuleContentExplorer = () => {
   }, [state.selectedActivity?.id]);
 
   useEffect(() => {
-    if (state.module && !stateFromUrlCalled.current) {
-      if (stateFromUrl?.lessonId)
-        dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-      stateFromUrlCalled.current = true;
+    if (
+      !state.module ||
+      String(state.module.id) !== moduleId ||
+      handledLocationKey.current === location.key
+    )
+      return;
+
+    if (stateFromUrl?.lessonId) {
+      dispatch({
+        type: "select_content_by_id",
+        lessonId: stateFromUrl.lessonId,
+        activityId: stateFromUrl.activityId,
+      });
     }
-  }, [state.module, stateFromUrl?.lessonId]);
+    handledLocationKey.current = location.key;
+  }, [
+    location.key,
+    moduleId,
+    state.module,
+    stateFromUrl?.activityId,
+    stateFromUrl?.lessonId,
+  ]);
 
   useEffect(() => {
     fetchModuleData();

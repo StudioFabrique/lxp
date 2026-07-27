@@ -5,15 +5,8 @@ import { studentCalendarRoutes } from "../features/calendar/routes";
 import { studentProfileRoutes } from "../features/profile/routes";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { studentDashboardRoutes } from "../features/dashboard-student/routes";
-import { lazyRoute } from "../utils/helpers/router-helpers";
+import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
-import RequireAbility from "../components/guards/RequireAbility";
-import { AppSubject } from "../rbac/ability";
-
-const guard = (subject: AppSubject, children: RouteObject[]): RouteObject => ({
-  element: <RequireAbility action="read" subject={subject} />,
-  children,
-});
 
 export const studentRoutes: RouteObject[] = [
   {

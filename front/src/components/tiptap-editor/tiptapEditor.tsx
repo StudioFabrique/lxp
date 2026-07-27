@@ -18,6 +18,7 @@ type TiptapEditorProps = {
   pending?: boolean;
   onSave?: (finalContent: string) => Promise<void>;
   onContentChange?: (content: string) => void;
+  headerSticky?: boolean;
 };
 
 export default function TiptapEditor({
@@ -26,6 +27,7 @@ export default function TiptapEditor({
   pending,
   onSave,
   onContentChange,
+  headerSticky = false,
 }: TiptapEditorProps) {
   const editorRef = useRef<Editor | null>(null);
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
@@ -76,14 +78,12 @@ export default function TiptapEditor({
           className="absolute -top-6 left-0 w-full h-4 pointer-events-none"
         />
 
-        {/* Placeholder pour éviter le saut de contenu quand le menu devient fixed */}
-        {isMenuBarSticky && <div className="h-14 mb-2 w-full" />}
-
         {editor ? (
           <MenuBar
             shouldHide={mode === "read"}
             editor={editor}
-            isSticky={isMenuBarSticky}
+            isSticky={isMenuBarSticky || headerSticky}
+            headerSticky={headerSticky}
             onUploadAllImagesRef={uploadAllImagesRef}
           />
         ) : null}

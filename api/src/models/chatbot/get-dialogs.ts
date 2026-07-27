@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
 import ChatDialogs from "../../utils/interfaces/db/chat-dialogs";
+import resolveSourceTarget from "./resolve-source-target";
 
 export default async function getDialogs(userId: string) {
   const dialogs = await ChatDialogs.find({ userId }).sort({ createdAt: 1 });
@@ -17,13 +17,7 @@ export default async function getDialogs(userId: string) {
     const sources = doc.sources
       ? await Promise.all(
           doc.sources?.map(async (source) => {
-            const lesson = await prisma.lesson.findFirst({
-              select: {
-                id: true,
-                course: { select: { moduleId: true } },
-              },
-              where: { course: { courseSlug: source.course } },
-            });
+            const target = await resolveSourceTarget(source);
 
             return {
               activity: source.activity,
@@ -31,8 +25,7 @@ export default async function getDialogs(userId: string) {
               heading_path: source.heading_path,
               score: source.score,
               section: source.section,
-              moduleId: lesson?.course.moduleId,
-              lessonId: lesson?.id,
+              ...target,
             };
           }),
         )

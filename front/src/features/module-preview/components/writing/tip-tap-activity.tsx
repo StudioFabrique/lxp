@@ -1,5 +1,5 @@
 import useAutosave from "./hooks/use-autosave";
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../../../components/tiptap-editor/tiptapEditor";
 
@@ -7,21 +7,21 @@ type Props = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
   id?: number;
   title?: string;
-  titleError?: string;
   content?: string;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onSave: (id?: number, title?: string, content?: string) => Promise<boolean>;
   onFinishSaving?: () => void;
   onClose?: () => void;
+  headerSticky?: boolean;
 };
 
 /**
  * Composant contenant l'éditeur de texte Tiptap ainsi que la logique de création/modification/lecture d'une activité
  * @param mode Le mode actuel de l'activité selectionnée ("read", "create" ou "edit")
  * @param id L'id (number, optionnel)
- * @param title Le titre (si déjà existant) qui est affiché dans la zone de texte au dessus de l'éditeur de texte (string, optionnel)
- * @param content Le contenu (si déjà existant) à passer à l’éditeur de texte (string, optionnel)
+ * @param title Le titre de l'activité géré dans le header parent (string, optionnel)
+ * @param content Le contenu (si déjà existant) à passer à l'éditeur de texte (string, optionnel)
  * @param onSave Fonction qui se déclenche lorsque l'utilisateur sauvegarde l'activité. Une promesse avec un retour de type boolean est attendue,
  *               si la requête se passe bien alors la prommesse doit retourner "true", sinon "false".
  * @param onClose Fonction qui se déclenche lorsque l'utilisateur ferme ce composant
@@ -30,13 +30,13 @@ const TiptapActivity = ({
   mode,
   id,
   title,
-  titleError,
   content,
   onEditTitle,
   onEditContent,
   onSave,
   onFinishSaving,
   onClose,
+  headerSticky,
 }: Props) => {
   const [pending, setPending] = useState<boolean>(false);
 
@@ -51,10 +51,6 @@ const TiptapActivity = ({
       onEditContent,
     },
   );
-
-  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    onEditTitle(e.currentTarget.value);
-  };
 
   const handleSave = async (finalContent: string) => {
     setPending(true);
@@ -79,26 +75,6 @@ const TiptapActivity = ({
         lastSaveTime={lastAutosaveTime}
       />
 
-      {mode !== "read" && (
-        <div className="py-4 flex gap-4 items-center select-none">
-          {/* Input titre */}
-          <label className="label min-w-fit" htmlFor="activity-title">
-            Titre de l'activité :
-          </label>
-          <input
-            id="activity-title"
-            value={title || ""}
-            onChange={handleChangeTitle}
-            type="text"
-            className={`input input-sm input-bordered flex-1 ${
-              titleError && "input-error text-error"
-            }`}
-            placeholder="Saisissez le titre de l'activité"
-            autoFocus
-          />
-        </div>
-      )}
-
       <div className={`w-full rounded-lg p-4 bg-base-200`}>
         <TiptapEditor
           mode={mode}
@@ -106,6 +82,7 @@ const TiptapActivity = ({
           pending={pending}
           onSave={handleSave}
           onContentChange={onEditContent}
+          headerSticky={headerSticky}
         />
       </div>
       {mode !== "read" && onClose && (

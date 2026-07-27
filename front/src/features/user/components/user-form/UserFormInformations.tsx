@@ -26,11 +26,20 @@ const inputStyle = (hasError: boolean) =>
     : "input input-sm input-bordered focus:outline-none w-full";
 
 const UserFormInformations = ({
-  lastname, lastnameError, onLastname,
-  firstname, firstnameError, onFirstname,
-  nickname, nicknameError, onNickname,
-  email, emailError, onEmail,
-  onSetFile, disabled,
+  lastname,
+  lastnameError,
+  onLastname,
+  firstname,
+  firstnameError,
+  onFirstname,
+  nickname,
+  nicknameError,
+  onNickname,
+  email,
+  emailError,
+  onEmail,
+  onSetFile,
+  disabled,
 }: Props) => {
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
@@ -43,62 +52,62 @@ const UserFormInformations = ({
 
   return (
     <Wrapper>
-    <h2 className="font-bold text-xl">Informations</h2>
-    <div className="flex flex-col items-center gap-2">
-      <label className="font-medium">Avatar</label>
-      <ProfileImageFileUpload
-        temporaryAvatar={temporaryAvatar}
-        onSetTemporaryAvatar={setTemporaryAvatar}
-        maxSize={avatarImageMaxSize}
-      />
-      <p className="text-xs text-base-content/60">
-        Cliquez sur l'avatar pour ajouter une image
-      </p>
-    </div>
-    <span className="flex flex-col gap-y-2">
-      <label>Nom *</label>
-      <input
-        className={inputStyle(lastnameError)}
-        type="text"
-        value={lastname}
-        onChange={(e) => onLastname(e.target.value)}
-        autoComplete="off"
-        disabled={disabled}
-      />
-    </span>
-    <span className="flex flex-col gap-y-2">
-      <label>Prénom *</label>
-      <input
-        className={inputStyle(firstnameError)}
-        type="text"
-        value={firstname}
-        onChange={(e) => onFirstname(e.target.value)}
-        autoComplete="off"
-        disabled={disabled}
-      />
-    </span>
-    <span className="flex flex-col gap-y-2">
-      <label>Pseudo</label>
-      <input
-        className={inputStyle(nicknameError && nickname.length > 0)}
-        type="text"
-        value={nickname}
-        onChange={(e) => onNickname(e.target.value)}
-        autoComplete="off"
-        disabled={disabled}
-      />
-    </span>
-    <span className="flex flex-col gap-y-2">
-      <label>Adresse Mail *</label>
-      <input
-        className={inputStyle(emailError)}
-        type="text"
-        value={email}
-        onChange={(e) => onEmail(e.target.value)}
-        autoComplete="off"
-        disabled={disabled}
-      />
-    </span>
+      <h2 className="font-bold text-xl">Informations</h2>
+      <div className="flex flex-col items-center gap-2">
+        <label className="font-medium">Avatar</label>
+        <ProfileImageFileUpload
+          temporaryAvatar={temporaryAvatar}
+          onSetTemporaryAvatar={setTemporaryAvatar}
+          maxSize={avatarImageMaxSize}
+        />
+        <p className="text-xs text-base-content/60">
+          Cliquez sur l'avatar pour ajouter une image
+        </p>
+      </div>
+      <span className="flex flex-col gap-y-2">
+        <label>Prénom *</label>
+        <input
+          className={inputStyle(firstnameError)}
+          type="text"
+          value={firstname}
+          onChange={(e) => onFirstname(e.target.value)}
+          autoComplete="off"
+          disabled={disabled}
+        />
+      </span>
+      <span className="flex flex-col gap-y-2">
+        <label>Nom *</label>
+        <input
+          className={inputStyle(lastnameError)}
+          type="text"
+          value={lastname}
+          onChange={(e) => onLastname(e.target.value)}
+          autoComplete="off"
+          disabled={disabled}
+        />
+      </span>
+      <span className="flex flex-col gap-y-2">
+        <label>Pseudo</label>
+        <input
+          className={inputStyle(nicknameError && nickname.length > 0)}
+          type="text"
+          value={nickname}
+          onChange={(e) => onNickname(e.target.value)}
+          autoComplete="off"
+          disabled={disabled}
+        />
+      </span>
+      <span className="flex flex-col gap-y-2">
+        <label>Adresse Mail *</label>
+        <input
+          className={inputStyle(emailError)}
+          type="text"
+          value={email}
+          onChange={(e) => onEmail(e.target.value)}
+          autoComplete="off"
+          disabled={disabled}
+        />
+      </span>
     </Wrapper>
   );
 };

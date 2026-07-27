@@ -43,7 +43,9 @@ type CourseItemProps = {
   ) => Promise<boolean>;
   openEditOnMount?: boolean;
   editLessonId?: number;
-  autoOpenCourseId?: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  onOpen: () => void;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
@@ -77,7 +79,9 @@ const CourseItem = ({
   onUpdateCourse,
   openEditOnMount = false,
   editLessonId,
-  autoOpenCourseId,
+  isOpen: isCourseOpen,
+  onToggle,
+  onOpen,
   onDeleteLesson,
   onCreateLesson,
   onLessonCreated,
@@ -91,10 +95,6 @@ const CourseItem = ({
     ability.can("update", "course") ||
     userBelongsToContacts(user, course.contacts);
 
-  const hasTargetLesson = course.lessons.some(
-    (lesson) => lesson.id === editLessonId,
-  );
-  const [isCourseOpen, setCourseOpen] = useState(hasTargetLesson);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalCourseType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -118,7 +118,7 @@ const CourseItem = ({
     setIsSavingLesson(false);
     if (lessonId) {
       setIsCreatingLesson(false);
-      setCourseOpen(true);
+      onOpen();
       onLessonCreated?.(lessonId);
     }
     return lessonId !== false;
@@ -147,7 +147,7 @@ const CourseItem = ({
   const isCourseCompleted = courseProgress === 1;
 
   const handleToggleCourseTab = () => {
-    setCourseOpen(!isCourseOpen);
+    onToggle();
   };
 
   const handleClickMenu = (e: React.MouseEvent) => {
@@ -202,21 +202,6 @@ const CourseItem = ({
   };
 
   useEffect(() => {
-    if (hasTargetLesson) return;
-
-    if (
-      selectedLesson &&
-      course.lessons.some((lesson) => lesson.id === selectedLesson.id)
-    ) {
-      // The open state follows the lesson selected elsewhere in the explorer.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCourseOpen(true);
-    } else {
-      setCourseOpen(false);
-    }
-  }, [course.lessons, hasTargetLesson, selectedLesson]);
-
-  useEffect(() => {
     const element = descriptionRef.current;
     if (!element || !isCourseOpen) return;
 
@@ -236,12 +221,6 @@ const CourseItem = ({
 
     return () => observer.disconnect();
   }, [isCourseOpen, course.description]);
-
-  useEffect(() => {
-    if (autoOpenCourseId && autoOpenCourseId === course.id) {
-      setCourseOpen(true);
-    }
-  }, [autoOpenCourseId, course.id]);
 
   return (
     <>

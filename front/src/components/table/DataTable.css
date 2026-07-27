@@ -1,0 +1,16 @@
+/*
+ * DaisyUI tooltips use absolutely positioned pseudo-elements. On the final
+ * table column, their invisible box otherwise extends the horizontal scroll
+ * area and creates empty space after the table.
+ */
+.data-table-actions .tooltip[data-tip]::before {
+  right: 0;
+  left: auto;
+  transform: translateX(0) translateY(var(--tt-pos, 0.25rem));
+}
+
+.data-table-actions .tooltip[data-tip]::after {
+  right: var(--tt-tail-off, 0.5rem);
+  left: auto;
+  transform: translateX(0) translateY(var(--tt-pos, 0.25rem));
+}

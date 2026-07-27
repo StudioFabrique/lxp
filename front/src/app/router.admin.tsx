@@ -1,4 +1,4 @@
-import { lazyRoute } from "../utils/helpers/router-helpers";
+import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { adminGroupRoutes } from "../features/group/routes";
@@ -17,13 +17,6 @@ import { adminMediathequeRoutes } from "../features/mediatheque/routes";
 import { adminResourcesRoutes } from "../features/resources/routes";
 import { adminProfileRoutes } from "../features/profile/routes";
 import { adminModulePreviewRoutes } from "../features/module-preview/routes";
-import RequireAbility from "../components/guards/RequireAbility";
-import { AppSubject } from "../rbac/ability";
-
-const guard = (subject: AppSubject, children: RouteObject[]): RouteObject => ({
-  element: <RequireAbility action="read" subject={subject} />,
-  children,
-});
 
 export const adminRoutes: RouteObject[] = [
   {
