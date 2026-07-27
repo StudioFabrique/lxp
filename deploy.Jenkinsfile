@@ -48,6 +48,10 @@ pipeline {
                         echo "📥 Récupération des images..."
                         docker compose pull
 
+                        echo "🔎 Vérification de l'image IA..."
+                        docker compose run --rm --no-deps ai python -c \
+                            'import app.db_provision; print("Module app.db_provision disponible")'
+
                         echo "🗄️ Démarrage des bases..."
                         docker compose up -d db-pg db-ai db-mongo
 
