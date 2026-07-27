@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import apiClient from "../../../../lib/axios";
 import type Tag from "../../../../utils/interfaces/tag";
 
@@ -57,9 +58,9 @@ export default function CreateLessonModal({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <dialog
-      className="modal modal-open"
+      className="modal modal-open z-[100]"
       onCancel={(event) => {
         event.preventDefault();
         close();
@@ -190,6 +191,7 @@ export default function CreateLessonModal({
       <button type="button" className="modal-backdrop" onClick={close}>
         Fermer
       </button>
-    </dialog>
+    </dialog>,
+    document.body,
   );
 }
