@@ -138,7 +138,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0 overflow-hidden">
+    <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <PermissionGuard action="component" object="progression">
         {courses.length > 0 ? (
