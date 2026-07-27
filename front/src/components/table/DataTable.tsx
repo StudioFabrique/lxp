@@ -11,6 +11,7 @@ import { SortAsc, SortDesc } from "lucide-react";
 import TableEmpty from "./TableEmpty";
 import FadeWrapper from "../wrappers/FadeWrapper";
 import TableOverflowContainer from "./TableOverflowContainer";
+import "./DataTable.css";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -63,8 +64,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <TableOverflowContainer>
-      <table className="table w-full min-w-max xl:min-w-full xl:max-w-full border-separate border-spacing-y-5">
-        <thead className="w-full">
+      <table className="data-table table w-full min-w-full border-separate border-spacing-y-5">
+        <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -111,8 +112,10 @@ export function DataTable<TData, TValue>({
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className={` pl-6 bg-base-100 first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
-                    cell.column.id === "actions" ? "text-center" : ""
+                  className={`pl-6 bg-base-100 first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
+                    cell.column.id === "actions"
+                      ? "data-table-actions text-center"
+                      : ""
                   }`}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
