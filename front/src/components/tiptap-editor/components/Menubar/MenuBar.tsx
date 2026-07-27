@@ -21,6 +21,7 @@ type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
   isSticky?: boolean;
+  headerSticky?: boolean;
   onUploadAllImagesRef?: React.MutableRefObject<(() => Promise<void>) | null>;
 };
 
@@ -31,6 +32,7 @@ export default function MenuBar({
   editor,
   shouldHide = false,
   isSticky = false,
+  headerSticky = false,
   onUploadAllImagesRef,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,9 @@ export default function MenuBar({
       hidden={shouldHide}
       className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max ${
         isSticky
-          ? "fixed top-4 transform shadow-xl shadow-base-content/10 rounded-2xl border border-base-300 h-fit bg-base-100/95 backdrop-blur-md"
+          ? `sticky ${
+              headerSticky ? "top-20" : "top-4"
+            } z-50 shadow-xl shadow-base-content/10 rounded-2xl border border-base-300 h-fit bg-base-100/95 backdrop-blur-md`
           : "border-b border-base-300"
       }`}
     >

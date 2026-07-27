@@ -6,9 +6,7 @@ import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip
 
 type Props = {
   mode: ActivitySelectMode;
-  title?: string;
   src?: string;
-  onEditTitle: (title: string) => void;
   onChangeSrc: (src: string) => void;
   onSave: () => Promise<boolean>;
   onFinishSaving: () => void;
@@ -16,9 +14,7 @@ type Props = {
 
 const IframeActivity = ({
   mode,
-  title = "",
   src = "",
-  onEditTitle,
   onChangeSrc,
   onSave,
   onFinishSaving,
@@ -37,10 +33,6 @@ const IframeActivity = ({
       return "";
     }
   }, [iframeUrl]);
-
-  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    onEditTitle(e.target.value);
-  };
 
   const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
     setUrlError(null);
@@ -66,19 +58,6 @@ const IframeActivity = ({
     <div className="w-full flex flex-col gap-4 mt-5 select-none">
       {["write", "edit"].includes(mode) && (
         <div className="form-control">
-          <label className="label">
-            <span className="label-text font-semibold text-primary">
-              Titre de la ressource interactive
-            </span>
-          </label>
-          <input
-            type="text"
-            placeholder="Titre de la ressource"
-            className="input input-bordered w-full"
-            value={title}
-            onChange={handleChangeTitle}
-          />
-
           <label className="label mt-5">
             <span className="label-text font-semibold text-primary">
               URL iframe de la ressource
@@ -107,7 +86,7 @@ const IframeActivity = ({
       {cleanedUrl ? (
         <div className="relative w-full overflow-hidden rounded-lg">
           {isLoading && (
-            <div className="w-full h-[500px] bg-base-200 flex flex-col justify-center items-center gap-3 animate-pulse">
+            <div className="w-full h-125 bg-base-200 flex flex-col justify-center items-center gap-3 animate-pulse">
               <div className="skeleton w-3/4 h-6 rounded"></div>
               <div className="skeleton w-5/6 h-6 rounded"></div>
               <div className="skeleton w-2/3 h-6 rounded"></div>
@@ -120,7 +99,7 @@ const IframeActivity = ({
           <iframe
             src={cleanedUrl}
             title="Iframe Activity"
-            className="w-full h-[500px] rounded-lg"
+            className="w-full h-125 rounded-lg"
             allowFullScreen
             onLoad={() => setIsLoading(false)}
             hidden={isLoading}

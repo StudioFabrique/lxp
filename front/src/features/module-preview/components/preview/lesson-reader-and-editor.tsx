@@ -3,9 +3,9 @@ import {
   ActivityType,
 } from "../../../../../src/utils/interfaces/activity";
 import RatingPanelButton from "../../../../../src/components/UI/lesson-rating/rating-panel-button";
-import { type PropsWithChildren, useCallback } from "react";
+import { type PropsWithChildren, useCallback, useState } from "react";
 import ActivityActionsMenu from "./activity-actions-menu";
-import activityIconType from "../../../../utils/helpers/activity-icon-type";
+import ActivityHeader from "../../../../features/lesson/components/edit/activities/activity-header";
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
@@ -72,6 +72,8 @@ const LessonReaderAndEditor = ({
   onSaveActivity,
   children,
 }: PropsWithChildren<Props>) => {
+  const [headerSticky, setHeaderSticky] = useState(false);
+
   const handleConfirmDelete = useCallback(() => {
     onDeleteActivity();
   }, [onDeleteActivity]);
@@ -100,36 +102,42 @@ const LessonReaderAndEditor = ({
         )}
 
         {/* Rendu de l'activité */}
-        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm">
+        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative">
           {/* Header de l'activité : titre et menu contextuel */}
-          <div className="font-semibold text-primary flex justify-between items-center mb-6">
-            <div className="flex gap-3 items-center w-[92%]">
-              <span className="w-6">{activityIconType(activityType)}</span>
-              <span className="text-2xl font-bold w-fit text-base-content">
-                {toUpperFirstLetter(textActivityTitle)}
-              </span>
-            </div>
-            <span className="flex-1" />
-            {canEdit &&
-              (mode === "write" || mode === "edit" ? (
-                <button
-                  className="btn btn-sm btn-error self-end text-base-100"
-                  onClick={mode === "write" ? onBack : onClose}
-                  disabled={isLoading}
-                >
-                  Annuler
-                </button>
-              ) : (
-                selectedActivity && (
-                  <ActivityActionsMenu
-                    activity={selectedActivity}
-                    onEditActivity={onEditActivity}
-                    onOpenDeleteModal={onOpenDeleteModal}
-                    disabled={mode !== "read"}
-                  />
-                )
-              ))}
-          </div>
+          {canEdit && (mode === "write" || mode === "edit") ? (
+            <ActivityHeader
+              title={textActivityTitle || ""}
+              activityType={activityType}
+              titleEditable
+              titleError={textActivityTitleError}
+              onEditTitle={onEditTitle}
+              className="font-semibold text-primary flex justify-between items-center mb-6"
+              titleClassName="text-2xl font-bold flex-1"
+              cancelLabel="Annuler"
+              cancelClassName="btn btn-sm btn-error text-base-100"
+              cancelDisabled={isLoading}
+              onCancel={mode === "write" ? onBack : onClose}
+              enableSticky
+              onStickyChange={setHeaderSticky}
+            />
+          ) : (
+            <ActivityHeader
+              title={toUpperFirstLetter(textActivityTitle) ?? ""}
+              activityType={activityType}
+              className="font-semibold text-primary flex justify-between items-center mb-6"
+              titleClassName="text-2xl font-bold"
+              enableSticky
+            >
+              {selectedActivity && (
+                <ActivityActionsMenu
+                  activity={selectedActivity}
+                  onEditActivity={onEditActivity}
+                  onOpenDeleteModal={onOpenDeleteModal}
+                  disabled={mode !== "read"}
+                />
+              )}
+            </ActivityHeader>
+          )}
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
           {activityType === "text" ? (
@@ -139,21 +147,19 @@ const LessonReaderAndEditor = ({
                 mode={mode}
                 id={selectedActivity?.id}
                 title={textActivityTitle}
-                titleError={textActivityTitleError}
                 content={textActivityContent}
                 onEditTitle={onEditTitle}
                 onEditContent={onEditContent}
                 onSave={onSaveActivity}
                 onFinishSaving={onClose}
+                headerSticky={headerSticky}
               />
             </div>
           ) : activityType === "iframe" ? (
             /* Si "iframe", afficher l'éditeur iframe */
             <IframeActivity
               mode={mode}
-              title={textActivityTitle}
               src={iframeActivitySrc}
-              onEditTitle={onEditTitle}
               onChangeSrc={onEditIframeSrc}
               onSave={onSaveActivity}
               onFinishSaving={onClose}

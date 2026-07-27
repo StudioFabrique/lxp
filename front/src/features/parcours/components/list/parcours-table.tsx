@@ -44,15 +44,12 @@ const ParcoursTable = (props: ParcoursTableProps) => {
           {parcoursList.map((item: Parcours) => (
             <TableRowWrapper key={item.id}>
               <td className="bg-transparent rounded-l-lg">
-                <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                <p className="tooltip tooltip-right" data-tip={item.title}>
                   {truncateText(item.title, 20)}
                 </p>
               </td>
               <td className="bg-transparent">
-                <p
-                  className="tooltip tooltip-bottom"
-                  data-tip={item.formation.title}
-                >
+                <p className="tooltip" data-tip={item.formation.title}>
                   {truncateText(item.formation.title, 20)}
                 </p>
               </td>
@@ -66,7 +63,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 {localeDate(item.updatedAt!)}
               </td>
               <td className="bg-transparent capitalize">
-                <p className="tooltip tooltip-bottom" data-tip={item.author}>
+                <p className="tooltip" data-tip={item.author}>
                   {truncateText(item.author, 20)}
                 </p>
               </td>
@@ -77,10 +74,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-6 h-6">
                     <PermissionGuard action="update" object="parcours">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Modifier le parcours"
-                      >
+                      <div className="tooltip" data-tip="Modifier le parcours">
                         <Link
                           className="btn btn-ghost btn-xs btn-square"
                           to={`edit/${item.id}`}
@@ -97,7 +91,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                   >
                     <PermissionGuard action="delete" object="parcours">
                       <div
-                        className="tooltip tooltip-bottom flex-items-center"
+                        className="tooltip flex-items-center"
                         data-tip="Supprimer le parcours"
                       >
                         <button

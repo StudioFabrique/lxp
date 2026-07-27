@@ -61,8 +61,13 @@ type ModuleExplorerContentAction =
   | { type: "set_course_visibility"; isVisible: boolean; course: Course }
   | { type: "delete_course"; id: number }
   // Lesson
-  | { type: "select_lesson"; lesson?: Lesson }
+  | { type: "select_lesson"; lesson?: Lesson; activityId?: number }
   | { type: "select_lesson_by_id"; id: number }
+  | {
+      type: "select_content_by_id";
+      lessonId: number;
+      activityId?: number;
+    }
   | { type: "set_lesson_rating"; rating: LessonRating[] }
   | { type: "mark_lesson_as_complete"; lesson: Lesson; lessonRead: LessonRead }
   | { type: "go_to_next_lesson" }
@@ -105,8 +110,20 @@ export function moduleExplorerContentReducer(
 ): ModuleExplorerContentState {
   switch (action.type) {
     // --- Module ---
-    case "update_module_data":
-      return { ...state, module: action.module };
+    case "update_module_data": {
+      const isChangingModule = state.module?.id !== action.module.id;
+
+      return {
+        ...state,
+        module: action.module,
+        ...(isChangingModule
+          ? {
+              selectedLesson: undefined,
+              selectedActivity: undefined,
+            }
+          : {}),
+      };
+    }
 
     // --- Course ---
     case "set_course_visibility": {
@@ -142,7 +159,10 @@ export function moduleExplorerContentReducer(
 
     // --- Lesson ---
     case "select_lesson": {
-      const selectedActivity = action.lesson?.activities?.[0];
+      const selectedActivity =
+        action.lesson?.activities?.find(
+          (activity) => activity.id === action.activityId,
+        ) ?? action.lesson?.activities?.[0];
 
       return {
         ...state,
@@ -164,6 +184,25 @@ export function moduleExplorerContentReducer(
       return {
         ...state,
         selectedLesson,
+        selectedActivity: selectedLesson?.activities?.[0],
+        mode: "read",
+      };
+    }
+
+    case "select_content_by_id": {
+      const selectedLesson = state.module?.courses
+        .flatMap((course) => course.lessons)
+        .find((lesson) => lesson.id === action.lessonId);
+      const selectedActivity =
+        selectedLesson?.activities?.find(
+          (activity) => activity.id === action.activityId,
+        ) ?? selectedLesson?.activities?.[0];
+
+      return {
+        ...state,
+        selectedLesson,
+        selectedActivity,
+        mode: "read",
       };
     }
 

@@ -31,6 +31,7 @@ const useEditImageActivity = (
 ) => {
   const {
     register,
+    watch,
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
     setValue,
@@ -122,6 +123,7 @@ const useEditImageActivity = (
 
   return {
     register,
+    watch,
     handleSubmit,
     errors,
     setValue,

@@ -4,7 +4,13 @@ import AvatarChatbot from "./avatar-chatbot";
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion } from "motion/react";
-import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  BookOpen,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  CornerDownRight,
+} from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
@@ -76,7 +82,8 @@ export default function MessageChatbot({
               onClick={() => setExpandTextSelection(!expandTextSelection)}
             >
               <div className="flex gap-2 items-start p-2.5">
-                <div className="w-full wrap-break-word text-left overflow-hidden">
+                <div className="w-full flex items-end gap-2 wrap-break-word text-left overflow-hidden">
+                  <CornerDownRight className="w-4 h-4" />
                   <motion.span
                     animate={{
                       maxHeight: expandTextSelection ? "1000px" : "20px",
@@ -150,6 +157,7 @@ export default function MessageChatbot({
                     onClick={onCloseChatbot}
                     state={{
                       lessonId: src.lessonId,
+                      activityId: src.activityId,
                     }}
                     className="badge badge-sm badge-outline hover:badge-primary transition-all duration-200 py-2.5 px-2 flex items-center gap-1 group no-underline"
                   >

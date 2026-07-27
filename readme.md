@@ -3,18 +3,18 @@
 Ce dépôt contient l'API Node.js et le frontend de la plateforme. En mode
 développement, PostgreSQL, PostgreSQL/pgvector et MongoDB tournent dans Docker,
 tandis que l'API et le frontend tournent directement sur la machine. Le service
-IA est fourni par le dépôt frère `ia-lxp` et tourne dans un conteneur séparé.
+IA est fourni par le dépôt `ia-lxp` et tourne dans un conteneur séparé.
 
 ## Prérequis
 
 - Node.js 22 et npm ;
 - Docker avec Docker Compose ;
-- le dépôt `ia-lxp` placé à côté de ce dépôt :
+- le dépôt `ia-lxp` (repo ia privé) cloné :
 
 ```text
 Downloads/
-├── lxp/
-└── ia-lxp/
+├── lxp (repo actuel) /
+└── ia-lxp (repo ia privé) /
 ```
 
 - deux clés API Mistral valides pour utiliser les fonctionnalités IA. En
@@ -162,14 +162,14 @@ docker compose logs --tail=100 ai-service
 
 ## Résumé des ports en développement
 
-| Service | Adresse depuis la machine |
-|---|---|
-| Frontend LXP | `http://localhost:5173` |
-| API LXP | `http://localhost:3000` |
-| API IA | `http://localhost:8000` |
-| PostgreSQL LXP | `localhost:5500` |
-| PostgreSQL IA/pgvector | `localhost:5501` |
-| MongoDB | `localhost:27000` |
+| Service                | Adresse depuis la machine |
+| ---------------------- | ------------------------- |
+| Frontend LXP           | `http://localhost:5173`   |
+| API LXP                | `http://localhost:3000`   |
+| API IA                 | `http://localhost:8000`   |
+| PostgreSQL LXP         | `localhost:5500`          |
+| PostgreSQL IA/pgvector | `localhost:5501`          |
+| MongoDB                | `localhost:27000`         |
 
 Depuis les conteneurs, PostgreSQL LXP est accessible via
 `lxp-prisma:5432` et PostgreSQL IA via `lxp-ai-postgres:5432`.

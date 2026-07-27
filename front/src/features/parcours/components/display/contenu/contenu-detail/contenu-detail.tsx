@@ -84,7 +84,7 @@ const ContenuDetail: FC<{
                 <button
                   onClick={(e) => handlePublish(e, course)}
                   className={cn("btn btn-ghost btn-sm tooltip ")}
-                  data-tip={"Publier le cours"}
+                  data-tip="Publier le cours"
                 >
                   <UploadCloud className="w-6 h-6" />
                 </button>

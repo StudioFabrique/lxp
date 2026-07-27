@@ -7,6 +7,7 @@ import { sign } from "jsonwebtoken";
 import ChatDialogs, {
   CourseSource,
 } from "../../utils/interfaces/db/chat-dialogs";
+import resolveSourceTarget from "../../models/chatbot/resolve-source-target";
 
 interface FastApiResponse {
   request: {
@@ -51,7 +52,7 @@ interface FastApiResponse {
 }
 
 type SourcesWithIds = CourseSource &
-  Partial<{ moduleId: number; lessonId: number }>;
+  Partial<{ moduleId: number; lessonId: number; activityId: number }>;
 
 interface FinalResponse {
   text: string;
@@ -201,18 +202,11 @@ export default async function httpPostPrompt(
 
       data.sources = await Promise.all(
         data.sources?.map(async (source) => {
-          const lesson = await prisma.lesson.findFirst({
-            select: {
-              id: true,
-              course: { select: { moduleId: true } },
-            },
-            where: { course: { courseSlug: source.course } },
-          });
+          const target = await resolveSourceTarget(source);
 
           return {
             ...source,
-            moduleId: lesson?.course.moduleId,
-            lessonId: lesson?.id,
+            ...target,
           };
         }),
       );

@@ -30,26 +30,20 @@ const ModuleTable = ({
         <>
           {modulesList.map((item: any) => (
             <TableRowWrapper key={item.id}>
-              <td className="bg-transparent rounded-l-lg max-w-[150px]">
-                <span className="tooltip tooltip-bottom" data-tip={item.title}>
+              <td className="bg-transparent rounded-l-lg max-w-37.5">
+                <span className="tooltip tooltip-right" data-tip={item.title}>
                   {truncateText(item.title, 20)}
                 </span>
               </td>
-              <td className="bg-transparent capitalize max-w-[100px]">
+              <td className="bg-transparent capitalize max-w-25">
                 <div>
-                  <span
-                    className="tooltip tooltip-bottom"
-                    data-tip={item.author}
-                  >
+                  <span className="tooltip" data-tip={item.author}>
                     {truncateText(item.author, 15)}
                   </span>
                 </div>
               </td>
-              <td className="bg-transparent max-w-[150px]">
-                <span
-                  className="tooltip tooltip-bottom text"
-                  data-tip={item.formation || "ND"}
-                >
+              <td className="bg-transparent max-w-37.5">
+                <span className="tooltip" data-tip={item.formation || "ND"}>
                   {truncateText(item.formation, 20)}
                 </span>
               </td>
@@ -63,7 +57,7 @@ const ModuleTable = ({
                       <div>
                         {item.parcoursId ? (
                           <Link
-                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
+                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip"
                             data-tip="Voir le module"
                             to={`/admin/parcours/module/${item.id}`}
                             aria-label="Prévisualiser le module"
@@ -72,7 +66,7 @@ const ModuleTable = ({
                           </Link>
                         ) : (
                           <div
-                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip tooltip-bottom"
+                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip"
                             data-tip="Vous ne pouvez pas modifier un module
                             non rattaché à un parcours"
                           >
@@ -87,7 +81,7 @@ const ModuleTable = ({
                       <div>
                         {item.parcoursId ? (
                           <Link
-                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip tooltip-bottom"
+                            className="btn btn-ghost btn-xs btn-square text-secondary tooltip"
                             data-tip="Modifier le module"
                             to={`/admin/parcours/edit/${item.parcoursId}?step=4&moduleId=${item.id}`}
                             aria-label="Editer le module"
@@ -96,7 +90,7 @@ const ModuleTable = ({
                           </Link>
                         ) : (
                           <div
-                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip tooltip-bottom"
+                            className="btn btn-ghost btn-xs btn-square text-base-content/50 tooltip"
                             data-tip="Vous ne pouvez pas modifier un module
                             non rattaché à un parcours"
                           >
@@ -112,7 +106,7 @@ const ModuleTable = ({
                   >
                     <PermissionGuard action="delete" object="module">
                       <div
-                        className="tooltip tooltip-bottom flex-items-center"
+                        className="tooltip tooltip-left flex-items-center"
                         data-tip="Supprimer le module"
                       >
                         <button

@@ -15,7 +15,12 @@ type Props = {
 
 const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   const [isActive, setIsActive] = useState(true);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(userQuickCreateSchema),
     defaultValues: {
       lastname: "",
@@ -72,19 +77,19 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <BoxWrapper>
             <FormInput
-              label="Nom *"
-              name="lastname"
-              placeholder="Dupont"
-              register={register}
-              error={errors.lastname}
-            />
-
-            <FormInput
               label="Prénom *"
               name="firstname"
               placeholder="Jean"
               register={register}
               error={errors.firstname}
+            />
+
+            <FormInput
+              label="Nom *"
+              name="lastname"
+              placeholder="Dupont"
+              register={register}
+              error={errors.lastname}
             />
 
             <FormInput
