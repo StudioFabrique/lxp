@@ -76,9 +76,10 @@ const ModuleContentExplorerWrapper = ({
         ) : null}
       </div>
 
-      <div className="mt-5 max-lg:flex max-lg:flex-col-reverse lg:grid lg:grid-cols-3 gap-5 w-full">
+      <div className="mt-5 grid grid-cols-[minmax(7rem,1fr)_minmax(0,2fr)] gap-2 sm:gap-3 lg:grid-cols-3 lg:gap-5 w-full">
         {!isPanelClosed && (
           <motion.div
+            className="min-w-0"
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: "auto", opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
@@ -89,7 +90,7 @@ const ModuleContentExplorerWrapper = ({
         )}
         <div
           className={`flex flex-col gap-2 min-h-[80vh] ${
-            isPanelClosed ? "lg:col-span-3" : "lg:col-span-2"
+            isPanelClosed ? "col-span-2 lg:col-span-3" : "col-span-1 lg:col-span-2"
           }`}
         >
           {selectedLesson ? previewLesson : moduleData}

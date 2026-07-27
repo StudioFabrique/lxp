@@ -10,17 +10,28 @@ type GroupFormData = {
   desc?: string;
 };
 
+type GroupFormSubmitData = {
+  group: {
+    _id?: string;
+    name: string;
+    desc?: string;
+  };
+  parcoursId: number;
+};
+
 function useGroupForm({
   onSubmitForm,
   group,
   isFileNotRequired,
 }: {
-  onSubmitForm: (data: any, file: File) => void;
+  onSubmitForm: (data: GroupFormSubmitData, file: File) => void;
   group?: Group;
   isFileNotRequired?: boolean;
 }) {
   const [file, setFile] = useState<File | null>(null);
-  const [parcoursId, setParcoursId] = useState<number | null>(null);
+  const [parcoursId, setParcoursId] = useState<number | null>(
+    group?.parcoursId ?? null,
+  );
 
   const {
     register,
@@ -71,8 +82,8 @@ function useGroupForm({
   useEffect(() => {
     if (group) {
       reset({
-        name: (group as any).name ?? "",
-        desc: (group as any).desc ?? "",
+        name: group.name ?? "",
+        desc: group.desc ?? "",
       });
     }
   }, [group, reset]);
