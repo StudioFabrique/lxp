@@ -3,6 +3,7 @@
  */
 
 import { PropsWithChildren } from "react";
+import SidebarRouteIcon from "./SidebarRouteIcon";
 
 interface HeaderProps {
   title: string;
@@ -22,17 +23,20 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
       onClick={props.onClick}
       className={`w-full flex px-4 ${props.isSubHeader ? "py-2" : "py-4"} ${props.isSubHeader && !props.disabled ? "ring-1" : ""} ${props.hasError && "ring-2 ring-error"} items-center justify-between rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""}`}
     >
-      <div>
-        <h2
-          className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}
-        >
-          {props.title}
-        </h2>
-        <p
-          className={`${props.isSubHeader ? "text-[8.5pt]" : "text-xs"} ${props.hasError ? "text-error" : "text-base-content"}`}
-        >
-          {props.description}
-        </p>
+      <div className="flex items-center gap-3">
+        {!props.isSubHeader && <SidebarRouteIcon />}
+        <div>
+          <h2
+            className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}
+          >
+            {props.title}
+          </h2>
+          <p
+            className={`${props.isSubHeader ? "text-[8.5pt]" : "text-xs"} ${props.hasError ? "text-error" : "text-base-content"}`}
+          >
+            {props.description}
+          </p>
+        </div>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>

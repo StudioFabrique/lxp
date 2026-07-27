@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import { cn } from "../../utils/cn";
+import SidebarRouteIcon from "./SidebarRouteIcon";
 
 interface Props {
   title: string;
@@ -36,24 +37,27 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
         props.onClick && "cursor-pointer hover:opacity-50",
       )}
     >
-      <div>
-        <h2
-          className={cn(
-            "flex-1",
-            props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold",
-            props.classname,
-          )}
-        >
-          {props.title}
-        </h2>
-        <p
-          className={cn(
-            props.isSubHeader ? "text-[8.5pt]" : "text-xs",
-            props.hasError ? "text-error" : "text-base-content",
-          )}
-        >
-          {props.description}
-        </p>
+      <div className="flex items-center gap-3">
+        {!props.isSubHeader && <SidebarRouteIcon />}
+        <div>
+          <h2
+            className={cn(
+              "flex-1",
+              props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold",
+              props.classname,
+            )}
+          >
+            {props.title}
+          </h2>
+          <p
+            className={cn(
+              props.isSubHeader ? "text-[8.5pt]" : "text-xs",
+              props.hasError ? "text-error" : "text-base-content",
+            )}
+          >
+            {props.description}
+          </p>
+        </div>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>
