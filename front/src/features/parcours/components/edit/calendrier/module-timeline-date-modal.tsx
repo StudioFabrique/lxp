@@ -36,7 +36,7 @@ const ModuleTimelineDateModal = ({
     maxDate: "",
   });
 
-  // Sync state with Redux currentModule
+  // Sync state with currentModule
   const setInitDates = useCallback(() => {
     if (currentModule) {
       setDatesModule({
@@ -44,7 +44,12 @@ const ModuleTimelineDateModal = ({
           new Date(currentModule.minDate || datesParcours.startDate),
         ),
         maxDate: formatDateToYYYYMMDD(
-          new Date(currentModule.maxDate || datesParcours.startDate),
+          new Date(
+            currentModule.maxDate ||
+              datesParcours.startDate.setDate(
+                datesParcours.startDate.getDate() + 1,
+              ),
+          ),
         ),
       });
     }
@@ -65,17 +70,17 @@ const ModuleTimelineDateModal = ({
 
     if (dMin && dMin < datesParcours.startDate) {
       return setError(
-        `La date de début du module doit être supérieur à la date de début du parcours.`
+        `La date de début du module doit être supérieur à la date de début du parcours.`,
       );
     }
     if (dMax && dMax > datesParcours.endDate) {
       return setError(
-        `La date de fin du module doit être inférieur à la date de fin du parcours`
+        `La date de fin du module doit être inférieur à la date de fin du parcours`,
       );
     }
     if (dMin && dMax && dMin > dMax) {
       return setError(
-        "Le date de début du module ne peut pas débuter après la date de fin du module."
+        "Le date de début du module ne peut pas débuter après la date de fin du module.",
       );
     }
     setError(null);
