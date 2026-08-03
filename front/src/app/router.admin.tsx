@@ -21,6 +21,7 @@ import { adminModulePreviewRoutes } from "../features/module-preview/routes";
 export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
+    HydrateFallback: () => null,
     lazy: lazyRoute(() => import("../components/wrappers/layouts/AdminLayout")),
     errorElement: <RouterErrorBoundary />,
     children: [

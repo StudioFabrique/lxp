@@ -7,6 +7,7 @@ import Formation from "../../../../src/utils/interfaces/formation";
 import Module from "../../../../src/utils/interfaces/module";
 import { BASE_URL } from "../../../config/urls";
 import {
+  getArchiveFingerprint,
   getMimeType,
   parseCourseZip,
   sanitizeFilename,
@@ -22,10 +23,14 @@ export enum CoursesImportStep {
   ImportResult,
 }
 
-import { ActivityImport, QueuedImage } from "../../../utils/interfaces/import-types";
+import {
+  ActivityImport,
+  QueuedImage,
+} from "../../../utils/interfaces/import-types";
 
 export type CourseImport = Course & {
   id: number;
+  sourceFileName?: string;
   hasError?: boolean;
   lessons: (Lesson & {
     id: number;
@@ -38,6 +43,66 @@ export type CourseImport = Course & {
   moduleId?: number;
 };
 
+export type ImportProgressStatus =
+  | "pending"
+  | "processing"
+  | "success"
+  | "error";
+
+export type ImportProgressItem = {
+  id: string;
+  title: string;
+  context: string;
+  filename?: string;
+  kind: "course" | "activity";
+  status: ImportProgressStatus;
+  error?: string;
+};
+
+type LessonMapping = { tempId: number; realId: number };
+
+const courseProgressId = (courseId: number) => `course-${courseId}`;
+const activityProgressId = (
+  courseId: number,
+  lessonId: number,
+  activityId: number,
+) => `activity-${courseId}-${lessonId}-${activityId}`;
+
+export function buildImportProgressItems(courses: CourseImport[]) {
+  return courses.flatMap((course): ImportProgressItem[] => [
+    {
+      id: courseProgressId(course.id),
+      title: course.title,
+      context: "Structure du cours et de ses leçons",
+      kind: "course",
+      status: "pending",
+    },
+    ...course.lessons.flatMap((lesson) =>
+      (lesson.activities ?? []).map((activity) => ({
+        id: activityProgressId(course.id, lesson.id!, activity.id),
+        title: activity.title || "Activité sans titre",
+        context: `${course.title} · ${lesson.title}`,
+        filename: activity.url?.split("/").pop() || undefined,
+        kind: "activity" as const,
+        status: "pending" as const,
+      })),
+    ),
+  ]);
+}
+
+function getCriticalImportError(error: unknown) {
+  const responseMessage = (
+    error as { response?: { data?: { message?: string; error?: string } } }
+  )?.response?.data;
+
+  return (
+    responseMessage?.message ??
+    responseMessage?.error ??
+    (error instanceof Error ? error.message : undefined) ??
+    "Une erreur réseau inconnue est survenue."
+  );
+}
+
 export default function useImportCourses() {
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
@@ -46,6 +111,8 @@ export default function useImportCourses() {
 
   const [importedCourses, setImportedCourses] = useState<CourseImport[]>();
   const imagesQueue = useRef<QueuedImage[]>([]);
+  const importedArchiveFingerprints = useRef<Set<string>>(new Set());
+  const isMbzImportRunning = useRef(false);
 
   // Selection Data
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
@@ -67,31 +134,57 @@ export default function useImportCourses() {
   // Progress State
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
+  const [importProgressItems, setImportProgressItems] = useState<
+    ImportProgressItem[]
+  >([]);
+  const [criticalImportError, setCriticalImportError] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
+  const [isImportComplete, setIsImportComplete] = useState(false);
+  const isImportRunning = useRef(false);
+  const importResume = useRef<{
+    courseMappings: Map<number, LessonMapping[]>;
+    completedItemIds: Set<string>;
+  }>({
+    courseMappings: new Map(),
+    completedItemIds: new Set(),
+  });
 
   /**
    * Envoie le .mbz brut via axiosInstance, supporte l'ajout cumulatif si déjà en mode Preview.
    */
   const handleImportMbz = useCallback(
     async (file: File) => {
+      if (isMbzImportRunning.current) return;
+
+      isMbzImportRunning.current = true;
       setError("");
       setTooltipErrorTip("");
       setIsLoading(true);
 
-      // Détection du mode : si on est déjà sur la vue preview, on ajoute au lieu de réinitialiser
-      const isAppending = step === CoursesImportStep.CoursesPreview;
-
-      if (!isAppending) {
-        setImportedCourses(undefined);
-        imagesQueue.current = [];
-      }
-
-      setCurrentAction(
-        isAppending
-          ? "Téléversement de l'archive Moodle supplémentaire (.mbz) et génération du contenu..."
-          : "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
-      );
-
       try {
+        setCurrentAction("Vérification de l'archive Moodle...");
+        const archiveFingerprint = await getArchiveFingerprint(file);
+
+        if (importedArchiveFingerprints.current.has(archiveFingerprint)) {
+          setError(`L'archive « ${file.name} » a déjà été ajoutée.`);
+          setUploadProgress(0);
+          return;
+        }
+
+        // Détection du mode : si on est déjà sur la vue preview, on ajoute au lieu de réinitialiser
+        const isAppending = step === CoursesImportStep.CoursesPreview;
+
+        if (!isAppending) {
+          setImportedCourses(undefined);
+          imagesQueue.current = [];
+        }
+
+        setCurrentAction(
+          isAppending
+            ? "Téléversement de l'archive Moodle supplémentaire (.mbz) et génération du contenu..."
+            : "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
+        );
+
         const formData = new FormData();
         formData.append("file", file);
 
@@ -122,6 +215,11 @@ export default function useImportCourses() {
           tooltipErrorTip: parseTooltip,
         } = await parseCourseZip(zipBlob, courseSlug);
 
+        const coursesWithSourceFile = newCourses.map((course) => ({
+          ...course,
+          sourceFileName: file.name,
+        }));
+
         if (parseError) setError(parseError);
         if (parseTooltip) setTooltipErrorTip(parseTooltip);
 
@@ -147,7 +245,7 @@ export default function useImportCourses() {
             );
 
             // Remappage séquentiel des nouveaux cours
-            const adjustedNewCourses = (newCourses || []).map((course) => {
+            const adjustedNewCourses = coursesWithSourceFile.map((course) => {
               maxCourseId++;
               const currentCourseId = maxCourseId;
 
@@ -179,18 +277,24 @@ export default function useImportCourses() {
           });
         } else {
           // Premier import classique
-          setImportedCourses(newCourses);
+          setImportedCourses(coursesWithSourceFile);
           imagesQueue.current = newImages;
           setImportStep(CoursesImportStep.CoursesPreview);
         }
-      } catch (err: any) {
+
+        importedArchiveFingerprints.current.add(archiveFingerprint);
+      } catch (err: unknown) {
         console.error(`Erreur import mbz:`, err);
+        const importError = err as {
+          response?: { data?: Blob | { message?: string } };
+          message?: string;
+        };
         let errorMessage =
           "Une erreur est survenue lors de l'intégration de votre cours.";
 
-        if (err.response?.data instanceof Blob) {
+        if (importError.response?.data instanceof Blob) {
           try {
-            const textError = await err.response.data.text();
+            const textError = await importError.response.data.text();
             const jsonError = JSON.parse(textError);
             if (jsonError.error) {
               errorMessage = jsonError.error;
@@ -209,15 +313,20 @@ export default function useImportCourses() {
           } catch (blobParseError) {
             console.error(`Erreur parsing blob error:`, blobParseError);
           }
-        } else if (err.response?.data?.message) {
-          errorMessage = err.response.data.message;
-        } else if (err.message) {
-          errorMessage = err.message;
+        } else if (
+          importError.response?.data &&
+          !(importError.response.data instanceof Blob) &&
+          importError.response.data.message
+        ) {
+          errorMessage = importError.response.data.message;
+        } else if (importError.message) {
+          errorMessage = importError.message;
         }
 
         setError(errorMessage);
         setUploadProgress(0);
       } finally {
+        isMbzImportRunning.current = false;
         setIsLoading(false);
       }
     },
@@ -250,62 +359,109 @@ export default function useImportCourses() {
   /**
    * PROCESSUS DE PERSISTANCE DES STRUCURES ET MÉDIAS SUR LE SERVEUR DE DONNÉES SQL
    */
-  const processImport = useCallback(async () => {
-    if (!importedCourses) return;
+  const processImport = useCallback(async (coursesOverride?: CourseImport[]) => {
+    const coursesToImport = coursesOverride ?? importedCourses;
+    if (!coursesToImport?.length || isImportRunning.current) return;
 
-    let processedCount = 0;
-    let totalItems = 0;
+    isImportRunning.current = true;
+    setIsImporting(true);
+    setIsImportComplete(false);
+    setCriticalImportError("");
+    setImportProgressItems((current) =>
+      current.map((item) =>
+        item.status === "error"
+          ? { ...item, status: "pending", error: undefined }
+          : item,
+      ),
+    );
 
-    importedCourses.forEach((c) => {
-      totalItems++;
-      c.lessons.forEach((l) => {
-        if (l.isSelected) {
-          totalItems++;
-          if (l.activities) totalItems += l.activities.length;
-        }
-      });
-    });
+    const totalItems = buildImportProgressItems(coursesToImport).length;
+    let activeItemId: string | null = null;
+    let activeItemTitle = "";
+
+    const updateItem = (
+      itemId: string,
+      status: ImportProgressStatus,
+      itemError?: string,
+    ) => {
+      setImportProgressItems((current) =>
+        current.map((item) =>
+          item.id === itemId
+            ? { ...item, status, error: itemError }
+            : item,
+        ),
+      );
+    };
+
+    const markItemAsSuccessful = (itemId: string) => {
+      importResume.current.completedItemIds.add(itemId);
+      updateItem(itemId, "success");
+      setUploadProgress(
+        (importResume.current.completedItemIds.size / totalItems) * 100,
+      );
+    };
 
     try {
-      for (const course of importedCourses) {
-        setCurrentAction(`Création du cours : ${course.title}`);
-        await new Promise((r) => setTimeout(r, 50));
+      for (const course of coursesToImport) {
+        const courseItemId = courseProgressId(course.id);
+        let lessonsMap = importResume.current.courseMappings.get(course.id);
 
-        const structurePayload = {
-          title: course.title,
-          description: course.description,
-          courseSlug: course.courseSlug,
-          moduleId: selectedModule?.id,
-          parcoursId: selectedParcours?.id,
-          lessons: course.lessons
-            .filter((l) => l.isSelected)
-            .map((l) => ({
-              id: l.id!,
-              title: l.title,
-              modalite: l.modalite,
+        if (!lessonsMap) {
+          activeItemId = courseItemId;
+          activeItemTitle = course.title;
+          updateItem(courseItemId, "processing");
+          setCurrentAction(`Création du cours : ${course.title}`);
+          await new Promise((resolve) => setTimeout(resolve, 50));
+
+          const structurePayload = {
+            title: course.title,
+            description: course.description,
+            courseSlug: course.courseSlug,
+            moduleId: selectedModule?.id,
+            parcoursId: selectedParcours?.id,
+            lessons: course.lessons.map((lesson) => ({
+              id: lesson.id!,
+              title: lesson.title,
+              modalite: lesson.modalite,
               isSelected: true,
             })),
-        };
+          };
 
-        const structureResponse =
-          await courseApi.mutations.importStructure(structurePayload);
-
-        processedCount += 1 + structurePayload.lessons.length;
-        setUploadProgress((processedCount / totalItems) * 100);
-
-        const {
-          lessonsMap,
-        }: { lessonsMap: { tempId: number; realId: number }[] } =
-          structureResponse;
+          const structureResponse =
+            await courseApi.mutations.importStructure(structurePayload);
+          lessonsMap = structureResponse.lessonsMap;
+          importResume.current.courseMappings.set(course.id, lessonsMap);
+          markItemAsSuccessful(courseItemId);
+        }
 
         for (const lesson of course.lessons) {
-          if (!lesson.isSelected) continue;
-
-          const mapping = lessonsMap.find((m) => m.tempId === lesson.id);
-          if (!mapping) continue;
+          const mapping = lessonsMap.find(
+            (candidate) => candidate.tempId === lesson.id,
+          );
+          if (!mapping) {
+            activeItemId = courseItemId;
+            activeItemTitle = lesson.title;
+            throw new Error(
+              `La leçon « ${lesson.title} » n'a pas pu être associée au cours créé.`,
+            );
+          }
           const realLessonId = mapping.realId;
 
           for (const activity of lesson.activities) {
+            const activityItemId = activityProgressId(
+              course.id,
+              lesson.id,
+              activity.id,
+            );
+            if (
+              importResume.current.completedItemIds.has(activityItemId)
+            ) {
+              continue;
+            }
+
+            activeItemId = activityItemId;
+            activeItemTitle = activity.title || "Activité sans titre";
+            updateItem(activityItemId, "processing");
             setCurrentAction(`Traitement : ${activity.title}`);
 
             if (
@@ -369,23 +525,33 @@ export default function useImportCourses() {
               );
             }
 
-            processedCount++;
-            setUploadProgress((processedCount / totalItems) * 100);
+            markItemAsSuccessful(activityItemId);
           }
         }
       }
 
       setCurrentAction("Importation terminée avec succès !");
       setUploadProgress(100);
+      setIsImportComplete(true);
+      setIsImporting(false);
     } catch (globalError) {
       console.error(globalError);
-      setError(
-        "Une erreur critique est survenue pendant l'importation réseau.",
+      const technicalMessage = getCriticalImportError(globalError);
+      const criticalMessage = activeItemTitle
+        ? `Échec de « ${activeItemTitle} » : ${technicalMessage}`
+        : `Une erreur critique est survenue : ${technicalMessage}`;
+      if (activeItemId) {
+        updateItem(activeItemId, "error", technicalMessage);
+      }
+      setCriticalImportError(criticalMessage);
+      setCurrentAction(
+        "Importation interrompue. Vous pouvez terminer ou réessayer.",
       );
-      setCurrentAction("Erreur critique.");
-      setIsLoading(false);
+      setIsImporting(false);
+    } finally {
+      isImportRunning.current = false;
     }
-  }, [importedCourses, selectedModule?.id, selectedParcours?.id]);
+  }, [importedCourses, selectedModule, selectedParcours, uploadActivityResource]);
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(
@@ -488,13 +654,23 @@ export default function useImportCourses() {
   };
 
   const onConfirmParcoursSelection = () => {
+    let finalCourses: CourseImport[] = [];
     if (importedCourses) {
-      const finalCourses = importedCourses
+      finalCourses = importedCourses
         .map((c) => ({ ...c, lessons: c.lessons.filter((l) => l.isSelected) }))
-        .filter((c) => c.lessons.length > 0);
-      setImportedCourses(finalCourses as CourseImport[]);
+        .filter((c) => c.lessons.length > 0) as CourseImport[];
+      setImportedCourses(finalCourses);
     }
+    importResume.current = {
+      courseMappings: new Map(),
+      completedItemIds: new Set(),
+    };
+    setImportProgressItems(buildImportProgressItems(finalCourses));
+    setCriticalImportError("");
+    setIsImportComplete(false);
+    setUploadProgress(0);
     setImportStep(CoursesImportStep.ImportResult);
+    void processImport(finalCourses);
   };
 
   const onGoBack = () => {
@@ -503,48 +679,55 @@ export default function useImportCourses() {
     );
   };
 
-  const fetchModules = useCallback(async () => {
-    if (selectedParcours) {
-      setModulesList([]);
-      setSelectedModule(null);
-      try {
-        const res = await apiClient.get(`/modules/${selectedParcours.id}`);
-        setModulesList(res.data.modules);
-      } catch (err) {
-        console.error("Erreur chargement modules:", err);
-      }
+  const loadModules = useCallback(async (parcours: Parcours | null) => {
+    setModulesList([]);
+    setSelectedModule(null);
+    if (!parcours) return;
+
+    try {
+      const res = await apiClient.get(`/modules/${parcours.id}`);
+      setModulesList(res.data.modules);
+    } catch (err) {
+      console.error("Erreur chargement modules:", err);
     }
-  }, [selectedParcours]);
+  }, []);
+
+  const handleSelectFormation = useCallback(async (formation: Formation) => {
+    setSelectedFormation(formation);
+    setParcoursList([]);
+    setSelectedParcours(null);
+    setModulesList([]);
+    setSelectedModule(null);
+
+    try {
+      const res = await apiClient.get(
+        `/parcours/parcours-by-formation/${formation.id}`,
+      );
+      setParcoursList(res.data.data);
+    } catch (err) {
+      console.error("Erreur chargement parcours:", err);
+    }
+  }, []);
+
+  const handleSelectParcours = useCallback(
+    (parcours: Parcours | null) => {
+      setSelectedParcours(parcours);
+      void loadModules(parcours);
+    },
+    [loadModules],
+  );
+
+  const fetchModules = useCallback(async () => {
+    await loadModules(selectedParcours);
+  }, [loadModules, selectedParcours]);
 
   // --- Effects de Synchronisation & Chargement des Données de Listes ---
-
-  useEffect(() => {
-    if (step === CoursesImportStep.ImportResult && importedCourses) {
-      processImport();
-    }
-  }, [importedCourses, processImport, step]);
 
   useEffect(() => {
     if (step === CoursesImportStep.ParcoursSelection) {
       apiClient.get("/formation").then((res) => setFormationsList(res.data));
     }
   }, [step]);
-
-  useEffect(() => {
-    if (selectedFormation) {
-      setParcoursList([]);
-      setSelectedParcours(null);
-      setModulesList([]);
-      setSelectedModule(null);
-      apiClient
-        .get(`/parcours/parcours-by-formation/${selectedFormation.id}`)
-        .then((res) => setParcoursList(res.data.data));
-    }
-  }, [selectedFormation]);
-
-  useEffect(() => {
-    fetchModules();
-  }, [fetchModules]);
 
   return {
     step,
@@ -554,6 +737,10 @@ export default function useImportCourses() {
     tooltipErrorTip,
     uploadProgress,
     currentAction,
+    importProgressItems,
+    criticalImportError,
+    isImporting,
+    isImportComplete,
     imagesQueue,
     formationsList,
     selectedFormation,
@@ -561,8 +748,8 @@ export default function useImportCourses() {
     selectedParcours,
     modulesList,
     selectedModule,
-    setSelectedFormation,
-    setSelectedParcours,
+    setSelectedFormation: handleSelectFormation,
+    setSelectedParcours: handleSelectParcours,
     setSelectedModule,
     fetchModules,
     handleImportMbz,
@@ -574,6 +761,7 @@ export default function useImportCourses() {
     onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
+    onRetryImport: processImport,
     onGoBack,
   };
 }

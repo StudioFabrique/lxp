@@ -61,6 +61,7 @@ type Props = {
   disabled?: boolean;
   isLoading?: boolean;
   compact?: boolean;
+  preserveButtonLabel?: boolean;
   ghost?: boolean;
   icon?: ReactNode;
   error?: string | null;
@@ -77,6 +78,7 @@ export default function FileUpload({
   disabled = false,
   isLoading = false,
   compact = false,
+  preserveButtonLabel = false,
   ghost = false,
   icon,
   error,
@@ -132,7 +134,7 @@ export default function FileUpload({
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
-          ) : fileName ? (
+          ) : fileName && !preserveButtonLabel ? (
             compact ? (
               <Pencil className="h-4 w-4" />
             ) : (
@@ -142,7 +144,9 @@ export default function FileUpload({
             (icon ?? <Upload className="h-4 w-4" />)
           )}
           <span className="max-w-64 truncate">
-            {compact && fileName ? fileName : buttonLabel}
+            {compact && fileName && !preserveButtonLabel
+              ? fileName
+              : buttonLabel}
           </span>
         </button>
         {!compact && (
