@@ -33,6 +33,7 @@ const ModuleContentExplorer = () => {
   const ability = useContext(AbilityContext);
   const navigate = useNavigate();
   const firstPathSegment = window.location.pathname.split("/")[1];
+  const isAdminView = firstPathSegment === "admin";
 
   const explorerStore = useModuleContentExplorer();
   const {
@@ -212,6 +213,7 @@ const ModuleContentExplorer = () => {
               aiIndexed={isSelectedCourseAiIndexed}
               smartQuizState={smartQuizState}
               canEditSelectedLesson={canEditSelectedLesson}
+              canNavigateAsAdmin={isAdminView}
             />
           }
           moduleData={<ModuleData moduleData={state.module} />}

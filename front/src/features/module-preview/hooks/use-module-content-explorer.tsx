@@ -59,6 +59,15 @@ const useModuleContentExplorer = () => {
     moduleExplorerContentReducer,
     initialModuleExplorerContentState,
   );
+  const selectedLessonId = state.selectedLesson?.id;
+  const selectedActivityId = state.selectedActivity?.id;
+  const selectedActivityType = state.selectedActivity?.type;
+  const selectedActivityUrl = state.selectedActivity?.url;
+  const moduleCourses = state.module?.courses;
+  const requestedActivityId =
+    stateFromUrl?.lessonId === selectedLessonId
+      ? stateFromUrl?.activityId
+      : undefined;
 
   const hasStartedModule = useMemo(() => {
     if (!state.module) return false;
@@ -81,39 +90,42 @@ const useModuleContentExplorer = () => {
 
   const isFirstActivitySelected = useMemo(() => {
     const activities = state.selectedLesson?.activities;
-    if (!activities?.length || !state.selectedActivity?.id) return false;
+    if (!activities?.length || !selectedActivityId) return false;
 
-    return activities[0].id === state.selectedActivity.id;
-  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
+    return activities[0].id === selectedActivityId;
+  }, [selectedActivityId, state.selectedLesson?.activities]);
 
   const isLastActivitySelected = useMemo(() => {
     const activities = state.selectedLesson?.activities;
-    if (!activities?.length || !state.selectedActivity?.id) return false;
+    if (!activities?.length || !selectedActivityId) return false;
 
-    return activities[activities.length - 1].id === state.selectedActivity.id;
-  }, [state.selectedActivity?.id, state.selectedLesson?.activities]);
+    return activities[activities.length - 1].id === selectedActivityId;
+  }, [selectedActivityId, state.selectedLesson?.activities]);
 
   const isLastLessonSelected = useMemo(() => {
-    if (!state.module?.courses?.length || !state.selectedLesson?.id)
-      return false;
+    if (!moduleCourses?.length || !selectedLessonId) return false;
 
-    const courses = state.module.courses;
-    const lastCourse = courses[courses.length - 1]; // Le dernier cours
+    const lessons = moduleCourses.flatMap((course) => course.lessons);
+    const lastLesson = lessons[lessons.length - 1];
+    return lastLesson?.id === selectedLessonId;
+  }, [moduleCourses, selectedLessonId]);
 
-    if (!lastCourse.lessons?.length) return false;
+  const hasNextLesson = useMemo(() => {
+    if (!moduleCourses?.length || !selectedLessonId) return false;
 
-    const lastLesson = lastCourse.lessons[lastCourse.lessons.length - 1]; // La dernière leçon de ce cours
-
-    // On compare juste les IDs
-    return lastLesson.id === state.selectedLesson.id;
-  }, [state.module?.courses, state.selectedLesson?.id]);
+    const lessons = moduleCourses.flatMap((course) => course.lessons);
+    const currentLessonIndex = lessons.findIndex(
+      (lesson) => lesson.id === selectedLessonId,
+    );
+    return currentLessonIndex >= 0 && currentLessonIndex < lessons.length - 1;
+  }, [moduleCourses, selectedLessonId]);
 
   const isLastLessonOfCurrentCourse = useMemo(() => {
-    if (!state.selectedLesson || !state.module) return false;
+    if (!selectedLessonId || !moduleCourses) return false;
 
     // On trouve le cours auquel appartient la leçon sélectionnée
-    const currentCourse = state.module.courses.find((course) =>
-      course.lessons.some((lesson) => lesson.id === state.selectedLesson?.id),
+    const currentCourse = moduleCourses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === selectedLessonId),
     );
 
     if (!currentCourse || !currentCourse.lessons.length) return false;
@@ -121,8 +133,8 @@ const useModuleContentExplorer = () => {
     // On compare l'ID de la leçon actuelle avec l'ID de la dernière leçon de ce cours
     const lastLessonInCourse =
       currentCourse.lessons[currentCourse.lessons.length - 1];
-    return lastLessonInCourse.id === state.selectedLesson.id;
-  }, [state.selectedLesson, state.module]);
+    return lastLessonInCourse.id === selectedLessonId;
+  }, [moduleCourses, selectedLessonId]);
 
   const fetchModuleData = useCallback(async () => {
     setIsLoadingRequest(true);
@@ -148,10 +160,10 @@ const useModuleContentExplorer = () => {
   // Handler pour signaler la fin du quiz et enclencher la lecture
   const onFinishInitialQuiz = useCallback(async () => {
     isDiagnosticPassed.current = true;
-    if (state.selectedLesson?.id) {
-      await initiateLesson(state.selectedLesson.id);
+    if (selectedLessonId) {
+      await initiateLesson(selectedLessonId);
     }
-  }, [state.selectedLesson?.id, initiateLesson]);
+  }, [selectedLessonId, initiateLesson]);
 
   const completeLesson = useCallback(
     async (rating: number) => {
@@ -196,7 +208,7 @@ const useModuleContentExplorer = () => {
     async (rating: number) => {
       try {
         const response = await apiClient.put(
-          `/lesson/rate/${state.selectedLesson?.id}`,
+          `/lesson/rate/${selectedLessonId}`,
           { rate: rating },
         );
         const { data } = response.data as { data: LessonRating };
@@ -205,7 +217,7 @@ const useModuleContentExplorer = () => {
         // silently fail
       }
     },
-    [state.selectedLesson?.id],
+    [selectedLessonId],
   );
 
   const enableCourse = useCallback(
@@ -394,12 +406,7 @@ const useModuleContentExplorer = () => {
   }, []);
 
   const fetchLessonData = useCallback(async () => {
-    if (!state.selectedLesson?.id) return;
-    const selectedLessonId = state.selectedLesson.id;
-    const targetActivityId =
-      stateFromUrl?.lessonId === selectedLessonId
-        ? stateFromUrl.activityId
-        : undefined;
+    if (!selectedLessonId) return;
 
     try {
       const response = await apiClient.get(`/lesson/${selectedLessonId}`);
@@ -407,7 +414,7 @@ const useModuleContentExplorer = () => {
       dispatch({
         type: "select_lesson",
         lesson,
-        activityId: targetActivityId,
+        activityId: requestedActivityId,
       });
     } catch {
       // silently fail
@@ -416,26 +423,21 @@ const useModuleContentExplorer = () => {
     if (isDiagnosticPassed.current) {
       await initiateLesson(selectedLessonId);
     }
-  }, [
-    state.selectedLesson?.id,
-    stateFromUrl?.activityId,
-    stateFromUrl?.lessonId,
-    initiateLesson,
-  ]);
+  }, [selectedLessonId, requestedActivityId, initiateLesson]);
 
   const fetchActivityTextContent = useCallback(() => {
     if (
-      state.selectedActivity?.type === "text" &&
-      state.selectedActivity?.url &&
+      selectedActivityType === "text" &&
+      selectedActivityUrl &&
       state.mode === "read"
     ) {
-      fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
+      fetch(`${ACTIVITIES}${selectedActivityUrl}`)
         .then((response) => response.text())
         .then((content: string) => {
           dispatch({ type: "update_activity_content", content });
         });
     }
-  }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
+  }, [state.mode, selectedActivityType, selectedActivityUrl]);
 
   const saveTextActivity = async (
     title: string,
@@ -666,7 +668,9 @@ const useModuleContentExplorer = () => {
   ]);
 
   useEffect(() => {
-    fetchModuleData();
+    // Le changement de module déclenche volontairement un nouveau chargement.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchModuleData();
   }, [fetchModuleData]);
 
   useEffect(() => {
@@ -713,6 +717,7 @@ const useModuleContentExplorer = () => {
       isFirstActivitySelected,
       isLastActivitySelected,
       isLastLessonSelected,
+      hasNextLesson,
       hasStartedModule,
       isLastLessonOfCurrentCourse,
     },

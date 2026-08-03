@@ -1,8 +1,7 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { cn } from "../../../../utils/cn";
-import PermissionGuard from "../../../../components/guards/PermissionGuard";
-import FeedbacksButton from "../../../../../src/components/buttons/FeedbacksButton";
 import { PropsWithChildren } from "react";
+import FeedbacksButton from "../../../../components/buttons/FeedbacksButton";
+import PermissionGuard from "../../../../components/guards/PermissionGuard";
 
 type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
@@ -10,42 +9,43 @@ type Props = {
   isLastActivitySelected: boolean;
   isLastLessonSelected: boolean;
   isLessonCompleted: boolean;
-  onPrevious: () => void;
-  onNext: () => void;
+  onPreviousActivity: () => void;
+  onNextActivity: () => void;
   onCompleteLesson: () => void;
 };
 
-const ActivityBottomNavigation = ({
+const StudentActivityNavigation = ({
   modalVisibility,
   isFirstActivitySelected,
   isLastActivitySelected,
   isLastLessonSelected,
   isLessonCompleted,
-  onPrevious,
-  onNext,
+  onPreviousActivity,
+  onNextActivity,
   onCompleteLesson,
   children,
 }: PropsWithChildren<Props>) => (
-  <div className={cn("flex justify-between items-center w-full gap-5")}>
-    {/* Bouton Précédent */}
-    <div className="flex-1 flex justify-start">
+  <div className="flex w-full items-center justify-between gap-5">
+    <div className="flex flex-1 justify-start">
       {!isFirstActivitySelected && (
-        <button onClick={onPrevious} className="btn btn-primary text-base-100">
+        <button
+          type="button"
+          onClick={onPreviousActivity}
+          className="btn btn-primary text-base-100"
+        >
           <ArrowLeft />
           Activité précédente
         </button>
       )}
     </div>
 
-    {/* Bouton central */}
     <div className="flex-initial">
       <PermissionGuard action="component" object="progression">
         {children}
       </PermissionGuard>
     </div>
 
-    {/* Bouton Suivant ou Terminer */}
-    <div className="flex-1 flex justify-end mr-5">
+    <div className="mr-5 flex flex-1 justify-end">
       {isLastActivitySelected ? (
         (!isLastLessonSelected || !isLessonCompleted) && (
           <PermissionGuard action="component" object="progression">
@@ -58,7 +58,7 @@ const ActivityBottomNavigation = ({
             >
               {isLessonCompleted ? (
                 <>
-                  Leçon Suivante
+                  Leçon suivante
                   <ArrowRight />
                 </>
               ) : (
@@ -71,7 +71,11 @@ const ActivityBottomNavigation = ({
           </PermissionGuard>
         )
       ) : (
-        <button onClick={onNext} className="btn btn-primary text-base-100">
+        <button
+          type="button"
+          onClick={onNextActivity}
+          className="btn btn-primary text-base-100"
+        >
           Activité suivante
           <ArrowRight />
         </button>
@@ -80,4 +84,4 @@ const ActivityBottomNavigation = ({
   </div>
 );
 
-export default ActivityBottomNavigation;
+export default StudentActivityNavigation;
