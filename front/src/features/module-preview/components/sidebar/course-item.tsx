@@ -227,6 +227,7 @@ const CourseItem = ({
       <CreateLessonModal
         open={isCreatingLesson}
         courseTitle={course.title}
+        courseTags={course.tags ?? []}
         isSaving={isSavingLesson}
         onClose={() => setIsCreatingLesson(false)}
         onSubmit={handleCreateLesson}
@@ -375,6 +376,7 @@ const CourseItem = ({
                     <div className={`w-full`} key={lesson.id}>
                       <LessonItem
                         lesson={lesson}
+                        courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
                         openEditOnMount={lesson.id === editLessonId}

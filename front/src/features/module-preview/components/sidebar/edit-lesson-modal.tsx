@@ -1,15 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Loader2, X } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { createPortal } from "react-dom";
 
-import apiClient from "../../../../lib/axios";
 import type Lesson from "../../../../utils/interfaces/lesson";
 import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonFormValues } from "./lesson-form.types";
 
 type Props = {
   lesson: Lesson;
+  courseTags: Tag[];
   isSubmitting: boolean;
   onClose: () => void;
   onSubmit: (values: LessonFormValues) => Promise<boolean>;
@@ -17,6 +16,7 @@ type Props = {
 
 export default function EditLessonModal({
   lesson,
+  courseTags,
   isSubmitting,
   onClose,
   onSubmit,
@@ -24,29 +24,22 @@ export default function EditLessonModal({
   const [title, setTitle] = useState(lesson.title);
   const [description, setDescription] = useState(lesson.description ?? "");
   const [modalite, setModalite] = useState(lesson.modalite ?? "distanciel");
-  const [tagId, setTagId] = useState<number | "">(lesson.tag?.id ?? "");
-
-  const {
-    data: tags = [],
-    isLoading: tagsLoading,
-    isError: tagsError,
-  } = useQuery({
-    queryKey: ["tags", "lesson-edit"],
-    queryFn: async (): Promise<Tag[]> => {
-      const response = await apiClient.get("/tag");
-      return response.data.response ?? response.data;
-    },
-  });
+  const [tagId, setTagId] = useState<number | "">(
+    lesson.tag?.id ?? courseTags[0]?.id ?? "",
+  );
+  const selectedTagId = courseTags.some((tag) => tag.id === tagId)
+    ? tagId
+    : (courseTags[0]?.id ?? "");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim() || !tagId) return;
+    if (!title.trim() || !selectedTagId) return;
 
     const success = await onSubmit({
       title: title.trim(),
       description: description.trim(),
       modalite,
-      tagId: Number(tagId),
+      tagId: Number(selectedTagId),
     });
     if (success) onClose();
   };
@@ -99,7 +92,12 @@ export default function EditLessonModal({
           </label>
 
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold">Description</span>
+            <span className="text-sm font-semibold">
+              Description{" "}
+              <span className="font-normal text-base-content/50">
+                (optionnelle)
+              </span>
+            </span>
             <textarea
               className="textarea textarea-bordered min-h-28 w-full resize-y"
               value={description}
@@ -114,18 +112,14 @@ export default function EditLessonModal({
               </span>
               <select
                 className="select select-bordered w-full"
-                value={tagId}
-                disabled={tagsLoading || tagsError}
+                value={selectedTagId}
+                disabled={courseTags.length === 0}
                 onChange={(event) => setTagId(Number(event.target.value))}
               >
-                <option value="">
-                  {tagsLoading
-                    ? "Chargement…"
-                    : tagsError
-                      ? "Tags indisponibles"
-                      : "Choisir un tag"}
-                </option>
-                {tags.map((tag) => (
+                {courseTags.length === 0 && (
+                  <option value="">Aucun tag associé au cours</option>
+                )}
+                {courseTags.map((tag) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.name}
                   </option>
@@ -147,10 +141,9 @@ export default function EditLessonModal({
             </label>
           </div>
 
-          {tagsError && (
+          {courseTags.length === 0 && (
             <p className="text-sm text-error">
-              Impossible de charger les tags. Fermez puis rouvrez la fenêtre
-              pour réessayer.
+              Ajoutez d’abord un tag au cours pour modifier cette leçon.
             </p>
           )}
         </form>
@@ -168,7 +161,7 @@ export default function EditLessonModal({
             type="submit"
             form={`edit-lesson-form-${lesson.id}`}
             className="btn btn-primary"
-            disabled={!title.trim() || !tagId || isSubmitting}
+            disabled={!title.trim() || !selectedTagId || isSubmitting}
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             Enregistrer

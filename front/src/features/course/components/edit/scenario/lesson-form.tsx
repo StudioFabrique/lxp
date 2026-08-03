@@ -81,7 +81,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
 
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="description">
-            Description
+            Description <span className="font-normal opacity-60">(optionnelle)</span>
           </label>
           <textarea
             className={setAreaStyle(description.hasError)}

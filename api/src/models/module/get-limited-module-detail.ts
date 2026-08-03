@@ -49,6 +49,7 @@ export default async function getLimitedModuleDetail(
           contacts: { select: { contact: { select: { idMdb: true } } } },
           lessons: {
             include: {
+              tag: true,
               lessonsRead: {
                 where: { student: { idMdb: userMongoId } },
               },
