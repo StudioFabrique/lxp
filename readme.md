@@ -4,7 +4,7 @@ Application web ANDRIA avec une API Node.js et un frontend React.
 
 ## Prérequis
 
-- Node.js 22.18 ou une version supérieure ;
+- Node.js 24 ou une version supérieure ;
 - npm ;
 - Docker avec Docker Compose ;
 - Git.
@@ -23,10 +23,10 @@ bases Docker, applique les migrations et charge les données de démonstration.
 
 Ouvrir <http://localhost:5173>.
 
-| Compte | Identifiant | Mot de passe |
-| --- | --- | --- |
-| Administrateur | `admin@studio.eco` | `Abcdef@123456` |
-| Apprenant | `apprenant@studio.eco` | `Abcdef@123456` |
+| Compte         | Identifiant            | Mot de passe    |
+| -------------- | ---------------------- | --------------- |
+| Administrateur | `admin@studio.eco`     | `Abcdef@123456` |
+| Apprenant      | `apprenant@studio.eco` | `Abcdef@123456` |
 
 ## Documentation
 
