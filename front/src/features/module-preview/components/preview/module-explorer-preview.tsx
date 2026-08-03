@@ -143,44 +143,43 @@ const ModuleExplorerPreview = ({
         }
         onSaveActivity={activityActions.saveActivity}
       >
-        {mode === "read" && canNavigateAsAdmin && (
-          <AdminActivityNavigation
-            modalVisibility={modalVisibility}
-            isFirstActivitySelected={computed.isFirstActivitySelected}
-            isLastActivitySelected={computed.isLastActivitySelected}
-            isLastLessonOfCurrentCourse={computed.isLastLessonOfCurrentCourse}
-            hasNextLesson={computed.hasNextLesson}
-            onPreviousActivity={() =>
-              dispatch({ type: "go_to_previous_activity" })
-            }
-            onNextActivity={() => dispatch({ type: "go_to_next_activity" })}
-            onNextLesson={lessonActions.nextLesson}
-          />
-        )}
-
-        {mode === "read" && !canNavigateAsAdmin && (
-          <StudentActivityNavigation
-            modalVisibility={modalVisibility}
-            isLessonCompleted={computed.isLessonCompleted}
-            isFirstActivitySelected={computed.isFirstActivitySelected}
-            isLastActivitySelected={computed.isLastActivitySelected}
-            isLastLessonSelected={computed.isLastLessonSelected}
-            onPreviousActivity={() =>
-              dispatch({ type: "go_to_previous_activity" })
-            }
-            onNextActivity={smartQuizState.handleNextActivity}
-            onCompleteLesson={() =>
-              computed.isLessonCompleted
-                ? lessonActions.nextLesson()
-                : dispatch({
-                    type: "set_modal_visibility",
-                    modalVisibility: "lessonCompletionModal",
-                  })
-            }
-          >
-            {quizButton}
-          </StudentActivityNavigation>
-        )}
+        {mode === "read" &&
+          (canNavigateAsAdmin ? (
+            <AdminActivityNavigation
+              modalVisibility={modalVisibility}
+              isFirstActivitySelected={computed.isFirstActivitySelected}
+              isLastActivitySelected={computed.isLastActivitySelected}
+              isLastLessonOfCurrentCourse={computed.isLastLessonOfCurrentCourse}
+              hasNextLesson={computed.hasNextLesson}
+              onPreviousActivity={() =>
+                dispatch({ type: "go_to_previous_activity" })
+              }
+              onNextActivity={() => dispatch({ type: "go_to_next_activity" })}
+              onNextLesson={lessonActions.nextLesson}
+            />
+          ) : (
+            <StudentActivityNavigation
+              modalVisibility={modalVisibility}
+              isLessonCompleted={computed.isLessonCompleted}
+              isFirstActivitySelected={computed.isFirstActivitySelected}
+              isLastActivitySelected={computed.isLastActivitySelected}
+              isLastLessonSelected={computed.isLastLessonSelected}
+              onPreviousActivity={() =>
+                dispatch({ type: "go_to_previous_activity" })
+              }
+              onNextActivity={smartQuizState.handleNextActivity}
+              onCompleteLesson={() =>
+                computed.isLessonCompleted
+                  ? lessonActions.nextLesson()
+                  : dispatch({
+                      type: "set_modal_visibility",
+                      modalVisibility: "lessonCompletionModal",
+                    })
+              }
+            >
+              {quizButton}
+            </StudentActivityNavigation>
+          ))}
       </LessonReaderAndEditor>
     </FadeWrapper>
   );
