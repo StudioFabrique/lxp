@@ -48,7 +48,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                 <div className="flex items-center gap-x-4 justify-center">
                   <PermissionGuard action="read" object="lesson">
                     <div
-                      className="tooltip tooltip-bottom flex-items-center"
+                      className="tooltip tooltip-top flex-items-center"
                       data-tip="Aperçu de la leçon"
                     >
                       <Link
@@ -67,7 +67,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                   >
                     <PermissionGuard action="delete" object="lesson">
                       <div
-                        className="tooltip tooltip-bottom flex-items-center"
+                        className="tooltip tooltip-top flex-items-center"
                         data-tip="Supprimer la leçon"
                       >
                         <button
@@ -84,7 +84,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                   <div className="w-6 h-6">
                     <PermissionGuard action="update" object="lesson">
                       <div
-                        className="tooltip tooltip-bottom"
+                        className="tooltip tooltip-left"
                         data-tip="Modifier la leçon"
                       >
                         <Link

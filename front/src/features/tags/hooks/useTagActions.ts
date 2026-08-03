@@ -1,8 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { tagApi } from "../api/tag.api";
 
 export function useTagActions(onSuccessCallback: () => void) {
+  const showMutationError = (error: AxiosError<{ message?: string }>) => {
+    toast.error(
+      error.response?.data?.message ?? "Impossible d'enregistrer le tag",
+    );
+  };
+
   const deleteManyMutation = useMutation({
     mutationFn: (ids: string[]) => tagApi.mutations.deleteMany(ids),
     onSuccess: () => {
@@ -35,6 +42,7 @@ export function useTagActions(onSuccessCallback: () => void) {
       toast.success("Tags créés avec succès");
       onSuccessCallback();
     },
+    onError: showMutationError,
   });
 
   const updateTagMutation = useMutation({
@@ -44,13 +52,14 @@ export function useTagActions(onSuccessCallback: () => void) {
       toast.success("Tag modifié avec succès");
       onSuccessCallback();
     },
+    onError: showMutationError,
   });
 
   return {
     onDeleteSelected: handleDeleteSelected,
     onDeleteOne: handleDeleteOne,
     onCreateTags: (tags: { name: string; color: string }[]) =>
-      createTagsMutation.mutate(tags),
+      createTagsMutation.mutateAsync(tags),
     onEditTag: (id: number, name: string) =>
       updateTagMutation.mutate({ id, name }),
     isDeleting: deleteManyMutation.isPending || deleteOneMutation.isPending,

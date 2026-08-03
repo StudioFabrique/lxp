@@ -29,6 +29,21 @@ export const duplicateLessonValidator = [
   checkValidatorResult,
 ];
 
+export const duplicateResourcesValidator = [
+  param("courseId")
+    .notEmpty()
+    .withMessage("L'identifiant du cours est requis.")
+    .isInt()
+    .withMessage("L'identifiant du cours doit être un nombre entier."),
+  body()
+    .isArray({ min: 1 })
+    .withMessage("La requête requiert au moins une ressource."),
+  body("*")
+    .isInt()
+    .withMessage("Les identifiants des ressources doivent être des entiers."),
+  checkValidatorResult,
+];
+
 export const lessonIdWithRateValidator = [
   param("lessonId")
     .notEmpty()
@@ -111,6 +126,16 @@ export const getLessonsByTagValidator = [
     .withMessage("L'identifiant du tag doit être un nombre")
     .trim()
     .escape(),
+  query("includeCourseContents")
+    .optional()
+    .isBoolean()
+    .withMessage("Le filtre des contenus de cours doit être un booléen"),
+  query("supplementaryResources")
+    .optional()
+    .isBoolean()
+    .withMessage(
+      "Le filtre des ressources supplémentaires doit être un booléen",
+    ),
   checkValidatorResult,
 ];
 

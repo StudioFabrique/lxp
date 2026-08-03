@@ -28,4 +28,6 @@ export interface LessonWithActivitiesCount {
   title: string;
   activitiesCount: number;
   isSelected?: boolean;
+  source: "resource" | "lesson";
+  sourceTitle?: string;
 }

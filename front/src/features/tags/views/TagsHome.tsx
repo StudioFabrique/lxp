@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import {
   RowSelectionState,
@@ -28,9 +28,10 @@ const TagsHome = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("editId");
-  const [isModalOpen, setModalOpen] = useState(false);
+  const isModalOpen = searchParams.has("openModal");
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [canSubmitTags, setCanSubmitTags] = useState(false);
   const idsList = Object.keys(rowSelection);
   const [idToDelete, setIdToDelete] = useState<number | null>(null);
 
@@ -64,14 +65,8 @@ const TagsHome = () => {
     isSubmitting,
   } = useTagActions(refreshAndClearSelection);
 
-  useEffect(() => {
-    const openModal = searchParams.get("openModal");
-    if (openModal) setModalOpen(true);
-    else setModalOpen(false);
-  }, [searchParams]);
-
   const handleDismissModal = () => {
-    setModalOpen(false);
+    setCanSubmitTags(false);
     navigate(".", { replace: true });
   };
 
@@ -119,6 +114,7 @@ const TagsHome = () => {
             btn?.click();
           }}
           isSubmitting={isSubmitting}
+          rightDisabled={!editId && !canSubmitTags}
         >
           {editId ? (
             <TagsHomeEditing
@@ -136,11 +132,16 @@ const TagsHome = () => {
             />
           ) : (
             <TagsHomeAdding
-              onSubmitAllTags={(tags) => {
-                onCreateTags(
-                  tags.map((t) => ({ name: t.name, color: t.color })),
-                );
-                handleDismissModal();
+              onCanSubmitChange={setCanSubmitTags}
+              onSubmitAllTags={async (tags) => {
+                try {
+                  await onCreateTags(
+                    tags.map((t) => ({ name: t.name, color: t.color })),
+                  );
+                  handleDismissModal();
+                } catch {
+                  // La mutation affiche l'erreur et garde la modale ouverte.
+                }
               }}
             />
           )}
@@ -165,7 +166,7 @@ const TagsHome = () => {
           placeholder="Rechercher un tag"
           onSubmitSearchValue={onSubmitSearchValue}
         >
-          <TableActionsButtons
+          <TableActionsButtons<TagRow>
             isLoading={isLoading || isDeleting}
             isDisabled={idsList.length === 0}
             onRefreshData={onRefreshData}
@@ -178,9 +179,7 @@ const TagsHome = () => {
               },
             ]}
             retreiveItemsProperty="name"
-            onRetreiveItemsValuesByPropertyFromIdList={
-              onRetreiveItemsValues as any
-            }
+            onRetreiveItemsValuesByPropertyFromIdList={onRetreiveItemsValues}
           />
         </SearchBar>
 

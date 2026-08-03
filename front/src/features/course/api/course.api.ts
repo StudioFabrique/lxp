@@ -44,11 +44,23 @@ const queries = {
       },
     }),
 
-  lessonsByTag: (tagId: number) =>
+  lessonsByTag: (
+    tagId: number,
+    includeCourseContents = false,
+    supplementaryResources = false,
+  ) =>
     queryOptions({
-      queryKey: ["lessons", "tag", tagId],
+      queryKey: [
+        "lessons",
+        "tag",
+        tagId,
+        includeCourseContents,
+        supplementaryResources,
+      ],
       queryFn: async (): Promise<{ data: LessonWithActivitiesCount[] }> => {
-        const res = await apiClient.get(`/lesson/tag/${tagId}`);
+        const res = await apiClient.get(`/lesson/tag/${tagId}`, {
+          params: { includeCourseContents, supplementaryResources },
+        });
         return res.data;
       },
     }),
