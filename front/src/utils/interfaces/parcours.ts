@@ -1,4 +1,4 @@
-import Contact from "./contact";
+import { ContactWithMail } from "./contact";
 import Formation from "./formation";
 import Group from "./group";
 import Module from "./module";
@@ -18,7 +18,7 @@ export default interface Parcours {
   adminId?: number;
   formation: Formation;
   tags: Array<Tag>;
-  contacts: Array<Contact>;
+  contacts: Array<ContactWithMail>;
   skills: Array<Skill>;
   bonusSkills: Array<Skill>;
   virtualClass?: string;
