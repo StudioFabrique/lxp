@@ -296,6 +296,12 @@ const useModuleContentExplorer = () => {
             values.lessonIds,
           );
         }
+        if (values.resourceIds.length > 0) {
+          await apiClient.post(
+            `/lesson/duplicate-resources/${data.course.id}`,
+            values.resourceIds,
+          );
+        }
         await fetchModuleData();
         toast.success("Cours créé");
         return data.course.id;

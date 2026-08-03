@@ -41,6 +41,11 @@ export default async function getLimitedModuleDetail(
           visibility: true,
           isPublished: true,
           courseSlug: true,
+          tags: {
+            select: {
+              tag: { select: { id: true, name: true, color: true } },
+            },
+          },
           contacts: { select: { contact: { select: { idMdb: true } } } },
           lessons: {
             include: {
@@ -75,10 +80,11 @@ export default async function getLimitedModuleDetail(
     tags: module.parcours.tags.map(({ tag }) => tag),
     bonusSkills: module.bonusSkills.map(({ bonusSkill }) => bonusSkill),
     contacts: module.contacts.map(({ contact }) => contact),
-    courses: module.courses.map(({ contacts, ...course }) => ({
+    courses: module.courses.map(({ contacts, tags, ...course }) => ({
       ...course,
       aiIndexed: Boolean(course.courseSlug),
       contacts: contacts.map(({ contact }) => contact),
+      tags: tags.map(({ tag }) => tag),
     })),
   };
 }

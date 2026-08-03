@@ -4,6 +4,7 @@ import AddTag from "../../../../../components/UI/add-tag";
 import Tag from "../../../../../../src/utils/interfaces/tag";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import { parcoursApi } from "../../../api/parcours.api";
@@ -18,7 +19,7 @@ function CreateNewTag(props: Props) {
   const { data: initialTags = [] } = useParcoursTagsQuery();
   const queryClient = useQueryClient();
 
-  const { mutate: createTags } = useMutation({
+  const { mutate: createTags, isPending } = useMutation({
     mutationFn: (payload: { tags: { name: string; color: string }[] }) =>
       parcoursApi.mutations.createTags(payload),
     onSuccess: (data: Tag[]) => {
@@ -29,20 +30,22 @@ function CreateNewTag(props: Props) {
       props.onCreated(data);
       handleCancel();
     },
-    onError: () => {
-      toast.error("Erreur lors de la création des tags");
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(
+        error.response?.data?.message ?? "Erreur lors de la création des tags",
+      );
     },
   });
 
   const handleCancel = () => {
     document.getElementById("create-tags")?.click();
     resetTags();
-    resetTags();
   };
 
   const {
     tag,
     currentTags,
+    getTagsWithPendingInput,
     handleCheckTags,
     handleOnChange,
     handleRemoveTag,
@@ -50,10 +53,21 @@ function CreateNewTag(props: Props) {
     resetTags,
   } = useTags(initialTags);
 
+  const pendingName = tag.trim().toLocaleLowerCase();
+  const pendingNameExists =
+    pendingName.length > 0 &&
+    initialTags.some(
+      (item) => item.name.toLocaleLowerCase() === pendingName,
+    );
+  const canSubmit =
+    handleCheckTags().length > 0 ||
+    (pendingName.length > 0 && !pendingNameExists);
+
   const handleSubmitNewTags = async () => {
-    const tmpTags = handleCheckTags();
+    const tmpTags = handleCheckTags(getTagsWithPendingInput());
 
     if (!tmpTags || tmpTags.length === 0) {
+      toast("Aucun nouveau tag à créer");
       return;
     }
 
@@ -65,7 +79,8 @@ function CreateNewTag(props: Props) {
   };
 
   const showNoTagMessage =
-    handleCheckTags().length === 0 && currentTags.length > 0;
+    pendingNameExists ||
+    (handleCheckTags().length === 0 && currentTags.length > 0);
 
   return (
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">
@@ -80,8 +95,8 @@ function CreateNewTag(props: Props) {
           />
           <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
           {showNoTagMessage && (
-            <p className="text-info text-xs pl-2">
-              Les tags saisis existent déjà.
+            <p className="text-error text-xs pl-2">
+              Ce nom de tag est déjà utilisé.
             </p>
           )}
           <div className="flex justify-between items-center mt-4">
@@ -94,8 +109,9 @@ function CreateNewTag(props: Props) {
             <button
               className="btn btn-primary"
               onClick={handleSubmitNewTags}
-              disabled={showNoTagMessage}
+              disabled={!canSubmit || isPending}
             >
+              {isPending && <span className="loading loading-spinner loading-sm" />}
               Créer les nouveaux tags
             </button>
           </div>

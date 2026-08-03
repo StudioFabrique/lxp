@@ -1,9 +1,8 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import type Tag from "../utils/interfaces/tag";
-import { createTag } from "../features/tags/hooks/create-tag";
+import { addPendingTag } from "../features/tags/helpers/tag-selection";
 
 const useTags = (initialTags: Tag[]) => {
-  const [notSelected, setNotSelected] = useState<Tag[]>([]);
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [tag, setTag] = useState<string>("");
 
@@ -13,22 +12,8 @@ const useTags = (initialTags: Tag[]) => {
 
   const handleTagSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const exisitingTag = notSelected.find(
-      (item) => item.name.toLowerCase() === tag.toLowerCase(),
-    );
-    if (!exisitingTag) {
-      const exisitingCurrentTag = currentTags.find(
-        (item) => item.name.toLowerCase() === tag.toLowerCase(),
-      );
-      if (!exisitingCurrentTag) {
-        setCurrentTags((prevState) => [
-          ...prevState,
-          createTag(tag, initialTags.length + currentTags.length),
-        ]);
-        setTag("");
-      }
-    } else {
-      setCurrentTags((prevState) => [...prevState, exisitingTag]);
+    if (tag.trim()) {
+      setCurrentTags((current) => addPendingTag(current, initialTags, tag));
       setTag("");
     }
   };
@@ -37,14 +22,19 @@ const useTags = (initialTags: Tag[]) => {
     setCurrentTags((prevState) => prevState.filter((item) => item.id !== id));
   };
 
-  const handleCheckTags = useCallback(() => {
-    return currentTags.filter(
+  const handleCheckTags = useCallback((tagsToCheck = currentTags) => {
+    return tagsToCheck.filter(
       (item) =>
         !initialTags.find(
           (elem) => elem.name.toLowerCase() === item.name.toLowerCase(),
         ),
     );
   }, [currentTags, initialTags]);
+
+  const getTagsWithPendingInput = useCallback(
+    () => addPendingTag(currentTags, initialTags, tag),
+    [currentTags, initialTags, tag],
+  );
 
   const resetTags = () => {
     setCurrentTags([]);
@@ -67,13 +57,6 @@ const useTags = (initialTags: Tag[]) => {
     [initialTags],
   );
 
-  useEffect(() => {
-    const tags = initialTags.filter(
-      (item) => !currentTags.find((elem) => elem.id === item.id),
-    );
-    setNotSelected(tags);
-  }, [currentTags, initialTags]);
-
   return {
     tag,
     handleSetCurrentTags,
@@ -82,6 +65,7 @@ const useTags = (initialTags: Tag[]) => {
     handleTagSubmit,
     handleRemoveTag,
     handleCheckTags,
+    getTagsWithPendingInput,
     resetTags,
     updatedTags,
   };

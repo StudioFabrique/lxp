@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import apiClient from "../../../../lib/axios";
 import type Course from "../../../../utils/interfaces/course";
 import type Tag from "../../../../utils/interfaces/tag";
+import { cn } from "../../../../utils/cn";
 import type { UpdateCourseFormValues } from "./course-form.types";
 
 type Props = {
@@ -129,10 +130,15 @@ export default function EditCourseModal({
                   <button
                     key={tag.id}
                     type="button"
-                    className={`btn btn-xs ${
-                      selected ? "btn-primary" : "btn-outline"
-                    }`}
+                    className={cn(
+                      "btn btn-xs border-2",
+                      selected
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-transparent",
+                    )}
+                    style={{ backgroundColor: tag.color }}
                     onClick={() => toggleTag(tag.id)}
+                    aria-pressed={selected}
                   >
                     {selected && <Check className="h-3 w-3" />}
                     {tag.name}

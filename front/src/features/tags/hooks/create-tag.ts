@@ -24,7 +24,7 @@ const colors = [
 ];
 
 export function createTag(name: string, value: number) {
-  const id = value + 1;
+  const id = -(value + 1);
 
   return {
     id,

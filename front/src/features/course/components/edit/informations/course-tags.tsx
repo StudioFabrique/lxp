@@ -3,6 +3,7 @@ import TagsWithDrawer from "../../../../parcours/components/edit/informations/ta
 
 type Props = {
   tags: Tag[];
+  inheritedTags: Tag[];
   onSubmit: (tags: Tag[]) => void;
   loading: boolean;
 };
@@ -12,7 +13,9 @@ function CourseTags(props: Props) {
     <TagsWithDrawer
       onSubmit={props.onSubmit}
       loading={props.loading}
-      tags={props.tags}
+      tags={props.inheritedTags}
+      selectedTags={props.tags}
+      inheritedTagsLabel="Tags du parcours"
     />
   );
 }

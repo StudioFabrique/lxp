@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import Course from "../../../../../../../src/utils/interfaces/course";
 import EditIcon from "../../../../../../../src/components/UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
-import { EyeOff, Import, Plus, UploadCloud } from "lucide-react";
+import { CloudOff, EyeOff, Import, Plus, UploadCloud } from "lucide-react";
 import { cn } from "../../../../../../utils/cn";
 import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
@@ -106,18 +106,18 @@ const ContenuDetail: FC<{
             <div
               className={cn(
                 "badge absolute -top-3 -left-2 tooltip tooltip-right z-11",
-                { "badge-error": !course.isPublished || !course.visibility },
+                { "badge-info": !course.isPublished || !course.visibility },
                 { "badge-warning": !course.visibility && course.isPublished },
               )}
-              data-tip={`Le cours est ${
-                !course.isPublished
-                  ? "non publié"
-                  : course.visibility
-                    ? "visible"
-                    : "invisible"
+              data-tip={`Ce cours ${
+                !course.isPublished ? "n'est pas publié" : "est invisible"
               }`}
             >
-              <EyeOff className="w-4 h-4" />
+              {!course.isPublished ? (
+                <CloudOff className="w-4 h-4" />
+              ) : (
+                <EyeOff className="w-4 h-4" />
+              )}
             </div>
           ) : null}
         </div>

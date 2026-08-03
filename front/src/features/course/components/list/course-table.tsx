@@ -59,19 +59,17 @@ export default function CourseTable({
               <div className="flex items-center gap-x-4 justify-center">
                 <button
                   type="button"
-                  className="btn btn-ghost btn-xs btn-square tooltip tooltip-bottom"
+                  className="btn btn-ghost btn-xs btn-square tooltip tooltip-top"
                   data-tip="Modifier le cours."
                   aria-label="Éditer le cours"
                   onClick={() => onEditCourse(course.id!)}
                 >
-                  <Pencil
-                    className="w-4 h-4 text-primary"
-                  />
+                  <Pencil className="w-4 h-4 text-primary" />
                 </button>
                 <PermissionGuard action="delete" object="course">
                   <button
                     type="button"
-                    className="btn btn-ghost btn-xs btn-square text-error tooltip tooltip-bottom"
+                    className="btn btn-ghost btn-xs btn-square text-error tooltip tooltip-left"
                     data-tip="Supprimer le cours définitivement."
                     aria-label="Supprimer le cours"
                     onClick={() => onDeleteCourse(course)}
