@@ -157,7 +157,7 @@ const ImportResult = ({
             <div className="flex items-center gap-2">
               <FileArchive className="h-5 w-5 text-primary" />
               <h3 className="font-semibold">
-                Contenu des archives .mbz importés
+                Contenu des archives .mbz importées
               </h3>
             </div>
             <div className="flex flex-wrap gap-2 text-xs">
@@ -175,12 +175,13 @@ const ImportResult = ({
             </div>
           </div>
 
-          <div className="max-h-96 divide-y divide-base-300 overflow-y-auto rounded-lg border border-base-300">
+          <div className="max-h-96 divide-y divide-base-200 overflow-y-auto rounded-lg border border-base-300">
             {items.map((item) => (
               <div
                 key={item.id}
                 className={cn(
                   "flex items-start gap-3 px-4 py-3",
+                  item.kind === "course" ? "bg-base-200/70" : "ml-6 pl-4",
                   item.status === "error" && "bg-error/5",
                   item.status === "processing" && "bg-primary/5",
                 )}
@@ -228,7 +229,11 @@ const ImportResult = ({
               Terminer
             </Link>
             {criticalError && (
-              <button className="btn btn-primary" onClick={onRetry}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => onRetry()}
+              >
                 <RotateCcw className="h-4 w-4" />
                 Réessayer
               </button>

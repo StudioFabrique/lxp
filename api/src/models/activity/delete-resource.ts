@@ -1,6 +1,8 @@
-import path from "path";
-import fs from "fs";
 import { prisma } from "../../utils/db";
+import {
+  collectUnusedActivityFiles,
+  deleteActivityFiles,
+} from "../../helpers/activity-file-cleanup";
 
 export default async function deleteResource(
   resourceId: number,
@@ -8,7 +10,7 @@ export default async function deleteResource(
 ) {
   const existingResource = await prisma.resourceActivity.findFirst({
     where: { id: resourceId },
-    select: { activity: { select: { authorId: true } } },
+    select: { url: true, activity: { select: { authorId: true } } },
   });
   if (!existingResource)
     throw { statusCode: 404, message: "La ressource n'existe pas." };
@@ -27,9 +29,22 @@ export default async function deleteResource(
       message: "Vous n'êtes pas le propriétaire de cette ressource.",
     };
 
-  const deletedResource = await prisma.resourceActivity.delete({
-    where: { id: resourceId },
+  const filesToDelete = await prisma.$transaction(async (tx) => {
+    const deletedResource = await tx.resourceActivity.delete({
+      where: { id: resourceId },
+    });
+
+    const files = await collectUnusedActivityFiles(tx, [
+      {
+        url: existingResource.url,
+        type: "resource",
+        trackedInMediatheque: true,
+      },
+    ]);
+
+    return { deletedResource, files };
   });
 
-  return deletedResource;
+  await deleteActivityFiles(filesToDelete.files);
+  return filesToDelete.deletedResource;
 }
