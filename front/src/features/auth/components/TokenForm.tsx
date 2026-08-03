@@ -54,6 +54,8 @@ const TokenForm = ({ onNext }: Props) => {
           <input
             type="text"
             placeholder="Clé d'activation"
+            autoComplete="off"
+            style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
             {...register("token", {
               required: "La clé d'activation est requise.",
             })}
