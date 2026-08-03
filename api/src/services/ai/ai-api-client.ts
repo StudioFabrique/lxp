@@ -1,4 +1,4 @@
-import { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { Readable } from "stream";
 
 const DEFAULT_AI_API_URL = "http://localhost:8000";
@@ -11,13 +11,18 @@ export class AiConfigurationError extends Error {
 }
 
 export class AiApiError extends Error {
+  readonly status: number;
+  readonly responseBody: unknown;
+
   constructor(
-    public readonly status: number,
-    public readonly responseBody: unknown,
+    status: number,
+    responseBody: unknown,
     message: string,
   ) {
     super(message);
     this.name = "AiApiError";
+    this.status = status;
+    this.responseBody = responseBody;
   }
 }
 
@@ -34,11 +39,16 @@ type RequestOptions = {
  * erreurs HTTP restent ainsi hors des contrôleurs métier.
  */
 export class AiApiClient {
+  private readonly baseUrl: string;
+  private readonly authSecret: string | undefined;
+
   constructor(
-    private readonly baseUrl =
-      process.env.DOCKER_IA_API_BASE_URL || DEFAULT_AI_API_URL,
-    private readonly authSecret = process.env.DOCKER_IA_AUTH_SECRET,
-  ) {}
+    baseUrl = process.env.DOCKER_IA_API_BASE_URL || DEFAULT_AI_API_URL,
+    authSecret = process.env.DOCKER_IA_AUTH_SECRET,
+  ) {
+    this.baseUrl = baseUrl;
+    this.authSecret = authSecret;
+  }
 
   async postJson<T>(
     path: string,
@@ -96,7 +106,7 @@ export class AiApiClient {
       );
     }
 
-    const token = sign(
+    const token = jwt.sign(
       {
         sub: options.subject,
         userRoles: [{ role: "admin" }],

@@ -1,8 +1,8 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 
-import deleteModule from "../../models/module/delete-module";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import deleteModule from "../../models/module/delete-module.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 
 async function httpDeleteModule(
   req: CustomRequest,

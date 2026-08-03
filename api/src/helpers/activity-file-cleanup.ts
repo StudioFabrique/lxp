@@ -22,7 +22,7 @@ const activityDirectory: Record<StoredActivityFileType, string> = {
 };
 
 const activitiesRoot = path.resolve(
-  __dirname,
+  import.meta.dirname,
   "..",
   "..",
   "uploads",

@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
   const existingModule = await prisma.module.findUnique({

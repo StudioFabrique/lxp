@@ -1,10 +1,10 @@
 import { body, param } from "express-validator";
 
-import { checkValidatorResult } from "../../../middleware/validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 import {
   stringValidateGeneric,
   stringValidateOptional,
-} from "../../../helpers/custom-validators";
+} from "../../../helpers/custom-validators.ts";
 
 export const postParcoursValidator = [
   body("formation")

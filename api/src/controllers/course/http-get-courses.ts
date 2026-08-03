@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getCourses from "../../models/course/get-courses";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getCourses from "../../models/course/get-courses.ts";
 
 async function httpGetCourses(req: Request, res: Response) {
   try {

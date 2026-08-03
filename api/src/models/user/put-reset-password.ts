@@ -1,7 +1,7 @@
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
-import { activationToken } from "../../helpers/activation-token";
-import { sendPasswordEmail } from "../../services/mailer";
+import { activationToken } from "../../helpers/activation-token.ts";
+import { sendPasswordEmail } from "../../services/mailer.ts";
 
 export default async function putResetPassword(userId: string) {
   const existingUser = await User.findOne({

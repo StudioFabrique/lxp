@@ -3,11 +3,10 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import request from "supertest";
-import mongoConnect from "../src/utils/services/db/mongo-connect";
-import Role from "../src/utils/interfaces/db/role";
-import User, { IUser } from "../src/utils/interfaces/db/user";
-import app from "../src/app";
-const originalPrismaClient = require("@prisma/client").PrismaClient;
+import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
+import Role from "../src/utils/interfaces/db/role.ts";
+import User, { type IUser } from "../src/utils/interfaces/db/user.ts";
+import app from "../src/app.ts";
 
 dotenv.config();
 

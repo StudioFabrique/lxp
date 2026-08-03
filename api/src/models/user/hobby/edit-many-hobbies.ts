@@ -1,6 +1,6 @@
-import { ObjectId } from "mongoose";
-import Hobby, { IHobby } from "../../../utils/interfaces/db/hobby";
-import User from "../../../utils/interfaces/db/user";
+import { type ObjectId } from "mongoose";
+import Hobby, { type IHobby } from "../../../utils/interfaces/db/hobby.ts";
+import User from "../../../utils/interfaces/db/user.ts";
 
 export default async function editManyHobbies(
   userId: ObjectId,

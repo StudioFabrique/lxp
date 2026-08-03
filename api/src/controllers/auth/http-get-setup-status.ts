@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { getSetupStatus } from "../../models/auth/setup";
+import { type Request, type Response } from "express";
+import { getSetupStatus } from "../../models/auth/setup.ts";
 
 export default async function httpGetSetupStatus(
   _req: Request,

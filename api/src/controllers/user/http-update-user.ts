@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import fs from "fs";
-import { badQuery } from "../../utils/constantes";
-import type { IGraduation } from "../../utils/interfaces/db/graduation";
-import type { IHobby } from "../../utils/interfaces/db/hobby";
-import type { ILink } from "../../utils/interfaces/db/link";
-import editUser from "../../models/user/edit-user";
-import editManyGraduations from "../../models/graduation/edit-many-graduations";
-import editManyLinks from "../../models/links/edit-many-links";
-import editManyHobbies from "../../models/user/hobby/edit-many-hobbies";
+import { badQuery } from "../../utils/constantes.ts";
+import type { IGraduation } from "../../utils/interfaces/db/graduation.ts";
+import type { IHobby } from "../../utils/interfaces/db/hobby.ts";
+import type { ILink } from "../../utils/interfaces/db/link.ts";
+import editUser from "../../models/user/edit-user.ts";
+import editManyGraduations from "../../models/graduation/edit-many-graduations.ts";
+import editManyLinks from "../../models/links/edit-many-links.ts";
+import editManyHobbies from "../../models/user/hobby/edit-many-hobbies.ts";
 import { validationResult } from "express-validator";
 
 /**

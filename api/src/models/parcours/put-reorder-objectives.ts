@@ -1,5 +1,5 @@
-import { Objective } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Objective } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 async function putReorderObjectives(
   parcoursId: string,

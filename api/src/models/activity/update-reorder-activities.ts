@@ -1,5 +1,5 @@
-import { Lesson, Resource } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Lesson, type Resource } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Updates the order of activities for either a lesson or a resource

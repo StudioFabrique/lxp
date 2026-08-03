@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import getUsersStats from "../../models/user/get-users-stats";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import getUsersStats from "../../models/user/get-users-stats.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 async function httpGetUsersStats(req: Request, res: Response) {
   try {

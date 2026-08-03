@@ -1,5 +1,5 @@
-import PromptStats from "../../utils/interfaces/db/prompt-stats";
-import User from "../../utils/interfaces/db/user";
+import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 /**
  * Incrémente les tokens utilisés pour un utilisateur donné (Chatbot ou Quiz)

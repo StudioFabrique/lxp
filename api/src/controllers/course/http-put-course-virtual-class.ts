@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import putCourseVirtualClass from "../../models/course/put-course-virtual-class";
+import { serverIssue } from "../../utils/constantes.ts";
+import putCourseVirtualClass from "../../models/course/put-course-virtual-class.ts";
 
 async function httpPutCourseVirtualClass(req: Request, res: Response) {
   const { courseId } = req.params;

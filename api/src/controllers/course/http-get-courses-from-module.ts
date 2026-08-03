@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getCoursesFromModule from "../../models/course/get-courses-from-module";
+import { type Request, type Response, type NextFunction } from "express";
+import getCoursesFromModule from "../../models/course/get-courses-from-module.ts";
 
 export default async function httpGetCoursesFromModule(
   req: Request,

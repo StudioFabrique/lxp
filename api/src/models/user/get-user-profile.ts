@@ -1,4 +1,4 @@
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default function getUserProfile(userId?: string) {
   return User.findById(userId)

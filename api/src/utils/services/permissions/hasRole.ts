@@ -1,4 +1,4 @@
-import { IRole } from "../../interfaces/db/role";
+import { type IRole } from "../../interfaces/db/role.ts";
 
 export const hasRole = (rank: number, userRoles: Array<IRole>) => {
   const roleFound = userRoles.find((role) => role.rank === rank);

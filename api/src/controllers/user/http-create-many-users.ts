@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { alreadyExist, creationSuccessfull } from "../../utils/constantes";
-import { serverIssue } from "../../utils/constantes";
-import createManyUsers from "../../models/user/create-many-users";
+import { type Request, type Response } from "express";
+import { alreadyExist, creationSuccessfull } from "../../utils/constantes.ts";
+import { serverIssue } from "../../utils/constantes.ts";
+import createManyUsers from "../../models/user/create-many-users.ts";
 
 export default async function httpCreateManyUser(req: Request, res: Response) {
   let users = req.body;

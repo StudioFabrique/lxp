@@ -1,6 +1,6 @@
 import { body } from "express-validator";
-import { checkValidatorResult } from "../../../middleware/validators";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
+import { stringValidateGeneric } from "../../../helpers/custom-validators.ts";
 
 export const putObjectiveValidator = [
   body("id").isNumeric().notEmpty().escape(),

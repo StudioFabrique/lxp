@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putCourseTags from "../../models/course/put-course-tags";
-import putCourseContacts from "../../models/course/put-course-contacts";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putCourseTags from "../../models/course/put-course-tags.ts";
+import putCourseContacts from "../../models/course/put-course-contacts.ts";
 
 async function httpPutCourseContacts(req: Request, res: Response) {
   console.log("coucou controller");

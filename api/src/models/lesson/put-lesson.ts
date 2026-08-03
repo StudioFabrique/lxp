@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 type LessonUpdateData = {
   id: number;

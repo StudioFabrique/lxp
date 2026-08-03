@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import getLessonsByTag from "../../models/lesson/get-lessons-by-tag";
+import { type Request, type Response } from "express";
+import getLessonsByTag from "../../models/lesson/get-lessons-by-tag.ts";
 
 async function httpGetLessonsByTag(req: Request, res: Response) {
   const { tagId } = req.params;

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import type { IGroup } from "../../utils/interfaces/db/group";
-import { creationSuccessfull, serverIssue } from "../../utils/constantes";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+import { type Request, type Response } from "express";
+import type { IGroup } from "../../utils/interfaces/db/group.ts";
+import { creationSuccessfull, serverIssue } from "../../utils/constantes.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
-import putGroup from "../../models/group/put-group";
-import type { IUser } from "../../utils/interfaces/db/user";
+import putGroup from "../../models/group/put-group.ts";
+import type { IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function httpPutGroup(req: Request, res: Response) {
   const { id } = req.params;

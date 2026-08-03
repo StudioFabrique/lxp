@@ -1,7 +1,7 @@
 // Import des types Express nécessaires
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 // Import de la fonction du modèle pour récupérer la liste des leçons
-import getLessonsList from "../../models/lesson/get-lessons-list";
+import getLessonsList from "../../models/lesson/get-lessons-list.ts";
 
 /**
  * Contrôleur HTTP pour récupérer la liste de toutes les leçons

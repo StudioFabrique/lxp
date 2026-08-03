@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import postText from "../../models/activity/post-activity/post-text";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { serverIssue } from "../../utils/constantes.ts";
+import postText from "../../models/activity/post-activity/post-text.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpPostActivityText(
   req: CustomRequest,

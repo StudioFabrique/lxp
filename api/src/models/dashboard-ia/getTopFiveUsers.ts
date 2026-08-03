@@ -1,4 +1,4 @@
-import PromptStats from "../../utils/interfaces/db/prompt-stats";
+import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
 
 export default async function getTopFiveUsers(
   perPage = 2,

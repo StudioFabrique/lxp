@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function getCoursesByModule(moduleId: number, userMdbId: string) {
   const teacherOrAdmin = await prisma.admin.findFirst({

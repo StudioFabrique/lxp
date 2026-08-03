@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Récupère la liste complète des leçons avec leurs informations associées

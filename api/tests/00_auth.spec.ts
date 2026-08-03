@@ -2,8 +2,8 @@ import request from "supertest";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import mongoose from "mongoose";
-import mongoConnect from "../src/utils/services/db/mongo-connect";
-import app from "../src/app";
+import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
+import app from "../src/app.ts";
 
 dotenv.config();
 

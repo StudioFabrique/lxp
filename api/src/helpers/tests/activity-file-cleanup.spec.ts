@@ -1,7 +1,7 @@
 import {
   extractLocalImagesFromHtml,
   resolveActivityFilePath,
-} from "../activity-file-cleanup";
+} from "../activity-file-cleanup.ts";
 
 describe("activity file cleanup", () => {
   it("résout chaque fichier dans le dossier correspondant à son type", () => {

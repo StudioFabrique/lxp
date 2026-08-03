@@ -1,7 +1,7 @@
 import {
   createMongoAbility,
-  MongoAbility,
-  RawRuleOf,
+  type MongoAbility,
+  type RawRuleOf,
 } from "@casl/ability";
 
 export const appActions = [

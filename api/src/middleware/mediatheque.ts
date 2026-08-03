@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import { prisma } from "../utils/db";
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import { type Response, type NextFunction } from "express";
+import { prisma } from "../utils/db.ts";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
 export default function mediatheque(type: string) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {

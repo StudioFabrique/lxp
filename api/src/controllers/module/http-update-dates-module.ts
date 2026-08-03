@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import updateDatesModule from "../../models/module/update-dates-module";
+import { type Request, type Response } from "express";
+import updateDatesModule from "../../models/module/update-dates-module.ts";
 
 export default async function httpUpdateDatesModule(
   req: Request,

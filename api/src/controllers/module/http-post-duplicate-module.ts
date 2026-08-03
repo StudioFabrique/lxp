@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 
 import { validationResult } from "express-validator";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { stat } from "fs";
-import { serverIssue } from "../../utils/constantes";
-import postDuplicateModule from "../../models/module/post-duplicate-module";
+import { serverIssue } from "../../utils/constantes.ts";
+import postDuplicateModule from "../../models/module/post-duplicate-module.ts";
 
 export default async function httpPostDuplicateModule(
   req: CustomRequest,

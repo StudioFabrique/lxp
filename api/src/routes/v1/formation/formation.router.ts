@@ -1,31 +1,31 @@
 import express from "express";
-import httpGetFormation from "../../../controllers/formation/http-get-formation";
-import httpPutFormationTags from "../../../controllers/formation/htttp-put-formation-tags";
+import httpGetFormation from "../../../controllers/formation/http-get-formation.ts";
+import httpPutFormationTags from "../../../controllers/formation/htttp-put-formation-tags.ts";
 import { body, param } from "express-validator";
 import multer from "multer";
 import path from "path";
-import httpPostModule from "../../../controllers/formation/http-post-module";
-import checkPermissions from "../../../middleware/check-permissions";
-import jsonParser from "../../../middleware/json-parser";
+import httpPostModule from "../../../controllers/formation/http-post-module.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import jsonParser from "../../../middleware/json-parser.ts";
 import {
   stringValidateGeneric,
   stringValidateOptional,
-} from "../../../helpers/custom-validators";
-import httpPostFormation from "../../../controllers/formation/http-post-formation";
+} from "../../../helpers/custom-validators.ts";
+import httpPostFormation from "../../../controllers/formation/http-post-formation.ts";
 import {
   fomrationIdValidator,
   postFormationValidator,
   putFormationValidator,
-} from "./formation-validators";
-import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations";
-import httpPutFormation from "../../../controllers/formation/http-put-formation";
-import httpDeleteFormation from "../../../controllers/formation/http-delete-formation";
+} from "./formation-validators.ts";
+import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations.ts";
+import httpPutFormation from "../../../controllers/formation/http-put-formation.ts";
+import httpDeleteFormation from "../../../controllers/formation/http-delete-formation.ts";
 
 const formationRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "..", "..", "..", "uploads"));
+    cb(null, path.join(import.meta.dirname, "..", "..", "..", "uploads"));
   },
   filename: function (req, file, cb) {
     if (file.mimetype.startsWith("image")) {

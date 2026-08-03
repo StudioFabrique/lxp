@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const sourceRoot = path.resolve(__dirname, "../..");
+const sourceRoot = path.resolve(import.meta.dirname, "../..");
 
 function typescriptFiles(directory: string): string[] {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

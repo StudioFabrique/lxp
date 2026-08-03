@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseTags(courseId: number, tags: number[]) {
   if (!tags.length) {

@@ -1,5 +1,5 @@
-import { Course } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Course } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseInformations(course: Course) {
   const existingCourse = await prisma.course.findFirst({

@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putFormationTags(formationId: number, newTags: Array<number>) {
   const existingFormation = await prisma.formation.findUnique({

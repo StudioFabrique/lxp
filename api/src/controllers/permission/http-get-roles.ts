@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { listRoles } from "../../models/permission/roles";
+import { type Request, type Response } from "express";
+import { listRoles } from "../../models/permission/roles.ts";
 
 export default async function httpGetAllRoles(_req: Request, res: Response) {
   try {

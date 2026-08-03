@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import deleteManyGroups from "../../models/group/delete-many-groups";
+import { serverIssue } from "../../utils/constantes.ts";
+import deleteManyGroups from "../../models/group/delete-many-groups.ts";
 
 export default async function httpDeleteManyGroups(
   req: Request,

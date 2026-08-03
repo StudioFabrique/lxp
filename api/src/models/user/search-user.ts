@@ -1,6 +1,6 @@
-import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
-import { getPagination } from "../../utils/services/getPagination";
+import Role from "../../utils/interfaces/db/role.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { getPagination } from "../../utils/services/getPagination.ts";
 
 /**
  * Search users in the database based on various criteria.

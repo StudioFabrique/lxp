@@ -1,7 +1,7 @@
 // Import du client Prisma pour interagir avec la base de données
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 // Import de l'utilitaire de pagination
-import { getPagination } from "../../utils/services/getPagination";
+import { getPagination } from "../../utils/services/getPagination.ts";
 
 export type GetMediasParams = {
   page?: string;

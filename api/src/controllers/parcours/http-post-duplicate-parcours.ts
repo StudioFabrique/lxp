@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postDuplicateParcours from "../../models/parcours/post-duplicate-parcours";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postDuplicateParcours from "../../models/parcours/post-duplicate-parcours.ts";
 
 /**
  * Handles the HTTP POST request to duplicate a parcours.

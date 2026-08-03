@@ -1,6 +1,6 @@
-import { Lesson } from "@prisma/client";
-import { prisma } from "../../utils/db";
-import { slugify } from "../../helpers/slugify";
+import { type Lesson } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
+import { slugify } from "../../helpers/slugify.ts";
 
 async function postCourseStructure(
   adminId: number,

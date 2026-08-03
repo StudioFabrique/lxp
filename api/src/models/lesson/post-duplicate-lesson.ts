@@ -1,8 +1,8 @@
-import { Lesson } from "@prisma/client";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
-import { getDuplicateIdentity } from "../../helpers/duplication";
-import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
+import { type Lesson } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { getDuplicateIdentity } from "../../helpers/duplication.ts";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
 
 export default async function postDuplicateLesson(
   courseId: number,

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putFormation from "../../models/formation/put-formation";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putFormation from "../../models/formation/put-formation.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpPutFormation(req: Request, res: Response) {

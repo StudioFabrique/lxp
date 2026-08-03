@@ -5,9 +5,9 @@ utilisé est désactivé.
 */
 
 import { hash } from "bcrypt";
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
-import BlackListedToken from "../../utils/interfaces/db/blacklisted-token";
+import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
 
 export default async function putPassword(
   userId: string,

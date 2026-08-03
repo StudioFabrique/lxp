@@ -1,5 +1,5 @@
-import { Lesson, Resource, Activity, BonusActivity } from "@prisma/client";
-import { prisma } from "../../../utils/db";
+import { type Lesson, type Resource, type Activity, type BonusActivity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
 
 export default async function postIframe(
   lessonId: number,

@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getParcours(userId: string) {
   const contactWithParcours = await prisma.contact.findFirst({

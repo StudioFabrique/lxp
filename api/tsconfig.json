@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2024",
-    "module": "node20",
-    "moduleResolution": "node16",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
@@ -11,8 +11,13 @@
     "outDir": "dist",
     "rootDir": ".",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "check-test-db.ts"],
   "exclude": ["dist", "node_modules"]
 }

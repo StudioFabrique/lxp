@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getParcoursModules from "../../models/module/get-parcours-modules";
+import { type Request, type Response, type NextFunction } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getParcoursModules from "../../models/module/get-parcours-modules.ts";
 
 /**
  * HTTP Controller: Get all modules from a specific parcours

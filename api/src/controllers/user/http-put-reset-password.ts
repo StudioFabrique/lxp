@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { validationResult } from "express-validator";
-import putResetPassword from "../../models/user/put-reset-password";
+import putResetPassword from "../../models/user/put-reset-password.ts";
 
 export default async function httpPutResetPassword(
   req: Request,

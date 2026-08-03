@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import putParcoursModules from "../../models/module/put-parcours-modules";
+import { type Request, type Response } from "express";
+import putParcoursModules from "../../models/module/put-parcours-modules.ts";
 
 async function httpParcoursModules(req: Request, res: Response) {
   try {

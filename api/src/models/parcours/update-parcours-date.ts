@@ -1,5 +1,5 @@
-import { getAdmin } from "../../helpers/get-admin";
-import { prisma } from "../../utils/db";
+import { getAdmin } from "../../helpers/get-admin.ts";
+import { prisma } from "../../utils/db.ts";
 
 async function updateParcoursDates(
   parcoursId: number,

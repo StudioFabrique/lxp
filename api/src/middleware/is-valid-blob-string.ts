@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 
-import { badQuery } from "../utils/constantes";
+import { badQuery } from "../utils/constantes.ts";
 
 function isValidBlobString(req: Request, res: Response, next: NextFunction) {
   const regex =

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
 async function httpGetAllSkills(req: Request, res: Response) {
   return res.status(200).json({

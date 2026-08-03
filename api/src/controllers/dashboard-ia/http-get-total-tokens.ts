@@ -4,9 +4,9 @@
  * used across all AI operations in the dashboard.
  */
 
-import { Request, Response, NextFunction } from "express";
-import getTotalTokens from "../../models/dashboard-ia/getTotalTokens";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response, type NextFunction } from "express";
+import getTotalTokens from "../../models/dashboard-ia/getTotalTokens.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 /**
  * HTTP handler to retrieve the total number of tokens consumed by AI services.

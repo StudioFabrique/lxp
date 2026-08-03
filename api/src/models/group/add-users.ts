@@ -1,5 +1,5 @@
-import Group from "../../utils/interfaces/db/group";
-import User from "../../utils/interfaces/db/user";
+import Group from "../../utils/interfaces/db/group.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function addUsers(groupId: string, usersId: string[]) {
   try {

@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import getLimitedModuleDetail from "../../models/module/get-limited-module-detail";
+import { type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import getLimitedModuleDetail from "../../models/module/get-limited-module-detail.ts";
 
 export default async function httpGetLimitedModuleDetail(
   req: CustomRequest,

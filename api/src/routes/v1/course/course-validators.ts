@@ -1,11 +1,11 @@
 import { body, param, query } from "express-validator";
 
-import { checkValidatorResult } from "../../../middleware/validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 import {
   dateValidateGeneric,
   stringValidateGeneric,
   stringValidateOptional,
-} from "../../../helpers/custom-validators";
+} from "../../../helpers/custom-validators.ts";
 
 /**
  * Valide l'identifiant du cours passé en paramètre

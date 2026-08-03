@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Return last parcours (max 2) for a contact identified by its MongoDB id.

@@ -1,8 +1,8 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../utils/constantes";
-import getUser from "../../models/user/get-user";
-import { imageToDataUrl } from "../../utils/images/image-source";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import getUser from "../../models/user/get-user.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {

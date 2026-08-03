@@ -1,8 +1,9 @@
+import { jest } from "@jest/globals";
 import {
   AiApiClient,
   AiApiError,
   AiConfigurationError,
-} from "../ai-api-client";
+} from "../ai-api-client.ts";
 
 describe("AiApiClient", () => {
   afterEach(() => jest.restoreAllMocks());

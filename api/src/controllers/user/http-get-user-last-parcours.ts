@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import getUserLastParcours from "../../models/user/get-user-last-parcours";
-import { serverIssue } from "../../utils/constantes";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import getUserLastParcours from "../../models/user/get-user-last-parcours.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetUserLastParcours(
   req: CustomRequest,

@@ -1,8 +1,8 @@
-import { Response, NextFunction } from "express";
-import { serverIssue } from "../../utils/constantes";
-import postResource from "../../models/resources/post-resource";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import putResource from "../../models/resources/put-resource";
+import { type Response, type NextFunction } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import postResource from "../../models/resources/post-resource.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import putResource from "../../models/resources/put-resource.ts";
 
 export default async function httpPutResource(
   req: CustomRequest,

@@ -1,12 +1,16 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 import {
-  AiQuizQuestion,
+  type AiQuizQuestion,
   toQuizQuestionCreateData,
-} from "../../services/quiz/quiz-question";
+} from "../../services/quiz/quiz-question.ts";
 
 export class QuizRepository {
-  constructor(private readonly database: PrismaClient = prisma) {}
+  private readonly database: PrismaClient;
+
+  constructor(database: PrismaClient = prisma) {
+    this.database = database;
+  }
 
   findStudentByMongoId(idMdb: string) {
     return this.database.student.findFirst({ where: { idMdb } });

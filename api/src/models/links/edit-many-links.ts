@@ -1,6 +1,6 @@
-import { ObjectId } from "mongoose";
-import Link, { ILink } from "../../utils/interfaces/db/link";
-import User from "../../utils/interfaces/db/user";
+import { type ObjectId } from "mongoose";
+import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
   try {

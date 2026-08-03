@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import deleteBonusSkill from "../../models/bonus-skill/delete-bonus-skill";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import deleteBonusSkill from "../../models/bonus-skill/delete-bonus-skill.ts";
 
 async function httpDeleteBonusSkill(req: Request, res: Response) {
   try {

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../../utils/constantes";
-import DeleteHobby from "../../../models/user/hobby/delete-hobby";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../../utils/constantes.ts";
+import DeleteHobby from "../../../models/user/hobby/delete-hobby.ts";
 
 export default async function httpDeleteHobby(req: Request, res: Response) {
   try {

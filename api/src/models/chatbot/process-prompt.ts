@@ -1,9 +1,9 @@
-import { sign } from "jsonwebtoken";
-import { prisma } from "../../utils/db";
-import type { CourseSource } from "../../utils/interfaces/db/chat-dialogs";
-import postDialogs, { clearDialogs } from "./post-dialogs";
-import resolveSourceTarget from "./resolve-source-target";
-import { trackTokens } from "../stats/trackTokens";
+import jwt from "jsonwebtoken";
+import { prisma } from "../../utils/db.ts";
+import type { CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
+import postDialogs, { clearDialogs } from "./post-dialogs.ts";
+import resolveSourceTarget from "./resolve-source-target.ts";
+import { trackTokens } from "../stats/trackTokens.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -22,11 +22,16 @@ export type ProcessPromptInput = {
 };
 
 export class PromptProcessingError extends Error {
+  readonly statusCode: number;
+  readonly body: Record<string, unknown>;
+
   constructor(
-    public readonly statusCode: number,
-    public readonly body: Record<string, unknown>,
+    statusCode: number,
+    body: Record<string, unknown>,
   ) {
     super(typeof body.error === "string" ? body.error : "Prompt processing failed");
+    this.statusCode = statusCode;
+    this.body = body;
   }
 }
 
@@ -40,7 +45,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
     });
   }
 
-  const token = sign(
+  const token = jwt.sign(
     { sub: input.userId, userRoles: [{ role: "admin" }] },
     secret,
   );

@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 import processPrompt, {
   PromptProcessingError,
-} from "../../models/chatbot/process-prompt";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+} from "../../models/chatbot/process-prompt.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpPostPrompt(req: CustomRequest, res: Response) {
   try {

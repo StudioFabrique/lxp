@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putCourseTags from "../../models/course/put-course-tags";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putCourseTags from "../../models/course/put-course-tags.ts";
 
 async function httpPutCourseTags(req: Request, res: Response) {
   console.log("coucou controller");

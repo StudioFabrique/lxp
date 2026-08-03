@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function getModulesFromParcours(parcoursId: number) {
   const parcours = await prisma.parcours.findUnique({

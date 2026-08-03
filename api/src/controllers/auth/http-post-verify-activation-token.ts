@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { validateFirstAdminToken } from "../../models/auth/setup";
+import { type Request, type Response } from "express";
+import { validateFirstAdminToken } from "../../models/auth/setup.ts";
 
 export default async function httpPostVerifyActivationToken(
   req: Request,

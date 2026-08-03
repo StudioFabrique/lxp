@@ -1,5 +1,5 @@
-import ChatDialogs from "../../utils/interfaces/db/chat-dialogs";
-import resolveSourceTarget from "./resolve-source-target";
+import ChatDialogs from "../../utils/interfaces/db/chat-dialogs.ts";
+import resolveSourceTarget from "./resolve-source-target.ts";
 
 export default async function getDialogs(userId: string) {
   const dialogs = await ChatDialogs.find({ userId }).sort({ createdAt: 1 });

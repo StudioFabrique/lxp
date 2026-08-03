@@ -1,9 +1,9 @@
-import { Lesson } from "@prisma/client";
+import { type Lesson } from "@prisma/client";
 
-import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
-import { getDuplicateIdentity } from "../../helpers/duplication";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
+import { getDuplicateIdentity } from "../../helpers/duplication.ts";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 function createHttpError(message: string, statusCode: number) {
   const error = new Error(message);

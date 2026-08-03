@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function deleteBonusSkill(id: number) {
   const existingSkill = await prisma.bonusSkill.findFirst({

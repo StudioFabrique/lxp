@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function getCourseScenario(courseId: number) {
   const scenario = await prisma.course.findFirst({

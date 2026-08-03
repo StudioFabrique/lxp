@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import deleteCourseDates from "../../models/course/delete-course-dates";
+import { type Request, type Response } from "express";
+import deleteCourseDates from "../../models/course/delete-course-dates.ts";
 
 async function httpDeleteCourseDates(req: Request, res: Response) {
   const { courseId, datesId } = req.params;

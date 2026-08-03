@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import deleteResource from "../../models/activity/delete-resource";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response, type NextFunction } from "express";
+import deleteResource from "../../models/activity/delete-resource.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpDeleteResource(
   req: CustomRequest,

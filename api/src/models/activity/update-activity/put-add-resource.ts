@@ -1,11 +1,11 @@
 import {
-  Activity,
-  ResourceActivity,
-  BonusActivity,
-  ResourceBonusActivity,
+  type Activity,
+  type ResourceActivity,
+  type BonusActivity,
+  type ResourceBonusActivity,
 } from "@prisma/client";
-import { prisma } from "../../../utils/db";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { prisma } from "../../../utils/db.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Type definition for an Activity with its resource activities included

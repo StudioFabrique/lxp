@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postCourseStructure from "../../models/course/post-course-structure";
-import getAdminId from "../../models/course/get-admin-id";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postCourseStructure from "../../models/course/post-course-structure.ts";
+import getAdminId from "../../models/course/get-admin-id.ts";
 
 export default async function httpPostImportCourseStructure(
   req: CustomRequest,

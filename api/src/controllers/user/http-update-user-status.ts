@@ -13,10 +13,10 @@
  * @response 500 - Server error if the update process fails
  */
 
-import { Response, NextFunction } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import updateUserStatus from "../../models/user/update-user-status";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response, type NextFunction } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import updateUserStatus from "../../models/user/update-user-status.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";
 
 async function httpUpdateUserStatus(

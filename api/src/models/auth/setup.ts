@@ -1,9 +1,9 @@
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../utils/db";
-import BlackListedToken from "../../utils/interfaces/db/blacklisted-token";
-import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
+import { prisma } from "../../utils/db.ts";
+import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
+import Role from "../../utils/interfaces/db/role.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 type FirstAdminInput = {
   token: string;

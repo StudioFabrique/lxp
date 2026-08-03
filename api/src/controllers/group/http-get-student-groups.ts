@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getStudentGroups from "../../models/group/get-student-groups";
+import { type Request, type Response, type NextFunction } from "express";
+import getStudentGroups from "../../models/group/get-student-groups.ts";
 
 /**
  * Contrôleur HTTP pour récupérer la liste des groupes d'étudiants

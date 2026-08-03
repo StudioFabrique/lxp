@@ -1,12 +1,12 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs"; // Import File System module
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
 export const uploadCompanyLogo = () => {
   const destinationPath = path.join(
-    __dirname,
+    import.meta.dirname,
     "..",
     "..",
     "uploads",

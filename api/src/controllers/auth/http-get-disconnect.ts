@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { closeCurrentConnection } from "../../models/auth/session";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { closeCurrentConnection } from "../../models/auth/session.ts";
 
 export default async function httpGetDisconnect(
   req: CustomRequest,

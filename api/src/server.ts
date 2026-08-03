@@ -1,11 +1,11 @@
 import http from "http";
 import https from "https";
 import { Server } from "socket.io";
-import mongoConnect from "./utils/services/db/mongo-connect";
-import app from "./app";
-import { socket } from "./socket/socket";
-import { corsOrigins, PORT } from "./config/config";
-import { authenticateSession } from "./utils/services/auth/authenticate-session";
+import mongoConnect from "./utils/services/db/mongo-connect.ts";
+import app from "./app.ts";
+import { socket } from "./socket/socket.ts";
+import { corsOrigins, PORT } from "./config/config.ts";
+import { authenticateSession } from "./utils/services/auth/authenticate-session.ts";
 
 let server: http.Server | https.Server;
 

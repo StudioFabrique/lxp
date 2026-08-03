@@ -1,5 +1,5 @@
-import { Tag } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Tag } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 export default async function postFormation(
   userId: string,

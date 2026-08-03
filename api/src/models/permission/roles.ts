@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import Permission from "../../utils/interfaces/db/permission";
-import Role, { IRole } from "../../utils/interfaces/db/role";
+import Permission from "../../utils/interfaces/db/permission.ts";
+import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import {
   resourcesRbac,
   getPermissionsByRank,
-} from "../../utils/rbac/config/ressources-rbac";
+} from "../../utils/rbac/config/ressources-rbac.ts";
 import {
   addPermissionToRole,
   createOrUpdateRoleWithPermissions,
@@ -12,7 +12,7 @@ import {
   getAllRoles,
   getAllRolesWithSearch,
   removePermissionFromRole,
-} from "../../utils/rbac/rbac-utils";
+} from "../../utils/rbac/rbac-utils.ts";
 
 type RoleIdentifier =
   | { identifier: "role"; role: string }

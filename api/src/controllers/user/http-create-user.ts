@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import fs from "fs";
-import createManyGraduations from "../../models/graduation/create-many-graduations";
-import createManyLinks from "../../models/links/create-many-links";
-import createUser from "../../models/user/create-user";
-import { badQuery } from "../../utils/constantes";
-import type { IGraduation } from "../../utils/interfaces/db/graduation";
-import type { IHobby } from "../../utils/interfaces/db/hobby";
-import type { ILink } from "../../utils/interfaces/db/link";
-import createManyHobbies from "../../models/user/hobby/create-many-hobbies";
+import createManyGraduations from "../../models/graduation/create-many-graduations.ts";
+import createManyLinks from "../../models/links/create-many-links.ts";
+import createUser from "../../models/user/create-user.ts";
+import { badQuery } from "../../utils/constantes.ts";
+import type { IGraduation } from "../../utils/interfaces/db/graduation.ts";
+import type { IHobby } from "../../utils/interfaces/db/hobby.ts";
+import type { ILink } from "../../utils/interfaces/db/link.ts";
+import createManyHobbies from "../../models/user/hobby/create-many-hobbies.ts";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   let userDataRequest = req.body.data.user;

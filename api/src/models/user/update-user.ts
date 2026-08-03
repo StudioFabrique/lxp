@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import User, { IUser } from "../../utils/interfaces/db/user";
-import Link from "../../utils/interfaces/db/link";
-import Hobby from "../../utils/interfaces/db/hobby";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import Link from "../../utils/interfaces/db/link.ts";
+import Hobby from "../../utils/interfaces/db/hobby.ts";
 
 export default async function updateUser(_id: string, user: IUser) {
   const existingUser = await User.findOne({ _id }).populate("roles");

@@ -1,7 +1,7 @@
 import express from "express";
-import checkPermissions from "../../middleware/check-permissions";
-import httpGetLessonsStats from "../../controllers/stats/http-lessons-stats";
-import httpGetParcoursStats from "../../controllers/stats/http-parcours-stats";
+import checkPermissions from "../../middleware/check-permissions.ts";
+import httpGetLessonsStats from "../../controllers/stats/http-lessons-stats.ts";
+import httpGetParcoursStats from "../../controllers/stats/http-parcours-stats.ts";
 import { param } from "express-validator";
 
 const statsRouter = express.Router();

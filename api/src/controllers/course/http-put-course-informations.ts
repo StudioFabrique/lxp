@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putCourseInformations from "../../models/course/put-course-informations";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putCourseInformations from "../../models/course/put-course-informations.ts";
 
 async function httpPutCourseInformations(req: Request, res: Response) {
   const course = req.body;

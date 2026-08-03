@@ -1,7 +1,7 @@
 import { mongo } from "mongoose";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
-import { getSoftColor } from "../../helpers/getSoftColors";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { getSoftColor } from "../../helpers/getSoftColors.ts";
 
 export default async function postResource(
   userId: string,

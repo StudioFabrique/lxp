@@ -1,14 +1,14 @@
-import { Request, Response } from "express";
-import type { IGroup } from "../../utils/interfaces/db/group";
-import createGroup from "../../models/group/create-group";
+import { type Request, type Response } from "express";
+import type { IGroup } from "../../utils/interfaces/db/group.ts";
+import createGroup from "../../models/group/create-group.ts";
 import {
   alreadyExist,
   creationSuccessfull,
   serverIssue,
-} from "../../utils/constantes";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+} from "../../utils/constantes.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
-import type { IUser } from "../../utils/interfaces/db/user";
+import type { IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const uploadedFile = req.file;

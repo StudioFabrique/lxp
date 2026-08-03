@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import { CourseSource } from "../../utils/interfaces/db/chat-dialogs";
+import { prisma } from "../../utils/db.ts";
+import { type CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
 
 export default async function resolveSourceTarget(source: CourseSource) {
   const numericActivityId = Number(source.activity);

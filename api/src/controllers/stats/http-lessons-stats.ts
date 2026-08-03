@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import getLessonsStats from "../../models/stats/get-lessons-stats";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import getLessonsStats from "../../models/stats/get-lessons-stats.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetLessonsStats(req: Request, res: Response) {
   try {

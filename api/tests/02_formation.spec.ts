@@ -1,8 +1,8 @@
 import request from "supertest";
-import app from "../src/app";
+import app from "../src/app.ts";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import mongoConnect from "../src/utils/services/db/mongo-connect";
+import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import mongoose from "mongoose";
 import path from "path";
 
@@ -145,7 +145,7 @@ describe("HTTP Formation", () => {
 
   describe("Test POST /new-module", () => {
     const filePath = path.join(
-      __dirname,
+      import.meta.dirname,
       "..",
       "..",
       "front",

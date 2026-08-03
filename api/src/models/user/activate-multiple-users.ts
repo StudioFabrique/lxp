@@ -1,5 +1,5 @@
-import User from "../../utils/interfaces/db/user";
-import { IUser } from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
+import { type IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function activateMultipleUsers(users: IUser[]) {
   const userIds = users.map((user) => user._id);

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getResourceDetails from "../../models/resources/get-resource-details";
+import { type Request, type Response, type NextFunction } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getResourceDetails from "../../models/resources/get-resource-details.ts";
 
 export default async function httpGetResourceDetails(
   req: Request,

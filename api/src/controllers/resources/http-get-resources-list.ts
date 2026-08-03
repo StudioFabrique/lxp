@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { regexGeneric, serverIssue } from "../../utils/constantes";
-import getResourcesList from "../../models/resources/get-resources-list";
+import { type Request, type Response, type NextFunction } from "express";
+import { regexGeneric, serverIssue } from "../../utils/constantes.ts";
+import getResourcesList from "../../models/resources/get-resources-list.ts";
 
 export default async function httpGetResourcesList(
   req: Request,

@@ -1,8 +1,8 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-import { badQuery, serverIssue } from "../../utils/constantes";
-import getLastLessonsRead from "../../models/lesson/get-last-lessons-read";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import getLastLessonsRead from "../../models/lesson/get-last-lessons-read.ts";
 
 export default async function httpGetLastLessonsRead(
   req: CustomRequest,

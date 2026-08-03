@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
-import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import deleteActivity from "../activity/delete-activity/delete-activity";
+import { prisma } from "../../utils/db.ts";
+import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
+import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteLesson(userId: string, lessonId: number) {
   const existingLesson = await prisma.lesson.findFirst({

@@ -1,6 +1,6 @@
 import { Readable, Transform, Writable } from "stream";
 import { pipeline } from "stream/promises";
-import { AiQuizQuestion, isAiQuizQuestion } from "./quiz-question";
+import { type AiQuizQuestion, isAiQuizQuestion } from "./quiz-question.ts";
 
 export interface QuizStreamDoneEvent {
   event: "done";

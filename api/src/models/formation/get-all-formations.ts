@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getAllFormations() {
   const formations = await prisma.formation.findMany({

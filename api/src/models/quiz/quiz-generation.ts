@@ -1,20 +1,25 @@
-import getCourseById from "../course/get-course-by-id";
-import { trackTokens } from "../stats/trackTokens";
-import { aiApiClient } from "../../services/ai/ai-api-client";
+import getCourseById from "../course/get-course-by-id.ts";
+import { trackTokens } from "../stats/trackTokens.ts";
+import { aiApiClient } from "../../services/ai/ai-api-client.ts";
 import {
-  AiQuizQuestion,
+  type AiQuizQuestion,
   createQuizGenerationKey,
-} from "../../services/quiz/quiz-question";
-import { quizRepository } from "./quiz-repository";
-import type { QuizStreamDoneEvent } from "../../services/quiz/quiz-stream";
+} from "../../services/quiz/quiz-question.ts";
+import { quizRepository } from "./quiz-repository.ts";
+import type { QuizStreamDoneEvent } from "../../services/quiz/quiz-stream.ts";
 
 export class QuizGenerationError extends Error {
+  readonly statusCode: number;
+  readonly code?: string;
+
   constructor(
-    public readonly statusCode: number,
+    statusCode: number,
     message: string,
-    public readonly code?: string,
+    code?: string,
   ) {
     super(message);
+    this.statusCode = statusCode;
+    this.code = code;
   }
 }
 

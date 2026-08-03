@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
-import { getTemplate } from "../helpers/get-mail-template";
-import { badQuery, regexMail } from "../utils/constantes";
+import { getTemplate } from "../helpers/get-mail-template.ts";
+import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
 
 // Configuration du transporteur SMTP pour l'envoi d'emails

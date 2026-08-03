@@ -1,10 +1,10 @@
-import { Response } from "express";
-import { generateRandomQuiz } from "../../models/quiz/quiz-generation";
+import { type Response } from "express";
+import { generateRandomQuiz } from "../../models/quiz/quiz-generation.ts";
 import {
   AiApiError,
   AiConfigurationError,
-} from "../../services/ai/ai-api-client";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+} from "../../services/ai/ai-api-client.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /** POST /quiz/random — génère ou récupère une question mise en cache. */
 export default async function httpPostRequestRandomQuiz(

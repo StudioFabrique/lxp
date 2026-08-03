@@ -1,5 +1,5 @@
-import Link, { ILink } from "../../utils/interfaces/db/link";
-import User from "../../utils/interfaces/db/user";
+import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function createManyLinks(userId: string, links: ILink[]) {
   const linksUpdatedWithUserId = links.map((link) => {

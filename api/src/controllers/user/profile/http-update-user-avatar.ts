@@ -1,9 +1,9 @@
 import fs from "fs";
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { serverIssue } from "../../../utils/constantes";
-import updateUserAvatar from "../../../models/user/update-user-avatar";
-import { deleteTempUploadedFile } from "../../../middleware/fileUpload";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { serverIssue } from "../../../utils/constantes.ts";
+import updateUserAvatar from "../../../models/user/update-user-avatar.ts";
+import { deleteTempUploadedFile } from "../../../middleware/fileUpload.ts";
 
 export default async function httpUpdateUserAvatar(
   req: CustomRequest,

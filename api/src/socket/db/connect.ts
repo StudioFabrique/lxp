@@ -1,7 +1,7 @@
-import User from "../../utils/interfaces/db/user";
-import UserSocket from "../../utils/interfaces/db/user-socket";
-import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
-import IConnectionInfos from "../../utils/interfaces/db/connection-infos";
+import User from "../../utils/interfaces/db/user.ts";
+import UserSocket from "../../utils/interfaces/db/user-socket.ts";
+import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import IConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
 
 export default async function connect(socketId: string, userId: string) {
   try {

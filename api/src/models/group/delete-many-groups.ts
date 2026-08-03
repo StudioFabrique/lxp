@@ -1,6 +1,6 @@
-import Group from "../../utils/interfaces/db/group";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import Group from "../../utils/interfaces/db/group.ts";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function deleteManyGroups(groupsIds: string[]) {
   try {

@@ -1,5 +1,5 @@
-import { prisma } from "../../../utils/db";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { prisma } from "../../../utils/db.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Met à jour une ressource existante d'une activité

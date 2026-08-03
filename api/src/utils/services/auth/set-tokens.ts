@@ -1,6 +1,6 @@
-import jwt, { SignOptions } from "jsonwebtoken";
-import BlackListedToken from "../../interfaces/db/blacklisted-token";
-import type { SessionTokenType } from "./authenticate-session";
+import jwt, { type SignOptions } from "jsonwebtoken";
+import BlackListedToken from "../../interfaces/db/blacklisted-token.ts";
+import type { SessionTokenType } from "./authenticate-session.ts";
 
 export const JWT_PATTERN =
   /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/;

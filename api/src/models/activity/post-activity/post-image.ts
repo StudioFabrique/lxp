@@ -1,5 +1,5 @@
-import { Activity, BonusActivity, Lesson, Resource } from "@prisma/client";
-import { prisma } from "../../../utils/db";
+import { type Activity, type BonusActivity, type Lesson, type Resource } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
 
 /**
  * Creates a new image activity in a lesson or resource

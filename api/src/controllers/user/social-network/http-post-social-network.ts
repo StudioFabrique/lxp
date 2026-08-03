@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import createSocialNetwork from "../../../models/user/social-network/create-social-network";
+import { type Request, type Response } from "express";
+import createSocialNetwork from "../../../models/user/social-network/create-social-network.ts";
 
 export default async function httpPostSocialNetwork(
   req: Request,

@@ -1,6 +1,6 @@
-import BlackListedToken from "../../utils/interfaces/db/blacklisted-token";
-import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
-import User from "../../utils/interfaces/db/user";
+import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
+import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export async function blacklistTokens(tokens: Array<string | undefined>) {
   const tokensToBlacklist = tokens.filter(Boolean).map((token) => ({ token }));

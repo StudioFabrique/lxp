@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getUserData from "../../models/user/get-user-data";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getUserData from "../../models/user/get-user-data.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpGetUserData(req: Request, res: Response) {

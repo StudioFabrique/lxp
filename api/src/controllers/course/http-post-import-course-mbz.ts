@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { Readable } from "stream";
-import importCourseMbz from "../../models/course/import-course-mbz";
+import importCourseMbz from "../../models/course/import-course-mbz.ts";
 
 export default async function httpPostImportCourseMbz(req: Request, res: Response) {
   if (!req.file) {

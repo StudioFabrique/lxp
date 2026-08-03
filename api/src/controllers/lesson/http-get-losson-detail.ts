@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import getLessonDetail from "../../models/lesson/get-lesson-detail";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { serverIssue } from "../../utils/constantes.ts";
+import getLessonDetail from "../../models/lesson/get-lesson-detail.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpGetLessonDetail(
   req: CustomRequest,
