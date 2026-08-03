@@ -17,6 +17,10 @@ const ImportCoursesHome = () => {
     tooltipErrorTip,
     uploadProgress,
     currentAction,
+    importProgressItems,
+    criticalImportError,
+    isImporting,
+    isImportComplete,
     formationsList,
     selectedFormation,
     parcoursList,
@@ -36,6 +40,7 @@ const ImportCoursesHome = () => {
     onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
+    onRetryImport,
     onGoBack,
   } = useImportCourses();
 
@@ -91,6 +96,11 @@ const ImportCoursesHome = () => {
             progress={uploadProgress}
             currentAction={currentAction}
             moduleId={selectedModule?.id}
+            items={importProgressItems}
+            criticalError={criticalImportError}
+            isImporting={isImporting}
+            isComplete={isImportComplete}
+            onRetry={onRetryImport}
           />
         );
       default:

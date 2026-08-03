@@ -12,10 +12,8 @@ import activityIconType from "../../../../../utils/helpers/activity-icon-type";
 import { toUpperFirstLetter } from "../../../../../utils/helpers/text-helpers";
 import Lesson from "../../../../../utils/interfaces/lesson";
 import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip-warning";
-import {
-  ActivityImport,
-  CourseImport,
-} from "../../../hooks/useImportCourses";
+import type { CourseImport } from "../../../hooks/useImportCourses";
+import type { ActivityImport } from "../../../../../utils/interfaces/import-types";
 
 type Props = {
   activeCourse: CourseImport | null;

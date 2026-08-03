@@ -4,6 +4,7 @@ import { lazyRoute } from "../../utils/helpers/router-helpers";
 export const authRoutes: RouteObject[] = [
   {
     lazy: lazyRoute(() => import("./components/AuthLayout")),
+    HydrateFallback: () => null,
     children: [
       {
         path: "/init",

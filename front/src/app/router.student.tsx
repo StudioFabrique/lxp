@@ -11,6 +11,7 @@ import { Navigate, RouteObject } from "react-router";
 export const studentRoutes: RouteObject[] = [
   {
     path: "/student",
+    HydrateFallback: () => null,
     lazy: lazyRoute(
       () => import("../components/wrappers/layouts/StudentLayout"),
     ),

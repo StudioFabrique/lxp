@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "../../../../../components/headers/Header";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
@@ -52,14 +52,16 @@ const CoursesPreview = ({
   onUpdateActivityTitle,
   onRemoveActivity,
 }: Props) => {
-  const [selectedCourse, setSelectedCourse] = useState<CourseImport | null>(
-    null,
-  );
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [selectedActivity, setSelectedActivity] =
     useState<ActivityImport | null>(null);
 
   const [isEditingCourseTitle, setIsEditingCourseTitle] = useState(false);
   const [tempCourseTitle, setTempCourseTitle] = useState("");
+  const selectedCourse =
+    importedCourses?.find((course) => course.id === selectedCourseId) ??
+    importedCourses?.[0] ??
+    null;
 
   const headerDescription = error
     ? error
@@ -68,7 +70,7 @@ const CoursesPreview = ({
       : "Sélectionner le contenu pédagogique à importer";
 
   const handlePreviewCourse = (course: CourseImport) => {
-    setSelectedCourse(course);
+    setSelectedCourseId(course.id);
     setSelectedActivity(null);
     setTempCourseTitle(course.title);
     setIsEditingCourseTitle(false);
@@ -80,31 +82,6 @@ const CoursesPreview = ({
       setIsEditingCourseTitle(false);
     }
   };
-
-  useEffect(() => {
-    if (importedCourses && importedCourses.length > 0) {
-      if (selectedCourse) {
-        const updatedCourse = importedCourses.find(
-          (c) => c.id === selectedCourse.id,
-        );
-        if (updatedCourse) {
-          setSelectedCourse(updatedCourse);
-          if (!isEditingCourseTitle) {
-            setTempCourseTitle(updatedCourse.title);
-          }
-        } else {
-          setSelectedCourse(importedCourses[0]);
-          setTempCourseTitle(importedCourses[0].title);
-        }
-      } else {
-        setSelectedCourse(importedCourses[0]);
-        setTempCourseTitle(importedCourses[0].title);
-      }
-    } else {
-      setSelectedCourse(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [importedCourses]);
 
   return (
     <div className="flex flex-col gap-6 ml-5">
@@ -124,6 +101,7 @@ const CoursesPreview = ({
         <div className="flex items-center gap-3">
           <FileUpload
             compact
+            preserveButtonLabel
             buttonLabel="Ajouter un fichier .mbz"
             icon={<FilePlus2 className="w-4" />}
             maxSize={50 * 1024 * 1024} // 100 Mo
@@ -183,41 +161,51 @@ const CoursesPreview = ({
           {selectedCourse && (
             <div className="grid grid-cols-12 gap-6 h-150 bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
               <div className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar">
-                <div className="flex items-center gap-2 mb-3 min-h-8">
-                  <h3 className="text-sm capitalize tracking-wide text-primary font-bold whitespace-nowrap">
-                    Cours :
-                  </h3>
-                  {isEditingCourseTitle ? (
-                    <div className="flex items-center gap-1 w-full">
-                      <input
-                        type="text"
-                        value={tempCourseTitle}
-                        onChange={(e) => setTempCourseTitle(e.target.value)}
-                        className="input input-xs input-bordered w-full"
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && handleSaveCourseTitle()
-                        }
-                        autoFocus
-                      />
-                      <button
-                        className="btn btn-xs btn-square btn-success"
-                        onClick={handleSaveCourseTitle}
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 w-full group">
-                      <span className="truncate text-sm font-bold capitalize">
-                        {selectedCourse.title}
-                      </span>
-                      <button
-                        onClick={() => setIsEditingCourseTitle(true)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-base-200 rounded"
-                      >
-                        <PenLine className="w-3 h-3 text-base-content/60" />
-                      </button>
-                    </div>
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 min-h-8">
+                    <h3 className="text-sm capitalize tracking-wide text-primary font-bold whitespace-nowrap">
+                      Cours :
+                    </h3>
+                    {isEditingCourseTitle ? (
+                      <div className="flex items-center gap-1 w-full">
+                        <input
+                          type="text"
+                          value={tempCourseTitle}
+                          onChange={(e) => setTempCourseTitle(e.target.value)}
+                          className="input input-xs input-bordered w-full"
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && handleSaveCourseTitle()
+                          }
+                          autoFocus
+                        />
+                        <button
+                          className="btn btn-xs btn-square btn-success"
+                          onClick={handleSaveCourseTitle}
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 w-full group">
+                        <span className="truncate text-sm font-bold capitalize">
+                          {selectedCourse.title}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setTempCourseTitle(selectedCourse.title);
+                            setIsEditingCourseTitle(true);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-base-200 rounded"
+                        >
+                          <PenLine className="w-3 h-3 text-base-content/60" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {selectedCourse.sourceFileName && (
+                    <p className="truncate pl-0 text-xs text-base-content/50">
+                      {selectedCourse.sourceFileName}
+                    </p>
                   )}
                 </div>
                 <CourseArborescence

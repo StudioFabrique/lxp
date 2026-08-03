@@ -11,9 +11,11 @@ export const router = createBrowserRouter([
   {
     path: "/access-denied",
     element: <AccessDenied />,
+    HydrateFallback: () => null,
   },
   {
     path: "*",
     element: <Navigate replace to="/login" />,
+    HydrateFallback: () => null,
   },
 ]);
