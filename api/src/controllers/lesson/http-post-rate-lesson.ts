@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import postRateLesson from "../../models/lesson/post-rate-lesson";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import postRateLesson from "../../models/lesson/post-rate-lesson.ts";
 
 export default async function httpPostRateLesson(
   req: CustomRequest,

@@ -1,17 +1,17 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import {
   badQuery,
   credentialsError,
   regexPassword,
   serverIssue,
-} from "../../utils/constantes";
-import userLogin from "../../models/auth/user-login";
-import { setTokens } from "../../utils/services/auth/set-tokens";
-import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config";
+} from "../../utils/constantes.ts";
+import userLogin from "../../models/auth/user-login.ts";
+import { setTokens } from "../../utils/services/auth/set-tokens.ts";
+import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config.ts";
 import { validationResult } from "express-validator";
-import { logger } from "../../utils/logs/logger";
-import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
-import { buildAbility } from "../../utils/rbac/ability";
+import { logger } from "../../utils/logs/logger.ts";
+import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils.ts";
+import { buildAbility } from "../../utils/rbac/ability.ts";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;

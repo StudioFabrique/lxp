@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Récupère les contacts et compétences associés à un parcours spécifique

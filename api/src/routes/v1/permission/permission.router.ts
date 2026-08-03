@@ -1,9 +1,9 @@
 import { Router } from "express";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpGetPermissions from "../../../controllers/permission/http-get-permissions";
-import httpGetRoles from "../../../controllers/permission/http-get-roles";
-import httpDeleteRole from "../../../controllers/permission/http-delete-role";
-import httpPostRole from "../../../controllers/permission/http-post-role";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpGetPermissions from "../../../controllers/permission/http-get-permissions.ts";
+import httpGetRoles from "../../../controllers/permission/http-get-roles.ts";
+import httpDeleteRole from "../../../controllers/permission/http-delete-role.ts";
+import httpPostRole from "../../../controllers/permission/http-post-role.ts";
 import {
   deleteManyRolesValidator,
   deleteRoleValidator,
@@ -12,15 +12,15 @@ import {
   putRoleValidator,
   removePermissionValidator,
   roleIdValidator,
-} from "./permission-validators";
-import httpPutRole from "../../../controllers/permission/http-put-role";
-import httpGetSearchRoles from "../../../controllers/permission/http-get-search-roles";
-import httpDeleteManyRoles from "../../../controllers/permission/http-delete-many-roles";
-import httpGetResourcesByRole from "../../../controllers/permission/http-get-resources-by-role";
-import httpGetResourcesById from "../../../controllers/permission/http-get-resources-by-id";
-import httpRemovePermissionFromRole from "../../../controllers/permission/http-remove-permission-from-role";
-import httpAddPermissionToRole from "../../../controllers/permission/http-add-permission-to-role";
-import httpPutResetRole from "../../../controllers/permission/http-put-reset-role";
+} from "./permission-validators.ts";
+import httpPutRole from "../../../controllers/permission/http-put-role.ts";
+import httpGetSearchRoles from "../../../controllers/permission/http-get-search-roles.ts";
+import httpDeleteManyRoles from "../../../controllers/permission/http-delete-many-roles.ts";
+import httpGetResourcesByRole from "../../../controllers/permission/http-get-resources-by-role.ts";
+import httpGetResourcesById from "../../../controllers/permission/http-get-resources-by-id.ts";
+import httpRemovePermissionFromRole from "../../../controllers/permission/http-remove-permission-from-role.ts";
+import httpAddPermissionToRole from "../../../controllers/permission/http-add-permission-to-role.ts";
+import httpPutResetRole from "../../../controllers/permission/http-put-reset-role.ts";
 
 const permissionRouter = Router();
 

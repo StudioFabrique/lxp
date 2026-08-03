@@ -1,4 +1,4 @@
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 
 async function getUser(userId: Object) {
   const user = await User.findOne({ _id: userId }, { password: 0 })

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import deleteGroup from "../../models/group/delete-group";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import deleteGroup from "../../models/group/delete-group.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpDeleteGroup(req: Request, res: Response) {
   const { id: groupId } = req.params;

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { regexNumber, serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import { regexNumber, serverIssue } from "../../utils/constantes.ts";
 import fs from "fs";
-import putCourseImage from "../../models/course/put-course-image";
+import putCourseImage from "../../models/course/put-course-image.ts";
 
 async function httpPutCourseImage(req: Request, res: Response) {
   const uploadedFile: any = req.file;

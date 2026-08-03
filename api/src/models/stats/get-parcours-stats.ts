@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Récupérer les informations d'un parcours destiné à l'affichage pour l'étudiant.

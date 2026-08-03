@@ -1,11 +1,11 @@
-import { Response } from "express";
-import postModule from "../../models/formation/post-module";
+import { type Response } from "express";
+import postModule from "../../models/formation/post-module.ts";
 import fs from "fs";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import sharp from "sharp";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";
-import { serverIssue } from "../../utils/constantes";
+import { serverIssue } from "../../utils/constantes.ts";
 
 /**
  * HTTP Controller for creating a new module or duplicating an existing one with image upload

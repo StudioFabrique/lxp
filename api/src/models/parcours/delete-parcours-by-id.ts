@@ -1,6 +1,6 @@
-import { getAdmin } from "../../helpers/get-admin";
-import { prisma } from "../../utils/db";
-import deleteActivity from "../activity/delete-activity/delete-activity";
+import { getAdmin } from "../../helpers/get-admin.ts";
+import { prisma } from "../../utils/db.ts";
+import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 async function deleteParcoursById(parcoursId: number, userId: string) {
   const admin = await getAdmin(userId);

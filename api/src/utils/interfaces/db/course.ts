@@ -1,5 +1,5 @@
 import { type Document, Schema, model } from "mongoose";
-import type { IGroup } from "./group";
+import type { IGroup } from "./group.ts";
 
 export interface ICourse extends Document {
   name: string;

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { deleteRole } from "../../models/permission/roles";
-import type { IRole } from "../../utils/interfaces/db/role";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import { deleteRole } from "../../models/permission/roles.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpDeleteRole(req: Request, res: Response) {
   try {

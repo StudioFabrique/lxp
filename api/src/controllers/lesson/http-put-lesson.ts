@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import putLesson from "../../models/lesson/put-lesson";
+import putLesson from "../../models/lesson/put-lesson.ts";
 
 async function httpPutLesson(req: Request, res: Response) {
   const lesson = req.body;

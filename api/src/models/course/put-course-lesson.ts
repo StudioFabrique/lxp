@@ -1,6 +1,6 @@
-import { Lesson } from "@prisma/client";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { type Lesson } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 async function putCourseLesson(
   courseId: number,

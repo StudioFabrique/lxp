@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function putFinishReadLesson(
   lessonId: number,

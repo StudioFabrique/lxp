@@ -1,5 +1,5 @@
-import Group from "../../utils/interfaces/db/group";
-import { prisma } from "../../utils/db";
+import Group from "../../utils/interfaces/db/group.ts";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getGroupDetails(groupId: string) {
   const group = await Group.findOne({

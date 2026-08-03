@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "node:crypto";
-import { displaySize } from "../helpers/size-unit-converter";
+import { displaySize } from "../helpers/size-unit-converter.ts";
 
 export const uploadActivityVideo = () => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "videos"),
+        path.join(import.meta.dirname, "..", "..", "uploads", "activities", "videos"),
       );
     },
     filename: function (req, file, cb) {

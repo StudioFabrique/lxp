@@ -1,9 +1,9 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 import {
   collectUnusedActivityFiles,
   deleteActivityFiles,
-} from "../../helpers/activity-file-cleanup";
-import deleteActivity from "../activity/delete-activity/delete-activity";
+} from "../../helpers/activity-file-cleanup.ts";
+import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteResource(
   resourceId: number,

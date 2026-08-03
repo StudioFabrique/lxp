@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putPublishParcours(parcoursId: number, isPublished: boolean) {
   const existingParcours = await prisma.parcours.findFirst({

@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../utils/interfaces/express/custom-request";
-import checkPermissions from "./check-permissions";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
+import checkPermissions from "./check-permissions.ts";
 
 const isStudent = (
   req: CustomRequest,

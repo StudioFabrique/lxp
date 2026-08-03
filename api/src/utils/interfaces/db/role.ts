@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IPermission } from "./permission";
+import { type IPermission } from "./permission.ts";
 
 export interface IRole extends Document {
   role: string;

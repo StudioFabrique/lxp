@@ -1,8 +1,8 @@
-import Group, { IGroup } from "../../utils/interfaces/db/group";
-import Role from "../../utils/interfaces/db/role";
-import User, { IUser } from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
-import activateMultipleUsers from "../user/activate-multiple-users";
+import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
+import Role from "../../utils/interfaces/db/role.ts";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import { prisma } from "../../utils/db.ts";
+import activateMultipleUsers from "../user/activate-multiple-users.ts";
 
 export default async function createGroup(
   group: IGroup,

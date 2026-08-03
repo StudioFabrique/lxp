@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import deleteLesson from "../../models/lesson/delete-lesson";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery } from "../../utils/constantes";
+import deleteLesson from "../../models/lesson/delete-lesson.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery } from "../../utils/constantes.ts";
 
 export default async function httpDeleteLesson(
   req: CustomRequest,

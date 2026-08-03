@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import Group from "../../utils/interfaces/db/group";
+import { prisma } from "../../utils/db.ts";
+import Group from "../../utils/interfaces/db/group.ts";
 
 export default async function getCoursesTimeline(
   userIdMdb: string,

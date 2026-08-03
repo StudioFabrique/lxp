@@ -1,9 +1,9 @@
 import { Router } from "express";
 
-import httpGetModuleFormation from "../../../controllers/module/http-get-modules-formation";
-import httpParcoursModules from "../../../controllers/module/http-parcours-modules";
-import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module";
-import httpDeleteModule from "../../../controllers/module/http-delete-module";
+import httpGetModuleFormation from "../../../controllers/module/http-get-modules-formation.ts";
+import httpParcoursModules from "../../../controllers/module/http-parcours-modules.ts";
+import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module.ts";
+import httpDeleteModule from "../../../controllers/module/http-delete-module.ts";
 import {
   getModuleFormationValidator,
   getModulesFromParcoursValidator,
@@ -12,23 +12,23 @@ import {
   putModuleParcoursValidator,
   putModuleValidator,
   updateDatesModulesValidator,
-} from "./module-validators";
-import checkPermissions from "../../../middleware/check-permissions";
-import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
-import { headerImageMaxSize } from "../../../config/images-sizes";
-import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours";
-import httpPutModule from "../../../controllers/module/http-put-module";
-import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
-import { parcoursIdValidator } from "../parcours/parcours-validator";
-import { idsArrayValidator } from "../../../helpers/custom-validators";
-import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
-import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
-import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
-import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
-import jsonParser from "../../../middleware/json-parser";
-import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
-import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
-import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
+} from "./module-validators.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload.ts";
+import { headerImageMaxSize } from "../../../config/images-sizes.ts";
+import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours.ts";
+import httpPutModule from "../../../controllers/module/http-put-module.ts";
+import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours.ts";
+import { parcoursIdValidator } from "../parcours/parcours-validator.ts";
+import { idsArrayValidator } from "../../../helpers/custom-validators.ts";
+import httpGetAllModules from "../../../controllers/module/http-get-all-modules.ts";
+import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module.ts";
+import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail.ts";
+import httpGetModuleImage from "../../../controllers/module/http-get-module-image.ts";
+import jsonParser from "../../../middleware/json-parser.ts";
+import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail.ts";
+import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module.ts";
+import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules.ts";
 
 const modules = Router();
 

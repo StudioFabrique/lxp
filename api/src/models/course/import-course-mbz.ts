@@ -1,4 +1,4 @@
-import { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export type ImportedCourseArchive = {
   courseSlug: string;
@@ -21,7 +21,7 @@ export default async function importCourseMbz(
     new Blob([file.buffer], { type: file.mimetype }),
     file.originalname,
   );
-  const token = sign(
+    const token = jwt.sign(
     { sub: "student", userRoles: [{ role: "admin" }] },
     secret,
   );

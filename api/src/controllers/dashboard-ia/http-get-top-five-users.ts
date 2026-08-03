@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import getTopFiveUsers from "../../models/dashboard-ia/getTopFiveUsers";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import { type Request, type Response, type NextFunction } from "express";
+import getTopFiveUsers from "../../models/dashboard-ia/getTopFiveUsers.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpGetTopFiveUsers(

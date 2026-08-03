@@ -1,9 +1,9 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { noAccess, serverIssue } from "../../utils/constantes";
-import updateParcoursDates from "../../models/parcours/update-parcours-date";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { logger } from "../../utils/logs/logger";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import updateParcoursDates from "../../models/parcours/update-parcours-date.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 async function httpUpdateParcoursDates(req: CustomRequest, res: Response) {
   try {

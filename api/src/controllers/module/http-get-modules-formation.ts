@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import getModulesFormation from "../../models/module/get-modules-formation";
+import { type Request, type Response } from "express";
+import getModulesFormation from "../../models/module/get-modules-formation.ts";
 
 async function httpGetModuleFormation(req: Request, res: Response) {
   try {

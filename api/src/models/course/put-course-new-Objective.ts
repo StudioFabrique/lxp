@@ -1,5 +1,5 @@
-import { Objective } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Objective } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseNewObjective(courseId: number, objective: Objective) {
   /*const existingCourse = await prisma.course.findFirst({

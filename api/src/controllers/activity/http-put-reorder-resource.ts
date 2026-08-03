@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import putReorderResource from "../../models/activity/update-activity/put-reorder-resource";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import putReorderResource from "../../models/activity/update-activity/put-reorder-resource.ts";
 
 /**
  * HTTP PUT controller for reordering resources within an activity

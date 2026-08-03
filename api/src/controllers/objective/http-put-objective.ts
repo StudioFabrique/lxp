@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import putObjective from "../../models/objective/put-objective";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import putObjective from "../../models/objective/put-objective.ts";
 
 async function httpPutObjective(req: Request, res: Response) {
   const result = validationResult(req);

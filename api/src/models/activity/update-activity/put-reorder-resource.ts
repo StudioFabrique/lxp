@@ -1,6 +1,6 @@
-import { Activity, BonusActivity } from "@prisma/client";
-import { prisma } from "../../../utils/db";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { type Activity, type BonusActivity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Updates the order of resources within an activity

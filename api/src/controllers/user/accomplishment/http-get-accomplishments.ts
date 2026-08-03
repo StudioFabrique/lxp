@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../../utils/constantes";
-import getLastAccomplishments from "../../../models/user/accomplishments/get-last-accomplishments";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../../utils/constantes.ts";
+import getLastAccomplishments from "../../../models/user/accomplishments/get-last-accomplishments.ts";
 
 /**
  *

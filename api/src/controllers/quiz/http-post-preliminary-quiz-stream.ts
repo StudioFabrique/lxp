@@ -1,15 +1,15 @@
-import { Response } from "express";
+import { type Response } from "express";
 import {
   AiApiError,
   AiConfigurationError,
-} from "../../services/ai/ai-api-client";
-import { toQuizApiQuestion } from "../../services/quiz/quiz-question";
+} from "../../services/ai/ai-api-client.ts";
+import { toQuizApiQuestion } from "../../services/quiz/quiz-question.ts";
 import {
   preparePreliminaryQuizGeneration,
   QuizGenerationError,
-} from "../../models/quiz/quiz-generation";
-import { relayQuizStream } from "../../services/quiz/quiz-stream";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+} from "../../models/quiz/quiz-generation.ts";
+import { relayQuizStream } from "../../services/quiz/quiz-stream.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 interface ModuleInfo {
   moduleId: number;

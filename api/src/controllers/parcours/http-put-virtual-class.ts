@@ -1,10 +1,10 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { noAccess, serverIssue } from "../../utils/constantes";
-import putVirtualClass from "../../models/parcours/put-virtual-class";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { logger } from "../../utils/logs/logger";
-import { customEscape } from "../../helpers/custom-escape";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import putVirtualClass from "../../models/parcours/put-virtual-class.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
+import { customEscape } from "../../helpers/custom-escape.ts";
 
 async function httpPutVirtualClass(req: CustomRequest, res: Response) {
   try {

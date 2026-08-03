@@ -13,8 +13,8 @@
  * @param next - Express next function for passing results or errors
  */
 
-import { Request, Response, NextFunction } from "express";
-import putInvitation from "../../models/user/put-invitation";
+import { type Request, type Response, type NextFunction } from "express";
+import putInvitation from "../../models/user/put-invitation.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpPutInvitation(

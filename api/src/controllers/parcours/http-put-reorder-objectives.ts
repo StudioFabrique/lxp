@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import putReorderObjectives from "../../models/parcours/put-reorder-objectives";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import putReorderObjectives from "../../models/parcours/put-reorder-objectives.ts";
 
 async function httpPutReorderObjectives(req: Request, res: Response) {
   const result = validationResult(req);

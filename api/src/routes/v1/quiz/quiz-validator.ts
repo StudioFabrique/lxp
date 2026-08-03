@@ -1,5 +1,5 @@
 import { body, param, query } from "express-validator";
-import { checkValidatorResult } from "../../../middleware/validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 /**
  * GET /quiz/course/ending/stream/:courseId

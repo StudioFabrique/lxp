@@ -1,7 +1,7 @@
-import { Contact } from "@prisma/client";
+import { type Contact } from "@prisma/client";
 
-import { prisma } from "../../utils/db";
-import { getAdmin } from "../../helpers/get-admin";
+import { prisma } from "../../utils/db.ts";
+import { getAdmin } from "../../helpers/get-admin.ts";
 
 async function putParcoursContacts(
   parcoursId: number,

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import deleteTag from "../../models/tag/delete-tag";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import deleteTag from "../../models/tag/delete-tag.ts";
 
 export default async function httpDeleteTag(req: Request, res: Response) {
   try {

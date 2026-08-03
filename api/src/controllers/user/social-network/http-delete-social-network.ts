@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../../utils/constantes";
-import deleteSocialNetwork from "../../../models/user/social-network/delete-social-network";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../../utils/constantes.ts";
+import deleteSocialNetwork from "../../../models/user/social-network/delete-social-network.ts";
 
 export default async function httpDeleteSocialNetwork(
   req: Request,

@@ -1,7 +1,7 @@
-import { regexGeneric } from "../../utils/constantes";
-import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
-import User from "../../utils/interfaces/db/user";
-import UserSocket from "../../utils/interfaces/db/user-socket";
+import { regexGeneric } from "../../utils/constantes.ts";
+import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function disconnect(socketId: string) {
   const existingSocket = await UserSocket.findOne({ socketId });

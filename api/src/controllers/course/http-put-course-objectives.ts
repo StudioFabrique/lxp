@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import putCourseObjectives from "../../models/course/put-course-objectives";
+import putCourseObjectives from "../../models/course/put-course-objectives.ts";
 
 async function httpPutCourseObjectives(req: Request, res: Response) {
   const { courseId } = req.params;

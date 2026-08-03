@@ -7,8 +7,8 @@ import {
   resolveActivityFilePath,
   type StoredActivityFileReference,
   type StoredActivityFileType,
-} from "../../../helpers/activity-file-cleanup";
-import { prisma } from "../../../utils/db";
+} from "../../../helpers/activity-file-cleanup.ts";
+import { prisma } from "../../../utils/db.ts";
 
 export default async function deleteActivity(
   activityId: number,

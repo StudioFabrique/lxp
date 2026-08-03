@@ -1,7 +1,7 @@
-import type { DialogEntry } from "../../utils/interfaces/chatbot/dialog-entry";
+import type { DialogEntry } from "../../utils/interfaces/chatbot/dialog-entry.ts";
 import ChatDialogs, {
-  CourseSource,
-} from "../../utils/interfaces/db/chat-dialogs";
+  type CourseSource,
+} from "../../utils/interfaces/db/chat-dialogs.ts";
 
 export default async function postDialogs(
   userId: string,

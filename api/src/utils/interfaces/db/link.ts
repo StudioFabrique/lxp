@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./user";
+import { type IUser } from "./user.ts";
 
 export type LinkType =
   | "website"

@@ -3,8 +3,8 @@ import {
   passwordValidateGeneric,
   stringValidateGeneric,
   tokenValidateGeneric,
-} from "../../../helpers/custom-validators";
-import { checkValidatorResult } from "../../../middleware/validators";
+} from "../../../helpers/custom-validators.ts";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 // Validateur pour vérifier le format d'une adresse email
 export const postCheckEmailValidator = [

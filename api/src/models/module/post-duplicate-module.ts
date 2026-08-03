@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
-import { getDuplicateIdentity } from "../../helpers/duplication";
-import { duplicateActivityFile } from "../../helpers/duplicate-activity-file";
+import { prisma } from "../../utils/db.ts";
+import { getDuplicateIdentity } from "../../helpers/duplication.ts";
+import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
 
 export default async function postDuplicateModule(
   sourceModuleId: number,

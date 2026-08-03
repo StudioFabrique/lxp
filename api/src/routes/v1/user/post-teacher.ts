@@ -1,13 +1,13 @@
 import express from "express";
 import { body } from "express-validator";
 
-import httpPostTeacher from "../../../controllers/user/http-post-teacher";
+import httpPostTeacher from "../../../controllers/user/http-post-teacher.ts";
 import {
   isBoolean,
   stringValidateGeneric,
   stringValidateOptional,
-} from "../../../helpers/custom-validators";
-import checkPermissions from "../../../middleware/check-permissions";
+} from "../../../helpers/custom-validators.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
 
 const postTeacherRouter = express.Router();
 

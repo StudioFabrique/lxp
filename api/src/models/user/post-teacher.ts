@@ -1,7 +1,7 @@
-import { Contact } from "@prisma/client";
-import { prisma } from "../../utils/db";
-import Role from "../../utils/interfaces/db/role";
-import User, { IUser } from "../../utils/interfaces/db/user";
+import { type Contact } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
+import Role from "../../utils/interfaces/db/role.ts";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
 
 async function postTeacher(teacher: IUser) {

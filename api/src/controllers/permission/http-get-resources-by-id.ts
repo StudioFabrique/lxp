@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { getRoleResources } from "../../models/permission/roles";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import { getRoleResources } from "../../models/permission/roles.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetResourcesById(req: Request, res: Response) {
   try {

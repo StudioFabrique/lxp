@@ -11,8 +11,8 @@
  * @response 500 - Server error if invitation process fails
  */
 
-import { Request, Response, NextFunction } from "express";
-import postManyInvitations from "../../models/user/post-many-invitations";
+import { type Request, type Response, type NextFunction } from "express";
+import postManyInvitations from "../../models/user/post-many-invitations.ts";
 
 export default async function httpPostManyInvitations(
   req: Request,

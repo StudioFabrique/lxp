@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import patchParcours from "../../models/parcours/patch-parcours";
-import { noAccess, serverIssue } from "../../utils/constantes";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import patchParcours from "../../models/parcours/patch-parcours.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpPatchParcours(req: CustomRequest, res: Response) {
   try {

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import request from "supertest";
-import app from "../src/app";
-import Permission from "../src/utils/interfaces/db/permission";
-import Role from "../src/utils/interfaces/db/role";
-import mongoConnect from "../src/utils/services/db/mongo-connect";
+import app from "../src/app.ts";
+import Permission from "../src/utils/interfaces/db/permission.ts";
+import Role from "../src/utils/interfaces/db/role.ts";
+import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 
 describe("CASL API authorization", () => {
   beforeAll(async () => {

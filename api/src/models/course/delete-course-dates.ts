@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 import { Prisma } from "@prisma/client";
 
 async function deleteCourseDates(courseId: number, datesId: number) {

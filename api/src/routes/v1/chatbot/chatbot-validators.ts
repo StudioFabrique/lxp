@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 
-import { checkValidatorResult } from "../../../middleware/validators";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
+import { stringValidateGeneric } from "../../../helpers/custom-validators.ts";
 
 export const postPromptValidator = [
   body("prompt")

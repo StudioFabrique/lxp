@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getAllFormations from "../../models/formation/get-all-formations";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getAllFormations from "../../models/formation/get-all-formations.ts";
 
 export default async function httpGetAllFormations(
   _req: Request,

@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
-import { badQuery } from "../../utils/constantes";
-import deleteUser from "../../models/user/delete-user";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response, type NextFunction } from "express";
+import { badQuery } from "../../utils/constantes.ts";
+import deleteUser from "../../models/user/delete-user.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { stat } from "fs";
 
 export default async function httpDeleteUser(

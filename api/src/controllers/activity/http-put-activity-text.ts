@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import updateText from "../../models/activity/update-activity/put-activity-text";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import updateText from "../../models/activity/update-activity/put-activity-text.ts";
 
 /**
  * Controller pour mettre à jour le texte d'une activité

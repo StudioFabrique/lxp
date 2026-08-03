@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
-import { checkValidatorResult } from "../../../middleware/validators";
-import { regexStringManyMongoId } from "../../../utils/constantes";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
+import { regexStringManyMongoId } from "../../../utils/constantes.ts";
+import { stringValidateGeneric } from "../../../helpers/custom-validators.ts";
 
 export const getPermissionsValidator = (queryParam: "role" | "id") => [
   param(queryParam)

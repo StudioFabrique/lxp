@@ -2,7 +2,7 @@ import {
   createQuizGenerationKey,
   toQuizApiQuestion,
   toQuizQuestionCreateData,
-} from "../quiz-question";
+} from "../quiz-question.ts";
 
 describe("quiz question mapping", () => {
   it("sépare les champs communs des données propres au type de question", () => {

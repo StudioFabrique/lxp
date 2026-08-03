@@ -14,10 +14,10 @@
  * @throws { statusCode: 500 } if the activation email could not be sent.
  */
 
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
-import { activationToken } from "../../helpers/activation-token";
-import { sendPasswordEmail } from "../../services/mailer";
+import { activationToken } from "../../helpers/activation-token.ts";
+import { sendPasswordEmail } from "../../services/mailer.ts";
 
 export default async function putInvitation(userId: string) {
   // Check if the user exists in the database

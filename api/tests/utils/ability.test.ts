@@ -1,7 +1,7 @@
 import {
   buildAbility,
   permissionNameToRule,
-} from "../../src/utils/rbac/ability";
+} from "../../src/utils/rbac/ability.ts";
 
 describe("CASL ability construction", () => {
   it("refuses everything by default", () => {

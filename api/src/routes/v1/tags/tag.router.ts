@@ -1,21 +1,21 @@
 import express from "express";
-import httpGetAllTags from "../../../controllers/tag/http-get-all-tags";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpPostManyTags from "../../../controllers/tag/http-post-many-tags";
+import httpGetAllTags from "../../../controllers/tag/http-get-all-tags.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpPostManyTags from "../../../controllers/tag/http-post-many-tags.ts";
 import {
   getPaginateSearchTagsValidator,
   getPaginateTagsValidator,
   postManyTagsValidator,
   tagIdValidator,
   tagPutValidator,
-} from "./tag-validator";
-import httpDeleteTag from "../../../controllers/tag/http-delete-tag";
-import httpPutTag from "../../../controllers/tag/http-put-tag";
-import httpGetPaginateTags from "../../../controllers/tag/http-get-paginate-tags";
-import httpGetPaginateSearchTags from "../../../controllers/tag/http-get-paginate-search-tags";
-import httpDeleteManyTags from "../../../controllers/tag/http-delete-many-tags";
-import { regexStringManyNumberId } from "../../../utils/constantes";
-import { checkValidatorResult } from "../../../middleware/validators";
+} from "./tag-validator.ts";
+import httpDeleteTag from "../../../controllers/tag/http-delete-tag.ts";
+import httpPutTag from "../../../controllers/tag/http-put-tag.ts";
+import httpGetPaginateTags from "../../../controllers/tag/http-get-paginate-tags.ts";
+import httpGetPaginateSearchTags from "../../../controllers/tag/http-get-paginate-search-tags.ts";
+import httpDeleteManyTags from "../../../controllers/tag/http-delete-many-tags.ts";
+import { regexStringManyNumberId } from "../../../utils/constantes.ts";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 import { query } from "express-validator";
 
 const tagRouter = express.Router();

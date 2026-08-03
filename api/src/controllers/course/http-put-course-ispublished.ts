@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import putCourseIsPublished from "../../models/course/put-course-ispublished";
-import { serverIssue } from "../../utils/constantes";
-import enableCourse from "../../models/course/enable-course";
+import putCourseIsPublished from "../../models/course/put-course-ispublished.ts";
+import { serverIssue } from "../../utils/constantes.ts";
+import enableCourse from "../../models/course/enable-course.ts";
 
 async function httpPutCourseIsPublished(req: Request, res: Response) {
   const { courseId } = req.params;

@@ -1,6 +1,6 @@
-import { Response } from "express";
-import deleteFormationModule from "../../models/module/delete-formation-module";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import deleteFormationModule from "../../models/module/delete-formation-module.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpDeleteFormationModule(
   req: CustomRequest,

@@ -1,5 +1,5 @@
 import { Readable, Writable } from "stream";
-import { relayQuizStream } from "../quiz-stream";
+import { relayQuizStream } from "../quiz-stream.ts";
 
 describe("quiz stream relay", () => {
   it("relaie les chunks à l'identique et traite les lignes fragmentées", async () => {

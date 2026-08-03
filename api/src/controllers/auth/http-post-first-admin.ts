@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config";
-import { createFirstAdmin } from "../../models/auth/setup";
-import { regexMail, regexPassword } from "../../utils/constantes";
-import { setTokens } from "../../utils/services/auth/set-tokens";
+import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config.ts";
+import { createFirstAdmin } from "../../models/auth/setup.ts";
+import { regexMail, regexPassword } from "../../utils/constantes.ts";
+import { setTokens } from "../../utils/services/auth/set-tokens.ts";
 
 export default async function httpPostFirstAdmin(req: Request, res: Response) {
   try {

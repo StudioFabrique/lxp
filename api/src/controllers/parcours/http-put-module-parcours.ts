@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import fs from "fs";
-import putModuleParcours from "../../models/parcours/putModuleParcours";
+import putModuleParcours from "../../models/parcours/putModuleParcours.ts";
 import {
   deleteTempUploadedFile,
   getBase64ImageFromReq,
-} from "../../middleware/fileUpload";
+} from "../../middleware/fileUpload.ts";
 import sharp from "sharp";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Gère la mise à jour d'un module dans un parcours, y compris le traitement des images

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import updateUserPassword from "../../../models/user/update-user-password";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { type Request, type Response } from "express";
+import updateUserPassword from "../../../models/user/update-user-password.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpUpdateUserPassword(
   req: CustomRequest,

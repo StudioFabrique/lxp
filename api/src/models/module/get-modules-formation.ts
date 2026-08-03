@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getModulesFormation(formationId: number) {
   const modules = await prisma.module.findMany({

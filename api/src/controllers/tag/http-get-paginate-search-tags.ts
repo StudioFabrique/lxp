@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getPaginateSearchTags from "../../models/tag/get-paginate-search-tags";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getPaginateSearchTags from "../../models/tag/get-paginate-search-tags.ts";
 
 async function httpGetPaginateSearchTags(req: Request, res: Response) {
   const { entity, value, stype, sdir } = req.params;

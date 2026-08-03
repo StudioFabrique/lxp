@@ -1,12 +1,12 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import fs from "fs";
 import sharp from "sharp";
 
-import putModule from "../../models/module/putModule";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import putModule from "../../models/module/putModule.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Gère la mise à jour d'un module existant

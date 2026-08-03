@@ -1,7 +1,7 @@
-import { Admin, Resource, Tag } from "@prisma/client";
-import { getSoftColor } from "../../helpers/getSoftColors";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { type Admin, type Resource, type Tag } from "@prisma/client";
+import { getSoftColor } from "../../helpers/getSoftColors.ts";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function putResource(
   userId: string,

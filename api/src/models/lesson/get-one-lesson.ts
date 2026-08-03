@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import { tags } from "../../utils/fixtures/data/data";
+import { prisma } from "../../utils/db.ts";
+import { tags } from "../../utils/fixtures/data/data.ts";
 
 export default async function getOneLesson(lessonId: number) {
   const existingLesson = await prisma.lesson.findFirst({

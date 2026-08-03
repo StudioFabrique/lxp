@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 
-import { badQuery, noAccess, serverIssue } from "../../utils/constantes";
-import putParcoursContacts from "../../models/parcours/put-parcours-contacts";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { badQuery, noAccess, serverIssue } from "../../utils/constantes.ts";
+import putParcoursContacts from "../../models/parcours/put-parcours-contacts.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpPutParcoursContacts(req: CustomRequest, res: Response) {
   try {

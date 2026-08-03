@@ -1,12 +1,12 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import {
   authenticateSession,
   AuthenticationError,
-} from "../utils/services/auth/authenticate-session";
-import { setTokens } from "../utils/services/auth/set-tokens";
-import { accessExpire, refreshExpire, tokensMaxAge } from "../config/config";
-import { noAccess } from "../utils/constantes";
+} from "../utils/services/auth/authenticate-session.ts";
+import { setTokens } from "../utils/services/auth/set-tokens.ts";
+import { accessExpire, refreshExpire, tokensMaxAge } from "../config/config.ts";
+import { noAccess } from "../utils/constantes.ts";
 
 async function refreshTokens(
   req: CustomRequest,

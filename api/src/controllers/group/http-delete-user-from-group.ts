@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import deleteUserFromGroup from "../../models/group/delete-user-from-group";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import deleteUserFromGroup from "../../models/group/delete-user-from-group.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpDeleteUserFromGroup(
   req: Request,

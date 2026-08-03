@@ -1,7 +1,7 @@
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
-import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
-import { slugify } from "../../helpers/slugify";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
+import { slugify } from "../../helpers/slugify.ts";
 
 async function postCourse(userId: string, course: any) {
   const existingModule = await prisma.module.findFirst({

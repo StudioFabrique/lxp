@@ -1,8 +1,8 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import putFinishReadLesson from "../../models/lesson/put-finish-read-lesson";
-import postRateLesson from "../../models/lesson/post-rate-lesson";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import putFinishReadLesson from "../../models/lesson/put-finish-read-lesson.ts";
+import postRateLesson from "../../models/lesson/post-rate-lesson.ts";
 
 export default async function httpPutFinishReadLesson(
   req: CustomRequest,

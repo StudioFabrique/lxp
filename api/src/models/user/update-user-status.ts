@@ -13,7 +13,7 @@
  * @returns The updated user object
  * @throws Error if validation fails or user cannot be updated
  */
-import User, { IUser } from "../../utils/interfaces/db/user";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 
 async function updateUserStatus(ownId: string, userId: string, value: boolean) {
   // Prevent users from changing their own status

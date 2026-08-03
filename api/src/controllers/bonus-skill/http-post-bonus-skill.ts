@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 
-import { badQuery } from "../../utils/constantes";
-import postBonusSkill from "../../models/bonus-skill/post-bonus-skill";
+import { badQuery } from "../../utils/constantes.ts";
+import postBonusSkill from "../../models/bonus-skill/post-bonus-skill.ts";
 
 async function httpPostBonusSkill(req: Request, res: Response) {
   const result = validationResult(req);

@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../../utils/constantes";
-import getStudentParcoursWithAccomplishments from "../../../models/user/accomplishments/get-student-parcours-with-accomplishments";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../../utils/constantes.ts";
+import getStudentParcoursWithAccomplishments from "../../../models/user/accomplishments/get-student-parcours-with-accomplishments.ts";
 
 /**
  * Retourner les accomplissements de l'étudiant connecté

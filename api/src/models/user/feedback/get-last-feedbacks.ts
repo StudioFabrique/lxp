@@ -1,8 +1,8 @@
-import { prisma } from "../../../utils/db";
-import Group from "../../../utils/interfaces/db/group";
-import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
-import User from "../../../utils/interfaces/db/user";
-import { imageToDataUrl } from "../../../utils/images/image-source";
+import { prisma } from "../../../utils/db.ts";
+import Group from "../../../utils/interfaces/db/group.ts";
+import StudentFeedback from "../../../utils/interfaces/db/student-feedback.ts";
+import User from "../../../utils/interfaces/db/user.ts";
+import { imageToDataUrl } from "../../../utils/images/image-source.ts";
 
 export default async function getLastFeedbacks(
   teacherId: string,

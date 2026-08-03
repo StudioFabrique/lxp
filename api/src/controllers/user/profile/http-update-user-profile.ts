@@ -1,10 +1,10 @@
 import fs from "fs";
-import { Response } from "express";
-import type { IUser } from "../../../utils/interfaces/db/user";
-import updateUser from "../../../models/user/update-user";
-import updateUserAvatar from "../../../models/user/update-user-avatar";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { deleteTempUploadedFile } from "../../../middleware/fileUpload";
+import { type Response } from "express";
+import type { IUser } from "../../../utils/interfaces/db/user.ts";
+import updateUser from "../../../models/user/update-user.ts";
+import updateUserAvatar from "../../../models/user/update-user-avatar.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { deleteTempUploadedFile } from "../../../middleware/fileUpload.ts";
 
 export default async function httpUpdateUserProfile(
   req: CustomRequest,

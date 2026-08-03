@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import getFormation from "../../models/formation/get-formation";
-import { noData, serverIssue } from "../../utils/constantes";
+import getFormation from "../../models/formation/get-formation.ts";
+import { noData, serverIssue } from "../../utils/constantes.ts";
 
 async function httpGetFormation(req: Request, res: Response) {
   try {

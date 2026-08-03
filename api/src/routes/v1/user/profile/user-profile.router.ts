@@ -1,12 +1,12 @@
 import { Router } from "express";
-import httpUpdateUserProfile from "../../../../controllers/user/profile/http-update-user-profile";
-import httpGetUserProfileInformation from "../../../../controllers/user/profile/http-get-user-profile";
-import { userProfileValidator } from "../../../../middleware/validators";
-import httpUpdateUserPassword from "../../../../controllers/user/profile/http-update-user-password";
-import { createFileUploadMiddleware } from "../../../../middleware/fileUpload";
-import { avatarImageMaxSize } from "../../../../config/images-sizes";
-import jsonParser from "../../../../middleware/json-parser";
-import checkPermissions from "../../../../middleware/check-permissions";
+import httpUpdateUserProfile from "../../../../controllers/user/profile/http-update-user-profile.ts";
+import httpGetUserProfileInformation from "../../../../controllers/user/profile/http-get-user-profile.ts";
+import { userProfileValidator } from "../../../../middleware/validators.ts";
+import httpUpdateUserPassword from "../../../../controllers/user/profile/http-update-user-password.ts";
+import { createFileUploadMiddleware } from "../../../../middleware/fileUpload.ts";
+import { avatarImageMaxSize } from "../../../../config/images-sizes.ts";
+import jsonParser from "../../../../middleware/json-parser.ts";
+import checkPermissions from "../../../../middleware/check-permissions.ts";
 
 const userProfileRouter = Router();
 

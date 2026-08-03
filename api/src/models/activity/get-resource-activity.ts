@@ -1,10 +1,10 @@
 import {
-  Activity,
-  BonusActivity,
-  ResourceActivity,
-  ResourceBonusActivity,
+  type Activity,
+  type BonusActivity,
+  type ResourceActivity,
+  type ResourceBonusActivity,
 } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getResourceActivity(
   activityId: number,

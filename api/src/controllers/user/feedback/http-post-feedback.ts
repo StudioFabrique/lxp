@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../../utils/constantes";
-import postFeedBack from "../../../models/user/feedback/post-feedback";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../../utils/constantes.ts";
+import postFeedBack from "../../../models/user/feedback/post-feedback.ts";
 
 export default async function httpPostFeedback(
   req: CustomRequest,

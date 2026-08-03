@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import getAuthBackgrounds from "../../models/auth/get-auth-backgrounds";
+import { type Request, type Response } from "express";
+import getAuthBackgrounds from "../../models/auth/get-auth-backgrounds.ts";
 
 export default async function httpGetAuthBackgrounds(req: Request, res: Response) {
   const theme = req.query.theme;

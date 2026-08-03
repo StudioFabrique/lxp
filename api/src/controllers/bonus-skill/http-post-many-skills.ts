@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 
-import { badQuery } from "../../utils/constantes";
-import postManySkills from "../../models/bonus-skill/post-many-skills";
-import { customEscape } from "../../helpers/custom-escape";
+import { badQuery } from "../../utils/constantes.ts";
+import postManySkills from "../../models/bonus-skill/post-many-skills.ts";
+import { customEscape } from "../../helpers/custom-escape.ts";
 
 async function httpPostManySkills(req: Request, res: Response) {
   const result = validationResult(req);

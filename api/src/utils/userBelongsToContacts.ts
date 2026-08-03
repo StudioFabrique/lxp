@@ -1,5 +1,5 @@
-import User from "./interfaces/db/user";
-import { IRole } from "./interfaces/db/role";
+import User from "./interfaces/db/user.ts";
+import { type IRole } from "./interfaces/db/role.ts";
 
 export default async function userBelongsToContacts(
   userMdbid: string,

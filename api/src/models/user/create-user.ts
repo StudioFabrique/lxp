@@ -1,10 +1,10 @@
-import User, { IUser } from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
-import Role from "../../utils/interfaces/db/role";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import { prisma } from "../../utils/db.ts";
+import Role from "../../utils/interfaces/db/role.ts";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import { activationToken } from "../../helpers/activation-token";
-import { sendPasswordEmail } from "../../services/mailer";
+import { activationToken } from "../../helpers/activation-token.ts";
+import { sendPasswordEmail } from "../../services/mailer.ts";
 
 export default async function createUser(user: IUser, roleId: string) {
   try {

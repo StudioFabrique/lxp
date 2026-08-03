@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import getCourseDates from "../../models/course/get-courses-dates";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import getCourseDates from "../../models/course/get-courses-dates.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 async function httpGetCourseDates(req: Request, res: Response) {
   const { courseId } = req.params;

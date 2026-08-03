@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
-import { IRole } from "./role";
-import { IGroup } from "./group";
-import { IGraduation } from "./graduation";
-import { IHobby } from "./hobby";
-import { ILink } from "./link";
-import { IConnectionInfos } from "./connection-infos";
-import { IStudentFeedback } from "./student-feedback";
-import { IPromptStats } from "./prompt-stats";
+import { type IRole } from "./role.ts";
+import { type IGroup } from "./group.ts";
+import { type IGraduation } from "./graduation.ts";
+import { type IHobby } from "./hobby.ts";
+import { type ILink } from "./link.ts";
+import { type IConnectionInfos } from "./connection-infos.ts";
+import { type IStudentFeedback } from "./student-feedback.ts";
+import { type IPromptStats } from "./prompt-stats.ts";
 
 export interface IUser extends Document {
   email: string;

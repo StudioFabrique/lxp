@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 
-import { serverIssue } from "../../utils/constantes";
-import putFormationTags from "../../models/formation/put-formation-tags";
+import { serverIssue } from "../../utils/constantes.ts";
+import putFormationTags from "../../models/formation/put-formation-tags.ts";
 
 async function httpPutFormationTags(req: Request, res: Response) {
   const result = validationResult(req);

@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function postManySkills(parcoursId: number, newSkills: Array<any>) {
   try {

@@ -1,8 +1,8 @@
-import { NextFunction, Response } from "express";
+import { type NextFunction, type Response } from "express";
 
-import postDuplicateResources from "../../models/lesson/post-duplicate-resources";
-import { serverIssue } from "../../utils/constantes";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import postDuplicateResources from "../../models/lesson/post-duplicate-resources.ts";
+import { serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpPostDuplicateResources(
   req: CustomRequest,

@@ -2,36 +2,36 @@
 import express from "express";
 
 // Import des différents routeurs pour l'authentification et la gestion des utilisateurs
-import authRouter from "./auth/auth.router";
-import userRouter from "./user/user.router";
-import groupRouter from "./group.router";
+import authRouter from "./auth/auth.router.ts";
+import userRouter from "./user/user.router.ts";
+import groupRouter from "./group.router.ts";
 
 // Import des routeurs liés au parcours pédagogique
-import parcoursRouter from "./parcours/parcours.router";
-import skillsRouter from "./skills.router";
-import tagRouter from "./tags/tag.router";
-import formationRouter from "./formation/formation.router";
-import objectiveRouter from "./objective/objective.router";
-import moduleRouter from "./modules/module-router";
-import bonusSkillRouter from "./bonus-skill.router";
+import parcoursRouter from "./parcours/parcours.router.ts";
+import skillsRouter from "./skills.router.ts";
+import tagRouter from "./tags/tag.router.ts";
+import formationRouter from "./formation/formation.router.ts";
+import objectiveRouter from "./objective/objective.router.ts";
+import moduleRouter from "./modules/module-router.ts";
+import bonusSkillRouter from "./bonus-skill.router.ts";
 
 // Import des routeurs liés aux permissions et à la gestion des cours
-import permissionRouter from "./permission/permission.router";
-import courseRouter from "./course/course.router";
-import lessonRouter from "./lesson/lesson.router";
-import checkPermissions from "../../middleware/check-permissions";
-import activityRouter from "./activity/activityRouter";
-import quizRouter from "./quiz/quiz.router";
+import permissionRouter from "./permission/permission.router.ts";
+import courseRouter from "./course/course.router.ts";
+import lessonRouter from "./lesson/lesson.router.ts";
+import checkPermissions from "../../middleware/check-permissions.ts";
+import activityRouter from "./activity/activityRouter.ts";
+import quizRouter from "./quiz/quiz.router.ts";
 
 // Import des routeurs pour les statistiques, évaluations et médias
-import statsRouter from "./stats.router";
-import evaluationRouter from "./evaluation/evaluation.router";
-import mediaRouter from "./mediatheque/mediatheque.router";
-import { uploadCompanyLogo } from "../../middleware/upload-company-image";
-import httpPostCompanyLogo from "../../controllers/http-post-company-logo";
-import resourcesRouter from "./resources/resources.router";
-import chatbotRouter from "./chatbot/chatbot.router";
-import dashboardIa from "./dashboard-ia/dashboard-ia-router";
+import statsRouter from "./stats.router.ts";
+import evaluationRouter from "./evaluation/evaluation.router.ts";
+import mediaRouter from "./mediatheque/mediatheque.router.ts";
+import { uploadCompanyLogo } from "../../middleware/upload-company-image.ts";
+import httpPostCompanyLogo from "../../controllers/http-post-company-logo.ts";
+import resourcesRouter from "./resources/resources.router.ts";
+import chatbotRouter from "./chatbot/chatbot.router.ts";
+import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();

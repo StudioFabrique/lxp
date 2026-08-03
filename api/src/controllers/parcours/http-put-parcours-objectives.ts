@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import putParcoursObjectives from "../../models/parcours/put-parcours-objectives";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import putParcoursObjectives from "../../models/parcours/put-parcours-objectives.ts";
 
 async function httpPutParcoursObjectives(req: Request, res: Response) {
   const result = validationResult(req);

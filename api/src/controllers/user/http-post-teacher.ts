@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 
-import postTeacher from "../../models/user/post-teacher";
-import { serverIssue } from "../../utils/constantes";
+import postTeacher from "../../models/user/post-teacher.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 async function httpPostTeacher(req: Request, res: Response) {
   const result: any = validationResult(req);

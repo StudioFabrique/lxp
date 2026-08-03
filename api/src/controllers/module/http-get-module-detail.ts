@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import getModuleDetail from "../../models/module/get-module-detail";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import getModuleDetail from "../../models/module/get-module-detail.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpGetModuleDetail(
   req: CustomRequest,

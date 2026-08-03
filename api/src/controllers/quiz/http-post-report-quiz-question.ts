@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postReportQuizQuestion from "../../models/quiz/post-report-quiz-question";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postReportQuizQuestion from "../../models/quiz/post-report-quiz-question.ts";
 
 /**
  * POST /quiz/question/report

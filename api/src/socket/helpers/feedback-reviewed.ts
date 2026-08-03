@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
-import getConnectedStudent from "../db/get-connected-student";
-import updateFeedback from "../db/update-feedback";
+import getConnectedStudent from "../db/get-connected-student.ts";
+import updateFeedback from "../db/update-feedback.ts";
 
 // met à jour le statut d'un feedback dans la bdd
 export async function feedbackReviewed(

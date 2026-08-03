@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import getOneLesson from "../../models/lesson/get-one-lesson";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response, type NextFunction } from "express";
+import getOneLesson from "../../models/lesson/get-one-lesson.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetOneLesson(
   req: Request,

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import getAllUsers from "../../models/user/get-all-users";
+import { type Request, type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import getAllUsers from "../../models/user/get-all-users.ts";
 import { validationResult } from "express-validator";
 
 async function httpGetAllUsers(req: Request, res: Response) {

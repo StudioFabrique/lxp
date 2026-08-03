@@ -1,6 +1,6 @@
-import StudentFeedback from "../../utils/interfaces/db/student-feedback";
-import User from "../../utils/interfaces/db/user";
-import UserSocket from "../../utils/interfaces/db/user-socket";
+import StudentFeedback from "../../utils/interfaces/db/student-feedback.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function updateFeedback(
   feedbackId: string,

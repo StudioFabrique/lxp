@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function getParcours() {
   const parcoursList = await prisma.parcours.findMany({

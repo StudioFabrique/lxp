@@ -1,9 +1,9 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { noAccess, serverIssue } from "../../utils/constantes";
-import createParcours from "../../models/parcours/create-parcours";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { customEscape } from "../../helpers/custom-escape";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import createParcours from "../../models/parcours/create-parcours.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { customEscape } from "../../helpers/custom-escape.ts";
 
 async function httpCreateParcours(req: CustomRequest, res: Response) {
   try {

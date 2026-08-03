@@ -1,7 +1,7 @@
-import { BonusSkill, Contact } from "@prisma/client";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
-import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image";
+import { type BonusSkill, type Contact } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
 
 async function putModuleParcours(
   module: string,

@@ -1,6 +1,6 @@
-import User, { IUser } from "../../utils/interfaces/db/user";
-import Role from "../../utils/interfaces/db/role";
-import { sendUpdatedUserEmail } from "../../services/mailer";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import Role from "../../utils/interfaces/db/role.ts";
+import { sendUpdatedUserEmail } from "../../services/mailer.ts";
 
 export default async function editUser(userId: string, user: IUser) {
   // Vérifier si l'utilisateur existe

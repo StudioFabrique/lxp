@@ -1,6 +1,6 @@
-import Group from "../../utils/interfaces/db/group";
-import Role from "../../utils/interfaces/db/role";
-import { prisma } from "../../utils/db";
+import Group from "../../utils/interfaces/db/group.ts";
+import Role from "../../utils/interfaces/db/role.ts";
+import { prisma } from "../../utils/db.ts";
 
 type GroupsList = {
   _id: string;

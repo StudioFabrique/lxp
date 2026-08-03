@@ -1,14 +1,14 @@
-import { NextFunction, Response } from "express";
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import { type NextFunction, type Response } from "express";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import {
-  AppAction,
-  AppSubject,
+  type AppAction,
+  type AppSubject,
   appSubjects,
-} from "../utils/rbac/ability";
+} from "../utils/rbac/ability.ts";
 import {
   authenticateSession,
   AuthenticationError,
-} from "../utils/services/auth/authenticate-session";
+} from "../utils/services/auth/authenticate-session.ts";
 
 const knownSubjects = new Set<string>(appSubjects);
 

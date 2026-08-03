@@ -1,11 +1,11 @@
-import { prisma } from "./utils/db";
+import { prisma } from "./utils/db.ts";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import User from "./utils/interfaces/db/user";
-import Role from "./utils/interfaces/db/role";
-import Group from "./utils/interfaces/db/group";
-import StudentFeedback from "./utils/interfaces/db/student-feedback";
+import User from "./utils/interfaces/db/user.ts";
+import Role from "./utils/interfaces/db/role.ts";
+import Group from "./utils/interfaces/db/group.ts";
+import StudentFeedback from "./utils/interfaces/db/student-feedback.ts";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 

@@ -1,4 +1,4 @@
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function getUserData(userId: string) {
   const userData = await User.findOne(

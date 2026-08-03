@@ -1,26 +1,26 @@
 import { Router } from "express";
-import httpCreateGroup from "../../controllers/group/http-create-group";
-import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
+import httpCreateGroup from "../../controllers/group/http-create-group.ts";
+import httpGetAllGroups from "../../controllers/group/http-get-all-groups.ts";
 import {
   checkValidatorResult,
   getAllValidator,
   groupValidator,
   searchValidator,
-} from "../../middleware/validators";
-import httpSearchGroup from "../../controllers/group/http-search-group";
-import checkPermissions from "../../middleware/check-permissions";
-import { createFileUploadMiddleware } from "../../middleware/fileUpload";
-import { headerImageMaxSize } from "../../config/images-sizes";
-import jsonParser from "../../middleware/json-parser";
-import httpDeleteGroup from "../../controllers/group/http-delete-group";
-import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
-import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
-import httpPutGroup from "../../controllers/group/http-put-group";
-import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group";
-import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups";
+} from "../../middleware/validators.ts";
+import httpSearchGroup from "../../controllers/group/http-search-group.ts";
+import checkPermissions from "../../middleware/check-permissions.ts";
+import { createFileUploadMiddleware } from "../../middleware/fileUpload.ts";
+import { headerImageMaxSize } from "../../config/images-sizes.ts";
+import jsonParser from "../../middleware/json-parser.ts";
+import httpDeleteGroup from "../../controllers/group/http-delete-group.ts";
+import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group.ts";
+import httpGetGroupDetails from "../../controllers/group/http-get-group-details.ts";
+import httpPutGroup from "../../controllers/group/http-put-group.ts";
+import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group.ts";
+import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups.ts";
 import { body, param, query } from "express-validator";
-import { regexStringManyMongoId } from "../../utils/constantes";
-import httpGetStudentGroups from "../../controllers/group/http-get-student-groups";
+import { regexStringManyMongoId } from "../../utils/constantes.ts";
+import httpGetStudentGroups from "../../controllers/group/http-get-student-groups.ts";
 const groupRouter = Router();
 
 // Retourne la liste des groupes d'étudiants avec des informations minimales destinées à être affichées dans un tableau

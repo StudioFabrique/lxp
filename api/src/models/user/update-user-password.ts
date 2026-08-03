@@ -1,5 +1,5 @@
 import { compare, genSalt, hash } from "bcrypt";
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function updateUserPassword(
   _id: string,

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { putResetPasswordByEmail } from "../../models/user/put-reset-password";
+import { type Request, type Response, type NextFunction } from "express";
+import { putResetPasswordByEmail } from "../../models/user/put-reset-password.ts";
 
 export default async function httpPutResetPasswordEmail(
   req: Request,

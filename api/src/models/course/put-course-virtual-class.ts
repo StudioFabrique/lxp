@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseVirtualClass(courseId: number, virtualClass: string) {
   const existingCourse = await prisma.course.findFirst({

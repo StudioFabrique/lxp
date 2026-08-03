@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { serverIssue } from "../../utils/constantes";
-import deleteResource from "../../models/resources/delete-resource";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { serverIssue } from "../../utils/constantes.ts";
+import deleteResource from "../../models/resources/delete-resource.ts";
 
 export default async function httpDeleteResource(
   req: CustomRequest,

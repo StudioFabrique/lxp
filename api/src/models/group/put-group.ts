@@ -1,7 +1,7 @@
-import { prisma } from "../../utils/db";
-import Group, { IGroup } from "../../utils/interfaces/db/group";
-import User, { IUser } from "../../utils/interfaces/db/user";
-import activateMultipleUsers from "../user/activate-multiple-users";
+import { prisma } from "../../utils/db.ts";
+import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import activateMultipleUsers from "../user/activate-multiple-users.ts";
 
 export default async function putGroup(
   id: string,

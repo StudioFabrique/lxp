@@ -3,43 +3,43 @@ import { body, param, query } from "express-validator";
 import path from "path";
 
 import multer from "multer";
-import { headerImageMaxSize } from "../../../config/images-sizes";
-import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
-import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
-import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
-import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
-import httpCreateUser from "../../../controllers/user/http-create-user";
-import httpDeleteUser from "../../../controllers/user/http-delete-user";
-import httpGetContacts from "../../../controllers/user/http-get-contacts";
-import httpGetUserData from "../../../controllers/user/http-get-user-data";
-import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
-import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
-import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
-import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
-import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
-import httpPostCheckActivationToken from "../../../controllers/user/http-post-check-activation-token";
-import httpPutInvitation from "../../../controllers/user/http-put-invitation";
-import httpPutPassword from "../../../controllers/user/http-put-password";
-import httpSearchUser from "../../../controllers/user/http-search-user";
-import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
-import httpUpdateUser from "../../../controllers/user/http-update-user";
-import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
-import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
+import { headerImageMaxSize } from "../../../config/images-sizes.ts";
+import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments.ts";
+import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks.ts";
+import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback.ts";
+import httpCreateManyUser from "../../../controllers/user/http-create-many-users.ts";
+import httpCreateUser from "../../../controllers/user/http-create-user.ts";
+import httpDeleteUser from "../../../controllers/user/http-delete-user.ts";
+import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
+import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
+import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours.ts";
+import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group.ts";
+import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank.ts";
+import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role.ts";
+import httpGetUsersStats from "../../../controllers/user/http-get-users-stats.ts";
+import httpPostCheckActivationToken from "../../../controllers/user/http-post-check-activation-token.ts";
+import httpPutInvitation from "../../../controllers/user/http-put-invitation.ts";
+import httpPutPassword from "../../../controllers/user/http-put-password.ts";
+import httpSearchUser from "../../../controllers/user/http-search-user.ts";
+import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status.ts";
+import httpUpdateUser from "../../../controllers/user/http-update-user.ts";
+import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles.ts";
+import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status.ts";
 import {
   paginationValidator,
   stringValidateGeneric,
-} from "../../../helpers/custom-validators";
-import activateAccount from "../../../middleware/activate-account";
-import checkPermissions from "../../../middleware/check-permissions";
-import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
-import jsonParser from "../../../middleware/json-parser";
+} from "../../../helpers/custom-validators.ts";
+import activateAccount from "../../../middleware/activate-account.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload.ts";
+import jsonParser from "../../../middleware/json-parser.ts";
 import {
   getAllByRankValidator,
   manyUsersValidator,
   userValidator,
-} from "../../../middleware/validators";
-import postTeacherRouter from "./post-teacher";
-import userProfileRouter from "./profile/user-profile.router";
+} from "../../../middleware/validators.ts";
+import postTeacherRouter from "./post-teacher.ts";
+import userProfileRouter from "./profile/user-profile.router.ts";
 import {
   getUsersByRoleValidator,
   postCheckEmailValidator,
@@ -48,23 +48,23 @@ import {
   updateManyUsersStatusValidator,
   updateUserStatusValidator,
   userIdValidator,
-} from "./user-validators";
-import httpPutResetPassword from "../../../controllers/user/http-put-reset-password";
-import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-password-email";
-import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
-import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
-import checkValidation from "../../../middleware/check-validation";
-import rateLimiter from "../../../middleware/rate-limiter";
-import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby";
-import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby";
-import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network";
-import httpDeleteSocialNetwork from "../../../controllers/user/social-network/http-delete-social-network";
+} from "./user-validators.ts";
+import httpPutResetPassword from "../../../controllers/user/http-put-reset-password.ts";
+import httpPutResetPasswordEmail from "../../../controllers/user/http-put-reset-password-email.ts";
+import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments.ts";
+import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations.ts";
+import checkValidation from "../../../middleware/check-validation.ts";
+import rateLimiter from "../../../middleware/rate-limiter.ts";
+import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby.ts";
+import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby.ts";
+import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network.ts";
+import httpDeleteSocialNetwork from "../../../controllers/user/social-network/http-delete-social-network.ts";
 
 const userRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "..", "..", "..", "..", "uploads"));
+    cb(null, path.join(import.meta.dirname, "..", "..", "..", "..", "uploads"));
   },
   filename: function (req, file, cb) {
     if (file.mimetype.startsWith("image")) {

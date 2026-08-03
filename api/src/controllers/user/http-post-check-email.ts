@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import postCheckEmail from "../../models/user/post-check-email";
+import { type Request, type Response, type NextFunction } from "express";
+import postCheckEmail from "../../models/user/post-check-email.ts";
 
 export default async function httpPostCheckEmail(
   req: Request,

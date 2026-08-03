@@ -3,12 +3,12 @@ import express from "express";
 import { body } from "express-validator";
 
 // Import des contrôleurs pour la gestion des parcours
-import httpGetParcours from "../../../controllers/parcours/http-get-parcours";
-import httpDeleteParcoursById from "../../../controllers/parcours/http-delete-parcours-by-id";
-import httpCreateParcours from "../../../controllers/parcours/http-create-parcours";
-import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-class";
-import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
-import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
+import httpGetParcours from "../../../controllers/parcours/http-get-parcours.ts";
+import httpDeleteParcoursById from "../../../controllers/parcours/http-delete-parcours-by-id.ts";
+import httpCreateParcours from "../../../controllers/parcours/http-create-parcours.ts";
+import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-class.ts";
+import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives.ts";
+import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives.ts";
 import {
   getParcoursByFormationValidator,
   getParcoursSelectValidator,
@@ -21,25 +21,25 @@ import {
   updateDatesValidator,
   updateInfosValidator,
   virtualClassValidator,
-} from "./parcours-validator";
-import httpGetParcoursByFormation from "../../../controllers/parcours/http-get-parcours-by-formation";
-import httpGetParcoursById from "../../../controllers/parcours/http-get-parcours-by-id";
-import httpUpdateParcoursInfos from "../../../controllers/parcours/http-update-parcours-infos";
-import httpUpdateParcoursDates from "../../../controllers/parcours/http-update-parcours-dates";
-import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours-tags";
-import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parcours-contacts";
-import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
-import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
-import checkPermissions from "../../../middleware/check-permissions";
-import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
-import httpUpdateImage from "../../../controllers/parcours/http-update-image";
-import { headerImageMaxSize } from "../../../config/images-sizes";
-import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
-import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
-import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
-import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
-import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts";
-import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours";
+} from "./parcours-validator.ts";
+import httpGetParcoursByFormation from "../../../controllers/parcours/http-get-parcours-by-formation.ts";
+import httpGetParcoursById from "../../../controllers/parcours/http-get-parcours-by-id.ts";
+import httpUpdateParcoursInfos from "../../../controllers/parcours/http-update-parcours-infos.ts";
+import httpUpdateParcoursDates from "../../../controllers/parcours/http-update-parcours-dates.ts";
+import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours-tags.ts";
+import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parcours-contacts.ts";
+import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups.ts";
+import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload.ts";
+import httpUpdateImage from "../../../controllers/parcours/http-update-image.ts";
+import { headerImageMaxSize } from "../../../config/images-sizes.ts";
+import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours.ts";
+import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student.ts";
+import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours.ts";
+import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours.ts";
+import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts.ts";
+import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours.ts";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();

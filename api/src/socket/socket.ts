@@ -1,19 +1,19 @@
 import { Server, Socket } from "socket.io";
-import connect from "./db/connect";
-import disconnect from "./db/disconnect";
-import countConnectedUser from "./db/count-connected-students";
-import postFeedBack from "../models/user/feedback/post-feedback";
-import congratulateStudent from "./db/congratulate-student";
-import User from "../utils/interfaces/db/user";
-import getUserGroupId from "./db/get-user-group-id";
-import getFeedbacks from "./db/get-connected-contacts";
-import getUserData from "./db/get-user-data";
-import { feedbackReviewed } from "./helpers/feedback-reviewed";
-import { io } from "../server";
-import { logger } from "../utils/logs/logger";
-import { imageToDataUrl } from "../utils/images/image-source";
-import { AppAction, AppSubject } from "../utils/rbac/ability";
-import { authenticateSession } from "../utils/services/auth/authenticate-session";
+import connect from "./db/connect.ts";
+import disconnect from "./db/disconnect.ts";
+import countConnectedUser from "./db/count-connected-students.ts";
+import postFeedBack from "../models/user/feedback/post-feedback.ts";
+import congratulateStudent from "./db/congratulate-student.ts";
+import User from "../utils/interfaces/db/user.ts";
+import getUserGroupId from "./db/get-user-group-id.ts";
+import getFeedbacks from "./db/get-connected-contacts.ts";
+import getUserData from "./db/get-user-data.ts";
+import { feedbackReviewed } from "./helpers/feedback-reviewed.ts";
+import { io } from "../server.ts";
+import { logger } from "../utils/logs/logger.ts";
+import { imageToDataUrl } from "../utils/images/image-source.ts";
+import { type AppAction, type AppSubject } from "../utils/rbac/ability.ts";
+import { authenticateSession } from "../utils/services/auth/authenticate-session.ts";
 
 async function authorizeSocket(
   socket: Socket,

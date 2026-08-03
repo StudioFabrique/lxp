@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import createHobby from "../../../models/user/hobby/create-hobby";
+import { type Request, type Response } from "express";
+import createHobby from "../../../models/user/hobby/create-hobby.ts";
 
 export default async function httpPostHobby(req: Request, res: Response) {
   const { id, title } = req.body;
