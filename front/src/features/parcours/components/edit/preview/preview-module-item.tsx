@@ -5,6 +5,8 @@ import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip
 import defaultImage from "../../../../../../src/assets/images/module-default-thumb.png";
 import { bgImageGradient } from "../../../../../utils/helpers/color-helpers";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
+import { Edit } from "lucide-react";
+import { Link } from "react-router";
 
 interface PreviewModuleItemProps {
   module: Module;
@@ -50,9 +52,16 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   return (
     <div className={style}>
       <span style={classImage}></span>
-      <span className="w-full h-[5rem] px-4 flex flex-col justify-center items-start relative">
+      <span className="w-full h-20 px-4 flex flex-col justify-center items-start relative">
         <p className="text-xs">{dates}</p>
         <p className="text-xs xl:text-sm font-bold">{text}</p>
+        <Link
+          to={`?step=4&moduleId=${module.id}`}
+          reloadDocument
+          className="self-end btn btn-sm btn-ghost tooltip tooltip-left"
+        >
+          <Edit className="h-4 w-4" />
+        </Link>
         {notValid ? (
           <ToolTipWarning absolutePos message={notValidModuleTooltip} />
         ) : null}
