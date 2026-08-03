@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IGroup } from "../../utils/interfaces/db/group";
+import type { IGroup } from "../../utils/interfaces/db/group";
 import createGroup from "../../models/group/create-group";
 import {
   alreadyExist,
@@ -8,7 +8,7 @@ import {
 } from "../../utils/constantes";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
-import { IUser } from "../../utils/interfaces/db/user";
+import type { IUser } from "../../utils/interfaces/db/user";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const uploadedFile = req.file;

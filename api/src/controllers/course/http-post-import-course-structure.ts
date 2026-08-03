@@ -1,7 +1,7 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { prisma } from "../../utils/db";
 import postCourseStructure from "../../models/course/post-course-structure";
+import getAdminId from "../../models/course/get-admin-id";
 
 export default async function httpPostImportCourseStructure(
   req: CustomRequest,
@@ -12,11 +12,11 @@ export default async function httpPostImportCourseStructure(
     req.body;
 
   try {
-    const admin = await prisma.admin.findFirst({ where: { idMdb: userId } });
-    if (!admin) return res.status(404).json({ message: "Admin introuvable" });
+    const adminId = await getAdminId(userId);
+    if (!adminId) return res.status(404).json({ message: "Admin introuvable" });
 
     const result = await postCourseStructure(
-      admin.id,
+      adminId,
       moduleId,
       title,
       description,

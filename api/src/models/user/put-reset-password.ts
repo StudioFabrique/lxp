@@ -25,3 +25,12 @@ export default async function putResetPassword(userId: string) {
     }
   }
 }
+
+export async function putResetPasswordByEmail(email: string) {
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser)
+    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+
+  return putResetPassword(existingUser._id.toString());
+}

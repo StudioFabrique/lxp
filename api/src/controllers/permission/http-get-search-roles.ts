@@ -1,17 +1,13 @@
 import { Request, Response } from "express";
-import { getAllRolesWithSearch } from "../../utils/rbac/rbac-utils";
+import { searchRoles } from "../../models/permission/roles";
 
 export default async function httpGetSearchRoles(req: Request, res: Response) {
   try {
-    const { searchValue } = req.params;
-
-    const roles = await getAllRolesWithSearch(searchValue);
-    return res
-      .status(200)
-      .json({ message: "les rôles ont bien été récupérés", data: roles });
-  } catch (error) {
-    console.log(error);
-
+    return res.status(200).json({
+      message: "les rôles ont bien été récupérés",
+      data: await searchRoles(req.params.searchValue),
+    });
+  } catch {
     return res.status(500).json({ message: "Problème serveur" });
   }
 }

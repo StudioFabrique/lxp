@@ -1,32 +1,17 @@
 import { Request, Response } from "express";
-import { prisma } from "../../utils/db";
+import putParcoursModules from "../../models/module/put-parcours-modules";
 
 async function httpParcoursModules(req: Request, res: Response) {
   try {
     const parcoursId = +req.params.parcoursId;
     const modulesId = req.body;
 
-    const result = await prisma.parcours.update({
-      where: { id: parcoursId },
-      data: {
-        modules: {
-          connect: modulesId.map((mId: number) => {
-            return {
-              module: {
-                connect: { id: mId },
-              },
-            };
-          }),
-        },
-      },
-      select: {
-        modules: { select: { id: true } },
-      },
-    });
+    const result = await putParcoursModules(parcoursId, modulesId);
 
     return res.status(201).json(result);
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Erreur serveur" });
   }
 }
 
