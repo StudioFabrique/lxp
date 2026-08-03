@@ -2,7 +2,7 @@ import fs from "fs";
 import { Response } from "express";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 import { serverIssue } from "../../../utils/constantes";
-import User from "../../../utils/interfaces/db/user";
+import updateUserAvatar from "../../../models/user/update-user-avatar";
 import { deleteTempUploadedFile } from "../../../middleware/fileUpload";
 
 export default async function httpUpdateUserAvatar(
@@ -17,7 +17,7 @@ export default async function httpUpdateUserAvatar(
       try {
         {
           const string64 = await fs.promises.readFile(avatarFile.path);
-          await User.updateOne({ _id: id }, { avatar: string64 });
+          await updateUserAvatar(id, string64);
           await deleteTempUploadedFile(req);
         }
       } catch (error: any) {

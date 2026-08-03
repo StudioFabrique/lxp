@@ -3,7 +3,7 @@ import { prisma } from "../../utils/db";
 import {
   AiQuizQuestion,
   toQuizQuestionCreateData,
-} from "./quiz-question";
+} from "../../services/quiz/quiz-question";
 
 export class QuizRepository {
   constructor(private readonly database: PrismaClient = prisma) {}

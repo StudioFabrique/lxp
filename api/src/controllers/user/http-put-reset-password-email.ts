@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import putResetPassword from "../../models/user/put-reset-password";
-import User from "../../utils/interfaces/db/user";
+import { putResetPasswordByEmail } from "../../models/user/put-reset-password";
 
 export default async function httpPutResetPasswordEmail(
   req: Request,
@@ -10,12 +9,7 @@ export default async function httpPutResetPasswordEmail(
   try {
     const { email } = req.body;
 
-    const existingUser = await User.findOne({ email });
-
-    if (!existingUser)
-      throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
-
-    await putResetPassword(existingUser._id.toString());
+    await putResetPasswordByEmail(email);
 
     const result = {
       statusCode: 200,

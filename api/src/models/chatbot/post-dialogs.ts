@@ -1,4 +1,4 @@
-import { DialogEntry } from "../../routes/v1/chatbot/chatbot-validators";
+import type { DialogEntry } from "../../utils/interfaces/chatbot/dialog-entry";
 import ChatDialogs, {
   CourseSource,
 } from "../../utils/interfaces/db/chat-dialogs";
@@ -48,4 +48,8 @@ export default async function postDialogs(
   await newDialog.save();
 
   return;
+}
+
+export function clearDialogs(userId: string) {
+  return ChatDialogs.deleteMany({ userId });
 }

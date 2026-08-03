@@ -1,13 +1,13 @@
 import { Response } from "express";
-import getCourseById from "../../models/course/get-course-by-id";
-import { trackTokens } from "../../models/stats/trackTokens";
+import {
+  prepareEndingQuizGeneration,
+  QuizGenerationError,
+} from "../../models/quiz/quiz-generation";
 import {
   AiApiError,
   AiConfigurationError,
-  aiApiClient,
 } from "../../services/ai/ai-api-client";
 import { toQuizApiQuestion } from "../../services/quiz/quiz-question";
-import { quizRepository } from "../../services/quiz/quiz-repository";
 import { relayQuizStream } from "../../services/quiz/quiz-stream";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 
@@ -27,37 +27,21 @@ export default async function httpGetEndingCourseQuizStream(
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     }
 
-    const course = await getCourseById(courseId);
-    if (!course) return res.status(404).json({ error: "Cours introuvable" });
-    if (!course.courseSlug) {
-      return res.status(409).json({
-        code: "AI_CONTENT_NOT_INDEXED",
-        error: "Les fonctionnalités IA de ce cours copié ne sont pas indexées.",
-      });
-    }
-
-    const student = await quizRepository.findStudentByMongoId(String(userId));
-    if (!student) {
-      return res
-        .status(404)
-        .json({ error: "Profil étudiant introuvable dans Postgres" });
-    }
-
-    const cachedQuiz = await quizRepository.findEndingQuiz(
+    const generation = await prepareEndingQuizGeneration(
       courseId,
-      student.id,
+      String(userId),
     );
 
-    if (cachedQuiz?.questions.length) {
+    if (generation.kind === "cached") {
       res.setHeader("Content-Type", "application/json");
       res.setHeader("Transfer-Encoding", "chunked");
-      for (const question of cachedQuiz.questions) {
+      for (const question of generation.questions) {
         res.write(`${JSON.stringify(toQuizApiQuestion(question))}\n`);
       }
       res.write(
         `${JSON.stringify({
           event: "done",
-          total_questions: cachedQuiz.questions.length,
+          total_questions: generation.questions.length,
           elapsed_sec: 0,
           tokens: { total_tokens: 0 },
         })}\n`,
@@ -65,43 +49,9 @@ export default async function httpGetEndingCourseQuizStream(
       return res.end();
     }
 
-    const aiStream = await aiApiClient.postStream("/quiz/generate/stream", {
-      subject: userId,
-      accept: "application/json",
-      body: {
-        course_slug: course.courseSlug,
-        num_questions: 10,
-        profile: {
-          user_id: String(userId),
-          course_id: String(courseId),
-        },
-      },
-    });
-
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Transfer-Encoding", "chunked");
-
-    let generatedQuizId: number | undefined;
-    await relayQuizStream(aiStream, res, {
-      onQuestion: async (question) => {
-        if (!generatedQuizId) {
-          const quiz = await quizRepository.createEndingQuiz(
-            `Quiz de fin - ${course.title}`,
-            courseId,
-            student.id,
-          );
-          generatedQuizId = quiz.id;
-        }
-
-        await quizRepository.saveQuestion(question, {
-          quizId: generatedQuizId,
-        });
-      },
-      onDone: async (event) => {
-        const totalTokens = event.tokens?.total_tokens;
-        if (totalTokens) await trackTokens(userId, totalTokens);
-      },
-    });
+    await relayQuizStream(generation.stream, res, generation);
   } catch (error) {
     console.error("Erreur de génération du quiz de fin :", error);
 
@@ -115,6 +65,12 @@ export default async function httpGetEndingCourseQuizStream(
     }
     if (error instanceof AiApiError) {
       return res.status(error.status).json({ error: error.message });
+    }
+    if (error instanceof QuizGenerationError) {
+      return res.status(error.statusCode).json({
+        ...(error.code && { code: error.code }),
+        error: error.message,
+      });
     }
 
     return res.status(500).json({ error: "Impossible de joindre l'API" });

@@ -16,7 +16,12 @@ export default async function httpGetMedias(
 ) {
   try {
     // Récupération des images depuis la base de données
-    const response = await getMediaImages(req);
+    const response = await getMediaImages({
+      page: req.query.page?.toString(),
+      limit: req.query.limit?.toString(),
+      type: req.query.type?.toString(),
+      sort: req.query.sort?.toString(),
+    });
 
     // Envoi de la réponse avec les images récupérées
     next({
