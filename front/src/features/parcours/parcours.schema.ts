@@ -33,3 +33,5 @@ export const moduleCreateSchema = z.object({
     .optional()
     .default(""),
 });
+
+export type ModuleCreateFormValues = z.input<typeof moduleCreateSchema>;

@@ -3,6 +3,7 @@ import { Copy, PlusCircle } from "lucide-react";
 type ModuleHeaderProps = {
   showForm: boolean;
   parcoursId?: number;
+  isSubmitting: boolean;
   onCreateNew: () => void;
   onAddExisting: () => void;
 };
@@ -13,6 +14,7 @@ type ModuleHeaderProps = {
  */
 export default function ModuleHeader({
   showForm,
+  isSubmitting,
   onCreateNew,
   onAddExisting,
 }: ModuleHeaderProps) {
@@ -24,13 +26,17 @@ export default function ModuleHeader({
       <span className="flex gap-x-4 items-center">
         <button
           className="btn btn-primary"
-          disabled={showForm}
+          disabled={showForm || isSubmitting}
           onClick={onCreateNew}
         >
           <PlusCircle />
           Créer un nouveau module
         </button>
-        <button className="btn btn-primary" onClick={onAddExisting}>
+        <button
+          className="btn btn-primary"
+          disabled={isSubmitting}
+          onClick={onAddExisting}
+        >
           <Copy />
           Ajouter un module existant
         </button>

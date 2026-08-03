@@ -359,199 +359,196 @@ export default function useImportCourses() {
   /**
    * PROCESSUS DE PERSISTANCE DES STRUCURES ET MÉDIAS SUR LE SERVEUR DE DONNÉES SQL
    */
-  const processImport = useCallback(async (coursesOverride?: CourseImport[]) => {
-    const coursesToImport = coursesOverride ?? importedCourses;
-    if (!coursesToImport?.length || isImportRunning.current) return;
+  const processImport = useCallback(
+    async (coursesOverride?: CourseImport[]) => {
+      const coursesToImport = coursesOverride ?? importedCourses;
+      if (!coursesToImport?.length || isImportRunning.current) return;
 
-    isImportRunning.current = true;
-    setIsImporting(true);
-    setIsImportComplete(false);
-    setCriticalImportError("");
-    setImportProgressItems((current) =>
-      current.map((item) =>
-        item.status === "error"
-          ? { ...item, status: "pending", error: undefined }
-          : item,
-      ),
-    );
-
-    const totalItems = buildImportProgressItems(coursesToImport).length;
-    let activeItemId: string | null = null;
-    let activeItemTitle = "";
-
-    const updateItem = (
-      itemId: string,
-      status: ImportProgressStatus,
-      itemError?: string,
-    ) => {
+      isImportRunning.current = true;
+      setIsImporting(true);
+      setIsImportComplete(false);
+      setCriticalImportError("");
       setImportProgressItems((current) =>
         current.map((item) =>
-          item.id === itemId
-            ? { ...item, status, error: itemError }
+          item.status === "error"
+            ? { ...item, status: "pending", error: undefined }
             : item,
         ),
       );
-    };
 
-    const markItemAsSuccessful = (itemId: string) => {
-      importResume.current.completedItemIds.add(itemId);
-      updateItem(itemId, "success");
-      setUploadProgress(
-        (importResume.current.completedItemIds.size / totalItems) * 100,
-      );
-    };
+      const totalItems = buildImportProgressItems(coursesToImport).length;
+      let activeItemId: string | null = null;
+      let activeItemTitle = "";
 
-    try {
-      for (const course of coursesToImport) {
-        const courseItemId = courseProgressId(course.id);
-        let lessonsMap = importResume.current.courseMappings.get(course.id);
+      const updateItem = (
+        itemId: string,
+        status: ImportProgressStatus,
+        itemError?: string,
+      ) => {
+        setImportProgressItems((current) =>
+          current.map((item) =>
+            item.id === itemId ? { ...item, status, error: itemError } : item,
+          ),
+        );
+      };
 
-        if (!lessonsMap) {
-          activeItemId = courseItemId;
-          activeItemTitle = course.title;
-          updateItem(courseItemId, "processing");
-          setCurrentAction(`Création du cours : ${course.title}`);
-          await new Promise((resolve) => setTimeout(resolve, 50));
+      const markItemAsSuccessful = (itemId: string) => {
+        importResume.current.completedItemIds.add(itemId);
+        updateItem(itemId, "success");
+        setUploadProgress(
+          (importResume.current.completedItemIds.size / totalItems) * 100,
+        );
+      };
 
-          const structurePayload = {
-            title: course.title,
-            description: course.description,
-            courseSlug: course.courseSlug,
-            moduleId: selectedModule?.id,
-            parcoursId: selectedParcours?.id,
-            lessons: course.lessons.map((lesson) => ({
-              id: lesson.id!,
-              title: lesson.title,
-              modalite: lesson.modalite,
-              isSelected: true,
-            })),
-          };
+      try {
+        for (const course of coursesToImport) {
+          const courseItemId = courseProgressId(course.id);
+          let lessonsMap = importResume.current.courseMappings.get(course.id);
 
-          const structureResponse =
-            await courseApi.mutations.importStructure(structurePayload);
-          lessonsMap = structureResponse.lessonsMap;
-          importResume.current.courseMappings.set(course.id, lessonsMap);
-          markItemAsSuccessful(courseItemId);
-        }
-
-        for (const lesson of course.lessons) {
-          const mapping = lessonsMap.find(
-            (candidate) => candidate.tempId === lesson.id,
-          );
-          if (!mapping) {
+          if (!lessonsMap) {
             activeItemId = courseItemId;
-            activeItemTitle = lesson.title;
-            throw new Error(
-              `La leçon « ${lesson.title} » n'a pas pu être associée au cours créé.`,
-            );
+            activeItemTitle = course.title;
+            updateItem(courseItemId, "processing");
+            setCurrentAction(`Création du cours : ${course.title}`);
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            const structurePayload = {
+              title: course.title,
+              description: course.description,
+              courseSlug: course.courseSlug,
+              moduleId: selectedModule?.id,
+              parcoursId: selectedParcours?.id,
+              lessons: course.lessons.map((lesson) => ({
+                id: lesson.id!,
+                title: lesson.title,
+                modalite: lesson.modalite,
+                isSelected: true,
+              })),
+            };
+
+            const structureResponse =
+              await courseApi.mutations.importStructure(structurePayload);
+            lessonsMap = structureResponse.lessonsMap;
+            importResume.current.courseMappings.set(course.id, lessonsMap);
+            markItemAsSuccessful(courseItemId);
           }
-          const realLessonId = mapping.realId;
 
-          for (const activity of lesson.activities) {
-            const activityItemId = activityProgressId(
-              course.id,
-              lesson.id,
-              activity.id,
+          for (const lesson of course.lessons) {
+            const mapping = lessonsMap.find(
+              (candidate) => candidate.tempId === lesson.id,
             );
-            if (
-              importResume.current.completedItemIds.has(activityItemId)
-            ) {
-              continue;
-            }
-
-            activeItemId = activityItemId;
-            activeItemTitle = activity.title || "Activité sans titre";
-            updateItem(activityItemId, "processing");
-            setCurrentAction(`Traitement : ${activity.title}`);
-
-            if (
-              activity.type === "text" &&
-              typeof activity.value === "string"
-            ) {
-              let finalHtml = activity.value;
-              const imagesToProcess = imagesQueue.current.filter((img) =>
-                finalHtml.includes(img.tempId),
+            if (!mapping) {
+              activeItemId = courseItemId;
+              activeItemTitle = lesson.title;
+              throw new Error(
+                `La leçon « ${lesson.title} » n'a pas pu être associée au cours créé.`,
               );
+            }
+            const realLessonId = mapping.realId;
 
-              if (imagesToProcess.length > 0) {
-                for (let i = 0; i < imagesToProcess.length; i++) {
-                  const img = imagesToProcess[i];
-                  setCurrentAction(
-                    `Upload image ${i + 1}/${imagesToProcess.length} pour : ${activity.title}`,
-                  );
-                  await new Promise((r) => setTimeout(r, 20));
-
-                  try {
-                    const formData = new FormData();
-                    formData.append("image", img.file, img.file.name);
-
-                    const response =
-                      await courseApi.mutations.uploadBlogImage(formData);
-
-                    const serverUrl = response.response || response.url;
-                    const fullUrl = serverUrl.startsWith("http")
-                      ? serverUrl
-                      : `${BASE_URL}${serverUrl}`;
-
-                    finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
-                    finalHtml = cleanActivityTextContent(finalHtml);
-                  } catch (err) {
-                    console.error("Erreur upload image blog", err);
-                  }
-                }
+            for (const activity of lesson.activities) {
+              const activityItemId = activityProgressId(
+                course.id,
+                lesson.id,
+                activity.id,
+              );
+              if (importResume.current.completedItemIds.has(activityItemId)) {
+                continue;
               }
 
-              await courseApi.mutations.createTextActivity(realLessonId, {
-                title: activity.title ?? "",
-                description: "",
-                value: finalHtml,
-                parent: "lesson",
-              });
-            } else if (activity.value instanceof Blob) {
-              setCurrentAction(`Téléversement ressource : ${activity.title}`);
+              activeItemId = activityItemId;
+              activeItemTitle = activity.title || "Activité sans titre";
+              updateItem(activityItemId, "processing");
+              setCurrentAction(`Traitement : ${activity.title}`);
 
-              const rawName =
-                activity.url.split("/").pop() || `${activity.title}.pdf`;
-              const cleanName = sanitizeFilename(rawName);
-              const mimeType = getMimeType(cleanName);
+              if (
+                activity.type === "text" &&
+                typeof activity.value === "string"
+              ) {
+                let finalHtml = activity.value;
+                const imagesToProcess = imagesQueue.current.filter((img) =>
+                  finalHtml.includes(img.tempId),
+                );
 
-              const fileToSend = new File([activity.value], cleanName, {
-                type: mimeType,
-              });
-              await uploadActivityResource(
-                realLessonId,
-                fileToSend,
-                activity.title || cleanName,
-              );
+                if (imagesToProcess.length > 0) {
+                  for (let i = 0; i < imagesToProcess.length; i++) {
+                    const img = imagesToProcess[i];
+                    setCurrentAction(
+                      `Upload image ${i + 1}/${imagesToProcess.length} pour : ${activity.title}`,
+                    );
+                    await new Promise((r) => setTimeout(r, 20));
+
+                    try {
+                      const formData = new FormData();
+                      formData.append("image", img.file, img.file.name);
+
+                      const response =
+                        await courseApi.mutations.uploadBlogImage(formData);
+
+                      const serverUrl = response.response || response.url;
+                      const fullUrl = serverUrl.startsWith("http")
+                        ? serverUrl
+                        : `${BASE_URL}${serverUrl}`;
+
+                      finalHtml = finalHtml.split(img.blobUrl).join(fullUrl);
+                      finalHtml = cleanActivityTextContent(finalHtml);
+                    } catch (err) {
+                      console.error("Erreur upload image blog", err);
+                    }
+                  }
+                }
+
+                await courseApi.mutations.createTextActivity(realLessonId, {
+                  title: activity.title ?? "",
+                  description: "",
+                  value: finalHtml,
+                  parent: "lesson",
+                });
+              } else if (activity.value instanceof Blob) {
+                setCurrentAction(`Téléversement ressource : ${activity.title}`);
+
+                const rawName =
+                  activity.url.split("/").pop() || `${activity.title}.pdf`;
+                const cleanName = sanitizeFilename(rawName);
+                const mimeType = getMimeType(cleanName);
+
+                const fileToSend = new File([activity.value], cleanName, {
+                  type: mimeType,
+                });
+                await uploadActivityResource(
+                  realLessonId,
+                  fileToSend,
+                  activity.title || cleanName,
+                );
+              }
+
+              markItemAsSuccessful(activityItemId);
             }
-
-            markItemAsSuccessful(activityItemId);
           }
         }
-      }
 
-      setCurrentAction("Importation terminée avec succès !");
-      setUploadProgress(100);
-      setIsImportComplete(true);
-      setIsImporting(false);
-    } catch (globalError) {
-      console.error(globalError);
-      const technicalMessage = getCriticalImportError(globalError);
-      const criticalMessage = activeItemTitle
-        ? `Échec de « ${activeItemTitle} » : ${technicalMessage}`
-        : `Une erreur critique est survenue : ${technicalMessage}`;
-      if (activeItemId) {
-        updateItem(activeItemId, "error", technicalMessage);
+        setCurrentAction("Importation terminée avec succès !");
+        setUploadProgress(100);
+        setIsImportComplete(true);
+        setIsImporting(false);
+      } catch (globalError) {
+        console.error(globalError);
+        const technicalMessage = getCriticalImportError(globalError);
+        const criticalMessage = activeItemTitle
+          ? `Échec de « ${activeItemTitle} » : ${technicalMessage}`
+          : `Une erreur critique est survenue : ${technicalMessage}`;
+        if (activeItemId) {
+          updateItem(activeItemId, "error", technicalMessage);
+        }
+        setCriticalImportError(criticalMessage);
+
+        setIsImporting(false);
+      } finally {
+        isImportRunning.current = false;
       }
-      setCriticalImportError(criticalMessage);
-      setCurrentAction(
-        "Importation interrompue. Vous pouvez terminer ou réessayer.",
-      );
-      setIsImporting(false);
-    } finally {
-      isImportRunning.current = false;
-    }
-  }, [importedCourses, selectedModule, selectedParcours, uploadActivityResource]);
+    },
+    [importedCourses, selectedModule, selectedParcours, uploadActivityResource],
+  );
 
   const onRemoveCourse = (courseTitle: string) => {
     setImportedCourses(
@@ -673,6 +670,10 @@ export default function useImportCourses() {
     void processImport(finalCourses);
   };
 
+  const onRetryImport = useCallback(() => {
+    void processImport();
+  }, [processImport]);
+
   const onGoBack = () => {
     setImportStep((curr) =>
       curr <= CoursesImportStep.CoursesPreview ? curr : curr - 1,
@@ -761,7 +762,7 @@ export default function useImportCourses() {
     onUpdateActivityTitle,
     onConfirmImport,
     onConfirmParcoursSelection,
-    onRetryImport: processImport,
+    onRetryImport,
     onGoBack,
   };
 }

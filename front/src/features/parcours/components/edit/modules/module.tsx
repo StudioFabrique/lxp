@@ -40,6 +40,7 @@ export default function ModuleComponent() {
     handleUpdateModule,
     id,
     isLoading,
+    isSubmittingModule,
     sourceModules,
     mode,
     moduleToDuplicate,
@@ -79,6 +80,7 @@ export default function ModuleComponent() {
           parcoursId={parcours?.id}
           onCreateNew={handleCreateNewModule}
           onAddExisting={handleDuplicateModule}
+          isSubmitting={isSubmittingModule}
         />
 
         {/* Module grid display */}
@@ -96,6 +98,7 @@ export default function ModuleComponent() {
             register={register}
             errors={errors}
             isLoading={isLoading}
+            isSubmitting={isSubmittingModule}
             currentContacts={currentContacts ?? []}
             currentSkills={currentSkills ?? []}
             contacts={parcours?.contacts ?? []}

@@ -6,13 +6,15 @@ import Skill from "../../../../../../src/utils/interfaces/skill";
 import ModuleFields from "./ModuleFields";
 import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
+import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
   refForm: RefObject<HTMLFormElement | null>;
-  register: UseFormRegister<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<ModuleCreateFormValues>;
+  errors: FieldErrors<ModuleCreateFormValues>;
   isLoading: boolean;
+  isSubmitting: boolean;
   currentContacts: Contact[];
   currentSkills: Skill[];
   contacts: Contact[];
@@ -34,6 +36,7 @@ export default function ModuleForm({
   register,
   errors,
   isLoading,
+  isSubmitting,
   currentContacts,
   currentSkills,
   contacts,
@@ -65,7 +68,7 @@ export default function ModuleForm({
                   placeholder="Ex : 12"
                   min={0}
                   register={register}
-                  error={errors.duration as any}
+                  error={errors.duration}
                 />
               </ModuleFields>
             </span>
@@ -89,11 +92,19 @@ export default function ModuleForm({
               type="button"
               className="btn btn-secondary mr-2"
               onClick={onCancel}
+              disabled={isSubmitting}
             >
               Annuler
             </button>
-            <button type="submit" className="btn btn-primary">
-              Enregistrer le module
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && (
+                <span className="loading loading-spinner loading-sm" />
+              )}
+              {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
             </button>
           </div>
         </form>
