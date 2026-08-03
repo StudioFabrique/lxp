@@ -9,6 +9,7 @@ import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/lesson";
 import type { CreateCourseFormValues } from "./course-form.types";
 import { cn } from "../../../../utils/cn";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
   initialTitle: string;
@@ -59,7 +60,9 @@ export default function CreateCourseDetailsModal({
   const toggleTag = (tagId: number) => {
     setSelectedTagIds((current) =>
       current.includes(tagId)
-        ? current.filter((id) => id !== tagId)
+        ? current.length > 1
+          ? current.filter((id) => id !== tagId)
+          : current
         : [...current, tagId],
     );
   };
@@ -99,7 +102,7 @@ export default function CreateCourseDetailsModal({
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim() || needsTagForNewLessons) return;
+    if (!title.trim() || selectedTagIds.length === 0) return;
     const success = await onSubmit({
       title: title.trim(),
       description: description.trim(),
@@ -163,9 +166,9 @@ export default function CreateCourseDetailsModal({
 
           <section className="flex flex-col gap-3">
             <div>
-              <h4 className="text-sm font-semibold">Tags du cours</h4>
+              <h4 className="text-sm font-semibold">Tags du cours *</h4>
               <p className="text-xs text-base-content/60">
-                Sélectionnez les thèmes qui permettront de classer le cours.
+                Sélectionnez au moins un thème pour classer le cours.
               </p>
             </div>
             <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto rounded-lg border border-base-300 p-3">
@@ -185,6 +188,7 @@ export default function CreateCourseDetailsModal({
                       )}
                       style={{ backgroundColor: tag.color }}
                       aria-pressed={selected}
+                      disabled={selected && selectedTagIds.length === 1}
                     >
                       {selected && <Check className="h-3 w-3" />}
                       {tag.name}
@@ -277,45 +281,48 @@ export default function CreateCourseDetailsModal({
 
             {showExistingContents && (
               <div className="flex flex-col gap-3">
-                <label className="flex flex-col gap-2">
-                  <span className="flex items-center gap-2 text-xs font-semibold">
-                    <Search className="h-3.5 w-3.5" />
-                    Rechercher les contenus existants par tag
-                  </span>
-                  <select
-                    className="select select-sm select-bordered w-full"
-                    value={contentTagId}
-                    onChange={(event) =>
-                      setContentTagId(Number(event.target.value))
-                    }
-                  >
-                    <option value={0}>Choisir un tag</option>
-                    {tags.map((tag) => (
-                      <option key={tag.id} value={tag.id}>
-                        {tag.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <span className="flex items-center gap-2 text-xs font-semibold">
+                  <Search className="h-3.5 w-3.5" />
+                  Rechercher par tag
+                </span>
+                <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2">
+                    <select
+                      className="select select-sm select-bordered w-full"
+                      value={contentTagId}
+                      onChange={(event) =>
+                        setContentTagId(Number(event.target.value))
+                      }
+                    >
+                      <option value={0}>Choisir un tag</option>
+                      {tags.map((tag) => (
+                        <option key={tag.id} value={tag.id}>
+                          {tag.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
 
-                <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-base-300 px-3 py-2">
-                  <span>
-                    <span className="block text-sm font-semibold">
-                      Afficher aussi les contenus des autres cours
+                  <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-base-300 px-3 h-full">
+                    <span className="flex items-center gap-2">
+                      <span className="block text-sm font-semibold">
+                        Contenus des autres cours
+                      </span>
+                      <QuestionMarkTooltip
+                        tooltipPosition="left"
+                        tooltipValue="Ressources supplémentaires seules par défaut."
+                      />
                     </span>
-                    <span className="text-xs text-base-content/60">
-                      Les ressources supplémentaires sont affichées par défaut.
-                    </span>
-                  </span>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-primary toggle-sm"
-                    checked={includeCourseContents}
-                    onChange={(event) =>
-                      handleToggleCourseContents(event.target.checked)
-                    }
-                  />
-                </label>
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-primary toggle-sm shrink-0"
+                      checked={includeCourseContents}
+                      onChange={(event) =>
+                        handleToggleCourseContents(event.target.checked)
+                      }
+                    />
+                  </label>
+                </div>
 
                 {isLoadingLessons ? (
                   <span className="loading loading-spinner loading-sm mx-auto" />
@@ -420,7 +427,9 @@ export default function CreateCourseDetailsModal({
             type="submit"
             form="create-course-details-form"
             className="btn btn-primary"
-            disabled={!title.trim() || needsTagForNewLessons || isSubmitting}
+            disabled={
+              !title.trim() || selectedTagIds.length === 0 || isSubmitting
+            }
           >
             {isSubmitting && (
               <span className="loading loading-spinner loading-sm" />

@@ -105,9 +105,12 @@ export const putCourseLessonValidator = [
     .withMessage("Un titre est requis pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la leçon contient des caractères non autorisés"),
-  body("description") /*
-    .notEmpty()
-    .withMessage("Une description est requise pour la leçon") */
+  body("description")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage(
+      "La description de la leçon doit être une chaîne de caractères",
+    )
     .custom(stringValidateOptional)
     .withMessage(
       "La description de la leçon contient des caractères non autorisés",
@@ -124,6 +127,16 @@ export const putCourseLessonValidator = [
     .withMessage("Un identifiant est requis pour le tag de la leçon")
     .isInt()
     .withMessage("L'identifiant du tag n'est pas un nombre entier"),
+  checkValidatorResult,
+];
+
+export const courseTagsValidator = [
+  body()
+    .isArray({ min: 1 })
+    .withMessage("Au moins un tag doit être associé au cours"),
+  body("*")
+    .isInt()
+    .withMessage("Les identifiants des tags doivent être des nombres entiers"),
   checkValidatorResult,
 ];
 

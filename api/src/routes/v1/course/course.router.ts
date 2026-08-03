@@ -12,6 +12,7 @@ import httpPostImportCourseStructure from "../../../controllers/course/http-post
 import {
   courseIdAndVisibilityValidator,
   courseIdValidator,
+  courseTagsValidator,
   deleteCourseDatesValidator,
   postCourseValidator,
   postImportCourseStructureValidator,
@@ -286,7 +287,7 @@ courseRouter.put(
 courseRouter.put(
   "/tags/:courseId",
   checkPermissions("course"),
-  idsArrayValidator,
+  courseTagsValidator,
   courseIdValidator,
   httpPutCourseTags,
 );

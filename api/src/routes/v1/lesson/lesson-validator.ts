@@ -1,5 +1,8 @@
 import { body, param, query } from "express-validator";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import {
+  stringValidateGeneric,
+  stringValidateOptional,
+} from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
 export const lessonIdValidator = [
@@ -95,10 +98,12 @@ export const putLessonValidator = [
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la leçon contient des caractères non autorisés"),
   body("description")
-    .notEmpty()
+    .optional({ nullable: true })
     .isString()
-    .withMessage("Une description est requise pour la leçon")
-    .custom(stringValidateGeneric)
+    .withMessage(
+      "La description de la leçon doit être une chaîne de caractères",
+    )
+    .custom(stringValidateOptional)
     .withMessage(
       "La description de la leçon contient des caractères non autorisés"
     ),

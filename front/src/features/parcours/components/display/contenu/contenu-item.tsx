@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowRightCircle, CalendarClock, CalendarOffIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
@@ -16,9 +16,12 @@ const ContenuItem: FC<{
       return { day: null, month: "" };
     }
     const date = new Date(module.minDate);
+    if (Number.isNaN(date.getTime())) {
+      return { day: null, month: "" };
+    }
     return {
       day: date.getDate(),
-      month: getMonth(date.getMonth())?.substring(0, 3) ?? "",
+      month: getMonth(date.getMonth())?.substring(0, 4) ?? "",
     };
   }, [module.minDate]);
 
@@ -39,10 +42,24 @@ const ContenuItem: FC<{
             : "bg-base-100 text-base-content group-hover:bg-base-200"
         }`}
       >
-        <p className="font-bold text-xl">{minDate.day}</p>
-        <p className="font-bold uppercase text-sm opacity-80">
-          {minDate.month}
-        </p>
+        {minDate.day === null ? (
+          <span
+            className="flex flex-col items-center gap-1 text-center"
+            aria-label="Date du module à planifier"
+          >
+            <CalendarOffIcon />
+            <span className="text-xs font-semibold leading-none opacity-80">
+              Pas de dates
+            </span>
+          </span>
+        ) : (
+          <>
+            <p className="font-bold text-xl">{minDate.day}</p>
+            <p className="font-bold uppercase text-sm opacity-80">
+              {minDate.month}
+            </p>
+          </>
+        )}
       </div>
 
       <div

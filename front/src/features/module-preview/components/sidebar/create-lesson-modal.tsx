@@ -1,13 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Loader2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
-import apiClient from "../../../../lib/axios";
 import type Tag from "../../../../utils/interfaces/tag";
 
 type Props = {
   open: boolean;
   courseTitle: string;
+  courseTags: Tag[];
   isSaving: boolean;
   onClose: () => void;
   onSubmit: (data: {
@@ -21,6 +20,7 @@ type Props = {
 export default function CreateLessonModal({
   open,
   courseTitle,
+  courseTags,
   isSaving,
   onClose,
   onSubmit,
@@ -28,31 +28,17 @@ export default function CreateLessonModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [modalite, setModalite] = useState("distanciel");
-  const [tagId, setTagId] = useState<number | "">("");
-
-  const {
-    data: tags = [],
-    isLoading: tagsLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["tags", "lesson-create"],
-    queryFn: async (): Promise<Tag[]> => {
-      const response = await apiClient.get("/tag");
-      return response.data.response ?? response.data;
-    },
-    enabled: open,
-  });
-
-  useEffect(() => {
-    if (!tagId && tags[0]) setTagId(tags[0].id);
-  }, [tagId, tags]);
+  const [tagId, setTagId] = useState<number | "">(courseTags[0]?.id ?? "");
+  const selectedTagId = courseTags.some((tag) => tag.id === tagId)
+    ? tagId
+    : (courseTags[0]?.id ?? "");
 
   const close = () => {
     if (isSaving) return;
     setTitle("");
     setDescription("");
     setModalite("distanciel");
-    setTagId("");
+    setTagId(courseTags[0]?.id ?? "");
     onClose();
   };
 
@@ -70,18 +56,18 @@ export default function CreateLessonModal({
         className="modal-box max-w-xl"
         onSubmit={async (event) => {
           event.preventDefault();
-          if (title.trim() && tagId) {
+          if (title.trim() && selectedTagId) {
             const success = await onSubmit({
               title: title.trim(),
               description: description.trim(),
               modalite,
-              tagId: +tagId,
+              tagId: +selectedTagId,
             });
             if (success) {
               setTitle("");
               setDescription("");
               setModalite("distanciel");
-              setTagId("");
+              setTagId(courseTags[0]?.id ?? "");
             }
           }
         }}
@@ -120,7 +106,7 @@ export default function CreateLessonModal({
           </label>
           <label className="flex flex-col gap-2">
             <span className="flex items-center gap-2 font-semibold">
-              Description
+              Description <span className="font-normal text-base-content/50">(optionnelle)</span>
             </span>
             <textarea
               className="textarea textarea-bordered min-h-24 w-full"
@@ -136,18 +122,14 @@ export default function CreateLessonModal({
               </span>
               <select
                 className="select select-bordered w-full"
-                value={tagId}
-                disabled={tagsLoading || isError}
+                value={selectedTagId}
+                disabled={courseTags.length === 0}
                 onChange={(event) => setTagId(+event.target.value)}
               >
-                <option value="">
-                  {tagsLoading
-                    ? "Chargement…"
-                    : isError
-                      ? "Tags indisponibles"
-                      : "Choisir un tag"}
-                </option>
-                {tags.map((tag) => (
+                {courseTags.length === 0 && (
+                  <option value="">Aucun tag associé au cours</option>
+                )}
+                {courseTags.map((tag) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.name}
                   </option>
@@ -167,10 +149,9 @@ export default function CreateLessonModal({
               </select>
             </label>
           </div>
-          {isError && (
+          {courseTags.length === 0 && (
             <p className="text-sm text-error">
-              Impossible de charger les tags. Fermez puis rouvrez la fenêtre
-              pour réessayer.
+              Ajoutez d’abord un tag au cours pour pouvoir créer une leçon.
             </p>
           )}
         </div>
@@ -181,7 +162,7 @@ export default function CreateLessonModal({
           </button>
           <button
             className="btn btn-primary"
-            disabled={!title.trim() || !tagId || isSaving}
+            disabled={!title.trim() || !selectedTagId || isSaving}
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSaving ? "Création…" : "Créer la leçon"}

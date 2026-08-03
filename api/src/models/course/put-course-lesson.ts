@@ -7,14 +7,24 @@ async function putCourseLesson(
   lessonData: any,
   adminId: string
 ) {
+  const tagId = Number(lessonData.tagId);
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
-    select: { lessons: true },
+    select: {
+      lessons: true,
+      tags: { select: { tagId: true } },
+    },
   });
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
     (error as any).statusCode = 404;
+    throw error;
+  }
+
+  if (!existingCourse.tags.some((tag) => tag.tagId === tagId)) {
+    const error = new Error("Le tag doit être associé au cours");
+    (error as any).statusCode = 400;
     throw error;
   }
 
@@ -46,12 +56,12 @@ async function putCourseLesson(
     newLesson = await tx.lesson.create({
       data: {
         title: lessonData.title,
-        description: lessonData.description,
+        description: lessonData.description ?? "",
         modalite: lessonData.modalite,
         author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
         order: existingCourse.lessons.length,
         tag: {
-          connect: { id: lessonData.tagId },
+          connect: { id: tagId },
         },
         admin: {
           connect: { id: prismaAdmin.id },
