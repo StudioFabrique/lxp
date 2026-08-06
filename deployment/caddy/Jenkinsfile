@@ -1,0 +1,145 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        CADDY_COMPOSE_FILE = 'deployment/caddy/compose.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Deploy with Caddy and Migrate') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'APP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'APP_DOMAIN', variable: 'APP_DOMAIN'),
+                    string(credentialsId: 'APP_SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_PORT', variable: 'SSH_PORT'),
+                    string(credentialsId: 'SSH_TARGET', variable: 'SSH_TARGET'),
+                    string(credentialsId: 'OVH_ENDPOINT', variable: 'OVH_ENDPOINT'),
+                    string(credentialsId: 'OVH_APPLICATION_KEY', variable: 'OVH_APPLICATION_KEY'),
+                    string(credentialsId: 'OVH_APPLICATION_SECRET', variable: 'OVH_APPLICATION_SECRET'),
+                    string(credentialsId: 'OVH_CONSUMER_KEY', variable: 'OVH_CONSUMER_KEY'),
+                    sshUserPrivateKey(credentialsId: 'SSH_CREDENTIALS', keyFileVariable: 'SSH_CREDENTIALS'),
+                    usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                ]) {
+                    sh '''
+                        set -eu
+
+                        cleanup() {
+                            status=$?
+                            rm -f .env
+                            docker logout >/dev/null 2>&1 || true
+                            exit "$status"
+                        }
+                        trap cleanup EXIT
+
+                        if ! printf '%s' "$APP_DOMAIN" | grep -Eq '^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$'; then
+                            echo "APP_DOMAIN doit etre un nom DNS sans protocole, chemin ou wildcard."
+                            exit 1
+                        fi
+
+                        if printf '%s' "$APP_DOMAIN" | grep -Fq '..'; then
+                            echo "APP_DOMAIN contient deux points consecutifs."
+                            exit 1
+                        fi
+
+                        echo "🔧 Configuration SSH pour $SSH_HOST..."
+                        mkdir -p ~/.ssh
+
+                        echo "Host deploy-target
+                        HostName $SSH_HOST
+                        User $SSH_USER
+                        Port $SSH_PORT
+                        IdentityFile \\"$SSH_CREDENTIALS\\"
+                        StrictHostKeyChecking no" > ~/.ssh/config
+
+                        echo "📁 Préparation des dossiers et synchronisation des cours..."
+                        ssh deploy-target "mkdir -p /home/$SSH_USER/$SSH_TARGET/data /home/$SSH_USER/$SSH_TARGET/uploads /home/$SSH_USER/$SSH_TARGET/logs"
+                        rsync -avz api/uploads/ deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/
+
+                        rm -f .env
+                        cp "$ENV_FILE" .env
+                        chmod 600 .env
+
+                        export DOCKER_HOST="ssh://deploy-target"
+
+                        compose() {
+                            docker compose --env-file .env -f "$CADDY_COMPOSE_FILE" "$@"
+                        }
+
+                        echo "🔐 Connexion Docker Hub..."
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                        echo "📥 Récupération des images applicatives..."
+                        compose pull app ai db-pg db-ai db-mongo
+
+                        echo "🔨 Construction de Caddy avec le module DNS OVH..."
+                        compose build --pull caddy
+
+                        echo "🔎 Validation du module OVH et du Caddyfile..."
+                        compose run --rm --no-deps --entrypoint caddy caddy list-modules | grep -q '^dns.providers.ovh$'
+                        compose run --rm --no-deps --entrypoint caddy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+                        compose config --quiet
+
+                        echo "🔎 Vérification de l'image IA..."
+                        compose run --rm --no-deps ai python -c \
+                            'import app.db_provision; print("Module app.db_provision disponible")'
+
+                        echo "🗄️ Démarrage des bases..."
+                        compose up -d db-pg db-ai db-mongo
+
+                        echo "⏳ Attente des bases..."
+                        until compose exec -T db-pg sh -c \
+                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+                        do
+                            sleep 2
+                        done
+
+                        until compose exec -T db-ai sh -c \
+                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+                        do
+                            sleep 2
+                        done
+
+                        echo "📌 Migration Prisma..."
+                        compose run --rm -w /app/api app npx prisma migrate deploy
+
+                        echo "🔔 Installation des triggers ANDRIA..."
+                        compose exec -T db-pg sh -c \
+                            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+                            < api/src/scripts/andria_notify_triggers.sql
+
+                        echo "🧠 Provisionnement de la base IA..."
+                        compose run --rm ai python -m app.db_provision
+
+                        echo "🚀 Démarrage des applications..."
+                        compose up -d app ai
+
+                        echo "🔑 Génération de la clé d’activation..."
+                        compose exec -T app npm run generate-activation-key
+
+                        echo "🔒 Démarrage de Caddy pour https://$APP_DOMAIN..."
+                        compose up -d caddy
+
+                        echo "📋 État des services..."
+                        compose ps
+                        compose logs --no-color --tail=100 caddy
+
+                        echo "🧹 Nettoyage des images inutilisées..."
+                        docker image prune -f
+                    '''
+                }
+            }
+        }
+    }
+}
