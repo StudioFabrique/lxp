@@ -44,7 +44,7 @@ pipeline {
                             exit 1
                         fi
 
-                        if printf '%s' "$APP_DOMAIN" | grep -Eq '\.\.'; then
+                        if printf '%s' "$APP_DOMAIN" | grep -Fq '..'; then
                             echo "APP_DOMAIN contient deux points consecutifs."
                             exit 1
                         fi
