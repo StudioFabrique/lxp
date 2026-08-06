@@ -28,6 +28,11 @@ Le pipeline de déploiement attend les deux images sur Docker Hub. Le dépôt IA
 publie `studiostep/lxp-ai:latest` avec son workflow GitHub Actions lors d'un push
 sur sa branche principale.
 
+Ce document décrit le déploiement HTTP historique. Pour déployer une instance
+avec HTTPS automatique, Caddy et le challenge DNS OVH, consulter
+[`deploiement-caddy-jenkins.md`](deploiement-caddy-jenkins.md). Les deux méthodes
+coexistent et le job historique continue d'utiliser `deploy.Jenkinsfile`.
+
 ## 1. Préparer Jenkins
 
 Installer les plugins suivants :
