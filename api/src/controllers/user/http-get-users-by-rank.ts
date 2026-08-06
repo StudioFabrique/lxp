@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
-import getUsersByRank from "../../models/user/get-users-by-rank";
+import getUsersByRank from "../../models/user/get-users-by-rank.ts";
 
 async function httpGetUsersByRank(req: Request, res: Response) {
   const result = validationResult(req);

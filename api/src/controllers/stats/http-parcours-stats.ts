@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import getParcoursStats from "../../models/stats/get-parcours-stats";
+import { type Request, type Response } from "express";
+import getParcoursStats from "../../models/stats/get-parcours-stats.ts";
 
 export default async function httpParcoursStats(req: Request, res: Response) {
   const parcoursId = parseInt(req.params.id);

@@ -57,4 +57,31 @@ describe("moduleExplorerContentReducer", () => {
     expect(state.selectedLesson?.activities).toEqual(loadedActivities);
     expect(state.selectedActivity?.id).toBe(11);
   });
+
+  it("passe à la première leçon du cours suivant", () => {
+    const currentLesson = { id: 2, activities: [] } as unknown as Lesson;
+    const nextCourseLesson = { id: 3, activities: [] } as unknown as Lesson;
+    const module = {
+      id: 2,
+      courses: [
+        {
+          id: 10,
+          lessons: [{ id: 1, activities: [] }, currentLesson],
+        },
+        { id: 11, lessons: [nextCourseLesson] },
+      ],
+    } as unknown as Module & { parcours: string };
+
+    const state = moduleExplorerContentReducer(
+      {
+        ...initialModuleExplorerContentState,
+        module,
+        selectedLesson: currentLesson,
+      },
+      { type: "go_to_next_lesson" },
+    );
+
+    expect(state.selectedLesson?.id).toBe(3);
+    expect(state.mode).toBe("read");
+  });
 });

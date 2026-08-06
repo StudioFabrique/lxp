@@ -1,4 +1,4 @@
-import deleteModule from "./delete-module";
+import deleteModule from "./delete-module.ts";
 
 // A flat module belongs to one parcours (and therefore one formation), so
 // removing it from a formation is now the same operation as deleting it.

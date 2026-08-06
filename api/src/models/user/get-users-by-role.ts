@@ -1,8 +1,8 @@
-import Role, { IRole } from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
-import { imageToDataUrl } from "../../utils/images/image-source";
-import { getPagination } from "../../utils/services/getPagination";
-import { prisma } from "../../utils/db";
+import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
+import { getPagination } from "../../utils/services/getPagination.ts";
+import { prisma } from "../../utils/db.ts";
 
 async function getUsersByRole(
   page: number,

@@ -2,7 +2,7 @@ import path from "path";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-dotenv.config({ path: path.join(__dirname, "..", "..", "..", "..", ".env") });
+dotenv.config({ path: path.join(import.meta.dirname, "..", "..", "..", "..", ".env") });
 //dotenv.config();
 //dotenv.config({ path: ".env.local", override: true });
 

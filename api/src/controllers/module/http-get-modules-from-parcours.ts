@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getModulesFromParcours from "../../models/module/get-modules-from-parcours";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getModulesFromParcours from "../../models/module/get-modules-from-parcours.ts";
 
 async function httpGetModulesFromParcours(req: Request, res: Response) {
   const { parcoursId } = req.params;

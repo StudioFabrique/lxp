@@ -1,5 +1,5 @@
-import jwt, { SignOptions } from "jsonwebtoken";
-import { IRole } from "../utils/interfaces/db/role";
+import jwt, { type SignOptions } from "jsonwebtoken";
+import { type IRole } from "../utils/interfaces/db/role.ts";
 
 export const activationToken = (
   userId: string,

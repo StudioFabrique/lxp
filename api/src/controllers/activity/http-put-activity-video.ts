@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putActivityVideo from "../../models/activity/update-activity/put-activity-video";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putActivityVideo from "../../models/activity/update-activity/put-activity-video.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpPutActivityVideo(
   req: CustomRequest,

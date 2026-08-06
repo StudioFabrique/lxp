@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import deleteObjective from "../../models/objective/delete-objective";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import deleteObjective from "../../models/objective/delete-objective.ts";
 
 async function httpDeleteObjective(req: Request, res: Response) {
   const result = validationResult(req);

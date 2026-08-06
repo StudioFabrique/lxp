@@ -1,5 +1,5 @@
-import Group from "../../utils/interfaces/db/group";
-import { IUser } from "../../utils/interfaces/db/user";
+import Group from "../../utils/interfaces/db/group.ts";
+import { type IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function editUsers(groupId: string, users: IUser[]) {
   const ids = users.map((user) => user._id);

@@ -1,5 +1,5 @@
-import { Activity, BonusActivity } from "@prisma/client";
-import { prisma } from "../../../utils/db";
+import { type Activity, type BonusActivity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
 
 export default async function postActivityVideo(
   lessonId: number,

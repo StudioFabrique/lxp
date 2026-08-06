@@ -1,6 +1,6 @@
-import User from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
-import { IRole } from "../../utils/interfaces/db/role";
+import User from "../../utils/interfaces/db/user.ts";
+import { prisma } from "../../utils/db.ts";
+import { type IRole } from "../../utils/interfaces/db/role.ts";
 
 export default async function getBestRatedCourses(userId: string) {
   // 1 Vérifier que userId is in Admin

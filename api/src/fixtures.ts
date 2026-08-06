@@ -10,17 +10,17 @@ import {
   firstnames,
   lastnames,
   tags,
-} from "./utils/fixtures/data/data";
-import Role from "./utils/interfaces/db/role";
-import Permission, { IPermission } from "./utils/interfaces/db/permission";
-import Tag from "./utils/interfaces/db/tag";
-import User from "./utils/interfaces/db/user";
+} from "./utils/fixtures/data/data.ts";
+import Role from "./utils/interfaces/db/role.ts";
+import Permission, { type IPermission } from "./utils/interfaces/db/permission.ts";
+import Tag from "./utils/interfaces/db/tag.ts";
+import User from "./utils/interfaces/db/user.ts";
 import {
   permDefsActions,
   permDefsInterface,
-} from "./utils/rbac/config/fixtures-permissions";
-import IConnectionInfos from "./utils/interfaces/db/connection-infos";
-import ConnectionInfos from "./utils/interfaces/db/connection-infos";
+} from "./utils/rbac/config/fixtures-permissions.ts";
+import IConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
+import ConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;

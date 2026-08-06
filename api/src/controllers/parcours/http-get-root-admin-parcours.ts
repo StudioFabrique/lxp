@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import getRootAdminParcours from "../../models/parcours/get-root-admin-parcours";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import getRootAdminParcours from "../../models/parcours/get-root-admin-parcours.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetRootAdminParcours(
   req: Request,

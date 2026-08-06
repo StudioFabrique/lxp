@@ -1,5 +1,5 @@
-import { noAccess } from "../utils/constantes";
-import { prisma } from "../utils/db";
+import { noAccess } from "../utils/constantes.ts";
+import { prisma } from "../utils/db.ts";
 
 export async function getAdmin(userId: string) {
   const admin = await prisma.admin.findFirst({

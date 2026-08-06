@@ -1,225 +1,78 @@
-import { Response } from "express";
-import { Readable } from "stream";
-import getCourseById from "../../models/course/get-course-by-id";
-import dotenv from "dotenv";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { trackTokens } from "../../models/stats/trackTokens";
-import { prisma } from "../../utils/db";
-import { sign } from "jsonwebtoken";
-
-dotenv.config();
-
-type QuizResponseStream = ReadableStream<{
-  event: string;
-  total_questions: number;
-  level_counts: {
-    easy: number;
-    medium: number;
-    hard: number;
-  };
-  content_richness: string;
-  elapsed_sec: number;
-  tokens: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}>;
+import { type Response } from "express";
+import {
+  prepareEndingQuizGeneration,
+  QuizGenerationError,
+} from "../../models/quiz/quiz-generation.ts";
+import {
+  AiApiError,
+  AiConfigurationError,
+} from "../../services/ai/ai-api-client.ts";
+import { toQuizApiQuestion } from "../../services/quiz/quiz-question.ts";
+import { relayQuizStream } from "../../services/quiz/quiz-stream.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /**
  * GET /quiz/course/ending/stream/:courseId
- * Récupérer un set de quiz généré par IA (5 questions) pour une fin de cours sous forme de stream
- * Personnalisé par étudiant pour éviter la duplication et économiser les tokens.
+ * Génère un quiz de fin de cours ou renvoie la version mise en cache.
  */
 export default async function httpGetEndingCourseQuizStream(
   req: CustomRequest,
   res: Response,
 ) {
-  const { courseId } = req.params;
-  const { userId } = req.auth ?? {};
+  const courseId = Number(req.params.courseId);
+  const userId = req.auth?.userId;
 
   try {
     if (!userId) {
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     }
 
-    // Récupérer le cours
-    const course = await getCourseById(+courseId);
-    if (!course) return res.status(404).json({ error: "Cours introuvable" });
-    if (!course.courseSlug) {
-      return res.status(409).json({
-        code: "AI_CONTENT_NOT_INDEXED",
-        error:
-          "Les fonctionnalités IA de ce cours copié ne sont pas indexées.",
-      });
-    }
+    const generation = await prepareEndingQuizGeneration(
+      courseId,
+      String(userId),
+    );
 
-    const student = await prisma.student.findFirst({
-      where: { idMdb: String(userId) },
-    });
-
-    if (!student) {
-      return res
-        .status(404)
-        .json({ error: "Profil étudiant introuvable dans Postgres" });
-    }
-
-    // Vérification du cache Prisma (Filtré par cours ET par étudiant)
-    let quizz = await prisma.quiz.findFirst({
-      where: {
-        courseId: +courseId,
-        type: "ending_course",
-        studentId: student.id,
-      },
-      include: { questions: true },
-    });
-
-    // Si le quizz existe déjà pour cet étudiant, simuler le stream
-    if (quizz && quizz.questions.length > 0) {
+    if (generation.kind === "cached") {
       res.setHeader("Content-Type", "application/json");
       res.setHeader("Transfer-Encoding", "chunked");
-
-      quizz.questions.forEach((q) => {
-        const payload = {
-          id: q.externalId,
-          type: q.type,
-          prompt: q.prompt,
-          difficulty: q.difficulty,
-          explanation_correct: q.explanationTrue,
-          explanation_wrong: q.explanationWrong,
-          tags: q.tags,
-          ...(q.data as any),
-        };
-        res.write(JSON.stringify(payload) + "\n");
-      });
-
-      // Simuler l'événement de fin
+      for (const question of generation.questions) {
+        res.write(`${JSON.stringify(toQuizApiQuestion(question))}\n`);
+      }
       res.write(
-        JSON.stringify({
+        `${JSON.stringify({
           event: "done",
-          total_questions: quizz.questions.length,
+          total_questions: generation.questions.length,
           elapsed_sec: 0,
           tokens: { total_tokens: 0 },
-        }) + "\n",
+        })}\n`,
       );
       return res.end();
     }
 
-    // Sinon, on appelle l'API IA
-    const quizzesRequestPayload = {
-      course_slug: course.courseSlug,
-      num_questions: 10,
-      profile: {
-        user_id: String(userId),
-        course_id: String(courseId),
-      },
-    };
-
-    const secret = process.env.DOCKER_IA_AUTH_SECRET;
-
-    if (!secret)
-      return res.status(500).json({
-        error:
-          "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
-      });
-
-    const token = sign(
-      {
-        sub: userId,
-        userRoles: [{ role: "admin" }],
-      },
-      secret,
-    );
-
-    const response = await fetch(
-      `${process.env.DOCKER_IA_API_BASE_URL}/quiz/generate/stream`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: JSON.stringify(quizzesRequestPayload),
-      },
-    );
-
-    if (!response.ok) throw new Error(`Erreur API: ${response.statusText}`);
-
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Transfer-Encoding", "chunked");
-
-    const nodeStream = Readable.fromWeb(response.body as QuizResponseStream);
-    nodeStream.pipe(res);
-
-    // 4. Interception pour sauvegarde en BDD
-    let accumulatedData = "";
-    nodeStream.on("data", (chunk) => {
-      accumulatedData += chunk.toString();
-    });
-
-    nodeStream.on("end", async () => {
-      try {
-        const lines = accumulatedData.split("\n");
-        const generatedQuestions = [];
-
-        for (const line of lines) {
-          const cleanLine = line.trim().replace(/^data:\s*/, "");
-          if (!cleanLine) continue;
-
-          const parsed = JSON.parse(cleanLine);
-
-          if (parsed?.event === "done") {
-            if (parsed?.tokens?.total_tokens) {
-              await trackTokens(userId, parsed.tokens.total_tokens);
-            }
-          } else if (parsed?.prompt) {
-            const {
-              id,
-              type,
-              prompt,
-              difficulty,
-              explanation_correct,
-              explanation_wrong,
-              tags,
-              ...specificData
-            } = parsed;
-            generatedQuestions.push({
-              externalId: id,
-              type,
-              prompt,
-              difficulty: difficulty || "medium",
-              explanationTrue: explanation_correct,
-              explanationWrong: explanation_wrong,
-              tags: tags || [],
-              data: specificData,
-            });
-          }
-        }
-
-        // Sauvegarde transactionnelle dans Prisma (Liée à l'étudiant)
-        if (generatedQuestions.length > 0) {
-          await prisma.quiz.create({
-            data: {
-              title: `Quiz de fin - ${course.title}`,
-              type: "ending_course",
-              courseId: +courseId,
-              studentId: student.id,
-              questions: {
-                create: generatedQuestions,
-              },
-            },
-          });
-        }
-      } catch (streamError) {
-        console.error(
-          "Erreur lors de l'extraction/sauvegarde du stream :",
-          streamError,
-        );
-      }
-    });
+    await relayQuizStream(generation.stream, res, generation);
   } catch (error) {
-    console.error("Erreur backend:", error);
-    res.status(500).json({ error: "Impossible de joindre l'API" });
+    console.error("Erreur de génération du quiz de fin :", error);
+
+    if (res.headersSent) {
+      if (!res.writableEnded) res.end();
+      return;
+    }
+
+    if (error instanceof AiConfigurationError) {
+      return res.status(500).json({ error: error.message });
+    }
+    if (error instanceof AiApiError) {
+      return res.status(error.status).json({ error: error.message });
+    }
+    if (error instanceof QuizGenerationError) {
+      return res.status(error.statusCode).json({
+        ...(error.code && { code: error.code }),
+        error: error.message,
+      });
+    }
+
+    return res.status(500).json({ error: "Impossible de joindre l'API" });
   }
 }

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import updateReorderActrivities from "../../models/activity/update-reorder-activities";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import updateReorderActrivities from "../../models/activity/update-reorder-activities.ts";
 
 /**
  * HTTP PUT controller for reordering activities within a lesson or resource

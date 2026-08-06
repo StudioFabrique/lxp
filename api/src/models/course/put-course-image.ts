@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseImage(courseId: number, image: any) {
   const existingCourse = await prisma.course.findFirst({

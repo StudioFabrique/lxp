@@ -1,6 +1,16 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
+import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteTag(id: number) {
+  const activities = await prisma.activity.findMany({
+    where: { lesson: { tagId: id } },
+    select: { id: true, type: true },
+  });
+
+  for (const activity of activities) {
+    await deleteActivity(activity.id, activity.type, "lesson");
+  }
+
   await prisma.tagsOnFormation.deleteMany({
     where: { tagId: id },
   });

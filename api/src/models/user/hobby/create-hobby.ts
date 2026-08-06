@@ -1,5 +1,5 @@
-import Hobby from "../../../utils/interfaces/db/hobby";
-import User from "../../../utils/interfaces/db/user";
+import Hobby from "../../../utils/interfaces/db/hobby.ts";
+import User from "../../../utils/interfaces/db/user.ts";
 
 export default async function createHobby(userId: string, title: string) {
   const user = await User.findById(userId);

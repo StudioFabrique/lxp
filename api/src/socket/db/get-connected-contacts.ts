@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
-import UserSocket from "../../utils/interfaces/db/user-socket";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function getConnectedContacts(userId: string) {
   const groupId = await User.findOne(

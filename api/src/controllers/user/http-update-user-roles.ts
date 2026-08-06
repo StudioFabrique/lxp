@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import { type Request, type Response, type NextFunction } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
-import updateUserRoles from "../../models/user/update-user-roles";
+import updateUserRoles from "../../models/user/update-user-roles.ts";
 
 /**
  * HTTP controller to update roles for multiple users

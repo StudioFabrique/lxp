@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 import fs from "fs";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import updateImage from "../../models/parcours/update-image";
-import { logger } from "../../utils/logs/logger";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import updateImage from "../../models/parcours/update-image.ts";
+import { logger } from "../../utils/logs/logger.ts";
 import sharp from "sharp";
 
 async function httpUpdateImage(req: Request, res: Response) {

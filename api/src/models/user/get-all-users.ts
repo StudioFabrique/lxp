@@ -1,6 +1,6 @@
-import User from "../../utils/interfaces/db/user";
-import { getPagination } from "../../utils/services/getPagination";
-import { imageToDataUrl } from "../../utils/images/image-source";
+import User from "../../utils/interfaces/db/user.ts";
+import { getPagination } from "../../utils/services/getPagination.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function getAllUsers(
   page: number,

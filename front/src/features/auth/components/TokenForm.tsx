@@ -28,10 +28,10 @@ const TokenForm = ({ onNext }: Props) => {
     try {
       await onboardingApi.verifyActivationToken(data.token.trim());
       onNext(data.token.trim());
-    } catch (err: any) {
+    } catch (error: unknown) {
       const message =
-        err.response?.data?.message ??
-        "Une erreur est survenue. Veuillez réessayer.";
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ?? "Une erreur est survenue. Veuillez réessayer.";
       setError(message);
     } finally {
       setIsLoading(false);
@@ -54,6 +54,8 @@ const TokenForm = ({ onNext }: Props) => {
           <input
             type="text"
             placeholder="Clé d'activation"
+            autoComplete="off"
+            style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
             {...register("token", {
               required: "La clé d'activation est requise.",
             })}

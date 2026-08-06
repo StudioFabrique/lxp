@@ -1,18 +1,22 @@
 // Import du client Prisma pour interagir avec la base de données
-import { prisma } from "../../utils/db";
-// Import du type Request d'Express pour le typage des paramètres
-import { Request } from "express";
+import { prisma } from "../../utils/db.ts";
 // Import de l'utilitaire de pagination
-import { getPagination } from "../../utils/services/getPagination";
+import { getPagination } from "../../utils/services/getPagination.ts";
+
+export type GetMediasParams = {
+  page?: string;
+  limit?: string;
+  type?: string;
+  sort?: string;
+};
 
 /**
  * Récupère toutes les images stockées dans la médiathèque de façon paginée
  * @param req - La requête Express contenant les paramètres de pagination
  * @returns Une promesse contenant un tableau des médias de type "image"
  */
-export default async function getMedias(req: Request) {
-  // Extraction des paramètres de pagination depuis la requête
-  let { page, limit, type, sort } = req.query;
+export default async function getMedias(params: GetMediasParams) {
+  let { page, limit, type, sort } = params;
   const types = ["image", "resource", "video", "audio"];
   const sorts = ["createdAt", "size", "used", "name"];
 

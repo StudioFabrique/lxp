@@ -1,7 +1,7 @@
 // Import des types Express nécessaires pour le controller
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 // Import de la fonction qui récupère les images depuis la base de données
-import getMediaImages from "../../models/mediatheque/get-medias";
+import getMediaImages from "../../models/mediatheque/get-medias.ts";
 
 /**
  * Controller qui gère la récupération des images de la médiathèque
@@ -16,7 +16,12 @@ export default async function httpGetMedias(
 ) {
   try {
     // Récupération des images depuis la base de données
-    const response = await getMediaImages(req);
+    const response = await getMediaImages({
+      page: req.query.page?.toString(),
+      limit: req.query.limit?.toString(),
+      type: req.query.type?.toString(),
+      sort: req.query.sort?.toString(),
+    });
 
     // Envoi de la réponse avec les images récupérées
     next({

@@ -11,7 +11,8 @@
  * regressions if the implementation changes).
  */
 
-import getStartAndEndOfMonth from "../getStartAndEndOfMonth";
+import { jest } from "@jest/globals";
+import getStartAndEndOfMonth from "../getStartAndEndOfMonth.ts";
 
 describe("getSartAndEndOfMonth", () => {
   const testDates = [
@@ -27,17 +28,14 @@ describe("getSartAndEndOfMonth", () => {
 
   afterEach(() => {
     // Restore real timers after each test to avoid leaking state.
-    // @ts-ignore - jest globals exist in the test environment
     if (typeof jest !== "undefined" && jest.useRealTimers) jest.useRealTimers();
   });
 
   testDates.forEach((iso) => {
     it(`returns expected boundaries for system time ${iso}`, () => {
       // Use modern fake timers and set the system time for determinism.
-      // @ts-ignore
-      jest.useFakeTimers("modern");
+      jest.useFakeTimers();
       const ms = Date.parse(iso);
-      // @ts-ignore
       jest.setSystemTime(ms);
 
       const { startOfMonth, endOfMonth } = getStartAndEndOfMonth();

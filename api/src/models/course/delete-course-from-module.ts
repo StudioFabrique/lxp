@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
-import userBelongsToContacts from "../../utils/userBelongsToContacts";
-import deleteLesson from "../lesson/delete-lesson";
+import { prisma } from "../../utils/db.ts";
+import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
+import deleteLesson from "../lesson/delete-lesson.ts";
 
 export default async function deleteCourse(courseId: number, userId: string) {
   // Récupération du cours et des IDs de ses leçons

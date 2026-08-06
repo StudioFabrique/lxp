@@ -1,5 +1,5 @@
-import Hobby, { IHobby } from "../../../utils/interfaces/db/hobby";
-import User from "../../../utils/interfaces/db/user";
+import Hobby, { type IHobby } from "../../../utils/interfaces/db/hobby.ts";
+import User from "../../../utils/interfaces/db/user.ts";
 
 export default async function createManyHobbies(
   userId: string,

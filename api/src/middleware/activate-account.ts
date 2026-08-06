@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
-import { badQuery } from "../utils/constantes";
+import { type Response, type NextFunction } from "express";
+import { badQuery } from "../utils/constantes.ts";
 import jwt from "jsonwebtoken";
 
-import BlackListedToken from "../utils/interfaces/db/blacklisted-token";
-import CustomRequest from "../utils/interfaces/express/custom-request";
-import { buildAbility } from "../utils/rbac/ability";
+import BlackListedToken from "../utils/interfaces/db/blacklisted-token.ts";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
+import { buildAbility } from "../utils/rbac/ability.ts";
 
 export default function activateAccount(
   req: CustomRequest,

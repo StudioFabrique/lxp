@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postActivityVideo from "../../models/activity/post-activity/post-activity-video";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postActivityVideo from "../../models/activity/post-activity/post-activity-video.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpPostActivityVideo(

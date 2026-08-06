@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import getCoursesByModule from "../../models/course/get-courses-by-module";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Request, type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import getCoursesByModule from "../../models/course/get-courses-by-module.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpGetCoursesByModule(req: CustomRequest, res: Response) {
   const { moduleId } = req.params;

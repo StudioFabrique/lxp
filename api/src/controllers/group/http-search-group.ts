@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import searchGroup from "../../models/group/search-group";
+import { type Request, type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import searchGroup from "../../models/group/search-group.ts";
 
 async function httpSearchGroup(req: Request, res: Response) {
   const { entity, role, value, stype, sdir } = req.params;

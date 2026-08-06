@@ -1,9 +1,9 @@
 import { body, param, query } from "express-validator";
-import { checkValidatorResult } from "../../../middleware/validators";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 import {
   rgbaValidator,
   stringValidateGeneric,
-} from "../../../helpers/custom-validators";
+} from "../../../helpers/custom-validators.ts";
 
 export const postManyTagsValidator = [
   // Valider le champ 'tableau'

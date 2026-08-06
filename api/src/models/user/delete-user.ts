@@ -15,8 +15,8 @@
  * @returns {Promise<void>} Resolves when user is successfully deleted
  */
 
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function deleteUser(userId: string, connectedId: string) {
   // Prevent users from deleting their own account

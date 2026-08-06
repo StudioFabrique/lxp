@@ -9,6 +9,7 @@ import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/lesson";
 import type { CreateCourseFormValues } from "./course-form.types";
 import { cn } from "../../../../utils/cn";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 type Props = {
   initialTitle: string;
@@ -29,8 +30,9 @@ export default function CreateCourseDetailsModal({
   const [lessonTitle, setLessonTitle] = useState("");
   const [lessonTitles, setLessonTitles] = useState<string[]>([]);
   const [showExistingContents, setShowExistingContents] = useState(false);
+  const [includeCourseContents, setIncludeCourseContents] = useState(false);
   const [contentTagId, setContentTagId] = useState(0);
-  const [selectedLessons, setSelectedLessons] = useState<
+  const [selectedContents, setSelectedContents] = useState<
     LessonWithActivitiesCount[]
   >([]);
 
@@ -43,10 +45,14 @@ export default function CreateCourseDetailsModal({
   });
 
   const { data: lessonsResponse, isLoading: isLoadingLessons } = useQuery({
-    ...courseApi.queries.lessonsByTag(contentTagId),
+    ...courseApi.queries.lessonsByTag(
+      contentTagId,
+      includeCourseContents,
+      true,
+    ),
     enabled: contentTagId > 0,
   });
-  const lessons = useMemo(
+  const availableContents = useMemo(
     () => lessonsResponse?.data ?? [],
     [lessonsResponse?.data],
   );
@@ -54,7 +60,9 @@ export default function CreateCourseDetailsModal({
   const toggleTag = (tagId: number) => {
     setSelectedTagIds((current) =>
       current.includes(tagId)
-        ? current.filter((id) => id !== tagId)
+        ? current.length > 1
+          ? current.filter((id) => id !== tagId)
+          : current
         : [...current, tagId],
     );
   };
@@ -67,11 +75,26 @@ export default function CreateCourseDetailsModal({
   };
 
   const toggleExistingLesson = (lesson: LessonWithActivitiesCount) => {
-    setSelectedLessons((current) =>
-      current.includes(lesson)
-        ? current.filter((l) => l !== lesson)
+    setSelectedContents((current) =>
+      current.some(
+        (content) =>
+          content.id === lesson.id && content.source === lesson.source,
+      )
+        ? current.filter(
+            (content) =>
+              content.id !== lesson.id || content.source !== lesson.source,
+          )
         : [...current, lesson],
     );
+  };
+
+  const handleToggleCourseContents = (enabled: boolean) => {
+    setIncludeCourseContents(enabled);
+    if (!enabled) {
+      setSelectedContents((current) =>
+        current.filter((content) => content.source === "resource"),
+      );
+    }
   };
 
   const needsTagForNewLessons =
@@ -79,14 +102,19 @@ export default function CreateCourseDetailsModal({
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim() || needsTagForNewLessons) return;
+    if (!title.trim() || selectedTagIds.length === 0) return;
     const success = await onSubmit({
       title: title.trim(),
       description: description.trim(),
       visibility: true,
       tagIds: selectedTagIds,
       lessonTitles,
-      lessonIds: selectedLessons.map((l) => (l.id ? l.id : 0)),
+      lessonIds: selectedContents
+        .filter((content) => content.source === "lesson")
+        .map((content) => content.id),
+      resourceIds: selectedContents
+        .filter((content) => content.source === "resource")
+        .map((content) => content.id),
     });
     if (success) onClose();
   };
@@ -138,9 +166,9 @@ export default function CreateCourseDetailsModal({
 
           <section className="flex flex-col gap-3">
             <div>
-              <h4 className="text-sm font-semibold">Tags du cours</h4>
+              <h4 className="text-sm font-semibold">Tags du cours *</h4>
               <p className="text-xs text-base-content/60">
-                Sélectionnez les thèmes qui permettront de classer le cours.
+                Sélectionnez au moins un thème pour classer le cours.
               </p>
             </div>
             <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto rounded-lg border border-base-300 p-3">
@@ -152,9 +180,15 @@ export default function CreateCourseDetailsModal({
                       key={tag.id}
                       type="button"
                       onClick={() => toggleTag(tag.id)}
-                      className={`btn btn-xs ${
-                        selected ? "btn-primary" : "btn-outline"
-                      }`}
+                      className={cn(
+                        "btn btn-xs border-2",
+                        selected
+                          ? "border-primary ring-2 ring-primary/30"
+                          : "border-transparent",
+                      )}
+                      style={{ backgroundColor: tag.color }}
+                      aria-pressed={selected}
+                      disabled={selected && selectedTagIds.length === 1}
                     >
                       {selected && <Check className="h-3 w-3" />}
                       {tag.name}
@@ -247,52 +281,87 @@ export default function CreateCourseDetailsModal({
 
             {showExistingContents && (
               <div className="flex flex-col gap-3">
-                <label className="flex flex-col gap-2">
-                  <span className="flex items-center gap-2 text-xs font-semibold">
-                    <Search className="h-3.5 w-3.5" />
-                    Rechercher les contenus existants par tag
-                  </span>
-                  <select
-                    className="select select-sm select-bordered w-full"
-                    value={contentTagId}
-                    onChange={(event) =>
-                      setContentTagId(Number(event.target.value))
-                    }
-                  >
-                    <option value={0}>Choisir un tag</option>
-                    {tags.map((tag) => (
-                      <option key={tag.id} value={tag.id}>
-                        {tag.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <span className="flex items-center gap-2 text-xs font-semibold">
+                  <Search className="h-3.5 w-3.5" />
+                  Rechercher par tag
+                </span>
+                <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2">
+                    <select
+                      className="select select-sm select-bordered w-full"
+                      value={contentTagId}
+                      onChange={(event) =>
+                        setContentTagId(Number(event.target.value))
+                      }
+                    >
+                      <option value={0}>Choisir un tag</option>
+                      {tags.map((tag) => (
+                        <option key={tag.id} value={tag.id}>
+                          {tag.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-base-300 px-3 h-full">
+                    <span className="flex items-center gap-2">
+                      <span className="block text-sm font-semibold">
+                        Contenus des autres cours
+                      </span>
+                      <QuestionMarkTooltip
+                        tooltipPosition="left"
+                        tooltipValue="Ressources supplémentaires seules par défaut."
+                      />
+                    </span>
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-primary toggle-sm shrink-0"
+                      checked={includeCourseContents}
+                      onChange={(event) =>
+                        handleToggleCourseContents(event.target.checked)
+                      }
+                    />
+                  </label>
+                </div>
 
                 {isLoadingLessons ? (
                   <span className="loading loading-spinner loading-sm mx-auto" />
-                ) : contentTagId > 0 && lessons.length === 0 ? (
+                ) : contentTagId > 0 && availableContents.length === 0 ? (
                   <p className="text-xs text-center text-base-content/55 pt-2">
-                    Aucun contenu trouvé pour ce tag.
+                    {includeCourseContents
+                      ? "Aucun contenu trouvé pour ce tag."
+                      : "Aucune ressource supplémentaire trouvée pour ce tag."}
                   </p>
                 ) : (
                   <div>
                     <div className="flex flex-wrap gap-2 overflow-y-auto">
-                      {lessons.map(
-                        (lesson: LessonWithActivitiesCount) =>
-                          !selectedLessons.includes(lesson) && (
+                      {availableContents.map(
+                        (content: LessonWithActivitiesCount) =>
+                          !selectedContents.some(
+                            (selected) =>
+                              selected.id === content.id &&
+                              selected.source === content.source,
+                          ) && (
                             <label
-                              key={lesson.id}
+                              key={`${content.source}-${content.id}`}
                               className="flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm select-none"
                             >
                               <input
                                 type="checkbox"
                                 className="checkbox checkbox-primary checkbox-sm"
-                                checked={selectedLessons.includes(lesson)}
-                                onChange={() => toggleExistingLesson(lesson)}
+                                checked={false}
+                                onChange={() => toggleExistingLesson(content)}
                               />
-                              <span className="flex-1">{lesson.title}</span>
+                              <span className="flex-1">
+                                <span className="block">{content.title}</span>
+                                <span className="text-xs text-base-content/50">
+                                  {content.source === "resource"
+                                    ? "Ressource supplémentaire"
+                                    : content.sourceTitle}
+                                </span>
+                              </span>
                               <span className="text-xs text-base-content/50">
-                                {lesson.activitiesCount ?? 0} activité(s)
+                                {content.activitiesCount ?? 0} activité(s)
                               </span>
                             </label>
                           ),
@@ -306,12 +375,12 @@ export default function CreateCourseDetailsModal({
                       </div>
                     }
 
-                    {selectedLessons.length > 0 ? (
+                    {selectedContents.length > 0 ? (
                       <div className="flex flex-wrap gap-2 overflow-y-auto">
-                        {selectedLessons.map(
-                          (lesson: LessonWithActivitiesCount) => (
+                        {selectedContents.map(
+                          (content: LessonWithActivitiesCount) => (
                             <label
-                              key={lesson.id}
+                              key={`${content.source}-${content.id}`}
                               className={cn(
                                 "flex cursor-pointer items-center gap-3 rounded-lg border border-base-300 p-3 text-sm select-none",
                                 "bg-info/10",
@@ -320,12 +389,19 @@ export default function CreateCourseDetailsModal({
                               <input
                                 type="checkbox"
                                 className="checkbox checkbox-primary checkbox-sm"
-                                checked={selectedLessons.includes(lesson)}
-                                onChange={() => toggleExistingLesson(lesson)}
+                                checked
+                                onChange={() => toggleExistingLesson(content)}
                               />
-                              <span className="flex-1">{lesson.title}</span>
+                              <span className="flex-1">
+                                <span className="block">{content.title}</span>
+                                <span className="text-xs text-base-content/50">
+                                  {content.source === "resource"
+                                    ? "Ressource supplémentaire"
+                                    : content.sourceTitle}
+                                </span>
+                              </span>
                               <span className="text-xs text-base-content/50">
-                                {lesson.activitiesCount ?? 0} activité(s)
+                                {content.activitiesCount ?? 0} activité(s)
                               </span>
                             </label>
                           ),
@@ -351,7 +427,9 @@ export default function CreateCourseDetailsModal({
             type="submit"
             form="create-course-details-form"
             className="btn btn-primary"
-            disabled={!title.trim() || needsTagForNewLessons || isSubmitting}
+            disabled={
+              !title.trim() || selectedTagIds.length === 0 || isSubmitting
+            }
           >
             {isSubmitting && (
               <span className="loading loading-spinner loading-sm" />

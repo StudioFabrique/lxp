@@ -1,16 +1,16 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "node:crypto";
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
 export const uploadActivityImage = () => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "images"),
+        path.join(import.meta.dirname, "..", "..", "uploads", "activities", "images"),
       );
     },
     filename: async function (req: CustomRequest, file, cb) {

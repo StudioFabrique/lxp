@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import putManyLessons from "../../models/course/put-many-lessons";
+import { type Request, type Response } from "express";
+import putManyLessons from "../../models/course/put-many-lessons.ts";
 
 async function httpPutManyLessons(req: Request, res: Response) {
   const { courseId } = req.params;

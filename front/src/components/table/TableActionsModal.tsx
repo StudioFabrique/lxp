@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 type TableActionsModalProps = {
   title?: string;
@@ -21,14 +22,21 @@ const TableActionsModal = ({
   onCancel,
 }: PropsWithChildren<TableActionsModalProps>) => {
   useEffect(() => {
-    document.body.addEventListener(
-      "keydown",
-      (e) => e.key === "Escape" && onCancel(),
-    );
-  });
+    if (!isOpen) return;
 
-  return (
-    <dialog id="modal1" className="modal bg-black/50" open={isOpen}>
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCancel();
+    };
+    document.body.addEventListener("keydown", handleEscape);
+    return () => document.body.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onCancel]);
+
+  const modal = (
+    <dialog
+      id="modal1"
+      className="modal z-[100000] bg-black/50"
+      open={isOpen}
+    >
       <div className="modal-box px-8 w-full">
         <div className="flex gap-x-2">
           <h3 className="font-bold pb-4 text-primary">
@@ -60,6 +68,10 @@ const TableActionsModal = ({
       </div>
     </dialog>
   );
+
+  return typeof document === "undefined"
+    ? modal
+    : createPortal(modal, document.body);
 };
 
 export default TableActionsModal;

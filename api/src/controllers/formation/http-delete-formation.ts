@@ -1,7 +1,7 @@
-import { Response } from "express";
-import deleteFormation from "../../models/formation/delete-formation";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { serverIssue } from "../../utils/constantes";
+import { type Response } from "express";
+import deleteFormation from "../../models/formation/delete-formation.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpDeleteFormation(

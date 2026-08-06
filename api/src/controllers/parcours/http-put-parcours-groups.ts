@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putParcoursGroups from "../../models/parcours/put-parcours-groups";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putParcoursGroups from "../../models/parcours/put-parcours-groups.ts";
 
 async function httpPutParcoursGroups(req: Request, res: Response) {
   const { parcoursId, groupsIds } = req.body;

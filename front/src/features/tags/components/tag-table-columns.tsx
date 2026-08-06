@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type { TagRow } from "../api/tag.api";
+import TagItem from "../../../components/UI/tag-item/tag-item";
 
 export const getTagColumns = (
   onDelete: (id: number) => void,
@@ -29,8 +30,15 @@ export const getTagColumns = (
   {
     accessorKey: "name",
     header: "Titre",
-    cell: (info) => (
-      <span className="font-semibold">{info.getValue() as string}</span>
+    cell: ({ row }) => (
+      <TagItem
+        tag={{
+          id: row.original.id,
+          name: row.original.name,
+          color: row.original.color,
+        }}
+        noIcon
+      />
     ),
   },
   {
@@ -48,7 +56,13 @@ export const getTagColumns = (
         <div className="flex flex-wrap gap-1">
           {parcours.length > 0 ? (
             parcours.map((p) => (
-              <ParcoursLink key={p.id} id={p.id} title={p.title} />
+              <a
+                key={p.id}
+                href={`/admin/parcours/view/${p.id}`}
+                className="badge badge-primary badge-outline p-3 hover:badge-primary transition-colors"
+              >
+                {p.title}
+              </a>
             ))
           ) : (
             <span>-</span>
@@ -85,14 +99,3 @@ export const getTagColumns = (
     enableSorting: false,
   },
 ];
-
-function ParcoursLink({ id, title }: { id: number; title: string }) {
-  return (
-    <a
-      href={`/admin/parcours/view/${id}`}
-      className="badge badge-primary badge-outline p-3 hover:badge-primary transition-colors"
-    >
-      {title}
-    </a>
-  );
-}

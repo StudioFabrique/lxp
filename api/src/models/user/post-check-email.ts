@@ -1,7 +1,7 @@
-import { activationToken } from "../../helpers/activation-token";
-import { sendPasswordEmail } from "../../services/mailer";
-import role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
+import { activationToken } from "../../helpers/activation-token.ts";
+import { sendPasswordEmail } from "../../services/mailer.ts";
+import role from "../../utils/interfaces/db/role.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function postCheckEmail(email: string) {
   const existingUser = await User.findOne({ email });

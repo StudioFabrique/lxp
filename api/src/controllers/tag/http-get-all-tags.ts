@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getAllTags from "../../models/tag/get-all-tags";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getAllTags from "../../models/tag/get-all-tags.ts";
 
 async function httpGetAllTags(req: Request, res: Response) {
   try {

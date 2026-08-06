@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import getParcoursByFormation from "../../models/parcours/get-parcours-by-formation";
+import { serverIssue } from "../../utils/constantes.ts";
+import getParcoursByFormation from "../../models/parcours/get-parcours-by-formation.ts";
 
 //  retourne la liste des parcours associés à une formation
 async function httpGetParcoursByFormation(req: Request, res: Response) {

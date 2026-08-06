@@ -7,9 +7,9 @@ import {
   regexOptionalGeneric,
   regexPassword,
   regexRgba,
-} from "../utils/constantes";
-import { checkValidatorResult } from "../middleware/validators";
-import { validateYoutubeUrl } from "./youtube-validator";
+} from "../utils/constantes.ts";
+import { checkValidatorResult } from "../middleware/validators.ts";
+import { validateYoutubeUrl } from "./youtube-validator.ts";
 
 export function rgbaValidator(value: string) {
   return regexRgba.test(value);

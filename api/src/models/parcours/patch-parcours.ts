@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
-import { getAdmin } from "../../helpers/get-admin";
-import { prisma } from "../../utils/db";
+import { getAdmin } from "../../helpers/get-admin.ts";
+import { prisma } from "../../utils/db.ts";
 
 export type PatchParcoursPayload = {
   title?: string;

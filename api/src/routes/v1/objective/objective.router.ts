@@ -1,11 +1,11 @@
 import express from "express";
-import checkToken from "../../../middleware/check-token";
+import checkToken from "../../../middleware/check-token.ts";
 import { body, param } from "express-validator";
 
-import httpDeleteObjective from "../../../controllers/objective/http-delete-objective";
-import httpPutObjective from "../../../controllers/objective/http-put-objective";
-import checkPermissions from "../../../middleware/check-permissions";
-import { putObjectiveValidator } from "./objective-validators";
+import httpDeleteObjective from "../../../controllers/objective/http-delete-objective.ts";
+import httpPutObjective from "../../../controllers/objective/http-put-objective.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import { putObjectiveValidator } from "./objective-validators.ts";
 
 const objectiveRouter = express.Router();
 

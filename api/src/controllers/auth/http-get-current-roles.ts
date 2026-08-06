@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getRoles from "../../models/auth/get-current-roles";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getRoles from "../../models/auth/get-current-roles.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpGetCurrentRoles(req: CustomRequest, res: Response) {
   try {

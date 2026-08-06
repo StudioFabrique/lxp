@@ -1,0 +1,404 @@
+erDiagram
+    Admin ||--o{ Activity : authors
+    Admin ||--o{ BonusActivity : authors
+    Admin ||--o{ Course : authors
+    Admin ||--o{ Formation : authors
+    Admin ||--o{ Lesson : authors
+    Admin ||--o{ Mediatheque : owns
+    Admin ||--o{ Module : authors
+    Admin ||--o{ Parcours : authors
+    Admin ||--o{ Resource : authors
+
+    Student ||--o{ Accomplishment : earns
+    Course o|--o{ Accomplishment : concerns
+
+    Lesson ||--o{ Activity : contains
+    Activity ||--o{ ResourceActivity : contains
+    Resource ||--o{ BonusActivity : contains
+    BonusActivity ||--o{ ResourceBonusActivity : contains
+
+    Formation ||--o{ Parcours : contains
+    Parcours ||--o{ Module : contains
+    Module ||--o{ Course : contains
+    Course ||--o{ Lesson : contains
+    Parcours ||--o{ Objective : defines
+    Parcours ||--o{ BonusSkill : defines
+
+    Contact ||--o{ ContactsOnCourse : assigned
+    Course ||--o{ ContactsOnCourse : has
+    Contact ||--o{ ContactsOnModule : assigned
+    Module ||--o{ ContactsOnModule : has
+    Contact ||--o{ ContactsOnParcours : assigned
+    Parcours ||--o{ ContactsOnParcours : has
+
+    Group ||--o{ GroupsOnParcours : assigned
+    Parcours ||--o{ GroupsOnParcours : has
+
+    BonusSkill ||--o{ BonusSkillsOnModule : assigned
+    Module ||--o{ BonusSkillsOnModule : has
+    Skill ||--o{ SkillsOnParcours : assigned
+    Parcours ||--o{ SkillsOnParcours : has
+
+    Tag ||--o{ Lesson : categorizes
+    Tag ||--o{ TagsOnCourse : assigned
+    Course ||--o{ TagsOnCourse : has
+    Tag ||--o{ TagsOnFormation : assigned
+    Formation ||--o{ TagsOnFormation : has
+    Tag ||--o{ TagsOnParcours : assigned
+    Parcours ||--o{ TagsOnParcours : has
+    Tag ||--o{ TagsOnResources : assigned
+    Resource ||--o{ TagsOnResources : has
+
+    Lesson ||--o{ LessonRating : receives
+    Student ||--o{ LessonRating : submits
+    Lesson ||--o{ LessonRead : tracks
+    Student ||--o{ LessonRead : performs
+
+    Module o|--o{ Quiz : scopes
+    Activity o|--o{ Quiz : scopes
+    Course o|--o{ Quiz : scopes
+    Student o|--o{ Quiz : owns
+    Quiz o|--o{ QuizQuestion : contains
+    QuizQuestion o|--o{ QuizQuestionReport : receives
+
+    Accomplishment {
+        int id PK
+        string name
+        string description
+        datetime accomplishedAt
+        boolean hasBeenCongratulated
+        int studentId FK
+        boolean showToOtherStudent
+        int courseId FK "nullable"
+    }
+
+    Activity {
+        int id PK
+        string title "nullable"
+        string type
+        int order
+        string url
+        int lessonId FK
+        datetime createdAt
+        datetime updatedAt
+        int authorId FK
+        int duplicationIndex
+    }
+
+    Admin {
+        int id PK
+        string idMdb
+    }
+
+    BonusActivity {
+        int id PK
+        string title "nullable"
+        string type
+        int order
+        string url
+        datetime createdAt
+        datetime updatedAt
+        int adminId FK
+        int resourceId FK
+    }
+
+    BonusSkill {
+        int id PK
+        string description
+        datetime createdAt
+        datetime updatedAt
+        string badge "nullable"
+        int parcoursId FK
+    }
+
+    BonusSkillsOnModule {
+        int bonusSkillId PK, FK
+        int moduleId PK, FK
+    }
+
+    Contact {
+        int id PK
+        string idMdb UK
+        string name
+        string role
+        string email "nullable"
+        string phone "nullable"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    ContactsOnCourse {
+        int contactId PK, FK
+        int courseId PK, FK
+    }
+
+    ContactsOnModule {
+        int contactId PK, FK
+        int moduleId PK, FK
+    }
+
+    ContactsOnParcours {
+        int parcoursId PK, FK
+        int contactId PK, FK
+    }
+
+    Course {
+        int id PK
+        string title
+        string description "nullable"
+        bytes image "nullable"
+        string virtualClass "nullable"
+        boolean visibility "nullable"
+        boolean scenario
+        json_array dates
+        int order
+        boolean isPublished
+        datetime createdAt
+        datetime updatedAt
+        string author
+        int adminId FK
+        string courseSlug "nullable"
+        int moduleId FK
+        int duplicationIndex
+    }
+
+    Formation {
+        int id PK
+        string title UK
+        string description "nullable"
+        string code "nullable"
+        string level
+        datetime createdAt
+        datetime updatedAt
+        int adminId FK
+    }
+
+    Group {
+        int id PK
+        string idMdb
+    }
+
+    GroupsOnParcours {
+        int groupId PK, FK
+        int parcoursId PK, FK
+    }
+
+    Lesson {
+        int id PK
+        string title
+        string description
+        string modalite
+        datetime createdAt
+        datetime updatedAt
+        string author
+        int adminId FK
+        int courseId FK
+        int tagId FK
+        int order
+        boolean isPublished
+        boolean visibility
+        int duplicationIndex
+    }
+
+    LessonRating {
+        int id PK
+        int rating
+        int lessonId FK
+        int studentId FK
+    }
+
+    LessonRead {
+        int id PK
+        datetime beganAt
+        datetime lastOpenedAt
+        datetime finishedAt "nullable"
+        int lessonId FK
+        int studentId FK
+    }
+
+    Mediatheque {
+        int id PK
+        string type
+        string url
+        string name
+        int authorId FK
+        int size
+        int used
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Module {
+        int id PK
+        string title
+        string description "nullable"
+        string quizInstructions "nullable"
+        bytes image "nullable"
+        bytes thumb "nullable"
+        int duration "nullable"
+        float rating "nullable"
+        datetime minDate "nullable"
+        datetime maxDate "nullable"
+        datetime createdAt
+        datetime updatedAt
+        string author
+        int adminId FK
+        int parcoursId FK
+        int duplicationIndex
+    }
+
+    Objective {
+        int id PK
+        string description
+        datetime createdAt
+        datetime updatedAt
+        int parcoursId FK
+    }
+
+    OpenBadge {
+        int id PK
+        string creator
+        bytes image
+        string url
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Parcours {
+        int id PK
+        string title UK
+        string description "nullable"
+        datetime startDate "nullable"
+        datetime endDate "nullable"
+        string degree "nullable"
+        bytes image "nullable"
+        bytes thumb "nullable"
+        datetime createdAt
+        datetime updatedAt
+        string author
+        boolean visibility
+        int adminId FK
+        int formationId FK
+        string virtualClass "nullable"
+        boolean isPublished
+        int duplicationIndex
+    }
+
+    Resource {
+        int id PK
+        string title
+        string description "nullable"
+        datetime createdAt
+        datetime updatedAt
+        string author
+        int adminId FK
+        string imageUrl "nullable"
+    }
+
+    ResourceActivity {
+        int id PK
+        string label
+        int order
+        string url
+        int activityId FK
+    }
+
+    ResourceBonusActivity {
+        int id PK
+        string label
+        int order
+        string url
+        int bonusActivityId FK
+    }
+
+    Skill {
+        int id PK
+        string description UK
+        datetime createdAt
+        datetime updatedAt
+        string badge "nullable"
+    }
+
+    SkillsOnParcours {
+        int skillId PK, FK
+        int parcoursId PK, FK
+    }
+
+    Student {
+        int id PK
+        string idMdb
+    }
+
+    Tag {
+        int id PK
+        string name UK
+        string color
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    TagsOnCourse {
+        int tagId PK, FK
+        int courseId PK, FK
+    }
+
+    TagsOnFormation {
+        int tagId PK, FK
+        int formationId PK, FK
+    }
+
+    TagsOnParcours {
+        int tagId PK, FK
+        int parcoursId PK, FK
+    }
+
+    TagsOnResources {
+        int tagId PK, FK
+        int resourceId PK, FK
+    }
+
+    Teacher {
+        int id PK
+        string idMdb
+    }
+
+    Authorization {
+        int id PK
+        string role
+        string action
+        string resource
+    }
+
+    Quiz {
+        int id PK
+        string title
+        string type
+        int moduleId FK "nullable"
+        int activityId FK "nullable"
+        int courseId FK "nullable"
+        datetime createdAt
+        datetime updatedAt
+        int studentId FK "nullable"
+    }
+
+    QuizQuestion {
+        int id PK
+        int quizId FK "nullable"
+        string externalId "nullable"
+        string type
+        string difficulty
+        string prompt
+        string explanationTrue "nullable"
+        string explanationWrong "nullable"
+        string_array tags
+        json data
+        string contentHash UK "nullable"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    QuizQuestionReport {
+        int id PK
+        int quizQuestionId FK "nullable"
+        string commentaire "nullable"
+    }

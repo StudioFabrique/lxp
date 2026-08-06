@@ -1,19 +1,19 @@
 import express from "express";
 import { body } from "express-validator";
 
-import httpLogout from "../../../controllers/auth/http-logout";
-import refreshTokens from "../../../middleware/refresh-tokens";
-import httpLogin from "../../../controllers/auth/http-login";
-import httpHandshake from "../../../controllers/auth/http-handshake";
-import checkToken from "../../../middleware/check-token";
-import httpGetCurrentRoles from "../../../controllers/auth/http-get-current-roles";
-import { passwordValidateGeneric } from "../../../helpers/custom-validators";
-import httpGetDisconnect from "../../../controllers/auth/http-get-disconnect";
-import httpGetSetupStatus from "../../../controllers/auth/http-get-setup-status";
-import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-verify-activation-token";
-import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin";
-import rateLimiter from "../../../middleware/rate-limiter";
-import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds";
+import httpLogout from "../../../controllers/auth/http-logout.ts";
+import refreshTokens from "../../../middleware/refresh-tokens.ts";
+import httpLogin from "../../../controllers/auth/http-login.ts";
+import httpHandshake from "../../../controllers/auth/http-handshake.ts";
+import checkToken from "../../../middleware/check-token.ts";
+import httpGetCurrentRoles from "../../../controllers/auth/http-get-current-roles.ts";
+import { passwordValidateGeneric } from "../../../helpers/custom-validators.ts";
+import httpGetDisconnect from "../../../controllers/auth/http-get-disconnect.ts";
+import httpGetSetupStatus from "../../../controllers/auth/http-get-setup-status.ts";
+import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-verify-activation-token.ts";
+import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin.ts";
+import rateLimiter from "../../../middleware/rate-limiter.ts";
+import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds.ts";
 
 const authRouter = express.Router();
 

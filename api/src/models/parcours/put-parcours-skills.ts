@@ -1,5 +1,5 @@
-import { Skill } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Skill } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
   const existingParcours = await prisma.parcours.findUnique({

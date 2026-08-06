@@ -1,4 +1,4 @@
-import UserSocket from "../../utils/interfaces/db/user-socket";
+import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function getConnectedStudent(studentId: string) {
   const socket = await UserSocket.findOne(

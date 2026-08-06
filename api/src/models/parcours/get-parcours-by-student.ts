@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import Group from "../../utils/interfaces/db/group";
+import { prisma } from "../../utils/db.ts";
+import Group from "../../utils/interfaces/db/group.ts";
 
 async function getParcoursByStudent(studentId: string) {
   const groupsWhereStudentIs = await Group.find({ users: studentId });

@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function putCourseDates(
   courseId: number,

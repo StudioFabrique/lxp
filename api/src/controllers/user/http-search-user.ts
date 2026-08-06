@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import searchUser from "../../models/user/search-user";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import searchUser from "../../models/user/search-user.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 
 async function httpSearchUser(req: Request, res: Response) {

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putTag from "../../models/tag/put-tag";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putTag from "../../models/tag/put-tag.ts";
 
 export default async function httpPutTag(req: Request, res: Response) {
   try {

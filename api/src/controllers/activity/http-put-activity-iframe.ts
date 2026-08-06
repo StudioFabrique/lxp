@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import putIframe from "../../models/activity/update-activity/put-iframe";
+import { serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import putIframe from "../../models/activity/update-activity/put-iframe.ts";
 
 export default async function httpPutActivityIframe(
   req: CustomRequest,

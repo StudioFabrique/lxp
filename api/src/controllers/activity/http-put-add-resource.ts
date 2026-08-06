@@ -1,6 +1,6 @@
-import putAddResource from "../../models/activity/update-activity/put-add-resource";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { Response, NextFunction } from "express";
+import putAddResource from "../../models/activity/update-activity/put-add-resource.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { type Response, type NextFunction } from "express";
 
 /**
  * HTTP PUT controller for adding resources to an existing activity

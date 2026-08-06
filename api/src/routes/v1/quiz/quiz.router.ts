@@ -1,15 +1,15 @@
 import { Router } from "express";
-import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz";
-import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream";
-import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream";
+import httpPostRequestRandomQuiz from "../../../controllers/quiz/http-post-request-random-quiz.ts";
+import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-ending-course-quiz-stream.ts";
+import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream.ts";
 import {
   endingCourseQuizStreamValidator,
   preliminaryQuizStreamValidator,
   randomQuizValidator,
   reportQuizQuestionValidator,
-} from "./quiz-validator";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpPostReportQuizQuestion from "../../../controllers/quiz/http-post-report-quiz-question";
+} from "./quiz-validator.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpPostReportQuizQuestion from "../../../controllers/quiz/http-post-report-quiz-question.ts";
 
 /**
  * Routeur dédié à la génération de quiz.

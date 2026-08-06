@@ -1,6 +1,6 @@
-import { Lesson, Activity, Resource, BonusActivity } from "@prisma/client";
-import { prisma } from "../../../utils/db";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { type Lesson, type Activity, type Resource, type BonusActivity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Type definition for a Lesson with its activities included

@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import putActivityImage from "../../models/activity/update-activity/put-activity-image";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import putActivityImage from "../../models/activity/update-activity/put-activity-image.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 
 /**
  * Contrôleur pour mettre à jour une activité de type image

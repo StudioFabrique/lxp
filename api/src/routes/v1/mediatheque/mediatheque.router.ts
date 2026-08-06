@@ -1,7 +1,7 @@
 // Import des dépendances nécessaires
 import { Router } from "express";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpGetMedias from "../../../controllers/mediatheque/http-get-medias";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpGetMedias from "../../../controllers/mediatheque/http-get-medias.ts";
 
 // Création du routeur pour la médiathèque
 const mediaRouter = Router();

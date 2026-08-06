@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import enableCourse from "../../models/course/enable-course";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import enableCourse from "../../models/course/enable-course.ts";
 
 export async function httpEnableCourse(
   req: CustomRequest,

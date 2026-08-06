@@ -1,9 +1,9 @@
-import { Request } from "express";
-import { IRole } from "../db/role";
+import { type Request } from "express";
+import { type IRole } from "../db/role.ts";
 import {
-  AppAbility,
-  AppAbilityRule,
-} from "../../rbac/ability";
+  type AppAbility,
+  type AppAbilityRule,
+} from "../../rbac/ability.ts";
 
 export default interface CustomRequest extends Request {
   auth?: {

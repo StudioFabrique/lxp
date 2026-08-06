@@ -1,34 +1,36 @@
 import express from "express";
 // Middleware d'authentification
 // Contrôleurs pour les opérations sur les leçons
-import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
+import httpPutLesson from "../../../controllers/lesson/http-put-lesson.ts";
 // Validateurs pour les différentes routes
 import {
   duplicateLessonValidator,
+  duplicateResourcesValidator,
   getLessonsByTagValidator,
   lessonIdValidator,
   lessonIdWithRateValidator,
   lessonRateValidator,
   putLessonValidator,
   putReorderLessonsValidator,
-} from "./lesson-validator";
+} from "./lesson-validator.ts";
 // Contrôleurs pour les différentes opérations sur les leçons
-import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by-tag";
+import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by-tag.ts";
 // Middleware de vérification des permissions
-import checkPermissions from "../../../middleware/check-permissions";
-import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list";
-import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
-import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
-import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list.ts";
+import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail.ts";
+import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson.ts";
+import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons.ts";
 // Contrôleurs pour le suivi de lecture des leçons
-import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
-import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
-import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
-import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson";
-import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating";
-import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson";
-import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson";
-import httpPostDuplicateLesson from "../../../controllers/lesson/http-post-duplicate-lesson";
+import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson.ts";
+import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson.ts";
+import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read.ts";
+import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson.ts";
+import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating.ts";
+import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson.ts";
+import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson.ts";
+import httpPostDuplicateLesson from "../../../controllers/lesson/http-post-duplicate-lesson.ts";
+import httpPostDuplicateResources from "../../../controllers/lesson/http-post-duplicate-resources.ts";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
@@ -139,6 +141,13 @@ lessonRouter.post(
   checkPermissions("lesson"),
   duplicateLessonValidator,
   httpPostDuplicateLesson
+);
+
+lessonRouter.post(
+  "/duplicate-resources/:courseId",
+  checkPermissions("lesson"),
+  duplicateResourcesValidator,
+  httpPostDuplicateResources,
 );
 
 export default lessonRouter;

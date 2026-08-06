@@ -1,6 +1,6 @@
-import getParcours from "../../models/evaluations/getParcours";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { Response, NextFunction } from "express";
+import getParcours from "../../models/evaluations/getParcours.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { type Response, type NextFunction } from "express";
 
 export default async function httpGetParcours(
   req: CustomRequest,

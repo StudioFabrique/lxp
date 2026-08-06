@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Récupère une liste simplifiée des parcours avec uniquement leur id et titre

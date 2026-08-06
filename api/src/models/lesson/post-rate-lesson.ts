@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function postRateLesson(
   lessonId: number,

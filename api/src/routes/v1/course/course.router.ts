@@ -6,12 +6,13 @@
 import express from "express";
 
 // Import des contrôleurs pour la gestion des cours
-import httpPostCourse from "../../../controllers/course/http-post-course";
-import httpPostImportCourseStructure from "../../../controllers/course/http-post-import-course-structure";
+import httpPostCourse from "../../../controllers/course/http-post-course.ts";
+import httpPostImportCourseStructure from "../../../controllers/course/http-post-import-course-structure.ts";
 
 import {
   courseIdAndVisibilityValidator,
   courseIdValidator,
+  courseTagsValidator,
   deleteCourseDatesValidator,
   postCourseValidator,
   postImportCourseStructureValidator,
@@ -20,45 +21,45 @@ import {
   putCourseLessonValidator,
   putCourseNewObjectiveValidator,
   putReorderCoursesValidator,
-} from "./course-validators";
-import httpGetCourses from "../../../controllers/course/http-get-courses";
-import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
+} from "./course-validators.ts";
+import httpGetCourses from "../../../controllers/course/http-get-courses.ts";
+import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations.ts";
 import multer from "multer";
 import path from "path";
-import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
-import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations";
-import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
+import httpPutCourseImage from "../../../controllers/course/http-put-course-image.ts";
+import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations.ts";
+import httpPutCourseTags from "../../../controllers/course/http-put-course-tags.ts";
 import {
   idsArrayValidator,
   virtualClassValidator,
-} from "../../../helpers/custom-validators";
-import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
-import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
-import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives";
-import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
-import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
-import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
-import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
-import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
-import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
-import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
-import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
-import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
-import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
-import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module";
-import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
-import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
-import { httpDeleteCourse } from "../../../controllers/course/http-delete-course";
-import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline";
-import httpGetCoursesFromModule from "../../../controllers/course/http-get-courses-from-module";
-import { moduleIdValidator } from "../modules/module-validators";
+} from "../../../helpers/custom-validators.ts";
+import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts.ts";
+import checkPermissions from "../../../middleware/check-permissions.ts";
+import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class.ts";
+import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives.ts";
+import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives.ts";
+import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective.ts";
+import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills.ts";
+import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills.ts";
+import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson.ts";
+import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario.ts";
+import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons.ts";
+import httpPutCourseDates from "../../../controllers/course/http-put-course-dates.ts";
+import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates.ts";
+import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished.ts";
+import httpGetCourseDates from "../../../controllers/course/http-get-course-dates.ts";
+import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module.ts";
+import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers.ts";
+import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses.ts";
+import { httpDeleteCourse } from "../../../controllers/course/http-delete-course.ts";
+import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline.ts";
+import httpGetCoursesFromModule from "../../../controllers/course/http-get-courses-from-module.ts";
+import { moduleIdValidator } from "../modules/module-validators.ts";
 import { query } from "express-validator";
-import { checkValidatorResult } from "../../../middleware/validators";
-import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses";
-import { httpEnableCourse } from "../../../controllers/course/http-enable-course";
-import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
+import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses.ts";
+import { httpEnableCourse } from "../../../controllers/course/http-enable-course.ts";
+import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz.ts";
 
 const courseRouter = express.Router();
 
@@ -68,7 +69,7 @@ const courseRouter = express.Router();
  */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "..", "..", "..", "..", "uploads"));
+    cb(null, path.join(import.meta.dirname, "..", "..", "..", "..", "uploads"));
   },
   filename: function (req, file, cb) {
     if (file.mimetype.startsWith("image")) {
@@ -286,7 +287,7 @@ courseRouter.put(
 courseRouter.put(
   "/tags/:courseId",
   checkPermissions("course"),
-  idsArrayValidator,
+  courseTagsValidator,
   courseIdValidator,
   httpPutCourseTags,
 );

@@ -1,6 +1,6 @@
-import { ObjectId } from "mongoose";
-import Graduation, { IGraduation } from "../../utils/interfaces/db/graduation";
-import User from "../../utils/interfaces/db/user";
+import { type ObjectId } from "mongoose";
+import Graduation, { type IGraduation } from "../../utils/interfaces/db/graduation.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function editManyGraduations(
   userId: ObjectId,

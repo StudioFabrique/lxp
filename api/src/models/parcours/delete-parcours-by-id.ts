@@ -1,80 +1,59 @@
-import { getAdmin } from "../../helpers/get-admin";
-import { prisma } from "../../utils/db";
+import { getAdmin } from "../../helpers/get-admin.ts";
+import { prisma } from "../../utils/db.ts";
+import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 async function deleteParcoursById(parcoursId: number, userId: string) {
   const admin = await getAdmin(userId);
-  try {
-    let title = "";
-    const transaction = await prisma.$transaction(async (tx) => {
-      const parcours = await tx.parcours.findUnique({
-        where: { id: parcoursId },
-        include: { tags: true, modules: true },
-      });
-
-      if (!parcours) {
-        throw {
-          message: `Le parcours identifié par l'id : ${parcoursId} n'existe pas`,
-          statusCode: 404,
-        };
-      }
-
-      const existingAuthor = await tx.admin.findFirst({
-        where: {
-          id: parcours.adminId,
+  const parcours = await prisma.parcours.findUnique({
+    where: { id: parcoursId },
+    include: {
+      admin: { select: { idMdb: true } },
+      modules: {
+        include: {
+          courses: {
+            include: {
+              lessons: { include: { activities: true } },
+            },
+          },
         },
-      });
-      // retourne une erreur si l'utilisateur n'est pas l'auteur du parcours
-      if (existingAuthor?.idMdb !== userId)
-        throw {
-          statusCode: 406,
-          message: "Vous n'êtes pas autorisé à supprimer ce parcours.",
-        };
+      },
+    },
+  });
 
-      title = parcours.title;
-
-      /*
-      if (parcours.modules && parcours.modules.length > 0) {
-        throw {
-          message:
-            "Des modules sont liés à ce parcours, il ne peut donc pas être supprimé. Supprimez manuellement les modules avant de reessayer.",
-          statusCode: 400,
-        };
-      }
-      */
-
-      // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
-      await tx.tagsOnParcours.deleteMany({
-        where: { parcoursId },
-      });
-
-      // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
-      await tx.contactsOnParcours.deleteMany({
-        where: { parcoursId: parcoursId },
-      });
-
-      await tx.bonusSkill.deleteMany({
-        where: { parcoursId },
-      });
-
-      await tx.objective.deleteMany({
-        where: { parcoursId },
-      });
-
-      await tx.groupsOnParcours.deleteMany({
-        where: { parcoursId },
-      });
-
-      // Supprimer le parcours
-      const deletedParcours = await tx.parcours.delete({
-        where: { id: parcoursId, adminId: admin.id },
-      });
-    });
-    return title;
-  } catch (error: any) {
-    console.log({ error });
-
-    throw error;
+  if (!parcours) {
+    throw {
+      message: `Le parcours identifié par l'id : ${parcoursId} n'existe pas`,
+      statusCode: 404,
+    };
   }
+
+  if (parcours.admin.idMdb !== userId) {
+    throw {
+      statusCode: 406,
+      message: "Vous n'êtes pas autorisé à supprimer ce parcours.",
+    };
+  }
+
+  for (const activity of parcours.modules.flatMap((module) =>
+    module.courses.flatMap((course) =>
+      course.lessons.flatMap((lesson) => lesson.activities),
+    ),
+  )) {
+    await deleteActivity(activity.id, activity.type, "lesson");
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.tagsOnParcours.deleteMany({ where: { parcoursId } });
+    await tx.contactsOnParcours.deleteMany({ where: { parcoursId } });
+    await tx.bonusSkill.deleteMany({ where: { parcoursId } });
+    await tx.objective.deleteMany({ where: { parcoursId } });
+    await tx.groupsOnParcours.deleteMany({ where: { parcoursId } });
+    await tx.parcours.delete({
+      where: { id: parcoursId, adminId: admin.id },
+    });
+  });
+
+  return parcours.title;
 }
 
 export default deleteParcoursById;

@@ -1,6 +1,6 @@
-import { activationToken } from "../../helpers/activation-token";
-import { sendPasswordEmail } from "../../services/mailer";
-import User from "../../utils/interfaces/db/user";
+import { activationToken } from "../../helpers/activation-token.ts";
+import { sendPasswordEmail } from "../../services/mailer.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 /**
  * Send activation invitations to multiple users

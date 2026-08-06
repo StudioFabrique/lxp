@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import postBeginReadLesson from "../../models/lesson/post-begin-read-lesson";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import postBeginReadLesson from "../../models/lesson/post-begin-read-lesson.ts";
 
 export default async function httpPostBeginReadLesson(
   req: CustomRequest,

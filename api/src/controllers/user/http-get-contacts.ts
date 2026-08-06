@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import getContacts from "../../models/parcours/get-contacts";
-import { serverIssue } from "../../utils/constantes";
+import getContacts from "../../models/parcours/get-contacts.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 async function httpGetContacts(req: Request, res: Response) {
   try {

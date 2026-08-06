@@ -1,6 +1,6 @@
-import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
+import Role from "../../utils/interfaces/db/role.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import { prisma } from "../../utils/db.ts";
 
 /**
  * Updates roles for multiple users with proper authorization checks

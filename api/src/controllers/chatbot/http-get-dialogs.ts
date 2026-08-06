@@ -1,7 +1,7 @@
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { Response, NextFunction } from "express";
-import { serverIssue } from "../../utils/constantes";
-import getDialogs from "../../models/chatbot/get-dialogs";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { type Response, type NextFunction } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import getDialogs from "../../models/chatbot/get-dialogs.ts";
 
 export default async function httpGetDialogs(
   req: CustomRequest,

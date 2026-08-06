@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { noData, serverIssue } from "../../utils/constantes";
-import updateManyUsersStatus from "../../models/user/update-many-users-status";
+import { type Request, type Response } from "express";
+import { noData, serverIssue } from "../../utils/constantes.ts";
+import updateManyUsersStatus from "../../models/user/update-many-users-status.ts";
 import { validationResult } from "express-validator";
 
 async function httpUpdateManyUsersStatus(req: Request, res: Response) {

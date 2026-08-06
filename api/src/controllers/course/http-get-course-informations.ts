@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import getCourseInformations from "../../models/course/get-course-informations";
+import { serverIssue } from "../../utils/constantes.ts";
+import getCourseInformations from "../../models/course/get-course-informations.ts";
 
 async function httpGetCourseInformations(req: Request, res: Response) {
   const { courseId } = req.params;

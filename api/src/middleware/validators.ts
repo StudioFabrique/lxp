@@ -1,18 +1,18 @@
-import { NextFunction, Response } from "express";
+import { type NextFunction, type Response } from "express";
 import {
-  ValidationChain,
+  type ValidationChain,
   body,
   param,
   query,
   validationResult,
 } from "express-validator";
-import { badQuery } from "../utils/constantes";
-import { logger } from "../utils/logs/logger";
-import CustomRequest from "../utils/interfaces/express/custom-request";
+import { badQuery } from "../utils/constantes.ts";
+import { logger } from "../utils/logs/logger.ts";
+import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import {
   stringValidateGeneric,
   stringValidateOptional,
-} from "../helpers/custom-validators";
+} from "../helpers/custom-validators.ts";
 
 export const checkValidatorResult = (
   req: CustomRequest,

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import deleteManyTags from "../../models/tag/delete-many-tags";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import deleteManyTags from "../../models/tag/delete-many-tags.ts";
 
 export default async function httpDeleteManyTags(req: Request, res: Response) {
   const tagsIds = req.query.ids?.toString().split(",") || [];

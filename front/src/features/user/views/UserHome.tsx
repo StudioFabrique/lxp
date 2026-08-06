@@ -55,13 +55,8 @@ const UserHome = () => {
     onRefreshData();
   }, [onRefreshData]);
 
-  const {
-    onDeleteOne,
-    onUpdateStatus,
-    onSendInvitation,
-    onSendResetPassword,
-    isDeleting,
-  } = useUserActions(refreshAndClearSelection);
+  const { onDeleteOne, onSendInvitation, onSendResetPassword, isDeleting } =
+    useUserActions(refreshAndClearSelection);
 
   const userToDelete = useMemo(
     () => data.find((u) => u._id === idToDelete),
@@ -92,11 +87,10 @@ const UserHome = () => {
     () =>
       getUsersColumns(
         (id) => setIdToDelete(id),
-        onUpdateStatus,
         (id) => setIdToResendInvitation(id),
         (id) => setIdToResetPassword(id),
       ),
-    [onUpdateStatus],
+    [],
   );
 
   const handleConfirmSingleDelete = async () => {

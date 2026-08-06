@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import getAllModules from "../../models/module/get-all-modules";
-import { serverIssue } from "../../utils/constantes";
+import { type Request, type Response } from "express";
+import getAllModules from "../../models/module/get-all-modules.ts";
+import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetAllModules(req: Request, res: Response) {
   try {

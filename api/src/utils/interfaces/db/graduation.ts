@@ -1,5 +1,5 @@
 import mongoose, { type Document, Schema } from "mongoose";
-import type { IUser } from "./user";
+import type { IUser } from "./user.ts";
 
 export interface IGraduation extends Document {
   title: string;

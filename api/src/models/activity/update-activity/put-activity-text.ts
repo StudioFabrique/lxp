@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs";
 import { randomUUID } from "node:crypto";
 
-import { prisma } from "../../../utils/db";
-import { BonusActivity, Activity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
+import { type BonusActivity, type Activity } from "@prisma/client";
 
 /**
  * Updates an activity's text content, title, and description.
@@ -56,7 +56,7 @@ export default async function putActivityText(
   try {
     const file = fs.writeFileSync(
       path.join(
-        __dirname,
+        import.meta.dirname,
         "..",
         "..",
         "..",
@@ -106,7 +106,7 @@ export default async function putActivityText(
     if (doublons && doublons.length === 0) {
       await fs.promises.unlink(
         path.join(
-          __dirname,
+          import.meta.dirname,
           "..",
           "..",
           "..",

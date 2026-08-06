@@ -1,6 +1,6 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
-import putAccomplishmentCompleted from "../../models/user/accomplishments/put-accomplishment-completed";
+import putAccomplishmentCompleted from "../../models/user/accomplishments/put-accomplishment-completed.ts";
 
 export default async function congratulateStudent(
   studentMdbId: string,

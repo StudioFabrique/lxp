@@ -1,7 +1,7 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import getParcoursByStudent from "../../models/parcours/get-parcours-by-student";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import getParcoursByStudent from "../../models/parcours/get-parcours-by-student.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpGetParcoursAsStudent(
   req: CustomRequest,

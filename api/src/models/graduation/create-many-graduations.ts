@@ -1,5 +1,5 @@
-import Graduation, { IGraduation } from "../../utils/interfaces/db/graduation";
-import User from "../../utils/interfaces/db/user";
+import Graduation, { type IGraduation } from "../../utils/interfaces/db/graduation.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 export default async function createManyGraduations(
   userId: string,

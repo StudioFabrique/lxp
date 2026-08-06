@@ -1,8 +1,8 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-import { badQuery, serverIssue } from "../../utils/constantes";
-import getMostReadCourses from "../../models/course/get-most-read-courses";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import getMostReadCourses from "../../models/course/get-most-read-courses.ts";
 
 export default async function httpGetMostReadCourses(
   req: CustomRequest,

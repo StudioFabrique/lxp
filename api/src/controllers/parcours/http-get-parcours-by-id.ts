@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import getParcoursById from "../../models/parcours/get-parcours-by-id";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../utils/constantes";
+import getParcoursById from "../../models/parcours/get-parcours-by-id.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
 
 async function httpGetParcoursById(req: CustomRequest, res: Response) {
   try {

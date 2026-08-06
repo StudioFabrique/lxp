@@ -7,7 +7,6 @@ import UserStatusToggle from "./UserStatusToggle";
 
 export const getUsersColumns = (
   onDelete: (id: string) => void,
-  onToggleStatus: (id: string, isActive: boolean) => void,
   onSendInvitation: (id: string) => void,
   onSendResetPassword: (id: string) => void,
 ): ColumnDef<User>[] => [
@@ -95,12 +94,7 @@ export const getUsersColumns = (
     header: "Status",
     cell: ({ row }) => {
       const user = row.original;
-      return (
-        <UserStatusToggle
-          isActive={user.isActive}
-          onToggle={() => onToggleStatus(user._id, user.isActive)}
-        />
-      );
+      return <UserStatusToggle isActive={user.isActive} />;
     },
     enableSorting: false,
   },

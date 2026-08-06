@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getActivity from "../../models/activity/get-activity";
+import { type Request, type Response, type NextFunction } from "express";
+import getActivity from "../../models/activity/get-activity.ts";
 
 export default async function httpGetActivity(
   req: Request,

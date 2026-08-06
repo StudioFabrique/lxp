@@ -1,115 +1,108 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs/promises";
 
-import { prisma } from "../../../utils/db";
+import {
+  collectUnusedActivityFiles,
+  deleteActivityFiles,
+  extractLocalImagesFromHtml,
+  resolveActivityFilePath,
+  type StoredActivityFileReference,
+  type StoredActivityFileType,
+} from "../../../helpers/activity-file-cleanup.ts";
+import { prisma } from "../../../utils/db.ts";
 
 export default async function deleteActivity(
   activityId: number,
-  type: string,
+  _type: string,
   parent = "lesson",
 ) {
-  const existingActivity = await (parent === "lesson"
-    ? prisma.activity.findFirst({
+  const isLessonActivity = parent === "lesson";
+  const existingActivity = isLessonActivity
+    ? await prisma.activity.findFirst({
         where: { id: activityId },
-        include: { resourceActivities: true },
+        select: {
+          id: true,
+          type: true,
+          url: true,
+          resourceActivities: { select: { url: true } },
+        },
       })
-    : prisma.bonusActivity.findFirst({
+    : await prisma.bonusActivity.findFirst({
         where: { id: activityId },
-        include: { resourceBonusActivities: true },
-      }));
+        select: {
+          id: true,
+          type: true,
+          url: true,
+          resourceBonusActivities: { select: { url: true } },
+        },
+      });
 
   if (!existingActivity) {
     throw { statusCode: 404, message: "L'activité n'existe pas" };
   }
 
-  const activityFolder = path.resolve(
-    __dirname,
-    "../../../../uploads/activities",
-  );
-  const filePath = path.join(activityFolder, existingActivity.url);
+  const activityType = existingActivity.type as StoredActivityFileType;
+  const references: StoredActivityFileReference[] = [];
 
-  await prisma.$transaction(async (tx: any) => {
-    // Delete Activity
-    if (parent === "lesson") {
+  if (activityType === "resource") {
+    const resources = isLessonActivity
+      ? (existingActivity as { resourceActivities: { url: string }[] })
+          .resourceActivities
+      : (existingActivity as { resourceBonusActivities: { url: string }[] })
+          .resourceBonusActivities;
+
+    references.push(
+      ...resources.map(({ url }) => ({
+        url,
+        type: "resource" as const,
+        trackedInMediatheque: true,
+      })),
+    );
+  } else if (activityType === "text") {
+    const textReference: StoredActivityFileReference = {
+      url: existingActivity.url,
+      type: "text",
+      trackedInMediatheque: false,
+    };
+    references.push(textReference);
+
+    const textPath = resolveActivityFilePath(textReference);
+    if (textPath) {
+      try {
+        const fileContent = await fs.readFile(textPath, "utf-8");
+        references.push(...extractLocalImagesFromHtml(fileContent));
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      }
+    }
+  } else if (activityType === "image" || activityType === "video") {
+    references.push({
+      url: existingActivity.url,
+      type: activityType,
+      trackedInMediatheque: true,
+    });
+  }
+
+  const filesToDelete = await prisma.$transaction(async (tx) => {
+    if (isLessonActivity) {
       await tx.activity.delete({ where: { id: activityId } });
     } else {
       await tx.bonusActivity.delete({ where: { id: activityId } });
     }
 
-    if (type === "resource") {
-      const resources =
-        (existingActivity as any).resourceActivities ||
-        (existingActivity as any).resourceBonusActivities ||
-        [];
-      await updateMediatheque(resources, tx);
-    } else if (type === "text") {
-      if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath, "utf-8");
-        const names = extraireURLImages(fileContent)
-          .map(extraireNomImage)
-          .filter(Boolean);
+    if (activityType === "text") {
+      const [remainingActivities, remainingBonusActivities] =
+        await Promise.all([
+          tx.activity.count({ where: { url: existingActivity.url } }),
+          tx.bonusActivity.count({ where: { url: existingActivity.url } }),
+        ]);
 
-        // Convert names to objects matching the helper's expected shape
-        const resources = names.map((name) => ({ url: name! }));
-        await updateMediatheque(resources, tx);
-      }
-    } else if (!(type === "video" && existingActivity.url.startsWith("http"))) {
-      await updateMediatheque([{ url: existingActivity.url }], tx);
+      // Certaines anciennes duplications partagent le même fichier texte.
+      // Le fichier et ses images ne peuvent être nettoyés qu'au dernier usage.
+      if (remainingActivities + remainingBonusActivities > 0) return [];
     }
+
+    return collectUnusedActivityFiles(tx, references);
   });
 
-  // File System Cleanup
-  if (
-    type === "text" ||
-    (type === "video" && !existingActivity.url.startsWith("http"))
-  ) {
-    try {
-      if (fs.existsSync(filePath)) {
-        await fs.promises.unlink(filePath);
-      }
-    } catch (error) {
-      console.error("FS Error:", error);
-    }
-  }
-}
-
-/**
- * Gestion des images qui se trouvent dans l'activité de type texte
- * @param texte
- * @returns
- */
-function extraireURLImages(texte: string): string[] {
-  // Regex matches <img src="URL"> and captures the URL inside the quotes
-  const regex = /<img[^>]+src="([^">]+)"/g;
-  const matches = [];
-  let match;
-
-  while ((match = regex.exec(texte)) !== null) {
-    matches.push(match[1]); // match[1] is the captured URL
-  }
-
-  return matches;
-}
-
-/**
- * Extrait le nom de l'image à partir de son URL
- * @param url - L'URL de l'image
- * @returns Le nom de l'image ou null si non trouvé
- */
-function extraireNomImage(url: string): string | null {
-  // This extracts the image file name after the last '/'
-  const parts = url.split("/");
-  console.log({ parts });
-  return parts.length > 0 ? parts[parts.length - 1] : null;
-}
-
-async function updateMediatheque(resources: { url: string }[], tx: any) {
-  for (const res of resources) {
-    if (!res.url) continue;
-
-    await tx.mediatheque.updateMany({
-      where: { url: res.url },
-      data: { used: { decrement: 1 } },
-    });
-  }
+  await deleteActivityFiles(filesToDelete);
 }

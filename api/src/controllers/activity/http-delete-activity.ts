@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import deletaActivity from "../../models/activity/delete-activity/delete-activity";
+import { type Request, type Response, type NextFunction } from "express";
+import deletaActivity from "../../models/activity/delete-activity/delete-activity.ts";
 
 /**
  * HTTP handler for deleting an activity.

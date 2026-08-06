@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import editUsers from "../../models/group/edit-users";
-import { IUser } from "../../utils/interfaces/db/user";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import editUsers from "../../models/group/edit-users.ts";
+import type { IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function httpPutGroupUsers(req: Request, res: Response) {
   const { id: groupId } = req.params;

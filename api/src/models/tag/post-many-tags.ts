@@ -1,36 +1,53 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function postManyTags(
-  tags: [{ name: string; color: string }]
+  tags: { name: string; color: string }[],
 ) {
-  console.log({ tags });
-
-  const tmpTags = tags.map((tag) => tag.name);
+  const normalizedTags = tags.map((tag) => ({
+    name: tag.name.trim(),
+    color: tag.color,
+  }));
+  const uniqueTags = normalizedTags.filter(
+    (tag, index, list) =>
+      list.findIndex(
+        (candidate) =>
+          candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
+      ) === index,
+  );
+  const tagNames = uniqueTags.map((tag) => tag.name);
 
   const existingTags = await prisma.tag.findMany({
     where: {
-      name: { in: tmpTags, mode: "insensitive" },
+      name: { in: tagNames, mode: "insensitive" },
     },
   });
 
-  let remainingTags = tags.filter(
+  if (existingTags.length > 0) {
+    const duplicateNames = existingTags.map((tag) => tag.name).join(", ");
+    throw {
+      statusCode: 409,
+      message: `Le nom de tag est déjà utilisé : ${duplicateNames}`,
+    };
+  }
+
+  const remainingTags = uniqueTags.filter(
     (tag) =>
       !existingTags.some(
         (existingTag) =>
-          existingTag.name.toLowerCase() === tag.name.toLowerCase()
-      )
+          existingTag.name.toLowerCase() === tag.name.toLowerCase(),
+      ),
   );
 
-  await prisma.tag.createMany({
-    data: remainingTags,
-  });
+  if (remainingTags.length > 0) {
+    await prisma.tag.createMany({
+      data: remainingTags,
+      skipDuplicates: true,
+    });
+  }
 
-  const newTags = await prisma.tag.findMany({
+  return prisma.tag.findMany({
     where: {
-      OR: tags.map((tag) => ({
-        name: tag.name,
-      })),
+      name: { in: tagNames, mode: "insensitive" },
     },
   });
-  return newTags;
 }

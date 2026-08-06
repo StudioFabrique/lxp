@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getSelectParcours from "../../models/parcours/get-select-parcours";
+import { type Request, type Response, type NextFunction } from "express";
+import getSelectParcours from "../../models/parcours/get-select-parcours.ts";
 
 export default async function httpGetSelectParcours(
   req: Request,

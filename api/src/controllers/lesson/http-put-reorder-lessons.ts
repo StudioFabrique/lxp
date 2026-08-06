@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putReorderLessons from "../../models/lesson/put-reorder-lessons";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putReorderLessons from "../../models/lesson/put-reorder-lessons.ts";
 
 export default async function httpPutReorderLessons(
   req: Request,

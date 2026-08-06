@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postActivityResource from "../../models/activity/post-activity/post-resource";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postActivityResource from "../../models/activity/post-activity/post-resource.ts";
 import fs from "fs";
 
 /**

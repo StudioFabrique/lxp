@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import putCourseNewObjective from "../../models/course/put-course-new-Objective";
+import { type Request, type Response } from "express";
+import putCourseNewObjective from "../../models/course/put-course-new-Objective.ts";
 
 async function httpPutCourseNewObjective(req: Request, res: Response) {
   const { courseId } = req.params;

@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 
-import { credentialsError } from "../../utils/constantes";
-import User from "../../utils/interfaces/db/user";
-import IConnectionInfos from "../../utils/interfaces/db/connection-infos";
-import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
-import { imageToDataUrl } from "../../utils/images/image-source";
+import { credentialsError } from "../../utils/constantes.ts";
+import User from "../../utils/interfaces/db/user.ts";
+import IConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function userLogin(email: string, password: string) {
   try {

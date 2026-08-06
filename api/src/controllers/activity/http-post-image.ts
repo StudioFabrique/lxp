@@ -1,8 +1,8 @@
 // Import des dépendances nécessaires
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import postImage from "../../models/activity/post-activity/post-image";
-import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postImage from "../../models/activity/post-activity/post-image.ts";
+import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 
 /**
  * Contrôleur pour créer une nouvelle activité de type image

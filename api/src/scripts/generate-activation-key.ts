@@ -2,14 +2,14 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
-import Role from "../utils/interfaces/db/role";
-import Permission, { IPermission } from "../utils/interfaces/db/permission";
+import Role from "../utils/interfaces/db/role.ts";
+import Permission, { type IPermission } from "../utils/interfaces/db/permission.ts";
 import {
   permDefsInterface,
   permDefsActions,
-} from "../utils/rbac/config/fixtures-permissions";
+} from "../utils/rbac/config/fixtures-permissions.ts";
 
-dotenv.config({ path: path.join(__dirname, "..", "..", ".env") });
+dotenv.config({ path: path.join(import.meta.dirname, "..", "..", ".env") });
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 const secret = process.env.REGISTER_SECRET;

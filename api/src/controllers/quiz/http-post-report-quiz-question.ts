@@ -1,6 +1,6 @@
-import { Response } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { prisma } from "../../utils/db";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import postReportQuizQuestion from "../../models/quiz/post-report-quiz-question.ts";
 
 /**
  * POST /quiz/question/report
@@ -18,25 +18,12 @@ export default async function httpPostReportQuizQuestion(
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     }
 
-    // 1. Vérification de l'existence de la question
-    const questionExists = await prisma.quizQuestion.findFirst({
-      where: { externalId: String(externalId) },
-    });
-
-    if (!questionExists) {
+    const report = await postReportQuizQuestion(String(externalId), comment);
+    if (!report) {
       return res
         .status(404)
         .json({ error: "La question spécifiée n'existe pas." });
     }
-
-    // Création du signalement en BDD
-    const report = await prisma.quizQuestionReport.create({
-      data: {
-        quizQuestionId: questionExists.id,
-        commentaire: comment,
-        // reportedBy: userId,
-      },
-    });
 
     return res.status(201).json({
       message: "Signalement enregistré avec succès.",

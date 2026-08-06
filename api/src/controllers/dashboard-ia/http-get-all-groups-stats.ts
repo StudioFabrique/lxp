@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getAllGroupsStats from "../../models/dashboard-ia/getAllGroupsStats";
+import { type Request, type Response, type NextFunction } from "express";
+import getAllGroupsStats from "../../models/dashboard-ia/getAllGroupsStats.ts";
 
 export default async function httpGetAllGroupsStats(
   _req: Request,

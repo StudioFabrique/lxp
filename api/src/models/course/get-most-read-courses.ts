@@ -1,7 +1,7 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
-import { Course } from "@prisma/client";
-import Group from "../../utils/interfaces/db/group";
+import { type Course } from "@prisma/client";
+import Group from "../../utils/interfaces/db/group.ts";
 
 /**
  * Récupère la liste des cours les plus populaires

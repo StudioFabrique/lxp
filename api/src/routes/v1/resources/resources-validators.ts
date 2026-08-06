@@ -2,8 +2,8 @@ import { body, param } from "express-validator";
 import {
   stringValidateGeneric,
   stringValidateOptional,
-} from "../../../helpers/custom-validators";
-import { checkValidatorResult } from "../../../middleware/validators";
+} from "../../../helpers/custom-validators.ts";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 export const postResourceValidator = [
   body("data.title")

@@ -1,7 +1,7 @@
-import { sortArray } from "../../helpers/sortArray";
-import { prisma } from "../../utils/db";
-import { IConnectionInfos } from "../../utils/interfaces/db/connection-infos";
-import User, { IUser } from "../../utils/interfaces/db/user";
+import { sortArray } from "../../helpers/sortArray.ts";
+import { prisma } from "../../utils/db.ts";
+import { type IConnectionInfos } from "../../utils/interfaces/db/connection-infos.ts";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 
 /**
  * Retrieves comprehensive user data including connection history, parcours information, and completion statistics

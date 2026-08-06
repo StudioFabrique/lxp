@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import addUsers from "../../models/group/add-users";
+import { type Request, type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
+import addUsers from "../../models/group/add-users.ts";
 
 export default async function httpPutAddUsersGroup(
   req: Request,

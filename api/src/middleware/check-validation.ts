@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery } from "../utils/constantes";
+import { badQuery } from "../utils/constantes.ts";
 
 const checkValidation = (validator: any) => {
   return (req: Request, _res: Response, next: NextFunction) => {

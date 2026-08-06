@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../../utils/constantes";
-import getLastFeedback from "../../../models/user/feedback/get-own-feedback";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../../utils/constantes.ts";
+import getLastFeedback from "../../../models/user/feedback/get-own-feedback.ts";
 
 export default async function httpGetLastFeedback(
   req: CustomRequest,

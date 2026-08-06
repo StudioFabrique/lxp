@@ -1,7 +1,7 @@
-import getBestRatedCourses from "../../models/course/get-best-rated-courses";
-import { noAccess } from "../../utils/constantes";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { Response } from "express";
+import getBestRatedCourses from "../../models/course/get-best-rated-courses.ts";
+import { noAccess } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { type Response } from "express";
 
 export default async function httpGetBestRatedCourses(
   req: CustomRequest,

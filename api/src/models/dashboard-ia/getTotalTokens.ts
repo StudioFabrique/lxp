@@ -3,8 +3,8 @@
  * This module queries the PromptStats collection to calculate total token consumption.
  */
 
-import getStartAndEndOfMonth from "../../helpers/getStartAndEndOfMonth";
-import PromptStats from "../../utils/interfaces/db/prompt-stats";
+import getStartAndEndOfMonth from "../../helpers/getStartAndEndOfMonth.ts";
+import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
 
 /**
  * Retrieves the total number of tokens consumed across all AI prompt operations.

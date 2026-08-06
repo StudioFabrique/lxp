@@ -2,10 +2,10 @@ import {
   componentPermissionsList,
   layoutPermissionsList,
   resourcesRbac,
-} from "./config/ressources-rbac";
-import Permission from "../interfaces/db/permission";
-import Role, { IRole } from "../interfaces/db/role";
-import User from "../interfaces/db/user";
+} from "./config/ressources-rbac.ts";
+import Permission from "../interfaces/db/permission.ts";
+import Role, { type IRole } from "../interfaces/db/role.ts";
+import User from "../interfaces/db/user.ts";
 
 /**
  * Configure les rôles initiaux dans le système

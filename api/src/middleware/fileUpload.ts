@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import * as fs from "fs";
-import { serverIssue } from "../utils/constantes";
+import { serverIssue } from "../utils/constantes.ts";
 
 /**
  * Extrait et convertit l'image du fichier uploadé en base64
@@ -36,7 +36,7 @@ export const createFileUploadMiddleware: any = (maxFileSize: number) => {
   const storage = multer.diskStorage({
     // Définit le dossier de destination
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, "..", "..", "uploads"));
+      cb(null, path.join(import.meta.dirname, "..", "..", "uploads"));
     },
     // Génère un nom de fichier unique
     filename: function (req, file, cb) {

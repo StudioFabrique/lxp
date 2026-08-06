@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
-import { serverIssue } from "../../utils/constantes";
-import postCourse from "../../models/course/post-course";
-import { customEscape } from "../../helpers/custom-escape";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { serverIssue } from "../../utils/constantes.ts";
+import postCourse from "../../models/course/post-course.ts";
+import { customEscape } from "../../helpers/custom-escape.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpPostCourse(req: CustomRequest, res: Response) {
   let course = req.body;

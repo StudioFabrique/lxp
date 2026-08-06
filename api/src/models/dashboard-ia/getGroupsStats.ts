@@ -1,6 +1,6 @@
-import Group from "../../utils/interfaces/db/group";
-import PromptStats from "../../utils/interfaces/db/prompt-stats";
-import GroupStats from "../../utils/interfaces/db/groups-stats";
+import Group from "../../utils/interfaces/db/group.ts";
+import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
+import GroupStats from "../../utils/interfaces/db/groups-stats.ts";
 
 export default async function getGroupStats(
   groupId: string,

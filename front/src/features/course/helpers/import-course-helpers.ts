@@ -53,6 +53,19 @@ export const sanitizeFilename = (filename: string): string => {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "_");
 };
 
+export const getArchiveFingerprint = async (file: File): Promise<string> => {
+  const content = await file.arrayBuffer();
+
+  if (!globalThis.crypto?.subtle) {
+    return `${file.name}:${file.size}:${file.lastModified}`;
+  }
+
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", content);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+};
+
 
 type JsonFileFormat = {
   type: "text" | "file";

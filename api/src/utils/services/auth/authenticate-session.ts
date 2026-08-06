@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
-import User from "../../interfaces/db/user";
-import { IRole } from "../../interfaces/db/role";
+import User from "../../interfaces/db/user.ts";
+import { type IRole } from "../../interfaces/db/role.ts";
 import {
-  AppAbility,
-  AppAbilityRule,
+  type AppAbility,
+  type AppAbilityRule,
   buildAbility,
-} from "../../rbac/ability";
-import { isTokenBlacklisted } from "./set-tokens";
+} from "../../rbac/ability.ts";
+import { isTokenBlacklisted } from "./set-tokens.ts";
 
 export type SessionTokenType = "access" | "refresh";
 

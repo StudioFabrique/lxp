@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
-import putPassword from "../../models/user/put-password";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { Response, NextFunction } from "express";
+import putPassword from "../../models/user/put-password.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { type Response, type NextFunction } from "express";
 
 export default async function httpPutPassword(
   req: CustomRequest,

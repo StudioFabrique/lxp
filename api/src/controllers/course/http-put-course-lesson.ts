@@ -1,6 +1,6 @@
-import { Response } from "express";
-import putCourseLesson from "../../models/course/put-course-lesson";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import putCourseLesson from "../../models/course/put-course-lesson.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpPutCourseLesson(req: CustomRequest, res: Response) {
   const { courseId } = req.params;

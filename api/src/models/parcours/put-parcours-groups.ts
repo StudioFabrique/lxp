@@ -1,5 +1,5 @@
-import { Group } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Group } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   const groups = await prisma.group.findMany({

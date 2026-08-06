@@ -1,5 +1,5 @@
-import { prisma } from "../../utils/db";
-import { getPagination } from "../../utils/services/getPagination";
+import { prisma } from "../../utils/db.ts";
+import { getPagination } from "../../utils/services/getPagination.ts";
 
 export default async function getResourcesList(
   stype: string,

@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 async function getCourseObjectives(courseId: number) {
   /*  const objectives = await prisma.course.findFirst({

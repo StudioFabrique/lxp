@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import type { IUser } from "./user";
+import type { IUser } from "./user.ts";
 
 export interface IStudentFeedback extends Document {
   feelingLevel: string;

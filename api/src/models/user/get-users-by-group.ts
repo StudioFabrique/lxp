@@ -1,7 +1,7 @@
-import Group from "../../utils/interfaces/db/group";
+import Group from "../../utils/interfaces/db/group.ts";
 import mongoose from "mongoose";
-import { IUser } from "../../utils/interfaces/db/user";
-import { imageToDataUrl } from "../../utils/images/image-source";
+import { type IUser } from "../../utils/interfaces/db/user.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function getUsersByGroup(groupsIds: string[]) {
   const ids = groupsIds.map(

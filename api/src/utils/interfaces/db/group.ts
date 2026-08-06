@@ -1,8 +1,8 @@
 import mongoose, { type Document, Schema, model } from "mongoose";
-import { IRole } from "./role";
-import { IUser } from "./user";
-import { ITag } from "./tag";
-import { IPromptStats } from "./prompt-stats";
+import { type IRole } from "./role.ts";
+import { type IUser } from "./user.ts";
+import { type ITag } from "./tag.ts";
+import { type IPromptStats } from "./prompt-stats.ts";
 
 export interface IGroup extends Document {
   name: string;

@@ -3,7 +3,10 @@ import { useParams, useSearchParams } from "react-router";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { moduleCreateSchema } from "../../../parcours.schema";
+import {
+  moduleCreateSchema,
+  type ModuleCreateFormValues,
+} from "../../../parcours.schema";
 import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
 import { moduleReducer, initialState } from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
@@ -35,6 +38,8 @@ const useNewModule = () => {
   const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittingModule, setIsSubmittingModule] = useState(false);
+  const isModuleSubmissionRunning = useRef(false);
   const [error, setError] = useState<string>("");
 
   const [state, dispatch] = useReducer(moduleReducer, initialState);
@@ -45,7 +50,7 @@ const useNewModule = () => {
     formState: { errors },
     getValues,
     trigger,
-  } = useForm({
+  } = useForm<ModuleCreateFormValues>({
     resolver: zodResolver(moduleCreateSchema),
     defaultValues: emptyModuleFormValues,
   });
@@ -66,38 +71,53 @@ const useNewModule = () => {
     }
   }, [id]);
 
+  const runModuleSubmission = async (submission: () => Promise<void>) => {
+    if (isModuleSubmissionRunning.current) return;
+
+    isModuleSubmissionRunning.current = true;
+    setIsSubmittingModule(true);
+    try {
+      await submission();
+    } finally {
+      isModuleSubmissionRunning.current = false;
+      setIsSubmittingModule(false);
+    }
+  };
+
   const handleSubmitNewModule = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isValid = await trigger();
-    if (!isValid) return;
+    await runModuleSubmission(async () => {
+      const isValid = await trigger();
+      if (!isValid) return;
 
-    const formData = new FormData();
-    const values = getValues();
+      const formData = new FormData();
+      const values = getValues();
 
-    const duration = values.duration ?? 0;
-    const moduleData = {
-      ...values,
-      formationId: state.parcours?.formationId,
-      parcoursId: +id!,
-      duration: duration === 0 || isNaN(duration) ? 1 : duration,
-      contacts: state.currentContacts.map((item) => item.id),
-      skills: state.currentSkills.map((item) => item.id),
-    };
+      const duration = values.duration ?? 0;
+      const moduleData = {
+        ...values,
+        formationId: state.parcours?.formationId,
+        parcoursId: +id!,
+        duration: duration === 0 || isNaN(duration) ? 1 : duration,
+        contacts: state.currentContacts.map((item) => item.id),
+        skills: state.currentSkills.map((item) => item.id),
+      };
 
-    formData.append("module", JSON.stringify(moduleData));
-    if (state.file) formData.append("image", state.file);
+      formData.append("module", JSON.stringify(moduleData));
+      if (state.file) formData.append("image", state.file);
 
-    try {
-      const data = await parcoursApi.mutations.createModule(formData);
-      reset();
-      dispatch({ type: "MODULE_CREATED", payload: data.data });
-      await queryClient.invalidateQueries({
-        queryKey: parcoursKeys.detail(+id!),
-      });
-      scrollToTop();
-    } catch {
-      toast.error("Erreur lors de la création du module");
-    }
+      try {
+        const data = await parcoursApi.mutations.createModule(formData);
+        reset();
+        dispatch({ type: "MODULE_CREATED", payload: data.data });
+        await queryClient.invalidateQueries({
+          queryKey: parcoursKeys.detail(+id!),
+        });
+        scrollToTop();
+      } catch {
+        toast.error("Erreur lors de la création du module");
+      }
+    });
   };
 
   const handleCancelForm = () => {
@@ -201,52 +221,53 @@ const useNewModule = () => {
 
   const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
+    await runModuleSubmission(async () => {
+      const isValid = await trigger();
+      if (!isValid) return;
 
-    const isValid = await trigger();
-    if (!isValid) return;
+      const isEmptyObject = (obj: unknown) =>
+        obj == null ||
+        (typeof obj === "object" &&
+          !Array.isArray(obj) &&
+          Object.keys(obj).length === 0);
 
-    const isEmptyObject = (obj: unknown) =>
-      obj == null ||
-      (typeof obj === "object" &&
-        !Array.isArray(obj) &&
-        Object.keys(obj).length === 0);
-
-    try {
-      if (!isEmptyObject(state.moduleToDuplicate)) {
-        const data = await parcoursApi.mutations.duplicateModule(
-          state.moduleToDuplicate!.id,
-          {
-            duration: getValues().duration ?? 0,
-            contactsIds: state.currentContacts
-              .map((item) => item.id)
-              .filter((item): item is number => typeof item === "number"),
-            skillsIds: state.currentSkills
-              .map((item) => item.id)
-              .filter((item): item is number => typeof item === "number"),
-            parcoursId: +id!,
-          },
-        );
-        reset();
-        dispatch({ type: "MODULE_CREATED", payload: data.response });
-        await queryClient.invalidateQueries({
-          queryKey: parcoursKeys.detail(+id!),
-        });
-        toast.success(data.message);
-        scrollToTop();
+      try {
+        if (!isEmptyObject(state.moduleToDuplicate)) {
+          const data = await parcoursApi.mutations.duplicateModule(
+            state.moduleToDuplicate!.id,
+            {
+              duration: getValues().duration ?? 0,
+              contactsIds: state.currentContacts
+                .map((item) => item.id)
+                .filter((item): item is number => typeof item === "number"),
+              skillsIds: state.currentSkills
+                .map((item) => item.id)
+                .filter((item): item is number => typeof item === "number"),
+              parcoursId: +id!,
+            },
+          );
+          reset();
+          dispatch({ type: "MODULE_CREATED", payload: data.response });
+          await queryClient.invalidateQueries({
+            queryKey: parcoursKeys.detail(+id!),
+          });
+          toast.success(data.message);
+          scrollToTop();
+        }
+      } catch {
+        toast.error("Erreur lors de la duplication du module");
       }
-    } catch {
-      toast.error("Erreur lors de la duplication du module");
-    }
+    });
   };
 
   const handleSubmitUpdateModule = async (e: React.FormEvent) => {
     e.preventDefault();
+    await runModuleSubmission(async () => {
+      const isValid = await trigger();
+      if (!isValid) return;
 
-    const isValid = await trigger();
-    if (!isValid) return;
-
-    try {
-      const updatedModule = {
+      try {
+        const updatedModule = {
           id: state.moduleToUpdate,
           ...getValues(),
           contactsIds: state.currentContacts
@@ -255,38 +276,41 @@ const useNewModule = () => {
           bonusSkillsIds: state.currentSkills
             ? state.currentSkills.map((item) => item.id)
             : [],
-      };
-      const formData = new FormData();
-      formData.append("module", JSON.stringify(updatedModule));
-      if (state.file) formData.append("image", state.file);
-      const data = await parcoursApi.mutations.updateModule(formData);
-      if (data.success) {
-        dispatch({
-          type: "SUCCESSFUL_MODULE_UPDATE",
-          payload: {
-            id: data.response.id,
-            contacts: data.response.contacts,
-            skills: data.response.skills,
-            duration: data.response.duration ? +data.response.duration : 0,
-            title: data.response.title,
-            description: data.response.description,
-            quizInstructions: data.response.quizInstructions,
-          },
-        });
-        toast.success(data.message);
-        await queryClient.invalidateQueries({
-          queryKey: parcoursKeys.detail(+id!),
-        });
-        reset();
-        scrollToTop();
+        };
+        const formData = new FormData();
+        formData.append("module", JSON.stringify(updatedModule));
+        if (state.file) formData.append("image", state.file);
+        const data = await parcoursApi.mutations.updateModule(formData);
+        if (data.success) {
+          dispatch({
+            type: "SUCCESSFUL_MODULE_UPDATE",
+            payload: {
+              id: data.response.id,
+              contacts: data.response.contacts,
+              skills: data.response.skills,
+              duration: data.response.duration ? +data.response.duration : 0,
+              title: data.response.title,
+              description: data.response.description,
+              quizInstructions: data.response.quizInstructions,
+            },
+          });
+          toast.success(data.message);
+          await queryClient.invalidateQueries({
+            queryKey: parcoursKeys.detail(+id!),
+          });
+          reset();
+          scrollToTop();
+        }
+      } catch {
+        toast.error("Erreur lors de la mise à jour du module");
       }
-    } catch {
-      toast.error("Erreur lors de la mise à jour du module");
-    }
+    });
   };
 
   useEffect(() => {
-    getParcoursModules();
+    // Le chargement est volontairement relancé lorsque l'identifiant du parcours change.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void getParcoursModules();
   }, [getParcoursModules]);
 
   useEffect(() => {
@@ -349,6 +373,7 @@ const useNewModule = () => {
     errors,
     getValues,
     isLoading,
+    isSubmittingModule,
     refForm,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,

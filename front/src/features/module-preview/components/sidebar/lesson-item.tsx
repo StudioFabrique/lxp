@@ -6,9 +6,11 @@ import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import EditLessonModal from "./edit-lesson-modal";
 import type { LessonFormValues } from "./lesson-form.types";
+import type Tag from "../../../../utils/interfaces/tag";
 
 type LessonItemProps = {
   lesson: Lesson;
+  courseTags: Tag[];
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
   openEditOnMount?: boolean;
@@ -22,6 +24,7 @@ type LessonItemProps = {
 
 const LessonItem = ({
   lesson,
+  courseTags,
   selectedLesson,
   canEditLesson,
   openEditOnMount = false,
@@ -124,6 +127,7 @@ const LessonItem = ({
       {isEditingLesson && (
         <EditLessonModal
           lesson={lesson}
+          courseTags={courseTags}
           isSubmitting={isSavingLesson}
           onClose={() => setIsEditingLesson(false)}
           onSubmit={handleUpdateLesson}

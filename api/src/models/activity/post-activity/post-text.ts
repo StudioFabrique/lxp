@@ -1,5 +1,5 @@
-import { Activity, BonusActivity } from "@prisma/client";
-import { prisma } from "../../../utils/db";
+import { type Activity, type BonusActivity } from "@prisma/client";
+import { prisma } from "../../../utils/db.ts";
 
 import fs from "fs";
 import path from "path";
@@ -45,7 +45,7 @@ export default async function postActivityText(
   try {
     const file = fs.writeFileSync(
       path.join(
-        __dirname,
+        import.meta.dirname,
         "..",
         "..",
         "..",

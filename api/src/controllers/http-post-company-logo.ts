@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 
 export default function httpPostCompanyLogo(_req: Request, res: Response) {
   return res.json({

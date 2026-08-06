@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/db";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getActivity(activityId: number) {
   const activity = await prisma.activity.findFirst({

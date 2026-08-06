@@ -1,6 +1,6 @@
-import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
-import User from "../../../utils/interfaces/db/user";
-import getLastFeedback from "./get-own-feedback";
+import StudentFeedback from "../../../utils/interfaces/db/student-feedback.ts";
+import User from "../../../utils/interfaces/db/user.ts";
+import getLastFeedback from "./get-own-feedback.ts";
 
 export default async function postFeedBack(
   studentMdbId: string,

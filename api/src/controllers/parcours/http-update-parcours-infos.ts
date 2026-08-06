@@ -1,8 +1,8 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import updateParcoursInfos from "../../models/parcours/update-parcours-infos";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../utils/constantes";
+import updateParcoursInfos from "../../models/parcours/update-parcours-infos.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
 
 async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
   try {

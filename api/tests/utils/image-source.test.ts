@@ -1,4 +1,4 @@
-import { imageToDataUrl } from "../../src/utils/images/image-source";
+import { imageToDataUrl } from "../../src/utils/images/image-source.ts";
 
 describe("imageToDataUrl", () => {
   it("does not prefix an already displayable source", () => {

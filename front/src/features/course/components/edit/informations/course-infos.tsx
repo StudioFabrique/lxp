@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
 import toast from "react-hot-toast";
@@ -40,6 +39,9 @@ const CourseInfos = () => {
   ) as Contact[];
   const currentTags = useCourseSelector(
     (state) => state.course?.tags
+  ) as Tag[];
+  const inheritedTags = useCourseSelector(
+    (state) => state.course?.module?.parcours?.tags,
   ) as Tag[];
   const visibility = useCourseSelector(
     (state) => state.course?.visibility
@@ -172,6 +174,7 @@ const CourseInfos = () => {
               onSubmit={handleUpdateTags}
               loading={loadingTags}
               tags={currentTags || []}
+              inheritedTags={inheritedTags || []}
             />
           </Wrapper>
         </div>

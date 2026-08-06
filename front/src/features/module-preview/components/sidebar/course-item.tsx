@@ -227,6 +227,7 @@ const CourseItem = ({
       <CreateLessonModal
         open={isCreatingLesson}
         courseTitle={course.title}
+        courseTags={course.tags ?? []}
         isSaving={isSavingLesson}
         onClose={() => setIsCreatingLesson(false)}
         onSubmit={handleCreateLesson}
@@ -255,7 +256,7 @@ const CourseItem = ({
             className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-11"
             data-tip="Ce cours n'est pas publié"
           >
-            <CloudOff className="w-4 h-4 stroke-base-100" />
+            <CloudOff className="w-4 h-4" />
           </div>
         ) : null}
         <div
@@ -283,10 +284,10 @@ const CourseItem = ({
                 </h3>
                 {course.isPublished && !course.visibility && (
                   <div
-                    className={cn("tooltip ml-1")}
+                    className={cn("tooltip ml-1.5")}
                     data-tip="Cours invisible"
                   >
-                    <EyeOff className="w-3 h-3" />
+                    <EyeOff className="w-3.5 h-3.5" />
                   </div>
                 )}
               </span>
@@ -375,6 +376,7 @@ const CourseItem = ({
                     <div className={`w-full`} key={lesson.id}>
                       <LessonItem
                         lesson={lesson}
+                        courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
                         openEditOnMount={lesson.id === editLessonId}

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getResourceActivity from "../../models/activity/get-resource-activity";
+import { type Request, type Response, type NextFunction } from "express";
+import getResourceActivity from "../../models/activity/get-resource-activity.ts";
 
 export default async function httpGetResourceActivity(
   req: Request,

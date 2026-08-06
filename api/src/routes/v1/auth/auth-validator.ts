@@ -4,8 +4,8 @@
 
 import { body } from "express-validator";
 
-import { passwordValidateGeneric } from "../../../helpers/custom-validators";
-import { checkValidatorResult } from "../../../middleware/validators";
+import { passwordValidateGeneric } from "../../../helpers/custom-validators.ts";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 export const loginValidator = [
   body("email").isEmail().withMessage("Email invalide").trim().escape(),

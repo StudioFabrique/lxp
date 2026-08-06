@@ -1,7 +1,7 @@
-import { Response } from "express";
-import getLessonRating from "../../models/lesson/get-lesson-rating";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import { type Response } from "express";
+import getLessonRating from "../../models/lesson/get-lesson-rating.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpGetLessonRating(
   req: CustomRequest,

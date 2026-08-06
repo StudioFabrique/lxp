@@ -1,7 +1,7 @@
-import { Contact } from "@prisma/client";
-import { calculateModuleProgress } from "../../helpers/calculate-module-progress";
-import { prisma } from "../../utils/db";
-import User from "../../utils/interfaces/db/user";
+import { type Contact } from "@prisma/client";
+import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
+import { prisma } from "../../utils/db.ts";
+import User from "../../utils/interfaces/db/user.ts";
 
 /**
  * Récupère les détails d'un parcours par son ID

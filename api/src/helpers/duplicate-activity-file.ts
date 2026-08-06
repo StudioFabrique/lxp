@@ -15,7 +15,7 @@ export async function duplicateActivityFile(url: string, type: string) {
 
   const filename = path.basename(url);
   const uploadsDirectory = path.join(
-    __dirname,
+    import.meta.dirname,
     "..",
     "..",
     "uploads",

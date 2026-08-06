@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "node:crypto";
@@ -8,7 +8,7 @@ export const uploadActivityFiles = () => {
     destination: function (req, files, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "files"),
+        path.join(import.meta.dirname, "..", "..", "uploads", "activities", "files"),
       );
     },
     filename: function (req, file, cb) {

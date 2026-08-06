@@ -1,4 +1,4 @@
-import { resourcesRbacByRank } from "./ressources-rbac";
+import { resourcesRbacByRank } from "./ressources-rbac.ts";
 
 export const permDefsInterface = {
   "interface:admin": {

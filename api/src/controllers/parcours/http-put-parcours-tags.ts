@@ -1,9 +1,9 @@
-import { Response } from "express";
+import { type Response } from "express";
 
-import putParcoursTags from "../../models/parcours/put-parcours-tags";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { noAccess, serverIssue } from "../../utils/constantes";
-import { logger } from "../../utils/logs/logger";
+import putParcoursTags from "../../models/parcours/put-parcours-tags.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { noAccess, serverIssue } from "../../utils/constantes.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 async function httpPutParcoursTags(req: CustomRequest, res: Response) {
   const userId = req.auth?.userId;

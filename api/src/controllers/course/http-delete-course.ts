@@ -1,8 +1,8 @@
-import { Response, NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 
-import deleteCourse from "../../models/course/delete-course-from-module";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery } from "../../utils/constantes";
+import deleteCourse from "../../models/course/delete-course-from-module.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { badQuery } from "../../utils/constantes.ts";
 
 export async function httpDeleteCourse(
   req: CustomRequest,

@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import apiClient from "../../../../lib/axios";
 import type Course from "../../../../utils/interfaces/course";
 import type Tag from "../../../../utils/interfaces/tag";
+import { cn } from "../../../../utils/cn";
 import type { UpdateCourseFormValues } from "./course-form.types";
 
 type Props = {
@@ -39,14 +40,16 @@ export default function EditCourseModal({
   const toggleTag = (tagId: number) => {
     setSelectedTagIds((current) =>
       current.includes(tagId)
-        ? current.filter((id) => id !== tagId)
+        ? current.length > 1
+          ? current.filter((id) => id !== tagId)
+          : current
         : [...current, tagId],
     );
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || selectedTagIds.length === 0) return;
     const success = await onSubmit({
       title: title.trim(),
       description: description.trim(),
@@ -117,9 +120,9 @@ export default function EditCourseModal({
 
           <section className="flex flex-col gap-3">
             <div>
-              <h4 className="text-sm font-semibold">Tags du cours</h4>
+              <h4 className="text-sm font-semibold">Tags du cours *</h4>
               <p className="text-xs text-base-content/60">
-                Ajoutez ou retirez les thèmes associés au cours.
+                Au moins un tag doit rester associé au cours.
               </p>
             </div>
             <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-base-300 p-3">
@@ -129,10 +132,16 @@ export default function EditCourseModal({
                   <button
                     key={tag.id}
                     type="button"
-                    className={`btn btn-xs ${
-                      selected ? "btn-primary" : "btn-outline"
-                    }`}
+                    className={cn(
+                      "btn btn-xs border-2",
+                      selected
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-transparent",
+                    )}
+                    style={{ backgroundColor: tag.color }}
                     onClick={() => toggleTag(tag.id)}
+                    aria-pressed={selected}
+                    disabled={selected && selectedTagIds.length === 1}
                   >
                     {selected && <Check className="h-3 w-3" />}
                     {tag.name}
@@ -151,7 +160,9 @@ export default function EditCourseModal({
             type="submit"
             form={`edit-course-form-${course.id}`}
             className="btn btn-primary"
-            disabled={!title.trim() || isSubmitting}
+            disabled={
+              !title.trim() || selectedTagIds.length === 0 || isSubmitting
+            }
           >
             {isSubmitting && (
               <span className="loading loading-spinner loading-sm" />

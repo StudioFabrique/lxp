@@ -1,17 +1,17 @@
 import express from "express";
 
 // Middleware d'authentification et de permissions
-import checkPermissions from "../../../middleware/check-permissions";
+import checkPermissions from "../../../middleware/check-permissions.ts";
 // Middleware pour l'upload d'images
-import { uploadActivityImage } from "../../../middleware/upload-activity-image";
-import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image";
+import { uploadActivityImage } from "../../../middleware/upload-activity-image.ts";
+import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image.ts";
 // Middleware pour l'upload de vidéos
-import { uploadActivityVideo } from "../../../middleware/upload-activity-video";
+import { uploadActivityVideo } from "../../../middleware/upload-activity-video.ts";
 // Validateurs pour les leçons
 import {
   lessonIdValidator,
   parentIdValidator,
-} from "../lesson/lesson-validator";
+} from "../lesson/lesson-validator.ts";
 // Validateurs pour les activités
 import {
   activityIdValidator,
@@ -27,31 +27,31 @@ import {
   updateActivityValidator,
   updateIframeValidator,
   updateVideoValidator,
-} from "./activityValidator";
+} from "./activityValidator.ts";
 // Middleware pour parser le JSON
-import jsonParser from "../../../middleware/json-parser";
+import jsonParser from "../../../middleware/json-parser.ts";
 // Contrôleurs pour les différentes opérations sur les activités
-import httpPutReorderActivities from "../../../controllers/activity/http-put-reorder-activities";
-import httpPostImage from "../../../controllers/activity/http-post-image";
-import httpGetActivity from "../../../controllers/activity/http-get-activity";
-import httpPutActivityText from "../../../controllers/activity/http-put-activity-text";
-import httpPostActivityText from "../../../controllers/activity/http-post-activity-text";
-import httpPostActivityVideo from "../../../controllers/activity/http-post-activity-video";
-import httpPutActivityVideo from "../../../controllers/activity/http-put-activity-video";
-import httpPutImage from "../../../controllers/activity/http-put-image";
+import httpPutReorderActivities from "../../../controllers/activity/http-put-reorder-activities.ts";
+import httpPostImage from "../../../controllers/activity/http-post-image.ts";
+import httpGetActivity from "../../../controllers/activity/http-get-activity.ts";
+import httpPutActivityText from "../../../controllers/activity/http-put-activity-text.ts";
+import httpPostActivityText from "../../../controllers/activity/http-post-activity-text.ts";
+import httpPostActivityVideo from "../../../controllers/activity/http-post-activity-video.ts";
+import httpPutActivityVideo from "../../../controllers/activity/http-put-activity-video.ts";
+import httpPutImage from "../../../controllers/activity/http-put-image.ts";
 // Middleware pour l'upload de fichiers d'activité
-import { uploadActivityFiles } from "../../../middleware/upload-activity-file";
+import { uploadActivityFiles } from "../../../middleware/upload-activity-file.ts";
 // Contrôleurs pour la gestion des ressources
-import httpPostActivityResource from "../../../controllers/activity/http-post-activity-resource";
-import httpPutAddResource from "../../../controllers/activity/http-put-add-resource";
-import httpPutReorderResource from "../../../controllers/activity/http-put-reorder-resource";
-import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
-import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
-import httpPutResource from "../../../controllers/activity/http-put-resource";
-import mediatheque from "../../../middleware/mediatheque";
-import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
-import httpPostActivityIframe from "../../../controllers/activity/http-post-activity-iframe";
-import httpPutActivityIframe from "../../../controllers/activity/http-put-activity-iframe";
+import httpPostActivityResource from "../../../controllers/activity/http-post-activity-resource.ts";
+import httpPutAddResource from "../../../controllers/activity/http-put-add-resource.ts";
+import httpPutReorderResource from "../../../controllers/activity/http-put-reorder-resource.ts";
+import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity.ts";
+import httpDeleteResource from "../../../controllers/activity/http-delete-resource.ts";
+import httpPutResource from "../../../controllers/activity/http-put-resource.ts";
+import mediatheque from "../../../middleware/mediatheque.ts";
+import httpDeleteActivity from "../../../controllers/activity/http-delete-activity.ts";
+import httpPostActivityIframe from "../../../controllers/activity/http-post-activity-iframe.ts";
+import httpPutActivityIframe from "../../../controllers/activity/http-put-activity-iframe.ts";
 
 const activityRouter = express.Router();
 

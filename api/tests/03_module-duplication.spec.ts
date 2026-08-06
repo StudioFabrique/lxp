@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import postDuplicateModule from "../src/models/module/post-duplicate-module";
-import { prisma } from "../src/utils/db";
-import User from "../src/utils/interfaces/db/user";
-import mongoConnect from "../src/utils/services/db/mongo-connect";
+import postDuplicateModule from "../src/models/module/post-duplicate-module.ts";
+import { prisma } from "../src/utils/db.ts";
+import User from "../src/utils/interfaces/db/user.ts";
+import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 
 describe("flat module duplication", () => {
   let userId: string;

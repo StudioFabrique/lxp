@@ -1,7 +1,7 @@
-import { Response } from "express";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
-import User from "../../../utils/interfaces/db/user";
-import { serverIssue } from "../../../utils/constantes";
+import { type Response } from "express";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
+import { serverIssue } from "../../../utils/constantes.ts";
+import getUserProfile from "../../../models/user/get-user-profile.ts";
 
 export default async function httpGetUserProfileInformation(
   req: CustomRequest,
@@ -10,11 +10,7 @@ export default async function httpGetUserProfileInformation(
   try {
     const userId = req.auth?.userId;
 
-    const user = await User.findById(userId)
-      .select(
-        "firstname lastname nickname email address city postCode phoneNumber description graduations hobbies links"
-      )
-      .populate(["hobbies", "links"]);
+    const user = await getUserProfile(userId);
 
     if (!user) {
       return res.status(400).json({

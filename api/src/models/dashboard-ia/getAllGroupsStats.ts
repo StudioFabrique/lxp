@@ -1,5 +1,5 @@
-import getStartAndEndOfMonth from "../../helpers/getStartAndEndOfMonth";
-import PromptStats from "../../utils/interfaces/db/prompt-stats";
+import getStartAndEndOfMonth from "../../helpers/getStartAndEndOfMonth.ts";
+import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
 
 /**
  * getAllGroupsStats

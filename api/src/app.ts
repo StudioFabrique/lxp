@@ -2,19 +2,19 @@ import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
 import express from "express";
-import api from "./routes/v1/v1.router";
+import api from "./routes/v1/v1.router.ts";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import responseHandler from "./middleware/response-handler";
-import { corsOrigins } from "./config/config";
+import responseHandler from "./middleware/response-handler.ts";
+import { corsOrigins } from "./config/config.ts";
 
 const app = express();
-const publicDirectory = path.join(__dirname, "..", "public");
+const publicDirectory = path.join(import.meta.dirname, "..", "public");
 const assetsDirectory = path.join(publicDirectory, "assets");
-const uploadsDirectory = path.join(__dirname, "..", "uploads");
+const uploadsDirectory = path.join(import.meta.dirname, "..", "uploads");
 
 app
   .use(

@@ -1,5 +1,5 @@
-import { Contact } from "@prisma/client";
-import { prisma } from "../../utils/db";
+import { type Contact } from "@prisma/client";
+import { prisma } from "../../utils/db.ts";
 
 export default async function getLessonDetail(
   lessonId: number,

@@ -1,4 +1,4 @@
-import Group from "../../utils/interfaces/db/group";
+import Group from "../../utils/interfaces/db/group.ts";
 
 async function getGroupsById(groupsIds: Array<string>) {
   const ids = groupsIds.map((item: string) => {

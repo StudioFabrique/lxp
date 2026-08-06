@@ -1,5 +1,5 @@
-import Role from "../../utils/interfaces/db/role";
-import User, { IUser } from "../../utils/interfaces/db/user";
+import Role from "../../utils/interfaces/db/role.ts";
+import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 
 export default async function createManyUsers(
   users: IUser[],

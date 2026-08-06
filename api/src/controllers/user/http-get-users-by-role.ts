@@ -1,8 +1,8 @@
-import { Response } from "express";
-import { badQuery, serverIssue } from "../../utils/constantes";
+import { type Response } from "express";
+import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
-import getUsersByRole from "../../models/user/get-users-by-role";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
+import getUsersByRole from "../../models/user/get-users-by-role.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 async function httpGetUsersByRole(req: CustomRequest, res: Response) {
   const result = validationResult(req);

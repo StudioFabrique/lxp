@@ -1,7 +1,7 @@
-import { prisma } from "../../../utils/db";
+import { prisma } from "../../../utils/db.ts";
 import path from "path";
 import fs from "fs";
-import { Activity, BonusActivity } from "@prisma/client";
+import { type Activity, type BonusActivity } from "@prisma/client";
 
 export default async function putActivityVideo(
   activityId: number,
@@ -64,7 +64,7 @@ export default async function putActivityVideo(
     if (existingParent.url !== url) {
       await fs.promises.unlink(
         path.join(
-          __dirname,
+          import.meta.dirname,
           "..",
           "..",
           "..",

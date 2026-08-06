@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import getParcoursSkillsContacts from "../../models/parcours/get-parcours-skills-contacts";
+import { type Request, type Response, type NextFunction } from "express";
+import getParcoursSkillsContacts from "../../models/parcours/get-parcours-skills-contacts.ts";
 
 /**
  * Contrôleur HTTP pour récupérer les contacts et compétences associés à un parcours

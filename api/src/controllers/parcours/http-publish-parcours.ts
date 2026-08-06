@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import putPublishParcours from "../../models/parcours/put-publish-parcours";
+import { type Request, type Response } from "express";
+import { serverIssue } from "../../utils/constantes.ts";
+import putPublishParcours from "../../models/parcours/put-publish-parcours.ts";
 
 async function httpPublishParcours(req: Request, res: Response) {
   const { parcoursId } = req.params;

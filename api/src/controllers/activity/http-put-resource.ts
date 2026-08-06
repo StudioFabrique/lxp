@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import putResource from "../../models/activity/update-activity/put-resource";
+import { type Response, type NextFunction } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import putResource from "../../models/activity/update-activity/put-resource.ts";
 
 /**
  * Contrôleur HTTP pour la mise à jour d'une ressource d'activité

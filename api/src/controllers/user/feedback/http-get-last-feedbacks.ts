@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { badQuery, serverIssue } from "../../../utils/constantes";
-import getLastFeedbacks from "../../../models/user/feedback/get-last-feedbacks";
-import CustomRequest from "../../../utils/interfaces/express/custom-request";
+import { type Response } from "express";
+import { badQuery, serverIssue } from "../../../utils/constantes.ts";
+import getLastFeedbacks from "../../../models/user/feedback/get-last-feedbacks.ts";
+import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpGetLastFeedbacks(
