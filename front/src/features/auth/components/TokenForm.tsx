@@ -1,6 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
+
+const ACTIVATION_KEY_COMMAND =
+  "docker compose exec app npm run generate-activation-key";
 
 type Props = {
   onNext: (token: string) => void;
@@ -13,6 +17,7 @@ type FormData = {
 const TokenForm = ({ onNext }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCommandCopied, setIsCommandCopied] = useState(false);
 
   const {
     register,
@@ -35,6 +40,16 @@ const TokenForm = ({ onNext }: Props) => {
       setError(message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCopyCommand = async () => {
+    try {
+      await navigator.clipboard.writeText(ACTIVATION_KEY_COMMAND);
+      setIsCommandCopied(true);
+      window.setTimeout(() => setIsCommandCopied(false), 2000);
+    } catch (error) {
+      console.error("Échec de la copie de la commande :", error);
     }
   };
 
@@ -98,9 +113,31 @@ const TokenForm = ({ onNext }: Props) => {
             Vous pouvez régénérer une nouvelle clé d'activation en exécutant la
             commande suivante sur le serveur :
           </p>
-          <code className="block bg-base-300 rounded-lg p-3 text-xs text-base-content select-all">
-            docker exec -it lxp npm run generate-activation-key
-          </code>
+          <div className="flex items-center gap-2 bg-base-300 rounded-lg p-2">
+            <textarea
+              readOnly
+              value={ACTIVATION_KEY_COMMAND}
+              rows={1}
+              aria-label="Commande de génération de la clé d'activation"
+              className="textarea min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none [field-sizing:content]"
+            />
+            <button
+              type="button"
+              onClick={handleCopyCommand}
+              className="btn btn-xs self-start btn-ghost shrink-0 gap-1 text-base-content/60 hover:text-base-content"
+              aria-label="Copier la commande"
+              title="Copier la commande"
+            >
+              {isCommandCopied ? (
+                <Check className="size-3.5 text-success" />
+              ) : (
+                <Copy className="size-3.5" />
+              )}
+              <span className="hidden sm:inline">
+                {isCommandCopied ? "Copié" : ""}
+              </span>
+            </button>
+          </div>
           <p className="text-xs text-base-content/50 mt-4">
             La nouvelle clé s'affichera dans le terminal. Elle est valide
             pendant 30 minutes.
