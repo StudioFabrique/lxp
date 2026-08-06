@@ -1,9 +1,10 @@
-# Déploiement complet avec Jenkins
+# Déploiement direct avec Jenkins
 
 Jenkins construit l'image du LXP, la publie sur Docker Hub, puis déploie
 l'application sur un serveur Docker distant. Le déploiement utilise les fichiers
 [`build.Jenkinsfile`](../build.Jenkinsfile),
-[`deploy.Jenkinsfile`](../deploy.Jenkinsfile) et [`compose.yml`](../compose.yml).
+[`deployment/direct/Jenkinsfile`](../deployment/direct/Jenkinsfile) et
+[`deployment/direct/compose.yml`](../deployment/direct/compose.yml).
 
 ## Chaîne de déploiement
 
@@ -28,10 +29,10 @@ Le pipeline de déploiement attend les deux images sur Docker Hub. Le dépôt IA
 publie `studiostep/lxp-ai:latest` avec son workflow GitHub Actions lors d'un push
 sur sa branche principale.
 
-Ce document décrit le déploiement HTTP historique. Pour déployer une instance
+Ce document décrit le déploiement HTTP direct. Pour déployer une instance
 avec HTTPS automatique, Caddy et le challenge DNS OVH, consulter
 [`deploiement-caddy-jenkins.md`](deploiement-caddy-jenkins.md). Les deux méthodes
-coexistent et le job historique continue d'utiliser `deploy.Jenkinsfile`.
+coexistent sous `deployment/direct` et `deployment/caddy`.
 
 ## 1. Préparer Jenkins
 
@@ -211,7 +212,7 @@ Ouvrir le dossier Jenkins `demo` :
 5. Sélectionner **Git** et saisir l'URL du dépôt LXP.
 6. Choisir l'identifiant `GITHUB-LXP`.
 7. Indiquer la branche `*/main`.
-8. Saisir `deploy.Jenkinsfile` dans **Script Path**.
+8. Saisir `deployment/direct/Jenkinsfile` dans **Script Path**.
 9. Enregistrer.
 
 Le chemin du job devient `demo/pull images and deploy app`, comme dans les
@@ -220,7 +221,8 @@ captures.
 Lancer **Build Now** après la publication des deux images. Le pipeline exécute
 ces opérations :
 
-1. récupère `compose.yml`, les scripts SQL et les fichiers à synchroniser ;
+1. récupère `deployment/direct/compose.yml`, les scripts SQL et les fichiers à
+   synchroniser ;
 2. prépare la connexion Docker distante par SSH ;
 3. crée les répertoires persistants et synchronise `api/uploads/` ;
 4. copie `APP_ENV` dans le workspace Jenkins ;

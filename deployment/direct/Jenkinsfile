@@ -1,8 +1,16 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        DIRECT_COMPOSE_FILE = 'deployment/direct/compose.yml'
+    }
+
     stages {
-        stage("Checkout Templates") {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
@@ -20,6 +28,16 @@ pipeline {
                     usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
                 ]) {
                     sh '''
+                        set -eu
+
+                        cleanup() {
+                            status=$?
+                            rm -f .env
+                            docker logout >/dev/null 2>&1 || true
+                            exit "$status"
+                        }
+                        trap cleanup EXIT
+
                         echo "🔧 Configuration SSH pour $SSH_HOST..."
                         mkdir -p ~/.ssh
 
@@ -42,55 +60,58 @@ pipeline {
 
                         export DOCKER_HOST="ssh://deploy-target"
 
+                        compose() {
+                            docker compose --env-file .env -f "$DIRECT_COMPOSE_FILE" "$@"
+                        }
+
                         echo "🔐 Connexion Docker Hub..."
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "📥 Récupération des images..."
-                        docker compose pull
+                        compose pull
 
                         echo "🔎 Vérification de l'image IA..."
-                        docker compose run --rm --no-deps ai python -c \
+                        compose run --rm --no-deps ai python -c \
                             'import app.db_provision; print("Module app.db_provision disponible")'
 
                         echo "🗄️ Démarrage des bases..."
-                        docker compose up -d db-pg db-ai db-mongo
+                        compose up -d db-pg db-ai db-mongo
 
                         echo "⏳ Attente des bases..."
-                        until docker compose exec -T db-pg \
-                            pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+                        until compose exec -T db-pg sh -c \
+                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
                         do
                             sleep 2
                         done
 
-                        until docker compose exec -T db-ai \
-                            pg_isready -U "$ANDRIA_POSTGRES_USER" -d "$ANDRIA_POSTGRES_DB"
+                        until compose exec -T db-ai sh -c \
+                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
                         do
                             sleep 2
                         done
 
                         echo "📌 Migration Prisma..."
-                        docker compose run --rm -w /app/api app npx prisma migrate deploy
+                        compose run --rm -w /app/api app npx prisma migrate deploy
 
                         echo "🔔 Installation des triggers ANDRIA..."
-                        docker compose exec -T db-pg sh -c \
+                        compose exec -T db-pg sh -c \
                             'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
                             < api/src/scripts/andria_notify_triggers.sql
 
                         echo "🧠 Provisionnement de la base IA..."
-                        docker compose run --rm ai python -m app.db_provision
+                        compose run --rm ai python -m app.db_provision
 
                         echo "🚀 Démarrage des applications..."
-                        docker compose up -d app ai
+                        compose up -d app ai
 
                         echo "🔑 Génération de la clé d’activation..."
-                        docker compose exec -T app npm run generate-activation-key
+                        compose exec -T app npm run generate-activation-key
 
                         echo "📋 État des services..."
-                        docker compose ps
+                        compose ps
 
                         echo "🧹 Nettoyage..."
                         docker image prune -f
-                        docker logout
                     '''
                 }
             }

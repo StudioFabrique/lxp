@@ -1,10 +1,10 @@
 # Déploiement Jenkins avec Caddy et le challenge DNS OVH
 
-Cette méthode déploie la même stack applicative que `deploy.Jenkinsfile`, mais
-elle ne publie pas directement le conteneur `app` sur le port 80. Caddy reçoit
-les connexions HTTP et HTTPS, obtient un certificat pour le domaine exact de
-l'instance au moyen du challenge DNS-01 OVH, puis transmet les requêtes à
-`app` sur le réseau Docker.
+Cette méthode déploie la même stack applicative que le mode direct situé dans
+`deployment/direct`, mais elle ne publie pas directement le conteneur `app` sur
+le port 80. Caddy reçoit les connexions HTTP et HTTPS, obtient un certificat
+pour le domaine exact de l'instance au moyen du challenge DNS-01 OVH, puis
+transmet les requêtes à `app` sur le réseau Docker.
 
 Elle utilise les fichiers suivants :
 
@@ -13,8 +13,9 @@ Elle utilise les fichiers suivants :
 - [`deployment/caddy/Dockerfile`](../deployment/caddy/Dockerfile) ;
 - [`deployment/caddy/Caddyfile`](../deployment/caddy/Caddyfile).
 
-Le déploiement HTTP historique reste disponible avec `deploy.Jenkinsfile` et
-`compose.yml` à la racine du dépôt.
+Le déploiement HTTP direct reste disponible avec
+[`deployment/direct/Jenkinsfile`](../deployment/direct/Jenkinsfile) et
+[`deployment/direct/compose.yml`](../deployment/direct/compose.yml).
 
 ## 1. Préparer le DNS et le VPS
 

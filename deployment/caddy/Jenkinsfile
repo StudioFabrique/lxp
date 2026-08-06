@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     environment {
         CADDY_COMPOSE_FILE = 'deployment/caddy/compose.yml'
     }
