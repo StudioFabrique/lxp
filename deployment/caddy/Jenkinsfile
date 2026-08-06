@@ -56,7 +56,7 @@ pipeline {
                         HostName $SSH_HOST
                         User $SSH_USER
                         Port $SSH_PORT
-                        IdentityFile \"$SSH_CREDENTIALS\"
+                        IdentityFile \\"$SSH_CREDENTIALS\\"
                         StrictHostKeyChecking no" > ~/.ssh/config
 
                         echo "📁 Préparation des dossiers et synchronisation des cours..."
