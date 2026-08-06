@@ -20,3 +20,8 @@ tmp
 /front/tmp
 certs/
 fixtures-test.ts
+
+# Runtime-generated database and activity dumps.
+/api/dumps/*
+!/api/dumps/.gitkeep
+/dumps/
