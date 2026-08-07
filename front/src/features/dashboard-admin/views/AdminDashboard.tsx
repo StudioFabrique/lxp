@@ -10,6 +10,7 @@ import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import LastModules from "../components/last-modules";
 import SidebarRouteIcon from "../../../components/headers/SidebarRouteIcon";
+import { EllipsisVertical } from "lucide-react";
 
 // Structure des liens centralisée avec métadonnées de permission optionnelles
 const links = [
@@ -30,10 +31,36 @@ const links = [
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const { data: parcours, isLoading } = useQuery({
-    queryKey: ["last-parcours"],
-    queryFn: dashboardAdminApi.queries.getLastParcours,
+  const isTeacher =
+    user?.roles.some((role) => role.role === "teacher") ?? false;
+
+  const { data: teacherParcours = [], isLoading: isTeacherParcoursLoading } =
+    useQuery({
+      queryKey: ["last-parcours"],
+      queryFn: dashboardAdminApi.queries.getLastParcours,
+      enabled: isTeacher,
+    });
+
+  const { data: formations = [], isSuccess: areFormationsLoaded } = useQuery({
+    queryKey: ["dashboard-admin", "last-formations"],
+    queryFn: dashboardAdminApi.queries.getLastFormations,
   });
+
+  const {
+    data: parcours = [],
+    isLoading: isParcoursLoading,
+    isSuccess: areParcoursLoaded,
+  } = useQuery({
+    queryKey: ["root-parcours"],
+    queryFn: dashboardAdminApi.queries.getRootParcours,
+  });
+
+  const shouldRecommendFormation = areFormationsLoaded && formations.length < 1;
+  const shouldRecommendParcours =
+    areFormationsLoaded &&
+    formations.length > 0 &&
+    areParcoursLoaded &&
+    parcours.length < 1;
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -52,48 +79,81 @@ const AdminDashboard = () => {
         </p>
       </section>
 
-      {/* --- Boutons d'actions rapides (Optimisés et Sécurisés) --- */}
-      <section>
-        <ul className="flex flex-wrap items-center gap-3">
-          {links.map((item) => {
-            const content = (
-              <li>
-                <Link
-                  className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
-                  to={item.path}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
+      {/* --- Liste d'actions rapides --- */}
+      <section className="flex flex-wrap justify-end items-center gap-3">
+        {/*{shouldRecommendFormation ? (
+          <PermissionGuard action="write" object="formation">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                className="btn btn-xl flex flex-col p-10"
+                to="/admin/formation"
+              >
+                <span className="badge badge-in">Action recommandée</span>
+                <span>Créer une formation</span>
+              </Link>
+            </div>
+          </PermissionGuard>
+        ) : null}*/}
 
-            if (item.permission) {
-              return (
-                <PermissionGuard
-                  key={item.label}
-                  action={item.permission.action}
-                  object={item.permission.object}
-                >
-                  {content}
-                </PermissionGuard>
+        {/*{shouldRecommendParcours ? (
+          <PermissionGuard action="write" object="parcours">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="badge badge-primary badge-outline">
+                Action recommandée
+              </span>
+              <Link className="btn btn-primary" to="/admin/parcours/new">
+                Créer un parcours
+              </Link>
+            </div>
+          </PermissionGuard>
+        ) : null}*/}
+
+        <details className="dropdown">
+          <summary className="btn m-1 flex items-center">
+            <span className="pb-0.5">Actions rapides</span>
+            <EllipsisVertical className="w-4 h-4" />
+          </summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            {links.map((item) => {
+              const content = (
+                <li>
+                  <Link to={item.path}>{item.label}</Link>
+                </li>
               );
-            }
 
-            return <span key={item.label}>{content}</span>;
-          })}
-        </ul>
+              if (item.permission) {
+                return (
+                  <PermissionGuard
+                    key={item.label}
+                    action={item.permission.action}
+                    object={item.permission.object}
+                  >
+                    {content}
+                  </PermissionGuard>
+                );
+              }
+
+              return (
+                <li key={item.label}>
+                  <Link to={item.path}>{item.label}</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
       </section>
 
       {/* --- Contenu Principal --- */}
       <section className="w-full flex flex-col 2xl:flex-row gap-6">
         <div className="flex-1 flex flex-col gap-6">
           <article className="w-full flex flex-col gap-y-4">
-            {user?.roles.find((role) => role.role === "teacher") &&
-            parcours &&
-            parcours.length > 0 ? (
-              <TeacherLastParcours parcours={parcours} isLoading={isLoading} />
+            {isTeacher && teacherParcours.length > 0 ? (
+              <TeacherLastParcours
+                parcours={teacherParcours}
+                isLoading={isTeacherParcoursLoading}
+              />
             ) : null}
-            <LastParcours />
+            <LastParcours parcours={parcours} isLoading={isParcoursLoading} />
             <LastModules />
           </article>
 

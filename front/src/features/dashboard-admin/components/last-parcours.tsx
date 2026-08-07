@@ -1,16 +1,18 @@
 import { Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
 import { MoveUpRight } from "lucide-react";
-import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import ParcoursTable from "./parcours-table";
 import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
+import type ParcoursSummary from "../interfaces/parcours-summary";
 
-export default function LastParcours() {
-  const { data: parcours } = useQuery({
-    queryKey: ["root-parcours"],
-    queryFn: dashboardAdminApi.queries.getRootParcours,
-  });
+type LastParcoursProps = {
+  parcours: ParcoursSummary[];
+  isLoading: boolean;
+};
 
+export default function LastParcours({
+  parcours,
+  isLoading,
+}: LastParcoursProps) {
   return (
     <SubBoxWrapper>
       <div className="p-2">
@@ -21,7 +23,11 @@ export default function LastParcours() {
         </div>
 
         <div className="w-full">
-          {parcours && parcours.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center py-4">
+              <span className="loading loading-spinner loading-sm text-primary" />
+            </div>
+          ) : parcours.length > 0 ? (
             <ParcoursTable parcoursList={parcours} />
           ) : (
             <p className="text-base-content/70 italic py-4">
