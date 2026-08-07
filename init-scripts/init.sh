@@ -1,4 +1,20 @@
 #!/bin/bash
+restore_data=false
+
+case "${1:-}" in
+  "") ;;
+  --with-data) restore_data=true ;;
+  *)
+    echo "Usage : npm run init [-- --with-data]"
+    exit 1
+    ;;
+esac
+
+if [ "$restore_data" = false ]; then
+  echo "Nettoyage des données existantes..."
+  ./init-scripts/clean-project-data.sh || { echo -e "\033[1;31m Échec: Nettoyage des données"; exit 1; }
+fi
+
 echo "Installation des dépendances racine..."
 npm ci --ignore-scripts || { echo -e "\033[1;31m Échec: Installation des dépendances racine"; exit 1; }
 
@@ -21,8 +37,10 @@ if [ -f "./api/.env" ]; then
   POSTGRES_USER=$(grep '^POSTGRES_USER=' ./api/.env | cut -d'=' -f2)
   POSTGRES_PASSWORD=$(grep '^POSTGRES_PASSWORD=' ./api/.env | cut -d'=' -f2)
   POSTGRES_DB=$(grep '^POSTGRES_DB=' ./api/.env | cut -d'=' -f2)
-  MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
-  MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
+  if [ "$restore_data" = true ]; then
+    MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
+    MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
+  fi
 fi
 
 # Naviguer vers le repertoire api pour la suite
@@ -58,37 +76,48 @@ echo "Exécution des migrations..."
 npx prisma migrate deploy || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
 
 echo "PostgreSQL est prêt !"
-echo "Restauration des données fictives..."
+if [ "$restore_data" = true ]; then
+  echo "Restauration des données de démonstration..."
 
-# Restauration PostgreSQL
-if [[ -f "./dumps/dump-pgsql.sql" ]]; then
-  echo "Dump PostgreSQL trouvé, injection en cours..."
-  docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
-else
-  echo "Aucun fichier ./dumps/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
-fi
+  # Restauration PostgreSQL
+  if [[ -f "./dumps/dump-pgsql.sql" ]]; then
+    echo "Dump PostgreSQL trouvé, injection en cours..."
+    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
+  else
+    echo "Aucun fichier ./dumps/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
+  fi
 
-# Restauration MongoDB
-if [[ -d "./dumps/dump-mongo" ]]; then
-  echo "Dossier de dump MongoDB trouvé, injection en cours..."
-  docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
-  docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
-else
-  echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
-fi
+  # Restauration MongoDB
+  if [[ -d "./dumps/dump-mongo" ]]; then
+    echo "Dossier de dump MongoDB trouvé, injection en cours..."
+    docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
+    docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
+  else
+    echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
+  fi
 
-echo "Restauration des fichiers d'activités..."
-if [[ -d "./dumps/activities" ]]; then
-  mkdir -p ./uploads/
-  rm -rf ./uploads/activities
-  cp -R ./dumps/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
-  echo -e "\033[0;32m Activités restaurées.\033[0m"
-else
-  echo -e "\033[1;33m Dossier ./dumps/activities introuvable, restauration ignorée."
+  echo "Restauration des fichiers d'activités..."
+  if [[ -d "./dumps/activities" ]]; then
+    mkdir -p ./uploads/
+    rm -rf ./uploads/activities
+    cp -R ./dumps/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
+    echo -e "\033[0;32m Activités restaurées.\033[0m"
+  else
+    echo -e "\033[1;33m Dossier ./dumps/activities introuvable, restauration ignorée."
+  fi
 fi
 
 echo "🔧 Notification des triggers pour le serveur IA..."
 npm run notify-triggers || { echo -e "\033[1;31m Échec: Notification des triggers"; exit 1; }
 
-echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
+if [ "$restore_data" = false ]; then
+  echo "Génération de la clé JWT de la création du premier utilisateur admin..."
+  npm run generate-activation-key || { echo -e "\033[1;31m Échec: Génération de la clé d'activation"; exit 1; }
+fi
+
+if [ "$restore_data" = true ]; then
+  echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
+else
+  echo -e "\033[0;32mConfiguration du projet ANDRIA à partir de bases de données vides terminée avec succès.\033[0m"
+fi
 echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"

@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 
-const ACTIVATION_KEY_COMMAND =
-  "docker compose exec app npm run generate-activation-key";
+const ACTIVATION_KEY_COMMAND = import.meta.env.PROD
+  ? "docker compose exec app npm run generate-activation-key"
+  : "npm run generate-activation-key";
 
 type Props = {
   onNext: (token: string) => void;

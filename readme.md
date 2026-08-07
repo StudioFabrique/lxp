@@ -18,8 +18,19 @@ npm run init
 npm run dev
 ```
 
-`npm run init` installe les dépendances, crée les fichiers `.env`, démarre les
-bases Docker, applique les migrations et charge les données de démonstration.
+`npm run init` supprime les éventuelles données locales, installe les
+dépendances, crée les fichiers `.env`, démarre les bases Docker et applique les
+migrations afin de commencer avec une application vide. La commande affiche la
+clé d'activation nécessaire à la création du premier administrateur.
+
+Pour initialiser l'application avec les données de démonstration :
+
+```bash
+npm run init -- --with-data
+```
+
+Les comptes de démonstration ci-dessous sont uniquement créés avec cette
+option.
 
 Ouvrir <http://localhost:5173>.
 
