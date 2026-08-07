@@ -1,10 +1,15 @@
 export default interface ParcoursSummary {
   id: number;
   title: string;
+  startDate: string | null;
+  endDate: string | null;
+  isPublished: boolean;
+  thumb: string | null;
+}
+
+export interface FormationParcoursSummary {
+  id: number;
+  title: string;
   level: string;
-  courses: number;
-  students: number;
-  duration: number;
-  startDate: string;
-  visibility: boolean;
+  parcours: ParcoursSummary[];
 }

@@ -19,7 +19,7 @@ export default function TeacherLastParcours({
   return (
     <>
       {isLoading && !parcours ? (
-        <div className="w-full h-[12rem] flex justify-center items-center">
+        <div className="w-full h-48 flex justify-center items-center">
           <Loader2 className="animate-spin text-primary" />
         </div>
       ) : null}

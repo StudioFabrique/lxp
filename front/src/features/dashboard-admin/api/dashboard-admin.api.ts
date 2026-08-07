@@ -1,7 +1,7 @@
 import apiClient from "../../../lib/axios";
 import type Parcours from "../../../utils/interfaces/parcours";
 import type FormationItem from "../../formation/interfaces/formation-item";
-import type ParcoursSummary from "../interfaces/parcours-summary";
+import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
 
 export type ModuleSummary = {
@@ -23,7 +23,7 @@ const queries = {
     const res = await apiClient.get("/formation/list");
     return (res.data.response ?? []).slice(0, 3);
   },
-  getRootParcours: async (): Promise<ParcoursSummary[]> => {
+  getRootParcours: async (): Promise<FormationParcoursSummary[]> => {
     const res = await apiClient.get("/parcours/root-parcours");
     return res.data;
   },
