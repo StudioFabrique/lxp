@@ -74,6 +74,7 @@ const TokenForm = ({ onNext }: Props) => {
             style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
             {...register("token", {
               required: "La clé d'activation est requise.",
+              onChange: () => setError(""),
             })}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
@@ -85,7 +86,10 @@ const TokenForm = ({ onNext }: Props) => {
         </div>
 
         {error && (
-          <span className="text-sm text-error text-center">{error}</span>
+          <span className="text-sm text-error text-center">
+            Une erreur est survenue. Veuillez vérifier votre clé d'activation et
+            réessayer.
+          </span>
         )}
 
         <button
