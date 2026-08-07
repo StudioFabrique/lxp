@@ -11,7 +11,6 @@
     "test": "npm run test --prefix api",
     "generate": "npm run prisma-generate --prefix api",
     "init": "./init-scripts/init.sh",
-    "init-empty": "./init-scripts/init-empty.sh",
     "clean": "./init-scripts/clean-project-data.sh",
     "dump": "./init-scripts/dump-data.sh",
     "generate-activation-key": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/generate-activation-key.js; else npm run generate-activation-key --prefix api; fi"

@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 
-const ACTIVATION_KEY_COMMAND =
-  "docker compose exec app npm run generate-activation-key";
+const ACTIVATION_KEY_COMMAND = import.meta.env.PROD
+  ? "docker compose exec app npm run generate-activation-key"
+  : "npm run generate-activation-key";
 
 type Props = {
   onNext: (token: string) => void;
@@ -73,6 +74,7 @@ const TokenForm = ({ onNext }: Props) => {
             style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
             {...register("token", {
               required: "La clé d'activation est requise.",
+              onChange: () => setError(""),
             })}
             className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
@@ -84,7 +86,10 @@ const TokenForm = ({ onNext }: Props) => {
         </div>
 
         {error && (
-          <span className="text-sm text-error text-center">{error}</span>
+          <span className="text-sm text-error text-center">
+            Une erreur est survenue. Veuillez vérifier votre clé d'activation et
+            réessayer.
+          </span>
         )}
 
         <button
