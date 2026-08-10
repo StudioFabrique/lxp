@@ -34,7 +34,7 @@ const CompanyPictureUpload = () => {
           toast.error(errorMessage);
         });
     },
-    [bgColor]
+    [bgColor],
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const CompanyPictureUpload = () => {
   }, [temporaryAvatar, handleSubmitPicture]);
 
   return (
-    <div className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+    <div className="card h-full">
       <div className="card-body p-6">
         {/* Header */}
         <h2 className="card-title text-lg font-medium mb-4">
@@ -52,7 +52,7 @@ const CompanyPictureUpload = () => {
         </h2>
 
         {/* Main */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="grid grid-cols-1 items-center gap-6 sm:grid-cols-2">
           {/* Left color picker */}
           <div className="flex flex-col gap-3 items-center md:items-start w-full md:w-auto">
             <span className="label-text font-semibold">Arrière-plan</span>
@@ -65,13 +65,15 @@ const CompanyPictureUpload = () => {
           </div>
 
           {/* Right image upload */}
-          <div className="flex-shrink-0">
+          <div className="flex w-full min-w-0 justify-center">
             <ProfileImageFileUpload
               temporaryAvatar={temporaryAvatar}
               onSetTemporaryAvatar={setTemporaryAvatar}
               maxSize={avatarImageMaxSize}
+              variant="logo"
+              previewBackgroundColor={bgColor}
             >
-              Ajouter le Logo
+              Ajouter le logo
             </ProfileImageFileUpload>
           </div>
         </div>

@@ -20,9 +20,6 @@ const OnboardingStopConfirmation = ({
     <div className="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 p-6 text-base-content shadow-2xl">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="rounded-full bg-warning/15 p-2 text-warning">
-            <CircleHelp className="h-5 w-5" />
-          </span>
           <h2 id="onboarding-stop-title" className="text-lg font-bold">
             Arrêter le tutoriel ?
           </h2>

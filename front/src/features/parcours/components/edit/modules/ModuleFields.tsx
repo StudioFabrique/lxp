@@ -4,12 +4,13 @@ import useImageUpload from "../../../../../../src/hooks/use-image-upload";
 import FormInput from "../../../../../components/form/FormInput";
 import FormTextarea from "../../../../../components/form/FormTextarea";
 import FormUploadImage from "../../../../../components/UI/form-upload-image";
+import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type Props = {
   children?: React.ReactNode;
   mode?: "edit" | "create";
-  register: UseFormRegister<any>;
-  errors: FieldErrors;
+  register: UseFormRegister<ModuleCreateFormValues>;
+  errors: FieldErrors<ModuleCreateFormValues>;
   onSetFile: (file: File | null) => void;
   onSetImageBase64?: (base64: string | null) => void;
 };
@@ -31,29 +32,34 @@ function ModuleFields({
   return (
     <div>
       <article className="flex flex-col gap-y-4">
-        <div>
+        <div data-onboarding="module-title-field">
           <FormInput
             label="Titre du module *"
             name="title"
             placeholder="Ex : Javascript"
             register={register}
-            error={errors.title as any}
+            error={errors.title}
           />
         </div>
 
-        <FormTextarea
-          label="Description"
-          name="description"
-          register={register}
-          error={errors.description as any}
-        />
+        <div data-onboarding="module-description-field">
+          <FormTextarea
+            label="Description"
+            name="description"
+            register={register}
+            error={errors.description}
+          />
+        </div>
 
-        <div className="flex flex-col gap-2">
+        <div
+          className="flex flex-col gap-2"
+          data-onboarding="module-quiz-instructions-field"
+        >
           <FormTextarea
             label="Instructions pour le quiz"
             name="quizInstructions"
             register={register}
-            error={errors.quizInstructions as any}
+            error={errors.quizInstructions}
           />
           <p className="text-base-content/40 text-xs">
             Exemple : Questionnaire diagnostique en français, ton clair et

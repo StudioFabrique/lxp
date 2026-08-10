@@ -48,7 +48,7 @@ type StageDefinition = {
   total: number;
 };
 
-const invalidLabelClasses = ["text-warning"];
+const invalidLabelClasses = ["text-info"];
 
 const getRequirementElement = (requirement: StageRequirement) =>
   document.querySelector<HTMLElement>(requirement.selector);
@@ -112,6 +112,7 @@ const withContext = (stage: string, contextId?: number) =>
 const getResumableToken = (token: string) => {
   const { stage, contextId } = splitToken(token);
   const resumableStage: Record<string, string> = {
+    "admin-module-form": "admin-module-title",
     "admin-course-details": "admin-course-create",
     "admin-lesson-details": "admin-lesson-create",
     "admin-activity-type": "admin-activity-create",
@@ -212,41 +213,103 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     index: 6,
   },
   "admin-parcours-info": {
-    target: '[data-onboarding="parcours-information"]',
+    target: '[data-onboarding="parcours-essential-information"]',
     title: "Complétez les informations",
     content:
-      "Le titre et la description se sauvegardent automatiquement. Vous pouvez également définir les dates, les contacts, les tags et une classe virtuelle.",
-    placement: "bottom",
-    next: "admin-module-form",
+      "Vérifiez le titre du parcours et ajoutez une description si nécessaire. Ces informations se sauvegardent automatiquement ; les autres réglages pourront être complétés plus tard.",
+    placement: "right",
+    next: "admin-module-title",
     nextLabel: "Créer un module",
     requirements: [
       {
         selector:
-          '[data-onboarding="parcours-information"] input[name="title"]',
+          '[data-onboarding="parcours-essential-information"] input[name="title"]',
         label: "le titre du parcours",
         highlightSelector:
-          '[data-onboarding="parcours-information"] label[for="title"]',
+          '[data-onboarding="parcours-essential-information"] label[for="title"]',
       },
     ],
     index: 7,
   },
-  "admin-module-form": {
-    target: '[data-onboarding="module-form"]',
-    title: "Ajoutez un premier module",
+  "admin-module-title": {
+    target: '[data-onboarding="module-title-field"]',
+    title: "Nommez votre module",
     content:
-      "Un module regroupe vos cours. Renseignez son titre, sa description et sa durée, puis enregistrez-le. L’image, les contacts et les compétences peuvent être ajoutés maintenant ou plus tard.",
-    placement: "top",
-    waitingForAction: true,
+      "Un module regroupe plusieurs cours. Commencez par saisir un titre clair pour l’identifier facilement.",
+    placement: "right",
     previous: "admin-parcours-info",
+    next: "admin-module-description",
     requirements: [
       {
         selector: '[data-onboarding="module-form"] input[name="title"]',
         label: "le titre du module",
-        highlightSelector:
-          '[data-onboarding="module-form"] label[for="title"]',
+        highlightSelector: '[data-onboarding="module-form"] label[for="title"]',
       },
     ],
     index: 8,
+  },
+  "admin-module-description": {
+    target: '[data-onboarding="module-description-field"]',
+    title: "Décrivez le module",
+    content:
+      "La description présente le contenu et les objectifs du module. Elle reste facultative et pourra être complétée plus tard.",
+    placement: "right",
+    previous: "admin-module-title",
+    next: "admin-module-quiz-instructions",
+    index: 9,
+  },
+  "admin-module-quiz-instructions": {
+    target: '[data-onboarding="module-quiz-instructions-field"]',
+    title: "Préparez les futurs quiz",
+    content:
+      "Ces instructions guideront la génération des quiz du module. Ce champ est primordial.",
+    placement: "right",
+    previous: "admin-module-description",
+    next: "admin-module-duration",
+    index: 10,
+  },
+  "admin-module-duration": {
+    target: '[data-onboarding="module-duration-field"]',
+    title: "Indiquez la durée",
+    content:
+      "Saisissez la durée estimée du module en heures. Elle doit être supérieure à zéro.",
+    placement: "right",
+    previous: "admin-module-quiz-instructions",
+    next: "admin-module-save",
+    requirements: [
+      {
+        selector: '[data-onboarding="module-form"] input[name="duration"]',
+        label: "la durée du module",
+        invalidValues: ["0"],
+        highlightSelector:
+          '[data-onboarding="module-form"] label[for="duration"]',
+      },
+    ],
+    index: 11,
+  },
+  "admin-module-save": {
+    target: '[data-onboarding="module-save"]',
+    title: "Enregistrez le module",
+    content:
+      "L’image, les ressources et les compétences sont facultatives. Enregistrez maintenant le module sans ouvrir les drawers associés.",
+    placement: "top",
+    waitingForAction: true,
+    previous: "admin-module-duration",
+    requirements: [
+      {
+        selector: '[data-onboarding="module-form"] input[name="title"]',
+        label: "le titre du module",
+        highlightSelector: '[data-onboarding="module-form"] label[for="title"]',
+      },
+      {
+        selector: '[data-onboarding="module-form"] input[name="duration"]',
+        label: "la durée du module",
+        invalidValues: ["0"],
+        highlightSelector:
+          '[data-onboarding="module-form"] label[for="duration"]',
+      },
+    ],
+    index: 12,
   },
   "admin-course-create": {
     target: '[data-onboarding="course-create"]',
@@ -255,7 +318,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Les cours structurent les leçons d’un module. Cliquez sur Ajouter un cours, saisissez un titre, puis validez pour ouvrir les informations détaillées.",
     placement: "right",
     waitingForAction: true,
-    index: 9,
+    index: 13,
   },
   "admin-course-details": {
     target: '[data-onboarding="course-details"]',
@@ -276,7 +339,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
         highlightSelector: '[data-onboarding-label="course-tags"]',
       },
     ],
-    index: 10,
+    index: 14,
   },
   "admin-lesson-create": {
     target: '[data-onboarding="lesson-create"]',
@@ -285,7 +348,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Ce bouton ajoute une leçon au cours que vous venez de créer. Une leçon contient les activités consultées par les apprenants.",
     placement: "right",
     waitingForAction: true,
-    index: 11,
+    index: 15,
   },
   "admin-lesson-details": {
     target: '[data-onboarding="lesson-details"]',
@@ -306,7 +369,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
         highlightSelector: '[data-onboarding-label="lesson-tag"]',
       },
     ],
-    index: 12,
+    index: 16,
   },
   "admin-activity-create": {
     target: '[data-onboarding="activity-create"]',
@@ -315,7 +378,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Une activité est l’unité de contenu affichée aux apprenants. Cliquez ici pour choisir son format.",
     placement: "right",
     waitingForAction: true,
-    index: 13,
+    index: 17,
   },
   "admin-activity-type": {
     target: '[data-onboarding="activity-type-text"]',
@@ -325,7 +388,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     placement: "bottom",
     waitingForAction: true,
     previous: "admin-activity-create",
-    index: 14,
+    index: 18,
   },
   "admin-text-editor": {
     target: '[data-onboarding="text-editor"]',
@@ -344,7 +407,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
         label: "le contenu de l’activité",
       },
     ],
-    index: 15,
+    index: 19,
   },
   "admin-complete": {
     target: "#main-scroll-container",
@@ -353,7 +416,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Vous connaissez maintenant la chaîne complète : formation, parcours, module, cours, leçon et activité. Vous pourrez relancer ce guide depuis le menu latéral.",
     placement: "center",
     nextLabel: "Compris",
-    index: 16,
+    index: 20,
   },
 };
 
@@ -464,6 +527,56 @@ const OnboardingTourContent = ({
   useEffect(() => {
     if (status !== "in_progress") return;
 
+    const previousRootOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const preventPointerScroll = (event: Event) => event.preventDefault();
+    const preventKeyboardScroll = (event: KeyboardEvent) => {
+      const scrollKeys = [
+        "ArrowUp",
+        "ArrowDown",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        " ",
+      ];
+      if (!scrollKeys.includes(event.key)) return;
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target?.matches("input, textarea, select, [contenteditable='true']") ||
+        (event.key === " " && target?.closest("button, a"))
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+    };
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.addEventListener("wheel", preventPointerScroll, {
+      capture: true,
+      passive: false,
+    });
+    document.addEventListener("touchmove", preventPointerScroll, {
+      capture: true,
+      passive: false,
+    });
+    document.addEventListener("keydown", preventKeyboardScroll, true);
+
+    return () => {
+      document.documentElement.style.overflow = previousRootOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.removeEventListener("wheel", preventPointerScroll, true);
+      document.removeEventListener("touchmove", preventPointerScroll, true);
+      document.removeEventListener("keydown", preventKeyboardScroll, true);
+    };
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== "in_progress") return;
+
     const refreshRequirements = () => {
       setRequirementRevision((current) => current + 1);
     };
@@ -506,7 +619,7 @@ const OnboardingTourContent = ({
       target = `/admin/parcours/new?formationId=${contextId}`;
     } else if (stage === "admin-parcours-info" && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=1`;
-    } else if (stage === "admin-module-form" && contextId) {
+    } else if (stage.startsWith("admin-module-") && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=4&create=true`;
     } else if (
       stage.startsWith("admin-") &&
@@ -516,7 +629,17 @@ const OnboardingTourContent = ({
       target = `/admin/parcours/module/${contextId}`;
     }
 
-    if (target && `${location.pathname}${location.search}` !== target) {
+    const isModuleFormAlreadyOpen =
+      stage.startsWith("admin-module-") &&
+      contextId !== undefined &&
+      location.pathname === `/admin/parcours/edit/${contextId}` &&
+      new URLSearchParams(location.search).get("step") === "4";
+
+    if (
+      target &&
+      !isModuleFormAlreadyOpen &&
+      `${location.pathname}${location.search}` !== target
+    ) {
       navigate(target, { replace: true });
     }
   }, [location.pathname, location.search, navigate, status, stepToken]);
@@ -547,7 +670,7 @@ const OnboardingTourContent = ({
           }
           break;
         case "module_created":
-          if (stage === "admin-module-form") {
+          if (stage === "admin-module-save") {
             goToStage("admin-course-create", event.id);
           }
           break;
@@ -599,7 +722,7 @@ const OnboardingTourContent = ({
     const definition = definitions[stage];
     if (!definition) return undefined;
 
-    const total = layout === "admin" ? 16 : 4;
+    const total = layout === "admin" ? 20 : 4;
     const resolveToken = (next?: string) =>
       next
         ? withContext(

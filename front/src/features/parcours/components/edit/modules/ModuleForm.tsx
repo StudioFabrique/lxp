@@ -63,14 +63,16 @@ export default function ModuleForm({
                   errors={errors}
                   onSetFile={onSetFile}
                 >
-                  <FormNumberInput
-                    label="Durée du module en heures *"
-                    name="duration"
-                    placeholder="Ex : 12"
-                    min={0}
-                    register={register}
-                    error={errors.duration}
-                  />
+                  <div data-onboarding="module-duration-field">
+                    <FormNumberInput
+                      label="Durée du module en heures *"
+                      name="duration"
+                      placeholder="Ex : 12"
+                      min={1}
+                      register={register}
+                      error={errors.duration}
+                    />
+                  </div>
                 </ModuleFields>
               </span>
 
@@ -98,6 +100,7 @@ export default function ModuleForm({
                 Annuler
               </button>
               <button
+                data-onboarding="module-save"
                 type="submit"
                 className="btn btn-primary"
                 disabled={isSubmitting}

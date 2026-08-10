@@ -82,20 +82,25 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
               </SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">
-              <FormInput
-                label="Titre *"
-                name="title"
-                register={register}
-                error={errors.title}
-                placeholder="Ex : CDA - Promo 2023"
-              />
+              <div
+                className="flex flex-col gap-y-8"
+                data-onboarding="parcours-essential-information"
+              >
+                <FormInput
+                  label="Titre *"
+                  name="title"
+                  register={register}
+                  error={errors.title}
+                  placeholder="Ex : CDA - Promo 2023"
+                />
 
-              <FormTextarea
-                label="Description"
-                name="description"
-                register={register}
-                error={errors.description}
-              />
+                <FormTextarea
+                  label="Description"
+                  name="description"
+                  register={register}
+                  error={errors.description}
+                />
+              </div>
 
               <div className="flex flex-col gap-y-4">
                 <h2 className="font-bold">Niveau du parcours</h2>
