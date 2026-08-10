@@ -31,7 +31,11 @@ const LastParcoursItem = ({
   formation?: FormationParcoursSummary;
 }) => {
   return (
-    <CursorGlowCard className="h-full rounded-box">
+    <CursorGlowCard
+      glowColor="info"
+      glowSize={2.5}
+      className="h-full rounded-box"
+    >
       <ul
         className={cn(
           "list border border-base-300 rounded-box overflow-hidden h-full min-h-52",

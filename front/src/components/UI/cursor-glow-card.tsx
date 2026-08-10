@@ -4,10 +4,25 @@ import { cn } from "../../utils/cn";
 
 type CursorGlowCardProps = {
   children: ReactNode;
+  glowSize?: number;
+  glowColor?:
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "neutral"
+    | "info"
+    | "success"
+    | "warning"
+    | "error";
   className?: string;
 };
 
-const CursorGlowCard = ({ children, className }: CursorGlowCardProps) => {
+const CursorGlowCard = ({
+  children,
+  glowSize = 1,
+  glowColor = "primary",
+  className,
+}: CursorGlowCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -31,7 +46,17 @@ const CursorGlowCard = ({ children, className }: CursorGlowCardProps) => {
       )}
     >
       <motion.span
-        className="pointer-events-none absolute h-14 w-36 invisible rounded-full bg-primary/50 opacity-70 blur-xl group-hover:visible"
+        className={cn(
+          "pointer-events-none absolute h-14 w-36 invisible rounded-full opacity-70 blur-xl group-hover:visible",
+          glowColor === "primary" && "bg-primary/40",
+          glowColor === "secondary" && "bg-secondary/40",
+          glowColor === "accent" && "bg-accent/40",
+          glowColor === "neutral" && "bg-neutral/40",
+          glowColor === "info" && "bg-info/40",
+          glowColor === "success" && "bg-success/40",
+          glowColor === "warning" && "bg-warning/40",
+          glowColor === "error" && "bg-error/40",
+        )}
         initial={{ scale: 0 }}
         style={{
           x: springX,
@@ -40,7 +65,7 @@ const CursorGlowCard = ({ children, className }: CursorGlowCardProps) => {
           translateY: "-50%",
         }}
         animate={{
-          scale: isHovered ? 1 : 0,
+          scale: isHovered ? glowSize : 0,
         }}
         transition={{ duration: 0.5 }}
         aria-hidden="true"
