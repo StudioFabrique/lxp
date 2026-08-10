@@ -75,7 +75,7 @@ export default async function createUser(user: IUser, roleId: string) {
       await sendPasswordEmail(createdUser.email, token, "activation");
       await User.updateOne(
         { _id: createdUser._id },
-        { $set: { invitationSent: true } },
+        { $set: { invitationSent: true, invitationSentAt: new Date() } },
       );
     }
 

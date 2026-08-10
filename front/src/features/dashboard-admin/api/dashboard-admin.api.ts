@@ -8,6 +8,7 @@ export type ModuleSummary = {
   id: number;
   parcoursId: number;
   title: string;
+  thumb: string | null;
   parcours: string;
   formation: string;
   coursesCount: number;

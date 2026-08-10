@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import mongoose from "mongoose";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import app from "../src/app.ts";
+import User from "../src/utils/interfaces/db/user.ts";
 
 dotenv.config();
 
@@ -159,6 +160,43 @@ describe("HTTP auth", () => {
           password: "<hacked>lol</hacked>",
         })
         .expect(401);
+    });
+
+    test("It should indicate that an inactive account needs activation", async () => {
+      const response = await request(app).post("/v1/auth/login").send({
+        email: "formateur2@studio.eco",
+        password: "Abcdef@123456",
+      });
+
+      expect(response.status).toBe(403);
+      expect(response.body.code).toBe("ACCOUNT_NOT_ACTIVATED");
+    });
+  });
+
+  describe("Test POST /auth/resend-activation", () => {
+    test("It should resend once and enforce the account cooldown", async () => {
+      const email = "formateur2@studio.eco";
+      await User.updateOne(
+        { email },
+        { $set: { invitationSent: false }, $unset: { invitationSentAt: 1 } },
+      );
+
+      const firstResponse = await request(app)
+        .post("/v1/auth/resend-activation")
+        .send({ email });
+      const user = await User.findOne({ email });
+
+      expect(firstResponse.status).toBe(200);
+      expect(user?.invitationSent).toBe(true);
+      expect(user?.invitationSentAt).toBeInstanceOf(Date);
+
+      const secondResponse = await request(app)
+        .post("/v1/auth/resend-activation")
+        .send({ email });
+
+      expect(secondResponse.status).toBe(429);
+      expect(secondResponse.body.code).toBe("ACTIVATION_EMAIL_COOLDOWN");
+      expect(secondResponse.body.retryAfterSeconds).toBeGreaterThan(0);
     });
   });
 

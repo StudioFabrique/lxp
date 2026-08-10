@@ -14,6 +14,7 @@ import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-v
 import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin.ts";
 import rateLimiter from "../../../middleware/rate-limiter.ts";
 import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds.ts";
+import httpPostResendActivation from "../../../controllers/auth/http-post-resend-activation.ts";
 
 const authRouter = express.Router();
 
@@ -28,6 +29,16 @@ authRouter.post(
     .custom(passwordValidateGeneric)
     .withMessage("Identifiants incorrects."),
   httpLogin
+);
+
+authRouter.post(
+  "/resend-activation",
+  rateLimiter(5, 60_000),
+  body("email")
+    .isEmail()
+    .withMessage("Adresse email invalide.")
+    .normalizeEmail(),
+  httpPostResendActivation,
 );
 authRouter.get("/handshake", checkToken, httpHandshake);
 authRouter.get("/logout", httpLogout);

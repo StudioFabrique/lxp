@@ -18,6 +18,8 @@ type AuthContextType = {
   isAppInitialized: boolean;
   isLoading: boolean;
   error: string;
+  activationRequired: boolean;
+  activationRetryAfterSeconds: number;
   roles: Array<Role>;
   socket: Socket | null;
   login: (email: string, password: string) => Promise<void>;
@@ -32,6 +34,8 @@ const AuthContext = createContext<AuthContextType>({
   isAppInitialized: false,
   isLoading: false,
   error: "",
+  activationRequired: false,
+  activationRetryAfterSeconds: 0,
   roles: [],
   socket: null,
   login: async () => {},
@@ -45,6 +49,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isAppInitialized, setIsAppInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [activationRequired, setActivationRequired] = useState(false);
+  const [activationRetryAfterSeconds, setActivationRetryAfterSeconds] =
+    useState(0);
   const [roles, setRoles] = useState<Array<Role>>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -62,6 +69,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const login = async (email: string, password: string) => {
     setError("");
+    setActivationRequired(false);
+    setActivationRetryAfterSeconds(0);
     setIsLoading(true);
     try {
       const response = await apiClient.post(
@@ -74,7 +83,16 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       );
       setUser(response.data);
     } catch (err: any) {
-      if (err.response?.status === 401 || err.response?.status === 403) {
+      if (err.response?.data?.code === "ACCOUNT_NOT_ACTIVATED") {
+        setActivationRequired(true);
+        setActivationRetryAfterSeconds(
+          err.response.data.retryAfterSeconds ?? 0,
+        );
+        setError(err.response.data.message);
+      } else if (
+        err.response?.status === 401 ||
+        err.response?.status === 403
+      ) {
         setError("Identifiant ou mot de passe incorrect");
         if (err.response?.status === 403) logout();
       } else {
@@ -170,6 +188,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         isAppInitialized,
         isLoading,
         error,
+        activationRequired,
+        activationRetryAfterSeconds,
         roles,
         socket,
         login,

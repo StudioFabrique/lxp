@@ -5,12 +5,12 @@ import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
 import { useContext, useState } from "react";
 import { Link, useParams } from "react-router";
-import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-contacts";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../../rbac/AbilityProvider";
+import { Edit, Plus } from "lucide-react";
 
 type ContenuProps = {
   modules: Module[];
@@ -46,13 +46,20 @@ const Contenu = ({ modules }: ContenuProps) => {
             <div className="flex gap-5">
               <PermissionGuard action="update" object="parcours">
                 <Link
+                  to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
+                  className="btn btn-primary text-base-100"
+                >
+                  <Plus className="h-5 w-5" />
+                  Créer un nouveau module
+                </Link>
+              </PermissionGuard>
+              <PermissionGuard action="update" object="parcours">
+                <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=4&moduleId=${selectedModule?.id}`}
                   className="btn btn-primary text-base-100"
                 >
-                  <span className="h-5 w-5">
-                    <EditIcon />
-                  </span>
-                  Modifier
+                  <Edit className="h-5 w-5" />
+                  Modifier ce module
                 </Link>
               </PermissionGuard>
             </div>

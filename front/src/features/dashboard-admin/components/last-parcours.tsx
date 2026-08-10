@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import LastParcoursItem from "./last-parcours-item";
+import QuickActions from "./quick-actions";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -14,20 +15,11 @@ export default function LastParcours({
 }: LastParcoursProps) {
   return (
     <div className="p-2">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl w-full font-bold text-primary">
+      <div className="flex flex-wrap justify-between items-center gap-4">
+        <h3 className="text-xl font-bold text-primary">
           Derniers parcours ajoutés
         </h3>
-        {parcours.length > 0 && (
-          <div className="w-full flex justify-end mt-4">
-            <Link
-              className="text-sm font-semibold text-primary hover:text-primary-focus flex items-center gap-x-1 hover:underline"
-              to="/admin/parcours"
-            >
-              Voir tous les parcours <MoveUpRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
+        <QuickActions />
       </div>
 
       <div className="w-full mt-4">
@@ -50,6 +42,16 @@ export default function LastParcours({
           </div>
         )}
       </div>
+      {parcours.length > 0 && (
+        <div className="flex justify-end mt-2">
+          <Link
+            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
+            to="/admin/parcours"
+          >
+            Voir tous les parcours <MoveUpRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

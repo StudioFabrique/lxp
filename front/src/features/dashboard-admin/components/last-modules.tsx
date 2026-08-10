@@ -1,10 +1,11 @@
-import { ExternalLink, Eye, MoveUpRight, Pencil } from "lucide-react";
+import { ExternalLink, MoveUpRight, Pencil } from "lucide-react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
 
-import { ModuleSummary } from "../api/dashboard-admin.api";
+import type { ModuleSummary } from "../api/dashboard-admin.api";
 import { localeDate } from "../../../utils/helpers/locale-date";
+import { normalizeImageSource } from "../../../utils/images/image-source";
+import defaultModuleImage from "../../../assets/images/module-default-thumb.png";
 
 type Props = {
   modules: ModuleSummary[];
@@ -15,75 +16,74 @@ export default function LastModules({ modules, isLoading }: Props) {
   return isLoading ? (
     <span className="loading loading-spinner loading-sm my-5" />
   ) : modules?.length ? (
-    <SubBoxWrapper>
-      <div className="p-2">
-        <h3 className="text-xl font-bold text-primary">
-          Derniers modules créés
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="table w-full border-separate border-spacing-y-2 text-sm">
-            <thead>
-              <tr>
-                <th>Module</th>
-                <th>Parcours</th>
-                <th>Cours</th>
-                <th>Créé le</th>
-                <th aria-label="Actions" />
-              </tr>
-            </thead>
-            <tbody>
-              {modules.map((module) => (
-                <tr key={module.id} className="bg-base-100 shadow-sm">
-                  <td className="rounded-l-lg font-semibold">{module.title}</td>
-                  <td>{module.parcours ?? "Non rattaché"}</td>
-                  <td>{module.coursesCount}</td>
-                  <td>{localeDate(module.createdAt)}</td>
-                  <td className="rounded-r-lg">
-                    <div className="flex justify-end gap-1">
-                      {module.parcoursId ? (
-                        <>
-                          <PermissionGuard action="update" object="module">
-                            <Link
-                              className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left"
-                              data-tip="Modifier dans le parcours"
-                              to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
-                              aria-label={`Modifier ${module.title}`}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Link>
-                          </PermissionGuard>
-                          <PermissionGuard action="read" object="module">
-                            <Link
-                              className="btn btn-ghost btn-sm btn-square"
-                              to={`/admin/parcours/module/${module.id}`}
-                              aria-label={`Prévisualiser ${module.title}`}
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </Link>
-                          </PermissionGuard>
-                        </>
-                      ) : (
-                        <span className="text-xs text-base-content/50">
-                          Non rattaché
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-end mt-2">
-          <Link
-            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
-            to="/admin/module"
-          >
-            Voir tous les modules <MoveUpRight className="w-4 h-4" />
-          </Link>
-        </div>
+    <div className="p-2">
+      <h3 className="text-xl font-bold text-primary">
+        Derniers modules créés
+      </h3>
+      <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-4">
+        {modules.map((module) => (
+          <li className="list-row" key={module.id}>
+            <div className="self-center">
+              <img
+                src={
+                  normalizeImageSource(module.thumb) ?? defaultModuleImage
+                }
+                alt={`Illustration du module ${module.title}`}
+                className="size-10 rounded-lg object-cover"
+              />
+            </div>
+
+            <div className="list-col-grow min-w-0 self-center">
+              <div className="font-semibold truncate">{module.title}</div>
+              <div className="text-xs font-light opacity-50 truncate">
+                {module.parcours ?? "Non rattaché"}
+              </div>
+              <div className="text-xs font-light opacity-50">
+                {module.coursesCount} cours · Créé le {localeDate(module.createdAt)}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-1 self-center">
+              {module.parcoursId ? (
+                <>
+                  <PermissionGuard action="update" object="module">
+                    <Link
+                      className="btn btn-ghost btn-sm btn-square tooltip tooltip-left"
+                      data-tip="Modifier dans le parcours"
+                      to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
+                      aria-label={`Modifier ${module.title}`}
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                  </PermissionGuard>
+                  <PermissionGuard action="read" object="module">
+                    <Link
+                      className="btn btn-ghost btn-sm btn-square"
+                      to={`/admin/parcours/module/${module.id}`}
+                      aria-label={`Prévisualiser ${module.title}`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
+                  </PermissionGuard>
+                </>
+              ) : (
+                <span className="text-xs text-base-content/50">
+                  Non rattaché
+                </span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="flex justify-end mt-2">
+        <Link
+          className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
+          to="/admin/module"
+        >
+          Voir tous les modules <MoveUpRight className="w-4 h-4" />
+        </Link>
       </div>
-    </SubBoxWrapper>
+    </div>
   ) : (
     <p className="text-base-content/70 italic py-4">Aucun module trouvé.</p>
   );
