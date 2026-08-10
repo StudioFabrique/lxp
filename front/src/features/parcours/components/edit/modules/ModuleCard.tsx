@@ -3,23 +3,31 @@ import { Link } from "react-router";
 import placeholder from "../../../../../../src/assets/images/cat.webp";
 import { ModuleData } from "../../../interfaces/new-module";
 import AppImage from "../../../../../components/UI/image/app-image";
+import { cn } from "../../../../../utils/cn";
 
 type ModuleCardProps = {
   module: ModuleData;
+  selected?: boolean;
   onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
 };
 
 export default function ModuleCard({
   module,
+  selected,
   onUpdate,
   onDelete,
 }: ModuleCardProps) {
   const { id, title, thumb } = module;
 
   return (
-    <article className="card h-44 w-full bg-base-100 image-full shadow-sm overflow-hidden border border-base-300">
-      <figure>
+    <article
+      className={cn(
+        "card h-44 w-full bg-base-100 image-full shadow-sm overflow-hidden border border-base-300",
+        selected ? "border-2 border-info" : "",
+      )}
+    >
+      <figure className="rounded-xl">
         <AppImage
           className="object-cover w-full h-full"
           src={thumb}

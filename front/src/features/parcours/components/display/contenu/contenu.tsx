@@ -43,16 +43,7 @@ const Contenu = ({ modules }: ContenuProps) => {
             Contenu du parcours
           </h2>
           {canEditParcoursContent && (
-            <div className="flex gap-5">
-              <PermissionGuard action="update" object="parcours">
-                <Link
-                  to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
-                  className="btn btn-primary text-base-100"
-                >
-                  <Plus className="h-5 w-5" />
-                  Créer un nouveau module
-                </Link>
-              </PermissionGuard>
+            <div>
               <PermissionGuard action="update" object="parcours">
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=4&moduleId=${selectedModule?.id}`}
@@ -82,6 +73,17 @@ const Contenu = ({ modules }: ContenuProps) => {
               ))
             ) : (
               <p>Aucun modules</p>
+            )}
+            {canEditParcoursContent && (
+              <PermissionGuard action="update" object="parcours">
+                <Link
+                  to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
+                  className="btn h-20"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span className="font-semibold">Créer un nouveau module</span>
+                </Link>
+              </PermissionGuard>
             )}
           </div>
           {modules?.length > 0 && (
