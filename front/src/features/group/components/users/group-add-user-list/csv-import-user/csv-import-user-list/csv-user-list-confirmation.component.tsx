@@ -1,10 +1,9 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import User from "../../../../../../../utils/interfaces/user";
-import GroupUserItem from "../../group-manage-user-list/group-manage-user-item/group-manage-user-item.component";
+import type { Dispatch, SetStateAction } from "react";
+import type User from "../../../../../../../utils/interfaces/user";
 
-interface IUserListConfirmation {
-  usersFromCsv: Array<User>;
-  usersToAdd: Array<User>;
+type Props = {
+  usersFromCsv: User[];
+  usersToAdd: User[];
   onConfirmSubmit: () => void;
   setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
   onAddSelectedUser: (user: User) => void;
@@ -12,93 +11,99 @@ interface IUserListConfirmation {
   isLoading: boolean;
   onSelectAllUsers: () => void;
   onDeselectAllUsers: () => void;
-}
+};
 
-const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
-  const [allSelected, setAllSelected] = useState(false);
-
-  const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    setAllSelected(checked);
-    if (checked) {
-      props.onSelectAllUsers();
-    } else {
-      props.onDeselectAllUsers();
-    }
-  };
-  const handleConfirm = () => {
-    props.onConfirmSubmit();
-  };
-
-  const handleCancel = () => {
-    props.setDrawerOpenState(false);
-  };
-
-  // Keep allSelected in sync with props.usersToAdd length
-  useEffect(() => {
-    setAllSelected(
-      props.usersFromCsv.length > 0 &&
-        props.usersFromCsv.every((user) =>
-          props.usersToAdd.some((u) => u.email === user.email),
-        ),
+const CsvUserListConfirmation = ({
+  usersFromCsv,
+  usersToAdd,
+  onConfirmSubmit,
+  setDrawerOpenState,
+  onAddSelectedUser,
+  onDeleteSelectedUser,
+  isLoading,
+  onSelectAllUsers,
+  onDeselectAllUsers,
+}: Props) => {
+  const allSelected =
+    usersFromCsv.length > 0 &&
+    usersFromCsv.every((user) =>
+      usersToAdd.some((selectedUser) => selectedUser.email === user.email),
     );
-  }, [props.usersFromCsv, props.usersToAdd]);
 
-  // Par défaut, les étudiants sont tous selectionnés
-  useEffect(() => {
-    setAllSelected(true);
-  }, []);
-
-  if (props.usersFromCsv.length > 0) {
+  if (usersFromCsv.length === 0) {
     return (
-      <div className="flex flex-col justify-between h-full items-center">
-        <div className="flex flex-col w-full">
-          <div className="pl-5 w-full flex gap-2 items-center mb-2">
-            <input
-              type="checkbox"
-              id="select-all"
-              checked={allSelected}
-              onChange={handleSelectAllChange}
-              className="checkbox checkbox-sm rounded-md checkbox-primary border-2"
-            />
-            <label htmlFor="select-all">Tout sélectionner</label>
-          </div>
-          <div className="flex flex-col gap-2">
-            {props.usersFromCsv.map((user) => (
-              <GroupUserItem
-                usersToAdd={props.usersToAdd}
-                verificationAttribute="email"
-                allUserSelected={allSelected}
-                key={user.email}
-                user={user}
-                onAddSelectedUser={props.onAddSelectedUser}
-                onDeleteSelectedUser={props.onDeleteSelectedUser}
-                forceEnableCheckbox={true}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="mt-10 flex justify-between w-full items-center pb-4">
-          <button className="btn btn-outline" onClick={handleCancel}>
-            Annuler
-          </button>
-          <button
-            onClick={handleConfirm}
-            className={`btn btn-primary ${props.isLoading && "loading"}`}
-          >
-            Confirmer
-          </button>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <p>
-        Aucun utilisateurs disponible pour être ajouté, vérifiez votre fichier
-        d'importation
+      <p className="text-center text-sm text-base-content/70">
+        Aucun utilisateur disponible. Vérifiez le fichier d’importation.
       </p>
     );
   }
+
+  return (
+    <div className="flex min-h-full flex-col gap-5">
+      <label className="flex items-center gap-3 rounded-lg bg-base-100 p-3">
+        <input
+          type="checkbox"
+          checked={allSelected}
+          onChange={(event) =>
+            event.currentTarget.checked
+              ? onSelectAllUsers()
+              : onDeselectAllUsers()
+          }
+          className="checkbox checkbox-sm checkbox-primary"
+        />
+        Tout sélectionner
+      </label>
+
+      <div className="flex flex-col gap-2">
+        {usersFromCsv.map((user) => {
+          const isSelected = usersToAdd.some(
+            (selectedUser) => selectedUser.email === user.email,
+          );
+          return (
+            <label
+              key={user.email}
+              className="flex items-center gap-3 rounded-lg bg-base-100 p-4"
+            >
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={(event) =>
+                  event.currentTarget.checked
+                    ? onAddSelectedUser(user)
+                    : onDeleteSelectedUser(user)
+                }
+                className="checkbox checkbox-sm checkbox-primary"
+              />
+              <span className="capitalize">
+                {user.firstname} {user.lastname}
+              </span>
+              <span className="ml-auto text-sm text-base-content/65">
+                {user.email}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+
+      <div className="mt-auto flex justify-end gap-2 border-t border-base-300 pt-4">
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={() => setDrawerOpenState(false)}
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={isLoading || usersToAdd.length === 0}
+          onClick={onConfirmSubmit}
+        >
+          {isLoading ? "Création…" : "Confirmer la création"}
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default CsvUserListConfirmation;

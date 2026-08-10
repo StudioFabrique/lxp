@@ -123,7 +123,7 @@ const GroupList = () => {
             ]}
             retreiveItemsProperty="name"
             onRetreiveItemsValuesByPropertyFromIdList={
-              onRetreiveItemsValues as any
+              onRetreiveItemsValues
             }
           />
         </SearchBar>

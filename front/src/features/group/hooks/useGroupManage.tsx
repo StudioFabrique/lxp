@@ -1,16 +1,39 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate, useParams, useSearchParams } from "react-router";
-import { useCallback, useEffect, useState } from "react";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import User from "../../../../src/utils/interfaces/user";
+import type User from "../../../../src/utils/interfaces/user";
 import { groupApi } from "../api/group.api";
+import { userApi } from "../../user/api/user.api";
+import type { GroupFormValues } from "../group.schema";
+import {
+  createStudentUrlFromGroup,
+  readGroupFormDraft,
+} from "../helpers/group-form-draft";
+import useGroupForm from "../components/group-form/useGroupForm";
+
+const mergeUsers = (currentUsers: User[], usersToAdd: User[]) => {
+  const usersById = new Map(currentUsers.map((user) => [user._id, user]));
+  usersToAdd.forEach((user) => usersById.set(user._id, user));
+  return [...usersById.values()];
+};
 
 function useGroupManage() {
   const { id } = useParams();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
+  const [managedUsers, setManagedUsers] = useState<User[] | null>(null);
   const [searchParams] = useSearchParams();
   const fromParcours = searchParams.get("parcours");
+  const searchParamsString = searchParams.toString();
+  const draft = useMemo(
+    () => readGroupFormDraft(new URLSearchParams(searchParamsString)),
+    [searchParamsString],
+  );
 
   const { data: existingGroup, isLoading } = useQuery({
     queryKey: ["group", id],
@@ -18,11 +41,37 @@ function useGroupManage() {
     enabled: !!id,
   });
 
-  useEffect(() => {
-    if (existingGroup) {
-      setUsersToAdd(existingGroup.users ?? []);
+  const form = useGroupForm({
+    group: existingGroup,
+    draft,
+    sourceParcoursId: fromParcours ? Number(fromParcours) : undefined,
+  });
+
+  const draftStudentIds = draft.studentIds;
+  const {
+    data: draftUsers,
+    isLoading: isLoadingDraftUsers,
+  } = useQuery({
+    queryKey: ["group-form", "draft-users", draftStudentIds],
+    queryFn: () => userApi.queries.getUsersByIds(draftStudentIds ?? []),
+    enabled: draftStudentIds !== undefined && draftStudentIds.length > 0,
+  });
+
+  const initialUsers = useMemo(() => {
+    if (draftStudentIds !== undefined) {
+      if (draftStudentIds.length === 0) return [];
+      return (draftUsers ?? []).map((user) =>
+        draft.activeStudentIds !== undefined
+          ? {
+              ...user,
+              isActive: draft.activeStudentIds.includes(user._id),
+            }
+          : user,
+      );
     }
-  }, [existingGroup]);
+    return existingGroup?.users ?? [];
+  }, [draft.activeStudentIds, draftStudentIds, draftUsers, existingGroup?.users]);
+  const usersToAdd = managedUsers ?? initialUsers;
 
   const handleNavigateAfterSubmit = useCallback(() => {
     if (fromParcours) {
@@ -48,7 +97,7 @@ function useGroupManage() {
     onSuccess: handleNavigateAfterSubmit,
   });
 
-  const handleSubmit = (data: any, file: File) => {
+  const handleSubmit = (data: GroupFormValues) => {
     const usersIdWithActiveState = usersToAdd.map((user) => ({
       _id: user._id,
       isActive: user.isActive,
@@ -57,41 +106,58 @@ function useGroupManage() {
     const formData = new FormData();
     formData.append(
       "data",
-      JSON.stringify({ ...data, users: usersIdWithActiveState }),
+      JSON.stringify({
+        group: {
+          _id: existingGroup?._id,
+          name: data.name,
+          desc: data.desc,
+        },
+        parcoursId: data.parcoursId,
+        users: usersIdWithActiveState,
+      }),
     );
-    formData.append("image", file);
 
     mutation.mutate(formData);
   };
 
   const handleAddUsers = (users: Array<User>) => {
-    setUsersToAdd((currentUsers) => [...currentUsers, ...users]);
-  };
-
-  const handleUpdateUser = (user: User) => {
-    setUsersToAdd((usersToAdd) =>
-      usersToAdd.map((userToAdd) =>
-        userToAdd._id === user._id
-          ? { ...userToAdd, isActive: user.isActive }
-          : userToAdd,
-      ),
+    setManagedUsers((currentUsers) =>
+      mergeUsers(currentUsers ?? initialUsers, users),
     );
   };
 
   const handleDeleteUser = (user: User) => {
-    setUsersToAdd((usersToAdd) =>
-      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
+    setManagedUsers((currentUsers) =>
+      (currentUsers ?? initialUsers).filter(
+        (userToAdd) => userToAdd._id !== user._id,
+      ),
+    );
+  };
+
+  const handleCreateStudent = () => {
+    navigate(
+      createStudentUrlFromGroup({
+        pathname,
+        currentSearchParams: searchParams,
+        values: form.getValues(),
+        students: usersToAdd.map((user) => ({
+          id: user._id,
+          isActive: user.isActive,
+        })),
+      }),
     );
   };
 
   return {
+    form,
     existingGroup,
+    isEditing: Boolean(id),
     usersToAdd,
-    isLoading: isLoading || mutation.isPending,
+    isLoading: isLoading || isLoadingDraftUsers || mutation.isPending,
     onSubmit: handleSubmit,
     onAddUsers: handleAddUsers,
-    onUpdateUser: handleUpdateUser,
     onDeleteUser: handleDeleteUser,
+    onCreateStudent: handleCreateStudent,
   };
 }
 

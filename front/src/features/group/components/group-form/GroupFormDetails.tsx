@@ -1,67 +1,35 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useFormContext } from "react-hook-form";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import apiClient from "../../../../lib/axios";
-import Group from "../../../../../src/utils/interfaces/group";
-import Formation from "../../../../../src/utils/interfaces/formation";
-import Parcours from "../../../../../src/utils/interfaces/parcours";
+import { ExternalLink } from "lucide-react";
+import { groupApi } from "../../api/group.api";
+import type { GroupFormValues } from "../../group.schema";
 
-const GroupFormDetails: FC<{
-  group?: Group;
-  onSelectParcours: (id: number) => void;
-  selectedParcoursId?: number | null;
-}> = ({ group, onSelectParcours, selectedParcoursId }) => {
-  const [formations, setFormations] = useState<Formation[]>([]);
-  const [formationId, setFormationId] = useState<number | undefined>(
-    group?.formationId,
-  );
-  const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
-  const [isLoadingParcours, setIsLoadingParcours] = useState(false);
+const GroupFormDetails = () => {
+  const {
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<GroupFormValues>();
+  const formationId = watch("formationId");
+  const selectedParcoursId = watch("parcoursId");
 
   const handleFormation = (id: number) => {
-    setFormationId(id || undefined);
-    setParcoursList([]);
-    onSelectParcours(0);
+    setValue("formationId", id, { shouldDirty: true });
+    setValue("parcoursId", 0, { shouldDirty: true, shouldValidate: true });
   };
 
-  useEffect(() => {
-    if (formationId !== undefined) {
-      (async () => {
-        setIsLoadingParcours(true);
-        try {
-          const response = await apiClient.get(
-            `/parcours/parcours-by-formation/${formationId}`,
-          );
-          const data = response.data as { data: Array<Parcours> };
-          setParcoursList(data.data);
-        } catch {
-          setParcoursList([]);
-        } finally {
-          setIsLoadingParcours(false);
-        }
-      })();
-    }
-  }, [formationId]);
+  const { data: formations = [], isLoading: isLoadingFormations } = useQuery({
+    queryKey: ["formations", "group-form"],
+    queryFn: groupApi.queries.getFormations,
+  });
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await apiClient.get("/formation");
-        const data = response.data as Array<Formation>;
-        setFormations(data);
-      } catch {
-        // silently fail
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (
-      group?.parcoursId &&
-      parcoursList.some((parcours) => parcours.id === group.parcoursId)
-    ) {
-      onSelectParcours(group.parcoursId);
-    }
-  }, [group?.parcoursId, parcoursList, onSelectParcours]);
+  const { data: parcoursList = [], isLoading: isLoadingParcours } = useQuery({
+    queryKey: ["parcours", "by-formation", formationId],
+    queryFn: () => groupApi.queries.getParcoursByFormation(formationId),
+    enabled: formationId > 0,
+  });
 
   const selectedParcours = useMemo(
     () => parcoursList.find((parcours) => parcours.id === selectedParcoursId),
@@ -83,10 +51,15 @@ const GroupFormDetails: FC<{
             <span className="text-sm font-semibold">Formation</span>
             <select
               className="select select-sm select-bordered w-full"
-              value={formationId ?? 0}
+              value={formationId}
+              disabled={isLoadingFormations}
               onChange={(event) => handleFormation(Number(event.target.value))}
             >
-              <option value={0}>Sélectionner une formation</option>
+              <option value={0}>
+                {isLoadingFormations
+                  ? "Chargement des formations…"
+                  : "Sélectionner une formation"}
+              </option>
               {formations.map((formation) => (
                 <option key={formation.id} value={formation.id}>
                   {formation.title}
@@ -102,9 +75,12 @@ const GroupFormDetails: FC<{
             <select
               className="select select-sm select-bordered w-full"
               disabled={!formationId || isLoadingParcours}
-              value={selectedParcoursId ?? 0}
+              value={selectedParcoursId}
               onChange={(event) =>
-                onSelectParcours(Number(event.target.value))
+                setValue("parcoursId", Number(event.target.value), {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                })
               }
             >
               <option value={0}>
@@ -120,6 +96,11 @@ const GroupFormDetails: FC<{
                 </option>
               ))}
             </select>
+            {errors.parcoursId && (
+              <span className="text-xs text-error">
+                {errors.parcoursId.message}
+              </span>
+            )}
           </label>
         </div>
 
@@ -130,23 +111,21 @@ const GroupFormDetails: FC<{
         )}
 
         {selectedParcours && (
-          <div className="flex items-center justify-between gap-3 border-t border-base-300 pt-4">
+          <div className="flex items-center justify-between gap-3 border-t border-base-content/50 pt-4 px-4">
             <div>
               <p className="text-xs text-base-content/60">
                 Parcours sélectionné
               </p>
               <p className="font-semibold">{selectedParcours.title}</p>
             </div>
-            <div>
-              <a
-                href={`/admin/parcours/view/${selectedParcours.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="link link-primary text-sm"
-              >
-                Vérifier
-              </a>
-            </div>
+            <a
+              href={`/admin/parcours/view/${selectedParcours.id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-ghost btn-square btn-sm text-sm"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
           </div>
         )}
       </div>

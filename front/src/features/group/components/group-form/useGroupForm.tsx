@@ -1,101 +1,49 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-import Group from "../../../../../src/utils/interfaces/group";
-import { createGroupSchema } from "../../group.schema";
-
-type GroupFormData = {
-  name: string;
-  desc?: string;
-};
-
-type GroupFormSubmitData = {
-  group: {
-    _id?: string;
-    name: string;
-    desc?: string;
-  };
-  parcoursId: number;
-};
+import type Group from "../../../../../src/utils/interfaces/group";
+import {
+  createGroupSchema,
+  type GroupFormValues,
+} from "../../group.schema";
+import type { GroupFormDraft } from "../../helpers/group-form-draft";
 
 function useGroupForm({
-  onSubmitForm,
   group,
-  isFileNotRequired,
+  draft,
+  sourceParcoursId,
 }: {
-  onSubmitForm: (data: GroupFormSubmitData, file: File) => void;
   group?: Group;
-  isFileNotRequired?: boolean;
+  draft: GroupFormDraft;
+  sourceParcoursId?: number;
 }) {
-  const [file, setFile] = useState<File | null>(null);
-  const [parcoursId, setParcoursId] = useState<number | null>(
-    group?.parcoursId ?? null,
-  );
-
-  const {
-    register,
-    handleSubmit: rhfHandleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<GroupFormData>({
+  const form = useForm<GroupFormValues>({
     resolver: zodResolver(createGroupSchema),
     defaultValues: {
-      name: "",
-      desc: "",
+      name: draft.values.name ?? "",
+      desc: draft.values.desc ?? "",
+      formationId: draft.values.formationId ?? 0,
+      parcoursId: sourceParcoursId ?? draft.values.parcoursId ?? 0,
     },
   });
 
-  const handleSetFile = (file: File) => {
-    setFile(file);
-  };
-
-  const handleSelectParcours = useCallback((newParcoursId: number) => {
-    setParcoursId(newParcoursId);
-  }, []);
-
-  const handleFormSubmit = useCallback(
-    (data: GroupFormData) => {
-      if (!parcoursId) {
-        toast.error("Veuillez sélectionner le parcours associé au groupe");
-        return;
-      }
-      if (isFileNotRequired || file) {
-        onSubmitForm(
-          {
-            group: {
-              _id: group?._id,
-              name: data.name,
-              desc: data.desc,
-            },
-            parcoursId: parcoursId,
-          },
-          file!,
-        );
-      } else {
-        toast.error("Un fichier image pour le groupe est requis");
-      }
-    },
-    [file, isFileNotRequired, onSubmitForm, group, parcoursId],
-  );
-
   useEffect(() => {
     if (group) {
-      reset({
-        name: group.name ?? "",
-        desc: group.desc ?? "",
+      form.reset({
+        name: draft.values.name ?? group.name ?? "",
+        desc: draft.values.desc ?? group.desc ?? "",
+        formationId:
+          draft.values.formationId ?? group.formationId ?? 0,
+        parcoursId:
+          sourceParcoursId ??
+          draft.values.parcoursId ??
+          group.parcoursId ??
+          0,
       });
     }
-  }, [group, reset]);
+  }, [draft.values, form, group, sourceParcoursId]);
 
-  return {
-    onSubmit: rhfHandleSubmit(handleFormSubmit),
-    onSetFile: handleSetFile,
-    register,
-    errors,
-    parcoursId,
-    onSelectParcours: handleSelectParcours,
-  };
+  return form;
 }
 
 export default useGroupForm;

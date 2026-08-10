@@ -8,33 +8,31 @@ const GroupEdit = () => {
   const fromParcours = searchParams.get("parcours");
 
   const {
-    existingGroup,
+    form,
+    isEditing,
     usersToAdd,
     isLoading,
     onSubmit,
     onAddUsers,
-    onUpdateUser,
     onDeleteUser,
+    onCreateStudent,
   } = useGroupManage();
 
   return (
-    <>
-      <GroupForm
-        key={existingGroup?._id ?? "loading"}
-        title={existingGroup && "Modifier un groupe de formation"}
-        group={existingGroup}
-        onSubmitForm={onSubmit}
-        isLoading={isLoading}
-        isFileNotRequired
-        fromParcours={fromParcours ?? undefined}
-      />
+    <GroupForm
+      form={form}
+      isEditing={isEditing}
+      onSubmitForm={onSubmit}
+      isLoading={isLoading}
+      fromParcours={fromParcours ?? undefined}
+    >
       <GroupUserList
         usersToAdd={usersToAdd}
         onAddUsers={onAddUsers}
-        onUpdateUser={onUpdateUser}
         onDeleteUser={onDeleteUser}
+        onCreateStudent={onCreateStudent}
       />
-    </>
+    </GroupForm>
   );
 };
 

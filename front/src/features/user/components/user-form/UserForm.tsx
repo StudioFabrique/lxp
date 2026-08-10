@@ -21,6 +21,8 @@ type Props = {
   isLoading?: boolean;
   fieldsDisabled?: boolean;
   editMode?: boolean;
+  initialRoleRank?: number;
+  cancelTo?: string;
 };
 
 const UserForm = ({
@@ -30,6 +32,8 @@ const UserForm = ({
   isLoading = false,
   fieldsDisabled = false,
   editMode = false,
+  initialRoleRank,
+  cancelTo,
 }: Props) => {
   const {
     email, setEmail, emailError,
@@ -76,9 +80,16 @@ const UserForm = ({
     <form className="flex flex-col gap-y-8" autoComplete="off">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
-        description="Modifier les informations d'un utilisateur."
+        description={
+          editMode
+            ? "Modifiez les informations de l'utilisateur."
+            : "Renseignez les informations du nouvel utilisateur."
+        }
       >
-        <Link to=".." className="btn btn-outline md:w-32 normal-case mr-4">
+        <Link
+          to={cancelTo ?? ".."}
+          className="btn btn-outline md:w-32 normal-case mr-4"
+        >
           Annuler
         </Link>
         <button
@@ -122,6 +133,7 @@ const UserForm = ({
                 sendEmail={sendEmail}
                 onSetSendEmail={setSendEmail}
                 onSetRoleId={setRoleId}
+                initialRoleRank={initialRoleRank}
                 editMode={editMode}
                 disabled={disabled}
               />

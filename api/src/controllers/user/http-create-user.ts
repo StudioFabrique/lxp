@@ -46,6 +46,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     return res.status(201).json({
       success: true,
       message: "L'utilisateur a été créé avec succès.",
+      userId: userResponse!.createdUser._id.toString(),
     });
   } catch (error: any) {
     console.log({ error });

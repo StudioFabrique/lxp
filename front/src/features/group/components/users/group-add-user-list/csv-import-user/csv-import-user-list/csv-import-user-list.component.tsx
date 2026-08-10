@@ -14,7 +14,7 @@ const CsvImportUserList: FC<{
 }> = ({ onAddUsers, usersAddedInTable }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
-    []
+    [],
   );
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
@@ -30,9 +30,10 @@ const CsvImportUserList: FC<{
       ].map((email) => data.find((item) => item.email === email)!);
 
       const filteredData = dataWithoutDuplicate.filter(
-        (item) => Object.keys(item).length > 0
+        (item) => Object.keys(item).length > 0,
       );
       setUsersToImport(filteredData);
+      setSelectedUsersToUpload(filteredData);
       setDrawerOpenState(true);
     } else {
       toast.error("problème d'importation des données");
@@ -99,6 +100,8 @@ const CsvImportUserList: FC<{
 
   const handleCloseDrawer = () => {
     setDrawerOpenState(false);
+    setUsersToImport([]);
+    setSelectedUsersToUpload([]);
   };
 
   return (

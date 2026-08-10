@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
@@ -13,10 +13,17 @@ type Props = {
   onSetRoleId: (v: string | null) => void;
   editMode?: boolean;
   disabled?: boolean;
+  initialRoleRank?: number;
 };
 
 const UserFormTypeUser = ({
-  roleId, sendEmail, onSetSendEmail, onSetRoleId, editMode, disabled,
+  roleId,
+  sendEmail,
+  onSetSendEmail,
+  onSetRoleId,
+  editMode,
+  disabled,
+  initialRoleRank,
 }: Props) => {
   const [showRefreshButton, setShowRefreshButton] = useState(false);
 
@@ -27,6 +34,17 @@ const UserFormTypeUser = ({
       return res.data.data as Role[];
     },
   });
+
+  useEffect(() => {
+    if (!roleId && initialRoleRank && roles) {
+      const defaultRole = roles.find(
+        (role) =>
+          role.rank === initialRoleRank &&
+          !role.role.startsWith("interface:"),
+      );
+      if (defaultRole) onSetRoleId(defaultRole._id);
+    }
+  }, [initialRoleRank, onSetRoleId, roleId, roles]);
 
   return (
     <Wrapper>
@@ -64,19 +82,21 @@ const UserFormTypeUser = ({
         ) : (
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-y-4 overflow-y-auto">
-              {(roles ?? []).map((role: Role) => (
-                <span key={role._id} className="flex gap-x-2">
-                  <input
-                    name={role.role}
-                    type="radio"
-                    className="radio radio-primary"
-                    onChange={() => onSetRoleId(role._id)}
-                    checked={roleId === role._id}
-                    disabled={disabled}
-                  />
-                  <label htmlFor="etudiant">{role.label}</label>
-                </span>
-              ))}
+              {(roles ?? [])
+                .filter((role) => !role.role.startsWith("interface:"))
+                .map((role: Role) => (
+                  <label key={role._id} className="flex gap-x-2">
+                    <input
+                      name="role"
+                      type="radio"
+                      className="radio radio-primary"
+                      onChange={() => onSetRoleId(role._id)}
+                      checked={roleId === role._id}
+                      disabled={disabled}
+                    />
+                    {role.label}
+                  </label>
+                ))}
             </div>
             {!editMode && (
               <>
