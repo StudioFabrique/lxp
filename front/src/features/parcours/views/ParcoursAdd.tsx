@@ -14,6 +14,7 @@ import { Copy, Layers3 } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Modal from "../../../components/UI/modal/modal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
+import type { AxiosError } from "axios";
 
 type Item = {
   id: number;
@@ -53,6 +54,12 @@ const AddParcours = () => {
         id: data.parcoursId,
       });
       nav(`/admin/parcours/edit/${data.parcoursId}`);
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(
+        error.response?.data?.message ??
+          "Le parcours n’a pas pu être enregistré.",
+      );
     },
   });
 

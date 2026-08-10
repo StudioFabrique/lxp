@@ -148,8 +148,14 @@ export default function CreateCourseDetailsModal({
           onSubmit={handleSubmit}
         >
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold">Titre *</span>
+            <span
+              className="text-sm font-semibold"
+              data-onboarding-label="course-title"
+            >
+              Titre *
+            </span>
             <input
+              data-onboarding-field="course-title"
               autoFocus
               className="input input-bordered w-full"
               value={title}
@@ -167,9 +173,20 @@ export default function CreateCourseDetailsModal({
             />
           </label>
 
-          <section className="flex flex-col gap-3">
+          <section
+            className="flex flex-col gap-3"
+            data-onboarding-field="course-tags"
+            data-onboarding-valid={
+              selectedTagIds.length > 0 ? "true" : "false"
+            }
+          >
             <div>
-              <h4 className="text-sm font-semibold">Tags du cours *</h4>
+              <h4
+                className="text-sm font-semibold"
+                data-onboarding-label="course-tags"
+              >
+                Tags du cours *
+              </h4>
               <p className="text-xs text-base-content/60">
                 Sélectionnez au moins un thème pour classer le cours.
               </p>

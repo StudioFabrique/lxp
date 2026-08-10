@@ -38,6 +38,19 @@ const makeTag = (name: string, value: number): Tag => ({
   color: TAG_COLORS[getRandomNumber(0, TAG_COLORS.length - 1)],
 });
 
+type FormationMutationError = AxiosError<{
+  message?: string;
+  errors?: Array<{ msg?: string }>;
+}>;
+
+const showFormationMutationError = (error: FormationMutationError) => {
+  toast.error(
+    error.response?.data?.message ??
+      error.response?.data?.errors?.[0]?.msg ??
+      "La formation n’a pas pu être enregistrée.",
+  );
+};
+
 export function useFormationForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -164,6 +177,7 @@ export function useFormationForm() {
       resetForm();
       refetchFormations();
     },
+    onError: showFormationMutationError,
   });
 
   const deleteMutation = useMutation({
@@ -211,6 +225,7 @@ export function useFormationForm() {
       resetForm();
       refetchFormations();
     },
+    onError: showFormationMutationError,
   });
 
   const handleSubmit = useCallback(() => {
@@ -229,6 +244,17 @@ export function useFormationForm() {
       toast.error("Au moins un tag est requis pour enregistrer la formation.");
       return;
     }
+    if (
+      !isEditing &&
+      formationsList.some(
+        (formation) =>
+          formation.title.trim().toLocaleLowerCase("fr") ===
+          title.trim().toLocaleLowerCase("fr"),
+      )
+    ) {
+      toast.error("Une formation avec ce nom existe déjà.");
+      return;
+    }
     if (isEditing) {
       updateMutation.mutate();
     } else {
@@ -240,6 +266,7 @@ export function useFormationForm() {
     level,
     code,
     currentTags,
+    formationsList,
     isEditing,
     createMutation,
     updateMutation,

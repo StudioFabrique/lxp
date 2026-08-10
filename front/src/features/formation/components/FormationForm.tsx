@@ -35,72 +35,87 @@ const FormationForm = ({
   isEditing, isPending,
   onSubmit, onCancel,
 }: Props) => (
-  <div className="flex flex-col gap-y-4" data-onboarding="formation-fields">
-    <form className="flex flex-col gap-y-4">
-      <span className="flex flex-col gap-y-2">
-        <label>Formation *</label>
-        <input
-          className="input input-sm input-bordered focus:outline-none w-full"
-          type="text"
-          placeholder="Nom de la formation"
-          value={title}
-          onChange={(e) => onTitle(e.target.value)}
-          autoComplete="off"
-          disabled={isPending}
-        />
-      </span>
-      <span className="flex flex-col gap-y-2">
-        <label>Description</label>
-        <textarea
-          className="textarea h-26 w-full p-2"
-          placeholder="Description de la formation"
-          value={description}
-          onChange={(e) => onDescription(e.target.value)}
-          autoComplete="off"
-          disabled={isPending}
-        />
-      </span>
-      <span className="flex flex-col gap-y-2">
-        <label>RNCP</label>
-        <input
-          className="input input-sm input-bordered focus:outline-none w-full"
-          type="text"
-          placeholder="Exemple : 35357"
-          value={code}
-          onChange={(e) => onCode(e.target.value)}
-          autoComplete="off"
-          disabled={isPending}
-        />
-      </span>
-      <span className="flex flex-col gap-y-2 w-full">
-        <label>Niveau *</label>
-        <select
-          className="select select-bordered focus:outline-none"
-          onChange={(e) => onLevel(e.target.value)}
-          value={level}
-          disabled={isPending}
-        >
-          <option value="" disabled>
-            Sélectionnez un niveau
-          </option>
-          {LEVELS.map((opt) => (
-            <option key={opt} value={opt}>
-              Niveau {opt}
+  <div className="flex flex-col gap-y-4">
+    <div
+      className="flex flex-col gap-y-4"
+      data-onboarding="formation-fields"
+    >
+      <form className="flex flex-col gap-y-4">
+        <span className="flex flex-col gap-y-2">
+          <label data-onboarding-label="formation-title">Formation *</label>
+          <input
+            data-onboarding-field="formation-title"
+            className="input input-sm input-bordered focus:outline-none w-full"
+            type="text"
+            placeholder="Nom de la formation"
+            value={title}
+            onChange={(e) => onTitle(e.target.value)}
+            autoComplete="off"
+            disabled={isPending}
+          />
+        </span>
+        <span className="flex flex-col gap-y-2">
+          <label>Description</label>
+          <textarea
+            className="textarea h-26 w-full p-2"
+            placeholder="Description de la formation"
+            value={description}
+            onChange={(e) => onDescription(e.target.value)}
+            autoComplete="off"
+            disabled={isPending}
+          />
+        </span>
+        <span className="flex flex-col gap-y-2">
+          <label>RNCP</label>
+          <input
+            className="input input-sm input-bordered focus:outline-none w-full"
+            type="text"
+            placeholder="Exemple : 35357"
+            value={code}
+            onChange={(e) => onCode(e.target.value)}
+            autoComplete="off"
+            disabled={isPending}
+          />
+        </span>
+        <span className="flex flex-col gap-y-2 w-full">
+          <label data-onboarding-label="formation-level">Niveau *</label>
+          <select
+            data-onboarding-field="formation-level"
+            className="select select-bordered focus:outline-none"
+            onChange={(e) => onLevel(e.target.value)}
+            value={level}
+            disabled={isPending}
+          >
+            <option value="" disabled>
+              Sélectionnez un niveau
             </option>
-          ))}
-        </select>
-      </span>
-    </form>
+            {LEVELS.map((opt) => (
+              <option key={opt} value={opt}>
+                Niveau {opt}
+              </option>
+            ))}
+          </select>
+        </span>
+      </form>
 
-    <AddTag
-      error={false}
-      tag={tagInput}
-      placeholder="Exemple : artisanal, technologie, industriel"
-      onChangeValue={(e) => onTagInput((e as React.ChangeEvent<HTMLInputElement>).target.value)}
-      onSubmit={onTagSubmit}
-    />
+      <div
+        className="flex flex-col gap-y-4"
+        data-onboarding-field="formation-tags"
+        data-onboarding-valid={currentTags.length > 0 ? "true" : "false"}
+      >
+        <AddTag
+          error={false}
+          tag={tagInput}
+          placeholder="Exemple : artisanal, technologie, industriel"
+          onChangeValue={(e) =>
+            onTagInput((e as React.ChangeEvent<HTMLInputElement>).target.value)
+          }
+          onSubmit={onTagSubmit}
+        />
 
-    <TagsList tagsList={currentTags} onRemove={onRemoveTag} />
+        <TagsList tagsList={currentTags} onRemove={onRemoveTag} />
+      </div>
+    </div>
 
     <div className="w-full flex justify-end gap-x-4">
       {isEditing && (

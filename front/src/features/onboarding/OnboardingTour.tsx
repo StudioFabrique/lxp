@@ -19,12 +19,20 @@ import OnboardingTooltip, {
   type OnboardingTooltipData,
 } from "./OnboardingTooltip";
 import OnboardingWelcome from "./OnboardingWelcome";
+import OnboardingStopConfirmation from "./OnboardingStopConfirmation";
 import {
   subscribeToOnboardingEvents,
   type OnboardingEventDetail,
 } from "./onboarding-events";
 
 type Layout = "admin" | "student";
+
+type StageRequirement = {
+  selector: string;
+  label: string;
+  invalidValues?: string[];
+  highlightSelector?: string;
+};
 
 type StageDefinition = {
   target: string;
@@ -35,8 +43,57 @@ type StageDefinition = {
   next?: string;
   previous?: string;
   nextLabel?: string;
+  requirements?: StageRequirement[];
   index: number;
   total: number;
+};
+
+const invalidLabelClasses = ["text-warning"];
+
+const getRequirementElement = (requirement: StageRequirement) =>
+  document.querySelector<HTMLElement>(requirement.selector);
+
+const getRequirementHighlightElement = (requirement: StageRequirement) =>
+  requirement.highlightSelector
+    ? document.querySelector<HTMLElement>(requirement.highlightSelector)
+    : null;
+
+const isRequirementMet = (requirement: StageRequirement) => {
+  const element = getRequirementElement(requirement);
+  if (!element) return false;
+
+  if (element.dataset.onboardingValid !== undefined) {
+    return element.dataset.onboardingValid === "true";
+  }
+
+  if (
+    element instanceof HTMLInputElement ||
+    element instanceof HTMLSelectElement ||
+    element instanceof HTMLTextAreaElement
+  ) {
+    const value = element.value.trim();
+    return (
+      value.length > 0 && !(requirement.invalidValues ?? []).includes(value)
+    );
+  }
+
+  return Boolean(element.textContent?.trim());
+};
+
+const getMissingRequirements = (
+  requirements: StageRequirement[] = [],
+  revision?: number,
+) => {
+  void revision;
+  return requirements.filter((requirement) => !isRequirementMet(requirement));
+};
+
+const clearRequirementHighlights = (requirements: StageRequirement[] = []) => {
+  requirements.forEach((requirement) => {
+    getRequirementHighlightElement(requirement)?.classList.remove(
+      ...invalidLabelClasses,
+    );
+  });
 };
 
 const splitToken = (token: string) => {
@@ -65,15 +122,62 @@ const getResumableToken = (token: string) => {
 };
 
 const adminStages: Record<string, Omit<StageDefinition, "total">> = {
+  "admin-navigation": {
+    target: '[data-onboarding="sidebar-navigation"]',
+    title: "Votre barre de navigation",
+    content:
+      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos formations, parcours, utilisateurs et ressources.",
+    placement: "right",
+    next: "admin-dashboard",
+    index: 1,
+  },
+  "admin-dashboard": {
+    target: '[data-onboarding="admin-dashboard-header"]',
+    title: "Votre tableau de bord",
+    content:
+      "Le tableau de bord rassemble vos derniers parcours, vos modules et les actions utiles pour administrer la plateforme.",
+    placement: "bottom",
+    previous: "admin-navigation",
+    next: "admin-formation-entry",
+    index: 2,
+  },
+  "admin-formation-entry": {
+    target: '[data-onboarding="formation-create-entry"]',
+    title: "Créez votre première formation",
+    content:
+      'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
+    placement: "top",
+    waitingForAction: true,
+    previous: "admin-dashboard",
+    index: 3,
+  },
   "admin-formation-fields": {
     target: '[data-onboarding="formation-fields"]',
     title: "Votre première formation",
     content:
-      "Une formation est le niveau le plus haut de votre catalogue. Donnez-lui un nom, un niveau et au moins un tag. La description et le code RNCP restent facultatifs.",
+      "Une formation est le plus haut niveau de vos contenus. Donnez-lui un nom, un niveau et au moins un tag. La description et le code RNCP restent facultatifs.",
     placement: "right",
     next: "admin-formation-save",
+    previous: "admin-formation-entry",
     nextLabel: "J’ai compris",
-    index: 1,
+    requirements: [
+      {
+        selector: '[data-onboarding-field="formation-title"]',
+        label: "le nom de la formation",
+        highlightSelector: '[data-onboarding-label="formation-title"]',
+      },
+      {
+        selector: '[data-onboarding-field="formation-level"]',
+        label: "le niveau de la formation",
+        highlightSelector: '[data-onboarding-label="formation-level"]',
+      },
+      {
+        selector: '[data-onboarding-field="formation-tags"]',
+        label: "au moins un tag",
+        highlightSelector: '[data-onboarding-field="formation-tags"] label',
+      },
+    ],
+    index: 4,
   },
   "admin-formation-save": {
     target: '[data-onboarding="formation-save"]',
@@ -83,7 +187,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     placement: "top",
     waitingForAction: true,
     previous: "admin-formation-fields",
-    index: 2,
+    index: 5,
   },
   "admin-parcours-create": {
     target: '[data-onboarding="parcours-create"]',
@@ -92,17 +196,39 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Le parcours organise l’expérience d’un groupe d’apprenants. La formation créée est déjà sélectionnée : saisissez simplement un titre puis cliquez sur Créer.",
     placement: "right",
     waitingForAction: true,
-    index: 3,
+    requirements: [
+      {
+        selector: '[data-onboarding="parcours-create"] select[name="menu"]',
+        label: "la formation associée",
+        invalidValues: ["0"],
+      },
+      {
+        selector: '[data-onboarding-field="parcours-title"]',
+        label: "le titre du parcours",
+        highlightSelector:
+          '[data-onboarding="parcours-create"] label[for="title"]',
+      },
+    ],
+    index: 6,
   },
   "admin-parcours-info": {
     target: '[data-onboarding="parcours-information"]',
     title: "Complétez les informations",
     content:
       "Le titre et la description se sauvegardent automatiquement. Vous pouvez également définir les dates, les contacts, les tags et une classe virtuelle.",
-    placement: "right",
+    placement: "bottom",
     next: "admin-module-form",
     nextLabel: "Créer un module",
-    index: 4,
+    requirements: [
+      {
+        selector:
+          '[data-onboarding="parcours-information"] input[name="title"]',
+        label: "le titre du parcours",
+        highlightSelector:
+          '[data-onboarding="parcours-information"] label[for="title"]',
+      },
+    ],
+    index: 7,
   },
   "admin-module-form": {
     target: '[data-onboarding="module-form"]',
@@ -112,7 +238,15 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     placement: "top",
     waitingForAction: true,
     previous: "admin-parcours-info",
-    index: 5,
+    requirements: [
+      {
+        selector: '[data-onboarding="module-form"] input[name="title"]',
+        label: "le titre du module",
+        highlightSelector:
+          '[data-onboarding="module-form"] label[for="title"]',
+      },
+    ],
+    index: 8,
   },
   "admin-course-create": {
     target: '[data-onboarding="course-create"]',
@@ -121,7 +255,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Les cours structurent les leçons d’un module. Cliquez sur Ajouter un cours, saisissez un titre, puis validez pour ouvrir les informations détaillées.",
     placement: "right",
     waitingForAction: true,
-    index: 6,
+    index: 9,
   },
   "admin-course-details": {
     target: '[data-onboarding="course-details"]',
@@ -130,7 +264,19 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Ajoutez une description et au moins un tag. Vous pouvez aussi préparer des titres de leçons, mais nous allons en créer une ensemble juste après.",
     placement: "left",
     waitingForAction: true,
-    index: 7,
+    requirements: [
+      {
+        selector: '[data-onboarding-field="course-title"]',
+        label: "le titre du cours",
+        highlightSelector: '[data-onboarding-label="course-title"]',
+      },
+      {
+        selector: '[data-onboarding-field="course-tags"]',
+        label: "au moins un tag pour le cours",
+        highlightSelector: '[data-onboarding-label="course-tags"]',
+      },
+    ],
+    index: 10,
   },
   "admin-lesson-create": {
     target: '[data-onboarding="lesson-create"]',
@@ -139,7 +285,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Ce bouton ajoute une leçon au cours que vous venez de créer. Une leçon contient les activités consultées par les apprenants.",
     placement: "right",
     waitingForAction: true,
-    index: 8,
+    index: 11,
   },
   "admin-lesson-details": {
     target: '[data-onboarding="lesson-details"]',
@@ -148,7 +294,19 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Saisissez un titre, choisissez le tag du cours et précisez la modalité. La description aide les apprenants à comprendre l’objectif de la leçon.",
     placement: "left",
     waitingForAction: true,
-    index: 9,
+    requirements: [
+      {
+        selector: '[data-onboarding-field="lesson-title"]',
+        label: "le titre de la leçon",
+        highlightSelector: '[data-onboarding-label="lesson-title"]',
+      },
+      {
+        selector: '[data-onboarding-field="lesson-tag"]',
+        label: "le tag de la leçon",
+        highlightSelector: '[data-onboarding-label="lesson-tag"]',
+      },
+    ],
+    index: 12,
   },
   "admin-activity-create": {
     target: '[data-onboarding="activity-create"]',
@@ -157,7 +315,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Une activité est l’unité de contenu affichée aux apprenants. Cliquez ici pour choisir son format.",
     placement: "right",
     waitingForAction: true,
-    index: 10,
+    index: 13,
   },
   "admin-activity-type": {
     target: '[data-onboarding="activity-type-text"]',
@@ -167,7 +325,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     placement: "bottom",
     waitingForAction: true,
     previous: "admin-activity-create",
-    index: 11,
+    index: 14,
   },
   "admin-text-editor": {
     target: '[data-onboarding="text-editor"]',
@@ -176,7 +334,17 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Donnez un titre à l’activité, saisissez quelques lignes et explorez la barre de mise en forme. Le bouton d’enregistrement apparaît dès que l’éditeur contient du texte.",
     placement: "top",
     waitingForAction: true,
-    index: 12,
+    requirements: [
+      {
+        selector: '[data-onboarding-field="activity-title"]',
+        label: "le titre de l’activité",
+      },
+      {
+        selector: '[data-onboarding-field="activity-content"]',
+        label: "le contenu de l’activité",
+      },
+    ],
+    index: 15,
   },
   "admin-complete": {
     target: "#main-scroll-container",
@@ -185,7 +353,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
       "Vous connaissez maintenant la chaîne complète : formation, parcours, module, cours, leçon et activité. Vous pourrez relancer ce guide depuis le menu latéral.",
     placement: "center",
     nextLabel: "Compris",
-    index: 13,
+    index: 16,
   },
 };
 
@@ -248,6 +416,8 @@ const OnboardingTourContent = ({
     getResumableToken(initialOnboarding.step),
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [showStopConfirmation, setShowStopConfirmation] = useState(false);
+  const [requirementRevision, setRequirementRevision] = useState(0);
   const navigatedStepRef = useRef("");
 
   const saveState = useCallback(
@@ -267,7 +437,7 @@ const OnboardingTourContent = ({
     setIsSaving(true);
     navigatedStepRef.current = "";
     const firstStep =
-      layout === "admin" ? "admin-formation-fields" : "student-navigation";
+      layout === "admin" ? "admin-navigation" : "student-navigation";
     await saveState("in_progress", firstStep);
     setIsSaving(false);
   }, [layout, saveState]);
@@ -275,6 +445,7 @@ const OnboardingTourContent = ({
   const stop = useCallback(async () => {
     setIsSaving(true);
     await saveState("skipped", "");
+    setShowStopConfirmation(false);
     setIsSaving(false);
   }, [saveState]);
 
@@ -291,6 +462,30 @@ const OnboardingTourContent = ({
   );
 
   useEffect(() => {
+    if (status !== "in_progress") return;
+
+    const refreshRequirements = () => {
+      setRequirementRevision((current) => current + 1);
+    };
+    const observer = new MutationObserver(refreshRequirements);
+
+    document.addEventListener("input", refreshRequirements, true);
+    document.addEventListener("change", refreshRequirements, true);
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["data-onboarding-valid"],
+    });
+
+    return () => {
+      document.removeEventListener("input", refreshRequirements, true);
+      document.removeEventListener("change", refreshRequirements, true);
+      observer.disconnect();
+    };
+  }, [status, stepToken]);
+
+  useEffect(() => {
     if (status !== "in_progress" || !stepToken) return;
     if (navigatedStepRef.current === stepToken) return;
     navigatedStepRef.current = stepToken;
@@ -299,12 +494,18 @@ const OnboardingTourContent = ({
     let target: string | undefined;
     if (stage.startsWith("student-")) {
       target = "/student/dashboard";
+    } else if (
+      ["admin-navigation", "admin-dashboard", "admin-formation-entry"].includes(
+        stage,
+      )
+    ) {
+      target = "/admin/dashboard";
     } else if (stage.startsWith("admin-formation")) {
       target = "/admin/formation";
     } else if (stage === "admin-parcours-create" && contextId) {
       target = `/admin/parcours/new?formationId=${contextId}`;
     } else if (stage === "admin-parcours-info" && contextId) {
-      target = `/admin/parcours/edit/${contextId}`;
+      target = `/admin/parcours/edit/${contextId}?step=1`;
     } else if (stage === "admin-module-form" && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=4&create=true`;
     } else if (
@@ -330,6 +531,11 @@ const OnboardingTourContent = ({
 
       const { stage, contextId } = splitToken(stepToken);
       switch (event.type) {
+        case "formation_entry_clicked":
+          if (stage === "admin-formation-entry") {
+            goToStage("admin-formation-fields");
+          }
+          break;
         case "formation_created":
           if (stage === "admin-formation-save") {
             goToStage("admin-parcours-create", event.id);
@@ -393,7 +599,7 @@ const OnboardingTourContent = ({
     const definition = definitions[stage];
     if (!definition) return undefined;
 
-    const total = layout === "admin" ? 13 : 4;
+    const total = layout === "admin" ? 16 : 4;
     const resolveToken = (next?: string) =>
       next
         ? withContext(
@@ -414,6 +620,45 @@ const OnboardingTourContent = ({
     };
   }, [layout, stepToken]);
 
+  const missingRequirements = useMemo(
+    () =>
+      getMissingRequirements(
+        stageDefinition?.requirements,
+        requirementRevision,
+      ),
+    [requirementRevision, stageDefinition],
+  );
+
+  useEffect(() => {
+    const requirements = stageDefinition?.requirements ?? [];
+    requirements.forEach((requirement) => {
+      const element = getRequirementHighlightElement(requirement);
+      const isMissing = !isRequirementMet(requirement);
+      invalidLabelClasses.forEach((className) => {
+        element?.classList.toggle(className, isMissing);
+      });
+    });
+
+    return () => clearRequirementHighlights(requirements);
+  }, [requirementRevision, stageDefinition]);
+
+  const validateCurrentStage = useCallback(() => {
+    const missing = getMissingRequirements(stageDefinition?.requirements);
+    if (missing.length === 0) return true;
+
+    setRequirementRevision((current) => current + 1);
+    toast.error(
+      `Complétez les champs obligatoires : ${missing
+        .map((requirement) => requirement.label)
+        .join(", ")}.`,
+    );
+
+    const firstElement = getRequirementElement(missing[0]);
+    firstElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstElement?.focus({ preventScroll: true });
+    return false;
+  }, [stageDefinition]);
+
   const step = useMemo<Step[]>(() => {
     if (!stageDefinition) return [];
 
@@ -421,8 +666,11 @@ const OnboardingTourContent = ({
       current: stageDefinition.index,
       total: stageDefinition.total,
       waitingForAction: stageDefinition.waitingForAction,
+      missingRequirements: missingRequirements.map(
+        (requirement) => requirement.label,
+      ),
       nextLabel: stageDefinition.nextLabel,
-      onStop: () => void stop(),
+      onStop: () => setShowStopConfirmation(true),
       onBack: stageDefinition.previous
         ? () => void saveState("in_progress", stageDefinition.previous!)
         : undefined,
@@ -431,9 +679,10 @@ const OnboardingTourContent = ({
         stepToken === "admin-complete" ||
         stepToken === "student-complete"
           ? () =>
-              stageDefinition.next
+              validateCurrentStage() &&
+              (stageDefinition.next
                 ? void saveState("in_progress", stageDefinition.next)
-                : void complete()
+                : void complete())
           : undefined,
     };
 
@@ -451,7 +700,14 @@ const OnboardingTourContent = ({
         spotlightPadding: 8,
       },
     ];
-  }, [complete, saveState, stageDefinition, stepToken, stop]);
+  }, [
+    complete,
+    missingRequirements,
+    saveState,
+    stageDefinition,
+    stepToken,
+    validateCurrentStage,
+  ]);
 
   const showWelcome = status === "pending";
   const run = status === "in_progress" && step.length > 0;
@@ -473,6 +729,21 @@ const OnboardingTourContent = ({
           steps={step}
           tooltipComponent={OnboardingTooltip}
           scrollToFirstStep
+          floatingOptions={{
+            strategy: "fixed",
+            shiftOptions: {
+              mainAxis: true,
+              crossAxis: true,
+              padding: 16,
+            },
+            flipOptions: { padding: 16 },
+          }}
+          styles={{
+            floater: {
+              boxSizing: "border-box",
+              maxWidth: "calc(100vw - 2rem)",
+            },
+          }}
           options={{
             buttons: [],
             closeButtonAction: "skip",
@@ -488,6 +759,13 @@ const OnboardingTourContent = ({
             targetWaitTimeout: 15_000,
             zIndex: 2000,
           }}
+        />
+      )}
+      {showStopConfirmation && status === "in_progress" && (
+        <OnboardingStopConfirmation
+          isSaving={isSaving}
+          onCancel={() => setShowStopConfirmation(false)}
+          onConfirm={() => void stop()}
         />
       )}
     </>

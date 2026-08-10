@@ -26,12 +26,12 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   };
 
   return (
-    <ul className="flex flex-col gap-1 xl:pl-2 items-center xl:items-start select-none">
+    <ul className="flex flex-col gap-1 px-2 select-none">
       {/* Avatar */}
-      <li>
+      <li className="w-full">
         <Link
           to={`/${interfaceType}/profil`}
-          className="flex gap-2 items-center text-white capitalize p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full gap-2 items-center text-white capitalize p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
           data-tip={fullName}
         >
           {user && (
@@ -47,13 +47,12 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {interfaceType === "admin" && (
         <li
-          className="cursor-pointer text-sm flex gap-2 p-2 rounded-lg hover:bg-primary/50"
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
           data-tip="Déconnexion"
         >
           <Link
             to="/admin/dashboard-ia"
-            className="flex gap-x-2 items-center tooltip tooltip-right"
-            data-tip="Dashboard IA"
+            className="flex w-full gap-x-2 items-center"
           >
             <Sparkles className="w-4 h-4" />
             <h2 className="xl:block hidden">Consommation IA</h2>
@@ -64,10 +63,10 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Bouton + modal questionnaire */}
       <Questionnaire />
 
-      <li>
+      <li className="w-full">
         <button
           type="button"
-          className="flex gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
           onClick={() => emitOnboardingEvent({ type: "restart" })}
           data-tip="Relancer le tutoriel"
         >
@@ -78,7 +77,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {/* Bouton Deconnection */}
       <li
-        className="cursor-pointer text-sm flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50"
+        className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
         data-tip="Déconnexion"
         onClick={handleClickLogout}
       >

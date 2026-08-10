@@ -94,10 +94,14 @@ export default function CreateLessonModal({
 
         <div className="grid gap-5 py-5">
           <label className="flex flex-col gap-2">
-            <span className="font-semibold">
+            <span
+              className="font-semibold"
+              data-onboarding-label="lesson-title"
+            >
               Titre <span className="text-error">*</span>
             </span>
             <input
+              data-onboarding-field="lesson-title"
               autoFocus
               className="input input-bordered w-full"
               value={title}
@@ -118,10 +122,14 @@ export default function CreateLessonModal({
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className="flex flex-col gap-2">
-              <span className="font-semibold">
+              <span
+                className="font-semibold"
+                data-onboarding-label="lesson-tag"
+              >
                 Tag <span className="text-error">*</span>
               </span>
               <select
+                data-onboarding-field="lesson-tag"
                 className="select select-bordered w-full"
                 value={selectedTagId}
                 disabled={courseTags.length === 0}

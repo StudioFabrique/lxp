@@ -25,14 +25,14 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   };
 
   return (
-    <li>
-      <div className="relative z-50">
+    <li className="w-full">
+      <div className="relative z-50 w-full">
         <Link
           to="https://forms.gle/joWqE48La7S6NqCK8"
           onClick={handleClose}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex gap-2 p-1 px-2 rounded-lg hover:bg-primary/50 ${
+          className={`flex w-full gap-2 p-1 px-2 items-center rounded-lg hover:bg-primary/50 ${
             showTooltip
               ? "ring-2 ring-primary ring-offset-1 rounded-full p-2 animate-pulse"
               : ""

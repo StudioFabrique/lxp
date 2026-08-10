@@ -2,6 +2,7 @@ export const ONBOARDING_EVENT = "lxp:onboarding";
 
 export type OnboardingEventDetail =
   | { type: "restart" }
+  | { type: "formation_entry_clicked" }
   | { type: "formation_created"; id: number }
   | { type: "parcours_created"; id: number }
   | { type: "module_created"; id: number }

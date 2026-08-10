@@ -49,7 +49,7 @@ async function createParcours(parcours: any, userId: string) {
 
   if (existtingParcours) {
     const error = new Error("Un parcours avec ce titre existe déjà");
-    (error as any).statusCode = 404;
+    (error as any).statusCode = 409;
     throw error;
   }
 

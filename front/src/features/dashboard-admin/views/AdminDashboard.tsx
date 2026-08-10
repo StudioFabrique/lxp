@@ -35,7 +35,10 @@ const AdminDashboard = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* --- Bannière de bienvenue --- */}
-      <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
+      <section
+        className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full"
+        data-onboarding="admin-dashboard-header"
+      >
         <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
           <SidebarRouteIcon />
           <span>
