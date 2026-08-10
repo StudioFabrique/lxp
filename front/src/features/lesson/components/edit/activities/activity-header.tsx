@@ -95,6 +95,7 @@ const ActivityHeader = ({
           )}
           {titleEditable ? (
             <input
+              data-onboarding-field="activity-title"
               type="text"
               value={title}
               onChange={(e) => onEditTitle?.(e.target.value)}

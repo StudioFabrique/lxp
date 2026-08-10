@@ -5,6 +5,7 @@ import { cn } from "../../../utils/cn";
 import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultParcoursImage from "../../../assets/images/new-parcours-default.jpg";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 const fullDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -101,7 +102,14 @@ const LastParcoursItem = ({
         )}
         {!formation ? (
           <li className="flex flex-1 items-center justify-center p-6">
-            <Link to="/admin/formation" className="btn btn-dash">
+            <Link
+              to="/admin/formation"
+              className="btn btn-dash"
+              data-onboarding="formation-create-entry"
+              onClick={() =>
+                emitOnboardingEvent({ type: "formation_entry_clicked" })
+              }
+            >
               <Plus className="size-[1.2em]" />
               <span>Créer une formation</span>
             </Link>

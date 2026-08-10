@@ -17,6 +17,11 @@ async function httpHandshake(req: CustomRequest, res: Response) {
           createdAt: user.createdAt,
           firstname: user.firstname,
           lastname: user.lastname,
+          onboarding: user.onboarding ?? {
+            status: "pending",
+            step: "",
+            version: 1,
+          },
           abilityRules: req.auth.abilityRules,
         });
       }

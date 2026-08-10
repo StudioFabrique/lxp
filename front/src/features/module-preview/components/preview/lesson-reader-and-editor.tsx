@@ -102,7 +102,14 @@ const LessonReaderAndEditor = ({
         )}
 
         {/* Rendu de l'activité */}
-        <div className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative">
+        <div
+          className="bg-base-200 border border-base-300 rounded-lg p-6 mb-4 shadow-sm relative"
+          data-onboarding={
+            activityType === "text" && mode === "write"
+              ? "text-editor"
+              : undefined
+          }
+        >
           {/* Header de l'activité : titre et menu contextuel */}
           {canEdit && (mode === "write" || mode === "edit") ? (
             <ActivityHeader

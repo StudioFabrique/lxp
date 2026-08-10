@@ -7,6 +7,7 @@ import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
 import ConfettiWrapper from "../ConfettiWrapper";
 import FadeWrapper from "../FadeWrapper";
+import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 
 const StudentLayout = () => (
   <ChatbotProvider>
@@ -18,6 +19,7 @@ const StudentLayout = () => (
       </AppWrapper>
     </ConfettiWrapper>
     {!isAiDisabled && <Chatbot />}
+    <OnboardingTour layout="student" />
   </ChatbotProvider>
 );
 

@@ -33,17 +33,21 @@ export function useParcoursEdit() {
         ?.data?.message ?? "Erreur inconnue")
     : "";
   const { modules } = useParcoursModules(parcoursId ?? 0);
-  const checkStep = useRef(true);
+  const appliedStepRef = useRef<string | null>(null);
   const [importedSkills, setImportedSkills] = useState<ImportedSkill[]>([]);
   const [importedObjectives, setImportedObjectives] = useState<Objective[]>([]);
 
   const step = searchParams.get("step");
 
   useEffect(() => {
-    if (step && checkStep.current) {
-      updateStep(+step);
-      checkStep.current = false;
+    if (!step) {
+      appliedStepRef.current = null;
+      return;
     }
+
+    if (appliedStepRef.current === step) return;
+    appliedStepRef.current = step;
+    updateStep(+step);
   }, [step, updateStep]);
 
   const updateImage = useCallback(

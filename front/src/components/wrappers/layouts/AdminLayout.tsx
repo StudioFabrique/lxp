@@ -6,6 +6,7 @@ import Loader from "../../loaders/Loader";
 import Sidebar from "../../sidebar/Sidebar";
 import AppWrapper from "../AppWrapper";
 import FadeWrapper from "../FadeWrapper";
+import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 
 const AdminLayout = () => (
   <ChatbotProvider>
@@ -15,6 +16,7 @@ const AdminLayout = () => (
       </FadeWrapper>
     </AppWrapper>
     {!isAiDisabled && <Chatbot />}
+    <OnboardingTour layout="admin" />
   </ChatbotProvider>
 );
 

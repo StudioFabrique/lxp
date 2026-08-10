@@ -7,6 +7,19 @@ import { Link } from "../../features/user/interfaces/link";
 import Role from "./role";
 import { AppAbilityRule } from "../../rbac/ability";
 
+export type OnboardingStatus =
+  | "pending"
+  | "in_progress"
+  | "completed"
+  | "skipped";
+
+export type UserOnboarding = {
+  status: OnboardingStatus;
+  step: string;
+  version: number;
+  updatedAt?: string;
+};
+
 export default interface User {
   _id: string;
   idMdb?: string;
@@ -41,6 +54,7 @@ export default interface User {
     date: string;
     tokensUsed: number;
   }>;
+  onboarding?: UserOnboarding;
 }
 
 export interface UserSelection extends User {

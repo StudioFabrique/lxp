@@ -11,6 +11,7 @@ import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 import { Edit, Plus } from "lucide-react";
+import { cn } from "../../../../../utils/cn";
 
 type ContenuProps = {
   modules: Module[];
@@ -61,24 +62,22 @@ const Contenu = ({ modules }: ContenuProps) => {
           className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
         >
           <div className="flex flex-col gap-y-2">
-            {modules?.length > 0 ? (
-              modules.map((module, i) => (
-                <ContenuItem
-                  key={module.id}
-                  module={module}
-                  selectedModuleId={selectedModule?.id}
-                  iterationCount={i + 1}
-                  setSelectedModule={setSelectedModule}
-                />
-              ))
-            ) : (
-              <p>Aucun modules</p>
-            )}
+            {modules.map((module, i) => (
+              <ContenuItem
+                key={module.id}
+                module={module}
+                selectedModuleId={selectedModule?.id}
+                iterationCount={i + 1}
+                setSelectedModule={setSelectedModule}
+              />
+            ))}
             {canEditParcoursContent && (
               <PermissionGuard action="update" object="parcours">
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
-                  className="btn h-20"
+                  className={cn("btn h-20", {
+                    "btn-dash": modules?.length === 0,
+                  })}
                 >
                   <Plus className="h-5 w-5" />
                   <span className="font-semibold">Créer un nouveau module</span>

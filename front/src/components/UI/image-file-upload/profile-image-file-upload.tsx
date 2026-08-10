@@ -8,9 +8,11 @@ import {
   SetStateAction,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import { EditIcon } from "lucide-react";
 import { AvatarSmall } from "../../avatar/AvatarSmall";
+import AppImage from "../image/app-image";
 
 type ProfileImageFileUploadProps = {
   temporaryAvatar: { file: File | null; url: string | null };
@@ -19,18 +21,25 @@ type ProfileImageFileUploadProps = {
   >;
   maxSize: number;
   existingAvatar?: string;
+  variant?: "avatar" | "logo";
+  previewBackgroundColor?: string;
 };
 
-const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
+const avatarAllowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
+const logoAllowedExtensions = /(\.jpeg|\.jpg|\.png)$/i;
 
 const ProfileImageFileUpload = ({
   temporaryAvatar,
   onSetTemporaryAvatar,
   maxSize,
   existingAvatar,
+  variant = "avatar",
+  previewBackgroundColor,
   children,
 }: PropsWithChildren<ProfileImageFileUploadProps>) => {
   const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
+  const [logoPreviewFailed, setLogoPreviewFailed] = useState(false);
+  const previewUrl = temporaryAvatar.url ?? existingAvatar ?? null;
 
   useEffect(() => {
     const url = temporaryAvatar.url;
@@ -51,6 +60,10 @@ const ProfileImageFileUpload = ({
           toast.error("Ce fichier n'est pass un fichier image");
           return;
         }
+        const allowedExtensions =
+          variant === "logo"
+            ? logoAllowedExtensions
+            : avatarAllowedExtensions;
         if (!allowedExtensions.test(selectedFile.name)) {
           toast.error("Extension de fichier non autorisée");
           return;
@@ -60,6 +73,7 @@ const ProfileImageFileUpload = ({
           return;
         }
         const temporaryUrl = URL.createObjectURL(selectedFile);
+        setLogoPreviewFailed(false);
         onSetTemporaryAvatar({ file: selectedFile, url: temporaryUrl });
       } else {
         console.log("Fichier non autorisé pour une raison ou une autre.");
@@ -71,26 +85,65 @@ const ProfileImageFileUpload = ({
     <button
       type="button"
       onClick={onClickChangeAvatar}
-      className="btn btn-ghost p-0 w-fit h-fit text-white rounded-full bg-white"
+      className={
+        variant === "logo"
+          ? "group relative flex h-32 w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-300 p-3 shadow-sm transition hover:border-primary hover:shadow-md"
+          : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white"
+      }
+      style={
+        variant === "logo"
+          ? { backgroundColor: previewBackgroundColor }
+          : undefined
+      }
+      aria-label={
+        variant === "logo"
+          ? "Modifier le logo de l’organisme"
+          : "Modifier l’avatar"
+      }
     >
-      {temporaryAvatar.url || !children ? (
+      {variant === "logo" ? (
+        previewUrl && !logoPreviewFailed ? (
+          <AppImage
+            src={previewUrl}
+            alt="Logo de l’organisme"
+            className="h-full w-full object-contain"
+            onError={() => setLogoPreviewFailed(true)}
+          />
+        ) : (
+          <span className="px-4 text-center text-sm font-semibold text-base-content/70">
+            {children ?? "Ajouter un logo"}
+          </span>
+        )
+      ) : temporaryAvatar.url || !children ? (
         <AvatarSmall
           user={{
             firstname: "a",
             lastname: "a",
-            avatar: temporaryAvatar.url ?? existingAvatar,
+            avatar: previewUrl ?? undefined,
           }}
           size={10}
         />
       ) : (
         children
       )}
-      <span className="flex justify-end items-end p-1 absolute rounded-full backdrop-blur-[2px] opacity-0 hover:opacity-100">
-        <EditIcon className="text-black stroke-[2px] p-1" />
+      <span
+        className={`pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${
+          variant === "logo" ? "bg-black/15" : "rounded-full bg-white/20"
+        }`}
+      >
+        <EditIcon
+          className={`h-7 w-7 rounded-full bg-base-100/90 p-1.5 stroke-2 ${
+            variant === "logo" ? "text-base-content" : "text-black"
+          }`}
+        />
       </span>
       <input
         ref={fileUploadRef}
-        accept=".jpg, .jpeg, .png, .webp"
+        accept={
+          variant === "logo"
+            ? ".jpg, .jpeg, .png"
+            : ".jpg, .jpeg, .png, .gif, .webp"
+        }
         className="hidden"
         type="file"
         onChange={handleFileChange}

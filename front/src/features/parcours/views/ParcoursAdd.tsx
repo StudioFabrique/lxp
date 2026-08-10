@@ -13,6 +13,8 @@ import Selecter from "../../../components/UI/selecter/selecter.component";
 import { Copy, Layers3 } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Modal from "../../../components/UI/modal/modal";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
+import type { AxiosError } from "axios";
 
 type Item = {
   id: number;
@@ -47,7 +49,17 @@ const AddParcours = () => {
         formation: data.formationId,
       }),
     onSuccess: (data) => {
+      emitOnboardingEvent({
+        type: "parcours_created",
+        id: data.parcoursId,
+      });
       nav(`/admin/parcours/edit/${data.parcoursId}`);
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(
+        error.response?.data?.message ??
+          "Le parcours n’a pas pu être enregistré.",
+      );
     },
   });
 
@@ -124,16 +136,18 @@ const AddParcours = () => {
                   pour créer le parcours
                 </h3>
 
-                <Wrapper>
-                  <h2 className="text-lg font-bold">
-                    Créer un nouveau parcours
-                  </h2>
-                  <NewParcoursForm
-                    formations={formations}
-                    initialFormationId={initialFormationId}
-                    onSubmit={handleSubmit}
-                  />
-                </Wrapper>
+                <div data-onboarding="parcours-create">
+                  <Wrapper>
+                    <h2 className="text-lg font-bold">
+                      Créer un nouveau parcours
+                    </h2>
+                    <NewParcoursForm
+                      formations={formations}
+                      initialFormationId={initialFormationId}
+                      onSubmit={handleSubmit}
+                    />
+                  </Wrapper>
+                </div>
 
                 <div className="divider">ou</div>
 

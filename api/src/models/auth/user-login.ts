@@ -49,6 +49,11 @@ async function userLogin(email: string, password: string) {
         createdAt: user.createdAt,
         firstname: user.firstname,
         lastname: user.lastname,
+        onboarding: user.onboarding ?? {
+          status: "pending",
+          step: "",
+          version: 1,
+        },
       };
     }
     throw { message: credentialsError, status: 401 };

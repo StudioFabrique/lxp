@@ -100,6 +100,7 @@ const NewParcoursForm: FC<Props> = ({
             Donner un nom au parcours
           </label>
           <input
+            data-onboarding-field="parcours-title"
             className={setInputStyle(title.hasError)}
             name="title"
             id="title"

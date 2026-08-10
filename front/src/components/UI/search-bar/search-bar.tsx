@@ -49,7 +49,7 @@ const SearchBar = ({
       <div className="flex items-center justify-end gap-5 w-full">
         <form
           onSubmit={handleSubmit}
-          className="flex items-center bg-secondary/10 w-[400px] gap-x-2 p-2 rounded-md"
+          className="flex items-center bg-secondary/10 w-100 gap-x-2 p-2 rounded-md"
         >
           <Search />
           <input
