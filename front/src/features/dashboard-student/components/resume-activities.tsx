@@ -105,7 +105,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                       <ArrowUpRightIcon />
                     </span>
                     <progress
-                      className="progress [&::-moz-progress-bar]:bg-gradient-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-gradient-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
+                      className="progress [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
                       value={progressCalculation}
                     />
                   </div>

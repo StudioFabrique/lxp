@@ -10,6 +10,7 @@ type CreateCourseItemProps = {
   moduleId: number;
   onCreate: (values: CreateCourseFormValues) => Promise<number | false>;
   onCreated?: (courseId: number) => void;
+  openDetailsOnMount?: boolean;
 };
 
 const CreateCourseItem = ({
@@ -17,9 +18,10 @@ const CreateCourseItem = ({
   moduleId,
   onCreate,
   onCreated,
+  openDetailsOnMount = false,
 }: CreateCourseItemProps) => {
   const [showTitleInput, setShowTitleInput] = useState(false);
-  const [showDetailsForm, setShowDetailsForm] = useState(false);
+  const [showDetailsForm, setShowDetailsForm] = useState(openDetailsOnMount);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const validationButtonRef = useRef<HTMLButtonElement>(null);

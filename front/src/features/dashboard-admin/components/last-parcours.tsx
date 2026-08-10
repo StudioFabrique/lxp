@@ -21,7 +21,7 @@ export default function LastParcours({
         {parcours.length > 0 && (
           <div className="w-full flex justify-end mt-4">
             <Link
-              className="text-sm font-semibold text-primary hover:text-primary-focus flex items-center gap-x-1 transition-colors"
+              className="text-sm font-semibold text-primary hover:text-primary-focus flex items-center gap-x-1 hover:underline"
               to="/admin/parcours"
             >
               Voir tous les parcours <MoveUpRight className="w-4 h-4" />

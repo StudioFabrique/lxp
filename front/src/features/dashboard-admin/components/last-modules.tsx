@@ -1,4 +1,4 @@
-import { Eye, MoveUpRight, Pencil } from "lucide-react";
+import { ExternalLink, Eye, MoveUpRight, Pencil } from "lucide-react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import SubBoxWrapper from "../../../components/wrappers/SubBoxWrapper";
@@ -34,9 +34,7 @@ export default function LastModules({ modules, isLoading }: Props) {
             <tbody>
               {modules.map((module) => (
                 <tr key={module.id} className="bg-base-100 shadow-sm">
-                  <td className="rounded-l-lg font-semibold">
-                    {module.title}
-                  </td>
+                  <td className="rounded-l-lg font-semibold">{module.title}</td>
                   <td>{module.parcours ?? "Non rattaché"}</td>
                   <td>{module.coursesCount}</td>
                   <td>{localeDate(module.createdAt)}</td>
@@ -44,42 +42,41 @@ export default function LastModules({ modules, isLoading }: Props) {
                     <div className="flex justify-end gap-1">
                       {module.parcoursId ? (
                         <>
-                          <PermissionGuard action="read" object="module">
+                          <PermissionGuard action="update" object="module">
                             <Link
                               className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left"
-                              data-tip="Prévisualiser"
+                              data-tip="Modifier dans le parcours"
+                              to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
+                              aria-label={`Modifier ${module.title}`}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Link>
+                          </PermissionGuard>
+                          <PermissionGuard action="read" object="module">
+                            <Link
+                              className="btn btn-ghost btn-sm btn-square"
                               to={`/admin/parcours/module/${module.id}`}
                               aria-label={`Prévisualiser ${module.title}`}
                             >
-                              <Eye className="w-4 h-4" />
+                              <ExternalLink className="w-4 h-4" />
                             </Link>
-                            </PermissionGuard>
-                            <PermissionGuard action="update" object="module">
-                              <Link
-                                className="btn btn-ghost btn-sm btn-circle tooltip tooltip-left"
-                                data-tip="Modifier dans le parcours"
-                                to={`/admin/parcours/edit/${module.parcoursId}?step=4&moduleId=${module.id}`}
-                                aria-label={`Modifier ${module.title}`}
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </Link>
-                            </PermissionGuard>
-                          </>
-                        ) : (
-                          <span className="text-xs text-base-content/50">
-                            Non rattaché
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          </PermissionGuard>
+                        </>
+                      ) : (
+                        <span className="text-xs text-base-content/50">
+                          Non rattaché
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         <div className="flex justify-end mt-2">
           <Link
-            className="text-sm font-semibold text-primary flex items-center gap-1"
+            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
             to="/admin/module"
           >
             Voir tous les modules <MoveUpRight className="w-4 h-4" />

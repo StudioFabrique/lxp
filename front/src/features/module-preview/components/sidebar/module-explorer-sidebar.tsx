@@ -26,6 +26,7 @@ const ModuleExplorerSidebar = ({
   const [searchParams] = useSearchParams();
   const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
   const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
+  const createCourse = searchParams.get("createCourse") === "true";
   const [openedCourseId, setOpenedCourseId] = useState<number>();
 
   if (!module) return null;
@@ -199,6 +200,7 @@ const ModuleExplorerSidebar = ({
                 moduleId={module.id || 0}
                 onCreate={courseActions.createCourse}
                 onCreated={setOpenedCourseId}
+                openDetailsOnMount={createCourse}
               />
             </PermissionGuard>
           )}
