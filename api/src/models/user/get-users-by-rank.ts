@@ -1,6 +1,7 @@
 import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
+import mongoose from "mongoose";
 
 async function getUsersByRank(
   page: number,
@@ -8,25 +9,44 @@ async function getUsersByRank(
   rank: number,
   stype: string,
   sdir: string,
+  searchValue?: string,
+  excludedUserIds: string[] = [],
 ) {
   const dir = sdir === "asc" ? 1 : -1;
-  let fetchedRoles;
-
-  fetchedRoles = await Role.find({ rank: rank }, { _id: 1 });
+  const fetchedRoles = await Role.find({ rank: rank }, { _id: 1 });
 
   if (!fetchedRoles) {
     return false;
   }
 
-  const users = await User.find(
-    { roles: { $in: fetchedRoles } },
-    { password: 0 },
-  )
+  const filters: Record<string, unknown> = {
+    roles: { $in: fetchedRoles },
+  };
+
+  if (searchValue?.trim()) {
+    const escapedSearchValue = searchValue
+      .trim()
+      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const searchPattern = new RegExp(escapedSearchValue, "i");
+    filters.$or = [
+      { firstname: searchPattern },
+      { lastname: searchPattern },
+      { email: searchPattern },
+    ];
+  }
+
+  if (excludedUserIds.length > 0) {
+    filters._id = {
+      $nin: excludedUserIds.map((id) => new mongoose.Types.ObjectId(id)),
+    };
+  }
+
+  const users = await User.find(filters, { password: 0 })
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort({ [stype]: dir })
     .skip(getPagination(page, limit))
     .limit(limit);
-  const total = await User.count({ roles: { $in: fetchedRoles } });
+  const total = await User.countDocuments(filters);
   return { total, users };
 }
 export default getUsersByRank;

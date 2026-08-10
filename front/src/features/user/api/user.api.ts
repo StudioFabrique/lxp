@@ -6,16 +6,28 @@ export const queries = {
     const res = await apiClient.get(`/user/data/${id}`);
     return res.data;
   },
+  getUsersByIds: async (ids: string[]): Promise<User[]> => {
+    const res = await apiClient.get<{ list: User[] }>("/user/byIds", {
+      params: { ids: ids.join(",") },
+    });
+    return res.data.list;
+  },
 };
 
 export const mutations = {
-  create: async (userData: Record<string, unknown>, file: File | null) => {
+  create: async (
+    userData: Record<string, unknown>,
+    file: File | null,
+  ): Promise<{ message?: string; userId?: string }> => {
     const formData = new FormData();
     formData.append("data", JSON.stringify({ user: userData }));
     if (file) {
       formData.append("image", file);
     }
-    const res = await apiClient.post("/user", formData);
+    const res = await apiClient.post<{ message?: string; userId?: string }>(
+      "/user",
+      formData,
+    );
     return res.data;
   },
   update: async (

@@ -22,8 +22,20 @@ const activateAccount = async (
   return res.data;
 };
 
+const resendActivation = async (
+  email: string,
+): Promise<{
+  success: boolean;
+  message: string;
+  retryAfterSeconds: number;
+}> => {
+  const res = await apiClient.post("/auth/resend-activation", { email });
+  return res.data;
+};
+
 export const accountApi = {
   checkEmail,
   checkInvitation,
   activateAccount,
+  resendActivation,
 };

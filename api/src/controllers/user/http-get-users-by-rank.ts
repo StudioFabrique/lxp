@@ -5,10 +5,8 @@ import getUsersByRank from "../../models/user/get-users-by-rank.ts";
 
 async function httpGetUsersByRank(req: Request, res: Response) {
   const result = validationResult(req);
-  console.log("dans le cul lulu");
-
   const { rank, stype, sdir } = req.params;
-  const { page, limit } = req.query;
+  const { page, limit, search, exclude } = req.query;
 
   if (!result.isEmpty()) {
     return res.status(400).json({ message: badQuery });
@@ -20,7 +18,9 @@ async function httpGetUsersByRank(req: Request, res: Response) {
       +limit!,
       parseInt(rank),
       stype,
-      sdir
+      sdir,
+      typeof search === "string" ? search : undefined,
+      typeof exclude === "string" ? exclude.split(",").filter(Boolean) : [],
     );
 
     if (!result) {

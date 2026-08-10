@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -11,28 +10,26 @@ import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-st
 import LastModules from "../components/last-modules";
 import SidebarRouteIcon from "../../../components/headers/SidebarRouteIcon";
 
-// Structure des liens centralisée avec métadonnées de permission optionnelles
-const links = [
-  {
-    path: "/admin/formation",
-    label: "Créer une formation",
-    permission: { action: "write", object: "formation" },
-  },
-  {
-    path: "/admin/parcours/new",
-    label: "Créer un parcours",
-    permission: { action: "write", object: "parcours" },
-  },
-  { path: "/admin/user/add", label: "Créer un utilisateur" },
-  { path: "/admin/feedbacks", label: "Voir les feedbacks" },
-  { path: "/admin/teacher/evaluations", label: "Evaluer un apprenant" },
-];
-
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const { data: parcours, isLoading } = useQuery({
-    queryKey: ["last-parcours"],
-    queryFn: dashboardAdminApi.queries.getLastParcours,
+  const isTeacher =
+    user?.roles.some((role) => role.role === "teacher") ?? false;
+
+  const { data: teacherParcours = [], isLoading: isTeacherParcoursLoading } =
+    useQuery({
+      queryKey: ["last-parcours"],
+      queryFn: dashboardAdminApi.queries.getLastParcours,
+      enabled: isTeacher,
+    });
+
+  const { data: parcours = [], isLoading: isParcoursLoading } = useQuery({
+    queryKey: ["root-parcours"],
+    queryFn: dashboardAdminApi.queries.getRootParcours,
+  });
+
+  const { data: modules = [], isLoading: isModulesLoading } = useQuery({
+    queryKey: ["dashboard", "last-modules"],
+    queryFn: dashboardAdminApi.queries.getLastModules,
   });
 
   return (
@@ -52,49 +49,20 @@ const AdminDashboard = () => {
         </p>
       </section>
 
-      {/* --- Boutons d'actions rapides (Optimisés et Sécurisés) --- */}
-      <section>
-        <ul className="flex flex-wrap items-center gap-3">
-          {links.map((item) => {
-            const content = (
-              <li>
-                <Link
-                  className="btn btn-outline border-base-300 bg-base-100 hover:bg-base-200 hover:border-primary shadow-sm"
-                  to={item.path}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-
-            if (item.permission) {
-              return (
-                <PermissionGuard
-                  key={item.label}
-                  action={item.permission.action}
-                  object={item.permission.object}
-                >
-                  {content}
-                </PermissionGuard>
-              );
-            }
-
-            return <span key={item.label}>{content}</span>;
-          })}
-        </ul>
-      </section>
-
       {/* --- Contenu Principal --- */}
       <section className="w-full flex flex-col 2xl:flex-row gap-6">
         <div className="flex-1 flex flex-col gap-6">
-          <article className="w-full flex flex-col gap-y-4">
-            {user?.roles.find((role) => role.role === "teacher") &&
-            parcours &&
-            parcours.length > 0 ? (
-              <TeacherLastParcours parcours={parcours} isLoading={isLoading} />
+          <article className="w-full flex flex-col gap-10">
+            {isTeacher && teacherParcours.length > 0 ? (
+              <TeacherLastParcours
+                parcours={teacherParcours}
+                isLoading={isTeacherParcoursLoading}
+              />
             ) : null}
-            <LastParcours />
-            <LastModules />
+            <LastParcours parcours={parcours} isLoading={isParcoursLoading} />
+            {modules.length > 0 && (
+              <LastModules modules={modules} isLoading={isModulesLoading} />
+            )}
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">

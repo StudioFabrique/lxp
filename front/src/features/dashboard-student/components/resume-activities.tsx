@@ -1,8 +1,7 @@
 import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { motion, useMotionValue, useSpring } from "motion/react";
-import { useState } from "react";
 import LessonRead from "../../../utils/interfaces/lesson-read";
+import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
@@ -11,17 +10,6 @@ type ResumeActivitiesProps = {
 const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
-  const [isHovered, setIsHovered] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 500, damping: 50 });
-  const springY = useSpring(mouseY, { stiffness: 500, damping: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
 
   if (lastLessons.length > 0)
     return (
@@ -44,29 +32,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
               }, 0) / item.lesson.course.lessons.length;
 
             return (
-              <div
-                key={item.id}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onMouseMove={handleMouseMove}
-                className="group relative overflow-hidden rounded-xl hover:scale-101 transition-transform duration-200"
-              >
-                <motion.span
-                  className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible rounded-full blur-xl opacity-70"
-                  initial={{ scale: 0 }}
-                  style={{
-                    x: springX,
-                    y: springY,
-                    translateX: "-50%",
-                    translateY: "-50%",
-                  }}
-                  animate={{
-                    scale: isHovered ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                />
+              <CursorGlowCard key={item.id}>
                 <Link
-                  key={item.id}
                   to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
                   state={{ lessonId: item.lesson.id }}
                   className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20"
@@ -105,12 +72,12 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                       <ArrowUpRightIcon />
                     </span>
                     <progress
-                      className="progress [&::-moz-progress-bar]:bg-gradient-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-gradient-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
+                      className="progress [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
                       value={progressCalculation}
                     />
                   </div>
                 </Link>
-              </div>
+              </CursorGlowCard>
             );
           })}
         </div>

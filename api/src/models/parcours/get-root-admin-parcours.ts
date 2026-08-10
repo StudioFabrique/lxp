@@ -1,65 +1,34 @@
 import { prisma } from "../../utils/db.ts";
-import Group from "../../utils/interfaces/db/group.ts";
+import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 export default async function getRootAdminParcours() {
-  const parcours = await prisma.parcours.findMany({
+  const formations = await prisma.formation.findMany({
     select: {
       id: true,
       title: true,
-      startDate: true,
-      isPublished: true,
-      formation: {
-        select: { level: true },
-      },
-      modules: {
+      level: true,
+      parcours: {
         select: {
-          courses: { select: { id: true } },
-          duration: true,
+          id: true,
+          title: true,
+          startDate: true,
+          endDate: true,
+          isPublished: true,
+          thumb: true,
         },
-      },
-      groups: {
-        select: {
-          group: {
-            select: { idMdb: true },
-          },
-        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
       },
     },
-    take: 3,
     orderBy: { createdAt: "desc" },
+    take: 6,
   });
 
-  let result = Array<any>();
-  for (const item of parcours) {
-    const groups = item.groups.map((group) => group.group);
-    let students = 0;
-    const courses = item.modules.map((module) => module.courses);
-    let duration = 0;
-    const modules = item.modules.map((module) => module);
-
-    for (const module of modules) {
-      duration += module.duration!;
-    }
-
-    for (let group of groups) {
-      const g = await Group.findOne({ _id: group.idMdb }, { _id: 1 }).populate(
-        "users",
-        { _id: 1 }
-      );
-      students += g?.users.length ?? 0;
-    }
-
-    const parc = {
-      id: item.id,
-      title: item.title,
-      level: item.formation.level,
-      courses: courses.length,
-      students,
-      duration,
-      startDate: item.startDate,
-      isPublished: item.isPublished,
-    };
-    result = [...result, parc];
-  }
-  return result;
+  return formations.map((formation) => ({
+    ...formation,
+    parcours: formation.parcours.map((parcours) => ({
+      ...parcours,
+      thumb: imageToDataUrl(parcours.thumb),
+    })),
+  }));
 }

@@ -106,6 +106,7 @@ const RightSideDrawer: FC<Props> = ({
       <div className="drawer-side h-screen overflow-hidden" style={{ zIndex }}>
         <label
           htmlFor={!isOpen ? id : undefined}
+          onClick={isOpen ? handleCloseDrawer : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
         <div className="min-w-[35rem] flex flex-col bg-base-200 text-base-content rounded-l-2xl h-screen relative">

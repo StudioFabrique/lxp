@@ -297,6 +297,17 @@ export const getAllByRankValidator = [
   param("sdir").isString().trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
+  query("search").optional().isString().trim().isLength({ max: 100 }),
+  query("exclude")
+    .optional()
+    .isString()
+    .trim()
+    .custom((value: string) =>
+      value
+        .split(",")
+        .filter(Boolean)
+        .every((id) => /^[a-f\d]{24}$/i.test(id)),
+    ),
   checkValidatorResult,
 ];
 

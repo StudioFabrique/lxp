@@ -179,7 +179,7 @@ const AddParcours = () => {
             <div className="flex flex-col gap-2">
               <p className="text-sm font-semibold">Parcours disponibles</p>
               {!formation ? (
-                <p className="rounded-xl border border-dashed border-base-300 p-6 text-center text-sm text-base-content/60">
+                <p className="p-6 text-center text-sm text-base-content/60">
                   Sélectionnez une formation pour afficher ses parcours.
                 </p>
               ) : parcoursList.length === 0 ? (

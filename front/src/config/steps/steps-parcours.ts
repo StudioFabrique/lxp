@@ -6,7 +6,7 @@ const steps = [
   { label: "Compétences" },
   { label: "Modules" },
   { label: "Calendrier" },
-  { label: "Etudiants" },
+  { label: "Étudiants" },
   { label: "Aperçu" },
 ];
 

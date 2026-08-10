@@ -76,9 +76,15 @@ async function httpLogin(req: Request, res: Response) {
     }
     console.error(error);
 
-    return res
-      .status(error.status ?? 500)
-      .json({ message: error.message ?? serverIssue });
+    if (error.retryAfterSeconds) {
+      res.setHeader("Retry-After", error.retryAfterSeconds);
+    }
+
+    return res.status(error.status ?? 500).json({
+      code: error.code,
+      message: error.message ?? serverIssue,
+      retryAfterSeconds: error.retryAfterSeconds,
+    });
   }
 }
 

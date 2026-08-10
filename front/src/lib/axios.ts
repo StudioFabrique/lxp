@@ -51,7 +51,7 @@ apiClient.interceptors.response.use(
       }
     }
 
-    if (status === 403 && !url.includes("/auth/handshake")) {
+    if (status === 403 && !isLogin && !url.includes("/auth/handshake")) {
       resyncPromise ??= axios
         .get(`${BASE_API_URL}/auth/handshake`, { withCredentials: true })
         .then((response) => {

@@ -1,19 +1,19 @@
-import { FC } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import FormInput from "../../../../../src/components/form/FormInput";
 import FormTextarea from "../../../../../src/components/form/FormTextarea";
-import Group from "../../../../../src/utils/interfaces/group";
+import type { GroupFormValues } from "../../group.schema";
 
-const GroupFormInformations: FC<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: UseFormRegister<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  errors: any;
-  onSetFile: (file: File) => void;
-  group?: Group;
+const GroupFormInformations = ({
+  isLoading,
+}: {
   isLoading?: boolean;
-}> = ({ register, errors, isLoading }) => {
+}) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<GroupFormValues>();
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
@@ -31,6 +31,7 @@ const GroupFormInformations: FC<{
           name="desc"
           register={register}
           error={errors.desc}
+          placeholder="Décrivez brièvement ce groupe"
           disabled={isLoading}
         />
       </span>

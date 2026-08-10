@@ -1,205 +1,158 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useState } from "react";
-import { AddUsersButton } from "./group-manage-user-item/buttons.component";
-import usePagination from "../../../../../../hooks/use-pagination";
-import Pagination from "../../../../../../components/UI/pagination/pagination";
-import RightSideDrawer from "../../../../../../components/UI/right-side-drawer/right-side-drawer";
-import User from "../../../../../../utils/interfaces/user";
-import Search from "../../../../../../components/UI/search/search.component";
-import UserToAddListHeader from "./user-to-add-list-header.component";
-import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
+import { useMemo, useState } from "react";
+import type {
+  OnChangeFn,
+  RowSelectionState,
+  SortingState,
+  Updater,
+} from "@tanstack/react-table";
 import { UserPlus } from "lucide-react";
+import type User from "../../../../../../utils/interfaces/user";
+import RightSideDrawer from "../../../../../../components/UI/right-side-drawer/right-side-drawer";
+import SearchBar from "../../../../../../components/UI/search-bar/search-bar";
+import { DataTable } from "../../../../../../components/table/DataTable";
+import TablePagination from "../../../../../../components/table/TablePagination";
+import { useAvailableStudents } from "../../../../hooks/useAvailableStudents";
+import { getAvailableStudentColumns } from "../../group-user-table-columns";
 
-const GroupManageUserList: FC<{
+type Props = {
   usersToAdd: User[];
-  onAddUsers: (users: Array<User>) => void;
-  drawerOptions?: { visible: boolean; isOpen: boolean };
-  onCloseDrawer?: (id: string) => void;
-}> = ({ usersToAdd, drawerOptions, onAddUsers, onCloseDrawer }) => {
+  onAddUsers: (users: User[]) => void;
+};
+
+const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [selectedUsers, setSelectedUsers] = useState<Map<string, User>>(
+    new Map(),
+  );
+
   const {
-    page,
-    totalPages,
-    dataList,
-    handlePageNumber,
-    perPage,
-    setPerPage,
-    stype,
-    sortData,
-    setAllChecked,
-    allChecked,
-  } = usePagination("lastname", "/user/byRank/3");
+    data,
+    isLoading,
+    searchValue,
+    sortProperty,
+    isAscDirection,
+    totalItems,
+    onSortProperty,
+    onSubmitSearchValue,
+    onResetPagination,
+    ...pagination
+  } = useAvailableStudents(
+    usersToAdd.map((user) => user._id),
+    isOpen,
+  );
 
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [isUsersSettedUp, setUsersSettedState] = useState(true);
-  const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
-  const [usersToShowsInList, setUsersToShowInList]: any[] = useState([]);
+  const sorting: SortingState = [{ id: sortProperty, desc: !isAscDirection }];
 
-  const handleCloseDrawer = () => {
-    setAllChecked(false);
-    onCloseDrawer && onCloseDrawer("add-user-to-group");
+  const handleSortingChange = (updater: Updater<SortingState>) => {
+    const nextSorting =
+      typeof updater === "function" ? updater(sorting) : updater;
+    if (nextSorting[0]) onSortProperty(nextSorting[0].id);
   };
 
-  const handleSetUsersToAdd = () => {
-    onAddUsers(selectedUsers);
-    const selectedUsersIds = selectedUsers.map(
-      (selectedUser) => selectedUser._id,
-    );
-    setSelectedUsers((users) =>
-      users.filter(
-        (currentUser) => !selectedUsersIds.includes(currentUser._id),
-      ),
-    );
-    handleCloseDrawer();
+  const handleSelectionChange: OnChangeFn<RowSelectionState> = (updater) => {
+    const nextSelection =
+      typeof updater === "function" ? updater(rowSelection) : updater;
+    setRowSelection(nextSelection);
+    setSelectedUsers((currentUsers) => {
+      const nextUsers = new Map(currentUsers);
+      data.forEach((user) => {
+        if (nextSelection[user._id]) nextUsers.set(user._id, user);
+        else nextUsers.delete(user._id);
+      });
+      return nextUsers;
+    });
   };
 
-  const handleAddSelectedUser = (user: User) => {
-    setSelectedUsers((users) => [...users, user]);
-    setUsersSettedState(false);
+  const resetSelection = () => {
+    setRowSelection({});
+    setSelectedUsers(new Map());
   };
 
-  const handleAddSelectedAllUser = useCallback(() => {
-    setSelectedUsers(usersToShowsInList);
-    setUsersSettedState(false);
-  }, [usersToShowsInList]);
-
-  const handleRemoveSelectedAllUser = useCallback(() => {
-    setSelectedUsers([]);
-    setUsersSettedState(true);
-  }, []);
-
-  const handleDeleteSelectedUser = useCallback((user: User) => {
-    setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id),
-    );
-    setUsersSettedState(false);
-  }, []);
-
-  /*
-    Ajoute un utilisateur directement dans la liste sans checklist
-   */
-  const handleAddUserInstantly = (user: User) => {
-    if (userSearchResult.length > 0) {
-      setUserSearchResult([]);
-    }
-    onAddUsers([user]);
-    setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id),
-    );
+  const handleClose = () => {
+    resetSelection();
+    setIsOpen(false);
   };
 
-  const handleSearchUser = (entityToSearch: string, searchValue: string) => {
-    const resultsFromSearch = usersToShowsInList.filter(
-      (user: any) =>
-        user[entityToSearch].toLowerCase() === searchValue.toLowerCase(),
-    );
-
-    setUserSearchResult(resultsFromSearch);
+  const handleAddUsers = () => {
+    onAddUsers([...selectedUsers.values()]);
+    handleClose();
   };
 
-  const handleResetSearchUser = () => {
-    setUserSearchResult([]);
-  };
-
-  useEffect(() => {
-    setUsersToShowInList(
-      dataList.filter((data) => {
-        return !usersToAdd.map((user) => user._id).includes(data._id);
-      }),
-    );
-  }, [dataList, usersToAdd]);
-
-  const renderUserItems = (users: User[]) => {
-    return users.map((user: User) => (
-      <GroupManageUserItem
-        key={user._id}
-        allUserSelected={allChecked}
-        user={user}
-        usersToAdd={usersToAdd}
-        onAddSelectedUser={handleAddSelectedUser}
-        onDeleteSelectedUser={handleDeleteSelectedUser}
-        onAddUserInstantly={handleAddUserInstantly}
-      />
-    ));
-  };
-
-  useEffect(() => {
-    if (allChecked) {
-      handleAddSelectedAllUser();
-    } else {
-      handleRemoveSelectedAllUser();
-    }
-  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
+  const columns = useMemo(() => getAvailableStudentColumns(), []);
 
   return (
-    <RightSideDrawer
-      title="Ajouter des étudiants au groupe"
-      id="add-user-to-group"
-      onCloseDrawer={handleCloseDrawer}
-      visible={drawerOptions?.visible}
-      isOpen={drawerOptions?.isOpen}
-      buttonTitle="Ajouter des étudiants"
-      icon={<UserPlus />}
-      buttonClassname="drawer-button btn btn-primary text-nowrap"
-    >
-      <div className="h-[80vh] w-[35rm]">
-        <div className="flex flex-col gap-y-5 items-center">
-          <Search
-            onResetInput={handleResetSearchUser}
-            placeholder="Rechercher"
-            onSearch={handleSearchUser}
-            options={[
-              { index: 0, option: "Prénom", value: "firstname" },
-              { index: 1, option: "Nom", value: "lastname" },
-              // { index: 2, option: "Formation", value: "group" },
-            ]}
+    <>
+      <button
+        type="button"
+        className="btn btn-primary btn-sm whitespace-nowrap"
+        onClick={() => {
+          onResetPagination();
+          setIsOpen(true);
+        }}
+      >
+        <UserPlus className="h-5 w-5" />
+        Ajouter des étudiants
+      </button>
+
+      <RightSideDrawer
+        title="Ajouter des étudiants au groupe"
+        id="add-user-to-group"
+        visible={false}
+        isOpen={isOpen}
+        onCloseDrawer={handleClose}
+      >
+        <div className="flex min-h-full flex-col gap-5">
+          <SearchBar
+            placeholder="Rechercher par nom, prénom ou email"
+            onSubmitSearchValue={onSubmitSearchValue}
           />
-          <div className="flex flex-col gap-y-4 w-full h-[85%]">
-            {/* TOP */}
-            <UserToAddListHeader
-              setSelectAllUsers={setAllChecked}
-              isAllUsersSelected={allChecked}
-              order={stype}
-              sortData={sortData}
-              filters={[
-                { filterValue: "firstname", placeholder: "Prénom" },
-                { filterValue: "lastname", placeholder: "Nom" },
-                // { filterValue: "group", placeholder: "Formation" },
-              ]}
-              value="test"
-            />
-            {/* MIDDLE */}
-            {dataList.length > 0 ? (
-              <div className="flex flex-col gap-y-5 h-full overflow-y-auto">
-                {userSearchResult.length > 0
-                  ? renderUserItems(userSearchResult)
-                  : renderUserItems(dataList)}
-              </div>
-            ) : (
-              <p className="text-center">
-                Aucun utilisateur éligible à être ajouté
-              </p>
-            )}
-            {/* BOTTOM */}
+
+          <DataTable
+            columns={columns}
+            data={data}
+            isLoading={isLoading}
+            rowSelection={rowSelection}
+            setRowSelection={handleSelectionChange}
+            sorting={sorting}
+            setSorting={handleSortingChange}
+            emptyMessage={
+              searchValue
+                ? "Aucun étudiant ne correspond à la recherche"
+                : "Aucun étudiant disponible"
+            }
+          />
+
+          <TablePagination
+            leftText={`Étudiants disponibles : ${totalItems}`}
+            {...pagination}
+          />
+
+          <div className="mt-auto flex items-center justify-between border-t border-base-300 pt-4">
+            <span className="text-sm text-base-content/70">
+              {selectedUsers.size} étudiant(s) sélectionné(s)
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={handleClose}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={selectedUsers.size === 0}
+                onClick={handleAddUsers}
+              >
+                Ajouter au groupe
+              </button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            perPage={perPage}
-            setPage={handlePageNumber}
-            setPerPages={setPerPage}
-          />
-          <span className="self-end">
-            <AddUsersButton
-              onSetUsersToAdd={handleSetUsersToAdd}
-              setUsersSettedState={setUsersSettedState}
-              isUserSettedUp={isUsersSettedUp}
-            />
-          </span>
-        </div>
-      </div>
-    </RightSideDrawer>
+      </RightSideDrawer>
+    </>
   );
 };
 

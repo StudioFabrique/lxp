@@ -14,6 +14,7 @@ import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
 import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours.ts";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group.ts";
+import httpGetUsersByIds from "../../../controllers/user/http-get-users-by-ids.ts";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank.ts";
 import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role.ts";
 import httpGetUsersStats from "../../../controllers/user/http-get-users-stats.ts";
@@ -110,6 +111,23 @@ userRouter.get(
   checkPermissions("user"),
   getAllByRankValidator,
   httpGetUsersByRank
+);
+
+userRouter.get(
+  "/byIds",
+  checkPermissions("user"),
+  query("ids")
+    .isString()
+    .trim()
+    .custom((value: string) => {
+      const ids = value.split(",").filter(Boolean);
+      return (
+        ids.length > 0 &&
+        ids.length <= 500 &&
+        ids.every((id) => /^[a-f\d]{24}$/i.test(id))
+      );
+    }),
+  httpGetUsersByIds
 );
 
 userRouter.put(

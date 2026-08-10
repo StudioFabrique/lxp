@@ -1,26 +1,47 @@
-import { Link } from "react-router";
-import { useResetPassword } from "../hooks/useResetPassword";
+import { Link, useLocation } from "react-router";
+import {
+  type AccountRecoveryMode,
+  useResetPassword,
+} from "../hooks/useResetPassword";
 import ResetPasswordFormEmail from "../components/ResetPasswordFormEmail";
 
+type RecoveryNavigationState = {
+  email?: string;
+  mode?: AccountRecoveryMode;
+  retryAfterSeconds?: number;
+};
+
 const ResetPasswordHome = () => {
+  const location = useLocation();
+  const navigationState = (location.state ?? {}) as RecoveryNavigationState;
   const {
     email,
     setEmail,
+    mode,
+    changeMode,
     fieldError,
     error,
     isLoading,
-    emailVerified,
+    requestSent,
+    successMessage,
+    retryAfterSeconds,
     handleCheckEmail,
-  } = useResetPassword();
+  } = useResetPassword({
+    initialEmail: navigationState.email,
+    initialMode: navigationState.mode,
+    initialRetryAfterSeconds: navigationState.retryAfterSeconds,
+  });
 
-  if (emailVerified) {
+  const isActivation = mode === "activation";
+
+  if (requestSent) {
     return (
       <div className="flex flex-col gap-6 my-auto w-full text-center">
-        <h2 className="leading-relaxed">
-          Un email de réinitialisation a été envoyé. Veuillez consulter votre
-          boîte de réception pour poursuivre la procédure.
-        </h2>
-        <Link className="btn btn-outline btn-primary w-full" to="/">
+        <h2 className="leading-relaxed">{successMessage}</h2>
+        <p className="text-sm text-base-content/70">
+          Consultez votre boîte de réception pour poursuivre la procédure.
+        </p>
+        <Link className="btn btn-outline btn-primary w-full" to="/login">
           Retour à la connexion
         </Link>
       </div>
@@ -31,12 +52,15 @@ const ResetPasswordHome = () => {
     <form className="flex flex-col flex-1 w-full" onSubmit={handleCheckEmail}>
       <div className="flex flex-col gap-4 my-auto w-full">
         <h1 className="font-bold text-2xl text-base-content mb-2">
-          Réinitialisation du mot de passe
+          {isActivation
+            ? "Activation du compte"
+            : "Réinitialisation du mot de passe"}
         </h1>
 
         <p className="text-sm text-base-content/70 mb-2">
-          Entrez l'adresse email associée à votre compte pour recevoir un lien
-          de récupération.
+          {isActivation
+            ? "Entrez l'adresse email associée à votre compte pour recevoir un nouveau lien d'activation."
+            : "Entrez l'adresse email associée à votre compte pour recevoir un lien de récupération."}
         </p>
 
         <div className="form-control w-full">
@@ -51,7 +75,7 @@ const ResetPasswordHome = () => {
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || retryAfterSeconds > 0}
           className="btn btn-primary w-full text-base-100"
         >
           {isLoading ? (
@@ -59,14 +83,28 @@ const ResetPasswordHome = () => {
               <span className="loading loading-spinner loading-sm"></span>
               Envoi en cours...
             </>
+          ) : retryAfterSeconds > 0 ? (
+            `Nouvel envoi disponible dans ${retryAfterSeconds} s`
+          ) : isActivation ? (
+            "Renvoyer le lien d'activation"
           ) : (
             "Envoyer le lien"
           )}
         </button>
 
+        <button
+          type="button"
+          onClick={() => changeMode(isActivation ? "reset" : "activation")}
+          className="text-sm text-primary hover:underline transition-all"
+        >
+          {isActivation
+            ? "Mot de passe oublié ?"
+            : "Compte non activé ? Renvoyer le lien d'activation"}
+        </button>
+
         <div className="text-center mt-2">
           <Link
-            to="/"
+            to="/login"
             className="text-sm text-base-content hover:underline transition-all"
           >
             Retour à la connexion

@@ -6,7 +6,14 @@ import { AuthContext } from "../../../store/AuthProvider";
 import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
 
 const Login = () => {
-  const { isLoading, error, login } = useContext(AuthContext);
+  const {
+    isLoading,
+    error,
+    login,
+    activationRequired,
+    activationRetryAfterSeconds,
+  } = useContext(AuthContext);
+  const [submittedEmail, setSubmittedEmail] = useState("");
 
   const handleSubmit = (email: string, password: string) => {
     login(email, password);
@@ -27,7 +34,9 @@ const Login = () => {
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      handleSubmit(email.value.trim(), password.value.trim());
+      const normalizedEmail = email.value.trim();
+      setSubmittedEmail(normalizedEmail);
+      handleSubmit(normalizedEmail, password.value.trim());
     }
   };
 
@@ -77,6 +86,20 @@ const Login = () => {
 
         {/* Message d'erreur */}
         {error && <span className="text-sm text-error -mt-2.5">{error}</span>}
+
+        {activationRequired && (
+          <Link
+            to="/reset-password"
+            state={{
+              mode: "activation",
+              email: submittedEmail,
+              retryAfterSeconds: activationRetryAfterSeconds,
+            }}
+            className="btn btn-sm btn-outline w-full"
+          >
+            Renvoyer le lien d'activation
+          </Link>
+        )}
 
         {/* Bouton de soumission */}
         <button

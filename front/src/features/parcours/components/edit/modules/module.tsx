@@ -45,6 +45,7 @@ export default function ModuleComponent() {
     mode,
     moduleToDuplicate,
     moduleToDelete,
+    moduleToUpdate,
     modules,
     parcours,
     refForm,
@@ -86,6 +87,7 @@ export default function ModuleComponent() {
         {/* Module grid display */}
         <ModuleGrid
           modules={modules}
+          selectedModuleId={moduleToUpdate ?? undefined}
           onUpdate={handleUpdateModule}
           onDelete={showDeleteModal}
         />

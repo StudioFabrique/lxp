@@ -124,7 +124,7 @@ const TokenForm = ({ onNext }: Props) => {
               value={ACTIVATION_KEY_COMMAND}
               rows={1}
               aria-label="Commande de génération de la clé d'activation"
-              className="textarea min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none [field-sizing:content]"
+              className="textarea min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none field-sizing-content"
             />
             <button
               type="button"

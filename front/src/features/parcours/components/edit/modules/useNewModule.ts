@@ -34,6 +34,8 @@ const useNewModule = () => {
   const moduleIdParam = searchParams.get("moduleId");
   const requestedModuleId =
     moduleIdParam !== null ? Number(moduleIdParam) : null;
+  const shouldCreateModule = searchParams.get("create") === "true";
+  const handledCreateRef = useRef(false);
   const handledModuleIdRef = useRef<number | null>(null);
   const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
@@ -126,10 +128,10 @@ const useNewModule = () => {
     scrollToTop();
   };
 
-  const handleCreateNewModule = () => {
+  const handleCreateNewModule = useCallback(() => {
     reset(emptyModuleFormValues);
     dispatch({ type: "START_CREATE" });
-  };
+  }, [reset]);
 
   const showDeleteModal = (id: number) => {
     const item = state.modules.find((module) => module.id === id);
@@ -312,6 +314,27 @@ const useNewModule = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void getParcoursModules();
   }, [getParcoursModules]);
+
+  useEffect(() => {
+    if (!shouldCreateModule) {
+      handledCreateRef.current = false;
+      return;
+    }
+
+    if (handledCreateRef.current) return;
+
+    handledCreateRef.current = true;
+    handleCreateNewModule();
+
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete("create");
+    setSearchParams(nextSearchParams, { replace: true });
+  }, [
+    handleCreateNewModule,
+    searchParams,
+    setSearchParams,
+    shouldCreateModule,
+  ]);
 
   useEffect(() => {
     if (

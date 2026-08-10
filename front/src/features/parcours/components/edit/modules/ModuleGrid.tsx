@@ -4,12 +4,14 @@ import ModuleCard from "./ModuleCard";
 
 type ModuleGridProps = {
   modules: ModuleData[];
+  selectedModuleId?: number;
   onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
 };
 
 export default function ModuleGrid({
   modules,
+  selectedModuleId,
   onUpdate,
   onDelete,
 }: ModuleGridProps) {
@@ -25,6 +27,7 @@ export default function ModuleGrid({
           key={module.id}
           onUpdate={onUpdate}
           onDelete={onDelete}
+          selected={module.id === selectedModuleId}
         />
       ))}
     </div>
