@@ -4,6 +4,7 @@ import { FormEvent, useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
+import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type CreateCourseItemProps = {
   parcoursId?: number;
@@ -29,6 +30,7 @@ const CreateCourseItem = ({
   const handleOpenDetails = (event: FormEvent) => {
     event.preventDefault();
     if (!title.trim()) return;
+    emitOnboardingEvent({ type: "course_form_opened" });
     setShowDetailsForm(true);
   };
 
@@ -61,6 +63,7 @@ const CreateCourseItem = ({
         />
       )}
       <motion.div
+        data-onboarding="course-create"
         className={`flex w-full flex-col gap-4 rounded-xl ${
           showTitleInput ? "bg-success" : ""
         }`}

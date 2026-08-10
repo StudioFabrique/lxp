@@ -54,6 +54,7 @@ export default function CreateLessonModal({
     >
       <form
         className="modal-box max-w-xl"
+        data-onboarding="lesson-details"
         onSubmit={async (event) => {
           event.preventDefault();
           if (title.trim() && selectedTagId) {

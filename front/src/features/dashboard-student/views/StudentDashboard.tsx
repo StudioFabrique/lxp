@@ -22,24 +22,29 @@ const StudentDashboard = () => {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <Header
-        title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
-        description="Bienvenue dans votre espace. Commencez votre apprentissage ou
-            reprenez là où vous vous êtes arrêté."
-        classname="capitalize"
-      >
-        <div className="flex gap-4 w-full">
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-            <Search />
-          </button>
-          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-            <Bell />
-          </button>
-        </div>
-      </Header>
+      <div data-onboarding="student-dashboard-header">
+        <Header
+          title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
+          description="Bienvenue dans votre espace. Commencez votre apprentissage ou
+              reprenez là où vous vous êtes arrêté."
+          classname="capitalize"
+        >
+          <div className="flex gap-4 w-full">
+            <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+              <Search />
+            </button>
+            <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+              <Bell />
+            </button>
+          </div>
+        </Header>
+      </div>
 
       <div className="grid gap-16 xl:grid-cols-3">
-        <div className="flex flex-col gap-5 xl:col-span-2">
+        <div
+          className="flex flex-col gap-5 xl:col-span-2"
+          data-onboarding="student-content"
+        >
           {/* <Notifications /> */}
           {lastLessons && lastLessons?.length > 0 ? (
             <>

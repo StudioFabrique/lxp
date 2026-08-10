@@ -35,7 +35,7 @@ const FormationForm = ({
   isEditing, isPending,
   onSubmit, onCancel,
 }: Props) => (
-  <div className="flex flex-col gap-y-4">
+  <div className="flex flex-col gap-y-4" data-onboarding="formation-fields">
     <form className="flex flex-col gap-y-4">
       <span className="flex flex-col gap-y-2">
         <label>Formation *</label>
@@ -113,6 +113,7 @@ const FormationForm = ({
         </button>
       )}
       <button
+        data-onboarding="formation-save"
         className="btn btn-primary"
         disabled={isPending}
         onClick={onSubmit}

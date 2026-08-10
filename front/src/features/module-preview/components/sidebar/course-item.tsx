@@ -29,6 +29,7 @@ import CreateLessonModal from "./create-lesson-modal";
 import type { UpdateCourseFormValues } from "./course-form.types";
 import EditCourseModal from "./edit-course-modal";
 import type { LessonFormValues } from "./lesson-form.types";
+import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type CourseItemProps = {
   course: Course;
@@ -298,10 +299,12 @@ const CourseItem = ({
                 <div className="flex gap-1 items-center">
                   <PermissionGuard action="write" object="course">
                     <button
+                      data-onboarding="lesson-create"
                       className="btn btn-success btn-xs gap-1 tooltip"
                       data-tip="Créer une leçon"
                       onClick={(e) => {
                         e.stopPropagation();
+                        emitOnboardingEvent({ type: "lesson_form_opened" });
                         setIsCreatingLesson(true);
                       }}
                     >

@@ -121,7 +121,10 @@ export default function CreateCourseDetailsModal({
 
   return createPortal(
     <dialog className="modal modal-open z-100">
-      <div className="modal-box flex max-h-[90vh] w-11/12 max-w-3xl flex-col overflow-hidden p-0">
+      <div
+        className="modal-box flex max-h-[90vh] w-11/12 max-w-3xl flex-col overflow-hidden p-0"
+        data-onboarding="course-details"
+      >
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Ajouter un cours</h3>

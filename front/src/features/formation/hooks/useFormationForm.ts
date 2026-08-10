@@ -7,6 +7,7 @@ import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../interfaces/formation-item";
 import { getRandomNumber } from "../../../utils/helpers/get-random-number";
 import type { AxiosError } from "axios";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 const TAG_COLORS = [
   "rgba(255, 0, 0, 0.5)",
@@ -158,6 +159,7 @@ export function useFormationForm() {
     },
     onSuccess: (formation) => {
       toast.success("Formation créée avec succès");
+      emitOnboardingEvent({ type: "formation_created", id: formation.id });
       setCreatedFormation(formation);
       resetForm();
       refetchFormations();

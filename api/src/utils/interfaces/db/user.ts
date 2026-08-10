@@ -8,6 +8,19 @@ import { type IConnectionInfos } from "./connection-infos.ts";
 import { type IStudentFeedback } from "./student-feedback.ts";
 import { type IPromptStats } from "./prompt-stats.ts";
 
+export type OnboardingStatus =
+  | "pending"
+  | "in_progress"
+  | "completed"
+  | "skipped";
+
+export interface IUserOnboarding {
+  status: OnboardingStatus;
+  step: string;
+  version: number;
+  updatedAt?: Date;
+}
+
 export interface IUser extends Document {
   email: string;
   firstname: string;
@@ -36,7 +49,22 @@ export interface IUser extends Document {
   invitationSentAt?: Date;
   promptCount: number;
   promptStats?: IPromptStats["_id"];
+  onboarding: IUserOnboarding;
 }
+
+const onboardingSchema = new Schema<IUserOnboarding>(
+  {
+    status: {
+      type: String,
+      enum: ["pending", "in_progress", "completed", "skipped"],
+      default: "pending",
+    },
+    step: { type: String, default: "" },
+    version: { type: Number, default: 1 },
+    updatedAt: { type: Date, required: false },
+  },
+  { _id: false },
+);
 
 const userSchema: Schema = new Schema(
   {
@@ -62,6 +90,10 @@ const userSchema: Schema = new Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "PromptStats",
       required: false,
+    },
+    onboarding: {
+      type: onboardingSchema,
+      default: () => ({ status: "pending", step: "", version: 1 }),
     },
 
     connectionInfos: {

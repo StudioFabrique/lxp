@@ -30,6 +30,7 @@ import type {
   UpdateCourseFormValues,
 } from "../components/sidebar/course-form.types";
 import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
 
 const useModuleContentExplorer = () => {
@@ -316,6 +317,7 @@ const useModuleContentExplorer = () => {
         }
         await fetchModuleData();
         toast.success("Cours créé");
+        emitOnboardingEvent({ type: "course_created", id: data.course.id });
         return data.course.id;
       } catch {
         toast.error("Impossible de créer le cours");
@@ -362,6 +364,7 @@ const useModuleContentExplorer = () => {
         );
         await fetchModuleData();
         toast.success("Leçon créée");
+        emitOnboardingEvent({ type: "lesson_created", id: response.data.id });
         return response.data.id;
       } catch {
         toast.error("Impossible de créer la leçon");
@@ -461,6 +464,7 @@ const useModuleContentExplorer = () => {
         );
         const activity = res.data as Activity;
         dispatch({ type: "create_activity", activity });
+        emitOnboardingEvent({ type: "activity_created", id: activity.id });
         response = true;
       } else {
         const res = await apiClient.put(

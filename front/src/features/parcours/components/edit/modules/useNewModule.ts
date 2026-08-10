@@ -19,6 +19,7 @@ import Skill from "../../../../../../src/utils/interfaces/skill";
 import { parcoursApi } from "../../../api/parcours.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { parcoursKeys } from "../../../api/parcours.keys";
+import { emitOnboardingEvent } from "../../../../onboarding/onboarding-events";
 
 const emptyModuleFormValues = {
   moduleId: undefined,
@@ -110,6 +111,7 @@ const useNewModule = () => {
 
       try {
         const data = await parcoursApi.mutations.createModule(formData);
+        emitOnboardingEvent({ type: "module_created", id: data.data.id });
         reset();
         dispatch({ type: "MODULE_CREATED", payload: data.data });
         await queryClient.invalidateQueries({

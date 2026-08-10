@@ -11,6 +11,10 @@ import apiClient from "../lib/axios";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
 import { injectAbilityResync, injectLogout } from "../lib/axios";
+import type {
+  OnboardingStatus,
+  UserOnboarding,
+} from "../utils/interfaces/user";
 
 type AuthContextType = {
   user: User | null;
@@ -26,6 +30,10 @@ type AuthContextType = {
   logout: () => Promise<void>;
   handshake: () => Promise<void>;
   fetchRoles: (role: Role) => Promise<void>;
+  updateOnboarding: (
+    status: OnboardingStatus,
+    step?: string,
+  ) => Promise<UserOnboarding>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -42,6 +50,11 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
   handshake: async () => {},
   fetchRoles: async () => {},
+  updateOnboarding: async () => ({
+    status: "pending",
+    step: "",
+    version: 1,
+  }),
 });
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
@@ -132,6 +145,20 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, []);
 
+  const updateOnboarding = useCallback(
+    async (status: OnboardingStatus, step = "") => {
+      const response = await apiClient.patch<UserOnboarding>(
+        "/auth/onboarding",
+        { status, step, version: 1 },
+      );
+      setUser((current) =>
+        current ? { ...current, onboarding: response.data } : current,
+      );
+      return response.data;
+    },
+    [],
+  );
+
   // Déclenche la récupération des rôles quand l'utilisateur est défini
   useEffect(() => {
     injectLogout(() => setUser(null));
@@ -196,6 +223,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         logout,
         handshake,
         fetchRoles,
+        updateOnboarding,
       }}
     >
       {children}

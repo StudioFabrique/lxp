@@ -15,6 +15,7 @@ import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin.
 import rateLimiter from "../../../middleware/rate-limiter.ts";
 import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds.ts";
 import httpPostResendActivation from "../../../controllers/auth/http-post-resend-activation.ts";
+import httpPatchOnboarding from "../../../controllers/auth/http-patch-onboarding.ts";
 
 const authRouter = express.Router();
 
@@ -45,6 +46,21 @@ authRouter.get("/logout", httpLogout);
 authRouter.get("/refresh", refreshTokens);
 authRouter.get("/roles", checkToken, httpGetCurrentRoles);
 authRouter.get("/close", checkToken, httpGetDisconnect);
+authRouter.patch(
+  "/onboarding",
+  checkToken,
+  body("status")
+    .isIn(["pending", "in_progress", "completed", "skipped"])
+    .withMessage("Statut d'onboarding invalide."),
+  body("step")
+    .isString()
+    .isLength({ max: 80 })
+    .withMessage("Étape d'onboarding invalide."),
+  body("version")
+    .isInt({ min: 1 })
+    .withMessage("Version d'onboarding invalide."),
+  httpPatchOnboarding,
+);
 
 // Auth screens backgrounds (public, cached)
 authRouter.get("/backgrounds", httpGetAuthBackgrounds);

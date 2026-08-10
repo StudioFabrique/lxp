@@ -1,4 +1,4 @@
-import { LogOutIcon, Sparkles } from "lucide-react";
+import { CircleHelp, LogOutIcon, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useContext } from "react";
 import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
@@ -6,6 +6,7 @@ import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
 import { AvatarSmall } from "../avatar/AvatarSmall";
 import ThemeToggle from "../buttons/ThemeToggle";
+import { emitOnboardingEvent } from "../../features/onboarding/onboarding-events";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -62,6 +63,18 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {/* Bouton + modal questionnaire */}
       <Questionnaire />
+
+      <li>
+        <button
+          type="button"
+          className="flex gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          onClick={() => emitOnboardingEvent({ type: "restart" })}
+          data-tip="Relancer le tutoriel"
+        >
+          <CircleHelp className="w-4" />
+          <span className="xl:block hidden">Tutoriel</span>
+        </button>
+      </li>
 
       {/* Bouton Deconnection */}
       <li
