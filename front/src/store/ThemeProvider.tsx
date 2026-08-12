@@ -9,51 +9,54 @@ import { themes } from "../config/themes";
 
 type ThemeContextType = {
   theme: "light" | "dark";
-  initTheme: () => void;
   toggleTheme: () => void;
-  chooseTheme: (newTheme: string, mode: string) => void;
+  chooseTheme: (newTheme: string, mode: "light" | "dark") => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: "light",
-  initTheme: () => {},
   toggleTheme: () => {},
   chooseTheme: () => {},
 });
 
+const initializeTheme = (): "light" | "dark" => {
+  const lightTheme = localStorage.getItem("lightTheme");
+  const darkTheme = localStorage.getItem("darkTheme");
+
+  if (lightTheme) themes.light = lightTheme;
+  else localStorage.setItem("lightTheme", themes.light);
+
+  if (darkTheme) themes.dark = darkTheme;
+  else localStorage.setItem("darkTheme", themes.dark);
+
+  const activeTheme = localStorage.getItem("activeTheme");
+  if (activeTheme === "light" || activeTheme === "dark") return activeTheme;
+
+  localStorage.setItem("activeTheme", "light");
+  return "light";
+};
+
 const ThemeProvider = ({ children }: PropsWithChildren) => {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">(initializeTheme);
 
-  const initTheme = useCallback(() => {
-    const lightTheme = localStorage.getItem("lightTheme");
-    const darkTheme = localStorage.getItem("darkTheme");
+  const chooseTheme = useCallback(
+    (newTheme: string, mode: "light" | "dark") => {
+      if (mode === "light") {
+        themes.light = newTheme;
+        localStorage.setItem("lightTheme", newTheme);
+      } else {
+        themes.dark = newTheme;
+        localStorage.setItem("darkTheme", newTheme);
+      }
+      localStorage.setItem("activeTheme", mode);
+      setTheme(mode);
 
-    if (lightTheme) themes.light = lightTheme;
-    else localStorage.setItem("lightTheme", "classic");
-
-    if (darkTheme) themes.dark = darkTheme;
-    else localStorage.setItem("darkTheme", "slate");
-
-    const activeTheme = localStorage.getItem("activeTheme");
-    if (activeTheme) {
-      setTheme(activeTheme as "light" | "dark");
-    } else {
-      setTheme("light");
-      localStorage.setItem("activeTheme", "light");
-    }
-  }, []);
-
-  const chooseTheme = useCallback((newTheme: string, mode: string) => {
-    if (mode === "light") {
-      themes.light = newTheme;
-      localStorage.setItem("lightTheme", newTheme);
-    } else {
-      themes.dark = newTheme;
-      localStorage.setItem("darkTheme", newTheme);
-    }
-    localStorage.setItem("activeTheme", mode);
-    setTheme(mode as "light" | "dark");
-  }, []);
+      // React ne relance pas l'effet si le mode est déjà actif. Le thème
+      // sélectionné doit néanmoins être appliqué immédiatement.
+      document.documentElement.setAttribute("data-theme", newTheme);
+    },
+    [],
+  );
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
@@ -62,10 +65,6 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
       return newTheme;
     });
   }, []);
-
-  useEffect(() => {
-    initTheme();
-  }, [initTheme]);
 
   useEffect(() => {
     document
@@ -77,7 +76,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
   }, [theme]);
 
   return (
-    <ThemeContext value={{ theme, initTheme, toggleTheme, chooseTheme }}>
+    <ThemeContext value={{ theme, toggleTheme, chooseTheme }}>
       {children}
     </ThemeContext>
   );

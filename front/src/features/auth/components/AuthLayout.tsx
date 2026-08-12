@@ -1,6 +1,6 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { useAuthBackground } from "../hooks/useAuthBackground";
@@ -9,11 +9,9 @@ import LoginGuard from "../../../components/guards/LoginGuard";
 import { useNavigate } from "react-router";
 
 const AuthLayout = () => {
-  const { theme, toggleTheme, initTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
-
-  useEffect(() => initTheme(), [initTheme]);
 
   return (
     <div className="relative min-h-screen w-full font-inter bg-base-100 flex py-12">

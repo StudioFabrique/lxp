@@ -34,16 +34,19 @@ const OnboardingWelcome = ({ layout }: Props) => {
       >
         {closeButton}
 
-        <h2
-          id="onboarding-welcome-title"
-          className="mb-2 flex items-center gap-3 text-3xl font-extrabold capitalize text-primary"
-        >
+        <div className="flex items-center gap-3">
           <SidebarRouteIcon />
-          <span>
-            Bienvenue {user?.firstname} {user?.lastname} sur la plateforme
-            ANDRIA
-          </span>
-        </h2>
+          <h2
+            id="onboarding-welcome-title"
+            className="mb-2 flex items-center gap-1.5 text-3xl font-extrabold text-primary"
+          >
+            <span>Bienvenue</span>
+            <span className="capitalize">
+              {user?.firstname} {user?.lastname}
+            </span>
+            <span> sur la plateforme ANDRIA !</span>
+          </h2>
+        </div>
         <p className="max-w-3xl text-base-content opacity-80">
           Découvrez les outils essentiels pour administrer la plateforme et
           créer vos premiers contenus.
@@ -73,10 +76,13 @@ const OnboardingWelcome = ({ layout }: Props) => {
         <div className="min-w-0">
           <h2
             id="onboarding-welcome-title"
-            className="text-xl font-extrabold capitalize"
+            className="mb-2 flex items-center gap-1.5 text-3xl font-extrabold text-primary"
           >
-            Bienvenue {user?.firstname} {user?.lastname} sur la plateforme
-            ANDRIA
+            <span>Bienvenue</span>
+            <span className="capitalize">
+              {user?.firstname} {user?.lastname}
+            </span>
+            <span> sur la plateforme ANDRIA !</span>
           </h2>
           <p className="text-xs text-base-content">
             Découvrez votre espace d’apprentissage et les outils qui vous

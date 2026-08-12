@@ -9,7 +9,10 @@ import { ThemeContext } from "../../../../store/ThemeProvider";
 const ThemeSelectSettings = () => {
   const { chooseTheme } = useContext(ThemeContext);
 
-  const handleThemeChange = (newTheme: string, mode: string) => {
+  const handleThemeChange = (
+    newTheme: string,
+    mode: "light" | "dark",
+  ) => {
     chooseTheme(newTheme, mode);
   };
 

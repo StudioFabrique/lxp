@@ -23,6 +23,7 @@ type ProfileImageFileUploadProps = {
   existingAvatar?: string;
   variant?: "avatar" | "logo";
   previewBackgroundColor?: string;
+  onPreviewAvailabilityChange?: (isAvailable: boolean) => void;
 };
 
 const avatarAllowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
@@ -35,6 +36,7 @@ const ProfileImageFileUpload = ({
   existingAvatar,
   variant = "avatar",
   previewBackgroundColor,
+  onPreviewAvailabilityChange,
   children,
 }: PropsWithChildren<ProfileImageFileUploadProps>) => {
   const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
@@ -107,7 +109,11 @@ const ProfileImageFileUpload = ({
             src={previewUrl}
             alt="Logo de l’organisme"
             className="h-full w-full object-contain"
-            onError={() => setLogoPreviewFailed(true)}
+            onLoad={() => onPreviewAvailabilityChange?.(true)}
+            onError={() => {
+              setLogoPreviewFailed(true);
+              onPreviewAvailabilityChange?.(false);
+            }}
           />
         ) : (
           <span className="px-4 text-center text-sm font-semibold text-base-content/70">

@@ -45,7 +45,7 @@ export const uploadCompanyLogo = () => {
       },
     }).single("image");
 
-    upload(req, res, function (err) {
+    upload(req, res, async function (err) {
       // 1. Handle Multer Errors
       if (err instanceof multer.MulterError) {
         return res.status(400).json({
@@ -57,28 +57,33 @@ export const uploadCompanyLogo = () => {
         });
       }
 
-      // 2. Handle Missing File
-      if (!req.file) {
+      const colorData = req.body.color;
+      const hasValidColor =
+        typeof colorData === "string" && /^#[0-9a-f]{6}$/i.test(colorData);
+
+      if (colorData !== undefined && !hasValidColor) {
         return res.status(400).json({
-          message: "Aucun fichier n'a été téléversé.",
+          message: "La couleur de fond est invalide.",
         });
       }
 
-      // 3. NEW LOGIC: Write the Color to a Text File
-      // Multer populates req.body with text fields after processing the file
-      const colorData = req.body.color;
+      if (!req.file && !hasValidColor) {
+        return res.status(400).json({
+          message: "Aucun logo ou couleur n'a été envoyé.",
+        });
+      }
 
-      if (colorData) {
+      if (hasValidColor) {
         const colorFilePath = path.join(destinationPath, "company-color.txt");
 
-        // Write the color string to the file (overwrites if exists)
-        fs.writeFile(colorFilePath, colorData, (writeErr) => {
-          if (writeErr) {
-            console.error("Error writing color file:", writeErr);
-            // Optionally decide if you want to fail the request here,
-            // usually better to log it and proceed if the image saved fine.
-          }
-        });
+        try {
+          await fs.promises.writeFile(colorFilePath, colorData, "utf8");
+        } catch (writeError) {
+          console.error("Error writing color file:", writeError);
+          return res.status(500).json({
+            message: "La couleur de fond n'a pas pu être sauvegardée.",
+          });
+        }
       }
 
       next();

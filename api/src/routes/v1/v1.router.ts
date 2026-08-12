@@ -29,6 +29,7 @@ import evaluationRouter from "./evaluation/evaluation.router.ts";
 import mediaRouter from "./mediatheque/mediatheque.router.ts";
 import { uploadCompanyLogo } from "../../middleware/upload-company-image.ts";
 import httpPostCompanyLogo from "../../controllers/http-post-company-logo.ts";
+import httpDeleteCompanyLogo from "../../controllers/http-delete-company-logo.ts";
 import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
@@ -71,6 +72,12 @@ v1Router.post(
   checkPermissions("formation"),
   uploadCompanyLogo(),
   httpPostCompanyLogo,
+);
+
+v1Router.delete(
+  "/company-logo",
+  checkPermissions("formation"),
+  httpDeleteCompanyLogo,
 );
 
 v1Router.use("/chatbot", chatbotRouter);
