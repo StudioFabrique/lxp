@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { Link } from "react-router";
-import Header from "../../../components/headers/Header";
+import PageHeader from "../../../components/headers/PageHeader";
 import useImportCourses, {
   CoursesImportStep,
 } from "../hooks/useImportCourses";
@@ -7,6 +8,7 @@ import ParcoursSelection from "../components/import/parcours-selection";
 import ImportResult from "../components/import/import-result";
 import CoursesPreview from "../components/import/courses-preview/courses-preview";
 import MbzImport from "../components/import/mbz-import";
+import { getCourseImportTourSteps } from "../components/import/course-import-tour-steps";
 
 const ImportCoursesHome = () => {
   const {
@@ -43,6 +45,24 @@ const ImportCoursesHome = () => {
     onRetryImport,
     onGoBack,
   } = useImportCourses();
+
+  const tourSteps = useMemo(
+    () =>
+      getCourseImportTourSteps({
+        step,
+        hasSelectedFormation: Boolean(selectedFormation),
+        hasSelectedParcours: Boolean(selectedParcours),
+        isComplete: isImportComplete,
+        hasCriticalError: Boolean(criticalImportError),
+      }),
+    [
+      criticalImportError,
+      isImportComplete,
+      selectedFormation,
+      selectedParcours,
+      step,
+    ],
+  );
 
   const renderBody = () => {
     switch (step) {
@@ -110,17 +130,18 @@ const ImportCoursesHome = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Header
+      <PageHeader
         title="Import de cours"
         description="Importer des cours ainsi que toutes les leçons et activités associées."
+        tourSteps={tourSteps}
       >
         {step !== CoursesImportStep.ImportResult && (
           <Link to={".."} className="btn btn-outline">
             Annuler
           </Link>
         )}
-      </Header>
-      {renderBody()}
+      </PageHeader>
+      <div data-course-import-tour="stage">{renderBody()}</div>
     </div>
   );
 };

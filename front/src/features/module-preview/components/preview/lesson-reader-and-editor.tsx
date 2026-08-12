@@ -165,6 +165,7 @@ const LessonReaderAndEditor = ({
           ) : activityType === "iframe" ? (
             /* Si "iframe", afficher l'éditeur iframe */
             <IframeActivity
+              key={selectedActivity?.id ?? "new-iframe"}
               mode={mode}
               src={iframeActivitySrc}
               onChangeSrc={onEditIframeSrc}

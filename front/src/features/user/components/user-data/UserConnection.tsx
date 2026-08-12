@@ -76,7 +76,7 @@ export default function UserConnection({
                 <div className="flex flex-col gap-y-1 mt-4">
                   {completionModules && completionModules.length > 0 ? (
                     <>
-                      <div className="h-[9rem] overflow-auto">
+                      <div className="h-9rem overflow-auto">
                         <StatsProgression
                           completionModules={completionModules}
                           parcoursCompletion={parcoursCompletion}

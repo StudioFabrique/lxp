@@ -58,7 +58,10 @@ const ParcoursSelection = ({
   };
 
   return (
-    <div className="flex flex-col gap-4 ml-5 animate-in fade-in duration-500">
+    <div
+      className="flex flex-col gap-4 ml-5 animate-in fade-in duration-500"
+      data-course-import-tour="assignment"
+    >
       <Header
         title="Première étape"
         description="Téléverser un dossier compressé de format .zip"
@@ -90,7 +93,10 @@ const ParcoursSelection = ({
       </Header>
 
       <div className="ml-10 flex flex-col gap-6 pb-10">
-        <div className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300">
+        <div
+          className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300"
+          data-course-import-tour="formation"
+        >
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
           </h3>
@@ -117,7 +123,10 @@ const ParcoursSelection = ({
         </div>
 
         {selectedFormation && (
-          <div className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300">
+          <div
+            className="flex flex-col bg-base-200 p-4 rounded-lg gap-4 animate-in slide-in-from-top-4 duration-300"
+            data-course-import-tour="parcours"
+          >
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un parcours pour :
               <span className="text-primary underline decoration-dotted capitalize">
@@ -150,7 +159,10 @@ const ParcoursSelection = ({
         )}
 
         {selectedParcours && (
-          <div className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg animate-in slide-in-from-top-4 duration-300">
+          <div
+            className="flex flex-col gap-4 bg-base-200 p-4 rounded-lg animate-in slide-in-from-top-4 duration-300"
+            data-course-import-tour="module"
+          >
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
               Choisir un module pour :
               <Link
@@ -197,22 +209,27 @@ const ParcoursSelection = ({
           </div>
         )}
       </div>
-      <FloatingBottomNavigation
-        startActions={
-          <button className="btn btn-ghost hover:underline" onClick={onGoBack}>
-            <Undo2 size={18} /> Retour
-          </button>
-        }
-        endActions={
-          <button
-            className="btn btn-success gap-2"
-            disabled={!canConfirm}
-            onClick={() => onConfirm(selectedParcours)}
-          >
-            Lancer l'importation <ArrowRight size={18} />
-          </button>
-        }
-      />
+      <div data-course-import-tour="assignment-actions">
+        <FloatingBottomNavigation
+          startActions={
+            <button
+              className="btn btn-ghost hover:underline"
+              onClick={onGoBack}
+            >
+              <Undo2 size={18} /> Retour
+            </button>
+          }
+          endActions={
+            <button
+              className="btn btn-success gap-2"
+              disabled={!canConfirm}
+              onClick={() => onConfirm(selectedParcours)}
+            >
+              Lancer l'importation <ArrowRight size={18} />
+            </button>
+          }
+        />
+      </div>
     </div>
   );
 };

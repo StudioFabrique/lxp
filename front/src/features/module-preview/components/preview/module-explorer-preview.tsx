@@ -8,6 +8,7 @@ import NoActivityPlaceholder from "./no-activity-placeholder";
 import StudentActivityNavigation from "./student-activity-navigation";
 import { ExplorerStore } from "../../views/ModuleContentExplorer";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
+import { useCallback } from "react";
 
 const ModuleExplorerPreview = ({
   store,
@@ -40,12 +41,19 @@ const ModuleExplorerPreview = ({
     mode,
   } = state;
 
-  const editTitle = (title: string) =>
-    dispatch({ type: "update_activity_title", title });
-  const editIframeSrc = (src: string) =>
-    dispatch({ type: "update_activity_iframe_src", src });
-  const editContent = (content: string) =>
-    dispatch({ type: "update_activity_content", content });
+  const editTitle = useCallback(
+    (title: string) => dispatch({ type: "update_activity_title", title }),
+    [dispatch],
+  );
+  const editIframeSrc = useCallback(
+    (src: string) => dispatch({ type: "update_activity_iframe_src", src }),
+    [dispatch],
+  );
+  const editContent = useCallback(
+    (content: string) =>
+      dispatch({ type: "update_activity_content", content }),
+    [dispatch],
+  );
 
   const quizButton =
     computed.isLastActivitySelected &&

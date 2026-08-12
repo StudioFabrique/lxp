@@ -23,6 +23,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
+import { tagsPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const TagsHome = () => {
   const navigate = useNavigate();
@@ -151,6 +152,7 @@ const TagsHome = () => {
       <PageHeader
         title="Liste des tags"
         description="Créer, modifier et supprimer des tags"
+        tourSteps={tagsPageTourSteps}
       >
         <PermissionGuard object="tag" action="write">
           <Link className="btn btn-primary btn-soft" to="?openModal=true">
@@ -161,42 +163,46 @@ const TagsHome = () => {
       </PageHeader>
 
       <Wrapper additionalClassname="px-10 items-center">
-        <SearchBar
-          title="Tags"
-          placeholder="Rechercher un tag"
-          onSubmitSearchValue={onSubmitSearchValue}
-        >
-          <TableActionsButtons<TagRow>
-            isLoading={isLoading || isDeleting}
-            isDisabled={idsList.length === 0}
-            onRefreshData={onRefreshData}
-            actions={[
-              {
-                title: "Supprimer les tags sélectionnés",
-                description: `${idsList.length} tag(s) vont être supprimé(s)`,
-                rightButtonTitle: "Supprimer",
-                onConfirm: () => onDeleteSelected(idsList),
-              },
-            ]}
-            retreiveItemsProperty="name"
-            onRetreiveItemsValuesByPropertyFromIdList={onRetreiveItemsValues}
+        <div className="w-full" data-page-tour="filters">
+          <SearchBar
+            title="Tags"
+            placeholder="Rechercher un tag"
+            onSubmitSearchValue={onSubmitSearchValue}
+          >
+            <TableActionsButtons<TagRow>
+              isLoading={isLoading || isDeleting}
+              isDisabled={idsList.length === 0}
+              onRefreshData={onRefreshData}
+              actions={[
+                {
+                  title: "Supprimer les tags sélectionnés",
+                  description: `${idsList.length} tag(s) vont être supprimé(s)`,
+                  rightButtonTitle: "Supprimer",
+                  onConfirm: () => onDeleteSelected(idsList),
+                },
+              ]}
+              retreiveItemsProperty="name"
+              onRetreiveItemsValuesByPropertyFromIdList={onRetreiveItemsValues}
+            />
+          </SearchBar>
+        </div>
+
+        <div className="w-full" data-page-tour="table">
+          <DataTable
+            columns={columns}
+            data={data}
+            isLoading={isLoading}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            sorting={sorting}
+            setSorting={handleSortingChange}
+            emptyMessage={
+              searchValue ? "Aucun tag trouvé" : "Aucun tag disponible"
+            }
           />
-        </SearchBar>
+        </div>
 
-        <DataTable
-          columns={columns}
-          data={data}
-          isLoading={isLoading}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          sorting={sorting}
-          setSorting={handleSortingChange}
-          emptyMessage={
-            searchValue ? "Aucun tag trouvé" : "Aucun tag disponible"
-          }
-        />
-
-        <div className="w-full mt-5">
+        <div className="w-full mt-5" data-page-tour="pagination">
           <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
         </div>
       </Wrapper>

@@ -21,6 +21,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
+import { groupsPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const GroupList = () => {
   const { state } = useLocation();
@@ -94,6 +95,7 @@ const GroupList = () => {
       <PageHeader
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
+        tourSteps={groupsPageTourSteps}
       >
         <PermissionGuard object="group" action="write">
           <Link className="btn btn-primary btn-soft" to="/admin/group/add">
@@ -104,44 +106,48 @@ const GroupList = () => {
       </PageHeader>
 
       <Wrapper additionalClassname="px-10 items-center">
-        <SearchBar
-          title="Groupes"
-          placeholder="Rechercher un groupe"
-          onSubmitSearchValue={onSubmitSearchValue}
-        >
-          <TableActionsButtons
-            isLoading={isLoading || isDeleting}
-            isDisabled={idsList.length === 0}
-            onRefreshData={onRefreshData}
-            actions={[
-              {
-                title: "Supprimer les groupes sélectionnés",
-                description: `${idsList.length} groupe(s) vont être supprimé(s)`,
-                rightButtonTitle: "Supprimer",
-                onConfirm: () => onDeleteSelected(idsList),
-              },
-            ]}
-            retreiveItemsProperty="name"
-            onRetreiveItemsValuesByPropertyFromIdList={
-              onRetreiveItemsValues
+        <div className="w-full" data-page-tour="filters">
+          <SearchBar
+            title="Groupes"
+            placeholder="Rechercher un groupe"
+            onSubmitSearchValue={onSubmitSearchValue}
+          >
+            <TableActionsButtons
+              isLoading={isLoading || isDeleting}
+              isDisabled={idsList.length === 0}
+              onRefreshData={onRefreshData}
+              actions={[
+                {
+                  title: "Supprimer les groupes sélectionnés",
+                  description: `${idsList.length} groupe(s) vont être supprimé(s)`,
+                  rightButtonTitle: "Supprimer",
+                  onConfirm: () => onDeleteSelected(idsList),
+                },
+              ]}
+              retreiveItemsProperty="name"
+              onRetreiveItemsValuesByPropertyFromIdList={
+                onRetreiveItemsValues
+              }
+            />
+          </SearchBar>
+        </div>
+
+        <div className="w-full" data-page-tour="table">
+          <DataTable
+            columns={columns}
+            data={data}
+            isLoading={isLoading}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            sorting={sorting}
+            setSorting={handleSortingChange}
+            emptyMessage={
+              searchValue ? "Aucun groupe trouvé" : "Aucun groupe disponible"
             }
           />
-        </SearchBar>
+        </div>
 
-        <DataTable
-          columns={columns}
-          data={data}
-          isLoading={isLoading}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          sorting={sorting}
-          setSorting={handleSortingChange}
-          emptyMessage={
-            searchValue ? "Aucun groupe trouvé" : "Aucun groupe disponible"
-          }
-        />
-
-        <div className="w-full mt-5">
+        <div className="w-full mt-5" data-page-tour="pagination">
           <TablePagination
             leftText={`Groupes : ${totalItems}`}
             {...pagination}

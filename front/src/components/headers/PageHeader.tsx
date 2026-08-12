@@ -1,6 +1,9 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo, useState, type MouseEvent } from "react";
+import { CircleHelp } from "lucide-react";
+import { EVENTS, Joyride, type Step } from "react-joyride";
 import { cn } from "../../utils/cn";
 import SidebarRouteIcon from "./SidebarRouteIcon";
+import PageTourTooltip from "./PageTourTooltip";
 
 interface Props {
   title: string;
@@ -12,12 +15,40 @@ interface Props {
   hasError?: boolean;
   classname?: string;
   onClick?: () => void;
+  tourSteps?: Step[];
 }
 
 const PageHeader = (props: PropsWithChildren<Props>) => {
+  const [isTourRunning, setIsTourRunning] = useState(false);
+  const [tourKey, setTourKey] = useState(0);
+  const steps = useMemo<Step[]>(
+    () =>
+      props.tourSteps?.length
+        ? props.tourSteps
+        : [
+            {
+              id: "page-overview",
+              target: '[data-page-tour="header"]',
+              title: props.title,
+              content:
+                props.description ??
+                "Découvrez les principales fonctionnalités disponibles sur cette page.",
+              placement: "bottom",
+            },
+          ],
+    [props.description, props.title, props.tourSteps],
+  );
+
+  const startTour = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setTourKey((current) => current + 1);
+    setIsTourRunning(true);
+  };
+
   return (
     <div
       onClick={props.onClick}
+      data-page-tour="header"
       className={cn(
         // Classes de base
         "w-full flex px-4 items-center justify-between rounded-lg select-none mb-6",
@@ -59,7 +90,60 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
           </p>
         </div>
       </div>
-      <div className="flex justify-end items-center">{props.children}</div>
+      <div
+        className="flex items-center justify-end gap-2"
+        data-page-tour="header-actions"
+      >
+        {props.children}
+        <button
+          type="button"
+          className="btn btn-circle btn-ghost btn-sm tooltip tooltip-left text-primary"
+          onClick={startTour}
+          data-tip="Découvrir cette page"
+          aria-label={`Lancer le tutoriel : ${props.title}`}
+        >
+          <CircleHelp className="h-5 w-5" />
+        </button>
+      </div>
+
+      <Joyride
+        key={tourKey}
+        run={isTourRunning}
+        steps={steps}
+        continuous
+        scrollToFirstStep
+        tooltipComponent={PageTourTooltip}
+        onEvent={({ type }) => {
+          if (type === EVENTS.TOUR_END) setIsTourRunning(false);
+        }}
+        floatingOptions={{
+          strategy: "fixed",
+          shiftOptions: { mainAxis: true, crossAxis: true, padding: 16 },
+          flipOptions: { padding: 16 },
+        }}
+        options={{
+          buttons: ["back", "primary", "skip"],
+          closeButtonAction: "skip",
+          dismissKeyAction: false,
+          overlayClickAction: false,
+          overlayColor: "rgba(2, 6, 23, 0.72)",
+          primaryColor: "var(--color-primary)",
+          backgroundColor: "var(--color-base-100)",
+          textColor: "var(--color-base-content)",
+          arrowColor: "var(--color-base-100)",
+          showProgress: true,
+          skipBeacon: true,
+          spotlightRadius: 10,
+          targetWaitTimeout: 5_000,
+          zIndex: 2100,
+        }}
+        locale={{
+          back: "Précédent",
+          last: "Terminer",
+          next: "Suivant",
+          skip: "Quitter le tutoriel",
+        }}
+      />
     </div>
   );
 };

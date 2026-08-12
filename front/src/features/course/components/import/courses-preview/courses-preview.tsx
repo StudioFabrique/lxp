@@ -91,14 +91,15 @@ const CoursesPreview = ({
         disabled
         isSubHeader
       />
-      <Header
-        title="Seconde étape"
-        isSubHeader
-        description={headerDescription}
-        alternateBgColor
-        hasError={Boolean(error)}
-      >
-        <div className="flex items-center gap-3">
+      <div data-course-import-tour="preview-actions">
+        <Header
+          title="Seconde étape"
+          isSubHeader
+          description={headerDescription}
+          alternateBgColor
+          hasError={Boolean(error)}
+        >
+          <div className="flex items-center gap-3">
           <FileUpload
             compact
             preserveButtonLabel
@@ -123,12 +124,16 @@ const CoursesPreview = ({
               tooltipPosition="left"
             />
           )}
-        </div>
-      </Header>
+          </div>
+        </Header>
+      </div>
 
       {importedCourses && importedCourses.length > 0 && (
         <div className="ml-5 flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            data-course-import-tour="course-selection"
+          >
             {importedCourses.map((course, idx) => {
               const isSelected = selectedCourse?.id === course.id;
               const subtitle = `${course.lessons.filter((l) => l.isSelected).length} / ${course.lessons.length} leçons`;
@@ -160,7 +165,10 @@ const CoursesPreview = ({
 
           {selectedCourse && (
             <div className="grid grid-cols-12 gap-6 h-150 bg-base-300 rounded-xl border border-base-200 p-4 mt-2">
-              <div className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar">
+              <div
+                className="select-none col-span-4 overflow-y-auto border-r border-secondary/20 pr-4 custom-scrollbar"
+                data-course-import-tour="course-tree"
+              >
                 <div className="mb-3">
                   <div className="flex items-center gap-2 min-h-8">
                     <h3 className="text-sm capitalize tracking-wide text-primary font-bold whitespace-nowrap">
@@ -219,7 +227,10 @@ const CoursesPreview = ({
                 />
               </div>
 
-              <div className="col-span-8 overflow-y-auto custom-scrollbar bg-base-100 rounded-lg shadow-sm border border-base-200 h-full">
+              <div
+                className="col-span-8 overflow-y-auto custom-scrollbar bg-base-100 rounded-lg shadow-sm border border-base-200 h-full"
+                data-course-import-tour="activity-preview"
+              >
                 <PreviewActivitiesFromImport activity={selectedActivity} />
               </div>
             </div>

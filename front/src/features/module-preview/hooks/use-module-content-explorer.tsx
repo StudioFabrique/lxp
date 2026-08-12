@@ -531,20 +531,20 @@ const useModuleContentExplorer = () => {
     const title =
       state.mode === "write"
         ? state.newActivityTitle?.trim()
-        : state.selectedActivity?.title;
+        : state.selectedActivity?.title?.trim();
+    const activityType =
+      state.mode === "write" ? state.activityType : state.selectedActivity?.type;
 
-    if (!title || !(title?.length > 0) || !content) {
+    if (!title) {
       const error = "Le titre est obligatoire";
       toast.error(error);
       dispatch({ type: "set_activity_title_error", error });
       return false;
     }
 
-    switch (
-      state.mode === "write" ? state.activityType : state.selectedActivity?.type
-    ) {
+    switch (activityType) {
       case "text":
-        return await saveTextActivity(title, content);
+        return await saveTextActivity(title, content ?? "");
       case "iframe":
         return await saveIframeActivity(title);
       default:

@@ -8,6 +8,7 @@ import RoleForm from "../components/role-form/RoleForm";
 import PageHeader from "../../../components/headers/PageHeader";
 import Loader from "../../../../src/components/loaders/Loader";
 import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { roleEditPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const toTitleCase = (str: string) =>
   str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
@@ -33,13 +34,16 @@ const RoleEdit = () => {
       <PageHeader
         title={`Modification du rôle ${toTitleCase(role.label)}`}
         description="Modifiez les détails du rôle ci-dessous"
+        tourSteps={roleEditPageTourSteps}
       >
         <Link to="/admin/roles" className="btn btn-outline">
           Retour
         </Link>
       </PageHeader>
 
-      <RoleForm role={role} />
+      <div data-page-tour="role-details">
+        <RoleForm role={role} />
+      </div>
 
       <div className="h-2" />
 
@@ -48,7 +52,10 @@ const RoleEdit = () => {
         <span className="capitalize font-bold"> {role.label} </span>
       </h3>
 
-      <div className="grid xl:grid-cols-2 gap-10">
+      <div
+        className="grid xl:grid-cols-2 gap-10"
+        data-page-tour="permissions"
+      >
         <PermissionsPanel
           drawerId="drawer-1"
           zIndex={40}
@@ -98,7 +105,10 @@ const RoleEdit = () => {
         />
       </div>
 
-      <span className="flex justify-between w-full">
+      <span
+        className="flex justify-between w-full"
+        data-page-tour="validation"
+      >
         <div className="flex gap-2 items-center">
           {role.protection >= 1 && (
             <>

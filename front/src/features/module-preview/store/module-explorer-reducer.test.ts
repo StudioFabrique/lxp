@@ -84,4 +84,40 @@ describe("moduleExplorerContentReducer", () => {
     expect(state.selectedLesson?.id).toBe(3);
     expect(state.mode).toBe("read");
   });
+
+  it("ignore une URL iframe inchangée en mode édition", () => {
+    const activity = {
+      id: 10,
+      type: "iframe" as const,
+      url: "https://example.com/embed",
+    };
+    const initialState = {
+      ...initialModuleExplorerContentState,
+      mode: "edit" as const,
+      selectedActivity: activity,
+    };
+
+    const state = moduleExplorerContentReducer(initialState, {
+      type: "update_activity_iframe_src",
+      src: activity.url,
+    });
+
+    expect(state).toBe(initialState);
+  });
+
+  it("ignore une URL iframe inchangée en mode création", () => {
+    const initialState = {
+      ...initialModuleExplorerContentState,
+      mode: "write" as const,
+      activityType: "iframe" as const,
+      newActivitySrc: "https://example.com/embed",
+    };
+
+    const state = moduleExplorerContentReducer(initialState, {
+      type: "update_activity_iframe_src",
+      src: initialState.newActivitySrc,
+    });
+
+    expect(state).toBe(initialState);
+  });
 });
