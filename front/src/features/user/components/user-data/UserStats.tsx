@@ -1,4 +1,4 @@
-import type UsersStats from "../interfaces/users-stats";
+import type UsersStats from "../../interfaces/users-stats";
 
 const UserStats = ({ stats }: { stats: UsersStats[] | null }) => {
   if (!stats) return null;

@@ -1,4 +1,5 @@
 import {
+  type PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
@@ -18,8 +19,8 @@ import type {
 import OnboardingTooltip, {
   type OnboardingTooltipData,
 } from "./OnboardingTooltip";
-import OnboardingWelcome from "./OnboardingWelcome";
 import OnboardingStopConfirmation from "./OnboardingStopConfirmation";
+import { OnboardingContext } from "./OnboardingContext";
 import {
   subscribeToOnboardingEvents,
   type OnboardingEventDetail,
@@ -465,10 +466,11 @@ const studentStages: Record<string, Omit<StageDefinition, "total">> = {
 const OnboardingTourContent = ({
   layout,
   initialOnboarding,
-}: {
+  children,
+}: PropsWithChildren<{
   layout: Layout;
   initialOnboarding: UserOnboarding;
-}) => {
+}>) => {
   const { updateOnboarding } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -832,19 +834,13 @@ const OnboardingTourContent = ({
     validateCurrentStage,
   ]);
 
-  const showWelcome = status === "pending";
   const run = status === "in_progress" && step.length > 0;
 
   return (
-    <>
-      {showWelcome && (
-        <OnboardingWelcome
-          layout={layout}
-          isSaving={isSaving}
-          onStart={() => void start()}
-          onSkip={() => void stop()}
-        />
-      )}
+    <OnboardingContext
+      value={{ status, isSaving, start, skip: stop }}
+    >
+      {children}
       {run && (
         <Joyride
           key={stepToken}
@@ -891,13 +887,16 @@ const OnboardingTourContent = ({
           onConfirm={() => void stop()}
         />
       )}
-    </>
+    </OnboardingContext>
   );
 };
 
-const OnboardingTour = ({ layout }: { layout: Layout }) => {
+const OnboardingTour = ({
+  layout,
+  children,
+}: PropsWithChildren<{ layout: Layout }>) => {
   const { user } = useContext(AuthContext);
-  if (!user) return null;
+  if (!user) return children;
 
   return (
     <OnboardingTourContent
@@ -910,7 +909,9 @@ const OnboardingTour = ({ layout }: { layout: Layout }) => {
           version: 1,
         }
       }
-    />
+    >
+      {children}
+    </OnboardingTourContent>
   );
 };
 

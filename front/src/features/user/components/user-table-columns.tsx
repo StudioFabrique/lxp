@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { MailCheck, Pencil, RotateCw, Send, Trash2 } from "lucide-react";
+import { Eye, MailCheck, Pencil, RotateCw, Send, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -105,6 +105,7 @@ export const getUsersColumns = (
       const user = row.original;
       const userId = user._id;
       if (!userId) return null;
+
       return (
         <div className="flex gap-2 justify-center items-center">
           {user.isActive ? (
@@ -151,6 +152,31 @@ export const getUsersColumns = (
             </button>
           </PermissionGuard>
         </div>
+      );
+    },
+    enableSorting: false,
+  },
+  {
+    id: "student-data",
+    header: "Statistiques",
+    cell: ({ row }) => {
+      const user = row.original;
+      const userId = user._id;
+      if (!userId) return null;
+      const isStudent = user.roles.some((role) => role.role === "student");
+
+      return (
+        isStudent && (
+          <div className="flex justify-center gap-2">
+            <Link
+              to={`/admin/user/data/${userId}`}
+              className="btn btn-ghost btn-xs btn-square tooltip"
+              data-tip="Consulter"
+            >
+              <Eye className="w-4 h-4" />
+            </Link>
+          </div>
+        )
       );
     },
     enableSorting: false,

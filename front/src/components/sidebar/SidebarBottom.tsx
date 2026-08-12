@@ -66,12 +66,12 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       <li className="w-full">
         <button
           type="button"
-          className="flex w-full gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
           onClick={() => emitOnboardingEvent({ type: "restart" })}
           data-tip="Relancer le tutoriel"
         >
           <CircleHelp className="w-4" />
-          <span className="xl:block hidden">Tutoriel</span>
+          <span className="xl:block hidden">Tutoriel guidée</span>
         </button>
       </li>
 

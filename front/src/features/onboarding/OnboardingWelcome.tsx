@@ -1,79 +1,106 @@
+import { useContext } from "react";
 import { X } from "lucide-react";
+
+import SidebarRouteIcon from "../../components/headers/SidebarRouteIcon";
+import { AuthContext } from "../../store/AuthProvider";
+import { useOnboarding } from "./OnboardingContext";
 
 type Props = {
   layout: "admin" | "student";
-  isSaving: boolean;
-  onStart: () => void;
-  onSkip: () => void;
 };
 
-const OnboardingWelcome = ({ layout, isSaving, onStart, onSkip }: Props) => {
-  const isAdmin = layout === "admin";
+const OnboardingWelcome = ({ layout }: Props) => {
+  const { user } = useContext(AuthContext);
+  const { isSaving, start, skip } = useOnboarding();
+
+  const closeButton = (
+    <button
+      type="button"
+      className="btn btn-circle btn-ghost btn-xs tooltip tooltip-left absolute right-2 top-2 z-10 text-base-content/50 hover:text-base-content"
+      onClick={() => void skip()}
+      disabled={isSaving}
+      data-tip="Passer le tutoriel"
+      aria-label="Passer le tutoriel"
+    >
+      <X size={17} />
+    </button>
+  );
+
+  if (layout === "admin") {
+    return (
+      <section
+        className="relative w-full rounded-lg border border-base-300 bg-base-200 p-6 pr-12 shadow-sm"
+        aria-labelledby="onboarding-welcome-title"
+      >
+        {closeButton}
+
+        <h2
+          id="onboarding-welcome-title"
+          className="mb-2 flex items-center gap-3 text-3xl font-extrabold capitalize text-primary"
+        >
+          <SidebarRouteIcon />
+          <span>
+            Bienvenue {user?.firstname} {user?.lastname} sur la plateforme
+            ANDRIA
+          </span>
+        </h2>
+        <p className="max-w-3xl text-base-content opacity-80">
+          Découvrez les outils essentiels pour administrer la plateforme et
+          créer vos premiers contenus.
+        </p>
+        <button
+          type="button"
+          className="btn btn-primary mt-4"
+          onClick={() => void start()}
+          disabled={isSaving}
+        >
+          {isSaving && (
+            <span className="loading loading-spinner loading-sm" />
+          )}
+          Commencer le tutoriel
+        </button>
+      </section>
+    );
+  }
 
   return (
-    <dialog
-      className="modal modal-open z-2100"
+    <section
+      className="relative flex w-full select-none items-center justify-between rounded-lg bg-secondary/20 px-4 py-4 pr-10"
       aria-labelledby="onboarding-welcome-title"
     >
-      <div className="modal-box max-w-2xl overflow-hidden p-0">
-        <div className="bg-secondary px-7 py-8 text-primary-content">
-          <div className="mb-5 flex items-start justify-between gap-5">
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm btn-circle text-primary-content"
-              onClick={onSkip}
-              disabled={isSaving}
-              aria-label="Ignorer le tutoriel"
-            >
-              <X />
-            </button>
-          </div>
-          <div className="mb-2 flex flex-col items-center gap-2">
-            <p className="text-2xl font-semibold tracking-wide opacity-80">
-              Bienvenue sur Andria
-            </p>
-            <h2 id="onboarding-welcome-title" className="text-xl font-bold">
-              {isAdmin
-                ? "Créons votre premier contenu ensemble"
-                : "Découvrez votre espace d’apprentissage"}
-            </h2>
-          </div>
-        </div>
+      {closeButton}
 
-        <div className="space-y-5 px-7 py-6">
-          <p className="text-base-content/75">
-            {isAdmin
-              ? "Ce guide vous accompagne de la création d’une formation jusqu’à votre première activité avec l’éditeur de texte. Vous saisissez vos propres informations : le tutoriel se contente de vous guider."
-              : "Ce rapide tutoriel vous montre où retrouver vos parcours, reprendre une activité et suivre votre progression."}
+      <div className="flex min-w-0 items-center gap-3">
+        <SidebarRouteIcon />
+        <div className="min-w-0">
+          <h2
+            id="onboarding-welcome-title"
+            className="text-xl font-extrabold capitalize"
+          >
+            Bienvenue {user?.firstname} {user?.lastname} sur la plateforme
+            ANDRIA
+          </h2>
+          <p className="text-xs text-base-content">
+            Découvrez votre espace d’apprentissage et les outils qui vous
+            accompagneront dans votre parcours.
           </p>
-          <p className="mt-1 text-sm text-info">
-            Vous pouvez revenir en arrière ou arrêter le tutoriel à tout moment.
-            Il pourra être relancé depuis le menu latéral.
-          </p>
-          <div className="flex flex-wrap justify-end gap-3">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={onSkip}
-              disabled={isSaving}
-            >
-              Plus tard
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onStart}
-              disabled={isSaving}
-            >
-              {isSaving && (
-                <span className="loading loading-spinner loading-sm" />
-              )}
-              Commencer le tutoriel
-            </button>
-          </div>
         </div>
       </div>
-    </dialog>
+
+      <div className="ml-4 mr-3 flex shrink-0 items-center justify-end">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => void start()}
+          disabled={isSaving}
+        >
+          {isSaving && (
+            <span className="loading loading-spinner loading-sm" />
+          )}
+          Commencer le tutoriel
+        </button>
+      </div>
+    </section>
   );
 };
 

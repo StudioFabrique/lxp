@@ -35,9 +35,14 @@ const CursorGlowCard = ({
     mouseY.set(event.clientY - rect.top);
   };
 
+  const handleMouseEnter = (event: MouseEvent<HTMLDivElement>) => {
+    handleMouseMove(event);
+    setIsHovered(true);
+  };
+
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
       className={cn(
@@ -47,7 +52,7 @@ const CursorGlowCard = ({
     >
       <motion.span
         className={cn(
-          "pointer-events-none absolute h-14 w-36 invisible rounded-full opacity-70 blur-xl group-hover:visible",
+          "pointer-events-none absolute h-14 w-36 rounded-full blur-xl",
           glowColor === "primary" && "bg-primary/40",
           glowColor === "secondary" && "bg-secondary/40",
           glowColor === "accent" && "bg-accent/40",
@@ -57,7 +62,7 @@ const CursorGlowCard = ({
           glowColor === "warning" && "bg-warning/40",
           glowColor === "error" && "bg-error/40",
         )}
-        initial={{ scale: 0 }}
+        initial={{ scale: 0, opacity: 0 }}
         style={{
           x: springX,
           y: springY,
@@ -66,8 +71,18 @@ const CursorGlowCard = ({
         }}
         animate={{
           scale: isHovered ? glowSize : 0,
+          opacity: isHovered ? 0.7 : 0,
         }}
-        transition={{ duration: 0.5 }}
+        transition={{
+          scale: {
+            duration: isHovered ? 0.25 : 0.5,
+            ease: isHovered ? "easeOut" : "easeInOut",
+          },
+          opacity: {
+            duration: isHovered ? 0.2 : 0.5,
+            ease: "easeOut",
+          },
+        }}
         aria-hidden="true"
       />
       {children}

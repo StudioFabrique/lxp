@@ -9,11 +9,15 @@ import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import LastModules from "../components/last-modules";
 import SidebarRouteIcon from "../../../components/headers/SidebarRouteIcon";
+import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
+import { useOnboarding } from "../../onboarding/OnboardingContext";
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
+  const { status: onboardingStatus } = useOnboarding();
   const isTeacher =
     user?.roles.some((role) => role.role === "teacher") ?? false;
+  const showOnboardingWelcome = onboardingStatus === "pending";
 
   const { data: teacherParcours = [], isLoading: isTeacherParcoursLoading } =
     useQuery({
@@ -35,22 +39,25 @@ const AdminDashboard = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* --- Bannière de bienvenue --- */}
-      <section
-        className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full"
-        data-onboarding="admin-dashboard-header"
-      >
-        <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
-          <SidebarRouteIcon />
-          <span>
-            Bonjour, {user?.firstname} {user?.lastname} !
-          </span>
-        </h2>
-        <p className="text-base-content opacity-80 max-w-3xl">
-          Bienvenue dans votre panneau d'administration, l'outil central pour
-          gérer et surveiller tous les aspects de l'apprentissage de vos
-          apprenants.
-        </p>
-      </section>
+      <div data-onboarding="admin-dashboard-header">
+        {showOnboardingWelcome ? (
+          <OnboardingWelcome layout="admin" />
+        ) : (
+          <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
+            <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
+              <SidebarRouteIcon />
+              <span>
+                Bonjour, {user?.firstname} {user?.lastname} !
+              </span>
+            </h2>
+            <p className="text-base-content opacity-80 max-w-3xl">
+              Bienvenue dans votre panneau d'administration, l'outil central
+              pour gérer et surveiller tous les aspects de l'apprentissage de
+              vos apprenants.
+            </p>
+          </section>
+        )}
+      </div>
 
       {/* --- Contenu Principal --- */}
       <section className="w-full flex flex-col 2xl:flex-row gap-6">
