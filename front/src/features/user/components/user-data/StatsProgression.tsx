@@ -1,4 +1,4 @@
-import { ProgressionData } from "../../hooks/useTeacher";
+import type { ProgressionData } from "../../interfaces/user-data";
 
 type Props = {
   completionModules: ProgressionData[];

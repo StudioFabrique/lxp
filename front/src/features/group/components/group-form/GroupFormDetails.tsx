@@ -42,7 +42,7 @@ const GroupFormDetails = () => {
         <div>
           <h2 className="font-bold text-xl">Parcours associé</h2>
           <p className="mt-1 text-sm text-base-content/65">
-            Les apprenants du groupe accéderont au parcours sélectionné.
+            Vous pouvez associer un parcours au groupe maintenant ou plus tard.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ const GroupFormDetails = () => {
 
         <div>
           <label className="flex w-full flex-col gap-2">
-            <span className="text-sm font-semibold">Parcours</span>
+            <span className="text-sm font-semibold">Parcours (optionnel)</span>
             <select
               className="select select-sm select-bordered w-full"
               disabled={!formationId || isLoadingParcours}
@@ -87,7 +87,7 @@ const GroupFormDetails = () => {
                 {isLoadingParcours
                   ? "Chargement des parcours…"
                   : formationId
-                    ? "Sélectionner un parcours"
+                    ? "Aucun parcours"
                     : "Choisissez d’abord une formation"}
               </option>
               {parcoursList.map((parcours) => (

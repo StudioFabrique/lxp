@@ -1,103 +1,60 @@
-import { useCallback, useEffect, useState } from "react";
-import Parcours from "../../../utils/interfaces/parcours";
-import User from "../../../utils/interfaces/user";
-
-export type ProgressionData = {
-  id: number;
-  metadataId: number;
-  title: string;
-  description: string;
-  thumb: string;
-  stats: {
-    progress: number;
-  };
-};
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { userApi } from "../api/user.api";
 
 const useTeacher = (studentId: string) => {
-  const { sendRequest } = useHttp();
-  const [student, setStudent] = useState<User | null>(null);
-  const [parcours, setParcours] = useState<Parcours | null>(null);
-  const [parcoursCompletion, setParcoursCompletion] = useState(0);
-  const [imageUrl, setImageUrl] = useState("/images/parcours-default.webp");
-  const [totaltokens, setTotalTokens] = useState(0);
-  const [completionModules, setCompletionModules] = useState<
-    ProgressionData[] | null
-  >(null);
+  const studentQuery = useQuery({
+    queryKey: ["user", "data", studentId],
+    queryFn: () => userApi.queries.getUserData(studentId),
+    enabled: !!studentId,
+  });
 
-  /**
-   * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
-   */
-  const getStudentData = useCallback(() => {
-    const applyData = (data: {
-      user: User;
-      parcours: Parcours;
-      parcoursCompletion: number;
-      totalTokens: number;
-    }) => {
-      setStudent(data.user);
-      setParcours(data.parcours ?? null);
-      setTotalTokens(data.totalTokens ?? 0);
-    };
-    sendRequest(
-      {
-        path: `/user/data/${studentId}`,
-      },
-      applyData,
-    );
-  }, [sendRequest, studentId]);
+  const progressionQuery = useQuery({
+    queryKey: ["user", "progression", studentId],
+    queryFn: () => userApi.queries.getUserProgression(studentId),
+    enabled: !!studentId,
+  });
 
-  /**
-   * retourne le temps total de connexion de l'apprenant sur l'application
-   */
-  const getTotalConnectionTime = useCallback((): number => {
-    let total = 0;
-    if (student && student.connectionInfos !== undefined) {
-      student!.connectionInfos!.forEach((item) => {
-        total += item.duration;
-      });
-    }
-    return Math.ceil(total / 3600000);
+  const student = studentQuery.data?.user ?? null;
+  const parcours = studentQuery.data?.parcours ?? null;
+  const completionModules = progressionQuery.data?.data?.result ?? [];
+  const parcoursCompletion =
+    progressionQuery.data?.data?.parcoursCompletion ?? 0;
+  const imageUrl = parcours?.image
+    ? `data:image/jpeg;base64,${parcours.image}`
+    : "/images/parcours-default.webp";
+
+  const totalConnectionTime = useMemo(() => {
+    const totalDuration =
+      student?.connectionInfos?.reduce(
+        (total, connection) => total + connection.duration,
+        0,
+      ) ?? 0;
+
+    return Math.ceil(totalDuration / 3600000);
   }, [student]);
 
-  const getCompletion = useCallback(() => {
-    const applyData = (data: {
-      message: string;
-      data: {
-        result: ProgressionData[];
-        parcoursCompletion: number;
-      };
-    }) => {
-      console.log({ data });
-      setCompletionModules(data.data ? data.data.result : []);
-      setParcoursCompletion(data.data ? data.data.parcoursCompletion : 0);
-    };
-    sendRequest(
-      {
-        path: `/modules/progression/${studentId}`,
-      },
-      applyData,
-    );
-  }, [sendRequest, studentId]);
-
-  useEffect(() => {
-    getStudentData();
-    getCompletion();
-  }, [getStudentData, getCompletion]);
-
-  useEffect(() => {
-    if (parcours && parcours.image) {
-      setImageUrl(`data:image/jpeg;base64,${parcours?.image}`);
-    }
-  }, [parcours]);
+  const totalTokens = useMemo(
+    () =>
+      studentQuery.data?.totalTokens ??
+      student?.promptStats?.reduce(
+        (total, stat) => total + stat.tokensUsed,
+        0,
+      ) ??
+      0,
+    [student, studentQuery.data?.totalTokens],
+  );
 
   return {
     imageUrl,
     student,
     parcours,
     parcoursCompletion,
-    getTotalConnectionTime,
-    totaltokens,
+    totalConnectionTime,
+    totalTokens,
     completionModules,
+    isLoading: studentQuery.isLoading || progressionQuery.isLoading,
+    isError: studentQuery.isError,
   };
 };
 

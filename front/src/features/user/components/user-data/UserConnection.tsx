@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import User from "../../../../utils/interfaces/user";
 import Parcours from "../../../../utils/interfaces/parcours";
-import { ProgressionData } from "../../hooks/useTeacher";
+import type { ProgressionData } from "../../interfaces/user-data";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import StudentCard from "./StudentCard";
 import StatsProgression from "./StatsProgression";
@@ -40,8 +40,6 @@ export default function UserConnection({
     "--size": "3rem",
     "--thickness": "4px",
   } as React.CSSProperties;
-
-  console.log({ completionModules });
 
   return (
     <article className="flex-1">

@@ -45,25 +45,25 @@ export default async function putGroup(
 
     if (!existingPrismaGroup) return null;
 
-    if (parcoursId) {
-      // First delete any existing relationship for this group
+    if (parcoursId !== undefined) {
       await prisma.groupsOnParcours.deleteMany({
         where: {
           groupId: existingPrismaGroup.id,
         },
       });
 
-      // Then create the new relationship
-      await prisma.groupsOnParcours.create({
-        data: {
-          group: {
-            connect: { id: existingPrismaGroup.id },
+      if (parcoursId > 0) {
+        await prisma.groupsOnParcours.create({
+          data: {
+            group: {
+              connect: { id: existingPrismaGroup.id },
+            },
+            parcours: {
+              connect: { id: parcoursId },
+            },
           },
-          parcours: {
-            connect: { id: parcoursId },
-          },
-        },
-      });
+        });
+      }
     }
 
     await User.updateMany(

@@ -30,6 +30,10 @@ export const adminUserRoutes: RouteObject[] = [
           },
         ],
       },
+      {
+        path: "data/:studentId",
+        lazy: lazyRoute(() => import("./views/UserData")),
+      },
     ],
   },
 ];

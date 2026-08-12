@@ -20,7 +20,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
   }: {
     group: IGroup;
     users: IUser[];
-    parcoursId: number;
+    parcoursId?: number;
   } = req.body.data;
 
   let image: any;

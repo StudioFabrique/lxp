@@ -7,10 +7,7 @@ export const createGroupSchema = z.object({
     .min(1, "Le nom du groupe est obligatoire"),
   desc: z.string(),
   formationId: z.number().int().nonnegative(),
-  parcoursId: z
-    .number()
-    .int()
-    .positive("Veuillez sélectionner le parcours associé au groupe"),
+  parcoursId: z.number().int().nonnegative(),
 });
 
 export type GroupFormValues = z.infer<typeof createGroupSchema>;
