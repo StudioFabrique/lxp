@@ -447,6 +447,7 @@ export function moduleExplorerContentReducer(
       if (state.mode === "read" || state.mode === "activity_type_selection")
         return state;
       if (state.mode === "write") {
+        if (state.newActivitySrc === action.src) return state;
         return {
           ...state,
           newActivitySrc: action.src,
@@ -454,6 +455,7 @@ export function moduleExplorerContentReducer(
         };
       } else {
         if (!state.selectedActivity) return state;
+        if (state.selectedActivity.url === action.src) return state;
         return {
           ...state,
           selectedActivity: {

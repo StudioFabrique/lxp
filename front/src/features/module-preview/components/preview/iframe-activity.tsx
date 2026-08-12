@@ -20,22 +20,27 @@ const IframeActivity = ({
   onFinishSaving,
 }: Props) => {
   const [iframeUrl, setIframeUrl] = useState<string>(src);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadedUrl, setLoadedUrl] = useState<string>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [urlError, setUrlError] = useState<string | null>(null);
 
   // Nettoyage du lien iframe
-  const cleanedUrl = useMemo(() => {
+  const { cleanedUrl, urlError } = useMemo(() => {
     try {
-      return iframeUrl.length > 0 ? cleanIframeLink(iframeUrl) : "";
+      return {
+        cleanedUrl:
+          iframeUrl.length > 0 ? cleanIframeLink(iframeUrl) : "",
+        urlError: null,
+      };
     } catch (error) {
-      setUrlError((error as Error).message);
-      return "";
+      return {
+        cleanedUrl: "",
+        urlError: (error as Error).message,
+      };
     }
   }, [iframeUrl]);
+  const isLoading = Boolean(cleanedUrl && loadedUrl !== cleanedUrl);
 
   const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
-    setUrlError(null);
     setIframeUrl(e.target.value);
   };
 
@@ -50,9 +55,10 @@ const IframeActivity = ({
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    onChangeSrc(cleanedUrl);
-  }, [cleanedUrl, onChangeSrc]);
+    if (mode !== "read" && cleanedUrl !== src) {
+      onChangeSrc(cleanedUrl);
+    }
+  }, [cleanedUrl, mode, onChangeSrc, src]);
 
   return (
     <div className="w-full flex flex-col gap-4 mt-5 select-none">
@@ -101,7 +107,7 @@ const IframeActivity = ({
             title="Iframe Activity"
             className="w-full h-125 rounded-lg"
             allowFullScreen
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => setLoadedUrl(cleanedUrl)}
             hidden={isLoading}
           />
         </div>
@@ -115,7 +121,7 @@ const IframeActivity = ({
         </div>
       )}
 
-      {mode !== "read" && iframeUrl && (
+      {mode !== "read" && cleanedUrl && (
         <SaveButton onSave={handleSave} pending={isUploading} />
       )}
     </div>
