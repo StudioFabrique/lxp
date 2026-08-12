@@ -29,7 +29,7 @@ const OnboardingWelcome = ({ layout }: Props) => {
   if (layout === "admin") {
     return (
       <section
-        className="relative w-full rounded-lg border border-base-300 bg-base-200 p-6 pr-12 shadow-sm"
+        className="relative flex flex-col w-full rounded-lg border border-base-300 bg-base-200 p-6 pr-12 shadow-sm"
         aria-labelledby="onboarding-welcome-title"
       >
         {closeButton}
@@ -50,13 +50,11 @@ const OnboardingWelcome = ({ layout }: Props) => {
         </p>
         <button
           type="button"
-          className="btn btn-primary mt-4"
+          className="btn btn-primary self-end mt-4"
           onClick={() => void start()}
           disabled={isSaving}
         >
-          {isSaving && (
-            <span className="loading loading-spinner loading-sm" />
-          )}
+          {isSaving && <span className="loading loading-spinner loading-sm" />}
           Commencer le tutoriel
         </button>
       </section>
@@ -94,9 +92,7 @@ const OnboardingWelcome = ({ layout }: Props) => {
           onClick={() => void start()}
           disabled={isSaving}
         >
-          {isSaving && (
-            <span className="loading loading-spinner loading-sm" />
-          )}
+          {isSaving && <span className="loading loading-spinner loading-sm" />}
           Commencer le tutoriel
         </button>
       </div>

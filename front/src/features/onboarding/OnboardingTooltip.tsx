@@ -18,7 +18,7 @@ const OnboardingTooltip = ({ step, tooltipProps }: TooltipRenderProps) => {
   return (
     <section
       {...tooltipProps}
-      className="box-border min-w-0 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-5 text-base-content shadow-2xl [overflow-wrap:anywhere]"
+      className="box-border min-w-0 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-5 text-base-content shadow-2xl wrap-anywhere"
       style={{
         width: "min(24rem, calc(100vw - 2rem))",
         maxWidth: "calc(100vw - 2rem)",

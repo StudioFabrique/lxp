@@ -16,6 +16,7 @@ import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import { rolesPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const RoleList = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -82,62 +83,69 @@ const RoleList = () => {
       <PageHeader
         title="Liste des rôles"
         description="Créer et gérer des rôles, les droits et les permissions des utilisateurs"
+        tourSteps={rolesPageTourSteps}
       />
 
       <Wrapper additionalClassname="px-10 items-center">
-        <SearchBar
-          title=""
-          placeholder="Rechercher un rôle"
-          onSubmitSearchValue={(value) => {
-            setSearchValue(value.length > 0 ? value : null);
-          }}
-        >
-          <PermissionGuard action="delete" object="role">
-            <TableActionsButtons
-              isLoading={isLoading || isDeleting}
-              isDisabled={idsList.length === 0}
-              onRefreshData={refetch}
-              actions={[
-                {
-                  title: "Supprimer les rôles sélectionnés",
-                  description: `${idsList.length} rôle(s) vont être supprimé(s)`,
-                  rightButtonTitle: "Confirmer",
-                  alertMessageBottom:
-                    "Attention: Cette opération ne peut pas être annulée",
-                  onConfirm: () => onDeleteSelected(idsList),
-                },
-              ]}
-              retreiveItemsProperty="role"
-              onRetreiveItemsValuesByPropertyFromIdList={
-                onRetreiveItemsValues as any
-              }
-            />
-          </PermissionGuard>
-        </SearchBar>
+        <div className="w-full" data-page-tour="filters">
+          <SearchBar
+            title=""
+            placeholder="Rechercher un rôle"
+            onSubmitSearchValue={(value) => {
+              setSearchValue(value.length > 0 ? value : null);
+            }}
+          >
+            <PermissionGuard action="delete" object="role">
+              <TableActionsButtons
+                isLoading={isLoading || isDeleting}
+                isDisabled={idsList.length === 0}
+                onRefreshData={refetch}
+                actions={[
+                  {
+                    title: "Supprimer les rôles sélectionnés",
+                    description: `${idsList.length} rôle(s) vont être supprimé(s)`,
+                    rightButtonTitle: "Confirmer",
+                    alertMessageBottom:
+                      "Attention: Cette opération ne peut pas être annulée",
+                    onConfirm: () => onDeleteSelected(idsList),
+                  },
+                ]}
+                retreiveItemsProperty="role"
+                onRetreiveItemsValuesByPropertyFromIdList={
+                  onRetreiveItemsValues as any
+                }
+              />
+            </PermissionGuard>
+          </SearchBar>
+        </div>
 
-        <DataTable
-          columns={columns}
-          data={data}
-          isLoading={isLoading}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          emptyMessage={
-            isSearching
-              ? "Aucun rôle ne correspond à votre recherche"
-              : "Aucun rôle créé"
-          }
-        />
+        <div className="w-full" data-page-tour="table">
+          <DataTable
+            columns={columns}
+            data={data}
+            isLoading={isLoading}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            emptyMessage={
+              isSearching
+                ? "Aucun rôle ne correspond à votre recherche"
+                : "Aucun rôle créé"
+            }
+          />
+        </div>
 
         <div className="w-full mt-2 text-sm text-base-content/60">
           Total : {data.length} rôle(s)
         </div>
       </Wrapper>
 
-      <PermissionGuard action="write" object="role">
-        <div className="mt-6">
-          <RoleForm onRoleCreated={handleRoleCreated} />
-        </div>
-      </PermissionGuard>
+      <div data-page-tour="role-form">
+        <PermissionGuard action="write" object="role">
+          <div className="mt-6">
+            <RoleForm onRoleCreated={handleRoleCreated} />
+          </div>
+        </PermissionGuard>
+      </div>
 
       <PermissionGuard action="delete" object="role">
         <TableActionsModal

@@ -80,36 +80,41 @@ const ImportResult = ({
         isSubHeader
         disabled
       />
-      <Header
-        title={
-          criticalError
-            ? "Importation interrompue"
-            : isComplete
-              ? "Importation terminée"
-              : "Traitement de l'importation..."
-        }
-        description={
-          criticalError
-            ? criticalError
-            : isComplete
-              ? "Tous les contenus ont été traités avec succès."
-              : `Les cours sélectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`
-        }
-        alternateBgColor={!isComplete}
-        isSubHeader
-        hasError={Boolean(criticalError)}
-        successBgColor={isComplete}
-      >
-        {criticalError ? (
-          <XCircle className="h-6 w-6 text-error" />
-        ) : isComplete ? (
-          <Check className="h-6 w-6 text-success" />
-        ) : isImporting ? (
-          <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
-        ) : null}
-      </Header>
+      <div data-course-import-tour="result-status">
+        <Header
+          title={
+            criticalError
+              ? "Importation interrompue"
+              : isComplete
+                ? "Importation terminée"
+                : "Traitement de l'importation..."
+          }
+          description={
+            criticalError
+              ? criticalError
+              : isComplete
+                ? "Tous les contenus ont été traités avec succès."
+                : `Les cours sélectionnés sont en cours d'importation${parcoursTitle ? " dans le parcours " + parcoursTitle : ""}. Merci de ne pas quitter ou recharger la page.`
+          }
+          alternateBgColor={!isComplete}
+          isSubHeader
+          hasError={Boolean(criticalError)}
+          successBgColor={isComplete}
+        >
+          {criticalError ? (
+            <XCircle className="h-6 w-6 text-error" />
+          ) : isComplete ? (
+            <Check className="h-6 w-6 text-success" />
+          ) : isImporting ? (
+            <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
+          ) : null}
+        </Header>
+      </div>
 
-      <div className="flex min-h-75 flex-col gap-6 p-6 sm:p-8">
+      <div
+        className="flex min-h-75 flex-col gap-6 p-6 sm:p-8"
+        data-course-import-tour="result-progress"
+      >
         {isComplete ? (
           <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-300">
             <div className="w-16 h-16 bg-success/20 text-success rounded-full flex items-center justify-center">
@@ -152,7 +157,10 @@ const ImportResult = ({
           </div>
         )}
 
-        <section className="flex flex-col gap-3">
+        <section
+          className="flex flex-col gap-3"
+          data-course-import-tour="result-items"
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <FileArchive className="h-5 w-5 text-primary" />
@@ -221,7 +229,10 @@ const ImportResult = ({
         )}
 
         {(criticalError || isComplete) && (
-          <div className="flex flex-wrap justify-end gap-3 border-t border-base-300 pt-5">
+          <div
+            className="flex flex-wrap justify-end gap-3 border-t border-base-300 pt-5"
+            data-course-import-tour="result-actions"
+          >
             <Link
               className={cn("btn", isComplete ? "btn-success" : "btn-outline")}
               to={`/admin/parcours/module/${moduleId}`}

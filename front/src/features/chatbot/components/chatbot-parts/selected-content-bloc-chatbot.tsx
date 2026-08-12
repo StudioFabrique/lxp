@@ -13,7 +13,6 @@ export default function SelectedContentBlocChatbot({
   return (
     <div className="flex flex-col items-end gap-1.5 my-2 w-[85%] ml-auto">
       <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-base-content/60">
-        <FileText className="w-3.5 h-3.5 text-primary" />
         <span>Inclus dans votre question</span>
       </div>
 

@@ -21,6 +21,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
+import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const UserHome = () => {
   const { roles } = useContext(AuthContext);
@@ -130,6 +131,7 @@ const UserHome = () => {
       <PageHeader
         title="Liste d'utilisateurs"
         description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
+        tourSteps={usersPageTourSteps}
       >
         <PermissionGuard object="user" action="write">
           <Link className="btn btn-primary btn-soft" to="/admin/user/add">
@@ -139,74 +141,82 @@ const UserHome = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <UserStats stats={stats} />
+      <div data-page-tour="stats">
+        <UserStats stats={stats} />
+      </div>
 
       <Wrapper additionalClassname="px-10 items-center">
-        {roles.length > 0 && currentRole && (
-          <div className="w-full flex justify-start gap-2 mb-4">
-            {roles
-              .filter((r) => !r.role.startsWith("interface:"))
-              .map((role) => (
-                <button
-                  key={role._id}
-                  onClick={() => handleRoleSwitch(role)}
-                  className={`btn btn-sm ${
-                    currentRole._id === role._id
-                      ? "btn-primary"
-                      : "btn-outline btn-primary"
-                  }`}
-                >
-                  {role.label}
-                </button>
-              ))}
-          </div>
-        )}
+        <div className="w-full" data-page-tour="role-filters">
+          {roles.length > 0 && currentRole && (
+            <div className="flex w-full justify-start gap-2 mb-4">
+              {roles
+                .filter((r) => !r.role.startsWith("interface:"))
+                .map((role) => (
+                  <button
+                    key={role._id}
+                    onClick={() => handleRoleSwitch(role)}
+                    className={`btn btn-sm ${
+                      currentRole._id === role._id
+                        ? "btn-primary"
+                        : "btn-outline btn-primary"
+                    }`}
+                  >
+                    {role.label}
+                  </button>
+                ))}
+            </div>
+          )}
+        </div>
 
-        <SearchBar
-          title=""
-          placeholder="Rechercher un utilisateur"
-          onSubmitSearchValue={onSubmitSearchValue}
-        >
-          <button
-            className={`btn btn-outline btn-sm btn-circle border-none text-primary ${
-              isLoading ? "animate-spin" : ""
-            }`}
-            disabled={isLoading}
-            onClick={() => onRefreshData()}
+        <div className="w-full" data-page-tour="filters">
+          <SearchBar
+            title=""
+            placeholder="Rechercher un utilisateur"
+            onSubmitSearchValue={onSubmitSearchValue}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
+            <button
+              className={`btn btn-outline btn-sm btn-circle border-none text-primary ${
+                isLoading ? "animate-spin" : ""
+              }`}
+              disabled={isLoading}
+              onClick={() => onRefreshData()}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
-              />
-            </svg>
-          </button>
-        </SearchBar>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
+                />
+              </svg>
+            </button>
+          </SearchBar>
+        </div>
 
-        <DataTable
-          columns={columns}
-          data={data}
-          isLoading={isLoading}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
-          sorting={sorting}
-          setSorting={handleSortingChange}
-          emptyMessage={
-            searchValue
-              ? "Aucun utilisateur trouvé"
-              : "Aucun utilisateur disponible"
-          }
-        />
+        <div className="w-full" data-page-tour="table">
+          <DataTable
+            columns={columns}
+            data={data}
+            isLoading={isLoading}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            sorting={sorting}
+            setSorting={handleSortingChange}
+            emptyMessage={
+              searchValue
+                ? "Aucun utilisateur trouvé"
+                : "Aucun utilisateur disponible"
+            }
+          />
+        </div>
 
-        <div className="w-full mt-5">
+        <div className="w-full mt-5" data-page-tour="pagination">
           <TablePagination
             leftText={`Utilisateurs : ${totalItems}`}
             {...pagination}
