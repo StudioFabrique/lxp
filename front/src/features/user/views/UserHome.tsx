@@ -12,7 +12,7 @@ import type Role from "../../../utils/interfaces/role";
 import { useUserActions } from "../hooks/useUserActions";
 import { useUserList } from "../hooks/useUserList";
 import { getUsersColumns } from "../components/user-table-columns";
-import UserStats from "../components/UserStats";
+import UserStats from "../components/user-data/UserStats";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
