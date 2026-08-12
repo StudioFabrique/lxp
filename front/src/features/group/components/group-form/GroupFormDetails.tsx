@@ -71,7 +71,7 @@ const GroupFormDetails = () => {
 
         <div>
           <label className="flex w-full flex-col gap-2">
-            <span className="text-sm font-semibold">Parcours (optionnel)</span>
+            <span className="text-sm font-semibold">Parcours</span>
             <select
               className="select select-sm select-bordered w-full"
               disabled={!formationId || isLoadingParcours}
@@ -103,12 +103,6 @@ const GroupFormDetails = () => {
             )}
           </label>
         </div>
-
-        {formationId && !isLoadingParcours && parcoursList.length === 0 && (
-          <p className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-sm">
-            Aucun parcours n’est disponible pour cette formation.
-          </p>
-        )}
 
         {selectedParcours && (
           <div className="flex items-center justify-between gap-3 border-t border-base-content/50 pt-4 px-4">

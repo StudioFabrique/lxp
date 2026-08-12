@@ -1,7 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import FormInput from "../../../../../src/components/form/FormInput";
-import FormTextarea from "../../../../../src/components/form/FormTextarea";
 import type { GroupFormValues } from "../../group.schema";
 
 const GroupFormInformations = ({
@@ -24,14 +23,6 @@ const GroupFormInformations = ({
           name="name"
           register={register}
           error={errors.name}
-          disabled={isLoading}
-        />
-        <FormTextarea
-          label="Description du groupe"
-          name="desc"
-          register={register}
-          error={errors.desc}
-          placeholder="Décrivez brièvement ce groupe"
           disabled={isLoading}
         />
       </span>

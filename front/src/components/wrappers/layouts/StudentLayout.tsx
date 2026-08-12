@@ -11,15 +11,16 @@ import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 
 const StudentLayout = () => (
   <ChatbotProvider>
-    <ConfettiWrapper>
-      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-        <FadeWrapper>
-          <RouteGuard layout="student" />
-        </FadeWrapper>
-      </AppWrapper>
-    </ConfettiWrapper>
-    {!isAiDisabled && <Chatbot />}
-    <OnboardingTour layout="student" />
+    <OnboardingTour layout="student">
+      <ConfettiWrapper>
+        <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+          <FadeWrapper>
+            <RouteGuard layout="student" />
+          </FadeWrapper>
+        </AppWrapper>
+      </ConfettiWrapper>
+      {!isAiDisabled && <Chatbot />}
+    </OnboardingTour>
   </ChatbotProvider>
 );
 

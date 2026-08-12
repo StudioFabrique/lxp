@@ -10,13 +10,14 @@ import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 
 const AdminLayout = () => (
   <ChatbotProvider>
-    <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
-      <FadeWrapper>
-        <RouteGuard layout="admin" />
-      </FadeWrapper>
-    </AppWrapper>
-    {!isAiDisabled && <Chatbot />}
-    <OnboardingTour layout="admin" />
+    <OnboardingTour layout="admin">
+      <AppWrapper sidebar={<Sidebar />} loader={<Loader />}>
+        <FadeWrapper>
+          <RouteGuard layout="admin" />
+        </FadeWrapper>
+      </AppWrapper>
+      {!isAiDisabled && <Chatbot />}
+    </OnboardingTour>
   </ChatbotProvider>
 );
 

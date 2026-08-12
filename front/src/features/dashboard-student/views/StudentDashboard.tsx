@@ -11,9 +11,13 @@ import StudentTimeline from "../components/timeline/student-timeline";
 import FeelingFeedback from "../components/right-side/feeling-feedback";
 import StudentAccomplishments from "../components/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../components/right-side/most-read-courses";
+import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
+import { useOnboarding } from "../../onboarding/OnboardingContext";
 
 const StudentDashboard = () => {
   const { user } = useContext(AuthContext);
+  const { status: onboardingStatus } = useOnboarding();
+  const showOnboardingWelcome = onboardingStatus === "pending";
 
   const { data: lastLessons } = useQuery({
     queryKey: ["last-read-lessons"],
@@ -23,21 +27,25 @@ const StudentDashboard = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       <div data-onboarding="student-dashboard-header">
-        <Header
-          title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
-          description="Bienvenue dans votre espace. Commencez votre apprentissage ou
-              reprenez là où vous vous êtes arrêté."
-          classname="capitalize"
-        >
-          <div className="flex gap-4 w-full">
-            <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-              <Search />
-            </button>
-            <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-              <Bell />
-            </button>
-          </div>
-        </Header>
+        {showOnboardingWelcome ? (
+          <OnboardingWelcome layout="student" />
+        ) : (
+          <Header
+            title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
+            description="Bienvenue dans votre espace. Commencez votre apprentissage ou
+                reprenez là où vous vous êtes arrêté."
+            classname="capitalize"
+          >
+            <div className="flex gap-4 w-full">
+              <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+                <Search />
+              </button>
+              <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+                <Bell />
+              </button>
+            </div>
+          </Header>
+        )}
       </div>
 
       <div className="grid gap-16 xl:grid-cols-3">
