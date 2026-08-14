@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { Joyride, type Step } from "react-joyride";
+import { EVENTS, Joyride, type Step } from "react-joyride";
 import toast from "react-hot-toast";
 
 import { AuthContext } from "../../store/AuthProvider";
@@ -483,6 +483,7 @@ const OnboardingTourContent = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showStopConfirmation, setShowStopConfirmation] = useState(false);
   const [requirementRevision, setRequirementRevision] = useState(0);
+  const [failedStepToken, setFailedStepToken] = useState<string>();
   const navigatedStepRef = useRef("");
 
   const saveState = useCallback(
@@ -500,6 +501,7 @@ const OnboardingTourContent = ({
 
   const start = useCallback(async () => {
     setIsSaving(true);
+    setFailedStepToken(undefined);
     navigatedStepRef.current = "";
     const firstStep =
       layout === "admin" ? "admin-navigation" : "student-navigation";
@@ -527,7 +529,7 @@ const OnboardingTourContent = ({
   );
 
   useEffect(() => {
-    if (status !== "in_progress") return;
+    if (status !== "in_progress" || failedStepToken === stepToken) return;
 
     const previousRootOverflow = document.documentElement.style.overflow;
     const previousBodyOverflow = document.body.style.overflow;
@@ -574,7 +576,7 @@ const OnboardingTourContent = ({
       document.removeEventListener("touchmove", preventPointerScroll, true);
       document.removeEventListener("keydown", preventKeyboardScroll, true);
     };
-  }, [status]);
+  }, [failedStepToken, status, stepToken]);
 
   useEffect(() => {
     if (status !== "in_progress") return;
@@ -834,11 +836,14 @@ const OnboardingTourContent = ({
     validateCurrentStage,
   ]);
 
-  const run = status === "in_progress" && step.length > 0;
+  const run =
+    status === "in_progress" &&
+    failedStepToken !== stepToken &&
+    step.length > 0;
 
   return (
     <OnboardingContext
-      value={{ status, isSaving, start, skip: stop }}
+      value={{ status, step: stepToken, isSaving, start, skip: stop }}
     >
       {children}
       {run && (
@@ -848,6 +853,23 @@ const OnboardingTourContent = ({
           steps={step}
           tooltipComponent={OnboardingTooltip}
           scrollToFirstStep
+          onEvent={({ type }) => {
+            if (type !== EVENTS.TARGET_NOT_FOUND) return;
+
+            const resumableToken = getResumableToken(stepToken);
+            if (resumableToken !== stepToken) {
+              toast.error(
+                "Cette étape n’est plus ouverte. Le tutoriel reprend à l’étape précédente.",
+              );
+              void saveState("in_progress", resumableToken);
+              return;
+            }
+
+            setFailedStepToken(stepToken);
+            toast.error(
+              "Le tutoriel a été mis en pause car cette étape n’est plus disponible. Vous pouvez le relancer depuis le menu.",
+            );
+          }}
           floatingOptions={{
             strategy: "fixed",
             shiftOptions: {

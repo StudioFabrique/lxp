@@ -80,11 +80,10 @@ const OnboardingWelcome = ({ layout }: Props) => {
               id="onboarding-welcome-title"
               className="mb-2 flex items-center gap-1.5 text-3xl font-extrabold text-primary"
             >
-              <span>Bienvenue</span>
               <span className="capitalize">
-                {user?.firstname} {user?.lastname}
+                {user?.firstname} {user?.lastname},
               </span>
-              <span> sur la plateforme ANDRIA !</span>
+              <span>{" Bienvenue sur la plateforme ANDRIA !"}</span>
             </h2>
           </div>
           <p className="max-w-3xl text-base-content opacity-80">

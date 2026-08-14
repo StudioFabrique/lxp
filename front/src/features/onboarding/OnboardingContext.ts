@@ -4,6 +4,7 @@ import type { OnboardingStatus } from "../../utils/interfaces/user";
 
 type OnboardingContextValue = {
   status: OnboardingStatus;
+  step: string;
   isSaving: boolean;
   start: () => Promise<void>;
   skip: () => Promise<void>;

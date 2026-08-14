@@ -15,9 +15,6 @@ const OnboardingWelcomeTooltip = ({
   >
     <div className="mb-4 flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-primary/70">
-          Pour bien démarrer
-        </p>
         {step.title && (
           <h2 id="onboarding-welcome-tour-title" className="text-lg font-bold">
             {step.title}

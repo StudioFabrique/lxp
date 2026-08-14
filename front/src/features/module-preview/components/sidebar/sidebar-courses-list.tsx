@@ -13,6 +13,7 @@ import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import type { UpdateCourseFormValues } from "./course-form.types";
 import type { LessonFormValues } from "./lesson-form.types";
 import { cn } from "../../../../utils/cn";
+import { useOnboarding } from "../../../onboarding/OnboardingContext";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -59,7 +60,16 @@ const SidebarCoursesList = ({
   onUpdateLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
+  const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
+  const selectedCourseId = courses.find((course) =>
+    course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
+  )?.id;
+  const courseIdLockedOpen =
+    onboardingStatus === "in_progress" &&
+    onboardingStep.split(":", 1)[0] === "admin-activity-create"
+      ? selectedCourseId
+      : undefined;
   const [openCourseId, setOpenCourseId] = useState<number | undefined>(() => {
     const courseContainingSelectedLesson = courses.find((course) =>
       course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
@@ -84,13 +94,22 @@ const SidebarCoursesList = ({
       course.lessons.some((lesson) => lesson.id === editLessonId),
     );
     const nextOpenCourseId =
-      selectedCourse?.id ?? editedCourse?.id ?? openedCourseId;
+      courseIdLockedOpen ??
+      selectedCourse?.id ??
+      editedCourse?.id ??
+      openedCourseId;
     if (!nextOpenCourseId) return;
 
     // L'ouverture automatique doit aussi refermer le cours précédemment ouvert.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenCourseId(nextOpenCourseId);
-  }, [courses, editLessonId, openedCourseId, selectedLesson]);
+  }, [
+    courseIdLockedOpen,
+    courses,
+    editLessonId,
+    openedCourseId,
+    selectedLesson,
+  ]);
 
   useEffect(() => {
     const scrollContainer = document.getElementById("main-scroll-container");
@@ -186,9 +205,16 @@ const SidebarCoursesList = ({
               editLessonId={editLessonId}
               isOpen={course.id === openCourseId}
               onToggle={() =>
-                setOpenCourseId((currentId) =>
-                  currentId === course.id ? undefined : course.id,
-                )
+                setOpenCourseId((currentId) => {
+                  if (
+                    currentId === course.id &&
+                    courseIdLockedOpen === course.id
+                  ) {
+                    return currentId;
+                  }
+
+                  return currentId === course.id ? undefined : course.id;
+                })
               }
               onOpen={() => setOpenCourseId(course.id)}
               onDeleteLesson={onDeleteLesson}
