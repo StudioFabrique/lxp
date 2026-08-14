@@ -1,9 +1,9 @@
-import { ChangeEvent, useMemo } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 
 interface ThemeSelectProps {
   label: "Thème clair" | "Thème sombre";
   themesList: string[];
-  onThemeChange: (newTheme: string, mode: string) => void;
+  onThemeChange: (newTheme: string, mode: "light" | "dark") => void;
 }
 
 export default function ThemeSelect({
@@ -15,13 +15,14 @@ export default function ThemeSelect({
     return label === "Thème clair" ? "light" : "dark";
   }, [label]);
 
-  const selectedTheme = useMemo(
+  const [selectedTheme, setSelectedTheme] = useState(
     () => localStorage.getItem(`${mode}Theme`) || "Aucun thème sélectionné",
-    [mode]
   );
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onThemeChange(event.target.value, mode);
+    const newTheme = event.target.value;
+    setSelectedTheme(newTheme);
+    onThemeChange(newTheme, mode);
   };
 
   return (
@@ -52,7 +53,7 @@ export default function ThemeSelect({
                 <input
                   type="radio"
                   name={`${mode}Theme`}
-                  className="theme-controller hidden"
+                  className="hidden"
                   value={theme}
                   onChange={handleChange}
                 />

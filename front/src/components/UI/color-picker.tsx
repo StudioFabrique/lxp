@@ -1,12 +1,10 @@
-import { useState } from "react";
-
 type Props = {
   onColorChange: (color: string) => void;
   defaultColor?: string;
 };
 
 const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
-  const [selectedColor, setSelectedColor] = useState(defaultColor);
+  const selectedColor = defaultColor;
 
   const predefinedColors = [
     { name: "White", hex: "#ffffff" },
@@ -24,7 +22,6 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
   ];
 
   const handleColorSelect = (color: string) => {
-    setSelectedColor(color);
     onColorChange(color);
     const elem = document.activeElement as HTMLElement;
     elem?.blur();

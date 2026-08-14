@@ -2,13 +2,18 @@ import { useContext } from "react";
 import { ThemeContext } from "../../store/ThemeProvider";
 
 const ThemeToggle = () => {
-  const { toggleTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <div className="w-fit flex gap-x-2 justify-center items-center">
       <label className="swap swap-rotate" htmlFor="mode-toggle">
         {/* this hidden checkbox controls the state */}
-        <input type="checkbox" id="mode-toggle" onClick={toggleTheme} />
+        <input
+          type="checkbox"
+          id="mode-toggle"
+          checked={theme === "dark"}
+          onChange={toggleTheme}
+        />
 
         {/* sun icon */}
         <svg
