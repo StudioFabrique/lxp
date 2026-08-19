@@ -1,55 +1,39 @@
-name: lxp
+name: ${LXP_DEPLOYMENT_NAME:-lxp}
 
 services:
-  caddy:
-    image: lxp-caddy-ovh:2.11.4
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    depends_on:
-      app:
-        condition: service_started
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    environment:
-      APP_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN doit etre defini par Jenkins}
-      APP_PORT: ${PORT:?PORT doit etre defini dans APP_ENV}
-      OVH_ENDPOINT: ${OVH_ENDPOINT:?OVH_ENDPOINT doit etre defini par Jenkins}
-      OVH_APPLICATION_KEY: ${OVH_APPLICATION_KEY:?OVH_APPLICATION_KEY doit etre defini par Jenkins}
-      OVH_APPLICATION_SECRET: ${OVH_APPLICATION_SECRET:?OVH_APPLICATION_SECRET doit etre defini par Jenkins}
-      OVH_CONSUMER_KEY: ${OVH_CONSUMER_KEY:?OVH_CONSUMER_KEY doit etre defini par Jenkins}
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - lxp
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   app:
-    image: studiostep/lxp:latest
+    image: "${LXP_IMAGE:-studiostep/lxp}:${LXP_IMAGE_TAG:-latest}"
     pull_policy: always
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-app
+    restart: unless-stopped
+    init: true
     expose:
-      - "${PORT}"
+      - "${PORT:?Set PORT in APP_ENV}"
     depends_on:
       db-pg:
         condition: service_healthy
       db-mongo:
         condition: service_healthy
       ai:
-        condition: service_started
+        condition: service_healthy
     volumes:
-      - /home/${SSH_USER}/${SSH_TARGET}/uploads:/app/api/dist/uploads
-      - /home/${SSH_USER}/${SSH_TARGET}/logs:/app/api/dist/logs
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/uploads:/app/api/dist/uploads
+      - ${DEPLOY_PATH}/logs:/app/api/dist/logs
     networks:
-      - lxp
+      - caddy
+      - backend
+    labels:
+      caddy: "http://${DEV_APP_HOST:?Set DEV_APP_HOST}"
+      caddy.import: "dev_access"
+      caddy.reverse_proxy: "${LXP_DEPLOYMENT_NAME:-lxp}-app:${PORT}"
+      caddy.reverse_proxy.header_up_0: "X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}"
+      caddy.reverse_proxy.header_up_1: "X-Forwarded-For {http.request.header.X-Forwarded-For}"
+      caddy_ingress_network: "caddy"
+
+      homepage.group: "Applications"
+      homepage.name: "LXP"
+      homepage.href: "https://${DEV_APP_HOST}"
+      homepage.description: "Plateforme de formation LXP"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_LOCAL_URL: ${MONGO_LOCAL_URL}
@@ -72,6 +56,20 @@ services:
       FROM: ${FROM}
 
       UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:' + process.env.PORT + '/').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: json-file
       options:
@@ -79,20 +77,24 @@ services:
         max-file: "3"
 
   ai:
-    image: studiostep/lxp-ai:latest
+    image: "${LXP_AI_IMAGE:-studiostep/lxp-ai}:${LXP_AI_IMAGE_TAG:-latest}"
     pull_policy: always
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-ai
+    restart: unless-stopped
     depends_on:
       db-pg:
         condition: service_healthy
       db-ai:
         condition: service_healthy
+    expose:
+      - "8000"
     networks:
-      - lxp
+      - backend
+      - egress
     volumes:
       - hf_cache:/cache
-      - /home/${SSH_USER}/${SSH_TARGET}/data:/app/data
-      - /home/${SSH_USER}/${SSH_TARGET}/uploads/activities:/lxp/api/uploads/activities:ro
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/data:/app/data
+      - ${DEPLOY_PATH}/uploads/activities:/lxp/api/uploads/activities:ro
     environment:
       DATABASE_URL: ${ANDRIA_AI_DB_URL}
       ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
@@ -120,6 +122,20 @@ services:
       HF_HOME: /cache/huggingface
       TRANSFORMERS_CACHE: /cache/huggingface
       SENTENCE_TRANSFORMERS_HOME: /cache/sentence_transformers
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: json-file
       options:
@@ -128,49 +144,54 @@ services:
 
   db-pg:
     image: postgres:18-alpine
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-pg
+    restart: unless-stopped
     volumes:
       - pg:/var/lib/postgresql
     networks:
-      - lxp
+      - backend
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
   db-ai:
     image: pgvector/pgvector:pg18
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-ai
+    restart: unless-stopped
     volumes:
       - pg_ai:/var/lib/postgresql
     networks:
-      - lxp
+      - backend
     environment:
       POSTGRES_USER: ${ANDRIA_POSTGRES_USER}
       POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD}
       POSTGRES_DB: ${ANDRIA_POSTGRES_DB}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${ANDRIA_POSTGRES_USER} -d ${ANDRIA_POSTGRES_DB}",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
   db-mongo:
     image: mongo:8.2
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-mongo
+    restart: unless-stopped
     volumes:
       - mongo:/data/db
     networks:
-      - lxp
+      - backend
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
@@ -180,15 +201,25 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
 networks:
-  lxp:
-    driver: bridge
+  caddy:
+    external: true
+  backend:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_backend
+    internal: true
+  egress:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_egress
 
 volumes:
   pg:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg
   pg_ai:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg_ai
   mongo:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_mongo
   hf_cache:
-  caddy_data:
-  caddy_config:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_hf_cache

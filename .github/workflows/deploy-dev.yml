@@ -1,0 +1,187 @@
+name: Build and deploy LXP to development
+
+on:
+  push:
+    branches:
+      - beta
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lxp-development
+  cancel-in-progress: false
+
+env:
+  LXP_IMAGE: studiostep/lxp
+  LXP_IMAGE_TAG: dev-${{ github.sha }}
+  LXP_AI_IMAGE: studiostep/lxp-ai
+  LXP_AI_IMAGE_TAG: latest
+  LXP_DEPLOYMENT_NAME: lxp-dev
+  DEV_APP_HOST: ${{ vars.DEV_APP_HOST || 'lxp.dev.step.eco' }}
+  DEPLOY_PATH: /home/martin/lxp-dev
+
+jobs:
+  image:
+    name: Build and publish the LXP image
+    if: github.ref == 'refs/heads/beta'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: development
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.LXP_IMAGE }}:${{ env.LXP_IMAGE_TAG }}
+            ${{ env.LXP_IMAGE }}:beta
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=lxp-development
+          cache-to: type=gha,mode=max,scope=lxp-development
+
+  deploy:
+    name: Deploy to the development VPS
+    if: github.ref == 'refs/heads/beta'
+    needs: image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: development
+    steps:
+      - name: Check out deployment files
+        uses: actions/checkout@v7
+
+      - name: Prepare and validate deployment environment
+        env:
+          APP_ENV: ${{ secrets.APP_ENV }}
+        run: |
+          set -eu
+
+          if [ -z "$APP_ENV" ]; then
+            echo "The APP_ENV secret is empty." >&2
+            exit 1
+          fi
+
+          printf '%s\n' "$APP_ENV" > .env
+
+          required_settings="
+          PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
+          POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
+          ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
+          ANDRIA_AI_DB_URL LXP_DB_URL
+          MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
+          DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
+          MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
+          EMAIL PASSWORD SMTP SMTP_EMAIL SMTP_PORT FROM UNSPLASH_ACCESS_KEY
+          "
+          for setting in $required_settings; do
+            if ! grep -q "^${setting}=." .env; then
+              echo "APP_ENV is missing a non-empty ${setting} setting." >&2
+              exit 1
+            fi
+          done
+
+          {
+            printf 'LXP_IMAGE=%s\n' "$LXP_IMAGE"
+            printf 'LXP_IMAGE_TAG=%s\n' "$LXP_IMAGE_TAG"
+            printf 'LXP_AI_IMAGE=%s\n' "$LXP_AI_IMAGE"
+            printf 'LXP_AI_IMAGE_TAG=%s\n' "$LXP_AI_IMAGE_TAG"
+            printf 'LXP_DEPLOYMENT_NAME=%s\n' "$LXP_DEPLOYMENT_NAME"
+            printf 'DEV_APP_HOST=%s\n' "$DEV_APP_HOST"
+            printf 'DEPLOY_PATH=%s\n' "$DEPLOY_PATH"
+          } > .deploy.env
+          chmod 600 .env .deploy.env
+
+          docker compose \
+            --env-file .env \
+            --env-file .deploy.env \
+            -f deployment/caddy/compose.yml \
+            config --quiet
+
+      - name: Copy deployment files to the VPS
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          source: ".env,.deploy.env,deployment/caddy/compose.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
+          target: "/home/martin/lxp-dev"
+
+      - name: Pull, migrate, and start LXP
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        env:
+          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          envs: REGISTRY_USER,REGISTRY_TOKEN
+          command_timeout: 15m
+          script: |
+            set -eu
+            cd /home/martin/lxp-dev
+
+            chmod 600 .env .deploy.env
+            mkdir -p data uploads logs
+            cp -R api/uploads/. uploads/
+
+            docker network inspect caddy >/dev/null
+
+            compose() {
+              docker compose \
+                --env-file .env \
+                --env-file .deploy.env \
+                -f deployment/caddy/compose.yml \
+                "$@"
+            }
+
+            compose config --quiet
+            printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+            compose pull
+
+            compose run --rm --no-deps ai python -c \
+              'import app.db_provision; print("Module app.db_provision disponible")'
+
+            compose up -d db-pg db-ai db-mongo
+
+            until compose exec -T db-pg sh -c \
+              'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+            do
+              sleep 2
+            done
+
+            until compose exec -T db-ai sh -c \
+              'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+            do
+              sleep 2
+            done
+
+            compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
+
+            compose exec -T db-pg sh -c \
+              'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+              < api/src/scripts/andria_notify_triggers.sql
+
+            compose run --rm ai python -m app.db_provision
+            compose up -d --remove-orphans --wait --wait-timeout 240 ai app
+            compose exec -T app npm run generate-activation-key
+            compose ps
