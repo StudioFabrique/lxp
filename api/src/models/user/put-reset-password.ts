@@ -29,8 +29,9 @@ export default async function putResetPassword(userId: string) {
 export async function putResetPasswordByEmail(email: string) {
   const existingUser = await User.findOne({ email });
 
-  if (!existingUser)
-    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+  // Endpoint public : on ne révèle pas si le compte existe ou non pour éviter
+  // l'énumération des utilisateurs. La réponse reste identique dans tous les cas.
+  if (!existingUser) return;
 
   return putResetPassword(existingUser._id.toString());
 }

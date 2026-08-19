@@ -15,7 +15,8 @@ export default async function httpPutResetPasswordEmail(
       statusCode: 200,
       data: {
         success: true,
-        message: "Le mail de réinitialisation a été envoyé avec succès.",
+        message:
+          "Si un compte est associé à cette adresse email, vous allez recevoir un lien de réinitialisation.",
       },
     };
     next(result);
