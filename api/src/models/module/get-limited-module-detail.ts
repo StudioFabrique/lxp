@@ -1,3 +1,7 @@
+import {
+  calculateCourseProgress,
+  calculateModuleProgress,
+} from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getLimitedModuleDetail(
@@ -81,11 +85,15 @@ export default async function getLimitedModuleDetail(
     tags: module.parcours.tags.map(({ tag }) => tag),
     bonusSkills: module.bonusSkills.map(({ bonusSkill }) => bonusSkill),
     contacts: module.contacts.map(({ contact }) => contact),
+    // Progression calculée ici : `lessonsRead` est déjà chargé, aucune requête
+    // supplémentaire. Le front se contente de lire `stats.progress`.
+    stats: { progress: calculateModuleProgress(module) },
     courses: module.courses.map(({ contacts, tags, ...course }) => ({
       ...course,
       aiIndexed: Boolean(course.courseSlug),
       contacts: contacts.map(({ contact }) => contact),
       tags: tags.map(({ tag }) => tag),
+      stats: { progress: calculateCourseProgress(course) },
     })),
   };
 }

@@ -41,14 +41,8 @@ const ModuleExplorerSidebar = ({
           const isSelectedCourse = course.lessons.some(
             (lesson) => lesson.id === selectedLesson?.id,
           );
-          const courseProgress =
-            course.lessons.reduce(
-              (sum, lesson) =>
-                sum +
-                (lesson.lessonsRead?.filter((read) => read.finishedAt).length ??
-                  0),
-              0,
-            ) / course.lessons.length;
+          // Même source que la version bureau : l'API, pas un calcul local.
+          const courseProgress = course.stats?.progress ?? 0;
 
           return (
             <div className="w-full" key={course.id}>
@@ -87,7 +81,8 @@ const ModuleExplorerSidebar = ({
                 </button>
                 <progress
                   className="progress progress-primary block h-1 w-full rounded-b-full bg-secondary"
-                  value={Number.isNaN(courseProgress) ? 0 : courseProgress}
+                  value={courseProgress}
+                  max={100}
                 />
               </div>
 
@@ -174,6 +169,7 @@ const ModuleExplorerSidebar = ({
       <div className="hidden md:block">
         <SidebarCoursesList
           courses={module.courses}
+          moduleProgress={module.stats?.progress ?? 0}
           selectedLesson={selectedLesson}
           onSelectLesson={(lesson: Lesson) => {
             if (lesson.id)

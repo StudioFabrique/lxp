@@ -18,6 +18,8 @@ import { useOnboarding } from "../../../onboarding/OnboardingContext";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
+  /** Pourcentage fourni par l'API, jamais recalculé ici. */
+  moduleProgress: number;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
@@ -45,6 +47,7 @@ type SidebarCoursesListProps = {
 
 const SidebarCoursesList = ({
   courses,
+  moduleProgress,
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
@@ -126,33 +129,10 @@ const SidebarCoursesList = ({
     return () => observer.disconnect();
   }, []);
 
-  // Filtre les cours qui ont des leçons
-  const coursesWithLessons = courses.filter(
-    (course) => course.lessons.length > 0,
-  );
-
-  // Calcule le pourcentage global de progression du module
-  const moduleProgress =
-    coursesWithLessons.reduce(
-      (sum, course) =>
-        sum +
-        Math.min(
-          course.lessons.reduce(
-            (sum, lesson) =>
-              sum +
-              (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt)
-                .length || 0),
-            0,
-          ) / course.lessons.length,
-          1,
-        ),
-      0,
-    ) / coursesWithLessons.length;
-
-  // Fonction utilitaire pour générer le style du cercle de progression
-  const radialStyle = (value: number) => {
+  // Style du cercle de progression, en pourcentage.
+  const radialStyle = (percentage: number) => {
     return {
-      "--value": value * 100,
+      "--value": percentage,
     } as CSSProperties;
   };
 
@@ -169,19 +149,14 @@ const SidebarCoursesList = ({
             <FadeWrapper>
               <span
                 className="radial-progress self-end text-primary"
-                style={radialStyle(
-                  !Number.isNaN(moduleProgress) ? moduleProgress : 0,
-                )}
+                style={radialStyle(moduleProgress)}
               >
                 <p className="text-base-content font-bold text-sm">
-                  {!Number.isNaN(moduleProgress)
-                    ? Math.round(moduleProgress * 100)
-                    : 0}
-                  %
+                  {moduleProgress}%
                 </p>
                 <span
                   className="absolute radial-progress text-primary/20"
-                  style={radialStyle(1)}
+                  style={radialStyle(100)}
                 />
               </span>
             </FadeWrapper>

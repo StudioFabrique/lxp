@@ -5,6 +5,10 @@ export interface IPromptStats extends Document {
   date: Date;
   tokensUsed: number;
   groupId?: string;
+  /** Nombre de questions posées au chatbot ce jour-là. */
+  chatbotQuestions: number;
+  /** Parmi elles, celles refusées par le service IA (hors périmètre). */
+  chatbotOutOfScope: number;
 }
 
 const promptStatsSchema: Schema = new Schema(
@@ -13,6 +17,10 @@ const promptStatsSchema: Schema = new Schema(
     date: { type: Date, required: true },
     tokensUsed: { type: Number, required: true, default: 0 },
     groupId: { type: String, required: false },
+    // Compteurs chatbot durables : ChatDialogs est une fenêtre glissante de 20
+    // échanges, purgeable par l'apprenant, donc inexploitable pour du comptage.
+    chatbotQuestions: { type: Number, required: true, default: 0 },
+    chatbotOutOfScope: { type: Number, required: true, default: 0 },
   },
   { timestamps: true },
 );

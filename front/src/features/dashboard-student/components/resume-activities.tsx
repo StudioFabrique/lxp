@@ -19,17 +19,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
         </h2>
         <div className="grid lg:grid-cols-3 gap-2">
           {lastLessons.map((item) => {
-            const progressCalculation =
-              item.lesson.course.lessons.reduce((sum, lesson) => {
-                return (
-                  sum +
-                  (lesson.lessonsRead &&
-                  lesson.lessonsRead?.length > 0 &&
-                  lesson.lessonsRead[0].finishedAt
-                    ? 1
-                    : 0)
-                );
-              }, 0) / item.lesson.course.lessons.length;
+            // Progression du cours, calculée par l'API.
+            const courseProgress = item.lesson.course.stats?.progress ?? 0;
 
             return (
               <CursorGlowCard key={item.id}>
@@ -73,7 +64,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                     </span>
                     <progress
                       className="progress [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
-                      value={progressCalculation}
+                      value={courseProgress}
+                      max={100}
                     />
                   </div>
                 </Link>

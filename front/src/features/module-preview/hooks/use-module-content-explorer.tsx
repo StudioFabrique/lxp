@@ -158,6 +158,14 @@ const useModuleContentExplorer = () => {
     await apiClient.post(`/lesson/read/${lessonId}`);
   }, []);
 
+  // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
+  const finishContent = useCallback(
+    (type: "module" | "course", contentId: number) => {
+      apiClient.put(`/content-read/${type}/${contentId}/finish`).catch(() => {});
+    },
+    [],
+  );
+
   // Handler pour signaler la fin du quiz et enclencher la lecture
   const onFinishInitialQuiz = useCallback(async () => {
     isDiagnosticPassed.current = true;
@@ -183,12 +191,28 @@ const useModuleContentExplorer = () => {
             lessonRead,
           });
           dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+
+          // Terminer la dernière leçon d'un cours (ou du module) clôt aussi le
+          // niveau au-dessus : sans ça, `finishedAt` resterait toujours nul sur
+          // CourseRead et ModuleRead.
+          if (isLastLessonOfCurrentCourse && state.selectedLesson.courseId) {
+            finishContent("course", state.selectedLesson.courseId);
+          }
+          if (isLastLessonSelected && state.module?.id) {
+            finishContent("module", state.module.id);
+          }
         } catch {
           // silently fail
         }
       }
     },
-    [state.selectedLesson],
+    [
+      state.selectedLesson,
+      state.module?.id,
+      isLastLessonOfCurrentCourse,
+      isLastLessonSelected,
+      finishContent,
+    ],
   );
 
   const deleteActivity = useCallback(async () => {

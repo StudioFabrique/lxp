@@ -1,19 +1,10 @@
 import apiClient from "../../../lib/axios";
 import type User from "../../../utils/interfaces/user";
-import type {
-  UserDataResponse,
-  UserProgressionResponse,
-} from "../interfaces/user-data";
+import type { UserDataResponse } from "../interfaces/user-data";
 
 export const queries = {
   getUserData: async (id: string): Promise<UserDataResponse> => {
     const res = await apiClient.get(`/user/data/${id}`);
-    return res.data;
-  },
-  getUserProgression: async (
-    id: string,
-  ): Promise<UserProgressionResponse> => {
-    const res = await apiClient.get(`/modules/progression/${id}`);
     return res.data;
   },
   getUsersByIds: async (ids: string[]): Promise<User[]> => {

@@ -1,36 +1,18 @@
-import { prisma } from "../../utils/db.ts";
+import postBeginContentRead from "../content-read/post-begin-content-read.ts";
 
+/**
+ * Conservé pour la route historique `POST /v1/lesson/read/:lessonId`.
+ * Le comportement vit désormais dans `models/content-read`, partagé avec les
+ * modules, cours et activités.
+ */
 export default async function postBeginReadLesson(
   lessonId: number,
   userIdMdb: string,
 ) {
-  const student = await prisma.student.findFirst({
-    where: { idMdb: userIdMdb },
-  });
+  const lessonRead = await postBeginContentRead("lesson", lessonId, userIdMdb);
 
-  if (!student) {
-    return [];
-  }
-
-  const existingLessonRead = await prisma.lessonRead.findFirst({
-    where: { lessonId, studentId: student.id },
-  });
-
-  if (existingLessonRead) {
-    const updatedExistingLessonRead = await prisma.lessonRead.update({
-      where: { id: existingLessonRead.id },
-      data: { lastOpenedAt: new Date() },
-    });
-    return updatedExistingLessonRead;
-  }
-
-  const lessonRead = await prisma.lessonRead.create({
-    data: { lessonId, studentId: student.id },
-  });
-
-  if (!lessonRead) {
-    return null;
-  }
+  // L'appelant historique distingue `[]` (pas un apprenant) de `null` (échec).
+  if (!lessonRead) return [];
 
   return lessonRead;
 }

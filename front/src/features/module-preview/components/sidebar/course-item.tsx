@@ -136,16 +136,9 @@ const CourseItem = ({
   const [showDescriptionExpander, setShowDescriptionExpander] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
-  const courseProgress =
-    course.lessons.reduce(
-      (sum, lesson) =>
-        sum +
-        (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
-          0),
-      0,
-    ) / course.lessons.length;
-
-  const isCourseCompleted = courseProgress === 1;
+  // Fourni par l'API (`calculate-module-progress.ts`), en pourcentage.
+  const courseProgress = course.stats?.progress ?? 0;
+  const isCourseCompleted = courseProgress === 100;
 
   const handleToggleCourseTab = () => {
     onToggle();
@@ -332,7 +325,8 @@ const CourseItem = ({
               className={cn(
                 "w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all",
               )}
-              value={isNaN(courseProgress) ? 0 : courseProgress}
+              value={courseProgress}
+              max={100}
             />
           </PermissionGuard>
         </div>

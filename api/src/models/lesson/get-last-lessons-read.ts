@@ -1,3 +1,4 @@
+import { calculateCourseProgress } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 
@@ -127,6 +128,8 @@ export default async function getLastLessonsRead(
             ...firstLesson.course.module,
             title: firstLesson.course.module.title,
           },
+          // Aucune leçon n'a encore été ouverte dans ce parcours.
+          stats: { progress: 0 },
         },
         parcoursId: firstLesson.course.module.parcours.id,
       },
@@ -149,6 +152,9 @@ export default async function getLastLessonsRead(
             ...course,
             module: { ...course.module, title: course.module.title },
             bonusSkills,
+            // `lessons` est déjà chargé filtré par apprenant : le calcul ne
+            // coûte rien de plus et évite au front de le refaire.
+            stats: { progress: calculateCourseProgress(course) },
           },
         },
         parcoursId: lessonRead.lesson.course.module.parcours.id,

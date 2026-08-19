@@ -30,6 +30,12 @@ export default interface Course {
   bonusSkills: Skill[];
   accomplishments?: Accomplishment[];
   order?: number;
+  /**
+   * Progression en pourcentage, calculée par l'API
+   * (`api/src/helpers/calculate-module-progress.ts`). Ne jamais la recalculer
+   * ici : c'est ce qui avait produit quatre formules divergentes.
+   */
+  stats?: { progress?: number };
 }
 
 export interface CourseTimeline {

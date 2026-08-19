@@ -20,5 +20,9 @@ export default interface Module {
   parcours: Parcours;
   courses: Array<Course>;
   tags: Array<Tag>;
+  /**
+   * Progression en pourcentage, calculée par l'API
+   * (`api/src/helpers/calculate-module-progress.ts`).
+   */
   stats?: { progress?: number };
 }
