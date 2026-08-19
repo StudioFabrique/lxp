@@ -43,7 +43,7 @@ const CourseActionsModal = ({
       case "visibility":
         return "Changez la visibilité du cours";
       case "publish":
-        return "Publiquez le cours";
+        return "Publiez le cours";
       case "deleteCourse":
         return "Supprimez le cours";
       case "deleteLesson":
