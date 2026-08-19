@@ -98,6 +98,7 @@ jobs:
           done
 
           {
+            printf '\n# Metadonnees de deploiement ecrites par GitHub Actions\n'
             printf 'LXP_IMAGE=%s\n' "$LXP_IMAGE"
             printf 'LXP_IMAGE_TAG=%s\n' "$LXP_IMAGE_TAG"
             printf 'LXP_AI_IMAGE=%s\n' "$LXP_AI_IMAGE"
@@ -105,14 +106,14 @@ jobs:
             printf 'LXP_DEPLOYMENT_NAME=%s\n' "$LXP_DEPLOYMENT_NAME"
             printf 'DEV_APP_HOST=%s\n' "$DEV_APP_HOST"
             printf 'DEPLOY_PATH=%s\n' "$DEPLOY_PATH"
-          } > .deploy.env
-          chmod 600 .env .deploy.env
+          } >> .env
+          chmod 600 .env
 
-          docker compose \
-            --env-file .env \
-            --env-file .deploy.env \
-            -f deployment/caddy/compose.yml \
-            config --quiet
+          # Le compose est deploye a la racine du repertoire cible pour que
+          # `docker compose ps|exec|logs` fonctionne sans option sur le VPS.
+          cp deployment/caddy/compose.yml compose.yml
+
+          docker compose config --quiet
 
       - name: Copy deployment files to the VPS
         uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
@@ -121,7 +122,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          source: ".env,.deploy.env,deployment/caddy/compose.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
+          source: ".env,compose.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
           target: "/home/martin/lxp-dev"
 
       - name: Pull, migrate, and start LXP
@@ -140,48 +141,41 @@ jobs:
             set -eu
             cd /home/martin/lxp-dev
 
-            chmod 600 .env .deploy.env
+            chmod 600 .env
+            rm -rf .deploy.env deployment
             mkdir -p data uploads logs
             cp -R api/uploads/. uploads/
 
             docker network inspect caddy >/dev/null
 
-            compose() {
-              docker compose \
-                --env-file .env \
-                --env-file .deploy.env \
-                -f deployment/caddy/compose.yml \
-                "$@"
-            }
-
-            compose config --quiet
+            docker compose config --quiet
             printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
-            compose pull
+            docker compose pull
 
-            compose run --rm --no-deps ai python -c \
+            docker compose run --rm --no-deps ai python -c \
               'import app.db_provision; print("Module app.db_provision disponible")'
 
-            compose up -d db-pg db-ai db-mongo
+            docker compose up -d db-pg db-ai db-mongo
 
-            until compose exec -T db-pg sh -c \
+            until docker compose exec -T db-pg sh -c \
               'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
             do
               sleep 2
             done
 
-            until compose exec -T db-ai sh -c \
+            until docker compose exec -T db-ai sh -c \
               'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
             do
               sleep 2
             done
 
-            compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
+            docker compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
 
-            compose exec -T db-pg sh -c \
+            docker compose exec -T db-pg sh -c \
               'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
               < api/src/scripts/andria_notify_triggers.sql
 
-            compose run --rm ai python -m app.db_provision
-            compose up -d --remove-orphans --wait --wait-timeout 240 ai app
-            compose exec -T app npm run generate-activation-key
-            compose ps
+            docker compose run --rm ai python -m app.db_provision
+            docker compose up -d --remove-orphans --wait --wait-timeout 240 ai app
+            docker compose exec -T app npm run generate-activation-key
+            docker compose ps
