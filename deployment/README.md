@@ -9,17 +9,16 @@ deployment/
 │   └── compose.yml
 └── caddy/
     ├── Jenkinsfile
-    ├── compose.yml
-    ├── Dockerfile
-    └── Caddyfile
+    └── compose.yml
 ```
 
 - `direct` publie le port HTTP de l'application directement sur le port 80 du
   VPS ;
-- `caddy` publie Caddy sur les ports 80 et 443 et utilise le challenge DNS OVH
-  pour gérer le certificat du domaine de l'instance.
+- `caddy` raccorde l'application au proxy Caddy partagé avec des labels Docker.
+  Le VPS conserve le Caddyfile central et le réseau externe `caddy`.
 
 Le pipeline de construction de l'image applicative reste à la racine dans
 `build.Jenkinsfile`, avec le `Dockerfile` de l'application. Les instructions
 détaillées se trouvent dans `docs/deploiement-jenkins.md` et
-`docs/deploiement-caddy-jenkins.md`.
+`docs/deploiement-caddy-jenkins.md`. Le déploiement du VPS de développement par
+GitHub Actions est décrit dans `docs/deploiement-caddy-github-actions.md`.

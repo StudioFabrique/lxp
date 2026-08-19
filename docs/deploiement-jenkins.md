@@ -29,8 +29,8 @@ Le pipeline de déploiement attend les deux images sur Docker Hub. Le dépôt IA
 publie `studiostep/lxp-ai:latest` avec son workflow GitHub Actions lors d'un push
 sur sa branche principale.
 
-Ce document décrit le déploiement HTTP direct. Pour déployer une instance
-avec HTTPS automatique, Caddy et le challenge DNS OVH, consulter
+Ce document décrit le déploiement HTTP direct. Pour raccorder une instance au
+proxy Caddy partagé d'un VPS, consulter
 [`deploiement-caddy-jenkins.md`](deploiement-caddy-jenkins.md). Les deux méthodes
 coexistent sous `deployment/direct` et `deployment/caddy`.
 
