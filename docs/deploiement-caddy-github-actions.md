@@ -40,8 +40,10 @@ FRONT_URL=https://lxp.dev.step.eco/
 LXP_PUBLIC_BASE=https://lxp.dev.step.eco
 ```
 
-Le workflow écrit les métadonnées de déploiement dans `.deploy.env`. Ne pas
-ajouter `DEV_APP_HOST`, `DEPLOY_PATH` ni les tags d'image au secret `APP_ENV`.
+Le workflow ajoute les métadonnées de déploiement (`LXP_IMAGE`, `LXP_IMAGE_TAG`,
+`LXP_AI_IMAGE`, `LXP_AI_IMAGE_TAG`, `LXP_DEPLOYMENT_NAME`, `DEV_APP_HOST`,
+`DEPLOY_PATH`) à la fin du `.env` déposé sur le VPS. Ne pas ajouter ces clés au
+secret `APP_ENV`.
 
 ## Préparer le VPS
 
@@ -54,8 +56,10 @@ docker ps --filter name=caddy
 ```
 
 Le workflow crée `/home/martin/lxp-dev` et ses sous-répertoires persistants. Il
-copie le Compose, les scripts SQL, les fichiers initiaux de `api/uploads`, `.env`
-et `.deploy.env`. Les deux fichiers d'environnement utilisent le mode `600`.
+copie `deployment/caddy/compose.yml` à la racine du répertoire sous le nom
+`compose.yml`, les scripts SQL, les fichiers initiaux de `api/uploads` et le
+`.env` en mode `600`. Le répertoire cible est ainsi un projet Compose autonome :
+`docker compose` y charge `compose.yml` et `.env` sans aucune option.
 
 ## Déroulement
 
@@ -72,11 +76,14 @@ Contrôler le résultat sur le VPS :
 
 ```sh
 cd /home/martin/lxp-dev
-docker compose --env-file .env --env-file .deploy.env \
-  -f deployment/caddy/compose.yml ps
-docker logs --tail=100 lxp-dev-app
-docker logs --tail=100 lxp-dev-ai
+docker compose ps
+docker compose logs --tail=100 app
+docker compose exec app npm run generate-activation-key
 ```
+
+Toutes les commandes Compose habituelles fonctionnent depuis ce répertoire :
+`docker compose exec db-pg psql -U "$POSTGRES_USER" "$POSTGRES_DB"`,
+`docker compose restart ai`, `docker compose pull && docker compose up -d`.
 
 Tester ensuite `https://lxp.dev.step.eco` depuis une adresse autorisée par
 `dev_access`, puis vérifier la carte **LXP** sur `https://dev.step.eco`.
