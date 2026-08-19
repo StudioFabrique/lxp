@@ -2,7 +2,8 @@ import mongoose, { Document, Schema } from "mongoose";
 import type { IUser } from "./user.ts";
 
 export interface IStudentFeedback extends Document {
-  feelingLevel: string;
+  /** Échelle 1 (orage) à 5 (soleil) ; le schéma stocke bien un nombre. */
+  feelingLevel: number;
   feedbackAt: Date;
   user: IUser["_id"];
   comment?: string;
@@ -14,37 +15,39 @@ export interface IStudentFeedback extends Document {
 const studentFeedbackSchema: Schema = new Schema({
   feelingLevel: {
     type: Schema.Types.Number,
-    require: true,
+    required: true,
     unique: false,
   },
   feedbackAt: {
     type: Date,
-    require: true,
+    required: true,
     default: Date.now,
     unique: false,
   },
   comment: {
     type: Schema.Types.String,
-    require: false,
+    required: false,
     unique: false,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   hasBeenReviewed: {
     type: Schema.Types.Boolean,
-    require: true,
+    required: true,
     default: false,
     unique: false,
   },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    require: false,
+    required: false,
     unique: false,
   },
 });
+
+studentFeedbackSchema.index({ user: 1, feedbackAt: -1 });
 
 const StudentFeedback = mongoose.model<IStudentFeedback>(
   "StudentFeedback",

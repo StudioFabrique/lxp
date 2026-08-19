@@ -14,6 +14,7 @@ import apiClient from "../../../lib/axios";
 import { isAiDisabled } from "../../../config/ai/ai";
 import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
+import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 
 export default function useCourseQuiz(
   courseId?: number,
@@ -21,6 +22,7 @@ export default function useCourseQuiz(
   aiIndexed = true,
 ) {
   const { aiUnavailable, setAiUnavailable } = useContext(ChatbotContext);
+  const attemptTracking = useQuizAttemptTracking();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -117,6 +119,7 @@ export default function useCourseQuiz(
     additionalQuizCount.current = 0;
     setAttempts([]);
     setShowResults(false);
+    if (courseId) attemptTracking.start("self_test", { courseId });
 
     if (isAiDisabled) {
       setIsStreaming(false);
@@ -290,6 +293,7 @@ export default function useCourseQuiz(
         ...prev,
         { quiz: currentQuiz, isCorrect: correct, userAnswer },
       ]);
+      attemptTracking.recordAnswer(currentQuiz.id, userAnswer);
     }
     if (correct) {
       setScore((prev) => prev + 1);
@@ -300,6 +304,7 @@ export default function useCourseQuiz(
       // Plus de quiz disponible (serveur IA indisponible ou limite atteinte) :
       // on affiche directement les résultats plutôt que de bloquer l'étudiant.
       setShowResults(true);
+      attemptTracking.finish();
     }
   };
 
@@ -314,6 +319,7 @@ export default function useCourseQuiz(
       setIsCorrect(false);
     } else {
       setShowResults(true);
+      attemptTracking.finish();
     }
   };
 
@@ -361,6 +367,7 @@ export default function useCourseQuiz(
             setCurrentIndex((prev) => prev + 1);
           } else {
             setShowResults(true);
+            attemptTracking.finish();
           }
           setIsAnswered(false);
           setIsCorrect(false);
@@ -372,7 +379,7 @@ export default function useCourseQuiz(
         setIsReplacing(false);
       }
     },
-    [activityContent, currentIndex, quizzes, isAnswered, isCorrect],
+    [activityContent, currentIndex, quizzes, isAnswered, isCorrect, attemptTracking],
   );
 
   return {

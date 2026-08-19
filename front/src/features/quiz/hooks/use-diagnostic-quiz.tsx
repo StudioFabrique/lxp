@@ -11,6 +11,7 @@ import {
 } from "../interfaces/quiz";
 import { isAiDisabled } from "../../../config/ai/ai";
 import apiClient from "../../../lib/axios";
+import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 interface ModuleInfoForDiagnostic {
@@ -26,6 +27,7 @@ export default function useDiagnosticQuiz(
   onFinishInitialQuiz: () => void,
 ) {
   const ability = useContext(AbilityContext);
+  const attemptTracking = useQuizAttemptTracking();
   const { setForceHideChatbot, aiUnavailable, setAiUnavailable } =
     useContext(ChatbotContext);
 
@@ -160,6 +162,9 @@ export default function useDiagnosticQuiz(
     setIsStreaming(true);
     setAttempts([]);
     setShowResults(false);
+    if (moduleInfo.id) {
+      attemptTracking.start("preliminary", { moduleId: moduleInfo.id });
+    }
 
     if (!moduleInfo.id || !moduleInfo.title || !moduleInfo.description) {
       console.warn(
@@ -254,6 +259,7 @@ export default function useDiagnosticQuiz(
     onFinishInitialQuiz,
     toastWarning,
     moduleInfo.description,
+    attemptTracking,
     aiUnavailable,
     bypassDiagnostic,
   ]);
@@ -272,6 +278,7 @@ export default function useDiagnosticQuiz(
         ...prev,
         { quiz: currentQuiz, isCorrect: correct, userAnswer },
       ]);
+      attemptTracking.recordAnswer(currentQuiz.id, userAnswer);
     }
     if (correct) {
       setScore((prev) => prev + 1);
@@ -292,6 +299,7 @@ export default function useDiagnosticQuiz(
     } else {
       isFinished.current = true;
       setShowResults(true);
+      attemptTracking.finish();
     }
   };
 
@@ -349,7 +357,8 @@ export default function useDiagnosticQuiz(
     setIsWaitingForNext(false);
     isFinished.current = true;
     setShowResults(true);
-  }, [isStreaming, isWaitingForNext]);
+    attemptTracking.finish();
+  }, [isStreaming, isWaitingForNext, attemptTracking]);
 
   useEffect(() => {
     if (!isModuleLoaded) return;

@@ -1,4 +1,5 @@
 import useModuleContentExplorer from "../hooks/use-module-content-explorer";
+import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentExplorerSkeleton from "./ModulePreviewSkeleton";
 import { Link, useNavigate } from "react-router";
 import { PenBox } from "lucide-react";
@@ -58,6 +59,14 @@ const ModuleContentExplorer = () => {
     (course) => course.id === state.selectedLesson?.courseId,
   );
   const isSelectedCourseAiIndexed = selectedCourse?.aiIndexed !== false;
+
+  // Mesure du temps passé, à chaque niveau du contenu. Les quatre niveaux se
+  // recouvrent volontairement : l'indicateur côté API additionne leçons et
+  // activités et garde module et cours comme détail.
+  useContentTracking("module", state.module?.id);
+  useContentTracking("course", selectedCourse?.id);
+  useContentTracking("lesson", state.selectedLesson?.id);
+  useContentTracking("activity", state.selectedActivity?.id);
 
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,

@@ -4,6 +4,7 @@ import type { CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
 import postDialogs, { clearDialogs } from "./post-dialogs.ts";
 import resolveSourceTarget from "./resolve-source-target.ts";
 import { trackTokens } from "../stats/trackTokens.ts";
+import trackChatbotUsage from "../stats/track-chatbot-usage.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -109,12 +110,9 @@ export default async function processPrompt(input: ProcessPromptInput) {
 
   const payload = (await response.json()) as FastApiResponse;
   const text = payload.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
+  const status = payload.status?.type ?? "ok";
   const type =
-    payload.status?.type === "refusal"
-      ? "warning"
-      : payload.status?.type === "error"
-        ? "error"
-        : "normal";
+    status === "refusal" ? "warning" : status === "error" ? "error" : "normal";
   const data = {
     text,
     type,
@@ -125,6 +123,9 @@ export default async function processPrompt(input: ProcessPromptInput) {
   if (input.userId !== "anonymous_student") {
     const totalTokens = payload.meta?.usage?.total_tokens || 0;
     if (totalTokens) await trackTokens(input.userId, totalTokens);
+    // Compté séparément des tokens : une question refusée n'en consomme pas
+    // forcément, elle doit malgré tout apparaître dans les indicateurs.
+    await trackChatbotUsage(input.userId, status === "refusal");
     await postDialogs(
       input.userId,
       [
@@ -133,6 +134,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
       ],
       payload.sources,
       input.textSelection,
+      status,
     );
     data.sources = await Promise.all(
       data.sources.map(async (source) => ({

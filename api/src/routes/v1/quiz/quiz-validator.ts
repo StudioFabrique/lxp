@@ -1,5 +1,6 @@
 import { body, param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
+import { QUIZ_ATTEMPT_ORIGINS } from "../../../config/quiz-attempt.ts";
 
 /**
  * GET /quiz/course/ending/stream/:courseId
@@ -76,5 +77,54 @@ export const reportQuizQuestionValidator = [
     .isLength({ max: 2000 })
     .withMessage("Le commentaire ne peut pas dépasser 2000 caractères.")
     .trim(),
+  checkValidatorResult,
+];
+
+/**
+ * Ouverture d'une passation de quiz.
+ * - origin : contexte de lancement, `self_test` pour « Je veux me tester »
+ */
+export const postQuizAttemptValidator = [
+  body("origin")
+    .isIn(QUIZ_ATTEMPT_ORIGINS)
+    .withMessage(
+      `L'origine doit être l'une de : ${QUIZ_ATTEMPT_ORIGINS.join(", ")}.`,
+    ),
+  body("courseId")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de cours invalide."),
+  body("moduleId")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de module invalide."),
+  checkValidatorResult,
+];
+
+/**
+ * Réponse à une question. `isCorrect` n'est volontairement pas accepté :
+ * la correction est faite côté serveur.
+ */
+export const postQuizAnswerValidator = [
+  param("attemptId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de tentative invalide."),
+  body("externalId")
+    .isString()
+    .notEmpty()
+    .withMessage("Identifiant de question invalide."),
+  body("userAnswer")
+    .isObject()
+    .withMessage("La réponse de l'apprenant est requise."),
+  body("userAnswer.type")
+    .isString()
+    .withMessage("Le type de réponse est requis."),
+  checkValidatorResult,
+];
+
+export const finishQuizAttemptValidator = [
+  param("attemptId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de tentative invalide."),
   checkValidatorResult,
 ];

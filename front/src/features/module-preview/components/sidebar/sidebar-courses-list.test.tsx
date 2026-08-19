@@ -63,6 +63,7 @@ const renderCourses = (container: HTMLDivElement, step: string) => {
       >
         <SidebarCoursesList
           courses={[course]}
+          moduleProgress={0}
           selectedLesson={lesson}
           onSelectLesson={vi.fn()}
           onDeleteCourse={vi.fn().mockResolvedValue(undefined)}

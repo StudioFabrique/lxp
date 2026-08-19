@@ -1,12 +1,14 @@
-import { ReactNode } from "react";
 import User from "../../../../utils/interfaces/user";
 import Parcours from "../../../../utils/interfaces/parcours";
-import type { ProgressionData } from "../../interfaces/user-data";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import StudentCard from "./StudentCard";
 import StatsProgression from "./StatsProgression";
 import ElementNotFound from "../../../../components/UI/element-not-found";
-import StatsConnection, { TokensUsed } from "./StatsConnection";
+import TokensUsed from "./TokensUsed";
+import type {
+  Indicator,
+  IndicatorModuleProgress,
+} from "../../interfaces/indicators";
 
 export type TokenStat = {
   _id: string;
@@ -15,28 +17,32 @@ export type TokenStat = {
 };
 
 interface UserConnectionProps {
-  connectionInfos: Array<{ lastConnection: string; duration: number }>;
-  totalConnectionTime: number;
-  parcoursCompletion: number;
   student: User;
   parcours: Parcours | null;
-  totalTokens: number;
   tokenStats?: TokenStat[];
-  completionModules: ProgressionData[] | null;
+  /** Indicateur `parcours_progression`, `null` tant qu'il n'est pas chargé. */
+  progression: Indicator | null;
+}
+
+function readModules(progression: Indicator | null): IndicatorModuleProgress[] {
+  const modules = progression?.meta?.modules;
+  return Array.isArray(modules) ? (modules as IndicatorModuleProgress[]) : [];
 }
 
 export default function UserConnection({
-  connectionInfos,
-  totalConnectionTime,
-  parcoursCompletion,
   student,
   parcours,
-  totalTokens,
   tokenStats,
-  completionModules,
+  progression,
 }: UserConnectionProps) {
+  const completion =
+    progression?.available && typeof progression.value === "number"
+      ? progression.value
+      : 0;
+  const modules = readModules(progression);
+
   const style = {
-    "--value": parcoursCompletion,
+    "--value": completion,
     "--size": "3rem",
     "--thickness": "4px",
   } as React.CSSProperties;
@@ -68,22 +74,16 @@ export default function UserConnection({
                     style={style}
                     role="progressbar"
                   >
-                    <p style={{ fontSize: "10px" }}>{parcoursCompletion} %</p>
+                    <p style={{ fontSize: "10px" }}>{completion} %</p>
                   </div>
                 </span>
               </div>
               <div className="flex flex-col gap-y-2">
                 <div className="flex flex-col gap-y-1 mt-4">
-                  {completionModules && completionModules.length > 0 ? (
-                    <>
-                      <div className="h-9rem overflow-auto">
-                        <StatsProgression
-                          completionModules={completionModules}
-                          parcoursCompletion={parcoursCompletion}
-                        />
-                        <div className="flex gap-x-4 items-center justify-between"></div>{" "}
-                      </div>
-                    </>
+                  {modules.length > 0 ? (
+                    <div className="h-9rem overflow-auto">
+                      <StatsProgression modules={modules} />
+                    </div>
                   ) : (
                     <ElementNotFound message="Aucun module complété pour le moment" />
                   )}
@@ -92,58 +92,13 @@ export default function UserConnection({
             </BoxWrapper>
           </div>
         </div>
-        <span className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <StatsUser label="Temps de connexion">
-            {totalConnectionTime} heures
-          </StatsUser>
-          <StatsUser label="Token utilisés">
-            {totalTokens} tokens utilisés
-          </StatsUser>
-        </span>
-        <span className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        {tokenStats ? (
           <BoxWrapper>
-            {connectionInfos ? (
-              <StatsConnection connectionTime={connectionInfos!} />
-            ) : null}
+            <TokensUsed tokenStats={tokenStats} />
           </BoxWrapper>
-          <BoxWrapper>
-            {tokenStats ? <TokensUsed tokenStats={tokenStats!} /> : null}
-          </BoxWrapper>
-        </span>
+        ) : null}
       </div>
     </article>
-  );
-}
-
-interface StatsUserProps {
-  label: string;
-  children: ReactNode;
-  positionY?: "top" | "center" | "bottom";
-}
-
-export function StatsUser({
-  label,
-  children,
-  positionY = "center",
-}: StatsUserProps) {
-  return (
-    <BoxWrapper>
-      <div
-        className={`h-full md:flex-row flex flex-col md:justify-between ${
-          positionY === "top"
-            ? "items-start"
-            : positionY === "bottom"
-              ? "items-end"
-              : "items-center"
-        } gap-x-2 gap-y-2`}
-      >
-        <h2 className="font-bold text-xl">{label}</h2>
-        <div
-          className={`h-full flex ${positionY === "top" ? "items-start" : positionY === "bottom" ? "items-end" : "items-center"}`}
-        >
-          {children}
-        </div>
-      </div>
-    </BoxWrapper>
   );
 }

@@ -8,6 +8,7 @@ export default async function postDialogs(
   lastDialogs: DialogEntry[],
   sources?: CourseSource[],
   textSelection?: string | null,
+  status: "ok" | "error" | "refusal" = "ok",
 ) {
   const existingDialogs = await ChatDialogs.find({ userId }).sort({
     createdAt: 1,
@@ -43,6 +44,7 @@ export default async function postDialogs(
     },
     textSelection: textSelection || null,
     sources: sources || [],
+    status,
   });
 
   await newDialog.save();

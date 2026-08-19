@@ -20,6 +20,8 @@ export interface IChatDialogs extends Document {
   answer: Dialog;
   textSelection?: string | null;
   sources?: CourseSource[];
+  /** Statut renvoyé par le service IA. `refusal` = question hors périmètre. */
+  status?: "ok" | "error" | "refusal";
 }
 
 const chatDialogsSchema: Schema = new Schema(
@@ -36,6 +38,11 @@ const chatDialogsSchema: Schema = new Schema(
       date: { type: Date, default: Date.now },
     },
     textSelection: { type: String, default: null },
+    status: {
+      type: String,
+      enum: ["ok", "error", "refusal"],
+      default: "ok",
+    },
     sources: [
       {
         course: { type: String, required: true },

@@ -4,12 +4,18 @@ import httpGetEndingCourseQuizStream from "../../../controllers/quiz/http-get-en
 import httpPostPreliminaryQuizStream from "../../../controllers/quiz/http-post-preliminary-quiz-stream.ts";
 import {
   endingCourseQuizStreamValidator,
+  finishQuizAttemptValidator,
+  postQuizAnswerValidator,
+  postQuizAttemptValidator,
   preliminaryQuizStreamValidator,
   randomQuizValidator,
   reportQuizQuestionValidator,
 } from "./quiz-validator.ts";
 import checkPermissions from "../../../middleware/check-permissions.ts";
 import httpPostReportQuizQuestion from "../../../controllers/quiz/http-post-report-quiz-question.ts";
+import httpPostQuizAttempt from "../../../controllers/quiz/http-post-quiz-attempt.ts";
+import httpPostQuizAnswer from "../../../controllers/quiz/http-post-quiz-answer.ts";
+import httpPutFinishQuizAttempt from "../../../controllers/quiz/http-put-finish-quiz-attempt.ts";
 
 /**
  * Routeur dédié à la génération de quiz.
@@ -47,6 +53,32 @@ quizRouter.post(
   checkPermissions("quiz", "write"),
   reportQuizQuestionValidator,
   httpPostReportQuizQuestion,
+);
+
+// Suivi des passations. Sans ces trois routes, rien de ce que fait
+// l'apprenant dans un quiz n'atteint la base : score et réponses ne vivaient
+// que dans le state React et disparaissaient à la fermeture de la modale.
+quizRouter.post(
+  "/attempt",
+  checkPermissions("quiz", "write"),
+  postQuizAttemptValidator,
+  httpPostQuizAttempt,
+);
+
+quizRouter.post(
+  "/attempt/:attemptId/answer",
+  checkPermissions("quiz", "write"),
+  postQuizAnswerValidator,
+  httpPostQuizAnswer,
+);
+
+// `write` et non `update` : les apprenants n'ont l'action `update` que sur
+// `cursus`, un PUT gardé par `quiz:update` leur renverrait 403.
+quizRouter.put(
+  "/attempt/:attemptId/finish",
+  checkPermissions("quiz", "write"),
+  finishQuizAttemptValidator,
+  httpPutFinishQuizAttempt,
 );
 
 export default quizRouter;

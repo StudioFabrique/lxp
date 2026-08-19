@@ -19,12 +19,14 @@ import bonusSkillRouter from "./bonus-skill.router.ts";
 import permissionRouter from "./permission/permission.router.ts";
 import courseRouter from "./course/course.router.ts";
 import lessonRouter from "./lesson/lesson.router.ts";
+import contentReadRouter from "./content-read/content-read.router.ts";
 import checkPermissions from "../../middleware/check-permissions.ts";
 import activityRouter from "./activity/activityRouter.ts";
 import quizRouter from "./quiz/quiz.router.ts";
 
 // Import des routeurs pour les statistiques, évaluations et médias
 import statsRouter from "./stats.router.ts";
+import indicatorsRouter from "./indicators/indicators.router.ts";
 import evaluationRouter from "./evaluation/evaluation.router.ts";
 import mediaRouter from "./mediatheque/mediatheque.router.ts";
 import { uploadCompanyLogo } from "../../middleware/upload-company-image.ts";
@@ -55,10 +57,12 @@ v1Router.use("/modules", moduleRouter);
 v1Router.use("/permission", permissionRouter);
 v1Router.use("/course", checkPermissions("course"), courseRouter);
 v1Router.use("/lesson", lessonRouter);
+v1Router.use("/content-read", contentReadRouter);
 v1Router.use("/activity", activityRouter);
 
 // Routes pour les statistiques, évaluations et médias
 v1Router.use("/stats", statsRouter);
+v1Router.use("/indicators", indicatorsRouter);
 v1Router.use("/evaluation", evaluationRouter);
 v1Router.use("/media", mediaRouter);
 v1Router.use("/resources", resourcesRouter);

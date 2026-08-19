@@ -5,21 +5,16 @@ import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import Loader from "../../../components/loaders/Loader";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import UserConnection from "../components/user-data/UserConnection";
+import IndicatorsGrid from "../components/user-data/IndicatorsGrid";
 import useTeacher from "../hooks/useTeacher";
+import useStudentIndicators from "../hooks/useStudentIndicators";
 
 export default function UserData() {
   const { studentId } = useParams();
-  const {
-    student,
-    parcours,
-    imageUrl,
-    totalConnectionTime,
-    totalTokens,
-    completionModules,
-    parcoursCompletion,
-    isLoading,
-    isError,
-  } = useTeacher(studentId!);
+  const { student, parcours, imageUrl, isLoading, isError } = useTeacher(
+    studentId!,
+  );
+  const indicatorsQuery = useStudentIndicators(studentId!);
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(imageUrl),
@@ -41,22 +36,29 @@ export default function UserData() {
       ) : isError ? (
         <ElementNotFound message="Impossible de charger les informations de cet apprenant." />
       ) : student ? (
-        <BoxWrapper>
-          <section className="flex flex-col xl:flex-row gap-4">
-            {student.connectionInfos !== undefined ? (
+        <>
+          <BoxWrapper>
+            <section className="flex flex-col xl:flex-row gap-4">
               <UserConnection
                 student={student}
                 parcours={parcours}
-                totalConnectionTime={totalConnectionTime}
-                connectionInfos={student.connectionInfos}
-                totalTokens={totalTokens}
                 tokenStats={student.promptStats}
-                completionModules={completionModules}
-                parcoursCompletion={parcoursCompletion}
+                progression={
+                  indicatorsQuery.indicators?.parcours_progression ?? null
+                }
               />
-            ) : null}
-          </section>
-        </BoxWrapper>
+            </section>
+          </BoxWrapper>
+
+          <BoxWrapper>
+            <IndicatorsGrid
+              indicators={indicatorsQuery.indicators}
+              range={indicatorsQuery.range}
+              isLoading={indicatorsQuery.isLoading}
+              isError={indicatorsQuery.isError}
+            />
+          </BoxWrapper>
+        </>
       ) : null}
     </main>
   );
