@@ -14,6 +14,7 @@ interface HeaderProps {
   isSubHeader?: boolean;
   hasError?: boolean;
   classname?: string;
+  containerClassname?: string;
   onClick?: () => void;
 }
 
@@ -21,9 +22,9 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
   return (
     <div
       onClick={props.onClick}
-      className={`w-full flex px-4 ${props.isSubHeader ? "py-2" : "py-4"} ${props.isSubHeader && !props.disabled ? "ring-1" : ""} ${props.hasError && "ring-2 ring-error"} items-center justify-between rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""}`}
+      className={`w-full flex px-4 ${props.isSubHeader ? "py-2" : "py-4"} ${props.isSubHeader && !props.disabled ? "ring-1" : ""} ${props.hasError && "ring-2 ring-error"} items-center justify-between rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""} ${props.containerClassname ?? ""}`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         {!props.isSubHeader && <SidebarRouteIcon />}
         <div>
           <h2
@@ -38,7 +39,9 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
           </p>
         </div>
       </div>
-      <div className="flex justify-end items-center">{props.children}</div>
+      <div className="flex shrink-0 justify-end items-center">
+        {props.children}
+      </div>
     </div>
   );
 };
