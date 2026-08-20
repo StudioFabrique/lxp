@@ -1,4 +1,4 @@
-import imageProfileReplacement from "../../../../config/image-profile-replacement";
+import { AvatarSmall } from "../../../../components/avatar/AvatarSmall";
 
 interface StudentCardProps {
   avatar?: string;
@@ -13,16 +13,20 @@ interface StudentCardProps {
 export default function StudentCard(props: StudentCardProps) {
   return (
     <div className="capitalize w-full flex lg:flex-col lg:justify-center flex-row gap-x-4 gap-y-2 text-xs">
+      {/* Même avatar qu'ailleurs dans l'application : les initiales quand
+          l'apprenant n'a pas déposé de photo, plutôt qu'une image de
+          remplacement qui ne s'affichait pas et laissait voir son texte
+          alternatif. */}
       <div className="avatar">
-        <div className="w-24 rounded-xl">
-          <img
-            className="h-full w-full rounded-lg object-cover"
-            src={`data:image/jpeg;base64,${
-              props.avatar ?? imageProfileReplacement
-            }`}
-            alt={`avatar de ${props.firstname} ${props.lastname}`}
-          />
-        </div>
+        <AvatarSmall
+          user={{
+            avatar: props.avatar,
+            firstname: props.firstname,
+            lastname: props.lastname,
+          }}
+          imgClassName="h-24 w-24 rounded-xl object-cover"
+          noImgClassName="flex h-24 w-24 items-center justify-center rounded-xl bg-accent text-2xl font-bold text-secondary-content"
+        />
       </div>
 
       <div className="flex justify-between">
