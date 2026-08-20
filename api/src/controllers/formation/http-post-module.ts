@@ -36,7 +36,6 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   // Check for validation errors from express-validator middleware
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors.array());
 
     // Clean up uploaded file if validation failed
     await deleteTempUploadedFile(req);
@@ -81,11 +80,9 @@ async function httpPostModule(req: CustomRequest, res: Response) {
         .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
-    console.log({ error });
 
     // Ensure cleanup of uploaded file even if an error occurs
     if (uploadedFile) await deleteTempUploadedFile(req);
-    console.log({ error });
 
     // Return appropriate error response with status code and message
     return res

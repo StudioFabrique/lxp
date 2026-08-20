@@ -21,7 +21,6 @@ async function httpDeleteModule(
       data: { success: true, message: "Module supprimé avec succès" },
     });
   } catch (error: any) {
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

@@ -15,7 +15,6 @@ export default async function httpDeleteSocialNetwork(
       .status(200)
       .json({ message: "Suppression effectuée avec succès" });
   } catch (error) {
-    console.log(error);
 
     return res.status(500).json({ message: serverIssue });
   }

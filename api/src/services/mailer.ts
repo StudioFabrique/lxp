@@ -2,6 +2,7 @@
 import { getTemplate } from "../helpers/get-mail-template.ts";
 import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
+import { logger } from "../utils/logs/logger.ts";
 
 // Configuration du transporteur SMTP pour l'envoi d'emails
 const transporter = nodemailer.createTransport({
@@ -54,9 +55,9 @@ export async function sendPasswordEmail(
 
     return result;
   } catch (error: any) {
-    console.error("Error sending email:", error);
+    logger.error("Error sending email:", error);
     if (error.code === "EAUTH") {
-      console.error("Authentication failed. Check your SMTP credentials.");
+      logger.error("Authentication failed. Check your SMTP credentials.");
     }
     throw {
       statusCode: 500,
@@ -86,7 +87,7 @@ export async function sendUpdatedUserEmail(email: string) {
       }
 
       // si en développement, on log l'erreur
-      console.error(
+      logger.error(
         "La variable d'environnement SMTP_EMAIL n'est pas définie."
       );
       return;

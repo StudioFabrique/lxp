@@ -4,12 +4,10 @@ import putCourseTags from "../../models/course/put-course-tags.ts";
 import putCourseContacts from "../../models/course/put-course-contacts.ts";
 
 async function httpPutCourseContacts(req: Request, res: Response) {
-  console.log("coucou controller");
 
   const { courseId } = req.params;
   const contacts = req.body;
 
-  console.log(req.body);
 
   try {
     const response = await putCourseContacts(+courseId, contacts);

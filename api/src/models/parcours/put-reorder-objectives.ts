@@ -28,7 +28,6 @@ async function putReorderObjectives(
       },
     });
 
-    console.log({ objectives });
 
     let tmp = Array<Objective>();
     for (const index of objectivesId) {

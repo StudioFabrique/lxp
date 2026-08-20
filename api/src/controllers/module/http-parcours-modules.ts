@@ -10,7 +10,6 @@ async function httpParcoursModules(req: Request, res: Response) {
 
     return res.status(201).json(result);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Erreur serveur" });
   }
 }

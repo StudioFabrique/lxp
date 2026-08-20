@@ -1,4 +1,5 @@
 import { incrementPromptStats } from "./prompt-stats-day.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * Comptabilise une question posée au chatbot, et le cas échéant son refus.
@@ -20,6 +21,6 @@ export default async function trackChatbotUsage(
     });
   } catch (error) {
     // Le suivi statistique ne doit jamais faire échouer la réponse du chatbot.
-    console.error("Erreur lors du tracking des interactions chatbot :", error);
+    logger.error("Erreur lors du tracking des interactions chatbot :", error);
   }
 }

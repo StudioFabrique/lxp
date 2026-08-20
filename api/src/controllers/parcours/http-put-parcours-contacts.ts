@@ -7,7 +7,6 @@ import type CustomRequest from "../../utils/interfaces/express/custom-request.ts
 
 async function httpPutParcoursContacts(req: CustomRequest, res: Response) {
   try {
-    //console.log(req.body);
 
     const userId = req.auth?.userId;
 
@@ -17,7 +16,6 @@ async function httpPutParcoursContacts(req: CustomRequest, res: Response) {
 
     const { parcoursId, contacts } = req.body;
     const response = await putParcoursContacts(+parcoursId, contacts, userId);
-    console.log(response);
 
     return res.status(201).json({
       success: true,

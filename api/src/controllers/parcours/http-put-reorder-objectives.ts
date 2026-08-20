@@ -13,7 +13,6 @@ async function httpPutReorderObjectives(req: Request, res: Response) {
   try {
     const { parcoursId, objectivesId } = req.body;
     const response = await putReorderObjectives(parcoursId, objectivesId);
-    console.log({ response });
 
     return res.status(201).json({
       success: true,

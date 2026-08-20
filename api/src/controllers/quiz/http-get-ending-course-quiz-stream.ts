@@ -10,6 +10,7 @@ import {
 import { toQuizApiQuestion } from "../../services/quiz/quiz-question.ts";
 import { relayQuizStream } from "../../services/quiz/quiz-stream.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * GET /quiz/course/ending/stream/:courseId
@@ -53,7 +54,7 @@ export default async function httpGetEndingCourseQuizStream(
     res.setHeader("Transfer-Encoding", "chunked");
     await relayQuizStream(generation.stream, res, generation);
   } catch (error) {
-    console.error("Erreur de génération du quiz de fin :", error);
+    logger.error("Erreur de génération du quiz de fin :", error);
 
     if (res.headersSent) {
       if (!res.writableEnded) res.end();

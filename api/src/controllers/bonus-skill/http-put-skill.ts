@@ -22,7 +22,6 @@ async function httpPutBonusSkill(req: Request, res: Response) {
         updatedSkill: response,
       });
   } catch (error: any) {
-    console.log("ERROR :", error);
 
     return res.status(500).json({ success: false, message: error.message });
   }

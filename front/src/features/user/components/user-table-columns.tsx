@@ -172,8 +172,12 @@ export const getUsersColumns = (
               to={`/admin/user/data/${userId}`}
               className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip="Consulter"
+              // Le lien n'a pour contenu qu'une icône : sans nom accessible,
+              // il est annoncé « lien » et rien d'autre. `data-tip` est un
+              // attribut de style, il n'est pas restitué aux lecteurs d'écran.
+              aria-label={`Consulter les statistiques de ${user.firstname} ${user.lastname}`}
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
         )

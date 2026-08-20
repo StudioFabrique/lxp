@@ -1,6 +1,7 @@
 import { type ObjectId } from "mongoose";
 import Graduation, { type IGraduation } from "../../utils/interfaces/db/graduation.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export default async function editManyGraduations(
   userId: ObjectId,
@@ -40,7 +41,7 @@ export default async function editManyGraduations(
 
     return updatedUser;
   } catch (error) {
-    console.error("Error replacing or updating user graduations:", error);
+    logger.error("Error replacing or updating user graduations:", error);
     throw error;
   }
 }

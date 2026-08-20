@@ -10,6 +10,7 @@ import {
 } from "../../models/quiz/quiz-generation.ts";
 import { relayQuizStream } from "../../services/quiz/quiz-stream.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 interface ModuleInfo {
   moduleId: number;
@@ -50,7 +51,7 @@ export default async function httpPostPreliminaryQuizStream(
 
     await relayQuizStream(generation.stream, res, generation);
   } catch (error) {
-    console.error("Erreur de génération du quiz préliminaire :", error);
+    logger.error("Erreur de génération du quiz préliminaire :", error);
 
     if (res.headersSent) {
       if (!res.writableEnded) res.end();

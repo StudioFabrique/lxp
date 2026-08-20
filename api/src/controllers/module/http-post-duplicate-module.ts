@@ -24,14 +24,12 @@ export default async function httpPostDuplicateModule(
       req.auth!.userId,
       parseInt(parcoursId, 10)
     );
-    console.log({ response });
 
     next({
       statusCode: 200,
       data: { success: true, message: "Module dupliqué avec succès", response },
     });
   } catch (error: any) {
-    console.log({ error });
     next({
       statusCode: error.statusCode ?? 500,
       message: error.message ?? serverIssue,

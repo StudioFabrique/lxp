@@ -28,7 +28,6 @@ export default async function httpDeleteUser(
       },
     });
   } catch (error: any) {
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

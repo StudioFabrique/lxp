@@ -13,7 +13,6 @@ export default async function postActivityText(
   value: string,
   parent: "lesson" | "resource",
 ) {
-  console.log({ parent });
 
   let existingLesson: any = null;
   let existingResource: any = null;

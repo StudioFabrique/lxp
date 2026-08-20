@@ -8,7 +8,6 @@ export default async function httpPutFormation(req: Request, res: Response) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
-      //console.log("Validation errors:", result.array());
 
       return res.status(400).json({ errors: result.array() });
     }

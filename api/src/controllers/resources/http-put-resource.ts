@@ -31,7 +31,6 @@ export default async function httpPutResource(
       data: { response },
     });
   } catch (error: any) {
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

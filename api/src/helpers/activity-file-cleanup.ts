@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { logger } from "../utils/logs/logger.ts";
 
 export type StoredActivityFileType =
   | "text"
@@ -154,7 +155,7 @@ export async function deleteActivityFiles(filePaths: string[]) {
         await fs.unlink(filePath);
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
-          console.error(`Impossible de supprimer le fichier ${filePath}`, error);
+          logger.error(`Impossible de supprimer le fichier ${filePath}`, error);
         }
       }
     }),

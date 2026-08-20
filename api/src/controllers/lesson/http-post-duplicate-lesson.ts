@@ -12,7 +12,6 @@ export default async function httpPostDuplicateLesson(
     const { courseId } = req.params;
     const lessonId = req.body;
 
-    console.log({ lessonId });
 
     const adminId = req.auth!.userId;
 

@@ -28,7 +28,6 @@ export default async function httpPostActivityResource(
     };
     next(result);
   } catch (error: any) {
-    console.log({ error });
 
     // En cas d'erreur, on nettoie les fichiers qui ont été uploadés
     if (req.files) {

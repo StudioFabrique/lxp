@@ -2,6 +2,7 @@ import { type Response } from "express";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import postCourseStructure from "../../models/course/post-course-structure.ts";
 import getAdminId from "../../models/course/get-admin-id.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export default async function httpPostImportCourseStructure(
   req: CustomRequest,
@@ -26,7 +27,7 @@ export default async function httpPostImportCourseStructure(
 
     return res.status(201).json(result);
   } catch (error: any) {
-    console.error(error);
+    logger.error(error);
     return res
       .status(500)
       .json({ message: "Erreur lors de l'import de la structure." });

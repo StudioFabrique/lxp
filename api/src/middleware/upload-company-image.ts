@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs"; // Import File System module
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
+import { logger } from "../utils/logs/logger.ts";
 
 export const uploadCompanyLogo = () => {
   const destinationPath = path.join(
@@ -79,7 +80,7 @@ export const uploadCompanyLogo = () => {
         try {
           await fs.promises.writeFile(colorFilePath, colorData, "utf8");
         } catch (writeError) {
-          console.error("Error writing color file:", writeError);
+          logger.error("Error writing color file:", writeError);
           return res.status(500).json({
             message: "La couleur de fond n'a pas pu être sauvegardée.",
           });

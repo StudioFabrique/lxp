@@ -35,7 +35,6 @@ async function putParcoursObjectives(
       objectives.length;
     const limit = objectives.length;
 
-    console.log({ offset, limit });
 
     const result = await prisma.objective.findMany({
       where: { parcoursId: id },

@@ -7,6 +7,7 @@ import {
 } from "../../services/quiz/quiz-question.ts";
 import { quizRepository } from "./quiz-repository.ts";
 import type { QuizStreamDoneEvent } from "../../services/quiz/quiz-stream.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export class QuizGenerationError extends Error {
   readonly statusCode: number;
@@ -189,7 +190,7 @@ export async function generateRandomQuiz(input: RandomQuizInput) {
 
   await quizRepository
     .saveStandaloneQuestion(data, createQuizGenerationKey())
-    .catch((error) => console.error("Erreur de sauvegarde cache:", error));
+    .catch((error) => logger.error("Erreur de sauvegarde cache:", error));
   const tokens = data.tokens?.total_tokens;
   if (input.userId && tokens) await trackTokens(input.userId, tokens);
   return data;

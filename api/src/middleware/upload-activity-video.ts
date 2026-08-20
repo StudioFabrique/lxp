@@ -18,20 +18,17 @@ export const uploadActivityVideo = () => {
         const fileName: string = uniqueID + new Date().getTime();
         cb(null, fileName + path.extname(file.originalname));
       } else {
-        console.log("oops");
       }
     },
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
-    //console.log("from middleware with love");
     const upload = multer({
       storage: storage,
       limits: { fileSize: 50 * 1024 * 1024 }, // 100MB limit
     }).single("video");
 
     upload(req, res, function (err: any) {
-      console.log("ERROR ", err);
 
       if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {

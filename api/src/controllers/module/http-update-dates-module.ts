@@ -19,7 +19,6 @@ export default async function httpUpdateDatesModule(
       data: { minDate, maxDate },
     });
   } catch (error) {
-    console.log(error);
 
     return res.status(500).send({ message: "problème serveur" });
   }

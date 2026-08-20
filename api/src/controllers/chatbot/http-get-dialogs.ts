@@ -17,7 +17,6 @@ export default async function httpGetDialogs(
       data: { success: true, dialogs: response },
     });
   } catch (error: any) {
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

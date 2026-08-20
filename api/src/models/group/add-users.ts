@@ -12,7 +12,6 @@ export default async function addUsers(groupId: string, usersId: string[]) {
 
     return group;
   } catch (e) {
-    console.log(e);
     return;
   }
 }

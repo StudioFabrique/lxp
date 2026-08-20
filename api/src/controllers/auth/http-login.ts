@@ -74,7 +74,7 @@ async function httpLogin(req: Request, res: Response) {
 
       childLogger.info(error);
     }
-    console.error(error);
+    logger.error(error);
 
     if (error.retryAfterSeconds) {
       res.setHeader("Retry-After", error.retryAfterSeconds);

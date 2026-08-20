@@ -3,7 +3,6 @@ import User from "../../utils/interfaces/db/user.ts";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
 
 async function createParcours(parcours: any, userId: string) {
-  console.log({ userId });
 
   const existingFormation = await prisma.formation.findFirst({
     where: { id: +parcours.formation },

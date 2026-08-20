@@ -18,7 +18,6 @@ async function httpDeleteParcoursById(
       throw { message: noAccess, status: 403 };
     }
     const { parcoursId } = req.params;
-    console.log({ parcoursId });
 
     const response = await deleteParcoursById(+parcoursId, userId);
     const result = {

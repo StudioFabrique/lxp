@@ -13,7 +13,6 @@ export default async function httpPostSocialNetwork(
       .status(201)
       .json({ message: "Réseau social créé avec succès", data: hobby });
   } catch (error) {
-    console.log({ error });
     return res.status(500).json({ message: error });
   }
 }

@@ -21,7 +21,6 @@ export const uploadActivityImage = () => {
 
         cb(null, file.fieldname + "-" + fileName + "." + ext);
       } else {
-        console.log("oops");
       }
     },
   });
