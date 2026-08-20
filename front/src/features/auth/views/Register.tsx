@@ -13,7 +13,7 @@ import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordUpdateSuccess from "../components/PasswordUpdateSuccess";
 import PasswordForm from "../components/PasswordForm";
 
-type FormData = {
+type RegisterValues = {
   password: string;
   confirmPassword: string;
 };
@@ -32,7 +32,7 @@ export default function RegisterHome() {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<RegisterValues>({
     defaultValues: { password: "", confirmPassword: "" },
   });
 
@@ -40,7 +40,7 @@ export default function RegisterHome() {
     chooseTheme("classic", "light");
   }, [chooseTheme]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     setError("");
     try {

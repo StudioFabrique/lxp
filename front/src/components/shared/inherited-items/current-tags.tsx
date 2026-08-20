@@ -14,7 +14,7 @@ const CurrentTags = (props: CurrentTagsProps) => {
     <>
       {props.list && props.list.length > 0 ? (
         <ul className="flex gap-2 flex-wrap">
-          {sortArray(props.list as unknown as Record<string, unknown>[], "name").map((item: any) => (
+          {sortArray(props.list, "name").map((item) => (
             <li key={item.id} onClick={() => props.onRemoveItem!(item)}>
               <TagItem tag={item} />
             </li>

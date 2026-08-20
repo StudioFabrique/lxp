@@ -1,6 +1,7 @@
 import apiClient from "../../../lib/axios";
 import type Parcours from "../../../utils/interfaces/parcours";
 import type Skill from "../../../utils/interfaces/skill";
+import type Tag from "../../../utils/interfaces/tag";
 
 export type UpdateParcoursPayload = Partial<{
   title: string;
@@ -54,8 +55,8 @@ const queries = {
     const res = await apiClient.get("/formation");
     return res.data;
   },
-  getTags: async () => {
-    const res = await apiClient.get("/tag");
+  getTags: async (): Promise<Tag[]> => {
+    const res = await apiClient.get<Tag[]>("/tag");
     return res.data;
   },
   getContacts: async () => {

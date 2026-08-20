@@ -112,7 +112,6 @@ const ParcoursList = (props: ParcoursListProps) => {
             ) : (
               <ParcoursCardsList
                 parcoursList={list}
-                loading={isDeleting}
                 onDeleteParcours={confirmParcoursToDelete}
               />
             )}

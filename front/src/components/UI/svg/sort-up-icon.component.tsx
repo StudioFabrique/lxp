@@ -5,7 +5,7 @@ type Props = {
 };
 
 const SortUpIcon: FC<Props> = ({ size = 6 }) => {
-  let style = `w-${size} h-${size}`;
+  const style = `w-${size} h-${size}`;
 
   return (
     <svg

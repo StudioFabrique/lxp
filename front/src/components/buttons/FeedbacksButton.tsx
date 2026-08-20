@@ -98,7 +98,7 @@ const FeedbacksButton = <TFunc extends () => void>({
   );
 
   const handleClick = () => {
-    showFeedback && reward();
+    if (showFeedback) reward();
     onClick();
   };
 

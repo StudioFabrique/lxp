@@ -56,7 +56,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (state?.refreshId) {
-      state?.tab && setCurrentTab(state?.tab ?? Tab.Info);
+      if (state?.tab) setCurrentTab(state.tab);
     }
   }, [state?.refreshId, state?.tab, state?.editMode]);
 

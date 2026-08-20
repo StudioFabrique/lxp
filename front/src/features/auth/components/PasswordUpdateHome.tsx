@@ -14,7 +14,7 @@ type Props = {
   description?: string;
 };
 
-type FormData = {
+type PasswordUpdateValues = {
   password: string;
   confirmPassword: string;
 };
@@ -33,7 +33,7 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<PasswordUpdateValues>({
     defaultValues: { password: "", confirmPassword: "" },
   });
 
@@ -41,7 +41,7 @@ const PasswordUpdateHome = ({ message, title, description }: Props) => {
     chooseTheme("classic", "light");
   }, [chooseTheme]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: PasswordUpdateValues) => {
     setIsLoading(true);
     setError("");
     try {

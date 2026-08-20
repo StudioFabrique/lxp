@@ -184,7 +184,7 @@ export default function VideoEditor({
         {video ? (
           <section className="w-full py-2 flex flex-col items-center gap-y-4">
             <h2 className="w-full">Aperçu de la vidéo</h2>
-            <VideoPlayer source={video} />
+            <VideoPlayer url={video} size="medium" />
           </section>
         ) : null}
       </Wrapper>

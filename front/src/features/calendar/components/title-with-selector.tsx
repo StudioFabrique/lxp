@@ -46,7 +46,7 @@ const TitleWithSelector = ({
 
   const handleSelectTitle = (e: MouseEvent<HTMLAnchorElement>) => {
     const value = e.currentTarget.dataset.title;
-    value && onSelectTitle?.(value);
+    if (value) onSelectTitle?.(value);
   };
 
   // --- DATE NAVIGATION LOGIC ---

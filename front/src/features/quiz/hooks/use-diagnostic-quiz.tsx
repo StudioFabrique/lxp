@@ -110,9 +110,7 @@ export default function useDiagnosticQuiz(
         };
 
       case "matching": {
-        let pairs: Pair[] = [];
-
-        pairs = external.pairs;
+        const pairs: Pair[] = external.pairs;
 
         return {
           ...base,

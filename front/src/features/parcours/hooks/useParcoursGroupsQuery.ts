@@ -11,8 +11,10 @@ export function useParcoursGroupsQuery(parcoursId: number) {
   const parcoursQuery = useParcoursQuery(parcoursId);
   const groupIds = ((parcoursQuery.data?.groups ?? []) as GroupRelation[])
     .map((item) => {
-      const group = "group" in item ? item.group : item;
-      return group.idMdb ?? group._id;
+      // Le parcours porte tantôt le groupe lui-même, tantôt la relation qui
+      // l'enveloppe ; seule la seconde forme expose `idMdb`.
+      if ("group" in item) return item.group.idMdb ?? item.group._id;
+      return item._id;
     })
     .filter(Boolean) as string[];
 

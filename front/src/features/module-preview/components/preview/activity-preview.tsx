@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import "./video-style.css";
 import { useEffect, useState } from "react";
 import type {
   Activity,
-  Resource,
+  ActivityResource,
 } from "../../../../../src/utils/interfaces/activity";
 import {
   ACTIVITIES,
@@ -23,7 +23,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
   const [url, setUrl] = useState("");
 
   // case when a activity contains a set of pdf files
-  const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
+  const [pdfUrls, setPdfUrls] = useState<ActivityResource[]>([]);
 
   useEffect(() => {
     if (activity?.url) {
@@ -54,7 +54,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       case "video":
         return (
           <div className="flex flex-col items-center gap-2">
-            <BaseReactPlayer url={url} controls />
+            <BaseReactPlayer src={url} controls />
           </div>
         );
       case "image":

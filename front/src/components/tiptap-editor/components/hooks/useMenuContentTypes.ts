@@ -13,7 +13,7 @@ interface QueuedImage {
 
 export const useMenuContentTypes = (
   editor: Editor,
-  imageInputRef: React.RefObject<HTMLInputElement>,
+  imageInputRef: React.RefObject<HTMLInputElement | null>,
 ) => {
   const imageQueue = useRef<QueuedImage[]>([]);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(

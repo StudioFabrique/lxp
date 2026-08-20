@@ -1,4 +1,4 @@
-import { CircleHelp, X } from "lucide-react";
+import { X } from "lucide-react";
 
 type Props = {
   isSaving: boolean;

@@ -61,15 +61,6 @@ export const useTextmenuCommands = (editor: Editor) => {
     [editor]
   );
 
-  const onChangeHighlight = useCallback(
-    (color: string) => editor.chain().setHighlight({ color }).run(),
-    [editor]
-  );
-  const onClearHighlight = useCallback(
-    () => editor.chain().focus().unsetHighlight().run(),
-    [editor]
-  );
-
   const onSimplify = useCallback(
     () =>
       editor
@@ -287,8 +278,6 @@ export const useTextmenuCommands = (editor: Editor) => {
     onAlignJustify,
     onChangeColor,
     onClearColor,
-    onChangeHighlight,
-    onClearHighlight,
     onSetFont,
     // onSetFontSize,
     onSimplify,

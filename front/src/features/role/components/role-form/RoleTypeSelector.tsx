@@ -31,7 +31,7 @@ const RoleTypeSelector = ({
           const found = roleTypes.find(
             (rt) => e.currentTarget.value === rt.rank.toString(),
           );
-          onSetCurrentRoleType((_) => found?.rank ?? currentRoleType);
+          onSetCurrentRoleType(() => found?.rank ?? currentRoleType);
         }}
         onFocus={() => setShowAlertRoleType(true)}
         onBlur={() => setShowAlertRoleType(false)}

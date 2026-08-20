@@ -69,49 +69,41 @@ const useUpdateResources = (
       });
   }, [activity.id, parent]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      let error = !regexGeneric.test(resourceName);
+  // `FileUpload` remonte directement le fichier choisi, pas l'événement de
+  // l'input : lire `event.target.files` ne donnait jamais rien, et l'ajout
+  // d'une ressource restait sans effet.
+  const handleFileChange = (selectedFile: File) => {
+    if (!selectedFile) return;
 
-      if (allowedMimeTypes.includes(event.target.files[0].type)) {
-        uploadList?.forEach((file) => {
-          if (file.file.name === event.target.files![0].name) {
-            error = true;
-            toast.error("Ce fichier se trouve déjà dans la liste");
-          }
-        });
-
-        if (
-          activity.resourceActivities &&
-          activity.resourceActivities.length > 0
-        ) {
-          activity.resourceActivities.forEach((resource) => {
-            if (resource.label === resourceName) {
-              error = true;
-              toast.error("Une ressource avec ce nom existe déjà");
-            }
-          });
-        }
-
-        const resource = [
-          ...(uploadList ?? []),
-          {
-            name: resourceName,
-            file: event.target.files[0],
-            hasError: error,
-          },
-        ];
-        setUploadList(resource as Resource[]);
-
-        event.target.value = "";
-        setResourceName("");
-      } else {
-        toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
-        );
-        return;
-      }
+    if (!allowedMimeTypes.includes(selectedFile.type)) {
+      toast.error(
+        "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
+      );
+      return;
     }
+
+    let error = !regexGeneric.test(resourceName);
+
+    if (uploadList?.some((file) => file.file.name === selectedFile.name)) {
+      error = true;
+      toast.error("Ce fichier se trouve déjà dans la liste");
+    }
+
+    if (
+      activity.resourceActivities?.some(
+        (resource) => resource.label === resourceName,
+      )
+    ) {
+      error = true;
+      toast.error("Une ressource avec ce nom existe déjà");
+    }
+
+    setUploadList([
+      ...(uploadList ?? []),
+      { name: resourceName, file: selectedFile, hasError: error },
+    ] as Resource[]);
+
+    setResourceName("");
   };
 
   const handleAddResource = () => {

@@ -22,11 +22,7 @@ const ResumeParcours = () => {
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={
-          parcours?.thumb
-            ? normalizeImageSource(parcours?.thumb)
-            : defaultImage
-        }
+        imageUrl={normalizeImageSource(parcours?.thumb) ?? defaultImage}
         title={parcours ? `${toUpperFirstLetter(parcours.title)}` : ""}
         titleIcon={<RocketIcon className="stroke-white w-5" />}
         subTitle={

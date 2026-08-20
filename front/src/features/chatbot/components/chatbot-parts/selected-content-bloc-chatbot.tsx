@@ -1,5 +1,5 @@
 import Markdown from "react-markdown";
-import { X, FileText } from "lucide-react";
+import { X } from "lucide-react";
 
 type Props = {
   textSelection: string;

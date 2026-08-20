@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type Module from "../../../utils/interfaces/module";
 import type Lesson from "../../../utils/interfaces/lesson";
+import type { Activity } from "../../../utils/interfaces/activity";
 import {
   initialModuleExplorerContentState,
   moduleExplorerContentReducer,
+  type ModuleExplorerContentState,
 } from "./module-explorer-reducer";
 
 describe("moduleExplorerContentReducer", () => {
@@ -91,10 +93,10 @@ describe("moduleExplorerContentReducer", () => {
       type: "iframe" as const,
       url: "https://example.com/embed",
     };
-    const initialState = {
+    const initialState: ModuleExplorerContentState = {
       ...initialModuleExplorerContentState,
-      mode: "edit" as const,
-      selectedActivity: activity,
+      mode: "edit",
+      selectedActivity: activity as unknown as Activity,
     };
 
     const state = moduleExplorerContentReducer(initialState, {

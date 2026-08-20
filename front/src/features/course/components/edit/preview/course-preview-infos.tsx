@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useCourseSelector } from "../../../store/CourseContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";

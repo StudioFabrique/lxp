@@ -27,7 +27,7 @@ const SearchBar = ({
 
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
     event.preventDefault();
-    onSetFilter && onSetFilter(event.currentTarget.value);
+    onSetFilter?.(event.currentTarget.value);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {

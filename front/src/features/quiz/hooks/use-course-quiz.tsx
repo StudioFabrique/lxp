@@ -79,8 +79,7 @@ export default function useCourseQuiz(
         };
 
       case "matching": {
-        let pairs: Pair[] = [];
-        pairs = external.pairs;
+        const pairs: Pair[] = external.pairs;
         return {
           ...base,
           type: "matching",

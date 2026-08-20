@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { useCallback, useEffect, useState } from "react";
 import { resourcesApi } from "../api/resources.api";
 import { regexGeneric } from "../../../config/constantes";

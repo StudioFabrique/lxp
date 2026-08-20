@@ -2,13 +2,14 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
+import { regexMail } from "../../../config/constantes";
 
 type Props = {
   token: string;
   onSuccess: () => void;
 };
 
-type FormData = {
+type AdminSignInValues = {
   email: string;
   firstname: string;
   lastname: string;
@@ -25,7 +26,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<AdminSignInValues>({
     defaultValues: {
       email: "",
       firstname: "",
@@ -35,7 +36,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
     },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: AdminSignInValues) => {
     setError("");
     setIsLoading(true);
     try {
@@ -72,8 +73,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
             {...register("email", {
               required: "L'adresse email est requise.",
               pattern: {
-                value:
-                  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                value: regexMail,
                 message: "L'adresse email n'est pas valide.",
               },
             })}

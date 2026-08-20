@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../../../api/dashboard-student.api";
 import Item from "./item";

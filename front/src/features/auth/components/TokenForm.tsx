@@ -11,7 +11,7 @@ type Props = {
   onNext: (token: string) => void;
 };
 
-type FormData = {
+type TokenFormValues = {
   token: string;
 };
 
@@ -24,11 +24,11 @@ const TokenForm = ({ onNext }: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<TokenFormValues>({
     defaultValues: { token: "" },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: TokenFormValues) => {
     setError("");
     setIsLoading(true);
     try {

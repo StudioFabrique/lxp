@@ -7,7 +7,7 @@ import { Resource } from "./useUploadResources";
 type Props = {
   resourceName: string;
   setResourceName: (name: string) => void;
-  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileChange: (file: File) => void;
   handleCancel: () => void;
   handleAddResource: () => void;
   handleRemoveFromUploadList: (id: number) => void;
