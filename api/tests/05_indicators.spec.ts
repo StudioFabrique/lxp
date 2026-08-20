@@ -123,3 +123,39 @@ describe("GET /v1/indicators/:userId", () => {
       .expect(400);
   });
 });
+
+describe("POST /v1/indicators/:userId/prediction", () => {
+  beforeAll(async () => {
+    await mongoConnect();
+  });
+
+  afterAll(async () => {
+    if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
+  });
+
+  it("refuse une requête sans session", async () => {
+    await request(app)
+      .post("/v1/indicators/000000000000000000000000/prediction")
+      .expect(401);
+  });
+
+  it("rejette un identifiant qui n'est pas un ObjectId", async () => {
+    const admin = await login("admin@studio.eco");
+
+    await request(app)
+      .post("/v1/indicators/pas-un-objectid/prediction")
+      .set("Cookie", admin.cookie)
+      .expect(400);
+  });
+
+  it("interdit à un apprenant d'interroger le modèle, même sur sa fiche", async () => {
+    // La prédiction n'est pas une donnée de suivi comme une autre : elle est
+    // réservée à l'équipe pédagogique, y compris pour l'apprenant concerné.
+    const student = await login("apprenant@studio.eco");
+
+    await request(app)
+      .post(`/v1/indicators/${student.userId}/prediction`)
+      .set("Cookie", student.cookie)
+      .expect(403);
+  });
+});
