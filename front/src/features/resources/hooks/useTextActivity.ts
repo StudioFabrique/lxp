@@ -93,7 +93,9 @@ const useTextActivity = () => {
 
   const getActivityContent = useCallback(
     (activity: Activity) => {
-      fetch(`${ACTIVITIES}${activity!.url}`).then((response) =>
+      fetch(`${ACTIVITIES}${activity!.url}`, {
+        credentials: "include",
+      }).then((response) =>
         response.text().then((content) => {
           editActivityContent(content);
           setTitle(activity!.title!);

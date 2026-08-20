@@ -48,20 +48,6 @@ const customPostalCodeValidation = (value: string) => {
   return false; // Run the original validation rules for non-empty value
 };
 
-const customPhoneNumberValidation = (value: string) => {
-  const phoneNumberPattern = /^\d{10}$/;
-
-  if (
-    value === undefined ||
-    value === null ||
-    value === "" ||
-    phoneNumberPattern.test(value)
-  ) {
-    return true; // Empty value is allowed
-  }
-
-  return false; // Run the original validation rules for non-empty value
-};
 
 export const userValidator = (isFormData: boolean = false) => {
   const validatorSubject = `${isFormData ? "data.user" : "user"}`;
@@ -100,7 +86,10 @@ export const userValidator = (isFormData: boolean = false) => {
       .optional()
       .isString()
       .trim()
-      .custom(customPhoneNumberValidation),
+      // Contrôle de caractères et non de format : les numéros saisis
+      // contiennent espaces, points ou indicatif international, et le
+      // `.escape()` d'origine n'imposait aucun format non plus.
+      .custom(stringValidateOptional),
     body(validatorSubject + ".links.*.url")
       .trim()
       .isString()
@@ -191,7 +180,7 @@ export const userProfileValidator = (isFormData: boolean = false) => {
     body(validatorSubject + ".links.*.url")
       .isString()
       .trim()
-      .isURL()
+      .custom(stringValidateOptional)
       .withMessage("links.*.url"),
     body(validatorSubject + ".links.*.alias")
       .isString()

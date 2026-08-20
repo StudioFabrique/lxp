@@ -43,9 +43,16 @@ export default async function httpCreateUser(req: Request, res: Response) {
       await fs.promises.unlink(uploadedFile.path);
     }
 
+    const invitationDemandee = Boolean(userDataRequest.invitationSent);
+    const invitationEnvoyee = Boolean(userResponse!.invitationSent);
+
     return res.status(201).json({
       success: true,
-      message: "L'utilisateur a été créé avec succès.",
+      message:
+        invitationDemandee && !invitationEnvoyee
+          ? "L'utilisateur a été créé, mais l'email d'invitation n'a pas pu être envoyé. Utilisez « Renvoyer l'invitation » depuis la liste des utilisateurs."
+          : "L'utilisateur a été créé avec succès.",
+      invitationSent: invitationEnvoyee,
       userId: userResponse!.createdUser._id.toString(),
     });
   } catch (error: any) {

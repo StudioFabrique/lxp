@@ -454,7 +454,9 @@ const useModuleContentExplorer = () => {
       selectedActivityUrl &&
       state.mode === "read"
     ) {
-      fetch(`${ACTIVITIES}${selectedActivityUrl}`)
+      fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
+        credentials: "include",
+      })
         .then((response) => response.text())
         .then((content: string) => {
           dispatch({ type: "update_activity_content", content });
