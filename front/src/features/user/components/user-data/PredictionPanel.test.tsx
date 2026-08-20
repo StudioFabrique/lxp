@@ -75,6 +75,8 @@ describe("PredictionPanel", () => {
     );
 
     expect(markup).toContain("Connexions rares");
+    // La synthèse ne peut pas rassurer sous un badge « point de vigilance ».
+    expect(markup).toContain("Des signaux méritent malgré tout votre attention");
     expect(markup).toContain(
       "Jours de connexion : 4 jours (seuil : au-dessus de 2 jours)",
     );

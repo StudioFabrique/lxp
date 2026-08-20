@@ -10,6 +10,7 @@ import {
   formatOutcome,
   formatProbability,
   formatRiskLevel,
+  isAlertDriven,
   isUncertain,
   missingDataSentence,
   outcomeSentence,
@@ -57,6 +58,12 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
           <span className="text-base-content/60">
             {" "}
             L'analyse hésite toutefois entre plusieurs issues.
+          </span>
+        ) : null}
+        {isAlertDriven(prediction) ? (
+          <span className="text-base-content/60">
+            {" "}
+            Des signaux méritent malgré tout votre attention.
           </span>
         ) : null}
       </p>

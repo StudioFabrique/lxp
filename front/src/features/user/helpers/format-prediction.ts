@@ -62,6 +62,18 @@ export function riskLevel(prediction: IndicatorsPrediction): number {
   );
 }
 
+/**
+ * `true` quand le niveau retenu vient des règles d'alerte et non de l'issue
+ * estimée : sans le dire, la synthèse se contredirait à l'écran — « devrait
+ * aller au bout de son parcours » sous un badge « point de vigilance ».
+ */
+export function isAlertDriven(prediction: IndicatorsPrediction): boolean {
+  return (
+    prediction.alert.effectiveLevel >
+    (OUTCOME_SEVERITY[prediction.outcome.prediction] ?? 0)
+  );
+}
+
 const RISK_LABELS: Record<number, string> = {
   0: "Rien à signaler",
   1: "Point de vigilance",
