@@ -28,13 +28,20 @@ export default async function httpPutGroup(req: Request, res: Response) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
 
-    const response = await putGroup(id, group, users, image, parcoursId);
+    await putGroup(id, group, users, image, parcoursId);
 
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });
-  } catch (e) {
-
+  } catch (error: any) {
     await deleteTempUploadedFile(req);
-    return res.status(500).json({ message: serverIssue + e });
+
+    // Même distinction qu'à la création : un conflit de nom ou un groupe
+    // introuvable est une réponse, pas une panne. La modification renvoyait
+    // 201 dans les deux cas, l'interface annonçait donc un succès.
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: serverIssue });
   }
 }

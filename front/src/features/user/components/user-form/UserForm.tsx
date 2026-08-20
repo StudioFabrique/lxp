@@ -17,7 +17,15 @@ import { transformLink, urlIsValid } from "../../helpers/link-transform";
 type Props = {
   user?: User | null;
   onSubmitForm: (userData: Record<string, unknown>, file: File | null) => void;
+  /** Message global de l'échec de soumission, signalé en toast. */
   error?: string;
+  /**
+   * Adresse refusée par le serveur et motif du refus. Le toast disparaît, le
+   * formulaire reste : sans repère sur le champ, rien n'indique quoi corriger.
+   * L'adresse est conservée pour ne plus afficher le message dès que la saisie
+   * change — le refus ne porterait alors plus sur rien.
+   */
+  emailConflict?: { email: string; message: string };
   isLoading?: boolean;
   fieldsDisabled?: boolean;
   editMode?: boolean;
@@ -29,6 +37,7 @@ const UserForm = ({
   user = null,
   onSubmitForm,
   error,
+  emailConflict,
   isLoading = false,
   fieldsDisabled = false,
   editMode = false,
@@ -61,6 +70,16 @@ const UserForm = ({
       toast.error(error);
     }
   }, [error]);
+
+  const emailIsRefused =
+    emailConflict !== undefined &&
+    email.trim().toLowerCase() === emailConflict.email.trim().toLowerCase();
+
+  const emailMessage = emailError
+    ? "Le format de l'adresse email n'est pas valide."
+    : emailIsRefused
+      ? emailConflict.message
+      : null;
 
   const handleSubmit = () => {
     if (!formIsValid) {
@@ -114,7 +133,10 @@ const UserForm = ({
             lastname={lastname} lastnameError={lastnameError} onLastname={setLastname}
             firstname={firstname} firstnameError={firstnameError} onFirstname={setFirstname}
             nickname={nickname} nicknameError={nicknameError} onNickname={setNickname}
-            email={email} emailError={emailError} onEmail={setEmail}
+            email={email}
+            emailError={emailError || emailIsRefused}
+            emailMessage={emailMessage}
+            onEmail={setEmail}
             onSetFile={setFile}
             disabled={disabled}
           />

@@ -15,6 +15,11 @@ import {
   readGroupFormDraft,
 } from "../helpers/group-form-draft";
 import useGroupForm from "../components/group-form/useGroupForm";
+import toast from "react-hot-toast";
+import {
+  getApiErrorMessage,
+  isConflictError,
+} from "../../../utils/helpers/api-error-message";
 
 const mergeUsers = (currentUsers: User[], usersToAdd: User[]) => {
   const usersById = new Map(currentUsers.map((user) => [user._id, user]));
@@ -95,9 +100,28 @@ function useGroupManage() {
       return groupApi.mutations.create(formData);
     },
     onSuccess: handleNavigateAfterSubmit,
+    onError: (error) => {
+      const message = getApiErrorMessage(
+        error,
+        id
+          ? "Le groupe n'a pas pu être modifié."
+          : "Le groupe n'a pas pu être créé.",
+      );
+
+      toast.error(message);
+
+      // Un nom déjà pris est le seul conflit possible sur ces routes : le
+      // message est rattaché au champ, sinon le formulaire semblait
+      // simplement ne rien faire une fois le toast disparu.
+      if (isConflictError(error)) {
+        form.setError("name", { type: "server", message });
+      }
+    },
   });
 
   const handleSubmit = (data: GroupFormValues) => {
+    form.clearErrors("name");
+
     const usersIdWithActiveState = usersToAdd.map((user) => ({
       _id: user._id,
       isActive: user.isActive,

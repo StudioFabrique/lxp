@@ -15,6 +15,8 @@ type Props = {
   onNickname: (v: string) => void;
   email: string;
   emailError: boolean;
+  /** Motif du refus affiché sous le champ : format invalide ou adresse prise. */
+  emailMessage?: string | null;
   onEmail: (v: string) => void;
   onSetFile: (file: File) => void;
   disabled?: boolean;
@@ -37,6 +39,7 @@ const UserFormInformations = ({
   onNickname,
   email,
   emailError,
+  emailMessage,
   onEmail,
   onSetFile,
   disabled,
@@ -106,7 +109,14 @@ const UserFormInformations = ({
           onChange={(e) => onEmail(e.target.value)}
           autoComplete="off"
           disabled={disabled}
+          aria-invalid={emailError}
+          aria-describedby={emailMessage ? "user-email-error" : undefined}
         />
+        {emailMessage ? (
+          <span id="user-email-error" role="alert" className="text-error text-sm">
+            {emailMessage}
+          </span>
+        ) : null}
       </span>
     </Wrapper>
   );

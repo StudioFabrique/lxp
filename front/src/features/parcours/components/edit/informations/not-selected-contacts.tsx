@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { parcoursApi } from "../../../api/parcours.api";
 import { parcoursKeys } from "../../../api/parcours.keys";
+import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -50,8 +51,12 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         });
       }
     },
-    onError: () => {
-      toast.error("Erreur lors de la création du contact");
+    onError: (error) => {
+      // L'API refuse en 409 une adresse email déjà utilisée : ce motif était
+      // remplacé par un message générique qui ne disait pas quoi corriger.
+      toast.error(
+        getApiErrorMessage(error, "Erreur lors de la création du contact"),
+      );
     },
   });
 

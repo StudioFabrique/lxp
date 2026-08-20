@@ -6,6 +6,11 @@ import { randomUUID } from "crypto";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { logger } from "../../utils/logs/logger.ts";
+import {
+  exactInsensitive,
+  isDuplicateKeyError,
+  normalizeEmail,
+} from "../../utils/unique-fields.ts";
 
 /**
  * Envoie l'invitation puis note l'issue sur le compte.
@@ -46,9 +51,20 @@ async function sendActivationInvitation(
 }
 
 export default async function createUser(user: IUser, roleId: string) {
+  const email = normalizeEmail(user.email ?? "");
+
   try {
-    // Vérifier si l'utilisateur existe déjà
-    const userToFind = await User.findOne({ email: user.email });
+    if (email.length === 0) {
+      throw {
+        statusCode: 400,
+        message: "L'adresse email est obligatoire.",
+      };
+    }
+
+    // Vérifier si l'utilisateur existe déjà. La comparaison ignore la casse :
+    // les comptes créés par import CSV ou via la création de contact ne sont
+    // pas passés en minuscules, un test d'égalité stricte les manquait.
+    const userToFind = await User.findOne({ email: exactInsensitive(email) });
     if (userToFind) {
       throw {
         statusCode: 409,
@@ -69,7 +85,7 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Créer un nouvel utilisateur dans MongoDB
     const createdUser = await User.create({
-      email: user.email.toLowerCase(),
+      email,
       firstname: user.firstname.toLowerCase(),
       lastname: user.lastname.toLowerCase(),
       nickname: user.nickname?.toLowerCase(),
@@ -136,6 +152,13 @@ export default async function createUser(user: IUser, roleId: string) {
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: role.rank, invitationPending };
   } catch (error: any) {
+    if (isDuplicateKeyError(error)) {
+      throw {
+        statusCode: 409,
+        message:
+          "Un utilisateur a déjà été enregistré avec cette adresse email.",
+      };
+    }
     throw error;
   }
 }

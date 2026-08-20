@@ -3,6 +3,7 @@ import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import activateMultipleUsers from "../user/activate-multiple-users.ts";
 import { logger } from "../../utils/logs/logger.ts";
+import { exactInsensitive } from "../../utils/unique-fields.ts";
 
 export default async function putGroup(
   id: string,
@@ -13,7 +14,37 @@ export default async function putGroup(
 ) {
   // Find the group by id
   const groupToFind = await Group.findOne({ _id: id });
-  if (!groupToFind) return null;
+  if (!groupToFind) {
+    throw {
+      statusCode: 404,
+      message: "Le groupe n'existe pas.",
+    };
+  }
+
+  const name = group.name?.trim() ?? "";
+
+  if (name.length === 0) {
+    throw {
+      statusCode: 400,
+      message: "Le nom du groupe est obligatoire.",
+    };
+  }
+
+  // Même contrôle qu'à la création, en excluant le groupe modifié : renommer
+  // un groupe avec le nom d'un autre passait sans aucun signalement.
+  const nameOwner = await Group.findOne({
+    name: exactInsensitive(name),
+    _id: { $ne: groupToFind._id },
+  });
+
+  if (nameOwner) {
+    throw {
+      statusCode: 409,
+      message: "Un groupe portant ce nom existe déjà.",
+    };
+  }
+
+  group.name = name;
 
   await activateMultipleUsers(users);
 
@@ -44,7 +75,12 @@ export default async function putGroup(
       where: { idMdb: id },
     });
 
-    if (!existingPrismaGroup) return null;
+    if (!existingPrismaGroup) {
+      throw {
+        statusCode: 404,
+        message: "Le groupe n'existe pas.",
+      };
+    }
 
     if (parcoursId !== undefined) {
       await prisma.groupsOnParcours.deleteMany({
@@ -75,6 +111,6 @@ export default async function putGroup(
     return updatedGroup;
   } catch (error) {
     logger.error("Error updating group:", error);
-    return null;
+    throw error;
   }
 }

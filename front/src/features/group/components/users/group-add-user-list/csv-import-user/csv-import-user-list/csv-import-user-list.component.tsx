@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { mutations as userMutations } from "../../../../../../user/api/user.api";
 import CsvUserListConfirmation from "./csv-user-list-confirmation.component";
 import CsvImportUser from "../csv-import.component";
+import { getApiErrorMessage } from "../../../../../../../utils/helpers/api-error-message";
 
 const CsvImportUserList: FC<{
   onAddUsers: (users: Array<User>) => void;
@@ -61,16 +62,27 @@ const CsvImportUserList: FC<{
     const applyData = (data: any) => {
       setDrawerOpenState(false);
       onAddUsers(data.usersCreated);
-      toast.success("étudiants enregistrés");
+
+      // L'API détaille ce qui a été créé et ce qui a été écarté (adresses déjà
+      // enregistrées, lignes sans email). Un fichier entièrement composé de
+      // doublons affichait auparavant « étudiants enregistrés ».
+      const message = data.message ?? "étudiants enregistrés";
+
+      if (data.createdCount === 0) {
+        toast(message, { icon: "ℹ️" });
+        return;
+      }
+
+      toast.success(message);
     };
     setIsLoading(true);
     userMutations
       .createMany(selectedUsersToUpload)
       .then(applyData)
       .catch((err) => {
-        const errorMessage =
-          err?.response?.data?.message ?? "Erreur inconnue";
-        toast.error(errorMessage);
+        toast.error(
+          getApiErrorMessage(err, "L'import des étudiants a échoué."),
+        );
       })
       .finally(() => setIsLoading(false));
   };

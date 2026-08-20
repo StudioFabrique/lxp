@@ -1,11 +1,7 @@
 import { type Request, type Response } from "express";
 import type { IGroup } from "../../utils/interfaces/db/group.ts";
 import createGroup from "../../models/group/create-group.ts";
-import {
-  alreadyExist,
-  creationSuccessfull,
-  serverIssue,
-} from "../../utils/constantes.ts";
+import { creationSuccessfull, serverIssue } from "../../utils/constantes.ts";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
@@ -29,16 +25,20 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     if (!!uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
-    const response = await createGroup(group, users, image, parcoursId);
+    await createGroup(group, users, image, parcoursId);
 
     await deleteTempUploadedFile(req);
-    if (response) {
-      return res.status(201).json({ message: creationSuccessfull });
+    return res.status(201).json({ message: creationSuccessfull });
+  } catch (error: any) {
+    await deleteTempUploadedFile(req);
+
+    // Le modèle qualifie les refus attendus (nom déjà pris, nom vide) : ils
+    // portent leur propre statut et un message destiné à l'utilisateur. Le
+    // reste est un incident serveur et ne doit pas fuiter de détail technique.
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ message: error.message });
     }
-    return res.status(409).json({ message: alreadyExist });
-  } catch (e) {
 
-    await deleteTempUploadedFile(req);
-    return res.status(500).json({ message: serverIssue + e });
+    return res.status(500).json({ message: serverIssue });
   }
 }
