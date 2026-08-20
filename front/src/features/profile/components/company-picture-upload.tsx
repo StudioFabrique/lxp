@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import apiClient from "../../../lib/axios";
+import { profileApi } from "../api/profile.api";
 import ProfileImageFileUpload from "../../../components/UI/image-file-upload/profile-image-file-upload";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
@@ -38,12 +38,12 @@ const CompanyPictureUpload = () => {
       formData.append("color", color);
 
       setIsSaving(true);
-      apiClient
-        .post(`/company-logo`, formData)
-        .then((response) => {
+      profileApi.mutations
+        .saveCompanyLogo(formData)
+        .then((data) => {
           if (avatar.file) setHasLogo(true);
           setRequiresReload(true);
-          applyData(response.data);
+          applyData(data);
         })
         .catch((err) => {
           const errorMessage =
@@ -99,9 +99,9 @@ const CompanyPictureUpload = () => {
   const handleDeleteLogo = () => {
     setIsDeleting(true);
 
-    apiClient
-      .delete("/company-logo")
-      .then((response) => {
+    profileApi.mutations
+      .deleteCompanyLogo()
+      .then((data) => {
         hasSelectedColor.current = true;
         bgColorRef.current = defaultBackgroundColor;
         setBgColor(defaultBackgroundColor);
@@ -109,7 +109,7 @@ const CompanyPictureUpload = () => {
         setHasLogo(false);
         setRequiresReload(true);
         setShowDeleteConfirmation(false);
-        toast.success(response.data.message);
+        toast.success(data.message);
       })
       .catch((err) => {
         const errorMessage =

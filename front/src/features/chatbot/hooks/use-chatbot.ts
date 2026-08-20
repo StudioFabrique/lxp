@@ -1,28 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import apiClient from "../../../lib/axios";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import { isAiServerError } from "../../../utils/helpers/ai-helpers";
+import { chatbotApi } from "../api/chatbot.api";
+import type { ChatbotValues } from "../interfaces/chatbot";
 
-type ChatbotSource = {
-  course: string;
-  section: string;
-  activity: string;
-  score: number;
-  heading_path: string;
-  lessonId?: number;
-  moduleId?: number;
-  activityId?: number;
-};
-
-export type ChatbotValues = {
-  origin: "user" | "bot";
-  message: string;
-  date: Date;
-  type?: "normal" | "warning" | "error";
-  mode?: string;
-  sources?: ChatbotSource[];
-  textSelection?: string;
-};
+export type { ChatbotSource, ChatbotValues } from "../interfaces/chatbot";
 
 const AI_UNAVAILABLE_MESSAGE =
   "L'assistant est temporairement indisponible. Veuillez réessayer plus tard.";
@@ -85,19 +67,13 @@ const useChatbot = () => {
 
     try {
       setIsLoading(true);
-      const response = await apiClient.post("/chatbot/prompt", {
+      const data = await chatbotApi.mutations.sendPrompt({
         prompt: prompt.trim(),
         fullPrompt: message,
         courseId: currentActivity?.courseId,
         clearHistory: pendingReset,
         textSelection: targetTextSelection || null,
       });
-      const data = response.data as {
-        text: string;
-        type?: "normal" | "warning" | "error";
-        mode?: string;
-        sources?: ChatbotSource[];
-      };
       const processedText = data.text;
 
       setAiUnavailable(false);
@@ -160,11 +136,7 @@ const useChatbot = () => {
 
   const getConversationData = useCallback(async () => {
     try {
-      const response = await apiClient.get("/chatbot/dialogs");
-      const data = response.data as {
-        success: boolean;
-        dialogs: ChatbotValues[];
-      };
+      const data = await chatbotApi.queries.getDialogs();
       if (data.success) {
         setDialog(data.dialogs);
       }

@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useEffect, useReducer, useState } from "react";
-import apiClient from "../../../lib/axios";
+import { mediathequeApi } from "../api/mediatheque.api";
 import toast from "react-hot-toast";
 
 /**
@@ -123,11 +123,14 @@ const usePaginatedMediatheque = <T>() => {
     };
     setIsLoading(true);
     setError("");
-    apiClient
-      .get(
-        `/media?page=${state.page}&limit=${state.perPage}&type=${state.type}&sort=${state.sort}`,
-      )
-      .then((response) => applyData(response.data))
+    mediathequeApi.queries
+      .getPaginated<T>({
+        page: state.page,
+        limit: state.perPage,
+        type: state.type,
+        sort: state.sort,
+      })
+      .then(applyData)
       .catch((err) => {
         const errorMessage =
           err?.response?.data?.message ?? "Erreur inconnue";

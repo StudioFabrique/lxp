@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
-import apiClient from "../../../lib/axios";
+import { quizApi } from "../api/quiz.api";
 import type { UserAnswer } from "../interfaces/quiz";
 
 type AttemptOrigin = "self_test" | "ending_course" | "preliminary";
@@ -29,12 +29,9 @@ export default function useQuizAttemptTracking() {
     async (origin: AttemptOrigin, scope: AttemptScope) => {
       attemptIdRef.current = null;
       try {
-        const res = await apiClient.post<{ id: number }>("/quiz/attempt", {
-          origin,
-          ...scope,
-        });
-        // 204 : l'utilisateur n'est pas suivi (formateur, administrateur).
-        attemptIdRef.current = res.data?.id ?? null;
+        // `null` : l'utilisateur n'est pas suivi (formateur, administrateur).
+        const attempt = await quizApi.mutations.beginAttempt(origin, scope);
+        attemptIdRef.current = attempt?.id ?? null;
       } catch {
         attemptIdRef.current = null;
       }
@@ -50,8 +47,8 @@ export default function useQuizAttemptTracking() {
       // Les questions « random » injectées après une mauvaise réponse
       // n'appartiennent à aucun quiz persisté : l'API répond 404 et la
       // réponse est simplement ignorée.
-      apiClient
-        .post(`/quiz/attempt/${attemptId}/answer`, { externalId, userAnswer })
+      quizApi.mutations
+        .recordAnswer(attemptId, externalId, userAnswer)
         .catch(() => undefined);
     },
     [],
@@ -62,9 +59,7 @@ export default function useQuizAttemptTracking() {
     if (!attemptId) return;
 
     attemptIdRef.current = null;
-    apiClient
-      .put(`/quiz/attempt/${attemptId}/finish`)
-      .catch(() => undefined);
+    quizApi.mutations.finishAttempt(attemptId).catch(() => undefined);
   }, []);
 
   // Référence stable : les hooks appelants la déclarent en dépendance de

@@ -5,7 +5,7 @@ import ModuleHomeList from "../components/list/module-home";
 import ModalSuppression from "../components/list/modal-suppression";
 import toast from "react-hot-toast";
 import Loader from "../../../components/loaders/Loader";
-import apiClient from "../../../../src/lib/axios";
+import { moduleApi } from "../api/module.api";
 
 const ModuleHome = () => {
   const [modules, setModules] = useState<Module[] | null>(null);
@@ -16,11 +16,9 @@ const ModuleHome = () => {
   // retourne la liste de tous les modules
   const getModules = useCallback(() => {
     setIsLoading(true);
-    apiClient
-      .get("/modules")
-      .then((res) => {
-        const data = res.data;
-        console.log({ data });
+    moduleApi.queries
+      .getAll()
+      .then((data) => {
         const updatedModules = data.response.map((item: any) => ({
           ...item,
           formation: item.formation,
@@ -46,10 +44,9 @@ const ModuleHome = () => {
 
   const handleConfirmDelete = useCallback(() => {
     if (!moduleToDelete) return;
-    apiClient
-      .delete(`/modules/${moduleToDelete.id}`)
-      .then((res) => {
-        const data = res.data as { message: string };
+    moduleApi.mutations
+      .remove(moduleToDelete.id)
+      .then((data) => {
         toast.success(data.message);
         handleCloseModal();
         modules?.filter((item) => item.id !== moduleToDelete.id);

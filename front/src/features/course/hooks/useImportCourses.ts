@@ -13,7 +13,6 @@ import {
   sanitizeFilename,
 } from "../helpers/import-course-helpers";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
-import apiClient from "../../../lib/axios";
 import { courseApi } from "../api/course.api";
 
 export enum CoursesImportStep {
@@ -185,20 +184,10 @@ export default function useImportCourses() {
             : "Téléversement de l'archive Moodle (.mbz) et génération du contenu par l'IA...",
         );
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const response = await apiClient.post("/course/import-mbz", formData, {
-          responseType: "blob",
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total,
-              );
-              setUploadProgress(percentCompleted);
-            }
-          },
-        });
+        const response = await courseApi.mutations.importMbz(
+          file,
+          setUploadProgress,
+        );
 
         const courseSlug = response.headers["x-course-slug"] || "";
 
@@ -686,8 +675,8 @@ export default function useImportCourses() {
     if (!parcours) return;
 
     try {
-      const res = await apiClient.get(`/modules/${parcours.id}`);
-      setModulesList(res.data.modules);
+      const data = await courseApi.queries.modulesByParcoursId(parcours.id);
+      setModulesList(data.modules);
     } catch (err) {
       console.error("Erreur chargement modules:", err);
     }
@@ -701,10 +690,8 @@ export default function useImportCourses() {
     setSelectedModule(null);
 
     try {
-      const res = await apiClient.get(
-        `/parcours/parcours-by-formation/${formation.id}`,
-      );
-      setParcoursList(res.data.data);
+      const data = await courseApi.queries.parcoursByFormationId(formation.id);
+      setParcoursList(data.data);
     } catch (err) {
       console.error("Erreur chargement parcours:", err);
     }
@@ -726,7 +713,7 @@ export default function useImportCourses() {
 
   useEffect(() => {
     if (step === CoursesImportStep.ParcoursSelection) {
-      apiClient.get("/formation").then((res) => setFormationsList(res.data));
+      courseApi.queries.formationsList().then(setFormationsList);
     }
   }, [step]);
 

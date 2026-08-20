@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Activity } from "../../../utils/interfaces/activity";
 import Resource from "../interfaces/resource";
 import Tag from "../../../utils/interfaces/tag";
-import apiClient from "../../../lib/axios";
+import { resourcesApi } from "../api/resources.api";
 import z from "zod";
 import { regexGeneric } from "../../../config/constantes";
 import { useParams } from "react-router";
@@ -221,37 +221,17 @@ const useResource = () => {
 
   const sendRequest = useCallback(
     async (
-      req: {
-        path: string;
-        method: "get" | "post" | "put" | "delete";
-        body?: unknown;
-        headers?: unknown;
-      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      call: () => Promise<any>,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       applyData?: (data: any) => void,
     ) => {
       setIsLoading(true);
       setError("");
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let response: any;
-        switch (req.method) {
-          case "post":
-            response = await apiClient.post(req.path, req.body);
-            break;
-          case "put":
-            response = await apiClient.put(req.path, req.body);
-            break;
-          case "delete":
-            response = await apiClient.delete(req.path);
-            break;
-          case "get":
-          default:
-            response = await apiClient.get(req.path);
-            break;
-        }
-        if (applyData) return applyData(response.data);
-        return response.data;
+        const data = await call();
+        if (applyData) return applyData(data);
+        return data;
       } catch (err) {
         const message =
           (err as { response?: { data?: { message?: string } } })?.response
@@ -318,11 +298,11 @@ const useResource = () => {
     };
 
     sendRequest(
-      {
-        path: `/resources${state.mode === "update" ? `/${state.resourceId}` : ""}`,
-        method: state.mode === "update" ? "put" : "post",
-        body: fd,
-      },
+      () =>
+        resourcesApi.mutations.save(
+          fd,
+          state.mode === "update" ? (state.resourceId ?? undefined) : undefined,
+        ),
       applyData,
     );
   });
@@ -347,12 +327,11 @@ const useResource = () => {
       }
     };
     sendRequest(
-      {
-        path: `/activity/${state.activityToDelete!.type}/${
-          state.activityToDelete!.id
-        }/resource`,
-        method: "delete",
-      },
+      () =>
+        resourcesApi.mutations.removeActivity(
+          state.activityToDelete!.type,
+          state.activityToDelete!.id,
+        ),
       applyData,
     );
   };
@@ -415,7 +394,7 @@ const useResource = () => {
     };
     if (state.resourceId) {
       sendRequest(
-        { path: `/resources/${state.resourceId}`, method: "get" },
+        () => resourcesApi.queries.getDetails(state.resourceId!),
         applyData,
       );
     }
@@ -468,11 +447,12 @@ const useResource = () => {
       getResourceDetails();
     };
     sendRequest(
-      {
-        path: `/activity/video/${state.previewActivity?.id ?? state.resourceId}`,
-        method: state.previewActivity ? "put" : "post",
-        body: fd,
-      },
+      () =>
+        resourcesApi.mutations.saveVideoActivity(
+          state.previewActivity?.id ?? state.resourceId!,
+          fd,
+          Boolean(state.previewActivity),
+        ),
       applyData,
     );
   };
@@ -511,15 +491,12 @@ const useResource = () => {
       dispatch({ type: "RESET_ACTIVITY_EDITOR" });
     };
     sendRequest(
-      {
-        path: `/activity/iframe/${state.previewActivity?.id ?? state.resourceId}`,
-        method: state.previewActivity ? "put" : "post",
-        body: {
-          title: newActivity.title,
-          url: newActivity.url,
-          parent: "resource",
-        },
-      },
+      () =>
+        resourcesApi.mutations.saveIframeActivity(
+          state.previewActivity?.id ?? state.resourceId!,
+          { title: newActivity.title, url: newActivity.url },
+          Boolean(state.previewActivity),
+        ),
       applyData,
     );
   };

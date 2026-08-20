@@ -3,6 +3,18 @@ import type User from "../../../utils/interfaces/user";
 import type { UserDataResponse } from "../interfaces/user-data";
 
 export const queries = {
+  list: async (path: string) => {
+    const res = await apiClient.get<{ total: number; list: unknown[] }>(path);
+    return res.data;
+  },
+  stats: async () => {
+    const res = await apiClient.get("/user/stats");
+    return res.data;
+  },
+  roles: async () => {
+    const res = await apiClient.get("/permission/role");
+    return res.data;
+  },
   getUserData: async (id: string): Promise<UserDataResponse> => {
     const res = await apiClient.get(`/user/data/${id}`);
     return res.data;
@@ -16,6 +28,10 @@ export const queries = {
 };
 
 export const mutations = {
+  createMany: async (users: unknown[]) => {
+    const res = await apiClient.post("/user/many", users);
+    return res.data;
+  },
   create: async (
     userData: Record<string, unknown>,
     file: File | null,

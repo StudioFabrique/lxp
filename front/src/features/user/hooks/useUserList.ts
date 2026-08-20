@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import apiClient from "../../../lib/axios";
+import { queries } from "../api/user.api";
 import type User from "../../../utils/interfaces/user";
 import type UsersStats from "../interfaces/users-stats";
 import type Role from "../../../utils/interfaces/role";
@@ -54,7 +54,7 @@ export function useUserList(role: Role | null) {
     queryFn: async () => {
       const sortDir = isAscDirection ? "asc" : "desc";
       const path = `${baseEndpoint}/${sortProperty}/${sortDir}?page=${currentPage}&limit=${itemsPerPage}`;
-      const res = await apiClient.get<{ total: number; list: User[] }>(path);
+      const res = { data: (await queries.list(path)) as { total: number; list: User[] } };
       return res.data;
     },
     enabled: !!role,
@@ -68,7 +68,7 @@ export function useUserList(role: Role | null) {
   const { data: statsData } = useQuery({
     queryKey: ["user-stats"],
     queryFn: async () => {
-      const res = await apiClient.get<UsersStats[]>("/user/stats");
+      const res = { data: (await queries.stats()) as UsersStats[] };
       return res.data;
     },
   });

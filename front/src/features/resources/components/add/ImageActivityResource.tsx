@@ -1,7 +1,7 @@
 import { Activity } from "../../../../utils/interfaces/activity";
 import ImageActivityEditor from "../../../../features/lesson/components/edit/activities/image/image-activity-editor";
 import toast from "react-hot-toast";
-import apiClient from "../../../../lib/axios";
+import { resourcesApi } from "../../api/resources.api";
 import ImageActivityPreview from "../../../../features/lesson/components/edit/activities/image/image-activity-preview";
 
 type Props = {
@@ -14,11 +14,11 @@ type Props = {
 export default function ImageActivityResource(props: Props) {
   const handleImageSubmit = async (fd: FormData) => {
     try {
-      const { data } = await apiClient.request({
-        url: `/activity/image/${props.activity?.id ?? props.resourceId}/resource`,
-        method: props.activity ? "put" : "post",
-        data: fd,
-      });
+      const data = await resourcesApi.mutations.saveImageActivity(
+        props.activity?.id ?? props.resourceId,
+        fd,
+        Boolean(props.activity),
+      );
       if (data.success) {
         toast.success(data.message);
         props.onCancel(false);

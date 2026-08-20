@@ -10,7 +10,7 @@ import {
   UserAnswer,
 } from "../interfaces/quiz";
 import { isAiDisabled } from "../../../config/ai/ai";
-import apiClient from "../../../lib/axios";
+import { quizApi } from "../api/quiz.api";
 import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 
@@ -179,17 +179,9 @@ export default function useDiagnosticQuiz(
     }
 
     try {
-      const response = await apiClient({
-        method: "post",
-        url: "/quiz/preliminary/stream?n=10",
-        data: {
-          moduleId: moduleInfo.id,
-        },
-        responseType: "stream",
-        adapter: "fetch",
-      });
-
-      const stream = response.data as ReadableStream<Uint8Array>;
+      const stream = await quizApi.queries.streamPreliminaryQuiz(
+        moduleInfo.id,
+      );
       const reader = stream.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -307,10 +299,7 @@ export default function useDiagnosticQuiz(
     async (externalId: string, comment: string) => {
       try {
         // Envoi du signalement au backend
-        await apiClient.post("/quiz/question/report", {
-          externalId,
-          comment,
-        });
+        await quizApi.mutations.reportQuestion(externalId, comment);
         toast.success("Merci ! Votre signalement a bien été pris en compte.");
 
         // Si l'étudiant avait déjà répondu avant de signaler, annule l'impact
@@ -333,7 +322,7 @@ export default function useDiagnosticQuiz(
         toast.error("Impossible de remplacer le quiz pour le moment.");
       }
     },
-    [apiClient, currentIndex, quizzes, isAnswered, isCorrect],
+    [currentIndex, quizzes, isAnswered, isCorrect],
   );
 
   const onContinueFromResults = useCallback(() => {

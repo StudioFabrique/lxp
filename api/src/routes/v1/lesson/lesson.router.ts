@@ -8,7 +8,6 @@ import {
   duplicateResourcesValidator,
   getLessonsByTagValidator,
   lessonIdValidator,
-  lessonIdWithRateValidator,
   lessonRateValidator,
   putLessonValidator,
   putReorderLessonsValidator,
@@ -23,8 +22,6 @@ import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-det
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson.ts";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons.ts";
 // Contrôleurs pour le suivi de lecture des leçons
-import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson.ts";
-import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson.ts";
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read.ts";
 import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson.ts";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating.ts";
@@ -95,15 +92,6 @@ lessonRouter.put(
   httpPutReorderLessons
 );
 
-// Route pour marquer le début de lecture d'une leçon
-lessonRouter.post(
-  "/read/:lessonId",
-  checkPermissions("lesson", "read"),
-  checkContentAccess("lesson", "lessonId"),
-  lessonIdValidator,
-  httpPostBeginReadLesson
-);
-
 lessonRouter.get(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
@@ -127,15 +115,6 @@ lessonRouter.post(
   checkContentAccess("lesson", "lessonId"),
   [...lessonIdValidator, ...lessonRateValidator],
   httpPostRateLesson
-);
-
-// Route pour marquer une leçon comme terminée (et noter pour la première fois la leçon)
-lessonRouter.put(
-  "/read/:lessonId",
-  checkPermissions("lesson", "read"),
-  checkContentAccess("lesson", "lessonId"),
-  lessonIdWithRateValidator,
-  httpPutFinishReadLesson
 );
 
 lessonRouter.get(

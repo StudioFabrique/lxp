@@ -4,7 +4,7 @@ import { csvUsersFields } from "../../../../../../../config/csv/csv-users-fields
 import RightSideDrawer from "../../../../../../../components/UI/right-side-drawer/right-side-drawer";
 import User from "../../../../../../../utils/interfaces/user";
 import { toast } from "react-hot-toast";
-import apiClient from "../../../../../../../lib/axios";
+import { mutations as userMutations } from "../../../../../../user/api/user.api";
 import CsvUserListConfirmation from "./csv-user-list-confirmation.component";
 import CsvImportUser from "../csv-import.component";
 
@@ -64,9 +64,9 @@ const CsvImportUserList: FC<{
       toast.success("étudiants enregistrés");
     };
     setIsLoading(true);
-    apiClient
-      .post("/user/many", selectedUsersToUpload)
-      .then((response) => applyData(response.data))
+    userMutations
+      .createMany(selectedUsersToUpload)
+      .then(applyData)
       .catch((err) => {
         const errorMessage =
           err?.response?.data?.message ?? "Erreur inconnue";

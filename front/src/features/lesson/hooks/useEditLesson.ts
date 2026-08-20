@@ -3,7 +3,7 @@ import { regexGeneric, regexOptionalGeneric } from "../../../config/constantes";
 import type Lesson from "../../../utils/interfaces/lesson";
 import useInput from "../../../hooks/useInput";
 import type Tag from "../../../utils/interfaces/tag";
-import apiClient from "../../../lib/axios";
+import { lessonApi } from "../api/lesson.api";
 import toast from "react-hot-toast";
 import { useNavigate, useParams, useLocation } from "react-router";
 
@@ -40,7 +40,7 @@ const useEditLesson = () => {
 
   const handleUpdateLesson = async () => {
     try {
-      const response = await apiClient.put("/lesson/update", {
+      const response = await lessonApi.mutations.updateLesson({
         id: lesson!.id,
         title: title.value,
         description: description.value,
@@ -68,8 +68,9 @@ const useEditLesson = () => {
   const getLesson = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await apiClient.get(`/lesson/edit/${lessonId}`);
-      const data = response.data as { lesson: Lesson };
+      const data = (await lessonApi.queries.getLessonForEdit(
+        lessonId!,
+      )) as { lesson: Lesson };
       setLesson(data.lesson);
       setLessonValues(data.lesson);
     } catch (err: unknown) {
