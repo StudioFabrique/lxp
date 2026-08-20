@@ -8,7 +8,7 @@ import LastParcours from "../components/last-parcours";
 import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import LastModules from "../components/last-modules";
-import SidebarRouteIcon from "../../../components/headers/SidebarRouteIcon";
+import Header from "../../../components/headers/Header";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 
@@ -43,19 +43,11 @@ const AdminDashboard = () => {
         {showOnboardingWelcome ? (
           <OnboardingWelcome layout="admin" />
         ) : (
-          <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
-            <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
-              <SidebarRouteIcon />
-              <span>
-                Bonjour, {user?.firstname} {user?.lastname} !
-              </span>
-            </h2>
-            <p className="text-base-content opacity-80 max-w-3xl">
-              Bienvenue dans votre panneau d'administration, l'outil central
-              pour gérer et surveiller tous les aspects de l'apprentissage de
-              vos apprenants.
-            </p>
-          </section>
+          <Header
+            title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
+            description="Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants."
+            classname="capitalize"
+          />
         )}
       </div>
 
