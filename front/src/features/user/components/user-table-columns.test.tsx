@@ -33,12 +33,10 @@ const renderCell = (user: User, columnId: string) => {
   );
   const cell = columns.find((column) => column.id === columnId)?.cell;
 
-  expect(typeof cell).toBe("function");
-  if (typeof cell !== "function") return "";
+  expect(typeof cell).toBe("object");
+  if (typeof cell !== "object") return "";
 
-  return renderToStaticMarkup(
-    <MemoryRouter>{cell({ row: { original: user } } as never)}</MemoryRouter>,
-  );
+  return renderToStaticMarkup(<MemoryRouter>{cell}</MemoryRouter>);
 };
 
 const renderActions = (user: User) => renderCell(user, "student-data");
