@@ -3,13 +3,13 @@ dotenv.config();
 import path from "path";
 import express from "express";
 import api from "./routes/v1/v1.router.ts";
-import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import responseHandler from "./middleware/response-handler.ts";
 import requireSession from "./middleware/require-session.ts";
+import requestLogger from "./middleware/request-logger.ts";
 import { corsOrigins } from "./config/config.ts";
 
 const app = express();
@@ -54,7 +54,7 @@ app
     }),
   )
   .use(cookieParser())
-  .use(morgan("combined"))
+  .use(requestLogger)
   .use(
     compression({
       filter: (req, res) => {

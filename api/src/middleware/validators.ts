@@ -95,13 +95,12 @@ export const userValidator = (isFormData: boolean = false) => {
       .optional()
       .custom(customPostalCodeValidation)
       .trim()
-      .escape()
       .withMessage("postCode non conforme"),
     body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
       .optional()
       .isString()
       .trim()
-      .escape(),
+      .custom(customPhoneNumberValidation),
     body(validatorSubject + ".links.*.url")
       .trim()
       .isString()
@@ -112,22 +111,22 @@ export const userValidator = (isFormData: boolean = false) => {
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("links.*.alias"),
     body(validatorSubject + ".hobbies.*.title")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("hobbies.*.title"),
     body(validatorSubject + ".graduations.*.title")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage(".graduations.*.title"),
     body(validatorSubject + ".graduations.*.degree")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage(".graduations.*.degree"),
 
     body([
@@ -192,28 +191,28 @@ export const userProfileValidator = (isFormData: boolean = false) => {
     body(validatorSubject + ".links.*.url")
       .isString()
       .trim()
-      .escape()
+      .isURL()
       .withMessage("links.*.url"),
     body(validatorSubject + ".links.*.alias")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .optional()
       .withMessage("links.*.alias"),
     body(validatorSubject + ".hobbies.*.title")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("hobbies.*.title"),
     body(validatorSubject + ".graduations.*.title")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage(".graduations.*.title"),
     body(validatorSubject + ".graduations.*.degree")
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage(".graduations.*.degree"),
 
     body([
@@ -233,7 +232,7 @@ export const userProfileValidator = (isFormData: boolean = false) => {
 
 export const manyUsersValidator = [
   body().isArray(),
-  body("*.email").isEmail().trim().escape(),
+  body("*.email").isEmail().trim(),
   body([
     "*.firstname",
     "*.lastname",
@@ -313,7 +312,7 @@ export const getAllByRankValidator = [
 export const searchValidator = [
   param("role").isString().trim().escape(),
   param("entity").isString().trim().escape(),
-  param("value").isString().trim().escape(),
+  param("value").isString().trim().custom(stringValidateOptional),
   param("stype").isString().trim().escape(),
   param("sdir").isString().trim().escape(),
   query("page").trim().escape().isInt(),
