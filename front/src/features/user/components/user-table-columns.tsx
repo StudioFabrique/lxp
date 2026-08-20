@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import { personSelectionColumn } from "../../../components/table/person-selection-column";
 import UserStatusToggle from "./UserStatusToggle";
 
 export const getUsersColumns = (
@@ -17,26 +18,7 @@ export const getUsersColumns = (
   onSendInvitation: (id: string) => void,
   onSendResetPassword: (id: string) => void,
 ): ColumnDef<User>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <input
-        type="checkbox"
-        className="checkbox checkbox-sm checkbox-primary"
-        checked={table.getIsAllPageRowsSelected()}
-        onChange={table.getToggleAllPageRowsSelectedHandler()}
-      />
-    ),
-    cell: ({ row }) => (
-      <input
-        type="checkbox"
-        className="checkbox checkbox-sm checkbox-primary"
-        checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
-      />
-    ),
-    enableSorting: false,
-  },
+  personSelectionColumn<User>("Sélectionner tous les utilisateurs affichés"),
   {
     accessorKey: "firstname",
     header: "Prénom",
