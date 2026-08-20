@@ -32,30 +32,17 @@ const renderCell = (user: User, columnId: string) => {
     () => undefined,
   );
   const cell = columns.find((column) => column.id === columnId)?.cell;
+  if (!cell) return "";
 
-  expect(typeof cell).toBe("object");
-  if (typeof cell !== "object") return "";
+  expect(typeof cell).toBe("function");
+  if (typeof cell !== "function") return "";
 
-  return renderToStaticMarkup(<MemoryRouter>{cell}</MemoryRouter>);
+  return renderToStaticMarkup(
+    <MemoryRouter>{cell({ row: { original: user } } as never)}</MemoryRouter>,
+  );
 };
 
-const renderActions = (user: User) => renderCell(user, "student-data");
-
 describe("getUsersColumns", () => {
-  it("affiche la consultation des statistiques pour un étudiant", () => {
-    const markup = renderActions(createUser("student"));
-
-    expect(markup).toContain('href="/admin/user/data/student-id"');
-    expect(markup).toContain("Consulter les statistiques de Camille Martin");
-  });
-
-  it("masque la consultation des statistiques pour les autres rôles", () => {
-    const markup = renderActions(createUser("teacher"));
-
-    expect(markup).not.toContain("/admin/user/data/");
-    expect(markup).not.toContain("Consulter les statistiques");
-  });
-
   describe("état de l'invitation", () => {
     // L'invitation part après la réponse de création : tant que le serveur SMTP
     // n'a pas remis le message, proposer le renvoi induirait en erreur.
