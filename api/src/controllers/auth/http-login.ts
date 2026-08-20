@@ -7,7 +7,11 @@ import {
 } from "../../utils/constantes.ts";
 import userLogin from "../../models/auth/user-login.ts";
 import { setTokens } from "../../utils/services/auth/set-tokens.ts";
-import { accessExpire, refreshExpire, tokensMaxAge } from "../../config/config.ts";
+import {
+  accessExpire,
+  refreshExpire,
+  sessionCookieOptions,
+} from "../../config/config.ts";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger.ts";
 import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils.ts";
@@ -48,16 +52,12 @@ async function httpLogin(req: Request, res: Response) {
         );
       } */
       return res
-        .cookie("accessToken", accessToken, {
-          maxAge: tokensMaxAge.accessToken,
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        })
-        .cookie("refreshToken", refreshToken, {
-          maxAge: tokensMaxAge.refreshToken,
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        })
+        .cookie("accessToken", accessToken, sessionCookieOptions("accessToken"))
+        .cookie(
+          "refreshToken",
+          refreshToken,
+          sessionCookieOptions("refreshToken"),
+        )
         .status(200)
         .json({ ...user, abilityRules: buildAbility(permissions).rules });
     }

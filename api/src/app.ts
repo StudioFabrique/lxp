@@ -23,7 +23,7 @@ app
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "http://localhost:5001"],
+          defaultSrc: ["'self'"],
           imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
           scriptSrc: ["'self'", "https://www.youtube.com"],
           frameSrc: [

@@ -7,7 +7,10 @@ import httpLogin from "../../../controllers/auth/http-login.ts";
 import httpHandshake from "../../../controllers/auth/http-handshake.ts";
 import checkToken from "../../../middleware/check-token.ts";
 import httpGetCurrentRoles from "../../../controllers/auth/http-get-current-roles.ts";
-import { passwordValidateGeneric } from "../../../helpers/custom-validators.ts";
+import {
+  newPasswordValidate,
+  passwordValidateGeneric,
+} from "../../../helpers/custom-validators.ts";
 import httpGetDisconnect from "../../../controllers/auth/http-get-disconnect.ts";
 import httpGetSetupStatus from "../../../controllers/auth/http-get-setup-status.ts";
 import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-verify-activation-token.ts";
@@ -129,7 +132,7 @@ authRouter.post(
     .withMessage("Le mot de passe est requis.")
     .isString()
     .withMessage("Le mot de passe doit être une chaîne de caractères.")
-    .custom(passwordValidateGeneric)
+    .custom(newPasswordValidate)
     .withMessage(
       "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
     ),

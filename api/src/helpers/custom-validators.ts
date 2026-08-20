@@ -5,6 +5,7 @@ import {
   regexJwt,
   regexNumber,
   regexOptionalGeneric,
+  regexNewPassword,
   regexPassword,
   regexRgba,
 } from "../utils/constantes.ts";
@@ -29,6 +30,11 @@ export function numberValidateGeneric(value: string) {
 
 export function passwordValidateGeneric(value: string) {
   return regexPassword.test(value);
+}
+
+/** À utiliser partout où un mot de passe est *défini*, jamais à la connexion. */
+export function newPasswordValidate(value: string) {
+  return regexNewPassword.test(value);
 }
 
 export function dateValidateGeneric(value: string) {

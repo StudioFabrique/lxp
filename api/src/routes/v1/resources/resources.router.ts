@@ -43,6 +43,10 @@ resourcesRouter.put(
   uploadActivityImage(),
   mediatheque("image"),
   jsonParser,
+  // `httpPutResource` lit `data.title`, `data.description` et `data.tags` :
+  // la route de création les valide, celle de mise à jour ne le faisait pas.
+  postResourceValidator,
+  resourceIdValidator,
   httpPutResource,
 );
 

@@ -30,7 +30,7 @@ export const uploadCompanyLogo = () => {
   return (req: CustomRequest, res: Response, next: NextFunction) => {
     const upload = multer({
       storage: storage,
-      limits: { fileSize: 50 * 1024 * 1024 * 1024 },
+      limits: { fileSize: 50 * 1024 * 1024 }, // 50 Mo
       fileFilter: (_req, file, cb: multer.FileFilterCallback) => {
         if (!file.mimetype.startsWith("image")) {
           cb(null, false);
