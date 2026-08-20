@@ -1055,6 +1055,118 @@ describe("HTTP /user", () => {
     });
   });*/
 
+  // Unicité de l'adresse email : le doublon était refusé sans que le motif
+  // remonte, et rien ne le contrôlait à la modification.
+  describe("Unicité de l'adresse email", () => {
+    const baseUser = {
+      firstname: "camille",
+      lastname: "delorme",
+      graduations: [],
+      links: [],
+      hobbies: [],
+    };
+
+    const createdEmails = [
+      "unicite-creation@studio.eco",
+      "unicite-modification@studio.eco",
+    ];
+
+    let studentRoleId = "";
+
+    const postUser = (user: Record<string, unknown>) =>
+      request(app)
+        .post("/v1/user")
+        .set("Cookie", [`${authToken}`])
+        .field("data", JSON.stringify({ user }));
+
+    beforeAll(async () => {
+      const studentRole = await Role.findOne({ rank: 3 });
+      studentRoleId = studentRole!._id.toString();
+    });
+
+    afterAll(async () => {
+      await User.deleteMany({ email: { $in: createdEmails } });
+    });
+
+    test("le premier enregistrement passe", async () => {
+      await postUser({
+        ...baseUser,
+        email: createdEmails[0],
+        roleId: studentRoleId,
+      }).expect(201);
+    });
+
+    test("la même adresse est refusée en 409 avec son motif", async () => {
+      const res = await postUser({
+        ...baseUser,
+        email: createdEmails[0],
+        roleId: studentRoleId,
+      });
+
+      expect(res.status).toBe(409);
+      expect(res.body.message).toBe(
+        "Un utilisateur a déjà été enregistré avec cette adresse email."
+      );
+    });
+
+    test("la même adresse dans une autre casse est refusée aussi", async () => {
+      const res = await postUser({
+        ...baseUser,
+        email: createdEmails[0].toUpperCase(),
+        roleId: studentRoleId,
+      });
+
+      expect(res.status).toBe(409);
+      expect(res.body.message).toBe(
+        "Un utilisateur a déjà été enregistré avec cette adresse email."
+      );
+    });
+
+    test("reprendre l'adresse d'un autre compte est refusé à la modification", async () => {
+      await postUser({
+        ...baseUser,
+        email: createdEmails[1],
+        roleId: studentRoleId,
+      }).expect(201);
+
+      const userToUpdate = await User.findOne({ email: createdEmails[1] });
+
+      const res = await request(app)
+        .put(`/v1/user/${userToUpdate!._id.toString()}`)
+        .set("Cookie", [`${authToken}`])
+        .field(
+          "data",
+          JSON.stringify({
+            user: { ...baseUser, email: createdEmails[0] },
+          })
+        );
+
+      expect(res.status).toBe(409);
+      expect(res.body.message).toBe(
+        "Un autre utilisateur utilise déjà cette adresse email."
+      );
+    });
+
+    test("conserver sa propre adresse reste possible", async () => {
+      const userToUpdate = await User.findOne({ email: createdEmails[1] });
+
+      await request(app)
+        .put(`/v1/user/${userToUpdate!._id.toString()}`)
+        .set("Cookie", [`${authToken}`])
+        .field(
+          "data",
+          JSON.stringify({
+            user: {
+              ...baseUser,
+              firstname: "camille-marie",
+              email: createdEmails[1].toUpperCase(),
+            },
+          })
+        )
+        .expect(201);
+    });
+  });
+
   afterAll(async () => {
     // Fermer la connexion à MongoDB
     await disconnect();

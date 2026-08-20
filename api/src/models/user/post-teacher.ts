@@ -3,18 +3,30 @@ import { prisma } from "../../utils/db.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
+import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
 
 async function postTeacher(teacher: IUser) {
+  const email = normalizeEmail(teacher.email ?? "");
+
+  if (email.length === 0) {
+    throw {
+      statusCode: 400,
+      message: "L'adresse email est obligatoire.",
+    };
+  }
+
+  // vérification de la disponibilité de l'adresse email, à la casse près :
+  // l'email est ici enregistré tel quel, une égalité stricte laissait passer
+  // la même adresse écrite différemment.
   const existingUser = await User.findOne(
-    { email: teacher.email },
+    { email: exactInsensitive(email) },
     { email: 1 },
   );
 
-  // vérification de la disponibilité de l'adresse email
   if (existingUser) {
     throw {
       statusCode: 409,
-      message: `L'utilisateur avec l'email : ${teacher.email} existe déjà`,
+      message: `L'utilisateur avec l'email : ${email} existe déjà`,
     };
   }
 
@@ -24,6 +36,7 @@ async function postTeacher(teacher: IUser) {
 
   const newTeacher = await User.create({
     ...teacher,
+    email,
     password,
     isActive: teacher.isActive ?? false,
     roles: [new Object(fetchedRole!._id)],
