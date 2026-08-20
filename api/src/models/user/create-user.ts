@@ -24,9 +24,18 @@ async function sendActivationInvitation(
     await sendPasswordEmail(email, token, "activation");
     await User.updateOne(
       { _id: userId },
-      { $set: { invitationSent: true, invitationSentAt: new Date() } },
+      {
+        $set: { invitationSent: true, invitationSentAt: new Date() },
+        $unset: { invitationPendingSince: 1 },
+      },
     );
   } catch (error: any) {
+    // L'attente est levée même en échec : la liste doit reproposer le renvoi
+    // plutôt que de rester sur un indicateur qui ne se résoudra pas.
+    await User.updateOne(
+      { _id: userId },
+      { $unset: { invitationPendingSince: 1 } },
+    );
     logger.error(
       `Invitation non envoyée à ${email}`,
       error instanceof Error
@@ -111,6 +120,12 @@ export default async function createUser(user: IUser, roleId: string) {
     const invitationPending = Boolean(user.invitationSent);
 
     if (invitationPending) {
+      // Marqué avant le départ : la liste peut être rechargée dans la seconde
+      // qui suit la création.
+      await User.updateOne(
+        { _id: createdUser._id },
+        { $set: { invitationPendingSince: new Date() } },
+      );
       void sendActivationInvitation(
         createdUser._id.toString(),
         createdUser.email,

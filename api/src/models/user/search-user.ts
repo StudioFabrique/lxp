@@ -1,6 +1,7 @@
 import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
+import { isInvitationPending } from "../../utils/services/invitation-status.ts";
 
 /**
  * Search users in the database based on various criteria.
@@ -93,7 +94,15 @@ async function searchUser(
     roles: { $in: fetchedRoles },
   });
 
-  return { total, users };
+  return {
+    total,
+    // Même état dérivé que la liste : l'indicateur d'envoi en cours ne doit pas
+    // dépendre du fait qu'une recherche soit active ou non.
+    users: users.map((user) => ({
+      ...user.toObject(),
+      invitationPending: isInvitationPending(user.invitationPendingSince),
+    })),
+  };
 }
 
 export default searchUser;

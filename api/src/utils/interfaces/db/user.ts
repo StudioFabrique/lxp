@@ -47,6 +47,16 @@ export interface IUser extends Document {
   emailVerified: boolean;
   invitationSent: boolean;
   invitationSentAt?: Date;
+  /**
+   * Horodatage du début d'un envoi d'invitation encore en cours.
+   *
+   * L'envoi étant détaché de la requête, « en cours de remise » et « jamais
+   * envoyée » se confondraient sans lui : les deux laissent `invitationSent` à
+   * faux. Un horodatage plutôt qu'un booléen pour qu'un redémarrage en plein
+   * envoi ne fige pas l'état indéfiniment — au-delà d'un délai, il est
+   * considéré comme périmé.
+   */
+  invitationPendingSince?: Date;
   promptCount: number;
   promptStats?: IPromptStats["_id"];
   onboarding: IUserOnboarding;
@@ -85,6 +95,7 @@ const userSchema: Schema = new Schema(
     emailVerified: { type: Boolean, default: false },
     invitationSent: { type: Boolean, default: false },
     invitationSentAt: { type: Date, required: false },
+    invitationPendingSince: { type: Date, required: false },
     promptCount: { type: Number, default: 0 },
     promptStats: {
       type: [mongoose.Schema.Types.ObjectId],

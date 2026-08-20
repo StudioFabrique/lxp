@@ -3,6 +3,7 @@ import User from "../../utils/interfaces/db/user.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
 import { prisma } from "../../utils/db.ts";
+import { isInvitationPending } from "../../utils/services/invitation-status.ts";
 
 async function getUsersByRole(
   page: number,
@@ -92,6 +93,7 @@ async function getUsersByRole(
       createdAt: 1,
       emailVerified: 1,
       invitationSent: 1,
+      invitationPendingSince: 1,
     }
   )
     .populate("group")
@@ -117,6 +119,10 @@ async function getUsersByRole(
             ).formation
           : "ND",
       avatar: imageToDataUrl(user.avatar),
+      // État dérivé plutôt que brut : la règle de péremption d'un envoi
+      // interrompu appartient au serveur, pas à chaque écran qui affiche la
+      // liste.
+      invitationPending: isInvitationPending(user.invitationPendingSince),
     };
   });
   return { total, users };

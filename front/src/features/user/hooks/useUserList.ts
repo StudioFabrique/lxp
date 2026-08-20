@@ -5,6 +5,13 @@ import type User from "../../../utils/interfaces/user";
 import type UsersStats from "../interfaces/users-stats";
 import type Role from "../../../utils/interfaces/role";
 
+/**
+ * Cadence de relance tant qu'une invitation est en cours de remise. Assez
+ * courte pour que l'indicateur ne s'attarde pas, assez espacée pour ne pas
+ * solliciter la liste inutilement.
+ */
+const INVITATION_POLL_INTERVAL_MS = 3000;
+
 export function useUserList(role: Role | null) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() => {
@@ -59,6 +66,13 @@ export function useUserList(role: Role | null) {
     },
     enabled: !!role,
     placeholderData: keepPreviousData,
+    // Une invitation part après la réponse de création : sans relance, la liste
+    // resterait sur l'indicateur d'attente jusqu'à une action de l'utilisateur.
+    // La relance s'arrête d'elle-même dès qu'aucune ligne n'est en cours.
+    refetchInterval: (query) =>
+      query.state.data?.list?.some((user) => user.invitationPending)
+        ? INVITATION_POLL_INTERVAL_MS
+        : false,
   });
 
   const listData = useMemo(() => data?.list ?? [], [data]);

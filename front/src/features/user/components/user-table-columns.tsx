@@ -1,5 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, MailCheck, Pencil, RotateCw, Send, Trash2 } from "lucide-react";
+import {
+  Eye,
+  LoaderCircle,
+  MailCheck,
+  Pencil,
+  RotateCw,
+  Send,
+  Trash2,
+} from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -116,6 +124,19 @@ export const getUsersColumns = (
             >
               <RotateCw className="w-4 h-4 text-warning" />
             </button>
+          ) : user.invitationPending ? (
+            // L'envoi est détaché de la création : tant que le serveur SMTP n'a
+            // pas remis le message, l'action de renvoi n'a pas lieu d'être
+            // proposée. Le libellé reste lisible aux lecteurs d'écran, que
+            // `data-tip` seul n'atteindrait pas.
+            <span
+              className="btn btn-ghost btn-xs btn-square tooltip btn-disabled"
+              data-tip="Invitation en cours d'envoi"
+              role="status"
+              aria-label={`Invitation en cours d'envoi à ${user.firstname} ${user.lastname}`}
+            >
+              <LoaderCircle className="w-4 h-4 animate-spin text-primary" />
+            </span>
           ) : (
             <button
               onClick={() => onSendInvitation(userId)}
