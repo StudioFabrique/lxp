@@ -44,17 +44,19 @@ const AdminDashboard = () => {
           <OnboardingWelcome layout="admin" />
         ) : (
           <section className="bg-base-200 border border-base-300 rounded-lg p-6 shadow-sm w-full">
-            <h2 className="flex items-center gap-3 text-3xl font-extrabold capitalize text-primary mb-2">
+            <div className="flex items-center gap-3">
               <SidebarRouteIcon />
-              <span>
-                Bonjour, {user?.firstname} {user?.lastname} !
-              </span>
-            </h2>
-            <p className="text-base-content opacity-80 max-w-3xl">
-              Bienvenue dans votre panneau d'administration, l'outil central
-              pour gérer et surveiller tous les aspects de l'apprentissage de
-              vos apprenants.
-            </p>
+              <div className="min-w-0">
+                <h2 className="text-xl font-extrabold capitalize text-primary">
+                  Bonjour, {user?.firstname} {user?.lastname} !
+                </h2>
+                <p className="max-w-3xl text-xs text-base-content">
+                  Bienvenue dans votre panneau d'administration, l'outil central
+                  pour gérer et surveiller tous les aspects de l'apprentissage
+                  de vos apprenants.
+                </p>
+              </div>
+            </div>
           </section>
         )}
       </div>

@@ -76,20 +76,22 @@ const OnboardingWelcome = ({ layout }: Props) => {
 
           <div className="flex items-center gap-3">
             <SidebarRouteIcon />
-            <h2
-              id="onboarding-welcome-title"
-              className="mb-2 flex items-center gap-1.5 text-3xl font-extrabold text-primary"
-            >
-              <span className="capitalize">
-                {user?.firstname} {user?.lastname},
-              </span>
-              <span>{" Bienvenue sur la plateforme ANDRIA !"}</span>
-            </h2>
+            <div className="min-w-0">
+              <h2
+                id="onboarding-welcome-title"
+                className="text-xl font-extrabold text-primary"
+              >
+                <span className="capitalize">
+                  {user?.firstname} {user?.lastname}
+                </span>
+                , Bienvenue sur la plateforme ANDRIA !
+              </h2>
+              <p className="max-w-3xl text-xs text-base-content">
+                Découvrez les outils essentiels pour administrer la plateforme
+                et créer vos premiers contenus.
+              </p>
+            </div>
           </div>
-          <p className="max-w-3xl text-base-content opacity-80">
-            Découvrez les outils essentiels pour administrer la plateforme et
-            créer vos premiers contenus.
-          </p>
           <button
             type="button"
             className="btn btn-primary self-end mt-4"
@@ -121,13 +123,13 @@ const OnboardingWelcome = ({ layout }: Props) => {
           <div className="min-w-0">
             <h2
               id="onboarding-welcome-title"
-              className="mb-2 flex items-center gap-1.5 text-3xl font-extrabold text-primary"
+              className="text-xl font-extrabold text-primary"
             >
-              <span>Bienvenue</span>
+              Bienvenue{" "}
               <span className="capitalize">
                 {user?.firstname} {user?.lastname}
-              </span>
-              <span> sur la plateforme ANDRIA !</span>
+              </span>{" "}
+              sur la plateforme ANDRIA !
             </h2>
             <p className="text-xs text-base-content">
               Découvrez votre espace d’apprentissage et les outils qui vous
