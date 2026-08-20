@@ -1,6 +1,11 @@
 name: Build and deploy LXP to development
 
 on:
+  # Le lint, les types et les tests tournent sur les PR vers beta.
+  pull_request:
+    branches:
+      - beta
+  # Le build de l'image et le deploiement tournent apres le merge sur beta.
   push:
     branches:
       - beta
@@ -10,8 +15,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: lxp-development
-  cancel-in-progress: false
+  # Une PR annule ses propres runs precedents, les deploiements sur beta
+  # restent serialises sur un seul groupe.
+  group: lxp-development-${{ github.event_name == 'pull_request' && github.head_ref || 'beta' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   LXP_IMAGE: studiostep/lxp
@@ -25,6 +32,7 @@ env:
 jobs:
   verify:
     name: Lint, types and tests
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -70,8 +78,7 @@ jobs:
 
   image:
     name: Build and publish the LXP image
-    if: github.ref == 'refs/heads/beta'
-    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: development
@@ -104,8 +111,8 @@ jobs:
 
   deploy:
     name: Deploy to the development VPS
-    if: github.ref == 'refs/heads/beta'
-    needs: [verify, image]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta'
+    needs: image
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: development

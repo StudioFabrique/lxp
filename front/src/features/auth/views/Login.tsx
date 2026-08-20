@@ -87,20 +87,6 @@ const Login = () => {
         {/* Message d'erreur */}
         {error && <span className="text-sm text-error -mt-2.5">{error}</span>}
 
-        {activationRequired && (
-          <Link
-            to="/reset-password"
-            state={{
-              mode: "activation",
-              email: submittedEmail,
-              retryAfterSeconds: activationRetryAfterSeconds,
-            }}
-            className="btn btn-sm btn-outline w-full"
-          >
-            Renvoyer le lien d'activation
-          </Link>
-        )}
-
         {/* Bouton de soumission */}
         <button
           type="submit"
@@ -116,6 +102,20 @@ const Login = () => {
             "Se connecter"
           )}
         </button>
+
+        {activationRequired && (
+          <Link
+            to="/reset-password"
+            state={{
+              mode: "activation",
+              email: submittedEmail,
+              retryAfterSeconds: activationRetryAfterSeconds,
+            }}
+            className="btn btn-sm btn-outline w-full"
+          >
+            Compte pas encore activé ?
+          </Link>
+        )}
 
         <div className="text-center mt-2">
           <Link

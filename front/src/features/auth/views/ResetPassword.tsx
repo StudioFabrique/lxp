@@ -42,7 +42,7 @@ const ResetPasswordHome = () => {
           Consultez votre boîte de réception pour poursuivre la procédure.
         </p>
         <Link className="btn btn-outline btn-primary w-full" to="/login">
-          Retour à la connexion
+          Retour à la page de connexion
         </Link>
       </div>
     );
@@ -107,7 +107,7 @@ const ResetPasswordHome = () => {
             to="/login"
             className="text-sm text-base-content hover:underline transition-all"
           >
-            Retour à la connexion
+            Retour à la page de connexion
           </Link>
         </div>
       </div>
