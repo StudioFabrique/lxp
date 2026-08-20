@@ -1,5 +1,6 @@
 import { Router } from "express";
 import checkPermissions from "../../../middleware/check-permissions.ts";
+import { checkContentAccessFromParams } from "../../../middleware/check-content-access.ts";
 import httpPostBeginContentRead from "../../../controllers/content-read/http-post-begin-content-read.ts";
 import httpPostContentReadHeartbeat from "../../../controllers/content-read/http-post-content-read-heartbeat.ts";
 import httpPutFinishContentRead from "../../../controllers/content-read/http-put-finish-content-read.ts";
@@ -18,6 +19,7 @@ const contentReadRouter = Router();
 contentReadRouter.post(
   "/:type/:id/begin",
   checkPermissions("cursus", "write"),
+  checkContentAccessFromParams("type", "id"),
   contentReadValidator,
   httpPostBeginContentRead,
 );
@@ -26,6 +28,7 @@ contentReadRouter.post(
 contentReadRouter.post(
   "/:type/:id/heartbeat",
   checkPermissions("cursus", "write"),
+  checkContentAccessFromParams("type", "id"),
   contentReadValidator,
   httpPostContentReadHeartbeat,
 );
@@ -34,6 +37,7 @@ contentReadRouter.post(
 contentReadRouter.put(
   "/:type/:id/finish",
   checkPermissions("cursus", "update"),
+  checkContentAccessFromParams("type", "id"),
   contentReadValidator,
   httpPutFinishContentRead,
 );

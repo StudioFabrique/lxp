@@ -12,7 +12,7 @@ import httpGetDisconnect from "../../../controllers/auth/http-get-disconnect.ts"
 import httpGetSetupStatus from "../../../controllers/auth/http-get-setup-status.ts";
 import httpPostVerifyActivationToken from "../../../controllers/auth/http-post-verify-activation-token.ts";
 import httpPostFirstAdmin from "../../../controllers/auth/http-post-first-admin.ts";
-import rateLimiter from "../../../middleware/rate-limiter.ts";
+import rateLimiter, { clientIp } from "../../../middleware/rate-limiter.ts";
 import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds.ts";
 import httpPostResendActivation from "../../../controllers/auth/http-post-resend-activation.ts";
 import httpPatchOnboarding from "../../../controllers/auth/http-patch-onboarding.ts";
@@ -21,7 +21,23 @@ const authRouter = express.Router();
 
 authRouter.post(
   "/login",
-  body("email").isEmail().withMessage("Email invalide").trim().escape(),
+  // Sans plafond, l'endpoint accepte autant de tentatives que l'attaquant peut
+  // en émettre : `userLogin` ne compte pas les échecs et aucun verrouillage de
+  // compte n'existe.
+  //
+  // Deux portées complémentaires. La première vise le bourrage d'un compte
+  // précis. La seconde, bien plus large, arrête le balayage d'une liste
+  // d'adresses sans pénaliser un établissement dont les postes sortent tous
+  // par la même IP publique.
+  rateLimiter(
+    10,
+    15 * 60_000,
+    (req) => `login:${clientIp(req)}:${String(req.body?.email ?? "").toLowerCase()}`,
+  ),
+  rateLimiter(60, 60_000),
+  // Pas de `.escape()` ici : l'email sert de critère de recherche, et l'encoder
+  // empêcherait une adresse contenant une apostrophe de correspondre.
+  body("email").isEmail().withMessage("Email invalide").trim(),
   body("password")
     .notEmpty()
     .withMessage("Le mot de passe est requis.")
@@ -43,7 +59,7 @@ authRouter.post(
 );
 authRouter.get("/handshake", checkToken, httpHandshake);
 authRouter.get("/logout", httpLogout);
-authRouter.get("/refresh", refreshTokens);
+authRouter.get("/refresh", rateLimiter(30, 60_000), refreshTokens);
 authRouter.get("/roles", checkToken, httpGetCurrentRoles);
 authRouter.get("/close", checkToken, httpGetDisconnect);
 authRouter.patch(

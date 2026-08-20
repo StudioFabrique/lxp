@@ -26,10 +26,18 @@ type SessionPayload = {
   tokenType?: SessionTokenType;
 };
 
-export async function authenticateSession(
+/**
+ * Valide le jeton et rien d'autre : signature, liste noire, type de session.
+ *
+ * Séparé de `authenticateSession` parce que servir un fichier statique n'a
+ * besoin que de savoir qu'une session est ouverte. Charger l'utilisateur, ses
+ * rôles et leurs permissions à chaque image d'une leçon coûterait une jointure
+ * Mongo par requête, pour une information dont le fichier ne fait rien.
+ */
+export async function verifySessionToken(
   token: unknown,
   expectedType: SessionTokenType = "access",
-): Promise<AuthenticatedSession> {
+): Promise<string> {
   if (
     !token ||
     typeof token !== "string" ||
@@ -45,15 +53,20 @@ export async function authenticateSession(
     throw new AuthenticationError("Session absente ou expirée");
   }
 
-  // tokenType is optional only during the compatible rollout of pre-CASL JWTs.
-  if (
-    !payload.userId ||
-    (payload.tokenType !== undefined && payload.tokenType !== expectedType)
-  ) {
+  if (!payload.userId || payload.tokenType !== expectedType) {
     throw new AuthenticationError("Type de session invalide");
   }
 
-  const user = await User.findById(payload.userId).populate({
+  return payload.userId;
+}
+
+export async function authenticateSession(
+  token: unknown,
+  expectedType: SessionTokenType = "access",
+): Promise<AuthenticatedSession> {
+  const userId = await verifySessionToken(token, expectedType);
+
+  const user = await User.findById(userId).populate({
     path: "roles",
     populate: { path: "permissions" },
   });

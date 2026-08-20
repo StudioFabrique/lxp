@@ -9,6 +9,7 @@ import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import responseHandler from "./middleware/response-handler.ts";
+import requireSession from "./middleware/require-session.ts";
 import { corsOrigins } from "./config/config.ts";
 
 const app = express();
@@ -82,7 +83,28 @@ app
       },
     }),
   )
-  .use(express.static(uploadsDirectory))
+  // Les fichiers déposés dans `activities` (documents, images et vidéos de
+  // cours) sont des contenus pédagogiques : ils ne doivent être lisibles que
+  // par une session valide. Le cookie `accessToken` étant httpOnly et le front
+  // servi par ce même serveur, le navigateur le joint automatiquement aux
+  // requêtes `<img src>` et `window.open` : les URLs restent inchangées.
+  .use(
+    "/activities",
+    requireSession,
+    express.static(path.join(uploadsDirectory, "activities"), {
+      index: false,
+      dotfiles: "deny",
+    }),
+  )
+  // Le logo et la couleur de l'entreprise sont affichés sur l'écran de
+  // connexion, donc avant toute authentification.
+  .use(
+    "/company",
+    express.static(path.join(uploadsDirectory, "company"), {
+      index: false,
+      dotfiles: "deny",
+    }),
+  )
   .use("/v1", api)
   .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
   .get("*", (_req, res) => {

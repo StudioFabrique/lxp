@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import { HEARTBEAT_INTERVAL_MS } from "../src/config/content-read.ts";
+import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,7 @@ describe("Suivi de consultation des contenus", () => {
   let cookie: string[];
   let studentId: number;
   let lessonId: number;
+  let enrollment: Enrollment;
 
   beforeAll(async () => {
     await mongoConnect();
@@ -36,10 +38,19 @@ describe("Suivi de consultation des contenus", () => {
     studentId = student.id;
 
     const [course, admin, tag] = await Promise.all([
-      prisma.course.findFirst({ select: { id: true } }),
+      prisma.course.findFirst({
+        select: { id: true, module: { select: { parcoursId: true } } },
+      }),
       prisma.admin.findFirst({ select: { id: true } }),
       prisma.tag.findFirst({ select: { id: true } }),
     ]);
+
+    // Les contenus sont cloisonnés par parcours : sans inscription, l'apprenant
+    // reçoit 404 sur la leçon qu'il est censé consulter.
+    enrollment = await enrollStudentInParcours(
+      userIdMdb,
+      course!.module.parcoursId,
+    );
 
     const lesson = await prisma.lesson.create({
       data: {
@@ -62,6 +73,7 @@ describe("Suivi de consultation des contenus", () => {
     // partagée avec les autres specs et référencée par leurs accomplissements.
     await prisma.lessonRead.deleteMany({ where: { lessonId } });
     await prisma.lesson.delete({ where: { id: lessonId } });
+    await enrollment.cleanup();
     await prisma.$disconnect();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
   });

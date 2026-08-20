@@ -1,17 +1,15 @@
 import { prisma } from "../../utils/db.ts";
-import Group from "../../utils/interfaces/db/group.ts";
+import { getAccessibleParcoursIds } from "../../utils/services/permissions/accessible-parcours.ts";
 
 async function getParcoursByStudent(studentId: string) {
-  const groupsWhereStudentIs = await Group.find({ users: studentId });
-
-  const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
+  // La résolution « apprenant → groupes Mongo → parcours PostgreSQL » est
+  // partagée avec le contrôle d'accès aux contenus : les deux doivent voir
+  // exactement le même périmètre, sinon un parcours listé ici deviendrait
+  // illisible une fois ouvert.
+  const accessibleParcoursIds = await getAccessibleParcoursIds(studentId);
 
   const parcoursList = await prisma.parcours.findMany({
-    where: {
-      isPublished: true,
-      // visibility: true,
-      groups: { some: { group: { idMdb: { in: groupIds } } } },
-    },
+    where: { id: { in: accessibleParcoursIds } },
     select: {
       id: true,
       title: true,

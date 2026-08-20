@@ -162,23 +162,45 @@ describe("HTTP auth", () => {
         .expect(401);
     });
 
-    test("It should indicate that an inactive account needs activation", async () => {
-      const response = await request(app).post("/v1/auth/login").send({
+    test("It should not reveal that an account exists but awaits activation", async () => {
+      // Distinguer « compte en attente d'activation » de « compte inconnu »
+      // permettait de tester une liste d'adresses pour savoir lesquelles sont
+      // inscrites. Les deux cas répondent désormais à l'identique, et le lien
+      // de renvoi d'activation est proposé après n'importe quel échec.
+      // L'état du compte est posé ici plutôt que hérité des fixtures :
+      // `01_user.spec.ts` réactive `formateur2` au passage, et l'ordre
+      // d'exécution des fichiers dépend du cache de jest.
+      await User.updateOne(
+        { email: "formateur2@studio.eco" },
+        { $set: { isActive: false, emailVerified: false } },
+      );
+
+      const inactif = await request(app).post("/v1/auth/login").send({
         email: "formateur2@studio.eco",
         password: "Abcdef@123456",
       });
+      const inconnu = await request(app).post("/v1/auth/login").send({
+        email: "jamais.inscrit@studio.eco",
+        password: "Abcdef@123456",
+      });
 
-      expect(response.status).toBe(403);
-      expect(response.body.code).toBe("ACCOUNT_NOT_ACTIVATED");
+      expect(inactif.status).toBe(401);
+      expect(inactif.body.code).toBeUndefined();
+      expect(inactif.body).toEqual(inconnu.body);
+      expect(inactif.status).toBe(inconnu.status);
     });
   });
 
   describe("Test POST /auth/resend-activation", () => {
     test("It should resend once and enforce the account cooldown", async () => {
       const email = "formateur2@studio.eco";
+      // Même précaution : le renvoi n'est proposé qu'à un compte encore inactif.
       await User.updateOne(
         { email },
-        { $set: { invitationSent: false }, $unset: { invitationSentAt: 1 } },
+        {
+          $set: { invitationSent: false, isActive: false, emailVerified: false },
+          $unset: { invitationSentAt: 1 },
+        },
       );
 
       const firstResponse = await request(app)

@@ -14,6 +14,7 @@ import {
   updateDatesModulesValidator,
 } from "./module-validators.ts";
 import checkPermissions from "../../../middleware/check-permissions.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload.ts";
 import { headerImageMaxSize } from "../../../config/images-sizes.ts";
 import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours.ts";
@@ -35,6 +36,7 @@ const modules = Router();
 modules.get(
   "/parcours-modules/:parcoursId",
   checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
   httpGetParcoursModules,
 );
@@ -63,6 +65,7 @@ modules.put(
 modules.put(
   "/:parcoursId",
   checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
   idsArrayValidator,
   httpParcoursModules,
@@ -93,6 +96,7 @@ modules.put(
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
   getModulesFromParcoursValidator,
   httpGetModulesFromParcours,
 );
@@ -109,6 +113,7 @@ modules.delete(
 modules.get(
   "/detail/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpGetModuleDetail,
 );
@@ -116,6 +121,7 @@ modules.get(
 modules.get(
   "/detail/limited/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpGetLimitedModuleDetail,
 );
@@ -123,6 +129,7 @@ modules.get(
 modules.get(
   "/image/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpGetModuleImage,
 );

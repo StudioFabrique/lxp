@@ -19,14 +19,31 @@ function cleanup() {
   }
 }
 
-export default function rateLimiter(maxRequests: number, windowMs: number) {
+export function clientIp(req: Request) {
+  return (
+    req.ip ??
+    req.socket.remoteAddress ??
+    req.headers["x-forwarded-for"]?.toString() ??
+    "unknown"
+  );
+}
+
+/**
+ * @param keyFor Portée du compteur. Par défaut une IP et un chemin, ce qui
+ * convient aux endpoints dont l'abus vient d'une seule machine. Pour la
+ * connexion, compter par IP seule punirait tout un établissement derrière un
+ * même NAT le matin ; la portée y est donc élargie à l'adresse visée.
+ */
+export default function rateLimiter(
+  maxRequests: number,
+  windowMs: number,
+  keyFor: (req: Request) => string = (req) => `${clientIp(req)}:${req.path}`,
+) {
   return (req: Request, res: Response, next: NextFunction) => {
     cleanup();
 
-    const ip =
-      req.ip ?? req.socket.remoteAddress ?? req.headers["x-forwarded-for"]?.toString() ?? "unknown";
     const now = Date.now();
-    const key = `${ip}:${req.path}`;
+    const key = keyFor(req);
     const entry = store.get(key);
 
     if (!entry || now > entry.resetTime) {

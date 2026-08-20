@@ -96,17 +96,15 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       );
       setUser(response.data);
     } catch (err: any) {
-      if (err.response?.data?.code === "ACCOUNT_NOT_ACTIVATED") {
-        setActivationRequired(true);
-        setActivationRetryAfterSeconds(
-          err.response.data.retryAfterSeconds ?? 0,
-        );
-        setError(err.response.data.message);
-      } else if (
-        err.response?.status === 401 ||
-        err.response?.status === 403
-      ) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
         setError("Identifiant ou mot de passe incorrect");
+        // L'API ne dit plus si l'échec vient d'un compte inexistant ou d'un
+        // compte en attente d'activation : c'était un moyen d'énumérer les
+        // adresses inscrites. Le lien de renvoi est donc proposé après
+        // n'importe quel échec, l'endpoint qu'il appelle répondant lui aussi
+        // de façon indifférenciée.
+        setActivationRequired(true);
+        setActivationRetryAfterSeconds(0);
         if (err.response?.status === 403) logout();
       } else {
         setError("Problème serveur, réessayez plus tard svp");

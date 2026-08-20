@@ -17,6 +17,7 @@ import {
 import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by-tag.ts";
 // Middleware de vérification des permissions
 import checkPermissions from "../../../middleware/check-permissions.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
 import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list.ts";
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail.ts";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson.ts";
@@ -65,6 +66,7 @@ lessonRouter.get(
 lessonRouter.get(
   "/:lessonId",
   checkPermissions("lesson"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpGetLessonDetail
 );
@@ -72,6 +74,7 @@ lessonRouter.get(
 lessonRouter.get(
   "/lesson/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   httpGetLessonDetail,
 );
 
@@ -79,6 +82,7 @@ lessonRouter.get(
 lessonRouter.delete(
   "/:lessonId",
   checkPermissions("lesson"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpDeleteLesson
 );
@@ -95,6 +99,7 @@ lessonRouter.put(
 lessonRouter.post(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpPostBeginReadLesson
 );
@@ -102,6 +107,7 @@ lessonRouter.post(
 lessonRouter.get(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpGetLessonRating
 );
@@ -109,6 +115,7 @@ lessonRouter.get(
 lessonRouter.put(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpPutRateLesson
 );
@@ -117,6 +124,7 @@ lessonRouter.put(
 lessonRouter.post(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   [...lessonIdValidator, ...lessonRateValidator],
   httpPostRateLesson
 );
@@ -125,6 +133,7 @@ lessonRouter.post(
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdWithRateValidator,
   httpPutFinishReadLesson
 );
@@ -132,6 +141,7 @@ lessonRouter.put(
 lessonRouter.get(
   "/edit/:lessonId",
   checkPermissions("lesson"),
+  checkContentAccess("lesson", "lessonId"),
   lessonIdValidator,
   httpGetOneLesson
 );

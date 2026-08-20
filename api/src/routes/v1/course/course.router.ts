@@ -35,6 +35,7 @@ import {
 } from "../../../helpers/custom-validators.ts";
 import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts.ts";
 import checkPermissions from "../../../middleware/check-permissions.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
 import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class.ts";
 import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives.ts";
 import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives.ts";
@@ -110,6 +111,7 @@ courseRouter.post(
 courseRouter.delete(
   "/delete-course/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpDeleteCourse,
 );
@@ -121,6 +123,7 @@ courseRouter.delete(
 courseRouter.put(
   "/enable-course/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdAndVisibilityValidator,
   httpEnableCourse,
 );
@@ -243,6 +246,7 @@ courseRouter.get(
 courseRouter.get(
   "/infos/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseInformations,
 );
@@ -287,6 +291,7 @@ courseRouter.put(
 courseRouter.put(
   "/tags/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseTagsValidator,
   courseIdValidator,
   httpPutCourseTags,
@@ -299,6 +304,7 @@ courseRouter.put(
 courseRouter.put(
   "/contacts/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   idsArrayValidator,
   courseIdValidator,
   httpPutCourseContacts,
@@ -311,6 +317,7 @@ courseRouter.put(
 courseRouter.put(
   "/virtual-class/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   virtualClassValidator,
   httpPutCourseVirtualClass,
@@ -323,6 +330,7 @@ courseRouter.put(
 courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseObjectives,
 );
@@ -334,6 +342,7 @@ courseRouter.get(
 courseRouter.put(
   "/objectives/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseObjectives,
@@ -346,6 +355,7 @@ courseRouter.put(
 courseRouter.put(
   "/new-objective/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   putCourseNewObjectiveValidator,
   httpPutCourseNewObjective,
@@ -358,6 +368,7 @@ courseRouter.put(
 courseRouter.get(
   "/skills/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseSkills,
 );
@@ -366,6 +377,7 @@ courseRouter.get(
 courseRouter.get(
   "/bonus-skills/:courseId",
   checkPermissions("course", "read"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseSkills,
 );
@@ -377,6 +389,7 @@ courseRouter.get(
 courseRouter.put(
   "/bonus-skills/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseBonusSkills,
@@ -389,6 +402,7 @@ courseRouter.put(
 courseRouter.put(
   "/new-lesson/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   putCourseLessonValidator,
   httpPutCourseLesson,
@@ -401,6 +415,7 @@ courseRouter.put(
 courseRouter.get(
   "/scenario/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseScenario,
 );
@@ -412,6 +427,7 @@ courseRouter.get(
 courseRouter.put(
   "/lessons/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   idsArrayValidator,
   httpPutManyLessons,
@@ -424,6 +440,7 @@ courseRouter.put(
 courseRouter.put(
   "/dates/:courseId",
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   putCourseDatesValidator,
   httpPutCourseDates,
@@ -433,6 +450,7 @@ courseRouter.put(
 courseRouter.delete(
   "/dates/:courseId/:datesId",
   checkPermissions("course", "delete"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   deleteCourseDatesValidator,
   httpDeleteCourseDates,
@@ -443,6 +461,7 @@ courseRouter.put(
   "/publish/:courseId",
   courseIdValidator,
   checkPermissions("course"),
+  checkContentAccess("course", "courseId"),
   httpPutCourseIsPublished,
 );
 
@@ -450,6 +469,7 @@ courseRouter.put(
 courseRouter.get(
   "/dates/:courseId",
   checkPermissions("role"),
+  checkContentAccess("course", "courseId"),
   courseIdValidator,
   httpGetCourseDates,
 );

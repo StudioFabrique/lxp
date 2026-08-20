@@ -12,7 +12,7 @@
     "docker:up": "cd tests && docker compose up -d && cd ..",
     "docker:down": "cd tests && docker compose down && cd ..",
     "test:setup": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- node src/fixtures.ts && dotenv -e .env.test -- node src/fixtures-prisma-test.ts",
-    "test:run": "echo '🚀 Starting Jest...' && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --clearCache && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest",
+    "test:run": "echo '🚀 Starting Jest...' && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --clearCache && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand",
     "test:cleanup": "npm run docker:down",
     "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
     "build": "prisma generate && tsc --project tsconfig.build.json",
