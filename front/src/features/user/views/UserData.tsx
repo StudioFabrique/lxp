@@ -6,6 +6,7 @@ import Loader from "../../../components/loaders/Loader";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import UserConnection from "../components/user-data/UserConnection";
 import IndicatorsGrid from "../components/user-data/IndicatorsGrid";
+import IndicatorsPrediction from "../components/user-data/IndicatorsPrediction";
 import useTeacher from "../hooks/useTeacher";
 import useStudentIndicators from "../hooks/useStudentIndicators";
 
@@ -56,6 +57,14 @@ export default function UserData() {
               range={indicatorsQuery.range}
               isLoading={indicatorsQuery.isLoading}
               isError={indicatorsQuery.isError}
+            />
+          </BoxWrapper>
+
+          <BoxWrapper>
+            <IndicatorsPrediction
+              studentId={studentId!}
+              range={indicatorsQuery.range}
+              disabled={indicatorsQuery.isLoading || indicatorsQuery.isError}
             />
           </BoxWrapper>
         </>
