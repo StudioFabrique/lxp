@@ -196,7 +196,7 @@ function toPredictionError(error: unknown): IndicatorPredictionError {
 
   return new IndicatorPredictionError(
     502,
-    "Le service IA est injoignable.",
+    "Le service IA n'a pas pu être interrogé. Vérifier qu'il est bien démarré.",
   );
 }
 

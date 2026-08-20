@@ -56,6 +56,27 @@ describe("AiApiClient", () => {
     });
   });
 
+  it("garde le statut d'une erreur renvoyée en texte brut", async () => {
+    // Une exception non gérée côté FastAPI répond « Internal Server Error » en
+    // texte : l'appelant doit malgré tout recevoir le statut, pas une erreur
+    // d'analyse JSON.
+    jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("Internal Server Error", {
+        status: 500,
+        statusText: "Internal Server Error",
+        headers: { "Content-Type": "text/plain" },
+      }),
+    );
+    const client = new AiApiClient("http://ai.test", "test-secret");
+
+    await expect(
+      client.postJson("/indicators/predict", { subject: "student-1", body: {} }),
+    ).rejects.toMatchObject<Partial<AiApiError>>({
+      status: 500,
+      responseBody: "Internal Server Error",
+    });
+  });
+
   it("échoue explicitement lorsque le secret est absent", async () => {
     const client = new AiApiClient("http://ai.test", undefined);
 
