@@ -157,17 +157,8 @@ describe("HTTP Formation", () => {
 
     // No authentication
     test("It should respond 401 unauthorized", async () => {
-      const module = {
-        formationId: 1,
-        parcoursId: 1,
-        title: "Random title",
-        description: "Description random",
-      };
       await request(app)
         .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        //.set("Cookie", [`${authToken}`])
         .expect(401);
     });
 
