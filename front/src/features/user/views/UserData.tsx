@@ -6,8 +6,11 @@ import Loader from "../../../components/loaders/Loader";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import UserConnection from "../components/user-data/UserConnection";
 import IndicatorsGrid from "../components/user-data/IndicatorsGrid";
+import PredictionButton from "../components/user-data/PredictionButton";
+import PredictionPanel from "../components/user-data/PredictionPanel";
 import useTeacher from "../hooks/useTeacher";
 import useStudentIndicators from "../hooks/useStudentIndicators";
+import useStudentPrediction from "../hooks/useStudentPrediction";
 
 export default function UserData() {
   const { studentId } = useParams();
@@ -15,6 +18,12 @@ export default function UserData() {
     studentId!,
   );
   const indicatorsQuery = useStudentIndicators(studentId!);
+  // L'analyse porte sur la fenêtre des indicateurs affichés, pour que le
+  // formateur juge sur exactement ce qu'il a sous les yeux.
+  const predictionQuery = useStudentPrediction(
+    studentId!,
+    indicatorsQuery.range,
+  );
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(imageUrl),
@@ -28,7 +37,23 @@ export default function UserData() {
 
   return (
     <main className="flex flex-col gap-y-4">
-      <Header title="Informations de l'apprenant" />
+      <Header title="Informations de l'apprenant">
+        <PredictionButton
+          onAnalyze={() => predictionQuery.predict()}
+          isPending={predictionQuery.isPending}
+          disabled={indicatorsQuery.isLoading || indicatorsQuery.isError}
+          hasResult={predictionQuery.prediction !== null}
+        />
+      </Header>
+
+      {/* Le résultat se lit avant tout le reste : c'est ce qui décide d'un
+          accompagnement, les indicateurs détaillés viennent l'étayer ensuite. */}
+      {predictionQuery.prediction ? (
+        <BoxWrapper>
+          <PredictionPanel prediction={predictionQuery.prediction} />
+        </BoxWrapper>
+      ) : null}
+
       <section style={classImage} />
 
       {isLoading ? (

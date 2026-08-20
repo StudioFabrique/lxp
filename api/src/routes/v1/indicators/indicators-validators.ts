@@ -1,7 +1,11 @@
 import { param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
 
-export const getIndicatorsValidator = [
+/**
+ * Identifiant d'apprenant et fenêtre de calcul : la même pour la lecture des
+ * indicateurs et pour la prédiction, qui portent sur la même période.
+ */
+export const indicatorsWindowValidator = [
   param("userId").isMongoId().withMessage("Identifiant d'apprenant invalide"),
   query("from")
     .optional()

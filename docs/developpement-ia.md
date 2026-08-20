@@ -182,6 +182,59 @@ Watcher du service IA
 Réindexation du cours dans lxp_ai
 ```
 
+## 6. Interroger le modèle d'indicateurs
+
+Le service IA expose un modèle qui estime l'issue d'un parcours — `graduate`,
+`fail` ou `dropout` — et applique des règles d'alerte déterministes. Le LXP
+l'interroge depuis la fiche d'un apprenant, `Administration > Utilisateurs >
+un apprenant`, avec le bouton « Analyser le risque de décrochage » placé dans
+l'en-tête de la fiche.
+
+Côté API :
+
+```text
+POST /v1/indicators/:userId/prediction?from=&to=
+```
+
+L'appel calcule les indicateurs de la plateforme sur la fenêtre demandée, les
+traduit vers les onze variables du modèle, puis relaie la réponse du service IA.
+La permission `stats:read` est requise et les apprenants sont refusés, y compris
+sur leur propre fiche : un pronostic d'abandon relève de l'accompagnement.
+
+Les noms diffèrent de part et d'autre, le modèle ayant été entraîné sur le jeu de
+données OULAD :
+
+| Variable du modèle | Indicateur du LXP | Conversion |
+| --- | --- | --- |
+| `session_time` | `session_time` | millisecondes → minutes |
+| `mood_proxy` | `mood` | aucune (échelle 1-5) |
+| `monthly_connection_days` | `monthly_connection_days` | aucune |
+| `days_since_last_activity` | `days_since_last_activity` | aucune |
+| `time_on_content` | `time_on_content` | millisecondes → minutes |
+| `quiz_interaction_count` | `quiz_interactions` | aucune |
+| `chatbot_proxy` | `chatbot_interactions` | aucune |
+| `score_evolution` | `correct_answer_rate_evolution` | points de pourcentage sur la période → pente journalière |
+| `assessment_count` | tentatives de quiz terminées sur la période | aucune |
+| `cumul_assessments` | tentatives de quiz terminées au total | aucune |
+| `pass_rate` | part des tentatives à 40 % de bonnes réponses ou plus | aucune |
+
+Une variable sans donnée est transmise à `null`, jamais à zéro, et la réponse en
+donne la raison. Le nombre de variables réellement transmises est affiché sous la
+prédiction : elle se lit à la lumière de ce qui a pu être mesuré.
+
+Le service IA répond en erreur tant qu'aucun modèle n'a été entraîné. Depuis le
+dépôt `ia-lxp` :
+
+```bash
+curl -X POST "http://localhost:8000/indicators/retrain?force=true"
+```
+
+L'interface affiche alors « Le modèle de prédiction est indisponible ».
+
+Le résultat est rendu en langage clair — niveau de risque, ce que l'activité
+laisse prévoir, signaux repérés avec leur seuil — sans jamais nommer le modèle
+ni ses métriques : ils ne changent rien à l'accompagnement.
+
 ## Réinstaller les triggers
 
 `npm run init` installe les triggers. Pour les réinstaller sans réinitialiser les

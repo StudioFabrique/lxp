@@ -2,29 +2,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
 import UserStatusToggle from "../../../user/components/UserStatusToggle";
+import { personSelectionColumn } from "../../../../components/table/person-selection-column";
 
-const selectionColumn: ColumnDef<User> = {
-  id: "select",
-  header: ({ table }) => (
-    <input
-      type="checkbox"
-      aria-label="Sélectionner tous les étudiants affichés"
-      className="checkbox checkbox-sm checkbox-primary"
-      checked={table.getIsAllPageRowsSelected()}
-      onChange={table.getToggleAllPageRowsSelectedHandler()}
-    />
-  ),
-  cell: ({ row }) => (
-    <input
-      type="checkbox"
-      aria-label={`Sélectionner ${row.original.firstname} ${row.original.lastname}`}
-      className="checkbox checkbox-sm checkbox-primary"
-      checked={row.getIsSelected()}
-      onChange={row.getToggleSelectedHandler()}
-    />
-  ),
-  enableSorting: false,
-};
+const selectionColumn = personSelectionColumn<User>(
+  "Sélectionner tous les étudiants affichés",
+);
 
 const identityColumns: ColumnDef<User>[] = [
   {

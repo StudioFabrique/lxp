@@ -58,17 +58,19 @@ export class AiApiClient {
       ...options,
       accept: "application/json",
     });
-    const responseBody = (await response.json()) as T;
 
+    // Le corps d'erreur est lu selon son type : une erreur non gérée du service
+    // IA revient en texte brut, et la parser comme du JSON ferait perdre le
+    // statut de la réponse au profit d'une erreur d'analyse.
     if (!response.ok) {
       throw new AiApiError(
         response.status,
-        responseBody,
+        await this.readErrorBody(response),
         `Erreur API IA: ${response.statusText}`,
       );
     }
 
-    return responseBody;
+    return (await response.json()) as T;
   }
 
   async postStream(
