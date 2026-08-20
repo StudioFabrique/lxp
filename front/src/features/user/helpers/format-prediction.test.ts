@@ -1,18 +1,49 @@
 import { describe, expect, it } from "vitest";
 import {
-  alertBadgeClass,
-  formatAlertLevel,
   formatAlertRuleDescription,
   formatAlertRuleName,
+  formatMatchedCondition,
   formatModelIndicatorValue,
   formatOutcome,
   formatProbability,
+  formatRiskLevel,
+  isUncertain,
+  missingDataSentence,
+  riskLevel,
+  severityBadgeClass,
   sortedProbabilities,
 } from "./format-prediction";
+import type { IndicatorsPrediction } from "../interfaces/indicators";
+
+function prediction(
+  overrides: Partial<IndicatorsPrediction> = {},
+): IndicatorsPrediction {
+  return {
+    userId: "abc",
+    from: "2026-07-21T00:00:00.000Z",
+    to: "2026-08-20T00:00:00.000Z",
+    indicators: {},
+    missing: {},
+    coverage: { available: 11, total: 11 },
+    outcome: {
+      prediction: "graduate",
+      probabilities: { dropout: 0.1, fail: 0.2, graduate: 0.7 },
+    },
+    alert: { effectiveLevel: 0, fired: [] },
+    model: {
+      championName: null,
+      trainedAt: null,
+      metricValue: null,
+      featureCount: null,
+    },
+    evaluatedAt: "2026-08-20T00:00:00.000Z",
+    ...overrides,
+  };
+}
 
 describe("formatOutcome", () => {
   it("traduit le vocabulaire du modèle", () => {
-    expect(formatOutcome("dropout")).toBe("Abandon probable");
+    expect(formatOutcome("dropout")).toBe("Abandon");
   });
 
   it("laisse passer une issue inconnue plutôt que de l'effacer", () => {
@@ -20,14 +51,42 @@ describe("formatOutcome", () => {
   });
 });
 
-describe("formatAlertLevel", () => {
-  it("nomme l'absence d'alerte", () => {
-    expect(formatAlertLevel(0)).toBe("Aucune alerte");
+describe("riskLevel", () => {
+  it("retient le signal le plus grave des deux", () => {
+    // Le modèle voit l'apprenant finir son parcours, mais une règle de niveau 2
+    // s'est déclenchée : c'est elle qui commande.
+    expect(
+      riskLevel(prediction({ alert: { effectiveLevel: 2, fired: [] } })),
+    ).toBe(2);
   });
 
-  it("distingue le niveau le plus grave", () => {
-    expect(formatAlertLevel(3)).toBe("Alerte critique");
-    expect(alertBadgeClass(3)).toBe("badge-error");
+  it("relève le niveau quand l'issue estimée est un abandon", () => {
+    expect(
+      riskLevel(
+        prediction({
+          outcome: {
+            prediction: "dropout",
+            probabilities: { dropout: 0.8, fail: 0.1, graduate: 0.1 },
+          },
+        }),
+      ),
+    ).toBe(3);
+  });
+
+  it("ne signale rien quand aucun des deux signaux n'alerte", () => {
+    expect(riskLevel(prediction())).toBe(0);
+    expect(formatRiskLevel(0)).toBe("Rien à signaler");
+    expect(severityBadgeClass(0)).toBe("badge-success");
+  });
+});
+
+describe("isUncertain", () => {
+  it("signale une distribution sans issue dominante", () => {
+    expect(isUncertain({ dropout: 0.1, fail: 0.42, graduate: 0.48 })).toBe(true);
+  });
+
+  it("ne signale rien quand une issue l'emporte", () => {
+    expect(isUncertain({ dropout: 0.1, fail: 0.2, graduate: 0.7 })).toBe(false);
   });
 });
 
@@ -46,6 +105,30 @@ describe("formatAlertRuleName", () => {
     expect(formatAlertRuleDescription("Règle maison", "Seuil interne")).toBe(
       "Seuil interne",
     );
+  });
+});
+
+describe("formatMatchedCondition", () => {
+  it("met la valeur et le seuil dans la même unité", () => {
+    expect(
+      formatMatchedCondition({
+        indicator: "pass_rate",
+        op: "<",
+        threshold: 0.6,
+        actual: 0.5,
+      }),
+    ).toBe("Taux de réussite aux quiz : 50 % (seuil : en dessous de 60 %)");
+  });
+
+  it("dit le seuil sans opérateur mathématique", () => {
+    expect(
+      formatMatchedCondition({
+        indicator: "monthly_connection_days",
+        op: ">",
+        threshold: 2,
+        actual: 4,
+      }),
+    ).toBe("Jours de connexion : 4 jours (seuil : au-dessus de 2 jours)");
   });
 });
 
@@ -77,6 +160,27 @@ describe("formatModelIndicatorValue", () => {
   it("distingue une variable absente d'une valeur nulle", () => {
     expect(formatModelIndicatorValue("quiz_interaction_count", null)).toBe("—");
     expect(formatModelIndicatorValue("quiz_interaction_count", 0)).toBe("0");
+  });
+});
+
+describe("missingDataSentence", () => {
+  it("ne dit rien quand l'analyse est complète", () => {
+    expect(missingDataSentence(prediction())).toBeNull();
+  });
+
+  it("nomme les données absentes plutôt que d'en donner le compte", () => {
+    expect(
+      missingDataSentence(
+        prediction({
+          missing: {
+            time_on_content: "Aucune consultation mesurée.",
+            mood_proxy: "Aucun retour déposé.",
+          },
+        }),
+      ),
+    ).toBe(
+      "2 données manquaient : temps passé sur les contenus, humeur déclarée.",
+    );
   });
 });
 
