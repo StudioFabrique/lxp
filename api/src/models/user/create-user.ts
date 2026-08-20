@@ -1,11 +1,40 @@
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
-import Role from "../../utils/interfaces/db/role.ts";
+import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { logger } from "../../utils/logs/logger.ts";
+
+/**
+ * Envoie l'invitation puis note l'issue sur le compte.
+ *
+ * Détachée du flux de création : elle n'est jamais attendue par une requête, et
+ * ne doit donc pas propager d'erreur. L'échec est journalisé avec sa cause, et
+ * `invitationSent` reste à faux, ce qui laisse le renvoi manuel disponible.
+ */
+async function sendActivationInvitation(
+  userId: string,
+  email: string,
+  role: IRole,
+) {
+  try {
+    const token = activationToken(userId, role, "7d");
+    await sendPasswordEmail(email, token, "activation");
+    await User.updateOne(
+      { _id: userId },
+      { $set: { invitationSent: true, invitationSentAt: new Date() } },
+    );
+  } catch (error: any) {
+    logger.error(
+      `Invitation non envoyée à ${email}`,
+      error instanceof Error
+        ? error
+        : new Error(error?.message ?? "cause inconnue"),
+    );
+  }
+}
 
 export default async function createUser(user: IUser, roleId: string) {
   try {
@@ -71,35 +100,26 @@ export default async function createUser(user: IUser, roleId: string) {
     if (role.rank === 3)
       await prisma.student.create({ data: { idMdb: createdUser._id } });
 
-    // L'envoi de l'invitation ne conditionne pas la création du compte.
+    // L'invitation part sans que la réponse l'attende.
     //
-    // Il intervient après l'écriture en base : le laisser interrompre l'appel
-    // renvoyait une erreur à l'administrateur tout en conservant le compte, si
-    // bien que la tentative suivante butait sur un conflit d'adresse email et
-    // que la situation devenait irrattrapable sans suppression manuelle. Le
-    // compte est donc conservé, l'échec signalé, et le renvoi d'invitation
-    // reste disponible depuis la liste des utilisateurs.
-    let invitationSent = false;
+    // Un serveur SMTP lent tenait la requête ouverte le temps de la remise —
+    // plus d'une minute par moments — laissant l'interface sur « sauvegarde en
+    // cours » alors que le compte était déjà créé. Le compte est l'objet de
+    // l'appel, la remise du message n'en est qu'une conséquence : elle se
+    // poursuit en arrière-plan et `invitationSent` reflète son issue dans la
+    // liste des utilisateurs, où figure aussi le renvoi manuel.
+    const invitationPending = Boolean(user.invitationSent);
 
-    if (user.invitationSent) {
-      try {
-        const token = activationToken(createdUser._id, role, "7d");
-        await sendPasswordEmail(createdUser.email, token, "activation");
-        await User.updateOne(
-          { _id: createdUser._id },
-          { $set: { invitationSent: true, invitationSentAt: new Date() } },
-        );
-        invitationSent = true;
-      } catch (error: any) {
-        logger.error(
-          `Invitation non envoyée à ${createdUser.email}`,
-          error instanceof Error ? error : new Error(error?.message ?? "cause inconnue"),
-        );
-      }
+    if (invitationPending) {
+      void sendActivationInvitation(
+        createdUser._id.toString(),
+        createdUser.email,
+        role,
+      );
     }
 
     // Retourner l'utilisateur créé et le rang du rôle
-    return { createdUser, role: role.rank, invitationSent };
+    return { createdUser, role: role.rank, invitationPending };
   } catch (error: any) {
     throw error;
   }
