@@ -71,7 +71,10 @@ export const getUsersColumns = (
         .map((r) => r.label)
         .join(", ");
       return (
-        <span className="tooltip tooltip-bottom" data-tip={label}>
+        <span
+          className="tooltip tooltip-bottom truncate max-w-24"
+          data-tip={label}
+        >
           {label || "ND"}
         </span>
       );

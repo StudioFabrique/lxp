@@ -38,7 +38,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             <AvatarSmall
               user={user}
               noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"
-              imgClassName="w-4 h-4 rounded-full object-cover"
+              imgClassName="w-6 h-6 rounded-full object-cover"
             />
           )}
           <span className="xl:block hidden">{fullName}</span>

@@ -42,11 +42,13 @@ export function personSelectionColumn<TData extends TablePerson>(
             checked={row.getIsSelected()}
             onChange={row.getToggleSelectedHandler()}
           />
-          <AvatarSmall
-            user={{ avatar, firstname, lastname }}
-            imgClassName="h-9 w-9 rounded-full object-cover"
-            noImgClassName="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-xs font-bold text-secondary-content"
-          />
+          <span className="ml-3">
+            <AvatarSmall
+              user={{ avatar, firstname, lastname }}
+              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"
+              imgClassName="w-6 h-6 rounded-full object-cover"
+            />
+          </span>
         </div>
       );
     },
