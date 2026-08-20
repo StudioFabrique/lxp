@@ -12,7 +12,18 @@ export default async function getLessonsByTag(
   tagId: number,
   includeCourseContents = false,
   supplementaryResources = false,
+  accessibleParcoursIds: number[] | null = null,
 ) {
+  // Les leçons sont bornées au périmètre de l'appelant ; les ressources, elles,
+  // forment une bibliothèque transverse sans rattachement à un parcours et
+  // restent donc gouvernées par la seule permission `read:resource`.
+  const lessonScope =
+    accessibleParcoursIds === null
+      ? { tagId }
+      : {
+          tagId,
+          course: { module: { parcoursId: { in: accessibleParcoursIds } } },
+        };
   if (supplementaryResources) {
     const resources = await prisma.resource.findMany({
       where: { tags: { some: { tagId } } },
@@ -34,7 +45,7 @@ export default async function getLessonsByTag(
     if (!includeCourseContents) return resourceResults;
 
     const lessons = await prisma.lesson.findMany({
-      where: { tagId },
+      where: lessonScope,
       select: {
         id: true,
         title: true,
@@ -59,7 +70,7 @@ export default async function getLessonsByTag(
   }
 
   const lessons = await prisma.lesson.findMany({
-    where: { tagId },
+    where: lessonScope,
     select: {
       id: true,
       title: true,

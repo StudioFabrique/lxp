@@ -27,7 +27,12 @@ export default async function httpPutFinishContentRead(
       return res.status(204).send();
     }
 
-    return res.status(200).json({ message: "Contenu marqué comme terminé" });
+    // L'enregistrement est renvoyé et pas seulement un accusé : l'appelant
+    // affiche l'état de complétion sans avoir à relire le contenu derrière.
+    return res.status(200).json({
+      message: "Contenu marqué comme terminé",
+      contentRead,
+    });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)

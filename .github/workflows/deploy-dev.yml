@@ -23,9 +23,55 @@ env:
   DEPLOY_PATH: /home/martin/lxp-dev
 
 jobs:
+  verify:
+    name: Lint, types and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the frontend dependencies
+        working-directory: front
+        run: npm ci
+
+      - name: Install the API dependencies
+        working-directory: api
+        run: npm ci
+
+      - name: Lint the frontend
+        working-directory: front
+        run: npm run lint
+
+      - name: Typecheck the frontend
+        working-directory: front
+        run: npx tsc --noEmit
+
+      # Régénère le client Prisma avant de vérifier les types : un client
+      # obsolète fait échouer la vérification sur des modèles qui existent.
+      - name: Typecheck the API
+        working-directory: api
+        run: npm run typecheck
+
+      - name: Run the frontend tests
+        working-directory: front
+        run: npx vitest run
+
+      # Démarre son propre docker compose (PostgreSQL et MongoDB), applique les
+      # migrations et charge les fixtures avant de lancer Jest.
+      - name: Run the API tests
+        working-directory: api
+        run: npm test
+
   image:
     name: Build and publish the LXP image
     if: github.ref == 'refs/heads/beta'
+    needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: development
@@ -59,7 +105,7 @@ jobs:
   deploy:
     name: Deploy to the development VPS
     if: github.ref == 'refs/heads/beta'
-    needs: image
+    needs: [verify, image]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: development

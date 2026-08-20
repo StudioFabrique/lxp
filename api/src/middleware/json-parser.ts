@@ -16,7 +16,6 @@ export default async function jsonParser(
   }
   if (req.body.data && req.body.data !== undefined) {
     const data = JSON.parse(req.body.data);
-    console.log("Parsed data:", data);
     req.body.data = data;
   }
   next();

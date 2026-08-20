@@ -1,6 +1,6 @@
 import { body, param } from "express-validator";
 import {
-  passwordValidateGeneric,
+  newPasswordValidate,
   stringValidateGeneric,
   tokenValidateGeneric,
 } from "../../../helpers/custom-validators.ts";
@@ -85,6 +85,8 @@ export const postPasswordValidator = [
   body("password")
     .isString()
     .withMessage("Le mot de passe est requis.")
-    .custom(passwordValidateGeneric)
-    .withMessage("Le mot de passe n'est pas valide."),
+    .custom(newPasswordValidate)
+    .withMessage(
+      "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
+    ),
 ];

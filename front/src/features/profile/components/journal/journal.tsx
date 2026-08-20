@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiClient from "../../../../lib/axios";
+import { profileApi } from "../../api/profile.api";
 import Loader from "../../../../components/loaders/Loader";
 import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTree from "./journal-tree";
@@ -11,9 +11,9 @@ const Journal = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    apiClient
-      .get("/user/my-accomplishment")
-      .then((response) => setParcours(response.data.data ?? []))
+    profileApi.queries
+      .getAccomplishments()
+      .then((data) => setParcours(data.data ?? []))
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);

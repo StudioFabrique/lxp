@@ -107,7 +107,7 @@ export default function TiptapEditor({
           )}
       </div>
       {editor && editor.isEditable && (
-        <LinkMenu editor={editor} appendTo={menuContainerRef} />
+        <LinkMenu editor={editor} />
       )}
       {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
       {editor && <AiAskBubbleMenu mode={mode} editor={editor} />}

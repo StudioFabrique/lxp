@@ -33,9 +33,7 @@ export default async function getStudentGroups() {
     },
   });
 
-  console.log("MONGO GROUPS : ", groups);
 
-  console.log("PRISMA GROUPS : ", prismaGroups);
 
   let returnedGroups: GroupsList[] = [];
 

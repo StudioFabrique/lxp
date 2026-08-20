@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { useCallback, useEffect, useState } from "react";
-import apiClient from "../../../lib/axios";
+import { resourcesApi } from "../api/resources.api";
 import { regexGeneric } from "../../../config/constantes";
 import toast from "react-hot-toast";
 import { ACTIVITIES } from "../../../config/urls";
@@ -18,6 +18,7 @@ const useTextActivity = () => {
     mode: "read" | "write" | "edit" = "write"
   ): Promise<boolean> => {
     // Implementation for creating an activity
+    if (!id) return false;
     if (!regexGeneric.test(title!)) {
       toast.error("Le titre contient des caractères non autorisés.");
       return false;
@@ -32,9 +33,9 @@ const useTextActivity = () => {
 
     try {
       if (mode === "edit") {
-        await apiClient.put(`/activity/text/${id}`, body);
+        await resourcesApi.mutations.saveTextActivity(id, body, true);
       } else {
-        await apiClient.post(`/activity/text/${id}`, body);
+        await resourcesApi.mutations.saveTextActivity(id, body, false);
       }
       return true;
     } catch (err) {
@@ -92,7 +93,9 @@ const useTextActivity = () => {
 
   const getActivityContent = useCallback(
     (activity: Activity) => {
-      fetch(`${ACTIVITIES}${activity!.url}`).then((response) =>
+      fetch(`${ACTIVITIES}${activity!.url}`, {
+        credentials: "include",
+      }).then((response) =>
         response.text().then((content) => {
           editActivityContent(content);
           setTitle(activity!.title!);

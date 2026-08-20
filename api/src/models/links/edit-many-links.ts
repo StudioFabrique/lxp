@@ -1,6 +1,7 @@
 import { type ObjectId } from "mongoose";
 import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
   try {
@@ -37,7 +38,7 @@ export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
 
     return updatedUser;
   } catch (error) {
-    console.error("Error replacing or updating user links:", error);
+    logger.error("Error replacing or updating user links:", error);
     throw error;
   }
 }

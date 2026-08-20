@@ -26,7 +26,6 @@ async function httpCreateParcours(req: CustomRequest, res: Response) {
       parcoursId: response.id,
     });
   } catch (error: any) {
-    console.log(error.message);
 
     return res.status(error.statusCode ?? 500).json({
       message: error.statusCode !== 500 ? error.message : serverIssue,

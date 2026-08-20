@@ -17,9 +17,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      props.module.thumb
-        ? normalizeImageSource(props.module.thumb)
-        : defaultImage,
+      normalizeImageSource(props.module.thumb) ?? defaultImage,
     ),
     width: "100%",
     minHeight: "9rem",

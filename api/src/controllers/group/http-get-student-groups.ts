@@ -26,7 +26,6 @@ export default async function httpGetStudentGroups(
       },
     });
   } catch (error: any) {
-    console.log({ error });
 
     // En cas d'erreur, transmission de l'erreur au middleware d'erreur
     next({

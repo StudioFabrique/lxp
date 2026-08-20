@@ -13,7 +13,6 @@ import ElementNotFound from "../../../components/UI/element-not-found";
 const DashboardIAHome = () => {
   const {
     dataList,
-    totalItems,
     totalPages,
     page,
     perPage,

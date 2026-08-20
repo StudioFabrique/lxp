@@ -10,7 +10,7 @@ import {
   QuizAttempt,
   UserAnswer,
 } from "../interfaces/quiz";
-import apiClient from "../../../lib/axios";
+import { quizApi } from "../api/quiz.api";
 import { isAiDisabled } from "../../../config/ai/ai";
 import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
@@ -79,8 +79,7 @@ export default function useCourseQuiz(
         };
 
       case "matching": {
-        let pairs: Pair[] = [];
-        pairs = external.pairs;
+        const pairs: Pair[] = external.pairs;
         return {
           ...base,
           type: "matching",
@@ -143,14 +142,7 @@ export default function useCourseQuiz(
     }
 
     try {
-      const response = await apiClient({
-        method: "get",
-        url: `/quiz/course/ending/stream/${courseId}`,
-        responseType: "stream",
-        adapter: "fetch",
-      });
-
-      const stream = response.data as ReadableStream<Uint8Array>;
+      const stream = await quizApi.queries.streamEndingQuiz(courseId);
       const reader = stream.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -246,11 +238,10 @@ export default function useCourseQuiz(
       setIsStreaming(true);
 
       try {
-        const response = await apiClient.post("/quiz/random", {
-          content: activityContent,
-        });
+        const question =
+          await quizApi.queries.requestRandomQuestion(activityContent);
 
-        const mappedQuiz = mapExternalToInternal(response.data);
+        const mappedQuiz = mapExternalToInternal(question);
 
         if (mappedQuiz) {
           setQuizzes((prev) => [...(prev || []), mappedQuiz]);
@@ -329,10 +320,7 @@ export default function useCourseQuiz(
 
       try {
         // Envoi du signalement au backend
-        await apiClient.post("/quiz/question/report", {
-          externalId,
-          comment,
-        });
+        await quizApi.mutations.reportQuestion(externalId, comment);
         toast.success("Merci ! Votre signalement a bien été pris en compte.");
 
         // Si l'étudiant avait déjà répondu avant de signaler, annule l'impact
@@ -344,11 +332,10 @@ export default function useCourseQuiz(
         }
 
         // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
-        const response = await apiClient.post("/quiz/random", {
-          content: activityContent,
-        });
+        const question =
+          await quizApi.queries.requestRandomQuestion(activityContent);
 
-        const mappedQuiz = mapExternalToInternal(response.data);
+        const mappedQuiz = mapExternalToInternal(question);
 
         if (mappedQuiz) {
           // Remplacer le quiz défectueux par le nouveau à l'index actuel

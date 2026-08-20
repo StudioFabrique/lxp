@@ -17,7 +17,6 @@ export default async function getActivity(activityId: number) {
 
   if (!activity) throw { statusCode: 404, message: "L'activité n'existe pas." };
 
-  console.log({ activity });
 
   return activity;
 }

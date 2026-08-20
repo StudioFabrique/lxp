@@ -5,6 +5,7 @@ import postDialogs, { clearDialogs } from "./post-dialogs.ts";
 import resolveSourceTarget from "./resolve-source-target.ts";
 import { trackTokens } from "../stats/trackTokens.ts";
 import trackChatbotUsage from "../stats/track-chatbot-usage.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -62,7 +63,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
       });
       await clearDialogs(input.userId);
     } catch (error) {
-      console.error("[RAG RESET ERROR]", error);
+      logger.error("[RAG RESET ERROR]", error);
     }
   }
 

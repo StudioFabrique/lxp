@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { RowSelectionState } from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import apiClient from "../../../lib/axios";
+import { roleApi } from "../api/role.api";
 
 import type { RoleCounts } from "../api/role.api";
 import { useRoleActions } from "../hooks/useRoleActions";
@@ -34,11 +34,9 @@ const RoleList = () => {
   } = useQuery({
     queryKey: ["roles", searchValue],
     queryFn: async () => {
-      const path = isSearching
-        ? `/permission/search/role/${searchValue}`
-        : "/permission/role";
-      const res = await apiClient.get(path);
-      return res.data.data as RoleCounts[];
+      return (await roleApi.queries.listRoles(
+        isSearching ? searchValue : undefined,
+      )) as RoleCounts[];
     },
   });
 

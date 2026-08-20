@@ -34,9 +34,6 @@ export default async function connect(socketId: string, userId: string) {
 
         if (lastConnectionInfos) {
           const today = new Date();
-          console.log(
-            today.getDate() === lastConnectionInfos.lastConnection.getDate()
-          );
 
           if (
             lastConnectionInfos &&

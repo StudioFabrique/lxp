@@ -6,7 +6,6 @@ async function httpPutCourseBonusSkills(req: Request, res: Response) {
   const { courseId } = req.params;
   const bonusSkillsIds = req.body;
 
-  console.log("bonus skills : ", bonusSkillsIds);
 
   try {
     const response = await putCourseBonusSkills(+courseId, bonusSkillsIds);

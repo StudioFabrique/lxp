@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useLocation, useNavigate } from "react-router";
 import { Fragment, useContext, useEffect } from "react";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";

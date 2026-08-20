@@ -5,7 +5,11 @@ import {
   AuthenticationError,
 } from "../utils/services/auth/authenticate-session.ts";
 import { setTokens } from "../utils/services/auth/set-tokens.ts";
-import { accessExpire, refreshExpire, tokensMaxAge } from "../config/config.ts";
+import {
+  accessExpire,
+  refreshExpire,
+  sessionCookieOptions,
+} from "../config/config.ts";
 import { noAccess } from "../utils/constantes.ts";
 
 async function refreshTokens(
@@ -22,16 +26,12 @@ async function refreshTokens(
     const refreshToken = setTokens(session.userId, "refresh", refreshExpire);
 
     return res
-      .cookie("accessToken", accessToken, {
-        maxAge: tokensMaxAge.accessToken,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .cookie("refreshToken", refreshToken, {
-        maxAge: tokensMaxAge.refreshToken,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
+      .cookie("accessToken", accessToken, sessionCookieOptions("accessToken"))
+      .cookie(
+        "refreshToken",
+        refreshToken,
+        sessionCookieOptions("refreshToken"),
+      )
       .status(200)
       .json({ message: "tokens refreshed successfully!" });
   } catch (error) {

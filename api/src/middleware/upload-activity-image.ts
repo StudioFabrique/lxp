@@ -21,7 +21,6 @@ export const uploadActivityImage = () => {
 
         cb(null, file.fieldname + "-" + fileName + "." + ext);
       } else {
-        console.log("oops");
       }
     },
   });
@@ -29,7 +28,7 @@ export const uploadActivityImage = () => {
   return (req: CustomRequest, res: Response, next: NextFunction) => {
     const upload = multer({
       storage: storage,
-      limits: { fileSize: 50 * 1024 * 1024 * 1024 },
+      limits: { fileSize: 50 * 1024 * 1024 }, // 50 Mo
     }).single("image");
 
     upload(req, res, function (err) {

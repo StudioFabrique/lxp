@@ -126,7 +126,10 @@ async function createUser() {
       new Object(roleStudent!._id),
       new Object(roleInterfaceStudent!._id),
     ],
-    isActive: false,
+    // Le compte en attente d'activation est `formateur2@studio.eco`, dédié à ce
+    // cas. Désactiver l'apprenant de référence empêchait toutes les suites qui
+    // se connectent avec lui de dépasser l'étape de connexion.
+    isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   const createdStudent = await newStudent.save();
@@ -143,7 +146,10 @@ async function createUser() {
       new Object(roleStudent!._id),
       new Object(roleInterfaceStudent!._id),
     ],
-    isActive: false,
+    // Le compte en attente d'activation est `formateur2@studio.eco`, dédié à ce
+    // cas. Désactiver l'apprenant de référence empêchait toutes les suites qui
+    // se connectent avec lui de dépasser l'étape de connexion.
+    isActive: true,
   });
   await rssi.save();
   const dates = createConnectionInfos();

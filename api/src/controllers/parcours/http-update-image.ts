@@ -32,10 +32,8 @@ async function httpUpdateImage(req: Request, res: Response) {
             thumb64
           );
           if (response) {
-            console.log("response dans la place");
 
             await fs.promises.unlink(uploadedFile.path);
-            console.log("Fichier supprimé :", uploadedFile.path);
             return res.status(200).json({ message: "Mise à jour réussie" });
           }
         }

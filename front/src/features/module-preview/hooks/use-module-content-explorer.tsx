@@ -24,7 +24,7 @@ import {
   ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
-import apiClient from "../../../lib/axios";
+import { modulePreviewApi } from "../api/module-preview.api";
 import type {
   CreateCourseFormValues,
   UpdateCourseFormValues,
@@ -138,14 +138,12 @@ const useModuleContentExplorer = () => {
   }, [moduleCourses, selectedLessonId]);
 
   const fetchModuleData = useCallback(async () => {
+    if (!moduleId) return;
     setIsLoadingRequest(true);
     try {
-      const response = await apiClient.get(
-        `/modules/detail/limited/${moduleId}`,
-      );
-      const { data } = response.data as {
-        data: Module & { parcours: string };
-      };
+      const { data } = (await modulePreviewApi.queries.getModuleDetail(
+        moduleId,
+      )) as { data: Module & { parcours: string } };
       dispatch({ type: "update_module_data", module: data });
     } catch {
       // silently fail
@@ -155,13 +153,13 @@ const useModuleContentExplorer = () => {
   }, [moduleId]);
 
   const initiateLesson = useCallback(async (lessonId: number) => {
-    await apiClient.post(`/lesson/read/${lessonId}`);
+    await modulePreviewApi.tracking.begin("lesson", lessonId);
   }, []);
 
   // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
   const finishContent = useCallback(
-    (type: "module" | "course", contentId: number) => {
-      apiClient.put(`/content-read/${type}/${contentId}/finish`).catch(() => {});
+    (type: "module" | "course" | "lesson", contentId: number) => {
+      modulePreviewApi.tracking.finish(type, contentId).catch(() => {});
     },
     [],
   );
@@ -176,15 +174,22 @@ const useModuleContentExplorer = () => {
 
   const completeLesson = useCallback(
     async (rating: number) => {
-      if (state.selectedLesson) {
+      const lessonId = state.selectedLesson?.id;
+      if (state.selectedLesson && lessonId) {
         try {
-          const response = await apiClient.put(
-            `/lesson/read/${state.selectedLesson.id}?rate=${rating}`,
-          );
-          const { lessonRead, rating: lessonRating } = response.data as {
-            lessonRead: LessonRead;
-            rating: LessonRating;
-          };
+          // Deux responsabilités distinctes, longtemps servies par la même
+          // route historique : clore le suivi de lecture, puis enregistrer la
+          // note. `/content-read` porte désormais le suivi pour les quatre
+          // niveaux de contenu, la notation reste propre à la leçon.
+          const { contentRead: lessonRead } =
+            (await modulePreviewApi.tracking.finish("lesson", lessonId)) as {
+              contentRead: LessonRead;
+            };
+          const { data: lessonRating } =
+            (await modulePreviewApi.mutations.rateLesson(
+              lessonId,
+              rating,
+            )) as { data: LessonRating };
           dispatch({
             type: "mark_lesson_as_complete",
             lesson: state.selectedLesson,
@@ -218,8 +223,9 @@ const useModuleContentExplorer = () => {
   const deleteActivity = useCallback(async () => {
     if (!state.selectedActivity) return;
     try {
-      await apiClient.delete(
-        `/activity/${state.selectedActivity.type}/${state.selectedActivity.id}/lesson`,
+      await modulePreviewApi.mutations.deleteActivity(
+        state.selectedActivity.type,
+        state.selectedActivity.id,
       );
       dispatch({ type: "delete_selected_activity" });
       toast.success("L'activité a été supprimé");
@@ -232,11 +238,10 @@ const useModuleContentExplorer = () => {
   const rateContent = useCallback(
     async (rating: number) => {
       try {
-        const response = await apiClient.put(
-          `/lesson/rate/${selectedLessonId}`,
-          { rate: rating },
-        );
-        const { data } = response.data as { data: LessonRating };
+        const { data } = (await modulePreviewApi.mutations.updateLessonRating(
+          selectedLessonId!,
+          rating,
+        )) as { data: LessonRating };
         dispatch({ type: "set_lesson_rating", rating: [data] });
       } catch {
         // silently fail
@@ -248,10 +253,10 @@ const useModuleContentExplorer = () => {
   const enableCourse = useCallback(
     async (courseId: number, visibility: boolean) => {
       try {
-        const response = await apiClient.put(
-          `/course/enable-course/${courseId}?visibility=${visibility}`,
+        const data = await modulePreviewApi.mutations.enableCourse(
+          courseId,
+          visibility,
         );
-        const data = response.data as { success: boolean; message: string };
         if (data.success) {
           toast.success(data.message);
           fetchModuleData();
@@ -266,8 +271,7 @@ const useModuleContentExplorer = () => {
   const publishCourse = useCallback(
     async (courseId: number) => {
       try {
-        const response = await apiClient.put(`/course/publish/${courseId}`);
-        const data = response.data as { success: boolean; message: string };
+        const data = await modulePreviewApi.mutations.publishCourse(courseId);
         if (data.success) {
           toast.success(data.message);
           fetchModuleData();
@@ -281,10 +285,7 @@ const useModuleContentExplorer = () => {
 
   const deleteCourse = useCallback(async (courseId: number) => {
     try {
-      const response = await apiClient.delete(
-        `/course/delete-course/${courseId}`,
-      );
-      const data = response.data as { success: boolean; message: string };
+      const data = await modulePreviewApi.mutations.deleteCourse(courseId);
       if (data.success) {
         toast.success(data.message);
         dispatch({ type: "delete_course", id: courseId });
@@ -298,28 +299,26 @@ const useModuleContentExplorer = () => {
     async (values: CreateCourseFormValues): Promise<number | false> => {
       if (!moduleId || !values.title.trim()) return false;
       try {
-        const { data } = await apiClient.post<{
-          course: { id: number };
-        }>("/course", {
+        const data = await modulePreviewApi.mutations.createCourse({
           title: values.title.trim(),
           moduleId: +moduleId,
         });
-        await apiClient.put("/course/infos", {
+        await modulePreviewApi.mutations.updateCourseInfos({
           id: data.course.id,
           title: values.title.trim(),
           description: values.description,
           visibility: values.visibility,
         });
         if (values.tagIds.length > 0) {
-          await apiClient.put(
-            `/course/tags/${data.course.id}`,
+          await modulePreviewApi.mutations.setCourseTags(
+            data.course.id,
             values.tagIds,
           );
         }
         if (values.lessonTitles.length > 0) {
           const tagId = values.tagIds[0];
           for (const lessonTitle of values.lessonTitles) {
-            await apiClient.put(`/course/new-lesson/${data.course.id}`, {
+            await modulePreviewApi.mutations.createLesson(data.course.id, {
               title: lessonTitle,
               description: "",
               modalite: "distanciel",
@@ -328,14 +327,14 @@ const useModuleContentExplorer = () => {
           }
         }
         if (values.lessonIds.length > 0) {
-          await apiClient.post(
-            `/lesson/duplicate/${data.course.id}`,
+          await modulePreviewApi.mutations.duplicateLessons(
+            data.course.id,
             values.lessonIds,
           );
         }
         if (values.resourceIds.length > 0) {
-          await apiClient.post(
-            `/lesson/duplicate-resources/${data.course.id}`,
+          await modulePreviewApi.mutations.duplicateResources(
+            data.course.id,
             values.resourceIds,
           );
         }
@@ -354,13 +353,13 @@ const useModuleContentExplorer = () => {
   const updateCourse = useCallback(
     async (courseId: number, values: UpdateCourseFormValues) => {
       try {
-        await apiClient.put("/course/infos", {
+        await modulePreviewApi.mutations.updateCourseInfos({
           id: courseId,
           title: values.title.trim(),
           description: values.description,
           visibility: values.visibility,
         });
-        await apiClient.put(`/course/tags/${courseId}`, values.tagIds);
+        await modulePreviewApi.mutations.setCourseTags(courseId, values.tagIds);
         await fetchModuleData();
         toast.success("Cours mis à jour");
         return true;
@@ -379,17 +378,14 @@ const useModuleContentExplorer = () => {
     ): Promise<number | false> => {
       if (!data.title.trim() || !data.tagId) return false;
       try {
-        const response = await apiClient.put<{ id: number }>(
-          `/course/new-lesson/${courseId}`,
-          {
-            ...data,
-            title: data.title.trim(),
-          },
+        const created = await modulePreviewApi.mutations.createLesson(
+          courseId,
+          { ...data, title: data.title.trim() },
         );
         await fetchModuleData();
         toast.success("Leçon créée");
-        emitOnboardingEvent({ type: "lesson_created", id: response.data.id });
-        return response.data.id;
+        emitOnboardingEvent({ type: "lesson_created", id: created.id });
+        return created.id;
       } catch {
         toast.error("Impossible de créer la leçon");
         return false;
@@ -402,7 +398,7 @@ const useModuleContentExplorer = () => {
     async (lessonId: number, data: LessonFormValues) => {
       if (!data.title.trim() || !data.tagId) return false;
       try {
-        await apiClient.put("/lesson/update", {
+        await modulePreviewApi.mutations.updateLesson({
           id: lessonId,
           ...data,
           title: data.title.trim(),
@@ -421,8 +417,7 @@ const useModuleContentExplorer = () => {
 
   const deleteLesson = useCallback(async (lessonId: number) => {
     try {
-      const response = await apiClient.delete(`/lesson/${lessonId}`);
-      const data = response.data as { success: boolean; message: string };
+      const data = await modulePreviewApi.mutations.deleteLesson(lessonId);
       if (data.success) {
         toast.success(data.message);
         dispatch({ type: "delete_lesson", id: lessonId });
@@ -436,8 +431,9 @@ const useModuleContentExplorer = () => {
     if (!selectedLessonId) return;
 
     try {
-      const response = await apiClient.get(`/lesson/${selectedLessonId}`);
-      const lesson = response.data as Lesson;
+      const lesson = (await modulePreviewApi.queries.getLesson(
+        selectedLessonId,
+      )) as Lesson;
       dispatch({
         type: "select_lesson",
         lesson,
@@ -458,7 +454,9 @@ const useModuleContentExplorer = () => {
       selectedActivityUrl &&
       state.mode === "read"
     ) {
-      fetch(`${ACTIVITIES}${selectedActivityUrl}`)
+      fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
+        credentials: "include",
+      })
         .then((response) => response.text())
         .then((content: string) => {
           dispatch({ type: "update_activity_content", content });
@@ -482,20 +480,20 @@ const useModuleContentExplorer = () => {
     let response: boolean;
     try {
       if (state.mode === "write") {
-        const res = await apiClient.post(
-          `/activity/text/${state.selectedLesson?.id}`,
+        const activity = (await modulePreviewApi.mutations.createTextActivity(
+          state.selectedLesson!.id!,
           { title, value: finalContent, parent: "lesson" },
-        );
-        const activity = res.data as Activity;
+        )) as Activity;
         dispatch({ type: "create_activity", activity });
         emitOnboardingEvent({ type: "activity_created", id: activity.id });
         response = true;
       } else {
-        const res = await apiClient.put(
-          `/activity/text/${state.selectedActivity?.id}`,
-          { title, value: finalContent, parent: "lesson" },
-        );
-        const activity = (res.data as { response: Activity }).response;
+        const activity = (
+          (await modulePreviewApi.mutations.updateTextActivity(
+            state.selectedActivity!.id,
+            { title, value: finalContent, parent: "lesson" },
+          )) as { response: Activity }
+        ).response;
         dispatch({ type: "edit_activity", activity });
         response = true;
       }
@@ -514,25 +512,17 @@ const useModuleContentExplorer = () => {
     let response: boolean;
     try {
       if (state.mode === "write") {
-        const res = await apiClient.post(
-          `/activity/iframe/${state.selectedLesson?.id}`,
-          {
-            title,
-            url: state.newActivitySrc,
-          },
-        );
-        const activity = res.data as Activity;
+        const activity = (await modulePreviewApi.mutations.createIframeActivity(
+          state.selectedLesson!.id!,
+          { title, url: state.newActivitySrc },
+        )) as Activity;
         dispatch({ type: "create_activity", activity });
         response = true;
       } else {
-        const res = await apiClient.put(
-          `/activity/iframe/${state.selectedActivity?.id}`,
-          {
-            title,
-            url: state.selectedActivity?.url,
-          },
-        );
-        const activity = res.data as Activity;
+        const activity = (await modulePreviewApi.mutations.updateIframeActivity(
+          state.selectedActivity!.id,
+          { title, url: state.selectedActivity?.url },
+        )) as Activity;
         dispatch({ type: "edit_activity", activity });
         response = true;
       }
@@ -610,9 +600,10 @@ const useModuleContentExplorer = () => {
       );
 
       try {
-        await apiClient.put(`/activity/reorder/${state.selectedLesson.id}`, {
-          activitiesIds: newActivitiesIds,
-        });
+        await modulePreviewApi.mutations.reorderActivities(
+          state.selectedLesson.id!,
+          newActivitiesIds,
+        );
       } catch {
         // silently fail
       } finally {

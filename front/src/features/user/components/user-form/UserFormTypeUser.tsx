@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
-import apiClient from "../../../../lib/axios";
+import { queries } from "../../api/user.api";
 import type Role from "../../../../utils/interfaces/role";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
@@ -30,7 +30,7 @@ const UserFormTypeUser = ({
   const { data: roles, isLoading } = useQuery({
     queryKey: ["permission-roles"],
     queryFn: async () => {
-      const res = await apiClient.get("/permission/role");
+      const res = { data: await queries.roles() };
       return res.data.data as Role[];
     },
   });

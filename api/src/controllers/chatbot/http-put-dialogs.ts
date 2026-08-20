@@ -23,7 +23,6 @@ export default async function httpPutDialogs(
       data: { success: true, message: "Dialogs saved successfully" },
     });
   } catch (error: any) {
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

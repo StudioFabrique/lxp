@@ -69,7 +69,6 @@ async function updateUserRoles(
   // Combine base roles with their corresponding interface roles
   roles = [...roles, ...rolesToSet];
 
-  console.log("ROLES TO SET", rolesToSet);
 
   // Verify that all requested users were found (data integrity check)
   if (actualUsers.length !== usersToUpdate.length) {
@@ -104,7 +103,6 @@ async function updateUserRoles(
 
   // Debug logging: Display current user roles before update
   for (const actualUser of actualUsers) {
-    console.log("ACTUAL USER ROLES", actualUser.roles);
   }
 
   // Prepare bulk update operations for efficient database modification

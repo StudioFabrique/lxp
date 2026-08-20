@@ -3,6 +3,7 @@ import processPrompt, {
   PromptProcessingError,
 } from "../../models/chatbot/process-prompt.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export default async function httpPostPrompt(req: CustomRequest, res: Response) {
   try {
@@ -18,7 +19,7 @@ export default async function httpPostPrompt(req: CustomRequest, res: Response) 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.status(200).json(data);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     if (error instanceof PromptProcessingError) {
       return res.status(error.statusCode).json(error.body);
     }

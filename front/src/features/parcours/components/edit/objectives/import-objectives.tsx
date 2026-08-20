@@ -52,7 +52,7 @@ const ImportObjectives: FC<Props> = ({
   };
 
   const handleFromCSV = useCallback(
-    (data: Objective[]) => onImport(addIdToObject(data) as Objective[]),
+    (data: Objective[]) => onImport(addIdToObject(data)),
     [onImport],
   );
 

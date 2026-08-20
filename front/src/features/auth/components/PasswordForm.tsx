@@ -5,14 +5,20 @@ import {
   type UseFormWatch,
   type FieldErrors,
   type FieldValues,
+  type Path,
 } from "react-hook-form";
 
-type Props = {
-  register: UseFormRegister<FormData>;
-  watch: UseFormWatch<FieldValues>;
-  errors: FieldErrors<FieldValues>;
-  passwordFieldName?: string;
-  confirmPasswordFieldName?: string;
+/**
+ * Générique sur le type du formulaire appelant : `UseFormRegister<T>` est
+ * contravariant, un formulaire typé ne pouvait donc pas être passé à un
+ * composant qui attendait `FieldValues`.
+ */
+type Props<T extends FieldValues> = {
+  register: UseFormRegister<T>;
+  watch: UseFormWatch<T>;
+  errors: FieldErrors<T>;
+  passwordFieldName?: Path<T>;
+  confirmPasswordFieldName?: Path<T>;
 };
 
 const passwordRules = [
@@ -30,13 +36,13 @@ function getPasswordStrength(password: string) {
   return { score, label: "Fort", color: "bg-success" };
 }
 
-const PasswordForm = ({
+const PasswordForm = <T extends FieldValues>({
   register,
   watch,
   errors,
-  passwordFieldName = "password",
-  confirmPasswordFieldName = "confirmPassword",
-}: Props) => {
+  passwordFieldName = "password" as Path<T>,
+  confirmPasswordFieldName = "confirmPassword" as Path<T>,
+}: Props<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const passwordValue = watch(passwordFieldName) ?? "";

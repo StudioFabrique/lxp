@@ -89,4 +89,3 @@ export default function IFrameActivityResource(props: Props) {
     </>
   );
 }
-("Aucune ressource iframe disponible.");

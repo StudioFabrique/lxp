@@ -1,5 +1,7 @@
 // Import des types Express nécessaires
-import { type Request, type Response } from "express";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 // Import de la fonction du modèle pour récupérer la liste des leçons
 import getLessonsList from "../../models/lesson/get-lessons-list.ts";
 
@@ -9,10 +11,14 @@ import getLessonsList from "../../models/lesson/get-lessons-list.ts";
  * @param res - Réponse Express
  * @returns Réponse JSON contenant la liste des leçons ou un message d'erreur
  */
-export default async function httpGetLessonsList(req: Request, res: Response) {
+export default async function httpGetLessonsList(
+  req: CustomRequest,
+  res: Response,
+) {
   try {
-    // Récupération de la liste des leçons via le modèle
-    const response = await getLessonsList();
+    // Récupération de la liste des leçons via le modèle, bornée au périmètre
+    // de l'appelant.
+    const response = await getLessonsList(await resolveAccessScope(req.auth!));
 
     // Retourne une réponse réussie avec les données
     return res.status(200).json({

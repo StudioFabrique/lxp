@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { courseApi } from "../../../course/api/course.api";
-import apiClient from "../../../../lib/axios";
+import { modulePreviewApi } from "../../api/module-preview.api";
 import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/lesson";
 import type { CreateCourseFormValues } from "./course-form.types";
@@ -39,8 +39,7 @@ export default function CreateCourseDetailsModal({
   const { data: tags = [] } = useQuery({
     queryKey: ["tags", "course-create"],
     queryFn: async (): Promise<Tag[]> => {
-      const response = await apiClient.get("/tag");
-      return response.data;
+      return modulePreviewApi.queries.getTags();
     },
   });
 

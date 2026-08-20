@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import apiClient from "../../../lib/axios";
+import { courseApi } from "../api/course.api";
 
 interface WithId {
   id: number;
@@ -22,10 +22,7 @@ export default function useDeleteCourse<T extends WithId>(
   const handleDeleteCourse = async () => {
     if (showModal) {
       try {
-        const response = await apiClient.delete(
-          `/course/delete-course/${showModal.id}`,
-        );
-        const data = response.data as { success: boolean; message: string };
+        const data = await courseApi.mutations.deleteCourse(showModal.id);
         if (data.success) toast.success(data.message);
         setShowModal(null);
         onRefreshCourses();

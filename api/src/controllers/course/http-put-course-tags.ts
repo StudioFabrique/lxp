@@ -3,12 +3,10 @@ import { serverIssue } from "../../utils/constantes.ts";
 import putCourseTags from "../../models/course/put-course-tags.ts";
 
 async function httpPutCourseTags(req: Request, res: Response) {
-  console.log("coucou controller");
 
   const { courseId } = req.params;
   const tags = req.body;
 
-  console.log(req.body);
 
   try {
     const response = await putCourseTags(+courseId, tags);

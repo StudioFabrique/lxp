@@ -41,6 +41,14 @@ export default interface User {
   isActive: boolean;
   invitationSent: boolean;
   invitationSentAt?: string;
+  /**
+   * Invitation partie mais pas encore remise par le serveur SMTP.
+   *
+   * Distinct de `invitationSent` à faux, qui signifie « jamais envoyée » :
+   * l'envoi étant détaché de la requête de création, les deux situations
+   * seraient autrement indiscernables.
+   */
+  invitationPending?: boolean;
   group?: Group;
   hobbies?: Array<Hobby>;
   links?: Array<Link>;

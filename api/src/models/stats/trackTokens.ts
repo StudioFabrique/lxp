@@ -1,5 +1,6 @@
 import User from "../../utils/interfaces/db/user.ts";
 import { incrementPromptStats } from "./prompt-stats-day.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * Incrémente les tokens utilisés pour un utilisateur donné (Chatbot ou Quiz)
@@ -16,6 +17,6 @@ export async function trackTokens(
     // Incrémentation du compteur global de prompts de l'utilisateur
     await User.findByIdAndUpdate(userId, { $inc: { promptCount: 1 } });
   } catch (error) {
-    console.error("Erreur lors du tracking des tokens :", error);
+    logger.error("Erreur lors du tracking des tokens :", error);
   }
 }

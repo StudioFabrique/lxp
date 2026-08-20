@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
-import User from "../../../../../../src/utils/interfaces/user";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { useState } from "react";
 import Pagination from "../../../../../components/UI/pagination/pagination";
@@ -8,10 +7,11 @@ import Search from "../../../../../../src/components/UI/search/search.component"
 import { userInGroupSearchOptions } from "../../../../../config/search-options";
 import RefreshIcon from "../../../../../../src/components/UI/svg/refresh-icon.component";
 import StudentsListTable from "./students-list-table";
+import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
 import { UserX } from "lucide-react";
 
 interface StudentsListProps {
-  initalList: User[];
+  initalList: StudentWithGroup[];
   groups: Group[];
   onRemoveGroup: (groupId: string) => void;
 }

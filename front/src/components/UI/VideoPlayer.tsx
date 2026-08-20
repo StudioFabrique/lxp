@@ -32,14 +32,16 @@ export default function VideoPlayer({ url, size = "small" }: Props) {
     setVideoError(false);
   }, [playerUrl]);
 
-  const ReactPlayerComponent = ReactPlayer as any;
-
   return (
     <>
       {playerUrl ? (
         <>
-          <ReactPlayerComponent
-            url={playerUrl}
+          <ReactPlayer
+            // react-player 3 attend `src` : la propriété `url` des versions
+            // antérieures était ignorée en silence, et aucune vidéo ne se
+            // chargeait. Le transtypage en `any` qui enveloppait le composant
+            // empêchait le compilateur de le signaler.
+            src={playerUrl}
             controls
             style={{
               borderRadius: "5px",
@@ -48,10 +50,7 @@ export default function VideoPlayer({ url, size = "small" }: Props) {
             }}
             width={dimensions.width}
             height={dimensions.height}
-            onError={(e: any) => {
-              console.warn("ReactPlayer error on url:", playerUrl, e);
-              setVideoError(true);
-            }}
+            onError={() => setVideoError(true)}
           />
           {videoError && (
             <div className="text-error text-xs mt-1 text-center">

@@ -25,7 +25,6 @@ export default async function httpPostActivityText(
     );
     return res.status(201).json(response);
   } catch (error: any) {
-    console.log({ error });
 
     return res
       .status(error.statusCode ?? 500)

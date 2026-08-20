@@ -31,7 +31,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       <li className="w-full">
         <Link
           to={`/${interfaceType}/profil`}
-          className="flex w-full gap-2 items-center text-white capitalize p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full gap-2 items-center justify-center xl:justify-start xl:p-1 py-2 text-white capitalize rounded-lg hover:bg-primary/50 text-sm"
           data-tip={fullName}
         >
           {user && (

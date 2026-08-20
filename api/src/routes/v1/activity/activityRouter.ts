@@ -2,6 +2,7 @@ import express from "express";
 
 // Middleware d'authentification et de permissions
 import checkPermissions from "../../../middleware/check-permissions.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
 // Middleware pour l'upload d'images
 import { uploadActivityImage } from "../../../middleware/upload-activity-image.ts";
 import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image.ts";
@@ -127,6 +128,7 @@ activityRouter.put(
 activityRouter.delete(
   "/:activityId",
   checkPermissions("activity"),
+  checkContentAccess("activity", "activityId"),
   activityIdValidator,
   httpDeleteActivity,
 );
@@ -166,6 +168,7 @@ activityRouter.put(
 activityRouter.get(
   "/:activityId",
   checkPermissions("activity"),
+  checkContentAccess("activity", "activityId"),
   activityIdValidator,
   httpGetActivity,
 );
@@ -204,6 +207,7 @@ activityRouter.put(
 activityRouter.get(
   "/resources/:activityId/:parent",
   checkPermissions("activity"),
+  checkContentAccess("activity", "activityId"),
   activityIdValidator,
   httpGetResourceActivity,
 );

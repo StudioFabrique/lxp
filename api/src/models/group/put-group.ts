@@ -2,6 +2,7 @@ import { prisma } from "../../utils/db.ts";
 import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import activateMultipleUsers from "../user/activate-multiple-users.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 export default async function putGroup(
   id: string,
@@ -73,7 +74,7 @@ export default async function putGroup(
 
     return updatedGroup;
   } catch (error) {
-    console.error("Error updating group:", error);
+    logger.error("Error updating group:", error);
     return null;
   }
 }

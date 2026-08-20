@@ -1,10 +1,9 @@
 import { validationResult } from "express-validator";
 import { type NextFunction, type Response } from "express";
 
-import User, {
-  type OnboardingStatus,
-} from "../../utils/interfaces/db/user.ts";
+import type { OnboardingStatus } from "../../utils/interfaces/db/user.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import patchOnboarding from "../../models/auth/patch-onboarding.ts";
 
 async function httpPatchOnboarding(
   req: CustomRequest,
@@ -21,26 +20,17 @@ async function httpPatchOnboarding(
     const step = req.body.step as string;
     const version = req.body.version as number;
 
-    const user = await User.findByIdAndUpdate(
-      req.auth?.userId,
-      {
-        $set: {
-          onboarding: {
-            status,
-            step,
-            version,
-            updatedAt: new Date(),
-          },
-        },
-      },
-      { new: true },
-    ).select("onboarding");
+    const onboarding = await patchOnboarding(req.auth?.userId, {
+      status,
+      step,
+      version,
+    });
 
-    if (!user) {
+    if (!onboarding) {
       return res.status(404).json({ message: "Utilisateur introuvable" });
     }
 
-    return res.status(200).json(user.onboarding);
+    return res.status(200).json(onboarding);
   } catch (error) {
     next(error);
   }

@@ -3,7 +3,7 @@ import { Check, X } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { createPortal } from "react-dom";
 
-import apiClient from "../../../../lib/axios";
+import { modulePreviewApi } from "../../api/module-preview.api";
 import type Course from "../../../../utils/interfaces/course";
 import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
@@ -32,8 +32,7 @@ export default function EditCourseModal({
   const { data: tags = [] } = useQuery({
     queryKey: ["tags", "course-edit"],
     queryFn: async (): Promise<Tag[]> => {
-      const response = await apiClient.get("/tag");
-      return response.data;
+      return modulePreviewApi.queries.getTags();
     },
   });
 

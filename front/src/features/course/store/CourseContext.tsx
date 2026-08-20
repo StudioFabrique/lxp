@@ -120,7 +120,7 @@ function courseReducer(state: CourseState, action: Action): CourseState {
       return {
         ...state,
         courseLessons: state.courseLessons
-          ? (sortArray([...state.courseLessons, action.payload] as unknown as Record<string, unknown>[], "order") as unknown as Lesson[])
+          ? sortArray([...state.courseLessons, action.payload], "order")
           : [action.payload],
       };
     case "DELETE_LESSON":

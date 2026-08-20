@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import apiClient from "../../../lib/axios";
+import { modulePreviewApi } from "../api/module-preview.api";
 
 export type ContentTrackingType = "module" | "course" | "lesson" | "activity";
 
@@ -36,15 +36,14 @@ export default function useContentTracking(
     trackedIdRef.current = contentId;
     let cancelled = false;
 
-    const basePath = `/content-read/${type}/${contentId}`;
-
     // Les échecs de suivi ne doivent jamais remonter à l'apprenant : ce n'est
     // pas une fonctionnalité dont dépend sa lecture.
-    const ping = (path: string) =>
-      apiClient.post(path).catch(() => undefined);
-
-    const begin = () => ping(`${basePath}/begin`);
-    const heartbeat = () => ping(`${basePath}/heartbeat`);
+    const begin = () =>
+      modulePreviewApi.tracking.begin(type, contentId).catch(() => undefined);
+    const heartbeat = () =>
+      modulePreviewApi.tracking
+        .heartbeat(type, contentId)
+        .catch(() => undefined);
 
     begin();
 

@@ -9,7 +9,9 @@ import { Link } from "react-router";
 type Props = {
   resourcesList?: ResourceListItem[] | null;
   children?: React.ReactNode;
-  onDeleteResource: (resource: ResourceListItem) => void;
+  // Le bouton de suppression n'est rendu qu'aux profils habilités : la vue
+  // apprenante n'a donc pas de rappel à fournir.
+  onDeleteResource?: (resource: ResourceListItem) => void;
 };
 
 export default function ResourcesListCard({
@@ -40,7 +42,7 @@ export default function ResourcesListCard({
   }
 
   const deleteRsource = (resource: ResourceListItem) => {
-    onDeleteResource(resource);
+    onDeleteResource?.(resource);
   };
 
   return (

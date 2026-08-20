@@ -5,7 +5,7 @@ import AddTag from "../../../components/UI/add-tag";
 import useTags from "../../../hooks/useTags";
 import Tag from "../../../../src/utils/interfaces/tag";
 import toast from "react-hot-toast";
-import apiClient from "../../../lib/axios";
+import { tagApi } from "../api/tag.api";
 
 type TagsHomeAddingProps = {
   onSubmitAllTags: (tags: Tag[]) => Promise<void> | void;
@@ -20,7 +20,7 @@ const TagsHomeAdding = ({
   const { data: initialTags = [] } = useQuery({
     queryKey: ["tags", "all", "create-validation"],
     queryFn: async (): Promise<Tag[]> => {
-      const response = await apiClient.get<Tag[]>("/tag");
+      const response = { data: await tagApi.queries.getAll() };
       return response.data;
     },
   });

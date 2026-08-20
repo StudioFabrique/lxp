@@ -8,6 +8,13 @@ export type TagRow = {
   parcours: { id: number; title: string }[];
 };
 
+const queries = {
+  getAll: async (): Promise<TagRow[]> => {
+    const res = await apiClient.get<TagRow[]>("/tag");
+    return res.data;
+  },
+};
+
 const mutations = {
   deleteOne: async (id: number): Promise<void> => {
     await apiClient.delete(`/tag/deleteSingle/${id}`);
@@ -27,5 +34,6 @@ const mutations = {
 };
 
 export const tagApi = {
+  queries,
   mutations,
 };

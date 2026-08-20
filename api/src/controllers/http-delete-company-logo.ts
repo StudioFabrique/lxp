@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import fs from "fs";
 import path from "path";
+import { logger } from "../utils/logs/logger.ts";
 
 const deleteFileIfItExists = async (filePath: string) => {
   try {
@@ -32,7 +33,7 @@ export default async function httpDeleteCompanyLogo(
       message: "Le logo de l'organisme a bien été supprimé",
     });
   } catch (error) {
-    console.error("Error deleting company logo:", error);
+    logger.error("Error deleting company logo:", error);
     return res.status(500).json({
       message: "Le logo de l'organisme n'a pas pu être supprimé.",
     });

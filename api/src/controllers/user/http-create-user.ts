@@ -43,13 +43,19 @@ export default async function httpCreateUser(req: Request, res: Response) {
       await fs.promises.unlink(uploadedFile.path);
     }
 
+    // L'invitation part en arrière-plan : la réponse annonce son envoi, pas sa
+    // remise, que la colonne « invitation » de la liste reflétera.
+    const invitationPending = Boolean(userResponse!.invitationPending);
+
     return res.status(201).json({
       success: true,
-      message: "L'utilisateur a été créé avec succès.",
+      message: invitationPending
+        ? "L'utilisateur a été créé. L'email d'invitation est en cours d'envoi."
+        : "L'utilisateur a été créé avec succès.",
+      invitationPending,
       userId: userResponse!.createdUser._id.toString(),
     });
   } catch (error: any) {
-    console.log({ error });
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

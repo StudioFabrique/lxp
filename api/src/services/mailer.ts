@@ -2,8 +2,16 @@
 import { getTemplate } from "../helpers/get-mail-template.ts";
 import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
+import { logger } from "../utils/logs/logger.ts";
 
-// Configuration du transporteur SMTP pour l'envoi d'emails
+/**
+ * Transporteur SMTP.
+ *
+ * `verify()` n'est plus appelé avant chaque envoi : il ouvrait une connexion
+ * complète — connexion, EHLO, authentification — que `sendMail` refaisait
+ * intégralement juste après, doublant la latence de chaque message pour une
+ * information que `sendMail` remonte de toute façon en cas d'échec.
+ */
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP,
   port: +process.env.SMTP_PORT!,
@@ -38,9 +46,6 @@ export async function sendPasswordEmail(
         ? process.env.SMTP_EMAIL
         : email;
 
-    // Vérification de la connexion SMTP
-    await transporter.verify();
-
     // Récupération du template HTML correspondant
     const message = getTemplate(template, token, email);
 
@@ -54,9 +59,9 @@ export async function sendPasswordEmail(
 
     return result;
   } catch (error: any) {
-    console.error("Error sending email:", error);
+    logger.error("Error sending email:", error);
     if (error.code === "EAUTH") {
-      console.error("Authentication failed. Check your SMTP credentials.");
+      logger.error("Authentication failed. Check your SMTP credentials.");
     }
     throw {
       statusCode: 500,
@@ -86,7 +91,7 @@ export async function sendUpdatedUserEmail(email: string) {
       }
 
       // si en développement, on log l'erreur
-      console.error(
+      logger.error(
         "La variable d'environnement SMTP_EMAIL n'est pas définie."
       );
       return;
@@ -97,9 +102,6 @@ export async function sendUpdatedUserEmail(email: string) {
       process.env.ENVIRONMENT === "development"
         ? process.env.SMTP_EMAIL
         : email;
-
-    // Vérification de la connexion SMTP
-    await transporter.verify();
 
     // Récupération du template pour la mise à jour du compte
     const message = getTemplate("updated-user", "");

@@ -1,12 +1,21 @@
 import { prisma } from "../../utils/db.ts";
 
 /**
- * Récupère la liste complète des leçons avec leurs informations associées
- * @returns Une liste de leçons avec leurs détails (titre, modalité, tag, cours, etc.)
+ * Récupère la liste des leçons avec leurs informations associées.
+ *
+ * @param accessibleParcoursIds Parcours auxquels l'appelant est inscrit, ou
+ * `null` pour un encadrant qui voit tout le catalogue. Sans ce filtre, la route
+ * retournait chaque leçon de la plateforme à n'importe quel apprenant.
  */
-export default async function getLessonsList() {
+export default async function getLessonsList(
+  accessibleParcoursIds: number[] | null = null,
+) {
   // Récupération des leçons depuis la base de données avec une sélection précise des champs
   const existingLessons = await prisma.lesson.findMany({
+    where:
+      accessibleParcoursIds === null
+        ? undefined
+        : { course: { module: { parcoursId: { in: accessibleParcoursIds } } } },
     select: {
       id: true,
       title: true,

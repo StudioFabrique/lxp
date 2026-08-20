@@ -33,7 +33,6 @@ export default async function httpPutGroup(req: Request, res: Response) {
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });
   } catch (e) {
-    console.log(e);
 
     await deleteTempUploadedFile(req);
     return res.status(500).json({ message: serverIssue + e });

@@ -13,7 +13,6 @@ export default async function httpPostBlogImage(req: Request, res: Response) {
       response: `activities/images/${uploadedFile.filename}`,
     });
   } catch (error: any) {
-    console.log(error.message);
 
     return res.status(500).json({ message: error.message });
   }

@@ -31,7 +31,6 @@ async function httpPutCourseImage(req: Request, res: Response) {
           const response = await putCourseImage(+courseId, base64String);
           if (response) {
             await fs.promises.unlink(uploadedFile.path);
-            console.log("Fichier supprimé :", uploadedFile.path);
             return res
               .status(201)
               .json({ message: "Image du cours mise à jour" });

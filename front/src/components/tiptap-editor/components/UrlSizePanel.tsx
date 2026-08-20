@@ -1,6 +1,6 @@
 import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 import { Button } from "./ui/Button";
-import { Icon } from "./ui/Icon";
+import { Icon, type IconProps } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { useUrlEditorState, type UrlEditorSize } from "./useUrlEditorState";
 
@@ -8,7 +8,7 @@ export type UrlSizePanelProps = {
   initialUrl?: string;
   initialSize?: UrlEditorSize;
   onSetLink: (url: string, size?: UrlEditorSize) => void;
-  iconName: string;
+  iconName: IconProps["name"];
   urlPlaceholder: string;
   submitLabel: string;
 };

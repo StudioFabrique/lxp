@@ -1,30 +1,26 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { logger } from "../utils/logs/logger.ts";
+import { type NextFunction, type Response } from "express";
 
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
+/**
+ * Met en forme les réponses des contrôleurs qui délèguent via
+ * `next({ statusCode, data })`.
+ *
+ * La journalisation n'est plus faite ici : elle dépendait alors du style
+ * d'écriture du contrôleur. `request-logger` s'accroche à la fin de chaque
+ * réponse et couvre donc l'ensemble du trafic.
+ */
 export default function responseHandler(
   data: { statusCode: number; data?: any; message?: string },
-  req: CustomRequest,
+  _req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
-  if (data) {
-    const childLogger = logger.child({
-      from: req.socket.remoteAddress ?? "unknown",
-    });
-    const message = `${req.auth?.userId}-${req.auth?.userRoles[0]!.label}-${
-      req.method
-    }-${req.path}`;
-    if (data.statusCode >= 500) {
-      childLogger.error(message + "-" + data.message);
-    } else if (data.statusCode < 400) {
-      childLogger.info(message);
-      return res.status(data.statusCode).json(data.data);
-    } else {
-      childLogger.warn(message + "-" + data.message);
-    }
-    return res.status(data.statusCode).json({ message: data.message });
+  if (!data) return next();
+
+  if (data.statusCode < 400) {
+    return res.status(data.statusCode).json(data.data);
   }
-  next();
+
+  return res.status(data.statusCode).json({ message: data.message });
 }

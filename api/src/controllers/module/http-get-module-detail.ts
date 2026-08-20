@@ -15,7 +15,6 @@ export default async function httpGetModuleDetail(
 
   try {
     const { moduleId } = req.params;
-    console.log("controller module id :", moduleId);
     const response = await getModuleDetail(+moduleId, userId);
     return res.status(200).json({
       message: "Les détails du module ont bien étés récupérés",

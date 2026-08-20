@@ -1,7 +1,9 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 import getLessonsByTag from "../../models/lesson/get-lessons-by-tag.ts";
 
-async function httpGetLessonsByTag(req: Request, res: Response) {
+async function httpGetLessonsByTag(req: CustomRequest, res: Response) {
   const { tagId } = req.params;
   const includeCourseContents = req.query.includeCourseContents === "true";
   const supplementaryResources = req.query.supplementaryResources === "true";
@@ -11,6 +13,7 @@ async function httpGetLessonsByTag(req: Request, res: Response) {
       +tagId,
       includeCourseContents,
       supplementaryResources,
+      await resolveAccessScope(req.auth!),
     );
     return res.status(200).json({ total: response.length, data: response });
   } catch (error: any) {

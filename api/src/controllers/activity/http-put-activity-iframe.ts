@@ -22,11 +22,9 @@ export default async function httpPutActivityIframe(
       parent,
     );
 
-    console.log({ response });
 
     return res.status(201).json(response);
   } catch (error: any) {
-    console.log({ error });
 
     return res
       .status(error.statusCode ?? 500)

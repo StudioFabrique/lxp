@@ -20,8 +20,9 @@ const EditCourseHome = () => {
   const dispatch = useCourseDispatch();
   const { courseId } = useParams();
   const [searchParams] = useSearchParams();
-  const { actualStep, finalStep, stepsList, updateStep, validateStep } =
-    useSteps(stepsCourse as Step[]);
+  const { actualStep, stepsList, updateStep, validateStep } = useSteps(
+    stepsCourse as Step[],
+  );
   const [step, setStep] = useState<string | null>(searchParams.get("step"));
 
   const { data: courseData } = useQuery({

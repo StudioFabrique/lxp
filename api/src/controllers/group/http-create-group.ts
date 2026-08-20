@@ -37,7 +37,6 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     }
     return res.status(409).json({ message: alreadyExist });
   } catch (e) {
-    console.log(e);
 
     await deleteTempUploadedFile(req);
     return res.status(500).json({ message: serverIssue + e });

@@ -3,6 +3,12 @@ import apiClient from "../../../lib/axios";
 type Item = { id: number; title: string };
 
 const queries = {
+  getLessonForEdit: async (lessonId: number | string) => {
+    const res = await apiClient.get<{ lesson: unknown }>(
+      `/lesson/edit/${lessonId}`,
+    );
+    return res.data;
+  },
   getParcoursSelect: async (): Promise<Item[]> => {
     const res = await apiClient.get<{ data: Item[] }>("/parcours/select");
     return res.data.data;
@@ -53,6 +59,16 @@ const queries = {
 };
 
 const mutations = {
+  updateLesson: async (body: {
+    id?: number;
+    title: string;
+    description: string;
+    tagId?: number;
+    modalite: string;
+  }) => {
+    const res = await apiClient.put("/lesson/update", body);
+    return res.data;
+  },
   createLesson: async (
     courseId: number,
     data: {

@@ -17,7 +17,6 @@ export default async function deleteUserFromGroup(
 
     return group ?? [];
   } catch (error) {
-    console.log(error);
     return [];
   }
 }

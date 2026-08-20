@@ -8,6 +8,20 @@ import type { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson
 import type CustomCourse from "../components/list/interfaces/custom-course";
 
 const queries = {
+  modulesByParcoursId: async (parcoursId?: number) => {
+    const res = await apiClient.get(`/modules/${parcoursId}`);
+    return res.data;
+  },
+  parcoursByFormationId: async (formationId?: number) => {
+    const res = await apiClient.get(
+      `/parcours/parcours-by-formation/${formationId}`,
+    );
+    return res.data;
+  },
+  formationsList: async () => {
+    const res = await apiClient.get("/formation");
+    return res.data;
+  },
   list: () =>
     queryOptions({
       queryKey: ["courses"],
@@ -116,6 +130,30 @@ const queries = {
 };
 
 const mutations = {
+  deleteCourse: async (courseId: number) => {
+    const res = await apiClient.delete<{ success: boolean; message: string }>(
+      `/course/delete-course/${courseId}`,
+    );
+    return res.data;
+  },
+  /** L'archive convertie revient en binaire, d'où le `responseType: "blob"`. */
+  importMbz: async (
+    file: File,
+    onProgress?: (percent: number) => void,
+  ) => {
+    const payload = new FormData();
+    payload.append("file", file);
+
+    return apiClient.post("/course/import-mbz", payload, {
+      responseType: "blob",
+      onUploadProgress: (progressEvent) => {
+        if (!onProgress || !progressEvent.total) return;
+        onProgress(
+          Math.round((progressEvent.loaded * 100) / progressEvent.total),
+        );
+      },
+    });
+  },
   create: async (body: {
     title: string;
     moduleId: number;

@@ -24,7 +24,7 @@ const ParcoursCard = (props: ParcoursCardProps) => {
   const [image, setImage] = useState<string | null>(null);
 
   // Gestionnaire de suppression d'un parcours
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const handleDeleteParcours = (parcours: Parcours) => {
     onDeleteParcours(parcours);
   };

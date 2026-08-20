@@ -28,7 +28,6 @@ export default async function deleteGroup(groupId: string) {
 
     return group ?? [];
   } catch (error) {
-    console.log(error);
     return [];
   }
 }

@@ -51,7 +51,7 @@ type ConditionnalStateProperties =
     };
 
 // Le type du state du reducer
-type ModuleExplorerContentState = StaticStateProperties &
+export type ModuleExplorerContentState = StaticStateProperties &
   ConditionnalStateProperties;
 
 type ModuleExplorerContentAction =

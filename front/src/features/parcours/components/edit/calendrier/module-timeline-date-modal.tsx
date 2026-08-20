@@ -88,7 +88,7 @@ const ModuleTimelineDateModal = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (error) return;
+    if (error || !currentModule?.id) return;
 
     try {
       await parcoursApi.mutations.updateModuleCalendarDates({

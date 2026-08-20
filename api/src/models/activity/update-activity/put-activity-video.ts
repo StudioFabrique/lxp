@@ -75,7 +75,6 @@ export default async function putActivityVideo(
           existingParent.url,
         ),
       );
-      console.log("Fichier supprimé :", url);
     }
   }
   return updatedActivity;

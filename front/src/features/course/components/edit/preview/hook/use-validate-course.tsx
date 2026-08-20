@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useCourseSelector } from "../../../../store/CourseContext";
 import type { CourseState } from "../../../../store/CourseContext";
 import Course from "../../../../../../../src/utils/interfaces/course";

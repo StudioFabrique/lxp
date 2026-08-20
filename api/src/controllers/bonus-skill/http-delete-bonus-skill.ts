@@ -16,7 +16,6 @@ async function httpDeleteBonusSkill(req: Request, res: Response) {
 
     return res.status(201).json({ success: true, response });
   } catch (error: any) {
-    console.log({ error });
 
     return res
       .status(error.statusCode ?? 500)

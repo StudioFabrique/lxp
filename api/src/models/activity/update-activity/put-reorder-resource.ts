@@ -63,7 +63,6 @@ export default async function putReorderResource(req: CustomRequest) {
   // Initialize activity variable (can be either Activity or BonusActivity)
   let existingActivity: Activity | BonusActivity | null = null;
 
-  console.log("parent", parent);
 
   // Fetch the parent activity based on type
   if (parent === "lesson") {

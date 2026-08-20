@@ -34,6 +34,13 @@ export type RoleCounts = {
 };
 
 const queries = {
+  listRoles: async (searchValue?: string) => {
+    const path = searchValue
+      ? `/permission/search/role/${searchValue}`
+      : "/permission/role";
+    const res = await apiClient.get(path);
+    return res.data.data;
+  },
   getPermissions: async (id: string): Promise<RolePermissionsResponse> => {
     const res = await apiClient.get(`/permission/resources/id/${id}`);
     return res.data.data;

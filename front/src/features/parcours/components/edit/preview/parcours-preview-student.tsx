@@ -1,13 +1,13 @@
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Group from "../../../../../../src/utils/interfaces/group";
-import User from "../../../../../../src/utils/interfaces/user";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import StudentsListTable from "../students/students-list-table";
+import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 
 interface ParcoursPreviewStudentProps {
   onEdit: (id: number) => void;
-  students: User[];
+  students: StudentWithGroup[];
   groups: Group[];
 }
 

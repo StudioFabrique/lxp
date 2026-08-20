@@ -12,10 +12,8 @@ async function httpPutParcoursObjectives(req: Request, res: Response) {
   try {
     const { parcoursId, objectives } = req.body;
 
-    console.log(req.body);
 
     const response = await putParcoursObjectives(parcoursId, objectives);
-    console.log(response);
     return res.status(201).json({
       success: true,
       data: response,

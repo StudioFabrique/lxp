@@ -15,7 +15,6 @@ export default async function httpPostActivityVideo(
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      console.log(result.array());
 
       throw { statusCode: 400, message: "Données invalides" };
     }

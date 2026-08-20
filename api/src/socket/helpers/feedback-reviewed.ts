@@ -20,6 +20,5 @@ export async function feedbackReviewed(
       }
     }
     socket.emit("response-feedback-reviewed", feedbackId);
-    console.log("response emitted !");
   }
 }

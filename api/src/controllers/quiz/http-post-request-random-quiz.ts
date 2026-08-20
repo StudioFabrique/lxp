@@ -5,6 +5,7 @@ import {
   AiConfigurationError,
 } from "../../services/ai/ai-api-client.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /** POST /quiz/random — génère ou récupère une question mise en cache. */
 export default async function httpPostRequestRandomQuiz(
@@ -32,7 +33,7 @@ export default async function httpPostRequestRandomQuiz(
 
     return res.status(200).json(data);
   } catch (error) {
-    console.error("Erreur de génération d'une question aléatoire :", error);
+    logger.error("Erreur de génération d'une question aléatoire :", error);
 
     if (error instanceof AiConfigurationError) {
       return res.status(500).json({ error: error.message });

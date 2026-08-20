@@ -23,7 +23,6 @@ async function httpUpdateUserRoles(
   res: Response,
   next: NextFunction
 ) {
-  console.log("HELLO UPDATE USER ROLES");
 
   try {
     // Validate request using express-validator

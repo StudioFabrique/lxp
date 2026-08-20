@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { informationSchema } from "../../schemas/info-schema";
-import apiClient from "../../../../lib/axios";
+import { profileApi } from "../../api/profile.api";
 import Loader from "../../../../components/loaders/Loader";
 import Hobby from "../../../user/interfaces/hobby";
 import { Link } from "../../../user/interfaces/link";
@@ -112,8 +112,8 @@ const InformationAndSettings: FC<{
     if (temporaryAvatar.file) formData.append("image", temporaryAvatar.file);
     formData.append("data", JSON.stringify({ user: completeData }));
 
-    apiClient
-      .put("/user/profile/information", formData)
+    profileApi.mutations
+      .updateInformation(formData)
       .then(() => {
         toast.success("Profil sauvegardé avec succès !");
       })
@@ -126,9 +126,9 @@ const InformationAndSettings: FC<{
 
   useEffect(() => {
     setIsLoading(true);
-    apiClient
-      .get("/user/profile/information")
-      .then((response) => setUserData(response.data.data))
+    profileApi.queries
+      .getInformation()
+      .then((data) => setUserData(data.data))
       .catch((err) => {
         const errorMessage =
           err?.response?.data?.message ?? "Erreur inconnue";

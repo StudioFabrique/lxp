@@ -7,7 +7,7 @@ import Skill from "./skill";
 import Tag from "./tag";
 
 export default interface Parcours {
-  id?: number;
+  id: number;
   title: string;
   description?: string;
   image?: string;

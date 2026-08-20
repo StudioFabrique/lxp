@@ -1,6 +1,7 @@
 import { type Response } from "express";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import postReportQuizQuestion from "../../models/quiz/post-report-quiz-question.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * POST /quiz/question/report
@@ -30,7 +31,7 @@ export default async function httpPostReportQuizQuestion(
       reportId: report.id,
     });
   } catch (error) {
-    console.error("Erreur lors du signalement de la question :", error);
+    logger.error("Erreur lors du signalement de la question :", error);
     return res
       .status(500)
       .json({ error: "Impossible d'enregistrer le signalement." });

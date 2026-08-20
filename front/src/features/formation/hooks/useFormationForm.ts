@@ -236,7 +236,7 @@ export function useFormationForm() {
       code,
     });
     if (!parsed.success) {
-      const first = parsed.error.errors[0];
+      const first = parsed.error.issues[0];
       toast.error(first.message);
       return;
     }

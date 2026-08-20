@@ -8,11 +8,11 @@ import Pagination from "../../../components/UI/pagination/pagination";
 import usePagination from "../../../../src/hooks/use-pagination";
 import { useState } from "react";
 import Modal from "../../../components/UI/modal/modal";
-import apiClient from "../../../lib/axios";
+import { resourcesApi } from "../api/resources.api";
 import toast from "react-hot-toast";
 
 export type ResourceListItem = {
-  id: string;
+  id: number;
   title: string;
   author: string;
   createdAt: string;
@@ -48,9 +48,7 @@ export default function ResourcesHome() {
 
   const handleDeleteResource = async () => {
     try {
-      const { data } = await apiClient.delete(
-        `/resources/${resourceToDelete?.id}`,
-      );
+      const data = await resourcesApi.mutations.remove(resourceToDelete!.id);
       if (data.success) {
         setResourceToDelete(null);
         toast.success(data.message);

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ManagePassword from "./manage-password";
 import { passwordSchema } from "../../schemas/password-schema";
-import apiClient from "../../../../lib/axios";
+import { profileApi } from "../../api/profile.api";
 
 const Account: FC<{
   formRef: Ref<HTMLFormElement>;
@@ -27,11 +27,8 @@ const Account: FC<{
       toast.error("Les mot des passes ne correspondent pas");
       return;
     }
-    apiClient
-      .put(`/user/profile/password`, {
-        oldPass: data.oldPass,
-        newPass: data.newPass,
-      })
+    profileApi.mutations
+      .updatePassword({ oldPass: data.oldPass, newPass: data.newPass })
       .then(() =>
         toast.success("Informations du compte sauvegardé avec succès !"),
       )

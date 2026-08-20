@@ -54,7 +54,7 @@ const testGroups = (groups: Array<Group>) => {
   return groups.length > 0;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function testParcoursStep(data: any) {
   const validationErrors = Array<any>();

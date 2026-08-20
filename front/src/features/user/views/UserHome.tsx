@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   RowSelectionState,
   SortingState,
@@ -9,6 +9,7 @@ import { PlusCircle } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type Role from "../../../utils/interfaces/role";
+import type User from "../../../utils/interfaces/user";
 import { useUserActions } from "../hooks/useUserActions";
 import { useUserList } from "../hooks/useUserList";
 import { getUsersColumns } from "../components/user-table-columns";
@@ -25,6 +26,7 @@ import { usersPageTourSteps } from "../../../components/headers/page-tour-steps"
 
 const UserHome = () => {
   const { roles } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
 
@@ -114,6 +116,21 @@ const UserHome = () => {
       setIdToResendInvitation(null);
     }
   };
+
+  // Les statistiques n'existent que pour les étudiants : les autres lignes
+  // n'ouvrent rien.
+  const isStudent = useCallback(
+    (user: User) => user.roles.some((role) => role.rank === 3),
+    [],
+  );
+
+  const handleRowClick = useCallback(
+    (user: User) => {
+      if (!user._id || !isStudent(user)) return;
+      navigate(`/admin/user/data/${user._id}`);
+    },
+    [isStudent, navigate],
+  );
 
   const handleRoleSwitch = (role: Role) => {
     setRowSelection({});
@@ -208,6 +225,8 @@ const UserHome = () => {
             setRowSelection={setRowSelection}
             sorting={sorting}
             setSorting={handleSortingChange}
+            onRowClick={handleRowClick}
+            isRowClickable={isStudent}
             emptyMessage={
               searchValue
                 ? "Aucun utilisateur trouvé"

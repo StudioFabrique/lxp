@@ -92,11 +92,7 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
 
     if (activity && !isEditing) {
       return (
-        <VideoPlayer
-          source={activity.url}
-          title={activity.title!}
-          description={activity.description}
-        />
+        <VideoPlayer url={activity.url} size="medium" />
       );
     }
 

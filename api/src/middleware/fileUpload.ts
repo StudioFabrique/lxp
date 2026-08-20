@@ -48,8 +48,6 @@ export const createFileUploadMiddleware: any = (maxFileSize: number) => {
           file.originalname;
         cb(null, file.fieldname + "-" + newFileName);
       } else {
-        console.log("problem with file :");
-        console.log(file);
         return;
       }
     },

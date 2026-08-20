@@ -1,5 +1,5 @@
 // ModuleDetailsModal.tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { useEffect, useRef } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { formatDate } from "../../../../calendar/components/calendar-utils";

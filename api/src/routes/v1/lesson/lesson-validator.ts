@@ -47,20 +47,6 @@ export const duplicateResourcesValidator = [
   checkValidatorResult,
 ];
 
-export const lessonIdWithRateValidator = [
-  param("lessonId")
-    .notEmpty()
-    .withMessage("L'idientifiant de la leçon est requis.")
-    .isNumeric()
-    .isInt()
-    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
-  query("rate")
-    .notEmpty()
-    .withMessage("L'idientifiant de la leçon est requis.")
-    .isNumeric()
-    .isInt()
-    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
-];
 
 export const parentIdValidator = [
   param("parentId")

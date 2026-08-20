@@ -59,7 +59,7 @@ export function socket(io: Server): void {
           io.emit("students-count", count);
         });
       } catch (error) {
-        console.error(
+        logger.error(
           "Erreur détectée lors de l'ouverture du socket, interruption de la connexion, IP : " +
             socket.handshake.address
         );
@@ -103,7 +103,7 @@ export function socket(io: Server): void {
               if (sock) {
                 sock.emit("new-feedback-received", feedback);
               } else {
-                console.error(`Socket non trouvé pour l'ID : ${contact}`);
+                logger.error(`Socket non trouvé pour l'ID : ${contact}`);
               }
             }
           }
@@ -151,7 +151,7 @@ export function socket(io: Server): void {
       );
     });
   } catch (error) {
-    console.error("Erreur lors de l'ouverture du socket !");
+    logger.error("Erreur lors de l'ouverture du socket !");
   }
 }
 
@@ -166,7 +166,7 @@ export async function userConnectionNotification(
     if (sock) {
       sock.emit("student_connected", notification);
     } else {
-      console.error(`Socket non trouvé pour l'ID : ${contact}`);
+      logger.error(`Socket non trouvé pour l'ID : ${contact}`);
     }
   }
 }

@@ -23,7 +23,6 @@ export default async function httpPutModule(
   try {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      console.log(result.array());
 
       return next({
         statusCode: 400,
@@ -54,7 +53,6 @@ export default async function httpPutModule(
     });
   } catch (error: any) {
     if (req.file) await deleteTempUploadedFile(req);
-    console.log({ error });
 
     next({
       statusCode: error.statusCode ?? 500,

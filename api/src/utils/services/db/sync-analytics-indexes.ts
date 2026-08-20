@@ -1,6 +1,7 @@
 import ConnectionInfos from "../../interfaces/db/connection-infos.ts";
 import PromptStats from "../../interfaces/db/prompt-stats.ts";
 import StudentFeedback from "../../interfaces/db/student-feedback.ts";
+import { logger } from "../../logs/logger.ts";
 
 /**
  * Aligne les index des collections servant au calcul des indicateurs.
@@ -20,6 +21,6 @@ export default async function syncAnalyticsIndexes() {
   } catch (error) {
     // Un index manquant dégrade les performances mais ne doit pas empêcher
     // le démarrage de l'API.
-    console.error("⚠️  Synchronisation des index analytics échouée :", error);
+    logger.error("⚠️  Synchronisation des index analytics échouée :", error);
   }
 }

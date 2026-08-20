@@ -1,9 +1,16 @@
 import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import apiClient from "../../../lib/axios";
+import { queries } from "../api/user.api";
 import type User from "../../../utils/interfaces/user";
 import type UsersStats from "../interfaces/users-stats";
 import type Role from "../../../utils/interfaces/role";
+
+/**
+ * Cadence de relance tant qu'une invitation est en cours de remise. Assez
+ * courte pour que l'indicateur ne s'attarde pas, assez espacée pour ne pas
+ * solliciter la liste inutilement.
+ */
+const INVITATION_POLL_INTERVAL_MS = 3000;
 
 export function useUserList(role: Role | null) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,11 +61,18 @@ export function useUserList(role: Role | null) {
     queryFn: async () => {
       const sortDir = isAscDirection ? "asc" : "desc";
       const path = `${baseEndpoint}/${sortProperty}/${sortDir}?page=${currentPage}&limit=${itemsPerPage}`;
-      const res = await apiClient.get<{ total: number; list: User[] }>(path);
+      const res = { data: (await queries.list(path)) as { total: number; list: User[] } };
       return res.data;
     },
     enabled: !!role,
     placeholderData: keepPreviousData,
+    // Une invitation part après la réponse de création : sans relance, la liste
+    // resterait sur l'indicateur d'attente jusqu'à une action de l'utilisateur.
+    // La relance s'arrête d'elle-même dès qu'aucune ligne n'est en cours.
+    refetchInterval: (query) =>
+      query.state.data?.list?.some((user) => user.invitationPending)
+        ? INVITATION_POLL_INTERVAL_MS
+        : false,
   });
 
   const listData = useMemo(() => data?.list ?? [], [data]);
@@ -68,7 +82,7 @@ export function useUserList(role: Role | null) {
   const { data: statsData } = useQuery({
     queryKey: ["user-stats"],
     queryFn: async () => {
-      const res = await apiClient.get<UsersStats[]>("/user/stats");
+      const res = { data: (await queries.stats()) as UsersStats[] };
       return res.data;
     },
   });

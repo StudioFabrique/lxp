@@ -1,6 +1,7 @@
 import { type ObjectId } from "mongoose";
 import Hobby, { type IHobby } from "../../../utils/interfaces/db/hobby.ts";
 import User from "../../../utils/interfaces/db/user.ts";
+import { logger } from "../../../utils/logs/logger.ts";
 
 export default async function editManyHobbies(
   userId: ObjectId,
@@ -40,7 +41,7 @@ export default async function editManyHobbies(
 
     return updatedUser;
   } catch (error) {
-    console.error("Error replacing or updating user hobbies:", error);
+    logger.error("Error replacing or updating user hobbies:", error);
     throw error;
   }
 }

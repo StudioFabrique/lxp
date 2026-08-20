@@ -3,6 +3,7 @@ import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
+import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,7 @@ describe("Progression servie par l'API", () => {
   let moduleId: number;
   let courseId: number;
   let lessonIds: number[] = [];
+  let enrollment: Enrollment;
 
   // Le contrôleur enveloppe la charge utile dans `data`, comme le lit le front.
   const fetchModule = async () => {
@@ -46,11 +48,15 @@ describe("Progression servie par l'API", () => {
     });
 
     const [module, admin, tag] = await Promise.all([
-      prisma.module.findFirst({ select: { id: true } }),
+      prisma.module.findFirst({ select: { id: true, parcoursId: true } }),
       prisma.admin.findFirst({ select: { id: true } }),
       prisma.tag.findFirst({ select: { id: true } }),
     ]);
     moduleId = module!.id;
+
+    // Les contenus sont cloisonnés par parcours : sans inscription, l'apprenant
+    // reçoit 404 sur son propre module.
+    enrollment = await enrollStudentInParcours(userIdMdb, module!.parcoursId);
 
     const course = await prisma.course.create({
       data: {
@@ -91,6 +97,7 @@ describe("Progression servie par l'API", () => {
     await prisma.lessonRead.deleteMany({ where: { lessonId: { in: lessonIds } } });
     await prisma.lesson.deleteMany({ where: { id: { in: lessonIds } } });
     await prisma.course.delete({ where: { id: courseId } });
+    await enrollment.cleanup();
     await prisma.$disconnect();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
   });

@@ -1,5 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, MailCheck, Pencil, RotateCw, Send, Trash2 } from "lucide-react";
+import {
+  LoaderCircle,
+  MailCheck,
+  Pencil,
+  RotateCw,
+  Send,
+  Trash2,
+} from "lucide-react";
 import { Link } from "react-router";
 import type User from "../../../utils/interfaces/user";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -116,6 +123,15 @@ export const getUsersColumns = (
             >
               <RotateCw className="w-4 h-4 text-warning" />
             </button>
+          ) : user.invitationPending ? (
+            <span
+              className="btn btn-ghost btn-xs btn-square tooltip"
+              data-tip="Invitation en cours d'envoi"
+              role="status"
+              aria-label={`Invitation en cours d'envoi à ${user.firstname} ${user.lastname}`}
+            >
+              <LoaderCircle className="w-4 h-4 animate-spin text-primary" />
+            </span>
           ) : (
             <button
               onClick={() => onSendInvitation(userId)}
@@ -152,31 +168,6 @@ export const getUsersColumns = (
             </button>
           </PermissionGuard>
         </div>
-      );
-    },
-    enableSorting: false,
-  },
-  {
-    id: "student-data",
-    header: "Statistiques",
-    cell: ({ row }) => {
-      const user = row.original;
-      const userId = user._id;
-      if (!userId) return null;
-      const isStudent = user.roles.some((role) => role.role === "student");
-
-      return (
-        isStudent && (
-          <div className="flex justify-center gap-2">
-            <Link
-              to={`/admin/user/data/${userId}`}
-              className="btn btn-ghost btn-xs btn-square tooltip"
-              data-tip="Consulter"
-            >
-              <Eye className="w-4 h-4" />
-            </Link>
-          </div>
-        )
       );
     },
     enableSorting: false,

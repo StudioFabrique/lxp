@@ -16,6 +16,7 @@ import type {
   IndicatorFn,
   IndicatorsPayload,
 } from "./types.ts";
+import { logger } from "../../utils/logs/logger.ts";
 
 /**
  * Registre des indicateurs exposés par l'API.
@@ -72,7 +73,7 @@ export default async function getAllIndicators(
       return;
     }
 
-    console.error(`Indicateur "${key}" en échec :`, result.reason);
+    logger.error(`Indicateur "${key}" en échec :`, result.reason);
 
     indicators[key] = {
       key,

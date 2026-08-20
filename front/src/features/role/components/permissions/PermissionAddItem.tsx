@@ -19,7 +19,7 @@ const PermissionAddItem = ({
   onAddPermission,
 }: PermissionAddItemProps) => {
   const handleAddPermission = () => {
-    onAddPermission && onAddPermission(fullName);
+    onAddPermission?.(fullName);
   };
 
   return (

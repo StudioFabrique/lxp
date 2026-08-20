@@ -26,7 +26,6 @@ export default async function postDialogs(
   );
 
   if (!questionDialog || !answerDialog) {
-    console.log("Missing question or answer dialog");
     return;
   }
 

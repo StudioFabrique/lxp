@@ -20,9 +20,7 @@ const ModuleContentExplorerHeader = ({
 
   return (
     <ImageHeader
-      imageUrl={
-        moduleData.image ? normalizeImageSource(moduleData.image) : defaultImage
-      }
+      imageUrl={normalizeImageSource(moduleData.image) ?? defaultImage}
       title={toUpperFirstLetter(moduleData.title) as string}
       titleIcon={<ComponentIcon className="stroke-white w-5" />}
       subTitle={toUpperFirstLetter(moduleData.parcours) as string}

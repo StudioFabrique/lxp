@@ -1,7 +1,7 @@
 import { normalizeImageSource } from "../../../utils/images/image-source";
 import { sortArray } from "../../../utils/helpers/sort-array";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function courseInfosFromHttp(course: any) {
   let updatedData = {

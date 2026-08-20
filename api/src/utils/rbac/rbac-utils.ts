@@ -6,6 +6,7 @@ import {
 import Permission from "../interfaces/db/permission.ts";
 import Role, { type IRole } from "../interfaces/db/role.ts";
 import User from "../interfaces/db/user.ts";
+import { logger } from "../logs/logger.ts";
 
 /**
  * Configure les rôles initiaux dans le système
@@ -28,7 +29,7 @@ import User from "../interfaces/db/user.ts";
 export async function assignRoleToUser(userId: string) {
   const userRole = await Role.findOne({ name: "user" });
   if (!userRole) {
-    console.error("Le rôle n'existe pas");
+    logger.error("Le rôle n'existe pas");
     return;
   }
 
@@ -37,7 +38,6 @@ export async function assignRoleToUser(userId: string) {
   });
 
   if (!user) {
-    console.log("L'utilisateur n'existe pas");
     return;
   }
 }
@@ -143,7 +143,6 @@ export async function getAllRolesWithSearch(search: string) {
 export async function getUsersThatHaveRole(role: string) {
   const foundRole = await Role.findOne({ name: role });
   if (!foundRole) {
-    console.log("Le rôle n'existe pas.");
     return [];
   }
 
@@ -160,7 +159,7 @@ export async function getUsersThatHaveRole(role: string) {
 export async function removeRoleFromUser(userId: string, role: string) {
   const userRole = await Role.findOne({ name: role });
   if (!userRole) {
-    console.error(`Le rôle ${role} n'existe pas`);
+    logger.error(`Le rôle ${role} n'existe pas`);
     return;
   }
 
@@ -169,7 +168,6 @@ export async function removeRoleFromUser(userId: string, role: string) {
   });
 
   if (user) {
-    console.log(`Rôle ${role} retiré avec succès`);
   }
 }
 
@@ -255,7 +253,7 @@ export async function removePermissionFromRole(
     });
 
   } catch (error) {
-    console.error(
+    logger.error(
       `Error removing permission ${permissionName} from role ${roleId}:`,
       error
     );
@@ -294,7 +292,7 @@ export async function addPermissionToRole(
     });
 
   } catch (error) {
-    console.error(
+    logger.error(
       `Error adding permission ${permissionName} to role ${roleId}:`,
       error
     );
@@ -464,7 +462,7 @@ export async function createOrUpdateInterfaceRoleWithPermissions(
       $set: { permissions: permissionIds },
     });
   } catch (error) {
-    console.error(`Error creating interface role ${roleName}:`, error);
+    logger.error(`Error creating interface role ${roleName}:`, error);
     throw new Error(`Failed to create interface role with permissions`);
   }
 }
