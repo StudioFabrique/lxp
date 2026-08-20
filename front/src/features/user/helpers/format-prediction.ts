@@ -41,6 +41,68 @@ export function alertBadgeClass(level: number): string {
   }
 }
 
+/**
+ * Libellés français des huit règles d'alerte livrées par défaut avec le service
+ * IA, qui les nomme et les décrit en anglais.
+ *
+ * La correspondance se fait sur le nom : une règle ajoutée ou renommée côté
+ * service ressort telle quelle plutôt que d'être masquée.
+ */
+const ALERT_RULE_LABELS: Record<string, { name: string; description: string }> =
+  {
+    "Critical disengagement": {
+      name: "Décrochage critique",
+      description:
+        "Aucune activité depuis 15 jours ou plus, aucun temps de connexion ni de consultation.",
+    },
+    "Critical academic failure": {
+      name: "Échec académique critique",
+      description:
+        "Moins de 40 % de quiz réussis et des résultats toujours en baisse.",
+    },
+    "Engagement fade": {
+      name: "Engagement en perte de vitesse",
+      description:
+        "Plus de 15 jours sans activité et au plus deux jours de connexion sur la période.",
+    },
+    "Content disengagement": {
+      name: "Désengagement des contenus",
+      description:
+        "Aucun temps passé sur les contenus ni sur les quiz : présent, mais pas en train d'apprendre.",
+    },
+    "Academic decline": {
+      name: "Résultats en baisse",
+      description:
+        "Moins de 60 % de quiz réussis sur au moins deux quiz terminés.",
+    },
+    "Early inactivity": {
+      name: "Inactivité naissante",
+      description:
+        "Entre 7 et 14 jours sans activité : alerte précoce avant le décrochage.",
+    },
+    "Low connection": {
+      name: "Connexions rares",
+      description: "Trois à cinq jours de connexion seulement sur la période.",
+    },
+    "Scores slipping": {
+      name: "Résultats qui s'effritent",
+      description:
+        "Résultats en léger recul après au moins un quiz terminé.",
+    },
+  };
+
+export function formatAlertRuleName(name: string): string {
+  return ALERT_RULE_LABELS[name]?.name ?? name;
+}
+
+/** La description traduite quand la règle est connue, sinon celle du service. */
+export function formatAlertRuleDescription(
+  name: string,
+  description: string | null,
+): string | null {
+  return ALERT_RULE_LABELS[name]?.description ?? description;
+}
+
 export function formatProbability(probability: number): string {
   return `${Math.round(probability * 100)} %`;
 }
@@ -86,6 +148,12 @@ export function formatModelIndicatorValue(
       return value === 1 ? "1 jour" : `${value} jours`;
     case "mood_proxy":
       return `${value} / 5`;
+    // Le modèle raisonne en pente sur une échelle [0, 1] par jour ; « 0.016667 »
+    // ne se lit pas, « +1,67 pt/jour » se rapporte au taux de bonnes réponses.
+    case "score_evolution": {
+      const points = (value * 100).toFixed(2).replace(".", ",");
+      return `${value > 0 ? "+" : ""}${points} pt/jour`;
+    }
     case "pass_rate":
       return `${Math.round(value * 100)} %`;
     default:

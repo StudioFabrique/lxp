@@ -5,6 +5,8 @@ import useStudentPrediction from "../../hooks/useStudentPrediction";
 import {
   alertBadgeClass,
   formatAlertLevel,
+  formatAlertRuleDescription,
+  formatAlertRuleName,
   formatModelIndicatorLabel,
   formatModelIndicatorValue,
   formatOutcome,
@@ -178,15 +180,17 @@ function PredictionResult({ prediction }: { prediction: Prediction }) {
 }
 
 function FiredRule({ rule }: { rule: FiredAlertRule }) {
+  const description = formatAlertRuleDescription(rule.name, rule.description);
+
   return (
     <li className="flex flex-col gap-y-1">
       <div className="flex items-center gap-x-2">
         <span className={`badge badge-xs ${alertBadgeClass(rule.level)}`} />
-        <p className="text-sm font-bold">{rule.name}</p>
+        <p className="text-sm font-bold">{formatAlertRuleName(rule.name)}</p>
       </div>
 
-      {rule.description ? (
-        <p className="text-xs text-base-content/50">{rule.description}</p>
+      {description ? (
+        <p className="text-xs text-base-content/50">{description}</p>
       ) : null}
 
       {/* Les seuils franchis sont affichés tels quels : la règle doit pouvoir
