@@ -187,7 +187,8 @@ Réindexation du cours dans lxp_ai
 Le service IA expose un modèle qui estime l'issue d'un parcours — `graduate`,
 `fail` ou `dropout` — et applique des règles d'alerte déterministes. Le LXP
 l'interroge depuis la fiche d'un apprenant, `Administration > Utilisateurs >
-un apprenant`, avec le bouton « Interroger le modèle IA ».
+un apprenant`, avec le bouton « Analyser le risque de décrochage » placé dans
+l'en-tête de la fiche.
 
 Côté API :
 
@@ -229,6 +230,10 @@ curl -X POST "http://localhost:8000/indicators/retrain?force=true"
 ```
 
 L'interface affiche alors « Le modèle de prédiction est indisponible ».
+
+Le résultat est rendu en langage clair — niveau de risque, ce que l'activité
+laisse prévoir, signaux repérés avec leur seuil — sans jamais nommer le modèle
+ni ses métriques : ils ne changent rien à l'accompagnement.
 
 ## Réinstaller les triggers
 
