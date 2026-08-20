@@ -125,12 +125,8 @@ export const getUsersColumns = (
               <RotateCw className="w-4 h-4 text-warning" />
             </button>
           ) : user.invitationPending ? (
-            // L'envoi est détaché de la création : tant que le serveur SMTP n'a
-            // pas remis le message, l'action de renvoi n'a pas lieu d'être
-            // proposée. Le libellé reste lisible aux lecteurs d'écran, que
-            // `data-tip` seul n'atteindrait pas.
             <span
-              className="btn btn-ghost btn-xs btn-square tooltip btn-disabled"
+              className="btn btn-ghost btn-xs btn-square tooltip"
               data-tip="Invitation en cours d'envoi"
               role="status"
               aria-label={`Invitation en cours d'envoi à ${user.firstname} ${user.lastname}`}
