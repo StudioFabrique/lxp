@@ -29,12 +29,8 @@ const DemoCaptcha = ({ progress, isSolved, error, onRetry }: Props) => {
 
   if (isSolved) {
     return (
-      <p
-        className="flex items-center justify-center gap-2 text-sm text-success"
-        role="status"
-      >
-        <ShieldCheck className="h-4 w-4 shrink-0" />
-        Vérification terminée, choisissez une interface.
+      <p className="flex items-center justify-center gap-2" role="status">
+        Choisissez une interface.
       </p>
     );
   }

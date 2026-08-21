@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Compass, PlayCircle, X } from "lucide-react";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { Link } from "react-router";
 
 type Props = {
   demoUrl: string;
@@ -20,9 +21,7 @@ const TutorialChoiceModal = ({ demoUrl, onClose, onStartTutorial }: Props) => {
   const ability = useContext(AbilityContext);
   const isStaff = ability.can("layout", "admin");
 
-  const tutorialLabel = isStaff
-    ? "Tutoriel guidé de création de contenu"
-    : "Tutoriel de découverte de l'interface";
+  const tutorialLabel = isStaff ? "Tutoriel guidé" : "Tutoriel de découverte";
 
   const tutorialDescription = isStaff
     ? "Un pas à pas dans votre espace, de la formation jusqu'à la première activité."
@@ -61,27 +60,31 @@ const TutorialChoiceModal = ({ demoUrl, onClose, onStartTutorial }: Props) => {
             className="card cursor-pointer border border-base-300 p-4 text-left transition hover:border-primary hover:shadow-md"
             onClick={onStartTutorial}
           >
-            <PlayCircle className="h-6 w-6 text-primary" />
-            <h3 className="mt-3 font-bold">{tutorialLabel}</h3>
+            <div className="flex gap-2">
+              <PlayCircle className="h-6 w-6 text-primary" />
+              <h3 className="font-bold">{tutorialLabel}</h3>
+            </div>
             <p className="mt-1 text-sm text-base-content/70">
               {tutorialDescription}
             </p>
           </button>
 
-          <a
-            href={demoUrl}
+          <Link
+            to={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="card cursor-pointer border border-base-300 p-4 text-left transition hover:border-primary hover:shadow-md"
             onClick={onClose}
           >
-            <Compass className="h-6 w-6 text-primary" />
-            <h3 className="mt-3 font-bold">Mode démonstration</h3>
+            <div className="flex gap-2">
+              <Compass className="h-6 w-6 text-primary" />
+              <h3 className="font-bold">Mode démonstration</h3>
+            </div>
             <p className="mt-1 text-sm text-base-content/70">
               Un espace de démonstration rempli de contenus, en consultation
               seule. S'ouvre dans un nouvel onglet, votre session reste ouverte.
             </p>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

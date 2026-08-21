@@ -121,10 +121,13 @@ const OnboardingWelcome = ({ layout }: Props) => {
       {isChoiceOpen && (
         <TutorialChoiceModal
           demoUrl={demoUrl}
-          onClose={() => setIsChoiceOpen(false)}
+          onClose={() => {
+            setIsChoiceOpen(false);
+            skip();
+          }}
           onStartTutorial={() => {
             setIsChoiceOpen(false);
-            void start();
+            start();
           }}
         />
       )}
