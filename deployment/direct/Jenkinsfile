@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        DIRECT_COMPOSE_FILE = 'deployment/direct/compose.yml'
+        BASE_COMPOSE_FILE = 'deployment/direct/compose.yml'
+        AI_COMPOSE_FILE = 'deployment/direct/compose.ai.yml'
     }
 
     stages {
@@ -60,8 +61,23 @@ pipeline {
 
                         export DOCKER_HOST="ssh://deploy-target"
 
+                        # La couche IA est superposée au socle sauf en mode
+                        # démonstration, où `DEMO_MODE=true` la coupe déjà côté
+                        # applicatif : la déployer ne ferait que consommer un
+                        # conteneur, un cache de modèles et un accès sortant.
+                        if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
+                            AI_ENABLED=false
+                            echo "🎭 Mode démonstration : la couche IA n'est pas déployée."
+                        else
+                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
+                            AI_ENABLED=true
+                        fi
+
+                        # Découpage en mots volontaire : la variable porte
+                        # plusieurs arguments.
                         compose() {
-                            docker compose --env-file .env -f "$DIRECT_COMPOSE_FILE" "$@"
+                            docker compose --env-file .env $COMPOSE_FILES "$@"
                         }
 
                         echo "🔐 Connexion Docker Hub..."
@@ -70,12 +86,14 @@ pipeline {
                         echo "📥 Récupération des images..."
                         compose pull
 
-                        echo "🔎 Vérification de l'image IA..."
-                        compose run --rm --no-deps ai python -c \
-                            'import app.db_provision; print("Module app.db_provision disponible")'
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            echo "🔎 Vérification de l'image IA..."
+                            compose run --rm --no-deps ai python -c \
+                                'import app.db_provision; print("Module app.db_provision disponible")'
+                        fi
 
                         echo "🗄️ Démarrage des bases..."
-                        compose up -d db-pg db-ai db-mongo
+                        compose up -d db-pg db-mongo
 
                         echo "⏳ Attente des bases..."
                         until compose exec -T db-pg sh -c \
@@ -84,25 +102,37 @@ pipeline {
                             sleep 2
                         done
 
-                        until compose exec -T db-ai sh -c \
-                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-                        do
-                            sleep 2
-                        done
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            compose up -d db-ai
+
+                            until compose exec -T db-ai sh -c \
+                                'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+                            do
+                                sleep 2
+                            done
+                        fi
 
                         echo "📌 Migration Prisma..."
                         compose run --rm -w /app/api app npx prisma migrate deploy
 
+                        # Installés dans les deux modes : de simples `pg_notify`
+                        # sans écouteur, qui gardent le schéma de la démonstration
+                        # identique à celui de la production.
                         echo "🔔 Installation des triggers ANDRIA..."
                         compose exec -T db-pg sh -c \
                             'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
                             < api/src/scripts/andria_notify_triggers.sql
 
-                        echo "🧠 Provisionnement de la base IA..."
-                        compose run --rm ai python -m app.db_provision
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            echo "🧠 Provisionnement de la base IA..."
+                            compose run --rm ai python -m app.db_provision
+                        fi
 
+                        # `ai` est tiré par le `depends_on` de `app` quand
+                        # l'overlay est chargé ; `--remove-orphans` retire les
+                        # conteneurs IA d'une stack qui bascule en démonstration.
                         echo "🚀 Démarrage des applications..."
-                        compose up -d app ai
+                        compose up -d --remove-orphans app
 
                         echo "🔑 Génération de la clé d’activation..."
                         compose exec -T app npm run generate-activation-key

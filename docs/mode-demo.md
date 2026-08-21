@@ -45,7 +45,8 @@ pour la même raison.
 | `DEMO_STUDENT_EMAIL` | Compte emprunté pour l'interface apprenant. |
 
 Elles sont déjà déclarées dans `deployment/direct/compose.yml` et
-`deployment/caddy/compose.yml`.
+`deployment/caddy/compose.yml`. `DEMO_MODE` pilote en outre le choix des
+fichiers Compose : sur `true`, la couche IA n'est pas déployée du tout.
 
 ## Le verrou lecture seule
 
@@ -190,8 +191,12 @@ des images compressées, plutôt que des vidéos déposées localement.
 npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 ```
 
-En production, c'est le même `compose.yml` avec un `.env` portant `DEMO_MODE=true`,
-un `SSH_TARGET` distinct, des bases dédiées et un `SECRET` propre.
+En production, c'est le même socle `compose.yml` avec un `.env` portant
+`DEMO_MODE=true`, un `SSH_TARGET` distinct, des bases dédiées et un `SECRET`
+propre. Seule différence d'infrastructure : l'overlay `compose.ai.yml` n'est pas
+chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
+sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
+[`deployment/README.md`](../deployment/README.md).
 
 Prévoir une restauration périodique du dump : même si les écritures sont
 bloquées, cela garantit que la démonstration reste conforme à ce qui est

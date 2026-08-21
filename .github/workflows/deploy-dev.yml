@@ -133,22 +133,47 @@ jobs:
 
           printf '%s\n' "$APP_ENV" > .env
 
+          # L'instance de demonstration ne deploie pas la couche IA :
+          # `DEMO_MODE=true` la coupe deja cote applicatif, donc ses reglages
+          # ne sont exiges qu'en dehors de ce mode.
+          if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+            DEMO_MODE=true
+          else
+            DEMO_MODE=false
+          fi
+
           required_settings="
           PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
           POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
-          ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-          ANDRIA_AI_DB_URL LXP_DB_URL
           MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
-          DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
-          MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
           EMAIL PASSWORD SMTP SMTP_EMAIL SMTP_PORT FROM UNSPLASH_ACCESS_KEY
           "
+
+          ai_settings="
+          ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
+          ANDRIA_AI_DB_URL LXP_DB_URL
+          DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
+          MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
+          "
+
+          if [ "$DEMO_MODE" = false ]; then
+            required_settings="$required_settings $ai_settings"
+          fi
+
           for setting in $required_settings; do
             if ! grep -q "^${setting}=." .env; then
               echo "APP_ENV is missing a non-empty ${setting} setting." >&2
               exit 1
             fi
           done
+
+          if [ "$DEMO_MODE" = true ]; then
+            echo "Mode demonstration : la couche IA n'est pas deployee."
+            COMPOSE_FILE=compose.yml
+          else
+            COMPOSE_FILE=compose.yml:compose.ai.yml
+          fi
+          export COMPOSE_FILE
 
           {
             printf '\n# Metadonnees de deploiement ecrites par GitHub Actions\n'
@@ -159,12 +184,18 @@ jobs:
             printf 'LXP_DEPLOYMENT_NAME=%s\n' "$LXP_DEPLOYMENT_NAME"
             printf 'DEV_APP_HOST=%s\n' "$DEV_APP_HOST"
             printf 'DEPLOY_PATH=%s\n' "$DEPLOY_PATH"
+            # Inscrit dans le .env deploye pour qu'un `docker compose` lance a
+            # la main sur le VPS charge le meme jeu de fichiers que le workflow.
+            printf 'COMPOSE_FILE=%s\n' "$COMPOSE_FILE"
           } >> .env
           chmod 600 .env
 
           # Le compose est deploye a la racine du repertoire cible pour que
           # `docker compose ps|exec|logs` fonctionne sans option sur le VPS.
+          # L'overlay est copie dans les deux cas : sans reference dans
+          # COMPOSE_FILE, un fichier present mais inutilise reste sans effet.
           cp deployment/caddy/compose.yml compose.yml
+          cp deployment/caddy/compose.ai.yml compose.ai.yml
 
           docker compose config --quiet
 
@@ -175,7 +206,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          source: ".env,compose.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
+          source: ".env,compose.yml,compose.ai.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
           target: "/home/martin/lxp-dev"
 
       - name: Pull, migrate, and start LXP
@@ -199,16 +230,29 @@ jobs:
             mkdir -p data uploads logs
             cp -R api/uploads/. uploads/
 
+            # Exporte une fois pour toutes : les `docker compose` qui suivent
+            # chargent le socle seul en demonstration, socle + overlay ailleurs.
+            if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+              export COMPOSE_FILE=compose.yml
+              AI_ENABLED=false
+            else
+              export COMPOSE_FILE=compose.yml:compose.ai.yml
+              AI_ENABLED=true
+            fi
+            echo "COMPOSE_FILE=$COMPOSE_FILE"
+
             docker network inspect caddy >/dev/null
 
             docker compose config --quiet
             printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
             docker compose pull
 
-            docker compose run --rm --no-deps ai python -c \
-              'import app.db_provision; print("Module app.db_provision disponible")'
+            if [ "$AI_ENABLED" = true ]; then
+              docker compose run --rm --no-deps ai python -c \
+                'import app.db_provision; print("Module app.db_provision disponible")'
+            fi
 
-            docker compose up -d db-pg db-ai db-mongo
+            docker compose up -d db-pg db-mongo
 
             until docker compose exec -T db-pg sh -c \
               'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
@@ -216,11 +260,15 @@ jobs:
               sleep 2
             done
 
-            until docker compose exec -T db-ai sh -c \
-              'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-            do
-              sleep 2
-            done
+            if [ "$AI_ENABLED" = true ]; then
+              docker compose up -d db-ai
+
+              until docker compose exec -T db-ai sh -c \
+                'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+              do
+                sleep 2
+              done
+            fi
 
             docker compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
 
@@ -228,7 +276,13 @@ jobs:
               'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
               < api/src/scripts/andria_notify_triggers.sql
 
-            docker compose run --rm ai python -m app.db_provision
-            docker compose up -d --remove-orphans --wait --wait-timeout 240 ai app
+            if [ "$AI_ENABLED" = true ]; then
+              docker compose run --rm ai python -m app.db_provision
+            fi
+
+            # `ai` est tire par le `depends_on` de `app` quand l'overlay est
+            # charge ; `--remove-orphans` retire les conteneurs IA d'une stack
+            # qui bascule en demonstration.
+            docker compose up -d --remove-orphans --wait --wait-timeout 240 app
             docker compose exec -T app npm run generate-activation-key
             docker compose ps

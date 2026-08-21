@@ -5,7 +5,12 @@ construit l'image du commit, la publie sur Docker Hub, puis déploie la stack da
 `/home/martin/lxp-dev`. Un push sur `beta` déclenche le workflow. Un lancement
 manuel fonctionne aussi lorsqu'il utilise la branche `beta`.
 
-Le workflow utilise [`deployment/caddy/compose.yml`](../deployment/caddy/compose.yml).
+Le workflow utilise [`deployment/caddy/compose.yml`](../deployment/caddy/compose.yml)
+pour le socle applicatif et
+[`deployment/caddy/compose.ai.yml`](../deployment/caddy/compose.ai.yml) pour la
+couche IA, superposée au socle sauf lorsque le `.env` porte `DEMO_MODE=true` —
+voir [`deployment/README.md`](../deployment/README.md).
+
 Le conteneur `lxp-dev-app` rejoint le réseau externe `caddy`; les bases et le
 service IA rejoignent le réseau interne `lxp-dev_backend`. Le service IA utilise
 `lxp-dev_egress` pour joindre les API Mistral et Hugging Face. Les labels
@@ -56,10 +61,13 @@ docker ps --filter name=caddy
 ```
 
 Le workflow crée `/home/martin/lxp-dev` et ses sous-répertoires persistants. Il
-copie `deployment/caddy/compose.yml` à la racine du répertoire sous le nom
-`compose.yml`, les scripts SQL, les fichiers initiaux de `api/uploads` et le
-`.env` en mode `600`. Le répertoire cible est ainsi un projet Compose autonome :
-`docker compose` y charge `compose.yml` et `.env` sans aucune option.
+copie `deployment/caddy/compose.yml` et `deployment/caddy/compose.ai.yml` à la
+racine du répertoire, les scripts SQL, les fichiers initiaux de `api/uploads` et
+le `.env` en mode `600`. Le répertoire cible est ainsi un projet Compose
+autonome : `docker compose` y charge `.env` sans aucune option, et le
+`COMPOSE_FILE` que le workflow y a inscrit désigne le jeu de fichiers du mode
+déployé (`compose.yml` seul, ou `compose.yml:compose.ai.yml`). Les commandes
+lancées à la main sur le VPS chargent donc la même stack que le workflow.
 
 ## Déroulement
 
@@ -70,7 +78,10 @@ Le job `image` publie deux tags :
 
 Le job `deploy` récupère le tag immuable, démarre les bases, applique les
 migrations Prisma et les triggers ANDRIA, provisionne la base IA, puis attend
-les healthchecks de `ai` et `app`.
+les healthchecks de `ai` et `app`. En mode démonstration, il valide un jeu de
+réglages réduit — les variables `ANDRIA_*`, `MISTRAL_*` et `DOCKER_IA_*` ne sont
+plus exigées — et saute les étapes IA ; `docker compose ps` ne liste alors que
+`app`, `db-pg` et `db-mongo`.
 
 Contrôler le résultat sur le VPS :
 

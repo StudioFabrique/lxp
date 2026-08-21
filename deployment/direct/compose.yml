@@ -1,5 +1,8 @@
 name: lxp
 
+# Socle applicatif, sans la couche IA. L'instance de démonstration se déploie
+# avec ce seul fichier ; les autres y superposent `compose.ai.yml`.
+
 services:
   app:
     image: studiostep/lxp:latest
@@ -12,8 +15,6 @@ services:
         condition: service_healthy
       db-mongo:
         condition: service_healthy
-      ai:
-        condition: service_started
     volumes:
       - /home/${SSH_USER}/${SSH_TARGET}/uploads:/app/api/dist/uploads
       - /home/${SSH_USER}/${SSH_TARGET}/logs:/app/api/dist/logs
@@ -22,9 +23,6 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_LOCAL_URL: ${MONGO_LOCAL_URL}
-
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL}
-      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET}
 
       SECRET: ${SECRET}
       REGISTER_SECRET: ${REGISTER_SECRET}
@@ -56,59 +54,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  ai:
-    image: studiostep/lxp-ai:latest
-    pull_policy: always
-    restart: always
-    depends_on:
-      db-pg:
-        condition: service_healthy
-      db-ai:
-        condition: service_healthy
-    networks:
-      - lxp
-    volumes:
-      - hf_cache:/cache
-      - /home/${SSH_USER}/${SSH_TARGET}/data:/app/data
-
-      # Même stockage que celui monté dans le conteneur LXP.
-      - /home/${SSH_USER}/${SSH_TARGET}/uploads/activities:/lxp/api/uploads/activities:ro
-    environment:
-      # Base propre au service IA
-      DATABASE_URL: ${ANDRIA_AI_DB_URL}
-      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
-
-      # Base métier LXP, idéalement avec un utilisateur read-only
-      LXP_DB_URL: ${LXP_DB_URL}
-
-      LXP_UPLOADS_DIR: /lxp/api/uploads/activities
-      LXP_PUBLIC_BASE: ${LXP_PUBLIC_BASE}
-
-      SECRET_KEY: ${SECRET_KEY}
-      DEV_BYPASS_AUTH: "false"
-
-      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY}
-      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY}
-      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
-
-      QUIZ_TEMPERATURE: ${QUIZ_TEMPERATURE:-0.5}
-      QUIZ_MAX_TOKENS: ${QUIZ_MAX_TOKENS:-1200}
-      QUIZ_MAX_ATTEMPTS: ${QUIZ_MAX_ATTEMPTS:-3}
-      QUIZ_PARALLEL_SLOTS: ${QUIZ_PARALLEL_SLOTS:-3}
-      QUIZ_MIN_PROMPT_LEN: ${QUIZ_MIN_PROMPT_LEN:-12}
-      QUIZ_MIN_EXPLANATION_LEN: ${QUIZ_MIN_EXPLANATION_LEN:-10}
-
-      DB_INGEST_MIN_WORDS: ${DB_INGEST_MIN_WORDS:-20}
-
-      HF_HOME: /cache/huggingface
-      TRANSFORMERS_CACHE: /cache/huggingface
-      SENTENCE_TRANSFORMERS_HOME: /cache/sentence_transformers
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   db-pg:
     image: postgres:18-alpine
     restart: always
@@ -123,28 +68,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  db-ai:
-    image: pgvector/pgvector:pg18
-    restart: always
-    volumes:
-      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
-      - pg_ai:/var/lib/postgresql
-    networks:
-      - lxp
-    environment:
-      POSTGRES_USER: ${ANDRIA_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${ANDRIA_POSTGRES_DB}
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${ANDRIA_POSTGRES_USER} -d ${ANDRIA_POSTGRES_DB}",
-        ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -173,6 +96,4 @@ networks:
 
 volumes:
   pg:
-  pg_ai:
   mongo:
-  hf_cache:

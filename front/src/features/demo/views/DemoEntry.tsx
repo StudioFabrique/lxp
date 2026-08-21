@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { GraduationCap, Users } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
@@ -129,8 +129,8 @@ const DemoEntry = () => {
   if (!isConfigLoaded || !demoMode) return <Loader />;
 
   return (
-    <main className="min-h-screen bg-base-200 px-4 py-28">
-      <div className="mx-auto flex max-w-3xl flex-col justify-center items-center gap-8">
+    <main className="h-screen bg-base-100 px-4 py-24">
+      <div className="mx-auto flex max-w-3xl flex-col h-full justify-between items-center gap-8">
         <div className="flex w-full justify-end">
           <div
             className="tooltip tooltip-left w-5"
@@ -186,6 +186,9 @@ const DemoEntry = () => {
             </button>
           ))}
         </div>
+        <Link className="btn" to="https://lxpandria.com">
+          Visiter le site de la plateforme
+        </Link>
       </div>
     </main>
   );

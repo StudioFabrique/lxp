@@ -44,8 +44,9 @@ npm run init:demo
 ```
 
 Cette instance se distingue par la seule variable `DEMO_MODE=true` dans
-`api/.env` ; le reste du déploiement est identique. Voir
-[Mode démonstration](docs/mode-demo.md).
+`api/.env`. En déploiement, c'est aussi elle qui écarte la couche IA : les
+pipelines chargent alors le socle `compose.yml` sans l'overlay
+`compose.ai.yml`. Voir [Mode démonstration](docs/mode-demo.md).
 
 | Compte         | Identifiant            | Mot de passe    |
 | -------------- | ---------------------- | --------------- |
