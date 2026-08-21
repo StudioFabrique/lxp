@@ -75,7 +75,7 @@ const DemoTour = ({ layout }: Props) => {
   const handleEvent = useCallback(({ type }: EventData) => {
     if (type !== EVENTS.TOUR_END) return;
     setIsRunning(false);
-    toast.success("Visite terminée : explorez librement.");
+    toast.success("Visite terminée ! Vous pouvez explorer librement");
   }, []);
 
   if (!demoMode || !isRunning) return null;
