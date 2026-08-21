@@ -4,10 +4,12 @@ import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { AbilityContext } from "../../rbac/AbilityProvider";
+import { useDemoMode } from "../../store/DemoContext";
 
 const LoginGuard = () => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
+  const { demoMode, isConfigLoaded } = useDemoMode();
   const location = useLocation();
   const [setupChecked, setSetupChecked] = useState(false);
   const [hasAdmins, setHasAdmins] = useState(true);
@@ -40,7 +42,8 @@ const LoginGuard = () => {
   }, [isLoggedIn]);
 
 
-  if (!isAppInitialized || (!isLoggedIn && !setupChecked)) return <Loader />;
+  if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked))
+    return <Loader />;
 
   if (isLoggedIn && user) {
     if (ability.can("layout", "admin"))
@@ -48,6 +51,15 @@ const LoginGuard = () => {
     if (ability.can("layout", "student"))
       return <Navigate replace to="/student" />;
     return <Navigate replace to="/access-denied" />;
+  }
+
+  // Sur l'instance de démonstration, aucune des pages d'authentification n'a
+  // de sens pour un visiteur : il n'a pas de compte, et le verrou lecture seule
+  // refuse déjà `POST /auth/login` — `demoWriteAllowlist` ne l'autorise pas. Le
+  // premier administrateur, lui, vient du jeu de démonstration restauré, donc
+  // `/init` n'a pas lieu d'être non plus. Tout ramène à l'entrée publique.
+  if (!isLoggedIn && demoMode) {
+    return <Navigate replace to="/demo" />;
   }
 
   if (!isLoggedIn && !hasAdmins && location.pathname !== "/init") {
