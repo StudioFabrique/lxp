@@ -45,3 +45,26 @@ export const corsOrigins =
         "http://localhost:5174",
         "http://localhost:5175",
       ];
+
+/**
+ * Mode démonstration.
+ *
+ * Des fonctions et non des constantes : la valeur est relue à chaque appel pour
+ * que les suites d'intégration puissent basculer le mode entre deux `describe`
+ * sans recharger `app.ts`.
+ */
+export const isDemoMode = () => process.env.DEMO_MODE === "true";
+
+/** Adresse vers laquelle renvoyer un visiteur qui quitte la démonstration. */
+export const demoExitUrl = () => process.env.DEMO_EXIT_URL ?? "";
+
+/** Adresse de l'instance de démonstration, annoncée par les autres instances. */
+export const demoUrl = () => process.env.DEMO_URL ?? "";
+
+/**
+ * L'IA est coupée en démonstration : ses routes partent d'une session obtenue
+ * sans identifiants sur une instance publique, et chaque appel consomme des
+ * jetons chez le fournisseur.
+ */
+export const isAiDisabled = () =>
+  isDemoMode() || process.env.DISABLE_AI_FEATURES === "true";

@@ -44,6 +44,15 @@ services:
       SECRET: ${SECRET}
       REGISTER_SECRET: ${REGISTER_SECRET}
 
+      # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
+      # l'ouverture d'une session publique. Réservé à l'instance dédiée.
+      DEMO_MODE: ${DEMO_MODE:-false}
+      DEMO_URL: ${DEMO_URL:-}
+      DEMO_EXIT_URL: ${DEMO_EXIT_URL:-}
+      ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}
+      DEMO_ADMIN_EMAIL: ${DEMO_ADMIN_EMAIL:-}
+      DEMO_STUDENT_EMAIL: ${DEMO_STUDENT_EMAIL:-}
+
       ENVIRONMENT: ${ENVIRONMENT}
       FRONT_URL: ${FRONT_URL}
       PORT: ${PORT}

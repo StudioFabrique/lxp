@@ -1,11 +1,20 @@
 #!/bin/bash
 restore_data=false
+demo_mode=false
+# Dossier des données à restaurer. Le jeu de démonstration vit à part et est
+# versionné, contrairement aux dumps de travail qui restent locaux.
+dump_dir="./dumps"
 
 case "${1:-}" in
   "") ;;
   --with-data) restore_data=true ;;
+  --demo)
+    restore_data=true
+    demo_mode=true
+    dump_dir="./dumps/demo"
+    ;;
   *)
-    echo "Usage : npm run init [-- --with-data]"
+    echo "Usage : npm run init [-- --with-data | --demo]"
     exit 1
     ;;
 esac
@@ -80,31 +89,36 @@ if [ "$restore_data" = true ]; then
   echo "Restauration des données de démonstration..."
 
   # Restauration PostgreSQL
-  if [[ -f "./dumps/dump-pgsql.sql" ]]; then
+  if [[ -f "$dump_dir/dump-pgsql.sql" ]]; then
     echo "Dump PostgreSQL trouvé, injection en cours..."
-    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < ./dumps/dump-pgsql.sql || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
+    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < "$dump_dir/dump-pgsql.sql" || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
   else
-    echo "Aucun fichier ./dumps/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
+    echo "Aucun fichier $dump_dir/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
   fi
 
   # Restauration MongoDB
-  if [[ -d "./dumps/dump-mongo" ]]; then
+  if [[ -d "$dump_dir/dump-mongo" ]]; then
     echo "Dossier de dump MongoDB trouvé, injection en cours..."
-    docker cp ./dumps/dump-mongo lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
+    docker cp "$dump_dir/dump-mongo" lxp-mongo:/dump-mongo || { echo -e "\033[1;31m Échec: Copie du dump Mongo"; exit 1; }
     docker exec -i lxp-mongo mongorestore --username "${MONGO_ADMIN_USERNAME:-root}" --password "${MONGO_ADMIN_PASSWORD:-root}" --authenticationDatabase admin --nsInclude="lxp.*" /dump-mongo || { echo -e "\033[1;31m Échec: Import MongoDB"; exit 1; }
   else
-    echo "Aucun dossier ./dumps/dump-mongo trouvé. L'import MongoDB est ignoré."
+    echo "Aucun dossier $dump_dir/dump-mongo trouvé. L'import MongoDB est ignoré."
   fi
 
   echo "Restauration des fichiers d'activités..."
-  if [[ -d "./dumps/activities" ]]; then
+  if [[ -d "$dump_dir/activities" ]]; then
     mkdir -p ./uploads/
     rm -rf ./uploads/activities
-    cp -R ./dumps/activities ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
+    cp -R "$dump_dir/activities" ./uploads/ || { echo -e "\033[1;31m Échec: Copie fichiers activités"; exit 1; }
     echo -e "\033[0;32m Activités restaurées.\033[0m"
   else
-    echo -e "\033[1;33m Dossier ./dumps/activities introuvable, restauration ignorée."
+    echo -e "\033[1;33m Dossier $dump_dir/activities introuvable, restauration ignorée."
   fi
+fi
+
+if [ "$demo_mode" = true ]; then
+  echo "Préparation des comptes de démonstration..."
+  npm run demo:seed || { echo -e "\033[1;31m Échec: Comptes de démonstration"; exit 1; }
 fi
 
 echo "🔧 Notification des triggers pour le serveur IA..."
@@ -115,7 +129,10 @@ if [ "$restore_data" = false ]; then
   npm run generate-activation-key || { echo -e "\033[1;31m Échec: Génération de la clé d'activation"; exit 1; }
 fi
 
-if [ "$restore_data" = true ]; then
+if [ "$demo_mode" = true ]; then
+  echo -e "\033[0;32mInstance de démonstration ANDRIA prête.\033[0m"
+  echo -e "\033[30;47m Vérifiez que DEMO_MODE=true est bien positionné dans api/.env. \033[0m"
+elif [ "$restore_data" = true ]; then
   echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
 else
   echo -e "\033[0;32mConfiguration du projet ANDRIA à partir de bases de données vides terminée avec succès.\033[0m"

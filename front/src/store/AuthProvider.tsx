@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { Socket } from "socket.io-client";
 import { SOCKET_URL } from "../config/urls";
+import { useDemoMode } from "./DemoContext";
 import apiClient from "../lib/axios";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
@@ -58,6 +59,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
+  const { demoMode } = useDemoMode();
   const [user, setUser] = useState<User | null>(null);
   const [isAppInitialized, setIsAppInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -186,7 +188,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     let cancelled = false;
     let activeSocket: Socket | null = null;
 
-    if (user) {
+    // Le temps réel est coupé en démonstration : ses gestionnaires écrivent en
+    // base sans passer par le verrou HTTP, et tous les visiteurs partageant un
+    // même compte se retrouveraient dans les mêmes salons.
+    if (user && !demoMode) {
       void import("socket.io-client").then(({ io }) => {
         if (cancelled) return;
 
@@ -203,7 +208,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       activeSocket?.disconnect();
       setSocket(null);
     };
-  }, [user]);
+  }, [user, demoMode]);
 
   return (
     <AuthContext

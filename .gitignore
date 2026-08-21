@@ -24,6 +24,9 @@ certs/
 fixtures-test.ts
 
 # Runtime-generated database and activity dumps.
+# Le jeu de démonstration fait exception : il est versionné, l'instance de
+# démonstration étant reconstruite à partir de lui.
 /api/dumps/*
 !/api/dumps/.gitkeep
+!/api/dumps/demo/
 /dumps/

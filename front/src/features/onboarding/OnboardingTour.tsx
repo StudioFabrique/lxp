@@ -25,6 +25,7 @@ import {
   subscribeToOnboardingEvents,
   type OnboardingEventDetail,
 } from "./onboarding-events";
+import { useDemoMode } from "../../store/DemoContext";
 
 type Layout = "admin" | "student";
 
@@ -913,11 +914,38 @@ const OnboardingTourContent = ({
   );
 };
 
+/**
+ * Contexte inerte, pour la démonstration.
+ *
+ * Le tutoriel enregistre sa progression sur le compte (`user.onboarding`). En
+ * démonstration ce compte est partagé par tous les visiteurs simultanés, et le
+ * verrou lecture seule refuse l'écriture : le faire tourner n'aurait aucun sens.
+ * On garde en revanche le fournisseur, plusieurs vues appelant `useOnboarding`
+ * — qui lève une erreur hors de son contexte. La visite guidée de la
+ * démonstration est portée par `DemoTour`.
+ */
+const InertOnboarding = ({ children }: PropsWithChildren) => (
+  <OnboardingContext
+    value={{
+      status: "skipped",
+      step: "",
+      isSaving: false,
+      start: async () => {},
+      skip: async () => {},
+    }}
+  >
+    {children}
+  </OnboardingContext>
+);
+
 const OnboardingTour = ({
   layout,
   children,
 }: PropsWithChildren<{ layout: Layout }>) => {
   const { user } = useContext(AuthContext);
+  const { demoMode } = useDemoMode();
+
+  if (demoMode) return <InertOnboarding>{children}</InertOnboarding>;
   if (!user) return children;
 
   return (

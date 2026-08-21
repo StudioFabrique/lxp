@@ -4,6 +4,11 @@ import { EVENTS, Joyride, type Step } from "react-joyride";
 import { cn } from "../../utils/cn";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 import PageTourTooltip from "./PageTourTooltip";
+import {
+  pageTourFloatingOptions,
+  pageTourLocale,
+  pageTourOptions,
+} from "./page-tour-options";
 
 interface Props {
   title: string;
@@ -116,33 +121,9 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
         onEvent={({ type }) => {
           if (type === EVENTS.TOUR_END) setIsTourRunning(false);
         }}
-        floatingOptions={{
-          strategy: "fixed",
-          shiftOptions: { mainAxis: true, crossAxis: true, padding: 16 },
-          flipOptions: { padding: 16 },
-        }}
-        options={{
-          buttons: ["back", "primary", "skip"],
-          closeButtonAction: "skip",
-          dismissKeyAction: false,
-          overlayClickAction: false,
-          overlayColor: "rgba(2, 6, 23, 0.72)",
-          primaryColor: "var(--color-primary)",
-          backgroundColor: "var(--color-base-100)",
-          textColor: "var(--color-base-content)",
-          arrowColor: "var(--color-base-100)",
-          showProgress: true,
-          skipBeacon: true,
-          spotlightRadius: 10,
-          targetWaitTimeout: 5_000,
-          zIndex: 2100,
-        }}
-        locale={{
-          back: "Précédent",
-          last: "Terminer",
-          next: "Suivant",
-          skip: "Quitter le tutoriel",
-        }}
+        floatingOptions={pageTourFloatingOptions}
+        options={pageTourOptions}
+        locale={pageTourLocale}
       />
     </div>
   );

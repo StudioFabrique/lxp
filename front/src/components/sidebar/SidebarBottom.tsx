@@ -1,12 +1,17 @@
-import { CircleHelp, LogOutIcon, Sparkles } from "lucide-react";
+import { CircleHelp, DoorOpen, LogOutIcon, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
 import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
 import { AvatarSmall } from "../avatar/AvatarSmall";
 import ThemeToggle from "../buttons/ThemeToggle";
 import { emitOnboardingEvent } from "../../features/onboarding/onboarding-events";
+import { useDemoMode } from "../../store/DemoContext";
+import DemoExitConfirmation from "../../features/demo/components/DemoExitConfirmation";
+import { clearDemoTour } from "../../features/demo/demo-tour-storage";
+import { emitDemoTourEvent } from "../../features/demo/demo-tour-events";
+import TutorialChoiceModal from "../../features/demo/components/TutorialChoiceModal";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -15,6 +20,9 @@ type SharedSideBarProps = {
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { demoMode, demoUrl, exitUrl, aiDisabled } = useDemoMode();
+  const [isExitOpen, setIsExitOpen] = useState(false);
+  const [isChoiceOpen, setIsChoiceOpen] = useState(false);
 
   const fullName = user
     ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
@@ -23,6 +31,21 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const handleClickLogout = () => {
     logout();
     navigate("/", { replace: true });
+  };
+
+  const handleExitDemo = async () => {
+    clearDemoTour();
+    await logout();
+    // Changement d'origine : `navigate` ne suffit pas pour sortir du site.
+    window.location.href = exitUrl || "/demo";
+  };
+
+  // Hors démonstration, proposer le choix n'a de sens que si une instance de
+  // démonstration existe ; sinon on garde le comportement d'origine.
+  const handleClickTutorial = () => {
+    if (demoMode) return emitDemoTourEvent({ type: "restart" });
+    if (demoUrl) return setIsChoiceOpen(true);
+    emitOnboardingEvent({ type: "restart" });
   };
 
   return (
@@ -45,7 +68,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </Link>
       </li>
 
-      {interfaceType === "admin" && (
+      {interfaceType === "admin" && !aiDisabled && (
         <li
           className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
           data-tip="Déconnexion"
@@ -61,13 +84,13 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       )}
 
       {/* Bouton + modal questionnaire */}
-      <Questionnaire />
+      {!demoMode && <Questionnaire />}
 
       <li className="w-full">
         <button
           type="button"
           className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
-          onClick={() => emitOnboardingEvent({ type: "restart" })}
+          onClick={handleClickTutorial}
           data-tip="Relancer le tutoriel"
         >
           <CircleHelp className="w-4" />
@@ -75,15 +98,28 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </button>
       </li>
 
-      {/* Bouton Deconnection */}
-      <li
-        className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
-        data-tip="Déconnexion"
-        onClick={handleClickLogout}
-      >
-        <LogOutIcon className="w-4" />
-        <span className="xl:block hidden">Déconnexion</span>
-      </li>
+      {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
+          n'ayant pas de compte auquel revenir. */}
+      {demoMode ? (
+        <li
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
+          data-tip="Quitter la démonstration"
+          data-demo-tour="demo-exit"
+          onClick={() => setIsExitOpen(true)}
+        >
+          <DoorOpen className="w-4" />
+          <span className="xl:block hidden">Sortir de la démo</span>
+        </li>
+      ) : (
+        <li
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
+          data-tip="Déconnexion"
+          onClick={handleClickLogout}
+        >
+          <LogOutIcon className="w-4" />
+          <span className="xl:block hidden">Déconnexion</span>
+        </li>
+      )}
 
       <li className="my-2 gap-4 flex flex-col-reverse xl:flex-row items-center justify-between w-full xl:px-2">
         {/* Logo */}
@@ -100,6 +136,23 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           <ThemeToggle />
         </div>
       </li>
+      {isExitOpen && (
+        <DemoExitConfirmation
+          onCancel={() => setIsExitOpen(false)}
+          onConfirm={() => void handleExitDemo()}
+        />
+      )}
+
+      {isChoiceOpen && (
+        <TutorialChoiceModal
+          demoUrl={demoUrl}
+          onClose={() => setIsChoiceOpen(false)}
+          onStartTutorial={() => {
+            setIsChoiceOpen(false);
+            emitOnboardingEvent({ type: "restart" });
+          }}
+        />
+      )}
     </ul>
   );
 };

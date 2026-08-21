@@ -35,9 +35,14 @@ import httpDeleteCompanyLogo from "../../controllers/http-delete-company-logo.ts
 import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
+import demoRouter from "./demo/demo.router.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
+
+// Mode démonstration : configuration d'exécution et ouverture de session.
+// Monté en tête et sans garde, ces routes devant répondre à un visiteur anonyme.
+v1Router.use("/demo", demoRouter);
 
 // Routes d'authentification et de gestion des utilisateurs
 v1Router.use("/auth", authRouter);
