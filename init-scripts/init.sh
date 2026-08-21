@@ -131,7 +131,6 @@ fi
 
 if [ "$demo_mode" = true ]; then
   echo -e "\033[0;32mInstance de démonstration ANDRIA prête.\033[0m"
-  echo -e "\033[30;47m Vérifiez que DEMO_MODE=true est bien positionné dans api/.env. \033[0m"
 elif [ "$restore_data" = true ]; then
   echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
 else
