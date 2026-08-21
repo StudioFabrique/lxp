@@ -66,10 +66,12 @@ pipeline {
                         # applicatif : la déployer ne ferait que consommer un
                         # conteneur, un cache de modèles et un accès sortant.
                         if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+                            DEMO_ENABLED=true
                             COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
                             AI_ENABLED=false
                             echo "🎭 Mode démonstration : la couche IA n'est pas déployée."
                         else
+                            DEMO_ENABLED=false
                             COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
                             AI_ENABLED=true
                         fi
@@ -112,6 +114,17 @@ pipeline {
                             done
                         fi
 
+                        if [ "$DEMO_ENABLED" = "true" ]; then
+                            # Le jeu de démonstration est un dump de données
+                            # seules : il ne se rejoue que sur un schéma vide, et
+                            # la démonstration doit revenir à l'état versionné à
+                            # chaque déploiement. L'instance étant en lecture
+                            # seule, rien d'utile n'y est perdu.
+                            echo "🧨 Remise à zéro de la base de démonstration..."
+                            compose exec -T db-pg sh -c \
+                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
+                        fi
+
                         echo "📌 Migration Prisma..."
                         compose run --rm -w /app/api app npx prisma migrate deploy
 
@@ -122,6 +135,36 @@ pipeline {
                         compose exec -T db-pg sh -c \
                             'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
                             < api/src/scripts/andria_notify_triggers.sql
+
+                        if [ "$DEMO_ENABLED" = "true" ]; then
+                            echo "🌱 Restauration du jeu de démonstration..."
+                            compose exec -T db-pg sh -c \
+                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+                                < api/dumps/demo/dump-pgsql.sql
+
+                            compose cp api/dumps/demo/dump-mongo db-mongo:/tmp/dump-mongo
+                            # `--nsFrom/--nsTo` : le dump est pris sur la base
+                            # `lxp`, que l'instance peut avoir nommée autrement.
+                            compose exec -T db-mongo sh -c \
+                                'mongorestore --quiet --drop \
+                                    --username "$MONGO_INITDB_ROOT_USERNAME" \
+                                    --password "$MONGO_INITDB_ROOT_PASSWORD" \
+                                    --authenticationDatabase admin \
+                                    --nsInclude "lxp.*" --nsFrom "lxp.*" \
+                                    --nsTo "$MONGO_INITDB_DATABASE.*" \
+                                    /tmp/dump-mongo'
+                            compose exec -T db-mongo rm -rf /tmp/dump-mongo
+
+                            echo "🖼️ Synchronisation des activités de démonstration..."
+                            rsync -avz --delete api/dumps/demo/activities/ \
+                                deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/activities/
+
+                            # Les deux comptes empruntés par les visiteurs, sans
+                            # lesquels /demo répond « La démonstration n'est pas
+                            # configurée sur cette instance ».
+                            echo "👥 Préparation des comptes de démonstration..."
+                            compose run --rm --no-deps app npm run demo:seed
+                        fi
 
                         if [ "$AI_ENABLED" = "true" ]; then
                             echo "🧠 Provisionnement de la base IA..."
@@ -134,8 +177,10 @@ pipeline {
                         echo "🚀 Démarrage des applications..."
                         compose up -d --remove-orphans app
 
-                        echo "🔑 Génération de la clé d’activation..."
-                        compose exec -T app npm run generate-activation-key
+                        if [ "$DEMO_ENABLED" = "false" ]; then
+                            echo "🔑 Génération de la clé d’activation..."
+                            compose exec -T app npm run generate-activation-key
+                        fi
 
                         echo "📋 État des services..."
                         compose ps

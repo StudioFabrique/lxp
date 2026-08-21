@@ -136,6 +136,10 @@ jobs:
           # L'instance de demonstration ne deploie pas la couche IA :
           # `DEMO_MODE=true` la coupe deja cote applicatif, donc ses reglages
           # ne sont exiges qu'en dehors de ce mode.
+          #
+          # Ce workflow deploie le VPS de developpement, qui n'est pas une
+          # instance de demonstration : la restauration du jeu de demonstration
+          # vit dans les deux `deployment/*/Jenkinsfile`, pas ici.
           if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
             DEMO_MODE=true
           else

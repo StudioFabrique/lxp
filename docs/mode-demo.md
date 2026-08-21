@@ -187,20 +187,50 @@ des images compressées, plutôt que des vidéos déposées localement.
 
 ## Déployer l'instance
 
+Sur un poste de développement :
+
 ```bash
 npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 ```
 
-En production, c'est le même socle `compose.yml` avec un `.env` portant
+`init-scripts/init.sh` ne vaut que là : il installe les dépendances, copie les
+`env.example` et parle aux conteneurs par leur nom local (`lxp-prisma`,
+`lxp-mongo`). Sur un serveur, c'est le **pipeline** qui restaure le jeu de
+démonstration, à chaque déploiement, dès que le `.env` porte `DEMO_MODE=true` :
+
+1. `DROP SCHEMA public CASCADE` sur la base LXP — le dump est un `pg_dump -a`,
+   il ne se rejoue que sur un schéma vide ;
+2. `prisma migrate deploy`, puis les triggers ANDRIA ;
+3. `psql < api/dumps/demo/dump-pgsql.sql` ;
+4. `mongorestore --drop` du dump Mongo, copié dans le conteneur au préalable ;
+5. `rsync` de `api/dumps/demo/activities/` vers le volume `uploads` ;
+6. `npm run demo:seed` dans le conteneur applicatif, qui prépare les deux
+   comptes empruntés par les visiteurs.
+
+La démonstration revient donc à l'état versionné à chaque déploiement. L'API y
+étant en lecture seule, rien d'utile n'est perdu au passage. Sans l'étape 6,
+`/demo` répond « La démonstration n'est pas configurée sur cette instance. » :
+`getDemoUser` cherche en base les comptes désignés par `DEMO_ADMIN_EMAIL` et
+`DEMO_STUDENT_EMAIL`.
+
+Pour le reste, c'est le même socle `compose.yml` avec un `.env` portant
 `DEMO_MODE=true`, un `SSH_TARGET` distinct, des bases dédiées et un `SECRET`
 propre. Seule différence d'infrastructure : l'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
 sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).
 
-Prévoir une restauration périodique du dump : même si les écritures sont
-bloquées, cela garantit que la démonstration reste conforme à ce qui est
-versionné.
+La restauration est portée par les deux `Jenkinsfile` de `deployment/`. Le
+workflow GitHub Actions déploie le VPS de développement, qui n'est pas une
+instance de démonstration, et ne l'embarque pas.
+
+## Entrée du visiteur
+
+Le catch-all du routeur (`front/src/app/router.tsx`) passe par
+`DefaultRedirect` : sur l'instance de démonstration, `/` et toute adresse
+inconnue mènent à `/demo`, ailleurs à `/login`. Le composant attend
+`isConfigLoaded` avant de trancher — le bundle étant commun à toutes les
+instances, le mode n'est connu qu'après la réponse de `GET /v1/demo/config`.
 
 ## Après une migration Prisma
 

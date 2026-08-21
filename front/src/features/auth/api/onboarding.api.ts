@@ -1,6 +1,10 @@
 import apiClient from "../../../lib/axios";
 
-const getSetupStatus = async (): Promise<{ hasAdmins: boolean }> => {
+const getSetupStatus = async (): Promise<{
+  hasAdmins: boolean;
+  /** Identifiant du conteneur applicatif, servi tant qu'aucun admin n'existe. */
+  containerId?: string;
+}> => {
   const res = await apiClient.get("/auth/setup-status");
   return res.data;
 };

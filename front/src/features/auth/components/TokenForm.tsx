@@ -1,11 +1,23 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 
-const ACTIVATION_KEY_COMMAND = import.meta.env.PROD
-  ? "docker compose exec app npm run generate-activation-key"
-  : "npm run generate-activation-key";
+const LOCAL_COMMAND = "npm run generate-activation-key";
+
+/**
+ * Commande à exécuter sur le serveur pour régénérer la clé.
+ *
+ * En production, `docker compose` n'est pas utilisable : les fichiers compose
+ * et le `.env` restent sur la machine de déploiement, jamais sur le serveur,
+ * pour ne pas y laisser les secrets en clair. `docker exec` n'a lui besoin que
+ * de l'identifiant du conteneur, que l'API se procure par son propre `hostname`
+ * et sert tant qu'aucun administrateur n'existe.
+ */
+const activationKeyCommand = (containerId?: string) => {
+  if (!import.meta.env.PROD) return LOCAL_COMMAND;
+  return `docker exec ${containerId ?? "<conteneur>"} ${LOCAL_COMMAND}`;
+};
 
 type Props = {
   onNext: (token: string) => void;
@@ -19,6 +31,26 @@ const TokenForm = ({ onNext }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCommandCopied, setIsCommandCopied] = useState(false);
+  const [containerId, setContainerId] = useState<string>();
+
+  useEffect(() => {
+    let active = true;
+
+    onboardingApi
+      .getSetupStatus()
+      .then((status) => {
+        if (active) setContainerId(status.containerId);
+      })
+      // Sans identifiant, la commande reste affichée avec un emplacement à
+      // compléter : mieux qu'une commande fausse ou pas de commande du tout.
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const command = activationKeyCommand(containerId);
 
   const {
     register,
@@ -46,7 +78,7 @@ const TokenForm = ({ onNext }: Props) => {
 
   const handleCopyCommand = async () => {
     try {
-      await navigator.clipboard.writeText(ACTIVATION_KEY_COMMAND);
+      await navigator.clipboard.writeText(command);
       setIsCommandCopied(true);
       window.setTimeout(() => setIsCommandCopied(false), 2000);
     } catch (error) {
@@ -121,10 +153,9 @@ const TokenForm = ({ onNext }: Props) => {
           <div className="flex items-center gap-2 bg-base-300 rounded-lg p-2">
             <textarea
               readOnly
-              value={ACTIVATION_KEY_COMMAND}
-              rows={1}
+              value={command}
               aria-label="Commande de génération de la clé d'activation"
-              className="textarea min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none field-sizing-content"
+              className="textarea min-h-0 min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent px-1 py-1 font-mono text-xs leading-5 text-base-content focus:outline-none field-sizing-content"
             />
             <button
               type="button"

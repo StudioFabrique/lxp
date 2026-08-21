@@ -14,7 +14,7 @@
     "init:demo": "./init-scripts/init.sh --demo",
     "clean": "./init-scripts/clean-project-data.sh",
     "dump": "./init-scripts/dump-data.sh",
-    "demo:seed": "npm run demo:seed --prefix api",
+    "demo:seed": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/demo-seed.js; else npm run demo:seed --prefix api; fi",
     "generate-activation-key": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/generate-activation-key.js; else npm run generate-activation-key --prefix api; fi"
   },
   "keywords": [],
