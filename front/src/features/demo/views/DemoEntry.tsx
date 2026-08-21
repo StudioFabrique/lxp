@@ -148,12 +148,7 @@ const DemoEntry = () => {
           />
           <h1 className="text-3xl font-extrabold">Découvrir ANDRIA</h1>
           <p className="mt-3 text-base-content/70">
-            Explorez la plateforme avec un jeu de contenus de démonstration.
-            Choisissez l'interface qui vous intéresse : une visite guidée
-            démarrera automatiquement.
-          </p>
-          <p className="mt-2 text-sm text-base-content/60">
-            Tous les contenus sont en consultation seule.
+            Explorez la plateforme avec des données de démonstration.
           </p>
         </header>
 
