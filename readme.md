@@ -43,5 +43,5 @@ Ouvrir <http://localhost:5173>.
 
 - [Service IA et synchronisation en développement](docs/developpement-ia.md)
 - [Déploiement complet avec Jenkins](docs/deploiement-jenkins.md)
-- [Structure et architecture](docs/1.%20structure-et-architecture.md)
+- [Structure et architecture](docs/structure-et-architecture.md)
 - [Schéma relationnel PostgreSQL](docs/lxp-postgres-erdiagram.mmd)
