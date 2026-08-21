@@ -1,4 +1,4 @@
-import { ShieldCheck, TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 
 type Props = {
   progress: number;

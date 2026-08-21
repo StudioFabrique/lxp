@@ -55,7 +55,7 @@ const TimelineView = ({
     nowTime,
     startHour,
     endHour,
-    style
+    style,
   );
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const TimelineView = ({
     <div className="select-none flex flex-1 overflow-y-auto relative">
       {/* TIME COLUMN */}
       <div
-        className={`sticky left-0 z-30 w-16 flex-shrink-0 border-r ${
+        className={`sticky left-0 z-10 w-16 flex-shrink-0 border-r ${
           theme(darkMode).sidebarBg
         } ${theme(darkMode).border}`}
       >
@@ -95,7 +95,7 @@ const TimelineView = ({
       <div className="flex-1 min-w-[300px] overflow-x-auto">
         {(view === "week" || currentWeekDayVisible) && (
           <div
-            className={`flex h-10 sticky top-0 z-20 border-b ${
+            className={`flex h-10 sticky top-0 z-10 border-b ${
               theme(darkMode).headerBg
             } ${theme(darkMode).border}`}
           >
@@ -114,7 +114,7 @@ const TimelineView = ({
               return (
                 <div
                   key={day}
-                  className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px] 
+                  className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px]
                   ${
                     isTodayHeader
                       ? theme(darkMode).todayText
@@ -194,12 +194,12 @@ const TimelineView = ({
                             event.start,
                             event.end,
                             startHour,
-                            style
+                            style,
                           )}
                           onClick={(e) =>
                             onClickEventDetails?.(
                               event.id,
-                              e.currentTarget.getBoundingClientRect()
+                              e.currentTarget.getBoundingClientRect(),
                             )
                           }
                         >
@@ -219,7 +219,7 @@ const TimelineView = ({
                   {/* Only render if we have an indicator AND this column is actually today */}
                   {timeIndicator && isToday && (
                     <div
-                      className="absolute w-full flex items-center z-30 pointer-events-none"
+                      className="absolute w-full flex items-center z-10 pointer-events-none"
                       style={{ top: timeIndicator.top }}
                     >
                       <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 shadow-sm ring-2 ring-transparent" />

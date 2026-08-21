@@ -15,7 +15,7 @@ interface Props {
   timelineEvents?: TimelineEvent[];
   onClickTimelineYearEventDetails?: (
     id: number | string,
-    rect: DOMRect
+    rect: DOMRect,
   ) => void;
   onClickEditTimelineYearEvent?: (id: number | string) => void;
   currentDate: Date;
