@@ -27,27 +27,17 @@ const DemoCaptcha = ({ progress, isSolved, error, onRetry }: Props) => {
     );
   }
 
-  if (isSolved) {
+  if (!isSolved)
     return (
-      <p className="flex items-center justify-center gap-2" role="status">
-        Choisissez une interface.
-      </p>
+      <div className="flex flex-col items-center gap-2" role="status">
+        <progress
+          className="progress progress-primary w-64"
+          value={Math.round(progress * 100)}
+          max={100}
+          aria-label="Avancement de la vérification anti-robot"
+        />
+      </div>
     );
-  }
-
-  return (
-    <div className="flex flex-col items-center gap-2" role="status">
-      <p className="text-sm text-base-content/70">
-        Vérification anti-robot en cours…
-      </p>
-      <progress
-        className="progress progress-primary w-64"
-        value={Math.round(progress * 100)}
-        max={100}
-        aria-label="Avancement de la vérification anti-robot"
-      />
-    </div>
-  );
 };
 
 export default DemoCaptcha;

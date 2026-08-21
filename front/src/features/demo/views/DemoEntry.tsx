@@ -129,8 +129,8 @@ const DemoEntry = () => {
   if (!isConfigLoaded || !demoMode) return <Loader />;
 
   return (
-    <main className="min-h-screen bg-base-200 px-4 py-12">
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-8">
+    <main className="min-h-screen bg-base-200 px-4 py-28">
+      <div className="mx-auto flex max-w-3xl flex-col justify-center items-center gap-8">
         <div className="flex w-full justify-end">
           <div
             className="tooltip tooltip-left w-5"
