@@ -4,12 +4,17 @@ import { useNavigate } from "react-router";
 import { GraduationCap, Users } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
+import { ThemeContext } from "../../../store/ThemeProvider";
 import { useDemoMode } from "../../../store/DemoContext";
 import Loader from "../../../components/loaders/Loader";
+import ThemeToggle from "../../../components/buttons/ThemeToggle";
 import DemoCaptcha from "../components/DemoCaptcha";
 import { demoApi, type DemoProfile } from "../api/demo-client";
 import { solveChallenge, type DemoSolution } from "../lib/altcha-solver";
 import { DEMO_TOUR_STORAGE_KEY } from "../demo-tour-storage";
+
+import logoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
+import logoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 
 const PROFILES: {
   profile: DemoProfile;
@@ -36,6 +41,7 @@ const PROFILES: {
 const DemoEntry = () => {
   const { demoMode, demoUrl, isConfigLoaded } = useDemoMode();
   const { handshake } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const [solution, setSolution] = useState<DemoSolution | null>(null);
@@ -112,8 +118,7 @@ const DemoEntry = () => {
         setError(
           (isAxiosError(err)
             ? (err.response?.data as { message?: string } | undefined)?.message
-            : undefined) ??
-            "La démonstration est momentanément indisponible.",
+            : undefined) ?? "La démonstration est momentanément indisponible.",
         );
         setPending(null);
       }
@@ -126,7 +131,21 @@ const DemoEntry = () => {
   return (
     <main className="min-h-screen bg-base-200 px-4 py-12">
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-8">
-        <header className="text-center">
+        <div className="flex w-full justify-end">
+          <div
+            className="tooltip tooltip-left w-5"
+            data-tip="Mode Clair / Mode Sombre"
+          >
+            <ThemeToggle />
+          </div>
+        </div>
+
+        <header className="flex flex-col items-center text-center">
+          <img
+            className="mb-6 h-auto w-56 object-contain"
+            src={theme === "light" ? logoLightMode : logoDarkMode}
+            alt="logo ANDRIA"
+          />
           <h1 className="text-3xl font-extrabold">Découvrir ANDRIA</h1>
           <p className="mt-3 text-base-content/70">
             Explorez la plateforme avec un jeu de contenus de démonstration.
