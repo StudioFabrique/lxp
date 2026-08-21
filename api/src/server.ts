@@ -5,7 +5,7 @@ import mongoConnect from "./utils/services/db/mongo-connect.ts";
 import syncAnalyticsIndexes from "./utils/services/db/sync-analytics-indexes.ts";
 import app from "./app.ts";
 import { socket } from "./socket/socket.ts";
-import { corsOrigins, PORT } from "./config/config.ts";
+import { corsOrigins, isDemoMode, PORT } from "./config/config.ts";
 import { authenticateSession } from "./utils/services/auth/authenticate-session.ts";
 
 let server: http.Server | https.Server;
@@ -47,5 +47,13 @@ async function mongoInit() {
     console.log(`🚀 Serveur démarré sur  http//localhost:${PORT}`);
   });
 
-  socket(io);
+  // Le temps réel est coupé en démonstration : ses gestionnaires écrivent en
+  // base (suivi de connexion, feedbacks apprenants) sans passer par le verrou
+  // HTTP, et tous les visiteurs partageant un même compte se retrouveraient
+  // dans les mêmes salons.
+  if (isDemoMode()) {
+    console.log("Mode démonstration : temps réel désactivé.");
+  } else {
+    socket(io);
+  }
 }

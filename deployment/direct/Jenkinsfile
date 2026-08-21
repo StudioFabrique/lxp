@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        DIRECT_COMPOSE_FILE = 'deployment/direct/compose.yml'
+        BASE_COMPOSE_FILE = 'deployment/direct/compose.yml'
+        AI_COMPOSE_FILE = 'deployment/direct/compose.ai.yml'
     }
 
     stages {
@@ -60,8 +61,25 @@ pipeline {
 
                         export DOCKER_HOST="ssh://deploy-target"
 
+                        # La couche IA est superposée au socle sauf en mode
+                        # démonstration, où `DEMO_MODE=true` la coupe déjà côté
+                        # applicatif : la déployer ne ferait que consommer un
+                        # conteneur, un cache de modèles et un accès sortant.
+                        if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+                            DEMO_ENABLED=true
+                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
+                            AI_ENABLED=false
+                            echo "Mode démonstration : la couche IA n'est pas déployée."
+                        else
+                            DEMO_ENABLED=false
+                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
+                            AI_ENABLED=true
+                        fi
+
+                        # Découpage en mots volontaire : la variable porte
+                        # plusieurs arguments.
                         compose() {
-                            docker compose --env-file .env -f "$DIRECT_COMPOSE_FILE" "$@"
+                            docker compose --env-file .env $COMPOSE_FILES "$@"
                         }
 
                         echo "🔐 Connexion Docker Hub..."
@@ -70,12 +88,14 @@ pipeline {
                         echo "📥 Récupération des images..."
                         compose pull
 
-                        echo "🔎 Vérification de l'image IA..."
-                        compose run --rm --no-deps ai python -c \
-                            'import app.db_provision; print("Module app.db_provision disponible")'
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            echo "🔎 Vérification de l'image IA..."
+                            compose run --rm --no-deps ai python -c \
+                                'import app.db_provision; print("Module app.db_provision disponible")'
+                        fi
 
                         echo "🗄️ Démarrage des bases..."
-                        compose up -d db-pg db-ai db-mongo
+                        compose up -d db-pg db-mongo
 
                         echo "⏳ Attente des bases..."
                         until compose exec -T db-pg sh -c \
@@ -84,28 +104,88 @@ pipeline {
                             sleep 2
                         done
 
-                        until compose exec -T db-ai sh -c \
-                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-                        do
-                            sleep 2
-                        done
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            compose up -d db-ai
+
+                            until compose exec -T db-ai sh -c \
+                                'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+                            do
+                                sleep 2
+                            done
+                        fi
+
+                        if [ "$DEMO_ENABLED" = "true" ]; then
+                            # Le jeu de démonstration est un dump de données
+                            # seules : il ne se rejoue que sur un schéma vide, et
+                            # la démonstration doit revenir à l'état versionné à
+                            # chaque déploiement. L'instance étant en lecture
+                            # seule, rien d'utile n'y est perdu.
+                            echo "Remise à zéro de la base de démonstration..."
+                            compose exec -T db-pg sh -c \
+                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
+                        fi
 
                         echo "📌 Migration Prisma..."
                         compose run --rm -w /app/api app npx prisma migrate deploy
 
+                        if [ "$DEMO_ENABLED" = "true" ]; then
+                            echo "🌱 Restauration du jeu de démonstration..."
+                            compose exec -T db-pg sh -c \
+                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+                                < api/dumps/demo/dump-pgsql.sql
+
+                            compose cp api/dumps/demo/dump-mongo db-mongo:/tmp/dump-mongo
+                            # `--nsFrom/--nsTo` : le dump est pris sur la base
+                            # `lxp`, que l'instance peut avoir nommée autrement.
+                            compose exec -T db-mongo sh -c \
+                                'mongorestore --quiet --drop \
+                                    --username "$MONGO_INITDB_ROOT_USERNAME" \
+                                    --password "$MONGO_INITDB_ROOT_PASSWORD" \
+                                    --authenticationDatabase admin \
+                                    --nsInclude "lxp.*" --nsFrom "lxp.*" \
+                                    --nsTo "$MONGO_INITDB_DATABASE.*" \
+                                    /tmp/dump-mongo'
+                            compose exec -T db-mongo rm -rf /tmp/dump-mongo
+
+                            echo "🖼️ Synchronisation des activités de démonstration..."
+                            rsync -avz --delete api/dumps/demo/activities/ \
+                                deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/activities/
+
+                        fi
+
+                        # Posés après la restauration : rejouer un dump n'est pas un
+                        # changement de contenu à signaler, et le trigger tournerait
+                        # une fois par ligne insérée. Installés dans les deux modes,
+                        # ce sont de simples `pg_notify` sans écouteur, qui gardent le
+                        # schéma de la démonstration identique à celui de la production.
                         echo "🔔 Installation des triggers ANDRIA..."
                         compose exec -T db-pg sh -c \
                             'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
                             < api/src/scripts/andria_notify_triggers.sql
 
-                        echo "🧠 Provisionnement de la base IA..."
-                        compose run --rm ai python -m app.db_provision
+                        if [ "$DEMO_ENABLED" = "true" ]; then
+                            # Les deux comptes empruntés par les visiteurs, sans
+                            # lesquels /demo répond « La démonstration n'est pas
+                            # configurée sur cette instance ».
+                            echo "👥 Préparation des comptes de démonstration..."
+                            compose run --rm --no-deps app npm run demo:seed
+                        fi
 
+                        if [ "$AI_ENABLED" = "true" ]; then
+                            echo "🧠 Provisionnement de la base IA..."
+                            compose run --rm ai python -m app.db_provision
+                        fi
+
+                        # `ai` est tiré par le `depends_on` de `app` quand
+                        # l'overlay est chargé ; `--remove-orphans` retire les
+                        # conteneurs IA d'une stack qui bascule en démonstration.
                         echo "🚀 Démarrage des applications..."
-                        compose up -d app ai
+                        compose up -d --remove-orphans app
 
-                        echo "🔑 Génération de la clé d’activation..."
-                        compose exec -T app npm run generate-activation-key
+                        if [ "$DEMO_ENABLED" = "false" ]; then
+                            echo "🔑 Génération de la clé d’activation..."
+                            compose exec -T app npm run generate-activation-key
+                        fi
 
                         echo "📋 État des services..."
                         compose ps

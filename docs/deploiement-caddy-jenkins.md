@@ -1,10 +1,15 @@
 # Déploiement Jenkins avec le Caddy partagé
 
 Cette méthode déploie la stack avec
-[`deployment/caddy/Jenkinsfile`](../deployment/caddy/Jenkinsfile) et
-[`deployment/caddy/compose.yml`](../deployment/caddy/compose.yml). Le VPS fait
-tourner Caddy dans une stack séparée. Le dépôt LXP ne construit aucun proxy et
-ne contient plus de Caddyfile.
+[`deployment/caddy/Jenkinsfile`](../deployment/caddy/Jenkinsfile),
+[`deployment/caddy/compose.yml`](../deployment/caddy/compose.yml) et
+[`deployment/caddy/compose.ai.yml`](../deployment/caddy/compose.ai.yml). Le VPS
+fait tourner Caddy dans une stack séparée. Le dépôt LXP ne construit aucun proxy
+et ne contient plus de Caddyfile.
+
+`compose.yml` porte le socle applicatif ; `compose.ai.yml` y superpose la couche
+IA, que le pipeline ne charge pas lorsque le `.env` porte `DEMO_MODE=true` —
+voir [`deployment/README.md`](../deployment/README.md).
 
 Le conteneur public rejoint le réseau externe `caddy` et porte les labels de
 routage. Les bases et le service IA rejoignent le réseau interne de la stack.

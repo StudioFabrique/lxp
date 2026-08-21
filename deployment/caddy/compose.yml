@@ -1,5 +1,8 @@
 name: ${LXP_DEPLOYMENT_NAME:-lxp}
 
+# Socle applicatif, sans la couche IA. L'instance de démonstration se déploie
+# avec ce seul fichier ; les autres y superposent `compose.ai.yml`.
+
 services:
   app:
     image: "${LXP_IMAGE:-studiostep/lxp}:${LXP_IMAGE_TAG:-latest}"
@@ -13,8 +16,6 @@ services:
       db-pg:
         condition: service_healthy
       db-mongo:
-        condition: service_healthy
-      ai:
         condition: service_healthy
     volumes:
       - ${DEPLOY_PATH:?Set DEPLOY_PATH}/uploads:/app/api/dist/uploads
@@ -38,11 +39,17 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_LOCAL_URL: ${MONGO_LOCAL_URL}
 
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL}
-      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET}
-
       SECRET: ${SECRET}
       REGISTER_SECRET: ${REGISTER_SECRET}
+
+      # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
+      # l'ouverture d'une session publique. Réservé à l'instance dédiée.
+      DEMO_MODE: ${DEMO_MODE:-false}
+      DEMO_URL: ${DEMO_URL:-}
+      DEMO_EXIT_URL: ${DEMO_EXIT_URL:-}
+      ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}
+      DEMO_ADMIN_EMAIL: ${DEMO_ADMIN_EMAIL:-}
+      DEMO_STUDENT_EMAIL: ${DEMO_STUDENT_EMAIL:-}
 
       ENVIRONMENT: ${ENVIRONMENT}
       FRONT_URL: ${FRONT_URL}
@@ -76,72 +83,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  ai:
-    image: "${LXP_AI_IMAGE:-studiostep/lxp-ai}:${LXP_AI_IMAGE_TAG:-latest}"
-    pull_policy: always
-    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-ai
-    restart: unless-stopped
-    depends_on:
-      db-pg:
-        condition: service_healthy
-      db-ai:
-        condition: service_healthy
-    expose:
-      - "8000"
-    networks:
-      - backend
-      - egress
-    volumes:
-      - hf_cache:/cache
-      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/data:/app/data
-      - ${DEPLOY_PATH}/uploads/activities:/lxp/api/uploads/activities:ro
-    environment:
-      DATABASE_URL: ${ANDRIA_AI_DB_URL}
-      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
-      LXP_DB_URL: ${LXP_DB_URL}
-
-      LXP_UPLOADS_DIR: /lxp/api/uploads/activities
-      LXP_PUBLIC_BASE: ${LXP_PUBLIC_BASE}
-
-      SECRET_KEY: ${SECRET_KEY}
-      DEV_BYPASS_AUTH: "false"
-
-      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY}
-      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY}
-      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
-
-      QUIZ_TEMPERATURE: ${QUIZ_TEMPERATURE:-0.5}
-      QUIZ_MAX_TOKENS: ${QUIZ_MAX_TOKENS:-1200}
-      QUIZ_MAX_ATTEMPTS: ${QUIZ_MAX_ATTEMPTS:-3}
-      QUIZ_PARALLEL_SLOTS: ${QUIZ_PARALLEL_SLOTS:-3}
-      QUIZ_MIN_PROMPT_LEN: ${QUIZ_MIN_PROMPT_LEN:-12}
-      QUIZ_MIN_EXPLANATION_LEN: ${QUIZ_MIN_EXPLANATION_LEN:-10}
-
-      DB_INGEST_MIN_WORDS: ${DB_INGEST_MIN_WORDS:-20}
-
-      HF_HOME: /cache/huggingface
-      TRANSFORMERS_CACHE: /cache/huggingface
-      SENTENCE_TRANSFORMERS_HOME: /cache/sentence_transformers
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "python",
-          "-c",
-          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
-    security_opt:
-      - no-new-privileges:true
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   db-pg:
     image: postgres:18-alpine
     container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-pg
@@ -154,27 +95,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    stop_grace_period: 30s
-    security_opt:
-      - no-new-privileges:true
-
-  db-ai:
-    image: pgvector/pgvector:pg18
-    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-ai
-    restart: unless-stopped
-    volumes:
-      - pg_ai:/var/lib/postgresql
-    networks:
-      - backend
-    environment:
-      POSTGRES_USER: ${ANDRIA_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${ANDRIA_POSTGRES_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
@@ -211,15 +131,9 @@ networks:
   backend:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_backend
     internal: true
-  egress:
-    name: ${LXP_DEPLOYMENT_NAME:-lxp}_egress
 
 volumes:
   pg:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg
-  pg_ai:
-    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg_ai
   mongo:
     name: ${LXP_DEPLOYMENT_NAME:-lxp}_mongo
-  hf_cache:
-    name: ${LXP_DEPLOYMENT_NAME:-lxp}_hf_cache

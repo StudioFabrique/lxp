@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { X } from "lucide-react";
 import { Joyride } from "react-joyride";
 
@@ -8,6 +8,8 @@ import { toUpperFirstLetter } from "../../utils/helpers/text-helpers";
 import { useOnboarding } from "./OnboardingContext";
 import OnboardingWelcomeTooltip from "./OnboardingWelcomeTooltip";
 import { onboardingWelcomeTourSteps } from "./onboarding-welcome-tour-steps";
+import { useDemoMode } from "../../store/DemoContext";
+import TutorialChoiceModal from "../demo/components/TutorialChoiceModal";
 
 type Props = {
   layout: "admin" | "student";
@@ -16,6 +18,15 @@ type Props = {
 const OnboardingWelcome = ({ layout }: Props) => {
   const { user } = useContext(AuthContext);
   const { isSaving, start, skip } = useOnboarding();
+  const { demoUrl } = useDemoMode();
+  const [isChoiceOpen, setIsChoiceOpen] = useState(false);
+
+  // Le choix n'est proposé que si une instance de démonstration existe ; sinon
+  // le bouton lance directement le tutoriel, comme avant.
+  const handleStart = () => {
+    if (demoUrl) return setIsChoiceOpen(true);
+    void start();
+  };
 
   const welcomeTour = (
     <Joyride
@@ -94,7 +105,7 @@ const OnboardingWelcome = ({ layout }: Props) => {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => void start()}
+            onClick={handleStart}
             disabled={isSaving}
             data-onboarding="welcome-start"
           >
@@ -107,6 +118,19 @@ const OnboardingWelcome = ({ layout }: Props) => {
         </Header>
       </section>
       {welcomeTour}
+      {isChoiceOpen && (
+        <TutorialChoiceModal
+          demoUrl={demoUrl}
+          onClose={() => {
+            setIsChoiceOpen(false);
+            skip();
+          }}
+          onStartTutorial={() => {
+            setIsChoiceOpen(false);
+            start();
+          }}
+        />
+      )}
     </>
   );
 };

@@ -34,6 +34,20 @@ option.
 
 Ouvrir <http://localhost:5173>.
 
+## Mode démonstration
+
+ANDRIA peut être déployée en instance de démonstration : une plateforme publique
+et en consultation seule, accessible sans compte depuis `/demo`.
+
+```bash
+npm run init:demo
+```
+
+Cette instance se distingue par la seule variable `DEMO_MODE=true` dans
+`api/.env`. En déploiement, c'est aussi elle qui écarte la couche IA : les
+pipelines chargent alors le socle `compose.yml` sans l'overlay
+`compose.ai.yml`. Voir [Mode démonstration](docs/mode-demo.md).
+
 | Compte         | Identifiant            | Mot de passe    |
 | -------------- | ---------------------- | --------------- |
 | Administrateur | `admin@studio.eco`     | `Abcdef@123456` |
@@ -44,4 +58,5 @@ Ouvrir <http://localhost:5173>.
 - [Service IA et synchronisation en développement](docs/developpement-ia.md)
 - [Déploiement complet avec Jenkins](docs/deploiement-jenkins.md)
 - [Structure et architecture](docs/structure-et-architecture.md)
+- [Mode démonstration](docs/mode-demo.md)
 - [Schéma relationnel PostgreSQL](docs/lxp-postgres-erdiagram.mmd)

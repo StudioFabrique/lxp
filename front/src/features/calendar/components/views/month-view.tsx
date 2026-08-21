@@ -107,7 +107,7 @@ const MonthView = ({
                       onClick={(e) =>
                         onClickEventDetails?.(
                           event.id,
-                          e.currentTarget.getBoundingClientRect()
+                          e.currentTarget.getBoundingClientRect(),
                         )
                       }
                       className={`text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}

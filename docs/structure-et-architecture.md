@@ -39,7 +39,7 @@ front/src/
 │   ├── axios.ts       # Client HTTP + refresh de session automatique
 │   └── react-query.ts # QueryClient TanStack Query
 ├── rbac/              # Gestion des droits (CASL) : ability et Provider
-├── store/             # État global : Auth, Theme, Chatbot (Context React)
+├── store/             # État global : Auth, Theme, Chatbot, Demo (Context React)
 ├── test/              # Setup Vitest
 ├── utils/             # Fonctions pures et interfaces de domaine partagées
 ├── index.css          # Feuille Tailwind + DaisyUI
@@ -171,6 +171,9 @@ l'opération métier (`create-parcours.ts`).
   des jetons, transmis par cookies `httpOnly` ;
 - `check-validation.ts` : rejette les requêtes invalides après
   express-validator ;
+- `demo-read-only.ts` : sur l'instance de démonstration, refuse tout verbe autre
+  que GET. Monté devant `/v1`, donc devant les dépôts de fichiers. Voir
+  [Mode démonstration](mode-demo.md) ;
 - `upload-activity-*.ts`, `fileUpload.ts` : dépôts de fichiers via multer,
   avec des tailles maximales déclarées dans `config/images-sizes.ts` ;
 - `request-logger.ts` et `response-handler.ts` : journalisation Winston et

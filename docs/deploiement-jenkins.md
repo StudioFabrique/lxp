@@ -3,8 +3,14 @@
 Jenkins construit l'image du LXP, la publie sur Docker Hub, puis déploie
 l'application sur un serveur Docker distant. Le déploiement utilise les fichiers
 [`build.Jenkinsfile`](../build.Jenkinsfile),
-[`deployment/direct/Jenkinsfile`](../deployment/direct/Jenkinsfile) et
-[`deployment/direct/compose.yml`](../deployment/direct/compose.yml).
+[`deployment/direct/Jenkinsfile`](../deployment/direct/Jenkinsfile),
+[`deployment/direct/compose.yml`](../deployment/direct/compose.yml) et
+[`deployment/direct/compose.ai.yml`](../deployment/direct/compose.ai.yml).
+
+`compose.yml` porte le socle applicatif ; `compose.ai.yml` y superpose la couche
+IA. Le pipeline ne charge l'overlay et n'exécute les étapes IA que lorsque le
+`.env` ne porte pas `DEMO_MODE=true` — voir
+[`deployment/README.md`](../deployment/README.md).
 
 ## Chaîne de déploiement
 
@@ -221,25 +227,32 @@ captures.
 Lancer **Build Now** après la publication des deux images. Le pipeline exécute
 ces opérations :
 
-1. récupère `deployment/direct/compose.yml`, les scripts SQL et les fichiers à
+1. récupère les fichiers Compose, les scripts SQL et les fichiers à
    synchroniser ;
 2. prépare la connexion Docker distante par SSH ;
 3. crée les répertoires persistants et synchronise `api/uploads/` ;
 4. copie `APP_ENV` dans le workspace Jenkins ;
-5. récupère les images LXP et IA ;
-6. démarre PostgreSQL, pgvector et MongoDB ;
-7. applique les migrations Prisma et les triggers de synchronisation IA ;
-8. provisionne les tables `andria_*` ;
-9. démarre le LXP et le service IA ;
-10. génère la clé d'activation du premier administrateur.
+5. choisit les fichiers Compose selon `DEMO_MODE` : le socle seul en mode
+   démonstration, socle et overlay IA sinon ;
+6. récupère les images LXP et IA ;
+7. démarre PostgreSQL, MongoDB, et pgvector hors mode démonstration ;
+8. applique les migrations Prisma et les triggers de synchronisation IA ;
+9. provisionne les tables `andria_*`, hors mode démonstration ;
+10. démarre le LXP, qui entraîne le service IA quand l'overlay est chargé ;
+11. génère la clé d'activation du premier administrateur.
+
+Les triggers de synchronisation sont posés dans les deux modes : ce sont de
+simples `pg_notify` sans écouteur, qui gardent le schéma de la démonstration
+aligné sur celui de la production.
 
 Le provisionnement et les migrations acceptent plusieurs exécutions. Le même
 job sert au premier déploiement et aux mises à jour.
 
 ## 7. Vérifier le déploiement
 
-La dernière étape Jenkins affiche `docker compose ps`. Les services `app`, `ai`,
-`db-pg`, `db-ai` et `db-mongo` doivent être démarrés.
+La dernière étape Jenkins affiche `docker compose ps`. Les services `app`,
+`ai`, `db-pg`, `db-ai` et `db-mongo` doivent être démarrés — ou seulement
+`app`, `db-pg` et `db-mongo` sur une instance de démonstration.
 
 Depuis le serveur cible :
 

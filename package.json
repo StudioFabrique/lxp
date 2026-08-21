@@ -1,7 +1,7 @@
 {
   "name": "lxp",
   "version": "1.0.0",
-  "description": "- Améliorer l'efficacité de l'apprentissage : En offrant un contenu de qualité et en permettant aux utilisateurs de personnaliser leur expérience d'apprentissage.",
+  "description": "- Am\u00e9liorer l'efficacit\u00e9 de l'apprentissage : En offrant un contenu de qualit\u00e9 et en permettant aux utilisateurs de personnaliser leur exp\u00e9rience d'apprentissage.",
   "main": "index.js",
   "scripts": {
     "install": "npm ci --prefix api && npm ci --prefix front",
@@ -11,8 +11,10 @@
     "test": "npm run test --prefix api",
     "generate": "npm run prisma-generate --prefix api",
     "init": "./init-scripts/init.sh",
+    "init:demo": "./init-scripts/init.sh --demo",
     "clean": "./init-scripts/clean-project-data.sh",
     "dump": "./init-scripts/dump-data.sh",
+    "demo:seed": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/demo-seed.js; else npm run demo:seed --prefix api; fi",
     "generate-activation-key": "if [ \"$NODE_ENV\" = \"production\" ]; then node api/dist/src/scripts/generate-activation-key.js; else npm run generate-activation-key --prefix api; fi"
   },
   "keywords": [],

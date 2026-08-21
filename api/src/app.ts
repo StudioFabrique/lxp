@@ -9,6 +9,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import responseHandler from "./middleware/response-handler.ts";
 import requireSession from "./middleware/require-session.ts";
+import demoReadOnly from "./middleware/demo-read-only.ts";
 import requestLogger from "./middleware/request-logger.ts";
 import { corsOrigins } from "./config/config.ts";
 
@@ -105,7 +106,7 @@ app
       dotfiles: "deny",
     }),
   )
-  .use("/v1", api)
+  .use("/v1", demoReadOnly, api)
   .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
   .get("*", (_req, res) => {
     res.setHeader("Cache-Control", "no-cache");
