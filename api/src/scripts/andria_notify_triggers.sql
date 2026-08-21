@@ -1,4 +1,12 @@
-CREATE OR REPLACE FUNCTION andria_notify_change() RETURNS trigger AS $$
+-- `SET search_path` : la fonction référence ses tables sans les qualifier, et
+-- un appelant peut avoir vidé son search_path. C'est le cas de tout fichier
+-- produit par `pg_dump`, qui ouvre par `set_config('search_path', '', false)` :
+-- sans cette clause, le moindre trigger déclenché pendant une restauration
+-- échoue sur « relation "Course" does not exist ».
+CREATE OR REPLACE FUNCTION andria_notify_change() RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public, pg_temp
+AS $$
 DECLARE
   rec         record;
   slug        text;
@@ -32,7 +40,7 @@ BEGIN
 
   RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 DROP TRIGGER IF EXISTS andria_course_ch   ON "Course";
 DROP TRIGGER IF EXISTS andria_lesson_ch   ON "Lesson";

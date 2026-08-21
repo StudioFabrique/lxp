@@ -220,9 +220,10 @@ chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles n
 sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).
 
-La restauration est portée par les deux `Jenkinsfile` de `deployment/`. Le
-workflow GitHub Actions déploie le VPS de développement, qui n'est pas une
-instance de démonstration, et ne l'embarque pas.
+Ces étapes sont identiques dans les trois pipelines : les deux `Jenkinsfile`
+de `deployment/` et `.github/workflows/deploy-dev.yml`. Toutes pilotent le démon
+Docker distant depuis la machine de déploiement, si bien que les dumps sont
+poussés dans les conteneurs sans jamais être écrits sur le serveur.
 
 ## Entrée du visiteur
 

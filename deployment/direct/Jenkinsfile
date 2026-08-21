@@ -128,14 +128,6 @@ pipeline {
                         echo "📌 Migration Prisma..."
                         compose run --rm -w /app/api app npx prisma migrate deploy
 
-                        # Installés dans les deux modes : de simples `pg_notify`
-                        # sans écouteur, qui gardent le schéma de la démonstration
-                        # identique à celui de la production.
-                        echo "🔔 Installation des triggers ANDRIA..."
-                        compose exec -T db-pg sh -c \
-                            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-                            < api/src/scripts/andria_notify_triggers.sql
-
                         if [ "$DEMO_ENABLED" = "true" ]; then
                             echo "🌱 Restauration du jeu de démonstration..."
                             compose exec -T db-pg sh -c \
@@ -159,6 +151,19 @@ pipeline {
                             rsync -avz --delete api/dumps/demo/activities/ \
                                 deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/activities/
 
+                        fi
+
+                        # Posés après la restauration : rejouer un dump n'est pas un
+                        # changement de contenu à signaler, et le trigger tournerait
+                        # une fois par ligne insérée. Installés dans les deux modes,
+                        # ce sont de simples `pg_notify` sans écouteur, qui gardent le
+                        # schéma de la démonstration identique à celui de la production.
+                        echo "🔔 Installation des triggers ANDRIA..."
+                        compose exec -T db-pg sh -c \
+                            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+                            < api/src/scripts/andria_notify_triggers.sql
+
+                        if [ "$DEMO_ENABLED" = "true" ]; then
                             # Les deux comptes empruntés par les visiteurs, sans
                             # lesquels /demo répond « La démonstration n'est pas
                             # configurée sur cette instance ».

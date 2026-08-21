@@ -135,11 +135,10 @@ jobs:
 
           # L'instance de demonstration ne deploie pas la couche IA :
           # `DEMO_MODE=true` la coupe deja cote applicatif, donc ses reglages
-          # ne sont exiges qu'en dehors de ce mode.
-          #
-          # Ce workflow deploie le VPS de developpement, qui n'est pas une
-          # instance de demonstration : la restauration du jeu de demonstration
-          # vit dans les deux `deployment/*/Jenkinsfile`, pas ici.
+          # ne sont exiges qu'en dehors de ce mode. En echange, les deux comptes
+          # empruntes par les visiteurs deviennent indispensables : sans eux,
+          # `/demo` repond « La demonstration n'est pas configuree sur cette
+          # instance ».
           if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
             DEMO_MODE=true
           else
@@ -160,7 +159,11 @@ jobs:
           MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
           "
 
-          if [ "$DEMO_MODE" = false ]; then
+          demo_settings="DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
+
+          if [ "$DEMO_MODE" = true ]; then
+            required_settings="$required_settings $demo_settings"
+          else
             required_settings="$required_settings $ai_settings"
           fi
 
@@ -171,14 +174,6 @@ jobs:
             fi
           done
 
-          if [ "$DEMO_MODE" = true ]; then
-            echo "Mode demonstration : la couche IA n'est pas deployee."
-            COMPOSE_FILE=compose.yml
-          else
-            COMPOSE_FILE=compose.yml:compose.ai.yml
-          fi
-          export COMPOSE_FILE
-
           {
             printf '\n# Metadonnees de deploiement ecrites par GitHub Actions\n'
             printf 'LXP_IMAGE=%s\n' "$LXP_IMAGE"
@@ -188,105 +183,180 @@ jobs:
             printf 'LXP_DEPLOYMENT_NAME=%s\n' "$LXP_DEPLOYMENT_NAME"
             printf 'DEV_APP_HOST=%s\n' "$DEV_APP_HOST"
             printf 'DEPLOY_PATH=%s\n' "$DEPLOY_PATH"
-            # Inscrit dans le .env deploye pour qu'un `docker compose` lance a
-            # la main sur le VPS charge le meme jeu de fichiers que le workflow.
-            printf 'COMPOSE_FILE=%s\n' "$COMPOSE_FILE"
           } >> .env
           chmod 600 .env
 
-          # Le compose est deploye a la racine du repertoire cible pour que
-          # `docker compose ps|exec|logs` fonctionne sans option sur le VPS.
-          # L'overlay est copie dans les deux cas : sans reference dans
-          # COMPOSE_FILE, un fichier present mais inutilise reste sans effet.
-          cp deployment/caddy/compose.yml compose.yml
-          cp deployment/caddy/compose.ai.yml compose.ai.yml
+      - name: Configure the SSH access to the VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT || 22 }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+        run: |
+          set -eu
 
-          docker compose config --quiet
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-      - name: Copy deployment files to the VPS
-        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          source: ".env,compose.yml,compose.ai.yml,api/src/scripts/andria_notify_triggers.sql,api/uploads"
-          target: "/home/martin/lxp-dev"
+          printf '%s\n' "$VPS_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          {
+            printf 'Host deploy-target\n'
+            printf '  HostName %s\n' "$VPS_HOST"
+            printf '  User %s\n' "$VPS_USERNAME"
+            printf '  Port %s\n' "$VPS_SSH_PORT"
+            printf '  IdentityFile ~/.ssh/deploy_key\n'
+            printf '  IdentitiesOnly yes\n'
+            printf '  StrictHostKeyChecking accept-new\n'
+          } > ~/.ssh/config
+          chmod 600 ~/.ssh/config
 
       - name: Pull, migrate, and start LXP
-        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         env:
           REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          envs: REGISTRY_USER,REGISTRY_TOKEN
-          command_timeout: 15m
-          script: |
-            set -eu
-            cd /home/martin/lxp-dev
+        run: |
+          set -eu
 
-            chmod 600 .env
-            rm -rf .deploy.env deployment
-            mkdir -p data uploads logs
-            cp -R api/uploads/. uploads/
+          # Le VPS n'heberge que les donnees persistantes : ni `.env`, ni
+          # fichier compose, ni script SQL n'y sont deposes. Le demon Docker
+          # distant est pilote depuis le runner, dont le disque disparait avec
+          # le job, et les fichiers sont pousses dans les conteneurs par
+          # l'entree standard.
+          export DOCKER_HOST="ssh://deploy-target"
 
-            # Exporte une fois pour toutes : les `docker compose` qui suivent
-            # chargent le socle seul en demonstration, socle + overlay ailleurs.
-            if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
-              export COMPOSE_FILE=compose.yml
-              AI_ENABLED=false
-            else
-              export COMPOSE_FILE=compose.yml:compose.ai.yml
-              AI_ENABLED=true
-            fi
-            echo "COMPOSE_FILE=$COMPOSE_FILE"
+          BASE_COMPOSE_FILE=deployment/caddy/compose.yml
+          AI_COMPOSE_FILE=deployment/caddy/compose.ai.yml
 
-            docker network inspect caddy >/dev/null
+          if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
+            DEMO_ENABLED=true
+            COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
+            LOG_SERVICES="app"
+            AI_ENABLED=false
+            echo "Mode demonstration : la couche IA n'est pas deployee."
+          else
+            DEMO_ENABLED=false
+            COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
+            LOG_SERVICES="app ai"
+            AI_ENABLED=true
+          fi
 
-            docker compose config --quiet
-            printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
-            docker compose pull
+          # Decoupage en mots volontaire : la variable porte plusieurs arguments.
+          compose() {
+            docker compose --env-file .env $COMPOSE_FILES "$@"
+          }
 
-            if [ "$AI_ENABLED" = true ]; then
-              docker compose run --rm --no-deps ai python -c \
-                'import app.db_provision; print("Module app.db_provision disponible")'
-            fi
+          # `:?` plutot que `$DEPLOY_PATH` nu : un chemin vide ferait retomber
+          # le `cd` distant sur le repertoire personnel, et le `rm -rf` qui suit
+          # s'y appliquerait.
+          : "${DEPLOY_PATH:?DEPLOY_PATH doit etre defini}"
 
-            docker compose up -d db-pg db-mongo
+          echo "Preparation des repertoires persistants..."
+          ssh deploy-target "mkdir -p '$DEPLOY_PATH/data' '$DEPLOY_PATH/uploads' '$DEPLOY_PATH/logs'"
 
-            until docker compose exec -T db-pg sh -c \
+          # Retire les fichiers deposes par les versions precedentes de ce
+          # workflow, qui laissaient le `.env` et les compose sur la machine.
+          ssh deploy-target "cd '$DEPLOY_PATH' && rm -f .env .deploy.env compose.yml compose.ai.yml && rm -rf deployment api"
+
+          rsync -avz api/uploads/ "deploy-target:$DEPLOY_PATH/uploads/"
+
+          echo "Verification du reseau Caddy partage..."
+          docker network inspect caddy >/dev/null
+          compose config --quiet
+
+          printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+          compose pull
+
+          if [ "$AI_ENABLED" = true ]; then
+            compose run --rm --no-deps ai python -c \
+              'import app.db_provision; print("Module app.db_provision disponible")'
+          fi
+
+          compose up -d db-pg db-mongo
+
+          until compose exec -T db-pg sh -c \
+            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+          do
+            sleep 2
+          done
+
+          if [ "$AI_ENABLED" = true ]; then
+            compose up -d db-ai
+
+            until compose exec -T db-ai sh -c \
               'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
             do
               sleep 2
             done
+          fi
 
-            if [ "$AI_ENABLED" = true ]; then
-              docker compose up -d db-ai
+          if [ "$DEMO_ENABLED" = true ]; then
+            # Le jeu de demonstration est un dump de donnees seules : il ne se
+            # rejoue que sur un schema vide, et la demonstration doit revenir a
+            # l'etat versionne a chaque deploiement.
+            echo "Remise a zero de la base de demonstration..."
+            compose exec -T db-pg sh -c \
+              'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
+          fi
 
-              until docker compose exec -T db-ai sh -c \
-                'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-              do
-                sleep 2
-              done
-            fi
+          compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
 
-            docker compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
+          if [ "$DEMO_ENABLED" = true ]; then
+            echo "Restauration du jeu de demonstration..."
+            compose exec -T db-pg sh -c \
+              'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+              < api/dumps/demo/dump-pgsql.sql
 
-            docker compose exec -T db-pg sh -c \
-              'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-              < api/src/scripts/andria_notify_triggers.sql
+            compose cp api/dumps/demo/dump-mongo db-mongo:/tmp/dump-mongo
+            # `--nsFrom/--nsTo` : le dump est pris sur la base `lxp`, que
+            # l'instance peut avoir nommee autrement.
+            compose exec -T db-mongo sh -c \
+              'mongorestore --quiet --drop \
+                  --username "$MONGO_INITDB_ROOT_USERNAME" \
+                  --password "$MONGO_INITDB_ROOT_PASSWORD" \
+                  --authenticationDatabase admin \
+                  --nsInclude "lxp.*" --nsFrom "lxp.*" \
+                  --nsTo "$MONGO_INITDB_DATABASE.*" \
+                  /tmp/dump-mongo'
+            compose exec -T db-mongo rm -rf /tmp/dump-mongo
 
-            if [ "$AI_ENABLED" = true ]; then
-              docker compose run --rm ai python -m app.db_provision
-            fi
+            rsync -avz --delete api/dumps/demo/activities/ \
+              "deploy-target:$DEPLOY_PATH/uploads/activities/"
+          fi
 
-            # `ai` est tire par le `depends_on` de `app` quand l'overlay est
-            # charge ; `--remove-orphans` retire les conteneurs IA d'une stack
-            # qui bascule en demonstration.
-            docker compose up -d --remove-orphans --wait --wait-timeout 240 app
-            docker compose exec -T app npm run generate-activation-key
-            docker compose ps
+          # Poses apres la restauration : rejouer un dump n'est pas un changement
+          # de contenu a signaler, et le trigger tournerait une fois par ligne
+          # inseree. `pg_dump` vide en outre le search_path de sa session, ce que
+          # la fonction encaisse depuis qu'elle porte sa propre clause SET.
+          compose exec -T db-pg sh -c \
+            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+            < api/src/scripts/andria_notify_triggers.sql
+
+          if [ "$DEMO_ENABLED" = true ]; then
+            # Les deux comptes empruntes par les visiteurs, sans lesquels /demo
+            # repond « La demonstration n'est pas configuree sur cette instance ».
+            compose run --rm --no-deps app npm run demo:seed
+          fi
+
+          if [ "$AI_ENABLED" = true ]; then
+            compose run --rm ai python -m app.db_provision
+          fi
+
+          # `ai` est tire par le `depends_on` de `app` quand l'overlay est
+          # charge ; `--remove-orphans` retire les conteneurs IA d'une stack qui
+          # bascule en demonstration.
+          compose up -d --remove-orphans --wait --wait-timeout 240 app
+
+          if [ "$DEMO_ENABLED" = false ]; then
+            compose exec -T app npm run generate-activation-key
+          fi
+
+          compose ps
+          compose logs --no-color --tail=100 $LOG_SERVICES
+
+      - name: Remove the local credentials
+        if: always()
+        run: |
+          rm -f .env ~/.ssh/deploy_key ~/.ssh/config
+          docker logout >/dev/null 2>&1 || true
