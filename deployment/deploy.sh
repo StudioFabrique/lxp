@@ -166,7 +166,13 @@ if [ -n "${DEPLOY_SSH_HOST:-}" ]; then
 
     if [ -n "${DEPLOY_SSH_KEY_FILE:-}" ]; then
         # Clé déjà posée sur le disque par l'agent, par exemple le
-        # `sshUserPrivateKey` de Jenkins.
+        # `sshUserPrivateKey` de Jenkins. Ce chemin est propre à une exécution :
+        # conservé d'un build à l'autre, il ne désigne plus rien et `ssh`
+        # échoue sur un « Permission denied (publickey) » qui ne dit pas
+        # pourquoi.
+        [ -r "$DEPLOY_SSH_KEY_FILE" ] || die "DEPLOY_SSH_KEY_FILE désigne un fichier introuvable ou illisible : $DEPLOY_SSH_KEY_FILE
+Cette variable ne sert qu'aux agents qui déposent eux-mêmes la clé, et son chemin ne survit pas à l'exécution.
+Si la clé vient d'Infisical, retirez DEPLOY_SSH_KEY_FILE du coffre et ne gardez que DEPLOY_SSH_PRIVATE_KEY."
         deploy_key_file="$DEPLOY_SSH_KEY_FILE"
     else
         require "DEPLOY_SSH_PRIVATE_KEY"
