@@ -8,7 +8,6 @@ import {
   formatProbability,
   formatRiskLevel,
   isUncertain,
-  missingDataSentence,
   riskLevel,
   severityBadgeClass,
   sortedProbabilities,
@@ -82,7 +81,9 @@ describe("riskLevel", () => {
 
 describe("isUncertain", () => {
   it("signale une distribution sans issue dominante", () => {
-    expect(isUncertain({ dropout: 0.1, fail: 0.42, graduate: 0.48 })).toBe(true);
+    expect(isUncertain({ dropout: 0.1, fail: 0.42, graduate: 0.48 })).toBe(
+      true,
+    );
   });
 
   it("ne signale rien quand une issue l'emporte", () => {
@@ -160,27 +161,6 @@ describe("formatModelIndicatorValue", () => {
   it("distingue une variable absente d'une valeur nulle", () => {
     expect(formatModelIndicatorValue("quiz_interaction_count", null)).toBe("—");
     expect(formatModelIndicatorValue("quiz_interaction_count", 0)).toBe("0");
-  });
-});
-
-describe("missingDataSentence", () => {
-  it("ne dit rien quand l'analyse est complète", () => {
-    expect(missingDataSentence(prediction())).toBeNull();
-  });
-
-  it("nomme les données absentes plutôt que d'en donner le compte", () => {
-    expect(
-      missingDataSentence(
-        prediction({
-          missing: {
-            time_on_content: "Aucune consultation mesurée.",
-            mood_proxy: "Aucun retour déposé.",
-          },
-        }),
-      ),
-    ).toBe(
-      "2 données manquaient : temps passé sur les contenus, humeur déclarée.",
-    );
   });
 });
 

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
-import { localeDate } from "../../../../utils/helpers/locale-date";
 import {
   formatAlertRuleDescription,
   formatAlertRuleName,
@@ -12,7 +11,6 @@ import {
   formatRiskLevel,
   isAlertDriven,
   isUncertain,
-  missingDataSentence,
   outcomeSentence,
   riskLevel,
   severityBadgeClass,
@@ -39,7 +37,6 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
 
   const level = riskLevel(prediction);
   const fired = prediction.alert.fired;
-  const missing = missingDataSentence(prediction);
 
   return (
     <section className="flex flex-col gap-y-4">
@@ -114,12 +111,7 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
         </BoxWrapper>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-base-content/50">
-          Analyse fondée sur l'activité du {localeDate(prediction.from)} au{" "}
-          {localeDate(prediction.to)}.{missing ? ` ${missing}` : ""}
-        </p>
-
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           className="btn btn-ghost btn-sm normal-case"
