@@ -6,11 +6,11 @@ Cette page décrit seulement les fichiers à modifier avec le code.
 
 ## Points d'entrée
 
-| Job | Script Path | Commande finale |
-| --- | --- | --- |
-| image LXP | `build.Jenkinsfile` | `deployment/with-infisical.sh deployment/build.sh` |
+| Job                | Script Path                     | Commande finale                                     |
+| ------------------ | ------------------------------- | --------------------------------------------------- |
+| image LXP          | `build.Jenkinsfile`             | `deployment/with-infisical.sh deployment/build.sh`  |
 | déploiement direct | `deployment/direct/Jenkinsfile` | `deployment/with-infisical.sh deployment/deploy.sh` |
-| déploiement Caddy | `deployment/caddy/Jenkinsfile` | `deployment/with-infisical.sh deployment/deploy.sh` |
+| déploiement Caddy  | `deployment/caddy/Jenkinsfile`  | `deployment/with-infisical.sh deployment/deploy.sh` |
 
 Les trois jobs utilisent le credential Jenkins `INFISICAL_LXP`, qui contient le
 Client ID et le Client Secret Universal Auth de la Machine Identity. Le build
@@ -18,7 +18,7 @@ lit `/ci`. Les déploiements lisent `/ci` et `/runtime` car l'agent Jenkins
 interpole Compose avant de piloter le démon Docker par SSH.
 
 Les paramètres utilisent les trois environnements inclus dans le plan Cloud
-gratuit : `dev`, `staging` et `prod`. Les cibles supplémentaires sont des
+gratuit : `dev` et `prod`. Les cibles supplémentaires sont des
 préfixes de chemin, pas des environnements : la démonstration vit dans `prod`
 avec `INFISICAL_PATH_PREFIX=/demo`, une instance cliente avec
 `/clients/<slug>`. Le wrapper lit alors `<préfixe>/ci` et `<préfixe>/runtime`.

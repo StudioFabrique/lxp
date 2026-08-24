@@ -73,22 +73,22 @@ vérité.
 
 ### Contrat d'entrée
 
-| Variable | Origine | Rôle |
-| --- | --- | --- |
-| `DEPLOY_MODE` | pipeline, `caddy` (défaut) ou `direct` | choisit `deployment/$DEPLOY_MODE/compose*.yml` |
-| `DEPLOY_PATH` | pipeline | répertoire des données persistantes sur le serveur cible |
-| `LXP_DEPLOYMENT_NAME` | pipeline | nom de la stack, des conteneurs, des réseaux et des volumes |
-| `LXP_IMAGE`, `LXP_IMAGE_TAG` | pipeline | image applicative à déployer |
-| `LXP_AI_IMAGE`, `LXP_AI_IMAGE_TAG` | pipeline | image du service IA, hors mode démonstration |
-| `APP_HOST` | pipeline | domaine du proxy partagé, exigé en mode `caddy` |
-| `DEMO_MODE` | configuration d'exécution | sur `true`, écarte la couche IA et rejoue le jeu de démonstration |
-| `REGISTRY_USER`, `REGISTRY_TOKEN` | secrets de transport | `docker login`, sautés si l'un des deux est vide |
-| `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PORT` | secrets de transport | serveur cible ; sans `DEPLOY_SSH_HOST`, le script vise le démon Docker local |
-| `DEPLOY_SSH_PRIVATE_KEY` **ou** `DEPLOY_SSH_KEY_FILE` | secrets de transport | clé de déploiement, sous forme de matière ou de fichier déjà posé |
-| `COMPOSE_WAIT_TIMEOUT` | pipeline, défaut `240` | attente des healthchecks au démarrage |
-| `DEPLOY_PRUNE` | pipeline, défaut `false` | `docker image prune -f` en fin de déploiement |
-| `CADDY_NETWORK` | pipeline, défaut `caddy` | réseau externe contrôlé avant de toucher à la stack |
-| toutes les autres | configuration d'exécution | interpolées par Compose depuis l'environnement |
+| Variable                                                | Origine                                | Rôle                                                                         |
+| ------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------- |
+| `DEPLOY_MODE`                                           | pipeline, `caddy` (défaut) ou `direct` | choisit `deployment/$DEPLOY_MODE/compose*.yml`                               |
+| `DEPLOY_PATH`                                           | pipeline                               | répertoire des données persistantes sur le serveur cible                     |
+| `LXP_DEPLOYMENT_NAME`                                   | pipeline                               | nom de la stack, des conteneurs, des réseaux et des volumes                  |
+| `LXP_IMAGE`, `LXP_IMAGE_TAG`                            | pipeline                               | image applicative à déployer                                                 |
+| `LXP_AI_IMAGE`, `LXP_AI_IMAGE_TAG`                      | pipeline                               | image du service IA, hors mode démonstration                                 |
+| `APP_HOST`                                              | pipeline                               | domaine du proxy partagé, exigé en mode `caddy`                              |
+| `DEMO_MODE`                                             | configuration d'exécution              | sur `true`, écarte la couche IA et rejoue le jeu de démonstration            |
+| `REGISTRY_USER`, `REGISTRY_TOKEN`                       | secrets de transport                   | `docker login`, sautés si l'un des deux est vide                             |
+| `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PORT` | secrets de transport                   | serveur cible ; sans `DEPLOY_SSH_HOST`, le script vise le démon Docker local |
+| `DEPLOY_SSH_PRIVATE_KEY` **ou** `DEPLOY_SSH_KEY_FILE`   | secrets de transport                   | clé de déploiement, sous forme de matière ou de fichier déjà posé            |
+| `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
+| `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
+| `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
+| toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
 
 Le script valide la présence des variables requises avant tout appel à
 `docker`, et adapte la liste au mode : l'instance de démonstration n'exige pas
@@ -114,7 +114,7 @@ Le fichier `env.example` liste chaque clé, son dossier et son propriétaire. Le
 variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 `deploy.sh` les restaure après l'injection Infisical.
 
-Le plan Cloud gratuit fournit les environnements `dev`, `staging` et `prod`.
+Le plan Cloud gratuit fournit les environnements `dev` et `prod`.
 La cible de démonstration utilise `dev` avec `INFISICAL_PATH_PREFIX=/demo`, soit
 les dossiers `/demo/ci` et `/demo/runtime`, sans créer un quatrième
 environnement Infisical.
