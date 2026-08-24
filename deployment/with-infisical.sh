@@ -28,7 +28,10 @@ require \
     INFISICAL_PROJECT_ID \
     INFISICAL_ENVIRONMENT
 
-infisical_domain="${INFISICAL_DOMAIN:-https://app.infisical.com}"
+# L'organisation est hébergée dans la région EU. La CLI vise par défaut
+# l'instance US, où les identités n'existent pas : le login y répond 401
+# « Invalid credentials » avec des identifiants pourtant valides.
+infisical_domain="${INFISICAL_DOMAIN:-https://eu.infisical.com}"
 infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
 
 case "$infisical_path_prefix" in

@@ -7,8 +7,9 @@ pipeline {
 
     parameters {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Laisser tel quel : le credential du dossier Jenkins est résolu en premier. À changer seulement pour un job hors dossier ou deux instances dans le même dossier.')
-        string(name: 'INFISICAL_PROJECT_ID', defaultValue: '', trim: true, description: 'Project ID du projet LXP dans Infisical')
-        string(name: 'INFISICAL_ENVIRONMENT', defaultValue: 'prod', trim: true, description: 'Slug Infisical : dev, staging ou prod')
+        choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
+        string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
+        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev', 'staging'], description: 'Environnement Infisical. Les instances déployées par Jenkins vivent dans prod ; dev suit la branche beta.')
         string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Vide pour la cible principale de l\'environnement ; /demo pour la démonstration ; /clients/<slug> pour une instance cliente')
         string(name: 'DEPLOY_PATH', defaultValue: '/home/martin/lxp', trim: true, description: 'Répertoire persistant sur le serveur cible')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
@@ -23,6 +24,7 @@ pipeline {
     // variables : un `sh` qui lirait `$DEPLOY_PATH` échouerait sur `set -u`.
     // `params` applique les valeurs par défaut dès le premier passage.
     environment {
+        INFISICAL_DOMAIN      = "${params.INFISICAL_DOMAIN}"
         INFISICAL_PROJECT_ID  = "${params.INFISICAL_PROJECT_ID}"
         INFISICAL_ENVIRONMENT = "${params.INFISICAL_ENVIRONMENT}"
         INFISICAL_PATH_PREFIX = "${params.INFISICAL_PATH_PREFIX}"
