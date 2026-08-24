@@ -16,6 +16,29 @@ pipeline {
         string(name: 'LXP_AI_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag de l’image ANDRIA-IA')
     }
 
+    // Les paramètres sont lus ici par `params`, jamais depuis l'environnement du
+    // shell. Au tout premier build d'un job, Jenkins n'a pas encore enregistré
+    // les paramètres déclarés dans ce fichier et ne les expose donc pas comme
+    // variables : un `sh` qui lirait `$DEPLOY_PATH` échouerait sur `set -u`.
+    // `params` applique les valeurs par défaut dès le premier passage.
+    environment {
+        INFISICAL_PROJECT_ID  = "${params.INFISICAL_PROJECT_ID}"
+        INFISICAL_ENVIRONMENT = "${params.INFISICAL_ENVIRONMENT}"
+        INFISICAL_PATH_PREFIX = "${params.INFISICAL_PATH_PREFIX}"
+
+        PIPELINE_DEPLOY_MODE         = 'direct'
+        PIPELINE_DEPLOY_PATH         = "${params.DEPLOY_PATH}"
+        PIPELINE_LXP_DEPLOYMENT_NAME = "${params.LXP_DEPLOYMENT_NAME}"
+
+        PIPELINE_LXP_IMAGE        = 'studiostep/lxp'
+        PIPELINE_LXP_IMAGE_TAG    = "${params.LXP_IMAGE_TAG}"
+        PIPELINE_LXP_AI_IMAGE     = 'studiostep/lxp-ai'
+        PIPELINE_LXP_AI_IMAGE_TAG = "${params.LXP_AI_IMAGE_TAG}"
+
+        PIPELINE_COMPOSE_WAIT_TIMEOUT = '240'
+        PIPELINE_DEPLOY_PRUNE         = 'true'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -32,23 +55,7 @@ pipeline {
                         passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
                     )
                 ]) {
-                    sh '''
-                        set -eu
-
-                        export PIPELINE_DEPLOY_MODE=direct
-                        export PIPELINE_DEPLOY_PATH="$DEPLOY_PATH"
-                        export PIPELINE_LXP_DEPLOYMENT_NAME="$LXP_DEPLOYMENT_NAME"
-
-                        export PIPELINE_LXP_IMAGE=studiostep/lxp
-                        export PIPELINE_LXP_IMAGE_TAG="$LXP_IMAGE_TAG"
-                        export PIPELINE_LXP_AI_IMAGE=studiostep/lxp-ai
-                        export PIPELINE_LXP_AI_IMAGE_TAG="$LXP_AI_IMAGE_TAG"
-
-                        export PIPELINE_COMPOSE_WAIT_TIMEOUT=240
-                        export PIPELINE_DEPLOY_PRUNE=true
-
-                        ./deployment/with-infisical.sh ./deployment/deploy.sh
-                    '''
+                    sh './deployment/with-infisical.sh ./deployment/deploy.sh'
                 }
             }
         }
