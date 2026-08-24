@@ -1,4 +1,3 @@
-import { isAiDisabled } from "../../../config/ai/ai";
 import { ChatbotProvider } from "../../../store/ChatbotProvider";
 import Chatbot from "../../../features/chatbot/components/chatbot";
 import RouteGuard from "../../guards/RouteGuard";
@@ -30,7 +29,7 @@ const StudentLayout = () => {
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {!isAiDisabled && !aiDisabled && <Chatbot />}
+        {!aiDisabled && <Chatbot />}
         {demoMode && <DemoTour layout="student" />}
       </OnboardingTour>
     </ChatbotProvider>

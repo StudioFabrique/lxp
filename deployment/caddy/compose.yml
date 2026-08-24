@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     init: true
     expose:
-      - "${PORT:?Set PORT in APP_ENV}"
+      - "${PORT:?Set PORT}"
     depends_on:
       db-pg:
         condition: service_healthy
@@ -24,7 +24,7 @@ services:
       - caddy
       - backend
     labels:
-      caddy: "http://${DEV_APP_HOST:?Set DEV_APP_HOST}"
+      caddy: "http://${APP_HOST:?Set APP_HOST}"
       caddy.import: "dev_access"
       caddy.reverse_proxy: "${LXP_DEPLOYMENT_NAME:-lxp}-app:${PORT}"
       caddy.reverse_proxy.header_up_0: "X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}"
@@ -33,18 +33,19 @@ services:
 
       homepage.group: "Applications"
       homepage.name: "LXP"
-      homepage.href: "https://${DEV_APP_HOST}"
+      homepage.href: "https://${APP_HOST}"
       homepage.description: "Plateforme de formation LXP"
     environment:
-      DATABASE_URL: ${DATABASE_URL}
-      MONGO_LOCAL_URL: ${MONGO_LOCAL_URL}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      MONGO_LOCAL_URL: ${MONGO_LOCAL_URL:?Set MONGO_LOCAL_URL}
 
-      SECRET: ${SECRET}
-      REGISTER_SECRET: ${REGISTER_SECRET}
+      SECRET: ${SECRET:?Set SECRET}
+      REGISTER_SECRET: ${REGISTER_SECRET:?Set REGISTER_SECRET}
 
       # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
       # l'ouverture d'une session publique. Réservé à l'instance dédiée.
       DEMO_MODE: ${DEMO_MODE:-false}
+      DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
       DEMO_URL: ${DEMO_URL:-}
       DEMO_EXIT_URL: ${DEMO_EXIT_URL:-}
       ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}
@@ -92,9 +93,9 @@ services:
     networks:
       - backend
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
@@ -113,9 +114,9 @@ services:
     networks:
       - backend
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME:?Set MONGO_ADMIN_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD:?Set MONGO_ADMIN_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:?Set MONGO_DATABASE}
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s

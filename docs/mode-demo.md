@@ -33,6 +33,16 @@ Le drapeau est par conséquent servi au moment de l'exécution par
 diffuse via `useDemoMode()`. C'est aussi par ce canal que passe `aiDisabled`,
 pour la même raison.
 
+Un seul appel est fait, au montage du provider, et son résultat vit dans le
+contexte React pour toute la session. Les consommateurs — les deux layouts, les
+hooks de quiz — lisent cette valeur ; aucun d'eux ne refait de requête.
+
+Le front n'a **pas** de variable `VITE_DISABLE_AI_FEATURES`. Elle a existé, et
+elle donnait le même verdict sur toutes les instances : une instance sans couche
+IA affichait quand même le chatbot dès lors que l'image avait été construite
+avec le drapeau à `false`. Ne la réintroduisez pas — `DISABLE_AI_FEATURES` reste
+côté API, et le front en hérite par `aiDisabled`.
+
 ## Variables d'environnement
 
 | Variable | Rôle |
@@ -196,7 +206,8 @@ npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 `init-scripts/init.sh` ne vaut que là : il installe les dépendances, copie les
 `env.example` et parle aux conteneurs par leur nom local (`lxp-prisma`,
 `lxp-mongo`). Sur un serveur, c'est le **pipeline** qui restaure le jeu de
-démonstration, à chaque déploiement, dès que le `.env` porte `DEMO_MODE=true` :
+démonstration, à chaque déploiement, dès que l'environnement porte
+`DEMO_MODE=true` :
 
 1. `DROP SCHEMA public CASCADE` sur la base LXP — le dump est un `pg_dump -a`,
    il ne se rejoue que sur un schéma vide ;
@@ -213,9 +224,11 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `getDemoUser` cherche en base les comptes désignés par `DEMO_ADMIN_EMAIL` et
 `DEMO_STUDENT_EMAIL`.
 
-Pour le reste, c'est le même socle `compose.yml` avec un `.env` portant
-`DEMO_MODE=true`, un `SSH_TARGET` distinct, des bases dédiées et un `SECRET`
-propre. Seule différence d'infrastructure : l'overlay `compose.ai.yml` n'est pas
+Pour le reste, c'est le même socle `compose.yml`. Le déploiement utilise
+l'environnement Infisical `dev` avec `INFISICAL_PATH_PREFIX=/demo`; le dossier
+`/demo/runtime` porte `DEMO_MODE=true`. Les paramètres Jenkins définissent un
+`DEPLOY_PATH` et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des
+secrets propres. L'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
 sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).

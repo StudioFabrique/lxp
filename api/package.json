@@ -12,7 +12,7 @@
     "docker:up": "cd tests && docker compose up -d && cd ..",
     "docker:down": "cd tests && docker compose down && cd ..",
     "test:setup": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- node src/fixtures.ts && dotenv -e .env.test -- node src/fixtures-prisma-test.ts",
-    "test:run": "echo '\ud83d\ude80 Starting Jest...' && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --clearCache && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand",
+    "test:run": "echo '🚀 Starting Jest...' && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --clearCache && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand",
     "test:cleanup": "npm run docker:down",
     "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
     "build": "prisma generate && tsc --project tsconfig.build.json",
@@ -48,7 +48,8 @@
     "sharp": "^0.35.3",
     "socket.io": "^4.5.4",
     "winston": "^3.10.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

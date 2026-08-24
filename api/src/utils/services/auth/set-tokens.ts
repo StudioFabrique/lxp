@@ -1,6 +1,7 @@
 import jwt, { type SignOptions } from "jsonwebtoken";
 import BlackListedToken from "../../interfaces/db/blacklisted-token.ts";
 import type { SessionTokenType } from "./authenticate-session.ts";
+import { env } from "../../../config/env.ts";
 
 export const JWT_PATTERN =
   /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/;
@@ -10,7 +11,7 @@ export function setTokens(
   tokenType: SessionTokenType,
   expiresIn: SignOptions["expiresIn"] = "20m",
 ) {
-  return jwt.sign({ userId, tokenType }, process.env.SECRET!, { expiresIn });
+  return jwt.sign({ userId, tokenType }, env.SECRET, { expiresIn });
 }
 
 export async function isTokenBlacklisted(token: unknown) {

@@ -70,8 +70,8 @@ const OnboardingWelcome = ({ layout }: Props) => {
       className="btn btn-circle btn-ghost btn-xs tooltip tooltip-left absolute right-2 top-2 z-10 text-base-content/50 hover:text-base-content"
       onClick={() => void skip()}
       disabled={isSaving}
-      data-tip="Passer le tutoriel"
-      aria-label="Passer le tutoriel"
+      data-tip="Ne plus me proposer le tutoriel"
+      aria-label="Ne plus me proposer le tutoriel"
     >
       <X size={17} />
     </button>

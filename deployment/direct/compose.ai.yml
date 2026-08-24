@@ -5,49 +5,56 @@
 # Ce fichier n'est pas autonome : il complète des services et référence un
 # réseau déclarés par le socle. Il n'est pas chargé sur l'instance de
 # démonstration, où `DEMO_MODE=true` coupe déjà l'IA côté applicatif.
+#
+# Contrairement au mode `caddy`, le mode `direct` n'a pas de réseau de sortie
+# dédié : son `backend` n'est pas `internal`, `ai` y joint donc déjà Mistral et
+# Hugging Face.
 
 services:
   app:
     depends_on:
       ai:
-        condition: service_started
+        condition: service_healthy
     environment:
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL}
-      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET}
+      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
+      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
 
   ai:
-    image: studiostep/lxp-ai:latest
+    image: "${LXP_AI_IMAGE:-studiostep/lxp-ai}:${LXP_AI_IMAGE_TAG:-latest}"
     pull_policy: always
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-ai
+    restart: unless-stopped
     depends_on:
       db-pg:
         condition: service_healthy
       db-ai:
         condition: service_healthy
+    expose:
+      - "8000"
     networks:
-      - lxp
+      - backend
     volumes:
       - hf_cache:/cache
-      - /home/${SSH_USER}/${SSH_TARGET}/data:/app/data
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/data:/app/data
 
       # Même stockage que celui monté dans le conteneur LXP.
-      - /home/${SSH_USER}/${SSH_TARGET}/uploads/activities:/lxp/api/uploads/activities:ro
+      - ${DEPLOY_PATH}/uploads/activities:/lxp/api/uploads/activities:ro
     environment:
       # Base propre au service IA
-      DATABASE_URL: ${ANDRIA_AI_DB_URL}
+      DATABASE_URL: ${ANDRIA_AI_DB_URL:?Set ANDRIA_AI_DB_URL}
       ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
 
       # Base métier LXP, idéalement avec un utilisateur read-only
-      LXP_DB_URL: ${LXP_DB_URL}
+      LXP_DB_URL: ${LXP_DB_URL:?Set LXP_DB_URL}
 
       LXP_UPLOADS_DIR: /lxp/api/uploads/activities
       LXP_PUBLIC_BASE: ${LXP_PUBLIC_BASE}
 
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY}
       DEV_BYPASS_AUTH: "false"
 
-      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY}
-      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY}
+      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY:?Set MISTRAL_STUDENT_API_KEY}
+      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY:?Set MISTRAL_CONTENT_API_KEY}
       MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
 
       QUIZ_TEMPERATURE: ${QUIZ_TEMPERATURE:-0.5}
@@ -62,6 +69,20 @@ services:
       HF_HOME: /cache/huggingface
       TRANSFORMERS_CACHE: /cache/huggingface
       SENTENCE_TRANSFORMERS_HOME: /cache/sentence_transformers
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: json-file
       options:
@@ -70,26 +91,29 @@ services:
 
   db-ai:
     image: pgvector/pgvector:pg18
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-ai
+    restart: unless-stopped
     volumes:
-      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      # PostgreSQL 18 range ses données dans un sous-répertoire propre à la
+      # version majeure.
       - pg_ai:/var/lib/postgresql
     networks:
-      - lxp
+      - backend
     environment:
-      POSTGRES_USER: ${ANDRIA_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${ANDRIA_POSTGRES_DB}
+      POSTGRES_USER: ${ANDRIA_POSTGRES_USER:?Set ANDRIA_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD:?Set ANDRIA_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${ANDRIA_POSTGRES_DB:?Set ANDRIA_POSTGRES_DB}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${ANDRIA_POSTGRES_USER} -d ${ANDRIA_POSTGRES_DB}",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   pg_ai:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg_ai
   hf_cache:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_hf_cache

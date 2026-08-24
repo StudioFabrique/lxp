@@ -6,6 +6,7 @@ import resolveSourceTarget from "./resolve-source-target.ts";
 import { trackTokens } from "../stats/trackTokens.ts";
 import trackChatbotUsage from "../stats/track-chatbot-usage.ts";
 import { logger } from "../../utils/logs/logger.ts";
+import { env } from "../../config/env.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -38,8 +39,8 @@ export class PromptProcessingError extends Error {
 }
 
 export default async function processPrompt(input: ProcessPromptInput) {
-  const baseUrl = process.env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
-  const secret = process.env.DOCKER_IA_AUTH_SECRET;
+  const baseUrl = env.DOCKER_IA_API_BASE_URL || "http://localhost:8000";
+  const secret = env.DOCKER_IA_AUTH_SECRET;
   if (!secret) {
     throw new PromptProcessingError(500, {
       error:

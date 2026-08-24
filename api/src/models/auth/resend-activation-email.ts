@@ -5,6 +5,7 @@ import {
   ACTIVATION_EMAIL_COOLDOWN_MS,
   getActivationEmailRetryAfterSeconds,
 } from "../../utils/services/auth/activation-email-cooldown.ts";
+import { env } from "../../config/env.ts";
 
 export default async function resendActivationEmail(email: string) {
   const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -74,7 +75,7 @@ export default async function resendActivationEmail(email: string) {
     "7d",
   );
 
-  if (process.env.ENVIRONMENT !== "test") {
+  if (env.ENVIRONMENT !== "test") {
     try {
       await sendPasswordEmail(existingUser.email, token, "activation");
     } catch (error) {

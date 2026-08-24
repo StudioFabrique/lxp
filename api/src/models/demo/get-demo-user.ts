@@ -1,4 +1,5 @@
 import User from "../../utils/interfaces/db/user.ts";
+import { env } from "../../config/env.ts";
 
 export type DemoProfile = "admin" | "student";
 
@@ -15,8 +16,8 @@ export class DemoAccountError extends Error {}
 export default async function getDemoUser(profile: DemoProfile) {
   const email =
     profile === "admin"
-      ? process.env.DEMO_ADMIN_EMAIL
-      : process.env.DEMO_STUDENT_EMAIL;
+      ? env.DEMO_ADMIN_EMAIL
+      : env.DEMO_STUDENT_EMAIL;
 
   if (!email) {
     throw new DemoAccountError(

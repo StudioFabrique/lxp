@@ -113,7 +113,7 @@ const Login = () => {
             }}
             className="btn btn-sm btn-outline w-full"
           >
-            Compte pas encore activé ?
+            Compte non activé ?
           </Link>
         )}
 

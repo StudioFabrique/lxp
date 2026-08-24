@@ -50,7 +50,16 @@ Depuis le dépôt `ia-lxp` :
 cp .env.example .env
 ```
 
-Renseigner `ia-lxp/.env` :
+Renseigner `ia-lxp/.env`. Les valeurs ci-dessous sont des valeurs locales de
+développement, sans intérêt hors du poste. Les clés Mistral, elles, se
+récupèrent dans l'environnement `dev` du projet Infisical, sous `/runtime` :
+
+```bash
+infisical run --env=dev --path=/runtime -- printenv MISTRAL_STUDENT_API_KEY
+```
+
+Ne recopiez pas une clé de production dans un fichier local.
+
 
 ```dotenv
 MISTRAL_STUDENT_API_KEY=<cle-mistral>

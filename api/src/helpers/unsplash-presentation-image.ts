@@ -1,10 +1,11 @@
+import { env } from "../config/env.ts";
 const UNSPLASH_SEARCH_URL = "https://api.unsplash.com/search/photos";
 
 type UnsplashResult = { urls?: { regular?: string } };
 
 /** Downloads a landscape presentation image matching a content title. */
 export async function getUnsplashPresentationImage(title: string) {
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+  const accessKey = env.UNSPLASH_ACCESS_KEY;
   if (!accessKey) return null;
 
   try {

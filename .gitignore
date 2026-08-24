@@ -1,5 +1,3 @@
-api/.env
-api/.env.local
 api/node_modules
 apprenant/node_modules
 admin/node_modules
@@ -7,14 +5,31 @@ front/node_modules
 front.old/nodeModules
 node_modules
 
-.env.local
-.env.demo
+# Aucun fichier d'environnement ne rejoint le dépôt. Les valeurs vivent dans
+# Infisical ; le dépôt ne porte que le contrat, dans les fichiers `env.example`.
 .env
-.env-lxp
-.env-infa
-.env-lfn
-.deploy.env
-deployment.env
+.env.*
+.env-*
+**/.env
+**/.env.*
+**/.env-*
+
+# Couvre aussi les noms hérités : `.deploy.env`, `deployment.env`, `env.demo`.
+*.env
+**/*.env
+env.*
+**/env.*
+
+*.credentials
+.infisical-token
+
+# Deux exceptions, aujourd'hui suivies. Sans ces négations, un `git add -A`
+# les désindexerait.
+#   - api/.env.test        : configuration de la suite de tests, sans valeur réelle
+#   - front/.env.production : configuration publique compilée dans le bundle Vite
+!api/.env.test
+!front/.env.production
+!**/env.example
 **/.DS_Store
 tmp
 /front/tmp/npm-cache/_cacache/content-v2/sha512/00/1d

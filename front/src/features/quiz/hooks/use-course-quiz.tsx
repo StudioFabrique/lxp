@@ -11,10 +11,10 @@ import {
   UserAnswer,
 } from "../interfaces/quiz";
 import { quizApi } from "../api/quiz.api";
-import { isAiDisabled } from "../../../config/ai/ai";
 import { isAiServerError } from "../../../utils/helpers/ai-helpers";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
+import { useDemoMode } from "../../../store/DemoContext";
 
 export default function useCourseQuiz(
   courseId?: number,
@@ -22,6 +22,10 @@ export default function useCourseQuiz(
   aiIndexed = true,
 ) {
   const { aiUnavailable, setAiUnavailable } = useContext(ChatbotContext);
+  // Le serveur décide de la disponibilité de l'IA : le bundle est bâti une
+  // seule fois pour toutes les instances. La valeur vient de l'unique appel
+  // à `/demo/config` fait au démarrage par `DemoProvider`.
+  const { aiDisabled } = useDemoMode();
   const attemptTracking = useQuizAttemptTracking();
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -120,7 +124,7 @@ export default function useCourseQuiz(
     setShowResults(false);
     if (courseId) attemptTracking.start("self_test", { courseId });
 
-    if (isAiDisabled) {
+    if (aiDisabled) {
       setIsStreaming(false);
       toast("Fonctionnalités IA désactivées.");
       return;
@@ -212,7 +216,7 @@ export default function useCourseQuiz(
   const onTriggerRandomQuiz = useCallback(
     async (isAppending = false) => {
       if (!aiIndexed) return;
-      if (isAiDisabled) {
+      if (aiDisabled) {
         toast("Les quiz IA sont temporairement désactivés.");
         return;
       }
@@ -262,7 +266,7 @@ export default function useCourseQuiz(
         setIsStreaming(false);
       }
     },
-    [activityContent, aiUnavailable, aiIndexed, setAiUnavailable],
+    [activityContent, aiDisabled, aiUnavailable, aiIndexed, setAiUnavailable],
   );
 
   const onCloseQuizzes = () => {

@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 import path from "path";
 import express from "express";
 import api from "./routes/v1/v1.router.ts";

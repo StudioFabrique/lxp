@@ -4,6 +4,7 @@ import { prisma } from "../../utils/db.ts";
 import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import { env } from "../../config/env.ts";
 
 type FirstAdminInput = {
   token: string;
@@ -16,7 +17,7 @@ type FirstAdminInput = {
 function verifyFirstAdminToken(token: string) {
   let data: any;
   try {
-    data = jwt.verify(token, process.env.REGISTER_SECRET!);
+    data = jwt.verify(token, env.REGISTER_SECRET);
   } catch {
     throw {
       statusCode: 401,

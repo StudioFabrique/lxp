@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Readable } from "stream";
+import { env } from "../../config/env.ts";
 
 const DEFAULT_AI_API_URL = "http://localhost:8000";
 
@@ -43,8 +44,8 @@ export class AiApiClient {
   private readonly authSecret: string | undefined;
 
   constructor(
-    baseUrl = process.env.DOCKER_IA_API_BASE_URL || DEFAULT_AI_API_URL,
-    authSecret = process.env.DOCKER_IA_AUTH_SECRET,
+    baseUrl = env.DOCKER_IA_API_BASE_URL || DEFAULT_AI_API_URL,
+    authSecret = env.DOCKER_IA_AUTH_SECRET,
   ) {
     this.baseUrl = baseUrl;
     this.authSecret = authSecret;

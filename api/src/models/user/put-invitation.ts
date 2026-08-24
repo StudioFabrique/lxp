@@ -18,6 +18,7 @@ import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
+import { env } from "../../config/env.ts";
 
 export default async function putInvitation(userId: string) {
   // Check if the user exists in the database
@@ -41,7 +42,7 @@ export default async function putInvitation(userId: string) {
   const token = activationToken(userId, role, "7d");
 
   // Send activation email if not in test environment
-  if (process.env.ENVIRONMENT !== "test") {
+  if (env.ENVIRONMENT !== "test") {
     try {
       await sendPasswordEmail(existingUser.email, token, "activation");
     } catch (emailError: any) {

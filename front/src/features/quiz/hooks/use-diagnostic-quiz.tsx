@@ -9,10 +9,10 @@ import {
   QuizAttempt,
   UserAnswer,
 } from "../interfaces/quiz";
-import { isAiDisabled } from "../../../config/ai/ai";
 import { quizApi } from "../api/quiz.api";
 import useQuizAttemptTracking from "./use-quiz-attempt-tracking";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { useDemoMode } from "../../../store/DemoContext";
 
 interface ModuleInfoForDiagnostic {
   id?: number;
@@ -27,6 +27,9 @@ export default function useDiagnosticQuiz(
   onFinishInitialQuiz: () => void,
 ) {
   const ability = useContext(AbilityContext);
+  // Voir `use-course-quiz` : la disponibilité de l'IA est une donnée
+  // d'exécution, servie par le serveur et mise en cache par `DemoProvider`.
+  const { aiDisabled } = useDemoMode();
   const attemptTracking = useQuizAttemptTracking();
   const { setForceHideChatbot, aiUnavailable, setAiUnavailable } =
     useContext(ChatbotContext);
@@ -134,7 +137,7 @@ export default function useDiagnosticQuiz(
   };
 
   const onLoadPreliminaryQuizzes = useCallback(async () => {
-    if (isAiDisabled) {
+    if (aiDisabled) {
       console.log("Fonctionnalités IA désactivées. Bypass du diagnostic.");
       setIsOpen(false);
       onFinishInitialQuiz();
@@ -250,6 +253,7 @@ export default function useDiagnosticQuiz(
     toastWarning,
     moduleInfo.description,
     attemptTracking,
+    aiDisabled,
     aiUnavailable,
     bypassDiagnostic,
   ]);
@@ -353,7 +357,7 @@ export default function useDiagnosticQuiz(
     const userIsAdmin = ability.can("update", "lesson");
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
-      if (isAiDisabled || aiUnavailable) {
+      if (aiDisabled || aiUnavailable) {
         // Si l'IA est désactivée ou indisponible, passe le diagnostic sans
         // même afficher le bouton.
         isFinished.current = true;
@@ -371,6 +375,7 @@ export default function useDiagnosticQuiz(
     isModuleLoaded,
     ability,
     onFinishInitialQuiz,
+    aiDisabled,
     aiUnavailable,
   ]);
 

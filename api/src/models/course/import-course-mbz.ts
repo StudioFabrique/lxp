@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { env } from "../../config/env.ts";
 
 export type ImportedCourseArchive = {
   courseSlug: string;
@@ -8,7 +9,7 @@ export type ImportedCourseArchive = {
 export default async function importCourseMbz(
   file: Express.Multer.File,
 ): Promise<ImportedCourseArchive> {
-  const secret = process.env.DOCKER_IA_AUTH_SECRET;
+  const secret = env.DOCKER_IA_AUTH_SECRET;
   if (!secret) {
     throw new Error(
       "Internal server error : Le secret JWT pour le docker IA n'est pas configuré",
@@ -25,7 +26,7 @@ export default async function importCourseMbz(
     { sub: "student", userRoles: [{ role: "admin" }] },
     secret,
   );
-  const baseUrl = process.env.DOCKER_IA_API_BASE_URL;
+  const baseUrl = env.DOCKER_IA_API_BASE_URL;
   const ingestResponse = await fetch(`${baseUrl}/ingest`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

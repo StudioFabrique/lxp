@@ -3,6 +3,7 @@ import { getTemplate } from "../helpers/get-mail-template.ts";
 import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
 import { logger } from "../utils/logs/logger.ts";
+import { env } from "../config/env.ts";
 
 /**
  * Transporteur SMTP.
@@ -12,13 +13,19 @@ import { logger } from "../utils/logs/logger.ts";
  * intégralement juste après, doublant la latence de chaque message pour une
  * information que `sendMail` remonte de toute façon en cas d'échec.
  */
+// `SMTP_PORT` n'est exigé qu'en production, où `config/env.ts` en contrôle la
+// présence. Hors production, le port de soumission standard évite le `NaN`
+// silencieux que produisait l'ancien `+process.env.SMTP_PORT!` quand la
+// variable manquait.
+const smtpPort = env.SMTP_PORT ?? 587;
+
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP,
-  port: +process.env.SMTP_PORT!,
-  secure: +process.env.SMTP_PORT! === 465,
+  host: env.SMTP,
+  port: smtpPort,
+  secure: smtpPort === 465,
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
+    user: env.EMAIL,
+    pass: env.PASSWORD,
   },
   tls: {
     rejectUnauthorized: false,
@@ -42,8 +49,8 @@ export async function sendPasswordEmail(
 
     // En développement, rediriger vers une adresse email de test
     const destination =
-      process.env.ENVIRONMENT === "development"
-        ? process.env.SMTP_EMAIL
+      env.ENVIRONMENT === "development"
+        ? env.SMTP_EMAIL
         : email;
 
     // Récupération du template HTML correspondant
@@ -51,7 +58,7 @@ export async function sendPasswordEmail(
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: process.env.FROM,
+      from: env.FROM,
       to: destination,
       subject: "Activation du compte",
       html: message,
@@ -81,9 +88,9 @@ export async function sendUpdatedUserEmail(email: string) {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     // Si la variable d'environnement n'est pas définie, log dans la console et un return
-    if (!process.env.SMTP_EMAIL) {
+    if (!env.SMTP_EMAIL) {
       //si en prod, on lance une erreur
-      if (process.env.ENVIRONMENT === "production") {
+      if (env.ENVIRONMENT === "production") {
         throw {
           statusCode: 500,
           message: "La variable d'environnement SMTP_EMAIL n'est pas définie.",
@@ -99,8 +106,8 @@ export async function sendUpdatedUserEmail(email: string) {
 
     // En développement, rediriger vers une adresse email de test
     const destination =
-      process.env.ENVIRONMENT === "development"
-        ? process.env.SMTP_EMAIL
+      env.ENVIRONMENT === "development"
+        ? env.SMTP_EMAIL
         : email;
 
     // Récupération du template pour la mise à jour du compte
@@ -108,7 +115,7 @@ export async function sendUpdatedUserEmail(email: string) {
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: process.env.FROM,
+      from: env.FROM,
       to: destination,
       subject: "Modification du compte",
       html: message,
