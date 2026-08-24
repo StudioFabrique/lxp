@@ -27,9 +27,13 @@ env.*
 # les désindexerait.
 #   - api/.env.test        : configuration de la suite de tests, sans valeur réelle
 #   - front/.env.production : configuration publique compilée dans le bundle Vite
+#   - **/env.ts             : code source, pas des valeurs — `env.*` ci-dessus
+#                             l'emportait et le typecheck de CI échouait sur
+#                             les vingt-deux modules qui l'importent
 !api/.env.test
 !front/.env.production
 !**/env.example
+!**/env.ts
 **/.DS_Store
 tmp
 /front/tmp/npm-cache/_cacache/content-v2/sha512/00/1d
