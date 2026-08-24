@@ -12,7 +12,7 @@ GitHub Actions s'authentifie auprès d'Infisical avec OIDC :
   `APP_HOST` ne contiennent pas de secret.
 
 Le workflow calcule le tag `dev-<sha>`, le nom `lxp-dev` et le chemin
-`/home/martin/lxp-dev`. Les clés correspondantes utilisent le préfixe
+`/home/<user>/lxp-dev`. Les clés correspondantes utilisent le préfixe
 `PIPELINE_` afin qu'une valeur importée dans Infisical ne puisse pas les
 remplacer.
 

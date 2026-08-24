@@ -11,7 +11,7 @@ pipeline {
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
         choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev', 'staging'], description: 'Environnement Infisical. Les instances déployées par Jenkins vivent dans prod ; dev suit la branche beta.')
         string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Vide pour la cible principale de l\'environnement ; /demo pour la démonstration ; /clients/<slug> pour une instance cliente')
-        string(name: 'DEPLOY_PATH', defaultValue: '/home/martin/lxp', trim: true, description: 'Répertoire persistant sur le serveur cible')
+        string(name: 'DEPLOY_PATH', defaultValue: '', trim: true, description: 'Répertoire persistant sur le serveur cible. Laisser vide : déduit en <foyer du compte de déploiement>/<nom de la stack>.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
         string(name: 'APP_HOST', defaultValue: 'lxp.dev.step.eco', trim: true, description: 'Domaine sans protocole, injecté dans les labels du proxy Caddy')
         string(name: 'LXP_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag LXP, latest ou SHA Jenkins pour un retour arrière')

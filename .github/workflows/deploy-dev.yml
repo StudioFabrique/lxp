@@ -37,7 +37,6 @@ env:
   PIPELINE_LXP_AI_IMAGE_TAG: latest
   PIPELINE_LXP_DEPLOYMENT_NAME: lxp-dev
   PIPELINE_APP_HOST: ${{ vars.APP_HOST || 'lxp.dev.step.eco' }}
-  PIPELINE_DEPLOY_PATH: /home/martin/lxp-dev
 
 jobs:
   verify:

@@ -124,7 +124,7 @@ PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
 POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
 MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
 EMAIL PASSWORD SMTP SMTP_EMAIL SMTP_PORT FROM UNSPLASH_ACCESS_KEY
-DEPLOY_PATH LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
+LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
 "
 
 # Le mode Caddy publie l'application par les labels du proxy partagé ; le mode
@@ -244,6 +244,21 @@ target_path() {
 # --------------------------------------------------------------------------
 # Préparation du serveur cible
 # --------------------------------------------------------------------------
+
+# Chemin des données sur le serveur cible. À défaut, le foyer du compte de
+# déploiement, complété du nom de la stack — soit `~/lxp-dev` pour un compte
+# `martin`. Le foyer est demandé au serveur plutôt que supposé sous `/home` :
+# le dépôt ne porte alors ni nom de compte, ni hypothèse sur son emplacement.
+#
+# Le tilde lui-même ne conviendrait pas : ce chemin sert de source aux montages
+# Docker, et le démon exige un chemin absolu qu'il n'expanse pas.
+if [ -z "${DEPLOY_PATH:-}" ]; then
+    deploy_home="$(target_sh 'printf %s "$HOME"')"
+    [ -n "$deploy_home" ] || die "Impossible de déterminer le répertoire du compte de déploiement sur le serveur cible."
+    DEPLOY_PATH="$deploy_home/$LXP_DEPLOYMENT_NAME"
+    export DEPLOY_PATH
+    echo "Chemin de déploiement déduit : $DEPLOY_PATH"
+fi
 
 # `:?` plutôt que `$DEPLOY_PATH` nu : un chemin vide ferait retomber le `cd`
 # distant sur le répertoire personnel, et le `rm -rf` qui suit s'y appliquerait.
