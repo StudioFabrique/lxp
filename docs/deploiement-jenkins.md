@@ -18,9 +18,10 @@ lit `/ci`. Les déploiements lisent `/ci` et `/runtime` car l'agent Jenkins
 interpole Compose avant de piloter le démon Docker par SSH.
 
 Les paramètres utilisent les trois environnements inclus dans le plan Cloud
-gratuit : `dev`, `staging` et `prod`. La démonstration reste dans `dev` avec
-`INFISICAL_PATH_PREFIX=/demo`; le wrapper lit alors `/demo/ci` et
-`/demo/runtime`.
+gratuit : `dev`, `staging` et `prod`. Les cibles supplémentaires sont des
+préfixes de chemin, pas des environnements : la démonstration vit dans `prod`
+avec `INFISICAL_PATH_PREFIX=/demo`, une instance cliente avec
+`/clients/<slug>`. Le wrapper lit alors `<préfixe>/ci` et `<préfixe>/runtime`.
 
 `deployment/env.example` constitue le contrat des variables. Ajoutez-y toute
 nouvelle clé dans le même changement que le code consommateur et le fichier
