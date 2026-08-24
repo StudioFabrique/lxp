@@ -29,7 +29,10 @@ export function DemoProvider({ children }: PropsWithChildren) {
     let cancelled = false;
 
     axios
-      .get<DemoConfig>(`${BASE_API_URL}/demo/config`)
+      // Des pages attendent cette réponse pour se monter : un serveur muet
+      // laisserait un écran de chargement indéfini, là où l'échec retombe sur
+      // le comportement normal.
+      .get<DemoConfig>(`${BASE_API_URL}/demo/config`, { timeout: 5000 })
       .then((response) => {
         if (!cancelled) setConfig({ ...DEFAULT_DEMO_CONFIG, ...response.data });
       })

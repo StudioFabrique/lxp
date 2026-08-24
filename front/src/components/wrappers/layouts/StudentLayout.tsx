@@ -12,7 +12,7 @@ import DemoBanner from "../../../features/demo/components/DemoBanner";
 import { useDemoMode } from "../../../store/DemoContext";
 
 const StudentLayout = () => {
-  const { demoMode, aiDisabled } = useDemoMode();
+  const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
 
   return (
     <ChatbotProvider>
@@ -29,7 +29,7 @@ const StudentLayout = () => {
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {!aiDisabled && <Chatbot />}
+        {isConfigLoaded && !aiDisabled && <Chatbot />}
         {demoMode && <DemoTour layout="student" />}
       </OnboardingTour>
     </ChatbotProvider>
