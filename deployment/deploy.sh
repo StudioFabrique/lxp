@@ -61,16 +61,20 @@ deploy_runtime_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-deploy.XXXXXX")"
 cleanup() {
     status=$?
     trap - 0 1 2 15
+    [ -z "${SSH_AGENT_PID:-}" ] || kill "$SSH_AGENT_PID" 2>/dev/null || true
     rm -rf "$deploy_runtime_dir"
     exit "$status"
 }
 trap cleanup 0 1 2 15
 
-HOME="$deploy_runtime_dir/home"
+# `ssh` résout `~` avec l'entrée passwd de l'utilisateur, jamais avec `$HOME` :
+# surcharger `HOME` ne l'empêcherait pas de lire la configuration réelle de
+# l'agent. On garde donc le vrai chemin, et on n'isole que Docker.
+real_home="$HOME"
 DOCKER_CONFIG="$deploy_runtime_dir/docker"
-export HOME DOCKER_CONFIG
-mkdir -p "$HOME/.ssh" "$DOCKER_CONFIG"
-chmod 700 "$HOME/.ssh" "$DOCKER_CONFIG"
+export DOCKER_CONFIG
+mkdir -p "$DOCKER_CONFIG"
+chmod 700 "$DOCKER_CONFIG"
 
 # `docker compose` charge automatiquement un `.env` présent dans le répertoire
 # du projet. L'environnement du processus reste prioritaire, mais un fichier
@@ -164,6 +168,9 @@ fi
 if [ -n "${DEPLOY_SSH_HOST:-}" ]; then
     require "DEPLOY_SSH_USER"
 
+    deploy_ssh_port="${DEPLOY_SSH_PORT:-22}"
+    deploy_ssh_target="${DEPLOY_SSH_USER}@${DEPLOY_SSH_HOST}"
+
     if [ -n "${DEPLOY_SSH_KEY_FILE:-}" ]; then
         # Clé déjà posée sur le disque par l'agent, par exemple le
         # `sshUserPrivateKey` de Jenkins. Ce chemin est propre à une exécution :
@@ -181,18 +188,29 @@ Si la clé vient d'Infisical, retirez DEPLOY_SSH_KEY_FILE du coffre et ne gardez
         chmod 600 "$deploy_key_file"
     fi
 
-    {
-        printf 'Host deploy-target\n'
-        printf '  HostName %s\n' "$DEPLOY_SSH_HOST"
-        printf '  User %s\n' "$DEPLOY_SSH_USER"
-        printf '  Port %s\n' "${DEPLOY_SSH_PORT:-22}"
-        printf '  IdentityFile %s\n' "$deploy_key_file"
-        printf '  IdentitiesOnly yes\n'
-        printf '  StrictHostKeyChecking accept-new\n'
-    } > "$HOME/.ssh/config"
-    chmod 600 "$HOME/.ssh/config"
+    # Aucun fichier de configuration : il faudrait l'écrire dans le `~/.ssh` réel
+    # de l'agent, partagé par tous les jobs, et deux déploiements simultanés s'y
+    # écraseraient. La clé passe par un agent propre au processus, et la cible
+    # est nommée en clair dans `DOCKER_HOST`.
+    ssh-add -l > /dev/null 2>&1 || eval "$(ssh-agent -s)" > /dev/null
+    ssh-add "$deploy_key_file" > /dev/null 2>&1 \
+        || die "ssh-add refuse la clé de déploiement.
+Vérifiez DEPLOY_SSH_PRIVATE_KEY : la valeur doit contenir la clé entière, lignes -----BEGIN et -----END comprises."
 
-    DOCKER_HOST="ssh://deploy-target"
+    # `docker` lance son propre `ssh` sans lui transmettre d'option : l'empreinte
+    # du serveur doit être connue avant, dans le known_hosts réel de l'agent.
+    # L'ajout est idempotent, donc sans risque entre deux jobs simultanés.
+    mkdir -p "$real_home/.ssh"
+    chmod 700 "$real_home/.ssh"
+    ssh-keyscan -p "$deploy_ssh_port" -H "$DEPLOY_SSH_HOST" \
+        >> "$real_home/.ssh/known_hosts" 2>/dev/null || true
+    sort -u -o "$real_home/.ssh/known_hosts" "$real_home/.ssh/known_hosts"
+
+    # `rsync` reprend le port par cette variable, sans toucher aux appels.
+    RSYNC_RSH="ssh -p $deploy_ssh_port"
+    export RSYNC_RSH
+
+    DOCKER_HOST="ssh://${deploy_ssh_target}:${deploy_ssh_port}"
     export DOCKER_HOST
     REMOTE=true
 else
@@ -208,7 +226,7 @@ compose() {
 
 target_sh() {
     if [ "$REMOTE" = "true" ]; then
-        ssh deploy-target "$1"
+        ssh -p "$deploy_ssh_port" "$deploy_ssh_target" "$1"
     else
         sh -c "$1"
     fi
@@ -217,7 +235,7 @@ target_sh() {
 # Préfixe un chemin de destination pour `rsync` selon la cible.
 target_path() {
     if [ "$REMOTE" = "true" ]; then
-        printf 'deploy-target:%s' "$1"
+        printf '%s:%s' "$deploy_ssh_target" "$1"
     else
         printf '%s' "$1"
     fi
