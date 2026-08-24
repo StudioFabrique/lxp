@@ -6,10 +6,10 @@ pipeline {
     }
 
     parameters {
-        string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_LXP', trim: true, description: 'Credential Jenkins portant le Client ID et le Client Secret de la Machine Identity de cette instance')
+        string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Laisser tel quel : le credential du dossier Jenkins est résolu en premier. À changer seulement pour un job hors dossier ou deux instances dans le même dossier.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '', trim: true, description: 'Project ID du projet LXP dans Infisical')
         string(name: 'INFISICAL_ENVIRONMENT', defaultValue: 'prod', trim: true, description: 'Slug Infisical : dev, staging ou prod')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Vide pour la cible principale ; /demo pour la démonstration dans dev')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Vide pour la cible principale de l\'environnement ; /demo pour la démonstration ; /clients/<slug> pour une instance cliente')
     }
 
     stages {
