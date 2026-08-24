@@ -44,10 +44,33 @@ const READ_METHODS = new Set(["get", "head", "options"]);
  */
 const DEMO_ALLOWED_WRITES = [/^\/?demo\/session\/?$/, /^\/?user\/group\/?$/];
 
-const isDemoAllowedWrite = (url: string) => {
-  const path = url.split("?")[0].replace(/^https?:\/\/[^/]+/, "");
-  return DEMO_ALLOWED_WRITES.some((pattern) => pattern.test(path));
-};
+/**
+ * Écritures refusées sans notification.
+ *
+ * L'ouverture du suivi de consultation et ses battements partent d'eux-mêmes :
+ * le premier à l'affichage d'une leçon, les suivants toutes les trente
+ * secondes tant qu'elle reste ouverte. Prévenir l'apprenant qu'il vient d'être
+ * bloqué n'a aucun sens, il n'a rien demandé — et la notification
+ * réapparaîtrait à chaque battement. La requête est arrêtée comme les autres,
+ * mais en silence : les appelants absorbent déjà l'échec, le suivi n'étant pas
+ * une fonctionnalité dont dépend la lecture.
+ *
+ * La clôture (`finish`) n'est pas de la partie : elle vient d'un clic sur
+ * « Terminer la leçon », qui mérite sa notification.
+ */
+const DEMO_SILENT_WRITES = [
+  /^\/?content-read\/[^/]+\/\d+\/(begin|heartbeat)\/?$/,
+];
+
+/** Chemin seul : sans hôte ni chaîne de requête, pour comparer aux motifs. */
+const toPath = (url: string) =>
+  url.split("?")[0].replace(/^https?:\/\/[^/]+/, "");
+
+const isDemoAllowedWrite = (path: string) =>
+  DEMO_ALLOWED_WRITES.some((pattern) => pattern.test(path));
+
+const isDemoSilentWrite = (path: string) =>
+  DEMO_SILENT_WRITES.some((pattern) => pattern.test(path));
 
 /**
  * Dernier rempart côté client.
@@ -63,11 +86,15 @@ apiClient.interceptors.request.use((request) => {
 
   const method = (request.method ?? "get").toLowerCase();
   if (READ_METHODS.has(method)) return request;
-  if (isDemoAllowedWrite(String(request.url ?? ""))) return request;
+
+  const path = toPath(String(request.url ?? ""));
+  if (isDemoAllowedWrite(path)) return request;
 
   // Un identifiant fixe : une page qui enchaîne plusieurs requêtes bloquées
   // n'empile pas les notifications.
-  toast("Indisponible en mode démo", { id: "demo-read-only" });
+  if (!isDemoSilentWrite(path)) {
+    toast("Indisponible en mode démo", { id: "demo-read-only" });
+  }
 
   return Promise.reject(
     Object.assign(new Error("Indisponible en mode démo"), {
@@ -112,7 +139,9 @@ apiClient.interceptors.response.use(
     // Un refus dû à la démonstration n'est pas une désynchronisation de droits :
     // relancer un handshake à chaque écriture bloquée n'apprendrait rien.
     if (error.response?.data?.code === DEMO_READ_ONLY_CODE) {
-      toast("Indisponible en mode démo", { id: "demo-read-only" });
+      if (!isDemoSilentWrite(toPath(url))) {
+        toast("Indisponible en mode démo", { id: "demo-read-only" });
+      }
       return Promise.reject(error);
     }
 
