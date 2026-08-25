@@ -46,7 +46,8 @@ un cache de modèles et un accès sortant vers Mistral. Les trois pipelines
 variable et sautent au passage les étapes purement IA
 (vérification de l'image, attente de `db-ai`, `app.db_provision`). Le point
 d'entrée commun retire également de son environnement toutes les variables de
-la couche IA, y compris celles héritées des dossiers Infisical communs.
+la couche IA, même si elles sont présentes dans la configuration Infisical
+sélectionnée.
 
 `compose.ai.yml` n'est pas autonome : il complète des services et référence des
 réseaux déclarés par le socle. Son nom n'est **pas** `compose.override.yml`,
@@ -101,19 +102,23 @@ préfixe de dossiers utilisé.
 ### Injection des secrets
 
 GitHub Actions s'authentifie avec OIDC. L'action Infisical charge `/ci` pour le
-build, puis `/ci` et `/runtime` pour le déploiement. Lorsque la variable GitHub
-d'environnement `INFISICAL_PATH_PREFIX` est définie, des actions supplémentaires
-chargent ensuite `<préfixe>/ci` et `<préfixe>/runtime` afin de remplacer les
-valeurs communes.
+build, puis `/ci` et `/runtime` pour le déploiement. Ce workflow utilise toujours
+l'environnement `dev` et ne consulte aucun dossier préfixé.
 
 Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
 password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
 Client Secret de mot de passe. `with-infisical.sh` échange ces valeurs contre un
-jeton court, charge les dossiers communs et spécifiques, puis lance `deploy.sh`.
-Le job de build applique le même héritage, limité aux dossiers `/ci`, avant
-d'appeler `build.sh`. La fusion de plusieurs dossiers exige Infisical CLI
-`0.43.82` ou plus récente ; le wrapper contrôle cette version avant de charger
-les secrets.
+jeton court, choisit les dossiers selon l'environnement, puis lance
+`deploy.sh`. La sélection est volontairement simple et sans héritage :
+
+- en `dev`, le build charge `/ci` et le déploiement charge `/ci` et `/runtime` ;
+  `INFISICAL_PATH_PREFIX` est ignoré ;
+- en `prod`, `INFISICAL_PATH_PREFIX` est obligatoire. Le build charge seulement
+  `<préfixe>/ci` et le déploiement charge seulement `<préfixe>/ci` et
+  `<préfixe>/runtime`.
+
+`DEMO_MODE` est simplement lu dans l'environnement injecté et décide seul de
+l'activation du mode démonstration.
 
 Le build Jenkins publie deux tags pour la même image : le SHA Git immuable et
 `latest`. Les jobs de déploiement acceptent l'un ou l'autre avec le paramètre
@@ -123,14 +128,11 @@ Le fichier `env.example` liste chaque clé, son dossier et son propriétaire. Le
 variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 `deploy.sh` les restaure après l'injection Infisical.
 
-Le plan Cloud gratuit fournit les environnements `dev` et `prod`. Une cible de
-démonstration peut utiliser l'un ou l'autre : seule la valeur effective de
-`DEMO_MODE` décide du mode. Avec `INFISICAL_PATH_PREFIX=/demo`, elle charge
-les dossiers communs `/ci` et `/runtime` complétés ou surchargés par
-`/demo/ci` et `/demo/runtime`, sans créer un quatrième environnement Infisical.
-La CLI donne priorité au premier `--path` : le wrapper place donc les dossiers
-spécifiques avant les dossiers communs dans la commande, même si le modèle
-logique reste « socle commun, puis surcharge spécifique ».
+Une cible de démonstration peut utiliser `dev` ou `prod` : seule la valeur
+effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
+`INFISICAL_ENVIRONMENT=prod` et `INFISICAL_PATH_PREFIX=/demo` sélectionnent
+exclusivement `/demo/ci` et `/demo/runtime`. Ces deux dossiers doivent contenir
+toute la configuration nécessaire à la cible.
 
 ### Lancer un déploiement à la main
 

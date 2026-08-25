@@ -225,18 +225,19 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `DEMO_STUDENT_EMAIL`.
 
 Pour le reste, c'est le même socle `compose.yml`. L'environnement Infisical
-peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. Avec
-`INFISICAL_PATH_PREFIX=/demo`, le déploiement hérite
-des dossiers communs `/ci` et `/runtime`, tandis que `/demo/ci` et
-`/demo/runtime` surchargent les valeurs propres à cette cible ; ce dernier porte
-notamment `DEMO_MODE=true`. Les paramètres Jenkins définissent un `DEPLOY_PATH`
-et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets
-propres. L'overlay `compose.ai.yml` n'est pas
+peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. En `dev`, le
+déploiement lit uniquement `/ci` et `/runtime`. En `prod`, il exige un préfixe
+et lit uniquement `<préfixe>/ci` et `<préfixe>/runtime` ; la démonstration
+utilise par exemple `/demo/ci` et `/demo/runtime`, ce dernier portant
+`DEMO_MODE=true`. Il n'existe aucun héritage entre les dossiers racine et ceux
+de la cible. Les paramètres Jenkins définissent un `DEPLOY_PATH` et un
+`LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets propres.
+L'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
 sont déployés. Les variables réservées à cette couche sont également retirées
-de l'environnement avant les appels à Docker, même lorsqu'elles proviennent de
-la configuration Infisical commune. Les pipelines s'en chargent seuls à partir
-de `DEMO_MODE` — voir
+de l'environnement avant les appels à Docker, même lorsqu'elles sont présentes
+dans la configuration Infisical sélectionnée. Les pipelines s'en chargent
+seuls à partir de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).
 
 Ces étapes sont identiques dans les trois pipelines : les deux `Jenkinsfile`

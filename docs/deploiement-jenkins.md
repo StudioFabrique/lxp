@@ -17,14 +17,19 @@ Client ID et le Client Secret Universal Auth de la Machine Identity. Le build
 lit `/ci`. Les déploiements lisent `/ci` et `/runtime` car l'agent Jenkins
 interpole Compose avant de piloter le démon Docker par SSH.
 
-Les paramètres utilisent les trois environnements inclus dans le plan Cloud
-gratuit : `dev` et `prod`. Les cibles supplémentaires sont des
-préfixes de chemin, pas des environnements : la démonstration vit dans `prod`
-avec `INFISICAL_PATH_PREFIX=/demo`, une instance cliente avec
-`/clients/<slug>`. Pour chaque catégorie demandée par le job, le wrapper charge
-le dossier commun (`/ci` ou `/runtime`) et applique le dossier correspondant
-`<préfixe>/ci` ou `<préfixe>/runtime` en priorité. Une cible ne doit donc définir
-dans ses dossiers spécifiques que les clés qui diffèrent du socle commun.
+La sélection des dossiers est exclusive et ne réalise aucun héritage :
+
+- en `dev`, le build lit `/ci` et les déploiements lisent `/ci` et `/runtime` ;
+  `INFISICAL_PATH_PREFIX` est ignoré ;
+- en `prod`, `INFISICAL_PATH_PREFIX` est obligatoire. Le build lit uniquement
+  `<préfixe>/ci` et les déploiements lisent uniquement `<préfixe>/ci` et
+  `<préfixe>/runtime`.
+
+La démonstration utilise par exemple `prod` avec
+`INFISICAL_PATH_PREFIX=/demo`, et une instance cliente
+`INFISICAL_PATH_PREFIX=/clients/<slug>`. Chaque cible doit contenir toute sa
+configuration dans ses propres dossiers. Seule la valeur injectée de
+`DEMO_MODE` décide si la couche IA est déployée.
 
 `deployment/env.example` constitue le contrat des variables. Ajoutez-y toute
 nouvelle clé dans le même changement que le code consommateur et le fichier

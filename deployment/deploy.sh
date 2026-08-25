@@ -53,8 +53,8 @@ restore_pipeline_metadata() {
     done
 
     # Ces métadonnées ne sont même pas restaurées sur la démonstration. Les
-    # éventuelles valeurs héritées d'Infisical seront ensuite supprimées avec
-    # le reste de la configuration IA.
+    # éventuelles valeurs injectées par Infisical seront ensuite supprimées
+    # avec le reste de la configuration IA.
     if [ "${DEMO_MODE:-false}" != "true" ]; then
         for name in LXP_AI_IMAGE LXP_AI_IMAGE_TAG; do
             eval "is_set=\${PIPELINE_$name+x}"
@@ -67,6 +67,11 @@ restore_pipeline_metadata() {
 }
 
 restore_pipeline_metadata
+
+case "${DEMO_MODE-}" in
+    true | false) ;;
+    *) die "DEMO_MODE doit être défini explicitement à true ou false." ;;
+esac
 
 # Isole la configuration SSH et le jeton Docker de ce déploiement. Un agent
 # Jenkins persistant conserve ainsi son ~/.ssh/config et son ~/.docker/config.
@@ -108,9 +113,9 @@ esac
 BASE_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.yml"
 AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.ai.yml"
 
-# Toutes les variables réservées à l'overlay IA. Elles peuvent être héritées
-# des dossiers Infisical communs ou injectées par un pipeline, mais ne doivent
-# pas rester dans l'environnement d'un déploiement de démonstration.
+# Toutes les variables réservées à l'overlay IA. Elles peuvent être injectées
+# par Infisical ou par un pipeline, mais ne doivent pas rester dans
+# l'environnement d'un déploiement de démonstration.
 AI_SETTINGS="
 ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
 ANDRIA_AI_DB_URL LXP_DB_URL
