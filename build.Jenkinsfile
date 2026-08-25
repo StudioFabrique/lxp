@@ -9,8 +9,7 @@ pipeline {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Ce job vit hors dossier : il utilise le credential global de ce nom, sauf mention contraire ici.')
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
-        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'dev charge /ci ; prod charge <préfixe>/ci.')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /demo ou /clients/<slug>. Aucun héritage entre dossiers.')
+        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'Charge uniquement /ci dans cet environnement pour obtenir REGISTRY_USER et REGISTRY_TOKEN.')
     }
 
     // Voir `deployment/direct/Jenkinsfile` : les paramètres passent par `params`
@@ -20,8 +19,6 @@ pipeline {
         INFISICAL_DOMAIN      = "${params.INFISICAL_DOMAIN}"
         INFISICAL_PROJECT_ID  = "${params.INFISICAL_PROJECT_ID}"
         INFISICAL_ENVIRONMENT = "${params.INFISICAL_ENVIRONMENT}"
-        INFISICAL_PATH_PREFIX = "${params.INFISICAL_PATH_PREFIX}"
-
         // Ce job ne construit rien qui tourne : il n'a pas besoin de /runtime.
         INFISICAL_SECRET_PATHS = '/ci'
 

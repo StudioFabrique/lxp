@@ -5,7 +5,8 @@ Le workflow `.github/workflows/deploy-dev.yml` contrôle les pull requests vers
 
 GitHub Actions s'authentifie auprès d'Infisical avec OIDC :
 
-- le job `image` lit `/ci` pour accéder au registre ;
+- le job `image` lit `/ci`, qui contient uniquement `REGISTRY_USER` et
+  `REGISTRY_TOKEN` ;
 - le job `deploy` lit `/ci` et `/runtime`, puis appelle
   `deployment/deploy.sh` ;
 - ce workflow cible toujours l'environnement Infisical `dev` et ne lit aucun

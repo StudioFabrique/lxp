@@ -227,8 +227,9 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 Pour le reste, c'est le même socle `compose.yml`. L'environnement Infisical
 peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. En `dev`, le
 déploiement lit uniquement `/ci` et `/runtime`. En `prod`, il exige un préfixe
-et lit uniquement `<préfixe>/ci` et `<préfixe>/runtime` ; la démonstration
-utilise par exemple `/demo/ci` et `/demo/runtime`, ce dernier portant
+et lit `/ci` pour le registre, `<préfixe>/ci` pour l'accès SSH, puis
+`<préfixe>/runtime` pour l'application ; la démonstration utilise par exemple
+`/ci`, `/demo/ci` et `/demo/runtime`, ce dernier portant
 `DEMO_MODE=true`. Il n'existe aucun héritage entre les dossiers racine et ceux
 de la cible. Les paramètres Jenkins définissent un `DEPLOY_PATH` et un
 `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets propres.

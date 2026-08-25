@@ -35,27 +35,38 @@ infisical_domain="${INFISICAL_DOMAIN:-https://eu.infisical.com}"
 infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
 secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime}"
 
-# Aucun héritage entre dossiers : `dev` lit les dossiers racine, `prod` ceux
-# de la cible désignée par INFISICAL_PATH_PREFIX.
+# `/ci` à la racine est global dans chaque environnement et ne contient que les
+# accès au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH
+# de la cible et `<préfixe>/runtime` sa configuration applicative.
+registry_ci_path="/ci"
+target_ci_path=""
+
+case "$secret_paths" in
+    /ci | "/ci /runtime") ;;
+    *) die "INFISICAL_SECRET_PATHS doit valoir /ci ou /ci /runtime." ;;
+esac
+
 case "$INFISICAL_ENVIRONMENT" in
     dev)
-        selected_path_prefix=""
+        runtime_path="/runtime"
         ;;
     prod)
-        [ -n "$infisical_path_prefix" ] \
-            || die "INFISICAL_PATH_PREFIX est obligatoire dans l'environnement prod."
-        case "$infisical_path_prefix" in
-            */) die "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." ;;
-            /*) ;;
-            *) die "INFISICAL_PATH_PREFIX doit commencer par /." ;;
-        esac
-        selected_path_prefix="$infisical_path_prefix"
+        if [ "$secret_paths" = "/ci /runtime" ]; then
+            [ -n "$infisical_path_prefix" ] \
+                || die "INFISICAL_PATH_PREFIX est obligatoire pour charger /runtime dans l'environnement prod."
+            case "$infisical_path_prefix" in
+                */) die "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." ;;
+                /*) ;;
+                *) die "INFISICAL_PATH_PREFIX doit commencer par /." ;;
+            esac
+            target_ci_path="${infisical_path_prefix}/ci"
+            runtime_path="${infisical_path_prefix}/runtime"
+        else
+            runtime_path=""
+        fi
         ;;
     *) die "INFISICAL_ENVIRONMENT doit valoir dev ou prod." ;;
 esac
-
-ci_path="${selected_path_prefix}/ci"
-runtime_path="${selected_path_prefix}/runtime"
 
 # La CLI reconnaît les deux variables Universal Auth. Elles ne passent donc
 # pas dans les arguments du processus, visibles par les autres utilisateurs de
@@ -76,32 +87,42 @@ export INFISICAL_TOKEN
 export INFISICAL_DISABLE_UPDATE_CHECK=true
 unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 
-# Le job de build se limite aux secrets `/ci`. Le déploiement interpole Compose
-# sur l'agent Jenkins et charge aussi `/runtime` avant de piloter Docker par
-# SSH. Les chemins ont déjà été choisis uniquement à partir de l'environnement.
+# Le job de build se limite aux identifiants de registre de `/ci`. En prod, le
+# déploiement ajoute les accès SSH de `<préfixe>/ci` et la configuration de
+# `<préfixe>/runtime`. En dev, ces données vivent dans `/runtime`.
 case "$secret_paths" in
     /ci)
         printf 'Chargement Infisical : environnement=%s, chemin=%s.\n' \
-            "$INFISICAL_ENVIRONMENT" "$ci_path"
+            "$INFISICAL_ENVIRONMENT" "$registry_ci_path"
         exec infisical run \
             --domain="$infisical_domain" \
             --projectId="$INFISICAL_PROJECT_ID" \
             --env="$INFISICAL_ENVIRONMENT" \
-            --path="$ci_path" \
+            --path="$registry_ci_path" \
             -- "$@"
         ;;
     "/ci /runtime")
-        printf 'Chargement Infisical : environnement=%s, chemins=%s et %s.\n' \
-            "$INFISICAL_ENVIRONMENT" "$ci_path" "$runtime_path"
-        exec infisical run \
-            --domain="$infisical_domain" \
-            --projectId="$INFISICAL_PROJECT_ID" \
-            --env="$INFISICAL_ENVIRONMENT" \
-            --path="$ci_path" \
-            --path="$runtime_path" \
-            -- "$@"
-        ;;
-    *)
-        die "INFISICAL_SECRET_PATHS doit valoir /ci ou /ci /runtime."
+        if [ "$INFISICAL_ENVIRONMENT" = "prod" ]; then
+            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
+                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$target_ci_path" "$runtime_path"
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$registry_ci_path" \
+                --path="$target_ci_path" \
+                --path="$runtime_path" \
+                -- "$@"
+        else
+            printf 'Chargement Infisical : environnement=%s, chemins=%s et %s.\n' \
+                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$runtime_path"
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$registry_ci_path" \
+                --path="$runtime_path" \
+                -- "$@"
+        fi
         ;;
 esac

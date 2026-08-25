@@ -85,9 +85,9 @@ vérité.
 | `LXP_AI_IMAGE`, `LXP_AI_IMAGE_TAG`                      | pipeline                               | image du service IA, hors mode démonstration                                 |
 | `APP_HOST`                                              | pipeline                               | domaine du proxy partagé, exigé en mode `caddy`                              |
 | `DEMO_MODE`                                             | configuration d'exécution              | sur `true`, écarte la couche IA et rejoue le jeu de démonstration            |
-| `REGISTRY_USER`, `REGISTRY_TOKEN`                       | secrets de transport                   | `docker login`, sautés si l'un des deux est vide                             |
-| `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PORT` | secrets de transport                   | serveur cible ; sans `DEPLOY_SSH_HOST`, le script vise le démon Docker local |
-| `DEPLOY_SSH_PRIVATE_KEY` **ou** `DEPLOY_SSH_KEY_FILE`   | secrets de transport                   | clé de déploiement, sous forme de matière ou de fichier déjà posé            |
+| `REGISTRY_USER`, `REGISTRY_TOKEN`                       | `/ci`                                  | `docker login`, sautés si l'un des deux est vide                             |
+| `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PORT` | dev `/runtime`, prod `<préfixe>/ci`      | serveur cible ; sans `DEPLOY_SSH_HOST`, le script vise le démon Docker local |
+| `DEPLOY_SSH_PRIVATE_KEY` **ou** `DEPLOY_SSH_KEY_FILE`   | dev `/runtime`, prod `<préfixe>/ci`      | clé de déploiement, sous forme de matière ou de fichier déjà posé            |
 | `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
 | `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
 | `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
@@ -109,13 +109,15 @@ Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
 password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
 Client Secret de mot de passe. `with-infisical.sh` échange ces valeurs contre un
 jeton court, choisit les dossiers selon l'environnement, puis lance
-`deploy.sh`. La sélection est volontairement simple et sans héritage :
+`deploy.sh`. `/ci` contient uniquement `REGISTRY_USER` et `REGISTRY_TOKEN` ; il
+reste à la racine de l'environnement et ne dépend jamais de la cible. La
+sélection est volontairement simple et sans héritage :
 
 - en `dev`, le build charge `/ci` et le déploiement charge `/ci` et `/runtime` ;
   `INFISICAL_PATH_PREFIX` est ignoré ;
-- en `prod`, `INFISICAL_PATH_PREFIX` est obligatoire. Le build charge seulement
-  `<préfixe>/ci` et le déploiement charge seulement `<préfixe>/ci` et
-  `<préfixe>/runtime`.
+- en `prod`, le build charge `/ci` sans préfixe. Pour un déploiement,
+  `INFISICAL_PATH_PREFIX` est obligatoire et le wrapper charge `/ci`,
+  `<préfixe>/ci` puis `<préfixe>/runtime`.
 
 `DEMO_MODE` est simplement lu dans l'environnement injecté et décide seul de
 l'activation du mode démonstration.
@@ -131,8 +133,8 @@ variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 Une cible de démonstration peut utiliser `dev` ou `prod` : seule la valeur
 effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
 `INFISICAL_ENVIRONMENT=prod` et `INFISICAL_PATH_PREFIX=/demo` sélectionnent
-exclusivement `/demo/ci` et `/demo/runtime`. Ces deux dossiers doivent contenir
-toute la configuration nécessaire à la cible.
+`/ci` pour le registre, `/demo/ci` pour l'accès SSH et `/demo/runtime` pour la
+configuration applicative propre à la cible.
 
 ### Lancer un déploiement à la main
 
