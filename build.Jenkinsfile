@@ -32,7 +32,26 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    // `checkout` retourne les informations Git, mais leur
+                    // export dans `env.GIT_COMMIT` dépend du type de job et
+                    // de la version du plugin Git.
+                    def scmVars = checkout scm
+                    def commit = scmVars?.GIT_COMMIT
+
+                    if (!commit) {
+                        commit = sh(
+                            script: 'git rev-parse --verify HEAD',
+                            returnStdout: true
+                        ).trim()
+                    }
+
+                    if (!commit) {
+                        error('Impossible de déterminer le commit Git à publier.')
+                    }
+
+                    env.PIPELINE_LXP_IMAGE_TAG = commit
+                }
             }
         }
 
@@ -45,11 +64,9 @@ pipeline {
                         passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
                     )
                 ]) {
-                    // `GIT_COMMIT` est posé par `checkout scm`, donc après
-                    // l'évaluation du bloc `environment`. Il se lit ici.
                     sh '''
                         set -eu
-                        export PIPELINE_LXP_IMAGE_TAG="$GIT_COMMIT"
+                        : "${PIPELINE_LXP_IMAGE_TAG:?Tag d'image non défini par le checkout}"
                         ./deployment/with-infisical.sh ./deployment/build.sh
                     '''
                 }
