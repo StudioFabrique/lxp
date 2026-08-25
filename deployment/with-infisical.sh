@@ -44,6 +44,37 @@ case "$infisical_path_prefix" in
     *) die "INFISICAL_PATH_PREFIX doit être vide ou commencer par /." ;;
 esac
 
+# La fusion de plusieurs `--path` n'est disponible que depuis la CLI 0.43.82.
+# Les versions antérieures acceptent néanmoins plusieurs occurrences sans les
+# fusionner correctement : `/runtime` peut alors remplacer silencieusement
+# `/demo/runtime`, comme si DEMO_MODE était resté à false.
+secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime}"
+needs_multiple_paths=false
+if [ "$secret_paths" = "/ci /runtime" ] || [ -n "$infisical_path_prefix" ]; then
+    needs_multiple_paths=true
+fi
+
+if [ "$needs_multiple_paths" = "true" ]; then
+    infisical_version="$(
+        infisical --version \
+            | awk '{ for (i = 1; i <= NF; i++) if ($i ~ /^v?[0-9]+\.[0-9]+\.[0-9]+/) { sub(/^v/, "", $i); print $i; exit } }'
+    )"
+    [ -n "$infisical_version" ] \
+        || die "Impossible de déterminer la version de la CLI Infisical. Version minimale requise : 0.43.82."
+
+    if ! awk -v current="$infisical_version" -v required="0.43.82" 'BEGIN {
+        split(current, c, "."); split(required, r, ".")
+        for (i = 1; i <= 3; i++) {
+            if (c[i] + 0 > r[i] + 0) exit 0
+            if (c[i] + 0 < r[i] + 0) exit 1
+        }
+        exit 0
+    }'; then
+        die "CLI Infisical $infisical_version trop ancienne : la fusion des chemins exige au minimum 0.43.82.
+Mettez à jour la CLI Jenkins.
+    fi
+fi
+
 common_ci_path="/ci"
 common_runtime_path="/runtime"
 specific_ci_path="${infisical_path_prefix}/ci"
@@ -73,7 +104,7 @@ unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 # SSH. Avec plusieurs `--path`, Infisical donne priorité au premier chemin :
 # les dossiers spécifiques précèdent donc les dossiers communs qu'ils
 # surchargent. Sans préfixe, chaque dossier commun n'est chargé qu'une fois.
-case "${INFISICAL_SECRET_PATHS:-/ci /runtime}" in
+case "$secret_paths" in
     /ci)
         if [ -n "$infisical_path_prefix" ]; then
             exec infisical run \

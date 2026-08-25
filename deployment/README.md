@@ -95,7 +95,8 @@ vérité.
 Le script valide la présence des variables requises avant tout appel à
 `docker`, et adapte la liste au mode : l'instance de démonstration n'exige pas
 les réglages de la couche IA, mais exige les deux comptes empruntés par les
-visiteurs.
+visiteurs. Le choix du mode ne dépend ni de l'environnement Infisical, ni du
+préfixe de dossiers utilisé.
 
 ### Injection des secrets
 
@@ -110,7 +111,9 @@ password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
 Client Secret de mot de passe. `with-infisical.sh` échange ces valeurs contre un
 jeton court, charge les dossiers communs et spécifiques, puis lance `deploy.sh`.
 Le job de build applique le même héritage, limité aux dossiers `/ci`, avant
-d'appeler `build.sh`.
+d'appeler `build.sh`. La fusion de plusieurs dossiers exige Infisical CLI
+`0.43.82` ou plus récente ; le wrapper contrôle cette version avant de charger
+les secrets.
 
 Le build Jenkins publie deux tags pour la même image : le SHA Git immuable et
 `latest`. Les jobs de déploiement acceptent l'un ou l'autre avec le paramètre
@@ -120,8 +123,9 @@ Le fichier `env.example` liste chaque clé, son dossier et son propriétaire. Le
 variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 `deploy.sh` les restaure après l'injection Infisical.
 
-Le plan Cloud gratuit fournit les environnements `dev` et `prod`.
-La cible de démonstration utilise `dev` avec `INFISICAL_PATH_PREFIX=/demo`, soit
+Le plan Cloud gratuit fournit les environnements `dev` et `prod`. Une cible de
+démonstration peut utiliser l'un ou l'autre : seule la valeur effective de
+`DEMO_MODE` décide du mode. Avec `INFISICAL_PATH_PREFIX=/demo`, elle charge
 les dossiers communs `/ci` et `/runtime` complétés ou surchargés par
 `/demo/ci` et `/demo/runtime`, sans créer un quatrième environnement Infisical.
 La CLI donne priorité au premier `--path` : le wrapper place donc les dossiers

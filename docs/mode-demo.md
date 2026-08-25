@@ -224,8 +224,9 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `getDemoUser` cherche en base les comptes désignés par `DEMO_ADMIN_EMAIL` et
 `DEMO_STUDENT_EMAIL`.
 
-Pour le reste, c'est le même socle `compose.yml`. Le déploiement utilise
-l'environnement Infisical `dev` avec `INFISICAL_PATH_PREFIX=/demo`. Il hérite
+Pour le reste, c'est le même socle `compose.yml`. L'environnement Infisical
+peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. Avec
+`INFISICAL_PATH_PREFIX=/demo`, le déploiement hérite
 des dossiers communs `/ci` et `/runtime`, tandis que `/demo/ci` et
 `/demo/runtime` surchargent les valeurs propres à cette cible ; ce dernier porte
 notamment `DEMO_MODE=true`. Les paramètres Jenkins définissent un `DEPLOY_PATH`
