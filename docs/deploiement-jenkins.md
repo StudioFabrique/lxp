@@ -21,7 +21,10 @@ Les paramètres utilisent les trois environnements inclus dans le plan Cloud
 gratuit : `dev` et `prod`. Les cibles supplémentaires sont des
 préfixes de chemin, pas des environnements : la démonstration vit dans `prod`
 avec `INFISICAL_PATH_PREFIX=/demo`, une instance cliente avec
-`/clients/<slug>`. Le wrapper lit alors `<préfixe>/ci` et `<préfixe>/runtime`.
+`/clients/<slug>`. Pour chaque catégorie demandée par le job, le wrapper charge
+le dossier commun (`/ci` ou `/runtime`) et applique le dossier correspondant
+`<préfixe>/ci` ou `<préfixe>/runtime` en priorité. Une cible ne doit donc définir
+dans ses dossiers spécifiques que les clés qui diffèrent du socle commun.
 
 `deployment/env.example` constitue le contrat des variables. Ajoutez-y toute
 nouvelle clé dans le même changement que le code consommateur et le fichier

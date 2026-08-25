@@ -98,13 +98,17 @@ visiteurs.
 ### Injection des secrets
 
 GitHub Actions s'authentifie avec OIDC. L'action Infisical charge `/ci` pour le
-build, puis `/ci` et `/runtime` pour le déploiement.
+build, puis `/ci` et `/runtime` pour le déploiement. Lorsque la variable GitHub
+d'environnement `INFISICAL_PATH_PREFIX` est définie, des actions supplémentaires
+chargent ensuite `<préfixe>/ci` et `<préfixe>/runtime` afin de remplacer les
+valeurs communes.
 
 Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
 password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
 Client Secret de mot de passe. `with-infisical.sh` échange ces valeurs contre un
-jeton court, charge les deux dossiers, puis lance `deploy.sh`. Le job de build
-limite le wrapper à `/ci` avant d'appeler `build.sh`.
+jeton court, charge les dossiers communs et spécifiques, puis lance `deploy.sh`.
+Le job de build applique le même héritage, limité aux dossiers `/ci`, avant
+d'appeler `build.sh`.
 
 Le build Jenkins publie deux tags pour la même image : le SHA Git immuable et
 `latest`. Les jobs de déploiement acceptent l'un ou l'autre avec le paramètre
@@ -116,8 +120,11 @@ variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 
 Le plan Cloud gratuit fournit les environnements `dev` et `prod`.
 La cible de démonstration utilise `dev` avec `INFISICAL_PATH_PREFIX=/demo`, soit
-les dossiers `/demo/ci` et `/demo/runtime`, sans créer un quatrième
-environnement Infisical.
+les dossiers communs `/ci` et `/runtime` complétés ou surchargés par
+`/demo/ci` et `/demo/runtime`, sans créer un quatrième environnement Infisical.
+La CLI donne priorité au premier `--path` : le wrapper place donc les dossiers
+spécifiques avant les dossiers communs dans la commande, même si le modèle
+logique reste « socle commun, puis surcharge spécifique ».
 
 ### Lancer un déploiement à la main
 
