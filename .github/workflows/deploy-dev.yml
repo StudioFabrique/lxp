@@ -98,7 +98,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Charger les secrets de transport
+      - name: Valider le prefixe Infisical
+        env:
+          INFISICAL_PATH_PREFIX: ${{ vars.INFISICAL_PATH_PREFIX }}
+        run: |
+          set -eu
+          case "$INFISICAL_PATH_PREFIX" in
+            "") ;;
+            /*/)
+              echo "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." >&2
+              exit 1
+              ;;
+            /*) ;;
+            *)
+              echo "INFISICAL_PATH_PREFIX doit etre vide ou commencer par /." >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Charger les secrets de transport communs
         uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
         with:
           method: oidc
@@ -106,6 +124,19 @@ jobs:
           project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
           env-slug: dev
           secret-path: /ci
+          domain: https://eu.infisical.com
+
+      # Une action Infisical exécutée plus tard remplace dans GITHUB_ENV les
+      # clés communes portant le même nom.
+      - name: Charger les secrets de transport specifiques
+        if: vars.INFISICAL_PATH_PREFIX != ''
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: ${{ format('{0}/ci', vars.INFISICAL_PATH_PREFIX) }}
           domain: https://eu.infisical.com
 
       - name: Log in to Docker Hub
@@ -148,12 +179,30 @@ jobs:
             exit 1
           fi
 
+      - name: Valider le prefixe Infisical
+        env:
+          INFISICAL_PATH_PREFIX: ${{ vars.INFISICAL_PATH_PREFIX }}
+        run: |
+          set -eu
+          case "$INFISICAL_PATH_PREFIX" in
+            "") ;;
+            /*/)
+              echo "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." >&2
+              exit 1
+              ;;
+            /*) ;;
+            *)
+              echo "INFISICAL_PATH_PREFIX doit etre vide ou commencer par /." >&2
+              exit 1
+              ;;
+          esac
+
       # `/ci` porte les identifiants du registre et l'acces SSH au serveur
       # cible ; `/runtime` porte la configuration de l'application. Les deux
       # sont necessaires ici : le runner pilote lui-meme le demon Docker
       # distant, il est donc a la fois le consommateur CI et l'agent de
       # deploiement.
-      - name: Charger les secrets de transport
+      - name: Charger les secrets de transport communs
         uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
         with:
           method: oidc
@@ -163,7 +212,7 @@ jobs:
           secret-path: /ci
           domain: https://eu.infisical.com
 
-      - name: Charger la configuration d'execution
+      - name: Charger la configuration d'execution commune
         uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
         with:
           method: oidc
@@ -171,6 +220,28 @@ jobs:
           project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
           env-slug: dev
           secret-path: /runtime
+          domain: https://eu.infisical.com
+
+      - name: Charger les secrets de transport specifiques
+        if: vars.INFISICAL_PATH_PREFIX != ''
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: ${{ format('{0}/ci', vars.INFISICAL_PATH_PREFIX) }}
+          domain: https://eu.infisical.com
+
+      - name: Charger la configuration d'execution specifique
+        if: vars.INFISICAL_PATH_PREFIX != ''
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: ${{ format('{0}/runtime', vars.INFISICAL_PATH_PREFIX) }}
           domain: https://eu.infisical.com
 
       # Signale un ancien APP_ENV importe tel quel. `deploy.sh` protège aussi

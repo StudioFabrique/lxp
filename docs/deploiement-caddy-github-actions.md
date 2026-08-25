@@ -8,6 +8,9 @@ GitHub Actions s'authentifie auprès d'Infisical avec OIDC :
 - le job `image` lit `/ci` pour accéder au registre ;
 - le job `deploy` lit `/ci` et `/runtime`, puis appelle
   `deployment/deploy.sh` ;
+- si la variable GitHub d'environnement `INFISICAL_PATH_PREFIX` vaut `/demo`
+  ou `/clients/<slug>`, chaque job charge ensuite les dossiers correspondants ;
+  leurs clés remplacent les valeurs communes portant le même nom ;
 - les variables GitHub `INFISICAL_IDENTITY_ID`, `INFISICAL_PROJECT_SLUG` et
   `APP_HOST` ne contiennent pas de secret.
 

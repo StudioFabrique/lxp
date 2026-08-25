@@ -225,10 +225,12 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `DEMO_STUDENT_EMAIL`.
 
 Pour le reste, c'est le même socle `compose.yml`. Le déploiement utilise
-l'environnement Infisical `dev` avec `INFISICAL_PATH_PREFIX=/demo`; le dossier
-`/demo/runtime` porte `DEMO_MODE=true`. Les paramètres Jenkins définissent un
-`DEPLOY_PATH` et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des
-secrets propres. L'overlay `compose.ai.yml` n'est pas
+l'environnement Infisical `dev` avec `INFISICAL_PATH_PREFIX=/demo`. Il hérite
+des dossiers communs `/ci` et `/runtime`, tandis que `/demo/ci` et
+`/demo/runtime` surchargent les valeurs propres à cette cible ; ce dernier porte
+notamment `DEMO_MODE=true`. Les paramètres Jenkins définissent un `DEPLOY_PATH`
+et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets
+propres. L'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
 sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).

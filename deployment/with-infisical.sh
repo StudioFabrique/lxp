@@ -44,8 +44,10 @@ case "$infisical_path_prefix" in
     *) die "INFISICAL_PATH_PREFIX doit être vide ou commencer par /." ;;
 esac
 
-ci_path="${infisical_path_prefix}/ci"
-runtime_path="${infisical_path_prefix}/runtime"
+common_ci_path="/ci"
+common_runtime_path="/runtime"
+specific_ci_path="${infisical_path_prefix}/ci"
+specific_runtime_path="${infisical_path_prefix}/runtime"
 
 # La CLI reconnaît les deux variables Universal Auth. Elles ne passent donc
 # pas dans les arguments du processus, visibles par les autres utilisateurs de
@@ -66,25 +68,50 @@ export INFISICAL_TOKEN
 export INFISICAL_DISABLE_UPDATE_CHECK=true
 unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 
-# Le job de build se limite à `/ci`. Le déploiement interpole Compose sur
-# l'agent Jenkins et charge aussi `/runtime` avant de piloter Docker par SSH.
+# Le job de build se limite aux secrets `/ci`. Le déploiement interpole Compose
+# sur l'agent Jenkins et charge aussi `/runtime` avant de piloter Docker par
+# SSH. Avec plusieurs `--path`, Infisical donne priorité au premier chemin :
+# les dossiers spécifiques précèdent donc les dossiers communs qu'ils
+# surchargent. Sans préfixe, chaque dossier commun n'est chargé qu'une fois.
 case "${INFISICAL_SECRET_PATHS:-/ci /runtime}" in
     /ci)
-        exec infisical run \
-            --domain="$infisical_domain" \
-            --projectId="$INFISICAL_PROJECT_ID" \
-            --env="$INFISICAL_ENVIRONMENT" \
-            --path="$ci_path" \
-            -- "$@"
+        if [ -n "$infisical_path_prefix" ]; then
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$specific_ci_path" \
+                --path="$common_ci_path" \
+                -- "$@"
+        else
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$common_ci_path" \
+                -- "$@"
+        fi
         ;;
     "/ci /runtime")
-        exec infisical run \
-            --domain="$infisical_domain" \
-            --projectId="$INFISICAL_PROJECT_ID" \
-            --env="$INFISICAL_ENVIRONMENT" \
-            --path="$ci_path" \
-            --path="$runtime_path" \
-            -- "$@"
+        if [ -n "$infisical_path_prefix" ]; then
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$specific_ci_path" \
+                --path="$specific_runtime_path" \
+                --path="$common_ci_path" \
+                --path="$common_runtime_path" \
+                -- "$@"
+        else
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$common_ci_path" \
+                --path="$common_runtime_path" \
+                -- "$@"
+        fi
         ;;
     *)
         die "INFISICAL_SECRET_PATHS doit valoir /ci ou /ci /runtime."
