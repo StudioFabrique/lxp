@@ -42,7 +42,7 @@ require() {
 restore_pipeline_metadata() {
     for name in \
         DEPLOY_MODE DEPLOY_PATH LXP_DEPLOYMENT_NAME \
-        LXP_IMAGE LXP_IMAGE_TAG LXP_AI_IMAGE LXP_AI_IMAGE_TAG \
+        LXP_IMAGE LXP_IMAGE_TAG \
         APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK
     do
         eval "is_set=\${PIPELINE_$name+x}"
@@ -51,6 +51,19 @@ restore_pipeline_metadata() {
             export "$name=$value"
         fi
     done
+
+    # Ces métadonnées ne sont même pas restaurées sur la démonstration. Les
+    # éventuelles valeurs héritées d'Infisical seront ensuite supprimées avec
+    # le reste de la configuration IA.
+    if [ "${DEMO_MODE:-false}" != "true" ]; then
+        for name in LXP_AI_IMAGE LXP_AI_IMAGE_TAG; do
+            eval "is_set=\${PIPELINE_$name+x}"
+            if [ "$is_set" = x ]; then
+                eval "value=\${PIPELINE_$name}"
+                export "$name=$value"
+            fi
+        done
+    fi
 }
 
 restore_pipeline_metadata
@@ -95,6 +108,21 @@ esac
 BASE_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.yml"
 AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.ai.yml"
 
+# Toutes les variables réservées à l'overlay IA. Elles peuvent être héritées
+# des dossiers Infisical communs ou injectées par un pipeline, mais ne doivent
+# pas rester dans l'environnement d'un déploiement de démonstration.
+AI_SETTINGS="
+ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
+ANDRIA_AI_DB_URL LXP_DB_URL
+DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
+MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY MISTRAL_MODEL
+LXP_PUBLIC_BASE DISABLE_AI_FEATURES
+QUIZ_TEMPERATURE QUIZ_MAX_TOKENS QUIZ_MAX_ATTEMPTS QUIZ_PARALLEL_SLOTS
+QUIZ_MIN_PROMPT_LEN QUIZ_MIN_EXPLANATION_LEN DB_INGEST_MIN_WORDS
+LXP_AI_IMAGE LXP_AI_IMAGE_TAG
+PIPELINE_LXP_AI_IMAGE PIPELINE_LXP_AI_IMAGE_TAG
+"
+
 [ -f "$BASE_COMPOSE_FILE" ] || die "Fichier Compose introuvable : $BASE_COMPOSE_FILE (le script se lance depuis la racine du dépôt)."
 
 # La couche IA est superposée au socle sauf en mode démonstration, où
@@ -107,7 +135,10 @@ if [ "${DEMO_MODE:-false}" = "true" ]; then
     AI_ENABLED=false
     COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
     LOG_SERVICES="app"
-    echo "Mode démonstration : la couche IA n'est pas déployée."
+    for name in $AI_SETTINGS; do
+        unset "$name"
+    done
+    echo "Mode démonstration : la couche IA et sa configuration sont ignorées."
 else
     DEMO_ENABLED=false
     AI_ENABLED=true

@@ -36,7 +36,6 @@ services:
       # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
       # l'ouverture d'une session publique. Réservé à l'instance dédiée.
       DEMO_MODE: ${DEMO_MODE:-false}
-      DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
       DEMO_URL: ${DEMO_URL:-}
       DEMO_EXIT_URL: ${DEMO_EXIT_URL:-}
       ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}

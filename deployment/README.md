@@ -44,7 +44,9 @@ sur `true`, l'API coupe déjà l'IA côté applicatif (`isAiDisabled()` dans
 un cache de modèles et un accès sortant vers Mistral. Les trois pipelines
 (`deployment/*/Jenkinsfile` et `.github/workflows/deploy-dev.yml`) lisent cette
 variable et sautent au passage les étapes purement IA
-(vérification de l'image, attente de `db-ai`, `app.db_provision`).
+(vérification de l'image, attente de `db-ai`, `app.db_provision`). Le point
+d'entrée commun retire également de son environnement toutes les variables de
+la couche IA, y compris celles héritées des dossiers Infisical communs.
 
 `compose.ai.yml` n'est pas autonome : il complète des services et référence des
 réseaux déclarés par le socle. Son nom n'est **pas** `compose.override.yml`,

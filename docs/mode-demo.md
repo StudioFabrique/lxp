@@ -232,7 +232,10 @@ notamment `DEMO_MODE=true`. Les paramètres Jenkins définissent un `DEPLOY_PATH
 et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets
 propres. L'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
-sont déployés. Les pipelines s'en chargent seuls à partir de `DEMO_MODE` — voir
+sont déployés. Les variables réservées à cette couche sont également retirées
+de l'environnement avant les appels à Docker, même lorsqu'elles proviennent de
+la configuration Infisical commune. Les pipelines s'en chargent seuls à partir
+de `DEMO_MODE` — voir
 [`deployment/README.md`](../deployment/README.md).
 
 Ces étapes sont identiques dans les trois pipelines : les deux `Jenkinsfile`
