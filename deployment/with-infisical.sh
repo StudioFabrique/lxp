@@ -71,7 +71,7 @@ if [ "$needs_multiple_paths" = "true" ]; then
         exit 0
     }'; then
         die "CLI Infisical $infisical_version trop ancienne : la fusion des chemins exige au minimum 0.43.82.
-Mettez à jour la CLI Jenkins.
+Mettez à jour la CLI Jenkins."
     fi
 fi
 
