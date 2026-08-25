@@ -1,4 +1,6 @@
-export const PORT = process.env.PORT || 5001;
+import { env } from "./env.ts";
+
+export const PORT = env.PORT;
 
 export const tokensMaxAge = {
   accessToken: 20 * 60 * 1000,
@@ -23,7 +25,7 @@ export const sessionCookieOptions = (
 } => ({
   maxAge: tokensMaxAge[token],
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: env.NODE_ENV === "production",
   sameSite: "lax",
 });
 
@@ -38,7 +40,7 @@ export const accessExpire = "20min";
 export const refreshExpire = "2h";
 
 export const corsOrigins =
-  process.env.ENVIRONMENT === "production"
+  env.ENVIRONMENT === "production"
     ? []
     : [
         "http://localhost:5173",

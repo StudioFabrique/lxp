@@ -1,4 +1,3 @@
-import { isAiDisabled } from "../../../config/ai/ai";
 import { ChatbotProvider } from "../../../store/ChatbotProvider";
 import Chatbot from "../../../features/chatbot/components/chatbot";
 import RouteGuard from "../../guards/RouteGuard";
@@ -13,7 +12,7 @@ import DemoBanner from "../../../features/demo/components/DemoBanner";
 import { useDemoMode } from "../../../store/DemoContext";
 
 const StudentLayout = () => {
-  const { demoMode, aiDisabled } = useDemoMode();
+  const { demoMode, aiDisabled, isConfigLoaded } = useDemoMode();
 
   return (
     <ChatbotProvider>
@@ -30,7 +29,7 @@ const StudentLayout = () => {
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {!isAiDisabled && !aiDisabled && <Chatbot />}
+        {isConfigLoaded && !aiDisabled && <Chatbot />}
         {demoMode && <DemoTour layout="student" />}
       </OnboardingTour>
     </ChatbotProvider>

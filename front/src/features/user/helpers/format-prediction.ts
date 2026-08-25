@@ -205,7 +205,10 @@ const OPERATOR_LABELS: Record<string, string> = {
  */
 export function formatMatchedCondition(condition: MatchedCondition): string {
   const label = formatModelIndicatorLabel(condition.indicator);
-  const value = formatModelIndicatorValue(condition.indicator, condition.actual);
+  const value = formatModelIndicatorValue(
+    condition.indicator,
+    condition.actual,
+  );
   const threshold = Array.isArray(condition.threshold)
     ? `entre ${formatModelIndicatorValue(condition.indicator, condition.threshold[0]!)} et ${formatModelIndicatorValue(condition.indicator, condition.threshold[1]!)}`
     : `${OPERATOR_LABELS[condition.op] ?? condition.op} ${formatModelIndicatorValue(condition.indicator, condition.threshold)}`;
@@ -266,27 +269,4 @@ export function formatModelIndicatorValue(
     default:
       return String(value);
   }
-}
-
-/**
- * Ce qui manquait à l'analyse, en une phrase — ou `null` si rien ne manquait.
- *
- * Une prédiction établie sur six données sur onze se lit autrement qu'une
- * prédiction complète : le lecteur doit le savoir sans avoir à déplier le
- * détail.
- */
-export function missingDataSentence(
-  prediction: IndicatorsPrediction,
-): string | null {
-  const labels = Object.keys(prediction.missing).map((key) =>
-    formatModelIndicatorLabel(key).toLowerCase(),
-  );
-
-  if (labels.length === 0) return null;
-
-  const list = labels.join(", ");
-
-  return labels.length === 1
-    ? `Une donnée manquait : ${list}.`
-    : `${labels.length} données manquaient : ${list}.`;
 }

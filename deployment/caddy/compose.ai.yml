@@ -12,8 +12,8 @@ services:
       ai:
         condition: service_healthy
     environment:
-      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL}
-      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET}
+      DOCKER_IA_API_BASE_URL: ${DOCKER_IA_API_BASE_URL:?Set DOCKER_IA_API_BASE_URL}
+      DOCKER_IA_AUTH_SECRET: ${DOCKER_IA_AUTH_SECRET:?Set DOCKER_IA_AUTH_SECRET}
 
   ai:
     image: "${LXP_AI_IMAGE:-studiostep/lxp-ai}:${LXP_AI_IMAGE_TAG:-latest}"
@@ -35,18 +35,18 @@ services:
       - ${DEPLOY_PATH:?Set DEPLOY_PATH}/data:/app/data
       - ${DEPLOY_PATH}/uploads/activities:/lxp/api/uploads/activities:ro
     environment:
-      DATABASE_URL: ${ANDRIA_AI_DB_URL}
-      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL}
-      LXP_DB_URL: ${LXP_DB_URL}
+      DATABASE_URL: ${ANDRIA_AI_DB_URL:?Set ANDRIA_AI_DB_URL}
+      ANDRIA_AI_DB_URL: ${ANDRIA_AI_DB_URL:?Set ANDRIA_AI_DB_URL}
+      LXP_DB_URL: ${LXP_DB_URL:?Set LXP_DB_URL}
 
       LXP_UPLOADS_DIR: /lxp/api/uploads/activities
       LXP_PUBLIC_BASE: ${LXP_PUBLIC_BASE}
 
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY}
       DEV_BYPASS_AUTH: "false"
 
-      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY}
-      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY}
+      MISTRAL_STUDENT_API_KEY: ${MISTRAL_STUDENT_API_KEY:?Set MISTRAL_STUDENT_API_KEY}
+      MISTRAL_CONTENT_API_KEY: ${MISTRAL_CONTENT_API_KEY:?Set MISTRAL_CONTENT_API_KEY}
       MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
 
       QUIZ_TEMPERATURE: ${QUIZ_TEMPERATURE:-0.5}
@@ -90,9 +90,9 @@ services:
     networks:
       - backend
     environment:
-      POSTGRES_USER: ${ANDRIA_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${ANDRIA_POSTGRES_DB}
+      POSTGRES_USER: ${ANDRIA_POSTGRES_USER:?Set ANDRIA_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ANDRIA_POSTGRES_PASSWORD:?Set ANDRIA_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${ANDRIA_POSTGRES_DB:?Set ANDRIA_POSTGRES_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s

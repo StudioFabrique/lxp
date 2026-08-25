@@ -5,9 +5,40 @@ pipeline {
         skipDefaultCheckout(true)
     }
 
+    parameters {
+        string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Laisser tel quel : le credential du dossier Jenkins est résolu en premier. À changer seulement pour un job hors dossier ou deux instances dans le même dossier.')
+        choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
+        string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
+        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'Environnement Infisical. Les instances déployées par Jenkins vivent dans prod ; dev suit la branche beta.')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Vide pour la cible principale de l\'environnement ; /demo pour la démonstration ; /clients/<slug> pour une instance cliente')
+        string(name: 'DEPLOY_PATH', defaultValue: '', trim: true, description: 'Répertoire persistant sur le serveur cible. Laisser vide : déduit en <foyer du compte de déploiement>/<nom de la stack>.')
+        string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
+        string(name: 'LXP_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag LXP, latest ou SHA Jenkins pour un retour arrière')
+        string(name: 'LXP_AI_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag de l’image ANDRIA-IA')
+    }
+
+    // Les paramètres sont lus ici par `params`, jamais depuis l'environnement du
+    // shell. Au tout premier build d'un job, Jenkins n'a pas encore enregistré
+    // les paramètres déclarés dans ce fichier et ne les expose donc pas comme
+    // variables : un `sh` qui lirait `$DEPLOY_PATH` échouerait sur `set -u`.
+    // `params` applique les valeurs par défaut dès le premier passage.
     environment {
-        BASE_COMPOSE_FILE = 'deployment/direct/compose.yml'
-        AI_COMPOSE_FILE = 'deployment/direct/compose.ai.yml'
+        INFISICAL_DOMAIN      = "${params.INFISICAL_DOMAIN}"
+        INFISICAL_PROJECT_ID  = "${params.INFISICAL_PROJECT_ID}"
+        INFISICAL_ENVIRONMENT = "${params.INFISICAL_ENVIRONMENT}"
+        INFISICAL_PATH_PREFIX = "${params.INFISICAL_PATH_PREFIX}"
+
+        PIPELINE_DEPLOY_MODE         = 'direct'
+        PIPELINE_DEPLOY_PATH         = "${params.DEPLOY_PATH}"
+        PIPELINE_LXP_DEPLOYMENT_NAME = "${params.LXP_DEPLOYMENT_NAME}"
+
+        PIPELINE_LXP_IMAGE        = 'studiostep/lxp'
+        PIPELINE_LXP_IMAGE_TAG    = "${params.LXP_IMAGE_TAG}"
+        PIPELINE_LXP_AI_IMAGE     = 'studiostep/lxp-ai'
+        PIPELINE_LXP_AI_IMAGE_TAG = "${params.LXP_AI_IMAGE_TAG}"
+
+        PIPELINE_COMPOSE_WAIT_TIMEOUT = '240'
+        PIPELINE_DEPLOY_PRUNE         = 'true'
     }
 
     stages {
@@ -17,182 +48,16 @@ pipeline {
             }
         }
 
-        stage('Deploy and Migrate') {
+        stage('Deploy and migrate') {
             steps {
                 withCredentials([
-                    file(credentialsId: "APP_ENV", variable: 'ENV_FILE'),
-                    string(credentialsId: "APP_SSH_HOST", variable: 'SSH_HOST'),
-                    string(credentialsId: "SSH_USER", variable: 'SSH_USER'),
-                    string(credentialsId: "SSH_PORT", variable: 'SSH_PORT'),
-                    string(credentialsId: "SSH_TARGET", variable: 'SSH_TARGET'),
-                    sshUserPrivateKey(credentialsId: "SSH_CREDENTIALS", keyFileVariable: 'SSH_CREDENTIALS'),
-                    usernamePassword(credentialsId: 'DOCKER_REGISTRY', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                    usernamePassword(
+                        credentialsId: params.INFISICAL_CREDENTIAL_ID,
+                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
+                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                    )
                 ]) {
-                    sh '''
-                        set -eu
-
-                        cleanup() {
-                            status=$?
-                            rm -f .env
-                            docker logout >/dev/null 2>&1 || true
-                            exit "$status"
-                        }
-                        trap cleanup EXIT
-
-                        echo "🔧 Configuration SSH pour $SSH_HOST..."
-                        mkdir -p ~/.ssh
-
-                        echo "Host deploy-target
-                        HostName $SSH_HOST
-                        User $SSH_USER
-                        Port $SSH_PORT
-                        IdentityFile \\"$SSH_CREDENTIALS\\"
-                        StrictHostKeyChecking no" > ~/.ssh/config
-
-                        echo "📁 Préparation des dossiers et synchronisation intelligente des cours..."
-                        ssh deploy-target "mkdir -p /home/$SSH_USER/$SSH_TARGET/data /home/$SSH_USER/$SSH_TARGET/uploads /home/$SSH_USER/$SSH_TARGET/logs"
-                        rsync -avz api/uploads/ deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/
-
-                        # Configuration du .env local
-                        rm -f .env
-                        cp "$ENV_FILE" .env
-
-                        chmod 600 .env
-
-                        export DOCKER_HOST="ssh://deploy-target"
-
-                        # La couche IA est superposée au socle sauf en mode
-                        # démonstration, où `DEMO_MODE=true` la coupe déjà côté
-                        # applicatif : la déployer ne ferait que consommer un
-                        # conteneur, un cache de modèles et un accès sortant.
-                        if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
-                            DEMO_ENABLED=true
-                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
-                            AI_ENABLED=false
-                            echo "Mode démonstration : la couche IA n'est pas déployée."
-                        else
-                            DEMO_ENABLED=false
-                            COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
-                            AI_ENABLED=true
-                        fi
-
-                        # Découpage en mots volontaire : la variable porte
-                        # plusieurs arguments.
-                        compose() {
-                            docker compose --env-file .env $COMPOSE_FILES "$@"
-                        }
-
-                        echo "🔐 Connexion Docker Hub..."
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-                        echo "📥 Récupération des images..."
-                        compose pull
-
-                        if [ "$AI_ENABLED" = "true" ]; then
-                            echo "🔎 Vérification de l'image IA..."
-                            compose run --rm --no-deps ai python -c \
-                                'import app.db_provision; print("Module app.db_provision disponible")'
-                        fi
-
-                        echo "🗄️ Démarrage des bases..."
-                        compose up -d db-pg db-mongo
-
-                        echo "⏳ Attente des bases..."
-                        until compose exec -T db-pg sh -c \
-                            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-                        do
-                            sleep 2
-                        done
-
-                        if [ "$AI_ENABLED" = "true" ]; then
-                            compose up -d db-ai
-
-                            until compose exec -T db-ai sh -c \
-                                'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-                            do
-                                sleep 2
-                            done
-                        fi
-
-                        if [ "$DEMO_ENABLED" = "true" ]; then
-                            # Le jeu de démonstration est un dump de données
-                            # seules : il ne se rejoue que sur un schéma vide, et
-                            # la démonstration doit revenir à l'état versionné à
-                            # chaque déploiement. L'instance étant en lecture
-                            # seule, rien d'utile n'y est perdu.
-                            echo "Remise à zéro de la base de démonstration..."
-                            compose exec -T db-pg sh -c \
-                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
-                        fi
-
-                        echo "📌 Migration Prisma..."
-                        compose run --rm -w /app/api app npx prisma migrate deploy
-
-                        if [ "$DEMO_ENABLED" = "true" ]; then
-                            echo "🌱 Restauration du jeu de démonstration..."
-                            compose exec -T db-pg sh -c \
-                                'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-                                < api/dumps/demo/dump-pgsql.sql
-
-                            compose cp api/dumps/demo/dump-mongo db-mongo:/tmp/dump-mongo
-                            # `--nsFrom/--nsTo` : le dump est pris sur la base
-                            # `lxp`, que l'instance peut avoir nommée autrement.
-                            compose exec -T db-mongo sh -c \
-                                'mongorestore --quiet --drop \
-                                    --username "$MONGO_INITDB_ROOT_USERNAME" \
-                                    --password "$MONGO_INITDB_ROOT_PASSWORD" \
-                                    --authenticationDatabase admin \
-                                    --nsInclude "lxp.*" --nsFrom "lxp.*" \
-                                    --nsTo "$MONGO_INITDB_DATABASE.*" \
-                                    /tmp/dump-mongo'
-                            compose exec -T db-mongo rm -rf /tmp/dump-mongo
-
-                            echo "🖼️ Synchronisation des activités de démonstration..."
-                            rsync -avz --delete api/dumps/demo/activities/ \
-                                deploy-target:/home/$SSH_USER/$SSH_TARGET/uploads/activities/
-
-                        fi
-
-                        # Posés après la restauration : rejouer un dump n'est pas un
-                        # changement de contenu à signaler, et le trigger tournerait
-                        # une fois par ligne insérée. Installés dans les deux modes,
-                        # ce sont de simples `pg_notify` sans écouteur, qui gardent le
-                        # schéma de la démonstration identique à celui de la production.
-                        echo "🔔 Installation des triggers ANDRIA..."
-                        compose exec -T db-pg sh -c \
-                            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-                            < api/src/scripts/andria_notify_triggers.sql
-
-                        if [ "$DEMO_ENABLED" = "true" ]; then
-                            # Les deux comptes empruntés par les visiteurs, sans
-                            # lesquels /demo répond « La démonstration n'est pas
-                            # configurée sur cette instance ».
-                            echo "👥 Préparation des comptes de démonstration..."
-                            compose run --rm --no-deps app npm run demo:seed
-                        fi
-
-                        if [ "$AI_ENABLED" = "true" ]; then
-                            echo "🧠 Provisionnement de la base IA..."
-                            compose run --rm ai python -m app.db_provision
-                        fi
-
-                        # `ai` est tiré par le `depends_on` de `app` quand
-                        # l'overlay est chargé ; `--remove-orphans` retire les
-                        # conteneurs IA d'une stack qui bascule en démonstration.
-                        echo "🚀 Démarrage des applications..."
-                        compose up -d --remove-orphans app
-
-                        if [ "$DEMO_ENABLED" = "false" ]; then
-                            echo "🔑 Génération de la clé d’activation..."
-                            compose exec -T app npm run generate-activation-key
-                        fi
-
-                        echo "📋 État des services..."
-                        compose ps
-
-                        echo "🧹 Nettoyage..."
-                        docker image prune -f
-                    '''
+                    sh './deployment/with-infisical.sh ./deployment/deploy.sh'
                 }
             }
         }

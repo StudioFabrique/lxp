@@ -1,3 +1,4 @@
+import { env } from "../../config/env.ts";
 const UNSPLASH_API_URL = "https://api.unsplash.com/search/photos";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const PHOTO_COUNT = 12;
@@ -45,7 +46,7 @@ function addTracking(url: string) {
 }
 
 async function fetchBackgrounds(theme: BackgroundTheme) {
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+  const accessKey = env.UNSPLASH_ACCESS_KEY;
   if (!accessKey) throw new Error("UNSPLASH_ACCESS_KEY is not configured");
 
   const url = new URL(UNSPLASH_API_URL);

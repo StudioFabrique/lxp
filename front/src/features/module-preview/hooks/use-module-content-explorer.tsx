@@ -152,8 +152,10 @@ const useModuleContentExplorer = () => {
     }
   }, [moduleId]);
 
+  // Comme la clôture ci-dessous : ouvrir le suivi ne doit pas faire échouer
+  // l'affichage de la leçon, ni laisser un rejet sans preneur chez l'appelant.
   const initiateLesson = useCallback(async (lessonId: number) => {
-    await modulePreviewApi.tracking.begin("lesson", lessonId);
+    await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => {});
   }, []);
 
   // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
@@ -186,10 +188,9 @@ const useModuleContentExplorer = () => {
               contentRead: LessonRead;
             };
           const { data: lessonRating } =
-            (await modulePreviewApi.mutations.rateLesson(
-              lessonId,
-              rating,
-            )) as { data: LessonRating };
+            (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
+              data: LessonRating;
+            };
           dispatch({
             type: "mark_lesson_as_complete",
             lesson: state.selectedLesson,
@@ -547,7 +548,9 @@ const useModuleContentExplorer = () => {
         ? state.newActivityTitle?.trim()
         : state.selectedActivity?.title?.trim();
     const activityType =
-      state.mode === "write" ? state.activityType : state.selectedActivity?.type;
+      state.mode === "write"
+        ? state.activityType
+        : state.selectedActivity?.type;
 
     if (!title) {
       const error = "Le titre est obligatoire";

@@ -2,6 +2,7 @@ import User from "../../utils/interfaces/db/user.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
+import { env } from "../../config/env.ts";
 
 export default async function putResetPassword(userId: string) {
   const existingUser = await User.findOne({
@@ -14,7 +15,7 @@ export default async function putResetPassword(userId: string) {
 
   const token = activationToken(userId, role, "15m");
 
-  if (process.env.ENVIRONMENT !== "test") {
+  if (env.ENVIRONMENT !== "test") {
     try {
       await sendPasswordEmail(existingUser.email, token, "reset");
     } catch (emailError: any) {

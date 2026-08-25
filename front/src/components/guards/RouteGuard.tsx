@@ -8,9 +8,14 @@ import { Navigate, Outlet } from "react-router";
 const RouteGuard = ({ layout }: { layout: "admin" | "student" }) => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
-  const { demoMode } = useDemoMode();
+  const { demoMode, isConfigLoaded } = useDemoMode();
 
-  if (!isAppInitialized) return <Loader />;
+  // Rien ne doit se monter avant que la configuration d'exécution soit lue :
+  // tant qu'elle manque, `demoMode` et `aiDisabled` valent faux, et une page de
+  // l'instance de démonstration se comporterait comme une page ordinaire —
+  // génération IA lancée, temps réel connecté, écritures tentées. `LoginGuard`
+  // attend déjà cette même valeur.
+  if (!isAppInitialized || !isConfigLoaded) return <Loader />;
   // Un visiteur de la démonstration n'a pas d'identifiants : quand sa session
   // expire, le renvoyer vers le formulaire de connexion serait une impasse.
   if (!isLoggedIn || !user) {

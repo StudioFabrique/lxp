@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import BlackListedToken from "../utils/interfaces/db/blacklisted-token.ts";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import { buildAbility } from "../utils/rbac/ability.ts";
+import { env } from "../config/env.ts";
 
 export default function activateAccount(
   req: CustomRequest,
@@ -18,7 +19,7 @@ export default function activateAccount(
     if (!token) throw { statusCode: 400, message: "Un token est requis" };
     jwt.verify(
       token.toString(),
-      process.env.REGISTER_SECRET!,
+      env.REGISTER_SECRET,
       async (err: any, data: any) => {
         if (err) {
           // Send error response directly

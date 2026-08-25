@@ -1,35 +1,42 @@
-name: lxp
+name: ${LXP_DEPLOYMENT_NAME:-lxp}
 
 # Socle applicatif, sans la couche IA. L'instance de démonstration se déploie
 # avec ce seul fichier ; les autres y superposent `compose.ai.yml`.
+#
+# Mode `direct` : `app` publie lui-même le port 80 de l'hôte. Le réseau reste
+# donc joignable depuis l'extérieur, contrairement au `backend` interne du mode
+# `caddy`, où seul le proxy partagé expose l'application.
 
 services:
   app:
-    image: studiostep/lxp:latest
+    image: "${LXP_IMAGE:-studiostep/lxp}:${LXP_IMAGE_TAG:-latest}"
     pull_policy: always
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-app
+    restart: unless-stopped
+    init: true
     ports:
-      - "80:${PORT}"
+      - "80:${PORT:?Set PORT}"
     depends_on:
       db-pg:
         condition: service_healthy
       db-mongo:
         condition: service_healthy
     volumes:
-      - /home/${SSH_USER}/${SSH_TARGET}/uploads:/app/api/dist/uploads
-      - /home/${SSH_USER}/${SSH_TARGET}/logs:/app/api/dist/logs
+      - ${DEPLOY_PATH:?Set DEPLOY_PATH}/uploads:/app/api/dist/uploads
+      - ${DEPLOY_PATH}/logs:/app/api/dist/logs
     networks:
-      - lxp
+      - backend
     environment:
-      DATABASE_URL: ${DATABASE_URL}
-      MONGO_LOCAL_URL: ${MONGO_LOCAL_URL}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      MONGO_LOCAL_URL: ${MONGO_LOCAL_URL:?Set MONGO_LOCAL_URL}
 
-      SECRET: ${SECRET}
-      REGISTER_SECRET: ${REGISTER_SECRET}
+      SECRET: ${SECRET:?Set SECRET}
+      REGISTER_SECRET: ${REGISTER_SECRET:?Set REGISTER_SECRET}
 
       # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
       # l'ouverture d'une session publique. Réservé à l'instance dédiée.
       DEMO_MODE: ${DEMO_MODE:-false}
+      DISABLE_AI_FEATURES: ${DISABLE_AI_FEATURES:-false}
       DEMO_URL: ${DEMO_URL:-}
       DEMO_EXIT_URL: ${DEMO_EXIT_URL:-}
       ALTCHA_HMAC_KEY: ${ALTCHA_HMAC_KEY:-}
@@ -48,6 +55,20 @@ services:
       FROM: ${FROM}
 
       UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:' + process.env.PORT + '/').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: json-file
       options:
@@ -56,44 +77,54 @@ services:
 
   db-pg:
     image: postgres:18-alpine
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-pg
+    restart: unless-stopped
     volumes:
-      # PostgreSQL 18 stores its data in a major-version-specific subdirectory.
+      # PostgreSQL 18 range ses données dans un sous-répertoire propre à la
+      # version majeure.
       - pg:/var/lib/postgresql
     networks:
-      - lxp
+      - backend
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
   db-mongo:
     image: mongo:8.2
-    restart: always
+    container_name: ${LXP_DEPLOYMENT_NAME:-lxp}-db-mongo
+    restart: unless-stopped
     volumes:
       - mongo:/data/db
     networks:
-      - lxp
+      - backend
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME:?Set MONGO_ADMIN_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD:?Set MONGO_ADMIN_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:?Set MONGO_DATABASE}
     healthcheck:
-      test:
-        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s
       timeout: 5s
       retries: 20
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
 networks:
-  lxp:
-    driver: bridge
+  backend:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_backend
 
 volumes:
   pg:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_pg
   mongo:
+    name: ${LXP_DEPLOYMENT_NAME:-lxp}_mongo

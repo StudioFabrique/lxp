@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { env } from "../../../config/env.ts";
 
 /**
  * Défi anti-robot par preuve de travail, dans l'esprit du protocole Altcha.
@@ -43,7 +44,7 @@ export class AltchaError extends Error {}
 function hmacKey(): string {
   // À défaut de clé dédiée, la clé de session : le défi n'a pas besoin d'un
   // secret distinct, mais en avoir un permet de la faire tourner séparément.
-  const key = process.env.ALTCHA_HMAC_KEY || process.env.SECRET;
+  const key = env.ALTCHA_HMAC_KEY || env.SECRET;
   if (!key) throw new AltchaError("Aucune clé de signature configurée");
   return key;
 }

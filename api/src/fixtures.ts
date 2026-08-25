@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import {
   addresses,
   cities,
@@ -21,9 +20,9 @@ import {
 } from "./utils/rbac/config/fixtures-permissions.ts";
 import IConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
-dotenv.config();
+import { env } from "./config/env.ts";
 
-const MONGO_URL = process.env.MONGO_LOCAL_URL;
+const MONGO_URL = env.MONGO_LOCAL_URL;
 console.log(MONGO_URL);
 
 mongoose.connection.once("open", () => {

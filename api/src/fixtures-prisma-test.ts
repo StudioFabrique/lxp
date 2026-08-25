@@ -1,13 +1,12 @@
 import { prisma } from "./utils/db.ts";
-import dotenv from "dotenv";
-dotenv.config();
 import mongoose from "mongoose";
 import User from "./utils/interfaces/db/user.ts";
 import Role from "./utils/interfaces/db/role.ts";
 import Group from "./utils/interfaces/db/group.ts";
 import StudentFeedback from "./utils/interfaces/db/student-feedback.ts";
+import { env } from "./config/env.ts";
 
-const MONGO_URL = process.env.MONGO_LOCAL_URL;
+const MONGO_URL = env.MONGO_LOCAL_URL;
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");

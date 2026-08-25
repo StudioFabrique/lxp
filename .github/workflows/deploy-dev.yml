@@ -10,9 +10,17 @@ on:
     branches:
       - beta
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag dev-<sha> existant à redéployer sans reconstruire l'image"
+        required: false
+        type: string
 
 permissions:
   contents: read
+  # Signature du jeton d'identite presente a Infisical. Sans elle,
+  # l'authentification OIDC echoue et aucun secret n'est recupere.
+  id-token: write
 
 concurrency:
   # Une PR annule ses propres runs precedents, les deploiements sur beta
@@ -21,13 +29,14 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  LXP_IMAGE: studiostep/lxp
-  LXP_IMAGE_TAG: dev-${{ github.sha }}
-  LXP_AI_IMAGE: studiostep/lxp-ai
-  LXP_AI_IMAGE_TAG: latest
-  LXP_DEPLOYMENT_NAME: lxp-dev
-  DEV_APP_HOST: ${{ vars.DEV_APP_HOST || 'lxp.dev.step.eco' }}
-  DEPLOY_PATH: /home/martin/lxp-dev
+  # Le préfixe protège les métadonnées calculées par le workflow. `deploy.sh`
+  # les restaure après l'injection Infisical, avant d'appeler Compose.
+  PIPELINE_LXP_IMAGE: studiostep/lxp
+  PIPELINE_LXP_IMAGE_TAG: ${{ inputs.image_tag || format('dev-{0}', github.sha) }}
+  PIPELINE_LXP_AI_IMAGE: studiostep/lxp-ai
+  PIPELINE_LXP_AI_IMAGE_TAG: latest
+  PIPELINE_LXP_DEPLOYMENT_NAME: lxp-dev
+  PIPELINE_APP_HOST: ${{ vars.APP_HOST || 'lxp.dev.step.eco' }}
 
 jobs:
   verify:
@@ -78,7 +87,7 @@ jobs:
 
   image:
     name: Build and publish the LXP image
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta' && inputs.image_tag == ''
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: development
@@ -89,11 +98,21 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Charger les secrets de transport
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /ci
+          domain: https://eu.infisical.com
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_TOKEN }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6
@@ -101,8 +120,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.LXP_IMAGE }}:${{ env.LXP_IMAGE_TAG }}
-            ${{ env.LXP_IMAGE }}:beta
+            ${{ env.PIPELINE_LXP_IMAGE }}:${{ env.PIPELINE_LXP_IMAGE_TAG }}
+            ${{ env.PIPELINE_LXP_IMAGE }}:beta
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
@@ -111,7 +130,7 @@ jobs:
 
   deploy:
     name: Deploy to the development VPS
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta'
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/beta' && (needs.image.result == 'success' || needs.image.result == 'skipped')
     needs: image
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -120,243 +139,69 @@ jobs:
       - name: Check out deployment files
         uses: actions/checkout@v7
 
-      - name: Prepare and validate deployment environment
-        env:
-          APP_ENV: ${{ secrets.APP_ENV }}
+      - name: Valider le tag demande
+        if: inputs.image_tag != ''
         run: |
           set -eu
-
-          if [ -z "$APP_ENV" ]; then
-            echo "The APP_ENV secret is empty." >&2
+          if ! printf '%s' "$PIPELINE_LXP_IMAGE_TAG" | grep -Eq '^dev-[0-9a-f]{40}$'; then
+            echo "Le tag de retour arriere doit respecter dev-<sha Git complet>." >&2
             exit 1
           fi
 
-          printf '%s\n' "$APP_ENV" > .env
+      # `/ci` porte les identifiants du registre et l'acces SSH au serveur
+      # cible ; `/runtime` porte la configuration de l'application. Les deux
+      # sont necessaires ici : le runner pilote lui-meme le demon Docker
+      # distant, il est donc a la fois le consommateur CI et l'agent de
+      # deploiement.
+      - name: Charger les secrets de transport
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /ci
+          domain: https://eu.infisical.com
 
-          # L'instance de demonstration ne deploie pas la couche IA :
-          # `DEMO_MODE=true` la coupe deja cote applicatif, donc ses reglages
-          # ne sont exiges qu'en dehors de ce mode. En echange, les deux comptes
-          # empruntes par les visiteurs deviennent indispensables : sans eux,
-          # `/demo` repond « La demonstration n'est pas configuree sur cette
-          # instance ».
-          if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
-            DEMO_MODE=true
-          else
-            DEMO_MODE=false
-          fi
+      - name: Charger la configuration d'execution
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /runtime
+          domain: https://eu.infisical.com
 
-          required_settings="
-          PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
-          POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
-          MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
-          EMAIL PASSWORD SMTP SMTP_EMAIL SMTP_PORT FROM UNSPLASH_ACCESS_KEY
+      # Signale un ancien APP_ENV importe tel quel. `deploy.sh` protège aussi
+      # ces valeurs, mais une clé mal classée doit être retirée d'Infisical.
+      - name: Verifier le classement des secrets
+        run: |
+          set -eu
+
+          reserved="
+          DEPLOY_MODE DEPLOY_PATH LXP_DEPLOYMENT_NAME
+          LXP_IMAGE LXP_IMAGE_TAG LXP_AI_IMAGE LXP_AI_IMAGE_TAG
+          APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK
           "
 
-          ai_settings="
-          ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-          ANDRIA_AI_DB_URL LXP_DB_URL
-          DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
-          MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
-          "
-
-          demo_settings="DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
-
-          if [ "$DEMO_MODE" = true ]; then
-            required_settings="$required_settings $demo_settings"
-          else
-            required_settings="$required_settings $ai_settings"
-          fi
-
-          for setting in $required_settings; do
-            if ! grep -q "^${setting}=." .env; then
-              echo "APP_ENV is missing a non-empty ${setting} setting." >&2
+          for name in $reserved; do
+            eval "is_set=\${$name+x}"
+            if [ "$is_set" = x ]; then
+              echo "$name est reserve au pipeline et ne doit pas se trouver dans /ci ou /runtime." >&2
               exit 1
             fi
           done
 
-          {
-            printf '\n# Metadonnees de deploiement ecrites par GitHub Actions\n'
-            printf 'LXP_IMAGE=%s\n' "$LXP_IMAGE"
-            printf 'LXP_IMAGE_TAG=%s\n' "$LXP_IMAGE_TAG"
-            printf 'LXP_AI_IMAGE=%s\n' "$LXP_AI_IMAGE"
-            printf 'LXP_AI_IMAGE_TAG=%s\n' "$LXP_AI_IMAGE_TAG"
-            printf 'LXP_DEPLOYMENT_NAME=%s\n' "$LXP_DEPLOYMENT_NAME"
-            printf 'DEV_APP_HOST=%s\n' "$DEV_APP_HOST"
-            printf 'DEPLOY_PATH=%s\n' "$DEPLOY_PATH"
-          } >> .env
-          chmod 600 .env
-
-      - name: Configure the SSH access to the VPS
+      - name: Deployer
         env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
-          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT || 22 }}
-          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          PIPELINE_DEPLOY_MODE: caddy
+          PIPELINE_COMPOSE_WAIT_TIMEOUT: 240
         run: |
           set -eu
-
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-          printf '%s\n' "$VPS_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-
-          {
-            printf 'Host deploy-target\n'
-            printf '  HostName %s\n' "$VPS_HOST"
-            printf '  User %s\n' "$VPS_USERNAME"
-            printf '  Port %s\n' "$VPS_SSH_PORT"
-            printf '  IdentityFile ~/.ssh/deploy_key\n'
-            printf '  IdentitiesOnly yes\n'
-            printf '  StrictHostKeyChecking accept-new\n'
-          } > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-
-      - name: Pull, migrate, and start LXP
-        env:
-          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-        run: |
-          set -eu
-
-          # Le VPS n'heberge que les donnees persistantes : ni `.env`, ni
-          # fichier compose, ni script SQL n'y sont deposes. Le demon Docker
-          # distant est pilote depuis le runner, dont le disque disparait avec
-          # le job, et les fichiers sont pousses dans les conteneurs par
-          # l'entree standard.
-          export DOCKER_HOST="ssh://deploy-target"
-
-          BASE_COMPOSE_FILE=deployment/caddy/compose.yml
-          AI_COMPOSE_FILE=deployment/caddy/compose.ai.yml
-
-          if grep -Eq '^DEMO_MODE=[[:space:]]*"?true"?[[:space:]]*$' .env; then
-            DEMO_ENABLED=true
-            COMPOSE_FILES="-f $BASE_COMPOSE_FILE"
-            LOG_SERVICES="app"
-            AI_ENABLED=false
-            echo "Mode demonstration : la couche IA n'est pas deployee."
-          else
-            DEMO_ENABLED=false
-            COMPOSE_FILES="-f $BASE_COMPOSE_FILE -f $AI_COMPOSE_FILE"
-            LOG_SERVICES="app ai"
-            AI_ENABLED=true
-          fi
-
-          # Decoupage en mots volontaire : la variable porte plusieurs arguments.
-          compose() {
-            docker compose --env-file .env $COMPOSE_FILES "$@"
-          }
-
-          # `:?` plutot que `$DEPLOY_PATH` nu : un chemin vide ferait retomber
-          # le `cd` distant sur le repertoire personnel, et le `rm -rf` qui suit
-          # s'y appliquerait.
-          : "${DEPLOY_PATH:?DEPLOY_PATH doit etre defini}"
-
-          echo "Preparation des repertoires persistants..."
-          ssh deploy-target "mkdir -p '$DEPLOY_PATH/data' '$DEPLOY_PATH/uploads' '$DEPLOY_PATH/logs'"
-
-          # Retire les fichiers deposes par les versions precedentes de ce
-          # workflow, qui laissaient le `.env` et les compose sur la machine.
-          ssh deploy-target "cd '$DEPLOY_PATH' && rm -f .env .deploy.env compose.yml compose.ai.yml && rm -rf deployment api"
-
-          rsync -avz api/uploads/ "deploy-target:$DEPLOY_PATH/uploads/"
-
-          echo "Verification du reseau Caddy partage..."
-          docker network inspect caddy >/dev/null
-          compose config --quiet
-
-          printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
-          compose pull
-
-          if [ "$AI_ENABLED" = true ]; then
-            compose run --rm --no-deps ai python -c \
-              'import app.db_provision; print("Module app.db_provision disponible")'
-          fi
-
-          compose up -d db-pg db-mongo
-
-          until compose exec -T db-pg sh -c \
-            'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-          do
-            sleep 2
-          done
-
-          if [ "$AI_ENABLED" = true ]; then
-            compose up -d db-ai
-
-            until compose exec -T db-ai sh -c \
-              'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
-            do
-              sleep 2
-            done
-          fi
-
-          if [ "$DEMO_ENABLED" = true ]; then
-            # Le jeu de demonstration est un dump de donnees seules : il ne se
-            # rejoue que sur un schema vide, et la demonstration doit revenir a
-            # l'etat versionne a chaque deploiement.
-            echo "Remise a zero de la base de demonstration..."
-            compose exec -T db-pg sh -c \
-              'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
-          fi
-
-          compose run --rm --no-deps -w /app/api app npx prisma migrate deploy
-
-          if [ "$DEMO_ENABLED" = true ]; then
-            echo "Restauration du jeu de demonstration..."
-            compose exec -T db-pg sh -c \
-              'psql -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-              < api/dumps/demo/dump-pgsql.sql
-
-            compose cp api/dumps/demo/dump-mongo db-mongo:/tmp/dump-mongo
-            # `--nsFrom/--nsTo` : le dump est pris sur la base `lxp`, que
-            # l'instance peut avoir nommee autrement.
-            compose exec -T db-mongo sh -c \
-              'mongorestore --quiet --drop \
-                  --username "$MONGO_INITDB_ROOT_USERNAME" \
-                  --password "$MONGO_INITDB_ROOT_PASSWORD" \
-                  --authenticationDatabase admin \
-                  --nsInclude "lxp.*" --nsFrom "lxp.*" \
-                  --nsTo "$MONGO_INITDB_DATABASE.*" \
-                  /tmp/dump-mongo'
-            compose exec -T db-mongo rm -rf /tmp/dump-mongo
-
-            rsync -avz --delete api/dumps/demo/activities/ \
-              "deploy-target:$DEPLOY_PATH/uploads/activities/"
-          fi
-
-          # Poses apres la restauration : rejouer un dump n'est pas un changement
-          # de contenu a signaler, et le trigger tournerait une fois par ligne
-          # inseree. `pg_dump` vide en outre le search_path de sa session, ce que
-          # la fonction encaisse depuis qu'elle porte sa propre clause SET.
-          compose exec -T db-pg sh -c \
-            'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-            < api/src/scripts/andria_notify_triggers.sql
-
-          if [ "$DEMO_ENABLED" = true ]; then
-            # Les deux comptes empruntes par les visiteurs, sans lesquels /demo
-            # repond « La demonstration n'est pas configuree sur cette instance ».
-            compose run --rm --no-deps app npm run demo:seed
-          fi
-
-          if [ "$AI_ENABLED" = true ]; then
-            compose run --rm ai python -m app.db_provision
-          fi
-
-          # `ai` est tire par le `depends_on` de `app` quand l'overlay est
-          # charge ; `--remove-orphans` retire les conteneurs IA d'une stack qui
-          # bascule en demonstration.
-          compose up -d --remove-orphans --wait --wait-timeout 240 app
-
-          if [ "$DEMO_ENABLED" = false ]; then
-            compose exec -T app npm run generate-activation-key
-          fi
-
-          compose ps
-          compose logs --no-color --tail=100 $LOG_SERVICES
+          ./deployment/deploy.sh
 
       - name: Remove the local credentials
         if: always()
         run: |
-          rm -f .env ~/.ssh/deploy_key ~/.ssh/config
           docker logout >/dev/null 2>&1 || true

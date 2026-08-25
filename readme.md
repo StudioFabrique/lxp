@@ -55,8 +55,18 @@ pipelines chargent alors le socle `compose.yml` sans l'overlay
 
 ## Documentation
 
-- [Service IA et synchronisation en développement](docs/developpement-ia.md)
-- [Déploiement complet avec Jenkins](docs/deploiement-jenkins.md)
+Les secrets du LXP vivent dans Infisical, jamais dans le dépôt. La norme
+d'entreprise — organisation du coffre, identités, injection, rotation — est
+décrite dans la
+[documentation du serveur](https://docs.dev.step.eco/1-publication-application/1-gerer-les-secrets/).
+Le contrat des variables attendues par un déploiement se trouve dans
+[`deployment/env.example`](deployment/env.example).
+
 - [Structure et architecture](docs/structure-et-architecture.md)
+- [Service IA et synchronisation en développement](docs/developpement-ia.md)
 - [Mode démonstration](docs/mode-demo.md)
+- [Déploiement avec Jenkins](docs/deploiement-jenkins.md)
+- [Déploiement Jenkins avec le Caddy partagé](docs/deploiement-caddy-jenkins.md)
+- [Déploiement de développement avec GitHub Actions](docs/deploiement-caddy-github-actions.md)
+- [Méthodes de déploiement](deployment/README.md)
 - [Schéma relationnel PostgreSQL](docs/lxp-postgres-erdiagram.mmd)

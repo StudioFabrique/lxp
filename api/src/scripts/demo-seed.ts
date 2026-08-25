@@ -1,4 +1,3 @@
-import "dotenv/config";
 import bcrypt from "bcrypt";
 import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
@@ -8,6 +7,7 @@ import mongoConnect from "../utils/services/db/mongo-connect.ts";
 import User from "../utils/interfaces/db/user.ts";
 import Group from "../utils/interfaces/db/group.ts";
 import Role from "../utils/interfaces/db/role.ts";
+import { env } from "../config/env.ts";
 
 /**
  * Prépare les deux comptes empruntés par les visiteurs de la démonstration.
@@ -40,7 +40,7 @@ const PROFILES = [
 ] as const;
 
 async function ensureAccount(profile: (typeof PROFILES)[number]) {
-  const email = process.env[profile.variable]?.toLowerCase();
+  const email = env[profile.variable]?.toLowerCase();
   if (!email) {
     throw new Error(
       `${profile.variable} n'est pas renseignée : impossible de préparer le compte « ${profile.role} ».`,

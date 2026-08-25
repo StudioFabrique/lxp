@@ -7,6 +7,7 @@ import {
   buildAbility,
 } from "../../rbac/ability.ts";
 import { isTokenBlacklisted } from "./set-tokens.ts";
+import { env } from "../../../config/env.ts";
 
 export type SessionTokenType = "access" | "refresh";
 
@@ -48,7 +49,7 @@ export async function verifySessionToken(
 
   let payload: SessionPayload;
   try {
-    payload = jwt.verify(token, process.env.SECRET!) as SessionPayload;
+    payload = jwt.verify(token, env.SECRET) as SessionPayload;
   } catch {
     throw new AuthenticationError("Session absente ou expirée");
   }
