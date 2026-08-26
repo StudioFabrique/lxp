@@ -2,12 +2,18 @@ import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "./get-pagination";
 import { sortArray } from "../utils/helpers/sort-array";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const useEagerLoadingList = (initialList: Array<any>, defaultSort: string, defaultLimit = 15, idProperty: "id" | "_id" = "id") => {
+const useEagerLoadingList = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialList: Array<any>,
+  defaultSort: string,
+  defaultLimit: number | null = 15,
+  idProperty: "id" | "_id" = "id",
+) => {
+  const paginationDisabled = defaultLimit === null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [list, setList] = useState<Array<any> | null>(initialList);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(defaultLimit);
+  const [limit, setLimit] = useState(defaultLimit ?? 15);
   const [totalPages, setTotalPages] = useState(0);
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);
@@ -90,17 +96,28 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string, defau
 
   useEffect(() => {
     setAllChecked(false);
+
+    if (paginationDisabled) {
+      setList(initialList);
+      return;
+    }
+
     const offset = getPagination(page, limit);
     setList(initialList.slice(offset, offset + limit));
-  }, [initialList, limit, page]);
+  }, [initialList, limit, page, paginationDisabled]);
 
   useEffect(() => {
+    if (paginationDisabled) {
+      setTotalPages(initialList.length > 0 ? 1 : 0);
+      return;
+    }
+
     const pages =
       initialList.length % limit === 0
         ? initialList.length / limit
         : Math.trunc(initialList.length / limit) + 1;
     setTotalPages(pages);
-  }, [limit, initialList]);
+  }, [limit, initialList, paginationDisabled]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

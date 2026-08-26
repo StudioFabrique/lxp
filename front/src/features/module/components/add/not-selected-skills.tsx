@@ -18,7 +18,7 @@ export default function NotSelectedSkills(props: Props) {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name");
+  } = useEagerLoadingList(props.list!, "description", null);
 
   /**
    * gère le coche / décochage de toutes les checkboxes

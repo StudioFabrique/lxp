@@ -1,4 +1,3 @@
-import { type Contact } from "@prisma/client";
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";

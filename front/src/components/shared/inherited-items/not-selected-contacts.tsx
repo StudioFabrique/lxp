@@ -19,7 +19,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name");
+  } = useEagerLoadingList(props.list!, "name", null);
 
   /**
    * gère le coche / décochage de toutes les checkboxes

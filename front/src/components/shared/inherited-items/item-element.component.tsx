@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 
 interface ItemElementProps {
@@ -15,7 +16,7 @@ const ItemElement = (props: ItemElementProps) => {
 
   return (
     <div className="flex gap-x-2 text-xs items-center">
-      <p className="capitalize flex-1">{props.item[props.property]}</p>
+      <p className="flex-1">{toUpperFirstLetter(props.item[props.property])}</p>
       {props.additionalProperty ? (
         <p className="capitalize mr-10 font-semibold">
           {props.item[props.additionalProperty]}
