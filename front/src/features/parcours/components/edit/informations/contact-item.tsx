@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import Contact from "../../../../../../src/utils/interfaces/contact";
+import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 
 const ContactItem: FC<{
   user: Contact;
@@ -14,7 +15,7 @@ const ContactItem: FC<{
 
   return (
     <div className="grid grid-cols-3 gap-2 text-xs items-center">
-      <p className="capitalize">{user.name}</p>
+      <p className="capitalize">{getContactFullName(user)}</p>
       <div className="w-full text-ellipsis whitespace-nowrap capitalize">
         {user.role}
       </div>

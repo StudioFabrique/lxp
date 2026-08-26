@@ -52,7 +52,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           loading={props.loading}
           initialList={availableContacts}
           selectedItems={currentContacts}
-          property="name"
+          property={["firstname", "lastname"]}
           onSubmit={handleUpdateContacts}
         >
           <InheritedTextList additionalProperty="role" />

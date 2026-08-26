@@ -8,7 +8,11 @@ import {
   type ModuleCreateFormValues,
 } from "../../../parcours.schema";
 import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
-import { moduleReducer, initialState } from "./useNewModuleReducer";
+import {
+  moduleReducer,
+  initialState,
+  withSelectedModuleAssociations,
+} from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
 import type {
   ModuleData,
@@ -113,10 +117,19 @@ const useNewModule = () => {
         const data = await parcoursApi.mutations.createModule(formData);
         emitOnboardingEvent({ type: "module_created", id: data.data.id });
         reset();
-        dispatch({ type: "MODULE_CREATED", payload: data.data });
-        await queryClient.invalidateQueries({
-          queryKey: parcoursKeys.detail(+id!),
+        dispatch({
+          type: "MODULE_CREATED",
+          payload: withSelectedModuleAssociations(data.data, {
+            contacts: state.currentContacts,
+            skills: state.currentSkills,
+          }),
         });
+        await Promise.all([
+          getParcoursModules(),
+          queryClient.invalidateQueries({
+            queryKey: parcoursKeys.detail(+id!),
+          }),
+        ]);
         scrollToTop();
       } catch {
         toast.error("Erreur lors de la création du module");
@@ -251,10 +264,19 @@ const useNewModule = () => {
             },
           );
           reset();
-          dispatch({ type: "MODULE_CREATED", payload: data.response });
-          await queryClient.invalidateQueries({
-            queryKey: parcoursKeys.detail(+id!),
+          dispatch({
+            type: "MODULE_CREATED",
+            payload: withSelectedModuleAssociations(data.response, {
+              contacts: state.currentContacts,
+              skills: state.currentSkills,
+            }),
           });
+          await Promise.all([
+            getParcoursModules(),
+            queryClient.invalidateQueries({
+              queryKey: parcoursKeys.detail(+id!),
+            }),
+          ]);
           toast.success(data.message);
           scrollToTop();
         }
@@ -288,20 +310,18 @@ const useNewModule = () => {
         if (data.success) {
           dispatch({
             type: "SUCCESSFUL_MODULE_UPDATE",
-            payload: {
-              id: data.response.id,
-              contacts: data.response.contacts,
-              skills: data.response.skills,
-              duration: data.response.duration ? +data.response.duration : 0,
-              title: data.response.title,
-              description: data.response.description,
-              quizInstructions: data.response.quizInstructions,
-            },
+            payload: withSelectedModuleAssociations(data.response, {
+              contacts: state.currentContacts,
+              skills: state.currentSkills,
+            }),
           });
           toast.success(data.message);
-          await queryClient.invalidateQueries({
-            queryKey: parcoursKeys.detail(+id!),
-          });
+          await Promise.all([
+            getParcoursModules(),
+            queryClient.invalidateQueries({
+              queryKey: parcoursKeys.detail(+id!),
+            }),
+          ]);
           reset();
           scrollToTop();
         }

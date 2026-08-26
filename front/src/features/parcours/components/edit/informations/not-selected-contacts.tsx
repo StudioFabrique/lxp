@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { parcoursApi } from "../../../api/parcours.api";
 import { parcoursKeys } from "../../../api/parcours.keys";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
+import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -37,7 +38,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name");
+  } = useEagerLoadingList(props.list!, "lastname");
   const queryClient = useQueryClient();
 
   const { mutate: createTeacher } = useMutation({
@@ -80,14 +81,14 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
             <th
               className="cursor-pointer"
               onClick={() => {
-                sortData("name");
+                sortData("lastname");
               }}
             >
               <div className="flex items-center gap-x-2">
-                <p>Nom</p>
+                <p>Prénom et nom</p>
                 <SortColumnIcon
                   fieldSort={fieldSort}
-                  column="name"
+                  column="lastname"
                   direction={direction}
                 />
               </div>
@@ -126,7 +127,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                     onChange={() => handleRowCheck(item.id)}
                   />
                 </td>
-                <td>{item.name}</td>
+                <td>{getContactFullName(item)}</td>
                 <td>{item.role}</td>
               </tr>
             ))}

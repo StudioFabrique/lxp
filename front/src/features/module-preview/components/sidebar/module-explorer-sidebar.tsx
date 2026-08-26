@@ -194,6 +194,7 @@ const ModuleExplorerSidebar = ({
               <CreateCourseItem
                 parcoursId={module.parcoursId}
                 moduleId={module.id || 0}
+                parcoursTags={module.tags}
                 onCreate={courseActions.createCourse}
                 onCreated={setOpenedCourseId}
                 openDetailsOnMount={createCourse}

@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -25,7 +26,7 @@ async function patchParcours(
   const tagIds = [...new Set(payload.tagIds ?? [])];
   const contactIds = [...new Set(payload.contactIds ?? [])];
 
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const existingParcours = await tx.parcours.findFirst({
       where: { id: parcoursId, adminId: admin.id },
       select: {
@@ -157,12 +158,17 @@ async function patchParcours(
       },
     });
 
-    return {
-      ...updated,
-      tags: updated.tags.map(({ tag }) => tag),
-      contacts: updated.contacts.map(({ contact }) => contact),
-    };
+    return updated;
   });
+
+  const contacts = await enrichContactsWithNames(
+    updated.contacts.map(({ contact }) => contact),
+  );
+  return {
+    ...updated,
+    tags: updated.tags.map(({ tag }) => tag),
+    contacts,
+  };
 }
 
 export default patchParcours;

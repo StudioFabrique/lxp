@@ -134,7 +134,13 @@ export const putParcoursContactsValidator = [
       "Caractères non autorisés pour l'identifiant nosql du contact."
     )
     .escape(),
-  body("contacts.*.name")
+  body("contacts.*.firstname")
+    .notEmpty()
+    .withMessage("Prénom absent")
+    .custom(stringValidateGeneric)
+    .withMessage("Caractères non autorisés pour le prénom du contact.")
+    .escape(),
+  body("contacts.*.lastname")
     .notEmpty()
     .withMessage("Nom absent")
     .custom(stringValidateGeneric)

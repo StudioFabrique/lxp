@@ -184,8 +184,8 @@ COPY public."BonusSkillsOnModule" ("bonusSkillId", "moduleId") FROM stdin;
 -- Data for Name: Contact; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Contact" (id, "idMdb", name, role, email, phone, "createdAt", "updatedAt") FROM stdin;
-1	6a8818e8bb276b805bba68d1	Doe John	équipe pédagogique	demo-formateur@andria.fr		2026-08-21 09:22:48.096	2026-08-21 09:22:48.096
+COPY public."Contact" (id, "idMdb", role, email, phone, "createdAt", "updatedAt") FROM stdin;
+1	6a8818e8bb276b805bba68d1	équipe pédagogique	demo-formateur@andria.fr		2026-08-21 09:22:48.096	2026-08-21 09:22:48.096
 \.
 
 
@@ -705,4 +705,3 @@ SELECT pg_catalog.setval('public."Teacher_id_seq"', 1, false);
 --
 
 \unrestrict L4GQHfZMoYGfZTFaTfrpf7KT1hkEFMdfAukW8UU0TFCuxcheTUQWmOpD7bLcu7F
-

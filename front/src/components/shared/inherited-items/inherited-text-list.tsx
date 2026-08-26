@@ -4,7 +4,7 @@ import ItemElement from "./item-element.component";
 
 interface InheritedTextListProps {
   list?: any[];
-  property?: string;
+  property?: string | string[];
   additionalProperty?: string; // propriété additionnelle facultative rajouté
   onRemoveItem?: (item: any) => void;
   onDelete?: (id: number) => void;

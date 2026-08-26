@@ -1,4 +1,5 @@
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
@@ -97,6 +98,16 @@ async function getParcoursById(parcoursId: number, userId: string) {
     throw error;
   }
 
+  const namedContacts = await enrichContactsWithNames([
+    ...parcours.contacts.map(({ contact }) => contact),
+    ...parcours.modules.flatMap(({ contacts }) =>
+      contacts.map(({ contact }) => contact),
+    ),
+  ]);
+  const contactsByMongoId = new Map(
+    namedContacts.map((contact) => [contact.idMdb, contact]),
+  );
+
   // 3. Initialisation de l'objet résultat
   // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
   let result: any = { ...parcours };
@@ -108,7 +119,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
   // 5. Traitement des contacts (aplatissement)
   // Transforme [{ contact: {...} }] en [{...}]
-  result.contacts = parcours.contacts.map((c) => c.contact);
+  result.contacts = parcours.contacts.map(
+    ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+  );
   result.tags = parcours.tags.map((item) => item.tag);
 
   // 6. Traitement des modules (si présents)
@@ -120,7 +133,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
         : null;
 
       // Contacts du module (aplatissement)
-      const moduleContacts = item.contacts.map((c: any) => c.contact);
+      const moduleContacts = item.contacts.map(
+        ({ contact }: any) => contactsByMongoId.get(contact.idMdb)!,
+      );
 
       return {
         ...item,

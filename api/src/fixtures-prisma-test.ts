@@ -255,7 +255,6 @@ async function createSqlContacts() {
       return {
         idMdb: user._id,
         role: "formateur",
-        name: `${user.firstname} ${user.lastname}`,
         email: user.email,
         phone: user.phoneNumber,
       };

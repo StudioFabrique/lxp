@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -17,7 +18,6 @@ export default async function getParcoursSkillsContacts(parcoursId: number) {
             select: {
               id: true,
               idMdb: true,
-              name: true,
               role: true,
             },
           },
@@ -37,8 +37,11 @@ export default async function getParcoursSkillsContacts(parcoursId: number) {
     throw { statusCode: 404, message: "Parcours non trouvé." };
 
   // Formate les données pour la réponse
+  const contacts = await enrichContactsWithNames(
+    existingParcours.contacts.map((item) => item.contact),
+  );
   const data = {
-    contacts: existingParcours.contacts.map((item) => item.contact), // Extrait les contacts
+    contacts,
     skills: existingParcours.bonusSkills, // Récupère les compétences
   };
 

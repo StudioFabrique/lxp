@@ -1,4 +1,3 @@
-import { type Contact } from "@prisma/client";
 import { prisma } from "../../utils/db.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
@@ -51,12 +50,10 @@ async function postTeacher(teacher: IUser) {
     ).populate("roles", { label: 1 });
 
     if (updatedTeacher) {
-      let contact: Contact | null = null;
-      const transaction = await prisma.$transaction(async (tx) => {
-        contact = await tx.contact.create({
+      const contact = await prisma.$transaction(async (tx) => {
+        const createdContact = await tx.contact.create({
           data: {
             idMdb: updatedTeacher._id,
-            name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
             role: updatedTeacher.roles[0].label,
             phone: updatedTeacher.phoneNumber,
             email: updatedTeacher.email,
@@ -68,9 +65,15 @@ async function postTeacher(teacher: IUser) {
             idMdb: updatedTeacher._id,
           },
         });
+
+        return createdContact;
       });
 
-      return contact;
+      return {
+        ...contact,
+        firstname: updatedTeacher.firstname,
+        lastname: updatedTeacher.lastname,
+      };
     }
   } else {
     throw {

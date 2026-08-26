@@ -1,6 +1,7 @@
 import { ContactIcon } from "lucide-react";
 import Contact from "../../../../../src/utils/interfaces/contact";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { getContactFullName } from "../../../../utils/helpers/contact-full-name";
 
 type ContactsProps = {
   contacts: Contact[];
@@ -17,7 +18,7 @@ const Contacts = ({ contacts }: ContactsProps) => {
         <ul className="list-disc pl-5">
           {contacts.map((contact) => (
             <li key={contact.id} className="capitalize">
-              {contact.name}
+              {getContactFullName(contact)}
             </li>
           ))}
         </ul>

@@ -50,7 +50,7 @@ export default function ModuleToParcours({
         loading={isLoading}
         initialList={contacts}
         selectedItems={currentContacts}
-        property="name"
+        property={["firstname", "lastname"]}
         onSubmit={setCurrentContacts}
         titleSize="medium"
         isDisabled={isDisabled}

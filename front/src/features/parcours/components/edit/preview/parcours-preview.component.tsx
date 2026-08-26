@@ -88,6 +88,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         ) : null}
       </section>
       <FloatingBottomNavigation
+        stickyActivationOffset={200}
         startActions={
           <button
             className="btn btn-ghost hover:underline"

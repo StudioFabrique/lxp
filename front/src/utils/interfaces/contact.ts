@@ -1,7 +1,8 @@
 export default interface Contact {
   id?: number;
   idMdb: string;
-  name: string;
+  firstname: string;
+  lastname: string;
   role: string;
   isSelected?: boolean;
 }

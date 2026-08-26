@@ -1,4 +1,5 @@
 import { prisma } from "../../utils/db.ts";
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
 
@@ -223,6 +224,9 @@ export default async function postDuplicateModule(
       bonusSkills: { include: { bonusSkill: true } },
     },
   });
+  const contacts = await enrichContactsWithNames(
+    duplicated.contacts.map(({ contact }) => contact),
+  );
 
   return {
     id: duplicated.id,
@@ -231,7 +235,7 @@ export default async function postDuplicateModule(
       ? Buffer.from(duplicated.thumb as any).toString("base64")
       : null,
     description: duplicated.description,
-    contacts: duplicated.contacts.map(({ contact }) => contact),
+    contacts,
     skills: duplicated.bonusSkills.map(({ bonusSkill }) => bonusSkill),
   };
 }

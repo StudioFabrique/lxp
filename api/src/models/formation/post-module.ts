@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
@@ -112,14 +113,20 @@ async function postModule(
       bonusSkills: { include: { bonusSkill: true } },
     },
   });
+  const contacts = await enrichContactsWithNames(
+    created.contacts.map(({ contact }) => contact),
+  );
 
   return {
-    ...created,
+    id: created.id,
+    title: created.title,
+    description: created.description,
+    quizInstructions: created.quizInstructions,
+    duration: created.duration ?? 1,
     thumb: created.thumb
       ? Buffer.from(created.thumb as any).toString("base64")
       : null,
-    image: undefined,
-    contacts: created.contacts.map(({ contact }) => contact),
+    contacts,
     skills: created.bonusSkills.map(({ bonusSkill }) => bonusSkill),
   };
 }

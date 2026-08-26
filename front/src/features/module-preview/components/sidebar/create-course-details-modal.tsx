@@ -4,7 +4,6 @@ import { FormEvent, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { courseApi } from "../../../course/api/course.api";
-import { modulePreviewApi } from "../../api/module-preview.api";
 import type Tag from "../../../../utils/interfaces/tag";
 import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/lesson";
 import type { CreateCourseFormValues } from "./course-form.types";
@@ -14,6 +13,7 @@ import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip
 type Props = {
   initialTitle: string;
   isSubmitting: boolean;
+  parcoursTags: Tag[];
   onClose: () => void;
   onSubmit: (values: CreateCourseFormValues) => Promise<boolean>;
 };
@@ -21,6 +21,7 @@ type Props = {
 export default function CreateCourseDetailsModal({
   initialTitle,
   isSubmitting,
+  parcoursTags,
   onClose,
   onSubmit,
 }: Props) {
@@ -35,13 +36,6 @@ export default function CreateCourseDetailsModal({
   const [selectedContents, setSelectedContents] = useState<
     LessonWithActivitiesCount[]
   >([]);
-
-  const { data: tags = [] } = useQuery({
-    queryKey: ["tags", "course-create"],
-    queryFn: async (): Promise<Tag[]> => {
-      return modulePreviewApi.queries.getTags();
-    },
-  });
 
   const { data: lessonsResponse, isLoading: isLoadingLessons } = useQuery({
     ...courseApi.queries.lessonsByTag(
@@ -191,8 +185,8 @@ export default function CreateCourseDetailsModal({
               </p>
             </div>
             <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto rounded-lg border border-base-300 p-3">
-              {tags.length ? (
-                tags.map((tag) => {
+              {parcoursTags.length ? (
+                parcoursTags.map((tag) => {
                   const selected = selectedTagIds.includes(tag.id);
                   return (
                     <button
@@ -314,7 +308,7 @@ export default function CreateCourseDetailsModal({
                       }
                     >
                       <option value={0}>Choisir un tag</option>
-                      {tags.map((tag) => (
+                      {parcoursTags.map((tag) => (
                         <option key={tag.id} value={tag.id}>
                           {tag.name}
                         </option>

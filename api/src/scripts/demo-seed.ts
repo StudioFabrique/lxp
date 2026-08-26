@@ -107,7 +107,6 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
       await prisma.contact.create({
         data: {
           idMdb,
-          name: `${profile.lastname} ${profile.firstname}`,
           role: role.label,
           phone: "Non Renseigné",
           email,

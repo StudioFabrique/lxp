@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
@@ -76,7 +77,11 @@ async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
         maxDate: true,
         thumb: true,
         contacts: {
-          select: { contact: { select: { id: true, name: true, role: true } } },
+          select: {
+            contact: {
+              select: { id: true, idMdb: true, role: true },
+            },
+          },
         },
         bonusSkills: {
           select: {
@@ -86,15 +91,21 @@ async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
       },
     });
   });
+  const contacts = await enrichContactsWithNames(
+    updated.contacts.map(({ contact }) => contact),
+  );
 
   return {
-    ...updated,
+    id: updated.id,
+    title: updated.title,
+    description: updated.description,
+    quizInstructions: updated.quizInstructions,
     duration: updated.duration ?? 1,
     thumb: updated.thumb
       ? Buffer.from(updated.thumb as any).toString("base64")
       : null,
-    contacts: updated.contacts.map(({ contact }) => contact),
-    bonusSkills: updated.bonusSkills.map(({ bonusSkill }) => bonusSkill),
+    contacts,
+    skills: updated.bonusSkills.map(({ bonusSkill }) => bonusSkill),
   };
 }
 

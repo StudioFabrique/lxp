@@ -2,6 +2,7 @@ import {
   calculateCourseProgress,
   calculateModuleProgress,
 } from "../../helpers/calculate-module-progress.ts";
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getLimitedModuleDetail(
@@ -32,7 +33,7 @@ export default async function getLimitedModuleDetail(
       },
       bonusSkills: { select: { bonusSkill: true } },
       contacts: {
-        select: { contact: { select: { id: true, idMdb: true, name: true } } },
+        select: { contact: { select: { id: true, idMdb: true } } },
       },
       courses: {
         where: isTeacher
@@ -69,6 +70,9 @@ export default async function getLimitedModuleDetail(
   if (!module) {
     throw { message: "Le module n'existe pas.", statusCode: 404 };
   }
+  const contacts = await enrichContactsWithNames(
+    module.contacts.map(({ contact }) => contact),
+  );
 
   return {
     id: module.id,
@@ -84,7 +88,7 @@ export default async function getLimitedModuleDetail(
     parcoursId: module.parcours.id,
     tags: module.parcours.tags.map(({ tag }) => tag),
     bonusSkills: module.bonusSkills.map(({ bonusSkill }) => bonusSkill),
-    contacts: module.contacts.map(({ contact }) => contact),
+    contacts,
     // Progression calculée ici : `lessonsRead` est déjà chargé, aucune requête
     // supplémentaire. Le front se contente de lire `stats.progress`.
     stats: { progress: calculateModuleProgress(module) },

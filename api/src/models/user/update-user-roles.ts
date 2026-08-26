@@ -46,7 +46,6 @@ async function updateUserRoles(
     await prisma.contact.createMany({
       data: actualUsers.map((user) => ({
         idMdb: user._id.toString(),
-        name: `${user.firstname} ${user.lastname}`,
         role: "équipe pédagogique",
         email: user.email,
       })),

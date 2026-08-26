@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getModulesFormation(formationId: number) {
@@ -21,20 +22,32 @@ export default async function getModulesFormation(formationId: number) {
         },
       },
       contacts: {
-        select: { contact: { select: { id: true, name: true, role: true } } },
+        select: {
+          contact: { select: { id: true, idMdb: true, role: true } },
+        },
       },
       bonusSkills: {
         select: { bonusSkill: { select: { id: true, description: true } } },
       },
     },
   });
+  const namedContacts = await enrichContactsWithNames(
+    modules.flatMap(({ contacts }) =>
+      contacts.map(({ contact }) => contact),
+    ),
+  );
+  const contactsByMongoId = new Map(
+    namedContacts.map((contact) => [contact.idMdb, contact]),
+  );
 
   return modules.map(({ contacts, bonusSkills, courses, ...module }) => ({
     ...module,
     thumb: module.thumb
       ? Buffer.from(module.thumb as any).toString("base64")
       : null,
-    contacts: contacts.map(({ contact }) => contact),
+    contacts: contacts.map(
+      ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+    ),
     bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
     courses: courses.map((course) => ({
       ...course,

@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 import Contact from "../../../utils/interfaces/contact";
 import SortColumnIcon from "../../UI/sort-column-icon/sort-column-icon";
 import useEagerLoadingList from "../../../hooks/useEagerLoadingList";
+import { getContactFullName } from "../../../utils/helpers/contact-full-name";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -19,7 +20,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name", null);
+  } = useEagerLoadingList(props.list!, "lastname", null);
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -44,14 +45,14 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
             <th
               className="cursor-pointer"
               onClick={() => {
-                sortData("name");
+                sortData("lastname");
               }}
             >
               <div className="flex items-center gap-x-2">
-                <p>Nom</p>
+                <p>Prénom et nom</p>
                 <SortColumnIcon
                   fieldSort={fieldSort}
-                  column="name"
+                  column="lastname"
                   direction={direction}
                 />
               </div>
@@ -90,7 +91,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                     onChange={() => handleRowCheck(item.id)}
                   />
                 </td>
-                <td>{item.name}</td>
+                <td>{getContactFullName(item)}</td>
                 <td>{item.role}</td>
               </tr>
             ))}

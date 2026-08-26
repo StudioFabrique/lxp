@@ -5,6 +5,7 @@ import { AuthContext } from "../../../../store/AuthProvider";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../rbac/AbilityProvider";
+import { getContactFullName } from "../../../../utils/helpers/contact-full-name";
 
 const Contacts = () => {
   const { user } = useContext(AuthContext);
@@ -21,7 +22,9 @@ const Contacts = () => {
           className="flex flex-col bg-base-200 border border-base-300 p-4 rounded-lg text-base-content"
         >
           <span className="flex justify-between items-center">
-            <p className="capitalize font-bold text-primary">{contact.name}</p>
+            <p className="capitalize font-bold text-primary">
+              {getContactFullName(contact)}
+            </p>
             <p className="capitalize text-xs opacity-70">{contact.role}</p>
           </span>
           <span className="text-xs flex flex-col items-start opacity-80">

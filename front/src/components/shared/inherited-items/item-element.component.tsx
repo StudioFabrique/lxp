@@ -4,7 +4,7 @@ import DeleteIcon from "../../UI/svg/delete-icon.component";
 interface ItemElementProps {
   item: any;
   onRemoveItem: (value: unknown) => void;
-  property: string;
+  property: string | string[];
   additionalProperty?: string;
 }
 
@@ -12,11 +12,17 @@ const ItemElement = (props: ItemElementProps) => {
   const handleRemoveItem = () => {
     props.onRemoveItem(props.item);
   };
+  const value = Array.isArray(props.property)
+    ? props.property
+        .map((property) => props.item[property])
+        .filter(Boolean)
+        .join(" ")
+    : props.item[props.property];
 
   return (
     <div className="flex gap-x-2 text-xs items-center">
       <p className="flex-1 first-letter:uppercase">
-        {props.item[props.property]}
+        {value}
       </p>
       {props.additionalProperty ? (
         <p className="capitalize mr-10 font-semibold">

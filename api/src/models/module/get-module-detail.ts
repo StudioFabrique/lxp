@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getModuleDetail(
@@ -42,6 +43,9 @@ export default async function getModuleDetail(
   }
 
   const { bonusSkills, contacts, parcours, ...flatModule } = module;
+  const namedContacts = await enrichContactsWithNames(
+    contacts.map(({ contact }) => contact),
+  );
   return {
     ...flatModule,
     image: module.image
@@ -50,7 +54,7 @@ export default async function getModuleDetail(
     parcours: parcours.title,
     parcoursId: parcours.id,
     bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
-    contacts: contacts.map(({ contact }) => contact),
+    contacts: namedContacts,
     courses: module.courses.map((course) => ({
       ...course,
       aiIndexed: Boolean(course.courseSlug),

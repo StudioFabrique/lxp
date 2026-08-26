@@ -5,7 +5,11 @@ import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
 import Modal from "../../../../../components/UI/modal/modal";
-import { useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+
+type Props = {
+  setModuleFormOpened: Dispatch<SetStateAction<boolean>>;
+};
 
 /**
  * Module Component - Main container for module management in a parcours
@@ -21,7 +25,7 @@ import { useMemo } from "react";
  *
  * @returns JSX.Element - The complete module management interface
  */
-export default function ModuleComponent() {
+export default function ModuleComponent({ setModuleFormOpened }: Props) {
   const {
     currentContacts,
     currentSkills,
@@ -70,6 +74,10 @@ export default function ModuleComponent() {
     handleSubmit,
     handleSubmitDuplicateModule,
   ]);
+
+  useEffect(() => {
+    setModuleFormOpened(showForm);
+  }, [setModuleFormOpened, showForm]);
 
   return (
     <>

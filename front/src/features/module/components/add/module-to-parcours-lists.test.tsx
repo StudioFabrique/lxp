@@ -27,7 +27,8 @@ describe("listes de sélection de ModuleToParcours", () => {
     const contacts = Array.from({ length: 18 }, (_, index) => ({
       id: index + 1,
       idMdb: `contact-${index + 1}`,
-      name: `Contact ${index + 1}`,
+      firstname: "Contact",
+      lastname: `${index + 1}`,
       role: "Formateur",
     }));
 
@@ -40,6 +41,7 @@ describe("listes de sélection de ModuleToParcours", () => {
     );
 
     expect(container.querySelectorAll("tbody tr")).toHaveLength(18);
+    expect(container.textContent).toContain("Contact 1");
   });
 
   it("affiche toutes les compétences disponibles", () => {

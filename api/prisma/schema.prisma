@@ -91,7 +91,6 @@ model BonusSkillsOnModule {
 model Contact {
   id        Int                  @id @default(autoincrement())
   idMdb     String               @unique
-  name      String
   role      String
   email     String?
   phone     String?              @default("Non renseigné")

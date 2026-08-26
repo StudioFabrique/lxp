@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getModulesFromParcours(parcoursId: number) {
@@ -14,7 +15,7 @@ async function getModulesFromParcours(parcoursId: number) {
           duration: true,
           contacts: {
             select: {
-              contact: { select: { id: true, name: true, role: true } },
+              contact: { select: { id: true, idMdb: true, role: true } },
             },
           },
           bonusSkills: {
@@ -27,7 +28,7 @@ async function getModulesFromParcours(parcoursId: number) {
       formation: { select: { id: true } },
       contacts: {
         select: {
-          contact: { select: { id: true, name: true, role: true } },
+          contact: { select: { id: true, idMdb: true, role: true } },
         },
       },
       bonusSkills: true,
@@ -35,6 +36,15 @@ async function getModulesFromParcours(parcoursId: number) {
   });
 
   if (!parcours) throw { statusCode: 404, message: "Parcours introuvable." };
+  const namedContacts = await enrichContactsWithNames([
+    ...parcours.contacts.map(({ contact }) => contact),
+    ...parcours.modules.flatMap(({ contacts }) =>
+      contacts.map(({ contact }) => contact),
+    ),
+  ]);
+  const contactsByMongoId = new Map(
+    namedContacts.map((contact) => [contact.idMdb, contact]),
+  );
 
   return {
     modules: parcours.modules.map(({ contacts, bonusSkills, ...module }) => ({
@@ -42,12 +52,16 @@ async function getModulesFromParcours(parcoursId: number) {
       thumb: module.thumb
         ? Buffer.from(module.thumb as any).toString("base64")
         : null,
-      contacts: contacts.map(({ contact }) => contact),
+      contacts: contacts.map(
+        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+      ),
       skills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
     })),
     parcoursData: {
       formationId: parcours.formation.id,
-      contacts: parcours.contacts.map(({ contact }) => contact),
+      contacts: parcours.contacts.map(
+        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+      ),
       bonusSkills: parcours.bonusSkills,
     },
   };

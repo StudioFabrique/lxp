@@ -21,6 +21,8 @@ import FloatingBottomNavigation from "../../../components/buttons/FloatingBottom
 const EditParcours = () => {
   const {
     id,
+    moduleFormOpened,
+    setModuleFormOpened,
     actualStep,
     stepsList,
     updateStep,
@@ -77,7 +79,7 @@ const EditParcours = () => {
           />
         );
       case 4:
-        return <ModuleComponent />;
+        return <ModuleComponent setModuleFormOpened={setModuleFormOpened} />;
       case 5:
         return <Calendrier />;
       case 6:
@@ -121,6 +123,7 @@ const EditParcours = () => {
           <div className="w-full mt-16">{renderActualStep()}</div>
           {actualStep.id !== stepsList.length ? (
             <FloatingBottomNavigation
+              stickyActivationOffset={moduleFormOpened ? 150 : undefined}
               startActions={
                 <button
                   className="btn btn-ghost hover:underline"

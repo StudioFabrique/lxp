@@ -19,6 +19,7 @@ export function useParcoursEdit() {
   const { actualStep, stepsList, updateStep, validateStep } = useSteps(
     stepsParcours as Step[],
   );
+  const [moduleFormOpened, setModuleFormOpened] = useState(false);
   const parcoursId = id !== undefined ? +id : undefined;
   const {
     data: parcours,
@@ -48,6 +49,7 @@ export function useParcoursEdit() {
     if (appliedStepRef.current === step) return;
     appliedStepRef.current = step;
     updateStep(+step);
+    setModuleFormOpened(false);
   }, [step, updateStep]);
 
   const updateImage = useCallback(
@@ -81,6 +83,8 @@ export function useParcoursEdit() {
 
   return {
     id,
+    moduleFormOpened,
+    setModuleFormOpened,
     actualStep,
     stepsList,
     updateStep,

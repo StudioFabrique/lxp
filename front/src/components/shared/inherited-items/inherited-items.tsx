@@ -17,7 +17,7 @@ interface InheritedItemsProps {
   initialList: unknown[];
   selectedItems: unknown[];
   isDisabled?: boolean;
-  property: string; // propriété utilisée pour trier les listes
+  property: string | string[]; // propriété(s) affichée(s) dans les listes
   onSubmit: (items: any[]) => void;
   titleSize?: "small" | "medium" | "large";
 }

@@ -5,10 +5,12 @@ import { motion } from "motion/react";
 import type { CreateCourseFormValues } from "./course-form.types";
 import CreateCourseDetailsModal from "./create-course-details-modal";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
+import type Tag from "../../../../utils/interfaces/tag";
 
 type CreateCourseItemProps = {
   parcoursId?: number;
   moduleId: number;
+  parcoursTags: Tag[];
   onCreate: (values: CreateCourseFormValues) => Promise<number | false>;
   onCreated?: (courseId: number) => void;
   openDetailsOnMount?: boolean;
@@ -17,6 +19,7 @@ type CreateCourseItemProps = {
 const CreateCourseItem = ({
   parcoursId,
   moduleId,
+  parcoursTags,
   onCreate,
   onCreated,
   openDetailsOnMount = false,
@@ -58,6 +61,7 @@ const CreateCourseItem = ({
         <CreateCourseDetailsModal
           initialTitle={title}
           isSubmitting={isSubmitting}
+          parcoursTags={parcoursTags}
           onClose={() => setShowDetailsForm(false)}
           onSubmit={handleCreate}
         />

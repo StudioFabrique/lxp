@@ -1,3 +1,4 @@
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getCourseInformations(courseId: number) {
@@ -32,7 +33,7 @@ async function getCourseInformations(courseId: number) {
               contact: {
                 select: {
                   id: true,
-                  name: true,
+                  idMdb: true,
                   role: true,
                 },
               },
@@ -76,11 +77,24 @@ async function getCourseInformations(courseId: number) {
   });
 
   if (!course) throw { message: "Le cours n'existe pas.", statusCode: 404 };
+  const namedContacts = await enrichContactsWithNames([
+    ...course.contacts.map(({ contact }) => contact),
+    ...course.module.contacts.map(({ contact }) => contact),
+  ]);
+  const contactsByMongoId = new Map(
+    namedContacts.map((contact) => [contact.idMdb, contact]),
+  );
 
   return {
     ...course,
+    contacts: course.contacts.map(({ contact }) => ({
+      contact: contactsByMongoId.get(contact.idMdb)!,
+    })),
     module: {
       ...course.module,
+      contacts: course.module.contacts.map(({ contact }) => ({
+        contact: contactsByMongoId.get(contact.idMdb)!,
+      })),
       image: course.module.image
         ? Buffer.from(course.module.image as any).toString("base64")
         : null,

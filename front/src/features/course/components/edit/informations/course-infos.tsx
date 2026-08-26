@@ -165,7 +165,7 @@ const CourseInfos = () => {
               loading={loadingContacts}
               initialList={contacts}
               currentItems={currentContacts}
-              property="name"
+              property={["firstname", "lastname"]}
               onSubmit={handleUpdateContacts}
             />
           </Wrapper>

@@ -111,7 +111,6 @@ export default async function createUser(user: IUser, roleId: string) {
       await prisma.contact.create({
         data: {
           idMdb: createdUser._id,
-          name: `${createdUser.lastname} ${createdUser.firstname}`,
           role: role.label,
           phone:
             createdUser.phoneNumber && createdUser.phoneNumber?.length > 0

@@ -1,5 +1,6 @@
 import { type Contact } from "@prisma/client";
 
+import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 
@@ -34,7 +35,12 @@ async function putParcoursContacts(
 
       if (contactsToCreate.length > 0) {
         await prisma.contact.createMany({
-          data: contactsToCreate,
+          data: contactsToCreate.map((contact) => ({
+            idMdb: contact.idMdb,
+            role: contact.role,
+            email: contact.email,
+            phone: contact.phone,
+          })),
         });
       }
 
@@ -81,7 +87,6 @@ async function putParcoursContacts(
                 select: {
                   id: true,
                   idMdb: true,
-                  name: true,
                   role: true,
                 },
               },
@@ -91,7 +96,15 @@ async function putParcoursContacts(
       });
       return updatedParcours;
     });
-    return transaction;
+    if (!("contacts" in transaction)) return transaction;
+
+    const contacts = await enrichContactsWithNames(
+      transaction.contacts.map(({ contact }) => contact),
+    );
+    return {
+      ...transaction,
+      contacts: contacts.map((contact) => ({ contact })),
+    };
   } catch (error: any) {
     throw error;
   }

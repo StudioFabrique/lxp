@@ -13,6 +13,24 @@ type ModuleUpdate = {
   skills: Skill[];
 };
 
+type ModuleAssociations = Pick<ModuleData, "contacts" | "skills">;
+
+/**
+ * The submitted selections are the source of truth until the modules list is
+ * fetched again. Keeping them on the mutation result prevents an incomplete or
+ * differently-shaped API response from clearing the other association locally.
+ */
+function withSelectedModuleAssociations(
+  module: ModuleData,
+  associations: ModuleAssociations,
+): ModuleData {
+  return {
+    ...module,
+    contacts: associations.contacts,
+    skills: associations.skills,
+  };
+}
+
 // Centralized state type
 type ModuleState = {
   image: string | null;
@@ -54,18 +72,7 @@ type ModuleAction =
     }
   | { type: "CLOSE_DELETE_MODAL" }
   | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
-  | {
-      type: "SUCCESSFUL_MODULE_UPDATE";
-      payload: {
-        id: number;
-        contacts: Contact[];
-        skills: Skill[];
-        duration: number;
-        title: string;
-        description?: string;
-        quizInstructions?: string;
-      };
-    };
+  | { type: "SUCCESSFUL_MODULE_UPDATE"; payload: ModuleData };
 
 // Initial state
 const initialState: ModuleState = {
@@ -221,12 +228,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
           module.id === action.payload.id
             ? {
                 ...module,
-                contacts: action.payload.contacts,
-                skills: action.payload.skills,
-                duration: action.payload.duration,
-                title: action.payload.title,
-                description: action.payload.description ?? "",
-                quizInstructions: action.payload.quizInstructions,
+                ...action.payload,
               }
             : module,
         ),
@@ -241,5 +243,5 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
   }
 }
 
-export { moduleReducer, initialState };
+export { moduleReducer, initialState, withSelectedModuleAssociations };
 export type { ModuleState, ModuleAction };

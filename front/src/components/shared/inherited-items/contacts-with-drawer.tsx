@@ -8,7 +8,7 @@ interface ContactsWithDrawerProps {
   loading: boolean;
   initialList: Contact[];
   currentItems: Contact[];
-  property: string;
+  property: string | string[];
   onSubmit: (items: any[]) => void;
 }
 
