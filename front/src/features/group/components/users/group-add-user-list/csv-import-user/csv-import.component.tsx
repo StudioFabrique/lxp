@@ -49,7 +49,7 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const handleDownloadFile = () => {
     downloadFile(
       `${DOWNLOAD_URL}/csv-users-group-modele.csv`,
-      "csv-users-group-modele",
+      "csv-users-group-modele.csv",
     );
   };
 
