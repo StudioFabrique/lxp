@@ -19,7 +19,6 @@ import ImageHeader from "../../../../src/components/image-header/image-header";
 import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
-import { toUpperFirstLetter } from "../../../../src/utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 
@@ -85,9 +84,9 @@ const ParcoursView = () => {
           <div className="w-full">
             <ImageHeader
               imageUrl={image ?? "/images/parcours-default.webp"}
-              title={toUpperFirstLetter(parcoursInfos.title) as string}
+              title={parcoursInfos.title}
               titleIcon={<RocketIcon className="stroke-white w-5" />}
-              subTitle={toUpperFirstLetter(parcours.formation?.title) as string}
+              subTitle={parcours.formation?.title}
               subTitleIcon={<GraduationCap className="stroke-white w-5" />}
               children={[
                 <Fragment key="fragment" />,

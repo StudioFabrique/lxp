@@ -1,6 +1,5 @@
 import { CableCar } from "lucide-react";
 import Skill from "../../../../../src/utils/interfaces/skill";
-import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
@@ -17,7 +16,9 @@ const Competences = ({ skills }: Props) => {
         </div>
         <ul className="list-disc pl-5">
           {skills.map((skill) => (
-            <li key={skill.id}>{toUpperFirstLetter(skill.description)}</li>
+            <li key={skill.id} className="first-letter:uppercase">
+              {skill.description}
+            </li>
           ))}
         </ul>
       </div>

@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
-import { toUpperFirstLetter } from "../../../../../utils/helpers/text-helpers";
 import Lesson from "../../../../../utils/interfaces/lesson";
 import ToolTipWarning from "../../../../../components/UI/tooltip-warning/tooltip-warning";
 import type { CourseImport } from "../../../hooks/useImportCourses";
@@ -147,9 +146,9 @@ const CourseArborescence = ({
                   ) : (
                     <div className="flex items-center gap-2 group/edit w-full">
                       <span
-                        className={`line-clamp-1 ${!lesson.isSelected && "line-through text-base-content/50"}`}
+                        className={`line-clamp-1 first-letter:uppercase ${!lesson.isSelected && "line-through text-base-content/50"}`}
                       >
-                        {toUpperFirstLetter(lesson.title)}
+                        {lesson.title}
                       </span>
                       {lesson.isSelected && (
                         <button
@@ -240,8 +239,8 @@ const CourseArborescence = ({
                                 activityIconType(activity.type)
                               )}
                             </span>
-                            <span className="truncate flex-1">
-                              {toUpperFirstLetter(activity.title)}
+                            <span className="truncate flex-1 first-letter:uppercase">
+                              {activity.title}
                             </span>
                             <div
                               onClick={(e) => {

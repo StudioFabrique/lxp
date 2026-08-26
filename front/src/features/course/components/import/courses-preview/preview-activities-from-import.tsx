@@ -3,7 +3,6 @@ import TiptapEditor from "../../../../../components/tiptap-editor/tiptapEditor";
 import { ActivityImport } from "../../../../../utils/interfaces/import-types";
 import { ArrowUpRight, EyeIcon } from "lucide-react";
 import activityIconType from "../../../../../utils/helpers/activity-icon-type";
-import { toUpperFirstLetter } from "../../../../../utils/helpers/text-helpers";
 
 type Props = {
   activity: ActivityImport | null;
@@ -124,8 +123,8 @@ const PreviewActivitiesFromImport = ({ activity, error }: Props) => {
           <div className="font-semibold text-primary flex justify-between items-center">
             <div className="flex gap-1 items-center w-[92%]">
               <span className="w-5">{activityIconType(activity.type)}</span>
-              <span className="text-2xl px-2 w-fit">
-                {toUpperFirstLetter(activity.title)}
+              <span className="text-2xl px-2 w-fit first-letter:uppercase">
+                {activity.title}
               </span>
             </div>
             <span className="flex-1" />

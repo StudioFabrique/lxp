@@ -11,7 +11,6 @@ import Lesson from "../../../../../src/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
-import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import { ActivitySelectMode } from "../../store/module-explorer-reducer";
 import Modal from "../../../../components/UI/modal/modal";
 
@@ -129,10 +128,10 @@ const LessonReaderAndEditor = ({
             />
           ) : (
             <ActivityHeader
-              title={toUpperFirstLetter(textActivityTitle) ?? ""}
+              title={textActivityTitle ?? ""}
               activityType={activityType}
               className="font-semibold text-primary flex justify-between items-center mb-6"
-              titleClassName="text-2xl font-bold"
+              titleClassName="text-2xl font-bold first-letter:uppercase"
               enableSticky
             >
               {selectedActivity && (

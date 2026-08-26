@@ -1,6 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
-import { toUpperFirstLetter } from "../../../../utils/helpers/text-helpers";
 import RatingWithStars from "../../../../../src/components/UI/lesson-rating/rating-with-stars";
 
 type BestCourseItemProps = {
@@ -25,7 +24,9 @@ const BestCourseItem = ({
       <div className="card-body py-2 px-3 flex flex-row items-start justify-between">
         <div className="flex-1 flex justify-between">
           <div className="flex gap-1 items-center">
-            <h2 className="card-title text-sm">{toUpperFirstLetter(title)}</h2>
+            <h2 className="card-title text-sm first-letter:uppercase">
+              {title}
+            </h2>
             <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <RatingWithStars selectedStars={rating} />

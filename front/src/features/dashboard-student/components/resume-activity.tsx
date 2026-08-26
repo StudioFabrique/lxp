@@ -12,7 +12,6 @@ import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques"
 import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 type ResumeActivityProps = {
@@ -37,13 +36,23 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
     <div className="flex gap-2">
       <ImageHeader
         imageUrl={isLoading ? "" : (image ?? "")}
-        title={`Leçon ${
-          (lastLesson.lesson.order ?? 0) + 1
-        }: ${toUpperFirstLetter(lastLesson.lesson.title)}`}
+        title={
+          <>
+            {`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : `}
+            <span className="inline-block first-letter:uppercase">
+              {lastLesson.lesson.title}
+            </span>
+          </>
+        }
         titleIcon={<FileEditIcon className="stroke-white w-5" />}
-        subTitle={`Cours ${
-          (lastLesson.lesson.course.order ?? 0) + 1
-        }: ${toUpperFirstLetter(lastLesson.lesson.course.title)}`}
+        subTitle={
+          <>
+            {`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : `}
+            <span className="inline-block first-letter:uppercase">
+              {lastLesson.lesson.course.title}
+            </span>
+          </>
+        }
         subTitleIcon={
           <div className="text-white w-5">
             <BookMarked />

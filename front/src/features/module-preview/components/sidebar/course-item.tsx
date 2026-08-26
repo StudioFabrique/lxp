@@ -21,7 +21,6 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
-import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import userBelongsToContacts from "../../../../utils/helpers/user-belongs-to-contacts";
 import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { cn } from "../../../../utils/cn";
@@ -273,8 +272,8 @@ const CourseItem = ({
                     <ChevronRight className="w-5" />
                   )}
                 </div>
-                <h3 className="font-semibold text-secondary-content/80 truncate">
-                  {toUpperFirstLetter(course.title)}
+                <h3 className="font-semibold text-secondary-content/80 truncate first-letter:uppercase">
+                  {course.title}
                 </h3>
                 {course.isPublished && !course.visibility && (
                   <div
@@ -346,11 +345,11 @@ const CourseItem = ({
               <span className="flex-1 min-w-0">
                 <p
                   ref={descriptionRef}
-                  className={`text-sm wrap-break-word overflow-hidden min-w-0 ${
+                  className={`text-sm wrap-break-word overflow-hidden min-w-0 first-letter:uppercase ${
                     !isDescriptionExpanded ? "line-clamp-1" : ""
                   }`}
                 >
-                  {toUpperFirstLetter(course.description)}
+                  {course.description}
                 </p>
 
                 {/* Render the button based on the state calculated in useEffect */}

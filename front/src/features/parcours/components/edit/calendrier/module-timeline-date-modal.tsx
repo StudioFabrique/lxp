@@ -2,8 +2,11 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
-import { formatDateToYYYYMMDD } from "../../../../../../src/utils/helpers/convert-date";
 import DatePicker from "./date-picker";
+import {
+  getInitialTimelineDates,
+  validateTimelineDates,
+} from "./module-timeline-date-modal.helpers";
 import { parcoursApi } from "../../../api/parcours.api";
 import type Module from "../../../../../utils/interfaces/module";
 import { useQueryClient } from "@tanstack/react-query";
@@ -39,21 +42,9 @@ const ModuleTimelineDateModal = ({
   // Sync state with currentModule
   const setInitDates = useCallback(() => {
     if (currentModule) {
-      setDatesModule({
-        minDate: formatDateToYYYYMMDD(
-          new Date(currentModule.minDate || datesParcours.startDate),
-        ),
-        maxDate: formatDateToYYYYMMDD(
-          new Date(
-            currentModule.maxDate ||
-              datesParcours.startDate.setDate(
-                datesParcours.startDate.getDate() + 1,
-              ),
-          ),
-        ),
-      });
+      setDatesModule(getInitialTimelineDates(currentModule, datesParcours));
     }
-  }, [currentModule, datesParcours.startDate]);
+  }, [currentModule, datesParcours]);
 
   const handleSetDates = (id: string, date: string) => {
     const newMinDate = id === "minDate" ? date : datesModule.minDate;
@@ -64,26 +55,12 @@ const ModuleTimelineDateModal = ({
       maxDate: newMaxDate,
     });
 
-    // Validation Logic
-    const dMin = newMinDate ? new Date(newMinDate) : null;
-    const dMax = newMaxDate ? new Date(newMaxDate) : null;
-
-    if (dMin && dMin < datesParcours.startDate) {
-      return setError(
-        `La date de début du module doit être supérieur à la date de début du parcours.`,
-      );
-    }
-    if (dMax && dMax > datesParcours.endDate) {
-      return setError(
-        `La date de fin du module doit être inférieur à la date de fin du parcours`,
-      );
-    }
-    if (dMin && dMax && dMin > dMax) {
-      return setError(
-        "Le date de début du module ne peut pas débuter après la date de fin du module.",
-      );
-    }
-    setError(null);
+    setError(
+      validateTimelineDates(
+        { minDate: newMinDate, maxDate: newMaxDate },
+        datesParcours,
+      ),
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {

@@ -4,7 +4,6 @@ import { Joyride } from "react-joyride";
 
 import Header from "../../components/headers/Header";
 import { AuthContext } from "../../store/AuthProvider";
-import { toUpperFirstLetter } from "../../utils/helpers/text-helpers";
 import { useOnboarding } from "./OnboardingContext";
 import OnboardingWelcomeTooltip from "./OnboardingWelcomeTooltip";
 import { onboardingWelcomeTourSteps } from "./onboarding-welcome-tour-steps";
@@ -77,17 +76,26 @@ const OnboardingWelcome = ({ layout }: Props) => {
     </button>
   );
 
-  const fullname = [
-    toUpperFirstLetter(user?.firstname),
-    toUpperFirstLetter(user?.lastname),
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const fullname = [user?.firstname, user?.lastname].filter(
+    (name): name is string => Boolean(name),
+  );
+  const formattedFullname = (
+    <span className="inline-flex gap-1">
+      {fullname.map((name, index) => (
+        <span
+          key={`${name}-${index}`}
+          className="inline-block first-letter:uppercase"
+        >
+          {name}
+        </span>
+      ))}
+    </span>
+  );
 
   const title =
     layout === "admin"
-      ? `${fullname}, Bienvenue sur la plateforme ANDRIA !`
-      : `Bienvenue ${fullname} sur la plateforme ANDRIA !`;
+      ? <>{formattedFullname}, Bienvenue sur la plateforme ANDRIA !</>
+      : <>Bienvenue {formattedFullname} sur la plateforme ANDRIA !</>;
 
   const description =
     layout === "admin"

@@ -2,11 +2,11 @@
  * En tête pour les interfaces qui listent les groupes, les users, les parcours, etc...
  */
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, type ReactNode } from "react";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 
 interface HeaderProps {
-  title: string;
+  title: ReactNode;
   alternateBgColor?: boolean;
   successBgColor?: boolean;
   disabled?: boolean;

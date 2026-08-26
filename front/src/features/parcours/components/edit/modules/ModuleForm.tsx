@@ -108,9 +108,7 @@ export default function ModuleForm({
                 {isSubmitting && (
                   <span className="loading loading-spinner loading-sm" />
                 )}
-                {isSubmitting
-                  ? "Enregistrement..."
-                  : "Enregistrer le module"}
+                {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
               </button>
             </div>
           </form>

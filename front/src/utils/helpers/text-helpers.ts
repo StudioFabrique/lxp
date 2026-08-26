@@ -8,16 +8,6 @@ function toTitleCase(str: string) {
     .join(" ");
 }
 
-function toUpperFirstLetter(value: string | undefined | null) {
-  if (!value) return undefined;
-
-  // Certaines valeurs saisies contiennent des espaces (ou de la ponctuation)
-  // avant le texte. Transformer `value[0]` ne modifie alors aucune lettre.
-  return value.replace(/\p{L}/u, (firstLetter) =>
-    firstLetter.toLocaleUpperCase("fr-FR"),
-  );
-}
-
 const cleanActivityTextContent = (content: string): string => {
   if (!content) return "";
 
@@ -55,4 +45,4 @@ const cleanActivityTextContent = (content: string): string => {
   return cleaned;
 };
 
-export { toTitleCase, toUpperFirstLetter, cleanActivityTextContent };
+export { toTitleCase, cleanActivityTextContent };

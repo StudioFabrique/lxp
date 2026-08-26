@@ -1,15 +1,21 @@
 // ModuleDetailsModal.tsx
- 
+
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import { X } from "lucide-react";
 import type Module from "../../../../../utils/interfaces/module";
 
+export interface TimelineDetailsPosition {
+  anchor: DOMRect;
+  container: DOMRect;
+}
+
 interface Props {
   modalId: string;
   isOpen: boolean;
-  position?: DOMRect;
+  position?: TimelineDetailsPosition;
   onClose: () => void;
   currentModule: Module | null;
 }
@@ -41,44 +47,51 @@ const ModuleTimelineDetailsPopover = ({
     };
   }, [isOpen, onClose]);
 
-  if (!currentModule || !isOpen || !position) return null;
+  if (!currentModule || !isOpen || !position) {
+    return null;
+  }
 
-  // --- POSITIONING LOGIC ---
-  const viewportHeight = window.innerHeight;
-  // Threshold: If clicked element is below 50% of the screen height, flip up.
-  const isBottomHalf = position.top > viewportHeight * 0.5;
+  const { anchor, container } = position;
+  const gap = 12;
+  const viewportPadding = 12;
+  const cardWidth = Math.min(384, window.innerWidth - viewportPadding * 2);
+  const fitsOnRight =
+    anchor.right + gap + cardWidth <= window.innerWidth - viewportPadding;
+  const proposedLeft = fitsOnRight
+    ? anchor.right + gap
+    : anchor.left - gap - cardWidth;
+  const minLeft = viewportPadding;
+  const maxLeft = window.innerWidth - viewportPadding - cardWidth;
+  const viewportLeft = Math.min(
+    Math.max(proposedLeft, minLeft),
+    maxLeft,
+  );
+  const isBottomHalf = anchor.top > window.innerHeight / 2;
 
-  const style: React.CSSProperties = {
-    position: "fixed",
-    left: position.right + 20, // 20px offset to the right
-    zIndex: 50,
-    maxHeight: "500px",
-    overflowY: "auto",
+  const style: CSSProperties = {
+    left: viewportLeft - container.left,
+    maxHeight: `min(500px, calc(100vh - ${viewportPadding * 2}px))`,
   };
 
   if (isBottomHalf) {
-    // ALIGN BOTTOM:
-    // We set 'bottom' to the distance from the viewport bottom to the element's bottom.
-    // This aligns the bottom of the card with the bottom of the clicked row.
-    style.bottom = viewportHeight - position.bottom;
-    // Reset top to auto to ensure CSS uses bottom
-    style.top = "auto";
+    style.bottom = Math.max(
+      container.bottom - anchor.bottom,
+      container.bottom - (window.innerHeight - viewportPadding),
+    );
   } else {
-    // ALIGN TOP (Default):
-    style.top = position.top;
-    style.bottom = "auto";
+    style.top = Math.max(
+      anchor.top - container.top,
+      viewportPadding - container.top,
+    );
   }
-
-  // Animation class changes based on position for a nice effect
-  const animationClass = isBottomHalf
-    ? "origin-bottom-left"
-    : "origin-top-left";
 
   return (
     <div
       ref={cardRef}
       style={style}
-      className={`card bg-base-100 shadow-2xl w-96 border border-gray-200 animate-in fade-in zoom-in-95 duration-200 ${animationClass}`}
+      className={`absolute z-50 card bg-base-100 shadow-2xl w-96 max-w-[calc(100vw-1.5rem)] overflow-y-auto border border-gray-200 animate-in fade-in zoom-in-95 duration-200 ${
+        isBottomHalf ? "origin-bottom-left" : "origin-top-left"
+      }`}
     >
       {/* --- BANNER IMAGE --- */}
       {currentModule.thumb && (

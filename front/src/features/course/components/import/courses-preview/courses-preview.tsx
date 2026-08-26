@@ -3,7 +3,6 @@ import Header from "../../../../../components/headers/Header";
 import FileUpload from "../../../../../components/UI/file-upload/FileUpload";
 import PreviewActivitiesFromImport from "./preview-activities-from-import";
 import { Eye, BookOpen, PenLine, Check, FilePlus2 } from "lucide-react";
-import { toUpperFirstLetter } from "../../../../../utils/helpers/text-helpers";
 import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import SelectableCard from "../../../../../components/UI/selectable-card";
 import { CourseImport } from "../../../hooks/useImportCourses";
@@ -141,7 +140,7 @@ const CoursesPreview = ({
               return (
                 <SelectableCard
                   key={idx}
-                  title={toUpperFirstLetter(course.title)}
+                  title={course.title}
                   error={
                     course.hasError ? "Des ressources sont manquantes" : ""
                   }

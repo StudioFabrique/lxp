@@ -1,7 +1,6 @@
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { useEffect, useRef, useState } from "react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
-import { toUpperFirstLetter } from "../../../../../src/utils/helpers/text-helpers";
 import { ArrowDownUp } from "lucide-react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -59,9 +58,9 @@ export default function ActivityItem({
         {activityIconType(activity.type, 4)}
       </span>
       <span
-        className={`truncate w-[90%] cursor-pointer ${isSelected && "underline"}`}
+        className={`truncate w-[90%] cursor-pointer first-letter:uppercase ${isSelected && "underline"}`}
       >
-        {toUpperFirstLetter(activity.title)}
+        {activity.title}
       </span>
       {canEdit && <ArrowDownUp className="w-4 hover:text-primary ml-auto" />}
     </button>

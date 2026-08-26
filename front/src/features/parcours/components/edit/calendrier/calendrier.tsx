@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
@@ -7,7 +7,9 @@ import { ThemeContext as Context } from "../../../../../store/ThemeProvider";
 import { TimelineEvent } from "../../../../calendar/components/calendar-configuration";
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
-import ModuleTimelineDetailsPopover from "./module-timeline-details-popover";
+import ModuleTimelineDetailsPopover, {
+  type TimelineDetailsPosition,
+} from "./module-timeline-details-popover";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
@@ -21,12 +23,13 @@ const Calendrier = () => {
   const { data: parcours } = useParcoursQuery(parcoursId);
   const { modules } = useParcoursModules(parcoursId);
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
     null
   );
-  const [detailsCardRectPosition, setDetailsCardRectPosition] =
-    useState<DOMRect>();
+  const [detailsCardPosition, setDetailsCardPosition] =
+    useState<TimelineDetailsPosition>();
 
   const datesParcours = {
     startDate: parcours?.startDate
@@ -69,8 +72,12 @@ const Calendrier = () => {
     moduleId: number | string,
     position: DOMRect
   ) => {
+    const containerPosition = containerRef.current?.getBoundingClientRect();
+
+    if (!containerPosition) return;
+
     handleSelectModule(moduleId, "details");
-    setDetailsCardRectPosition(position);
+    setDetailsCardPosition({ anchor: position, container: containerPosition });
   };
 
   // --- HANDLER: CLOSE MODALS ---
@@ -89,7 +96,7 @@ const Calendrier = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-5 h-full">
+    <div ref={containerRef} className="relative flex flex-col gap-y-5 h-full">
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <h1 className="text-2xl font-bold">Calendrier des Modules</h1>
         <div
@@ -124,7 +131,7 @@ const Calendrier = () => {
         modalId="module_details_modal"
         isOpen={activeModal === "details"}
         currentModule={currentModule}
-        position={detailsCardRectPosition}
+        position={detailsCardPosition}
         onClose={handleCloseModal}
       />
 

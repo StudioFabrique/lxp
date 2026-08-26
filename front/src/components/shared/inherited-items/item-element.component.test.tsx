@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import ItemElement from "./item-element.component";
 
 describe("ItemElement", () => {
-  it("met en majuscule la première lettre même après des espaces", () => {
+  it("applique la variante Tailwind à la première lettre", () => {
     const container = document.createElement("div");
     const root: Root = createRoot(container);
 
@@ -20,9 +20,10 @@ describe("ItemElement", () => {
         );
       });
 
-      expect(container.querySelector("p")?.textContent).toBe(
-        "  Élément pédagogique",
-      );
+      const label = container.querySelector("p");
+
+      expect(label?.textContent).toBe("  élément pédagogique");
+      expect(label?.classList.contains("first-letter:uppercase")).toBe(true);
     } finally {
       act(() => root.unmount());
     }

@@ -6,7 +6,6 @@ import { dashboardStudentApi } from "../api/dashboard-student.api";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../../assets/images/module-default.jpg";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import { toUpperFirstLetter } from "../../../utils/helpers/text-helpers";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 
 const ResumeParcours = () => {
@@ -23,11 +22,9 @@ const ResumeParcours = () => {
     <div className="flex gap-2">
       <ImageHeader
         imageUrl={normalizeImageSource(parcours?.thumb) ?? defaultImage}
-        title={parcours ? `${toUpperFirstLetter(parcours.title)}` : ""}
+        title={parcours?.title ?? ""}
         titleIcon={<RocketIcon className="stroke-white w-5" />}
-        subTitle={
-          parcours ? `${toUpperFirstLetter(parcours.formation.title)}` : ""
-        }
+        subTitle={parcours?.formation.title ?? ""}
         subTitleIcon={<GraduationCap className="stroke-white w-5" />}
         hidePublished
         children={[

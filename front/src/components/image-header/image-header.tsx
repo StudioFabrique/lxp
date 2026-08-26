@@ -5,9 +5,9 @@ import { bgImageGradient } from "../../utils/helpers/color-helpers";
 
 interface ImageHeaderProps {
   imageUrl: string;
-  title: string;
+  title: ReactNode;
   titleIcon?: ReactNode;
-  subTitle: string;
+  subTitle: ReactNode;
   subTitleIcon?: ReactNode;
   subTitleLinkTo?: string;
   isPublished?: boolean;
@@ -40,13 +40,13 @@ const ImageHeader = (props: ImageHeaderProps) => {
                   {props.subTitleIcon}
                   {props.subTitleLinkTo ? (
                     <Link
-                      className="capitalise text-white hover:underline truncate max-w-125"
+                      className="first-letter:uppercase text-white hover:underline truncate max-w-125"
                       to={props.subTitleLinkTo}
                     >
                       {props.subTitle}
                     </Link>
                   ) : (
-                    <h3 className="capitalise text-white truncate max-w-125">
+                    <h3 className="first-letter:uppercase text-white truncate max-w-125">
                       {props.subTitle}
                     </h3>
                   )}
@@ -57,7 +57,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
                 <div className="pl-5 flex items-center gap-2">
                   <CornerDownRight className="stroke-white" />
                   {props.titleIcon}
-                  <h1 className="text-xl text-white truncate max-w-137.5">
+                  <h1 className="first-letter:uppercase text-xl text-white truncate max-w-137.5">
                     {props.title}
                     {!props.hidePublished &&
                       (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
