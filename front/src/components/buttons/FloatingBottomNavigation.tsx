@@ -20,9 +20,7 @@ const FloatingBottomNavigation = ({
   const isSticky = activationOffset === 0 || isDelayedStickyActive;
 
   useEffect(() => {
-    const scrollRoot = sentinelRef.current?.closest(
-      "#main-scroll-container",
-    );
+    const scrollRoot = sentinelRef.current?.closest("#main-scroll-container");
     const dockingObserver = new IntersectionObserver(
       ([entry]) => {
         setIsDocked(entry.isIntersecting);
@@ -46,9 +44,7 @@ const FloatingBottomNavigation = ({
   useEffect(() => {
     if (activationOffset === 0) return;
 
-    const scrollRoot = sentinelRef.current?.closest(
-      "#main-scroll-container",
-    );
+    const scrollRoot = sentinelRef.current?.closest("#main-scroll-container");
     const activationObserver = new IntersectionObserver(
       ([entry]) => {
         setIsDelayedStickyActive(!entry.isIntersecting);
@@ -70,9 +66,9 @@ const FloatingBottomNavigation = ({
   return (
     <>
       <div
-        className={`${isSticky ? "sticky bottom-4" : ""} z-30 mt-12 w-full p-4 rounded-2xl flex justify-between items-center border transition-all duration-500 ease-in-out ${
+        className={`${isSticky ? "sticky bottom-4  w-[60vw]" : "w-full"} z-30 mt-12 p-4 rounded-2xl flex justify-between mx-auto items-center border transition-all duration-500 ease-in-out ${
           isDocked
-            ? "bg-transparent backdrop-blur-none border-transparent shadow-none"
+            ? "bg-transparent backdrop-blur-none border-transparent shadow-none w-full"
             : "bg-base-200/90 backdrop-blur border-base-300 shadow-xl"
         }`}
       >

@@ -125,16 +125,13 @@ const EditParcours = () => {
             <FloatingBottomNavigation
               stickyActivationOffset={moduleFormOpened ? 150 : undefined}
               startActions={
-                <button
-                  className="btn btn-ghost hover:underline"
-                  onClick={handleRetour}
-                >
+                <button className="btn btn-outline" onClick={handleRetour}>
                   Retour
                 </button>
               }
               endActions={
                 <button
-                  className="btn btn-primary px-6"
+                  className="btn btn-info px-6"
                   onClick={() => handleUpdateStep(actualStep.id)}
                 >
                   Étape suivante

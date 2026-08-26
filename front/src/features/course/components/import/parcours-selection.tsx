@@ -212,10 +212,7 @@ const ParcoursSelection = ({
       <div data-course-import-tour="assignment-actions">
         <FloatingBottomNavigation
           startActions={
-            <button
-              className="btn btn-ghost hover:underline"
-              onClick={onGoBack}
-            >
+            <button className="btn btn-outline" onClick={onGoBack}>
               <Undo2 size={18} /> Retour
             </button>
           }
