@@ -22,7 +22,7 @@ La sélection des dossiers est exclusive et ne réalise aucun héritage :
 
 - en `dev`, le build lit `/ci` et les déploiements lisent `/ci` et `/runtime` ;
   `INFISICAL_PATH_PREFIX` est ignoré ;
-- en `prod`, le build lit toujours `/ci`, sans préfixe. Pour un déploiement,
+- en `prod` et `pre-prod`, le build lit toujours `/ci`, sans préfixe. Pour un déploiement,
   `INFISICAL_PATH_PREFIX` est obligatoire : le wrapper lit `/ci`,
   `<préfixe>/ci` puis `<préfixe>/runtime`.
 

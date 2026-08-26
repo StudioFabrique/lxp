@@ -22,7 +22,6 @@ const ImportObjectives: FC<Props> = ({
   onCloseDrawer,
   onImport,
 }) => {
-  const protocol = window.location.href.split("/")[0];
   const { id } = useParams();
   const parcoursId = Number(id);
   const { data: parcours } = useParcoursQuery(parcoursId);
@@ -59,7 +58,7 @@ const ImportObjectives: FC<Props> = ({
   return (
     <div className="flex flex-col gap-y-4 px-4">
       <ImportCSVActions
-        modelFileUrl={`${protocol + DOWNLOAD_URL}/csv-objectifs-modele.csv`}
+        modelFileUrl={`${DOWNLOAD_URL}/csv-objectifs-modele.csv`}
         modelFileName={"csv-objectifs-modele.csv"}
         onHandleFromCSV={handleFromCSV}
         fields={objectivesFields}

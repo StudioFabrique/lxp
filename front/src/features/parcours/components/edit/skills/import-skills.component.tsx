@@ -22,8 +22,6 @@ const ImportSkills: FC<Props> = ({
   onCloseDrawer,
   onImport,
 }) => {
-  const protocol = window.location.href.split("/")[0];
-
   const { id } = useParams();
   const parcoursId = Number(id);
   const { importSkills } = useParcoursSkillMutations(parcoursId);
@@ -52,7 +50,7 @@ const ImportSkills: FC<Props> = ({
   return (
     <div className="flex flex-col gap-y-4 px-4">
       <ImportCSVActions
-        modelFileUrl={`${protocol + DOWNLOAD_URL}/csv-competences-modele.csv`}
+        modelFileUrl={`${DOWNLOAD_URL}/csv-competences-modele.csv`}
         modelFileName={"csv-competences-modele.csv"}
         onHandleFromCSV={handleFromCSV}
         fields={skillsFields}
