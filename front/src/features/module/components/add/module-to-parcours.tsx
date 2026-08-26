@@ -44,6 +44,7 @@ export default function ModuleToParcours({
     <div className="flex flex-col gap-y-8">
       {/* Composant qui permet de selectionner des contacts */}
       <InheritedItems
+        capitalize
         drawerId="add-contacts"
         drawerTitle="Ajouter des Ressources Pédagogiques"
         title="Ressources Pédagogiques"

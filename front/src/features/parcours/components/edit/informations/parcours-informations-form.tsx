@@ -78,7 +78,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
             <div className="flex flex-col gap-y-4">
               <h2 className="font-bold">Formation</h2>
               <SubWrapper>
-                <p className="capitalize">{formation.title}</p>
+                <p className="first-letter:uppercase">{formation.title}</p>
               </SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">

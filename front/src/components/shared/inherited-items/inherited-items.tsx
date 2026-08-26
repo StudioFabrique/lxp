@@ -4,9 +4,11 @@ import React, { ReactNode, useEffect, useMemo, useState } from "react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../../UI/button-add/button-add";
 import SubBoxWrapper from "../../wrappers/SubBoxWrapper";
+import { cn } from "../../../utils/cn";
 
 interface InheritedItemsProps {
   visibleList?: boolean;
+  capitalize?: boolean;
   tooltip?: string;
   buttonLabel?: string;
   children: ReactNode[];
@@ -57,7 +59,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
     let updatedItems = currentItems;
     (ids ?? []).forEach((item: any) => {
       const foundItem = props.initialList?.find(
-        (element: any) => element.id === item
+        (element: any) => element.id === item,
       );
       if (foundItem) {
         updatedItems = [...updatedItems, foundItem];
@@ -119,14 +121,21 @@ const InheritedItems = (props: InheritedItemsProps) => {
           onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />
       </div>
-      <div className="w-full flex flex-col gap-y-4 mt-4">
+      <div
+        className={cn("w-full flex flex-col gap-y-4 mt-4", {
+          capitalize: Boolean(props.capitalize),
+        })}
+      >
         {currentItems.length ? (
           <>
-            {React.cloneElement(props.children[0] as React.ReactElement, {
-              list: currentItems,
-              property: props.property,
-              onRemoveItem: handleRemoveItem,
-            } as any)}
+            {React.cloneElement(
+              props.children[0] as React.ReactElement,
+              {
+                list: currentItems,
+                property: props.property,
+                onRemoveItem: handleRemoveItem,
+              } as any,
+            )}
           </>
         ) : visibleList ? (
           <SubBoxWrapper>
@@ -140,12 +149,15 @@ const InheritedItems = (props: InheritedItemsProps) => {
         visible={false}
         onCloseDrawer={handleCloseDrawer}
       >
-        {React.cloneElement(props.children[1] as React.ReactElement, {
-          list: notSelected,
-          onAddItems: handleAddItem,
-          onCloseDrawer: handleCloseDrawer,
-          tooltip: props.tooltip,
-        } as any)}
+        {React.cloneElement(
+          props.children[1] as React.ReactElement,
+          {
+            list: notSelected,
+            onAddItems: handleAddItem,
+            onCloseDrawer: handleCloseDrawer,
+            tooltip: props.tooltip,
+          } as any,
+        )}
       </RightSideDrawer>
     </section>
   );

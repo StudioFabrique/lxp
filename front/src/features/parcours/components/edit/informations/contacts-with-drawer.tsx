@@ -24,13 +24,10 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
     [draftContacts, parcours?.contacts],
   );
 
-  const handleUpdateContacts = useCallback(
-    (contacts: Contact[]) => {
-      setSubmit(true);
-      setDraftContacts(contacts);
-    },
-    [],
-  );
+  const handleUpdateContacts = useCallback((contacts: Contact[]) => {
+    setSubmit(true);
+    setDraftContacts(contacts);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -46,6 +43,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
     <>
       {availableContacts ? (
         <InheritedItems
+          capitalize
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
           title="Ressources Pédagogiques"
