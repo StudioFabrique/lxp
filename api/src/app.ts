@@ -15,6 +15,13 @@ const app = express();
 const publicDirectory = path.join(import.meta.dirname, "..", "public");
 const assetsDirectory = path.join(publicDirectory, "assets");
 const uploadsDirectory = path.join(import.meta.dirname, "..", "uploads");
+const csvTemplatePaths = new Map(
+  [
+    "csv-competences-modele.csv",
+    "csv-objectifs-modele.csv",
+    "csv-users-group-modele.csv",
+  ].map((filename) => [`/${filename}`, path.join(uploadsDirectory, filename)]),
+);
 
 app
   .use(
@@ -82,11 +89,18 @@ app
       },
     }),
   )
-  // Les fichiers déposés dans `activities` (documents, images et vidéos de
-  // cours) sont des contenus pédagogiques : ils ne doivent être lisibles que
-  // par une session valide. Le cookie `accessToken` étant httpOnly et le front
-  // servi par ce même serveur, le navigateur le joint automatiquement aux
-  // requêtes `<img src>` et `window.open` : les URLs restent inchangées.
+  .get([...csvTemplatePaths.keys()], (req, res, next) => {
+    const templatePath = csvTemplatePaths.get(req.path);
+
+    if (!templatePath) {
+      next();
+      return;
+    }
+
+    res.sendFile(templatePath, (error) => {
+      if (error) next(error);
+    });
+  })
   .use(
     "/activities",
     requireSession,
@@ -95,8 +109,6 @@ app
       dotfiles: "deny",
     }),
   )
-  // Le logo et la couleur de l'entreprise sont affichés sur l'écran de
-  // connexion, donc avant toute authentification.
   .use(
     "/company",
     express.static(path.join(uploadsDirectory, "company"), {
