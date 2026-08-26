@@ -79,6 +79,13 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     setModuleFormOpened(showForm);
   }, [setModuleFormOpened, showForm]);
 
+  useEffect(
+    () => () => {
+      setModuleFormOpened(false);
+    },
+    [setModuleFormOpened],
+  );
+
   return (
     <>
       {/* Main content area */}

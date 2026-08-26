@@ -209,24 +209,23 @@ const ParcoursSelection = ({
           </div>
         )}
       </div>
-      <div data-course-import-tour="assignment-actions">
-        <FloatingBottomNavigation
-          startActions={
-            <button className="btn btn-outline" onClick={onGoBack}>
-              <Undo2 size={18} /> Retour
-            </button>
-          }
-          endActions={
-            <button
-              className="btn btn-success gap-2"
-              disabled={!canConfirm}
-              onClick={() => onConfirm(selectedParcours)}
-            >
-              Lancer l'importation <ArrowRight size={18} />
-            </button>
-          }
-        />
-      </div>
+      <FloatingBottomNavigation
+        startActions={
+          <button className="btn btn-outline" onClick={onGoBack}>
+            <Undo2 size={18} /> Retour
+          </button>
+        }
+        endActions={
+          <button
+            data-course-import-tour="assignment-actions"
+            className="btn btn-success gap-2"
+            disabled={!canConfirm}
+            onClick={() => onConfirm(selectedParcours)}
+          >
+            Lancer l'importation <ArrowRight size={18} />
+          </button>
+        }
+      />
     </div>
   );
 };
