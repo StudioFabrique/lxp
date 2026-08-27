@@ -19,19 +19,6 @@ export const adminCourseRoutes: RouteObject[] = [
         ),
       },
       {
-        path: "edit/:courseId",
-        element: <RequireAbility action="update" subject="course" />,
-        children: [
-          {
-            index: true,
-            lazy: lazyRouteWithWrapper(
-              () => import("./views/CourseEdit"),
-              wrapCourse,
-            ),
-          },
-        ],
-      },
-      {
         path: "import",
         element: <RequireAbility action="write" subject="course" />,
         children: [

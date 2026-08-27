@@ -109,7 +109,7 @@ export const formatDate = (date?: Date | string): string | null => {
   return date
     ? new Date(date).toLocaleDateString("fr-FR", {
         day: "numeric", // "4"
-        month: "long", // "janvier"
+        month: "short", // "janvier"
         year: "numeric", // "2026"
       })
     : null;
