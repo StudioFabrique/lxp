@@ -28,6 +28,8 @@ const useEditImageActivity = (
   onCancel: (value: boolean) => void,
   parent: "lesson" | "resource",
   onSubmit?: (fd: FormData) => void,
+  parentId?: number,
+  onSaved?: () => void | Promise<void>,
 ) => {
   const {
     register,
@@ -47,7 +49,7 @@ const useEditImageActivity = (
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { lessonId } = useParams();
+  const { lessonId, resourceId } = useParams();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleSubmit = rhfHandleSubmit((formValues) => {
@@ -67,13 +69,20 @@ const useEditImageActivity = (
     if (onSubmit) onSubmit(formData);
     else {
       setIsLoading(true);
-      const id = activity?.id ?? lessonId!;
+      const routeParentId = parent === "resource" ? resourceId : lessonId;
+      const id = activity?.id ?? parentId ?? routeParentId;
+      if (id === undefined) {
+        setIsLoading(false);
+        toast.error("Impossible d'identifier le parent de l'image.");
+        return;
+      }
       lessonApi.mutations
         .upsertImageActivity(id, parent, formData, activity ? "put" : "post")
-        .then((data: SuccessWithMessage) => {
+        .then(async (data: SuccessWithMessage) => {
           if (data.success) {
             toast.success(data.message);
-            onCancel(false);
+            if (onSaved) await onSaved();
+            else onCancel(false);
           }
         })
         .catch((err: any) => {
@@ -111,6 +120,8 @@ const useEditImageActivity = (
 
     const handleMessage = (event: MessageEvent) => {
       setSelectedImage(event.data);
+      setFile(null);
+      setImage(null);
       setShowDialog(false);
     };
     ecouteur.addEventListener("message", handleMessage);

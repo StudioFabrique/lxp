@@ -17,7 +17,9 @@ const ActivityActionsMenu = ({
 }: ActivityActionsMenuProps) => {
   return (
     <div className="flex items-center gap-1">
-      {["text", "iframe"].includes(activity.type) && (
+      {["text", "iframe", "image", "video", "resource"].includes(
+        activity.type,
+      ) && (
         <PermissionGuard action="update" object="lesson">
           <button
             type="button"

@@ -4,15 +4,23 @@ import ResourceForm from "./resource-form";
 import ResourcesAction from "./resource-actions";
 import ResourcesList from "./resources-list";
 import ElementNotFound from "../../../../../../components/UI/element-not-found";
-import Wrapper from "../../../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
   onCancel: (value: boolean) => void;
   onResetForm?: () => void;
   onSubmit?: () => void;
+  parentId?: number;
+  parent?: "lesson" | "resource";
+  onSaved?: () => void | Promise<void>;
 };
 
-export default function ResourceUpload({ onCancel, onSubmit }: Props) {
+export default function ResourceUpload({
+  onCancel,
+  onSubmit,
+  parentId,
+  parent = "lesson",
+  onSaved,
+}: Props) {
   const {
     resourceName,
     setResourceName,
@@ -27,7 +35,7 @@ export default function ResourceUpload({ onCancel, onSubmit }: Props) {
     uploadProgress,
     cancelUpload,
     hasError,
-  } = useUploadResources(onCancel, onSubmit);
+  } = useUploadResources(onCancel, onSubmit, parentId, parent, onSaved);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -45,22 +53,20 @@ export default function ResourceUpload({ onCancel, onSubmit }: Props) {
   return (
     <section className="grid grid-cols-1 gap-4">
       <article className="flex flex-col gap-y-4">
-        <Wrapper>
-          <ResourceForm
-            value={resourceName}
-            onChange={setResourceName}
-            onFileChange={handleFileChange}
-          />
-          <ResourcesAction
-            onCancel={onCancel}
-            resetFilesList={resetFilesList}
-            filesNumber={filesNumber}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-            cancelUpload={cancelUpload}
-            hasError={hasError}
-          />
-        </Wrapper>
+        <ResourceForm
+          value={resourceName}
+          onChange={setResourceName}
+          onFileChange={handleFileChange}
+        />
+        <ResourcesAction
+          onCancel={onCancel}
+          resetFilesList={resetFilesList}
+          filesNumber={filesNumber}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
+          cancelUpload={cancelUpload}
+          hasError={hasError}
+        />
       </article>
       <article>
         {filesList && filesList.length !== 0 ? (

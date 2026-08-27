@@ -25,6 +25,9 @@ export const allowedMimeTypes = [
 const useUploadResources = (
   onCancel: (value: boolean) => void,
   onSubmit?: () => void,
+  parentId?: number,
+  parent: "lesson" | "resource" = "lesson",
+  onSaved?: () => void | Promise<void>,
 ) => {
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
   const [resourceName, setResourceName] = useState("");
@@ -34,9 +37,11 @@ const useUploadResources = (
   const { resourceId } = useParams();
   const { lessonId } = useParams();
 
-  let id: number | null = null;
-  if (resourceId) id = parseInt(resourceId);
-  else if (lessonId) id = parseInt(lessonId);
+  let id: number | null = parentId ?? null;
+  if (id === null && parent === "resource" && resourceId)
+    id = parseInt(resourceId);
+  else if (id === null && parent === "lesson" && lessonId)
+    id = parseInt(lessonId);
 
   const [hasError, setHasError] = useState(false);
 
@@ -108,22 +113,28 @@ const useUploadResources = (
       ];
     }
 
-    formData.append(
-      "data",
-      JSON.stringify({ resources, parent: lessonId ? "lesson" : "resource" }),
-    );
+    formData.append("data", JSON.stringify({ resources, parent }));
+
+    if (id === null) {
+      toast.error("Impossible d'identifier le parent des ressources.");
+      return;
+    }
 
     setIsLoading(true);
     setUploadProgress(0);
     lessonApi.mutations
-      .uploadResources(id!, formData, controller.signal, (progressEvent: any) => {
+      .uploadResources(id, formData, controller.signal, (progressEvent: any) => {
         const progress = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total,
         );
         setUploadProgress(progress);
       })
       .then((data: { success: boolean; message: string }) => {
-        if (data.success) toast.success(data.message);
+        if (!data.success) return;
+        toast.success(data.message);
+        if (onSaved) {
+          return onSaved();
+        }
         onCancel(false);
         onSubmit?.();
       })

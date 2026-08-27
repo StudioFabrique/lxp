@@ -13,6 +13,10 @@ import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
 import { ActivitySelectMode } from "../../store/module-explorer-reducer";
 import Modal from "../../../../components/UI/modal/modal";
+import Video from "../../../lesson/components/edit/activities/video";
+import ImageActivityEditor from "../../../lesson/components/edit/activities/image/image-activity-editor";
+import ResourcePreview from "../../../lesson/components/edit/activities/resources/preview/resource-preview";
+import ResourceUpload from "../../../lesson/components/edit/activities/resources/resource-upload";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -37,6 +41,7 @@ type Props = {
   onCloseDeleteModal: () => void;
   onClose: () => void;
   onBack: () => void;
+  onRefreshActivity: (selectLastActivity?: boolean) => Promise<boolean>;
   onSaveActivity: (
     id?: number,
     title?: string,
@@ -68,10 +73,28 @@ const LessonReaderAndEditor = ({
   onDeleteActivity,
   onClose,
   onBack,
+  onRefreshActivity,
   onSaveActivity,
   children,
 }: PropsWithChildren<Props>) => {
   const [headerSticky, setHeaderSticky] = useState(false);
+
+  const hasOwnEditorHeader =
+    canEdit &&
+    (mode === "write" || mode === "edit") &&
+    ["video", "image"].includes(activityType);
+  const isResourceEditor =
+    canEdit &&
+    (mode === "write" || mode === "edit") &&
+    activityType === "resource";
+
+  const handleMediaSaved = useCallback(async () => {
+    await onRefreshActivity(mode === "write");
+  }, [mode, onRefreshActivity]);
+
+  const handleFinishResourceEditing = useCallback(() => {
+    void onRefreshActivity(false);
+  }, [onRefreshActivity]);
 
   const handleConfirmDelete = useCallback(() => {
     onDeleteActivity();
@@ -110,7 +133,27 @@ const LessonReaderAndEditor = ({
           }
         >
           {/* Header de l'activité : titre et menu contextuel */}
-          {canEdit && (mode === "write" || mode === "edit") ? (
+          {isResourceEditor ? (
+            <ActivityHeader
+              title={
+                mode === "write"
+                  ? "Ressources"
+                  : textActivityTitle || "Ressources"
+              }
+              activityType="resource"
+              className="font-semibold text-primary flex justify-between items-center mb-6"
+              titleClassName="text-2xl font-bold first-letter:uppercase"
+              cancelLabel={mode === "edit" ? "Terminer" : "Annuler"}
+              cancelClassName={
+                mode === "edit"
+                  ? "btn btn-primary text-base-100"
+                  : "btn btn-warning"
+              }
+              onCancel={
+                mode === "edit" ? handleFinishResourceEditing : onBack
+              }
+            />
+          ) : !hasOwnEditorHeader && canEdit && (mode === "write" || mode === "edit") ? (
             <ActivityHeader
               title={textActivityTitle || ""}
               activityType={activityType}
@@ -127,7 +170,7 @@ const LessonReaderAndEditor = ({
               enableSticky
               onStickyChange={setHeaderSticky}
             />
-          ) : (
+          ) : !hasOwnEditorHeader ? (
             <ActivityHeader
               title={textActivityTitle ?? ""}
               activityType={activityType}
@@ -135,7 +178,7 @@ const LessonReaderAndEditor = ({
               titleClassName="text-2xl font-bold first-letter:uppercase"
               enableSticky
             >
-              {selectedActivity && (
+              {selectedActivity && canEdit && (
                 <ActivityActionsMenu
                   activity={selectedActivity}
                   onEditActivity={onEditActivity}
@@ -144,7 +187,7 @@ const LessonReaderAndEditor = ({
                 />
               )}
             </ActivityHeader>
-          )}
+          ) : null}
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
           {activityType === "text" ? (
@@ -172,6 +215,40 @@ const LessonReaderAndEditor = ({
               onSave={onSaveActivity}
               onFinishSaving={onClose}
             />
+          ) : activityType === "video" && hasOwnEditorHeader ? (
+            <Video
+              key={selectedActivity?.id ?? "new-video"}
+              activity={selectedActivity}
+              isEditing={mode === "edit"}
+              parentId={selectedLesson?.id}
+              parent="lesson"
+              onCancel={mode === "write" ? onBack : onClose}
+              onSaved={handleMediaSaved}
+            />
+          ) : activityType === "image" && hasOwnEditorHeader ? (
+            <ImageActivityEditor
+              key={selectedActivity?.id ?? "new-image"}
+              activity={selectedActivity}
+              parentId={selectedLesson?.id}
+              parent="lesson"
+              onCancel={() => (mode === "write" ? onBack() : onClose())}
+              onSaved={handleMediaSaved}
+            />
+          ) : activityType === "resource" && isResourceEditor ? (
+            mode === "write" ? (
+              <ResourceUpload
+                parentId={selectedLesson?.id}
+                parent="lesson"
+                onCancel={() => onBack()}
+                onSaved={handleMediaSaved}
+              />
+            ) : selectedActivity ? (
+              <ResourcePreview
+                activity={selectedActivity}
+                parent="lesson"
+                onCancel={() => undefined}
+              />
+            ) : null
           ) : (
             /* Sinon afficher l'activité d'un autre type "video", "image" ou "resources" */
             <ActivityPreview activity={selectedActivity} />
