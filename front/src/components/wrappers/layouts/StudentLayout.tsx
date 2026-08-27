@@ -29,7 +29,7 @@ const StudentLayout = () => {
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
-        {isConfigLoaded && !aiDisabled && <Chatbot />}
+        {isConfigLoaded && !aiDisabled && <Chatbot enableQuizSuggestion />}
         {demoMode && <DemoTour layout="student" />}
       </OnboardingTour>
     </ChatbotProvider>

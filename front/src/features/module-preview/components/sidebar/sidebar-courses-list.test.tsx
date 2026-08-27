@@ -43,7 +43,11 @@ const course = {
   lessons: [lesson],
 } as Course;
 
-const renderCourses = (container: HTMLDivElement, step: string) => {
+const renderCourses = (
+  container: HTMLDivElement,
+  step: string,
+  disableCourseCreationFloating = false,
+) => {
   let root = roots[0];
   if (!root) {
     root = createRoot(container);
@@ -73,6 +77,7 @@ const renderCourses = (container: HTMLDivElement, step: string) => {
           onDeleteLesson={vi.fn().mockResolvedValue(undefined)}
           onCreateLesson={vi.fn().mockResolvedValue(11)}
           onUpdateLesson={vi.fn().mockResolvedValue(true)}
+          disableCourseCreationFloating={disableCourseCreationFloating}
         >
           <span>Créer un cours</span>
           <span>Créer une activité</span>
@@ -128,5 +133,20 @@ describe("SidebarCoursesList pendant le tutoriel", () => {
     renderCourses(container, "admin-activity-create:42");
 
     expect(getCourseButton(container).dataset.open).toBe("true");
+  });
+});
+
+describe("SidebarCoursesList pendant l’édition d’une activité texte", () => {
+  it("ne fait pas flotter le bouton de création de cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "admin-activity-create:42", true);
+
+    const createCourseButton = Array.from(container.querySelectorAll("span"))
+      .find((element) => element.textContent === "Créer un cours");
+    const actionsContainer = createCourseButton?.parentElement;
+
+    expect(actionsContainer).toBeTruthy();
+    expect(actionsContainer?.classList.contains("sticky")).toBe(false);
+    expect(actionsContainer?.classList.contains("backdrop-blur")).toBe(false);
   });
 });

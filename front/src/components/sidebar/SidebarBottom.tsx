@@ -84,7 +84,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       )}
 
       {/* Bouton + modal questionnaire */}
-      {!demoMode && <Questionnaire />}
+      {!demoMode && interfaceType === "student" && <Questionnaire />}
 
       <li className="w-full">
         <button

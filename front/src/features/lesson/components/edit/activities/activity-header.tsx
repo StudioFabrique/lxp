@@ -6,6 +6,7 @@ type Props = {
   title: string;
   activityType?: Activity["type"];
   titleEditable?: boolean;
+  autoFocusTitle?: boolean;
   titleError?: string;
   onEditTitle?: (title: string) => void;
   titlePlaceholder?: string;
@@ -25,6 +26,7 @@ const ActivityHeader = ({
   title,
   activityType,
   titleEditable = false,
+  autoFocusTitle = true,
   titleError,
   onEditTitle,
   titlePlaceholder = "Saisissez le titre de l'activité",
@@ -83,7 +85,7 @@ const ActivityHeader = ({
       <article
         className={
           isSticky
-            ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 backdrop-blur-md rounded-2xl transition-all duration-300`
+            ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300`
             : className
         }
       >
@@ -103,7 +105,7 @@ const ActivityHeader = ({
                 titleError && "input-error text-error"
               } ${inputClassName ?? ""}`}
               placeholder={titlePlaceholder}
-              autoFocus
+              autoFocus={autoFocusTitle}
             />
           ) : (
             <h1 className={titleClassName}>{title}</h1>

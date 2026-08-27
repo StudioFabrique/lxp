@@ -115,6 +115,7 @@ const LessonReaderAndEditor = ({
               title={textActivityTitle || ""}
               activityType={activityType}
               titleEditable
+              autoFocusTitle={mode === "write"}
               titleError={textActivityTitleError}
               onEditTitle={onEditTitle}
               className="font-semibold text-primary flex justify-between items-center mb-6"
