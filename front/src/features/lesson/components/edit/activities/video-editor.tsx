@@ -52,6 +52,7 @@ export default function VideoEditor({
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<VideoFormData>({
     resolver: zodResolver(activiteMetaDataSchema),
     defaultValues: { title: "", description: "" },
@@ -121,7 +122,7 @@ export default function VideoEditor({
         titleEditable
         titleError={errors.title?.message}
         onEditTitle={(value) =>
-          register("title").onChange({ target: { value } })
+          setValue("title", value, { shouldDirty: true, shouldValidate: true })
         }
         titlePlaceholder="Titre de la vidéo"
         onCancel={onCancel}

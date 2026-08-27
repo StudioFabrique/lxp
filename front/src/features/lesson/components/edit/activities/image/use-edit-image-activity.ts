@@ -12,9 +12,9 @@ import type SuccessWithMessage from "../../../../../../../src/utils/interfaces/s
 const imageActivitySchema = z.object({
   title: z
     .string()
-    .min(1, "A title is required")
+    .min(1, "Le titre est obligatoire")
     .regex(regexGeneric, {
-      message: "The title contains unauthorized characters",
+      message: "Le titre contient des caractères non autorisés",
     }),
   description: z.string().optional(),
 });
@@ -54,7 +54,7 @@ const useEditImageActivity = (
 
   const handleSubmit = rhfHandleSubmit((formValues) => {
     if (!activity && !file && !selectedImage) {
-      toast.error("A file is required");
+      toast.error("Veuillez sélectionner une image");
       return;
     }
     const dataToSend: Record<string, unknown> = { ...formValues };

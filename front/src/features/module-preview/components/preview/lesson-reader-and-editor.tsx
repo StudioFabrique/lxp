@@ -92,9 +92,22 @@ const LessonReaderAndEditor = ({
     await onRefreshActivity(mode === "write");
   }, [mode, onRefreshActivity]);
 
-  const handleFinishResourceEditing = useCallback(() => {
-    void onRefreshActivity(false);
-  }, [onRefreshActivity]);
+  const handleFinishResourceEditing = useCallback(async () => {
+    if (mode === "edit") {
+      const saved = await onSaveActivity(
+        selectedActivity?.id,
+        textActivityTitle,
+      );
+      if (!saved) return;
+    }
+    await onRefreshActivity(false);
+  }, [
+    mode,
+    onRefreshActivity,
+    onSaveActivity,
+    selectedActivity?.id,
+    textActivityTitle,
+  ]);
 
   const handleConfirmDelete = useCallback(() => {
     onDeleteActivity();
@@ -135,12 +148,12 @@ const LessonReaderAndEditor = ({
           {/* Header de l'activité : titre et menu contextuel */}
           {isResourceEditor ? (
             <ActivityHeader
-              title={
-                mode === "write"
-                  ? "Ressources"
-                  : textActivityTitle || "Ressources"
-              }
+              title={textActivityTitle || "Ressources"}
               activityType="resource"
+              titleEditable
+              autoFocusTitle={mode === "write"}
+              titleError={textActivityTitleError}
+              onEditTitle={onEditTitle}
               className="font-semibold text-primary flex justify-between items-center mb-6"
               titleClassName="text-2xl font-bold first-letter:uppercase"
               cancelLabel={mode === "edit" ? "Terminer" : "Annuler"}
@@ -149,9 +162,8 @@ const LessonReaderAndEditor = ({
                   ? "btn btn-primary text-base-100"
                   : "btn btn-warning"
               }
-              onCancel={
-                mode === "edit" ? handleFinishResourceEditing : onBack
-              }
+              cancelDisabled={isLoading}
+              onCancel={mode === "edit" ? handleFinishResourceEditing : onBack}
             />
           ) : !hasOwnEditorHeader && canEdit && (mode === "write" || mode === "edit") ? (
             <ActivityHeader
@@ -239,6 +251,7 @@ const LessonReaderAndEditor = ({
               <ResourceUpload
                 parentId={selectedLesson?.id}
                 parent="lesson"
+                title={textActivityTitle}
                 onCancel={() => onBack()}
                 onSaved={handleMediaSaved}
               />

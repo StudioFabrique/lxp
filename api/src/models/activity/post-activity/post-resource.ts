@@ -63,6 +63,11 @@ export default async function postActivityResource(req: CustomRequest) {
   const { lessonId } = req.params;
   const userId = req.auth?.userId;
   const parent: "lesson" | "resource" = req.body.data.parent ?? "lesson";
+  const requestedTitle = req.body.data.title;
+  const title =
+    typeof requestedTitle === "string" && requestedTitle.trim()
+      ? requestedTitle.trim()
+      : "Ressources";
 
   // Validate consistency between uploaded files and metadata
   if (data.resources.length !== uploadedFiles.length)
@@ -129,7 +134,7 @@ export default async function postActivityResource(req: CustomRequest) {
       // Create a new Activity of type "resource" for the lesson
       const newActivity = await tx.activity.create({
         data: {
-          title: "Ressources",
+          title,
           lessonId: +lessonId,
           type: "resource",
           // Set order to be the next in sequence after existing activities
@@ -153,7 +158,7 @@ export default async function postActivityResource(req: CustomRequest) {
       // Create a new BonusActivity of type "resource" for the resource
       const newBonusActivity = await tx.bonusActivity.create({
         data: {
-          title: "Ressources",
+          title,
           resourceId: +lessonId,
           type: "resource",
           // Set order to be the next in sequence after existing bonus activities

@@ -11,6 +11,7 @@ type Props = {
   onSubmit?: () => void;
   parentId?: number;
   parent?: "lesson" | "resource";
+  title?: string;
   onSaved?: () => void | Promise<void>;
 };
 
@@ -19,6 +20,7 @@ export default function ResourceUpload({
   onSubmit,
   parentId,
   parent = "lesson",
+  title,
   onSaved,
 }: Props) {
   const {
@@ -35,7 +37,7 @@ export default function ResourceUpload({
     uploadProgress,
     cancelUpload,
     hasError,
-  } = useUploadResources(onCancel, onSubmit, parentId, parent, onSaved);
+  } = useUploadResources(onCancel, onSubmit, parentId, parent, onSaved, title);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {

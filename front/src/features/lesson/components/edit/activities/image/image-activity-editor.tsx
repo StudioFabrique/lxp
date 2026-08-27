@@ -28,13 +28,13 @@ export default function ImageActivityEditor({
   onSaved,
 }: Props) {
   const {
-    register,
     watch,
     errors,
     handleSubmit,
     isLoading,
     reset,
     setFile,
+    setValue,
     setSelectedImage,
     showDialog,
     setShowDialog,
@@ -77,7 +77,7 @@ export default function ImageActivityEditor({
           titleEditable
           titleError={errors.title?.message}
           onEditTitle={(value) =>
-            register("title").onChange({ target: { value } })
+            setValue("title", value, { shouldDirty: true, shouldValidate: true })
           }
           titlePlaceholder="Titre de l'image"
           cancelDisabled={isLoading}

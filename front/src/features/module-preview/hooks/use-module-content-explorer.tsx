@@ -565,17 +565,38 @@ const useModuleContentExplorer = () => {
     return response;
   };
 
+  const saveResourceActivity = async (title: string): Promise<boolean> => {
+    if (!state.selectedActivity?.id) return false;
+
+    setIsLoading(true);
+    try {
+      const response = await modulePreviewApi.mutations.updateResourceActivityTitle(
+        state.selectedActivity.id,
+        title,
+        "lesson",
+      );
+      return response.success !== false;
+    } catch {
+      toast.error("Impossible de modifier le titre des ressources");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const saveActivity = async (
-    _id?: number | undefined,
-    _title?: string | undefined,
+    id?: number | undefined,
+    titleOverride?: string | undefined,
     content?: string | undefined,
   ): Promise<boolean> => {
     if (state.mode === "read") return false;
 
-    const title =
-      state.mode === "write"
-        ? state.newActivityTitle?.trim()
-        : state.selectedActivity?.title?.trim();
+    const title = (
+      titleOverride ??
+      (state.mode === "write"
+        ? state.newActivityTitle
+        : state.selectedActivity?.title)
+    )?.trim();
     const activityType =
       state.mode === "write"
         ? state.activityType
@@ -593,6 +614,10 @@ const useModuleContentExplorer = () => {
         return await saveTextActivity(title, content ?? "");
       case "iframe":
         return await saveIframeActivity(title);
+      case "resource":
+        if (state.mode === "write") return false;
+        if (id && id !== state.selectedActivity?.id) return false;
+        return await saveResourceActivity(title);
       default:
         return false;
     }

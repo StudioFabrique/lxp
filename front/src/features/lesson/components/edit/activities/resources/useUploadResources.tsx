@@ -28,6 +28,7 @@ const useUploadResources = (
   parentId?: number,
   parent: "lesson" | "resource" = "lesson",
   onSaved?: () => void | Promise<void>,
+  title?: string,
 ) => {
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
   const [resourceName, setResourceName] = useState("");
@@ -113,7 +114,7 @@ const useUploadResources = (
       ];
     }
 
-    formData.append("data", JSON.stringify({ resources, parent }));
+    formData.append("data", JSON.stringify({ resources, parent, title }));
 
     if (id === null) {
       toast.error("Impossible d'identifier le parent des ressources.");
