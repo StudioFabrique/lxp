@@ -8,7 +8,12 @@ type Props = {
   setLimit: (limit: number) => void; // Fonction pour modifier le nombre d'éléments par page
   setPage: (page: number) => void; // Fonction pour changer de page
   totalPages: number; // Nombre total de pages
-  children?: ReactElement;
+  children?: ReactElement<PaginationChildProps>;
+};
+
+type PaginationChildProps = {
+  perPage?: number;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 /**
@@ -53,7 +58,7 @@ function Pagination({
   const getContent = (
     <>
       {children
-        ? cloneElement(children, { perPage, onChange: handleChange } as any)
+        ? cloneElement(children, { perPage, onChange: handleChange })
         : null}
       <>
         <button

@@ -14,7 +14,7 @@ export function extractYouTubeId(
   return match ? match[1] : null;
 }
 
-export function normalizeVideoUrl(raw: any): {
+export function normalizeVideoUrl(raw: unknown): {
   provider: "youtube" | "unknown";
   id: string | null;
 } {

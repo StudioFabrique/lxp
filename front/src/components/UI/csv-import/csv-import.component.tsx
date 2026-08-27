@@ -9,10 +9,11 @@ import Papa from "papaparse";
 import { checkCSV } from "../../../config/csv/csv-check";
 import FileUpload from "../file-upload/FileUpload";
 
+type CsvRow = Record<string, string>;
 
 type Props = {
   origin: string;
-  onParseCsv: (data: any) => void;
+  onParseCsv: (data: CsvRow[]) => void;
   fields: Array<string>;
   type?: "icon" | "text";
 };
@@ -53,11 +54,11 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
 
   useEffect(() => {
     if (selectedFile) {
-      Papa.parse(selectedFile, {
+      Papa.parse<CsvRow>(selectedFile, {
         ...commonConfig,
         header: true,
-        complete: (result: any) => {
-          if (checkCSV(fields, result.meta.fields)) {
+        complete: (result) => {
+          if (checkCSV(fields, result.meta.fields ?? [])) {
             result.data.pop();
             onParseCsv(result.data);
             setFilename(selectedFile.name);

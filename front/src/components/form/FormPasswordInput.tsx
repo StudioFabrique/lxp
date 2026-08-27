@@ -1,24 +1,29 @@
 import { useState } from "react";
-import { UseFormRegister, FieldError } from "react-hook-form";
+import {
+  FieldError,
+  FieldPath,
+  FieldValues,
+  UseFormRegister,
+} from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 
-interface FormPasswordInputProps {
+interface FormPasswordInputProps<TFieldValues extends FieldValues> {
   label: string;
-  name: string;
-  register: UseFormRegister<any>;
+  name: FieldPath<TFieldValues>;
+  register: UseFormRegister<TFieldValues>;
   error?: FieldError;
   placeholder?: string;
   disabled?: boolean;
 }
 
-const FormPasswordInput = ({
+const FormPasswordInput = <TFieldValues extends FieldValues,>({
   label,
   name,
   register,
   error,
   placeholder,
   disabled,
-}: FormPasswordInputProps) => {
+}: FormPasswordInputProps<TFieldValues>) => {
   const [visible, setVisible] = useState(false);
 
   return (

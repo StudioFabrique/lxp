@@ -1,4 +1,4 @@
-import { Clock, Save } from "lucide-react";
+import { Save } from "lucide-react";
 
 type AutosaveIndicatorProps = {
   isVisible: boolean;

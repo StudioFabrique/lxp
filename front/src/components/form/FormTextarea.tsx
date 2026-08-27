@@ -1,16 +1,21 @@
-import { UseFormRegister, FieldError } from "react-hook-form";
+import {
+  FieldError,
+  FieldPath,
+  FieldValues,
+  UseFormRegister,
+} from "react-hook-form";
 
-interface FormTextareaProps {
+interface FormTextareaProps<TFieldValues extends FieldValues> {
   label: string;
-  name: string;
-  register: UseFormRegister<any>;
+  name: FieldPath<TFieldValues>;
+  register: UseFormRegister<TFieldValues>;
   error?: FieldError;
   placeholder?: string;
   disabled?: boolean;
   rows?: number;
 }
 
-const FormTextarea = ({
+const FormTextarea = <TFieldValues extends FieldValues,>({
   label,
   name,
   register,
@@ -18,7 +23,7 @@ const FormTextarea = ({
   placeholder,
   disabled,
   rows = 4,
-}: FormTextareaProps) => {
+}: FormTextareaProps<TFieldValues>) => {
   return (
     <div className="flex flex-col gap-y-2 w-full">
       <label htmlFor={name} className="text-sm font-bold">

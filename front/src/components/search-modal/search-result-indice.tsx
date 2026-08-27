@@ -2,7 +2,15 @@ import { FC } from "react";
 import SearchResultItem from "./search-result-item";
 import convertSearchResultToIndices from "../../utils/convertSearchResultToIndices";
 
-const SearchResultIndice: FC<{ searchResult: any }> = ({ searchResult }) => {
+type SearchResult = {
+  _index: string;
+  _id: string;
+  _source: Record<string, unknown>;
+};
+
+const SearchResultIndice: FC<{ searchResult: SearchResult[] }> = ({
+  searchResult,
+}) => {
   const indicesList = convertSearchResultToIndices(searchResult);
 
   return (
@@ -17,8 +25,8 @@ const SearchResultIndice: FC<{ searchResult: any }> = ({ searchResult }) => {
           </summary>
           <div className="pt-2 flex flex-col gap-5">
             {searchResult
-              .filter((singleData: any) => singleData._index === index)
-              .map((result: any) => (
+              .filter((singleData) => singleData._index === index)
+              .map((result) => (
                 <SearchResultItem
                   indexName={result._index}
                   source={result._source}
