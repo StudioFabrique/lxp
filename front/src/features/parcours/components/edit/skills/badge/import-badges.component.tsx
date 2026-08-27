@@ -30,7 +30,9 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
         badgeMaxDimensions.height,
       );
       if (!hasValidDimensions) {
-        toast.error("Les dimensions du badge ne doivent pas dépasser 500 × 500 pixels.");
+        toast.error(
+          "Les dimensions du badge ne doivent pas dépasser 500 × 500 pixels.",
+        );
         return;
       }
 
@@ -64,7 +66,7 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
       fileType="badge"
       maxSize={maxSize}
       buttonLabel="Importer un badge"
-      helperText="PNG, JPEG ou SVG — 500 Ko maximum — dimensions maximales : 500 × 500 px"
+      helperText=".png, .jpeg ou .svg. 500 Ko maximum. Dimensions maximales de 500 × 500 px"
       onFileSelect={handleFileChange}
     />
   );

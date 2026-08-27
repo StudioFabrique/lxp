@@ -61,7 +61,7 @@ export default function CourseTable({
                   type="button"
                   className="btn btn-ghost btn-xs btn-square tooltip tooltip-top"
                   data-tip="Modifier le cours."
-                  aria-label="Éditer le cours"
+                  aria-label="Modifier le cours"
                   onClick={() => onEditCourse(course.id!)}
                 >
                   <Pencil className="w-4 h-4 text-primary" />
