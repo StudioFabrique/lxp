@@ -8,7 +8,11 @@ import QuizModal from "../../quiz/components/modals/quiz-modal";
 import { useContext } from "react";
 import { ChatbotContext } from "../../../store/ChatbotProvider";
 
-export default function Chatbot() {
+type Props = {
+  enableQuizSuggestion?: boolean;
+};
+
+export default function Chatbot({ enableQuizSuggestion = false }: Props) {
   const { forceHideChatbot } = useContext(ChatbotContext);
 
   const chatbot = useChatbot();
@@ -17,6 +21,7 @@ export default function Chatbot() {
     chatbotUi.showChatbot,
     chatbotUi.handleOpenChatbot,
     chatbotUi.handleCloseChatbot,
+    enableQuizSuggestion,
   );
 
   const { quizState } = chatbotQuiz;

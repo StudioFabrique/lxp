@@ -12,6 +12,24 @@
   ul,
   ol {
     padding: 0 1rem;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+
+    li {
+      margin-top: 0.125em;
+      margin-bottom: 0.125em;
+
+      p {
+        margin-top: 0.125em;
+        margin-bottom: 0.125em;
+      }
+    }
+
+    ul,
+    ol {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
   }
 
   h1,

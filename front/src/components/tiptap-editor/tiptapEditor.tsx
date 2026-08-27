@@ -72,7 +72,7 @@ export default function TiptapEditor({
           </span>
         </div>
       )}
-      <div className="editor relative w-[70%] mx-auto" ref={menuContainerRef}>
+      <div className="editor relative w-[90%] mx-auto" ref={menuContainerRef}>
         <div
           ref={stickyMarkerRef}
           className="absolute -top-6 left-0 w-full h-4 pointer-events-none"
@@ -96,19 +96,18 @@ export default function TiptapEditor({
           editor={editor}
         />
 
-        {onSave &&
-          mode !== "read" &&
-          editorRef.current &&
-          editorRef.current.getText()?.length > 0 && (
-            <SaveButton
-              pending={pending || isImageUploadPending}
-              onSave={handleSave}
-            />
-          )}
       </div>
-      {editor && editor.isEditable && (
-        <LinkMenu editor={editor} />
-      )}
+      {onSave &&
+        mode !== "read" &&
+        editor &&
+        editor.getText()?.length > 0 && (
+          <SaveButton
+            pending={pending || isImageUploadPending}
+            onSave={handleSave}
+            floating
+          />
+        )}
+      {editor && editor.isEditable && <LinkMenu editor={editor} />}
       {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
       {editor && <AiAskBubbleMenu mode={mode} editor={editor} />}
     </>

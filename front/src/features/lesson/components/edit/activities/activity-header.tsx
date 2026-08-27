@@ -6,6 +6,7 @@ type Props = {
   title: string;
   activityType?: Activity["type"];
   titleEditable?: boolean;
+  autoFocusTitle?: boolean;
   titleError?: string;
   onEditTitle?: (title: string) => void;
   titlePlaceholder?: string;
@@ -25,6 +26,7 @@ const ActivityHeader = ({
   title,
   activityType,
   titleEditable = false,
+  autoFocusTitle = true,
   titleError,
   onEditTitle,
   titlePlaceholder = "Saisissez le titre de l'activité",
@@ -103,7 +105,7 @@ const ActivityHeader = ({
                 titleError && "input-error text-error"
               } ${inputClassName ?? ""}`}
               placeholder={titlePlaceholder}
-              autoFocus
+              autoFocus={autoFocusTitle}
             />
           ) : (
             <h1 className={titleClassName}>{title}</h1>

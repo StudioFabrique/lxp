@@ -11,6 +11,7 @@ export default function useChatbotQuiz(
   isChatbotOpened: boolean,
   onOpenChatbot: (overrideSize?: chatbotWindowSize) => void,
   onCloseChatbot: () => void,
+  isQuizSuggestionEnabled: boolean,
 ) {
   const { currentActivity, setActivityTextSelection } =
     useContext(ChatbotContext);
@@ -25,6 +26,8 @@ export default function useChatbotQuiz(
   const [timerKey, setTimerKey] = useState(0);
 
   const triggerType = useMemo((): TimerTriggerType => {
+    if (!isQuizSuggestionEnabled) return "disabled";
+
     if (
       currentActivity?.readTimeMs &&
       currentActivity?.readTimeMs * 2 < 2 * 60 * 1000
@@ -36,7 +39,12 @@ export default function useChatbotQuiz(
     }
 
     return "disabled";
-  }, [currentActivity, isChatbotOpened, hasMessageBeenShown]);
+  }, [
+    currentActivity,
+    isChatbotOpened,
+    hasMessageBeenShown,
+    isQuizSuggestionEnabled,
+  ]);
 
   const onTriggerQuiz = () => {
     quizState.onTriggerRandomQuiz();
@@ -100,7 +108,7 @@ export default function useChatbotQuiz(
 
   return {
     onTriggerQuiz,
-    showQuizMessage,
+    showQuizMessage: isQuizSuggestionEnabled && showQuizMessage,
     isQuizModalOpened: quizState.isOpen,
     onResetTimer,
     quizState,
