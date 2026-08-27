@@ -3,7 +3,7 @@ import ContenuItem from "./contenu-item";
 import Module from "../../../../../../src/utils/interfaces/module";
 import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 import userBelongsToContacts from "../../../../../utils/helpers/user-belongs-to-contacts";
 import { AuthContext } from "../../../../../store/AuthProvider";
@@ -12,12 +12,17 @@ import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 import { Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
+import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
 
 type ContenuProps = {
   modules: Module[];
 };
 
 const Contenu = ({ modules }: ContenuProps) => {
+  const sortedModules = useMemo(
+    () => sortModulesByStartDate(modules),
+    [modules],
+  );
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const { id: parcoursId } = useParams();
@@ -26,7 +31,7 @@ const Contenu = ({ modules }: ContenuProps) => {
   );
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    modules ? modules[0] : null,
+    sortedModules[0] ?? null,
   );
 
   const canEditParcoursContent =
@@ -62,7 +67,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
         >
           <div className="flex flex-col gap-y-2">
-            {modules.map((module, i) => (
+            {sortedModules.map((module, i) => (
               <ContenuItem
                 key={module.id}
                 module={module}
@@ -76,7 +81,7 @@ const Contenu = ({ modules }: ContenuProps) => {
                 <Link
                   to={`/admin/parcours/edit/${parcoursId}?step=4&create=true`}
                   className={cn("btn h-20", {
-                    "btn-dash": modules?.length === 0,
+                    "btn-dash": sortedModules.length === 0,
                   })}
                 >
                   <Plus className="h-5 w-5" />
@@ -85,7 +90,7 @@ const Contenu = ({ modules }: ContenuProps) => {
               </PermissionGuard>
             )}
           </div>
-          {modules?.length > 0 && (
+          {sortedModules.length > 0 && (
             <div className="flex flex-col gap-y-4">
               <ContenuDetailHeader
                 imageModuleHeader={selectedModule?.thumb}
