@@ -49,7 +49,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   }, [floating]);
 
   const icon = pending ? (
-    <span>
+    <span className="flex justify-center items-center w-5 h-5">
       <Loader />
     </span>
   ) : (
