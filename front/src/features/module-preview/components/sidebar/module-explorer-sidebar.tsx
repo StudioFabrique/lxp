@@ -188,6 +188,10 @@ const ModuleExplorerSidebar = ({
             dispatch({ type: "select_lesson_by_id", id: lessonId })
           }
           onUpdateLesson={lessonActions.updateLesson}
+          disableCourseCreationFloating={
+            (state.mode === "write" && state.activityType === "text") ||
+            (state.mode === "edit" && selectedActivity?.type === "text")
+          }
         >
           {canEditModule && (
             <PermissionGuard action="write" object="course">

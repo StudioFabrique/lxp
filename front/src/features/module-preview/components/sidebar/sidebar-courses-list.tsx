@@ -42,6 +42,7 @@ type SidebarCoursesListProps = {
     lessonId: number,
     values: LessonFormValues,
   ) => Promise<boolean>;
+  disableCourseCreationFloating?: boolean;
   children: React.ReactNode[];
 };
 
@@ -61,6 +62,7 @@ const SidebarCoursesList = ({
   onCreateLesson,
   onLessonCreated,
   onUpdateLesson,
+  disableCourseCreationFloating = false,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
@@ -210,11 +212,13 @@ const SidebarCoursesList = ({
       <PermissionGuard action="update" object="course">
         <div
           className={cn(
-            "sticky bottom-1 z-30 w-full rounded-xl transition-all duration-300",
+            "z-30 w-full rounded-xl transition-all duration-300",
             {
-              "bg-transparent shadow-none": isAtNaturalPosition,
+              "sticky bottom-1": !disableCourseCreationFloating,
+              "bg-transparent shadow-none":
+                disableCourseCreationFloating || isAtNaturalPosition,
               "border border-base-300 px-2 py-2 backdrop-blur":
-                !isAtNaturalPosition,
+                !disableCourseCreationFloating && !isAtNaturalPosition,
               "mt-5": courses.length > 0,
             },
           )}
