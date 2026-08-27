@@ -6,13 +6,13 @@ import type CustomRequest from "../../../utils/interfaces/express/custom-request
  * Updates the order of resources within an activity
  *
  * This function reorders resources (ResourceActivity or ResourceBonusActivity)
- * within a parent activity or bonus activity. It validates permissions to ensure
- * only the author can reorder their resources.
+ * within a parent activity or bonus activity. Route-level permissions determine
+ * which administrators and teachers can reorder them.
  *
  * The function performs the following operations:
  * 1. Validates the parent type ("lesson" or "resource")
  * 2. Verifies the existence of the parent activity
- * 3. Verifies the author exists and has permission to modify the resources
+ * 3. Verifies the authenticated administrator exists
  * 4. Updates the order of each resource in a transaction
  *
  * @param req - Custom Express Request object containing:
@@ -27,7 +27,6 @@ import type CustomRequest from "../../../utils/interfaces/express/custom-request
  *   - Parent type is invalid (400)
  *   - Parent activity doesn't exist (404)
  *   - Author doesn't exist (404)
- *   - User is not the owner of the activity (406)
  *
  * @example
  * // Request body for reordering resources in a lesson activity:
@@ -89,17 +88,6 @@ export default async function putReorderResource(req: CustomRequest) {
   // Verify author exists
   if (!existingAuthor)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
-
-  // Verify user is the owner of the activity
-  // Activity uses 'authorId', BonusActivity uses 'adminId'
-  if (
-    (existingActivity as Activity).authorId !== existingAuthor.id &&
-    (existingActivity as BonusActivity).adminId !== existingAuthor.id
-  )
-    throw {
-      statusCode: 406,
-      message: "Vous n'êtes pas le propriétaire de la ressource.",
-    };
 
   // Execute all updates in a transaction to ensure atomicity
   const transaction = await prisma.$transaction(async (tx) => {

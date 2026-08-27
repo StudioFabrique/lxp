@@ -23,12 +23,6 @@ export default async function deleteResource(
       statusCode: 404,
       message: "L'auteur de la ressource n'existe pas.",
     };
-  if (existingAuthor.idMdb !== userId)
-    throw {
-      statusCode: 406,
-      message: "Vous n'êtes pas le propriétaire de cette ressource.",
-    };
-
   const filesToDelete = await prisma.$transaction(async (tx) => {
     const deletedResource = await tx.resourceActivity.delete({
       where: { id: resourceId },

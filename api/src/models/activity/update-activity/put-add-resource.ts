@@ -25,13 +25,13 @@ type BonusActivityWithResources = BonusActivity & {
  * Adds new resources to an existing activity or bonus activity
  *
  * This function handles the upload and addition of resource files to an existing
- * activity (for lessons) or bonus activity (for resources). It validates permissions
- * to ensure only the author can add resources to their activities.
+ * activity (for lessons) or bonus activity (for resources). Route-level
+ * permissions determine which administrators and teachers can update it.
  *
  * The function performs the following operations:
  * 1. Validates uploaded files exist
  * 2. Verifies the existence of the parent activity
- * 3. Verifies the author exists and has permission to modify the activity
+ * 3. Verifies the authenticated administrator exists
  * 4. Creates new resource entries linked to the activity
  * 5. Registers files in the media library (mediatheque)
  *
@@ -48,7 +48,6 @@ type BonusActivityWithResources = BonusActivity & {
  *   - No files are uploaded (400)
  *   - Parent activity doesn't exist (404)
  *   - Author doesn't exist (404)
- *   - User is not the owner of the activity (406)
  *
  * @example
  * // Request body structure:
@@ -116,17 +115,6 @@ export default async function putAddResource(req: CustomRequest) {
   // Verify author exists
   if (!existingAuthor)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
-
-  // Verify user is the owner of the activity
-  // Activity uses 'authorId', BonusActivity uses 'adminId'
-  if (
-    (existingParent as Activity).authorId !== existingAuthor.id &&
-    (existingParent as BonusActivity).adminId !== existingAuthor.id
-  )
-    throw {
-      statusCode: 406,
-      message: "Vous n'êtes pas le propriétaire de la ressource.",
-    };
 
   // Array to store the new resources with their labels and URLs
   let newResources: { label: string; url: string }[] = [];

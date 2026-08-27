@@ -1,7 +1,7 @@
 import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 import { Icon } from "../ui/Icon";
 import { Surface } from "../ui/Surface";
-import { Toolbar } from "../ui/Toolbar";
+import { ToolbarButton, ToolbarDivider } from "../ui/Toolbar";
 import Tooltip from "../ui/Tooltip";
 
 export type LinkPreviewPanelProps = {
@@ -28,16 +28,16 @@ export const LinkPreviewPanel = ({
       >
         {url}
       </a>
-      <Toolbar.Divider />
+      <ToolbarDivider />
       <Tooltip title="Edit link">
-        <Toolbar.Button onClick={onEdit}>
+        <ToolbarButton onClick={onEdit}>
           <Icon name="Pen" />
-        </Toolbar.Button>
+        </ToolbarButton>
       </Tooltip>
       <Tooltip title="Remove link">
-        <Toolbar.Button onClick={onClear}>
+        <ToolbarButton onClick={onClear}>
           <Icon name="Trash2" />
-        </Toolbar.Button>
+        </ToolbarButton>
       </Tooltip>
     </Surface>
   );

@@ -61,7 +61,10 @@ export default async function httpPutAddResource(
     // Prepare success result object
     const result = {
       statusCode: 200,
-      data: { message: "La nouvelle ressource a été créée avec succès." },
+      data: {
+        success: true,
+        message: "La nouvelle ressource a été créée avec succès.",
+      },
     };
 
     // Pass result to next middleware

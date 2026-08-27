@@ -120,7 +120,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
                 }}
                 transition={{ duration: 0.16, ease: "easeInOut" }}
                 aria-hidden={isFloating}
-                className="ml-1 shrink-0 whitespace-nowrap text-left"
+                className="ml-2 shrink-0 whitespace-nowrap text-left"
               >
                 Sauvegarder l'activité
               </motion.span>

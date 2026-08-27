@@ -15,7 +15,7 @@ export default async function putResource(req: CustomRequest) {
   // Recherche de la ressource existante
   const existingResource = await prisma.resourceActivity.findFirst({
     where: { id: +resourceId },
-    select: { id: true, activity: true, url: true },
+    select: { id: true },
   });
 
   // Vérification de l'existence de la ressource
@@ -29,14 +29,8 @@ export default async function putResource(req: CustomRequest) {
 
   // Vérification de l'existence de l'utilisateur
   if (!existingUser)
-    throw { statusCodes: 404, message: "L'utilisateur n'existe pas." };
+    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
-  // Vérification des droits d'accès
-  if (existingUser.id !== existingResource.activity.authorId)
-    throw {
-      statusCode: 406,
-      message: "Vous n'êtes pas le propriétaire de cette ressource.",
-    };
   const updatedResource = await prisma.resourceActivity.update({
     where: { id: +resourceId },
     data: {

@@ -9,7 +9,10 @@ import VideoPlayer from "../../../../../components/UI/VideoPlayer";
 interface VideoProps {
   activity?: Activity;
   onCancel: () => void;
+  onSaved?: (activity?: Activity) => void | Promise<void>;
   isEditing: boolean;
+  parentId?: number;
+  parent?: "lesson" | "resource";
 }
 
 const isValidYouTubeUrl = (url: string) => {
@@ -17,8 +20,15 @@ const isValidYouTubeUrl = (url: string) => {
   return pattern.test(url);
 };
 
-export default function Video({ activity, onCancel, isEditing }: VideoProps) {
-  const { lessonId } = useParams();
+export default function Video({
+  activity,
+  onCancel,
+  onSaved,
+  isEditing,
+  parentId,
+  parent = "lesson",
+}: VideoProps) {
+  const { lessonId, resourceId } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,6 +57,8 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
           title: value.title,
           description: value.description,
           url: value.fileValue ? "" : value.videoValue,
+          parent,
+          parentType: parent,
         }),
       );
 
@@ -54,26 +66,42 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
         fd.append("video", value.fileValue);
       }
 
-      const id = activity?.id ?? lessonId!;
+      const routeParentId = parent === "resource" ? resourceId : lessonId;
+      const id = activity?.id ?? parentId ?? routeParentId;
 
-      lessonApi.mutations
-        .upsertVideoActivity(id, fd, activity ? "put" : "post")
-        .then((data: { success: boolean; message: string }) => {
-          if (data.success) {
-            toast.success(data.message);
-            onCancel();
-          }
-        })
-        .catch((err: any) => {
-          setError(
-            err.response?.data?.message ||
-              err.message ||
-              "Une erreur est survenue"
-          );
-        })
-        .finally(() => setLoading(false));
+      if (id === undefined) {
+        setLoading(false);
+        toast.error("Impossible d'identifier le parent de la vidéo.");
+        return;
+      }
+
+      try {
+        const data = (await lessonApi.mutations.upsertVideoActivity(
+          id,
+          fd,
+          activity ? "put" : "post",
+        )) as {
+          success: boolean;
+          message: string;
+          response?: Activity;
+        };
+
+        if (data.success) {
+          toast.success(data.message);
+          if (onSaved) await onSaved(data.response);
+          else onCancel();
+        }
+      } catch (err: any) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Une erreur est survenue",
+        );
+      } finally {
+        setLoading(false);
+      }
     },
-    [activity, lessonId, onCancel],
+    [activity, lessonId, onCancel, onSaved, parent, parentId, resourceId],
   );
 
   const renderContent = () => {

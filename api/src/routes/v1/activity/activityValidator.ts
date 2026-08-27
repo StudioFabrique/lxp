@@ -43,6 +43,22 @@ export const updateActivityValidator = [
   checkValidatorResult,
 ];
 
+export const updateActivityTitleValidator = [
+  param("parent")
+    .isIn(["lesson", "resource"])
+    .withMessage('Le parent doit être soit "lesson" soit "resource".'),
+  body("title")
+    .notEmpty()
+    .withMessage("Le titre de l'activité est obligatoire.")
+    .isString()
+    .withMessage("Le titre de l'activité doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Le titre de l'activité contient des caractères non autorisés.",
+    ),
+  checkValidatorResult,
+];
+
 export const updateVideoValidator = [
   body("data.url")
     .optional({ nullable: true })
@@ -143,7 +159,7 @@ export const putReorderActivitiesValidator = [
 ];
 
 export const putResourceValidator = [
-  body("data.label")
+  body("label")
     .custom(stringValidateGeneric)
     .withMessage(
       "Le label de la ressource contient des caractères non autorisés.",

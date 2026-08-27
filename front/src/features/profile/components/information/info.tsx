@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useContext } from "react";
 import { UseFormRegister } from "react-hook-form";
 import Wrapper from "../../../../components/wrappers/BoxWrapper";
 import FormInput from "../../../../components/form/FormInput";
-import ProfileImageFileUpload from "../../../../components/UI/image-file-upload/profile-image-file-upload";
+import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import { AuthContext } from "../../../../store/AuthProvider";
 
@@ -34,11 +34,11 @@ const Info: FC<{
             />
             <div className="flex flex-col items-center gap-2">
               <h4>Avatar</h4>
-              <ProfileImageFileUpload
-                temporaryAvatar={temporaryAvatar}
-                onSetTemporaryAvatar={setTemporaryAvatar}
+              <ImageFileUpload
+                temporaryImage={temporaryAvatar}
+                onSetTemporaryImage={setTemporaryAvatar}
                 maxSize={avatarImageMaxSize}
-                existingAvatar={user?.avatar}
+                existingImage={user?.avatar}
               />
             </div>
           </div>

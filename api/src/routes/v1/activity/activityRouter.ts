@@ -26,6 +26,7 @@ import {
   putResourceValidator,
   resourceIdValidator,
   updateActivityValidator,
+  updateActivityTitleValidator,
   updateIframeValidator,
   updateVideoValidator,
 } from "./activityValidator.ts";
@@ -53,6 +54,7 @@ import mediatheque from "../../../middleware/mediatheque.ts";
 import httpDeleteActivity from "../../../controllers/activity/http-delete-activity.ts";
 import httpPostActivityIframe from "../../../controllers/activity/http-post-activity-iframe.ts";
 import httpPutActivityIframe from "../../../controllers/activity/http-put-activity-iframe.ts";
+import httpPutActivityTitle from "../../../controllers/activity/http-put-activity-title.ts";
 
 const activityRouter = express.Router();
 
@@ -122,6 +124,15 @@ activityRouter.put(
   idValidator,
   updateActivityValidator,
   httpPutActivityText,
+);
+
+// Route pour mettre à jour le titre d'une activité de leçon ou de ressource
+activityRouter.put(
+  "/title/:activityId/:parent",
+  checkPermissions("activity"),
+  activityIdValidator,
+  updateActivityTitleValidator,
+  httpPutActivityTitle,
 );
 
 // Route pour supprimer une activité et toutes ses ressources associées

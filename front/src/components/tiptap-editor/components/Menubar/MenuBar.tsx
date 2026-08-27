@@ -9,7 +9,7 @@ import { useMenuContentTypes } from "../hooks/useMenuContentTypes.js";
 import { useMenuAlignTextTypes } from "../hooks/useMenuAlignTextTypes.js";
 import { useTextmenuStates } from "../hooks/useTextmenuStates.js";
 import { useTextmenuCommands } from "../hooks/useTextmenuCommands.js";
-import { Toolbar } from "../ui/Toolbar.js";
+import { ToolbarWrapper } from "../ui/Toolbar.js";
 import { FontFamilyPicker } from "../FontFamilyPicker.js";
 import { EditLinkPopover } from "../EditLinkPopover.js";
 import { EditYoutubeLinkPopover } from "../EditYoutubeLinkPopover.js";
@@ -58,7 +58,7 @@ export default function MenuBar({
   }, [uploadAllImages, onUploadAllImagesRef]);
 
   return (
-    <Toolbar.Wrapper
+    <ToolbarWrapper
       ref={toolbarRef}
       hidden={shouldHide}
       className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out flex-wrap min-w-max ${
@@ -107,6 +107,6 @@ export default function MenuBar({
         type="file"
         accept="image/*"
       />
-    </Toolbar.Wrapper>
+    </ToolbarWrapper>
   );
 }

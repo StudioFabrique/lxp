@@ -14,6 +14,7 @@ import AddIcon from "../../../../../../src/components/UI/svg/add-icon";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import { courseApi } from "../../../api/course.api";
 import Modal from "../../../../../components/UI/modal/modal";
+import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];
@@ -52,8 +53,8 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       });
       dispatch({ type: "NEW_LESSON", payload: data });
       handleResetForm();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Erreur inconnue"));
     }
     setIsLoading(false);
   };
@@ -69,8 +70,8 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       });
       dispatch({ type: "UPDATE_LESSON", payload: data });
       handleResetForm();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Erreur inconnue"));
     }
   };
 
@@ -95,8 +96,8 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
         toast.success(data.message);
         setLessonToDelete(null);
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Erreur inconnue"));
     }
   };
 

@@ -1,16 +1,21 @@
-import { UseFormRegister, FieldError } from "react-hook-form";
+import {
+  FieldError,
+  FieldPath,
+  FieldValues,
+  UseFormRegister,
+} from "react-hook-form";
 
-interface FormNumberInputProps {
+interface FormNumberInputProps<TFieldValues extends FieldValues> {
   label: string;
-  name: string;
-  register: UseFormRegister<any>;
+  name: FieldPath<TFieldValues>;
+  register: UseFormRegister<TFieldValues>;
   error?: FieldError;
   placeholder?: string;
   disabled?: boolean;
   min?: number;
 }
 
-const FormNumberInput = ({
+const FormNumberInput = <TFieldValues extends FieldValues,>({
   label,
   name,
   register,
@@ -18,7 +23,7 @@ const FormNumberInput = ({
   placeholder,
   disabled,
   min,
-}: FormNumberInputProps) => {
+}: FormNumberInputProps<TFieldValues>) => {
   return (
     <div className="flex flex-col gap-y-2 w-full">
       <label htmlFor={name} className="text-sm font-bold">

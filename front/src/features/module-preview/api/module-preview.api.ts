@@ -152,6 +152,17 @@ const mutations = {
     const res = await apiClient.put(`/activity/iframe/${activityId}`, payload);
     return res.data;
   },
+  updateResourceActivityTitle: async (
+    activityId: number,
+    title: string,
+    parent: "lesson" | "resource" = "lesson",
+  ) => {
+    const res = await apiClient.put(
+      `/activity/title/${activityId}/${parent}`,
+      { title },
+    );
+    return res.data;
+  },
   deleteActivity: async (type: string, activityId: number) => {
     const res = await apiClient.delete(`/activity/${type}/${activityId}/lesson`);
     return res.data;

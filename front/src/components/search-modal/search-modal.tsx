@@ -13,6 +13,7 @@ import Loader from "../loaders/Loader";
 import SearchResults from "./search-results";
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
+import type { SearchResultsData } from "./search-result.types";
 
 const SearchModal: FC<{
   isModalOpen: boolean;
@@ -22,10 +23,8 @@ const SearchModal: FC<{
   const [isLoading, setIsLoading] = useState(false);
 
   const [searchValue, setSearchValue] = useState<string>("");
-  const [searchResultsData, setSearchResultsData] = useState<Record<
-    string,
-    string
-  > | null>(null);
+  const [searchResultsData, setSearchResultsData] =
+    useState<SearchResultsData | null>(null);
 
   const inputRef: Ref<HTMLInputElement> = useRef(null);
 
@@ -33,7 +32,7 @@ const SearchModal: FC<{
     if (searchValue.length > 0) {
       setIsLoading(true);
       apiClient
-        .get(`/search/parcours/${id}/${searchValue}`)
+        .get<SearchResultsData>(`/search/parcours/${id}/${searchValue}`)
         .then((response) => setSearchResultsData(response.data))
         .catch((err) => {
           const errorMessage =

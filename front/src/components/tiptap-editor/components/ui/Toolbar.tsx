@@ -10,8 +10,8 @@ export type ToolbarWrapperProps = {
   isVertical?: boolean;
 } & HTMLProps<HTMLDivElement>;
 
-const ToolbarWrapper = forwardRef<HTMLDivElement, ToolbarWrapperProps>(
-  (
+export const ToolbarWrapper = forwardRef<HTMLDivElement, ToolbarWrapperProps>(
+  function ToolbarWrapper(
     {
       shouldShowContent = true,
       children,
@@ -20,7 +20,7 @@ const ToolbarWrapper = forwardRef<HTMLDivElement, ToolbarWrapperProps>(
       ...rest
     },
     ref,
-  ) => {
+  ) {
     const toolbarClassName = cn(
       "text-base-content inline-flex h-full leading-none gap-0.5",
       TIPTAP_MENU_BAR_COLORS.background,
@@ -44,8 +44,8 @@ export type ToolbarDividerProps = {
   horizontal?: boolean;
 } & HTMLProps<HTMLDivElement>;
 
-const ToolbarDivider = forwardRef<HTMLDivElement, ToolbarDividerProps>(
-  ({ horizontal, className, ...rest }, ref) => {
+export const ToolbarDivider = forwardRef<HTMLDivElement, ToolbarDividerProps>(
+  function ToolbarDivider({ horizontal, className, ...rest }, ref) {
     const dividerClassName = cn(
       "bg-base-300",
       horizontal
@@ -69,8 +69,8 @@ export type ToolbarButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonProps["variant"];
 };
 
-const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
-  (
+export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
+  function ToolbarButton(
     {
       children,
       buttonSize = "icon",
@@ -82,7 +82,7 @@ const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
       ...rest
     },
     ref,
-  ) => {
+  ) {
     const buttonClass = cn("gap-1 min-w-[2rem] px-2 w-auto", className);
 
     const content = (
@@ -111,9 +111,3 @@ const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
 );
 
 ToolbarButton.displayName = "ToolbarButton";
-
-export const Toolbar = {
-  Wrapper: ToolbarWrapper,
-  Divider: ToolbarDivider,
-  Button: ToolbarButton,
-};

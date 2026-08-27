@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { profileApi } from "../api/profile.api";
-import ProfileImageFileUpload from "../../../components/UI/image-file-upload/profile-image-file-upload";
+import ImageFileUpload from "../../../components/UI/image-file-upload/image-file-upload";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import ColorPicker from "../../../components/UI/color-picker";
@@ -145,16 +145,16 @@ const CompanyPictureUpload = () => {
 
           {/* Right image upload */}
           <div className="flex w-full min-w-0 flex-col items-center gap-3">
-            <ProfileImageFileUpload
-              temporaryAvatar={temporaryAvatar}
-              onSetTemporaryAvatar={setTemporaryAvatar}
+            <ImageFileUpload
+              temporaryImage={temporaryAvatar}
+              onSetTemporaryImage={setTemporaryAvatar}
               maxSize={avatarImageMaxSize}
               variant="logo"
               previewBackgroundColor={bgColor}
               onPreviewAvailabilityChange={setHasLogo}
             >
               Ajouter le logo
-            </ProfileImageFileUpload>
+            </ImageFileUpload>
             {hasLogo && (
               <button
                 type="button"

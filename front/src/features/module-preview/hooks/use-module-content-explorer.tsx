@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -52,7 +52,6 @@ const useModuleContentExplorer = () => {
     activity: false,
   });
 
-  const navigate = useNavigate();
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -449,6 +448,36 @@ const useModuleContentExplorer = () => {
     }
   }, [selectedLessonId, requestedActivityId, initiateLesson]);
 
+  const refreshSelectedLesson = useCallback(
+    async (selectLastActivity = false): Promise<boolean> => {
+      if (!selectedLessonId) return false;
+
+      setIsLoading(true);
+      try {
+        const lesson = (await modulePreviewApi.queries.getLesson(
+          selectedLessonId,
+        )) as Lesson;
+        const activityId = selectLastActivity
+          ? lesson.activities?.[lesson.activities.length - 1]?.id
+          : selectedActivityId;
+
+        dispatch({ type: "select_lesson", lesson, activityId });
+
+        if (selectLastActivity && activityId) {
+          emitOnboardingEvent({ type: "activity_created", id: activityId });
+        }
+
+        return true;
+      } catch {
+        toast.error("Impossible de rafraîchir la leçon");
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedActivityId, selectedLessonId],
+  );
+
   const fetchActivityTextContent = useCallback(() => {
     if (
       selectedActivityType === "text" &&
@@ -536,17 +565,38 @@ const useModuleContentExplorer = () => {
     return response;
   };
 
+  const saveResourceActivity = async (title: string): Promise<boolean> => {
+    if (!state.selectedActivity?.id) return false;
+
+    setIsLoading(true);
+    try {
+      const response = await modulePreviewApi.mutations.updateResourceActivityTitle(
+        state.selectedActivity.id,
+        title,
+        "lesson",
+      );
+      return response.success !== false;
+    } catch {
+      toast.error("Impossible de modifier le titre des ressources");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const saveActivity = async (
-    _id?: number | undefined,
-    _title?: string | undefined,
+    id?: number | undefined,
+    titleOverride?: string | undefined,
     content?: string | undefined,
   ): Promise<boolean> => {
     if (state.mode === "read") return false;
 
-    const title =
-      state.mode === "write"
-        ? state.newActivityTitle?.trim()
-        : state.selectedActivity?.title?.trim();
+    const title = (
+      titleOverride ??
+      (state.mode === "write"
+        ? state.newActivityTitle
+        : state.selectedActivity?.title)
+    )?.trim();
     const activityType =
       state.mode === "write"
         ? state.activityType
@@ -564,6 +614,10 @@ const useModuleContentExplorer = () => {
         return await saveTextActivity(title, content ?? "");
       case "iframe":
         return await saveIframeActivity(title);
+      case "resource":
+        if (state.mode === "write") return false;
+        if (id && id !== state.selectedActivity?.id) return false;
+        return await saveResourceActivity(title);
       default:
         return false;
     }
@@ -625,23 +679,14 @@ const useModuleContentExplorer = () => {
     switch (activityType) {
       case "text":
       case "iframe":
+      case "video":
+      case "image":
+      case "resource":
         return dispatch({
           type: "select_mode",
           mode: "write",
           activityType,
         });
-      case "video":
-        return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=video`,
-        );
-      case "image":
-        return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=image`,
-        );
-      case "resource":
-        return navigate(
-          `/admin/lesson/edit/${state.selectedLesson?.id}?type=resource`,
-        );
     }
   };
 
@@ -769,6 +814,7 @@ const useModuleContentExplorer = () => {
       deleteActivity,
       activityReorder,
       selectActivityType,
+      refreshSelectedLesson,
     },
     scrollTopRef,
   };

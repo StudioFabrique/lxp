@@ -149,6 +149,7 @@ const ModuleExplorerPreview = ({
         onBack={() =>
           dispatch({ type: "select_mode", mode: "activity_type_selection" })
         }
+        onRefreshActivity={activityActions.refreshSelectedLesson}
         onSaveActivity={activityActions.saveActivity}
       >
         {mode === "read" &&

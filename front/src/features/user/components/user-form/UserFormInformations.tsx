@@ -1,6 +1,6 @@
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
-import ProfileImageFileUpload from "../../../../components/UI/image-file-upload/profile-image-file-upload";
+import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -58,9 +58,9 @@ const UserFormInformations = ({
       <h2 className="font-bold text-xl">Informations</h2>
       <div className="flex flex-col items-center gap-2">
         <label className="font-medium">Avatar</label>
-        <ProfileImageFileUpload
-          temporaryAvatar={temporaryAvatar}
-          onSetTemporaryAvatar={setTemporaryAvatar}
+        <ImageFileUpload
+          temporaryImage={temporaryAvatar}
+          onSetTemporaryImage={setTemporaryAvatar}
           maxSize={avatarImageMaxSize}
         />
         <p className="text-xs text-base-content/60">

@@ -44,7 +44,7 @@ const queries = {
     activityId: string,
   ): Promise<{ success: boolean; activity: any }> => {
     const res = await apiClient.get(`/activity/${activityId}`);
-    return res.data.data;
+    return res.data;
   },
 
   getResources: async (
@@ -54,7 +54,7 @@ const queries = {
     const res = await apiClient.get(
       `/activity/resources/${activityId}/${parent}`,
     );
-    return res.data.data;
+    return res.data;
   },
 };
 
@@ -126,7 +126,7 @@ const mutations = {
     const res = await apiClient[method](`/activity/video/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    return res.data.data;
+    return res.data;
   },
 
   upsertImageActivity: async (
@@ -142,7 +142,7 @@ const mutations = {
         headers: { "Content-Type": "multipart/form-data" },
       },
     );
-    return res.data.data;
+    return res.data;
   },
 
   createBlogActivity: async (
@@ -169,7 +169,7 @@ const mutations = {
       signal,
       onUploadProgress,
     });
-    return res.data.data;
+    return res.data;
   },
 
   addResources: async (
@@ -186,7 +186,7 @@ const mutations = {
         onUploadProgress,
       },
     );
-    return res.data.data;
+    return res.data;
   },
 
   updateResource: async (
@@ -196,7 +196,7 @@ const mutations = {
     const res = await apiClient.put(`/activity/resource/${resourceId}`, {
       label,
     });
-    return res.data.data;
+    return res.data;
   },
 
   deleteResource: async (
@@ -205,7 +205,7 @@ const mutations = {
     const res = await apiClient.delete(
       `/activity/activity-resource/${resourceId}`,
     );
-    return res.data.data;
+    return res.data;
   },
 
   reorderResources: async (
@@ -217,7 +217,7 @@ const mutations = {
       `/activity/reorder-resource/${activityId}`,
       { activitiesIds, parent },
     );
-    return res.data.data;
+    return res.data;
   },
 };
 

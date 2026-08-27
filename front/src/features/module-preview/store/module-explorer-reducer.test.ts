@@ -122,4 +122,19 @@ describe("moduleExplorerContentReducer", () => {
 
     expect(state).toBe(initialState);
   });
+
+  it.each(["image", "video", "resource"] as const)(
+    "ouvre l'éditeur inline pour une activité %s",
+    (activityType) => {
+      const state = moduleExplorerContentReducer(
+        initialModuleExplorerContentState,
+        { type: "select_mode", mode: "write", activityType },
+      );
+
+      expect(state.mode).toBe("write");
+      expect(state.mode === "write" && state.activityType === activityType).toBe(
+        true,
+      );
+    },
+  );
 });

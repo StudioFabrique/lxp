@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 
 import { maxSizeError } from "../../../../../utils/helpers/max-size-error";
 import { activityVideoSize } from "../../../../../config/images-sizes";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import { Loader2 } from "lucide-react";
 import { activiteMetaDataSchema } from "../../../lesson.schema";
 import FormTextarea from "../../../../../components/form/FormTextarea";
@@ -53,6 +52,7 @@ export default function VideoEditor({
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<VideoFormData>({
     resolver: zodResolver(activiteMetaDataSchema),
     defaultValues: { title: "", description: "" },
@@ -122,72 +122,70 @@ export default function VideoEditor({
         titleEditable
         titleError={errors.title?.message}
         onEditTitle={(value) =>
-          register("title").onChange({ target: { value } })
+          setValue("title", value, { shouldDirty: true, shouldValidate: true })
         }
         titlePlaceholder="Titre de la vidéo"
         onCancel={onCancel}
         cancelDisabled={loading}
       />
-      <Wrapper>
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-          <article>
-            <form className="flex flex-col gap-y-2">
-              <FormTextarea
-                label="Description"
-                name="description"
-                register={register}
-                error={errors.description}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+        <article>
+          <form className="flex flex-col gap-y-2">
+            <FormTextarea
+              label="Description"
+              name="description"
+              register={register}
+              error={errors.description}
+            />
+          </form>
+        </article>
+        <article className="flex flex-col gap-y-4 justify-center">
+          <span className="flex items-center justify-between">
+            <label className="text-primary" htmlFor="origin">
+              Sélectionner la provenance de la vidéo :
+            </label>
+            <select
+              className="pl-2 select select-primary select-sm focus:outline-none"
+              name="origin"
+              id="origin"
+              value={origin}
+              onChange={handleOnChangeOrigin}
+            >
+              <option value="fileSystem">Votre ordinateur</option>
+              <option value="web">Un lien externe</option>
+            </select>
+          </span>
+          <span>
+            {origin === "fileSystem" ? (
+              <FileUpload
+                compact
+                fileType="video"
+                maxSize={maxSize}
+                buttonLabel="Sélectionner une vidéo"
+                onFileSelect={handleSelectFile}
               />
-            </form>
-          </article>
-          <article className="flex flex-col gap-y-4 justify-center">
-            <span className="flex items-center justify-between">
-              <label className="text-primary" htmlFor="origin">
-                Sélectionner la provenance de la vidéo :
-              </label>
-              <select
-                className="pl-2 select select-primary select-sm focus:outline-none"
-                name="origin"
-                id="origin"
-                value={origin}
-                onChange={handleOnChangeOrigin}
-              >
-                <option value="fileSystem">Votre ordinateur</option>
-                <option value="web">Un lien externe</option>
-              </select>
-            </span>
-            <span>
-              {origin === "fileSystem" ? (
-                <FileUpload
-                  compact
-                  fileType="video"
-                  maxSize={maxSize}
-                  buttonLabel="Sélectionner une vidéo"
-                  onFileSelect={handleSelectFile}
+            ) : (
+              <div className="flex items-center gap-x-2">
+                <input
+                  className="w-full input input-sm input-primary focus:outline-none active:outline-none"
+                  type="text"
+                  name="httpsLink"
+                  id="httpsLink"
+                  placeholder="Lien https"
+                  value={url}
+                  onChange={handleOnChangeUrl}
                 />
-              ) : (
-                <div className="flex items-center gap-x-2">
-                  <input
-                    className="w-full input input-sm input-primary focus:outline-none active:outline-none"
-                    type="text"
-                    name="httpsLink"
-                    id="httpsLink"
-                    placeholder="Lien https"
-                    value={url}
-                    onChange={handleOnChangeUrl}
-                  />
-                </div>
-              )}
-            </span>
-          </article>
+              </div>
+            )}
+          </span>
+        </article>
+      </section>
+      {video ? (
+        <section className="w-full py-2 flex flex-col items-center gap-y-4">
+          <h2 className="w-full">Aperçu de la vidéo</h2>
+          <VideoPlayer url={video} size="medium" />
         </section>
-        {video ? (
-          <section className="w-full py-2 flex flex-col items-center gap-y-4">
-            <h2 className="w-full">Aperçu de la vidéo</h2>
-            <VideoPlayer url={video} size="medium" />
-          </section>
-        ) : null}
-      </Wrapper>
+      ) : null}
       <section className="flex justify-end items-center gap-x-2">
         <button
           className="btn btn-primary flex items-center gap-x-2"

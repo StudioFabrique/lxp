@@ -8,6 +8,7 @@ import { infosCourseSchema } from "../../../course.schema";
 import FormInput from "../../../../../../src/components/form/FormInput";
 import FormTextarea from "../../../../../../src/components/form/FormTextarea";
 import useAutoSave from "../../../../../../src/hooks/useAutoSave";
+import { getApiErrorMessage } from "../../../../../../src/utils/helpers/api-error-message";
 import { courseApi } from "../../../api/course.api";
 
 interface CourseInfosFormProps {
@@ -54,8 +55,8 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
           dispatch({ type: "SET_COURSE_INFOS", payload: response.data as { title: string; description: string; visibility: boolean } });
           toast.success(response.message);
         }
-      } catch (err: any) {
-        toast.error(err?.response?.data?.message ?? "Erreur inconnue");
+      } catch (err: unknown) {
+        toast.error(getApiErrorMessage(err, "Erreur inconnue"));
       }
     },
     [dispatch, props.courseId, visibility],
