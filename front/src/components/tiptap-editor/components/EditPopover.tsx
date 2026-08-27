@@ -13,7 +13,7 @@ export const EditPopover = ({ title, icon, children }: EditPopoverProps) => {
     <Popover.Root>
       <Popover.Trigger asChild>
         <ToolbarButton className="flex items-center gap-3 p-1.5 text-sm font-medium text-left bg-transparent w-full rounded select-none">
-          <span className="text-base-content/60 w-8 flex items-center">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center text-base-content/60">
             {icon}
           </span>
           <span className="text-base-content/60 w-full">{title}</span>

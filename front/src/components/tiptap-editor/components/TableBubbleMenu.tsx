@@ -64,7 +64,7 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex gap-1"
+      className="fixed z-50 flex gap-1 rounded-lg border border-base-300 bg-base-100 p-2 text-base-content shadow-lg"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -72,49 +72,73 @@ export const TableBubbleMenu = ({ editor }: TableBubbleMenuProps) => {
       }}
     >
       <button
-        className="p-2 hover:bg-gray-100 rounded transition-colors"
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200"
         onClick={() => editor.chain().focus().addRowBefore().run()}
         title="Ajouter ligne avant"
       >
-        <Icon name="ArrowUp" className="w-4 h-4 text-base-content" />
+        <Icon name="ArrowUp" />
       </button>
       <button
-        className="p-2 hover:bg-gray-100 rounded transition-colors"
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200"
         onClick={() => editor.chain().focus().addRowAfter().run()}
         title="Ajouter ligne après"
       >
-        <Icon name="ArrowDown" className="w-4 h-4 text-base-content" />
+        <Icon name="ArrowDown" />
       </button>
       <button
-        className="p-2 hover:bg-gray-100 rounded transition-colors"
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200 disabled:cursor-not-allowed disabled:opacity-30"
+        onClick={() => editor.chain().focus().deleteRow().run()}
+        disabled={!editor.can().deleteRow()}
+        title="Supprimer la ligne"
+      >
+        <Icon name="TableRowsSplit" />
+      </button>
+      <button
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200"
         onClick={() => editor.chain().focus().addColumnBefore().run()}
         title="Ajouter colonne avant"
       >
-        <Icon name="ArrowLeft" className="w-4 h-4 text-base-content" />
+        <Icon name="ArrowLeft" />
       </button>
       <button
-        className="p-2 hover:bg-gray-100 rounded transition-colors"
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200"
         onClick={() => editor.chain().focus().addColumnAfter().run()}
         title="Ajouter colonne après"
       >
-        <Icon name="ArrowRight" className="w-4 h-4 text-base-content" />
+        <Icon name="ArrowRight" />
       </button>
-      <div className="w-px bg-gray-300 mx-1"></div>
       <button
-        className="p-2 hover:bg-gray-100 rounded transition-colors"
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200 disabled:cursor-not-allowed disabled:opacity-30"
+        onClick={() => editor.chain().focus().deleteColumn().run()}
+        disabled={!editor.can().deleteColumn()}
+        title="Supprimer la colonne"
+      >
+        <Icon name="TableColumnsSplit" />
+      </button>
+      <div className="mx-1 w-px bg-base-300"></div>
+      <button
+        type="button"
+        className="flex h-8 w-8 items-center justify-center rounded p-2 text-base-content transition-colors hover:bg-base-200 disabled:cursor-not-allowed disabled:opacity-30"
         onClick={() => editor.chain().focus().mergeCells().run()}
         disabled={!editor.can().mergeCells()}
         title="Fusionner les cellules sélectionnées"
       >
-        <Icon name="Combine" className="w-4 h-4 text-base-content" />
+        <Icon name="Combine" />
       </button>
-      <div className="w-px bg-gray-300 mx-1"></div>
+      <div className="mx-1 w-px bg-base-300"></div>
       <button
-        className="flex text-sm items-center gap-2 p-2 hover:bg-red-100 rounded transition-colors text-red-500"
+        type="button"
+        className="flex items-center gap-2 rounded p-2 text-sm text-error transition-colors hover:bg-error/10"
         onClick={() => editor.chain().focus().deleteTable().run()}
         title="Supprimer tableau"
       >
-        <Icon name="Trash" className="w-4 h-4 text-base-content" />
+        <Icon name="Trash" />
         Supprimer le tableau
       </button>
     </div>
