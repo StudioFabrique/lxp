@@ -1,9 +1,16 @@
 import { FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { compressImage } from "../../../../../../utils/helpers/compress-image";
 
 import Badge from "../../../../interfaces/badge";
-import { validateImageFile } from "../../../../helpers/validate-image-file";
-import { badgeMaxSize } from "../../../../../../config/images-sizes";
+import {
+  validateImageDimensions,
+  validateImageFile,
+} from "../../../../helpers/validate-image-file";
+import {
+  badgeMaxDimensions,
+  badgeMaxSize,
+} from "../../../../../../config/images-sizes";
 import FileUpload from "../../../../../../components/UI/file-upload/FileUpload";
 
 const maxSize = badgeMaxSize;
@@ -17,7 +24,19 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
 
   const handleFileChange = async (selectedFile: File) => {
     if (validateImageFile(selectedFile, maxSize)) {
-      const file = await compressImage(selectedFile, 100);
+      const hasValidDimensions = await validateImageDimensions(
+        selectedFile,
+        badgeMaxDimensions.width,
+        badgeMaxDimensions.height,
+      );
+      if (!hasValidDimensions) {
+        toast.error("Les dimensions du badge ne doivent pas dépasser 500 × 500 pixels.");
+        return;
+      }
+
+      const file = selectedFile.name.toLowerCase().endsWith(".svg")
+        ? selectedFile
+        : await compressImage(selectedFile, badgeMaxDimensions.width);
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -42,9 +61,10 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
   return (
     <FileUpload
       compact
-      fileType="png"
+      fileType="badge"
       maxSize={maxSize}
       buttonLabel="Importer un badge"
+      helperText="PNG, JPEG ou SVG — 500 Ko maximum — dimensions maximales : 500 × 500 px"
       onFileSelect={handleFileChange}
     />
   );
