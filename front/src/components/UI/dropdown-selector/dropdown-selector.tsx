@@ -19,7 +19,7 @@ const DropdownSelector = ({
       <div
         tabIndex={0}
         role="button"
-        className="btn btn-sm btn-ghost text-primary-content rounded-none"
+        className="btn btn-sm btn-ghost hover:bg-transparent text-primary-content"
       >
         {children ?? "Select a value"}
       </div>
