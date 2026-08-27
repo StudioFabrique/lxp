@@ -132,7 +132,7 @@ const useChatbot = () => {
         (entry) => !(entry.origin === "bot" && entry.type === "error"),
       ),
     );
-  }, []);
+  }, [setAiUnavailable]);
 
   const getConversationData = useCallback(async () => {
     try {
@@ -145,7 +145,7 @@ const useChatbot = () => {
         setAiUnavailable(true);
       }
     }
-  }, []);
+  }, [setAiUnavailable]);
 
   useEffect(() => {
     getConversationData();

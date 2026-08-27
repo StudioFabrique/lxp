@@ -3,6 +3,7 @@ import { useState } from "react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
+import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 
 type Props = {
   token: string;
@@ -48,11 +49,13 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
         password: data.password,
       });
       onSuccess();
-    } catch (err: any) {
-      const message =
-        err.response?.data?.message ??
-        "Une erreur est survenue. Veuillez réessayer.";
-      setError(message);
+    } catch (err: unknown) {
+      setError(
+        getApiErrorMessage(
+          err,
+          "Une erreur est survenue. Veuillez réessayer.",
+        ),
+      );
     } finally {
       setIsLoading(false);
     }
