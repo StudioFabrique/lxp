@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { PropsWithChildren, useMemo } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { Toolbar } from "../ui/Toolbar";
+import { ToolbarButton } from "../ui/Toolbar";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
 
@@ -107,7 +107,7 @@ export const ContentTypePicker = ({
   return (
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
-        <Toolbar.Button
+        <ToolbarButton
           active={activeItem?.id !== "paragraph" && !!activeItem?.type}
         >
           {isLoading ? (
@@ -129,7 +129,7 @@ export const ContentTypePicker = ({
               />
             </>
           )}
-        </Toolbar.Button>
+        </ToolbarButton>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
         <Surface

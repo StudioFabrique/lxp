@@ -1,6 +1,6 @@
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { useCallback } from "react";
-import { Toolbar } from "./ui/Toolbar";
+import { ToolbarButton } from "./ui/Toolbar";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "./ui/Dropdown";
@@ -55,7 +55,7 @@ export const FontFamilyPicker = ({
   return (
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
-        <Toolbar.Button active={!!currentValue?.value}>
+        <ToolbarButton active={!!currentValue?.value}>
           <span className="text-base-content/60 select-none text-sm">
             {currentFontLabel}
           </span>
@@ -63,7 +63,7 @@ export const FontFamilyPicker = ({
             name="ChevronDown"
             className="w-2 h-2 text-base-content/40"
           />
-        </Toolbar.Button>
+        </ToolbarButton>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
         <Surface

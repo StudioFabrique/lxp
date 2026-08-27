@@ -1,14 +1,9 @@
 import { FC } from "react";
 import SearchResultItem from "./search-result-item";
 import convertSearchResultToIndices from "../../utils/convertSearchResultToIndices";
+import type { SearchResultHit } from "./search-result.types";
 
-type SearchResult = {
-  _index: string;
-  _id: string;
-  _source: Record<string, unknown>;
-};
-
-const SearchResultIndice: FC<{ searchResult: SearchResult[] }> = ({
+const SearchResultIndice: FC<{ searchResult: SearchResultHit[] }> = ({
   searchResult,
 }) => {
   const indicesList = convertSearchResultToIndices(searchResult);

@@ -1,5 +1,11 @@
 import { Editor } from "@tiptap/react";
-import { MouseEvent, useContext, useEffect, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { EditorState, NodeSelection } from "@tiptap/pm/state";
 import { Sparkles } from "lucide-react";
@@ -17,7 +23,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectionKey, setSelectionKey] = useState("empty");
 
-  const shouldShow = ({ state }: { state: EditorState }) => {
+  const shouldShow = useCallback(({ state }: { state: EditorState }) => {
     if (mode !== "read" || !state) return false;
 
     const { from, to, empty } = state.selection;
@@ -36,7 +42,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     }
 
     return true;
-  };
+  }, [editor, mode]);
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -118,7 +124,7 @@ export const AiAskBubbleMenu = ({ editor, mode }: Props) => {
     return () => {
       editor.off("transaction", updateReactState);
     };
-  }, [editor, mode]);
+  }, [editor, mode, shouldShow]);
 
   return (
     <BubbleMenu

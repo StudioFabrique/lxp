@@ -1,5 +1,5 @@
 import * as Popover from "@radix-ui/react-popover";
-import { Toolbar } from "./ui/Toolbar";
+import { ToolbarButton } from "./ui/Toolbar";
 import { Icon } from "./ui/Icon";
 import { InsertImagePanel } from "./InsertImagePanel";
 import type { Dispatch, SetStateAction } from "react";
@@ -36,7 +36,7 @@ export const InsertImagePopover = ({
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
-        <Toolbar.Button
+        <ToolbarButton
           className={`flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none`}
         >
           <Icon
@@ -46,7 +46,7 @@ export const InsertImagePopover = ({
           <span className="text-base-content/60 w-full">
             {title}
           </span>
-        </Toolbar.Button>
+        </ToolbarButton>
       </Popover.Trigger>
       <Popover.Content className="absolute left-[4.6rem] -top-10">
         <InsertImagePanel

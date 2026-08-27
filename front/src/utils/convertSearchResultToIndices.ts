@@ -1,9 +1,7 @@
-export default function convertSearchResultToIndices(hits: any): Array<string> {
-  const filteredIndicesList = hits
-    .map((element: any) => element._index)
-    .filter((index: any, i: number, initialArray: Array<string>) => {
-      return initialArray.indexOf(index) === i;
-    });
+import type { SearchResultHit } from "../components/search-modal/search-result.types";
 
-  return filteredIndicesList;
+export default function convertSearchResultToIndices(
+  hits: SearchResultHit[],
+): string[] {
+  return [...new Set(hits.map(({ _index }) => _index))];
 }
