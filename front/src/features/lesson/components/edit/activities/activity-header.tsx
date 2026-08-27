@@ -85,7 +85,7 @@ const ActivityHeader = ({
       <article
         className={
           isSticky
-            ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 backdrop-blur-md rounded-2xl transition-all duration-300`
+            ? `sticky top-0 left-0 z-10 flex justify-between items-center px-4 py-3 bg-base-200 transition-all duration-300`
             : className
         }
       >
