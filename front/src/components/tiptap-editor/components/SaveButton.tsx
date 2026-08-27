@@ -1,7 +1,13 @@
 import { Save } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Loader from "../../loaders/Loader";
+
+const FLOATING_SIZE = 32;
+const BUTTON_TRANSITION = {
+  duration: 0.36,
+  ease: [0.4, 0, 0.2, 1] as const,
+};
 
 type SaveButtonProps = {
   pending?: boolean;
@@ -10,13 +16,21 @@ type SaveButtonProps = {
 };
 
 const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
-  const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
+  const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(true);
+  const [naturalWidth, setNaturalWidth] = useState<number>();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isFloating = floating && !isAtNaturalPosition;
-  const transition = {
-    duration: 0.42,
-    ease: [0.4, 0, 0.2, 1] as const,
-  };
+  const animatedWidth = isFloating ? FLOATING_SIZE : naturalWidth;
+
+  const measureNaturalWidth = useCallback(
+    (button: HTMLButtonElement | null) => {
+      if (!button) return;
+
+      const width = Math.ceil(button.getBoundingClientRect().width);
+      if (width > 0) setNaturalWidth((current) => current ?? width);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!floating || !sentinelRef.current) return;
@@ -45,7 +59,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   if (!floating) {
     return (
       <button
-        className="self-center flex btn btn-sm btn-info text-info-content"
+        className="self-center btn btn-sm btn-info text-info-content"
         type="button"
         onClick={onSave}
         disabled={pending}
@@ -68,46 +82,50 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
         <motion.div
           initial={false}
           animate={{
-            left: isFloating ? "calc(100%)" : "calc(50%)",
+            left: isFloating ? "calc(100% - 0px)" : "calc(50% - 0px)",
           }}
-          transition={transition}
+          transition={BUTTON_TRANSITION}
           className="absolute top-0 -translate-x-1/2"
         >
-          <motion.button
-            initial={false}
-            animate={{
-              width: isFloating ? 32 : "auto",
-              borderRadius: isFloating ? 16 : 8,
-              paddingLeft: isFloating ? 0 : 16,
-              paddingRight: isFloating ? 0 : 16,
-            }}
-            transition={transition}
-            className={`btn btn-sm btn-info overflow-hidden px-0 text-info-content ${
-              isFloating ? "btn-circle shadow-lg" : ""
+          <div
+            className={`relative inline-flex ${
+              isFloating ? "tooltip tooltip-left" : ""
             }`}
-            type="button"
-            onClick={onSave}
-            disabled={pending}
-            aria-label="Sauvegarder l'activité"
-            title={isFloating ? "Sauvegarder l'activité" : undefined}
+            data-tip={isFloating ? "Sauvegarder l'activité" : undefined}
           >
-            {icon}
-            <motion.span
+            <motion.button
+              ref={measureNaturalWidth}
               initial={false}
               animate={{
-                opacity: isFloating ? 0 : 1,
-                width: isFloating ? 0 : "auto",
+                ...(animatedWidth ? { width: animatedWidth } : {}),
+                borderRadius: isFloating ? FLOATING_SIZE / 2 : 8,
+                paddingLeft: isFloating ? 6 : 16,
+                paddingRight: isFloating ? 6 : 16,
               }}
-              transition={{
-                width: transition,
-                opacity: { duration: 0.18, ease: "easeInOut" },
-              }}
-              aria-hidden={isFloating}
-              className="shrink-0 overflow-hidden whitespace-nowrap text-left"
+              transition={BUTTON_TRANSITION}
+              className={`btn btn-sm btn-info justify-start overflow-hidden px-0 text-info-content ${
+                isFloating ? "btn-circle shadow-lg" : ""
+              }`}
+              type="button"
+              onClick={onSave}
+              disabled={pending}
+              aria-label="Sauvegarder l'activité"
             >
-              Sauvegarder l'activité
-            </motion.span>
-          </motion.button>
+              {icon}
+              <motion.span
+                initial={false}
+                animate={{
+                  opacity: isFloating ? 0 : 1,
+                  x: isFloating ? -4 : 0,
+                }}
+                transition={{ duration: 0.16, ease: "easeInOut" }}
+                aria-hidden={isFloating}
+                className="ml-1 shrink-0 whitespace-nowrap text-left"
+              >
+                Sauvegarder l'activité
+              </motion.span>
+            </motion.button>
+          </div>
         </motion.div>
       </div>
       <div ref={sentinelRef} className="h-px w-full" />

@@ -34,14 +34,21 @@ describe("SaveButton flottant", () => {
     const getWrapper = () =>
       container.querySelector<HTMLElement>("[data-floating]");
     const getButton = () => container.querySelector("button");
-    const getPositioner = () => getWrapper()?.firstElementChild;
+
+    act(() => {
+      observerCallback?.(
+        [{ isIntersecting: false } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      );
+    });
 
     expect(getWrapper()?.classList.contains("sticky")).toBe(true);
     expect(getButton()?.classList.contains("btn-circle")).toBe(true);
     expect(getButton()?.classList.contains("btn-info")).toBe(true);
-    expect(getPositioner()?.getAttribute("style")).toContain(
-      "left: calc(100% - 8px)",
-    );
+    const tooltip = container.querySelector<HTMLElement>("[data-tip]");
+    expect(tooltip).toBe(getButton()?.parentElement);
+    expect(tooltip?.classList.contains("tooltip-left")).toBe(true);
+    expect(getWrapper()?.classList.contains("tooltip")).toBe(false);
     expect(
       getButton()?.querySelector("span:last-child")?.getAttribute("aria-hidden"),
     ).toBe("true");
@@ -56,9 +63,13 @@ describe("SaveButton flottant", () => {
     expect(getWrapper()?.classList.contains("sticky")).toBe(false);
     expect(getWrapper()?.dataset.floating).toBe("false");
     expect(getButton()?.classList.contains("btn-circle")).toBe(false);
+    expect(container.querySelector("[data-tip]")).toBeNull();
     expect(
       getButton()?.querySelector("span:last-child")?.getAttribute("aria-hidden"),
     ).toBe("false");
+    expect(
+      getButton()?.querySelector("span:last-child")?.classList.contains("ml-2"),
+    ).toBe(true);
 
     act(() => {
       observerCallback?.(
