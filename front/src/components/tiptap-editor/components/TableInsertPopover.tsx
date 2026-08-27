@@ -59,17 +59,17 @@ export const TableInsertPopover = ({
         cells.push(
           <div
             key={`${row}-${col}`}
-            className="table-cell"
+            className={`table-cell${isHighlighted ? " highlighted" : ""}`}
             data-highlighted={isHighlighted}
             onMouseEnter={() => handleCellHover(row, col)}
             onClick={() => handleCellClick(row, col)}
             style={{
               width: "16px",
               height: "16px",
-              border: "1px solid oklch(var(--b3))",
+              border: "1px solid var(--color-base-300)",
               backgroundColor: isHighlighted
-                ? "oklch(var(--p))"
-                : "oklch(var(--b1))",
+                ? "var(--color-primary)"
+                : "var(--color-base-100)",
               cursor: "pointer",
               transition: "all 0.1s ease",
             }}
@@ -88,9 +88,11 @@ export const TableInsertPopover = ({
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
-        <ToolbarButton className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none">
-          <Icon name="Table" className="text-base-content/60 w-8" />
-          <span className="text-base-content/60 w-full">
+        <ToolbarButton className="flex w-full max-w-max items-center gap-3 rounded bg-transparent p-1.5 text-left text-sm font-medium select-none">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center text-base-content/60">
+            <Icon name="Table" className="h-5 w-5" />
+          </span>
+          <span className="w-full text-base-content/60">
             {title}
           </span>
         </ToolbarButton>
@@ -111,7 +113,7 @@ export const TableInsertPopover = ({
               onMouseLeave={() => setHoveredCell(null)}
             >
               <div
-                className="rounded-lg border border-base-300 bg-base-200 p-2"
+                className="table-grid rounded-lg border border-base-300 bg-base-200 p-2"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${maxCols}, 1fr)`,

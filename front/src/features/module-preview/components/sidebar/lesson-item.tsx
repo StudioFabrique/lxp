@@ -180,7 +180,7 @@ const LessonItem = ({
                             }}
                           >
                             <Edit3 className="w-4 h-4" />
-                            <span>Éditer les détails</span>
+                            <span>Modifier les détails</span>
                           </button>
                         </li>
                         <li>

@@ -1,5 +1,4 @@
- 
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { Fragment, useContext, useEffect } from "react";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -16,7 +15,7 @@ import QuickStatistiques from "../components/display/quick-statistiques/quick-st
 import ProgressModulesStats from "../components/display/progress-stats";
 import HeaderMenu from "../../../components/UI/header-menu";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
+import { Bell, Edit, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -34,9 +33,11 @@ const ParcoursView = () => {
   } = useParcoursView();
 
   const navigate = useNavigate();
+  const { id } = useParams();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
   const ability = useContext(AbilityContext);
+  const canEditParcours = ability.can("update", "parcours");
   const isStudent =
     ability.can("layout", "student") && !ability.can("layout", "admin");
 
@@ -69,12 +70,24 @@ const ParcoursView = () => {
             reprenez là où vous vous êtes arrêté."
       >
         <div className="flex gap-4 w-full">
-          <button className="btn btn-outline btn-primary">
-            <Search />
-          </button>
-          <button className="btn btn-outline btn-primary">
-            <Bell />
-          </button>
+          {canEditParcours ? (
+            <Link
+              to={`/admin/parcours/edit/${id}`}
+              className="btn btn-outline btn-primary"
+            >
+              <Edit />
+              Modifier le parcours
+            </Link>
+          ) : (
+            <>
+              <button className="btn btn-outline btn-primary">
+                <Search />
+              </button>
+              <button className="btn btn-outline btn-primary">
+                <Bell />
+              </button>
+            </>
+          )}
         </div>
       </Header>
       {isLoading ? (

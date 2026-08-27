@@ -11,7 +11,7 @@ export const EditLinkPopover = ({ title, onSetLink }: EditLinkPopoverProps) => {
   return (
     <EditPopover
       title={title}
-      icon={<Icon className="text-base-content/60 w-8" name="Link" />}
+      icon={<Icon className="h-5 w-5 text-base-content/60" name="Link" />}
     >
       <LinkEditorPanel onSetLink={onSetLink} />
     </EditPopover>

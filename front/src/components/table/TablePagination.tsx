@@ -32,32 +32,30 @@ const TablePagination = (props: TablePaginationProps) => {
         </div>
 
         {/* Section Droite : Contrôles */}
-        <div className="flex flex-row gap-4 sm:items-center justify-center">
+        <div className="flex flex-row gap-4 sm:items-center justify-center ">
           {/* Navigation (Pagination) */}
           {!isSinglePage && (
             <div className="join flex items-center justify-center">
               <button
                 onClick={props.onSetPreviousPage}
                 disabled={isFirstPage}
-                className="join-item btn btn-sm btn-ghost text-primary-content disabled:bg-transparent disabled:text-base-100/30"
+                className="join-item btn btn-sm btn-ghost text-primary-content hover:bg-transparent disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page précédente"
               >
                 <ChevronLeft size={20} />
               </button>
 
-              <div className="join-item px-2">
-                <DropdownSelector
-                  onSelect={(val) => props.onSetCurrentPage(Number(val))}
-                  valueList={pageValueArray}
-                >
-                  {props.currentPage} / {props.maxPage}
-                </DropdownSelector>
-              </div>
+              <DropdownSelector
+                onSelect={(val) => props.onSetCurrentPage(Number(val))}
+                valueList={pageValueArray}
+              >
+                {props.currentPage} / {props.maxPage}
+              </DropdownSelector>
 
               <button
                 onClick={props.onSetNextPage}
                 disabled={isLastPage}
-                className="join-item btn btn-sm btn-ghost text-primary-content disabled:bg-transparent disabled:text-base-100/30"
+                className="join-item btn btn-sm btn-ghost text-primary-content hover:bg-transparent disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page suivante"
               >
                 <ChevronRight size={20} />

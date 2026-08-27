@@ -7,6 +7,7 @@ import { cn } from "../../../utils/cn";
 export type UploadFileType =
   | "image"
   | "png"
+  | "badge"
   | "csv"
   | "zip"
   | "mbz"
@@ -27,6 +28,11 @@ const fileTypes: Record<
     accept: ".png",
     extensions: /\.png$/i,
     mimePrefix: "image/png",
+  },
+  badge: {
+    accept: ".png,.jpg,.jpeg,.svg",
+    extensions: /\.(png|jpe?g|svg)$/i,
+    mimePrefix: "image/",
   },
   csv: {
     accept: ".csv,text/csv",
