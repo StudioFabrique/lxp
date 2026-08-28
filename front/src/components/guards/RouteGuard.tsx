@@ -5,7 +5,11 @@ import { useDemoMode } from "../../store/DemoContext";
 import Loader from "../loaders/Loader";
 import { Navigate, Outlet } from "react-router";
 
-const RouteGuard = ({ layout }: { layout: "admin" | "student" }) => {
+const RouteGuard = ({
+  layout,
+}: {
+  layout: ("admin" | "student" | "teacher")[];
+}) => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const { demoMode, isConfigLoaded } = useDemoMode();
@@ -21,7 +25,7 @@ const RouteGuard = ({ layout }: { layout: "admin" | "student" }) => {
   if (!isLoggedIn || !user) {
     return <Navigate replace to={demoMode ? "/demo" : "/login"} />;
   }
-  if (!ability.can("layout", layout)) {
+  if (!layout.some((lay) => ability.can("layout", lay))) {
     return <Navigate replace to="/access-denied" />;
   }
   return <Outlet />;

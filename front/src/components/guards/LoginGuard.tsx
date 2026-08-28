@@ -41,12 +41,11 @@ const LoginGuard = () => {
     };
   }, [isLoggedIn]);
 
-
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked))
     return <Loader />;
 
   if (isLoggedIn && user) {
-    if (ability.can("layout", "admin"))
+    if (ability.can("layout", "admin") || ability.can("layout", "teacher"))
       return <Navigate replace to="/admin" />;
     if (ability.can("layout", "student"))
       return <Navigate replace to="/student" />;

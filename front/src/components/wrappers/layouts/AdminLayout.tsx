@@ -25,7 +25,7 @@ const AdminLayout = () => {
           topbar={demoMode ? <DemoBanner /> : undefined}
         >
           <FadeWrapper>
-            <RouteGuard layout="admin" />
+            <RouteGuard layout={["admin", "teacher"]} />
           </FadeWrapper>
         </AppWrapper>
         {isConfigLoaded && !aiDisabled && <Chatbot />}

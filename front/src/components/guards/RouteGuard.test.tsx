@@ -31,12 +31,50 @@ const renderGuard = async (isConfigLoaded: boolean, demoMode = true) => {
               <Routes>
                 <Route
                   path="/student"
-                  element={<RouteGuard layout="student" />}
+                  element={<RouteGuard layout={["student"]} />}
                 >
                   <Route
                     path="parcours/module/:moduleId"
                     element={<p>page-module</p>}
                   />
+                </Route>
+                <Route path="/access-denied" element={<p>page-refus</p>} />
+              </Routes>
+            </MemoryRouter>
+          </AbilityContext>
+        </AuthContext>
+      </DemoContext>,
+    );
+  });
+
+  return container.textContent ?? "";
+};
+
+const renderAdminGuard = async (
+  rules: Parameters<typeof createAppAbility>[0],
+) => {
+  await act(async () => {
+    root.render(
+      <DemoContext
+        value={{ ...DEFAULT_DEMO_CONFIG, demoMode: false, isConfigLoaded: true }}
+      >
+        <AuthContext
+          value={
+            {
+              user: { id: 1 },
+              isLoggedIn: true,
+              isAppInitialized: true,
+            } as never
+          }
+        >
+          <AbilityContext value={createAppAbility(rules)}>
+            <MemoryRouter initialEntries={["/admin/dashboard"]}>
+              <Routes>
+                <Route
+                  path="/admin"
+                  element={<RouteGuard layout={["admin", "teacher"]} />}
+                >
+                  <Route path="dashboard" element={<p>page-admin</p>} />
                 </Route>
                 <Route path="/access-denied" element={<p>page-refus</p>} />
               </Routes>
@@ -71,5 +109,20 @@ describe("RouteGuard", () => {
 
   it("monte la page une fois la configuration connue", async () => {
     expect(await renderGuard(true)).toContain("page-module");
+  });
+
+  it.each(["admin", "teacher"] as const)(
+    "accepte le layout admin avec le droit %s",
+    async (subject) => {
+      expect(
+        await renderAdminGuard([{ action: "layout", subject }]),
+      ).toContain("page-admin");
+    },
+  );
+
+  it("refuse le layout admin quand aucun droit autorisé n'est présent", async () => {
+    expect(
+      await renderAdminGuard([{ action: "layout", subject: "student" }]),
+    ).toContain("page-refus");
   });
 });
