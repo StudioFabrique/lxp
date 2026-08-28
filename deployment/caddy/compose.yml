@@ -25,7 +25,6 @@ services:
       - backend
     labels:
       caddy: "http://${APP_HOST:?Set APP_HOST}"
-      caddy.import: "dev_access"
       caddy.reverse_proxy: "${LXP_DEPLOYMENT_NAME:-lxp}-app:${PORT}"
       caddy.reverse_proxy.header_up_0: "X-Forwarded-Proto {http.request.header.X-Forwarded-Proto}"
       caddy.reverse_proxy.header_up_1: "X-Forwarded-For {http.request.header.X-Forwarded-For}"
