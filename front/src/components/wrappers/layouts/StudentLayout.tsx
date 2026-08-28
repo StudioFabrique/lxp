@@ -25,7 +25,7 @@ const StudentLayout = () => {
             topbar={demoMode ? <DemoBanner /> : undefined}
           >
             <FadeWrapper>
-              <RouteGuard layout="student" />
+              <RouteGuard layout={["student"]} />
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>
