@@ -85,6 +85,9 @@ jobs:
         working-directory: api
         run: npm test
 
+      - name: Validate deployment scripts
+        run: ./deployment/tests/backup-scripts.test.sh
+
   image:
     name: Build and publish the LXP image
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/beta' && inputs.image_tag == ''
@@ -191,6 +194,14 @@ jobs:
             fi
           done
 
+      - name: Sauvegarder avant migration
+        env:
+          BACKUP_REASON: pre-deploy
+          BACKUP_ALLOW_UNINITIALIZED: "true"
+        run: |
+          set -eu
+          ./deployment/backup.sh
+
       - name: Deployer
         env:
           PIPELINE_DEPLOY_MODE: caddy
@@ -198,6 +209,13 @@ jobs:
         run: |
           set -eu
           ./deployment/deploy.sh
+
+      - name: Sauvegarder l'etat deploye
+        env:
+          BACKUP_REASON: post-deploy
+        run: |
+          set -eu
+          ./deployment/backup.sh
 
       - name: Remove the local credentials
         if: always()

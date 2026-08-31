@@ -3,6 +3,7 @@ pipeline {
 
     options {
         skipDefaultCheckout(true)
+        disableConcurrentBuilds()
     }
 
     parameters {
@@ -50,6 +51,20 @@ pipeline {
             }
         }
 
+        stage('Backup before migration') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: params.INFISICAL_CREDENTIAL_ID,
+                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
+                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                    )
+                ]) {
+                    sh 'BACKUP_REASON=pre-deploy BACKUP_ALLOW_UNINITIALIZED=true ./deployment/with-infisical.sh ./deployment/backup.sh'
+                }
+            }
+        }
+
         stage('Deploy with Caddy and migrate') {
             steps {
                 withCredentials([
@@ -60,6 +75,20 @@ pipeline {
                     )
                 ]) {
                     sh './deployment/with-infisical.sh ./deployment/deploy.sh'
+                }
+            }
+        }
+
+        stage('Backup deployed state') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: params.INFISICAL_CREDENTIAL_ID,
+                        usernameVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_ID',
+                        passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
+                    )
+                ]) {
+                    sh 'BACKUP_REASON=post-deploy ./deployment/with-infisical.sh ./deployment/backup.sh'
                 }
             }
         }

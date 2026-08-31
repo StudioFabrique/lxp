@@ -35,9 +35,9 @@ infisical_domain="${INFISICAL_DOMAIN:-https://eu.infisical.com}"
 infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
 secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime}"
 
-# `/ci` à la racine est global dans chaque environnement et ne contient que les
-# accès au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH
-# de la cible et `<préfixe>/runtime` sa configuration applicative.
+# `/ci` à la racine est global dans chaque environnement et contient les accès
+# au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH et les
+# secrets de sauvegarde de la cible ; `<préfixe>/runtime` porte l'application.
 registry_ci_path="/ci"
 target_ci_path=""
 
@@ -88,8 +88,9 @@ export INFISICAL_DISABLE_UPDATE_CHECK=true
 unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 
 # Le job de build se limite aux identifiants de registre de `/ci`. En prod, le
-# déploiement ajoute les accès SSH de `<préfixe>/ci` et la configuration de
-# `<préfixe>/runtime`. En dev, ces données vivent dans `/runtime`.
+# déploiement ajoute les accès SSH et la sauvegarde de `<préfixe>/ci`, puis la
+# configuration de `<préfixe>/runtime`. En dev, ces données vivent dans
+# `/runtime`.
 case "$secret_paths" in
     /ci)
         printf 'Chargement Infisical : environnement=%s, chemin=%s.\n' \

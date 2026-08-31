@@ -76,9 +76,13 @@ esac
 # Isole la configuration SSH et le jeton Docker de ce déploiement. Un agent
 # Jenkins persistant conserve ainsi son ~/.ssh/config et son ~/.docker/config.
 deploy_runtime_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-deploy.XXXXXX")"
+operation_lock_container=''
 cleanup() {
     status=$?
     trap - 0 1 2 15
+    if [ -n "$operation_lock_container" ]; then
+        docker rm -f "$operation_lock_container" > /dev/null 2>&1 || true
+    fi
     [ -z "${SSH_AGENT_PID:-}" ] || kill "$SSH_AGENT_PID" 2>/dev/null || true
     rm -rf "$deploy_runtime_dir"
     exit "$status"
@@ -254,6 +258,22 @@ else
     # développement.
     REMOTE=false
 fi
+
+# Le meme verrou est utilise par backup.sh et restore.sh. Il empeche une
+# sauvegarde planifiee de lire les volumes pendant une migration ou une
+# restauration. Le conteneur n'est jamais demarre ; son nom suffit comme
+# primitive atomique geree par le demon Docker cible.
+backup_helper_image="${BACKUP_HELPER_IMAGE:-busybox:1.37.0}"
+docker pull "$backup_helper_image" > /dev/null
+requested_operation_lock="$LXP_DEPLOYMENT_NAME-backup-lock"
+if ! docker create \
+    --name "$requested_operation_lock" \
+    --label "eco.step.lxp.backup-lock=true" \
+    --label "eco.step.lxp.stack=$LXP_DEPLOYMENT_NAME" \
+    "$backup_helper_image" sleep 86400 > /dev/null; then
+    die "Une sauvegarde, une restauration ou un autre deploiement est deja en cours pour $LXP_DEPLOYMENT_NAME."
+fi
+operation_lock_container="$requested_operation_lock"
 
 # Découpage en mots volontaire : `COMPOSE_FILES` porte plusieurs arguments.
 compose() {

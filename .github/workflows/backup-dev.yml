@@ -1,0 +1,79 @@
+name: Check LXP development backups
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Operation non destructive a executer"
+        required: true
+        default: backup
+        type: choice
+        options:
+          - backup
+          - verify-local
+          - verify-s3
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  # Identique au deploiement de beta : les deux workflows ne touchent jamais
+  # la stack de developpement en meme temps.
+  group: lxp-development-beta
+  cancel-in-progress: false
+
+env:
+  PIPELINE_LXP_DEPLOYMENT_NAME: lxp-dev
+  PIPELINE_DEPLOY_PATH: ""
+
+jobs:
+  backup:
+    name: Backup or verify the development VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: development
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Charger les acces CI
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /ci
+          domain: https://eu.infisical.com
+
+      - name: Charger la configuration de la cible
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /runtime
+          domain: https://eu.infisical.com
+
+      - name: Executer la sauvegarde ou sa verification
+        env:
+          REQUESTED_OPERATION: ${{ inputs.operation || 'backup' }}
+        run: |
+          set -eu
+          case "$REQUESTED_OPERATION" in
+            backup)
+              BACKUP_REASON=manual ./deployment/backup.sh
+              ;;
+            verify-local)
+              RESTORE_SOURCE=local ./deployment/restore.sh verify
+              ;;
+            verify-s3)
+              RESTORE_SOURCE=s3 ./deployment/restore.sh verify
+              ;;
+            *)
+              echo "Operation inconnue : $REQUESTED_OPERATION" >&2
+              exit 2
+              ;;
+          esac
