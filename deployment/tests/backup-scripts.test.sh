@@ -63,13 +63,9 @@ if grep -Eq 'verify-(s3|local)' "$repository_root/deployment/backup.Jenkinsfile"
     fail "les anciennes operations verify-s3 ou verify-local sont encore exposees"
 fi
 
-grep -Fq 'RESTORE_SOURCE=local ./deployment/restore.sh verify' \
+grep -Fq './deployment/restore.sh verify-enabled' \
     "$repository_root/deployment/backup.Jenkinsfile" \
-    || fail "verify-backup ne controle pas le depot local"
-
-grep -Fq 'RESTORE_SOURCE=s3 ./deployment/restore.sh verify' \
-    "$repository_root/deployment/backup.Jenkinsfile" \
-    || fail "verify-backup ne controle pas le depot S3"
+    || fail "verify-backup ne controle pas les destinations activees"
 
 mkdir -p "$temporary_dir/infisical-bin"
 cat >"$temporary_dir/infisical-bin/infisical" <<'EOF'
@@ -116,9 +112,13 @@ disabled_output="$(
 [[ "$disabled_output" == *"Sauvegarde desactivee"* ]] \
     || fail "la sauvegarde n'est pas desactivee par defaut"
 
-expect_failure "une valeur BACKUP_ENABLED invalide a ete acceptee" \
+expect_failure "une valeur BACKUP_S3_ENABLED invalide a ete acceptee" \
     env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
-        BACKUP_ENABLED=invalid "$backup_script"
+        BACKUP_S3_ENABLED=invalid "$backup_script"
+
+expect_failure "l'ancienne variable BACKUP_ENABLED a ete acceptee silencieusement" \
+    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        BACKUP_ENABLED=true BACKUP_S3_ENABLED=true "$backup_script"
 
 expect_failure "le job planifie a accepte une sauvegarde desactivee" \
     env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
@@ -136,7 +136,11 @@ expect_failure "une restauration destructive a accepte le snapshot latest" \
         LXP_DEPLOYMENT_NAME=lxp-test DEPLOY_PATH="$temporary_dir/data" \
         RESTORE_SNAPSHOT=latest "$restore_script" restore
 
-mkdir -p "$temporary_dir/bin" "$temporary_dir/data" "$temporary_dir/local-backup"
+mkdir -p \
+    "$temporary_dir/bin" \
+    "$temporary_dir/data" \
+    "$temporary_dir/local-backup" \
+    "$temporary_dir/external-backup"
 cat >"$temporary_dir/bin/docker" <<'EOF'
 #!/usr/bin/env bash
 if [[ -n "${MOCK_DOCKER_LOG:-}" ]]; then
@@ -164,19 +168,25 @@ list_output="$(
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         MOCK_DOCKER_LOG="$temporary_dir/docker-list.log" \
         LXP_DEPLOYMENT_NAME=lxp-test \
+        BACKUP_LOCAL_ENABLED=true \
         BACKUP_LOCAL_REPOSITORY="$temporary_dir/local-backup" \
+        BACKUP_EXTERNAL_VOLUME_ENABLED=true \
+        BACKUP_EXTERNAL_VOLUME_REPOSITORY="$temporary_dir/external-backup" \
+        BACKUP_S3_ENABLED=true \
         BACKUP_S3_REPOSITORY='s3:https://example.test/bucket/lxp-test' \
         BACKUP_S3_ACCESS_KEY=test \
         BACKUP_S3_SECRET_KEY=test \
         BACKUP_RESTIC_PASSWORD=test \
         "$list_script"
 )"
-[[ "$list_output" == *"Snapshots du depot local"* ]] \
+[[ "$list_output" == *"Snapshots du depot local au VPS"* ]] \
     || fail "list-backup n'affiche pas le depot local"
+[[ "$list_output" == *"Snapshots du volume externe"* ]] \
+    || fail "list-backup n'affiche pas le volume externe"
 [[ "$list_output" == *"Snapshots du depot S3"* ]] \
     || fail "list-backup n'affiche pas le depot S3"
-[[ "$(grep -c ' snapshots --host lxp-test$' "$temporary_dir/docker-list.log")" -eq 2 ]] \
-    || fail "list-backup n'interroge pas les deux depots Restic"
+[[ "$(grep -c ' snapshots --host lxp-test$' "$temporary_dir/docker-list.log")" -eq 3 ]] \
+    || fail "list-backup n'interroge pas les trois depots Restic"
 
 fresh_output="$(
     env -i \
@@ -184,7 +194,7 @@ fresh_output="$(
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
-        BACKUP_ENABLED=true \
+        BACKUP_S3_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 )"
@@ -198,7 +208,7 @@ expect_failure "des volumes orphelins ont ete confondus avec une cible neuve" \
         MOCK_POSTGRES_VOLUME_EXISTS=0 \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
-        BACKUP_ENABLED=true \
+        BACKUP_S3_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 
@@ -209,21 +219,41 @@ expect_failure "une cible partiellement initialisee a ete acceptee" \
         MOCK_POSTGRES_EXISTS=0 MOCK_MONGO_EXISTS=1 \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
-        BACKUP_ENABLED=true \
+        BACKUP_S3_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 
-expect_failure "le depot local place sur le disque de production a ete accepte" \
+expect_failure "le volume externe place sur le disque de production a ete accepte" \
     bash -c "
         source '$common_script'
         DEPLOY_PATH='$temporary_dir/data'
-        BACKUP_LOCAL_REPOSITORY='$temporary_dir/local-backup'
-        BACKUP_S3_REPOSITORY='s3:https://example.test/bucket/lxp-test'
-        BACKUP_S3_ACCESS_KEY='test'
-        BACKUP_S3_SECRET_KEY='test'
+        BACKUP_EXTERNAL_VOLUME_ENABLED=true
+        BACKUP_EXTERNAL_VOLUME_REPOSITORY='$temporary_dir/external-backup'
         BACKUP_RESTIC_PASSWORD='test'
         BACKUP_REMOTE=false
         backup_validate_repositories
     "
+
+bash -c "
+    source '$common_script'
+    DEPLOY_PATH='$temporary_dir/data'
+    BACKUP_LOCAL_ENABLED=true
+    BACKUP_LOCAL_REPOSITORY='$temporary_dir/local-backup'
+    BACKUP_RESTIC_PASSWORD='test'
+    BACKUP_REMOTE=false
+    backup_validate_repositories
+" || fail "le depot local sur le disque du VPS a ete refuse"
+
+bash -c "
+    source '$common_script'
+    DEPLOY_PATH='$temporary_dir/data'
+    BACKUP_S3_ENABLED=true
+    BACKUP_S3_REPOSITORY='s3:https://example.test/bucket/lxp-test'
+    BACKUP_S3_ACCESS_KEY='test'
+    BACKUP_S3_SECRET_KEY='test'
+    BACKUP_RESTIC_PASSWORD='test'
+    BACKUP_REMOTE=false
+    backup_validate_repositories
+" || fail "la configuration S3 seule a ete refusee"
 
 printf 'Tests des scripts de sauvegarde: OK\n'

@@ -95,9 +95,10 @@ vérité.
 | `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
 | `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
 | `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
-| `BACKUP_LOCAL_REPOSITORY`                               | dossier Infisical `backup` de la cible  | dépôt Restic sur un disque distinct                                          |
-| `BACKUP_S3_*`, `BACKUP_RESTIC_PASSWORD`                 | dossier Infisical `backup` de la cible  | dépôt Restic hors site et chiffrement                                        |
-| `BACKUP_ENABLED`                                        | dossier `backup`, défaut `false`         | active les sauvegardes avant et après déploiement                            |
+| `BACKUP_LOCAL_ENABLED`, `BACKUP_LOCAL_REPOSITORY`       | dossier Infisical `backup` de la cible  | dépôt Restic sur le disque du VPS                                            |
+| `BACKUP_EXTERNAL_VOLUME_ENABLED`, `BACKUP_EXTERNAL_VOLUME_REPOSITORY` | dossier Infisical `backup` de la cible | dépôt Restic sur un système de fichiers distinct                |
+| `BACKUP_S3_ENABLED`, `BACKUP_S3_*`                      | dossier Infisical `backup` de la cible  | dépôt Restic hors site                                                       |
+| `BACKUP_RESTIC_PASSWORD`                                | dossier Infisical `backup` de la cible  | chiffrement commun aux destinations actives                                 |
 | toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
 
 Le script valide la présence des variables requises avant tout appel à
@@ -146,32 +147,40 @@ effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
 `/ci` pour le registre, `/demo/ci` pour l'accès SSH, `/demo/runtime` pour la
 configuration applicative et `/demo/backup` pour la sauvegarde.
 
-## Sauvegarde 3-2-1
+## Sauvegardes Restic
 
 `backup.sh` protège les deux bases métier et le répertoire `uploads`. Il crée
 un dump PostgreSQL complet au format custom et une archive MongoDB compressée.
-Restic chiffre et déduplique ces exports avec les fichiers dans deux dépôts :
+Restic chiffre et déduplique ces exports avec les fichiers dans les
+destinations activées indépendamment :
 
-- `BACKUP_LOCAL_REPOSITORY`, sur un disque monté distinct de celui qui porte
-  `DEPLOY_PATH` ;
+- `BACKUP_LOCAL_REPOSITORY`, sur le disque du VPS mais hors de `DEPLOY_PATH` ;
+- `BACKUP_EXTERNAL_VOLUME_REPOSITORY`, sur un volume monté distinct de celui
+  qui porte `DEPLOY_PATH` ;
 - `BACKUP_S3_REPOSITORY`, dans un stockage objet hors du VPS.
 
-Les volumes actifs forment la première copie. Les deux dépôts fournissent les
-deux autres copies et le stockage S3 garde une copie hors site. Le script
-compare les périphériques qui portent `DEPLOY_PATH` et le dépôt local. Il
-s'arrête si les deux chemins utilisent le même système de fichiers.
+`BACKUP_LOCAL_ENABLED`, `BACKUP_EXTERNAL_VOLUME_ENABLED` et
+`BACKUP_S3_ENABLED` choisissent les destinations. Une copie locale sur le même
+disque protège d'une suppression accidentelle, mais pas de la perte du VPS.
+Le mode volume externe compare les périphériques qui portent `DEPLOY_PATH` et
+le dépôt ; il s'arrête si les deux chemins utilisent le même système de
+fichiers. La combinaison volume externe et S3 satisfait la topologie 3-2-1.
 
 La sauvegarde s'exécute à chaud. PostgreSQL et MongoDB garantissent chacun la
 cohérence de leur export. Une écriture qui touche à la fois une base et un
 fichier peut toutefois se trouver entre deux instants de l'opération.
 
-`BACKUP_ENABLED` vaut `false` par défaut. Les étapes de sauvegarde quittent sans
-accéder à Docker, au disque ou à S3 tant que la variable ne vaut pas `true`.
-Vous pouvez donc déployer une cible qui ne possède aucune configuration Restic.
+Les trois variables d'activation valent `false` par défaut. Les étapes de
+sauvegarde quittent sans accéder à Docker, au disque ou à S3 tant qu'aucune
+destination ne vaut `true`. Vous pouvez donc déployer une cible qui ne possède
+aucune configuration Restic. L'ancienne variable `BACKUP_ENABLED` doit être
+supprimée d'Infisical ; sa présence provoque une erreur explicite afin d'éviter
+une migration silencieuse sans sauvegarde.
 
-Avec `BACKUP_ENABLED=true`, chaque déploiement lance une sauvegarde avant les
-migrations et une autre après le démarrage. L'échec de la première bloque le
-déploiement. Sur une cible neuve, le script accepte l'absence des deux
+Dès qu'une destination est activée, chaque déploiement lance une sauvegarde
+avant les migrations et une autre après le démarrage. L'échec d'une destination
+active fait échouer toute la sauvegarde, et l'échec de la première sauvegarde
+bloque le déploiement. Sur une cible neuve, le script accepte l'absence des deux
 conteneurs de base et le pipeline crée le premier snapshot après le démarrage.
 L'absence d'une seule base signale une cible incomplète et arrête le job.
 
@@ -183,16 +192,17 @@ En production, créez un job par cible à partir de
 le préfixe Infisical, le nom de stack et le chemin de déploiement de la cible.
 Le job reprend ces valeurs comme paramètres par défaut pour les passages
 suivants. Cette première sauvegarde réussie installe le cron, qui répartit les
-départs avec la syntaxe Jenkins `H H/6 * * *`. Le job échoue si
-`BACKUP_ENABLED` ne vaut pas `true`, ce qui évite un résultat vert sans
-snapshot.
+départs avec la syntaxe Jenkins `H H/6 * * *`. Le job échoue si aucune
+destination n'est activée, ce qui évite un résultat vert sans snapshot.
 
 Le paramètre Jenkins `OPERATION` expose quatre actions :
 
-- `backup` crée les copies locale et S3 ; c'est l'action utilisée par le cron ;
-- `list-backup` affiche les snapshots des deux dépôts dans la console Jenkins ;
-- `verify-backup` vérifie et restaure temporairement le dernier snapshot des
-  deux dépôts ;
+- `backup` écrit sur toutes les destinations activées ; c'est l'action utilisée
+  par le cron ;
+- `list-backup` affiche les snapshots des destinations activées dans la console
+  Jenkins ;
+- `verify-backup` vérifie et restaure temporairement le dernier snapshot de
+  chaque destination activée ;
 - `stop-backup` retire le déclencheur cron, sans supprimer les snapshots déjà
   validés. Le job reste disponible pour les opérations manuelles.
 
@@ -201,29 +211,32 @@ est déjà en cours, `stop-backup` attend sa fin puis retire la planification. U
 nouveau `backup` manuel réussi réactive automatiquement le cron
 `H H/6 * * *`.
 
-Cette opération ne change pas `BACKUP_ENABLED` : les sauvegardes avant et après
-un déploiement restent actives. Elle coupe uniquement le job cron dédié. La
-planification est gérée avec les propriétés Pipeline standard et ne demande pas
-d'approbation de script Groovy supplémentaire.
+Cette opération ne change aucune variable `BACKUP_*_ENABLED` : les sauvegardes
+avant et après un déploiement restent actives. Elle coupe uniquement le job
+cron dédié. La planification est gérée avec les propriétés Pipeline standard
+et ne demande pas d'approbation de script Groovy supplémentaire.
 
 Restic conserve tous les snapshots des sept derniers jours, huit points
-hebdomadaires et douze points mensuels. Chaque exécution contrôle les deux
-dépôts après l'application de cette rétention. La base `db-ai`, le cache
-Hugging Face, `data` et les logs restent exclus. Le déploiement reconstruit la
-base IA à partir des données métier.
+hebdomadaires et douze points mensuels. Chaque exécution contrôle toutes les
+destinations actives après l'application de cette rétention. La base `db-ai`,
+le cache Hugging Face, `data` et les logs restent exclus. Le déploiement
+reconstruit la base IA à partir des données métier.
 
 ### Préparer une cible
 
-Montez un disque de sauvegarde, créez le répertoire du dépôt et donnez au démon
-Docker le droit d'y écrire. Créez un bucket S3 hors du compte ou du serveur qui
-héberge l'application. Ajoutez les variables `BACKUP_*` décrites dans
-`env.example` : `/backup` pour la cible de développement, ou
-`<préfixe>/backup` pour une cible de production. Ajoutez
-`BACKUP_ENABLED=true` après avoir préparé les deux dépôts.
+Préparez uniquement les destinations disponibles et donnez au démon Docker le
+droit d'écrire dans les répertoires locaux. Pour une copie sur volume externe,
+montez d'abord un système de fichiers distinct. Pour S3, créez un bucket hors
+du serveur qui héberge l'application. Ajoutez les variables `BACKUP_*` décrites
+dans `env.example` : `/backup` pour la cible de développement, ou
+`<préfixe>/backup` pour une cible de production. Activez ensuite chaque
+destination prête avec sa variable `BACKUP_*_ENABLED`.
 
-Utilisez un préfixe S3 et un répertoire local propres à chaque cible. Conservez
+Utilisez un préfixe S3 et des répertoires propres à chaque cible. Conservez
 `BACKUP_RESTIC_PASSWORD` dans un second coffre. Restic ne peut pas ouvrir les
-dépôts sans ce mot de passe.
+dépôts sans ce mot de passe. Un VPS sans volume supplémentaire peut utiliser
+`BACKUP_S3_ENABLED=true` seul ; c'est une sauvegarde hors site, mais pas une
+topologie 3-2-1 complète.
 
 ### Vérifier et restaurer
 
@@ -237,13 +250,16 @@ RESTORE_SOURCE=s3 RESTORE_SNAPSHOT=latest \
 
 RESTORE_SOURCE=local RESTORE_SNAPSHOT=<id-restic> \
   ./deployment/restore.sh verify
+
+RESTORE_SOURCE=external-volume RESTORE_SNAPSHOT=latest \
+  ./deployment/restore.sh verify
 ```
 
-Le job Jenkins expose une action manuelle `verify-backup` qui enchaîne la
-vérification locale puis la vérification S3. En développement, lancez
-`restore.sh verify` depuis un agent qui charge la configuration Infisical de la
-cible. Exécutez aussi un exercice après un changement de version majeure de
-PostgreSQL, MongoDB ou Restic.
+Le job Jenkins expose une action manuelle `verify-backup` qui contrôle toutes
+les destinations activées. En développement, lancez `restore.sh verify` depuis
+un agent qui charge la configuration Infisical de la cible. Exécutez aussi un
+exercice après un changement de version majeure de PostgreSQL, MongoDB ou
+Restic.
 
 Le mode `restore` remplace les données de la stack. Il commence par la même
 vérification complète, puis exige que `RESTORE_CONFIRM` corresponde au nom de

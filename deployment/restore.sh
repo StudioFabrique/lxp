@@ -10,18 +10,37 @@ source "$script_dir/backup-common.sh"
 
 usage() {
     printf '%s\n' \
-        "Usage : deployment/restore.sh verify|restore" \
+        "Usage : deployment/restore.sh verify|verify-enabled|restore" \
         "  verify  controle et restaure le snapshot dans des conteneurs temporaires" \
+        "  verify-enabled controle successivement toutes les destinations activees" \
         "  restore remplace les donnees de la stack apres confirmation explicite"
 }
 
 [[ $# -eq 1 ]] || { usage >&2; exit 2; }
 operation="$1"
-case "$operation" in verify | restore) ;; *) usage >&2; exit 2 ;; esac
+case "$operation" in verify | verify-enabled | restore) ;; *) usage >&2; exit 2 ;; esac
 
 backup_restore_pipeline_metadata
 backup_require LXP_DEPLOYMENT_NAME
 backup_validate_stack_name
+
+if [[ "$operation" == verify-enabled ]]; then
+    backup_validate_destination_flags
+    backup_require_enabled_destination
+    if [[ "${BACKUP_LOCAL_ENABLED:-false}" == true ]]; then
+        printf 'Verification du depot local au VPS...\n'
+        RESTORE_SOURCE=local "$0" verify
+    fi
+    if [[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" == true ]]; then
+        printf 'Verification du volume externe...\n'
+        RESTORE_SOURCE=external-volume "$0" verify
+    fi
+    if [[ "${BACKUP_S3_ENABLED:-false}" == true ]]; then
+        printf 'Verification du depot S3...\n'
+        RESTORE_SOURCE=s3 "$0" verify
+    fi
+    exit 0
+fi
 
 cleanup_status=0
 lock_container=''
@@ -45,7 +64,10 @@ backup_resolve_deploy_path
 
 RESTORE_SOURCE="${RESTORE_SOURCE:-s3}"
 RESTORE_SNAPSHOT="${RESTORE_SNAPSHOT:-latest}"
-case "$RESTORE_SOURCE" in local | s3) ;; *) backup_die "RESTORE_SOURCE doit valoir local ou s3." ;; esac
+case "$RESTORE_SOURCE" in
+    local | external-volume | s3) ;;
+    *) backup_die "RESTORE_SOURCE doit valoir local, external-volume ou s3." ;;
+esac
 [[ "$RESTORE_SNAPSHOT" =~ ^(latest|[a-f0-9]{8,64})$ ]] \
     || backup_die "RESTORE_SNAPSHOT doit valoir latest ou un identifiant hexadecimal Restic."
 if [[ "$operation" == restore && "$RESTORE_SNAPSHOT" == latest ]]; then
@@ -53,6 +75,8 @@ if [[ "$operation" == restore && "$RESTORE_SNAPSHOT" == latest ]]; then
 fi
 if [[ "$RESTORE_SOURCE" == local ]]; then
     backup_validate_local_repository
+elif [[ "$RESTORE_SOURCE" == external-volume ]]; then
+    backup_validate_external_volume_repository
 else
     backup_validate_s3_repository
 fi
@@ -77,6 +101,9 @@ restic_selected() {
     local repository
     if [[ "$RESTORE_SOURCE" == local ]]; then
         docker_args+=(-v "$BACKUP_LOCAL_REPOSITORY:/repository")
+        repository=/repository
+    elif [[ "$RESTORE_SOURCE" == external-volume ]]; then
+        docker_args+=(-v "$BACKUP_EXTERNAL_VOLUME_REPOSITORY:/repository")
         repository=/repository
     else
         docker_args+=(-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION)

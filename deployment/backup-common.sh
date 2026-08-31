@@ -44,6 +44,31 @@ backup_validate_host_path() {
         || backup_die "$name ne doit contenir ni . ni ..."
 }
 
+backup_validate_destination_flags() {
+    local name value
+    [[ "${BACKUP_ENABLED+x}" != x ]] \
+        || backup_die "BACKUP_ENABLED n'est plus pris en charge ; utilisez les trois variables BACKUP_*_ENABLED."
+    for name in \
+        BACKUP_LOCAL_ENABLED \
+        BACKUP_EXTERNAL_VOLUME_ENABLED \
+        BACKUP_S3_ENABLED; do
+        value="${!name:-false}"
+        [[ "$value" == true || "$value" == false ]] \
+            || backup_die "$name doit valoir true ou false."
+    done
+}
+
+backup_has_enabled_destination() {
+    [[ "${BACKUP_LOCAL_ENABLED:-false}" == true \
+        || "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" == true \
+        || "${BACKUP_S3_ENABLED:-false}" == true ]]
+}
+
+backup_require_enabled_destination() {
+    backup_has_enabled_destination \
+        || backup_die "Au moins une destination de sauvegarde doit etre activee : BACKUP_LOCAL_ENABLED, BACKUP_EXTERNAL_VOLUME_ENABLED ou BACKUP_S3_ENABLED."
+}
+
 backup_runtime_dir=''
 backup_started_ssh_agent=false
 backup_real_home=''
@@ -128,7 +153,14 @@ backup_validate_local_repository() {
     backup_require BACKUP_LOCAL_REPOSITORY BACKUP_RESTIC_PASSWORD
     backup_validate_host_path BACKUP_LOCAL_REPOSITORY
     backup_target_sh "test -d '$BACKUP_LOCAL_REPOSITORY'" \
-        || backup_die "BACKUP_LOCAL_REPOSITORY doit etre cree et monte avant la sauvegarde : $BACKUP_LOCAL_REPOSITORY"
+        || backup_die "BACKUP_LOCAL_REPOSITORY doit etre cree avant la sauvegarde : $BACKUP_LOCAL_REPOSITORY"
+}
+
+backup_validate_external_volume_repository() {
+    backup_require BACKUP_EXTERNAL_VOLUME_REPOSITORY BACKUP_RESTIC_PASSWORD
+    backup_validate_host_path BACKUP_EXTERNAL_VOLUME_REPOSITORY
+    backup_target_sh "test -d '$BACKUP_EXTERNAL_VOLUME_REPOSITORY'" \
+        || backup_die "BACKUP_EXTERNAL_VOLUME_REPOSITORY doit etre cree et monte avant la sauvegarde : $BACKUP_EXTERNAL_VOLUME_REPOSITORY"
 }
 
 backup_validate_s3_repository() {
@@ -142,18 +174,31 @@ backup_validate_s3_repository() {
 }
 
 backup_validate_repositories() {
-    backup_validate_local_repository
-    backup_validate_s3_repository
+    backup_validate_destination_flags
+    backup_require_enabled_destination
+    [[ "${BACKUP_LOCAL_ENABLED:-false}" != true ]] \
+        || backup_validate_local_repository
+    [[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" != true ]] \
+        || backup_validate_external_volume_repository
+    [[ "${BACKUP_S3_ENABLED:-false}" != true ]] \
+        || backup_validate_s3_repository
     backup_target_sh "test -d '$DEPLOY_PATH'" \
         || backup_die "DEPLOY_PATH n'existe pas sur la cible : $DEPLOY_PATH"
 
+    if [[ "${BACKUP_LOCAL_ENABLED:-false}" == true \
+        && "${BACKUP_LOCAL_REPOSITORY:-}" == "$DEPLOY_PATH"/* ]]; then
+        backup_die "BACKUP_LOCAL_REPOSITORY doit etre place hors de DEPLOY_PATH."
+    fi
+
+    [[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" != true ]] && return
+
     local deploy_device backup_device
     deploy_device="$(backup_target_sh "findmnt -n -o SOURCE --target '$DEPLOY_PATH' 2>/dev/null || df -P '$DEPLOY_PATH' | awk 'END { print \$1 }'")"
-    backup_device="$(backup_target_sh "findmnt -n -o SOURCE --target '$BACKUP_LOCAL_REPOSITORY' 2>/dev/null || df -P '$BACKUP_LOCAL_REPOSITORY' | awk 'END { print \$1 }'")"
+    backup_device="$(backup_target_sh "findmnt -n -o SOURCE --target '$BACKUP_EXTERNAL_VOLUME_REPOSITORY' 2>/dev/null || df -P '$BACKUP_EXTERNAL_VOLUME_REPOSITORY' | awk 'END { print \$1 }'")"
     [[ -n "$deploy_device" && -n "$backup_device" ]] \
         || backup_die "Impossible d'identifier les systemes de fichiers des donnees et de la sauvegarde locale."
     [[ "$deploy_device" != "$backup_device" ]] \
-        || backup_die "BACKUP_LOCAL_REPOSITORY et DEPLOY_PATH utilisent le meme systeme de fichiers ($deploy_device)."
+        || backup_die "BACKUP_EXTERNAL_VOLUME_REPOSITORY et DEPLOY_PATH utilisent le meme systeme de fichiers ($deploy_device)."
 }
 
 backup_validate_upload_mount() {
@@ -182,6 +227,13 @@ backup_restic_local() {
     docker run --rm \
         -e RESTIC_PASSWORD \
         -v "$BACKUP_LOCAL_REPOSITORY:/repository" \
+        "$BACKUP_RESTIC_IMAGE" -r /repository "$@"
+}
+
+backup_restic_external_volume() {
+    docker run --rm \
+        -e RESTIC_PASSWORD \
+        -v "$BACKUP_EXTERNAL_VOLUME_REPOSITORY:/repository" \
         "$BACKUP_RESTIC_IMAGE" -r /repository "$@"
 }
 
