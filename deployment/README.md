@@ -95,9 +95,9 @@ vérité.
 | `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
 | `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
 | `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
-| `BACKUP_LOCAL_REPOSITORY`                               | configuration CI de la cible           | dépôt Restic sur un disque distinct                                          |
-| `BACKUP_S3_*`, `BACKUP_RESTIC_PASSWORD`                 | configuration CI de la cible           | dépôt Restic hors site et chiffrement                                        |
-| `BACKUP_ENABLED`                                        | configuration CI, défaut `false`        | active les sauvegardes avant et après déploiement                            |
+| `BACKUP_LOCAL_REPOSITORY`                               | dossier Infisical `backup` de la cible  | dépôt Restic sur un disque distinct                                          |
+| `BACKUP_S3_*`, `BACKUP_RESTIC_PASSWORD`                 | dossier Infisical `backup` de la cible  | dépôt Restic hors site et chiffrement                                        |
+| `BACKUP_ENABLED`                                        | dossier `backup`, défaut `false`         | active les sauvegardes avant et après déploiement                            |
 | toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
 
 Le script valide la présence des variables requises avant tout appel à
@@ -109,8 +109,9 @@ préfixe de dossiers utilisé.
 ### Injection des secrets
 
 GitHub Actions s'authentifie avec OIDC. L'action Infisical charge `/ci` pour le
-build, puis `/ci` et `/runtime` pour le déploiement. Ce workflow utilise toujours
-l'environnement `dev` et ne consulte aucun dossier préfixé.
+build, puis `/ci`, `/runtime` et `/backup` pour le job de déploiement. Ce
+workflow utilise toujours l'environnement `dev` et ne consulte aucun dossier
+préfixé.
 
 Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
 password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
@@ -120,11 +121,13 @@ jeton court, choisit les dossiers selon l'environnement, puis lance
 reste à la racine de l'environnement et ne dépend jamais de la cible. La
 sélection est volontairement simple et sans héritage :
 
-- en `dev`, le build charge `/ci` et le déploiement charge `/ci` et `/runtime` ;
-  `INFISICAL_PATH_PREFIX` est ignoré ;
+- en `dev`, le build charge `/ci`, le déploiement charge `/ci` et `/runtime`,
+  et ses étapes de sauvegarde ajoutent `/backup` ; `INFISICAL_PATH_PREFIX` est
+  ignoré ;
 - en `prod`, le build charge `/ci` sans préfixe. Pour un déploiement,
   `INFISICAL_PATH_PREFIX` est obligatoire et le wrapper charge `/ci`,
-  `<préfixe>/ci` puis `<préfixe>/runtime`.
+  `<préfixe>/ci` puis `<préfixe>/runtime`. Les opérations de sauvegarde
+  ajoutent `<préfixe>/backup`.
 
 `DEMO_MODE` est simplement lu dans l'environnement injecté et décide seul de
 l'activation du mode démonstration.
@@ -140,8 +143,8 @@ variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 Une cible de démonstration peut utiliser `dev` ou `prod` : seule la valeur
 effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
 `INFISICAL_ENVIRONMENT=prod` et `INFISICAL_PATH_PREFIX=/demo` sélectionnent
-`/ci` pour le registre, `/demo/ci` pour l'accès SSH et `/demo/runtime` pour la
-configuration applicative propre à la cible.
+`/ci` pour le registre, `/demo/ci` pour l'accès SSH, `/demo/runtime` pour la
+configuration applicative et `/demo/backup` pour la sauvegarde.
 
 ## Sauvegarde 3-2-1
 
@@ -194,9 +197,9 @@ base IA à partir des données métier.
 Montez un disque de sauvegarde, créez le répertoire du dépôt et donnez au démon
 Docker le droit d'y écrire. Créez un bucket S3 hors du compte ou du serveur qui
 héberge l'application. Ajoutez les variables `BACKUP_*` décrites dans
-`env.example` : `/runtime` pour la cible de développement, ou `<préfixe>/ci`
-pour une cible de production. Ajoutez `BACKUP_ENABLED=true` après avoir préparé
-les deux dépôts.
+`env.example` : `/backup` pour la cible de développement, ou
+`<préfixe>/backup` pour une cible de production. Ajoutez
+`BACKUP_ENABLED=true` après avoir préparé les deux dépôts.
 
 Utilisez un préfixe S3 et un répertoire local propres à chaque cible. Conservez
 `BACKUP_RESTIC_PASSWORD` dans un second coffre. Restic ne peut pas ouvrir les

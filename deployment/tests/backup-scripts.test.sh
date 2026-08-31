@@ -6,6 +6,7 @@ repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
 common_script="$repository_root/deployment/backup-common.sh"
 backup_script="$repository_root/deployment/backup.sh"
 restore_script="$repository_root/deployment/restore.sh"
+infisical_wrapper="$repository_root/deployment/with-infisical.sh"
 temporary_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-backup-tests.XXXXXX")"
 trap 'rm -rf -- "$temporary_dir"' EXIT
 
@@ -26,9 +27,48 @@ bash -n \
     "$repository_root/deployment/backup-common.sh" \
     "$repository_root/deployment/backup.sh" \
     "$repository_root/deployment/restore.sh"
+sh -n "$infisical_wrapper"
 
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "le job Jenkins planifie n'est pas limite a la production"
+
+mkdir -p "$temporary_dir/infisical-bin"
+cat >"$temporary_dir/infisical-bin/infisical" <<'EOF'
+#!/bin/sh
+case "$1" in
+    login) printf 'test-token\n' ;;
+    run) printf '%s\n' "$@" ;;
+    *) exit 2 ;;
+esac
+EOF
+chmod +x "$temporary_dir/infisical-bin/infisical"
+
+dev_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=dev \
+        INFISICAL_SECRET_PATHS='/ci /runtime /backup' \
+        "$infisical_wrapper" true
+)"
+[[ "$dev_paths_output" == *"--path=/backup"* ]] \
+    || fail "le wrapper Infisical ne charge pas /backup en dev"
+
+prod_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=prod \
+        INFISICAL_PATH_PREFIX=/demo \
+        INFISICAL_SECRET_PATHS='/ci /runtime /backup' \
+        "$infisical_wrapper" true
+)"
+[[ "$prod_paths_output" == *"--path=/demo/backup"* ]] \
+    || fail "le wrapper Infisical ne charge pas le dossier backup prefixe en prod"
 
 disabled_output="$(
     env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \

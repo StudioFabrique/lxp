@@ -10,8 +10,8 @@ pipeline {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Laisser tel quel : le credential du dossier Jenkins est résolu en premier. À changer seulement pour un job hors dossier ou deux instances dans le même dossier.')
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
-        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'pre-prod', 'dev'], description: 'Charge /ci et /runtime en dev ; en prod, /ci puis <préfixe>/ci et <préfixe>/runtime. Le mode démo dépend uniquement de DEMO_MODE.')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /demo ou /clients/<slug>.')
+        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'pre-prod', 'dev'], description: 'Charge /ci et /runtime en dev ; en prod, /ci puis <préfixe>/ci et <préfixe>/runtime. Les sauvegardes ajoutent le dossier backup de la cible.')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /demo ou /clients/<slug> ; détermine aussi <préfixe>/backup.')
         string(name: 'DEPLOY_PATH', defaultValue: '', trim: true, description: 'Répertoire persistant sur le serveur cible. Laisser vide : déduit en <foyer du compte de déploiement>/<nom de la stack>.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
         string(name: 'APP_HOST', defaultValue: 'lxp.dev.step.eco', trim: true, description: 'Domaine sans protocole, injecté dans les labels du proxy Caddy')
@@ -60,7 +60,7 @@ pipeline {
                         passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
                     )
                 ]) {
-                    sh 'BACKUP_REASON=pre-deploy BACKUP_ALLOW_UNINITIALIZED=true ./deployment/with-infisical.sh ./deployment/backup.sh'
+                    sh 'INFISICAL_SECRET_PATHS="/ci /runtime /backup" BACKUP_REASON=pre-deploy BACKUP_ALLOW_UNINITIALIZED=true ./deployment/with-infisical.sh ./deployment/backup.sh'
                 }
             }
         }
@@ -88,7 +88,7 @@ pipeline {
                         passwordVariable: 'INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET'
                     )
                 ]) {
-                    sh 'BACKUP_REASON=post-deploy ./deployment/with-infisical.sh ./deployment/backup.sh'
+                    sh 'INFISICAL_SECRET_PATHS="/ci /runtime /backup" BACKUP_REASON=post-deploy ./deployment/with-infisical.sh ./deployment/backup.sh'
                 }
             }
         }

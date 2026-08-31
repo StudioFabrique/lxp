@@ -152,8 +152,8 @@ jobs:
           fi
 
       # `/ci` porte uniquement les identifiants du registre. `/runtime` porte
-      # toute la configuration de cette cible, y compris son acces SSH. Les
-      # deux sont necessaires au deploiement.
+      # la configuration applicative et l'acces SSH. `/backup` porte les
+      # secrets Restic et S3 utilises par les deux sauvegardes du deploiement.
       - name: Charger les acces au registre
         uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
         with:
@@ -174,6 +174,16 @@ jobs:
           secret-path: /runtime
           domain: https://eu.infisical.com
 
+      - name: Charger la configuration de sauvegarde
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /backup
+          domain: https://eu.infisical.com
+
       # Signale un ancien APP_ENV importe tel quel. `deploy.sh` protège aussi
       # ces valeurs, mais une clé mal classée doit être retirée d'Infisical.
       - name: Verifier le classement des secrets
@@ -189,7 +199,7 @@ jobs:
           for name in $reserved; do
             eval "is_set=\${$name+x}"
             if [ "$is_set" = x ]; then
-              echo "$name est reserve au pipeline et ne doit pas se trouver dans /ci ou /runtime." >&2
+              echo "$name est reserve au pipeline et ne doit pas se trouver dans /ci, /runtime ou /backup." >&2
               exit 1
             fi
           done
