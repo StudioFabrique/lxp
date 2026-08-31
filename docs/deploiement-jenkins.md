@@ -20,18 +20,21 @@ configuration applicative et l'accès SSH.
 
 La sélection des dossiers est exclusive et ne réalise aucun héritage :
 
-- en `dev`, le build lit `/ci` et les déploiements lisent `/ci` et `/runtime` ;
+- en `dev`, le build lit `/ci`, les déploiements lisent `/ci` et `/runtime`,
+  et leurs étapes de sauvegarde ajoutent `/backup` ;
   `INFISICAL_PATH_PREFIX` est ignoré ;
-- en `prod` et `pre-prod`, le build lit toujours `/ci`, sans préfixe. Pour un déploiement,
-  `INFISICAL_PATH_PREFIX` est obligatoire : le wrapper lit `/ci`,
-  `<préfixe>/ci` puis `<préfixe>/runtime`.
+- en `prod` et `pre-prod`, le build lit toujours `/ci`, sans préfixe. Pour un
+  déploiement, `INFISICAL_PATH_PREFIX` est obligatoire : le wrapper lit `/ci`,
+  `<préfixe>/ci` puis `<préfixe>/runtime`. Les opérations de sauvegarde
+  ajoutent `<préfixe>/backup`.
 
 La démonstration utilise par exemple `prod` avec
 `INFISICAL_PATH_PREFIX=/demo`, et une instance cliente
 `INFISICAL_PATH_PREFIX=/clients/<slug>`. Chaque cible doit contenir toute sa
 configuration de déploiement dans son dossier `runtime`, y compris ses secrets
-applicatifs. Ses secrets SSH vivent dans `<préfixe>/ci`. Seule la valeur
-injectée de `DEMO_MODE` décide si la couche IA est déployée.
+applicatifs. Ses secrets SSH vivent dans `<préfixe>/ci` et ses variables
+`BACKUP_*` dans `<préfixe>/backup`. Seule la valeur injectée de `DEMO_MODE`
+décide si la couche IA est déployée.
 
 `deployment/env.example` constitue le contrat des variables. Ajoutez-y toute
 nouvelle clé dans le même changement que le code consommateur et le fichier

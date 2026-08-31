@@ -4,9 +4,13 @@ Le répertoire contient les deux modes de déploiement applicatif disponibles :
 
 ```text
 deployment/
+├── backup-common.sh  accès commun à la cible et aux dépôts Restic
+├── backup.sh         export et copie PostgreSQL, MongoDB et uploads
+├── backup.Jenkinsfile job planifié, à instancier une fois par cible
 ├── build.sh           construction et publication Jenkins
 ├── deploy.sh          point d'entrée unique des trois pipelines
 ├── env.example        contrat Infisical et métadonnées des pipelines
+├── restore.sh         vérification et restauration d'un snapshot
 ├── with-infisical.sh  authentification Universal Auth de Jenkins
 ├── direct/
 │   ├── Jenkinsfile
@@ -62,11 +66,11 @@ d'exploitation se trouvent dans la documentation du serveur :
 
 ## `deploy.sh`
 
-Les deux Jenkinsfile et `.github/workflows/deploy-dev.yml` ne portent plus que
-la récupération des secrets et le calcul des métadonnées du déploiement. La
-séquence elle-même — synchronisation des contenus, migrations Prisma, triggers
-ANDRIA, restauration du jeu de démonstration, provisionnement de la base IA,
-démarrage — vit dans `deploy.sh`.
+Les deux Jenkinsfile et `.github/workflows/deploy-dev.yml` récupèrent les
+secrets, calculent les métadonnées et encadrent le déploiement avec les étapes
+de sauvegarde. `deploy.sh` garde la séquence applicative : synchronisation des
+contenus, migrations Prisma, triggers ANDRIA, restauration du jeu de
+démonstration, provisionnement de la base IA et démarrage.
 
 Le script ne lit aucun fichier de secrets : toute la configuration arrive par
 l'environnement du processus. Il refuse d'ailleurs de démarrer si un `.env`
@@ -91,6 +95,9 @@ vérité.
 | `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
 | `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
 | `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
+| `BACKUP_LOCAL_REPOSITORY`                               | dossier Infisical `backup` de la cible  | dépôt Restic sur un disque distinct                                          |
+| `BACKUP_S3_*`, `BACKUP_RESTIC_PASSWORD`                 | dossier Infisical `backup` de la cible  | dépôt Restic hors site et chiffrement                                        |
+| `BACKUP_ENABLED`                                        | dossier `backup`, défaut `false`         | active les sauvegardes avant et après déploiement                            |
 | toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
 
 Le script valide la présence des variables requises avant tout appel à
@@ -102,8 +109,9 @@ préfixe de dossiers utilisé.
 ### Injection des secrets
 
 GitHub Actions s'authentifie avec OIDC. L'action Infisical charge `/ci` pour le
-build, puis `/ci` et `/runtime` pour le déploiement. Ce workflow utilise toujours
-l'environnement `dev` et ne consulte aucun dossier préfixé.
+build, puis `/ci`, `/runtime` et `/backup` pour le job de déploiement. Ce
+workflow utilise toujours l'environnement `dev` et ne consulte aucun dossier
+préfixé.
 
 Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
 password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
@@ -113,11 +121,13 @@ jeton court, choisit les dossiers selon l'environnement, puis lance
 reste à la racine de l'environnement et ne dépend jamais de la cible. La
 sélection est volontairement simple et sans héritage :
 
-- en `dev`, le build charge `/ci` et le déploiement charge `/ci` et `/runtime` ;
-  `INFISICAL_PATH_PREFIX` est ignoré ;
+- en `dev`, le build charge `/ci`, le déploiement charge `/ci` et `/runtime`,
+  et ses étapes de sauvegarde ajoutent `/backup` ; `INFISICAL_PATH_PREFIX` est
+  ignoré ;
 - en `prod`, le build charge `/ci` sans préfixe. Pour un déploiement,
   `INFISICAL_PATH_PREFIX` est obligatoire et le wrapper charge `/ci`,
-  `<préfixe>/ci` puis `<préfixe>/runtime`.
+  `<préfixe>/ci` puis `<préfixe>/runtime`. Les opérations de sauvegarde
+  ajoutent `<préfixe>/backup`.
 
 `DEMO_MODE` est simplement lu dans l'environnement injecté et décide seul de
 l'activation du mode démonstration.
@@ -133,8 +143,105 @@ variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
 Une cible de démonstration peut utiliser `dev` ou `prod` : seule la valeur
 effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
 `INFISICAL_ENVIRONMENT=prod` et `INFISICAL_PATH_PREFIX=/demo` sélectionnent
-`/ci` pour le registre, `/demo/ci` pour l'accès SSH et `/demo/runtime` pour la
-configuration applicative propre à la cible.
+`/ci` pour le registre, `/demo/ci` pour l'accès SSH, `/demo/runtime` pour la
+configuration applicative et `/demo/backup` pour la sauvegarde.
+
+## Sauvegarde 3-2-1
+
+`backup.sh` protège les deux bases métier et le répertoire `uploads`. Il crée
+un dump PostgreSQL complet au format custom et une archive MongoDB compressée.
+Restic chiffre et déduplique ces exports avec les fichiers dans deux dépôts :
+
+- `BACKUP_LOCAL_REPOSITORY`, sur un disque monté distinct de celui qui porte
+  `DEPLOY_PATH` ;
+- `BACKUP_S3_REPOSITORY`, dans un stockage objet hors du VPS.
+
+Les volumes actifs forment la première copie. Les deux dépôts fournissent les
+deux autres copies et le stockage S3 garde une copie hors site. Le script
+compare les périphériques qui portent `DEPLOY_PATH` et le dépôt local. Il
+s'arrête si les deux chemins utilisent le même système de fichiers.
+
+La sauvegarde s'exécute à chaud. PostgreSQL et MongoDB garantissent chacun la
+cohérence de leur export. Une écriture qui touche à la fois une base et un
+fichier peut toutefois se trouver entre deux instants de l'opération.
+
+`BACKUP_ENABLED` vaut `false` par défaut. Les étapes de sauvegarde quittent sans
+accéder à Docker, au disque ou à S3 tant que la variable ne vaut pas `true`.
+Vous pouvez donc déployer une cible qui ne possède aucune configuration Restic.
+
+Avec `BACKUP_ENABLED=true`, chaque déploiement lance une sauvegarde avant les
+migrations et une autre après le démarrage. L'échec de la première bloque le
+déploiement. Sur une cible neuve, le script accepte l'absence des deux
+conteneurs de base et le pipeline crée le premier snapshot après le démarrage.
+L'absence d'une seule base signale une cible incomplète et arrête le job.
+
+En développement, `deploy-dev.yml` exécute les sauvegardes avant et après le
+déploiement. Aucun workflow de sauvegarde séparé ne tourne sur cette cible.
+
+En production, créez un job par cible à partir de
+`deployment/backup.Jenkinsfile`. Lancez une première sauvegarde manuelle avec
+le préfixe Infisical, le nom de stack et le chemin de déploiement de la cible.
+Le job reprend ces valeurs comme paramètres par défaut pour les passages
+suivants. Son cron répartit les départs avec la syntaxe Jenkins
+`H H/6 * * *`. Le job échoue si `BACKUP_ENABLED` ne vaut pas `true`, ce qui
+évite un résultat vert sans snapshot.
+
+Restic conserve tous les snapshots des sept derniers jours, huit points
+hebdomadaires et douze points mensuels. Chaque exécution contrôle les deux
+dépôts après l'application de cette rétention. La base `db-ai`, le cache
+Hugging Face, `data` et les logs restent exclus. Le déploiement reconstruit la
+base IA à partir des données métier.
+
+### Préparer une cible
+
+Montez un disque de sauvegarde, créez le répertoire du dépôt et donnez au démon
+Docker le droit d'y écrire. Créez un bucket S3 hors du compte ou du serveur qui
+héberge l'application. Ajoutez les variables `BACKUP_*` décrites dans
+`env.example` : `/backup` pour la cible de développement, ou
+`<préfixe>/backup` pour une cible de production. Ajoutez
+`BACKUP_ENABLED=true` après avoir préparé les deux dépôts.
+
+Utilisez un préfixe S3 et un répertoire local propres à chaque cible. Conservez
+`BACKUP_RESTIC_PASSWORD` dans un second coffre. Restic ne peut pas ouvrir les
+dépôts sans ce mot de passe.
+
+### Vérifier et restaurer
+
+Le mode `verify` lit les données du dépôt, restaure le snapshot dans un volume
+temporaire, contrôle les sommes SHA-256 puis injecte les dumps dans des
+conteneurs PostgreSQL et MongoDB isolés :
+
+```sh
+RESTORE_SOURCE=s3 RESTORE_SNAPSHOT=latest \
+  ./deployment/restore.sh verify
+
+RESTORE_SOURCE=local RESTORE_SNAPSHOT=<id-restic> \
+  ./deployment/restore.sh verify
+```
+
+Le job Jenkins expose ces deux vérifications comme actions manuelles. En
+développement, lancez `restore.sh verify` depuis un agent qui charge la
+configuration Infisical de la cible. Exécutez aussi un exercice après un
+changement de version majeure de PostgreSQL, MongoDB ou Restic.
+
+Le mode `restore` remplace les données de la stack. Il commence par la même
+vérification complète, puis exige que `RESTORE_CONFIRM` corresponde au nom de
+la stack. Il arrête l'application, remplace PostgreSQL, MongoDB et `uploads`,
+reprovisionne ANDRIA si la cible utilise l'IA et contrôle le healthcheck :
+
+```sh
+RESTORE_SOURCE=s3 \
+RESTORE_SNAPSHOT=<id-restic> \
+RESTORE_CONFIRM="$LXP_DEPLOYMENT_NAME" \
+  ./deployment/restore.sh restore
+```
+
+Lancez cette commande depuis un agent qui charge les mêmes secrets Infisical
+que le déploiement. En cas d'échec après l'arrêt, le script laisse
+l'application arrêtée pour éviter de servir un état incomplet. Le verrou Docker
+`<stack>-backup-lock` empêche les opérations concurrentes. Si l'agent subit un
+arrêt brutal, vérifiez qu'aucune opération ne tourne avant de retirer ce
+conteneur avec `docker rm -f <stack>-backup-lock`.
 
 ### Lancer un déploiement à la main
 

@@ -35,25 +35,28 @@ infisical_domain="${INFISICAL_DOMAIN:-https://eu.infisical.com}"
 infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
 secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime}"
 
-# `/ci` à la racine est global dans chaque environnement et ne contient que les
-# accès au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH
-# de la cible et `<préfixe>/runtime` sa configuration applicative.
+# `/ci` à la racine est global dans chaque environnement et contient les accès
+# au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH et les
+# secrets CI de la cible ; `<préfixe>/runtime` porte l'application et
+# `<préfixe>/backup` porte les secrets de sauvegarde.
 registry_ci_path="/ci"
 target_ci_path=""
+backup_path=""
 
 case "$secret_paths" in
-    /ci | "/ci /runtime") ;;
-    *) die "INFISICAL_SECRET_PATHS doit valoir /ci ou /ci /runtime." ;;
+    /ci | "/ci /runtime" | "/ci /runtime /backup") ;;
+    *) die "INFISICAL_SECRET_PATHS doit valoir /ci, /ci /runtime ou /ci /runtime /backup." ;;
 esac
 
 case "$INFISICAL_ENVIRONMENT" in
     dev)
         runtime_path="/runtime"
+        backup_path="/backup"
         ;;
     prod)
-        if [ "$secret_paths" = "/ci /runtime" ]; then
+        if [ "$secret_paths" != "/ci" ]; then
             [ -n "$infisical_path_prefix" ] \
-                || die "INFISICAL_PATH_PREFIX est obligatoire pour charger /runtime dans l'environnement prod."
+                || die "INFISICAL_PATH_PREFIX est obligatoire pour charger les secrets d'une cible dans l'environnement prod."
             case "$infisical_path_prefix" in
                 */) die "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." ;;
                 /*) ;;
@@ -61,6 +64,7 @@ case "$INFISICAL_ENVIRONMENT" in
             esac
             target_ci_path="${infisical_path_prefix}/ci"
             runtime_path="${infisical_path_prefix}/runtime"
+            backup_path="${infisical_path_prefix}/backup"
         else
             runtime_path=""
         fi
@@ -87,9 +91,10 @@ export INFISICAL_TOKEN
 export INFISICAL_DISABLE_UPDATE_CHECK=true
 unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 
-# Le job de build se limite aux identifiants de registre de `/ci`. En prod, le
-# déploiement ajoute les accès SSH de `<préfixe>/ci` et la configuration de
-# `<préfixe>/runtime`. En dev, ces données vivent dans `/runtime`.
+# Le job de build se limite aux identifiants de registre de `/ci`. Les
+# déploiements ajoutent les accès SSH de la cible et sa configuration runtime.
+# Les opérations de sauvegarde demandent explicitement `/backup`, préfixé par
+# la cible dans l'environnement prod.
 case "$secret_paths" in
     /ci)
         printf 'Chargement Infisical : environnement=%s, chemin=%s.\n' \
@@ -122,6 +127,32 @@ case "$secret_paths" in
                 --env="$INFISICAL_ENVIRONMENT" \
                 --path="$registry_ci_path" \
                 --path="$runtime_path" \
+                -- "$@"
+        fi
+        ;;
+    "/ci /runtime /backup")
+        if [ "$INFISICAL_ENVIRONMENT" = "prod" ]; then
+            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s, %s et %s.\n' \
+                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$target_ci_path" "$runtime_path" "$backup_path"
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$registry_ci_path" \
+                --path="$target_ci_path" \
+                --path="$runtime_path" \
+                --path="$backup_path" \
+                -- "$@"
+        else
+            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
+                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$runtime_path" "$backup_path"
+            exec infisical run \
+                --domain="$infisical_domain" \
+                --projectId="$INFISICAL_PROJECT_ID" \
+                --env="$INFISICAL_ENVIRONMENT" \
+                --path="$registry_ci_path" \
+                --path="$runtime_path" \
+                --path="$backup_path" \
                 -- "$@"
         fi
         ;;

@@ -226,13 +226,15 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 
 Pour le reste, c'est le même socle `compose.yml`. L'environnement Infisical
 peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. En `dev`, le
-déploiement lit uniquement `/ci` et `/runtime`. En `prod`, il exige un préfixe
-et lit `/ci` pour le registre, `<préfixe>/ci` pour l'accès SSH, puis
-`<préfixe>/runtime` pour l'application ; la démonstration utilise par exemple
-`/ci`, `/demo/ci` et `/demo/runtime`, ce dernier portant
-`DEMO_MODE=true`. Il n'existe aucun héritage entre les dossiers racine et ceux
-de la cible. Les paramètres Jenkins définissent un `DEPLOY_PATH` et un
-`LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des secrets propres.
+déploiement lit `/ci` et `/runtime` ; les étapes de sauvegarde ajoutent
+`/backup`. En `prod`, il exige un préfixe et lit `/ci` pour le registre,
+`<préfixe>/ci` pour l'accès SSH, puis `<préfixe>/runtime` pour l'application ;
+les sauvegardes ajoutent `<préfixe>/backup`. La démonstration utilise par
+exemple `/ci`, `/demo/ci`, `/demo/runtime` et `/demo/backup`, le dossier
+`runtime` portant `DEMO_MODE=true`. Il n'existe aucun héritage entre les
+dossiers racine et ceux de la cible. Les paramètres Jenkins définissent un
+`DEPLOY_PATH` et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des
+secrets propres.
 L'overlay `compose.ai.yml` n'est pas
 chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
 sont déployés. Les variables réservées à cette couche sont également retirées
