@@ -96,7 +96,7 @@ backup_tag="backup-set=$backup_set_id"
 staging_volume="${LXP_DEPLOYMENT_NAME}_backup_${backup_set_id//[^A-Za-z0-9]/_}"
 docker volume create "$staging_volume" >/dev/null
 
-printf 'Export coherent de PostgreSQL...\n'
+printf 'Export PostgreSQL...\n'
 docker exec "$postgres_container" sh -eu -c \
     'pg_dump --format=custom --no-owner --no-privileges -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
     | docker run --rm -i -v "$staging_volume:/staging" "$BACKUP_HELPER_IMAGE" \
@@ -104,7 +104,7 @@ docker exec "$postgres_container" sh -eu -c \
 docker run --rm -v "$staging_volume:/staging:ro" "$BACKUP_POSTGRES_IMAGE" \
     pg_restore --list /staging/postgresql.dump >/dev/null
 
-printf 'Export coherent de MongoDB...\n'
+printf 'Export MongoDB...\n'
 docker exec "$mongo_container" sh -eu -c \
     'mongodump --quiet --archive --gzip \
         --username "$MONGO_INITDB_ROOT_USERNAME" \

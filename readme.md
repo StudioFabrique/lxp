@@ -1,15 +1,19 @@
 # ANDRIA LXP
 
-Application web ANDRIA avec une API Node.js et un frontend React.
+ANDRIA réunit une API Node.js, une interface React et trois bases Docker. Le
+service IA vit dans le dépôt privé
+[`StudioFabrique/ANDRIA-IA`](https://github.com/StudioFabrique/ANDRIA-IA).
 
-## Prérequis
+## Démarrer en local
 
-- Node.js 24 ou une version supérieure ;
+### Prérequis
+
+- Node.js 22.18 ou une version supérieure ;
 - npm ;
 - Docker avec Docker Compose ;
-- Git.
+- Git et un accès aux dépôts privés de `StudioFabrique`.
 
-## Démarrer en développement
+### Installation
 
 ```bash
 git clone git@github.com:StudioFabrique/lxp.git
@@ -18,55 +22,97 @@ npm run init
 npm run dev
 ```
 
-`npm run init` supprime les éventuelles données locales, installe les
-dépendances, crée les fichiers `.env`, démarre les bases Docker et applique les
-migrations afin de commencer avec une application vide. La commande affiche la
-clé d'activation nécessaire à la création du premier administrateur.
+Ouvrez <http://localhost:5173>. L’API écoute sur
+<http://localhost:3000>.
 
-Pour initialiser l'application avec les données de démonstration :
+`npm run init` installe les dépendances, crée les fichiers d’environnement,
+démarre PostgreSQL, pgvector et MongoDB, puis applique les migrations. La
+commande affiche aussi la clé qui permet de créer le premier administrateur.
 
-```bash
-npm run init -- --with-data
+> `npm run init` supprime les volumes Docker locaux du LXP. Sauvegardez vos
+> données avec `npm run dump` avant de réinitialiser un poste déjà utilisé.
+
+| Besoin | Commande |
+| --- | --- |
+| Partir de bases vides | `npm run init` |
+| Restaurer un dump local placé dans `api/dumps/` | `npm run init -- --with-data` |
+| Charger l’instance de démonstration | `npm run init:demo` |
+| Relancer le front et l’API | `npm run dev` |
+
+Les valeurs locales se trouvent dans `api/.env` et `front/.env`. Consultez le
+[tableau des variables d’environnement](docs/variables-environnement.md) avant
+de les modifier.
+
+## Ajouter le service IA
+
+Placez les deux dépôts dans le même dossier :
+
+```text
+projets/
+├── lxp/
+└── ANDRIA-IA/
 ```
 
-Les comptes de démonstration ci-dessous sont uniquement créés avec cette
-option.
-
-Ouvrir <http://localhost:5173>.
-
-## Mode démonstration
-
-ANDRIA peut être déployée en instance de démonstration : une plateforme publique
-et en consultation seule, accessible sans compte depuis `/demo`.
+Après `npm run init` dans le LXP :
 
 ```bash
-npm run init:demo
+cd ..
+git clone --branch prod git@github.com:StudioFabrique/ANDRIA-IA.git
+cd ANDRIA-IA
+cp env.example .env
 ```
 
-Cette instance se distingue par la seule variable `DEMO_MODE=true` dans
-`api/.env`. En déploiement, c'est aussi elle qui écarte la couche IA : les
-pipelines chargent alors le socle `compose.yml` sans l'overlay
-`compose.ai.yml`. Voir [Mode démonstration](docs/mode-demo.md).
+Renseignez `ANDRIA-IA/.env` avec les valeurs de développement. Les deux clés
+Mistral se trouvent dans Infisical EU, environnement `dev`, chemin `/runtime`.
+`SECRET_KEY` doit porter la même valeur que `DOCKER_IA_AUTH_SECRET` dans
+`lxp/api/.env`.
 
-| Compte         | Identifiant            | Mot de passe    |
-| -------------- | ---------------------- | --------------- |
-| Administrateur | `admin@studio.eco`     | `Abcdef@123456` |
-| Apprenant      | `apprenant@studio.eco` | `Abcdef@123456` |
+```bash
+docker compose build
+docker compose run --rm ai-service python -m app.db_provision
+docker compose up -d
+curl http://localhost:8000/health
+```
+
+Le premier démarrage télécharge les modèles et peut prendre quelques minutes.
+Les démarrages suivants demandent seulement `docker compose up -d`.
+
+Le guide [Démarrer ANDRIA-IA en développement](docs/developpement-ia.md)
+contient la configuration à copier et les contrôles du watcher.
+
+## Déployer
+
+Les pipelines chargent les secrets depuis le coffre Infisical de l’entreprise.
+Aucun fichier `.env` ne doit rester sur le serveur.
+
+| Cible | Méthode | Déclenchement |
+| --- | --- | --- |
+| Développement partagé | GitHub Actions | Fusion dans `beta` |
+| Production avec proxy partagé | Jenkins Caddy | Job basé sur `deployment/caddy/Jenkinsfile` |
+| Serveur dédié sans Caddy | Jenkins direct | Job basé sur `deployment/direct/Jenkinsfile` |
+| Diagnostic opérateur | `deployment/deploy.sh` | Environnement complet déjà injecté |
+
+Pour une nouvelle cible, créez ses dossiers dans Infisical, contrôlez les
+variables, puis lancez le job Jenkins correspondant. Le guide
+[Déployer ANDRIA](deployment/README.md) donne la procédure et les paramètres de
+chaque méthode. Le
+[tableau de production](docs/variables-environnement.md#production) montre la
+répartition entre `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et
+`<préfixe>/backup`.
 
 ## Documentation
 
-Les secrets du LXP vivent dans Infisical, jamais dans le dépôt. La norme
-d'entreprise — organisation du coffre, identités, injection, rotation — est
-décrite dans la
-[documentation du serveur](https://docs.dev.step.eco/1-publication-application/1-gerer-les-secrets/).
-Le contrat des variables attendues par un déploiement se trouve dans
-[`deployment/env.example`](deployment/env.example).
+### Premiers pas
 
-- [Structure et architecture](docs/structure-et-architecture.md)
-- [Service IA et synchronisation en développement](docs/developpement-ia.md)
-- [Mode démonstration](docs/mode-demo.md)
-- [Déploiement avec Jenkins](docs/deploiement-jenkins.md)
-- [Déploiement Jenkins avec le Caddy partagé](docs/deploiement-caddy-jenkins.md)
-- [Déploiement de développement avec GitHub Actions](docs/deploiement-caddy-github-actions.md)
+- [Variables d’environnement](docs/variables-environnement.md)
+- [Service IA en développement](docs/developpement-ia.md)
+- [Structure du code](docs/structure-et-architecture.md)
+
+### Exploitation
+
 - [Méthodes de déploiement](deployment/README.md)
-- [Schéma relationnel PostgreSQL](docs/lxp-postgres-erdiagram.mmd)
+- [Sauvegardes et restauration](docs/sauvegardes.md)
+- [Mode démonstration](docs/mode-demo.md)
+
+La [documentation du serveur](https://docs.dev.step.eco/) couvre la norme
+Infisical et les prérequis communs des serveurs de l’entreprise.
