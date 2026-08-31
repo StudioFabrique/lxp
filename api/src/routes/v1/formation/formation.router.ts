@@ -25,7 +25,10 @@ const formationRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(import.meta.dirname, "..", "..", "..", "uploads"));
+    cb(
+      null,
+      path.join(import.meta.dirname, "..", "..", "..", "..", "uploads")
+    );
   },
   filename: function (req, file, cb) {
     if (file.mimetype.startsWith("image")) {
