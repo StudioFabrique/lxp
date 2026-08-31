@@ -53,7 +53,7 @@ pipeline {
                         set -eu
                         case "${OPERATION}" in
                             backup)
-                                BACKUP_REASON=scheduled ./deployment/with-infisical.sh ./deployment/backup.sh
+                                BACKUP_REQUIRE_ENABLED=true BACKUP_REASON=scheduled ./deployment/with-infisical.sh ./deployment/backup.sh
                                 ;;
                             verify-s3)
                                 RESTORE_SOURCE=s3 ./deployment/with-infisical.sh ./deployment/restore.sh verify

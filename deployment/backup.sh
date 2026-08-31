@@ -8,6 +8,18 @@ script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 # shellcheck source=deployment/backup-common.sh
 source "$script_dir/backup-common.sh"
 
+case "${BACKUP_ENABLED:-false}" in
+    true) ;;
+    false)
+        if [[ "${BACKUP_REQUIRE_ENABLED:-false}" == true ]]; then
+            backup_die "BACKUP_ENABLED doit valoir true pour executer le job de sauvegarde planifie."
+        fi
+        printf 'Sauvegarde desactivee : BACKUP_ENABLED ne vaut pas true.\n'
+        exit 0
+        ;;
+    *) backup_die "BACKUP_ENABLED doit valoir true ou false." ;;
+esac
+
 backup_restore_pipeline_metadata
 backup_require LXP_DEPLOYMENT_NAME
 backup_validate_stack_name

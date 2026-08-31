@@ -97,6 +97,7 @@ vérité.
 | `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
 | `BACKUP_LOCAL_REPOSITORY`                               | configuration CI de la cible           | dépôt Restic sur un disque distinct                                          |
 | `BACKUP_S3_*`, `BACKUP_RESTIC_PASSWORD`                 | configuration CI de la cible           | dépôt Restic hors site et chiffrement                                        |
+| `BACKUP_ENABLED`                                        | configuration CI, défaut `false`        | active les sauvegardes avant et après déploiement                            |
 | toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
 
 Le script valide la présence des variables requises avant tout appel à
@@ -161,11 +162,15 @@ La sauvegarde s'exécute à chaud. PostgreSQL et MongoDB garantissent chacun la
 cohérence de leur export. Une écriture qui touche à la fois une base et un
 fichier peut toutefois se trouver entre deux instants de l'opération.
 
-Chaque déploiement lance une sauvegarde avant les migrations et une autre
-après le démarrage. L'échec de la première bloque le déploiement. Sur une cible
-neuve, le script accepte l'absence des deux conteneurs de base et le pipeline
-crée le premier snapshot après le démarrage. L'absence d'une seule base signale
-une cible partiellement initialisée et arrête le job.
+`BACKUP_ENABLED` vaut `false` par défaut. Les étapes de sauvegarde quittent sans
+accéder à Docker, au disque ou à S3 tant que la variable ne vaut pas `true`.
+Vous pouvez donc déployer une cible qui ne possède aucune configuration Restic.
+
+Avec `BACKUP_ENABLED=true`, chaque déploiement lance une sauvegarde avant les
+migrations et une autre après le démarrage. L'échec de la première bloque le
+déploiement. Sur une cible neuve, le script accepte l'absence des deux
+conteneurs de base et le pipeline crée le premier snapshot après le démarrage.
+L'absence d'une seule base signale une cible incomplète et arrête le job.
 
 En développement, `deploy-dev.yml` exécute les sauvegardes avant et après le
 déploiement. Aucun workflow de sauvegarde séparé ne tourne sur cette cible.
@@ -175,7 +180,8 @@ En production, créez un job par cible à partir de
 le préfixe Infisical, le nom de stack et le chemin de déploiement de la cible.
 Le job reprend ces valeurs comme paramètres par défaut pour les passages
 suivants. Son cron répartit les départs avec la syntaxe Jenkins
-`H H/6 * * *`.
+`H H/6 * * *`. Le job échoue si `BACKUP_ENABLED` ne vaut pas `true`, ce qui
+évite un résultat vert sans snapshot.
 
 Restic conserve tous les snapshots des sept derniers jours, huit points
 hebdomadaires et douze points mensuels. Chaque exécution contrôle les deux
@@ -189,7 +195,8 @@ Montez un disque de sauvegarde, créez le répertoire du dépôt et donnez au d�
 Docker le droit d'y écrire. Créez un bucket S3 hors du compte ou du serveur qui
 héberge l'application. Ajoutez les variables `BACKUP_*` décrites dans
 `env.example` : `/runtime` pour la cible de développement, ou `<préfixe>/ci`
-pour une cible de production.
+pour une cible de production. Ajoutez `BACKUP_ENABLED=true` après avoir préparé
+les deux dépôts.
 
 Utilisez un préfixe S3 et un répertoire local propres à chaque cible. Conservez
 `BACKUP_RESTIC_PASSWORD` dans un second coffre. Restic ne peut pas ouvrir les

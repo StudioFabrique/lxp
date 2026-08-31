@@ -30,6 +30,21 @@ bash -n \
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "le job Jenkins planifie n'est pas limite a la production"
 
+disabled_output="$(
+    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        "$backup_script"
+)"
+[[ "$disabled_output" == *"Sauvegarde desactivee"* ]] \
+    || fail "la sauvegarde n'est pas desactivee par defaut"
+
+expect_failure "une valeur BACKUP_ENABLED invalide a ete acceptee" \
+    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        BACKUP_ENABLED=invalid "$backup_script"
+
+expect_failure "le job planifie a accepte une sauvegarde desactivee" \
+    env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        BACKUP_REQUIRE_ENABLED=true "$backup_script"
+
 expect_failure "un nom de stack dangereux a ete accepte" \
     bash -c "source '$common_script'; LXP_DEPLOYMENT_NAME='lxp;false'; backup_validate_stack_name"
 
@@ -67,6 +82,7 @@ fresh_output="$(
         HOME="$temporary_dir" TMPDIR="$temporary_dir" \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
+        BACKUP_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 )"
@@ -80,6 +96,7 @@ expect_failure "des volumes orphelins ont ete confondus avec une cible neuve" \
         MOCK_POSTGRES_VOLUME_EXISTS=0 \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
+        BACKUP_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 
@@ -90,6 +107,7 @@ expect_failure "une cible partiellement initialisee a ete acceptee" \
         MOCK_POSTGRES_EXISTS=0 MOCK_MONGO_EXISTS=1 \
         LXP_DEPLOYMENT_NAME=lxp-test \
         DEPLOY_PATH="$temporary_dir/data" \
+        BACKUP_ENABLED=true \
         BACKUP_ALLOW_UNINITIALIZED=true \
         "$backup_script"
 
