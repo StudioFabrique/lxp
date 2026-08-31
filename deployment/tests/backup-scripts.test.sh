@@ -6,6 +6,7 @@ repository_root="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
 common_script="$repository_root/deployment/backup-common.sh"
 backup_script="$repository_root/deployment/backup.sh"
 restore_script="$repository_root/deployment/restore.sh"
+list_script="$repository_root/deployment/list-backups.sh"
 infisical_wrapper="$repository_root/deployment/with-infisical.sh"
 temporary_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-backup-tests.XXXXXX")"
 trap 'rm -rf -- "$temporary_dir"' EXIT
@@ -26,11 +27,49 @@ expect_failure() {
 bash -n \
     "$repository_root/deployment/backup-common.sh" \
     "$repository_root/deployment/backup.sh" \
+    "$list_script" \
     "$repository_root/deployment/restore.sh"
 sh -n "$infisical_wrapper"
+[[ -x "$list_script" ]] || fail "le script de liste n'est pas executable"
 
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "le job Jenkins planifie n'est pas limite a la production"
+
+grep -Fq "choices: ['backup', 'list-backup', 'verify-backup', 'stop-backup']" \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "les operations Jenkins de sauvegarde sont incompletes"
+
+grep -Fq 'disableConcurrentBuilds()' \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "le job Jenkins autorise des operations concurrentes"
+
+if grep -Fq 'abortPrevious: true' "$repository_root/deployment/backup.Jenkinsfile"; then
+    fail "stop-backup interrompt encore le build precedent"
+fi
+
+grep -Fq 'properties([pipelineTriggers([])])' \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "stop-backup ne desactive pas le cron Jenkins"
+
+grep -Fq "cron('H H/6 * * *')" \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "backup ne reactive pas le cron Jenkins"
+
+if grep -Fq 'currentBuild.rawBuild' "$repository_root/deployment/backup.Jenkinsfile"; then
+    fail "la gestion du cron depend encore d'une approbation Groovy interne"
+fi
+
+if grep -Eq 'verify-(s3|local)' "$repository_root/deployment/backup.Jenkinsfile"; then
+    fail "les anciennes operations verify-s3 ou verify-local sont encore exposees"
+fi
+
+grep -Fq 'RESTORE_SOURCE=local ./deployment/restore.sh verify' \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "verify-backup ne controle pas le depot local"
+
+grep -Fq 'RESTORE_SOURCE=s3 ./deployment/restore.sh verify' \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "verify-backup ne controle pas le depot S3"
 
 mkdir -p "$temporary_dir/infisical-bin"
 cat >"$temporary_dir/infisical-bin/infisical" <<'EOF'
@@ -100,6 +139,9 @@ expect_failure "une restauration destructive a accepte le snapshot latest" \
 mkdir -p "$temporary_dir/bin" "$temporary_dir/data" "$temporary_dir/local-backup"
 cat >"$temporary_dir/bin/docker" <<'EOF'
 #!/usr/bin/env bash
+if [[ -n "${MOCK_DOCKER_LOG:-}" ]]; then
+    printf '%s\n' "$*" >> "$MOCK_DOCKER_LOG"
+fi
 if [[ "$*" == *"container inspect lxp-test-db-pg"* ]]; then
     exit "${MOCK_POSTGRES_EXISTS:-1}"
 fi
@@ -115,6 +157,26 @@ fi
 exit 0
 EOF
 chmod +x "$temporary_dir/bin/docker"
+
+list_output="$(
+    env -i \
+        PATH="$temporary_dir/bin:/usr/bin:/bin" \
+        HOME="$temporary_dir" TMPDIR="$temporary_dir" \
+        MOCK_DOCKER_LOG="$temporary_dir/docker-list.log" \
+        LXP_DEPLOYMENT_NAME=lxp-test \
+        BACKUP_LOCAL_REPOSITORY="$temporary_dir/local-backup" \
+        BACKUP_S3_REPOSITORY='s3:https://example.test/bucket/lxp-test' \
+        BACKUP_S3_ACCESS_KEY=test \
+        BACKUP_S3_SECRET_KEY=test \
+        BACKUP_RESTIC_PASSWORD=test \
+        "$list_script"
+)"
+[[ "$list_output" == *"Snapshots du depot local"* ]] \
+    || fail "list-backup n'affiche pas le depot local"
+[[ "$list_output" == *"Snapshots du depot S3"* ]] \
+    || fail "list-backup n'affiche pas le depot S3"
+[[ "$(grep -c ' snapshots --host lxp-test$' "$temporary_dir/docker-list.log")" -eq 2 ]] \
+    || fail "list-backup n'interroge pas les deux depots Restic"
 
 fresh_output="$(
     env -i \

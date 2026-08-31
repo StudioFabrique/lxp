@@ -7,12 +7,6 @@ pipeline {
         timeout(time: 90, unit: 'MINUTES')
     }
 
-    // Ce job planifie ne couvre que les cibles de production. En dev, les
-    // Jenkinsfile de deploiement lancent eux-memes les sauvegardes.
-    triggers {
-        cron('H H/6 * * *')
-    }
-
     parameters {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Credential Universal Auth visible par le job.')
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Region Infisical.')
@@ -20,7 +14,7 @@ pipeline {
         string(name: 'INFISICAL_PATH_PREFIX', defaultValue: "${params.INFISICAL_PATH_PREFIX ?: ''}", trim: true, description: 'Obligatoire en prod : /demo ou /clients/<slug> ; sélectionne notamment <préfixe>/backup.')
         string(name: 'DEPLOY_PATH', defaultValue: "${params.DEPLOY_PATH ?: ''}", trim: true, description: 'Vide pour deduire le chemin du foyer distant.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: "${params.LXP_DEPLOYMENT_NAME ?: 'lxp'}", trim: true, description: 'Nom exact de la stack Docker.')
-        choice(name: 'OPERATION', choices: ['backup', 'verify-s3', 'verify-local'], description: 'Le cron utilise backup ; les controles sont declenchables manuellement.')
+        choice(name: 'OPERATION', choices: ['backup', 'list-backup', 'verify-backup', 'stop-backup'], description: 'Le cron utilise backup ; les autres operations sont declenchables manuellement.')
     }
 
     environment {
@@ -35,12 +29,33 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            when {
+                not {
+                    equals expected: 'stop-backup', actual: params.OPERATION
+                }
+            }
             steps {
                 checkout scm
             }
         }
 
-        stage('Backup or verify') {
+        stage('Disable scheduled backups') {
+            when {
+                equals expected: 'stop-backup', actual: params.OPERATION
+            }
+            steps {
+                echo 'Desactivation des prochains passages cron...'
+                properties([pipelineTriggers([])])
+                echo 'Planification desactivee. Le job reste disponible manuellement et les snapshots existants sont conserves.'
+            }
+        }
+
+        stage('Backup operation') {
+            when {
+                not {
+                    equals expected: 'stop-backup', actual: params.OPERATION
+                }
+            }
             steps {
                 withCredentials([
                     usernamePassword(
@@ -55,11 +70,16 @@ pipeline {
                             backup)
                                 INFISICAL_SECRET_PATHS="/ci /runtime /backup" BACKUP_REQUIRE_ENABLED=true BACKUP_REASON=scheduled ./deployment/with-infisical.sh ./deployment/backup.sh
                                 ;;
-                            verify-s3)
-                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" RESTORE_SOURCE=s3 ./deployment/with-infisical.sh ./deployment/restore.sh verify
+                            list-backup)
+                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" ./deployment/with-infisical.sh ./deployment/list-backups.sh
                                 ;;
-                            verify-local)
-                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" RESTORE_SOURCE=local ./deployment/with-infisical.sh ./deployment/restore.sh verify
+                            verify-backup)
+                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" ./deployment/with-infisical.sh sh -eu -c '
+                                    printf "Verification du depot local...\\n"
+                                    RESTORE_SOURCE=local ./deployment/restore.sh verify
+                                    printf "Verification du depot S3...\\n"
+                                    RESTORE_SOURCE=s3 ./deployment/restore.sh verify
+                                '
                                 ;;
                             *)
                                 echo "Operation inconnue : ${OPERATION}" >&2
@@ -68,6 +88,20 @@ pipeline {
                         esac
                     '''
                 }
+            }
+        }
+
+        stage('Enable scheduled backups') {
+            when {
+                equals expected: 'backup', actual: params.OPERATION
+            }
+            steps {
+                properties([
+                    pipelineTriggers([
+                        cron('H H/6 * * *')
+                    ])
+                ])
+                echo 'Planification des sauvegardes activee toutes les six heures.'
             }
         }
     }

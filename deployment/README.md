@@ -182,9 +182,29 @@ En production, créez un job par cible à partir de
 `deployment/backup.Jenkinsfile`. Lancez une première sauvegarde manuelle avec
 le préfixe Infisical, le nom de stack et le chemin de déploiement de la cible.
 Le job reprend ces valeurs comme paramètres par défaut pour les passages
-suivants. Son cron répartit les départs avec la syntaxe Jenkins
-`H H/6 * * *`. Le job échoue si `BACKUP_ENABLED` ne vaut pas `true`, ce qui
-évite un résultat vert sans snapshot.
+suivants. Cette première sauvegarde réussie installe le cron, qui répartit les
+départs avec la syntaxe Jenkins `H H/6 * * *`. Le job échoue si
+`BACKUP_ENABLED` ne vaut pas `true`, ce qui évite un résultat vert sans
+snapshot.
+
+Le paramètre Jenkins `OPERATION` expose quatre actions :
+
+- `backup` crée les copies locale et S3 ; c'est l'action utilisée par le cron ;
+- `list-backup` affiche les snapshots des deux dépôts dans la console Jenkins ;
+- `verify-backup` vérifie et restaure temporairement le dernier snapshot des
+  deux dépôts ;
+- `stop-backup` retire le déclencheur cron, sans supprimer les snapshots déjà
+  validés. Le job reste disponible pour les opérations manuelles.
+
+Jenkins ne lance pas deux exécutions concurrentes de ce job. Si une sauvegarde
+est déjà en cours, `stop-backup` attend sa fin puis retire la planification. Un
+nouveau `backup` manuel réussi réactive automatiquement le cron
+`H H/6 * * *`.
+
+Cette opération ne change pas `BACKUP_ENABLED` : les sauvegardes avant et après
+un déploiement restent actives. Elle coupe uniquement le job cron dédié. La
+planification est gérée avec les propriétés Pipeline standard et ne demande pas
+d'approbation de script Groovy supplémentaire.
 
 Restic conserve tous les snapshots des sept derniers jours, huit points
 hebdomadaires et douze points mensuels. Chaque exécution contrôle les deux
@@ -219,10 +239,11 @@ RESTORE_SOURCE=local RESTORE_SNAPSHOT=<id-restic> \
   ./deployment/restore.sh verify
 ```
 
-Le job Jenkins expose ces deux vérifications comme actions manuelles. En
-développement, lancez `restore.sh verify` depuis un agent qui charge la
-configuration Infisical de la cible. Exécutez aussi un exercice après un
-changement de version majeure de PostgreSQL, MongoDB ou Restic.
+Le job Jenkins expose une action manuelle `verify-backup` qui enchaîne la
+vérification locale puis la vérification S3. En développement, lancez
+`restore.sh verify` depuis un agent qui charge la configuration Infisical de la
+cible. Exécutez aussi un exercice après un changement de version majeure de
+PostgreSQL, MongoDB ou Restic.
 
 Le mode `restore` remplace les données de la stack. Il commence par la même
 vérification complète, puis exige que `RESTORE_CONFIRM` corresponde au nom de
