@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Sauvegarde 3-2-1 de PostgreSQL, MongoDB et des fichiers televerses.
+# Sauvegarde de PostgreSQL, MongoDB et des fichiers televerses vers les
+# destinations Restic activees.
 
 set -euo pipefail
 set +x
@@ -8,17 +9,14 @@ script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 # shellcheck source=deployment/backup-common.sh
 source "$script_dir/backup-common.sh"
 
-case "${BACKUP_ENABLED:-false}" in
-    true) ;;
-    false)
-        if [[ "${BACKUP_REQUIRE_ENABLED:-false}" == true ]]; then
-            backup_die "BACKUP_ENABLED doit valoir true pour executer le job de sauvegarde planifie."
-        fi
-        printf 'Sauvegarde desactivee : BACKUP_ENABLED ne vaut pas true.\n'
-        exit 0
-        ;;
-    *) backup_die "BACKUP_ENABLED doit valoir true ou false." ;;
-esac
+backup_validate_destination_flags
+if ! backup_has_enabled_destination; then
+    if [[ "${BACKUP_REQUIRE_ENABLED:-false}" == true ]]; then
+        backup_require_enabled_destination
+    fi
+    printf 'Sauvegarde desactivee : aucune destination ne vaut true.\n'
+    exit 0
+fi
 
 backup_restore_pipeline_metadata
 backup_require LXP_DEPLOYMENT_NAME
@@ -143,46 +141,76 @@ docker run --rm \
         } > manifest.txt
     '
 
-backup_ensure_repository backup_restic_local
-backup_ensure_repository backup_restic_s3
+[[ "${BACKUP_LOCAL_ENABLED:-false}" != true ]] \
+    || backup_ensure_repository backup_restic_local
+[[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" != true ]] \
+    || backup_ensure_repository backup_restic_external_volume
+[[ "${BACKUP_S3_ENABLED:-false}" != true ]] \
+    || backup_ensure_repository backup_restic_s3
 
 backup_sources=(
     -v "$staging_volume:/source/databases:ro"
     -v "$DEPLOY_PATH/uploads:/source/uploads:ro"
 )
 
-printf 'Ecriture de la copie locale sur le disque de sauvegarde...\n'
-docker run --rm \
-    -e RESTIC_PASSWORD \
-    -v "$BACKUP_LOCAL_REPOSITORY:/repository" \
-    "${backup_sources[@]}" \
-    "$BACKUP_RESTIC_IMAGE" -r /repository backup \
-        --host "$LXP_DEPLOYMENT_NAME" \
-        --tag "$backup_tag" --tag "$BACKUP_REASON" \
-        /source/databases /source/uploads
+backup_write_filesystem_repository() {
+    local repository_path="$1" description="$2"
+    printf 'Ecriture de la copie %s...\n' "$description"
+    docker run --rm \
+        -e RESTIC_PASSWORD \
+        -v "$repository_path:/repository" \
+        "${backup_sources[@]}" \
+        "$BACKUP_RESTIC_IMAGE" -r /repository backup \
+            --host "$LXP_DEPLOYMENT_NAME" \
+            --tag "$backup_tag" --tag "$BACKUP_REASON" \
+            /source/databases /source/uploads
+}
 
-printf 'Ecriture de la copie hors site S3...\n'
-docker run --rm \
-    -e RESTIC_PASSWORD \
-    -e AWS_ACCESS_KEY_ID \
-    -e AWS_SECRET_ACCESS_KEY \
-    -e AWS_DEFAULT_REGION \
-    "${backup_sources[@]}" \
-    "$BACKUP_RESTIC_IMAGE" -r "$BACKUP_S3_REPOSITORY" backup \
-        --host "$LXP_DEPLOYMENT_NAME" \
-        --tag "$backup_tag" --tag "$BACKUP_REASON" \
-        /source/databases /source/uploads
+if [[ "${BACKUP_LOCAL_ENABLED:-false}" == true ]]; then
+    backup_write_filesystem_repository "$BACKUP_LOCAL_REPOSITORY" \
+        'locale sur le disque du VPS'
+fi
+if [[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" == true ]]; then
+    backup_write_filesystem_repository "$BACKUP_EXTERNAL_VOLUME_REPOSITORY" \
+        'locale sur le volume externe'
+fi
+if [[ "${BACKUP_S3_ENABLED:-false}" == true ]]; then
+    printf 'Ecriture de la copie hors site S3...\n'
+    docker run --rm \
+        -e RESTIC_PASSWORD \
+        -e AWS_ACCESS_KEY_ID \
+        -e AWS_SECRET_ACCESS_KEY \
+        -e AWS_DEFAULT_REGION \
+        "${backup_sources[@]}" \
+        "$BACKUP_RESTIC_IMAGE" -r "$BACKUP_S3_REPOSITORY" backup \
+            --host "$LXP_DEPLOYMENT_NAME" \
+            --tag "$backup_tag" --tag "$BACKUP_REASON" \
+            /source/databases /source/uploads
+fi
 
-backup_snapshot_exists backup_restic_local "$backup_tag"
-backup_snapshot_exists backup_restic_s3 "$backup_tag"
+[[ "${BACKUP_LOCAL_ENABLED:-false}" != true ]] \
+    || backup_snapshot_exists backup_restic_local "$backup_tag"
+[[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" != true ]] \
+    || backup_snapshot_exists backup_restic_external_volume "$backup_tag"
+[[ "${BACKUP_S3_ENABLED:-false}" != true ]] \
+    || backup_snapshot_exists backup_restic_s3 "$backup_tag"
 
 printf 'Application de la retention 7 jours, 8 semaines et 12 mois...\n'
-backup_restic_local forget \
-    --host "$LXP_DEPLOYMENT_NAME" --keep-within 7d --keep-weekly 8 --keep-monthly 12 --prune
-backup_restic_s3 forget \
-    --host "$LXP_DEPLOYMENT_NAME" --keep-within 7d --keep-weekly 8 --keep-monthly 12 --prune
+if [[ "${BACKUP_LOCAL_ENABLED:-false}" == true ]]; then
+    backup_restic_local forget \
+        --host "$LXP_DEPLOYMENT_NAME" --keep-within 7d --keep-weekly 8 --keep-monthly 12 --prune
+    backup_restic_local check
+fi
+if [[ "${BACKUP_EXTERNAL_VOLUME_ENABLED:-false}" == true ]]; then
+    backup_restic_external_volume forget \
+        --host "$LXP_DEPLOYMENT_NAME" --keep-within 7d --keep-weekly 8 --keep-monthly 12 --prune
+    backup_restic_external_volume check
+fi
+if [[ "${BACKUP_S3_ENABLED:-false}" == true ]]; then
+    backup_restic_s3 forget \
+        --host "$LXP_DEPLOYMENT_NAME" --keep-within 7d --keep-weekly 8 --keep-monthly 12 --prune
+    backup_restic_s3 check
+fi
 
-backup_restic_local check
-backup_restic_s3 check
-
-printf 'Sauvegarde 3-2-1 terminee : %s (%s).\n' "$backup_set_id" "$BACKUP_REASON"
+printf 'Sauvegarde terminee sur toutes les destinations activees : %s (%s).\n' \
+    "$backup_set_id" "$BACKUP_REASON"

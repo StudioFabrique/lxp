@@ -74,12 +74,7 @@ pipeline {
                                 INFISICAL_SECRET_PATHS="/ci /runtime /backup" ./deployment/with-infisical.sh ./deployment/list-backups.sh
                                 ;;
                             verify-backup)
-                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" ./deployment/with-infisical.sh sh -eu -c '
-                                    printf "Verification du depot local...\\n"
-                                    RESTORE_SOURCE=local ./deployment/restore.sh verify
-                                    printf "Verification du depot S3...\\n"
-                                    RESTORE_SOURCE=s3 ./deployment/restore.sh verify
-                                '
+                                INFISICAL_SECRET_PATHS="/ci /runtime /backup" ./deployment/with-infisical.sh ./deployment/restore.sh verify-enabled
                                 ;;
                             *)
                                 echo "Operation inconnue : ${OPERATION}" >&2
