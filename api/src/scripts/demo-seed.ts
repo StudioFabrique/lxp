@@ -28,14 +28,14 @@ const PROFILES = [
     role: "admin",
     interfaceRole: "interface:admin",
     firstname: "Camille",
-    lastname: "Démonstration",
+    lastname: "Démo",
   },
   {
     variable: "DEMO_STUDENT_EMAIL",
     role: "student",
     interfaceRole: "interface:student",
     firstname: "Alex",
-    lastname: "Découverte",
+    lastname: "Démo",
   },
 ] as const;
 
@@ -173,7 +173,10 @@ async function ensureEnrollment(userId: string) {
 
   const idMdb = groupeMongo.id as string;
   const groupePg =
-    (await prisma.group.findFirst({ where: { idMdb }, select: { id: true } })) ??
+    (await prisma.group.findFirst({
+      where: { idMdb },
+      select: { id: true },
+    })) ??
     (await prisma.group.create({ data: { idMdb }, select: { id: true } }));
 
   await prisma.groupsOnParcours.createMany({
