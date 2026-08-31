@@ -27,9 +27,6 @@ bash -n \
     "$repository_root/deployment/backup.sh" \
     "$repository_root/deployment/restore.sh"
 
-if grep -q '^[[:space:]]*schedule:' "$repository_root/.github/workflows/backup-dev.yml"; then
-    fail "le workflow de developpement contient encore une planification"
-fi
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "le job Jenkins planifie n'est pas limite a la production"
 

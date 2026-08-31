@@ -167,9 +167,8 @@ neuve, le script accepte l'absence des deux conteneurs de base et le pipeline
 crée le premier snapshot après le démarrage. L'absence d'une seule base signale
 une cible partiellement initialisée et arrête le job.
 
-En développement, les sauvegardes automatiques s'exécutent pendant le
-déploiement. `.github/workflows/backup-dev.yml` garde un déclenchement manuel
-pour créer un snapshot ou tester les dépôts.
+En développement, `deploy-dev.yml` exécute les sauvegardes avant et après le
+déploiement. Aucun workflow de sauvegarde séparé ne tourne sur cette cible.
 
 En production, créez un job par cible à partir de
 `deployment/backup.Jenkinsfile`. Lancez une première sauvegarde manuelle avec
@@ -210,9 +209,10 @@ RESTORE_SOURCE=local RESTORE_SNAPSHOT=<id-restic> \
   ./deployment/restore.sh verify
 ```
 
-GitHub Actions et le job Jenkins exposent ces deux vérifications comme actions
-manuelles. Exécutez aussi un exercice après un changement de version majeure
-de PostgreSQL, MongoDB ou Restic.
+Le job Jenkins expose ces deux vérifications comme actions manuelles. En
+développement, lancez `restore.sh verify` depuis un agent qui charge la
+configuration Infisical de la cible. Exécutez aussi un exercice après un
+changement de version majeure de PostgreSQL, MongoDB ou Restic.
 
 Le mode `restore` remplace les données de la stack. Il commence par la même
 vérification complète, puis exige que `RESTORE_CONFIRM` corresponde au nom de
