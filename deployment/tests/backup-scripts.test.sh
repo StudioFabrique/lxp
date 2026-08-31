@@ -55,6 +55,9 @@ grep -Fq "cron('H H/6 * * *')" \
     "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "backup ne reactive pas le cron Jenkins"
 
+[[ "$(grep -c '^[[:space:]]*script {$' "$repository_root/deployment/backup.Jenkinsfile")" -eq 2 ]] \
+    || fail "les appels dynamiques a properties ne sont pas encapsules dans des blocs script"
+
 if grep -Fq 'currentBuild.rawBuild' "$repository_root/deployment/backup.Jenkinsfile"; then
     fail "la gestion du cron depend encore d'une approbation Groovy interne"
 fi

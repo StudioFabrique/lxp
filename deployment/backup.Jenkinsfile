@@ -45,7 +45,9 @@ pipeline {
             }
             steps {
                 echo 'Desactivation des prochains passages cron...'
-                properties([pipelineTriggers([])])
+                script {
+                    properties([pipelineTriggers([])])
+                }
                 echo 'Planification desactivee. Le job reste disponible manuellement et les snapshots existants sont conserves.'
             }
         }
@@ -91,11 +93,13 @@ pipeline {
                 equals expected: 'backup', actual: params.OPERATION
             }
             steps {
-                properties([
-                    pipelineTriggers([
-                        cron('H H/6 * * *')
+                script {
+                    properties([
+                        pipelineTriggers([
+                            cron('H H/6 * * *')
+                        ])
                     ])
-                ])
+                }
                 echo 'Planification des sauvegardes activee toutes les six heures.'
             }
         }
