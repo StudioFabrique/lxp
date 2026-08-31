@@ -1,0 +1,130 @@
+<h2><strong>Gestion des comptes utilisateurs</strong></h2>
+<h3><strong>US-01 : Inscription et connexion des utilisateurs</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir créer un compte et me connecter,<br><strong>afin de</strong> gérer mes commandes et suivre mes achats.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Un formulaire d’inscription est disponible avec les champs <strong>Nom, Prénom, Email, Mot de passe</strong>.</li>
+<li>Un email de confirmation est envoyé après l’inscription.</li>
+<li>L’utilisateur peut se connecter avec son email et son mot de passe.</li>
+<li>L’utilisateur peut récupérer son mot de passe en cas d’oubli.</li>
+</ul>
+<h3><strong>US-02 : Gestion du profil utilisateur</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir mettre à jour mes informations personnelles,<br><strong>afin de</strong> gérer mes coordonnées et préférences de commande.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut modifier son <strong>adresse, numéro de téléphone, mot de passe</strong>.</li>
+<li>Un message de confirmation apparaît après la mise à jour.</li>
+<li>La suppression du compte est possible avec confirmation.</li>
+</ul>
+<hr>
+<h2><strong>Parcours d'achat &amp; Produits</strong></h2>
+<h3><strong>US-03 : Parcourir le catalogue de produits</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir consulter une liste de produits,<br><strong>afin de</strong> choisir ceux qui m’intéressent.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Une page catalogue affiche les <strong>produits avec images, noms, prix</strong>.</li>
+<li>Un système de <strong>filtres et tri</strong> est disponible (prix, catégorie, popularité).</li>
+<li>Les produits sont <strong>classés par catégories</strong> (escargots frais, cuisinés, sauces).</li>
+</ul>
+<h3><strong>US-04 : Voir les détails d’un produit</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir voir la fiche détaillée d’un produit,<br><strong>afin de</strong> connaître ses caractéristiques avant d’acheter.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>La page produit affiche <strong>une image, une description, le prix et la disponibilité</strong>.</li>
+<li>Un bouton "Ajouter au panier" est visible.</li>
+<li>Les <strong>avis clients</strong> sont affichés sur la page produit.</li>
+</ul>
+<h3><strong>US-05 : Ajouter un produit au panier</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir ajouter un produit à mon panier,<br><strong>afin de</strong> finaliser mon achat plus tard.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Un clic sur le bouton <strong>"Ajouter au panier"</strong> enregistre le produit.</li>
+<li>Un message de confirmation s’affiche.</li>
+<li>Le nombre d’articles dans le panier est mis à jour en temps réel.</li>
+</ul>
+<h3><strong>US-06 : Modifier mon panier</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir modifier le contenu de mon panier,<br><strong>afin de</strong> gérer mes achats avant le paiement.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut <strong>modifier la quantité</strong> d’un produit.</li>
+<li>L’utilisateur peut <strong>supprimer un produit du panier</strong>.</li>
+<li>Le total du panier est mis à jour dynamiquement.</li>
+</ul>
+<hr>
+<h2><strong>Catégorie : Paiement et Commande</strong></h2>
+<h3><strong>US-07 : Passer une commande</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir valider mon panier et finaliser mon achat,<br><strong>afin de</strong> recevoir mes produits.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut sélectionner <strong>une adresse de livraison</strong>.</li>
+<li>L’utilisateur peut <strong>choisir un mode de paiement sécurisé</strong> (CB, PayPal, virement).</li>
+<li>Un email de confirmation est envoyé après validation.</li>
+</ul>
+<h3><strong>US-08 : Suivi des commandes</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir suivre l’état de ma commande,<br><strong>afin de</strong> savoir quand je vais recevoir mon colis.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut voir le <strong>statut de la commande</strong> ("En préparation", "Expédiée", "Livrée").</li>
+<li>Un numéro de suivi est fourni lorsque la commande est expédiée.</li>
+</ul>
+<hr>
+<h2><strong>Livraison</strong></h2>
+<h3><strong>US-09 : Choix du mode de livraison</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> choisir mon mode de livraison,<br><strong>afin de</strong> recevoir ma commande selon mes préférences.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut choisir entre <strong>livraison standard et express</strong>.</li>
+<li>Le coût de la livraison est affiché avant le paiement.</li>
+<li>Un délai estimé est indiqué pour chaque mode de livraison.</li>
+</ul>
+<hr>
+<h2><strong>Gestion des stocks &amp; Administration</strong></h2>
+<h3><strong>US-10 : Gestion des stocks (Admin)</strong></h3>
+<p><strong>En tant que</strong> administrateur,<br><strong>je veux</strong> pouvoir gérer les stocks en temps réel,<br><strong>afin de</strong> mettre à jour la disponibilité des produits.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’administrateur peut <strong>ajouter, modifier ou supprimer</strong> un produit.</li>
+<li>Une alerte est envoyée lorsque le stock atteint un seuil critique.</li>
+<li>La mise à jour des stocks est automatique après chaque commande validée.</li>
+</ul>
+<h3><strong>US-11 : Gestion des commandes (Admin)</strong></h3>
+<p><strong>En tant que</strong> administrateur,<br><strong>je veux</strong> gérer les commandes des clients,<br><strong>afin de</strong> garantir un traitement efficace des livraisons.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’administrateur peut voir toutes les commandes dans un tableau de bord.</li>
+<li>Il peut <strong>modifier le statut</strong> d’une commande ("En attente", "Expédiée", "Livrée").</li>
+<li>Un email de notification est envoyé aux clients à chaque mise à jour.</li>
+</ul>
+<hr>
+<h2><strong>Expérience utilisateur</strong></h2>
+<h3><strong>US-12 : Laisser un avis sur un produit</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir laisser un avis sur un produit,<br><strong>afin de</strong> partager mon expérience avec d’autres clients.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>L’utilisateur peut attribuer une <strong>note (1 à 5 étoiles)</strong>.</li>
+<li>Un commentaire peut être ajouté avec un texte libre.</li>
+<li>L’administrateur peut <strong>modérer les avis</strong> avant publication.</li>
+</ul>
+<h3><strong>US-13: Recevoir des recommandations personnalisées</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> voir des suggestions de produits basées sur mes achats,<br><strong>afin de</strong> découvrir d’autres produits qui pourraient m’intéresser.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Une section <strong>"Produits recommandés"</strong> apparaît sur la page produit.</li>
+<li>Les recommandations sont basées sur <strong>les achats précédents</strong> du client.</li>
+</ul>
+<hr>
+<h2><strong>Contenu &amp; Marketing</strong></h2>
+<h3><strong>US-14 : Lire des articles de blog sur les escargots</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> accéder à des articles de blog,<br><strong>afin de</strong> découvrir des recettes et conseils sur les escargots.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Le blog affiche une liste d’articles classés par catégories.</li>
+<li>Chaque article comprend <strong>un titre, une image, un contenu et des commentaires</strong>.</li>
+</ul>
+<h3><strong>US-15 : Recevoir une newsletter avec des offres spéciales</strong></h3>
+<p><strong>En tant que</strong> client,<br><strong>je veux</strong> pouvoir m’abonner à une newsletter,<br><strong>afin de</strong> recevoir des offres et nouveautés.</p>
+<p>✅ <strong>Critères d’acceptation :</strong></p>
+<ul>
+<li>Un champ d’inscription à la newsletter est disponible en bas du site.</li>
+<li>Les clients inscrits reçoivent une <strong>newsletter hebdomadaire avec des promotions</strong>.</li>
+</ul>

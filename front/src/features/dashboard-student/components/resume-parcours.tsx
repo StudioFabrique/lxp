@@ -37,7 +37,7 @@ const ResumeParcours = () => {
               <div className="flex flex-col h-[17.5em] justify-between gap-5">
                 <Link
                   to={`/${currentRoute[0]}/parcours`}
-                  className="z-20 btn btn-sm"
+                  className="z-10 btn btn-sm"
                 >
                   <List />
                   <p>Accéder à la liste des autres parcours</p>
@@ -48,7 +48,7 @@ const ResumeParcours = () => {
                       ? `/${currentRoute[0]}/parcours/view/${parcours.id}`
                       : `/${currentRoute[0]}/parcours`
                   }
-                  className="z-20 btn btn-primary text-white"
+                  className="z-10 btn btn-primary text-white"
                 >
                   <PlayCircleIcon />
                   <p>Accéder au parcours</p>

@@ -1,0 +1,58 @@
+<h3>Approche de conception descendante</h3>
+<p>L'approche descendante part du système dans son ensemble, au niveau le plus élevé, puis un processus de décomposition s'amorce pour descendre progressivement vers les détails. Le point de départ est le niveau d'abstraction le plus élevé. À mesure que la décomposition progresse, la conception devient plus détaillée, jusqu'à atteindre le niveau des composants.</p>
+<p>Une conception utilisant l'approche descendante est généralement réalisée de manière itérative, avec des niveaux de décomposition croissants. Elle est particulièrement efficace si le domaine est bien compris. Cette approche systématique est privilégiée par les entreprises car elle permet de gérer des projets vastes et complexes et parce que la méthode de conception est planifiée.</p>
+<p>Une approche systématique de la conception d'architecture est attrayante pour les entreprises car elle peut faciliter l'estimation des délais et des budgets. Cependant, une approche descendante stricte, qui exige une conception d'architecture initiale importante, est devenue moins courante dans l'architecture logicielle moderne.</p>
+<h4>Comment fonctionne l'approche descendante&nbsp;?</h4>
+<p>L'approche descendante fonctionne en :</p>
+<ul>
+<li>Décomposer le problème en composantes principales,</li>
+<li>Affiner chaque composante en sous-composantes plus petites</li>
+<li>Poursuivre ce processus jusqu'à ce que chaque partie soit suffisamment simple pour être implémentée.</li>
+</ul>
+<h4>Avantages de l'approche Descendante</h4>
+<ul>
+<li><p>Simplification des problèmes complexes : Décomposer les problèmes en parties plus petites facilite l'identification des actions à entreprendre.</p>
+</li>
+<li><p>Identification aisée des exigences : À chaque étape d'affinage, les nouvelles parties deviennent moins complexes et donc plus faciles à résoudre.</p>
+</li>
+<li><p>Promotion de la réutilisabilité : Certaines parties de la solution peuvent s'avérer réutilisables.</p>
+</li>
+<li><p>Facilitation de la collaboration : Décomposer les problèmes permet à plusieurs personnes de les résoudre.</p>
+</li>
+</ul>
+<h4>Inconvénients de l'approche descendante</h4>
+<p>Une approche strictement descendante présente le risque d'une conception initiale trop lourde (BDUF), parfois appelée conception initiale trop lourde (BUFD). Les logiciels sont complexes et il peut être difficile de concevoir l'architecture complète en amont. Des défauts de conception ou des fonctionnalités manquantes dans l'architecture peuvent ne pas être découverts avant une phase ultérieure du processus, lors de la conception ou de l'implémentation des composants. Si des modifications architecturales sont nécessaires à des niveaux supérieurs après l'avancement de certains travaux, il sera plus difficile de les effectuer.</p>
+<h3>Approche de conception Ascendante</h3>
+<p>Contrairement à l'approche descendante, l'approche ascendante part des composants nécessaires à la solution, puis la conception progresse vers des niveaux d'abstraction supérieurs. Différents composants peuvent ensuite être utilisés ensemble, comme des briques de construction, pour créer d'autres composants et, finalement, des structures plus complexes. Le processus se poursuit jusqu'à ce que toutes les exigences soient satisfaites.</p>
+<p>À la différence de l'approche descendante, qui débute par la structure de haut niveau, l'approche ascendante ne repose pas sur une conception architecturale préalable. L'architecture émerge au fur et à mesure de l'avancement du travail. C'est pourquoi on parle parfois de conception émergente ou d'architecture émergente.</p>
+<p>L'approche ascendante ne requiert pas une parfaite maîtrise du domaine, car l'équipe se concentre sur une petite partie à la fois. Le système se développe progressivement à mesure que l'équipe approfondit sa connaissance du domaine et de la solution.</p>
+<h4>Comment fonctionne l'approche ascendante&nbsp;?</h4>
+<p>L'approche ascendante fonctionne en&nbsp;:</p>
+<ul>
+<li>Identifiant et spécifiant les composants (ou objets) de plus petite taille.</li>
+<li>Liant ces éléments pour former des composants plus grands.</li>
+<li>Les intégrant progressivement pour constituer le système complet.</li>
+</ul>
+<p>Cette méthode privilégie la création de composants de bas niveau bien définis et réutilisables avant de décider de leur intégration dans un système de niveau supérieur.</p>
+<h4>Avantages de l'approche ascendante</h4>
+<p>L'un des avantages de l'approche ascendante réside dans sa plus grande simplicité. L'équipe se concentre sur des éléments individuels et ne développe que ce dont elle a besoin pour une itération donnée.</p>
+<ul>
+<li>Réutilisation des composants de bas niveau&nbsp;: Les décisions concernant les utilitaires de bas niveau réutilisables sont prises dès les premières étapes de la conception.</li>
+<li>Résolution ciblée des problèmes&nbsp;: Les développeurs peuvent se concentrer en priorité sur la résolution de problèmes plus petits et plus isolés.</li>
+<li>Modularité accrue&nbsp;: L’approche modulaire facilite la mise à jour des composants individuels sans impacter l’ensemble du système.</li>
+</ul>
+<h4>Inconvénients de l'approche ascendante</h4>
+<p>L'approche ascendante, ou émergente, part du principe que le changement est peu coûteux. Les méthodologies et pratiques agiles proposent une approche qui anticipe le changement et s'y adapte. Cependant, selon la nature du changement, la refonte de l'architecture logicielle peut s'avérer très onéreuse.</p>
+<h3>Quand utiliser le modèle de conception descendant (Top-Down) ou ascendant (Bottom-Up)&nbsp;?</h3>
+<p>Utilisez le modèle de conception <strong>descendant</strong> lorsque&nbsp;:</p>
+<ul>
+<li>Vous devez développer des systèmes vastes et complexes où l’architecture de haut niveau est définie dès le début.</li>
+<li>La structure globale du système est essentielle avant de traiter les composants individuels.</li>
+<li>Vous travaillez dans un environnement de programmation plutôt procédural ou structuré.</li>
+</ul>
+<p>Utilisez le modèle de conception <strong>ascendant</strong> lorsque&nbsp;:</p>
+<ul>
+<li>Vous souhaitez vous concentrer sur les composants individuels et les intégrer progressivement dans un système complet.</li>
+<li>Vous travaillez avec des langages de programmation orientée objet (POO) et souhaitez tirer parti de la modularité et de la réutilisabilité des objets.</li>
+<li>Le système est composé de composants plus petits et réutilisables qui doivent être intégrés.</li>
+</ul>

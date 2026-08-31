@@ -3,14 +3,9 @@ import { PropsWithChildren, ReactNode } from "react";
 type Props = {
   sidebar: ReactNode;
   loader: ReactNode;
-  topbar?: ReactNode;
 };
 
-const AppWrapper = ({
-  children,
-  sidebar,
-  topbar,
-}: PropsWithChildren<Props>) => {
+const AppWrapper = ({ children, sidebar }: PropsWithChildren<Props>) => {
   return (
     <div className="flex flex-col h-screen p-2 bg-base-100 box-border">
       <div className="flex gap-2 h-full overflow-hidden">
@@ -21,9 +16,6 @@ const AppWrapper = ({
           id="main-scroll-container"
           className="min-w-0 overflow-y-auto w-full h-full relative"
         >
-          {/* Topbar optionnelle */}
-          {topbar && <header className="sticky top-0 z-10">{topbar}</header>}
-
           {/* Children */}
 
           <div className="flex min-w-0 justify-center">

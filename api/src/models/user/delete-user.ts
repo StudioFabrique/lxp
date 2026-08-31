@@ -1,84 +1,136 @@
-/**
- * Deletes a user from the system
- *
- * This function removes a user from both MongoDB and Prisma databases.
- * It handles different user types (admin vs student) appropriately and
- * includes safety checks to prevent self-deletion and handle errors.
- *
- * @param {string} userId - ID of the user to delete
- * @param {string} connectedId - ID of the currently connected user making the request
- *
- * @throws {Object} Error with statusCode 400 if user tries to delete their own account
- * @throws {Object} Error with statusCode 404 if user doesn't exist
- * @throws {Object} Error with statusCode 500 if deletion fails in MongoDB
- *
- * @returns {Promise<void>} Resolves when user is successfully deleted
- */
-
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
+/**
+ * Supprime un utilisateur et les données PostgreSQL qui représentent son rôle.
+ *
+ * Les contenus créés par un administrateur ou un formateur sont conservés :
+ * leur propriété est transférée à l'utilisateur qui effectue la suppression.
+ * Les affectations pédagogiques d'un formateur sont, elles, détachées.
+ * Les traces d'apprentissage d'un apprenant sont supprimées par les cascades
+ * déclarées dans le schéma Prisma.
+ */
 export default async function deleteUser(userId: string, connectedId: string) {
-  // Prevent users from deleting their own account
-  if (userId === connectedId)
+  if (userId === connectedId) {
     throw {
       message: "Vous ne pouvez pas supprimer votre propre compte.",
       statusCode: 400,
     };
+  }
 
-  // Find the user to delete with their roles
-  const userToDelete = await User.findOne({ _id: userId }).populate("roles");
+  const userToDelete = await User.findById(userId).select({ _id: 1 }).lean();
 
-  // Check if user exists
-  if (!userToDelete)
+  if (!userToDelete) {
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+  }
 
-  let prismaUser: any;
+  await prisma.$transaction(async (tx) => {
+    /*
+     * Un formateur peut être affecté à plusieurs niveaux. Les tables de
+     * liaison utilisent RESTRICT côté Contact : on les vide explicitement
+     * avant de supprimer sa fiche PostgreSQL.
+     */
+    const contact = await tx.contact.findUnique({
+      where: { idMdb: userId },
+      select: { id: true },
+    });
 
-  const transaction = await prisma.$transaction(async (tx) => {
-    // Handle admin users (rank <= 2) differently from regular users
-    if (userToDelete.roles[0].rank <= 2) {
-      // Get admin from Prisma database
-      prismaUser = await tx.admin.findFirst({
-        where: { idMdb: userId },
+    if (contact) {
+      await tx.contactsOnCourse.deleteMany({
+        where: { contactId: contact.id },
       });
-
-      if (prismaUser) {
-        await tx.admin.deleteMany({ where: { idMdb: userId } });
-      }
-
-      const prismaContact = await tx.contact.findFirst({
-        where: { idMdb: userId },
+      await tx.contactsOnModule.deleteMany({
+        where: { contactId: contact.id },
       });
-
-      if (prismaContact) {
-        try {
-          await tx.contact.deleteMany({ where: { idMdb: userId } });
-        } catch (error) {
-          throw {
-            statusCode: 500,
-            message:
-              "Une erreur est survenue lors de la suppression de la ressource pédagogique. Vérifiez qu'il ne soit pas lié à du contenu pédagogique.",
-          };
-        }
-      }
-    } else {
-      // Get student from Prisma database
-      prismaUser = await tx.student.findFirst({
-        where: { idMdb: userId },
+      await tx.contactsOnParcours.deleteMany({
+        where: { contactId: contact.id },
       });
-      // Delete from Prisma student table
-      if (prismaUser) await tx.student.deleteMany({ where: { idMdb: userId } });
+      await tx.contact.delete({ where: { id: contact.id } });
     }
 
-    try {
-      // Delete user from MongoDB
-      await User.deleteOne().where({ _id: userId });
-    } catch (error) {
+    // Ancienne représentation, encore présente dans certaines installations.
+    await tx.teacher.deleteMany({ where: { idMdb: userId } });
+
+    /*
+     * Admin sert aussi de propriétaire technique aux contenus créés par les
+     * formateurs. Supprimer directement cette ligne déclenche notamment
+     * Formation_adminId_fkey (RESTRICT). On transfère donc toutes les
+     * références vers l'administrateur connecté avant la suppression.
+     */
+    const adminsToDelete = await tx.admin.findMany({
+      where: { idMdb: userId },
+      select: { id: true },
+    });
+
+    if (adminsToDelete.length > 0) {
+      const replacementAdmin = await tx.admin.findFirst({
+        where: { idMdb: connectedId },
+        select: { id: true },
+      });
+
+      if (!replacementAdmin) {
+        throw {
+          statusCode: 409,
+          message:
+            "Impossible de supprimer cet utilisateur : aucun autre compte ne peut reprendre ses contenus pédagogiques.",
+        };
+      }
+
+      const adminIds = adminsToDelete.map(({ id }) => id);
+      const fromDeletedAdmins = { in: adminIds };
+
+      await tx.activity.updateMany({
+        where: { authorId: fromDeletedAdmins },
+        data: { authorId: replacementAdmin.id },
+      });
+      await tx.bonusActivity.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.course.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.formation.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.lesson.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.mediatheque.updateMany({
+        where: { authorId: fromDeletedAdmins },
+        data: { authorId: replacementAdmin.id },
+      });
+      await tx.module.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.parcours.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.resource.updateMany({
+        where: { adminId: fromDeletedAdmins },
+        data: { adminId: replacementAdmin.id },
+      });
+      await tx.admin.deleteMany({ where: { id: { in: adminIds } } });
+    }
+
+    // Les accomplissements et autres traces progressives suivent en cascade.
+    await tx.student.deleteMany({ where: { idMdb: userId } });
+
+    /*
+     * MongoDB n'est pas transactionnel avec PostgreSQL. L'opération est placée
+     * en dernier dans le callback : toute erreur Mongo annule les changements
+     * Prisma tant que leur transaction n'est pas encore validée.
+     */
+    const deletion = await User.deleteOne({ _id: userId });
+    if (deletion.deletedCount !== 1) {
       throw {
-        statusCode: 500,
-        message:
-          "Une erreur est survenue lors de la suppression de l'utilisateur.",
+        statusCode: 404,
+        message: "L'utilisateur n'existe plus.",
       };
     }
   });

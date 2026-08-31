@@ -58,8 +58,14 @@ const UserHome = () => {
     onRefreshData();
   }, [onRefreshData]);
 
-  const { onDeleteOne, onSendInvitation, onSendResetPassword, isDeleting } =
-    useUserActions(refreshAndClearSelection);
+  const {
+    onDeleteOne,
+    onSendInvitation,
+    onSendResetPassword,
+    isDeleting,
+    deleteError,
+    resetDeleteError,
+  } = useUserActions(refreshAndClearSelection);
 
   const userToDelete = useMemo(
     () => data.find((u) => u._id === idToDelete),
@@ -89,19 +95,49 @@ const UserHome = () => {
   const columns = useMemo(
     () =>
       getUsersColumns(
-        (id) => setIdToDelete(id),
+        (id) => {
+          resetDeleteError();
+          setIdToDelete(id);
+        },
         (id) => setIdToResendInvitation(id),
         (id) => setIdToResetPassword(id),
       ),
-    [],
+    [resetDeleteError],
   );
 
   const handleConfirmSingleDelete = async () => {
     if (idToDelete) {
-      onDeleteOne(idToDelete);
-      setIdToDelete(null);
+      try {
+        await onDeleteOne(idToDelete);
+        setIdToDelete(null);
+      } catch {
+        // Le toast et le message de la modale sont alimentés par la mutation.
+      }
     }
   };
+
+  const handleCancelSingleDelete = () => {
+    setIdToDelete(null);
+    resetDeleteError();
+  };
+
+  const deleteWarning = useMemo(() => {
+    if (!userToDelete) return undefined;
+
+    if (userToDelete.roles.some((role) => role.rank === 3)) {
+      return "Ses accomplissements, résultats de quiz et historiques de progression seront également supprimés.";
+    }
+
+    if (userToDelete.roles.some((role) => role.rank === 2)) {
+      return "Le formateur sera détaché de ses parcours, modules et cours. Les contenus qu’il a créés seront conservés et transférés.";
+    }
+
+    if (userToDelete.roles.some((role) => role.rank === 1)) {
+      return "Les contenus créés par cet administrateur seront conservés et transférés.";
+    }
+
+    return undefined;
+  }, [userToDelete]);
 
   const handleConfirmResetPassword = async () => {
     if (idToResetPassword) {
@@ -245,7 +281,7 @@ const UserHome = () => {
 
       <TableActionsModal
         isOpen={!!idToDelete}
-        onCancel={() => setIdToDelete(null)}
+        onCancel={handleCancelSingleDelete}
         title="Confirmation de suppression"
         description="Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible."
         descList={
@@ -253,6 +289,8 @@ const UserHome = () => {
             ? [`${userToDelete.firstname} ${userToDelete.lastname}`]
             : undefined
         }
+        alertMessageBottom={deleteWarning}
+        error={deleteError}
       >
         <button
           className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
