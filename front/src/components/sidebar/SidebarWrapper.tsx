@@ -3,6 +3,8 @@ import SidebarBottom from "./SidebarBottom";
 import { ThemeContext } from "../../store/ThemeProvider";
 import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../config/urls";
 import { cn } from "../../utils/cn";
+import { useDemoMode } from "../../store/DemoContext";
+import DemoModeIndicator from "../../features/demo/components/DemoModeIndicator";
 
 const SidebarWrapper = ({
   children,
@@ -12,6 +14,7 @@ const SidebarWrapper = ({
   interfaceType: string;
 }) => {
   const { theme } = useContext(ThemeContext);
+  const { demoMode } = useDemoMode();
 
   const [logoExists, setExists] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -65,6 +68,7 @@ const SidebarWrapper = ({
             alt="Company logo"
           />
         )}
+        {demoMode && <DemoModeIndicator />}
         {children}
       </div>
       <SidebarBottom interfaceType={interfaceType} />

@@ -2,12 +2,11 @@ import { type Response, type NextFunction } from "express";
 import { badQuery } from "../../utils/constantes.ts";
 import deleteUser from "../../models/user/delete-user.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
-import { stat } from "fs";
 
 export default async function httpDeleteUser(
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const { id } = req.params;
 
@@ -28,11 +27,13 @@ export default async function httpDeleteUser(
       },
     });
   } catch (error: any) {
+    const isExpectedError = typeof error?.statusCode === "number";
 
     next({
-      statusCode: error.statusCode ?? 500,
-      message:
-        error.message ?? "Erreur lors de la suppression de l'utilisateur",
+      statusCode: isExpectedError ? error.statusCode : 500,
+      message: isExpectedError
+        ? error.message
+        : "Une erreur est survenue lors de la suppression de l'utilisateur.",
     });
   }
 }

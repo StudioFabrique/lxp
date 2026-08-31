@@ -18,7 +18,7 @@ model Accomplishment {
   showToOtherStudent   Boolean  @default(false)
   courseId             Int?
   course               Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student              Student  @relation(fields: [studentId], references: [id])
+  student              Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
 model Activity {
@@ -214,7 +214,7 @@ model LessonRating {
   lessonId  Int
   studentId Int
   lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
 model LessonRead {
@@ -226,7 +226,7 @@ model LessonRead {
   lessonId     Int
   studentId    Int
   lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  student      Student   @relation(fields: [studentId], references: [id])
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([lessonId, studentId])
   @@index([studentId, lastOpenedAt])
@@ -507,7 +507,7 @@ model ModuleRead {
   moduleId     Int
   studentId    Int
   module       Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  student      Student   @relation(fields: [studentId], references: [id])
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([moduleId, studentId])
   @@index([studentId, lastOpenedAt])
@@ -523,7 +523,7 @@ model CourseRead {
   courseId     Int
   studentId    Int
   course       Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student      Student   @relation(fields: [studentId], references: [id])
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, studentId])
   @@index([studentId, lastOpenedAt])
@@ -539,7 +539,7 @@ model ActivityRead {
   activityId   Int
   studentId    Int
   activity     Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  student      Student   @relation(fields: [studentId], references: [id])
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([activityId, studentId])
   @@index([studentId, lastOpenedAt])
@@ -552,7 +552,7 @@ model QuizAttempt {
   quizId         Int
   quiz           Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
   studentId      Int
-  student        Student      @relation(fields: [studentId], references: [id])
+  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
   origin         String
   startedAt      DateTime     @default(now())
   finishedAt     DateTime?

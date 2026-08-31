@@ -7,7 +7,6 @@ import AppWrapper from "../AppWrapper";
 import FadeWrapper from "../FadeWrapper";
 import OnboardingTour from "../../../features/onboarding/OnboardingTour";
 import DemoTour from "../../../features/demo/components/DemoTour";
-import DemoBanner from "../../../features/demo/components/DemoBanner";
 import { useDemoMode } from "../../../store/DemoContext";
 
 const AdminLayout = () => {
@@ -22,7 +21,6 @@ const AdminLayout = () => {
         <AppWrapper
           sidebar={<Sidebar />}
           loader={<Loader />}
-          topbar={demoMode ? <DemoBanner /> : undefined}
         >
           <FadeWrapper>
             <RouteGuard layout={["admin", "teacher"]} />

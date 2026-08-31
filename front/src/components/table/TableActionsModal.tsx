@@ -64,7 +64,11 @@ const TableActionsModal = ({
           </button>
           {children}
         </div>
-        {error && <p>{error}</p>}
+        {error && (
+          <p className="mt-3 text-sm text-error" role="alert">
+            {error}
+          </p>
+        )}
       </div>
     </dialog>
   );

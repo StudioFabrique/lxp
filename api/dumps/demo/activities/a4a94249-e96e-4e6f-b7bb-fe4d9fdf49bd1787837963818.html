@@ -1,0 +1,111 @@
+<p dir="ltr" style="text-align: left;"><!-- obsidian --></p><p>L’architecture traditionnelle s’appuyait souvent sur une conception très en amont (BUFD, <em>Big Upfront Design</em>), où les architectes tentaient d’anticiper toutes les exigences futures avant l’implémentation.  </p>
+<p>Mais dans le monde actuel, qui évolue rapidement — marchés changeants, réglementations en évolution, technologies émergentes — cette approche échoue.</p><br><p></p><p dir="ltr" style="text-align: left;"></p>
+<p>L’architecture traditionnelle s’appuyait souvent sur une conception très en amont (BUFD, <em>Big Upfront Design</em>), où les architectes tentaient d’anticiper toutes les exigences futures avant l’implémentation. </p>
+<p>Mais dans le monde actuel, qui évolue rapidement — marchés changeants, réglementations en évolution, technologies émergentes — cette approche échoue.</p>
+<p></p>
+<p>À la place, nous avons besoin d’une architecture évolutive :</p>
+<ul>
+    <li>Des systèmes conçus pour s’adapter au changement de manière robuste et progressive.</li>
+    <li>Une priorité donnée à l’évolution incrémentale plutôt qu’aux réécritures massives.</li>
+    <li>Des principes qui permettent aux systèmes de grandir sans devenir fragiles.</li>
+</ul><br>
+<hr>
+<h4></h4>
+<h3>Qu'est-ce l’architecture évolutive ?</h3>
+<p></p>L’architecture évolutive (“evolutionary architecture”) part d’une idée simple : on considère le changement comme un besoin de premier ordre. Au lieu de “figer” une architecture au départ, on conçoit le système pour qu’il puisse évoluer par petites étapes, de manière guidée, sur plusieurs dimensions (technique, données, déploiement, organisation, etc.).<br><br>
+<h4>Qualités clés :</h4>
+<h5></h5>
+<ul>
+    <li>Modularité – de petites unités évoluent de façon indépendante.</li>
+    <li>Tests automatisés – un filet de sécurité pour un changement continu.</li>
+    <li>Observabilité – surveiller comment le système se comporte en production.</li>
+    <li>Fonctions de fitness – des critères mesurables pour valider les objectifs d’architecture.</li>
+</ul>
+<p>Ces quatre “qualités clés” sont des capacités opérationnelles qui rendent le changement fréquent possible sans casser le système. Elles sont liées : modularité réduit l’impact des changements, les tests donnent la sécurité, l’observabilité donne la réalité en prod, et les fitness functions rendent les objectifs d’architecture vérifiables.</p>
+<h5 data-heading="Modularité">Modularité</h5>
+<ul>
+    <li>Idée : découper le système en unités cohérentes et relativement autonomes (modules, services, bounded contexts) avec des frontières nettes. </li>
+    <li>Pourquoi c’est critique : si tout est couplé, chaque modification devient un “risque global” et coûte cher (coordination + tests + régressions). Avec de bons boundaries, un changement reste local.</li>
+</ul>
+<p>Concrètement, ça implique :</p>
+<ul>
+    <li>Ownership clair : une équipe “possède” un module/service et ses données.</li>
+    <li>Interfaces stables : API/événements versionnés, contrats explicites.</li>
+    <li>Dépendances contrôlées : pas d’accès direct à la DB d’un autre service, pas de “import” entre modules interdits.</li>
+    <li>Cohésion : un module fait une chose métier, pas un mélange.</li>
+</ul>
+<p>
+</p>
+<h5 data-heading="Tests automatisés">Tests automatisés</h5>
+<ul>
+    <li>Idée : fournir un filet de sécurité rapide et fiable pour modifier le code en continu. </li>
+    <li>Pourquoi c’est critique : l’architecture évolutive suppose des changements fréquents. Sans tests, tu ralentis (peur de casser) ou tu casses souvent.</li>
+</ul>
+<p>Couches utiles (et ce qu’elles protègent) :</p>
+<ul>
+    <li>Tests unitaires : invariants métier, logique locale (rapides).</li>
+    <li>Tests d’intégration : DB, cache, dépendances (plus lents).</li>
+    <li>Tests de contrat : compatibilité API/événements entre producteurs/consommateurs.</li>
+    <li>Tests end-to-end : parcours critiques (peu nombreux, coûteux mais indispensables).</li>
+</ul>
+<h5 data-heading="Observabilité">Observabilité</h5>
+<ul>
+    <li>Idée : comprendre ce que fait réellement le système en production (pas seulement “ça tourne”). </li>
+    <li>Pourquoi c’est critique : en environnement distribué, les bugs et dégradations sont souvent invisibles en dev. L’observabilité sert à détecter, diagnostiquer et piloter.</li>
+</ul>
+<p>Les 3 piliers :</p>
+<ul>
+    <li>Logs : événements et contexte (corrélation, erreurs).</li>
+    <li>Metrics : SLI/SLO (latence P95/P99, taux d’erreurs, saturation CPU/mémoire, backlog de queue).</li>
+    <li>Traces distribuées : suivre une requête à travers plusieurs services (où est la latence ? qui casse ?).</li>
+</ul>
+<h5>Fitness functions </h5>
+<p></p>
+<ul>
+    <li>Idée : rendre testables les objectifs d’architecture (les “-ilities”). Une fitness function est une vérification automatisée (ou semi-automatisée) qui mesure un critère d’architecture et échoue si le système dérive. </li>
+    <li>Pourquoi c’est critique : sinon, “maintenabilité”, “sécurité”, “scalabilité” restent des slogans. Avec une fitness function, c’est un garde-fou continu.</li>
+</ul>
+<p>Exemples concrets (très utilisés) :</p>
+<ul>
+    <li>Performance : “P95 &lt; 200 ms sur /checkout” (test de perf en CI + monitoring en prod).</li>
+    <li>Résilience : “le service tient si la dépendance X répond en 2s” (chaos testing / tests de timeout).</li>
+    <li><span style="font-size: 0.9375rem;">Couplage : “interdiction d’appels directs vers la DB d’un autre domaine” (règles d’architecture).</span></li>
+    <li>Déployabilité : “déploiement &lt; 10 min, rollback &lt; 5 min” (mesuré via pipeline).</li>
+</ul><br><hr><h4>Principes </h4>
+<p></p>
+<h5>Principe 1 : le pattern « Strangler Fig » (figuier étrangleur)</h5>
+<p>Remplacer un système legacy de manière incrémentale en construisant de nouvelles fonctionnalités autour de lui, puis en “étranglant” progressivement l’ancien système.</p>
+<p>Pourquoi utiliser cette méthode?</p>
+<ul>
+    <li>Les réécritures “big bang” échouent souvent.</li>
+    <li>Une migration incrémentale réduit le risque.<br>
+    </li>
+</ul>
+<p><u>Exemple</u> : système legacy de gestion des commandes</p><span style="font-size: 0.9375rem;">Sans Strangler : <br>- réécrire tout le monolithe → des années d’effort, très risqué.<br></span><span style="font-size: 0.9375rem;">Avec Strangler :<br><span style="font-size: 0.9375rem;">- Router les nouveaux appels API </span><code>/orders</code><span style="font-size: 0.9375rem;"> vers un nouveau service.<br><span style="font-size: 0.9375rem;">- Le legacy continue de servir les anciennes fonctionnalités.<br><span style="font-size: 0.9375rem;">- Déplacer progressivement le trafic jusqu’à retirer l’ancien système.<br></span></span></span></span><br><br>
+<p></p>
+<p></p>
+<h5>Principe 2 : Continuous Delivery (livraison continue)</h5>
+<p>L’évolution architecturale nécessite des déploiements rapides et sûrs.</p>
+<ul>
+    <li>Des releases fréquentes réduisent la taille des lots de changements.</li>
+    <li>L’automatisation (CI/CD) garantit la cohérence.</li>
+    <li>Les rollbacks minimisent le risque.</li>
+</ul>
+<p>Pratiques </p>
+<ul>
+    <li>Tests automatisés à tous les niveaux.</li>
+    <li>Infrastructure as code</li>
+    <li>Déploiements canary et feature flags.</li>
+</ul>
+<p></p>
+<h5>Principe 3 : Fitness Functions</h5>
+<p>Des contrôles automatisés qui mesurent si le système respecte ses objectifs d’architecture.<br>
+    Exemples :</p>
+<ul>
+    <li>Temps de réponse &lt; 200 ms.</li>
+    <li>99,99 % de disponibilité.</li>
+    <li>Aucune dépendance cyclique.</li>
+</ul>
+<p>Les fitness functions garantissent que l’évolution n’érode pas les qualités clés.</p><br>
+<p></p>
+<p></p>
