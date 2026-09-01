@@ -1,12 +1,7 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
-import {
-  ArrowRightCircle,
-  CalendarOffIcon,
-  Pencil,
-  Plus,
-} from "lucide-react";
+import { ArrowRightCircle, CalendarOffIcon, Pencil, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
@@ -67,10 +62,12 @@ const ContenuItem: FC<{
                   Pas de dates
                 </span>
               </span>
-              <Plus
-                className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-primary/90 p-1.5 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
+              <span
+                className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 items-center justify-center rounded-full bg-primary/90 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
                 aria-hidden="true"
-              />
+              >
+                <Plus className="h-5 w-5 shrink-0" />
+              </span>
             </Link>
           ) : (
             <span
@@ -96,10 +93,12 @@ const ContenuItem: FC<{
                 {minDate.month}
               </span>
             </span>
-            <Pencil
-              className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-primary/90 p-1.5 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
+            <span
+              className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 items-center justify-center rounded-full bg-primary/90 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
               aria-hidden="true"
-            />
+            >
+              <Pencil className="h-4 w-4 shrink-0" />
+            </span>
           </Link>
         ) : (
           <>
