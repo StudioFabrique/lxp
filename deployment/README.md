@@ -80,10 +80,9 @@ Un job Jenkins lit :
 <préfixe>/backup       sauvegardes
 ```
 
-Exemples de préfixes :
+Exemple de préfixe :
 
-- `/demo` pour l’instance de démonstration ;
-- `/clients/<slug>` pour une instance cliente.
+- `/instances/<slug>` pour une instance cliente.
 
 Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Le
 dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et

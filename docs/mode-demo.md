@@ -234,9 +234,9 @@ déploiement lit `/ci`, `/runtime` et `/backup`. En `prod`, il demande un
 préfixe et lit `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et
 `<préfixe>/backup`.
 
-Une démonstration de production peut utiliser les dossiers `/ci`, `/demo/ci`,
-`/demo/runtime` et `/demo/backup`. Placez `DEMO_MODE=true` dans
-`/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
+Une démonstration de production peut utiliser les dossiers `/ci`, `/instances/demo/ci`,
+`/instances/demo/runtime` et `/instances/demo/backup`. Placez `DEMO_MODE=true` dans
+`/instances/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
 `LXP_DEPLOYMENT_NAME` et ses propres secrets de base de données.
 
 Le pipeline ne charge pas `compose.ai.yml`. Le service `ai`, sa base pgvector

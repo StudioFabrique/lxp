@@ -245,15 +245,15 @@ Sans `DEPLOY_SSH_HOST`, les scripts utilisent le Docker local.
 
 Jenkins demande les valeurs suivantes :
 
-| Variable ou paramètre                    | Rôle                                                                              |
-| ---------------------------------------- | --------------------------------------------------------------------------------- |
-| `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID`     | Identifiant de la Machine Identity, fourni par le credential Jenkins.             |
-| `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` | Secret de la Machine Identity, fourni par le credential Jenkins.                  |
-| `INFISICAL_PROJECT_ID`                   | Identifiant du projet LXP.                                                        |
-| `INFISICAL_ENVIRONMENT`                  | `dev` ou `prod`.                                                                  |
-| `INFISICAL_PATH_PREFIX`                  | Préfixe d’une cible hors développement, par exemple `/demo` ou `/clients/<slug>`. |
-| `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                            |
-| `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`.        |
+| Variable ou paramètre                    | Rôle                                                                       |
+| ---------------------------------------- | -------------------------------------------------------------------------- |
+| `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID`     | Identifiant de la Machine Identity, fourni par le credential Jenkins.      |
+| `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` | Secret de la Machine Identity, fourni par le credential Jenkins.           |
+| `INFISICAL_PROJECT_ID`                   | Identifiant du projet LXP.                                                 |
+| `INFISICAL_ENVIRONMENT`                  | `dev` ou `prod`.                                                           |
+| `INFISICAL_PATH_PREFIX`                  | Préfixe d’une cible hors développement, par exemple `/instances/<slug>`.   |
+| `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                     |
+| `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`. |
 
 GitHub Actions demande trois variables dans l’environnement GitHub
 `development` :
