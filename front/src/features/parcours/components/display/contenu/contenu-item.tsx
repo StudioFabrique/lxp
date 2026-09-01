@@ -1,7 +1,12 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
-import { ArrowRightCircle, CalendarOffIcon, Plus } from "lucide-react";
+import {
+  ArrowRightCircle,
+  CalendarOffIcon,
+  Pencil,
+  Plus,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
@@ -78,6 +83,24 @@ const ContenuItem: FC<{
               </span>
             </span>
           )
+        ) : editDatesUrl ? (
+          <Link
+            to={editDatesUrl}
+            className="group/date relative flex flex-col items-center rounded-md text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+            aria-label={`Modifier les dates du module ${module.title}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <span className="flex flex-col items-center transition duration-200 group-hover/date:blur-[2px] group-focus-visible/date:blur-[2px]">
+              <span className="text-xl font-bold">{minDate.day}</span>
+              <span className="text-sm font-bold uppercase opacity-80">
+                {minDate.month}
+              </span>
+            </span>
+            <Pencil
+              className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-primary/90 p-1.5 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
+              aria-hidden="true"
+            />
+          </Link>
         ) : (
           <>
             <p className="font-bold text-xl">{minDate.day}</p>
@@ -104,7 +127,9 @@ const ContenuItem: FC<{
         <Link
           className={cn(
             "btn btn-sm btn-ghost self-end",
-            isSelected ? "text-primary-content" : "",
+            isSelected
+              ? "text-primary-content hover:text-primary"
+              : "hover:text-primary",
           )}
           to={`../module/${module.id}`}
         >
