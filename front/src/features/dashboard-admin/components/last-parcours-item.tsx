@@ -105,12 +105,15 @@ const LastParcoursItem = ({
       <CursorGlowCard
         glowColor="primary"
         glowSize={2.4}
-        className="h-full rounded-box"
+        className={cn("rounded-box", {
+          "h-full": baseRoute === "admin",
+        })}
       >
         <ul
           className={cn(
-            "list border border-base-300 rounded-box overflow-hidden h-full min-h-52",
+            "list border border-base-300 rounded-box overflow-hidden",
             {
+              "h-full min-h-52": baseRoute === "admin",
               "border-dashed border-primary/25": !formation,
               "bg-base-200": Boolean(formation),
             },

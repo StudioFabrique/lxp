@@ -60,6 +60,7 @@ describe("LastParcoursItem", () => {
 
     expect(markup).not.toContain("parcours-actions-11");
     expect(markup).toContain("Prévisualiser le parcours Parcours test");
+    expect(markup).toContain("min-h-52");
   });
 
   it("ne montre pas le menu d’administration dans la vue étudiante", () => {
@@ -71,5 +72,6 @@ describe("LastParcoursItem", () => {
 
     expect(markup).not.toContain("parcours-actions-11");
     expect(markup).toContain("/student/parcours/view/11");
+    expect(markup).not.toContain("min-h-52");
   });
 });

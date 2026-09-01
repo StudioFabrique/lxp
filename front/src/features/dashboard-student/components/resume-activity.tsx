@@ -18,6 +18,11 @@ type ResumeActivityProps = {
   lastLesson: LessonRead;
 };
 
+const capitalizeFirstLetter = (value: string) =>
+  value.length > 0
+    ? `${value.charAt(0).toLocaleUpperCase("fr-FR")}${value.slice(1)}`
+    : value;
+
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -38,23 +43,9 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       <div className="min-w-0 flex-1">
         <ImageHeader
           imageUrl={isLoading ? "" : (image ?? "")}
-          title={
-            <>
-              {`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : `}
-              <span className="inline-block first-letter:uppercase">
-                {lastLesson.lesson.title}
-              </span>
-            </>
-          }
+          title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : ${capitalizeFirstLetter(lastLesson.lesson.title)}`}
           titleIcon={<FileEditIcon className="stroke-white w-5" />}
-          subTitle={
-            <>
-              {`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : `}
-              <span className="inline-block first-letter:uppercase">
-                {lastLesson.lesson.course.title}
-              </span>
-            </>
-          }
+          subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : ${capitalizeFirstLetter(lastLesson.lesson.course.title)}`}
           subTitleIcon={
             <div className="text-white w-5">
               <BookMarked />
@@ -93,7 +84,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               action="component"
               object="start-lesson-button"
             >
-              <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5">
+              <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5 pb-9">
                 <Link
                   to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
                   state={{ lessonId: lastLesson.lesson.id }}

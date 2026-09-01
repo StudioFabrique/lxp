@@ -34,7 +34,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
         {props.children ? props.children[1] : null}
         <div
           className={`absolute bottom-2 left-2 z-5 flex w-full min-w-0 items-end justify-between gap-x-2 px-4 py-5 font-bold ${
-            props.reserveActionSpace ? "pr-20 sm:pr-60 md:pr-64 lg:pr-72" : ""
+            props.reserveActionSpace ? "pr-20 sm:pr-48" : ""
           }`}
         >
           <span className="flex min-w-0 flex-1 gap-x-2 overflow-hidden">

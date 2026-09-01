@@ -102,7 +102,7 @@ const AdminParcoursManagement = ({
   return (
     <main className="w-full flex flex-col gap-8">
       <Header
-        title="Gestion des parcours"
+        title={isAdmin ? "Gestion des parcours" : "Liste des parcours"}
         description={
           isAdmin
             ? "Gérez les formations et les parcours qui leur sont associés."
@@ -133,7 +133,9 @@ const AdminParcoursManagement = ({
       </Header>
 
       <section
-        className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
+        className={`grid items-start gap-5 ${
+          isAdmin ? "lg:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"
+        }`}
         data-page-tour="parcours-cards"
       >
         {!isAdmin && formations.length === 0 ? (
