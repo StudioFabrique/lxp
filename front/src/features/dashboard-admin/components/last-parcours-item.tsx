@@ -12,7 +12,7 @@ import ParcoursActionsMenu from "../../parcours/components/list/parcours-actions
 
 const fullDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
-  month: "long",
+  month: "short",
   year: "numeric",
 });
 
@@ -84,7 +84,7 @@ const ParcoursRow = ({
 
 const LastParcoursItem = ({
   formation,
-  maxParcoursShown = 3,
+  maxParcoursShown = 2,
   isManagementView = false,
   baseRoute = "admin",
   onCreateFormation,
@@ -166,12 +166,17 @@ const LastParcoursItem = ({
                 </li>
               ) : null}
               {baseRoute === "admin" ? (
-                <li className="mt-auto flex flex-col gap-2 items-center py-5">
+                <li
+                  className={cn("flex flex-col gap-2 items-center py-5", {
+                    "mt-auto": formation.parcours.length > 0,
+                    "flex-1 justify-center": formation.parcours.length === 0,
+                  })}
+                >
                   <PermissionGuard action="write" object="parcours">
                     <Link
                       to={`/admin/parcours/new?formationId=${formation.id}`}
-                      className={cn("btn btn-sm btn-dash mx-5", {
-                        "self-end": formation.parcours.length > 0,
+                      className={cn("btn btn-dash mx-5", {
+                        "self-end btn-sm": formation.parcours.length > 0,
                       })}
                     >
                       <Plus className="size-[1.2em]" />
