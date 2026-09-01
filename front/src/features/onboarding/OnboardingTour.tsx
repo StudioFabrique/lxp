@@ -75,6 +75,16 @@ const isRequirementMet = (requirement: StageRequirement) => {
     element instanceof HTMLTextAreaElement
   ) {
     const value = element.value.trim();
+    if (element instanceof HTMLInputElement && element.type === "number") {
+      const numericValue = element.valueAsNumber;
+      const minimum = element.min === "" ? undefined : Number(element.min);
+      if (
+        !Number.isFinite(numericValue) ||
+        (minimum !== undefined && numericValue < minimum)
+      ) {
+        return false;
+      }
+    }
     return (
       value.length > 0 && !(requirement.invalidValues ?? []).includes(value)
     );

@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
-import { ArrowRightCircle, CalendarOffIcon } from "lucide-react";
+import { ArrowRightCircle, CalendarOffIcon, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
@@ -10,7 +10,14 @@ const ContenuItem: FC<{
   iterationCount: number;
   selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
-}> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
+  editDatesUrl?: string;
+}> = ({
+  module,
+  iterationCount,
+  selectedModuleId,
+  setSelectedModule,
+  editDatesUrl,
+}) => {
   const minDate: { day: number | null; month: string } = useMemo(() => {
     if (!module.minDate) {
       return { day: null, month: "" };
@@ -36,22 +43,41 @@ const ContenuItem: FC<{
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
       <div
-        className={`flex flex-col items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors ${
-          isSelected
-            ? "bg-secondary text-secondary-content"
-            : "bg-base-100 text-base-content group-hover:bg-base-200"
-        }`}
+        className={cn(
+          "flex flex-col bg-secondary text-secondary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors",
+          { "bg-base-200 text-base-content": !isSelected },
+        )}
       >
         {minDate.day === null ? (
-          <span
-            className="flex flex-col items-center gap-1 text-center"
-            aria-label="Date du module à planifier"
-          >
-            <CalendarOffIcon />
-            <span className="text-xs font-semibold leading-none opacity-80">
-              Pas de dates
+          editDatesUrl ? (
+            <Link
+              to={editDatesUrl}
+              className="group/date relative flex flex-col items-center gap-1 rounded-md text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+              aria-label={`Planifier les dates du module ${module.title}`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <span className="flex flex-col items-center gap-1 transition duration-200 group-hover/date:blur-[2px] group-focus-visible/date:blur-[2px]">
+                <CalendarOffIcon />
+                <span className="text-xs font-semibold leading-none opacity-80">
+                  Pas de dates
+                </span>
+              </span>
+              <Plus
+                className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-primary/90 p-1.5 text-primary-content opacity-0 shadow-md backdrop-blur-sm transition duration-200 group-hover/date:scale-100 group-hover/date:opacity-100 group-focus-visible/date:scale-100 group-focus-visible/date:opacity-100"
+                aria-hidden="true"
+              />
+            </Link>
+          ) : (
+            <span
+              className="flex flex-col items-center gap-1 text-center"
+              aria-label="Date du module à planifier"
+            >
+              <CalendarOffIcon />
+              <span className="text-xs font-semibold leading-none opacity-80">
+                Pas de dates
+              </span>
             </span>
-          </span>
+          )
         ) : (
           <>
             <p className="font-bold text-xl">{minDate.day}</p>

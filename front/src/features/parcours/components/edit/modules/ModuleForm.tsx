@@ -54,7 +54,7 @@ export default function ModuleForm({
       </div>
       <div data-onboarding="module-form">
         <Wrapper>
-          <form onSubmit={onSubmit} ref={refForm}>
+          <form onSubmit={onSubmit} ref={refForm} noValidate>
             <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
               <span className="col-span-5">
                 <ModuleFields
@@ -68,7 +68,8 @@ export default function ModuleForm({
                       label="Durée du module en heures *"
                       name="duration"
                       placeholder="Ex : 12"
-                      min={1}
+                      min={0}
+                      helperText="Saisissez une durée supérieure à 0. Les valeurs décimales sont acceptées."
                       register={register}
                       error={errors.duration}
                     />

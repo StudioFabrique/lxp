@@ -1,4 +1,4 @@
-import { BookOpen, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import type Tag from "../../../../utils/interfaces/tag";

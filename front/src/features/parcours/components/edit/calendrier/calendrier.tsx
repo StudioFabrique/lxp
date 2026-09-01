@@ -10,7 +10,7 @@ import ModuleTimelineDateModal from "./module-timeline-date-modal";
 import ModuleTimelineDetailsPopover, {
   type TimelineDetailsPosition,
 } from "./module-timeline-details-popover";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
 
@@ -19,6 +19,7 @@ const Calendrier = () => {
   const darkMode = theme === "dark";
   const currentDate = new Date();
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const parcoursId = id ? Number(id) : 0;
   const { data: parcours } = useParcoursQuery(parcoursId);
   const { modules } = useParcoursModules(parcoursId);
@@ -30,6 +31,7 @@ const Calendrier = () => {
   );
   const [detailsCardPosition, setDetailsCardPosition] =
     useState<TimelineDetailsPosition>();
+  const requestedModuleId = Number(searchParams.get("editModuleDates"));
 
   const datesParcours = {
     startDate: parcours?.startDate
@@ -49,6 +51,12 @@ const Calendrier = () => {
       endDate: mod.maxDate ? new Date(mod.maxDate) : undefined,
       image: mod.thumb ? normalizeImageSource(mod.thumb) : undefined,
     }));
+  const requestedModule =
+    Number.isInteger(requestedModuleId) && requestedModuleId > 0
+      ? (modules.find((module) => module.id === requestedModuleId) ?? null)
+      : null;
+  const displayedModule = currentModule ?? requestedModule;
+  const displayedModal = activeModal ?? (requestedModule ? "edit" : null);
 
   const handleSelectModule = (
     moduleId: number | string,
@@ -84,6 +92,11 @@ const Calendrier = () => {
   const handleCloseModal = () => {
     setActiveModal(null);
     setCurrentModule(null);
+    if (searchParams.has("editModuleDates")) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete("editModuleDates");
+      setSearchParams(nextSearchParams, { replace: true });
+    }
   };
 
   if (!modules || !parcours) {
@@ -129,8 +142,8 @@ const Calendrier = () => {
       {/* DETAILS MODAL */}
       <ModuleTimelineDetailsPopover
         modalId="module_details_modal"
-        isOpen={activeModal === "details"}
-        currentModule={currentModule}
+        isOpen={displayedModal === "details"}
+        currentModule={displayedModule}
         position={detailsCardPosition}
         onClose={handleCloseModal}
       />
@@ -139,8 +152,8 @@ const Calendrier = () => {
       <ModuleTimelineDateModal
         modalId="module_dates_modal"
         datesParcours={datesParcours}
-        isOpen={activeModal === "edit"}
-        currentModule={currentModule}
+        isOpen={displayedModal === "edit"}
+        currentModule={displayedModule}
         onClose={handleCloseModal}
       />
     </div>

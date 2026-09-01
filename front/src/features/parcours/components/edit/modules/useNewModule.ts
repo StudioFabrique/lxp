@@ -60,6 +60,8 @@ const useNewModule = () => {
   } = useForm<ModuleCreateFormValues>({
     resolver: zodResolver(moduleCreateSchema),
     defaultValues: emptyModuleFormValues,
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
   const getParcoursModules = useCallback(async () => {
@@ -94,18 +96,17 @@ const useNewModule = () => {
   const handleSubmitNewModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async () => {
-      const isValid = await trigger();
+      const isValid = await trigger(undefined, { shouldFocus: true });
       if (!isValid) return;
 
       const formData = new FormData();
       const values = getValues();
 
-      const duration = values.duration ?? 0;
       const moduleData = {
         ...values,
         formationId: state.parcours?.formationId,
         parcoursId: +id!,
-        duration: duration === 0 || isNaN(duration) ? 1 : duration,
+        duration: values.duration,
         contacts: state.currentContacts.map((item) => item.id),
         skills: state.currentSkills.map((item) => item.id),
       };
@@ -239,7 +240,7 @@ const useNewModule = () => {
   const handleSubmitDuplicateModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async () => {
-      const isValid = await trigger();
+      const isValid = await trigger(undefined, { shouldFocus: true });
       if (!isValid) return;
 
       const isEmptyObject = (obj: unknown) =>
@@ -289,7 +290,7 @@ const useNewModule = () => {
   const handleSubmitUpdateModule = async (e: React.FormEvent) => {
     e.preventDefault();
     await runModuleSubmission(async () => {
-      const isValid = await trigger();
+      const isValid = await trigger(undefined, { shouldFocus: true });
       if (!isValid) return;
 
       try {
