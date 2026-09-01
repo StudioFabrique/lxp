@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import AddTag from "../../../components/UI/add-tag";
 import TagsList from "../../../components/tags/TagsList";
 
@@ -18,8 +18,11 @@ type Props = {
   onRemoveTag: (id: number) => void;
   isEditing: boolean;
   isPending: boolean;
+  isDeleting?: boolean;
+  deleteDisabled?: boolean;
   onSubmit: () => void;
   onCancel: () => void;
+  onDelete?: () => void;
 };
 
 const LEVELS = Array.from({ length: 8 }, (_, i) => `${i + 1}`);
@@ -32,8 +35,8 @@ const FormationForm = ({
   tagInput, onTagInput,
   currentTags,
   onTagSubmit, onRemoveTag,
-  isEditing, isPending,
-  onSubmit, onCancel,
+  isEditing, isPending, isDeleting = false, deleteDisabled = false,
+  onSubmit, onCancel, onDelete,
 }: Props) => (
   <div className="flex flex-col gap-y-4">
     <div
@@ -117,31 +120,56 @@ const FormationForm = ({
       </div>
     </div>
 
-    <div className="w-full flex justify-end gap-x-4">
-      {isEditing && (
+    <div className="w-full flex flex-wrap justify-between gap-4">
+      <div>
+        {isEditing && onDelete ? (
+          <span
+            className={deleteDisabled ? "tooltip tooltip-right" : undefined}
+            data-tip="Suppression impossible : des parcours sont rattachés"
+          >
+            <button
+              type="button"
+              className="btn btn-outline btn-error"
+              disabled={isPending || isDeleting || deleteDisabled}
+              onClick={onDelete}
+            >
+              {isDeleting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
+              Supprimer la formation
+            </button>
+          </span>
+        ) : null}
+      </div>
+
+      <div className="flex gap-x-4">
         <button
+          type="button"
           className="btn btn-outline btn-primary"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isPending || isDeleting}
         >
           Annuler
         </button>
-      )}
-      <button
-        data-onboarding="formation-save"
-        className="btn btn-primary"
-        disabled={isPending}
-        onClick={onSubmit}
-      >
-        {isPending ? (
-          <span className="flex items-center gap-x-2">
-            <Loader2 className="animate-spin" />
-            <p>Sauvegarde en cours...</p>
-          </span>
-        ) : (
-          <span>Sauvegarder</span>
-        )}
-      </button>
+        <button
+          type="button"
+          data-onboarding="formation-save"
+          className="btn btn-primary"
+          disabled={isPending || isDeleting}
+          onClick={onSubmit}
+        >
+          {isPending ? (
+            <span className="flex items-center gap-x-2">
+              <Loader2 className="animate-spin" />
+              <p>Sauvegarde en cours...</p>
+            </span>
+          ) : (
+            <span>Sauvegarder</span>
+          )}
+        </button>
+      </div>
     </div>
   </div>
 );

@@ -182,7 +182,7 @@ parcoursRouter.put(
   httpPublishParcours
 );
 
-// Route GET pour récupérer jusqu'à six formations avec leurs derniers parcours
+// Route GET pour récupérer les formations avec tous leurs parcours
 parcoursRouter.get(
   "/root-parcours",
   checkPermissions("parcours"),

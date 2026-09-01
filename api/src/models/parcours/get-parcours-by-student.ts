@@ -13,9 +13,11 @@ async function getParcoursByStudent(studentId: string) {
     select: {
       id: true,
       title: true,
+      startDate: true,
+      endDate: true,
       createdAt: true,
       updatedAt: true,
-      formation: { select: { title: true, level: true } },
+      formation: { select: { id: true, title: true, level: true } },
       admin: { select: { idMdb: true } },
       author: true,
       isPublished: true,

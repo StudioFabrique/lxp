@@ -17,11 +17,9 @@ export default async function getRootAdminParcours() {
           thumb: true,
         },
         orderBy: { createdAt: "desc" },
-        take: 5,
       },
     },
     orderBy: { createdAt: "desc" },
-    take: 6,
   });
 
   return formations.map((formation) => ({

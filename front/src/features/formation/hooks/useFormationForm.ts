@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { formationApi } from "../api/formation.api";
 import { formationSchema } from "../formation.schema";
@@ -51,7 +51,12 @@ const showFormationMutationError = (error: FormationMutationError) => {
   );
 };
 
-export function useFormationForm() {
+type UseFormationFormOptions = {
+  onSaved?: () => void;
+};
+
+export function useFormationForm(options: UseFormationFormOptions = {}) {
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [code, setCode] = useState("");
@@ -176,6 +181,8 @@ export function useFormationForm() {
       setCreatedFormation(formation);
       resetForm();
       refetchFormations();
+      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
+      options.onSaved?.();
     },
     onError: showFormationMutationError,
   });
@@ -186,6 +193,7 @@ export function useFormationForm() {
       toast.success("Formation supprimée avec succès");
       resetForm();
       refetchFormations();
+      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
@@ -224,6 +232,8 @@ export function useFormationForm() {
       toast.success("Formation mise à jour avec succès");
       resetForm();
       refetchFormations();
+      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
+      options.onSaved?.();
     },
     onError: showFormationMutationError,
   });

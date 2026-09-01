@@ -129,7 +129,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     target: '[data-onboarding="sidebar-navigation"]',
     title: "Votre barre de navigation",
     content:
-      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos formations, parcours, utilisateurs et ressources.",
+      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos parcours, utilisateurs et ressources.",
     placement: "right",
     next: "admin-dashboard",
     index: 1,
@@ -619,7 +619,7 @@ const OnboardingTourContent = ({
     ) {
       target = "/admin/dashboard";
     } else if (stage.startsWith("admin-formation")) {
-      target = "/admin/formation";
+      target = "/admin/dashboard?createFormation=true";
     } else if (stage === "admin-parcours-create" && contextId) {
       target = `/admin/parcours/new?formationId=${contextId}`;
     } else if (stage === "admin-parcours-info" && contextId) {
