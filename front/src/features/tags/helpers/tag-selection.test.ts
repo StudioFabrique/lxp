@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type Tag from "../../../utils/interfaces/tag";
-import { addPendingTag, splitTagNames } from "./tag-selection";
+import {
+  addPendingTag,
+  partitionTagInput,
+  splitTagNames,
+} from "./tag-selection";
 
 const existingTag: Tag = {
   id: 12,
@@ -53,5 +57,21 @@ describe("splitTagNames", () => {
       "design system",
       "ui",
     ]);
+  });
+});
+
+describe("partitionTagInput", () => {
+  it("consomme toute une liste collée contenant des virgules", () => {
+    expect(partitionTagInput("produit, design system, accessibilité")).toEqual({
+      committed: "produit, design system, accessibilité",
+      pending: "",
+    });
+  });
+
+  it("conserve une saisie simple jusqu’à sa validation", () => {
+    expect(partitionTagInput("produit")).toEqual({
+      committed: "",
+      pending: "produit",
+    });
   });
 });

@@ -7,9 +7,15 @@ type Props = {
   stepItem: Step;
   actualStepId: number;
   updateStep: (stepId: number) => void;
+  disabled?: boolean;
 };
 
-const StepItem: FC<Props> = ({ actualStepId, stepItem, updateStep }) => {
+const StepItem: FC<Props> = ({
+  actualStepId,
+  stepItem,
+  updateStep,
+  disabled = false,
+}) => {
   const isActive = stepItem.id <= actualStepId;
 
   const handleClick = () => {
@@ -31,8 +37,10 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem, updateStep }) => {
           "after:bg-info",
           "cursor-auto",
         ],
+        disabled && "pointer-events-none cursor-not-allowed opacity-50",
       )}
-      onClick={handleClick}
+      onClick={disabled ? undefined : handleClick}
+      aria-disabled={disabled}
       data-content={stepItem.id}
     >
       {stepItem.label}

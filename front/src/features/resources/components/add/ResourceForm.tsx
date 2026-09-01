@@ -8,7 +8,10 @@ import TagsList from "../../../../components/tags/TagsList";
 import useImageUpload from "../../../../hooks/use-image-upload";
 import FormUploadImage from "../../../../components/UI/form-upload-image";
 import Tag from "../../../../utils/interfaces/tag";
-import { splitTagNames } from "../../../tags/helpers/tag-selection";
+import {
+  partitionTagInput,
+  splitTagNames,
+} from "../../../tags/helpers/tag-selection";
 
 type Props = {
   mode: "create" | "update";
@@ -75,15 +78,15 @@ export default function ResourceForm({
 
   const handleUpdateTag = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const lastSeparatorIndex = value.lastIndexOf(",");
+    const { committed, pending } = partitionTagInput(value);
 
-    if (lastSeparatorIndex === -1) {
-      setInputTag(value);
+    if (!committed) {
+      setInputTag(pending);
       return;
     }
 
-    addTags(value.slice(0, lastSeparatorIndex));
-    setInputTag(value.slice(lastSeparatorIndex + 1).trimStart());
+    addTags(committed);
+    setInputTag(pending);
   };
 
   // Detecte qd la touche enter est pressée

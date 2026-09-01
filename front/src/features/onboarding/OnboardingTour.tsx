@@ -22,6 +22,7 @@ import OnboardingTooltip, {
 import OnboardingStopConfirmation from "./OnboardingStopConfirmation";
 import { OnboardingContext } from "./OnboardingContext";
 import {
+  emitOnboardingEvent,
   subscribeToOnboardingEvents,
   type OnboardingEventDetail,
 } from "./onboarding-events";
@@ -215,11 +216,11 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     index: 6,
   },
   "admin-parcours-info": {
-    target: '[data-onboarding="parcours-essential-information"]',
-    title: "Complétez les informations",
+    target: '[data-onboarding-field="parcours-tags"]',
+    title: "Ajoutez un tag au parcours",
     content:
-      "Vérifiez le titre du parcours et ajoutez une description si nécessaire. Ces informations se sauvegardent automatiquement ; les autres réglages pourront être complétés plus tard.",
-    placement: "right",
+      "Vérifiez le titre du parcours et ajoutez au moins un tag. La description reste facultative et ces informations se sauvegardent automatiquement.",
+    placement: "left",
     next: "admin-module-title",
     nextLabel: "Créer un module",
     requirements: [
@@ -229,6 +230,11 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
         label: "le titre du parcours",
         highlightSelector:
           '[data-onboarding="parcours-essential-information"] label[for="title"]',
+      },
+      {
+        selector: '[data-onboarding-field="parcours-tags"]',
+        label: "au moins un tag pour le parcours",
+        highlightSelector: '[data-onboarding-field="parcours-tags"] h2',
       },
     ],
     index: 7,
@@ -587,7 +593,6 @@ const OnboardingTourContent = ({
     };
     const observer = new MutationObserver(refreshRequirements);
 
-    document.addEventListener("change", refreshRequirements, true);
     observer.observe(document.body, {
       subtree: true,
       childList: true,
@@ -596,7 +601,6 @@ const OnboardingTourContent = ({
     });
 
     return () => {
-      document.removeEventListener("change", refreshRequirements, true);
       observer.disconnect();
     };
   }, [status, stepToken]);
@@ -662,8 +666,19 @@ const OnboardingTourContent = ({
             goToStage("admin-formation-fields");
           }
           break;
+        case "formation_modal_cancelled":
+          if (
+            stage === "admin-formation-fields" ||
+            stage === "admin-formation-save"
+          ) {
+            goToStage("admin-formation-entry");
+          }
+          break;
         case "formation_created":
-          if (stage === "admin-formation-save") {
+          if (
+            stage === "admin-formation-fields" ||
+            stage === "admin-formation-save"
+          ) {
             goToStage("admin-parcours-create", event.id);
           }
           break;
@@ -808,7 +823,14 @@ const OnboardingTourContent = ({
       nextLabel: stageDefinition.nextLabel,
       onStop: () => setShowStopConfirmation(true),
       onBack: stageDefinition.previous
-        ? () => void saveState("in_progress", stageDefinition.previous!)
+        ? () => {
+            void saveState("in_progress", stageDefinition.previous!);
+            if (stepToken === "admin-formation-fields") {
+              emitOnboardingEvent({
+                type: "formation_modal_close_requested",
+              });
+            }
+          }
         : undefined,
       onNext:
         stageDefinition.next ||
@@ -831,6 +853,7 @@ const OnboardingTourContent = ({
         data,
         placement: stageDefinition.placement,
         skipBeacon: true,
+        hideOverlay: Boolean(stageDefinition.requirements?.length),
         blockTargetInteraction: false,
         disableFocusTrap: Boolean(
           stageDefinition.waitingForAction ||

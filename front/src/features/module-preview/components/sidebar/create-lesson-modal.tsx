@@ -74,14 +74,9 @@ export default function CreateLessonModal({
         }}
       >
         <div className="flex items-start justify-between gap-4 border-b border-base-300 pb-4">
-          <div className="flex items-center gap-3">
-            <BookOpen className="w-5 h-5" />
-            <div>
-              <h3 className="font-bold text-lg">
-                Ajouter une leçon dans le cours « {courseTitle} »
-              </h3>
-            </div>
-          </div>
+          <h3 className="font-bold text-lg">
+            Ajouter une leçon dans le cours « {courseTitle} »
+          </h3>
           <button
             type="button"
             className="btn btn-sm btn-ghost btn-circle"
@@ -111,7 +106,10 @@ export default function CreateLessonModal({
           </label>
           <label className="flex flex-col gap-2">
             <span className="flex items-center gap-2 font-semibold">
-              Description <span className="font-normal text-base-content/50">(optionnelle)</span>
+              Description{" "}
+              <span className="font-normal text-base-content/50">
+                (optionnelle)
+              </span>
             </span>
             <textarea
               className="textarea textarea-bordered min-h-24 w-full"

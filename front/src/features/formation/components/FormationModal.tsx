@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import Modal from "../../../components/UI/modal/modal";
 import FormationForm from "./FormationForm";
 import { useFormationForm } from "../hooks/useFormationForm";
+import {
+  emitOnboardingEvent,
+  subscribeToOnboardingEvents,
+} from "../../onboarding/onboarding-events";
 
 type FormationModalProps = {
   formationId?: number | null;
@@ -40,9 +44,20 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
   }, [formationId, selectFormation]);
 
   const handleClose = () => {
+    emitOnboardingEvent({ type: "formation_modal_cancelled" });
     cancelEdit();
     onClose();
   };
+
+  useEffect(
+    () =>
+      subscribeToOnboardingEvents((event) => {
+        if (event.type !== "formation_modal_close_requested") return;
+        cancelEdit();
+        onClose();
+      }),
+    [cancelEdit, onClose],
+  );
 
   const confirmDelete = () => {
     if (!formationToEdit || formationToEdit.parcours > 0) return;

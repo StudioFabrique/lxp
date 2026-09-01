@@ -39,7 +39,11 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   );
 
   return (
-    <div className="flex flex-col justify-between gap-y-4 h-full">
+    <div
+      className="flex flex-col justify-between gap-y-4 h-full"
+      data-onboarding-field="parcours-tags"
+      data-onboarding-valid={currentTags.length > 0 ? "true" : "false"}
+    >
       <span className="h-full flex-1">
         <InheritedItems
           drawerId="add-tags"

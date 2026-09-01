@@ -8,6 +8,18 @@ export function splitTagNames(value: string): string[] {
     .filter(Boolean);
 }
 
+export function partitionTagInput(value: string): {
+  committed: string;
+  pending: string;
+} {
+  const containsSeparator = value.includes(",");
+
+  return {
+    committed: containsSeparator ? value : "",
+    pending: containsSeparator ? "" : value,
+  };
+}
+
 export function addPendingTag(
   currentTags: Tag[],
   initialTags: Tag[],

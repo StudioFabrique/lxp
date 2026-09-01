@@ -169,9 +169,7 @@ export default function CreateCourseDetailsModal({
           <section
             className="flex flex-col gap-3"
             data-onboarding-field="course-tags"
-            data-onboarding-valid={
-              selectedTagIds.length > 0 ? "true" : "false"
-            }
+            data-onboarding-valid={selectedTagIds.length > 0 ? "true" : "false"}
           >
             <div>
               <h4
@@ -194,7 +192,7 @@ export default function CreateCourseDetailsModal({
                       type="button"
                       onClick={() => toggleTag(tag.id)}
                       className={cn(
-                        "btn btn-xs border-2",
+                        "btn btn-sm border-2",
                         selected
                           ? "border-primary ring-2 ring-primary/30"
                           : "border-transparent",

@@ -7,7 +7,10 @@ import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../interfaces/formation-item";
 import type { AxiosError } from "axios";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
-import { addPendingTag } from "../../tags/helpers/tag-selection";
+import {
+  addPendingTag,
+  partitionTagInput,
+} from "../../tags/helpers/tag-selection";
 
 type FormationMutationError = AxiosError<{
   message?: string;
@@ -92,21 +95,17 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
 
   const handleTagInputChange = useCallback(
     (value: string) => {
-      const lastSeparatorIndex = value.lastIndexOf(",");
+      const { committed, pending } = partitionTagInput(value);
 
-      if (lastSeparatorIndex === -1) {
-        setTagInputState(value);
+      if (!committed) {
+        setTagInputState(pending);
         return;
       }
 
       setCurrentTags((current) =>
-        addPendingTag(
-          current,
-          allTags,
-          value.slice(0, lastSeparatorIndex),
-        ),
+        addPendingTag(current, allTags, committed),
       );
-      setTagInputState(value.slice(lastSeparatorIndex + 1).trimStart());
+      setTagInputState(pending);
     },
     [allTags],
   );

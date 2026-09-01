@@ -74,12 +74,12 @@ associée.
 | Variable                 | Rôle                                                                         |
 | ------------------------ | ---------------------------------------------------------------------------- |
 | `FRONT_URL`              | Adresse utilisée dans les liens envoyés par courriel.                        |
-| `EMAIL`                  | Compte de connexion au serveur SMTP.                                         |
-| `PASSWORD`               | Mot de passe du compte SMTP.                                                 |
-| `SMTP`                   | Nom du serveur SMTP.                                                         |
-| `SMTP_EMAIL`             | Adresse utilisée pour les messages de développement.                         |
-| `SMTP_PORT`              | Port du serveur SMTP.                                                        |
-| `FROM`                   | Nom et adresse de l’expéditeur.                                              |
+| `MAILER_EMAIL`           | Compte de connexion au serveur SMTP.                                         |
+| `MAILER_PASSWORD`        | Mot de passe du compte SMTP.                                                 |
+| `MAILER_SMTP`            | Nom du serveur SMTP.                                                         |
+| `MAILER_DEV_RECIPIENT`   | Destinataire de redirection des messages en développement.                   |
+| `MAILER_SMTP_PORT`       | Port du serveur SMTP.                                                        |
+| `MAILER_FROM`            | Nom et adresse de l’expéditeur.                                              |
 | `UNSPLASH_ACCESS_KEY`    | Clé utilisée pour les images de connexion.                                   |
 | `DOCKER_IA_API_BASE_URL` | Adresse du service IA, en général `http://localhost:8000`.                   |
 | `DOCKER_IA_AUTH_SECRET`  | Secret partagé avec `SECRET_KEY` dans ANDRIA-IA.                             |
@@ -152,12 +152,12 @@ la colonne « Source ».
 | `MONGO_ADMIN_PASSWORD` | `runtime` | Mot de passe MongoDB.                                                                        |
 | `MONGO_DATABASE`       | `runtime` | Nom de la base MongoDB.                                                                      |
 | `MONGO_LOCAL_URL`      | `runtime` | URL complète vers `db-mongo:27017` avec `authSource=admin`.                                  |
-| `EMAIL`                | `runtime` | Compte de connexion SMTP.                                                                    |
-| `PASSWORD`             | `runtime` | Mot de passe SMTP.                                                                           |
-| `SMTP`                 | `runtime` | Nom du serveur SMTP.                                                                         |
-| `SMTP_EMAIL`           | `runtime` | Adresse utilisée par l’application.                                                          |
-| `SMTP_PORT`            | `runtime` | Port SMTP.                                                                                   |
-| `FROM`                 | `runtime` | Nom et adresse de l’expéditeur.                                                              |
+| `MAILER_EMAIL`         | `runtime` | Compte de connexion SMTP.                                                                    |
+| `MAILER_PASSWORD`      | `runtime` | Mot de passe SMTP.                                                                           |
+| `MAILER_SMTP`          | `runtime` | Nom du serveur SMTP.                                                                         |
+| `MAILER_DEV_RECIPIENT` | `runtime` | Destinataire de redirection des messages en développement.                                   |
+| `MAILER_SMTP_PORT`     | `runtime` | Port SMTP.                                                                                   |
+| `MAILER_FROM`          | `runtime` | Nom et adresse de l’expéditeur.                                                              |
 | `UNSPLASH_ACCESS_KEY`  | `runtime` | Clé Unsplash. L’API l’exige en production.                                                   |
 | `LXP_IMAGE`            | pipeline  | Nom de l’image du LXP.                                                                       |
 | `LXP_IMAGE_TAG`        | pipeline  | Tag de l’image du LXP. Utilisez un tag fixe pour pouvoir revenir en arrière.                 |

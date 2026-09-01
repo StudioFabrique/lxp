@@ -17,8 +17,14 @@ import ModuleComponent from "../components/edit/modules/module";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
+import { useOnboarding } from "../../onboarding/OnboardingContext";
 
 const EditParcours = () => {
+  const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
+  const onboardingNavigationLocked =
+    onboardingStatus === "in_progress" &&
+    (onboardingStep.startsWith("admin-parcours-info") ||
+      onboardingStep.startsWith("admin-module-"));
   const {
     id,
     moduleFormOpened,
@@ -117,6 +123,7 @@ const EditParcours = () => {
                 actualStep={actualStep}
                 stepsList={stepsList}
                 updateStep={updateStep}
+                disabled={onboardingNavigationLocked}
               />
             </div>
           </div>
@@ -125,7 +132,11 @@ const EditParcours = () => {
             <FloatingBottomNavigation
               stickyActivationOffset={moduleFormOpened ? 150 : undefined}
               startActions={
-                <button className="btn btn-outline" onClick={handleRetour}>
+                <button
+                  className="btn btn-outline"
+                  onClick={handleRetour}
+                  disabled={onboardingNavigationLocked}
+                >
                   Retour
                 </button>
               }
@@ -133,6 +144,7 @@ const EditParcours = () => {
                 <button
                   className="btn btn-info px-6"
                   onClick={() => handleUpdateStep(actualStep.id)}
+                  disabled={onboardingNavigationLocked}
                 >
                   Étape suivante
                 </button>
