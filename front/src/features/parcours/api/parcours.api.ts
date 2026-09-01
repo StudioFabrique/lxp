@@ -1,6 +1,7 @@
 import apiClient from "../../../lib/axios";
 import type Parcours from "../../../utils/interfaces/parcours";
 import type Skill from "../../../utils/interfaces/skill";
+import type SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 import type Tag from "../../../utils/interfaces/tag";
 
 export type UpdateParcoursPayload = Partial<{
@@ -103,8 +104,8 @@ const mutations = {
     const res = await apiClient.post("/parcours", data);
     return res.data;
   },
-  deleteParcours: async (id: number) => {
-    const res = await apiClient.delete(`/parcours/${id}`);
+  deleteParcours: async (id: number): Promise<SuccessWithMessage> => {
+    const res = await apiClient.delete<SuccessWithMessage>(`/parcours/${id}`);
     return res.data;
   },
   duplicateParcours: async (

@@ -8,6 +8,7 @@ import defaultParcoursImage from "../../../assets/images/new-parcours-default.jp
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
 import Modal from "../../../components/UI/modal/modal";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import ParcoursActionsMenu from "../../parcours/components/list/parcours-actions-menu";
 
 const fullDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -35,14 +36,21 @@ type LastParcoursItemProps = {
   baseRoute?: "admin" | "student";
   onCreateFormation?: () => void;
   onEditFormation?: (formationId: number) => void;
+  onDeleteParcours?: (
+    parcours: FormationParcoursSummary["parcours"][number],
+  ) => void;
 };
 
 const ParcoursRow = ({
   item,
   baseRoute,
+  showManagementActions = false,
+  onDelete,
 }: {
   item: FormationParcoursSummary["parcours"][number];
   baseRoute: "admin" | "student";
+  showManagementActions?: boolean;
+  onDelete?: (item: FormationParcoursSummary["parcours"][number]) => void;
 }) => (
   <li className="list-row" key={item.id}>
     <div className="self-center">
@@ -60,13 +68,17 @@ const ParcoursRow = ({
       </div>
     </div>
 
-    <Link
-      className="btn btn-square btn-sm btn-ghost self-center"
-      to={`/${baseRoute}/parcours/view/${item.id}`}
-      aria-label={`Prévisualiser le parcours ${item.title}`}
-    >
-      <ExternalLink className="size-[1.2em]" />
-    </Link>
+    {showManagementActions && onDelete ? (
+      <ParcoursActionsMenu parcours={item} onDelete={onDelete} />
+    ) : (
+      <Link
+        className="btn btn-square btn-sm btn-ghost self-center"
+        to={`/${baseRoute}/parcours/view/${item.id}`}
+        aria-label={`Prévisualiser le parcours ${item.title}`}
+      >
+        <ExternalLink className="size-[1.2em]" />
+      </Link>
+    )}
   </li>
 );
 
@@ -77,9 +89,16 @@ const LastParcoursItem = ({
   baseRoute = "admin",
   onCreateFormation,
   onEditFormation,
+  onDeleteParcours,
 }: LastParcoursItemProps) => {
   const [showRemainingParcours, setShowRemainingParcours] = useState(false);
   const remainingParcours = formation?.parcours.slice(maxParcoursShown) ?? [];
+  const requestParcoursDeletion = (
+    parcours: FormationParcoursSummary["parcours"][number],
+  ) => {
+    setShowRemainingParcours(false);
+    onDeleteParcours?.(parcours);
+  };
 
   return (
     <>
@@ -125,7 +144,15 @@ const LastParcoursItem = ({
                 </div>
               </li>
               {formation.parcours.slice(0, maxParcoursShown).map((item) => (
-                <ParcoursRow key={item.id} item={item} baseRoute={baseRoute} />
+                <ParcoursRow
+                  key={item.id}
+                  item={item}
+                  baseRoute={baseRoute}
+                  showManagementActions={
+                    isManagementView && baseRoute === "admin"
+                  }
+                  onDelete={requestParcoursDeletion}
+                />
               ))}
               {isManagementView && remainingParcours.length > 0 ? (
                 <li className="px-5 pt-3 flex justify-center">
@@ -182,7 +209,13 @@ const LastParcoursItem = ({
         >
           <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-5">
             {remainingParcours.map((item) => (
-              <ParcoursRow key={item.id} item={item} baseRoute={baseRoute} />
+              <ParcoursRow
+                key={item.id}
+                item={item}
+                baseRoute={baseRoute}
+                showManagementActions={baseRoute === "admin"}
+                onDelete={requestParcoursDeletion}
+              />
             ))}
           </ul>
         </Modal>
