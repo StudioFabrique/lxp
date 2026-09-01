@@ -11,7 +11,7 @@ pipeline {
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
         choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'Charge /ci et /runtime en dev ; en prod, /ci puis <préfixe>/ci et <préfixe>/runtime. Les sauvegardes ajoutent le dossier backup de la cible.')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /demo ou /clients/<slug> ; détermine aussi <préfixe>/backup.')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /demo ou /instances/<slug> ; détermine aussi <préfixe>/backup.')
         string(name: 'DEPLOY_PATH', defaultValue: '', trim: true, description: 'Répertoire persistant sur le serveur cible. Laisser vide : déduit en <foyer du compte de déploiement>/<nom de la stack>.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
         string(name: 'LXP_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag LXP, latest ou SHA Jenkins pour un retour arrière')

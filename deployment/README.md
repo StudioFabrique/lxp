@@ -9,10 +9,10 @@ avant de préparer une nouvelle instance.
 
 ## Choisir le mode de déploiement
 
-| Mode | Fichier | Usage |
-| --- | --- | --- |
-| `caddy` | `deployment/caddy/Jenkinsfile` | Le serveur utilise un proxy Caddy partagé. |
-| `direct` | `deployment/direct/Jenkinsfile` | Le LXP publie lui-même le port 80 du serveur. |
+| Mode                  | Fichier                            | Usage                                                       |
+| --------------------- | ---------------------------------- | ----------------------------------------------------------- |
+| `caddy`               | `deployment/caddy/Jenkinsfile`     | Le serveur utilise un proxy Caddy partagé.                  |
+| `direct`              | `deployment/direct/Jenkinsfile`    | Le LXP publie lui-même le port 80 du serveur.               |
 | développement partagé | `.github/workflows/deploy-dev.yml` | Une fusion dans `beta` déploie l’instance de développement. |
 
 Le mode `caddy` demande un réseau Docker externe nommé `caddy` par défaut. Le
@@ -83,7 +83,7 @@ Un job Jenkins lit :
 Exemples de préfixes :
 
 - `/demo` pour l’instance de démonstration ;
-- `/clients/acme` pour une instance cliente.
+- `/clients/<slug>` pour une instance cliente.
 
 Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Le
 dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et
@@ -108,12 +108,12 @@ changer avec le paramètre `INFISICAL_CREDENTIAL_ID`.
 
 ### 2. Créer les jobs
 
-| Job | Script Path |
-| --- | --- |
-| Construire l’image LXP | `build.Jenkinsfile` |
-| Déployer avec Caddy | `deployment/caddy/Jenkinsfile` |
-| Déployer sans Caddy | `deployment/direct/Jenkinsfile` |
-| Sauvegarder une cible | `deployment/backup.Jenkinsfile` |
+| Job                    | Script Path                     |
+| ---------------------- | ------------------------------- |
+| Construire l’image LXP | `build.Jenkinsfile`             |
+| Déployer avec Caddy    | `deployment/caddy/Jenkinsfile`  |
+| Déployer sans Caddy    | `deployment/direct/Jenkinsfile` |
+| Sauvegarder une cible  | `deployment/backup.Jenkinsfile` |
 
 ### 3. Renseigner les paramètres
 
@@ -201,11 +201,11 @@ contrôler un snapshot ou remplacer les données d’une instance.
 
 ## Fichiers principaux
 
-| Fichier | Rôle |
-| --- | --- |
-| `deployment/deploy.sh` | Valide les variables, applique les migrations et démarre les services. |
-| `deployment/with-infisical.sh` | Charge les secrets Infisical pour Jenkins. |
-| `deployment/build.sh` | Construit et publie l’image du LXP. |
-| `deployment/backup.sh` | Crée une sauvegarde. |
-| `deployment/restore.sh` | Contrôle ou restaure une sauvegarde. |
-| `deployment/env.example` | Liste les variables avec des exemples sans secret. |
+| Fichier                        | Rôle                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| `deployment/deploy.sh`         | Valide les variables, applique les migrations et démarre les services. |
+| `deployment/with-infisical.sh` | Charge les secrets Infisical pour Jenkins.                             |
+| `deployment/build.sh`          | Construit et publie l’image du LXP.                                    |
+| `deployment/backup.sh`         | Crée une sauvegarde.                                                   |
+| `deployment/restore.sh`        | Contrôle ou restaure une sauvegarde.                                   |
+| `deployment/env.example`       | Liste les variables avec des exemples sans secret.                     |
