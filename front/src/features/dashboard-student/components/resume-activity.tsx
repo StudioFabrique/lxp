@@ -33,76 +33,82 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
     : defaultImage;
 
   return (
-    <div className="flex gap-2">
-      <ImageHeader
-        imageUrl={isLoading ? "" : (image ?? "")}
-        title={
-          <>
-            {`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : `}
-            <span className="inline-block first-letter:uppercase">
-              {lastLesson.lesson.title}
-            </span>
-          </>
-        }
-        titleIcon={<FileEditIcon className="stroke-white w-5" />}
-        subTitle={
-          <>
-            {`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : `}
-            <span className="inline-block first-letter:uppercase">
-              {lastLesson.lesson.course.title}
-            </span>
-          </>
-        }
-        subTitleIcon={
-          <div className="text-white w-5">
-            <BookMarked />
-          </div>
-        }
-        hidePublished
-        children={[
-          <div
-            key="title-and-badges"
-            className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
-          >
-            <div className="flex gap-2">
-              <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
-              <ComponentIcon className="stroke-white" />
+    <div className="flex flex-row gap-2 max-[1799px]:flex-col">
+      <div className="min-w-0 flex-1">
+        <ImageHeader
+          imageUrl={isLoading ? "" : (image ?? "")}
+          title={
+            <>
+              {`Leçon ${(lastLesson.lesson.order ?? 0) + 1} : `}
+              <span className="inline-block first-letter:uppercase">
+                {lastLesson.lesson.title}
+              </span>
+            </>
+          }
+          titleIcon={<FileEditIcon className="stroke-white w-5" />}
+          subTitle={
+            <>
+              {`Cours ${(lastLesson.lesson.course.order ?? 0) + 1} : `}
+              <span className="inline-block first-letter:uppercase">
+                {lastLesson.lesson.course.title}
+              </span>
+            </>
+          }
+          subTitleIcon={
+            <div className="text-white w-5">
+              <BookMarked />
             </div>
-            <div className="flex gap-1">
-              {lastLesson.lesson.course.bonusSkills &&
-                lastLesson.lesson.course.bonusSkills
-                  .filter((skill) => skill.badge)
-                  .map(
-                    (skill, i) =>
-                      i < 5 && (
-                        <img
-                          key={skill.id}
-                          className="w-20 h-20 p-2"
-                          src={skill.badge}
-                          alt="illustration badge"
-                        />
-                      ),
-                  )}
-            </div>
-          </div>,
-          <PermissionGuard
-            key="link"
-            action="component"
-            object="start-lesson-button"
-          >
-            <div className="p-5 w-full flex justify-end">
-              <Link
-                to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
-                state={{ lessonId: lastLesson.lesson.id }}
-                className="z-9 btn btn-primary text-base-100 flex"
-              >
-                <PlayCircleIcon />
-                <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
-              </Link>
-            </div>
-          </PermissionGuard>,
-        ]}
-      />
+          }
+          reserveActionSpace
+          hidePublished
+          children={[
+            <div
+              key="title-and-badges"
+              className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
+            >
+              <div className="flex gap-2">
+                <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
+                <ComponentIcon className="stroke-white" />
+              </div>
+              <div className="flex gap-1">
+                {lastLesson.lesson.course.bonusSkills &&
+                  lastLesson.lesson.course.bonusSkills
+                    .filter((skill) => skill.badge)
+                    .map(
+                      (skill, i) =>
+                        i < 5 && (
+                          <img
+                            key={skill.id}
+                            className="w-20 h-20 p-2"
+                            src={skill.badge}
+                            alt="illustration badge"
+                          />
+                        ),
+                    )}
+              </div>
+            </div>,
+            <PermissionGuard
+              key="link"
+              action="component"
+              object="start-lesson-button"
+            >
+              <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5">
+                <Link
+                  to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
+                  state={{ lessonId: lastLesson.lesson.id }}
+                  aria-label={lastLesson.beganAt ? "Reprendre" : "Démarrer"}
+                  className="pointer-events-auto z-10 btn btn-primary text-base-100 flex"
+                >
+                  <PlayCircleIcon />
+                  <p className="hidden sm:block">
+                    {lastLesson.beganAt ? "Reprendre" : "Démarrer"}
+                  </p>
+                </Link>
+              </div>
+            </PermissionGuard>,
+          ]}
+        />
+      </div>
       {lastLesson.parcoursId ? (
         <ParcoursStatistiques parcoursId={lastLesson.parcoursId} />
       ) : null}

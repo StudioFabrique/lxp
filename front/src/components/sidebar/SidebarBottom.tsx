@@ -54,13 +54,13 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       <li className="w-full">
         <Link
           to={`/${interfaceType}/profil`}
-          className="flex w-full gap-2 items-center justify-center xl:justify-start xl:p-1 py-2 text-white capitalize rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full gap-2 items-center justify-center xl:justify-start xl:p-1 py-2 capitalize rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
           data-tip={fullName}
         >
           {user && (
             <AvatarSmall
               user={user}
-              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-secondary-content"
+              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-accent-content"
               imgClassName="w-6 h-6 rounded-full object-cover"
             />
           )}
@@ -70,7 +70,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {interfaceType === "admin" && !aiDisabled && (
         <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
           data-tip="Déconnexion"
         >
           <Link
@@ -89,7 +89,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       <li className="w-full">
         <button
           type="button"
-          className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-primary/50 text-sm"
+          className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
           onClick={handleClickTutorial}
           data-tip="Relancer le tutoriel"
         >
@@ -102,7 +102,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
         <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
           data-tip="Quitter la démonstration"
           data-demo-tour="demo-exit"
           onClick={() => setIsExitOpen(true)}
@@ -112,7 +112,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </li>
       ) : (
         <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-primary/50"
+          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
           data-tip="Déconnexion"
           onClick={handleClickLogout}
         >

@@ -103,8 +103,8 @@ const LastParcoursItem = ({
   return (
     <>
       <CursorGlowCard
-        glowColor="info"
-        glowSize={2.5}
+        glowColor="primary"
+        glowSize={2.4}
         className="h-full rounded-box"
       >
         <ul

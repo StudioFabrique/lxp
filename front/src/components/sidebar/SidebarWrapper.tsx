@@ -1,6 +1,5 @@
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import SidebarBottom from "./SidebarBottom";
-import { ThemeContext } from "../../store/ThemeProvider";
 import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../config/urls";
 import { cn } from "../../utils/cn";
 import { useDemoMode } from "../../store/DemoContext";
@@ -13,7 +12,6 @@ const SidebarWrapper = ({
   children: ReactNode;
   interfaceType: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { demoMode } = useDemoMode();
 
   const [logoExists, setExists] = useState(true);
@@ -55,14 +53,12 @@ const SidebarWrapper = ({
   return (
     <nav
       data-onboarding="sidebar-navigation"
-      className={`h-full xl:w-[20rem] flex flex-col justify-between gap-y-4 xl:px-2 px-1 xl:pt-2 xl:pb-4 pb-2 rounded-xl gap-2 ${
-        theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
-      }`}
+      className="h-full xl:w-[20rem] flex flex-col justify-between gap-y-4 xl:px-2 px-1 xl:pt-2 xl:pb-4 pb-2 rounded-xl gap-2 border bg-[var(--sidebar-bg)] text-[var(--sidebar-content)] border-[var(--sidebar-border)] shadow-sm transition-colors duration-200"
     >
       <div className={cn(!showLogo && "mt-2")}>
         {showLogo && (
           <img
-            className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border-slate-700 border object-contain p-1 m-2 mb-3 bg-white"
+            className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border object-contain p-1 m-2 mb-3 bg-white border-[var(--sidebar-border)]"
             src={COMPANY_LOGO}
             style={{ backgroundColor: logoBgColor }}
             alt="Company logo"

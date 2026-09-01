@@ -1,10 +1,23 @@
 import { ChangeEvent, useMemo, useState } from "react";
+import { themeLabels } from "../../../config/themes";
 
 interface ThemeSelectProps {
   label: "Thème clair" | "Thème sombre";
-  themesList: string[];
+  themesList: readonly string[];
   onThemeChange: (newTheme: string, mode: "light" | "dark") => void;
 }
+
+const ThemeSwatch = ({ theme }: { theme: string }) => (
+  <span
+    data-theme={theme}
+    className="flex size-5 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20"
+    aria-hidden="true"
+  >
+    <span className="h-full w-1/3 bg-primary" />
+    <span className="h-full w-1/3 bg-secondary" />
+    <span className="h-full w-1/3 bg-accent" />
+  </span>
+);
 
 export default function ThemeSelect({
   label,
@@ -30,8 +43,9 @@ export default function ThemeSelect({
       <label htmlFor={`${mode}ThemeDropdown`}>{label}</label>
 
       <div className="dropdown" id={`${mode}ThemeDropdown`}>
-        <div tabIndex={0} role="button" className="btn m-1">
-          {selectedTheme}
+        <div tabIndex={0} role="button" className="btn m-1 gap-2">
+          <ThemeSwatch theme={selectedTheme} />
+          {themeLabels[selectedTheme] ?? selectedTheme}
           <svg
             width="12px"
             height="12px"
@@ -45,7 +59,7 @@ export default function ThemeSelect({
 
         <ul
           tabIndex={-1}
-          className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl"
+          className="dropdown-content max-h-80 overflow-y-auto bg-base-300 rounded-box z-10 w-60 p-2 shadow-2xl"
         >
           {themesList.map((theme) => (
             <li key={theme}>
@@ -57,8 +71,9 @@ export default function ThemeSelect({
                   value={theme}
                   onChange={handleChange}
                 />
-                <span className="btn btn-sm btn-block btn-ghost justify-start">
-                  {theme === "lofi" ? "daltonien" : theme}
+                <span className="btn btn-sm btn-block btn-ghost justify-start gap-3">
+                  <ThemeSwatch theme={theme} />
+                  {themeLabels[theme] ?? theme}
                 </span>
               </label>
             </li>
