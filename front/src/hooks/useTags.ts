@@ -7,7 +7,22 @@ const useTags = (initialTags: Tag[]) => {
   const [tag, setTag] = useState<string>("");
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTag(event.currentTarget.value);
+    const value = event.currentTarget.value;
+    const lastSeparatorIndex = value.lastIndexOf(",");
+
+    if (lastSeparatorIndex === -1) {
+      setTag(value);
+      return;
+    }
+
+    setCurrentTags((current) =>
+      addPendingTag(
+        current,
+        initialTags,
+        value.slice(0, lastSeparatorIndex),
+      ),
+    );
+    setTag(value.slice(lastSeparatorIndex + 1).trimStart());
   };
 
   const handleTagSubmit = (event: React.FormEvent) => {

@@ -145,7 +145,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     index: 2,
   },
   "admin-formation-entry": {
-    target: '[data-onboarding="formation-create-entry"]',
+    target: '[data-onboarding="dashboard-formation-create-entry"]',
     title: "Créez votre première formation",
     content:
       'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
@@ -587,7 +587,6 @@ const OnboardingTourContent = ({
     };
     const observer = new MutationObserver(refreshRequirements);
 
-    document.addEventListener("input", refreshRequirements, true);
     document.addEventListener("change", refreshRequirements, true);
     observer.observe(document.body, {
       subtree: true,
@@ -597,7 +596,6 @@ const OnboardingTourContent = ({
     });
 
     return () => {
-      document.removeEventListener("input", refreshRequirements, true);
       document.removeEventListener("change", refreshRequirements, true);
       observer.disconnect();
     };
@@ -757,6 +755,18 @@ const OnboardingTourContent = ({
     [requirementRevision, stageDefinition],
   );
 
+  const missingRequirementLabelsKey = missingRequirements
+    .map((requirement) => requirement.label)
+    .join("\u0000");
+
+  const missingRequirementLabels = useMemo(
+    () =>
+      missingRequirementLabelsKey.length > 0
+        ? missingRequirementLabelsKey.split("\u0000")
+        : [],
+    [missingRequirementLabelsKey],
+  );
+
   useEffect(() => {
     const requirements = stageDefinition?.requirements ?? [];
     requirements.forEach((requirement) => {
@@ -794,9 +804,7 @@ const OnboardingTourContent = ({
       current: stageDefinition.index,
       total: stageDefinition.total,
       waitingForAction: stageDefinition.waitingForAction,
-      missingRequirements: missingRequirements.map(
-        (requirement) => requirement.label,
-      ),
+      missingRequirements: missingRequirementLabels,
       nextLabel: stageDefinition.nextLabel,
       onStop: () => setShowStopConfirmation(true),
       onBack: stageDefinition.previous
@@ -824,13 +832,16 @@ const OnboardingTourContent = ({
         placement: stageDefinition.placement,
         skipBeacon: true,
         blockTargetInteraction: false,
-        disableFocusTrap: Boolean(stageDefinition.waitingForAction),
+        disableFocusTrap: Boolean(
+          stageDefinition.waitingForAction ||
+            stageDefinition.requirements?.length,
+        ),
         spotlightPadding: 8,
       },
     ];
   }, [
     complete,
-    missingRequirements,
+    missingRequirementLabels,
     saveState,
     stageDefinition,
     stepToken,

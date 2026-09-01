@@ -30,6 +30,7 @@ function getDatesTooltip(startDate: string | null, endDate: string | null) {
 
 type LastParcoursItemProps = {
   formation?: FormationParcoursSummary;
+  maxParcoursShown?: number;
   isManagementView?: boolean;
   baseRoute?: "admin" | "student";
   onCreateFormation?: () => void;
@@ -71,13 +72,14 @@ const ParcoursRow = ({
 
 const LastParcoursItem = ({
   formation,
+  maxParcoursShown = 3,
   isManagementView = false,
   baseRoute = "admin",
   onCreateFormation,
   onEditFormation,
 }: LastParcoursItemProps) => {
   const [showRemainingParcours, setShowRemainingParcours] = useState(false);
-  const remainingParcours = formation?.parcours.slice(5) ?? [];
+  const remainingParcours = formation?.parcours.slice(maxParcoursShown) ?? [];
 
   return (
     <>
@@ -116,13 +118,13 @@ const LastParcoursItem = ({
                         aria-label={`Modifier la formation ${formation.title}`}
                         onClick={() => onEditFormation(formation.id)}
                       >
-                        <Edit3 className="size-4" />
+                        <Edit3 className="size-[1.2em]" />
                       </button>
                     </PermissionGuard>
                   ) : null}
                 </div>
               </li>
-              {formation.parcours.slice(0, 5).map((item) => (
+              {formation.parcours.slice(0, maxParcoursShown).map((item) => (
                 <ParcoursRow key={item.id} item={item} baseRoute={baseRoute} />
               ))}
               {isManagementView && remainingParcours.length > 0 ? (
@@ -137,7 +139,7 @@ const LastParcoursItem = ({
                 </li>
               ) : null}
               {baseRoute === "admin" ? (
-                <li className="h-full flex flex-col justify-center gap-2 items-center py-5">
+                <li className="mt-auto flex flex-col gap-2 items-center py-5">
                   <PermissionGuard action="write" object="parcours">
                     <Link
                       to={`/admin/parcours/new?formationId=${formation.id}`}
@@ -159,7 +161,7 @@ const LastParcoursItem = ({
                 <button
                   type="button"
                   className="btn btn-dash"
-                  data-onboarding="formation-create-entry"
+                  data-onboarding="dashboard-formation-create-entry"
                   onClick={onCreateFormation}
                 >
                   <Plus className="size-[1.2em]" />

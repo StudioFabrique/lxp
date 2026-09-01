@@ -5,38 +5,9 @@ import { formationApi } from "../api/formation.api";
 import { formationSchema } from "../formation.schema";
 import type Tag from "../../../utils/interfaces/tag";
 import type FormationItem from "../interfaces/formation-item";
-import { getRandomNumber } from "../../../utils/helpers/get-random-number";
 import type { AxiosError } from "axios";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
-
-const TAG_COLORS = [
-  "rgba(255, 0, 0, 0.5)",
-  "rgba(0, 255, 0, 0.5)",
-  "rgba(0, 0, 255, 0.5)",
-  "rgba(255, 255, 0, 0.5)",
-  "rgba(255, 0, 255, 0.5)",
-  "rgba(0, 255, 255, 0.5)",
-  "rgba(128, 0, 0, 0.5)",
-  "rgba(0, 128, 0, 0.5)",
-  "rgba(0, 0, 128, 0.5)",
-  "rgba(128, 128, 0, 0.5)",
-  "rgba(128, 0, 128, 0.5)",
-  "rgba(0, 128, 128, 0.5)",
-  "rgba(255, 165, 0, 0.5)",
-  "rgba(139, 69, 19, 0.5)",
-  "rgba(220, 20, 60, 0.5)",
-  "rgba(46, 139, 87, 0.5)",
-  "rgba(255, 215, 0, 0.5)",
-  "rgba(139, 0, 139, 0.5)",
-  "rgba(0, 100, 0, 0.5)",
-  "rgba(0, 0, 139, 0.5)",
-];
-
-const makeTag = (name: string, value: number): Tag => ({
-  id: value + 1,
-  name,
-  color: TAG_COLORS[getRandomNumber(0, TAG_COLORS.length - 1)],
-});
+import { addPendingTag } from "../../tags/helpers/tag-selection";
 
 type FormationMutationError = AxiosError<{
   message?: string;
@@ -62,7 +33,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
   const [code, setCode] = useState("");
   const [level, setLevel] = useState("");
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
-  const [tagInput, setTagInput] = useState("");
+  const [tagInput, setTagInputState] = useState("");
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
     null,
   );
@@ -88,7 +59,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
     setCode("");
     setLevel("");
     setCurrentTags([]);
-    setTagInput("");
+    setTagInputState("");
     setFormationToEdit(null);
   }, []);
 
@@ -113,28 +84,31 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
     (e: React.FormEvent) => {
       e.preventDefault();
       if (!tagInput.trim()) return;
-      const existing = allTags.find(
-        (t) => t.name.toLowerCase() === tagInput.toLowerCase(),
-      );
-      if (existing) {
-        if (!currentTags.find((t) => t.id === existing.id)) {
-          setCurrentTags((prev) => [...prev, existing]);
-        }
-      } else {
-        if (
-          !currentTags.find(
-            (t) => t.name.toLowerCase() === tagInput.toLowerCase(),
-          )
-        ) {
-          setCurrentTags((prev) => [
-            ...prev,
-            makeTag(tagInput, allTags.length + prev.length),
-          ]);
-        }
-      }
-      setTagInput("");
+      setCurrentTags((current) => addPendingTag(current, allTags, tagInput));
+      setTagInputState("");
     },
-    [tagInput, allTags, currentTags],
+    [tagInput, allTags],
+  );
+
+  const handleTagInputChange = useCallback(
+    (value: string) => {
+      const lastSeparatorIndex = value.lastIndexOf(",");
+
+      if (lastSeparatorIndex === -1) {
+        setTagInputState(value);
+        return;
+      }
+
+      setCurrentTags((current) =>
+        addPendingTag(
+          current,
+          allTags,
+          value.slice(0, lastSeparatorIndex),
+        ),
+      );
+      setTagInputState(value.slice(lastSeparatorIndex + 1).trimStart());
+    },
+    [allTags],
   );
 
   const handleRemoveTag = useCallback((id: number) => {
@@ -293,7 +267,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
     setLevel,
     currentTags,
     tagInput,
-    setTagInput,
+    setTagInput: handleTagInputChange,
     formationToEdit,
     createdFormation,
     dismissCreatedFormation: () => setCreatedFormation(null),

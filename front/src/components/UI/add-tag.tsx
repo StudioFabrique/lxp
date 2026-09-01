@@ -42,8 +42,8 @@ export default function AddTag(props: AddTagProps) {
         </QuestionMarkTooltip>
       </span>
       <p className="text-xs text-secondary pl-1">
-        Appuyer sur la touche "Entrée" après avoir saisi un nom de tag pour
-        l'ajouter à la liste.
+        Séparez plusieurs tags par une virgule, puis appuyez sur la touche
+        "Entrée" pour ajouter le dernier à la liste.
       </p>
     </form>
   );

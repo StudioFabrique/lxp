@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type Tag from "../../../utils/interfaces/tag";
-import { addPendingTag } from "./tag-selection";
+import { addPendingTag, splitTagNames } from "./tag-selection";
 
 const existingTag: Tag = {
   id: 12,
@@ -27,5 +27,31 @@ describe("addPendingTag", () => {
 
   it("ignore une saisie vide", () => {
     expect(addPendingTag([], [], "   ")).toEqual([]);
+  });
+
+  it("sépare les tags délimités par des virgules", () => {
+    const result = addPendingTag([], [], " Design, UX, accessibilité ");
+
+    expect(result.map((tag) => tag.name)).toEqual([
+      "Design",
+      "UX",
+      "accessibilité",
+    ]);
+  });
+
+  it("ignore les segments vides et les doublons d'une saisie multiple", () => {
+    const result = addPendingTag([], [existingTag], "design, , DESIGN, UX,");
+
+    expect(result.map((tag) => tag.name)).toEqual(["Design", "UX"]);
+  });
+});
+
+describe("splitTagNames", () => {
+  it("nettoie les espaces autour de chaque nom", () => {
+    expect(splitTagNames("  produit, design system ,ui  ")).toEqual([
+      "produit",
+      "design system",
+      "ui",
+    ]);
   });
 });
