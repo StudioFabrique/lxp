@@ -24,13 +24,14 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
 
   const { data: imageBlob, isLoading } = useQuery({
     queryKey: ["module-image", lastLesson.lesson.course.module.id],
-    queryFn: () => dashboardStudentApi.queries.getModuleImage(lastLesson.lesson.course.module.id!),
+    queryFn: () =>
+      dashboardStudentApi.queries.getModuleImage(
+        lastLesson.lesson.course.module.id!,
+      ),
     enabled: !!lastLesson.lesson.course.module.id,
   });
 
-  const image = imageBlob
-    ? normalizeImageSource(imageBlob)
-    : defaultImage;
+  const image = imageBlob ? normalizeImageSource(imageBlob) : defaultImage;
 
   return (
     <div className="flex flex-row gap-2 max-[1799px]:flex-col">
@@ -67,8 +68,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
             >
               <div className="flex gap-2">
-                <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
                 <ComponentIcon className="stroke-white" />
+                <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
               </div>
               <div className="flex gap-1">
                 {lastLesson.lesson.course.bonusSkills &&
