@@ -1,7 +1,9 @@
-# Structure et architecture
+# Structure du projet
 
-Le dépôt est un monorepo à deux applications, pilotées depuis le
-`package.json` racine :
+Le dépôt regroupe deux applications. Le fichier `package.json` à la racine
+contient les commandes communes.
+
+## Vue d’ensemble
 
 ```bash
 lxp/
@@ -13,15 +15,17 @@ lxp/
 └── package.json       # Scripts transverses (install, dev, build, test)
 ```
 
-En production, l'API sert le build du front (voir `api/src/app.ts`).
+En production, l’API sert les fichiers créés par le build du front. Le code se
+trouve dans `api/src/app.ts`.
 
-Le code du service IA est présent dans un dépôt séparé (`ia-lxp`), les requêtes vers ce service se font depuis `api/src/services/ai/`.
+Le code du service IA est présent dans le dépôt séparé `ANDRIA-IA`. L’API
+appelle ce service depuis `api/src/services/ai/`.
 
 Voir [Service IA et synchronisation en développement](developpement-ia.md).
 
-# 1. Structure et architecture front
+## Front
 
-## L'arborescence globale du projet
+### Dossiers
 
 ```bash
 front/src/
@@ -46,7 +50,7 @@ front/src/
 └── main.tsx           # Point de montage React (createRoot)
 ```
 
-## Les composants transverses (/src/components)
+### Composants partagés
 
 `components/` ne contient que ce qui est réutilisable hors d'une feature :
 
@@ -63,7 +67,7 @@ components/
 
 Un composant utilisé par une seule feature reste dans cette feature.
 
-## La structure interne d'une Feature (/src/features)
+### Structure d’une fonction métier
 
 ```bash
 features/parcours/
@@ -79,14 +83,14 @@ features/parcours/
 └── routes.tsx         # Le sous-routeur de cette feature
 ```
 
-La convention est de séparer strictement les trois couches :
+Séparez le code en trois couches :
 
 1. `api/*.api.ts` : appels réseau, typés, sans React ;
 2. `hooks/` : `useQuery` / `useMutation` construits sur ces appels, avec les
    clés de `api/*.keys.ts` ;
 3. `views/` et `components/` : affichage, qui ne consomme que les hooks.
 
-## Le routage
+### Routes
 
 `app/router.tsx` assemble trois ensembles de routes : `authRoutes` (exporté
 par la feature `auth`), `adminRoutes` et `studentRoutes`. Chaque groupe
@@ -94,16 +98,16 @@ compose les `routes.tsx` des features concernées sous son layout
 (`AdminLayout` ou `StudentLayout`), et les protège avec les gardes de
 `components/guards/`.
 
-## Les droits (RBAC)
+### Droits d’accès
 
 Les permissions sont portées par CASL. `rbac/ability.ts` définit les actions
 et les sujets, `rbac/AbilityProvider.tsx` expose l'ability de l'utilisateur
 connecté. Le front s'en sert pour masquer ou désactiver l'interface ; la
 décision qui fait autorité reste celle de l'API.
 
-# 2. Structure et architecture back
+## API
 
-## L'arborescence globale du projet
+### Dossiers
 
 ```bash
 api/
@@ -132,10 +136,9 @@ L'API est écrite en TypeScript exécuté nativement par Node (les imports
 portent l'extension `.ts`). En développement, `node --watch src/server.ts` ;
 en production, le build `tsc` est lancé depuis `dist/`.
 
-## La chaîne de traitement d'une requête
+### Traitement d’une requête
 
-Chaque endpoint traverse toujours les mêmes couches, une responsabilité par
-fichier :
+Chaque route utilise les mêmes couches. Chaque fichier garde un rôle précis :
 
 ```text
 routes/v1/<domaine>/<domaine>.router.ts   déclaration de la route
@@ -149,7 +152,7 @@ Concrètement, pour `GET /v1/parcours/:parcoursId` :
 
 ```bash
 routes/v1/parcours/parcours.router.ts      # route + validateur + permission
-controllers/parcours/http-get-parcours-by-id.ts  # req/res uniquement
+controllers/parcours/http-get-parcours-by-id.ts  # req/res seulement
 models/parcours/get-parcours-by-id.ts      # requête Prisma et mise en forme
 ```
 
@@ -160,7 +163,7 @@ l'opération métier (`create-parcours.ts`).
 
 `routes/v1/v1.router.ts` monte tous les sous-routeurs sous le préfixe `/v1`.
 
-## Les middlewares
+### Middlewares
 
 `src/middleware/` regroupe les préoccupations transverses :
 
@@ -179,15 +182,15 @@ l'opération métier (`create-parcours.ts`).
 - `request-logger.ts` et `response-handler.ts` : journalisation Winston et
   format de réponse homogène.
 
-## La persistance
+### Bases de données
 
 Deux bases de données coexistent :
 
-- **PostgreSQL via Prisma** porte le domaine pédagogique : formations,
+- **PostgreSQL avec Prisma** stocke le domaine pédagogique : formations,
   parcours, modules, cours, leçons, activités, quiz, groupes, compétences,
   suivi de lecture et de progression. Le schéma est dans
   `prisma/schema.prisma`, le client partagé dans `src/utils/db.ts` ;
-- **MongoDB via Mongoose** porte les données annexes et volatiles :
+- **MongoDB avec Mongoose** stocke les données annexes et temporaires :
   utilisateurs et rôles, jetons révoqués, dialogues du chatbot, statistiques
   de prompts, informations de connexion, feedbacks apprenants. Les schémas
   sont dans `src/utils/interfaces/db/`, la connexion dans
@@ -196,15 +199,15 @@ Deux bases de données coexistent :
 Un modèle de `src/models/` peut donc viser l'une ou l'autre base ; c'est la
 seule couche autorisée à le faire.
 
-## Le temps réel
+### Temps réel
 
 `src/socket/socket.ts` initialise Socket.IO à partir du serveur HTTP. La
 session est lue depuis le cookie `accessToken` au moment du handshake, et
 chaque événement sensible repasse par l'ability CASL (`authorizeSocket`). Le
-canal sert principalement aux feedbacks apprenants, au comptage des
+canal sert aux feedbacks apprenants, au comptage des
 connectés et aux félicitations envoyées par un formateur.
 
-## Les services
+### Services
 
 - `services/ai/ai-api-client.ts` : point d'entrée unique vers le service IA
   externe. Il centralise la configuration, la signature JWT et la traduction
@@ -212,7 +215,7 @@ connectés et aux félicitations envoyées par un formateur.
 - `services/quiz/` : génération et correction des questions ;
 - `services/mailer.ts` : envoi des courriels (activation, invitations).
 
-## Les tests
+### Tests
 
 Le front utilise Vitest (`npm run test --prefix front`), en colocalisant les
 fichiers `*.test.ts(x)` à côté du code testé.

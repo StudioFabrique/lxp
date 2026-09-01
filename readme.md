@@ -1,15 +1,26 @@
 # ANDRIA LXP
 
-Application web ANDRIA avec une API Node.js et un frontend React.
+ANDRIA est une plateforme de formation. Ce dépôt contient :
 
-## Prérequis
+- une API Node.js dans `api/` ;
+- une interface React dans `front/` ;
+- les fichiers de déploiement dans `deployment/`.
 
-- Node.js 24 ou une version supérieure ;
+####
+
+Le service IA est présent dans le dépôt privé du studio
+[`StudioFabrique/ANDRIA-IA`](https://github.com/StudioFabrique/ANDRIA-IA).
+
+## Démarrer le projet en local
+
+### Prérequis
+
+- Node.js 22.18 ou une version plus récente ;
 - npm ;
 - Docker avec Docker Compose ;
-- Git.
+- Git ;
 
-## Démarrer en développement
+### Première installation
 
 ```bash
 git clone git@github.com:StudioFabrique/lxp.git
@@ -18,55 +29,103 @@ npm run init
 npm run dev
 ```
 
-`npm run init` supprime les éventuelles données locales, installe les
-dépendances, crée les fichiers `.env`, démarre les bases Docker et applique les
-migrations afin de commencer avec une application vide. La commande affiche la
-clé d'activation nécessaire à la création du premier administrateur.
+Ouvrez <http://localhost:5173>. L’API répond sur
+<http://localhost:3000>.
 
-Pour initialiser l'application avec les données de démonstration :
+`npm run init` effectue les actions suivantes :
 
-```bash
-npm run init -- --with-data
+1. installe les dépendances ;
+2. copie `api/env.example` vers `api/.env` ;
+3. copie `front/env.example` vers `front/.env` ;
+4. démarre PostgreSQL, pgvector et MongoDB ;
+5. applique les migrations et affiche la clé de création du premier compte
+   administrateur.
+
+> `npm run init` supprime les volumes Docker locaux du LXP. Lancez
+> `npm run dump` avant cette commande si le projet initialisé contient des données à
+> conserver.
+
+### Commandes courantes
+
+| Action                                    | Commande                                         |
+| ----------------------------------------- | ------------------------------------------------ |
+| Initialiser des bases vides               | `npm run init`                                   |
+| Restaurer un dump placé dans `api/dumps/` | `npm run init:data`                              |
+| Charger les données de démonstration      | `npm run init:demo`                              |
+| Démarrer l’API et le front                | `npm run dev`                                    |
+| Démarrer les bases sans les réinitialiser | `docker compose -f api/docker-compose.yml up -d` |
+| Sauvegarder les données locales           | `npm run dump`                                   |
+| Lancer les tests de l’API                 | `npm test`                                       |
+
+## Variables d’environnement
+
+Le projet utilise deux fichiers en développement :
+
+- `api/.env` pour l’API et les bases Docker ;
+- `front/.env` pour l’interface.
+
+`npm run init` crée ces fichiers à partir des fichiers `env.example`. Les
+valeurs fournies permettent de démarrer le LXP en local.
+
+La page [Variables d’environnement](docs/variables-environnement.md) indique :
+
+- les variables obligatoires en développement ;
+- les variables du service IA ;
+- les variables requises pour chaque type de déploiement ;
+- le dossier Infisical de chaque variable.
+
+Ne placez aucune clé ou aucun mot de passe réel dans Git.
+
+## Ajouter le service IA en local
+
+Placez les deux dépôts dans le même dossier :
+
+```text
+projets/
+├── lxp/
+└── ANDRIA-IA/
 ```
 
-Les comptes de démonstration ci-dessous sont uniquement créés avec cette
-option.
+Initialisez d’abord le LXP, puis suivez le guide
+[Démarrer ANDRIA-IA en développement](docs/developpement-ia.md). Le guide
+explique où trouver les clés Mistral, quelles variables renseigner et comment
+contrôler le service.
 
-Ouvrir <http://localhost:5173>.
+Vous pouvez travailler sans le service IA. Définissez alors cette valeur dans
+`api/.env` :
 
-## Mode démonstration
-
-ANDRIA peut être déployée en instance de démonstration : une plateforme publique
-et en consultation seule, accessible sans compte depuis `/demo`.
-
-```bash
-npm run init:demo
+```dotenv
+DISABLE_AI_FEATURES=true
 ```
 
-Cette instance se distingue par la seule variable `DEMO_MODE=true` dans
-`api/.env`. En déploiement, c'est aussi elle qui écarte la couche IA : les
-pipelines chargent alors le socle `compose.yml` sans l'overlay
-`compose.ai.yml`. Voir [Mode démonstration](docs/mode-demo.md).
+## Déployer le LXP
 
-| Compte         | Identifiant            | Mot de passe    |
-| -------------- | ---------------------- | --------------- |
-| Administrateur | `admin@studio.eco`     | `Abcdef@123456` |
-| Apprenant      | `apprenant@studio.eco` | `Abcdef@123456` |
+Trois chemins sont disponibles :
+
+| Cible                               | Méthode                                      |
+| ----------------------------------- | -------------------------------------------- |
+| Serveur de développement partagé    | GitHub Actions après une fusion dans `beta`  |
+| Serveur avec un proxy Caddy partagé | Jenkins avec `deployment/caddy/Jenkinsfile`  |
+| Serveur dédié sans Caddy            | Jenkins avec `deployment/direct/Jenkinsfile` |
+
+Les pipelines lisent les secrets dans Infisical. Ils ne déposent pas de
+fichier `.env` sur le serveur.
+
+Consultez le guide [Déployer ANDRIA](deployment/README.md) pour choisir une
+méthode et préparer le serveur. Consultez aussi la
+[liste des variables de production](docs/variables-environnement.md#déploiement)
+avant le premier lancement.
 
 ## Documentation
 
-Les secrets du LXP vivent dans Infisical, jamais dans le dépôt. La norme
-d'entreprise — organisation du coffre, identités, injection, rotation — est
-décrite dans la
-[documentation du serveur](https://docs.dev.step.eco/1-publication-application/1-gerer-les-secrets/).
-Le contrat des variables attendues par un déploiement se trouve dans
-[`deployment/env.example`](deployment/env.example).
+| Besoin                                      | Page                                                         |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| Installer le projet et régler les variables | [Variables d’environnement](docs/variables-environnement.md) |
+| Comprendre le code                          | [Structure du projet](docs/structure-et-architecture.md)     |
+| Démarrer le service IA                      | [Développement avec ANDRIA-IA](docs/developpement-ia.md)     |
+| Déployer une instance                       | [Guide de déploiement](deployment/README.md)                 |
+| Sauvegarder ou restaurer une instance       | [Sauvegardes](docs/sauvegardes.md)                           |
+| Gérer l’instance de démonstration           | [Mode démonstration](docs/mode-demo.md)                      |
 
-- [Structure et architecture](docs/structure-et-architecture.md)
-- [Service IA et synchronisation en développement](docs/developpement-ia.md)
-- [Mode démonstration](docs/mode-demo.md)
-- [Déploiement avec Jenkins](docs/deploiement-jenkins.md)
-- [Déploiement Jenkins avec le Caddy partagé](docs/deploiement-caddy-jenkins.md)
-- [Déploiement de développement avec GitHub Actions](docs/deploiement-caddy-github-actions.md)
-- [Méthodes de déploiement](deployment/README.md)
-- [Schéma relationnel PostgreSQL](docs/lxp-postgres-erdiagram.mmd)
+La [documentation des serveurs STEP](https://docs.dev.step.eco/) décrit la
+configuration commune de Jenkins, Infisical et Caddy.

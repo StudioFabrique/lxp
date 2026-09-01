@@ -1,58 +1,62 @@
 # Mode démonstration
 
 ANDRIA peut être déployée en **instance de démonstration** : une plateforme
-publique, accessible sans compte, garnie de contenus fictifs et strictement en
-consultation. Elle sert de vitrine, et permet à un visiteur de parcourir
+publique, accessible sans compte, avec des contenus fictifs et en consultation
+seule. Elle permet à un visiteur de parcourir
 l'interface de l'équipe pédagogique comme celle d'un apprenant.
 
 ## Principe
 
-Le mode démonstration n'est pas une variante du code, c'est une **configuration
-d'exécution** : la même image Docker, un `.env` différent, des bases dédiées.
-Aucune donnée de production n'est donc atteignable depuis la démonstration.
+Une configuration d’exécution active le mode démonstration. L’instance utilise
+la même image Docker, des variables différentes et des bases dédiées. Elle ne
+peut pas accéder aux données de production.
 
-Sur une instance ordinaire, `DEMO_MODE` reste à `false` et rien ne change. Il
-suffit d'y renseigner `DEMO_URL` pour que le bouton « Mode démonstration »
-apparaisse à côté du tutoriel guidé.
+Sur une instance ordinaire, gardez `DEMO_MODE=false`. Définissez `DEMO_URL`
+pour afficher le bouton « Mode démonstration » à côté du tutoriel guidé.
 
-## Pourquoi le drapeau vient de l'API et non d'une variable `VITE_*`
+## Pourquoi le front lit le mode depuis l’API
 
 Le front est construit une seule fois, dans l'étape `build` du `Dockerfile`, et
 `front/.env.production` est versionné puis copié dans l'image. Une variable
 `VITE_*` a donc **la même valeur sur toutes les instances** : elle ne peut pas
 distinguer la production de la démonstration.
 
-Le drapeau est par conséquent servi au moment de l'exécution par
+L’API fournit le mode au moment de l’exécution avec
 `GET /v1/demo/config`, une route publique qui renvoie :
 
 ```json
-{ "demoMode": true, "demoUrl": "", "exitUrl": "https://andria…", "aiDisabled": true }
+{
+  "demoMode": true,
+  "demoUrl": "",
+  "exitUrl": "https://andria…",
+  "aiDisabled": true
+}
 ```
 
 `DemoProvider` (`front/src/store/DemoProvider.tsx`) la lit au démarrage et la
 diffuse via `useDemoMode()`. C'est aussi par ce canal que passe `aiDisabled`,
 pour la même raison.
 
-Un seul appel est fait, au montage du provider, et son résultat vit dans le
-contexte React pour toute la session. Les consommateurs — les deux layouts, les
-hooks de quiz — lisent cette valeur ; aucun d'eux ne refait de requête.
+Le provider fait un seul appel et stocke son résultat dans le
+contexte React pour toute la session. Les deux layouts et les hooks de quiz
+lisent cette valeur ; aucun d'eux ne refait de requête.
 
 Le front n'a **pas** de variable `VITE_DISABLE_AI_FEATURES`. Elle a existé, et
 elle donnait le même verdict sur toutes les instances : une instance sans couche
 IA affichait quand même le chatbot dès lors que l'image avait été construite
-avec le drapeau à `false`. Ne la réintroduisez pas — `DISABLE_AI_FEATURES` reste
+avec le drapeau à `false`. Ne la réintroduisez pas. `DISABLE_AI_FEATURES` reste
 côté API, et le front en hérite par `aiDisabled`.
 
 ## Variables d'environnement
 
-| Variable | Rôle |
-| --- | --- |
-| `DEMO_MODE` | `true` sur la seule instance de démonstration. Active le verrou lecture seule et l'ouverture de session publique. |
-| `DEMO_URL` | Adresse de l'instance de démonstration, renseignée sur les **autres** instances pour proposer le lien. |
-| `DEMO_EXIT_URL` | Où renvoyer un visiteur qui quitte la démonstration. |
-| `ALTCHA_HMAC_KEY` | Clé de signature des défis anti-robot. À défaut, `SECRET` est utilisée. |
-| `DEMO_ADMIN_EMAIL` | Compte emprunté pour l'interface équipe pédagogique. |
-| `DEMO_STUDENT_EMAIL` | Compte emprunté pour l'interface apprenant. |
+| Variable             | Rôle                                                                                                              |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `DEMO_MODE`          | `true` sur la seule instance de démonstration. Active le verrou lecture seule et l'ouverture de session publique. |
+| `DEMO_URL`           | Adresse de l'instance de démonstration, renseignée sur les **autres** instances pour proposer le lien.            |
+| `DEMO_EXIT_URL`      | Où renvoyer un visiteur qui quitte la démonstration.                                                              |
+| `ALTCHA_HMAC_KEY`    | Clé de signature des défis anti-robot. À défaut, `SECRET` est utilisée.                                           |
+| `DEMO_ADMIN_EMAIL`   | Compte emprunté pour l'interface équipe pédagogique.                                                              |
+| `DEMO_STUDENT_EMAIL` | Compte emprunté pour l'interface apprenant.                                                                       |
 
 Elles sont déjà déclarées dans `deployment/direct/compose.yml` et
 `deployment/caddy/compose.yml`. `DEMO_MODE` pilote en outre le choix des
@@ -70,11 +74,11 @@ tardif laisserait un fichier déposé atteindre le disque avant le refus.
 Trois exceptions seulement, dans `api/src/config/demo-read-only-allowlist.ts` :
 
 - `POST /v1/demo/session`, l'ouverture de session ;
-- `POST /v1/user/group`, qui appelle `httpGetUsersByGroup` — une **lecture
+- `POST /v1/user/group`, qui appelle `httpGetUsersByGroup` : une **lecture
   servie en POST**. Sans elle, les pages Groupes cassent.
 
 Une quatrième route mérite d'être connue : `POST /v1/indicators/:userId/prediction`
-est également une lecture (une inférence, sans écriture). Elle reste bloquée
+est une lecture, sous forme d’inférence sans écriture. Elle reste bloquée
 parce que l'IA est coupée en démonstration ; l'autoriser suppose d'accepter le
 coût des appels au fournisseur depuis une instance publique.
 
@@ -115,9 +119,10 @@ de sens pour un visiteur anonyme.
 
 Ils portent les **rôles ordinaires, avec toutes leurs permissions**. C'est
 délibéré : `PermissionGuard` masque ce qu'il refuse, et une ability réduite à la
-lecture ferait *disparaître* les boutons d'action au lieu de les afficher
-inertes — ANDRIA donnerait l'image d'une interface amputée. Ce sont le verrou
-API et la neutralisation côté front qui interdisent d'écrire, pas leurs droits.
+lecture ferait _disparaître_ les boutons d'action au lieu de les afficher
+inertes. ANDRIA donnerait l'image d'une interface amputée. Le verrou
+API et la neutralisation côté front interdisent d'écrire. Les droits des
+comptes restent inchangés.
 
 Deux points de vigilance :
 
@@ -140,7 +145,7 @@ plutôt que de disparaître.
   clic en phase de capture et pose un tooltip « Indisponible en mode démo ».
   Pas de `disabled` : un élément désactivé n'émet plus d'événement de survol, et
   le tooltip ne s'afficherait jamais.
-- `PermissionGuard` enveloppe automatiquement dans `DemoLock` toute action
+- `PermissionGuard` place dans `DemoLock` toute action
   `write`, `update` ou `delete`. Ce garde est utilisé dans une quarantaine de
   fichiers, autour des boutons d'ajout, de modification et de suppression : c'est
   le principal levier de couverture.
@@ -156,12 +161,12 @@ au prochain rafraîchissement des données.
 
 ## Ce qui est désactivé en démonstration
 
-| Quoi | Pourquoi |
-| --- | --- |
-| Le temps réel (Socket.IO) | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`. |
-| Les fonctionnalités IA | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur. |
-| Le tutoriel d'onboarding | Il enregistre sa progression sur le compte, partagé : le premier visiteur à le terminer en priverait tous les suivants. `OnboardingTour` ne fournit plus qu'un contexte inerte, et la visite guidée est portée par `DemoTour`. |
-| Le questionnaire bêta-testeurs | Sans objet pour un visiteur de passage. |
+| Quoi                           | Pourquoi                                                                                                                                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Le temps réel (Socket.IO)      | Ses gestionnaires écrivent en base sans passer par le verrou HTTP, et tous les visiteurs partagent un compte, donc les mêmes salons. Coupé dans `api/src/server.ts` et `front/src/store/AuthProvider.tsx`.                     |
+| Les fonctionnalités IA         | Chatbot et génération de quiz partent d'une session obtenue sans identifiants sur une instance publique, et consomment des jetons chez le fournisseur.                                                                         |
+| Le tutoriel d'onboarding       | Il enregistre sa progression sur le compte, partagé : le premier visiteur à le terminer en priverait tous les suivants. `OnboardingTour` ne fournit plus qu'un contexte inerte, et la visite guidée est portée par `DemoTour`. |
+| Le questionnaire bêta-testeurs | Sans objet pour un visiteur de passage.                                                                                                                                                                                        |
 
 ## La visite guidée
 
@@ -169,7 +174,7 @@ au prochain rafraîchissement des données.
 l'entrée dans la démonstration et se relance depuis « Tutoriel guidée » dans la
 barre latérale.
 
-Son état vit en `sessionStorage`, **jamais en base**, pour la raison ci-dessus :
+Son état est stocké dans `sessionStorage`, **jamais en base**, pour la raison ci-dessus :
 chaque onglet a donc sa propre visite, et la démonstration commence toujours par
 elle.
 
@@ -184,7 +189,7 @@ L'habillage est partagé avec les visites par page
 1. Sur une instance locale vierge (`npm run init`), créer le premier
    administrateur puis **saisir le contenu via l'interface** : plusieurs
    formations, des parcours **publiés**, des modules, cours, leçons, activités,
-   quiz, des groupes, quelques apprenants, et un peu de progression — seule
+   quiz, des groupes, quelques apprenants et un peu de progression. Seule
    `LessonRead.finishedAt` alimente les pourcentages affichés
    (`api/src/helpers/calculate-module-progress.ts`).
 2. `npm run dump`, qui écrit dans `api/dumps/`.
@@ -197,7 +202,7 @@ des images compressées, plutôt que des vidéos déposées localement.
 
 ## Déployer l'instance
 
-Sur un poste de développement :
+En local :
 
 ```bash
 npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
@@ -209,7 +214,7 @@ npm run init:demo   # restaure api/dumps/demo/ puis prépare les comptes
 démonstration, à chaque déploiement, dès que l'environnement porte
 `DEMO_MODE=true` :
 
-1. `DROP SCHEMA public CASCADE` sur la base LXP — le dump est un `pg_dump -a`,
+1. `DROP SCHEMA public CASCADE` sur la base LXP. Le dump est un `pg_dump -a`,
    il ne se rejoue que sur un schéma vide ;
 2. `prisma migrate deploy`, puis les triggers ANDRIA ;
 3. `psql < api/dumps/demo/dump-pgsql.sql` ;
@@ -224,23 +229,19 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `getDemoUser` cherche en base les comptes désignés par `DEMO_ADMIN_EMAIL` et
 `DEMO_STUDENT_EMAIL`.
 
-Pour le reste, c'est le même socle `compose.yml`. L'environnement Infisical
-peut être `prod` ou `dev` : seul `DEMO_MODE=true` active ce mode. En `dev`, le
-déploiement lit `/ci` et `/runtime` ; les étapes de sauvegarde ajoutent
-`/backup`. En `prod`, il exige un préfixe et lit `/ci` pour le registre,
-`<préfixe>/ci` pour l'accès SSH, puis `<préfixe>/runtime` pour l'application ;
-les sauvegardes ajoutent `<préfixe>/backup`. La démonstration utilise par
-exemple `/ci`, `/demo/ci`, `/demo/runtime` et `/demo/backup`, le dossier
-`runtime` portant `DEMO_MODE=true`. Il n'existe aucun héritage entre les
-dossiers racine et ceux de la cible. Les paramètres Jenkins définissent un
-`DEPLOY_PATH` et un `LXP_DEPLOYMENT_NAME` distincts, et les bases utilisent des
-secrets propres.
-L'overlay `compose.ai.yml` n'est pas
-chargé, donc ni le service `ai`, ni sa base pgvector, ni le cache de modèles ne
-sont déployés. Les variables réservées à cette couche sont également retirées
-de l'environnement avant les appels à Docker, même lorsqu'elles sont présentes
-dans la configuration Infisical sélectionnée. Les pipelines s'en chargent
-seuls à partir de `DEMO_MODE` — voir
+Le fichier `compose.yml` démarre l’application et ses bases. En `dev`, le
+déploiement lit `/ci`, `/runtime` et `/backup`. En `prod`, il demande un
+préfixe et lit `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et
+`<préfixe>/backup`.
+
+Une démonstration de production peut utiliser les dossiers `/ci`, `/demo/ci`,
+`/demo/runtime` et `/demo/backup`. Placez `DEMO_MODE=true` dans
+`/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
+`LXP_DEPLOYMENT_NAME` et ses propres secrets de base de données.
+
+Le pipeline ne charge pas `compose.ai.yml`. Le service `ai`, sa base pgvector
+et le cache des modèles ne démarrent pas. Le script retire aussi les variables
+IA avant les appels à Docker. Consultez
 [`deployment/README.md`](../deployment/README.md).
 
 Ces étapes sont identiques dans les trois pipelines : les deux `Jenkinsfile`
@@ -253,7 +254,7 @@ poussés dans les conteneurs sans jamais être écrits sur le serveur.
 Le catch-all du routeur (`front/src/app/router.tsx`) passe par
 `DefaultRedirect` : sur l'instance de démonstration, `/` et toute adresse
 inconnue mènent à `/demo`, ailleurs à `/login`. Le composant attend
-`isConfigLoaded` avant de trancher — le bundle étant commun à toutes les
+`isConfigLoaded` avant de trancher, car le bundle est commun à toutes les
 instances, le mode n'est connu qu'après la réponse de `GET /v1/demo/config`.
 
 ## Après une migration Prisma
@@ -263,5 +264,5 @@ migration ajoutant une colonne obligatoire, renommant une colonne ou modifiant u
 énuméré périme donc `api/dumps/demo/dump-pgsql.sql`, qu'il faut régénérer.
 
 À terme, un jeu de fixtures écrit avec le client Prisma (sur le modèle de
-`api/src/fixtures.ts`) suivrait le schéma automatiquement et supprimerait cette
+`api/src/fixtures.ts`) suivrait le schéma et supprimerait cette
 servitude.
