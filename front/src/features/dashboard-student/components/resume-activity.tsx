@@ -39,7 +39,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   const image = imageBlob ? normalizeImageSource(imageBlob) : defaultImage;
 
   return (
-    <div className="flex flex-row gap-2 max-[1799px]:flex-col">
+    <div className="flex flex-col gap-2 xl:flex-row">
       <div className="min-w-0 flex-1">
         <ImageHeader
           imageUrl={isLoading ? "" : (image ?? "")}
