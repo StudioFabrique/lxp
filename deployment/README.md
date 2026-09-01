@@ -1,302 +1,211 @@
-# Méthodes de déploiement
+# Déployer ANDRIA
 
-Le répertoire contient les deux modes de déploiement applicatif disponibles :
+Les pipelines construisent les images, lisent les secrets dans Infisical et
+pilotent Docker sur le serveur cible. Le serveur conserve seulement les bases,
+les fichiers envoyés par les utilisateurs et les journaux.
+
+Consultez la [liste des variables](../docs/variables-environnement.md#déploiement)
+avant de préparer une nouvelle instance.
+
+## Choisir le mode de déploiement
+
+| Mode | Fichier | Usage |
+| --- | --- | --- |
+| `caddy` | `deployment/caddy/Jenkinsfile` | Le serveur utilise un proxy Caddy partagé. |
+| `direct` | `deployment/direct/Jenkinsfile` | Le LXP publie lui-même le port 80 du serveur. |
+| développement partagé | `.github/workflows/deploy-dev.yml` | Une fusion dans `beta` déploie l’instance de développement. |
+
+Le mode `caddy` demande un réseau Docker externe nommé `caddy` par défaut. Le
+mode `direct` ne demande pas de proxy.
+
+## Services déployés
+
+Le fichier `compose.yml` démarre :
+
+- l’application `app` ;
+- PostgreSQL `db-pg` ;
+- MongoDB `db-mongo`.
+
+Le fichier `compose.ai.yml` ajoute le service `ai`, sa base `db-ai` et le cache
+des modèles. Les pipelines chargent ce second fichier quand
+`DEMO_MODE=false`.
+
+Une instance de démonstration utilise seulement `compose.yml`. Elle ne démarre
+pas le service IA.
+
+## Préparer un serveur
+
+Le serveur doit fournir :
+
+- Docker avec le module Compose ;
+- un compte SSH autorisé à utiliser Docker ;
+- `rsync` ;
+- le réseau Caddy pour un déploiement en mode `caddy` ;
+- assez d’espace pour les bases, les fichiers et les images Docker.
+
+Le pipeline crée ces dossiers sous `DEPLOY_PATH` :
 
 ```text
-deployment/
-├── backup-common.sh  accès commun à la cible et aux dépôts Restic
-├── backup.sh         export et copie PostgreSQL, MongoDB et uploads
-├── backup.Jenkinsfile job planifié, à instancier une fois par cible
-├── build.sh           construction et publication Jenkins
-├── deploy.sh          point d'entrée unique des trois pipelines
-├── env.example        contrat Infisical et métadonnées des pipelines
-├── restore.sh         vérification et restauration d'un snapshot
-├── with-infisical.sh  authentification Universal Auth de Jenkins
-├── direct/
-│   ├── Jenkinsfile
-│   ├── compose.yml
-│   └── compose.ai.yml
-└── caddy/
-    ├── Jenkinsfile
-    ├── compose.yml
-    └── compose.ai.yml
+DEPLOY_PATH/
+├── data/
+├── logs/
+└── uploads/
 ```
 
-- `direct` publie le port HTTP de l'application directement sur le port 80 du
-  VPS ;
-- `caddy` raccorde l'application au proxy Caddy partagé avec des labels Docker.
-  Le VPS conserve le Caddyfile central et le réseau externe `caddy`.
+Le pipeline ne copie aucun secret, fichier Compose ou script sur le serveur.
+Il utilise Docker à distance avec SSH.
 
-## Socle et couche IA
+## Préparer Infisical
 
-Dans les deux modes, `compose.yml` porte le **socle** — `app`, `db-pg`,
-`db-mongo` — et `compose.ai.yml` y **superpose** la couche IA : le service `ai`,
-sa base `db-ai` (pgvector), le cache de modèles `hf_cache`, et le
-`depends_on` correspondant sur `app`.
+### Instance de développement
 
-```sh
-# Instance ordinaire
-docker compose -f compose.yml -f compose.ai.yml up -d app
+Le workflow GitHub Actions lit :
 
-# Instance de démonstration
-docker compose -f compose.yml up -d app
+```text
+/ci       accès au registre Docker
+/runtime  application et accès SSH
+/backup   sauvegardes
 ```
 
-Le choix se fait sur la seule variable d'environnement `DEMO_MODE` :
-sur `true`, l'API coupe déjà l'IA côté applicatif (`isAiDisabled()` dans
-`api/src/config/config.ts`), la déployer ne ferait que consommer un conteneur,
-un cache de modèles et un accès sortant vers Mistral. Les trois pipelines
-(`deployment/*/Jenkinsfile` et `.github/workflows/deploy-dev.yml`) lisent cette
-variable et sautent au passage les étapes purement IA
-(vérification de l'image, attente de `db-ai`, `app.db_provision`). Le point
-d'entrée commun retire également de son environnement toutes les variables de
-la couche IA, même si elles sont présentes dans la configuration Infisical
-sélectionnée.
+Il utilise toujours l’environnement Infisical `dev`.
 
-`compose.ai.yml` n'est pas autonome : il complète des services et référence des
-réseaux déclarés par le socle. Son nom n'est **pas** `compose.override.yml`,
-que `docker compose` chargerait automatiquement — un fichier oublié sur
-l'instance de démonstration y relancerait l'IA en silence.
+### Instance de production
 
-Le pipeline de construction de l'image applicative reste à la racine dans
-`build.Jenkinsfile`, avec le `Dockerfile` de l'application. Les procédures
-d'exploitation se trouvent dans la documentation du serveur :
-<https://docs.dev.step.eco/2-deploiement-lxp/0-deployer-avec-jenkins/> et
-<https://docs.dev.step.eco/2-deploiement-lxp/1-deployer-avec-github-actions/>.
+Un job Jenkins lit :
 
-## `deploy.sh`
-
-Les deux Jenkinsfile et `.github/workflows/deploy-dev.yml` récupèrent les
-secrets, calculent les métadonnées et encadrent le déploiement avec les étapes
-de sauvegarde. `deploy.sh` garde la séquence applicative : synchronisation des
-contenus, migrations Prisma, triggers ANDRIA, restauration du jeu de
-démonstration, provisionnement de la base IA et démarrage.
-
-Le script ne lit aucun fichier de secrets : toute la configuration arrive par
-l'environnement du processus. Il refuse d'ailleurs de démarrer si un `.env`
-traîne à la racine du dépôt, parce que `docker compose` le chargerait
-automatiquement et fournirait en silence une variable absente de la source de
-vérité.
-
-### Contrat d'entrée
-
-| Variable                                                | Origine                                | Rôle                                                                         |
-| ------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------- |
-| `DEPLOY_MODE`                                           | pipeline, `caddy` (défaut) ou `direct` | choisit `deployment/$DEPLOY_MODE/compose*.yml`                               |
-| `DEPLOY_PATH`                                           | pipeline                               | répertoire des données persistantes sur le serveur cible                     |
-| `LXP_DEPLOYMENT_NAME`                                   | pipeline                               | nom de la stack, des conteneurs, des réseaux et des volumes                  |
-| `LXP_IMAGE`, `LXP_IMAGE_TAG`                            | pipeline                               | image applicative à déployer                                                 |
-| `LXP_AI_IMAGE`, `LXP_AI_IMAGE_TAG`                      | pipeline                               | image du service IA, hors mode démonstration                                 |
-| `APP_HOST`                                              | pipeline                               | domaine du proxy partagé, exigé en mode `caddy`                              |
-| `DEMO_MODE`                                             | configuration d'exécution              | sur `true`, écarte la couche IA et rejoue le jeu de démonstration            |
-| `REGISTRY_USER`, `REGISTRY_TOKEN`                       | `/ci`                                  | `docker login`, sautés si l'un des deux est vide                             |
-| `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PORT` | dev `/runtime`, prod `<préfixe>/ci`      | serveur cible ; sans `DEPLOY_SSH_HOST`, le script vise le démon Docker local |
-| `DEPLOY_SSH_PRIVATE_KEY` **ou** `DEPLOY_SSH_KEY_FILE`   | dev `/runtime`, prod `<préfixe>/ci`      | clé de déploiement, sous forme de matière ou de fichier déjà posé            |
-| `COMPOSE_WAIT_TIMEOUT`                                  | pipeline, défaut `240`                 | attente des healthchecks au démarrage                                        |
-| `DEPLOY_PRUNE`                                          | pipeline, défaut `false`               | `docker image prune -f` en fin de déploiement                                |
-| `CADDY_NETWORK`                                         | pipeline, défaut `caddy`               | réseau externe contrôlé avant de toucher à la stack                          |
-| `BACKUP_LOCAL_ENABLED`, `BACKUP_LOCAL_REPOSITORY`       | dossier Infisical `backup` de la cible  | dépôt Restic sur le disque du VPS                                            |
-| `BACKUP_EXTERNAL_VOLUME_ENABLED`, `BACKUP_EXTERNAL_VOLUME_REPOSITORY` | dossier Infisical `backup` de la cible | dépôt Restic sur un système de fichiers distinct                |
-| `BACKUP_S3_ENABLED`, `BACKUP_S3_*`                      | dossier Infisical `backup` de la cible  | dépôt Restic hors site                                                       |
-| `BACKUP_RESTIC_PASSWORD`                                | dossier Infisical `backup` de la cible  | chiffrement commun aux destinations actives                                 |
-| toutes les autres                                       | configuration d'exécution              | interpolées par Compose depuis l'environnement                               |
-
-Le script valide la présence des variables requises avant tout appel à
-`docker`, et adapte la liste au mode : l'instance de démonstration n'exige pas
-les réglages de la couche IA, mais exige les deux comptes empruntés par les
-visiteurs. Le choix du mode ne dépend ni de l'environnement Infisical, ni du
-préfixe de dossiers utilisé.
-
-### Injection des secrets
-
-GitHub Actions s'authentifie avec OIDC. L'action Infisical charge `/ci` pour le
-build, puis `/ci`, `/runtime` et `/backup` pour le job de déploiement. Ce
-workflow utilise toujours l'environnement `dev` et ne consulte aucun dossier
-préfixé.
-
-Jenkins conserve un seul credential `INFISICAL_LXP` de type **Username with
-password**. Le Client ID Universal Auth tient lieu de nom d'utilisateur et le
-Client Secret de mot de passe. `with-infisical.sh` échange ces valeurs contre un
-jeton court, choisit les dossiers selon l'environnement, puis lance
-`deploy.sh`. `/ci` contient uniquement `REGISTRY_USER` et `REGISTRY_TOKEN` ; il
-reste à la racine de l'environnement et ne dépend jamais de la cible. La
-sélection est volontairement simple et sans héritage :
-
-- en `dev`, le build charge `/ci`, le déploiement charge `/ci` et `/runtime`,
-  et ses étapes de sauvegarde ajoutent `/backup` ; `INFISICAL_PATH_PREFIX` est
-  ignoré ;
-- en `prod`, le build charge `/ci` sans préfixe. Pour un déploiement,
-  `INFISICAL_PATH_PREFIX` est obligatoire et le wrapper charge `/ci`,
-  `<préfixe>/ci` puis `<préfixe>/runtime`. Les opérations de sauvegarde
-  ajoutent `<préfixe>/backup`.
-
-`DEMO_MODE` est simplement lu dans l'environnement injecté et décide seul de
-l'activation du mode démonstration.
-
-Le build Jenkins publie deux tags pour la même image : le SHA Git immuable et
-`latest`. Les jobs de déploiement acceptent l'un ou l'autre avec le paramètre
-`LXP_IMAGE_TAG`.
-
-Le fichier `env.example` liste chaque clé, son dossier et son propriétaire. Les
-variables préfixées par `PIPELINE_` restent sous le contrôle du workflow ;
-`deploy.sh` les restaure après l'injection Infisical.
-
-Une cible de démonstration peut utiliser `dev` ou `prod` : seule la valeur
-effective de `DEMO_MODE` décide du mode. Pour la cible Jenkins habituelle,
-`INFISICAL_ENVIRONMENT=prod` et `INFISICAL_PATH_PREFIX=/demo` sélectionnent
-`/ci` pour le registre, `/demo/ci` pour l'accès SSH, `/demo/runtime` pour la
-configuration applicative et `/demo/backup` pour la sauvegarde.
-
-## Sauvegardes Restic
-
-`backup.sh` protège les deux bases métier et le répertoire `uploads`. Il crée
-un dump PostgreSQL complet au format custom et une archive MongoDB compressée.
-Restic chiffre et déduplique ces exports avec les fichiers dans les
-destinations activées indépendamment :
-
-- `BACKUP_LOCAL_REPOSITORY`, sur le disque du VPS mais hors de `DEPLOY_PATH` ;
-- `BACKUP_EXTERNAL_VOLUME_REPOSITORY`, sur un volume monté distinct de celui
-  qui porte `DEPLOY_PATH` ;
-- `BACKUP_S3_REPOSITORY`, dans un stockage objet hors du VPS.
-
-`BACKUP_LOCAL_ENABLED`, `BACKUP_EXTERNAL_VOLUME_ENABLED` et
-`BACKUP_S3_ENABLED` choisissent les destinations. Une copie locale sur le même
-disque protège d'une suppression accidentelle, mais pas de la perte du VPS.
-Le mode volume externe compare les périphériques qui portent `DEPLOY_PATH` et
-le dépôt ; il s'arrête si les deux chemins utilisent le même système de
-fichiers. La combinaison volume externe et S3 satisfait la topologie 3-2-1.
-
-La sauvegarde s'exécute à chaud. PostgreSQL et MongoDB garantissent chacun la
-cohérence de leur export. Une écriture qui touche à la fois une base et un
-fichier peut toutefois se trouver entre deux instants de l'opération.
-
-Les trois variables d'activation valent `false` par défaut. Les étapes de
-sauvegarde quittent sans accéder à Docker, au disque ou à S3 tant qu'aucune
-destination ne vaut `true`. Vous pouvez donc déployer une cible qui ne possède
-aucune configuration Restic. L'ancienne variable `BACKUP_ENABLED` doit être
-supprimée d'Infisical ; sa présence provoque une erreur explicite afin d'éviter
-une migration silencieuse sans sauvegarde.
-
-Dès qu'une destination est activée, chaque déploiement lance une sauvegarde
-avant les migrations et une autre après le démarrage. L'échec d'une destination
-active fait échouer toute la sauvegarde, et l'échec de la première sauvegarde
-bloque le déploiement. Sur une cible neuve, le script accepte l'absence des deux
-conteneurs de base et le pipeline crée le premier snapshot après le démarrage.
-L'absence d'une seule base signale une cible incomplète et arrête le job.
-
-En développement, `deploy-dev.yml` exécute les sauvegardes avant et après le
-déploiement. Aucun workflow de sauvegarde séparé ne tourne sur cette cible.
-
-En production, créez un job par cible à partir de
-`deployment/backup.Jenkinsfile`. Lancez une première sauvegarde manuelle avec
-le préfixe Infisical, le nom de stack et le chemin de déploiement de la cible.
-Le job reprend ces valeurs comme paramètres par défaut pour les passages
-suivants. Cette première sauvegarde réussie installe le cron, qui répartit les
-départs avec la syntaxe Jenkins `H H/6 * * *`. Le job échoue si aucune
-destination n'est activée, ce qui évite un résultat vert sans snapshot.
-
-Le paramètre Jenkins `OPERATION` expose quatre actions :
-
-- `backup` écrit sur toutes les destinations activées ; c'est l'action utilisée
-  par le cron ;
-- `list-backup` affiche les snapshots des destinations activées dans la console
-  Jenkins ;
-- `verify-backup` vérifie et restaure temporairement le dernier snapshot de
-  chaque destination activée ;
-- `stop-backup` retire le déclencheur cron, sans supprimer les snapshots déjà
-  validés. Le job reste disponible pour les opérations manuelles.
-
-Jenkins ne lance pas deux exécutions concurrentes de ce job. Si une sauvegarde
-est déjà en cours, `stop-backup` attend sa fin puis retire la planification. Un
-nouveau `backup` manuel réussi réactive automatiquement le cron
-`H H/6 * * *`.
-
-Cette opération ne change aucune variable `BACKUP_*_ENABLED` : les sauvegardes
-avant et après un déploiement restent actives. Elle coupe uniquement le job
-cron dédié. La planification est gérée avec les propriétés Pipeline standard
-et ne demande pas d'approbation de script Groovy supplémentaire.
-
-Restic conserve tous les snapshots des sept derniers jours, huit points
-hebdomadaires et douze points mensuels. Chaque exécution contrôle toutes les
-destinations actives après l'application de cette rétention. La base `db-ai`,
-le cache Hugging Face, `data` et les logs restent exclus. Le déploiement
-reconstruit la base IA à partir des données métier.
-
-### Préparer une cible
-
-Préparez uniquement les destinations disponibles et donnez au démon Docker le
-droit d'écrire dans les répertoires locaux. Pour une copie sur volume externe,
-montez d'abord un système de fichiers distinct. Pour S3, créez un bucket hors
-du serveur qui héberge l'application. Ajoutez les variables `BACKUP_*` décrites
-dans `env.example` : `/backup` pour la cible de développement, ou
-`<préfixe>/backup` pour une cible de production. Activez ensuite chaque
-destination prête avec sa variable `BACKUP_*_ENABLED`.
-
-Utilisez un préfixe S3 et des répertoires propres à chaque cible. Conservez
-`BACKUP_RESTIC_PASSWORD` dans un second coffre. Restic ne peut pas ouvrir les
-dépôts sans ce mot de passe. Un VPS sans volume supplémentaire peut utiliser
-`BACKUP_S3_ENABLED=true` seul ; c'est une sauvegarde hors site, mais pas une
-topologie 3-2-1 complète.
-
-### Vérifier et restaurer
-
-Le mode `verify` lit les données du dépôt, restaure le snapshot dans un volume
-temporaire, contrôle les sommes SHA-256 puis injecte les dumps dans des
-conteneurs PostgreSQL et MongoDB isolés :
-
-```sh
-RESTORE_SOURCE=s3 RESTORE_SNAPSHOT=latest \
-  ./deployment/restore.sh verify
-
-RESTORE_SOURCE=local RESTORE_SNAPSHOT=<id-restic> \
-  ./deployment/restore.sh verify
-
-RESTORE_SOURCE=external-volume RESTORE_SNAPSHOT=latest \
-  ./deployment/restore.sh verify
+```text
+/ci                    accès commun au registre Docker
+<préfixe>/ci           accès SSH de la cible
+<préfixe>/runtime      application
+<préfixe>/backup       sauvegardes
 ```
 
-Le job Jenkins expose une action manuelle `verify-backup` qui contrôle toutes
-les destinations activées. En développement, lancez `restore.sh verify` depuis
-un agent qui charge la configuration Infisical de la cible. Exécutez aussi un
-exercice après un changement de version majeure de PostgreSQL, MongoDB ou
-Restic.
+Exemples de préfixes :
 
-Le mode `restore` remplace les données de la stack. Il commence par la même
-vérification complète, puis exige que `RESTORE_CONFIRM` corresponde au nom de
-la stack. Il arrête l'application, remplace PostgreSQL, MongoDB et `uploads`,
-reprovisionne ANDRIA si la cible utilise l'IA et contrôle le healthcheck :
+- `/demo` pour l’instance de démonstration ;
+- `/clients/acme` pour une instance cliente.
 
-```sh
-RESTORE_SOURCE=s3 \
-RESTORE_SNAPSHOT=<id-restic> \
-RESTORE_CONFIRM="$LXP_DEPLOYMENT_NAME" \
-  ./deployment/restore.sh restore
-```
+Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Le
+dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et
+`REGISTRY_TOKEN`.
 
-Lancez cette commande depuis un agent qui charge les mêmes secrets Infisical
-que le déploiement. En cas d'échec après l'arrêt, le script laisse
-l'application arrêtée pour éviter de servir un état incomplet. Le verrou Docker
-`<stack>-backup-lock` empêche les opérations concurrentes. Si l'agent subit un
-arrêt brutal, vérifiez qu'aucune opération ne tourne avant de retirer ce
-conteneur avec `docker rm -f <stack>-backup-lock`.
+Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
+secret. La page
+[Variables d’environnement](../docs/variables-environnement.md#répartition-dans-infisical)
+explique où placer chaque valeur.
 
-### Lancer un déploiement à la main
+## Déployer avec Jenkins
 
-Sans `DEPLOY_SSH_HOST`, `deploy.sh` s'adresse au démon Docker local — c'est le
-mode « je monte la stack sur ma machine » :
+### 1. Créer le credential Infisical
 
-```sh
-DEPLOY_MODE=caddy \
-DEPLOY_PATH="$PWD/tmp/lxp-local" \
-LXP_DEPLOYMENT_NAME=lxp-local \
-LXP_IMAGE=studiostep/lxp LXP_IMAGE_TAG=beta \
-LXP_AI_IMAGE=studiostep/lxp-ai LXP_AI_IMAGE_TAG=latest \
-APP_HOST=lxp.dev.step.eco \
+Créez un credential Jenkins de type « Username with password » :
+
+- le nom d’utilisateur contient le Client ID Universal Auth ;
+- le mot de passe contient le Client Secret Universal Auth.
+
+Le nom proposé par les Jenkinsfiles est `INFISICAL_CREDENTIALS`. Vous pouvez le
+changer avec le paramètre `INFISICAL_CREDENTIAL_ID`.
+
+### 2. Créer les jobs
+
+| Job | Script Path |
+| --- | --- |
+| Construire l’image LXP | `build.Jenkinsfile` |
+| Déployer avec Caddy | `deployment/caddy/Jenkinsfile` |
+| Déployer sans Caddy | `deployment/direct/Jenkinsfile` |
+| Sauvegarder une cible | `deployment/backup.Jenkinsfile` |
+
+### 3. Renseigner les paramètres
+
+Vérifiez au minimum :
+
+- `INFISICAL_PROJECT_ID` ;
+- `INFISICAL_ENVIRONMENT` ;
+- `INFISICAL_PATH_PREFIX` pour une cible hors développement ;
+- `LXP_DEPLOYMENT_NAME` ;
+- `APP_HOST` en mode Caddy ;
+- les tags des images.
+
+Gardez le même `LXP_DEPLOYMENT_NAME` pendant toute la vie d’une instance. Un
+nouveau nom crée de nouveaux volumes Docker et donne l’impression que les
+données ont disparu.
+
+### 4. Lancer le job
+
+Le job effectue une sauvegarde, déploie l’application, puis crée une seconde
+sauvegarde. Aucune sauvegarde n’est créée si les trois variables
+`BACKUP_*_ENABLED` valent `false`.
+
+La [documentation des serveurs STEP](https://docs.dev.step.eco/2-deploiement-lxp/0-deployer-avec-jenkins/)
+explique la création des jobs et le retour à une ancienne image.
+
+## Déployer le développement avec GitHub Actions
+
+Le workflow `.github/workflows/deploy-dev.yml` effectue deux actions :
+
+- sur une pull request vers `beta`, il lance le lint, les types et les tests ;
+- après une fusion dans `beta`, il construit l’image et déploie le serveur de
+  développement.
+
+Ajoutez ces variables dans l’environnement GitHub `development` :
+
+- `INFISICAL_IDENTITY_ID` ;
+- `INFISICAL_PROJECT_SLUG` ;
+- `APP_HOST`.
+
+Le workflow utilise OIDC pour accéder à Infisical. Aucun secret Infisical ne
+doit être enregistré dans GitHub.
+
+La [documentation des serveurs STEP](https://docs.dev.step.eco/2-deploiement-lxp/1-deployer-avec-github-actions/)
+décrit la configuration de l’identité OIDC.
+
+## Déployer une instance de démonstration
+
+Définissez `DEMO_MODE=true` dans le dossier `runtime` de la cible. Ajoutez aussi
+`DEMO_ADMIN_EMAIL` et `DEMO_STUDENT_EMAIL`.
+
+Le pipeline :
+
+1. ignore les variables et l’image IA ;
+2. remet les bases dans leur état de démonstration ;
+3. charge les données présentes dans `api/dumps/demo/` ;
+4. prépare les deux comptes de visite.
+
+N’activez pas `DEMO_MODE` sur une instance qui contient des données à garder.
+Le déploiement efface les données de cette instance.
+
+Consultez [Mode démonstration](../docs/mode-demo.md) pour produire les données
+et tester le parcours visiteur.
+
+## Déploiement manuel
+
+`deployment/deploy.sh` sert surtout aux pipelines. Vous pouvez aussi le lancer
+depuis un agent qui possède Docker, `rsync` et toutes les variables requises.
+
+Sans `DEPLOY_SSH_HOST`, le script utilise le Docker local :
+
+```bash
+infisical run --env=dev --path=/ci --path=/runtime -- \
   ./deployment/deploy.sh
 ```
 
-La configuration d'exécution reste à fournir. Elle viendra d'Infisical :
+Le script doit partir de la racine du dépôt. Il refuse de démarrer si un
+fichier `.env` est présent à cette racine.
 
-```sh
-infisical run --env=dev --path=/ci --path=/runtime -- ./deployment/deploy.sh
-```
+## Sauvegardes
+
+Les déploiements peuvent copier PostgreSQL, MongoDB et `uploads` vers un dépôt
+Restic local, un volume externe ou S3. Consultez
+[Sauvegarder et restaurer](../docs/sauvegardes.md) pour préparer les dépôts,
+contrôler un snapshot ou remplacer les données d’une instance.
+
+## Fichiers principaux
+
+| Fichier | Rôle |
+| --- | --- |
+| `deployment/deploy.sh` | Valide les variables, applique les migrations et démarre les services. |
+| `deployment/with-infisical.sh` | Charge les secrets Infisical pour Jenkins. |
+| `deployment/build.sh` | Construit et publie l’image du LXP. |
+| `deployment/backup.sh` | Crée une sauvegarde. |
+| `deployment/restore.sh` | Contrôle ou restaure une sauvegarde. |
+| `deployment/env.example` | Liste les variables avec des exemples sans secret. |

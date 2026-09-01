@@ -40,7 +40,7 @@ npm run dev
 `npm run init` crée les trois bases, le réseau Docker et les triggers qui
 signalent les changements de cours au watcher.
 
-Pour un poste déjà initialisé, gardez les données et relancez les services :
+Pour un projet déjà initialisé, gardez les données et relancez les services :
 
 ```bash
 docker compose -f api/docker-compose.yml up -d
@@ -142,13 +142,13 @@ DISABLE_AI_FEATURES=true
 
 ## Problèmes courants
 
-| Symptôme | Contrôle |
-| --- | --- |
-| `network lxp not found` | Démarrez les bases du LXP avant ANDRIA-IA. |
-| Connexion PostgreSQL ou MongoDB refusée | Utilisez les noms de conteneurs et leurs ports internes. |
-| Réponse IA `401` | Alignez `SECRET_KEY` et `DOCKER_IA_AUTH_SECRET`. |
-| Tables `andria_*` absentes | Relancez `python -m app.db_provision` avec `docker compose run`. |
-| Watcher sans événement | Lancez `npm run notify-triggers --prefix api`, puis redémarrez `ai-service`. |
+| Symptôme                                | Contrôle                                                                     |
+| --------------------------------------- | ---------------------------------------------------------------------------- |
+| `network lxp not found`                 | Démarrez les bases du LXP avant ANDRIA-IA.                                   |
+| Connexion PostgreSQL ou MongoDB refusée | Utilisez les noms de conteneurs et leurs ports internes.                     |
+| Réponse IA `401`                        | Alignez `SECRET_KEY` et `DOCKER_IA_AUTH_SECRET`.                             |
+| Tables `andria_*` absentes              | Relancez `python -m app.db_provision` avec `docker compose run`.             |
+| Watcher sans événement                  | Lancez `npm run notify-triggers --prefix api`, puis redémarrez `ai-service`. |
 
 La liste des variables et de leurs valeurs par défaut se trouve dans
 [Variables d’environnement](variables-environnement.md#andria-ia-en-développement).
