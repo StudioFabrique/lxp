@@ -119,11 +119,12 @@ export function DataTable<TData, TValue>({
                 className={`text-base-content group ${
                   isClickable ? "cursor-pointer" : ""
                 }`}
-                // La ligne entière sert de lien : sans rôle ni gestion clavier,
-                // elle ne serait atteignable qu'à la souris.
+                // La ligne entière sert de lien
                 role={isClickable ? "link" : undefined}
                 tabIndex={isClickable ? 0 : undefined}
-                onClick={isClickable ? () => onRowClick(row.original) : undefined}
+                onClick={
+                  isClickable ? () => onRowClick(row.original) : undefined
+                }
                 onKeyDown={
                   isClickable
                     ? (event) => {
@@ -146,7 +147,8 @@ export function DataTable<TData, TValue>({
                     // cellule : leur clic ne doit pas déclencher la navigation
                     // portée par la ligne.
                     onClick={
-                      cell.column.id === "select" || cell.column.id === "actions"
+                      cell.column.id === "select" ||
+                      cell.column.id === "actions"
                         ? (event) => event.stopPropagation()
                         : undefined
                     }

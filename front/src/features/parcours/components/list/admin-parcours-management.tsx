@@ -144,6 +144,7 @@ const AdminParcoursManagement = ({
         {formations.map((formation) => (
           <LastParcoursItem
             key={formation.id}
+            maxParcoursShown={4}
             formation={formation}
             isManagementView
             baseRoute={layout}
@@ -168,9 +169,7 @@ const AdminParcoursManagement = ({
           title={`Supprimer le parcours « ${parcoursToDelete.title} »`}
           leftLabel="Annuler"
           rightLabel="Supprimer"
-          rightDisabled={
-            deleteConfirmation.trim() !== parcoursToDelete.title
-          }
+          rightDisabled={deleteConfirmation.trim() !== parcoursToDelete.title}
           isSubmitting={deleteParcoursMutation.isPending}
           onLeftClick={closeParcoursDeletion}
           onRightClick={confirmParcoursDeletion}
