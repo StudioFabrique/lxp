@@ -33,7 +33,7 @@ const ParcoursActionsMenu = ({
       <DropdownMenu.Content
         align="end"
         sideOffset={6}
-        className="z-[110] min-w-52 rounded-box border border-base-300 bg-base-100 p-1.5 text-base-content shadow-lg"
+        className="z-20 min-w-52 rounded-box border border-base-300 bg-base-100 p-1.5 text-base-content shadow-lg"
       >
         <DropdownMenu.Item asChild>
           <Link

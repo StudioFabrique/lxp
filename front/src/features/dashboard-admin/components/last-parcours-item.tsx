@@ -206,6 +206,7 @@ const LastParcoursItem = ({
           leftLabel="Fermer"
           onLeftClick={() => setShowRemainingParcours(false)}
           modalBoxStyle="max-w-2xl"
+          dialogAdditionalClass="z-20"
         >
           <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-5">
             {remainingParcours.map((item) => (
