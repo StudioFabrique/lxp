@@ -123,9 +123,18 @@ const mutations = {
         | undefined,
     };
   },
-  importParcours: async (archive: File) => {
+  importParcours: async ({
+    archive,
+    formationId,
+  }: {
+    archive: File;
+    formationId?: number;
+  }) => {
     const formData = new FormData();
     formData.append("archive", archive);
+    if (formationId !== undefined) {
+      formData.append("formationId", formationId.toString());
+    }
     const res = await apiClient.post<{
       success: true;
       parcoursId: number;

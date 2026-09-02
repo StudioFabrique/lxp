@@ -668,7 +668,11 @@ async function createQuiz(
   });
 }
 
-export async function importParcoursArchive(archive: Buffer, userId: string) {
+export async function importParcoursArchive(
+  archive: Buffer,
+  userId: string,
+  formationId?: number,
+) {
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive, { checkCRC32: true });
@@ -811,10 +815,20 @@ export async function importParcoursArchive(archive: Buffer, userId: string) {
 
     const result = await prisma.$transaction(
       async (tx) => {
-        const existingFormation = await tx.formation.findUnique({
-          where: { title: manifest.formation.title },
-        });
+        const selectedFormation =
+          formationId === undefined
+            ? null
+            : await tx.formation.findUnique({ where: { id: formationId } });
+        if (formationId !== undefined && !selectedFormation) {
+          throw httpError(404, "La formation sélectionnée n'existe pas.");
+        }
+        const existingFormation = selectedFormation
+          ? null
+          : await tx.formation.findUnique({
+              where: { title: manifest.formation.title },
+            });
         const formation =
+          selectedFormation ??
           existingFormation ??
           (await tx.formation.create({
             data: { ...manifest.formation, adminId: admin.id },

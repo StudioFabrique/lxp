@@ -17,6 +17,10 @@ import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import type { AxiosError } from "axios";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import {
+  findDetectedFormationId,
+  readParcoursArchiveFormationTitle,
+} from "../helpers/read-parcours-archive-formation";
 
 type Item = {
   id: number;
@@ -37,6 +41,11 @@ const AddParcours = () => {
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [pendingArchive, setPendingArchive] = useState<File>();
+  const [importFormationId, setImportFormationId] = useState<
+    number | undefined
+  >();
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -44,6 +53,7 @@ const AddParcours = () => {
     queryKey: ["formations"],
     queryFn: () => parcoursApi.queries.getFormations(),
   });
+  const formationList: Item[] = Array.isArray(formations) ? formations : [];
 
   const { mutate: createParcours, isPending: isCreating } = useMutation({
     mutationFn: (data: { title: string; formationId: number }) =>
@@ -137,7 +147,22 @@ const AddParcours = () => {
     setParcours(undefined);
   };
 
-  const handleArchiveSelection = (
+  const closeImportModal = () => {
+    if (isImporting) return;
+    setShowImportModal(false);
+    setPendingArchive(undefined);
+    setImportFormationId(undefined);
+  };
+
+  const handleImportParcours = () => {
+    if (!pendingArchive) return;
+    importParcours({
+      archive: pendingArchive,
+      formationId: importFormationId,
+    });
+  };
+
+  const handleArchiveSelection = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const archive = event.target.files?.[0];
@@ -147,7 +172,20 @@ const AddParcours = () => {
       toast.error("Sélectionnez une archive au format .zip.");
       return;
     }
-    importParcours(archive);
+    try {
+      const formationTitle = await readParcoursArchiveFormationTitle(archive);
+      setPendingArchive(archive);
+      setImportFormationId(
+        findDetectedFormationId(formationList, formationTitle),
+      );
+      setShowImportModal(true);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Le parcours n’a pas pu être importé.",
+      );
+    }
   };
 
   return (
@@ -176,7 +214,7 @@ const AddParcours = () => {
                       Créer un nouveau parcours
                     </h2>
                     <NewParcoursForm
-                      formations={formations}
+                      formations={formationList}
                       initialFormationId={initialFormationId}
                       onSubmit={handleSubmit}
                     />
@@ -243,7 +281,7 @@ const AddParcours = () => {
                 Rechercher par formation
               </label>
               <Selecter
-                list={formations ?? []}
+                list={formationList}
                 title="Sélectionner une formation"
                 onSelectItem={handleFormation}
               />
@@ -281,6 +319,48 @@ const AddParcours = () => {
                   })}
                 </div>
               )}
+            </div>
+          </div>
+        </Modal>
+      )}
+      {showImportModal && pendingArchive && (
+        <Modal
+          title="Importer un parcours"
+          leftLabel="Annuler"
+          rightLabel="Importer le parcours"
+          onLeftClick={closeImportModal}
+          onRightClick={handleImportParcours}
+          isSubmitting={isImporting}
+          rightDisabled={importFormationId === undefined}
+          modalBoxStyle="w-11/12 max-w-2xl"
+        >
+          <div className="mt-6 flex flex-col gap-5">
+            <p className="text-sm text-base-content/70">
+              Archive sélectionnée : {pendingArchive.name}
+            </p>
+            <div>
+              <label
+                className="mb-2 block text-sm font-semibold"
+                htmlFor="import-formation"
+              >
+                Formation de destination
+              </label>
+              <select
+                id="import-formation"
+                className="select select-primary w-full border border-neutral/50 focus:outline-none"
+                value={importFormationId ?? ""}
+                onChange={(event) => {
+                  const value = Number(event.currentTarget.value);
+                  setImportFormationId(value > 0 ? value : undefined);
+                }}
+              >
+                <option value="">Sélectionner une formation</option>
+                {formationList.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </Modal>
