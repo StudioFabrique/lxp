@@ -115,8 +115,10 @@ const PromoteToRoot = () => {
               </span>
             </button>
             puis saisissez-la ci-dessous. La clé est valable
-            {` ${activationTokenTtlMinutes} minute(s)`} et ne peut être utilisée
-            qu'une fois.
+            {activationTokenTtlMinutes >= 60
+              ? `${activationTokenTtlMinutes / 60} heures`
+              : `${activationTokenTtlMinutes} minutes`}{" "}
+            et ne peut être utilisée qu'une fois.
           </p>
           <input
             type="password"

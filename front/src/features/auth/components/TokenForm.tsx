@@ -181,7 +181,11 @@ const TokenForm = ({ onNext }: Props) => {
           </div>
           <p className="text-xs text-base-content/50 mt-4">
             La nouvelle clé s'affichera dans le terminal. Elle est valide
-            pendant {activationTokenTtlMinutes} minute(s).
+            pendant{" "}
+            {activationTokenTtlMinutes >= 60
+              ? `${activationTokenTtlMinutes / 60} heures`
+              : `${activationTokenTtlMinutes} minutes`}
+            .
           </p>
         </div>
       </div>
