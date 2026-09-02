@@ -155,7 +155,9 @@ const AdminParcoursManagement = ({
           />
         ))}
         {isAdmin ? (
-          <LastParcoursItem onCreateFormation={openFormationCreation} />
+          <PermissionGuard action="write" object="parcours">
+            <LastParcoursItem onCreateFormation={openFormationCreation} />
+          </PermissionGuard>
         ) : null}
       </section>
 

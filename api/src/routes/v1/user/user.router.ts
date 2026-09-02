@@ -15,7 +15,6 @@ import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
 import preventSelfUserEdit from "../../../middleware/prevent-self-user-edit.ts";
 import checkUserManagementScope from "../../../middleware/check-user-management-scope.ts";
 import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
-import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours.ts";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group.ts";
 import httpGetUsersByIds from "../../../controllers/user/http-get-users-by-ids.ts";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank.ts";
