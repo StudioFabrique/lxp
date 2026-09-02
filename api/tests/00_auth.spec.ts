@@ -8,7 +8,10 @@ import app from "../src/app.ts";
 import User from "../src/utils/interfaces/db/user.ts";
 import Role from "../src/utils/interfaces/db/role.ts";
 import BlackListedToken from "../src/utils/interfaces/db/blacklisted-token.ts";
-import { createFirstAdmin } from "../src/models/auth/setup.ts";
+import {
+  createFirstAdmin,
+  promoteAdminToRoot,
+} from "../src/models/auth/setup.ts";
 import { env } from "../src/config/env.ts";
 
 dotenv.config();
@@ -370,6 +373,32 @@ describe("HTTP auth", () => {
           { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
           { $set: { isActive: true } },
         );
+      }
+    });
+
+    test("un administrateur peut promouvoir son propre compte en root", async () => {
+      const admin = await User.findOne({ email: "admin@studio.eco" });
+      expect(admin).not.toBeNull();
+
+      const initialRoles = [...admin!.roles];
+      const token = jwt.sign({ purpose: "first-admin" }, env.REGISTER_SECRET, {
+        expiresIn: "5m",
+      });
+
+      try {
+        await promoteAdminToRoot(token, admin!._id.toString());
+
+        const promotedAdmin = await User.findById(admin!._id).populate("roles");
+        expect(promotedAdmin?.roles).toEqual([
+          expect.objectContaining({ role: "root", rank: 0 }),
+        ]);
+        expect(await BlackListedToken.exists({ token })).not.toBeNull();
+      } finally {
+        await User.updateOne(
+          { _id: admin!._id },
+          { $set: { roles: initialRoles } },
+        );
+        await BlackListedToken.deleteOne({ token });
       }
     });
   });

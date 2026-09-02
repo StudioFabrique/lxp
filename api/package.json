@@ -41,6 +41,7 @@
     "express-validator": "^7.0.1",
     "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
+    "jszip": "^3.10.1",
     "mongoose": "^7.0.3",
     "multer": "^2.0.2",
     "nodemailer": "^9.0.2",

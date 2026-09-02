@@ -41,9 +41,7 @@ const queries = {
     return res.data;
   },
   getById: async (id: number): Promise<Parcours> => {
-    const res = await apiClient.get<Parcours>(
-      `/parcours/parcours-by-id/${id}`,
-    );
+    const res = await apiClient.get<Parcours>(`/parcours/parcours-by-id/${id}`);
     return res.data;
   },
   getByFormation: async (formationId: number) => {
@@ -114,6 +112,28 @@ const mutations = {
     const res = await apiClient.post(`/parcours/duplicate/${id}`);
     return res.data;
   },
+  exportParcours: async (id: number) => {
+    const res = await apiClient.get<Blob>(`/parcours/export/${id}`, {
+      responseType: "blob",
+    });
+    return {
+      archive: res.data,
+      contentDisposition: res.headers["content-disposition"] as
+        | string
+        | undefined,
+    };
+  },
+  importParcours: async (archive: File) => {
+    const formData = new FormData();
+    formData.append("archive", archive);
+    const res = await apiClient.post<{
+      success: true;
+      parcoursId: number;
+      title: string;
+      warnings: string[];
+    }>("/parcours/import", formData);
+    return res.data;
+  },
   publishParcours: async (id: string, isPublished: boolean) => {
     const res = await apiClient.put(`/parcours/publish/${id}`, {
       isPublished,
@@ -147,10 +167,7 @@ const mutations = {
     const res = await apiClient.put("/parcours/update-virtual-class", data);
     return res.data;
   },
-  updateParcoursTags: async (data: {
-    parcoursId: number;
-    tags: number[];
-  }) => {
+  updateParcoursTags: async (data: { parcoursId: number; tags: number[] }) => {
     const res = await apiClient.put("/parcours/update-tags", data);
     return res.data;
   },
@@ -175,9 +192,7 @@ const mutations = {
     const res = await apiClient.put("/parcours/groups", data);
     return res.data;
   },
-  createTags: async (payload: {
-    tags: { name: string; color: string }[];
-  }) => {
+  createTags: async (payload: { tags: { name: string; color: string }[] }) => {
     const res = await apiClient.post("/tag", payload);
     return res.data;
   },

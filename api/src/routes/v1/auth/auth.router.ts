@@ -19,6 +19,7 @@ import rateLimiter, { clientIp } from "../../../middleware/rate-limiter.ts";
 import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-backgrounds.ts";
 import httpPostResendActivation from "../../../controllers/auth/http-post-resend-activation.ts";
 import httpPatchOnboarding from "../../../controllers/auth/http-patch-onboarding.ts";
+import httpPostPromoteRoot from "../../../controllers/auth/http-post-promote-root.ts";
 
 const authRouter = express.Router();
 
@@ -79,6 +80,18 @@ authRouter.patch(
     .isInt({ min: 1 })
     .withMessage("Version d'onboarding invalide."),
   httpPatchOnboarding,
+);
+
+authRouter.post(
+  "/promote-root",
+  checkToken,
+  rateLimiter(3, 60_000),
+  body("token")
+    .notEmpty()
+    .withMessage("Le token est requis.")
+    .isString()
+    .withMessage("Le token doit être une chaîne de caractères."),
+  httpPostPromoteRoot,
 );
 
 // Auth screens backgrounds (public, cached)

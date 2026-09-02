@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import Role from "../utils/interfaces/db/role.ts";
-import Permission, { type IPermission } from "../utils/interfaces/db/permission.ts";
-import {
-  permDefsActions,
-} from "../utils/rbac/config/fixtures-permissions.ts";
+import Permission, {
+  type IPermission,
+} from "../utils/interfaces/db/permission.ts";
+import { permDefsActions } from "../utils/rbac/config/fixtures-permissions.ts";
 import { env } from "../config/env.ts";
 
 const MONGO_URL = env.MONGO_LOCAL_URL;
@@ -134,7 +134,7 @@ async function main() {
   console.log("");
 
   const token = jwt.sign({ purpose: "first-admin" }, registerSecret, {
-    expiresIn: "30m",
+    expiresIn: env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES * 60,
   });
 
   console.log("[3/3] Génération de la clé d'activation...");
@@ -157,7 +157,13 @@ async function main() {
   console.log("\n══════════════════════════════════════════════════");
   console.log("  Clé d'activation du premier administrateur");
   console.log(`\n  ${token}`);
-  console.log("\n  Ce token est valide pendant 30 minutes.");
+  console.log(
+    `\n  Ce token est valide pendant ${
+      env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES >= 60
+        ? `${env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES / 60} heure(s)`
+        : `${env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES} minute(s)`
+    }.`,
+  );
   console.log("══════════════════════════════════════════════════\n");
 
   await mongoose.disconnect();

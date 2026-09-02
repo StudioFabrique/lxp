@@ -39,6 +39,10 @@ const schema = z
     MONGO_LOCAL_URL: z.string().min(1),
     SECRET: z.string().min(1),
     REGISTER_SECRET: z.string().min(1),
+    ROOT_ACTIVATION_TOKEN_TTL_MINUTES: z.preprocess(
+      emptyStringToUndefined,
+      z.coerce.number().int().min(1).default(30),
+    ),
 
     FRONT_URL: optionalUrl,
     MAILER_EMAIL: optionalString,

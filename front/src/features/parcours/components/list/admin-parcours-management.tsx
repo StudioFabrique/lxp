@@ -53,6 +53,40 @@ const AdminParcoursManagement = ({
     },
   });
 
+  const exportParcoursMutation = useMutation({
+    mutationFn: (parcours: ParcoursSummary) =>
+      parcoursApi.mutations.exportParcours(parcours.id),
+    onSuccess: ({ archive, contentDisposition }, parcours) => {
+      const encodedFilename = contentDisposition?.match(
+        /filename\*=UTF-8''([^;]+)/i,
+      )?.[1];
+      const plainFilename = contentDisposition?.match(
+        /filename="?([^";]+)"?/i,
+      )?.[1];
+      const fallbackFilename = `${
+        parcours.title
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+          .toLowerCase() || "parcours"
+      }.zip`;
+      const filename = encodedFilename
+        ? decodeURIComponent(encodedFilename)
+        : plainFilename || fallbackFilename;
+      const url = URL.createObjectURL(archive);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Archive du parcours téléchargée.");
+    },
+    onError: () => toast.error("Le parcours n’a pas pu être exporté."),
+  });
+
   useEffect(() => {
     if (searchParams.get("createFormation") === "true") {
       setFormationModal({ isOpen: true, formationId: null });
@@ -152,6 +186,16 @@ const AdminParcoursManagement = ({
             baseRoute={layout}
             onEditFormation={isAdmin ? openFormationEdition : undefined}
             onDeleteParcours={isAdmin ? openParcoursDeletion : undefined}
+            onExportParcours={
+              isAdmin
+                ? (parcours) => exportParcoursMutation.mutate(parcours)
+                : undefined
+            }
+            exportingParcoursId={
+              exportParcoursMutation.isPending
+                ? exportParcoursMutation.variables?.id
+                : null
+            }
           />
         ))}
         {isAdmin ? (

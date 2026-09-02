@@ -40,6 +40,15 @@ const ParcoursView = () => {
   const canEditParcours =
     ability.can("update", "parcours") && parcours.canManage !== false;
   const isStudent = !canEditParcours;
+  const hasDescription = Boolean(parcoursInfos?.description?.trim());
+  const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
+  const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
+  const hasBadges = [
+    ...(parcoursInfos?.skills ?? []),
+    ...(parcoursInfos?.bonusSkills ?? []),
+  ].some((skill) => Boolean(skill.badge));
+  const hasSupplementaryContent =
+    hasDescription || hasTags || hasContacts || hasBadges;
 
   const handleClickResume = () => {
     const resumeModuleId =
@@ -97,7 +106,7 @@ const ParcoursView = () => {
           <div className="w-full">
             <ImageHeader
               imageUrl={image ?? "/images/parcours-default.webp"}
-              title={parcoursInfos.title}
+              title={parcoursInfos?.title ?? ""}
               titleIcon={<RocketIcon className="stroke-white w-5" />}
               subTitle={parcours.formation?.title}
               subTitleIcon={<GraduationCap className="stroke-white w-5" />}
@@ -124,18 +133,20 @@ const ParcoursView = () => {
             <PermissionGuard object="cursus" action="read">
               <Contenu modules={modules} />
             </PermissionGuard>
-            <div className="grid items-start lg:grid-cols-3 gap-4">
-              <div className="flex flex-col gap-4">
+            <div className="grid items-start gap-4 lg:grid-cols-3">
+              <div
+                className={hasSupplementaryContent ? "" : "lg:col-span-3"}
+              >
                 <Informations />
-                <Description />
               </div>
-              <div className="flex flex-col gap-4">
-                <Tags />
-                <Awards />
-              </div>
-              <div>
-                <Contacts />
-              </div>
+              {hasSupplementaryContent ? (
+                <div className="flex flex-wrap content-start gap-4 lg:col-span-2 [&>*]:min-w-0 [&>*]:basis-80 [&>*]:grow">
+                  {hasDescription ? <Description /> : null}
+                  {hasTags ? <Tags /> : null}
+                  {hasContacts ? <Contacts /> : null}
+                  {hasBadges ? <Awards /> : null}
+                </div>
+              ) : null}
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <Competences />

@@ -1,13 +1,23 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { EllipsisVertical, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import {
+  Download,
+  EllipsisVertical,
+  ExternalLink,
+  LoaderCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { Link } from "react-router";
 
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-summary";
 
 type ParcoursActionsMenuProps = {
   parcours: ParcoursSummary;
   onDelete: (parcours: ParcoursSummary) => void;
+  onExport?: (parcours: ParcoursSummary) => void;
+  isExporting?: boolean;
 };
 
 const itemBaseClassName =
@@ -17,6 +27,8 @@ const itemClassName = `${itemBaseClassName} hover:bg-primary/10 focus:bg-primary
 const ParcoursActionsMenu = ({
   parcours,
   onDelete,
+  onExport,
+  isExporting = false,
 }: ParcoursActionsMenuProps) => (
   <DropdownMenu.Root>
     <DropdownMenu.Trigger asChild>
@@ -59,17 +71,38 @@ const ParcoursActionsMenu = ({
           </PermissionGuard>
         ) : null}
 
+        {onExport ? (
+          <RoleRankGuard ranks={[0, 1]}>
+            <PermissionGuard action="read" object="parcours">
+              <DropdownMenu.Item
+                className={itemClassName}
+                disabled={isExporting}
+                onSelect={() => onExport(parcours)}
+              >
+                {isExporting ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <Download className="size-4" />
+                )}
+                Exporter (.zip)
+              </DropdownMenu.Item>
+            </PermissionGuard>
+          </RoleRankGuard>
+        ) : null}
+
         {parcours.canManage !== false ? (
-          <PermissionGuard action="delete" object="parcours">
-            <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
-            <DropdownMenu.Item
-              className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
-              onSelect={() => onDelete(parcours)}
-            >
-              <Trash2 className="size-4" />
-              Supprimer
-            </DropdownMenu.Item>
-          </PermissionGuard>
+          <RoleRankGuard ranks={[0, 1]}>
+            <PermissionGuard action="delete" object="parcours">
+              <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
+              <DropdownMenu.Item
+                className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
+                onSelect={() => onDelete(parcours)}
+              >
+                <Trash2 className="size-4" />
+                Supprimer
+              </DropdownMenu.Item>
+            </PermissionGuard>
+          </RoleRankGuard>
         ) : null}
       </DropdownMenu.Content>
     </DropdownMenu.Portal>

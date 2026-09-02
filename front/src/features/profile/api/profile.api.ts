@@ -22,6 +22,10 @@ const mutations = {
     const res = await apiClient.put("/user/profile/password", payload);
     return res.data;
   },
+  promoteToRoot: async (token: string) => {
+    const res = await apiClient.post("/auth/promote-root", { token });
+    return res.data;
+  },
 
   // Le logo et la couleur de fond sont portés par le même endpoint : la
   // couleur voyage dans le `FormData`, aux côtés du fichier quand il y en a un.

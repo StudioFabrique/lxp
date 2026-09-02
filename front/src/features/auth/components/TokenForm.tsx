@@ -32,6 +32,8 @@ const TokenForm = ({ onNext }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCommandCopied, setIsCommandCopied] = useState(false);
   const [containerId, setContainerId] = useState<string>();
+  const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
+    useState(30);
 
   useEffect(() => {
     let active = true;
@@ -39,7 +41,10 @@ const TokenForm = ({ onNext }: Props) => {
     onboardingApi
       .getSetupStatus()
       .then((status) => {
-        if (active) setContainerId(status.containerId);
+        if (active) {
+          setContainerId(status.containerId);
+          setActivationTokenTtlMinutes(status.activationTokenTtlMinutes);
+        }
       })
       // Sans identifiant, la commande reste affichée avec un emplacement à
       // compléter : mieux qu'une commande fausse ou pas de commande du tout.
@@ -176,7 +181,11 @@ const TokenForm = ({ onNext }: Props) => {
           </div>
           <p className="text-xs text-base-content/50 mt-4">
             La nouvelle clé s'affichera dans le terminal. Elle est valide
-            pendant 30 minutes.
+            pendant{" "}
+            {activationTokenTtlMinutes >= 60
+              ? `${activationTokenTtlMinutes / 60} heures`
+              : `${activationTokenTtlMinutes} minutes`}
+            .
           </p>
         </div>
       </div>

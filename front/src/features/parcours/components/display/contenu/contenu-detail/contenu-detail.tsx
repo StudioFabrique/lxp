@@ -64,7 +64,7 @@ const ContenuDetail: FC<{
 
   const contentsList =
     !isLoading && courses.length > 0 ? (
-      courses.slice(0, 2).map((course, i) => (
+      courses.slice(0, 3).map((course, i) => (
         <div
           onClick={() =>
             navigate(`/${currentRoute[0]}/parcours/module/${moduleId}`, {
@@ -136,7 +136,9 @@ const ContenuDetail: FC<{
   return (
     <div className="flex flex-col gap-y-4 mt-5">
       <span className="flex justify-between gap-4">
-        <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
+        <h2 className="text-xl font-bold text-primary select-none">
+          Contenu du module
+        </h2>
         {canEdit && (
           <PermissionGuard action="write" object="course">
             <div className="flex flex-wrap justify-end gap-2">

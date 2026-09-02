@@ -63,7 +63,10 @@ describe("LoginGuard", () => {
     document.body.appendChild(container);
     root = createRoot(container);
     getSetupStatus.mockReset();
-    getSetupStatus.mockResolvedValue({ hasAdmins: true });
+    getSetupStatus.mockResolvedValue({
+      hasAdmins: true,
+      activationTokenTtlMinutes: 30,
+    });
   });
 
   afterEach(() => {
@@ -83,7 +86,10 @@ describe("LoginGuard", () => {
   });
 
   it("conduit au premier administrateur quand aucun compte n'existe", async () => {
-    getSetupStatus.mockResolvedValue({ hasAdmins: false });
+    getSetupStatus.mockResolvedValue({
+      hasAdmins: false,
+      activationTokenTtlMinutes: 30,
+    });
 
     expect(await renderAt("/login", false)).toBe("page-premier-admin");
   });

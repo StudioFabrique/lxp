@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -10,11 +10,13 @@ import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import Selecter from "../../../components/UI/selecter/selecter.component";
-import { Copy, Layers3 } from "lucide-react";
+import { Copy, Layers3, LoaderCircle, Upload } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Modal from "../../../components/UI/modal/modal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import type { AxiosError } from "axios";
+import RoleRankGuard from "../../../components/guards/RoleRankGuard";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 type Item = {
   id: number;
@@ -35,6 +37,7 @@ const AddParcours = () => {
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const archiveInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
   const { data: formations } = useQuery({
@@ -70,6 +73,24 @@ const AddParcours = () => {
         toast.success("Parcours dupliqué avec succès");
         nav(`/admin/parcours/edit/${data.parcoursId}`);
       }
+    },
+  });
+
+  const { mutate: importParcours, isPending: isImporting } = useMutation({
+    mutationFn: parcoursApi.mutations.importParcours,
+    onSuccess: (data) => {
+      toast.success(`Le parcours « ${data.title} » a été importé.`);
+      if (data.warnings.length > 0) {
+        toast(
+          `${data.warnings.length} fichier(s) étaient manquants lors de l’export.`,
+        );
+      }
+      nav(`/admin/parcours/edit/${data.parcoursId}`);
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(
+        error.response?.data?.message ?? "Le parcours n’a pas pu être importé.",
+      );
     },
   });
 
@@ -116,6 +137,19 @@ const AddParcours = () => {
     setParcours(undefined);
   };
 
+  const handleArchiveSelection = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const archive = event.target.files?.[0];
+    event.target.value = "";
+    if (!archive) return;
+    if (!archive.name.toLowerCase().endsWith(".zip")) {
+      toast.error("Sélectionnez une archive au format .zip.");
+      return;
+    }
+    importParcours(archive);
+  };
+
   return (
     <FadeWrapper>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto">
@@ -159,6 +193,31 @@ const AddParcours = () => {
                   <Layers3 className="h-5 w-5" />
                   Créer un parcours à partir d'un modèle
                 </button>
+
+                <RoleRankGuard ranks={[0, 1]}>
+                  <PermissionGuard action="write" object="parcours">
+                    <input
+                      ref={archiveInputRef}
+                      type="file"
+                      accept=".zip,application/zip"
+                      className="hidden"
+                      onChange={handleArchiveSelection}
+                    />
+                    <button
+                      className="btn btn-outline btn-secondary w-full min-h-14"
+                      type="button"
+                      disabled={isImporting}
+                      onClick={() => archiveInputRef.current?.click()}
+                    >
+                      {isImporting ? (
+                        <LoaderCircle className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Upload className="h-5 w-5" />
+                      )}
+                      Importer un parcours (.zip)
+                    </button>
+                  </PermissionGuard>
+                </RoleRankGuard>
               </div>
             )}
           </div>

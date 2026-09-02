@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { hostname } from "node:os";
 import { getSetupStatus } from "../../models/auth/setup.ts";
+import { env } from "../../config/env.ts";
 
 export default async function httpGetSetupStatus(
   _req: Request,
@@ -17,10 +18,15 @@ export default async function httpGetSetupStatus(
     // Servi seulement pendant la fenêtre d'amorçage : dès qu'un administrateur
     // existe, la page `/init` est inaccessible et l'information n'a plus de
     // raison d'être publique.
-    return res
-      .status(200)
-      .json(hasAdmins ? { hasAdmins } : { hasAdmins, containerId: hostname() });
+    return res.status(200).json({
+      hasAdmins,
+      activationTokenTtlMinutes: env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES,
+      ...(hasAdmins ? {} : { containerId: hostname() }),
+    });
   } catch {
-    return res.status(200).json({ hasAdmins: true });
+    return res.status(200).json({
+      hasAdmins: true,
+      activationTokenTtlMinutes: env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES,
+    });
   }
 }
