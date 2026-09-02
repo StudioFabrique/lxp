@@ -29,7 +29,7 @@ export const themeLabels: Record<string, string> = {
   classic: "Classique",
   ocean: "Océan",
   linen: "Lin",
-  sage: "Sauge",
+  sage: "Forêt",
   lavender: "Lavande",
   sunrise: "Lever du jour",
   glacier: "Glacier",

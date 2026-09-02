@@ -103,7 +103,7 @@ const LastParcoursItem = ({
   return (
     <>
       <CursorGlowCard
-        glowColor="primary"
+        glowColor="secondary"
         glowSize={2.4}
         className={cn("rounded-box", {
           "h-full": baseRoute === "admin",
