@@ -24,7 +24,7 @@ const Objectifs = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold text-primary">Objectifs</h2>
-      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto h-[25vh]">
         {objectivesList}
       </div>
     </Wrapper>
