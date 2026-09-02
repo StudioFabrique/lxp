@@ -9,6 +9,7 @@ import type Course from "../../../../../src/utils/interfaces/course";
 import CourseItem from "./course-item";
 import type Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import FadeWrapper from "../../../../../src/components/wrappers/FadeWrapper";
 import type { UpdateCourseFormValues } from "./course-form.types";
 import type { LessonFormValues } from "./lesson-form.types";
@@ -141,7 +142,7 @@ const SidebarCoursesList = ({
   return (
     <div className="border border-base-300 bg-base-200 rounded-lg p-2 sm:p-3 lg:p-5 select-none shadow-sm sticky top-0">
       {/* En-tête avec le titre et l'indicateur de progression */}
-      <PermissionGuard action="component" object="progression">
+      <RoleRankGuard ranks={[3]}>
         {courses.length > 0 ? (
           <div className="flex flex-col items-center gap-2 mb-3 sm:flex-row sm:justify-between sm:mb-4 lg:mb-5">
             <h2 className="hidden text-xl font-bold w-28 text-primary sm:block">
@@ -164,7 +165,7 @@ const SidebarCoursesList = ({
             </FadeWrapper>
           </div>
         ) : null}
-      </PermissionGuard>
+      </RoleRankGuard>
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
@@ -202,11 +203,11 @@ const SidebarCoursesList = ({
             />
           ))
         ) : (
-          <PermissionGuard action="component" object="progression">
+          <RoleRankGuard ranks={[3]}>
             <p className="text-lg font-bold text-primary">
               Aucun cours disponible
             </p>
-          </PermissionGuard>
+          </RoleRankGuard>
         )}
       </div>
       <PermissionGuard action="update" object="course">

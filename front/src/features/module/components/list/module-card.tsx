@@ -3,7 +3,7 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { useState } from "react";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
 import defaultImage from "../../../../assets/images/module-default-thumb.png";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Lock, Pencil, Trash2 } from "lucide-react";
 import { bgImageGradient } from "../../../../utils/helpers/color-helpers";
 import { localeDate } from "../../../../utils/helpers/locale-date";
 import { normalizeImageSource } from "../../../../utils/images/image-source";
@@ -17,6 +17,7 @@ interface ModuleCardProps {
 const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const coursesCount = module.coursesCount ?? module.courses?.length ?? 0;
+  const hasAccess = module.hasAccess !== false;
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
@@ -39,7 +40,7 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
-          {module.parcoursId ? (
+          {module.parcoursId && hasAccess ? (
             <PermissionGuard action="update" object="module">
               <div
                 className="tooltip tooltip-left"
@@ -108,17 +109,23 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
           </FadeWrapper>
         ) : null}
         <div className="w-full flex justify-between items-center">
-          <p
-            className="text-xs text-primary underline font-normal cursor-pointer"
-            onClick={handleToggleDetails}
-          >
-            {showDetails ? "Fermer" : "Détails"}
-          </p>
+          {hasAccess ? (
+            <p
+              className="text-xs text-primary underline font-normal cursor-pointer"
+              onClick={handleToggleDetails}
+            >
+              {showDetails ? "Fermer" : "Détails"}
+            </p>
+          ) : (
+            <span className="text-xs flex items-center gap-1">
+              <Lock className="h-3 w-3" /> Non affecté
+            </span>
+          )}
 
           <div className="flex place-items-center gap-x-2">
             <PermissionGuard action="read" object="module">
               <div className="">
-                {module.parcoursId ? (
+                {module.parcoursId && hasAccess ? (
                   <Link
                     className="btn btn-sm btn-primary flex justify-center place-items-center btn-circle rounded-md tooltip tooltip-bottom"
                     data-tip="Voir le module"
@@ -138,7 +145,7 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
                 )}
               </div>
             </PermissionGuard>
-            <div aria-label="suppression du module">
+            {hasAccess && <div aria-label="suppression du module">
               <PermissionGuard action="delete" object="module">
                 <div
                   className="tooltip tooltip-bottom flex-items-center"
@@ -152,7 +159,7 @@ const ModuleCard = ({ module, onDelete }: ModuleCardProps) => {
                   </button>
                 </div>
               </PermissionGuard>
-            </div>
+            </div>}
           </div>
         </div>
       </div>

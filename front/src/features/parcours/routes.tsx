@@ -1,6 +1,7 @@
 import { RouteObject } from "react-router";
 import { lazyRoute } from "../../utils/helpers/router-helpers";
 import RequireAbility from "../../components/guards/RequireAbility";
+import RequireParcoursManagement from "./components/guards/RequireParcoursManagement";
 
 export const adminParcoursRoutes: RouteObject[] = [
   {
@@ -26,8 +27,13 @@ export const adminParcoursRoutes: RouteObject[] = [
         element: <RequireAbility action="update" subject="parcours" />,
         children: [
           {
-            index: true,
-            lazy: lazyRoute(() => import("./views/ParcoursEdit")),
+            element: <RequireParcoursManagement />,
+            children: [
+              {
+                index: true,
+                lazy: lazyRoute(() => import("./views/ParcoursEdit")),
+              },
+            ],
           },
         ],
       },

@@ -24,7 +24,18 @@ async function httpGetUsersByRole(req: CustomRequest, res: Response) {
       };
     }
 
-    const result = await getUsersByRole(+page!, +limit!, role, stype, sdir);
+    const actorRank = Math.min(
+      ...req.auth!.userRoles.map(({ rank }) => rank),
+      4,
+    );
+    const result = await getUsersByRole(
+      +page!,
+      +limit!,
+      role,
+      stype,
+      sdir,
+      actorRank,
+    );
 
     if (!result) {
       return res.status(400).json({ message: badQuery });

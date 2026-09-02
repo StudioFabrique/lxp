@@ -4,6 +4,13 @@ import { describe, expect, it } from "vitest";
 
 import type User from "../../../utils/interfaces/user";
 import { getUsersColumns } from "./user-table-columns";
+import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { createAppAbility } from "../../../rbac/ability";
+
+const ability = createAppAbility([
+  { action: "update", subject: "user" },
+  { action: "delete", subject: "user" },
+]);
 
 const createUser = (role: string, overrides: Partial<User> = {}): User => ({
   _id: `${role}-id`,
@@ -25,11 +32,18 @@ const createUser = (role: string, overrides: Partial<User> = {}): User => ({
   ...overrides,
 });
 
-const renderCell = (user: User, columnId: string) => {
+const renderCell = (
+  user: User,
+  columnId: string,
+  currentUserId?: string,
+  currentUserRank?: number,
+) => {
   const columns = getUsersColumns(
     () => undefined,
     () => undefined,
     () => undefined,
+    currentUserId,
+    currentUserRank,
   );
   const cell = columns.find((column) => column.id === columnId)?.cell;
   if (!cell) return "";
@@ -38,11 +52,28 @@ const renderCell = (user: User, columnId: string) => {
   if (typeof cell !== "function") return "";
 
   return renderToStaticMarkup(
-    <MemoryRouter>{cell({ row: { original: user } } as never)}</MemoryRouter>,
+    <AbilityContext value={ability}>
+      <MemoryRouter>{cell({ row: { original: user } } as never)}</MemoryRouter>
+    </AbilityContext>,
   );
 };
 
 describe("getUsersColumns", () => {
+  it("n'affiche pas de lien d'édition pour le compte connecté", () => {
+    const user = createUser("admin");
+    const markup = renderCell(user, "actions", user._id, 1);
+
+    expect(markup).toContain("Modification de votre propre compte indisponible");
+    expect(markup).not.toContain(`/admin/user/edit/${user._id}`);
+  });
+
+  it("n'affiche pas d'actions sur un utilisateur de rang égal", () => {
+    const markup = renderCell(createUser("other-admin"), "actions", undefined, 1);
+
+    expect(markup).toContain("Modification indisponible pour ce rang");
+    expect(markup).not.toContain("Supprimer");
+  });
+
   describe("état de l'invitation", () => {
     // L'invitation part après la réponse de création : tant que le serveur SMTP
     // n'a pas remis le message, proposer le renvoi induirait en erreur.

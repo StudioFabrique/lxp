@@ -91,7 +91,6 @@ export const resourcesRbac = [
     description:
       "Centre de ressources multimédias pour approfondir vos connaissances",
   },
-  // Ressource à retirer - sera remplacée par une meilleure implémentation du système de gestion de droits (role layout d'interface)
   {
     name: "cursus",
     description:
@@ -116,32 +115,6 @@ export const resourcesRbac = [
   },
 ];
 
-// Permissions pour les rôles d'interface
-export const layoutPermissionsList = ["admin", "teacher", "student"];
-
-export const componentPermissionsList = [
-  "hobbie",
-  "social-network",
-  "course",
-  "group",
-  "parcours",
-  "profile",
-  "user",
-  "role",
-  "course",
-  "profile",
-  "lesson",
-  "module",
-  "formation",
-  "calendar",
-  "mediatheque",
-  "last-feedback",
-  "lessons-rating-stats",
-  "progression",
-  "company-picture-upload",
-  "start-lesson-button",
-];
-
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherResourcesRbac = resourcesRbac.filter(
@@ -149,6 +122,15 @@ const teacherResourcesRbac = resourcesRbac.filter(
     !["permission", "role", "admin", "teacher", "everything"].includes(
       resource.name,
     ),
+);
+const teacherCreatableResources = teacherResourcesRbac.filter(
+  ({ name }) => !["formation", "parcours"].includes(name),
+);
+const teacherUpdatableResources = teacherResourcesRbac.filter(
+  ({ name }) => name !== "formation",
+);
+const teacherDeletableResources = teacherResourcesRbac.filter(
+  ({ name }) => name !== "formation",
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template
@@ -170,9 +152,9 @@ export const resourcesRbacByRank = {
   // formateur
   2: {
     read: resourcesRbac.map((r) => r.name),
-    write: teacherResourcesRbac.map((r) => r.name),
-    update: teacherResourcesRbac.map((r) => r.name),
-    delete: teacherResourcesRbac.map((r) => r.name),
+    write: teacherCreatableResources.map((r) => r.name),
+    update: teacherUpdatableResources.map((r) => r.name),
+    delete: teacherDeletableResources.map((r) => r.name),
   },
   // apprenant
   3: {
@@ -206,6 +188,7 @@ export async function getPermissionsByRank(
   { resource: string; actions: ("read" | "write" | "update" | "delete")[] }[]
 > {
   switch (rank) {
+    case 0:
     case 1: {
       // const roles = await Role.find();
       // const roleNames = roles.map((role) => role.role);
@@ -235,9 +218,9 @@ export async function getPermissionsByRank(
     case 2: {
       return resourcesRbacByRank[rank].read.map((resource) => ({
         resource,
-        actions: resourcesRbacByRank[rank].write.includes(resource)
-          ? ["read", "write", "update", "delete"]
-          : ["read"],
+        actions: (["read", "write", "update", "delete"] as const).filter(
+          (action) => resourcesRbacByRank[rank][action].includes(resource),
+        ),
       }));
     }
     case 3: {

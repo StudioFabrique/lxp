@@ -136,6 +136,7 @@ courseRouter.post(
   "/",
   checkPermissions("course", "write"),
   postCourseValidator,
+  checkContentAccess("module", "moduleId"),
   httpPostCourse,
 );
 
@@ -147,6 +148,7 @@ courseRouter.post(
   "/import-structure",
   checkPermissions("course"),
   postImportCourseStructureValidator,
+  checkContentAccess("module", "moduleId"),
   httpPostImportCourseStructure,
 );
 
@@ -236,6 +238,7 @@ courseRouter.get(
 courseRouter.get(
   "/:moduleId",
   checkPermissions("course"),
+  checkContentAccess("module", "moduleId"),
   httpGetCoursesByModule,
 );
 
@@ -258,6 +261,7 @@ courseRouter.get(
 courseRouter.get(
   "/select/:moduleId",
   checkPermissions("course"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpGetCoursesFromModule,
 );
@@ -270,6 +274,7 @@ courseRouter.put(
   "/image",
   checkPermissions("course"),
   upload.single("image"),
+  checkContentAccess("course", "courseId"),
   httpPutCourseImage,
 );
 
@@ -280,6 +285,7 @@ courseRouter.put(
 courseRouter.put(
   "/infos",
   checkPermissions("course"),
+  checkContentAccess("course", "id"),
   putCourseInformationsValidator,
   httpPutCourseInformations,
 );
@@ -478,6 +484,7 @@ courseRouter.get(
 courseRouter.put(
   "/reorder/:moduleId",
   checkPermissions("course"),
+  checkContentAccess("module", "moduleId"),
   putReorderCoursesValidator,
   httpPutReorderCourses,
 );

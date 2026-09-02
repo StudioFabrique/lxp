@@ -1,21 +1,29 @@
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 /**
  * Récupère la liste des leçons avec leurs informations associées.
  *
- * @param accessibleParcoursIds Parcours auxquels l'appelant est inscrit, ou
- * `null` pour un encadrant qui voit tout le catalogue. Sans ce filtre, la route
+ * @param scope Périmètre de parcours/modules de l'appelant, ou `null` pour un
+ * administrateur. Sans ce filtre, la route
  * retournait chaque leçon de la plateforme à n'importe quel apprenant.
  */
 export default async function getLessonsList(
-  accessibleParcoursIds: number[] | null = null,
+  scope: AccessScope = null,
 ) {
   // Récupération des leçons depuis la base de données avec une sélection précise des champs
   const existingLessons = await prisma.lesson.findMany({
     where:
-      accessibleParcoursIds === null
+      scope === null
         ? undefined
-        : { course: { module: { parcoursId: { in: accessibleParcoursIds } } } },
+        : {
+            course: {
+              module:
+                scope.moduleIds === null
+                  ? { parcoursId: { in: scope.parcoursIds } }
+                  : { id: { in: scope.moduleIds } },
+            },
+          },
     select: {
       id: true,
       title: true,

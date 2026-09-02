@@ -53,11 +53,15 @@ modules.get(
 modules.post(
   "/duplicate/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
+  checkContentAccess("parcours", "parcoursId"),
+  moduleIdValidator,
   httpPostDuplicateModule,
 );
 modules.put(
   "/calendar/dates",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdFromBodyValidator,
   updateDatesModulesValidator,
   httpUpdateDatesModule,
@@ -73,6 +77,7 @@ modules.put(
 modules.delete(
   "/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpDeleteModule,
 );
@@ -81,6 +86,7 @@ modules.put(
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
+  checkContentAccess("parcours", "parcoursId"),
   putModuleParcoursValidator,
   httpPutModuleParcours,
 );
@@ -89,6 +95,7 @@ modules.put(
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
+  checkContentAccess("module", "module.id"),
   putModuleValidator,
   httpPutModule,
 );
@@ -105,6 +112,7 @@ modules.get(
 modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
+  checkContentAccess("module", "moduleId"),
   moduleIdValidator,
   httpDeleteFormationModule,
 );

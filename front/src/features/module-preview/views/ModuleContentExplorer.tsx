@@ -14,6 +14,7 @@ import QuizModal from "../../quiz/components/modals/quiz-modal";
 import QuizRequestModal from "../../quiz/components/modals/quiz-request-modal";
 import LessonCompletionModal from "../components/lesson-completion-modal";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import ModuleContentExplorerWrapper from "../components/module-content-explorer-wrapper";
 import ModuleContentExplorerHeader from "../components/module-content-explorer-header";
 import ModuleExplorerSidebar from "../components/sidebar/module-explorer-sidebar";
@@ -210,9 +211,9 @@ const ModuleContentExplorer = () => {
           }
           /* Progress Bar */
           topProgressBar={
-            <PermissionGuard action="component" object="progression">
+            <RoleRankGuard ranks={[3]}>
               <ProgressBar courses={state.module.courses} />
-            </PermissionGuard>
+            </RoleRankGuard>
           }
           /* Preview */
           previewLesson={

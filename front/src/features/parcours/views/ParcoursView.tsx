@@ -37,9 +37,9 @@ const ParcoursView = () => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
   const ability = useContext(AbilityContext);
-  const canEditParcours = ability.can("update", "parcours");
-  const isStudent =
-    ability.can("layout", "student") && !ability.can("layout", "admin");
+  const canEditParcours =
+    ability.can("update", "parcours") && parcours.canManage !== false;
+  const isStudent = !canEditParcours;
 
   const handleClickResume = () => {
     const resumeModuleId =
@@ -116,7 +116,7 @@ const ParcoursView = () => {
             />
           </div>
 
-          <div className="mt-5 flex flex-col gap-y-5">
+          <div className="mt-4 flex flex-col gap-y-4">
             <QuickStatistiques studentCount={studentCount} />
             {isStudent && modules?.length > 0 ? (
               <ProgressModulesStats modules={modules} />
@@ -124,12 +124,12 @@ const ParcoursView = () => {
             <PermissionGuard object="cursus" action="read">
               <Contenu modules={modules} />
             </PermissionGuard>
-            <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
-              <div className="grid grid-rows-2 gap-y-5">
+            <div className="grid items-start lg:grid-cols-3 gap-4">
+              <div className="flex flex-col gap-4">
                 <Informations />
                 <Description />
               </div>
-              <div className="grid grid-rows-2 gap-y-5">
+              <div className="flex flex-col gap-4">
                 <Tags />
                 <Awards />
               </div>
@@ -137,7 +137,7 @@ const ParcoursView = () => {
                 <Contacts />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-x-5">
+            <div className="grid md:grid-cols-2 gap-4">
               <Competences />
               <Objectifs />
             </div>

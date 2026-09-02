@@ -29,4 +29,6 @@ export default interface Parcours {
   author: string;
   visibility: boolean;
   thumb?: string;
+  /** Faux si le parcours n'est visible que par l'affectation à un module. */
+  canManage?: boolean;
 }

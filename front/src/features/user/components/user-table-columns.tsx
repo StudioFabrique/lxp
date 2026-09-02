@@ -17,8 +17,13 @@ export const getUsersColumns = (
   onDelete: (id: string) => void,
   onSendInvitation: (id: string) => void,
   onSendResetPassword: (id: string) => void,
+  currentUserId?: string,
+  currentUserRank?: number,
 ): ColumnDef<User>[] => [
-  personSelectionColumn<User>("Sélectionner tous les utilisateurs affichés"),
+  personSelectionColumn<User>(
+    "Sélectionner tous les utilisateurs affichés",
+    (user) => canManageUser(user, currentUserRank),
+  ),
   {
     accessorKey: "firstname",
     header: "Prénom",
@@ -67,7 +72,6 @@ export const getUsersColumns = (
     cell: ({ row }) => {
       const roles = row.original.roles;
       const label = roles
-        .filter((r) => !r.role.startsWith("interface"))
         .map((r) => r.label)
         .join(", ");
       return (
@@ -97,64 +101,92 @@ export const getUsersColumns = (
       const user = row.original;
       const userId = user._id;
       if (!userId) return null;
+      const canManage = canManageUser(user, currentUserRank);
 
       return (
         <div className="flex gap-2 justify-center items-center">
-          {user.isActive ? (
-            <button
-              onClick={() => onSendResetPassword(userId)}
-              className="btn btn-ghost btn-xs btn-square text-primary tooltip"
-              data-tip="Envoyer une demande de réinitialisation de mot de passe"
-            >
-              <RotateCw className="w-4 h-4 text-warning" />
-            </button>
-          ) : user.invitationPending ? (
-            <span
-              className="btn btn-ghost btn-xs btn-square tooltip"
-              data-tip="Invitation en cours d'envoi"
-              role="status"
-              aria-label={`Invitation en cours d'envoi à ${user.firstname} ${user.lastname}`}
-            >
-              <LoaderCircle className="w-4 h-4 animate-spin text-primary" />
-            </span>
-          ) : (
-            <button
-              onClick={() => onSendInvitation(userId)}
-              className="btn btn-ghost btn-xs btn-square tooltip"
-              data-tip={
-                user.invitationSent
-                  ? "L'invitation a déjà été envoyée. Cliquez pour renvoyer."
-                  : "Envoyer une invitation"
-              }
-            >
-              {user.invitationSent ? (
-                <MailCheck className="w-4 h-4 text-success" />
-              ) : (
-                <Send className="w-4 h-4 text-primary" />
-              )}
-            </button>
-          )}
+          {canManage &&
+            (user.isActive ? (
+              <button
+                onClick={() => onSendResetPassword(userId)}
+                className="btn btn-ghost btn-xs btn-square text-primary tooltip"
+                data-tip="Envoyer une demande de réinitialisation de mot de passe"
+              >
+                <RotateCw className="w-4 h-4 text-warning" />
+              </button>
+            ) : user.invitationPending ? (
+              <span
+                className="btn btn-ghost btn-xs btn-square tooltip"
+                data-tip="Invitation en cours d'envoi"
+                role="status"
+                aria-label={`Invitation en cours d'envoi à ${user.firstname} ${user.lastname}`}
+              >
+                <LoaderCircle className="w-4 h-4 animate-spin text-primary" />
+              </span>
+            ) : (
+              <button
+                onClick={() => onSendInvitation(userId)}
+                className="btn btn-ghost btn-xs btn-square tooltip"
+                data-tip={
+                  user.invitationSent
+                    ? "L'invitation a déjà été envoyée. Cliquez pour renvoyer."
+                    : "Envoyer une invitation"
+                }
+              >
+                {user.invitationSent ? (
+                  <MailCheck className="w-4 h-4 text-success" />
+                ) : (
+                  <Send className="w-4 h-4 text-primary" />
+                )}
+              </button>
+            ))}
           <PermissionGuard object="user" action="update">
-            <Link
-              to={`/admin/user/edit/${userId}`}
-              className="btn btn-ghost btn-xs btn-square tooltip"
-              data-tip="Modifier"
-            >
-              <Pencil className="w-4 h-4" />
-            </Link>
+            {!canManage ? (
+              <span
+                className="btn btn-ghost btn-xs btn-square text-base-content/40 tooltip"
+                data-tip={
+                  userId === currentUserId
+                    ? "Votre propre compte ne peut pas être modifié depuis cette liste"
+                    : "Vous ne pouvez pas modifier un utilisateur de rang égal ou supérieur"
+                }
+                aria-label={
+                  userId === currentUserId
+                    ? "Modification de votre propre compte indisponible"
+                    : "Modification indisponible pour ce rang"
+                }
+              >
+                <Pencil className="w-4 h-4" />
+              </span>
+            ) : (
+              <Link
+                to={`/admin/user/edit/${userId}`}
+                className="btn btn-ghost btn-xs btn-square tooltip"
+                data-tip="Modifier"
+              >
+                <Pencil className="w-4 h-4" />
+              </Link>
+            )}
           </PermissionGuard>
-          <PermissionGuard object="user" action="delete">
-            <button
-              onClick={() => onDelete(userId)}
-              className="btn btn-ghost btn-xs btn-square text-error tooltip"
-              data-tip="Supprimer"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </PermissionGuard>
+          {canManage && (
+            <PermissionGuard object="user" action="delete">
+              <button
+                onClick={() => onDelete(userId)}
+                className="btn btn-ghost btn-xs btn-square text-error tooltip"
+                data-tip="Supprimer"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </PermissionGuard>
+          )}
         </div>
       );
     },
     enableSorting: false,
   },
 ];
+
+export function canManageUser(user: User, currentUserRank?: number): boolean {
+  if (currentUserRank === undefined) return true;
+  const targetRank = Math.min(...user.roles.map(({ rank }) => rank), 4);
+  return targetRank > currentUserRank;
+}

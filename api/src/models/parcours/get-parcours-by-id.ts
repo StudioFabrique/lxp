@@ -2,11 +2,16 @@ import { calculateModuleProgress } from "../../helpers/calculate-module-progress
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 /**
  * Récupère les détails d'un parcours par son ID
  */
-async function getParcoursById(parcoursId: number, userId: string) {
+async function getParcoursById(
+  parcoursId: number,
+  userId: string,
+  scope: AccessScope = null,
+) {
   // 1. Récupération des données brutes
   const parcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },
@@ -100,9 +105,12 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
   const namedContacts = await enrichContactsWithNames([
     ...parcours.contacts.map(({ contact }) => contact),
-    ...parcours.modules.flatMap(({ contacts }) =>
-      contacts.map(({ contact }) => contact),
-    ),
+    ...parcours.modules
+      .filter(
+        ({ id }) =>
+          scope?.kind !== "teacher" || scope.moduleIds?.includes(id),
+      )
+      .flatMap(({ contacts }) => contacts.map(({ contact }) => contact)),
   ]);
   const contactsByMongoId = new Map(
     namedContacts.map((contact) => [contact.idMdb, contact]),
@@ -110,7 +118,12 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
   // 3. Initialisation de l'objet résultat
   // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
-  let result: any = { ...parcours };
+  let result: any = {
+    ...parcours,
+    canManage:
+      scope?.kind !== "teacher" ||
+      scope.directParcoursIds?.includes(parcours.id),
+  };
 
   // 4. Traitement de l'image principale
   result.image = parcours.image
@@ -132,6 +145,17 @@ async function getParcoursById(parcoursId: number, userId: string) {
         ? Buffer.from(item.thumb as any).toString("base64")
         : null;
 
+      const hasAccess =
+        scope?.kind !== "teacher" || scope.moduleIds?.includes(item.id);
+      if (!hasAccess) {
+        return {
+          id: item.id,
+          title: item.title,
+          thumb,
+          hasAccess: false,
+        };
+      }
+
       // Contacts du module (aplatissement)
       const moduleContacts = item.contacts.map(
         ({ contact }: any) => contactsByMongoId.get(contact.idMdb)!,
@@ -145,6 +169,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
           progress: calculateModuleProgress(item),
         },
         contacts: moduleContacts,
+        hasAccess: true,
       };
     });
   }

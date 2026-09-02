@@ -34,19 +34,19 @@ function verifyFirstAdminToken(token: string) {
 }
 
 async function findAdminRoleAndCount() {
-  const adminRole = await Role.findOne({ role: "admin" });
-  if (!adminRole) return { adminRole: null, adminCount: 0 };
+  const rootRole = await Role.findOne({ role: "root", rank: 0 });
+  const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select("_id");
 
   const adminCount = await User.countDocuments({
-    roles: adminRole._id,
+    roles: { $in: privilegedRoles.map(({ _id }) => _id) },
     isActive: true,
   });
-  return { adminRole, adminCount };
+  return { rootRole, adminCount };
 }
 
 export async function getSetupStatus() {
-  const { adminRole, adminCount } = await findAdminRoleAndCount();
-  return Boolean(adminRole && adminCount > 0);
+  const { adminCount } = await findAdminRoleAndCount();
+  return adminCount > 0;
 }
 
 export async function validateFirstAdminToken(token: string) {
@@ -67,9 +67,12 @@ export async function createFirstAdmin(input: FirstAdminInput) {
     throw { statusCode: 400, message: "Ce token a déjà été utilisé." };
   }
 
-  const { adminRole, adminCount } = await findAdminRoleAndCount();
-  if (!adminRole) {
-    throw { statusCode: 500, message: "Le rôle administrateur n'existe pas." };
+  const { rootRole, adminCount } = await findAdminRoleAndCount();
+  if (!rootRole) {
+    throw {
+      statusCode: 500,
+      message: "Le rôle root n'existe pas.",
+    };
   }
   if (adminCount > 0) {
     throw {
@@ -86,14 +89,6 @@ export async function createFirstAdmin(input: FirstAdminInput) {
     };
   }
 
-  const interfaceRole = await Role.findOne({
-    rank: 1,
-    role: "interface:admin",
-  });
-  const roles = interfaceRole
-    ? [adminRole._id, interfaceRole._id]
-    : [adminRole._id];
-
   const createdUser = await User.create({
     email,
     firstname: input.firstname.toLowerCase(),
@@ -101,7 +96,7 @@ export async function createFirstAdmin(input: FirstAdminInput) {
     password: await hash(input.password, 10),
     isActive: true,
     emailVerified: true,
-    roles,
+    roles: [rootRole._id],
   });
 
   await prisma.admin.create({ data: { idMdb: createdUser._id.toString() } });

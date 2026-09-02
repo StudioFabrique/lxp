@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
   emptyMessage?: string;
   onRowClick?: (row: TData) => void;
   isRowClickable?: (row: TData) => boolean;
+  canSelectRow?: (row: TData) => boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,6 +38,7 @@ export function DataTable<TData, TValue>({
   emptyMessage = "Aucune donnée disponible",
   onRowClick,
   isRowClickable = () => true,
+  canSelectRow = () => true,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -56,6 +58,7 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     manualSorting: true,
+    enableRowSelection: (row) => canSelectRow(row.original),
   });
 
   if (!isLoading && data.length === 0) {

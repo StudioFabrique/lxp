@@ -26,14 +26,12 @@ const PROFILES = [
   {
     variable: "DEMO_ADMIN_EMAIL",
     role: "admin",
-    interfaceRole: "interface:admin",
     firstname: "Camille",
     lastname: "Démo",
   },
   {
     variable: "DEMO_STUDENT_EMAIL",
     role: "student",
-    interfaceRole: "interface:student",
     firstname: "Alex",
     lastname: "Démo",
   },
@@ -47,14 +45,11 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
     );
   }
 
-  const [role, interfaceRole] = await Promise.all([
-    Role.findOne({ role: profile.role }),
-    Role.findOne({ role: profile.interfaceRole }),
-  ]);
+  const role = await Role.findOne({ role: profile.role });
 
-  if (!role || !interfaceRole) {
+  if (!role) {
     throw new Error(
-      `Rôles « ${profile.role} » ou « ${profile.interfaceRole} » absents : appliquez d'abord les fixtures de rôles.`,
+      `Rôle « ${profile.role} » absent : appliquez d'abord les fixtures de rôles.`,
     );
   }
 
@@ -70,7 +65,7 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
       password: await bcrypt.hash(`${randomUUID()}@Dm99`, 10),
       isActive: true,
       emailVerified: true,
-      roles: [role._id, interfaceRole._id],
+      roles: [role._id],
     });
     console.log(`  compte créé : ${email}`);
   } else {
@@ -86,7 +81,7 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
     {
       $set: {
         isActive: true,
-        roles: [role._id, interfaceRole._id],
+        roles: [role._id],
         onboarding: { status: "skipped", step: "", version: 1 },
       },
     },

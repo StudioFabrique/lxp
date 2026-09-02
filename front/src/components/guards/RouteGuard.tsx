@@ -1,17 +1,12 @@
 import { useContext } from "react";
 import { AuthContext } from "../../store/AuthProvider";
-import { AbilityContext } from "../../rbac/AbilityProvider";
 import { useDemoMode } from "../../store/DemoContext";
+import { getUserArea, type AppArea } from "../../utils/helpers/user-role";
 import Loader from "../loaders/Loader";
 import { Navigate, Outlet } from "react-router";
 
-const RouteGuard = ({
-  layout,
-}: {
-  layout: ("admin" | "student" | "teacher")[];
-}) => {
+const RouteGuard = ({ area }: { area: AppArea }) => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
-  const ability = useContext(AbilityContext);
   const { demoMode, isConfigLoaded } = useDemoMode();
 
   // Rien ne doit se monter avant que la configuration d'exécution soit lue :
@@ -25,7 +20,7 @@ const RouteGuard = ({
   if (!isLoggedIn || !user) {
     return <Navigate replace to={demoMode ? "/demo" : "/login"} />;
   }
-  if (!layout.some((lay) => ability.can("layout", lay))) {
+  if (getUserArea(user) !== area) {
     return <Navigate replace to="/access-denied" />;
   }
   return <Outlet />;

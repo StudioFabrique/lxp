@@ -11,23 +11,19 @@ describe("frontend CASL ability", () => {
     const ability = createAppAbility([]);
 
     expect(ability.can("read", "module")).toBe(false);
-    expect(ability.can("layout", "admin")).toBe(false);
   });
 
-  it("uses the serialized API rules for layouts, routes and actions", () => {
+  it("uses the serialized API rules for resource actions", () => {
     const ability = createAppAbility([
-      { action: "layout", subject: "admin" },
       { action: "read", subject: "role" },
       { action: "write", subject: "role" },
       { action: "update", subject: "role" },
       { action: "delete", subject: "role" },
     ]);
 
-    expect(ability.can("layout", "admin")).toBe(true);
     for (const action of ["read", "write", "update", "delete"] as const) {
       expect(ability.can(action, "role")).toBe(true);
     }
-    expect(ability.can("layout", "student")).toBe(false);
   });
 
   it("filters each role-management action with the same ability", () => {

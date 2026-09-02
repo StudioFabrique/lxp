@@ -16,6 +16,7 @@ type TableButtonsProps<TData> = {
   isLoading: boolean;
   isDisabled: boolean;
   onRefreshData: () => void;
+  showRefresh?: boolean;
   actions: Action<TData>[];
   retreiveItemsProperty?: keyof TData;
   onRetreiveItemsValuesByPropertyFromIdList?: (
@@ -77,13 +78,15 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
         </TableActionsModal>
       ) : null}
       <div className="flex items-center">
-        <button
-          onClick={props.onRefreshData}
-          disabled={props.isLoading}
-          className="btn btn-sm btn-ghost disabled:bg-transparent"
-        >
-          <RefreshCw />
-        </button>
+        {props.showRefresh !== false && (
+          <button
+            onClick={props.onRefreshData}
+            disabled={props.isLoading}
+            className="btn btn-sm btn-ghost disabled:bg-transparent"
+          >
+            <RefreshCw />
+          </button>
+        )}
         <ActionsDropdown
           actions={props.actions.map((action) => ({
             actionTitle: action.title,

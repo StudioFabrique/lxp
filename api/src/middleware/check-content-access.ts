@@ -4,9 +4,9 @@ import { noData } from "../utils/constantes.ts";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import {
   type AccessCheckedContent,
-  findParcoursIdForContent,
-  getAccessibleParcoursIds,
-  isRestrictedToEnrollment,
+  type AccessScope,
+  findContentAccessCoordinates,
+  resolveAccessScope,
 } from "../utils/services/permissions/accessible-parcours.ts";
 
 /**
@@ -31,21 +31,34 @@ export default function checkContentAccess(
       const auth = req.auth;
       if (!auth) return res.status(401).json({ message: "Session absente" });
 
-      // Administrateurs et formateurs encadrent tout le catalogue.
-      if (!isRestrictedToEnrollment(auth.userRoles)) return next();
+      const scope = await accessScopeFor(req);
+      // Les administrateurs restent les seuls à encadrer tout le catalogue.
+      if (scope === null) return next();
 
-      const contentId = Number(req.params[parameterName]);
+      const contentId = Number(requestValue(req, parameterName));
       if (!Number.isInteger(contentId) || contentId <= 0) {
         return res.status(404).json({ message: noData });
       }
 
-      const parcoursId = await findParcoursIdForContent(type, contentId);
-      if (parcoursId === null) {
+      const coordinates = await findContentAccessCoordinates(type, contentId);
+      if (coordinates === null) {
         return res.status(404).json({ message: noData });
       }
 
-      const accessibleParcoursIds = await accessibleParcoursFor(req, auth.userId);
-      if (!accessibleParcoursIds.includes(parcoursId)) {
+      const parcoursAllowed = scope.parcoursIds.includes(coordinates.parcoursId);
+      const directParcoursAssignmentRequired =
+        scope.kind === "teacher" &&
+        type === "parcours" &&
+        req.method !== "GET";
+      const directlyAssignedToParcours =
+        !directParcoursAssignmentRequired ||
+        scope.directParcoursIds?.includes(coordinates.parcoursId);
+      const moduleAllowed =
+        scope.moduleIds === null ||
+        coordinates.moduleId === null ||
+        scope.moduleIds.includes(coordinates.moduleId);
+
+      if (!parcoursAllowed || !moduleAllowed || !directlyAssignedToParcours) {
         return res.status(404).json({ message: noData });
       }
 
@@ -54,6 +67,14 @@ export default function checkContentAccess(
       next(error);
     }
   };
+}
+
+function requestValue(req: CustomRequest, name: string): unknown {
+  if (req.params[name] !== undefined) return req.params[name];
+  return name.split(".").reduce<unknown>((value, key) => {
+    if (typeof value !== "object" || value === null) return undefined;
+    return (value as Record<string, unknown>)[key];
+  }, req.body);
 }
 
 /**
@@ -80,8 +101,12 @@ export function checkContentAccessFromParams(
  * gardes peuvent se succéder sur une même route, et la résolution coûte une
  * lecture Mongo plus une lecture PostgreSQL.
  */
-async function accessibleParcoursFor(req: CustomRequest, userId: string) {
-  const cache = req as CustomRequest & { accessibleParcoursIds?: number[] };
-  cache.accessibleParcoursIds ??= await getAccessibleParcoursIds(userId);
-  return cache.accessibleParcoursIds;
+async function accessScopeFor(req: CustomRequest) {
+  const cache = req as CustomRequest & {
+    resolvedContentAccessScope?: AccessScope;
+  };
+  if (cache.resolvedContentAccessScope === undefined) {
+    cache.resolvedContentAccessScope = await resolveAccessScope(req.auth!);
+  }
+  return cache.resolvedContentAccessScope;
 }

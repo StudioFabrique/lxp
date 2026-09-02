@@ -139,7 +139,7 @@ const AdminParcoursManagement = ({
         data-page-tour="parcours-cards"
       >
         {!isAdmin && formations.length === 0 ? (
-          <p className="text-base-content/70 italic">
+          <p className="text-base-content">
             Aucun parcours ne vous est attribué pour le moment.
           </p>
         ) : null}
@@ -155,7 +155,9 @@ const AdminParcoursManagement = ({
           />
         ))}
         {isAdmin ? (
-          <LastParcoursItem onCreateFormation={openFormationCreation} />
+          <PermissionGuard action="write" object="parcours">
+            <LastParcoursItem onCreateFormation={openFormationCreation} />
+          </PermissionGuard>
         ) : null}
       </section>
 

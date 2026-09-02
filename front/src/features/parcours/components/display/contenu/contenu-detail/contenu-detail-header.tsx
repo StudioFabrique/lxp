@@ -13,7 +13,7 @@ const ContenuDetailHeader: FC<{
       normalizeImageSource(imageModuleHeader) ?? defaultImage,
     ),
     width: "100%",
-    height: "12rem",
+    height: "9rem",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",

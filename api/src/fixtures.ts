@@ -14,10 +14,7 @@ import Role from "./utils/interfaces/db/role.ts";
 import Permission, { type IPermission } from "./utils/interfaces/db/permission.ts";
 import Tag from "./utils/interfaces/db/tag.ts";
 import User from "./utils/interfaces/db/user.ts";
-import {
-  permDefsActions,
-  permDefsInterface,
-} from "./utils/rbac/config/fixtures-permissions.ts";
+import { permDefsActions } from "./utils/rbac/config/fixtures-permissions.ts";
 import IConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
 import { env } from "./config/env.ts";
@@ -48,10 +45,7 @@ function createMail(firstname: string, lastname: string, i: number) {
 let robotIndex = 1;
 
 async function createUser() {
-  const [roleAdmin, roleInterfaceAdmin] = await Promise.all([
-    await Role.findOne({ role: "admin" }),
-    await Role.findOne({ role: "interface:admin" }),
-  ]);
+  const roleAdmin = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
     firstname: "jean",
@@ -63,16 +57,13 @@ async function createUser() {
     phoneNumber: "06 06 06 06 06",
     nickname: "studio",
     password: hash,
-    roles: [new Object(roleAdmin!._id), new Object(roleInterfaceAdmin!._id)],
+    roles: [new Object(roleAdmin!._id)],
     isActive: true,
   });
   await newUser.save();
   robotIndex++;
 
-  const [roleTeacher, roleInterfaceTeacher] = await Promise.all([
-    await Role.findOne({ role: "teacher" }),
-    await Role.findOne({ role: "interface:teacher" }),
-  ]);
+  const roleTeacher = await Role.findOne({ role: "teacher" });
   const newTeacher = new User({
     firstname: "raymond",
     lastname: "dupont",
@@ -82,10 +73,7 @@ async function createUser() {
     email: "formateur@studio.eco",
     phoneNumber: "06 06 06 06 06",
     password: hash,
-    roles: [
-      new Object(roleTeacher!._id),
-      new Object(roleInterfaceTeacher!._id),
-    ],
+    roles: [new Object(roleTeacher!._id)],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -107,10 +95,7 @@ async function createUser() {
   await newTeacher2.save();
   robotIndex++;
 
-  const [roleStudent, roleInterfaceStudent] = await Promise.all([
-    await Role.findOne({ role: "student" }),
-    await Role.findOne({ role: "interface:student" }),
-  ]);
+  const roleStudent = await Role.findOne({ role: "student" });
 
   const newStudent = new User({
     firstname: "jacqueline",
@@ -121,10 +106,7 @@ async function createUser() {
     email: "apprenant@studio.eco",
     phoneNumber: "06 06 06 06 06",
     password: hash,
-    roles: [
-      new Object(roleStudent!._id),
-      new Object(roleInterfaceStudent!._id),
-    ],
+    roles: [new Object(roleStudent!._id)],
     // Le compte en attente d'activation est `formateur2@studio.eco`, dédié à ce
     // cas. Désactiver l'apprenant de référence empêchait toutes les suites qui
     // se connectent avec lui de dépasser l'étape de connexion.
@@ -141,10 +123,7 @@ async function createUser() {
     email: "rssi@studio.eco",
     phoneNumber: "06 06 06 06 06",
     password: hash,
-    roles: [
-      new Object(roleStudent!._id),
-      new Object(roleInterfaceStudent!._id),
-    ],
+    roles: [new Object(roleStudent!._id)],
     // Le compte en attente d'activation est `formateur2@studio.eco`, dédié à ce
     // cas. Désactiver l'apprenant de référence empêchait toutes les suites qui
     // se connectent avec lui de dépasser l'étape de connexion.
@@ -173,10 +152,7 @@ async function createUser() {
 }
 
 async function createManyAdmins() {
-  const [role, roleInterface] = await Promise.all([
-    await Role.findOne({ role: "admin" }),
-    await Role.findOne({ role: "interface:admin" }),
-  ]);
+  const role = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -193,7 +169,7 @@ async function createManyAdmins() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: [new Object(role!._id), new Object(roleInterface!._id)],
+      roles: [new Object(role!._id)],
       isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -204,10 +180,7 @@ async function createManyAdmins() {
 }
 
 async function createManyTeachers() {
-  const [role, roleInterface] = await Promise.all([
-    await Role.findOne({ role: "teacher" }),
-    await Role.findOne({ role: "interface:teacher" }),
-  ]);
+  const role = await Role.findOne({ role: "teacher" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -224,7 +197,7 @@ async function createManyTeachers() {
       postCode,
       city: cityName,
       phoneNumber: "06 06 06 06 06",
-      roles: [new Object(role!._id), new Object(roleInterface!._id)],
+      roles: [new Object(role!._id)],
       isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -235,10 +208,7 @@ async function createManyTeachers() {
 }
 
 async function createManyStudents() {
-  const [role, roleInterface] = await Promise.all([
-    await Role.findOne({ role: "student" }),
-    await Role.findOne({ role: "interface:student" }),
-  ]);
+  const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -255,7 +225,7 @@ async function createManyStudents() {
       postCode,
       city: cityName,
       phoneNumber: "06 06 06 06 06",
-      roles: [new Object(role!._id), new Object(roleInterface!._id)],
+      roles: [new Object(role!._id)],
       isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -266,30 +236,13 @@ async function createManyStudents() {
 }
 
 async function createRoles() {
-  // Roles d'interface
-  const interfaceRoles = [
-    {
-      role: "interface:admin",
-      label: "interface de l'admin",
-      rank: 1,
-      protection: 2,
-    },
-    {
-      role: "interface:teacher",
-      label: "interface du formateur",
-      rank: 2,
-      protection: 2,
-    },
-    {
-      role: "interface:student",
-      label: "interface de l'apprenant",
-      rank: 3,
-      protection: 2,
-    },
-  ];
-
-  // Roles d'actions
   const actionsRoles = [
+    {
+      role: "root",
+      label: "root",
+      rank: 0,
+      protection: 2,
+    },
     // protection 2, le nom du role, son modèle et rank ainsi que ses permissions ne peuvent pas être modifiés
     // seul le label est modifiable
     { role: "admin", label: "administrateur", rank: 1, protection: 2 },
@@ -304,7 +257,7 @@ async function createRoles() {
     { role: "student", label: "apprenant", rank: 3, protection: 1 },
   ];
   const dbRoles = Array<any>();
-  [...interfaceRoles, ...actionsRoles].forEach((role) => {
+  actionsRoles.forEach((role) => {
     dbRoles.push(new Role(role));
   });
   await Role.bulkSave(dbRoles);
@@ -315,7 +268,6 @@ async function createPermissions() {
   const bulkRoleUpdates = new Map<string, any>();
 
   for (const [roleName, value] of Object.entries({
-    ...permDefsInterface,
     ...permDefsActions,
   })) {
     const role = await Role.findOne({ role: roleName });

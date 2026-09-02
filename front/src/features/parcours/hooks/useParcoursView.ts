@@ -26,7 +26,11 @@ export default function useParcoursView() {
     isLoading,
     error,
     image: normalizeImageSource(parcours?.image),
-    parcours: { id: parcours?.id, formation: parcours?.formation },
+    parcours: {
+      id: parcours?.id,
+      formation: parcours?.formation,
+      canManage: parcours?.canManage,
+    },
     parcoursInfos: parcours ?? { title: "" },
     modules,
     studentCount: (parcours as typeof parcours & { studentCount?: number })

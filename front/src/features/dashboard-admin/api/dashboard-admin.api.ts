@@ -1,5 +1,4 @@
 import apiClient from "../../../lib/axios";
-import type Parcours from "../../../utils/interfaces/parcours";
 import type FormationItem from "../../formation/interfaces/formation-item";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
@@ -16,10 +15,6 @@ export type ModuleSummary = {
 };
 
 const queries = {
-  getLastParcours: async (): Promise<Parcours[]> => {
-    const res = await apiClient.get("/user/last-parcours");
-    return res.data.response ?? [];
-  },
   getLastFormations: async (): Promise<FormationItem[]> => {
     const res = await apiClient.get("/formation/list");
     return (res.data.response ?? []).slice(0, 3);

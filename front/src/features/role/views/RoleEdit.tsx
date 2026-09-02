@@ -11,7 +11,10 @@ import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/qu
 import { roleEditPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const toTitleCase = (str: string) =>
-  str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+  str.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(),
+  );
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -52,10 +55,7 @@ const RoleEdit = () => {
         <span className="capitalize font-bold"> {role.label} </span>
       </h3>
 
-      <div
-        className="grid xl:grid-cols-2 gap-10"
-        data-page-tour="permissions"
-      >
+      <div className="grid xl:grid-cols-2 gap-10" data-page-tour="permissions">
         <PermissionsPanel
           drawerId="drawer-1"
           zIndex={40}
@@ -105,23 +105,16 @@ const RoleEdit = () => {
         />
       </div>
 
-      <span
-        className="flex justify-between w-full"
-        data-page-tour="validation"
-      >
+      <span className="flex justify-between w-full" data-page-tour="validation">
         <div className="flex gap-2 items-center">
-          {role.protection >= 1 && (
-            <>
-              <button
-                className="btn btn-sm btn-accent w-fit"
-                onClick={onResetPermissions}
-              >
-                <TimerReset className="w-4" />
-                Réinitialiser toutes les permissions pour ce rôle
-              </button>
-              <QuestionMarkTooltip tooltipValue="Lorsque de nouvelles permissions ont été ajoutées ou que des permissions sont manquantes pour ce rôle système, ce bouton permet d'ajouter ces permissions manquantes." />
-            </>
-          )}
+          <button
+            className="btn btn-sm btn-accent w-fit"
+            onClick={onResetPermissions}
+          >
+            <TimerReset className="w-4" />
+            Réinitialiser toutes les permissions pour ce rôle
+          </button>
+          <QuestionMarkTooltip tooltipValue="Lorsque de nouvelles permissions ont été ajoutées ou que des permissions sont manquantes pour ce rôle système, ce bouton permet d'ajouter ces permissions manquantes." />
         </div>
         <button
           type="button"

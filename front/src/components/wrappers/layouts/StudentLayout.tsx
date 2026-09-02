@@ -23,7 +23,7 @@ const StudentLayout = () => {
             loader={<Loader />}
           >
             <FadeWrapper>
-              <RouteGuard layout={["student"]} />
+              <RouteGuard area="student" />
             </FadeWrapper>
           </AppWrapper>
         </ConfettiWrapper>

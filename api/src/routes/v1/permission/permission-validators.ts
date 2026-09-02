@@ -27,7 +27,7 @@ export const postRoleValidator = [
     .custom(stringValidateGeneric)
     .withMessage("Le role ne peut pas contenir de caractères spéciaux"),
   body("rank")
-    .isNumeric()
+    .isInt({ min: 1, max: 4 })
     .withMessage("Rang invalide")
     .notEmpty()
     .withMessage("Rang absent"),
@@ -74,7 +74,7 @@ export const putRoleValidator = [
     .escape(),
 
   body("rank")
-    .isNumeric()
+    .isInt({ min: 1, max: 4 })
     .withMessage("Rang invalide")
     .notEmpty()
     .withMessage("Rang absent"),

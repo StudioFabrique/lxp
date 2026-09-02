@@ -23,7 +23,7 @@ const AdminLayout = () => {
           loader={<Loader />}
         >
           <FadeWrapper>
-            <RouteGuard layout={["admin", "teacher"]} />
+            <RouteGuard area="staff" />
           </FadeWrapper>
         </AppWrapper>
         {isConfigLoaded && !aiDisabled && <Chatbot />}

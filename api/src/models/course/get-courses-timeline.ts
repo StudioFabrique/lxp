@@ -1,46 +1,16 @@
 import { prisma } from "../../utils/db.ts";
-import Group from "../../utils/interfaces/db/group.ts";
+import {
+  moduleWhereForScope,
+  type AccessScope,
+} from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getCoursesTimeline(
-  userIdMdb: string,
   minDate: string,
   maxDate: string,
-  /**
-   * allCourses - Si l'utilisateur est un admin, lui laisser le choix d'afficher tous les cours
-   * ou ceux pour lesquels il est affecté en tant que formateur s'il est formateur.
-   */
-  showAllCourses?: boolean
+  scope: AccessScope = null,
 ) {
-  // Recherche des groupes contenant les étudiants
-  const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
-  const groupsIds: string[] = groupsWhereStudentIs.map((group) => group.id);
-
-  // Recherche du formateur (dans le cas où l'utilisateur est un formateur)
-  const formateurContacts = await prisma.contact.findMany({
-    where: {
-      idMdb: userIdMdb,
-      courses: {
-        some: {
-          courseId: {
-            not: undefined,
-          },
-        },
-      },
-    },
-  });
-
-  const admins = await prisma.admin.findMany({
-    where: {
-      idMdb: userIdMdb,
-    },
-  });
-
-  if (
-    !(groupsIds.length > 0 || formateurContacts.length > 0 || admins.length > 0)
-  )
-    return null;
-
-  // Trouver les cours dans les modules pour ces groupes
+  // Les cours suivent le périmètre du module ; aucun contact posé sur le cours
+  // n'est requis pour un formateur déjà affecté au module.
   const courses = await prisma.course.findMany({
     select: {
       id: true,
@@ -49,7 +19,6 @@ export default async function getCoursesTimeline(
       module: {
         select: {
           id: true,
-          // select parcours only if showAllCourses
           parcours: {
             select: {
               title: true,
@@ -69,65 +38,8 @@ export default async function getCoursesTimeline(
     where: {
       isPublished: true,
       visibility: true,
-      OR: [
-        ...(admins.length > 0 && showAllCourses
-          ? [
-              {
-                module: {
-                  minDate: {
-                    lte: new Date(maxDate).toISOString(),
-                  },
-                  maxDate: {
-                    gte: new Date(minDate).toISOString(),
-                  },
-                },
-              },
-            ]
-          : [
-              {
-                contacts: {
-                  some: {
-                    contactId: {
-                      in: formateurContacts.map((contact) => contact.id),
-                    },
-                  },
-                },
-                module: {
-                  contacts: {
-                    some: {
-                      contactId: {
-                        in: formateurContacts.map((contact) => contact.id),
-                      },
-                    },
-                  },
-                  parcours: {
-                    isPublished: true,
-                    contacts: {
-                      some: {
-                        contactId: {
-                          in: formateurContacts.map((contact) => contact.id),
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                module: {
-                  parcours: {
-                    isPublished: true,
-                    groups: {
-                      some: {
-                        group: { idMdb: { in: groupsIds } },
-                      },
-                    },
-                  },
-                },
-              },
-            ]),
-      ],
       module: {
-        // Adjusted logic to check for overlap
+        ...(scope === null ? {} : moduleWhereForScope(scope)),
         OR: [
           {
             minDate: {
@@ -150,7 +62,6 @@ export default async function getCoursesTimeline(
       minDate: string;
       maxDate: string;
     }[]) {
-      // Adjusted to include overlapping ranges
       if (
         new Date(date.minDate) <= new Date(maxDate) &&
         new Date(date.maxDate) >= new Date(minDate)
@@ -163,14 +74,8 @@ export default async function getCoursesTimeline(
           minDate: date.minDate,
           maxDate: date.maxDate,
           firstLessonId: course.lessons[0]?.id,
-          parcoursTitle:
-            showAllCourses && course.module.parcours
-              ? course.module.parcours.title
-              : undefined,
-          formationTitle:
-            showAllCourses && course.module.parcours
-              ? course.module.parcours.formation.title
-              : undefined,
+          parcoursTitle: course.module.parcours?.title,
+          formationTitle: course.module.parcours?.formation.title,
         });
       }
     }

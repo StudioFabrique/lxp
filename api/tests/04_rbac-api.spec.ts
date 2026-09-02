@@ -33,6 +33,22 @@ describe("CASL API authorization", () => {
       .expect(403);
   });
 
+  it("keeps the root role out of role-management responses", async () => {
+    const login = await request(app)
+      .post("/v1/auth/login")
+      .send({ email: "admin@studio.eco", password: "Abcdef@123456" })
+      .expect(200);
+
+    const response = await request(app)
+      .get("/v1/permission/role")
+      .set("Cookie", login.headers["set-cookie"])
+      .expect(200);
+
+    expect(response.body.data).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ role: "root" })]),
+    );
+  });
+
   it("applies a role change immediately with the same JWT", async () => {
     const login = await request(app)
       .post("/v1/auth/login")

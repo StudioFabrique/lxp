@@ -12,7 +12,6 @@ import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques"
 import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -79,11 +78,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                     )}
               </div>
             </div>,
-            <PermissionGuard
-              key="link"
-              action="component"
-              object="start-lesson-button"
-            >
+            <div key="link">
               <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5 pb-9">
                 <Link
                   to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
@@ -97,7 +92,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                   </p>
                 </Link>
               </div>
-            </PermissionGuard>,
+            </div>,
           ]}
         />
       </div>

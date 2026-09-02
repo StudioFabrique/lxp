@@ -75,16 +75,14 @@ const Profile = () => {
           Informations
         </a>
 
-        <PermissionGuard action="component" object="calendar">
-          <a
-            role="tab"
-            className={`tab ${currentTab === Tab.Calendar ? "tab-active" : ""}`}
-            data-value="Calendar"
-            onClick={handleChangeTab}
-          >
-            Calendrier
-          </a>
-        </PermissionGuard>
+        <a
+          role="tab"
+          className={`tab ${currentTab === Tab.Calendar ? "tab-active" : ""}`}
+          data-value="Calendar"
+          onClick={handleChangeTab}
+        >
+          Calendrier
+        </a>
 
         {currentRoute[0] === "student" && (
           <>

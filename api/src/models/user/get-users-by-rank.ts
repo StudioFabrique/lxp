@@ -11,6 +11,7 @@ async function getUsersByRank(
   sdir: string,
   searchValue?: string,
   excludedUserIds: string[] = [],
+  actorRank = 0,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   const fetchedRoles = await Role.find({ rank: rank }, { _id: 1 });
@@ -22,6 +23,14 @@ async function getUsersByRank(
   const filters: Record<string, unknown> = {
     roles: { $in: fetchedRoles },
   };
+
+  const hiddenRoles = await Role.find(
+    { rank: { $lte: actorRank } },
+    { _id: 1 },
+  );
+  filters.$and = [
+    { roles: { $nin: hiddenRoles.map(({ _id }) => _id) } },
+  ];
 
   if (searchValue?.trim()) {
     const escapedSearchValue = searchValue

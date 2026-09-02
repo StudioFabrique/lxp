@@ -40,6 +40,8 @@ import httpGetSelectParcours from "../../../controllers/parcours/http-get-select
 import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours.ts";
 import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts.ts";
 import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
+import checkFormationAccess from "../../../middleware/check-formation-access.ts";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -60,6 +62,7 @@ parcoursRouter.post(
   "/",
   checkPermissions("parcours"),
   postParcoursValidator,
+  checkFormationAccess("formation"),
   httpCreateParcours
 );
 
@@ -67,6 +70,7 @@ parcoursRouter.post(
 parcoursRouter.patch(
   "/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   patchParcoursValidator,
   httpPatchParcours,
 );
@@ -75,6 +79,7 @@ parcoursRouter.patch(
 parcoursRouter.delete(
   "/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursByIdValidator,
   httpDeleteParcoursById
 );
@@ -91,6 +96,7 @@ parcoursRouter.get(
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursByIdValidator,
   httpGetParcoursById
 );
@@ -106,6 +112,7 @@ parcoursRouter.get(
 parcoursRouter.put(
   "/update-infos",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   updateInfosValidator,
   httpUpdateParcoursInfos
 );
@@ -114,6 +121,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-dates",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   updateDatesValidator,
   httpUpdateParcoursDates
 );
@@ -122,6 +130,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-tags",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   putParcoursTagsValidator,
   httpPutParcoursTags
 );
@@ -130,6 +139,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-contacts",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   putParcoursContactsValidator,
   httpPutParcoursContacts
 );
@@ -138,6 +148,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-virtual-class",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   virtualClassValidator,
   httpPutVirtualClass
 );
@@ -146,6 +157,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-objectives",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
@@ -156,6 +168,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/reorder-objectives",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   httpPutReorderObjectives
 );
 
@@ -163,6 +176,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-image/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   createFileUploadMiddleware(headerImageMaxSize),
   parcoursIdValidator,
   httpUpdateImage
@@ -172,6 +186,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   httpPutParcoursGroups
 );
 
@@ -179,6 +194,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   httpPublishParcours
 );
 
@@ -193,6 +209,7 @@ parcoursRouter.get(
 parcoursRouter.post(
   "/duplicate/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
   httpPostDuplicateParcours
 );
@@ -201,6 +218,7 @@ parcoursRouter.post(
 parcoursRouter.get(
   "/skills-contacts/:parcoursId",
   checkPermissions("parcours"),
+  checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
   httpGetParcoursSkillsContacts
 );

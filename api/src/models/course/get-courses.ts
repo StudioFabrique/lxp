@@ -1,7 +1,13 @@
 import { prisma } from "../../utils/db.ts";
+import {
+  moduleWhereForScope,
+  type AccessScope,
+} from "../../utils/services/permissions/accessible-parcours.ts";
 
-async function getCourses() {
+async function getCourses(scope: AccessScope = null) {
   const courses = await prisma.course.findMany({
+    where:
+      scope === null ? undefined : { module: moduleWhereForScope(scope) },
     select: {
       id: true,
       title: true,

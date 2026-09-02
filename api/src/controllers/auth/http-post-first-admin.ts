@@ -50,7 +50,7 @@ export default async function httpPostFirstAdmin(req: Request, res: Response) {
         sessionCookieOptions("refreshToken"),
       )
       .status(200)
-      .json({ success: true, message: "Administrateur créé avec succès." });
+      .json({ success: true, message: "Compte root créé avec succès." });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
       message:

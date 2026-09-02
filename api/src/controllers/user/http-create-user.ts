@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import fs from "fs";
 import createManyGraduations from "../../models/graduation/create-many-graduations.ts";
 import createManyLinks from "../../models/links/create-many-links.ts";
@@ -8,8 +8,12 @@ import type { IGraduation } from "../../utils/interfaces/db/graduation.ts";
 import type { IHobby } from "../../utils/interfaces/db/hobby.ts";
 import type { ILink } from "../../utils/interfaces/db/link.ts";
 import createManyHobbies from "../../models/user/hobby/create-many-hobbies.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-export default async function httpCreateUser(req: Request, res: Response) {
+export default async function httpCreateUser(
+  req: CustomRequest,
+  res: Response,
+) {
   let userDataRequest = req.body.data.user;
   const graduationsDataRequest: IGraduation[] | undefined =
     userDataRequest.graduations;
@@ -28,7 +32,15 @@ export default async function httpCreateUser(req: Request, res: Response) {
       return res.status(404).send({ message: badQuery });
     }
 
-    const userResponse = await createUser(userDataRequest, roleId); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
+    const actorRank = Math.min(
+      ...req.auth!.userRoles.map(({ rank }) => rank),
+      4,
+    );
+    const userResponse = await createUser(
+      userDataRequest,
+      roleId,
+      actorRank,
+    ); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     await createManyGraduations(
       userResponse!.createdUser._id,

@@ -18,11 +18,18 @@ type ContenuProps = {
   modules: Module[];
 };
 
+const INITIAL_MODULE_COUNT = 5;
+
 const Contenu = ({ modules }: ContenuProps) => {
   const sortedModules = useMemo(
     () => sortModulesByStartDate(modules),
     [modules],
   );
+  const [showAllModules, setShowAllModules] = useState(false);
+  const displayedModules = showAllModules
+    ? sortedModules
+    : sortedModules.slice(0, INITIAL_MODULE_COUNT);
+  const hiddenModuleCount = sortedModules.length - INITIAL_MODULE_COUNT;
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const { id: parcoursId } = useParams();
@@ -31,15 +38,17 @@ const Contenu = ({ modules }: ContenuProps) => {
   );
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    sortedModules[0] ?? null,
+    sortedModules.find((module) => module.hasAccess !== false) ?? null,
   );
 
   const canEditParcoursContent =
-    ability.can("update", "parcours") ||
-    userBelongsToContacts(user, parcours?.contacts);
+    parcours?.canManage !== false &&
+    (ability.can("update", "parcours") ||
+      userBelongsToContacts(user, parcours?.contacts));
   const canEditModule =
-    ability.can("update", "module") ||
-    userBelongsToContacts(user, selectedModule?.contacts);
+    selectedModule?.hasAccess !== false &&
+    (ability.can("update", "module") ||
+      userBelongsToContacts(user, selectedModule?.contacts));
 
   return (
     <Wrapper>
@@ -67,7 +76,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           className="grid lg:grid-cols-2 gap-x-10 gap-y-5"
         >
           <div className="flex flex-col gap-y-2">
-            {sortedModules.map((module, i) => (
+            {displayedModules.map((module, i) => (
               <ContenuItem
                 key={module.id}
                 module={module}
@@ -75,12 +84,26 @@ const Contenu = ({ modules }: ContenuProps) => {
                 iterationCount={i + 1}
                 setSelectedModule={setSelectedModule}
                 editDatesUrl={
-                  ability.can("update", "parcours") && parcoursId
+                  module.hasAccess !== false &&
+                  ability.can("update", "parcours") &&
+                  parcoursId
                     ? `/admin/parcours/edit/${parcoursId}?step=5&editModuleDates=${module.id}`
                     : undefined
                 }
               />
             ))}
+            {hiddenModuleCount > 0 ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost text-primary self-center"
+                onClick={() => setShowAllModules((current) => !current)}
+                aria-expanded={showAllModules}
+              >
+                {showAllModules
+                  ? "Afficher moins"
+                  : `Afficher plus (${hiddenModuleCount})`}
+              </button>
+            ) : null}
             {canEditParcoursContent && (
               <PermissionGuard action="update" object="parcours">
                 <Link
@@ -95,16 +118,16 @@ const Contenu = ({ modules }: ContenuProps) => {
               </PermissionGuard>
             )}
           </div>
-          {sortedModules.length > 0 && (
+          {selectedModule?.id && (
             <div className="flex flex-col gap-y-4">
               <ContenuDetailHeader
-                imageModuleHeader={selectedModule?.thumb}
-                title={selectedModule?.title}
+                imageModuleHeader={selectedModule.thumb}
+                title={selectedModule.title}
               />
               <ContenuDetail
                 canEdit={canEditModule}
                 parcoursId={Number(parcoursId)}
-                moduleId={selectedModule?.id ?? 0}
+                moduleId={selectedModule.id}
               />
             </div>
           )}

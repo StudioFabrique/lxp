@@ -1,10 +1,12 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { serverIssue } from "../../utils/constantes.ts";
 import getCourses from "../../models/course/get-courses.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
-async function httpGetCourses(req: Request, res: Response) {
+async function httpGetCourses(req: CustomRequest, res: Response) {
   try {
-    const response = await getCourses();
+    const response = await getCourses(await resolveAccessScope(req.auth!));
     return res
       .status(200)
       .json({

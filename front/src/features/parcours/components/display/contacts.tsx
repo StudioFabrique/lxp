@@ -33,7 +33,10 @@ const Contacts = () => {
                 <Mail className="w-3 h-3" /> {contact.email ?? "Non renseigné"}
               </p>
             )}
-            {user && contact.phone && ability.can("update", "parcours") ? (
+            {user &&
+            contact.phone &&
+            ability.can("update", "parcours") &&
+            parcours?.canManage !== false ? (
               <div className="flex items-center gap-x-2">
                 <Phone className="w-3 h-3" />
                 <p>{contact.phone ?? "Non renseigné"}</p>
@@ -47,11 +50,11 @@ const Contacts = () => {
     );
 
   return (
-    <Wrapper>
+    <Wrapper additionalClassname="h-auto">
       <h2 className="text-xl font-bold text-primary">
         Ressources pédagogiques
       </h2>
-      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto max-h-72">
         {contactsList}
       </div>
     </Wrapper>

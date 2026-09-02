@@ -4,8 +4,27 @@ import { userApi } from "../api/user.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 
 const DELETE_ERROR_FALLBACK = "Impossible de supprimer cet utilisateur.";
+const DELETE_MANY_ERROR_FALLBACK =
+  "Impossible de supprimer tous les utilisateurs sélectionnés.";
 
 export function useUserActions(onSuccessCallback: () => void) {
+  const deleteManyMutation = useMutation({
+    mutationFn: (ids: string[]) => userApi.mutations.deleteMany(ids),
+    onSuccess: () => {
+      toast.success("Utilisateurs supprimés avec succès");
+      onSuccessCallback();
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, DELETE_MANY_ERROR_FALLBACK));
+      onSuccessCallback();
+    },
+  });
+
+  const handleDeleteSelected = async (ids: string[]) => {
+    if (ids.length === 0) return;
+    deleteManyMutation.mutate(ids);
+  };
+
   const deleteOneMutation = useMutation({
     mutationFn: (id: string) => userApi.mutations.deleteOne(id),
     onSuccess: () => {
@@ -102,8 +121,9 @@ export function useUserActions(onSuccessCallback: () => void) {
   };
 
   return {
+    onDeleteSelected: handleDeleteSelected,
     onDeleteOne: handleDeleteOne,
-    isDeleting: deleteOneMutation.isPending,
+    isDeleting: deleteOneMutation.isPending || deleteManyMutation.isPending,
     deleteError: deleteOneMutation.isError
       ? getApiErrorMessage(deleteOneMutation.error, DELETE_ERROR_FALLBACK)
       : undefined,
@@ -116,6 +136,7 @@ export function useUserActions(onSuccessCallback: () => void) {
     onSendResetPassword: handleSendResetPassword,
     isPending:
       deleteOneMutation.isPending ||
+      deleteManyMutation.isPending ||
       updateStatusMutation.isPending ||
       updateManyStatusMutation.isPending ||
       updateRolesMutation.isPending ||

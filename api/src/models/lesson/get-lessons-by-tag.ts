@@ -1,4 +1,5 @@
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 type Result = {
   id: number;
@@ -12,17 +13,22 @@ export default async function getLessonsByTag(
   tagId: number,
   includeCourseContents = false,
   supplementaryResources = false,
-  accessibleParcoursIds: number[] | null = null,
+  scope: AccessScope = null,
 ) {
   // Les leçons sont bornées au périmètre de l'appelant ; les ressources, elles,
   // forment une bibliothèque transverse sans rattachement à un parcours et
   // restent donc gouvernées par la seule permission `read:resource`.
   const lessonScope =
-    accessibleParcoursIds === null
+    scope === null
       ? { tagId }
       : {
           tagId,
-          course: { module: { parcoursId: { in: accessibleParcoursIds } } },
+          course: {
+            module:
+              scope.moduleIds === null
+                ? { parcoursId: { in: scope.parcoursIds } }
+                : { id: { in: scope.moduleIds } },
+          },
         };
   if (supplementaryResources) {
     const resources = await prisma.resource.findMany({

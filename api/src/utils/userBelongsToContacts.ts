@@ -17,7 +17,7 @@ export default async function userBelongsToContacts(
 
   const isBelonging =
     contacts.some((contact) => contact.idMdb === user.id) ||
-    user.roles.some((role: IRole) => role.rank === 1);
+    user.roles.some((role: IRole) => role.rank <= 1);
 
   if (!isBelonging)
     throw {

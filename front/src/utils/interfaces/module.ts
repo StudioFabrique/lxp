@@ -20,6 +20,8 @@ export default interface Module {
   parcours: Parcours;
   courses: Array<Course>;
   tags: Array<Tag>;
+  /** Faux lorsque le module est seulement visible dans la liste du parcours. */
+  hasAccess?: boolean;
   /**
    * Progression en pourcentage, calculée par l'API
    * (`api/src/helpers/calculate-module-progress.ts`).

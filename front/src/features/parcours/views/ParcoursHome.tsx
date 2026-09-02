@@ -14,20 +14,18 @@ const ParcoursHome = () => {
 
   const currentRoute = useMemo(
     () => pathname.split("/").slice(1) ?? [],
-    [pathname]
+    [pathname],
   );
 
   const asStudent = currentRoute[0] === "student";
 
-  const {
-    data: studentParcoursList,
-    isLoading: isStudentParcoursLoading,
-  } = useQuery({
-    queryKey: ["parcours", { asStudent: true }],
-    queryFn: () => parcoursApi.queries.getAll(true),
-    select: (data) => sortArray(data, "id"),
-    enabled: asStudent,
-  });
+  const { data: studentParcoursList, isLoading: isStudentParcoursLoading } =
+    useQuery({
+      queryKey: ["parcours", { asStudent: true }],
+      queryFn: () => parcoursApi.queries.getAll(true),
+      select: (data) => sortArray(data, "id"),
+      enabled: asStudent,
+    });
 
   const { data: formations = [], isLoading: isAdminParcoursLoading } = useQuery(
     {

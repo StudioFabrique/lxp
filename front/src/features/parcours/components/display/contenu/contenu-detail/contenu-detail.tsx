@@ -3,7 +3,14 @@ import { FC, useEffect, useState } from "react";
 import Course from "../../../../../../../src/utils/interfaces/course";
 import EditIcon from "../../../../../../../src/components/UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router";
-import { CloudOff, EyeOff, Import, Plus, UploadCloud } from "lucide-react";
+import {
+  ArrowRight,
+  CloudOff,
+  EyeOff,
+  Import,
+  Plus,
+  UploadCloud,
+} from "lucide-react";
 import { cn } from "../../../../../../utils/cn";
 import toast from "react-hot-toast";
 import PermissionGuard from "../../../../../../components/guards/PermissionGuard";
@@ -57,7 +64,7 @@ const ContenuDetail: FC<{
 
   const contentsList =
     !isLoading && courses.length > 0 ? (
-      courses.map((course, i) => (
+      courses.slice(0, 2).map((course, i) => (
         <div
           onClick={() =>
             navigate(`/${currentRoute[0]}/parcours/module/${moduleId}`, {
@@ -152,7 +159,16 @@ const ContenuDetail: FC<{
           </PermissionGuard>
         )}
       </span>
-      <div className="flex flex-col gap-y-4">{contentsList}</div>
+      <div className="flex flex-col gap-y-3">{contentsList}</div>
+      {!isLoading && courses.length > 0 ? (
+        <Link
+          to={`/${currentRoute[0]}/parcours/module/${moduleId}`}
+          className="btn btn-sm btn-outline btn-primary self-end"
+        >
+          Afficher tout le contenu
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      ) : null}
     </div>
   );
 };

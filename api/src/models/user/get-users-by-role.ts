@@ -10,7 +10,8 @@ async function getUsersByRole(
   limit: number,
   role: string,
   stype: string,
-  sdir: string
+  sdir: string,
+  actorRank: number,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
@@ -24,6 +25,17 @@ async function getUsersByRole(
   if (fetchedRoles === undefined || fetchedRoles.length === 0) {
     throw { statusCode: 404, message: "Aucun rôle trouvé." };
   }
+
+  const hiddenRoles = await Role.find(
+    { rank: { $lte: actorRank } },
+    { _id: 1 },
+  );
+  const userFilter = {
+    $and: [
+      { roles: { $in: fetchedRoles.map(({ _id }) => _id) } },
+      { roles: { $nin: hiddenRoles.map(({ _id }) => _id) } },
+    ],
+  };
 
   const groupsSql = await prisma.group.findMany({
     select: {
@@ -82,7 +94,7 @@ async function getUsersByRole(
   }
 
   const data = await User.find(
-    { roles: { $in: fetchedRoles } },
+    userFilter,
     {
       _id: 1,
       firstname: 1,
@@ -94,14 +106,14 @@ async function getUsersByRole(
       emailVerified: 1,
       invitationSent: 1,
       invitationPendingSince: 1,
-    }
+    },
   )
     .populate("group")
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort(sortObject)
     .skip(getPagination(page, limit))
     .limit(limit);
-  const total = await User.count({ roles: { $in: fetchedRoles } });
+  const total = await User.countDocuments(userFilter);
 
   let users = data.map((user) => {
     return {

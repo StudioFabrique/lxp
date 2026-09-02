@@ -18,6 +18,7 @@ import { motion } from "motion/react";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
 import { AuthContext } from "../../../../store/AuthProvider";
@@ -319,7 +320,7 @@ const CourseItem = ({
               )}
             </div>
           </div>
-          <PermissionGuard action="component" object="progression">
+          <RoleRankGuard ranks={[3]}>
             <progress
               className={cn(
                 "w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all",
@@ -327,7 +328,7 @@ const CourseItem = ({
               value={courseProgress}
               max={100}
             />
-          </PermissionGuard>
+          </RoleRankGuard>
         </div>
         <motion.div
           className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2 pt-2"

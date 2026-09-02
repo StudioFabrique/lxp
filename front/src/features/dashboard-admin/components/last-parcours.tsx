@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
@@ -6,6 +6,7 @@ import LastParcoursItem from "./last-parcours-item";
 import QuickActions from "./quick-actions";
 import FormationModal from "../../formation/components/FormationModal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -20,12 +21,6 @@ export default function LastParcours({
   const [isFormationModalOpen, setIsFormationModalOpen] = useState(
     searchParams.get("createFormation") === "true",
   );
-
-  useEffect(() => {
-    if (searchParams.get("createFormation") === "true") {
-      setIsFormationModalOpen(true);
-    }
-  }, [searchParams]);
 
   const openFormationModal = () => {
     setIsFormationModalOpen(true);
@@ -44,9 +39,11 @@ export default function LastParcours({
   return (
     <div className="p-2">
       <div className="flex flex-wrap justify-between items-center gap-4">
-        <h3 className="text-xl font-bold text-primary select-none">
-          Derniers parcours ajoutés
-        </h3>
+        {parcours.length > 0 && (
+          <h3 className="text-xl font-bold text-primary select-none">
+            Derniers parcours ajoutés
+          </h3>
+        )}
         <QuickActions onCreateFormation={openFormationModal} />
       </div>
 
@@ -66,7 +63,9 @@ export default function LastParcours({
             {parcours.slice(0, 6).map((formation) => (
               <LastParcoursItem key={formation.id} formation={formation} />
             ))}
-            <LastParcoursItem onCreateFormation={openFormationModal} />
+            <PermissionGuard action="write" object="parcours">
+              <LastParcoursItem onCreateFormation={openFormationModal} />
+            </PermissionGuard>
           </div>
         )}
       </div>
