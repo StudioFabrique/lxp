@@ -20,7 +20,7 @@ Le service IA est présent dans le dépôt privé du studio
 - Docker avec Docker Compose ;
 - Git ;
 
-### Première installation
+### Mise en route rapide de l'application
 
 ```bash
 git clone git@github.com:StudioFabrique/lxp.git
@@ -29,8 +29,9 @@ npm run init
 npm run dev
 ```
 
-Ouvrez <http://localhost:5173>. L’API répond sur
-<http://localhost:3000>.
+Ouvrez <http://localhost:5173> dans le navigateur.
+
+L'API de l'application est disponible sur <http://localhost:3000>.
 
 `npm run init` effectue les actions suivantes :
 
@@ -40,10 +41,6 @@ Ouvrez <http://localhost:5173>. L’API répond sur
 4. démarre PostgreSQL, pgvector et MongoDB ;
 5. applique les migrations et affiche la clé de création du premier compte
    administrateur.
-
-> `npm run init` supprime les volumes Docker locaux du LXP. Lancez
-> `npm run dump` avant cette commande si le projet initialisé contient des données à
-> conserver.
 
 ### Commandes courantes
 
@@ -126,6 +123,3 @@ avant le premier lancement.
 | Déployer une instance                       | [Guide de déploiement](deployment/README.md)                 |
 | Sauvegarder ou restaurer une instance       | [Sauvegardes](docs/sauvegardes.md)                           |
 | Gérer l’instance de démonstration           | [Mode démonstration](docs/mode-demo.md)                      |
-
-La [documentation des serveurs STEP](https://docs.dev.step.eco/) décrit la
-configuration commune de Jenkins, Infisical et Caddy.
