@@ -18,6 +18,7 @@ export type TablePerson = {
  */
 export function personSelectionColumn<TData extends TablePerson>(
   selectAllLabel = "Sélectionner toutes les lignes affichées",
+  canSelect: (row: TData) => boolean = () => true,
 ): ColumnDef<TData> {
   return {
     id: "select",
@@ -32,6 +33,7 @@ export function personSelectionColumn<TData extends TablePerson>(
     ),
     cell: ({ row }) => {
       const { avatar, firstname, lastname } = row.original;
+      const selectable = canSelect(row.original);
 
       return (
         <div className="flex items-center gap-x-3">
@@ -40,6 +42,7 @@ export function personSelectionColumn<TData extends TablePerson>(
             aria-label={`Sélectionner ${firstname} ${lastname}`}
             className="checkbox checkbox-sm checkbox-primary"
             checked={row.getIsSelected()}
+            disabled={!selectable}
             onChange={row.getToggleSelectedHandler()}
           />
           <span className="ml-3">

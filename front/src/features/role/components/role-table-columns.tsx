@@ -41,6 +41,13 @@ export const getRoleColumns = (
     ),
   },
   {
+    accessorKey: "model",
+    header: "Modèle",
+    cell: (info) => (
+      <span className="capitalize">{info.getValue() as string}</span>
+    ),
+  },
+  {
     accessorKey: "countRead",
     header: "Lire",
     enableSorting: false,

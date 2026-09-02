@@ -1,7 +1,11 @@
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
-async function getModulesFromParcours(parcoursId: number) {
+async function getModulesFromParcours(
+  parcoursId: number,
+  scope: AccessScope = null,
+) {
   const parcours = await prisma.parcours.findUnique({
     where: { id: +parcoursId },
     select: {
@@ -47,16 +51,27 @@ async function getModulesFromParcours(parcoursId: number) {
   );
 
   return {
-    modules: parcours.modules.map(({ contacts, bonusSkills, ...module }) => ({
-      ...module,
-      thumb: module.thumb
+    modules: parcours.modules.map(({ contacts, bonusSkills, ...module }) => {
+      const thumb = module.thumb
         ? Buffer.from(module.thumb as any).toString("base64")
-        : null,
-      contacts: contacts.map(
-        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
-      ),
-      skills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
-    })),
+        : null;
+      const hasAccess =
+        scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id);
+
+      if (!hasAccess) {
+        return { id: module.id, title: module.title, thumb, hasAccess: false };
+      }
+
+      return {
+        ...module,
+        thumb,
+        contacts: contacts.map(
+          ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+        ),
+        skills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
+        hasAccess: true,
+      };
+    }),
     parcoursData: {
       formationId: parcours.formation.id,
       contacts: parcours.contacts.map(

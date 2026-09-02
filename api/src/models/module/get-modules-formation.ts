@@ -1,9 +1,16 @@
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
-export default async function getModulesFormation(formationId: number) {
+export default async function getModulesFormation(
+  formationId: number,
+  scope: AccessScope = null,
+) {
   const modules = await prisma.module.findMany({
-    where: { parcours: { formationId } },
+    where: {
+      parcours: { formationId },
+      ...(scope !== null && { parcoursId: { in: scope.parcoursIds } }),
+    },
     orderBy: [{ parcours: { title: "asc" } }, { createdAt: "asc" }],
     select: {
       id: true,
@@ -40,18 +47,35 @@ export default async function getModulesFormation(formationId: number) {
     namedContacts.map((contact) => [contact.idMdb, contact]),
   );
 
-  return modules.map(({ contacts, bonusSkills, courses, ...module }) => ({
-    ...module,
-    thumb: module.thumb
+  return modules.map(({ contacts, bonusSkills, courses, ...module }) => {
+    const thumb = module.thumb
       ? Buffer.from(module.thumb as any).toString("base64")
-      : null,
-    contacts: contacts.map(
-      ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
-    ),
-    bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
-    courses: courses.map((course) => ({
-      ...course,
-      aiIndexed: Boolean(course.courseSlug),
-    })),
-  }));
+      : null;
+    const hasAccess =
+      scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id);
+
+    if (!hasAccess) {
+      return {
+        id: module.id,
+        title: module.title,
+        parcours: module.parcours,
+        thumb,
+        hasAccess: false,
+      };
+    }
+
+    return {
+      ...module,
+      thumb,
+      contacts: contacts.map(
+        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+      ),
+      bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
+      courses: courses.map((course) => ({
+        ...course,
+        aiIndexed: Boolean(course.courseSlug),
+      })),
+      hasAccess: true,
+    };
+  });
 }

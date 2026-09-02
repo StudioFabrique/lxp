@@ -20,6 +20,8 @@ import {
 import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations.ts";
 import httpPutFormation from "../../../controllers/formation/http-put-formation.ts";
 import httpDeleteFormation from "../../../controllers/formation/http-delete-formation.ts";
+import checkFormationAccess from "../../../middleware/check-formation-access.ts";
+import checkContentAccess from "../../../middleware/check-content-access.ts";
 
 const formationRouter = express.Router();
 
@@ -99,6 +101,7 @@ formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
 formationRouter.put(
   "/update-tags",
   checkPermissions("formation"),
+  checkFormationAccess("formationId"),
   body("formationId")
     .isNumeric()
     .withMessage("L'identifiant de la formation doit être un nombre entier"),
@@ -114,6 +117,7 @@ formationRouter.post(
   checkPermissions("module", "write"),
   upload.single("image"),
   jsonParser,
+  checkContentAccess("parcours", "module.parcoursId"),
   validationModule,
   httpPostModule
 );
@@ -137,6 +141,7 @@ formationRouter.get(
 formationRouter.put(
   "/:formationId",
   checkPermissions("formation"),
+  checkFormationAccess("formationId"),
   fomrationIdValidator,
   putFormationValidator,
   httpPutFormation
@@ -145,6 +150,7 @@ formationRouter.put(
 formationRouter.delete(
   "/:formationId",
   checkPermissions("formation"),
+  checkFormationAccess("formationId"),
   fomrationIdValidator,
   httpDeleteFormation
 );

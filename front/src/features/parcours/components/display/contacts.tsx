@@ -33,7 +33,10 @@ const Contacts = () => {
                 <Mail className="w-3 h-3" /> {contact.email ?? "Non renseigné"}
               </p>
             )}
-            {user && contact.phone && ability.can("update", "parcours") ? (
+            {user &&
+            contact.phone &&
+            ability.can("update", "parcours") &&
+            parcours?.canManage !== false ? (
               <div className="flex items-center gap-x-2">
                 <Phone className="w-3 h-3" />
                 <p>{contact.phone ?? "Non renseigné"}</p>

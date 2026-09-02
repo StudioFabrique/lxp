@@ -16,10 +16,6 @@ export type ModuleSummary = {
 };
 
 const queries = {
-  getLastParcours: async (): Promise<Parcours[]> => {
-    const res = await apiClient.get("/user/last-parcours");
-    return res.data.response ?? [];
-  },
   getLastFormations: async (): Promise<FormationItem[]> => {
     const res = await apiClient.get("/formation/list");
     return (res.data.response ?? []).slice(0, 3);

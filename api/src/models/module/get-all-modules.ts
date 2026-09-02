@@ -1,7 +1,10 @@
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
-export default async function getAllModules() {
+export default async function getAllModules(scope: AccessScope = null) {
   const modules = await prisma.module.findMany({
+    where:
+      scope === null ? undefined : { parcoursId: { in: scope.parcoursIds } },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
@@ -27,6 +30,8 @@ export default async function getAllModules() {
     formationId: parcours.formation.id,
     formation: parcours.formation.title,
     coursesCount: courses.length,
+    hasAccess:
+      scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id),
     thumb: module.thumb
       ? Buffer.from(module.thumb as any).toString("base64")
       : null,

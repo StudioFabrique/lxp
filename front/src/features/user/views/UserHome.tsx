@@ -12,7 +12,10 @@ import type Role from "../../../utils/interfaces/role";
 import type User from "../../../utils/interfaces/user";
 import { useUserActions } from "../hooks/useUserActions";
 import { useUserList } from "../hooks/useUserList";
-import { getUsersColumns } from "../components/user-table-columns";
+import {
+  canManageUser,
+  getUsersColumns,
+} from "../components/user-table-columns";
 import UserStats from "../components/user-data/UserStats";
 
 import PageHeader from "../../../components/headers/PageHeader";
@@ -26,8 +29,15 @@ import SearchBar from "../../../components/UI/search-bar/search-bar";
 import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const UserHome = () => {
-  const { roles } = useContext(AuthContext);
+  const { roles, user: currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const currentUserRank = useMemo(
+    () =>
+      currentUser
+        ? Math.min(...currentUser.roles.map(({ rank }) => rank), 4)
+        : undefined,
+    [currentUser],
+  );
 
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
 
@@ -104,8 +114,10 @@ const UserHome = () => {
         },
         (id) => setIdToResendInvitation(id),
         (id) => setIdToResetPassword(id),
+        currentUser?._id,
+        currentUserRank,
       ),
-    [resetDeleteError],
+    [currentUser?._id, currentUserRank, resetDeleteError],
   );
 
   const selectedUserNames = useCallback(
@@ -279,6 +291,9 @@ const UserHome = () => {
             setSorting={handleSortingChange}
             onRowClick={handleRowClick}
             isRowClickable={isStudent}
+            canSelectRow={(listedUser) =>
+              canManageUser(listedUser, currentUserRank)
+            }
             emptyMessage={
               searchValue
                 ? "Aucun utilisateur trouvé"

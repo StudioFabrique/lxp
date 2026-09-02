@@ -20,11 +20,14 @@ const prisma = new PrismaClient();
 describe("Cloisonnement des contenus par parcours", () => {
   let cookieApprenant: string[];
   let cookieAdmin: string[];
+  let cookieFormateur: string[];
 
   // Contenus du parcours auquel l'apprenant est inscrit.
   const inscrit = { parcoursId: 0, moduleId: 0, courseId: 0, lessonId: 0, activityId: 0 };
   // Contenus d'un parcours auquel il ne l'est pas.
   const etranger = { parcoursId: 0, moduleId: 0, courseId: 0, lessonId: 0, activityId: 0 };
+  let moduleVisibleMaisVerrouille = 0;
+  let teacherContactId = 0;
 
   let mongoGroupId: string;
   let pgGroupId: number;
@@ -73,14 +76,17 @@ describe("Cloisonnement des contenus par parcours", () => {
   beforeAll(async () => {
     await mongoConnect();
 
-    const [connexionApprenant, connexionAdmin] = await Promise.all([
+    const [connexionApprenant, connexionAdmin, connexionFormateur] = await Promise.all([
       request(app).post("/v1/auth/login")
         .send({ email: "apprenant@studio.eco", password: "Abcdef@123456" }).expect(200),
       request(app).post("/v1/auth/login")
         .send({ email: "admin@studio.eco", password: "Abcdef@123456" }).expect(200),
+      request(app).post("/v1/auth/login")
+        .send({ email: "formateur@studio.eco", password: "Abcdef@123456" }).expect(200),
     ]);
     cookieApprenant = connexionApprenant.headers["set-cookie"] as unknown as string[];
     cookieAdmin = connexionAdmin.headers["set-cookie"] as unknown as string[];
+    cookieFormateur = connexionFormateur.headers["set-cookie"] as unknown as string[];
 
     const [admin, formation, tag] = await Promise.all([
       prisma.admin.findFirst({ select: { id: true } }),
@@ -91,6 +97,38 @@ describe("Cloisonnement des contenus par parcours", () => {
 
     await creerArborescence("Acces inscrit", inscrit, admin.id, formation.id, tag.id);
     await creerArborescence("Acces etranger", etranger, admin.id, formation.id, tag.id);
+
+    const teacher = await User.findOne({ email: "formateur@studio.eco" });
+    if (!teacher) throw new Error("Fixture formateur absente");
+    const teacherContact = await prisma.contact.upsert({
+      where: { idMdb: teacher.id },
+      update: {},
+      create: {
+        idMdb: teacher.id,
+        role: "teacher",
+        email: teacher.email,
+      },
+      select: { id: true },
+    });
+    teacherContactId = teacherContact.id;
+    await prisma.contactsOnModule.create({
+      data: { contactId: teacherContact.id, moduleId: inscrit.moduleId },
+    });
+    // Une affectation au cours ne doit plus ouvrir son module ou son parcours.
+    await prisma.contactsOnCourse.create({
+      data: { contactId: teacherContact.id, courseId: etranger.courseId },
+    });
+    moduleVisibleMaisVerrouille = (
+      await prisma.module.create({
+        data: {
+          title: "Module visible mais verrouillé",
+          author: "test",
+          adminId: admin.id,
+          parcoursId: inscrit.parcoursId,
+        },
+        select: { id: true },
+      })
+    ).id;
 
     // Rattachement de l'apprenant au seul premier parcours : groupe côté Mongo
     // (appartenance des utilisateurs) puis miroir côté PostgreSQL (rattachement
@@ -115,6 +153,13 @@ describe("Cloisonnement des contenus par parcours", () => {
   });
 
   afterAll(async () => {
+    await prisma.contactsOnCourse.deleteMany({
+      where: { contactId: teacherContactId, courseId: etranger.courseId },
+    });
+    await prisma.contactsOnModule.deleteMany({
+      where: { contactId: teacherContactId, moduleId: inscrit.moduleId },
+    });
+    await prisma.module.deleteMany({ where: { id: moduleVisibleMaisVerrouille } });
     await prisma.groupsOnParcours.deleteMany({ where: { groupId: pgGroupId } });
     await prisma.group.deleteMany({ where: { id: pgGroupId } });
     await Group.deleteOne({ _id: mongoGroupId });
@@ -206,6 +251,77 @@ describe("Cloisonnement des contenus par parcours", () => {
     it("l'administrateur atteint la leçon d'un parcours où il n'est pas inscrit", async () => {
       await request(app).get(`/v1/lesson/${etranger.lessonId}`)
         .set("Cookie", cookieAdmin).expect(200);
+    });
+  });
+
+  describe("un formateur est borné à ses affectations de parcours et modules", () => {
+    it("ne peut créer ni formation ni parcours", async () => {
+      await request(app).post("/v1/formation")
+        .set("Cookie", cookieFormateur)
+        .send({})
+        .expect(403);
+      await request(app).post("/v1/parcours")
+        .set("Cookie", cookieFormateur)
+        .send({})
+        .expect(403);
+    });
+
+    it("voit seulement les parcours contenant une affectation pédagogique", async () => {
+      const reponse = await request(app).get("/v1/parcours")
+        .set("Cookie", cookieFormateur).expect(200);
+
+      const ids = reponse.body.map((parcours: { id: number }) => parcours.id);
+      expect(ids).toContain(inscrit.parcoursId);
+      expect(ids).not.toContain(etranger.parcoursId);
+    });
+
+    it("voit tous les modules du parcours, avec les modules non affectés verrouillés", async () => {
+      const reponse = await request(app)
+        .get(`/v1/modules/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .expect(200);
+
+      expect(reponse.body.modules).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: inscrit.moduleId, hasAccess: true }),
+          expect.objectContaining({ id: moduleVisibleMaisVerrouille, hasAccess: false }),
+        ]),
+      );
+    });
+
+    it("voit le parcours parent sans pouvoir le modifier", async () => {
+      const reponse = await request(app)
+        .get(`/v1/parcours/parcours-by-id/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .expect(200);
+
+      expect(reponse.body.canManage).toBe(false);
+      await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ description: "Modification interdite" })
+        .expect(404);
+    });
+
+    it("ouvre le détail du module affecté et ses cours sans affectation au cours", async () => {
+      await request(app).get(`/v1/modules/detail/${inscrit.moduleId}`)
+        .set("Cookie", cookieFormateur).expect(200);
+      await request(app).get(`/v1/course/${inscrit.moduleId}`)
+        .set("Cookie", cookieFormateur).expect(200);
+    });
+
+    it("ne peut ni ouvrir ni modifier un module seulement visible", async () => {
+      await request(app).get(`/v1/modules/detail/${moduleVisibleMaisVerrouille}`)
+        .set("Cookie", cookieFormateur).expect(404);
+      await request(app).delete(`/v1/modules/${moduleVisibleMaisVerrouille}`)
+        .set("Cookie", cookieFormateur).expect(404);
+    });
+
+    it("une affectation directe au cours n'ouvre pas le parcours ni le module", async () => {
+      await request(app).get(`/v1/parcours/parcours-by-id/${etranger.parcoursId}`)
+        .set("Cookie", cookieFormateur).expect(404);
+      await request(app).get(`/v1/course/${etranger.moduleId}`)
+        .set("Cookie", cookieFormateur).expect(404);
     });
   });
 });

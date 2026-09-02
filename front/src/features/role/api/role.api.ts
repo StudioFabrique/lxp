@@ -26,6 +26,7 @@ export type RoleCounts = {
   role: string;
   label: string;
   rank: number;
+  model: string;
   protection: number;
   countRead: number;
   countWrite: number;

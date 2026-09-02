@@ -55,7 +55,7 @@ const ModuleTable = ({
                   <div className="w-6 h-6">
                     <PermissionGuard action="read" object="module">
                       <div>
-                        {item.parcoursId ? (
+                        {item.parcoursId && item.hasAccess !== false ? (
                           <Link
                             className="btn btn-ghost btn-xs btn-square text-secondary tooltip"
                             data-tip="Voir le module"
@@ -79,7 +79,7 @@ const ModuleTable = ({
                   <div className="w-6 h-6">
                     <PermissionGuard action="update" object="module">
                       <div>
-                        {item.parcoursId ? (
+                        {item.parcoursId && item.hasAccess !== false ? (
                           <Link
                             className="btn btn-ghost btn-xs btn-square text-secondary tooltip"
                             data-tip="Modifier le module"
@@ -100,7 +100,7 @@ const ModuleTable = ({
                       </div>
                     </PermissionGuard>
                   </div>
-                  <div
+                  {item.hasAccess !== false && <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression du module"
                   >
@@ -118,7 +118,7 @@ const ModuleTable = ({
                         </button>
                       </div>
                     </PermissionGuard>
-                  </div>
+                  </div>}
                 </div>
               </td>
             </TableRowWrapper>

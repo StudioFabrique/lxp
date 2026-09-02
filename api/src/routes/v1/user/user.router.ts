@@ -12,6 +12,8 @@ import httpCreateUser from "../../../controllers/user/http-create-user.ts";
 import httpDeleteUser from "../../../controllers/user/http-delete-user.ts";
 import httpDeleteManyUsers from "../../../controllers/user/http-delete-many-users.ts";
 import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
+import preventSelfUserEdit from "../../../middleware/prevent-self-user-edit.ts";
+import checkUserManagementScope from "../../../middleware/check-user-management-scope.ts";
 import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours.ts";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group.ts";
@@ -86,7 +88,12 @@ userRouter.put(
   "/update-many-status",
   checkPermissions("user"),
   updateManyUsersStatusValidator,
-  httpUpdateManyUsersStatus
+  checkUserManagementScope({
+    location: "body",
+    key: "usersIds",
+    multiple: true,
+  }),
+  httpUpdateManyUsersStatus,
 );
 
 userRouter.delete(
@@ -104,6 +111,11 @@ userRouter.delete(
     })
     .withMessage("La liste d'identifiants utilisateurs est invalide."),
   checkValidatorResult,
+  checkUserManagementScope({
+    location: "query",
+    key: "ids",
+    commaSeparated: true,
+  }),
   httpDeleteManyUsers,
 );
 
@@ -111,7 +123,8 @@ userRouter.put(
   "/update-user-status",
   checkPermissions("user"),
   updateUserStatusValidator,
-  httpUpdateUserStatus
+  checkUserManagementScope({ location: "body", key: "userId" }),
+  httpUpdateUserStatus,
 );
 
 userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
@@ -122,7 +135,7 @@ userRouter.get(
   checkPermissions("user"),
   getUsersByRoleValidator,
   paginationValidator,
-  httpGetUsersByRole
+  httpGetUsersByRole,
 );
 
 //  récupération de la liste des utilisateurs en fonction de leur rang de leur rôle
@@ -130,7 +143,7 @@ userRouter.get(
   "/byRank/:rank/:stype/:sdir",
   checkPermissions("user"),
   getAllByRankValidator,
-  httpGetUsersByRank
+  httpGetUsersByRank,
 );
 
 userRouter.get(
@@ -147,7 +160,7 @@ userRouter.get(
         ids.every((id) => /^[a-f\d]{24}$/i.test(id))
       );
     }),
-  httpGetUsersByIds
+  httpGetUsersByIds,
 );
 
 userRouter.put(
@@ -162,7 +175,7 @@ userRouter.put(
   body("usersToUpdate.*")
     .isMongoId()
     .withMessage(
-      "Chaque élément de studentsToUpdate doit être un identifiant MongoDB valide."
+      "Chaque élément de studentsToUpdate doit être un identifiant MongoDB valide.",
     ),
   body("rolesId")
     .isArray()
@@ -172,9 +185,13 @@ userRouter.put(
   body("rolesId.*")
     .isMongoId()
     .withMessage(
-      "Chaque élément de rolesId doit être un identifiant MongoDB valide."
+      "Chaque élément de rolesId doit être un identifiant MongoDB valide.",
     ),
-  httpUpdateUserRoles
+  checkUserManagementScope(
+    { location: "body", key: "usersToUpdate", multiple: true },
+    "rolesId",
+  ),
+  httpUpdateUserRoles,
 );
 
 userRouter.post(
@@ -183,30 +200,33 @@ userRouter.post(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   userValidator(true),
-  httpCreateUser
+  httpCreateUser,
 );
 
 //  vérification de l'existence d'un compte utilisateur et envoi du mail de réinitialisation (public)
 userRouter.put(
   "/reset-password",
   checkValidation(postCheckEmailValidator),
-  httpPutResetPasswordEmail
+  httpPutResetPasswordEmail,
 );
 
 userRouter.put(
   "/:id",
   checkPermissions("user"),
+  preventSelfUserEdit,
+  checkUserManagementScope({ location: "params", key: "id" }),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   userValidator(true),
-  httpUpdateUser
+  httpUpdateUser,
 );
 
 userRouter.delete(
   "/:id",
   checkPermissions("user"),
   param("id").isString().trim().escape(),
-  httpDeleteUser
+  checkUserManagementScope({ location: "params", key: "id" }),
+  httpDeleteUser,
 );
 
 // Création de plusieurs utilisateurs à la chaine
@@ -215,7 +235,7 @@ userRouter.post(
   "/many",
   checkPermissions("user"),
   manyUsersValidator,
-  httpCreateManyUser
+  httpCreateManyUser,
 );
 
 userRouter.get(
@@ -233,14 +253,14 @@ userRouter.get(
     .withMessage("Le paramètre 'entity' est requis.")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Le paramètre 'entity' contient des caractères non autorisés."
+      "Le paramètre 'entity' contient des caractères non autorisés.",
     ),
   param("value")
     .isString()
     .withMessage("Le paramètre 'value' est requis.")
     .custom(stringValidateGeneric)
     .withMessage("Le paramètre 'value' contient des caractères non autorisés."),
-  httpSearchUser
+  httpSearchUser,
 );
 
 userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
@@ -259,14 +279,7 @@ userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);
 userRouter.post(
   "/social-network",
   checkPermissions("cursus"),
-  httpPostSocialNetwork
-);
-
-// retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
-userRouter.get(
-  "/last-parcours",
-  checkPermissions("parcours"),
-  httpGetUserLastParcours
+  httpPostSocialNetwork,
 );
 
 // retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
@@ -274,27 +287,27 @@ userRouter.get(
   "/data/:userId",
   checkPermissions("user"),
   param("userId").isMongoId().withMessage("Identifiant d'utilisateur invalide"),
-  httpGetUserData
+  httpGetUserData,
 );
 
 userRouter.get(
   "/own-feedback",
   checkPermissions("cursus"),
-  httpGetLastFeedback
+  httpGetLastFeedback,
 );
 
 // récupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
 userRouter.get(
   "/accomplishment",
   checkPermissions("cursus"),
-  httpGetAccomplishements
+  httpGetAccomplishements,
 );
 
 // récupère les accomplissements de l'étudiant connnecté.
 userRouter.get(
   "/my-accomplishment",
   checkPermissions("cursus"),
-  httpGetConnectedStudentParcoursWithAccomplishements
+  httpGetConnectedStudentParcoursWithAccomplishements,
 );
 
 // retourne la liste des derniers feedbacks enregistrés
@@ -304,7 +317,7 @@ userRouter.get(
   param("notReviewed")
     .isBoolean()
     .withMessage("Le paramètre 'notReviewed' doit être un booléen."),
-  httpGetLastFeedbacks
+  httpGetLastFeedbacks,
 );
 
 //  met à jour le mot d'un passe d'un nouvel utilisateur
@@ -312,7 +325,7 @@ userRouter.post(
   "/activate",
   activateAccount,
   postPasswordValidator,
-  httpPutPassword
+  httpPutPassword,
 );
 
 // envoie un email d'activation à un utilisateur nouvellement créé'
@@ -321,7 +334,8 @@ userRouter.put(
   rateLimiter(5, 60_000),
   userIdValidator,
   checkPermissions("user"),
-  httpPutInvitation
+  checkUserManagementScope({ location: "params", key: "userId" }),
+  httpPutInvitation,
 );
 
 // envoie un email de réinitialisation de mot de passe à un utilisateur (admin)
@@ -329,7 +343,8 @@ userRouter.put(
   "/reset-password/:userId",
   userIdValidator,
   checkPermissions("user"),
-  httpPutResetPassword
+  checkUserManagementScope({ location: "params", key: "userId" }),
+  httpPutResetPassword,
 );
 
 // vérifie la validité du lien d'activation de compte'
@@ -337,7 +352,7 @@ userRouter.post(
   "/check-invitation",
   tokenValidator,
   activateAccount,
-  httpPostCheckActivationToken
+  httpPostCheckActivationToken,
 );
 
 // Send activations emails to multiple users
@@ -345,7 +360,12 @@ userRouter.post(
   "/invitations",
   rateLimiter(3, 60_000),
   checkPermissions("user"),
-  httpPostManyInvitations
+  checkUserManagementScope({
+    location: "body",
+    key: "userIds",
+    multiple: true,
+  }),
+  httpPostManyInvitations,
 );
 
 userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
@@ -353,7 +373,7 @@ userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
 userRouter.delete(
   "/social-network/:id",
   checkPermissions("cursus"),
-  httpDeleteSocialNetwork
+  httpDeleteSocialNetwork,
 );
 
 export default userRouter;

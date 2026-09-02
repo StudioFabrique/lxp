@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
 import { queries } from "../../api/user.api";
 import type Role from "../../../../utils/interfaces/role";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { AuthContext } from "../../../../store/AuthProvider";
 
 type Props = {
   roleId: string | null;
@@ -26,6 +27,10 @@ const UserFormTypeUser = ({
   initialRoleRank,
 }: Props) => {
   const [showRefreshButton, setShowRefreshButton] = useState(false);
+  const { user: currentUser } = useContext(AuthContext);
+  const currentUserRank = currentUser
+    ? Math.min(...currentUser.roles.map(({ rank }) => rank), 4)
+    : 4;
 
   const { data: roles, isLoading } = useQuery({
     queryKey: ["permission-roles"],
@@ -79,14 +84,7 @@ const UserFormTypeUser = ({
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-y-4 overflow-y-auto">
               {(roles ?? [])
-                .filter(
-                  (role) =>
-                    !editMode ||
-                    !initialRoleRank ||
-                    (initialRoleRank <= 2
-                      ? role.rank <= 2
-                      : role.rank > 2),
-                )
+                .filter((role) => role.rank > currentUserRank)
                 .map((role: Role) => (
                   <label key={role._id} className="flex gap-x-2">
                     <input

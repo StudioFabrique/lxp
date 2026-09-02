@@ -1,7 +1,12 @@
 import { prisma } from "../../utils/db.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
-export default async function getAllFormations() {
+export default async function getAllFormations(scope: AccessScope = null) {
   const formations = await prisma.formation.findMany({
+    where:
+      scope === null
+        ? undefined
+        : { parcours: { some: { id: { in: scope.parcoursIds } } } },
     select: {
       id: true,
       title: true,
@@ -10,6 +15,8 @@ export default async function getAllFormations() {
       level: true,
       createdAt: true,
       parcours: {
+        where:
+          scope === null ? undefined : { id: { in: scope.parcoursIds } },
         select: {
           id: true,
         },

@@ -83,6 +83,7 @@ export async function getAllRoles() {
       role: role.role,
       label: role.label,
       rank: role.rank,
+      model: getRoleModelLabel(role.rank),
       protection: role.protection,
       countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
       countWrite: permissions.filter((perm) => perm.startsWith("write:"))
@@ -113,6 +114,8 @@ export async function getAllRolesWithSearch(search: string) {
       role: role.role,
       label: role.label,
       rank: role.rank,
+      model: getRoleModelLabel(role.rank),
+      protection: role.protection,
       countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
       countWrite: permissions.filter((perm) => perm.startsWith("write:"))
         .length,
@@ -122,6 +125,17 @@ export async function getAllRolesWithSearch(search: string) {
         .length,
     };
   });
+}
+
+function getRoleModelLabel(rank: number): string {
+  return (
+    {
+      1: "administrateur",
+      2: "équipe pédagogique",
+      3: "apprenant",
+      4: "visiteur",
+    }[rank] ?? "personnalisé"
+  );
 }
 
 /**

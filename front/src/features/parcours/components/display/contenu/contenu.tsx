@@ -31,15 +31,17 @@ const Contenu = ({ modules }: ContenuProps) => {
   );
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    sortedModules[0] ?? null,
+    sortedModules.find((module) => module.hasAccess !== false) ?? null,
   );
 
   const canEditParcoursContent =
-    ability.can("update", "parcours") ||
-    userBelongsToContacts(user, parcours?.contacts);
+    parcours?.canManage !== false &&
+    (ability.can("update", "parcours") ||
+      userBelongsToContacts(user, parcours?.contacts));
   const canEditModule =
-    ability.can("update", "module") ||
-    userBelongsToContacts(user, selectedModule?.contacts);
+    selectedModule?.hasAccess !== false &&
+    (ability.can("update", "module") ||
+      userBelongsToContacts(user, selectedModule?.contacts));
 
   return (
     <Wrapper>
@@ -75,7 +77,9 @@ const Contenu = ({ modules }: ContenuProps) => {
                 iterationCount={i + 1}
                 setSelectedModule={setSelectedModule}
                 editDatesUrl={
-                  ability.can("update", "parcours") && parcoursId
+                  module.hasAccess !== false &&
+                  ability.can("update", "parcours") &&
+                  parcoursId
                     ? `/admin/parcours/edit/${parcoursId}?step=5&editModuleDates=${module.id}`
                     : undefined
                 }

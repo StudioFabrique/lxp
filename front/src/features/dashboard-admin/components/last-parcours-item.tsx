@@ -131,7 +131,9 @@ const LastParcoursItem = ({
                       {formation.title}
                     </h4>
                   </div>
-                  {isManagementView && onEditFormation ? (
+                  {isManagementView &&
+                  onEditFormation &&
+                  formation.canManage !== false ? (
                     <PermissionGuard action="update" object="formation">
                       <button
                         type="button"

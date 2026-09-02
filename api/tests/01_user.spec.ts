@@ -42,7 +42,7 @@ describe("HTTP /user", () => {
     token = jwt.sign(
       { userId: user!._id, userRoles: [role] },
       process.env.REGISTER_SECRET!,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     const teacherLogin = await request(app)
@@ -240,7 +240,8 @@ describe("HTTP /user", () => {
 
     // Successful update
     test("It should respond 201 success", async () => {
-      const users = await User.find({});
+      const studentRole = await Role.findOne({ role: "student" });
+      const users = await User.find({ roles: studentRole!._id });
       const res = await request(app)
         .put("/v1/user/update-many-status")
         .send({
@@ -319,12 +320,12 @@ describe("HTTP /user", () => {
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(201);
       expect(res.body.message).toBe(
-        `Le compte de l'utilisateur ${users[1].email} a été activé.`
+        `Le compte de l'utilisateur ${users[1].email} a été activé.`,
       );
     });
 
     // Failure own status update
-    test("It should respond 400 bad request", async () => {
+    test("It should respond 403 forbidden", async () => {
       const users = await User.find({});
       const res = await request(app)
         .put("/v1/user/update-user-status")
@@ -333,9 +334,9 @@ describe("HTTP /user", () => {
           value: true,
         })
         .set("Cookie", [`${authToken}`]);
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(403);
       expect(res.body.message).toBe(
-        "Vous ne pouvez pas changer le statut de votre propre compte."
+        "Vous ne pouvez modifier ou supprimer qu'un utilisateur de rang inférieur au vôtre.",
       );
     });
   });
@@ -371,7 +372,7 @@ describe("HTTP /user", () => {
     test("It should respond 400 bad request", async () => {
       const res = await request(app)
         .get(
-          "/v1/user/list/teacher/lastname/asc?page=<hacker/>>&limit=<hacker/>"
+          "/v1/user/list/teacher/lastname/asc?page=<hacker/>>&limit=<hacker/>",
         )
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
@@ -455,7 +456,7 @@ describe("HTTP /user", () => {
     });
 
     // Unauthorized role for user - a student cant become an admin
-    test("It should respond 400 bad request", async () => {
+    test("It should respond 403 forbidden", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
       const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
       const students = await User.find({ roles: { $in: studentRole } });
@@ -467,14 +468,14 @@ describe("HTTP /user", () => {
           rolesId: [adminRole!._id],
         })
         .set("Cookie", [`${authToken}`]);
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(403);
       expect(res.body.message).toBe(
-        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
+        "Vous ne pouvez attribuer qu'un rôle de rang inférieur au vôtre.",
       );
     });
 
     // Unauthorized role for user - an admin cant become a student
-    test("It should respond 400 bad request", async () => {
+    test("It should respond 403 forbidden", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
       const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
       const admins = await User.find({ roles: { $in: adminRole } });
@@ -486,9 +487,9 @@ describe("HTTP /user", () => {
           rolesId: [studentRole!._id],
         })
         .set("Cookie", [`${authToken}`]);
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(403);
       expect(res.body.message).toBe(
-        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
+        "Vous ne pouvez modifier ou supprimer qu'un utilisateur de rang inférieur au vôtre.",
       );
     });
 
@@ -513,7 +514,7 @@ describe("HTTP /user", () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
       let users = (await User.find(
         { roles: { $in: studentRole } },
-        { _id: 1 }
+        { _id: 1 },
       )) as { _id: string }[];
 
       users = [...users, { _id: studentRole!._id }];
@@ -527,7 +528,7 @@ describe("HTTP /user", () => {
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(404);
       expect(res.body.message).toBe(
-        "Un ou plusieurs utilisateurs n'existent pas."
+        "Un ou plusieurs utilisateurs n'existent pas.",
       );
     });
   });
@@ -537,7 +538,7 @@ describe("HTTP /user", () => {
     test("It should respond 401 unauthorized", async () => {
       await request(app)
         .get(
-          "/v1/user/search/teacher/firstname/value/lastname/asc?page=1&limit=10"
+          "/v1/user/search/teacher/firstname/value/lastname/asc?page=1&limit=10",
         )
         .expect(401);
     });
@@ -551,7 +552,7 @@ describe("HTTP /user", () => {
     test("It should respond 200 success", async () => {
       await request(app)
         .get(
-          "/v1/user/search/teacher/firstname/value/lastname/asc?page=toto&limit=tata"
+          "/v1/user/search/teacher/firstname/value/lastname/asc?page=toto&limit=tata",
         )
         .set("Cookie", [`${authToken}`])
         .expect(200);
@@ -561,7 +562,7 @@ describe("HTTP /user", () => {
     test("It should respond 200 success", async () => {
       const res = await request(app)
         .get(
-          `/v1/user/search/teacher/firstname/toto/lastname/asc?page=1&limit=10`
+          `/v1/user/search/teacher/firstname/toto/lastname/asc?page=1&limit=10`,
         )
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(200);
@@ -573,7 +574,7 @@ describe("HTTP /user", () => {
     test("It should respond 200 success", async () => {
       const res = await request(app)
         .get(
-          `/v1/user/search/teacher/firstname/raymond/lastname/asc?page=1&limit=10`
+          `/v1/user/search/teacher/firstname/raymond/lastname/asc?page=1&limit=10`,
         )
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(200);
@@ -585,7 +586,7 @@ describe("HTTP /user", () => {
     test("It should respond 404 not found", async () => {
       const res = await request(app)
         .get(
-          `/v1/user/search/toto/firstname/raymond/lastname/asc?page=1&limit=10`
+          `/v1/user/search/toto/firstname/raymond/lastname/asc?page=1&limit=10`,
         )
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(404);
@@ -596,41 +597,11 @@ describe("HTTP /user", () => {
     test("It should responde 400 bad request", async () => {
       const res = await request(app)
         .get(
-          "/v1/user/search/teacher/firstname/<hacked lol/>/lastname/asc?page=1&limit=10"
+          "/v1/user/search/teacher/firstname/<hacked lol/>/lastname/asc?page=1&limit=10",
         )
         .set("Cookie", [`${authToken}`]);
 
       expect(res.status).toBe(404);
-    });
-  });
-
-  describe("GET /last-parcours", () => {
-    // No authentication
-    test("It should respond 401 unauthorized", async () => {
-      await request(app).get("/V1/user/last-parcours").expect(401);
-    });
-
-    // User is not a teacher
-    test("It should respond 404 not found", async () => {
-      const res = await request(app)
-        .get("/V1/user/last-parcours")
-        .set("Cookie", [`${authToken}`]);
-      expect(res.status).toBe(404);
-      expect(res.body.message).toBe(
-        "L'utilisateur n'existe pas dans la liste des contacts."
-      );
-    });
-
-    // Successful reading
-    test("It should respond 200 success", async () => {
-      const res = await request(app)
-        .get("/V1/user/last-parcours")
-        .set("Cookie", [`${teacherToken}`]);
-      expect(res.status).toBe(200);
-
-      expect(res.body.message).toBe("");
-      expect(res.body.response).toHaveLength(1);
-      expect(res.body.response[0].title).toBe("Parcours Test 1");
     });
   });
 
@@ -1105,7 +1076,7 @@ describe("HTTP /user", () => {
 
       expect(res.status).toBe(409);
       expect(res.body.message).toBe(
-        "Un utilisateur a déjà été enregistré avec cette adresse email."
+        "Un utilisateur a déjà été enregistré avec cette adresse email.",
       );
     });
 
@@ -1118,7 +1089,7 @@ describe("HTTP /user", () => {
 
       expect(res.status).toBe(409);
       expect(res.body.message).toBe(
-        "Un utilisateur a déjà été enregistré avec cette adresse email."
+        "Un utilisateur a déjà été enregistré avec cette adresse email.",
       );
     });
 
@@ -1138,12 +1109,12 @@ describe("HTTP /user", () => {
           "data",
           JSON.stringify({
             user: { ...baseUser, email: createdEmails[0] },
-          })
+          }),
         );
 
       expect(res.status).toBe(409);
       expect(res.body.message).toBe(
-        "Un autre utilisateur utilise déjà cette adresse email."
+        "Un autre utilisateur utilise déjà cette adresse email.",
       );
     });
 
@@ -1161,9 +1132,65 @@ describe("HTTP /user", () => {
               firstname: "camille-marie",
               email: createdEmails[1].toUpperCase(),
             },
-          })
+          }),
         )
         .expect(201);
+    });
+  });
+
+  describe("hiérarchie de gestion des comptes", () => {
+    test("un administrateur et un formateur ne peuvent pas modifier un administrateur", async () => {
+      const adminRole = await Role.findOne({ role: "admin" });
+      if (!adminRole) throw new Error("Rôle administrateur absent");
+
+      const peerAdmin = await User.create({
+        email: "peer-admin-scope@test.fr",
+        firstname: "pair",
+        lastname: "admin",
+        password: "not-used",
+        isActive: true,
+        roles: [adminRole._id],
+      });
+
+      try {
+        const [adminLogin, teacherLogin] = await Promise.all([
+          request(app).post("/v1/auth/login").send({
+            email: "admin@studio.eco",
+            password: "Abcdef@123456",
+          }),
+          request(app).post("/v1/auth/login").send({
+            email: "formateur@studio.eco",
+            password: "Abcdef@123456",
+          }),
+        ]);
+
+        for (const cookie of [
+          adminLogin.headers["set-cookie"],
+          teacherLogin.headers["set-cookie"],
+        ]) {
+          const response = await request(app)
+            .put("/v1/user/update-user-status")
+            .set("Cookie", cookie)
+            .send({ userId: peerAdmin.id, value: false })
+            .expect(403);
+          expect(response.body.message).toContain("rang inférieur");
+        }
+      } finally {
+        await User.deleteOne({ _id: peerAdmin._id });
+      }
+    });
+
+    test("l'édition de son propre compte est refusée par l'API d'administration", async () => {
+      const admin = await User.findOne({ email: "admin@studio.eco" });
+      const login = await request(app).post("/v1/auth/login").send({
+        email: "admin@studio.eco",
+        password: "Abcdef@123456",
+      });
+
+      await request(app)
+        .put(`/v1/user/${admin!.id}`)
+        .set("Cookie", login.headers["set-cookie"])
+        .expect(403);
     });
   });
 

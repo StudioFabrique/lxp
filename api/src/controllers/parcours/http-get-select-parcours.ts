@@ -1,14 +1,19 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import getSelectParcours from "../../models/parcours/get-select-parcours.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function httpGetSelectParcours(
-  req: Request,
+  req: CustomRequest,
   _res: Response,
   next: NextFunction
 ) {
   try {
     const { formationId } = req.params ?? null;
-    const response = await getSelectParcours(formationId ? +formationId : null);
+    const response = await getSelectParcours(
+      formationId ? +formationId : null,
+      await resolveAccessScope(req.auth!),
+    );
     const result = {
       statusCode: 200,
       data: response,

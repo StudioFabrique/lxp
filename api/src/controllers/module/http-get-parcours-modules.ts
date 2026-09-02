@@ -1,6 +1,8 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import { serverIssue } from "../../utils/constantes.ts";
 import getParcoursModules from "../../models/module/get-parcours-modules.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 /**
  * HTTP Controller: Get all modules from a specific parcours
@@ -30,7 +32,7 @@ import getParcoursModules from "../../models/module/get-parcours-modules.ts";
  * }
  */
 export default async function httpGetParcoursModules(
-  req: Request,
+  req: CustomRequest,
   _res: Response,
   next: NextFunction
 ) {
@@ -39,7 +41,10 @@ export default async function httpGetParcoursModules(
     const parcoursId = +req.params.parcoursId;
 
     // Fetch modules and available resources from database
-    const response = await getParcoursModules(parcoursId);
+    const response = await getParcoursModules(
+      parcoursId,
+      await resolveAccessScope(req.auth!),
+    );
 
     // Pass successful response to middleware (status 200)
     next({ statusCode: 200, data: response });

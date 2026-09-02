@@ -45,28 +45,32 @@ const ParcoursActionsMenu = ({
           </Link>
         </DropdownMenu.Item>
 
-        <PermissionGuard action="update" object="parcours">
-          <DropdownMenu.Item asChild>
-            <Link
-              className={itemClassName}
-              to={`/admin/parcours/edit/${parcours.id}`}
-            >
-              <Pencil className="size-4" />
-              Modifier
-            </Link>
-          </DropdownMenu.Item>
-        </PermissionGuard>
+        {parcours.canManage !== false ? (
+          <PermissionGuard action="update" object="parcours">
+            <DropdownMenu.Item asChild>
+              <Link
+                className={itemClassName}
+                to={`/admin/parcours/edit/${parcours.id}`}
+              >
+                <Pencil className="size-4" />
+                Modifier
+              </Link>
+            </DropdownMenu.Item>
+          </PermissionGuard>
+        ) : null}
 
-        <PermissionGuard action="delete" object="parcours">
-          <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
-          <DropdownMenu.Item
-            className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
-            onSelect={() => onDelete(parcours)}
-          >
-            <Trash2 className="size-4" />
-            Supprimer
-          </DropdownMenu.Item>
-        </PermissionGuard>
+        {parcours.canManage !== false ? (
+          <PermissionGuard action="delete" object="parcours">
+            <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
+            <DropdownMenu.Item
+              className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
+              onSelect={() => onDelete(parcours)}
+            >
+              <Trash2 className="size-4" />
+              Supprimer
+            </DropdownMenu.Item>
+          </PermissionGuard>
+        ) : null}
       </DropdownMenu.Content>
     </DropdownMenu.Portal>
   </DropdownMenu.Root>

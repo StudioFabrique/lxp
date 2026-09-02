@@ -5,6 +5,7 @@ export default interface ParcoursSummary {
   endDate: string | null;
   isPublished: boolean;
   thumb: string | null;
+  canManage?: boolean;
 }
 
 export interface FormationParcoursSummary {
@@ -12,4 +13,5 @@ export interface FormationParcoursSummary {
   title: string;
   level: string;
   parcours: ParcoursSummary[];
+  canManage?: boolean;
 }

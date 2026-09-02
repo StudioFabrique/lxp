@@ -37,7 +37,8 @@ const ParcoursView = () => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
   const ability = useContext(AbilityContext);
-  const canEditParcours = ability.can("update", "parcours");
+  const canEditParcours =
+    ability.can("update", "parcours") && parcours.canManage !== false;
   const isStudent = !canEditParcours;
 
   const handleClickResume = () => {
