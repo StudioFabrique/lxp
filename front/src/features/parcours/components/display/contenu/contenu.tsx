@@ -54,7 +54,7 @@ const Contenu = ({ modules }: ContenuProps) => {
     <Wrapper>
       <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
-          <h2 className="text-2xl font-bold text-primary">
+          <h2 className="text-2xl font-bold text-primary select-none">
             Contenu du parcours
           </h2>
           {canEditParcoursContent && (
