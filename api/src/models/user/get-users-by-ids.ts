@@ -1,12 +1,21 @@
 import mongoose from "mongoose";
 import User from "../../utils/interfaces/db/user.ts";
+import Role from "../../utils/interfaces/db/role.ts";
 
-export default async function getUsersByIds(userIds: string[]) {
+export default async function getUsersByIds(
+  userIds: string[],
+  actorRank: number,
+) {
+  const hiddenRoles = await Role.find(
+    { rank: { $lte: actorRank } },
+    { _id: 1 },
+  );
   const users = await User.find(
     {
       _id: {
         $in: userIds.map((userId) => new mongoose.Types.ObjectId(userId)),
       },
+      roles: { $nin: hiddenRoles.map(({ _id }) => _id) },
     },
     { password: 0 },
   )

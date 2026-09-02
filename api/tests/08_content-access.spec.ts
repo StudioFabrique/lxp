@@ -28,6 +28,7 @@ describe("Cloisonnement des contenus par parcours", () => {
   const etranger = { parcoursId: 0, moduleId: 0, courseId: 0, lessonId: 0, activityId: 0 };
   let moduleVisibleMaisVerrouille = 0;
   let teacherContactId = 0;
+  let sharedFormationId = 0;
 
   let mongoGroupId: string;
   let pgGroupId: number;
@@ -94,6 +95,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       prisma.tag.findFirst({ select: { id: true } }),
     ]);
     if (!admin || !formation || !tag) throw new Error("Fixtures PostgreSQL incomplètes");
+    sharedFormationId = formation.id;
 
     await creerArborescence("Acces inscrit", inscrit, admin.id, formation.id, tag.id);
     await creerArborescence("Acces etranger", etranger, admin.id, formation.id, tag.id);
@@ -255,8 +257,12 @@ describe("Cloisonnement des contenus par parcours", () => {
   });
 
   describe("un formateur est borné à ses affectations de parcours et modules", () => {
-    it("ne peut créer ni formation ni parcours", async () => {
+    it("ne peut ni créer ni modifier une formation, ni créer un parcours", async () => {
       await request(app).post("/v1/formation")
+        .set("Cookie", cookieFormateur)
+        .send({})
+        .expect(403);
+      await request(app).put(`/v1/formation/${sharedFormationId}`)
         .set("Cookie", cookieFormateur)
         .send({})
         .expect(403);

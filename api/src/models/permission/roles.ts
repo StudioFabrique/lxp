@@ -24,17 +24,33 @@ function fail(statusCode: number, message: string): never {
 
 export const listRoles = () => getAllRoles();
 export const searchRoles = (value: string) => getAllRolesWithSearch(value);
-export const listRolePermissions = (role: string) =>
-  getAllActionsPermissionsForRole({ identifier: "role", role });
-export const grantPermission = (roleId: string, permission: string) =>
-  addPermissionToRole(roleId, permission);
-export const revokePermission = (roleId: string, permission: string) =>
-  removePermissionFromRole(roleId, permission);
+export async function listRolePermissions(role: string) {
+  await assertInterfaceRole({ identifier: "role", role });
+  return getAllActionsPermissionsForRole({ identifier: "role", role });
+}
+export async function grantPermission(roleId: string, permission: string) {
+  await assertInterfaceRole({ identifier: "_id", _id: roleId });
+  return addPermissionToRole(roleId, permission);
+}
+export async function revokePermission(roleId: string, permission: string) {
+  await assertInterfaceRole({ identifier: "_id", _id: roleId });
+  return removePermissionFromRole(roleId, permission);
+}
+
+async function assertInterfaceRole(identifier: RoleIdentifier) {
+  const role = await Role.findOne(
+    identifier.identifier === "role"
+      ? { role: identifier.role }
+      : { _id: identifier._id },
+  ).select("rank");
+  if (!role || role.rank === 0) fail(404, "Le rôle demandé n'existe pas");
+}
 
 export async function getRoleResources(identifier: RoleIdentifier) {
+  await assertInterfaceRole(identifier);
   const [permissions, roles] = await Promise.all([
     getAllActionsPermissionsForRole(identifier),
-    Role.find(),
+    Role.find({ rank: { $gt: 0 } }),
   ]);
   if (!permissions) fail(404, "aucune permissions n'a été trouvé");
   if (resourcesRbac.length === 0)
@@ -63,16 +79,21 @@ export async function createRole(role: string, label: string, rank: number) {
   );
   if (!createdRole) fail(500, "Erreur lors de la création du rôle");
 
-  const adminRole = await Role.findOne({ role: "admin" });
+  const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select("_id");
   const permissions = await Promise.all(
     ["read", "write", "update", "delete"].map((action) =>
       Permission.create({ name: `${action}:${createdRole.role}`, isRole: true }),
     ),
   );
-  if (adminRole) {
-    await Role.findByIdAndUpdate(adminRole._id, {
-      $addToSet: { permissions: { $each: permissions.map((item) => item._id) } },
-    });
+  if (privilegedRoles.length > 0) {
+    await Role.updateMany(
+      { _id: { $in: privilegedRoles.map(({ _id }) => _id) } },
+      {
+        $addToSet: {
+          permissions: { $each: permissions.map((item) => item._id) },
+        },
+      },
+    );
   }
 }
 
@@ -83,6 +104,7 @@ export async function updateRole(
   rank: number,
 ) {
   const existingRole = await Role.findById(id);
+  if (existingRole?.rank === 0) fail(404, "Le rôle demandé n'existe pas");
   return existingRole?.rank !== rank
     ? createOrUpdateRoleWithPermissions(
         role,
@@ -97,6 +119,7 @@ export async function updateRole(
 export async function resetRole(id: string) {
   const role = await Role.findById(id);
   if (!role) fail(400, "Paramètres de requête non conformes.");
+  if (role.rank === 0) fail(404, "Le rôle demandé n'existe pas");
   return createOrUpdateRoleWithPermissions(
     role.role,
     role.label,

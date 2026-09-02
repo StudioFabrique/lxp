@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
@@ -10,6 +10,7 @@ import { parcoursApi } from "../../../api/parcours.api";
 import { parcoursKeys } from "../../../api/parcours.keys";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
+import { AuthContext } from "../../../../../store/AuthProvider";
 
 interface NotSelectedContactsProps {
   list?: Contact[];
@@ -30,6 +31,9 @@ type Teacher = {
 };
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
+  const { user } = useContext(AuthContext);
+  const canCreateTeacher =
+    user?.roles.some(({ rank }) => rank < 2) ?? false;
   const {
     allChecked,
     list,
@@ -170,50 +174,58 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         <>
           {table}
           <div className="w-full flex justify-between mt-4">
-            <button
-              className="btn btn-accent"
-              onClick={() => handleCloseDrawer("new-contact")}
-            >
-              Créer un contact
-            </button>
+            {canCreateTeacher ? (
+              <button
+                className="btn btn-accent"
+                onClick={() => handleCloseDrawer("new-contact")}
+              >
+                Créer un contact
+              </button>
+            ) : (
+              <span />
+            )}
             <button className="btn btn-primary" onClick={handleAddContacts}>
               Ajouter
             </button>
           </div>
-          <RightSideDrawer
-            id="new-contact"
-            title="Ajouter un Formateur"
-            visible={false}
-            //onCloseDrawer={handleCloseDrawer}
-          >
-            <UserQuickCreate
-              onCloseDrawer={handleCloseDrawer}
-              onSubmitUser={submitNewTeacher}
-            />
-          </RightSideDrawer>
+          {canCreateTeacher ? (
+            <RightSideDrawer
+              id="new-contact"
+              title="Ajouter un Formateur"
+              visible={false}
+            >
+              <UserQuickCreate
+                onCloseDrawer={handleCloseDrawer}
+                onSubmitUser={submitNewTeacher}
+              />
+            </RightSideDrawer>
+          ) : null}
         </>
       ) : (
         <div className="flex flex-col gap-y-8">
           <p>Tous les contacts ont déja été ajoutés</p>
-          <button
-            className="btn btn-accent"
-            onClick={() => {
-              handleCloseDrawer("new-contact");
-            }}
-          >
-            Créer un contact
-          </button>
-          <RightSideDrawer
-            id="new-contact"
-            title="Ajouter un Formateur"
-            visible={false}
-            //onCloseDrawer={handleCloseDrawer}
-          >
-            <UserQuickCreate
-              onCloseDrawer={handleCloseDrawer}
-              onSubmitUser={submitNewTeacher}
-            />
-          </RightSideDrawer>
+          {canCreateTeacher ? (
+            <>
+              <button
+                className="btn btn-accent"
+                onClick={() => {
+                  handleCloseDrawer("new-contact");
+                }}
+              >
+                Créer un contact
+              </button>
+              <RightSideDrawer
+                id="new-contact"
+                title="Ajouter un Formateur"
+                visible={false}
+              >
+                <UserQuickCreate
+                  onCloseDrawer={handleCloseDrawer}
+                  onSubmitUser={submitNewTeacher}
+                />
+              </RightSideDrawer>
+            </>
+          ) : null}
         </div>
       )}
     </>

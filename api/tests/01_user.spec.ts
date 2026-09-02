@@ -1139,6 +1139,36 @@ describe("HTTP /user", () => {
   });
 
   describe("hiérarchie de gestion des comptes", () => {
+    test("les listes ne montrent que les comptes de rang inférieur", async () => {
+      const [adminLogin, teacherLogin] = await Promise.all([
+        request(app).post("/v1/auth/login").send({
+          email: "admin@studio.eco",
+          password: "Abcdef@123456",
+        }),
+        request(app).post("/v1/auth/login").send({
+          email: "formateur@studio.eco",
+          password: "Abcdef@123456",
+        }),
+      ]);
+
+      for (const [cookie, actorRank] of [
+        [adminLogin.headers["set-cookie"], 1],
+        [teacherLogin.headers["set-cookie"], 2],
+      ] as const) {
+        const response = await request(app)
+          .get("/v1/user/list/everything/lastname/asc?page=1&limit=100")
+          .set("Cookie", cookie)
+          .expect(200);
+
+        expect(response.body.list.length).toBeGreaterThan(0);
+        expect(
+          response.body.list.every((user: { roles: Array<{ rank: number }> }) =>
+            user.roles.every(({ rank }) => rank > actorRank),
+          ),
+        ).toBe(true);
+      }
+    });
+
     test("un administrateur et un formateur ne peuvent pas modifier un administrateur", async () => {
       const adminRole = await Role.findOne({ role: "admin" });
       if (!adminRole) throw new Error("Rôle administrateur absent");

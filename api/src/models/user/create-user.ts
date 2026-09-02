@@ -50,7 +50,11 @@ async function sendActivationInvitation(
   }
 }
 
-export default async function createUser(user: IUser, roleId: string) {
+export default async function createUser(
+  user: IUser,
+  roleId: string,
+  actorRank: number,
+) {
   const email = normalizeEmail(user.email ?? "");
 
   try {
@@ -78,6 +82,13 @@ export default async function createUser(user: IUser, roleId: string) {
     if (!role) {
       throw { statusCode: 404, message: "Le rôle n'existe pas." };
     }
+    if (role.rank <= actorRank) {
+      throw {
+        statusCode: 403,
+        message:
+          "Vous ne pouvez créer qu'un utilisateur de rang inférieur au vôtre.",
+      };
+    }
 
     // Créer un nouvel utilisateur dans MongoDB
     const createdUser = await User.create({
@@ -99,7 +110,7 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Gérer les créations Prisma en fonction du rôle
 
-    if (role.rank === 1 || role.rank === 2) {
+    if (role.rank <= 2) {
       await prisma.admin.create({ data: { idMdb: createdUser._id } });
     }
 

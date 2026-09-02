@@ -22,32 +22,42 @@ const mongoUrl = MONGO_URL;
 
 async function seedRoles() {
   const existingCount = await Role.countDocuments();
-  if (existingCount > 0) {
-    console.log(`  ✓ ${existingCount} rôles déjà existants.`);
-    return;
-  }
-
-  console.log("Création des rôles...");
-
   const actionsRoles = [
+    {
+      role: "root",
+      label: "root",
+      rank: 0,
+      protection: 2,
+    },
     { role: "admin", label: "administrateur", rank: 1, protection: 2 },
     { role: "teacher", label: "équipe pédagogique", rank: 2, protection: 1 },
     { role: "student", label: "apprenant", rank: 3, protection: 1 },
   ];
 
-  const dbRoles = actionsRoles.map((r) => new Role(r));
-  await Role.bulkSave(dbRoles);
-  console.log(`  ✓ ${dbRoles.length} rôles créés.`);
+  await Promise.all(
+    actionsRoles.map((role) =>
+      Role.updateOne(
+        { role: role.role },
+        role.role === "root" ? { $set: role } : { $setOnInsert: role },
+        { upsert: true },
+      ),
+    ),
+  );
+  const totalCount = await Role.countDocuments();
+  console.log(
+    existingCount === 0
+      ? `  ✓ ${totalCount} rôles créés.`
+      : `  ✓ ${totalCount} rôles disponibles, rôles système vérifiés.`,
+  );
 }
 
 async function seedPermissions() {
   const existingCount = await Permission.countDocuments();
-  if (existingCount > 0) {
-    console.log(`  ✓ ${existingCount} permissions déjà existantes.`);
-    return;
-  }
-
-  console.log("Création des permissions...");
+  console.log(
+    existingCount > 0
+      ? "Vérification des permissions des rôles système..."
+      : "Création des permissions...",
+  );
 
   const bulkPermissions = new Map<string, IPermission>();
   const bulkRoleUpdates = new Map<string, any>();
@@ -57,6 +67,10 @@ async function seedPermissions() {
   })) {
     const role = await Role.findOne({ role: roleName });
     if (!role) continue;
+    // Ne réinitialise pas les permissions personnalisables d'une installation
+    // existante. Le rôle root nouvellement ajouté est vide et
+    // reçoit ici sa matrice complète.
+    if (role.permissions.length > 0) continue;
 
     const rolePermissions: any[] = [];
 
@@ -94,9 +108,15 @@ async function seedPermissions() {
     });
   }
 
-  await Permission.bulkSave(Array.from(bulkPermissions.values()));
-  await Role.bulkWrite(Array.from(bulkRoleUpdates.values()));
-  console.log(`  ✓ ${bulkPermissions.size} permissions créées.`);
+  if (bulkPermissions.size > 0) {
+    await Permission.bulkSave(Array.from(bulkPermissions.values()));
+  }
+  if (bulkRoleUpdates.size > 0) {
+    await Role.bulkWrite(Array.from(bulkRoleUpdates.values()));
+  }
+  console.log(
+    `  ✓ ${await Permission.countDocuments()} permissions disponibles.`,
+  );
 }
 
 async function main() {

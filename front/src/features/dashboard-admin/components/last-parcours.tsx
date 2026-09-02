@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
@@ -21,12 +21,6 @@ export default function LastParcours({
   const [isFormationModalOpen, setIsFormationModalOpen] = useState(
     searchParams.get("createFormation") === "true",
   );
-
-  useEffect(() => {
-    if (searchParams.get("createFormation") === "true") {
-      setIsFormationModalOpen(true);
-    }
-  }, [searchParams]);
 
   const openFormationModal = () => {
     setIsFormationModalOpen(true);

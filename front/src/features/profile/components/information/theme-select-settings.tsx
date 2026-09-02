@@ -39,7 +39,7 @@ const ThemeSelectSettings = () => {
         </div>
 
         <div>
-          <RoleRankGuard ranks={[1]}>
+          <RoleRankGuard ranks={[0, 1]}>
             <CompanyPictureUpload />
           </RoleRankGuard>
         </div>

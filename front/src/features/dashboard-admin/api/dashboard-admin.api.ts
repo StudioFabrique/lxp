@@ -1,5 +1,4 @@
 import apiClient from "../../../lib/axios";
-import type Parcours from "../../../utils/interfaces/parcours";
 import type FormationItem from "../../formation/interfaces/formation-item";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import type LessonsQualityStats from "../interfaces/lessons-quality-stats";

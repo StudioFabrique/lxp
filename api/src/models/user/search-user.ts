@@ -29,7 +29,8 @@ async function searchUser(
   page: number,
   limit: number,
   stype: string,
-  sdir: string
+  sdir: string,
+  actorRank: number,
 ) {
   // Determine sort direction: 1 for ascending, -1 for descending
   const dir = sdir === "asc" ? 1 : -1;
@@ -56,6 +57,11 @@ async function searchUser(
     throw { statusCode: 404, message: "Le rôle n'existe pas." };
   }
 
+  const hiddenRoles = await Role.find(
+    { rank: { $lte: actorRank } },
+    { _id: 1 },
+  );
+
   let field: any;
 
   // Special handling for date search (createdAt)
@@ -79,20 +85,21 @@ async function searchUser(
   }
 
   // Query users with the specified criteria, excluding the password field
-  const users = await User.find(
-    { [entity]: field, roles: { $in: fetchedRoles } },
-    { password: 0 }
-  )
+  const userFilter = {
+    [entity]: field,
+    $and: [
+      { roles: { $in: fetchedRoles.map(({ _id }) => _id) } },
+      { roles: { $nin: hiddenRoles.map(({ _id }) => _id) } },
+    ],
+  };
+  const users = await User.find(userFilter, { password: 0 })
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 }) // Populate role details
     .sort({ [stype]: dir }) // Sort by specified field and direction
     .skip(getPagination(page, limit)) // Pagination: skip appropriate number of results
     .limit(limit); // Limit the number of results
 
   // Count total number of matching users for pagination
-  const total = await User.count({
-    [entity]: field,
-    roles: { $in: fetchedRoles },
-  });
+  const total = await User.countDocuments(userFilter);
 
   return {
     total,

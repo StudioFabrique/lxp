@@ -10,7 +10,7 @@ export const hasRoleRank = (
 export const getUserArea = (
   user: Pick<User, "roles"> | null | undefined,
 ): AppArea | null => {
-  if (hasRoleRank(user, [1, 2])) return "staff";
+  if (hasRoleRank(user, [0, 1, 2])) return "staff";
   if (hasRoleRank(user, [3])) return "student";
   return null;
 };

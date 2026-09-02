@@ -1,10 +1,11 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { validationResult } from "express-validator";
 import getUsersByIds from "../../models/user/get-users-by-ids.ts";
 import { serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 export default async function httpGetUsersByIds(
-  req: Request,
+  req: CustomRequest,
   res: Response,
 ) {
   const validation = validationResult(req);
@@ -14,7 +15,11 @@ export default async function httpGetUsersByIds(
 
   try {
     const ids = String(req.query.ids).split(",").filter(Boolean);
-    const users = await getUsersByIds(ids);
+    const actorRank = Math.min(
+      ...req.auth!.userRoles.map(({ rank }) => rank),
+      4,
+    );
+    const users = await getUsersByIds(ids, actorRank);
     return res.status(200).json({ list: users });
   } catch (error: any) {
     return res

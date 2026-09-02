@@ -237,6 +237,12 @@ async function createManyStudents() {
 
 async function createRoles() {
   const actionsRoles = [
+    {
+      role: "root",
+      label: "root",
+      rank: 0,
+      protection: 2,
+    },
     // protection 2, le nom du role, son modèle et rank ainsi que ses permissions ne peuvent pas être modifiés
     // seul le label est modifiable
     { role: "admin", label: "administrateur", rank: 1, protection: 2 },

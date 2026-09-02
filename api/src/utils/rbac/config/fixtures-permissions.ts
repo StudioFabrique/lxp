@@ -4,6 +4,12 @@ import { resourcesRbacByRank } from "./ressources-rbac.ts";
 // dynamic role is created or reset. This prevents newly declared resources
 // from silently becoming inaccessible to existing system roles.
 export const permDefsActions = {
+  root: {
+    read: [...resourcesRbacByRank[0].read],
+    write: [...resourcesRbacByRank[0].write],
+    update: [...resourcesRbacByRank[0].update],
+    delete: [...resourcesRbacByRank[0].delete],
+  },
   admin: {
     read: [...resourcesRbacByRank[1].read],
     write: [...resourcesRbacByRank[1].write],

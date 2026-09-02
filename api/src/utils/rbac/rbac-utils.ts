@@ -74,7 +74,7 @@ export async function getRolesForUser(userId: string) {
 }
 
 export async function getAllRoles() {
-  const roles = await Role.find().populate("permissions");
+  const roles = await Role.find({ rank: { $gt: 0 } }).populate("permissions");
 
   return roles.map((role) => {
     const permissions = role.permissions.map((perm) => perm.name);
@@ -105,7 +105,10 @@ export async function getAllRolesWithSearch(search: string) {
       { label: { $regex: search, $options: "i" } },
     ],
   };
-  const roles = await Role.find(queryWithSearch).populate("permissions");
+  const roles = await Role.find({
+    ...queryWithSearch,
+    rank: { $gt: 0 },
+  }).populate("permissions");
 
   return roles.map((role) => {
     const permissions = role.permissions.map((perm) => perm.name);
@@ -130,6 +133,7 @@ export async function getAllRolesWithSearch(search: string) {
 function getRoleModelLabel(rank: number): string {
   return (
     {
+      0: "root",
       1: "administrateur",
       2: "équipe pédagogique",
       3: "apprenant",

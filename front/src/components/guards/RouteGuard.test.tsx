@@ -103,7 +103,7 @@ describe("RouteGuard", () => {
     expect(await renderGuard(true)).toContain("page-module");
   });
 
-  it.each([1, 2])(
+  it.each([0, 1, 2])(
     "accepte l'espace d'administration pour le rang %s",
     async (rank) => {
       expect(await renderAdminGuard(rank)).toContain("page-admin");

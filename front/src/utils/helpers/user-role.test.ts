@@ -6,7 +6,7 @@ const userWithRank = (rank: number) =>
   ({ roles: [{ rank }] }) as Pick<User, "roles">;
 
 describe("user role navigation", () => {
-  it.each([1, 2])("routes rank %s to the staff area", (rank) => {
+  it.each([0, 1, 2])("routes rank %s to the staff area", (rank) => {
     const user = userWithRank(rank);
     expect(getUserArea(user)).toBe("staff");
     expect(getUserHomePath(user)).toBe("/admin");

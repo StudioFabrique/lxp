@@ -2,9 +2,14 @@ import request from "supertest";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import app from "../src/app.ts";
 import User from "../src/utils/interfaces/db/user.ts";
+import Role from "../src/utils/interfaces/db/role.ts";
+import BlackListedToken from "../src/utils/interfaces/db/blacklisted-token.ts";
+import { createFirstAdmin } from "../src/models/auth/setup.ts";
+import { env } from "../src/config/env.ts";
 
 dotenv.config();
 
@@ -297,10 +302,16 @@ describe("HTTP auth", () => {
      * Should return 200 status code and user roles
      */
     test("It should respond 200 success with valid auth token", async () => {
-      await request(app)
+      const response = await request(app)
         .get("/v1/auth/roles")
         .set("Cookie", [`${authToken}`])
         .expect(200);
+
+      expect(
+        response.body.some(({ role }: { role: string }) =>
+          ["root", "admin"].includes(role),
+        ),
+      ).toBe(false);
     });
 
     /**
@@ -312,6 +323,54 @@ describe("HTTP auth", () => {
         .get("/v1/auth/roles")
         // .set("Cookie", [`${authToken}`]) // Intentionally commented out
         .expect(401);
+    });
+  });
+
+  describe("Initialisation du compte root", () => {
+    test("le premier compte créé par /init reçoit le rôle root", async () => {
+      const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select(
+        "_id",
+      );
+      const activeAdmins = await User.find({
+        roles: { $in: privilegedRoles.map(({ _id }) => _id) },
+        isActive: true,
+      }).select("_id");
+      const token = jwt.sign({ purpose: "first-admin" }, env.REGISTER_SECRET, {
+        expiresIn: "5m",
+      });
+      let rootUserId: string | undefined;
+
+      await User.updateMany(
+        { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
+        { $set: { isActive: false } },
+      );
+
+      try {
+        rootUserId = await createFirstAdmin({
+          token,
+          email: "root-init@test.fr",
+          firstname: "Compte",
+          lastname: "Root",
+          password: "RootPassword@123",
+        });
+
+        const rootUser = await User.findById(rootUserId).populate("roles");
+        expect(rootUser?.roles).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ role: "root", rank: 0 }),
+          ]),
+        );
+      } finally {
+        if (rootUserId) {
+          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await User.deleteOne({ _id: rootUserId });
+        }
+        await BlackListedToken.deleteOne({ token });
+        await User.updateMany(
+          { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
+          { $set: { isActive: true } },
+        );
+      }
     });
   });
 

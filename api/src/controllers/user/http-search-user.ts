@@ -1,9 +1,10 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import searchUser from "../../models/user/search-user.ts";
 import { serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-async function httpSearchUser(req: Request, res: Response) {
+async function httpSearchUser(req: CustomRequest, res: Response) {
   const result = validationResult(req);
 
   if (!result.isEmpty) {
@@ -14,6 +15,10 @@ async function httpSearchUser(req: Request, res: Response) {
   const { page, limit } = req.query;
 
   try {
+    const actorRank = Math.min(
+      ...req.auth!.userRoles.map(({ rank }) => rank),
+      4,
+    );
     const result = await searchUser(
       entity,
       value,
@@ -21,7 +26,8 @@ async function httpSearchUser(req: Request, res: Response) {
       +page!,
       +limit!,
       stype,
-      sdir
+      sdir,
+      actorRank,
     );
 
     return res.status(200).json({ total: result!.total, list: result!.users });

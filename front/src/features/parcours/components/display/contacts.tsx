@@ -50,11 +50,11 @@ const Contacts = () => {
     );
 
   return (
-    <Wrapper>
+    <Wrapper additionalClassname="h-auto">
       <h2 className="text-xl font-bold text-primary">
         Ressources pédagogiques
       </h2>
-      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto max-h-72">
         {contactsList}
       </div>
     </Wrapper>

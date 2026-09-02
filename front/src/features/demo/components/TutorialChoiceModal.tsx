@@ -20,7 +20,7 @@ type Props = {
  */
 const TutorialChoiceModal = ({ demoUrl, onClose, onStartTutorial }: Props) => {
   const { user } = useContext(AuthContext);
-  const isStaff = hasRoleRank(user, [1, 2]);
+  const isStaff = hasRoleRank(user, [0, 1, 2]);
 
   const tutorialLabel = isStaff ? "Tutoriel guidé" : "Tutoriel de découverte";
 

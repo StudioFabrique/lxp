@@ -126,6 +126,12 @@ const teacherResourcesRbac = resourcesRbac.filter(
 const teacherCreatableResources = teacherResourcesRbac.filter(
   ({ name }) => !["formation", "parcours"].includes(name),
 );
+const teacherUpdatableResources = teacherResourcesRbac.filter(
+  ({ name }) => name !== "formation",
+);
+const teacherDeletableResources = teacherResourcesRbac.filter(
+  ({ name }) => name !== "formation",
+);
 
 // Ressources (toutes permissions crud) sur les différents rôles template
 export const resourcesRbacByRank = {
@@ -147,8 +153,8 @@ export const resourcesRbacByRank = {
   2: {
     read: resourcesRbac.map((r) => r.name),
     write: teacherCreatableResources.map((r) => r.name),
-    update: teacherResourcesRbac.map((r) => r.name),
-    delete: teacherResourcesRbac.map((r) => r.name),
+    update: teacherUpdatableResources.map((r) => r.name),
+    delete: teacherDeletableResources.map((r) => r.name),
   },
   // apprenant
   3: {
@@ -182,6 +188,7 @@ export async function getPermissionsByRank(
   { resource: string; actions: ("read" | "write" | "update" | "delete")[] }[]
 > {
   switch (rank) {
+    case 0:
     case 1: {
       // const roles = await Role.find();
       // const roleNames = roles.map((role) => role.role);
