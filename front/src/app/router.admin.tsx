@@ -7,7 +7,6 @@ import { adminLessonRoutes } from "../features/lesson/routes";
 import { adminTagsRoutes } from "../features/tags/routes";
 import { adminRoleRoutes } from "../features/role/routes";
 import { adminUserRoutes } from "../features/user/routes";
-import { adminFormationRoutes } from "../features/formation/routes";
 import { adminFeedbacksRoutes } from "../features/feedbacks/routes";
 import { adminDashboardIARoutes } from "../features/dashboard-ia/routes";
 import { adminModuleRoutes } from "../features/module/routes";
@@ -36,7 +35,6 @@ export const adminRoutes: RouteObject[] = [
       guard("tag", adminTagsRoutes),
       guard("role", adminRoleRoutes),
       guard("user", adminUserRoutes),
-      guard("formation", adminFormationRoutes),
       guard("feedback", adminFeedbacksRoutes),
       guard("dashboardIa", adminDashboardIARoutes),
       guard("mediatheque", adminMediathequeRoutes),

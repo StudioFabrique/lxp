@@ -13,6 +13,7 @@ interface FormNumberInputProps<TFieldValues extends FieldValues> {
   placeholder?: string;
   disabled?: boolean;
   min?: number;
+  helperText?: string;
 }
 
 const FormNumberInput = <TFieldValues extends FieldValues,>({
@@ -23,7 +24,11 @@ const FormNumberInput = <TFieldValues extends FieldValues,>({
   placeholder,
   disabled,
   min,
+  helperText,
 }: FormNumberInputProps<TFieldValues>) => {
+  const errorId = `${name}-error`;
+  const helperId = `${name}-helper`;
+
   return (
     <div className="flex flex-col gap-y-2 w-full">
       <label htmlFor={name} className="text-sm font-bold">
@@ -33,13 +38,24 @@ const FormNumberInput = <TFieldValues extends FieldValues,>({
         {...register(name, { valueAsNumber: true })}
         className={`w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60 ${error ? "input-error" : ""}`}
         type="number"
-        defaultValue={0}
         id={name}
         placeholder={placeholder}
         disabled={disabled}
         min={min}
+        step="any"
+        inputMode="decimal"
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : helperText ? helperId : undefined}
       />
-      {error && <p className="text-error text-xs">{error.message}</p>}
+      {error ? (
+        <p id={errorId} className="text-error text-xs" role="alert">
+          {error.message}
+        </p>
+      ) : helperText ? (
+        <p id={helperId} className="text-base-content/60 text-xs">
+          {helperText}
+        </p>
+      ) : null}
     </div>
   );
 };

@@ -84,7 +84,7 @@ const NewParcoursForm: FC<Props> = ({
             />
             <Link
               className="text-xs underline font-normal pl-2"
-              to="/admin/formation"
+              to="/admin/parcours?createFormation=true"
             >
               Formation inexistante ? Créer une formation
             </Link>

@@ -41,7 +41,7 @@ export const getGroupColumns = (
       return (
         <Link
           to={`/admin/parcours/view/${group.parcoursId}`}
-          className="link link-primary"
+          className="link link-primary no-underline hover:underline"
         >
           {group.formation}
         </Link>

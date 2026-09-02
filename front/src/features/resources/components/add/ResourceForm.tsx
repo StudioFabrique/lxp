@@ -8,6 +8,10 @@ import TagsList from "../../../../components/tags/TagsList";
 import useImageUpload from "../../../../hooks/use-image-upload";
 import FormUploadImage from "../../../../components/UI/form-upload-image";
 import Tag from "../../../../utils/interfaces/tag";
+import {
+  partitionTagInput,
+  splitTagNames,
+} from "../../../tags/helpers/tag-selection";
 
 type Props = {
   mode: "create" | "update";
@@ -55,29 +59,41 @@ export default function ResourceForm({
     ? "input input-sm input-error focus:outline-none w-full"
     : "input input-sm focus:outline-none w-full";
 
-  const handleSubmit = () => {
-    // Génère une couleur RGB aléatoire
-    const color = getSoftColor();
+  const addTags = (value: string) => {
+    const updatedTags = splitTagNames(value).reduce((currentTags, name) => {
+      const alreadyExists = currentTags.some(
+        (tag) => tag.name.toLocaleLowerCase() === name.toLocaleLowerCase(),
+      );
+      if (alreadyExists) return currentTags;
 
-    const result = {
-      name: inputTag,
-      color,
-      id: i++,
-    };
+      return [
+        ...currentTags,
+        { name, color: getSoftColor(), id: i++ },
+      ];
+    }, tags);
 
-    setTags([...tags, result]);
+    setTags(updatedTags);
     onTagError(false);
   };
 
   const handleUpdateTag = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    setInputTag(value);
+    const { committed, pending } = partitionTagInput(value);
+
+    if (!committed) {
+      setInputTag(pending);
+      return;
+    }
+
+    addTags(committed);
+    setInputTag(pending);
   };
 
   // Detecte qd la touche enter est pressée
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
-      handleSubmit();
+      event.preventDefault();
+      addTags(inputTag);
       setInputTag("");
     }
   };
@@ -116,8 +132,8 @@ export default function ResourceForm({
           </QuestionMarkTooltip>
         </span>
         <p className="text-xs text-secondary pl-1">
-          Appuyer sur la touche "Entrée" après avoir saisi un nom de tag pour
-          l'ajouter à la liste.
+          Séparez plusieurs tags par une virgule, puis appuyez sur la touche
+          "Entrée" pour ajouter le dernier à la liste.
         </p>
         <TagsList tagsList={tags} onRemove={removeTag} />
         <FormTextarea

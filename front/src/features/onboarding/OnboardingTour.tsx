@@ -22,6 +22,7 @@ import OnboardingTooltip, {
 import OnboardingStopConfirmation from "./OnboardingStopConfirmation";
 import { OnboardingContext } from "./OnboardingContext";
 import {
+  emitOnboardingEvent,
   subscribeToOnboardingEvents,
   type OnboardingEventDetail,
 } from "./onboarding-events";
@@ -74,6 +75,16 @@ const isRequirementMet = (requirement: StageRequirement) => {
     element instanceof HTMLTextAreaElement
   ) {
     const value = element.value.trim();
+    if (element instanceof HTMLInputElement && element.type === "number") {
+      const numericValue = element.valueAsNumber;
+      const minimum = element.min === "" ? undefined : Number(element.min);
+      if (
+        !Number.isFinite(numericValue) ||
+        (minimum !== undefined && numericValue < minimum)
+      ) {
+        return false;
+      }
+    }
     return (
       value.length > 0 && !(requirement.invalidValues ?? []).includes(value)
     );
@@ -129,7 +140,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     target: '[data-onboarding="sidebar-navigation"]',
     title: "Votre barre de navigation",
     content:
-      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos formations, parcours, utilisateurs et ressources.",
+      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos parcours, utilisateurs et ressources.",
     placement: "right",
     next: "admin-dashboard",
     index: 1,
@@ -145,7 +156,7 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     index: 2,
   },
   "admin-formation-entry": {
-    target: '[data-onboarding="formation-create-entry"]',
+    target: '[data-onboarding="dashboard-formation-create-entry"]',
     title: "Créez votre première formation",
     content:
       'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
@@ -215,11 +226,11 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
     index: 6,
   },
   "admin-parcours-info": {
-    target: '[data-onboarding="parcours-essential-information"]',
-    title: "Complétez les informations",
+    target: '[data-onboarding-field="parcours-tags"]',
+    title: "Ajoutez un tag au parcours",
     content:
-      "Vérifiez le titre du parcours et ajoutez une description si nécessaire. Ces informations se sauvegardent automatiquement ; les autres réglages pourront être complétés plus tard.",
-    placement: "right",
+      "Vérifiez le titre du parcours et ajoutez au moins un tag. La description reste facultative et ces informations se sauvegardent automatiquement.",
+    placement: "left",
     next: "admin-module-title",
     nextLabel: "Créer un module",
     requirements: [
@@ -229,6 +240,11 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
         label: "le titre du parcours",
         highlightSelector:
           '[data-onboarding="parcours-essential-information"] label[for="title"]',
+      },
+      {
+        selector: '[data-onboarding-field="parcours-tags"]',
+        label: "au moins un tag pour le parcours",
+        highlightSelector: '[data-onboarding-field="parcours-tags"] h2',
       },
     ],
     index: 7,
@@ -587,8 +603,6 @@ const OnboardingTourContent = ({
     };
     const observer = new MutationObserver(refreshRequirements);
 
-    document.addEventListener("input", refreshRequirements, true);
-    document.addEventListener("change", refreshRequirements, true);
     observer.observe(document.body, {
       subtree: true,
       childList: true,
@@ -597,8 +611,6 @@ const OnboardingTourContent = ({
     });
 
     return () => {
-      document.removeEventListener("input", refreshRequirements, true);
-      document.removeEventListener("change", refreshRequirements, true);
       observer.disconnect();
     };
   }, [status, stepToken]);
@@ -619,7 +631,7 @@ const OnboardingTourContent = ({
     ) {
       target = "/admin/dashboard";
     } else if (stage.startsWith("admin-formation")) {
-      target = "/admin/formation";
+      target = "/admin/dashboard?createFormation=true";
     } else if (stage === "admin-parcours-create" && contextId) {
       target = `/admin/parcours/new?formationId=${contextId}`;
     } else if (stage === "admin-parcours-info" && contextId) {
@@ -664,8 +676,19 @@ const OnboardingTourContent = ({
             goToStage("admin-formation-fields");
           }
           break;
+        case "formation_modal_cancelled":
+          if (
+            stage === "admin-formation-fields" ||
+            stage === "admin-formation-save"
+          ) {
+            goToStage("admin-formation-entry");
+          }
+          break;
         case "formation_created":
-          if (stage === "admin-formation-save") {
+          if (
+            stage === "admin-formation-fields" ||
+            stage === "admin-formation-save"
+          ) {
             goToStage("admin-parcours-create", event.id);
           }
           break;
@@ -757,6 +780,18 @@ const OnboardingTourContent = ({
     [requirementRevision, stageDefinition],
   );
 
+  const missingRequirementLabelsKey = missingRequirements
+    .map((requirement) => requirement.label)
+    .join("\u0000");
+
+  const missingRequirementLabels = useMemo(
+    () =>
+      missingRequirementLabelsKey.length > 0
+        ? missingRequirementLabelsKey.split("\u0000")
+        : [],
+    [missingRequirementLabelsKey],
+  );
+
   useEffect(() => {
     const requirements = stageDefinition?.requirements ?? [];
     requirements.forEach((requirement) => {
@@ -794,13 +829,18 @@ const OnboardingTourContent = ({
       current: stageDefinition.index,
       total: stageDefinition.total,
       waitingForAction: stageDefinition.waitingForAction,
-      missingRequirements: missingRequirements.map(
-        (requirement) => requirement.label,
-      ),
+      missingRequirements: missingRequirementLabels,
       nextLabel: stageDefinition.nextLabel,
       onStop: () => setShowStopConfirmation(true),
       onBack: stageDefinition.previous
-        ? () => void saveState("in_progress", stageDefinition.previous!)
+        ? () => {
+            void saveState("in_progress", stageDefinition.previous!);
+            if (stepToken === "admin-formation-fields") {
+              emitOnboardingEvent({
+                type: "formation_modal_close_requested",
+              });
+            }
+          }
         : undefined,
       onNext:
         stageDefinition.next ||
@@ -823,14 +863,18 @@ const OnboardingTourContent = ({
         data,
         placement: stageDefinition.placement,
         skipBeacon: true,
+        hideOverlay: Boolean(stageDefinition.requirements?.length),
         blockTargetInteraction: false,
-        disableFocusTrap: Boolean(stageDefinition.waitingForAction),
+        disableFocusTrap: Boolean(
+          stageDefinition.waitingForAction ||
+            stageDefinition.requirements?.length,
+        ),
         spotlightPadding: 8,
       },
     ];
   }, [
     complete,
-    missingRequirements,
+    missingRequirementLabels,
     saveState,
     stageDefinition,
     stepToken,

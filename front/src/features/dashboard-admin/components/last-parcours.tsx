@@ -1,8 +1,11 @@
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import LastParcoursItem from "./last-parcours-item";
 import QuickActions from "./quick-actions";
+import FormationModal from "../../formation/components/FormationModal";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -13,13 +16,38 @@ export default function LastParcours({
   parcours,
   isLoading,
 }: LastParcoursProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isFormationModalOpen, setIsFormationModalOpen] = useState(
+    searchParams.get("createFormation") === "true",
+  );
+
+  useEffect(() => {
+    if (searchParams.get("createFormation") === "true") {
+      setIsFormationModalOpen(true);
+    }
+  }, [searchParams]);
+
+  const openFormationModal = () => {
+    setIsFormationModalOpen(true);
+    emitOnboardingEvent({ type: "formation_entry_clicked" });
+  };
+
+  const closeFormationModal = () => {
+    setIsFormationModalOpen(false);
+    if (searchParams.has("createFormation")) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete("createFormation");
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+  };
+
   return (
     <div className="p-2">
       <div className="flex flex-wrap justify-between items-center gap-4">
-        <h3 className="text-xl font-bold text-primary">
+        <h3 className="text-xl font-bold text-primary select-none">
           Derniers parcours ajoutés
         </h3>
-        <QuickActions />
+        <QuickActions onCreateFormation={openFormationModal} />
       </div>
 
       <div className="w-full mt-4">
@@ -38,20 +66,23 @@ export default function LastParcours({
             {parcours.slice(0, 6).map((formation) => (
               <LastParcoursItem key={formation.id} formation={formation} />
             ))}
-            <LastParcoursItem />
+            <LastParcoursItem onCreateFormation={openFormationModal} />
           </div>
         )}
       </div>
       {parcours.length > 0 && (
         <div className="flex justify-end mt-2">
           <Link
-            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
+            className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline select-none"
             to="/admin/parcours"
           >
             Voir tous les parcours <MoveUpRight className="w-4 h-4" />
           </Link>
         </div>
       )}
+      {isFormationModalOpen ? (
+        <FormationModal onClose={closeFormationModal} />
+      ) : null}
     </div>
   );
 }

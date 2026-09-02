@@ -7,9 +7,10 @@ type Props = {
   actualStep: Step;
   stepsList: Array<Step>;
   updateStep: (id: number) => void;
+  disabled?: boolean;
 };
 
-const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
+const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep, disabled }) => {
   const content = (
     <>
       <ul className="w-full rounded-lg steps">
@@ -19,6 +20,7 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
             stepItem={item}
             actualStepId={actualStep.id}
             updateStep={updateStep}
+            disabled={disabled}
           />
         ))}
       </ul>

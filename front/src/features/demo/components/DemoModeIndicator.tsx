@@ -7,7 +7,7 @@ const DemoModeIndicator = () => (
     data-tip="Mode démonstration"
   >
     <div
-      className="flex items-center justify-center gap-2 rounded-lg bg-base-300 px-2 py-2 text-xs font-medium text-base-content xl:justify-start xl:px-3"
+      className="flex items-center justify-center gap-2 rounded-lg border border-[var(--sidebar-border)] bg-[var(--sidebar-surface)] px-2 py-2 text-xs font-medium text-[var(--sidebar-content)] xl:justify-start xl:px-3"
       role="status"
       aria-label="Mode démonstration"
     >

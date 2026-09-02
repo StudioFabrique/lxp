@@ -1,13 +1,27 @@
 import { ChangeEvent, useCallback, useState } from "react";
 import type Tag from "../utils/interfaces/tag";
-import { addPendingTag } from "../features/tags/helpers/tag-selection";
+import {
+  addPendingTag,
+  partitionTagInput,
+} from "../features/tags/helpers/tag-selection";
 
 const useTags = (initialTags: Tag[]) => {
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [tag, setTag] = useState<string>("");
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTag(event.currentTarget.value);
+    const value = event.currentTarget.value;
+    const { committed, pending } = partitionTagInput(value);
+
+    if (!committed) {
+      setTag(pending);
+      return;
+    }
+
+    setCurrentTags((current) =>
+      addPendingTag(current, initialTags, committed),
+    );
+    setTag(pending);
   };
 
   const handleTagSubmit = (event: React.FormEvent) => {

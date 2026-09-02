@@ -18,7 +18,7 @@ const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
     : undefined;
 
   return (
-    <div className="text-primary grid grid-rows-4 gap-2 w-[10%]">
+    <div className="order-first grid w-full grid-cols-2 gap-2 text-primary sm:grid-cols-4 xl:order-last xl:w-32 xl:shrink-0 xl:grid-cols-1 xl:grid-rows-4">
       {stats?.map((stat) => (
         <ParcoursStatistiquesItem
           key={stat.title}

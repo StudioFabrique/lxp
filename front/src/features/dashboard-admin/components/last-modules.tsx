@@ -17,7 +17,7 @@ export default function LastModules({ modules, isLoading }: Props) {
     <span className="loading loading-spinner loading-sm my-5" />
   ) : modules?.length ? (
     <div className="p-2">
-      <h3 className="text-xl font-bold text-primary">
+      <h3 className="text-xl font-bold text-primary select-none">
         Derniers modules créés
       </h3>
       <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-4">
@@ -25,9 +25,7 @@ export default function LastModules({ modules, isLoading }: Props) {
           <li className="list-row" key={module.id}>
             <div className="self-center">
               <img
-                src={
-                  normalizeImageSource(module.thumb) ?? defaultModuleImage
-                }
+                src={normalizeImageSource(module.thumb) ?? defaultModuleImage}
                 alt={`Illustration du module ${module.title}`}
                 className="size-10 rounded-lg object-cover"
               />
@@ -39,7 +37,8 @@ export default function LastModules({ modules, isLoading }: Props) {
                 {module.parcours ?? "Non rattaché"}
               </div>
               <div className="text-xs font-light opacity-50">
-                {module.coursesCount} cours · Créé le {localeDate(module.createdAt)}
+                {module.coursesCount} cours · Créé le{" "}
+                {localeDate(module.createdAt)}
               </div>
             </div>
 
@@ -77,7 +76,7 @@ export default function LastModules({ modules, isLoading }: Props) {
       </ul>
       <div className="flex justify-end mt-2">
         <Link
-          className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline"
+          className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline select-none"
           to="/admin/module"
         >
           Voir tous les modules <MoveUpRight className="w-4 h-4" />

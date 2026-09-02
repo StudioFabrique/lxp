@@ -19,51 +19,53 @@ const ResumeParcours = () => {
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   return (
-    <div className="flex gap-2">
-      <ImageHeader
-        imageUrl={normalizeImageSource(parcours?.thumb) ?? defaultImage}
-        title={parcours?.title ?? ""}
-        titleIcon={<RocketIcon className="stroke-white w-5" />}
-        subTitle={parcours?.formation.title ?? ""}
-        subTitleIcon={<GraduationCap className="stroke-white w-5" />}
-        hidePublished
-        children={[
-          <div
-            key="title-and-badges"
-            className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
-          />,
-          <div key="link" className="p-5 w-full flex justify-end">
-            {parcours ? (
-              <div className="flex flex-col h-[17.5em] justify-between gap-5">
-                <Link
-                  to={`/${currentRoute[0]}/parcours`}
-                  className="z-10 btn btn-sm"
-                >
-                  <List />
-                  <p>Accéder à la liste des autres parcours</p>
-                </Link>
-                <Link
-                  to={
-                    parcours
-                      ? `/${currentRoute[0]}/parcours/view/${parcours.id}`
-                      : `/${currentRoute[0]}/parcours`
-                  }
-                  className="z-10 btn btn-primary text-white"
-                >
-                  <PlayCircleIcon />
-                  <p>Accéder au parcours</p>
-                </Link>
-              </div>
-            ) : (
-              <FadeWrapper>
-                <p className="text-white text-4xl text-center opacity-95 select-none">
-                  Votre formation sera bientôt disponible dans votre espace
-                </p>
-              </FadeWrapper>
-            )}
-          </div>,
-        ]}
-      />
+    <div className="flex flex-col gap-2 xl:flex-row">
+      <div className="min-w-0 flex-1">
+        <ImageHeader
+          imageUrl={normalizeImageSource(parcours?.thumb) ?? defaultImage}
+          title={parcours?.title ?? ""}
+          titleIcon={<RocketIcon className="stroke-white w-5" />}
+          subTitle={parcours?.formation.title ?? ""}
+          subTitleIcon={<GraduationCap className="stroke-white w-5" />}
+          hidePublished
+          children={[
+            <div
+              key="title-and-badges"
+              className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
+            />,
+            <div key="link" className="p-5 w-full flex justify-end">
+              {parcours ? (
+                <div className="flex flex-col h-[17.5em] justify-between gap-5">
+                  <Link
+                    to={`/${currentRoute[0]}/parcours`}
+                    className="z-10 btn btn-sm"
+                  >
+                    <List />
+                    <p>Accéder à la liste des autres parcours</p>
+                  </Link>
+                  <Link
+                    to={
+                      parcours
+                        ? `/${currentRoute[0]}/parcours/view/${parcours.id}`
+                        : `/${currentRoute[0]}/parcours`
+                    }
+                    className="z-10 btn btn-primary text-white"
+                  >
+                    <PlayCircleIcon />
+                    <p>Accéder au parcours</p>
+                  </Link>
+                </div>
+              ) : (
+                <FadeWrapper>
+                  <p className="text-white text-4xl text-center opacity-95 select-none">
+                    Votre formation sera bientôt disponible dans votre espace
+                  </p>
+                </FadeWrapper>
+              )}
+            </div>,
+          ]}
+        />
+      </div>
       {parcours && parcours.id && (
         <ParcoursStatistiques parcoursId={parcours.id} />
       )}

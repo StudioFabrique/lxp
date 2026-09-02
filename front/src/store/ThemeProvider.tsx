@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { themes } from "../config/themes";
+import { darkThemes, lightThemes, themes } from "../config/themes";
 
 type ThemeContextType = {
   theme: "light" | "dark";
@@ -19,15 +19,30 @@ const ThemeContext = createContext<ThemeContextType>({
   chooseTheme: () => {},
 });
 
+const getAvailableTheme = (
+  storedTheme: string | null,
+  availableThemes: readonly string[],
+  fallbackTheme: string,
+) =>
+  storedTheme && availableThemes.includes(storedTheme)
+    ? storedTheme
+    : fallbackTheme;
+
 const initializeTheme = (): "light" | "dark" => {
-  const lightTheme = localStorage.getItem("lightTheme");
-  const darkTheme = localStorage.getItem("darkTheme");
+  themes.light = getAvailableTheme(
+    localStorage.getItem("lightTheme"),
+    lightThemes,
+    "classic",
+  );
+  themes.dark = getAvailableTheme(
+    localStorage.getItem("darkTheme"),
+    darkThemes,
+    "classic-dark",
+  );
 
-  if (lightTheme) themes.light = lightTheme;
-  else localStorage.setItem("lightTheme", themes.light);
-
-  if (darkTheme) themes.dark = darkTheme;
-  else localStorage.setItem("darkTheme", themes.dark);
+  // Remplace aussi les anciens thèmes retirés dans le stockage du navigateur.
+  localStorage.setItem("lightTheme", themes.light);
+  localStorage.setItem("darkTheme", themes.dark);
 
   const activeTheme = localStorage.getItem("activeTheme");
   if (activeTheme === "light" || activeTheme === "dark") return activeTheme;
@@ -41,6 +56,10 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
 
   const chooseTheme = useCallback(
     (newTheme: string, mode: "light" | "dark") => {
+      const availableThemes = mode === "light" ? lightThemes : darkThemes;
+      if (!availableThemes.some((availableTheme) => availableTheme === newTheme))
+        return;
+
       if (mode === "light") {
         themes.light = newTheme;
         localStorage.setItem("lightTheme", newTheme);

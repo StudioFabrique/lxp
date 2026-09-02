@@ -3,7 +3,6 @@ import {
   Calendar,
   Component,
   FileEdit,
-  GraduationCap,
   Home,
   Layers,
   Library,
@@ -41,13 +40,6 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       path: "user",
       label: "Utilisateurs",
       icon: User,
-    },
-    {
-      key: "formation",
-      subject: "formation",
-      path: "formation",
-      label: "Formations",
-      icon: GraduationCap,
     },
     {
       key: "parcours",

@@ -41,7 +41,7 @@ fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 
 # Chargement des variables d'environnement (sélectif pour éviter les erreurs
-# de syntaxe sur des lignes comme SMTP ou FROM qui ne sont pas du bash).
+# de syntaxe sur des lignes comme MAILER_SMTP ou MAILER_FROM qui ne sont pas du bash).
 if [ -f "./api/.env" ]; then
   POSTGRES_USER=$(grep '^POSTGRES_USER=' ./api/.env | cut -d'=' -f2)
   POSTGRES_PASSWORD=$(grep '^POSTGRES_PASSWORD=' ./api/.env | cut -d'=' -f2)

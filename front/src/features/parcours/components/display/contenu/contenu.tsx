@@ -74,6 +74,11 @@ const Contenu = ({ modules }: ContenuProps) => {
                 selectedModuleId={selectedModule?.id}
                 iterationCount={i + 1}
                 setSelectedModule={setSelectedModule}
+                editDatesUrl={
+                  ability.can("update", "parcours") && parcoursId
+                    ? `/admin/parcours/edit/${parcoursId}?step=5&editModuleDates=${module.id}`
+                    : undefined
+                }
               />
             ))}
             {canEditParcoursContent && (

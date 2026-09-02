@@ -14,7 +14,7 @@ type ModalProps = {
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
-  sendModalBottom?: boolean;
+  dialogAdditionalClass?: string;
 };
 
 const Modal = (props: PropsWithChildren<ModalProps>) => {
@@ -24,7 +24,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
   return (
     <dialog
       id="my_modal_4"
-      className={`modal modal-open ${props.sendModalBottom && "z-0"}`}
+      className={`modal modal-open ${props.dialogAdditionalClass}`}
     >
       <div className={`modal-box ${props.modalBoxStyle}`}>
         {props.buttonsBothTopBottom && (

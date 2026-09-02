@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import ThemeToggle from "../components/buttons/ThemeToggle";
 import ThemeSelect from "../features/profile/components/theme-select";
-import { themes } from "../config/themes";
+import { darkThemes, lightThemes, themes } from "../config/themes";
 import { ThemeContext, ThemeProvider } from "./ThemeProvider";
 
 const ThemeControls = () => {
@@ -19,7 +19,7 @@ const ThemeControls = () => {
       />
       <ThemeSelect
         label="Thème sombre"
-        themesList={["slate", "carbon"]}
+        themesList={["classic-dark", "aurora"]}
         onThemeChange={chooseTheme}
       />
       <ThemeToggle />
@@ -35,9 +35,9 @@ describe("ThemeProvider", () => {
     localStorage.clear();
     localStorage.setItem("activeTheme", "dark");
     localStorage.setItem("lightTheme", "classic");
-    localStorage.setItem("darkTheme", "slate");
+    localStorage.setItem("darkTheme", "classic-dark");
     themes.light = "classic";
-    themes.dark = "slate";
+    themes.dark = "classic-dark";
 
     container = document.createElement("div");
     document.body.appendChild(container);
@@ -48,6 +48,11 @@ describe("ThemeProvider", () => {
     container.remove();
     document.documentElement.removeAttribute("data-theme");
     localStorage.clear();
+  });
+
+  it("propose autant de thèmes clairs que de thèmes sombres", () => {
+    expect(lightThemes).toHaveLength(8);
+    expect(darkThemes).toHaveLength(8);
   });
 
   it("applique les variantes et reste basculable dans les deux sens", async () => {
@@ -65,14 +70,14 @@ describe("ThemeProvider", () => {
     const toggle = container.querySelector<HTMLInputElement>("#mode-toggle");
 
     expect(currentMode()).toBe("dark");
-    expect(document.documentElement.dataset.theme).toBe("slate");
+    expect(document.documentElement.dataset.theme).toBe("classic-dark");
     expect(toggle?.checked).toBe(true);
 
     await act(async () => {
-      container.querySelector<HTMLInputElement>('input[value="carbon"]')?.click();
+      container.querySelector<HTMLInputElement>('input[value="aurora"]')?.click();
     });
-    expect(document.documentElement.dataset.theme).toBe("carbon");
-    expect(localStorage.getItem("darkTheme")).toBe("carbon");
+    expect(document.documentElement.dataset.theme).toBe("aurora");
+    expect(localStorage.getItem("darkTheme")).toBe("aurora");
 
     await act(async () => toggle?.click());
     expect(currentMode()).toBe("light");
@@ -86,13 +91,33 @@ describe("ThemeProvider", () => {
     expect(localStorage.getItem("lightTheme")).toBe("ocean");
 
     await act(async () => {
-      container.querySelector<HTMLInputElement>('input[value="slate"]')?.click();
+      container
+        .querySelector<HTMLInputElement>('input[value="classic-dark"]')
+        ?.click();
     });
     expect(currentMode()).toBe("dark");
-    expect(document.documentElement.dataset.theme).toBe("slate");
+    expect(document.documentElement.dataset.theme).toBe("classic-dark");
 
     await act(async () => toggle?.click());
     expect(currentMode()).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("ocean");
+  });
+
+  it("remplace les anciens thèmes enregistrés par les nouveaux thèmes par défaut", async () => {
+    localStorage.setItem("lightTheme", "paper");
+    localStorage.setItem("darkTheme", "slate");
+
+    await act(async () => {
+      root = createRoot(container);
+      root.render(
+        <ThemeProvider>
+          <ThemeControls />
+        </ThemeProvider>,
+      );
+    });
+
+    expect(localStorage.getItem("lightTheme")).toBe("classic");
+    expect(localStorage.getItem("darkTheme")).toBe("classic-dark");
+    expect(document.documentElement.dataset.theme).toBe("classic-dark");
   });
 });

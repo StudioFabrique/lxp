@@ -13,7 +13,6 @@ export type DemoStep = Step & { route?: string };
 /** Réutilise les cibles déjà posées pour l'onboarding et les tours par page. */
 const SIDEBAR = '[data-onboarding="sidebar-navigation"]';
 const PAGE_HEADER = '[data-page-tour="header"]';
-const PAGE_TABLE = '[data-page-tour="table"]';
 const CENTER = "#main-scroll-container";
 
 export const adminDemoTourSteps: DemoStep[] = [
@@ -23,7 +22,7 @@ export const adminDemoTourSteps: DemoStep[] = [
     target: SIDEBAR,
     title: "La navigation",
     content:
-      "Le menu donne accès au tableau de bord et aux espaces de gestion : formations, parcours, contenus, utilisateurs et ressources.",
+      "Le menu donne accès au tableau de bord et aux espaces de gestion des parcours, contenus, utilisateurs et ressources.",
     placement: "right",
   },
   {
@@ -37,20 +36,11 @@ export const adminDemoTourSteps: DemoStep[] = [
   },
   {
     id: "demo-admin-formations",
-    route: "/admin/formation",
-    target: PAGE_HEADER,
+    route: "/admin/parcours",
+    target: '[data-page-tour="parcours-cards"]',
     title: "Les formations",
     content:
       "La formation est le niveau le plus large : elle regroupe les parcours proposés à une promotion.",
-    placement: "bottom",
-  },
-  {
-    id: "demo-admin-formations-table",
-    route: "/admin/formation",
-    target: PAGE_TABLE,
-    title: "Le catalogue",
-    content:
-      "Voici le catalogue de démonstration. Les actions de création et de modification restent visibles, mais sont sans effet ici.",
     placement: "top",
   },
   {

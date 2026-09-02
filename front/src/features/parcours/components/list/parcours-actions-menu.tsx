@@ -1,0 +1,75 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { EllipsisVertical, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { Link } from "react-router";
+
+import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-summary";
+
+type ParcoursActionsMenuProps = {
+  parcours: ParcoursSummary;
+  onDelete: (parcours: ParcoursSummary) => void;
+};
+
+const itemBaseClassName =
+  "flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm outline-none transition-colors";
+const itemClassName = `${itemBaseClassName} hover:bg-primary/10 focus:bg-primary/10`;
+
+const ParcoursActionsMenu = ({
+  parcours,
+  onDelete,
+}: ParcoursActionsMenuProps) => (
+  <DropdownMenu.Root>
+    <DropdownMenu.Trigger asChild>
+      <button
+        type="button"
+        className="btn btn-square btn-sm btn-ghost self-center"
+        aria-label={`Actions pour le parcours ${parcours.title}`}
+      >
+        <EllipsisVertical className="size-[1.2em]" />
+      </button>
+    </DropdownMenu.Trigger>
+
+    <DropdownMenu.Portal>
+      <DropdownMenu.Content
+        align="end"
+        sideOffset={6}
+        className="z-20 min-w-52 rounded-box border border-base-300 bg-base-100 p-1.5 text-base-content shadow-lg"
+      >
+        <DropdownMenu.Item asChild>
+          <Link
+            className={itemClassName}
+            to={`/admin/parcours/view/${parcours.id}`}
+          >
+            <ExternalLink className="size-4" />
+            Prévisualiser
+          </Link>
+        </DropdownMenu.Item>
+
+        <PermissionGuard action="update" object="parcours">
+          <DropdownMenu.Item asChild>
+            <Link
+              className={itemClassName}
+              to={`/admin/parcours/edit/${parcours.id}`}
+            >
+              <Pencil className="size-4" />
+              Modifier
+            </Link>
+          </DropdownMenu.Item>
+        </PermissionGuard>
+
+        <PermissionGuard action="delete" object="parcours">
+          <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
+          <DropdownMenu.Item
+            className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
+            onSelect={() => onDelete(parcours)}
+          >
+            <Trash2 className="size-4" />
+            Supprimer
+          </DropdownMenu.Item>
+        </PermissionGuard>
+      </DropdownMenu.Content>
+    </DropdownMenu.Portal>
+  </DropdownMenu.Root>
+);
+
+export default ParcoursActionsMenu;

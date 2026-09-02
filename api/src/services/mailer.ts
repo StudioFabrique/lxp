@@ -13,19 +13,19 @@ import { env } from "../config/env.ts";
  * intégralement juste après, doublant la latence de chaque message pour une
  * information que `sendMail` remonte de toute façon en cas d'échec.
  */
-// `SMTP_PORT` n'est exigé qu'en production, où `config/env.ts` en contrôle la
-// présence. Hors production, le port de soumission standard évite le `NaN`
-// silencieux que produisait l'ancien `+process.env.SMTP_PORT!` quand la
+// `MAILER_SMTP_PORT` n'est exigé qu'en production, où `config/env.ts` en
+// contrôle la présence. Hors production, le port de soumission standard évite le `NaN`
+// silencieux que produisait l'ancien `+process.env.MAILER_SMTP_PORT!` quand la
 // variable manquait.
-const smtpPort = env.SMTP_PORT ?? 587;
+const smtpPort = env.MAILER_SMTP_PORT ?? 587;
 
 const transporter = nodemailer.createTransport({
-  host: env.SMTP,
+  host: env.MAILER_SMTP,
   port: smtpPort,
   secure: smtpPort === 465,
   auth: {
-    user: env.EMAIL,
-    pass: env.PASSWORD,
+    user: env.MAILER_EMAIL,
+    pass: env.MAILER_PASSWORD,
   },
   tls: {
     rejectUnauthorized: false,
@@ -50,7 +50,7 @@ export async function sendPasswordEmail(
     // En développement, rediriger vers une adresse email de test
     const destination =
       env.ENVIRONMENT === "development"
-        ? env.SMTP_EMAIL
+        ? env.MAILER_DEV_RECIPIENT
         : email;
 
     // Récupération du template HTML correspondant
@@ -58,7 +58,7 @@ export async function sendPasswordEmail(
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: env.FROM,
+      from: env.MAILER_FROM,
       to: destination,
       subject: "Activation du compte",
       html: message,
@@ -88,18 +88,19 @@ export async function sendUpdatedUserEmail(email: string) {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     // Si la variable d'environnement n'est pas définie, log dans la console et un return
-    if (!env.SMTP_EMAIL) {
+    if (!env.MAILER_DEV_RECIPIENT) {
       //si en prod, on lance une erreur
       if (env.ENVIRONMENT === "production") {
         throw {
           statusCode: 500,
-          message: "La variable d'environnement SMTP_EMAIL n'est pas définie.",
+          message:
+            "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
         };
       }
 
       // si en développement, on log l'erreur
       logger.error(
-        "La variable d'environnement SMTP_EMAIL n'est pas définie."
+        "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie."
       );
       return;
     }
@@ -107,7 +108,7 @@ export async function sendUpdatedUserEmail(email: string) {
     // En développement, rediriger vers une adresse email de test
     const destination =
       env.ENVIRONMENT === "development"
-        ? env.SMTP_EMAIL
+        ? env.MAILER_DEV_RECIPIENT
         : email;
 
     // Récupération du template pour la mise à jour du compte
@@ -115,7 +116,7 @@ export async function sendUpdatedUserEmail(email: string) {
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: env.FROM,
+      from: env.MAILER_FROM,
       to: destination,
       subject: "Modification du compte",
       html: message,

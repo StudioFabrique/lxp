@@ -32,7 +32,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           onClick={handleClose}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex w-full gap-2 p-1 px-2 items-center rounded-lg hover:bg-primary/50 ${
+          className={`flex w-full gap-2 p-1 px-2 items-center rounded-lg hover:bg-[var(--sidebar-hover)] transition-colors ${
             showTooltip
               ? "ring-2 ring-primary ring-offset-1 rounded-full p-2 animate-pulse"
               : ""

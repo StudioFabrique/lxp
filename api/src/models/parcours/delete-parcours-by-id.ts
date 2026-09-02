@@ -48,6 +48,7 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
     await tx.bonusSkill.deleteMany({ where: { parcoursId } });
     await tx.objective.deleteMany({ where: { parcoursId } });
     await tx.groupsOnParcours.deleteMany({ where: { parcoursId } });
+    await tx.skillsOnParcours.deleteMany({ where: { parcoursId } });
     await tx.parcours.delete({
       where: { id: parcoursId, adminId: admin.id },
     });

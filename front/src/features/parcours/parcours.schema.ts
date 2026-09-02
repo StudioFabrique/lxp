@@ -23,7 +23,9 @@ export const moduleCreateSchema = z.object({
     })
     .optional()
     .default(""),
-  duration: z.number().optional().default(0),
+  duration: z
+    .number({ error: "La durée du module est obligatoire" })
+    .positive("La durée du module doit être supérieure à 0 heure"),
   quizInstructions: z
     .string()
     .regex(regexOptionalGeneric, {
