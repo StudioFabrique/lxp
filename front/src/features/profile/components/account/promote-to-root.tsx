@@ -114,7 +114,7 @@ const PromoteToRoot = () => {
                 {isCommandCopied ? "Copié" : ""}
               </span>
             </button>
-            puis saisissez-la ci-dessous. La clé est valable
+            puis saisissez-la ci-dessous. La clé est valable{" "}
             {activationTokenTtlMinutes >= 60
               ? `${activationTokenTtlMinutes / 60} heures`
               : `${activationTokenTtlMinutes} minutes`}{" "}
