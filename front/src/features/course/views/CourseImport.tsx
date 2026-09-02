@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
 import PageHeader from "../../../components/headers/PageHeader";
-import useImportCourses, {
-  CoursesImportStep,
-} from "../hooks/useImportCourses";
+import useImportCourses, { CoursesImportStep } from "../hooks/useImportCourses";
 import ParcoursSelection from "../components/import/parcours-selection";
 import ImportResult from "../components/import/import-result";
 import CoursesPreview from "../components/import/courses-preview/courses-preview";
@@ -132,7 +130,7 @@ const ImportCoursesHome = () => {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Import de cours"
-        description="Importer des cours ainsi que toutes les leçons et activités associées."
+        description="Importer des cours depuis Moodle ainsi que toutes les leçons et activités associées."
         tourSteps={tourSteps}
       >
         {step !== CoursesImportStep.ImportResult && (

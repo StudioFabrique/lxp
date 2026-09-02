@@ -31,7 +31,7 @@ export default function useParcoursView() {
       formation: parcours?.formation,
       canManage: parcours?.canManage,
     },
-    parcoursInfos: parcours ?? { title: "" },
+    parcoursInfos: parcours,
     modules,
     studentCount: (parcours as typeof parcours & { studentCount?: number })
       ?.studentCount,

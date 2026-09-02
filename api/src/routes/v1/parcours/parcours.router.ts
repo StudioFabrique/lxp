@@ -99,7 +99,8 @@ parcoursRouter.patch(
 // Route DELETE pour supprimer un parcours spécifique
 parcoursRouter.delete(
   "/:parcoursId",
-  checkPermissions("parcours"),
+  checkPermissions("parcours", "delete"),
+  checkRoleRank([0, 1]),
   checkContentAccess("parcours", "parcoursId"),
   parcoursByIdValidator,
   httpDeleteParcoursById,

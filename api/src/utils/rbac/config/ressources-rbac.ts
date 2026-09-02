@@ -130,7 +130,7 @@ const teacherUpdatableResources = teacherResourcesRbac.filter(
   ({ name }) => name !== "formation",
 );
 const teacherDeletableResources = teacherResourcesRbac.filter(
-  ({ name }) => name !== "formation",
+  ({ name }) => !["formation", "parcours"].includes(name),
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template

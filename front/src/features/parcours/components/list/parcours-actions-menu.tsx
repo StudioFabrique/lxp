@@ -91,16 +91,18 @@ const ParcoursActionsMenu = ({
         ) : null}
 
         {parcours.canManage !== false ? (
-          <PermissionGuard action="delete" object="parcours">
-            <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
-            <DropdownMenu.Item
-              className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
-              onSelect={() => onDelete(parcours)}
-            >
-              <Trash2 className="size-4" />
-              Supprimer
-            </DropdownMenu.Item>
-          </PermissionGuard>
+          <RoleRankGuard ranks={[0, 1]}>
+            <PermissionGuard action="delete" object="parcours">
+              <DropdownMenu.Separator className="my-1 h-px bg-base-300" />
+              <DropdownMenu.Item
+                className={`${itemBaseClassName} text-error hover:bg-error/10 focus:bg-error/10`}
+                onSelect={() => onDelete(parcours)}
+              >
+                <Trash2 className="size-4" />
+                Supprimer
+              </DropdownMenu.Item>
+            </PermissionGuard>
+          </RoleRankGuard>
         ) : null}
       </DropdownMenu.Content>
     </DropdownMenu.Portal>
