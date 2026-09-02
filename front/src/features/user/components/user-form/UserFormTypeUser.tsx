@@ -37,11 +37,7 @@ const UserFormTypeUser = ({
 
   useEffect(() => {
     if (!roleId && initialRoleRank && roles) {
-      const defaultRole = roles.find(
-        (role) =>
-          role.rank === initialRoleRank &&
-          !role.role.startsWith("interface:"),
-      );
+      const defaultRole = roles.find((role) => role.rank === initialRoleRank);
       if (defaultRole) onSetRoleId(defaultRole._id);
     }
   }, [initialRoleRank, onSetRoleId, roleId, roles]);
@@ -83,7 +79,14 @@ const UserFormTypeUser = ({
           <div className="flex flex-col justify-between h-full gap-5">
             <div className="flex flex-col gap-y-4 overflow-y-auto">
               {(roles ?? [])
-                .filter((role) => !role.role.startsWith("interface:"))
+                .filter(
+                  (role) =>
+                    !editMode ||
+                    !initialRoleRank ||
+                    (initialRoleRank <= 2
+                      ? role.rank <= 2
+                      : role.rank > 2),
+                )
                 .map((role: Role) => (
                   <label key={role._id} className="flex gap-x-2">
                     <input

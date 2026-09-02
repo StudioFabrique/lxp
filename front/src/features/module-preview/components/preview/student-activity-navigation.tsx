@@ -1,7 +1,6 @@
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { PropsWithChildren } from "react";
 import FeedbacksButton from "../../../../components/buttons/FeedbacksButton";
-import PermissionGuard from "../../../../components/guards/PermissionGuard";
 
 type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
@@ -40,35 +39,31 @@ const StudentActivityNavigation = ({
     </div>
 
     <div className="flex-initial">
-      <PermissionGuard action="component" object="progression">
-        {children}
-      </PermissionGuard>
+      {children}
     </div>
 
     <div className="mr-5 flex flex-1 justify-end">
       {isLastActivitySelected ? (
         (!isLastLessonSelected || !isLessonCompleted) && (
-          <PermissionGuard action="component" object="progression">
-            <FeedbacksButton
-              className="btn btn-success text-nowrap text-success-content"
-              feedbackType="thumbUp"
-              showFeedback={!isLessonCompleted}
-              disabled={modalVisibility !== "none"}
-              onClick={onCompleteLesson}
-            >
-              {isLessonCompleted ? (
-                <>
-                  Leçon suivante
-                  <ArrowRight />
-                </>
-              ) : (
-                <>
-                  <Check />
-                  Marquer comme terminé
-                </>
-              )}
-            </FeedbacksButton>
-          </PermissionGuard>
+          <FeedbacksButton
+            className="btn btn-success text-nowrap text-success-content"
+            feedbackType="thumbUp"
+            showFeedback={!isLessonCompleted}
+            disabled={modalVisibility !== "none"}
+            onClick={onCompleteLesson}
+          >
+            {isLessonCompleted ? (
+              <>
+                Leçon suivante
+                <ArrowRight />
+              </>
+            ) : (
+              <>
+                <Check />
+                Marquer comme terminé
+              </>
+            )}
+          </FeedbacksButton>
         )
       ) : (
         <button

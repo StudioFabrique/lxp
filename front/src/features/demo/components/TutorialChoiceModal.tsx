@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Compass, PlayCircle, X } from "lucide-react";
-import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { AuthContext } from "../../../store/AuthProvider";
+import { hasRoleRank } from "../../../utils/helpers/user-role";
 import { Link } from "react-router";
 
 type Props = {
@@ -18,8 +19,8 @@ type Props = {
  * équipe pédagogique, découvrir l'interface pour un apprenant.
  */
 const TutorialChoiceModal = ({ demoUrl, onClose, onStartTutorial }: Props) => {
-  const ability = useContext(AbilityContext);
-  const isStaff = ability.can("layout", "admin");
+  const { user } = useContext(AuthContext);
+  const isStaff = hasRoleRank(user, [1, 2]);
 
   const tutorialLabel = isStaff ? "Tutoriel guidé" : "Tutoriel de découverte";
 

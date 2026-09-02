@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { AuthContext } from "../../../store/AuthProvider";
-import PermissionGuard from "../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import TeacherLastParcours from "../components/teacher-last-parcours";
 import LastParcours from "../components/last-parcours";
 import LastFeedback from "../components/last-feedback";
@@ -68,12 +68,12 @@ const AdminDashboard = () => {
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">
-            <PermissionGuard action="component" object="last-feedback">
+            <RoleRankGuard ranks={[2]}>
               <LastFeedback />
-            </PermissionGuard>
-            <PermissionGuard action="component" object="lessons-rating-stats">
+            </RoleRankGuard>
+            <RoleRankGuard ranks={[2]}>
               <TeacherLessonsQualityStats />
-            </PermissionGuard>
+            </RoleRankGuard>
           </article>
         </div>
       </section>

@@ -34,7 +34,7 @@ export const revokePermission = (roleId: string, permission: string) =>
 export async function getRoleResources(identifier: RoleIdentifier) {
   const [permissions, roles] = await Promise.all([
     getAllActionsPermissionsForRole(identifier),
-    Role.find({ role: { $not: { $regex: "^interface:" } } }),
+    Role.find(),
   ]);
   if (!permissions) fail(404, "aucune permissions n'a été trouvé");
   if (resourcesRbac.length === 0)
@@ -117,7 +117,7 @@ async function removeRolePermissions(roleNames: string[]) {
     name: { $in: permissionNames },
   }).select("_id");
   await Role.updateMany(
-    { role: { $not: /^interface:/ } },
+    {},
     { $pull: { permissions: { $in: permissions.map((item) => item._id) } } },
   );
   await Permission.deleteMany({ name: { $in: permissionNames } });

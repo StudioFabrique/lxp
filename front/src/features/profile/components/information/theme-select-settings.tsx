@@ -1,6 +1,6 @@
 import CompanyPictureUpload from "../company-picture-upload";
 import ThemeSelect from "../theme-select";
-import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import Wrapper from "../../../../components/wrappers/BoxWrapper";
 import { darkThemes, lightThemes } from "../../../../config/themes";
 import { useContext } from "react";
@@ -39,9 +39,9 @@ const ThemeSelectSettings = () => {
         </div>
 
         <div>
-          <PermissionGuard action="component" object="company-picture-upload">
+          <RoleRankGuard ranks={[1]}>
             <CompanyPictureUpload />
-          </PermissionGuard>
+          </RoleRankGuard>
         </div>
       </div>
     </div>

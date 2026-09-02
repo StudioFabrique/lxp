@@ -59,16 +59,6 @@ async function updateUserRoles(
       },
     });
 
-  // Generate interface role names for additional role lookup
-  const tmp = roles.map((role) => `interface:${role.role}`);
-
-  // Find corresponding interface roles that should be included
-  const rolesToSet = await Role.find({ role: { $in: tmp } });
-
-  // Combine base roles with their corresponding interface roles
-  roles = [...roles, ...rolesToSet];
-
-
   // Verify that all requested users were found (data integrity check)
   if (actualUsers.length !== usersToUpdate.length) {
     throw {

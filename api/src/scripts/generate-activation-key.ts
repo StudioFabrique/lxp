@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import Role from "../utils/interfaces/db/role.ts";
 import Permission, { type IPermission } from "../utils/interfaces/db/permission.ts";
 import {
-  permDefsInterface,
   permDefsActions,
 } from "../utils/rbac/config/fixtures-permissions.ts";
 import { env } from "../config/env.ts";
@@ -30,34 +29,13 @@ async function seedRoles() {
 
   console.log("Création des rôles...");
 
-  const interfaceRoles = [
-    {
-      role: "interface:admin",
-      label: "interface de l'admin",
-      rank: 1,
-      protection: 2,
-    },
-    {
-      role: "interface:teacher",
-      label: "interface du formateur",
-      rank: 2,
-      protection: 2,
-    },
-    {
-      role: "interface:student",
-      label: "interface de l'apprenant",
-      rank: 3,
-      protection: 2,
-    },
-  ];
-
   const actionsRoles = [
     { role: "admin", label: "administrateur", rank: 1, protection: 2 },
     { role: "teacher", label: "équipe pédagogique", rank: 2, protection: 1 },
     { role: "student", label: "apprenant", rank: 3, protection: 1 },
   ];
 
-  const dbRoles = [...interfaceRoles, ...actionsRoles].map((r) => new Role(r));
+  const dbRoles = actionsRoles.map((r) => new Role(r));
   await Role.bulkSave(dbRoles);
   console.log(`  ✓ ${dbRoles.length} rôles créés.`);
 }
@@ -75,7 +53,6 @@ async function seedPermissions() {
   const bulkRoleUpdates = new Map<string, any>();
 
   for (const [roleName, value] of Object.entries({
-    ...permDefsInterface,
     ...permDefsActions,
   })) {
     const role = await Role.findOne({ role: roleName });

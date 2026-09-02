@@ -86,7 +86,7 @@ const UserForm = ({
       toast.error("Certains champs du formulaire sont manquants ou mal remplis.");
       return;
     }
-    if (!editMode && (!roleId || roleId.length < 1)) {
+    if (!roleId || roleId.length < 1) {
       toast.error("Veuillez choisir un rôle svp ...");
       return;
     }
@@ -128,7 +128,7 @@ const UserForm = ({
         </button>
       </Header>
       <div className="flex flex-col gap-y-5">
-        <div className={`grid gap-x-5 ${editMode ? "grid-cols-2" : "grid-cols-3"}`}>
+        <div className="grid grid-cols-3 gap-x-5">
           <UserFormInformations
             lastname={lastname} lastnameError={lastnameError} onLastname={setLastname}
             firstname={firstname} firstnameError={firstnameError} onFirstname={setFirstname}
@@ -149,17 +149,15 @@ const UserForm = ({
             disabled={disabled}
           />
           <div className="grid grid-rows-1 gap-y-5">
-            {!editMode && (
-              <UserFormTypeUser
-                roleId={roleId}
-                sendEmail={sendEmail}
-                onSetSendEmail={setSendEmail}
-                onSetRoleId={setRoleId}
-                initialRoleRank={initialRoleRank}
-                editMode={editMode}
-                disabled={disabled}
-              />
-            )}
+            <UserFormTypeUser
+              roleId={roleId}
+              sendEmail={sendEmail}
+              onSetSendEmail={setSendEmail}
+              onSetRoleId={setRoleId}
+              initialRoleRank={initialRoleRank ?? user?.roles?.[0]?.rank}
+              editMode={editMode}
+              disabled={disabled}
+            />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-x-5">

@@ -1,20 +1,5 @@
 import { resourcesRbacByRank } from "./ressources-rbac.ts";
 
-export const permDefsInterface = {
-  "interface:admin": {
-    layout: ["admin", "teacher", "student"],
-    component: ["calendar", "company-picture-upload"],
-  },
-  "interface:teacher": {
-    layout: ["teacher", "student"],
-    component: ["calendar", "lessons-rating-stats", "last-feedback"],
-  },
-  "interface:student": {
-    layout: ["student"],
-    component: ["calendar", "start-lesson-button", "progression"],
-  },
-};
-
 // Keep test/development fixtures on the same permission matrix used when a
 // dynamic role is created or reset. This prevents newly declared resources
 // from silently becoming inaccessible to existing system roles.

@@ -67,7 +67,6 @@ export const getUsersColumns = (
     cell: ({ row }) => {
       const roles = row.original.roles;
       const label = roles
-        .filter((r) => !r.role.startsWith("interface"))
         .map((r) => r.label)
         .join(", ");
       return (

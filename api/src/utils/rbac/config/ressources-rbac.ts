@@ -91,7 +91,6 @@ export const resourcesRbac = [
     description:
       "Centre de ressources multimédias pour approfondir vos connaissances",
   },
-  // Ressource à retirer - sera remplacée par une meilleure implémentation du système de gestion de droits (role layout d'interface)
   {
     name: "cursus",
     description:
@@ -114,32 +113,6 @@ export const resourcesRbac = [
     description:
       "Permission temporaire - Afficher tous les utilisateurs de tous roles confondus",
   },
-];
-
-// Permissions pour les rôles d'interface
-export const layoutPermissionsList = ["admin", "teacher", "student"];
-
-export const componentPermissionsList = [
-  "hobbie",
-  "social-network",
-  "course",
-  "group",
-  "parcours",
-  "profile",
-  "user",
-  "role",
-  "course",
-  "profile",
-  "lesson",
-  "module",
-  "formation",
-  "calendar",
-  "mediatheque",
-  "last-feedback",
-  "lessons-rating-stats",
-  "progression",
-  "company-picture-upload",
-  "start-lesson-button",
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2

@@ -86,14 +86,6 @@ export async function createFirstAdmin(input: FirstAdminInput) {
     };
   }
 
-  const interfaceRole = await Role.findOne({
-    rank: 1,
-    role: "interface:admin",
-  });
-  const roles = interfaceRole
-    ? [adminRole._id, interfaceRole._id]
-    : [adminRole._id];
-
   const createdUser = await User.create({
     email,
     firstname: input.firstname.toLowerCase(),
@@ -101,7 +93,7 @@ export async function createFirstAdmin(input: FirstAdminInput) {
     password: await hash(input.password, 10),
     isActive: true,
     emailVerified: true,
-    roles,
+    roles: [adminRole._id],
   });
 
   await prisma.admin.create({ data: { idMdb: createdUser._id.toString() } });

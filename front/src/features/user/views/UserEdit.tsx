@@ -33,7 +33,7 @@ const UserEdit = () => {
     }: {
       userData: Record<string, unknown>;
       file: File | null;
-    }) => userApi.mutations.update(id!, userData, file),
+    }) => userApi.mutations.updateWithRole(id!, userData, file),
     onSuccess: (res) => {
       toast.success(res.message ?? "Utilisateur mis à jour avec succès");
       navigate("/admin/user");

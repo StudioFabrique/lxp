@@ -10,6 +10,7 @@ import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users.ts";
 import httpCreateUser from "../../../controllers/user/http-create-user.ts";
 import httpDeleteUser from "../../../controllers/user/http-delete-user.ts";
+import httpDeleteManyUsers from "../../../controllers/user/http-delete-many-users.ts";
 import httpGetContacts from "../../../controllers/user/http-get-contacts.ts";
 import httpGetUserData from "../../../controllers/user/http-get-user-data.ts";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours.ts";
@@ -36,6 +37,7 @@ import { createFileUploadMiddleware } from "../../../middleware/fileUpload.ts";
 import jsonParser from "../../../middleware/json-parser.ts";
 import {
   getAllByRankValidator,
+  checkValidatorResult,
   manyUsersValidator,
   userValidator,
 } from "../../../middleware/validators.ts";
@@ -85,6 +87,24 @@ userRouter.put(
   checkPermissions("user"),
   updateManyUsersStatusValidator,
   httpUpdateManyUsersStatus
+);
+
+userRouter.delete(
+  "/deleteMany",
+  checkPermissions("user"),
+  query("ids")
+    .isString()
+    .custom((value: string) => {
+      const ids = value.split(",").filter(Boolean);
+      return (
+        ids.length > 0 &&
+        ids.length <= 100 &&
+        ids.every((id) => /^[a-f\d]{24}$/i.test(id))
+      );
+    })
+    .withMessage("La liste d'identifiants utilisateurs est invalide."),
+  checkValidatorResult,
+  httpDeleteManyUsers,
 );
 
 userRouter.put(

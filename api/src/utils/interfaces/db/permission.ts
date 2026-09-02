@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPermission extends Document {
-  name: string; // <action>:<ressource> OR <layout>:<name> OR <component>:<name>
+  name: string; // <action>:<ressource>
   isRole: boolean;
 }
 

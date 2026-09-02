@@ -60,8 +60,24 @@ export const mutations = {
     const res = await apiClient.put(`/user/${id}`, formData);
     return res.data;
   },
+  updateWithRole: async (
+    id: string,
+    userData: Record<string, unknown>,
+    file: File | null,
+  ) => {
+    const response = await mutations.update(id, userData, file);
+    const roleId = typeof userData.roleId === "string" ? userData.roleId : null;
+    if (roleId) await mutations.updateUserRoles([id], [roleId]);
+    return response;
+  },
   deleteOne: async (id: string) => {
     const res = await apiClient.delete(`/user/${id}`);
+    return res.data;
+  },
+  deleteMany: async (ids: string[]) => {
+    const res = await apiClient.delete("/user/deleteMany", {
+      params: { ids: ids.join(",") },
+    });
     return res.data;
   },
   updateUserStatus: async (id: string, value: boolean) => {

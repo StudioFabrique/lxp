@@ -79,10 +79,6 @@ export default async function createUser(user: IUser, roleId: string) {
       throw { statusCode: 404, message: "Le rôle n'existe pas." };
     }
 
-    const interfaceRole = await Role.findOne({
-      rank: role.rank,
-    });
-
     // Créer un nouvel utilisateur dans MongoDB
     const createdUser = await User.create({
       email,
@@ -98,7 +94,7 @@ export default async function createUser(user: IUser, roleId: string) {
       password: await hash(randomUUID() + "@Sn99", 10),
       isActive: false,
       avatar: user.avatar,
-      roles: [role, interfaceRole],
+      roles: [role],
     });
 
     // Gérer les créations Prisma en fonction du rôle

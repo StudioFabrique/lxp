@@ -3,12 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
-import { AbilityContext } from "../../rbac/AbilityProvider";
 import { useDemoMode } from "../../store/DemoContext";
+import { getUserHomePath } from "../../utils/helpers/user-role";
 
 const LoginGuard = () => {
   const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
-  const ability = useContext(AbilityContext);
   const { demoMode, isConfigLoaded } = useDemoMode();
   const location = useLocation();
   const [setupChecked, setSetupChecked] = useState(false);
@@ -45,10 +44,8 @@ const LoginGuard = () => {
     return <Loader />;
 
   if (isLoggedIn && user) {
-    if (ability.can("layout", "admin") || ability.can("layout", "teacher"))
-      return <Navigate replace to="/admin" />;
-    if (ability.can("layout", "student"))
-      return <Navigate replace to="/student" />;
+    const homePath = getUserHomePath(user);
+    if (homePath) return <Navigate replace to={homePath} />;
     return <Navigate replace to="/access-denied" />;
   }
 

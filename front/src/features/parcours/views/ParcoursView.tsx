@@ -38,8 +38,7 @@ const ParcoursView = () => {
   const currentRoute = pathname.split("/").slice(1) ?? [];
   const ability = useContext(AbilityContext);
   const canEditParcours = ability.can("update", "parcours");
-  const isStudent =
-    ability.can("layout", "student") && !ability.can("layout", "admin");
+  const isStudent = !canEditParcours;
 
   const handleClickResume = () => {
     const resumeModuleId =

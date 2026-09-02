@@ -5,7 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, RefreshCw } from "lucide-react";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type Role from "../../../utils/interfaces/role";
@@ -21,6 +21,7 @@ import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
+import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
 import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 
@@ -45,6 +46,7 @@ const UserHome = () => {
   } = useUserList(currentRole);
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const selectedIds = Object.keys(rowSelection);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const [idToResetPassword, setIdToResetPassword] = useState<string | null>(
     null,
@@ -60,6 +62,7 @@ const UserHome = () => {
 
   const {
     onDeleteOne,
+    onDeleteSelected,
     onSendInvitation,
     onSendResetPassword,
     isDeleting,
@@ -103,6 +106,14 @@ const UserHome = () => {
         (id) => setIdToResetPassword(id),
       ),
     [resetDeleteError],
+  );
+
+  const selectedUserNames = useCallback(
+    () =>
+      data
+        .filter((user) => user._id && rowSelection[user._id])
+        .map((user) => `${user.firstname} ${user.lastname}`),
+    [data, rowSelection],
   );
 
   const handleConfirmSingleDelete = async () => {
@@ -202,21 +213,19 @@ const UserHome = () => {
         <div className="w-full" data-page-tour="role-filters">
           {roles.length > 0 && currentRole && (
             <div className="flex w-full justify-start gap-2 mb-4">
-              {roles
-                .filter((r) => !r.role.startsWith("interface:"))
-                .map((role) => (
-                  <button
-                    key={role._id}
-                    onClick={() => handleRoleSwitch(role)}
-                    className={`btn btn-sm ${
-                      currentRole._id === role._id
-                        ? "btn-primary"
-                        : "btn-outline btn-primary"
-                    }`}
-                  >
-                    {role.label}
-                  </button>
-                ))}
+              {roles.map((role) => (
+                <button
+                  key={role._id}
+                  onClick={() => handleRoleSwitch(role)}
+                  className={`btn btn-sm ${
+                    currentRole._id === role._id
+                      ? "btn-primary"
+                      : "btn-outline btn-primary"
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -228,27 +237,34 @@ const UserHome = () => {
             onSubmitSearchValue={onSubmitSearchValue}
           >
             <button
-              className={`btn btn-outline btn-sm btn-circle border-none text-primary ${
-                isLoading ? "animate-spin" : ""
-              }`}
-              disabled={isLoading}
+              type="button"
               onClick={() => onRefreshData()}
+              disabled={isLoading}
+              className="btn btn-sm btn-ghost disabled:bg-transparent"
+              aria-label="Rafraîchir la liste des utilisateurs"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
-                />
-              </svg>
+              <RefreshCw className={isLoading ? "animate-spin" : ""} />
             </button>
+            <PermissionGuard object="user" action="delete">
+              <TableActionsButtons<User>
+                isLoading={isLoading || isDeleting}
+                isDisabled={selectedIds.length === 0}
+                onRefreshData={onRefreshData}
+                showRefresh={false}
+                actions={[
+                  {
+                    title: "Supprimer les utilisateurs sélectionnés",
+                    description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
+                    rightButtonTitle: "Supprimer",
+                    alertMessageBottom:
+                      "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
+                    onConfirm: () => onDeleteSelected(selectedIds),
+                  },
+                ]}
+                retreiveItemsProperty="lastname"
+                onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
+              />
+            </PermissionGuard>
           </SearchBar>
         </div>
 

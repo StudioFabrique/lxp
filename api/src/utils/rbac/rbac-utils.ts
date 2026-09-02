@@ -1,8 +1,4 @@
-import {
-  componentPermissionsList,
-  layoutPermissionsList,
-  resourcesRbac,
-} from "./config/ressources-rbac.ts";
+import { resourcesRbac } from "./config/ressources-rbac.ts";
 import Permission from "../interfaces/db/permission.ts";
 import Role, { type IRole } from "../interfaces/db/role.ts";
 import User from "../interfaces/db/user.ts";
@@ -78,9 +74,7 @@ export async function getRolesForUser(userId: string) {
 }
 
 export async function getAllRoles() {
-  const roles = await Role.find({
-    role: { $not: { $regex: "^interface:" } },
-  }).populate("permissions");
+  const roles = await Role.find().populate("permissions");
 
   return roles.map((role) => {
     const permissions = role.permissions.map((perm) => perm.name);
@@ -102,14 +96,9 @@ export async function getAllRoles() {
 }
 
 export async function getAllRolesWithSearch(search: string) {
-  const query = {
-    role: { $not: { $regex: "^interface:" } },
-  };
-
   // Construction de la query avec la valeur de recherche
   // Recherche dans la propriété role mais aussi dans la propriété
   const queryWithSearch = {
-    ...query,
     $or: [
       { role: { $regex: search, $options: "i" } },
       { label: { $regex: search, $options: "i" } },
@@ -188,9 +177,9 @@ export async function getAllActionsPermissionsForRole(
     return [];
   }
 
-  const permissionList = (roleDoc.permissions as any[])
-    .map((permission) => permission.name)
-    .filter((name) => !name.startsWith("interface:"));
+  const permissionList = (roleDoc.permissions as any[]).map(
+    (permission) => permission.name,
+  );
   return permissionList;
 }
 
@@ -400,69 +389,4 @@ export async function createOrUpdateRoleWithPermissions(
   }
 
   return foundRole;
-}
-
-/**
- * Crée un rôle conçu pour conditionner l'affichage de l'interface avec des
- * dispositions et des permissions spécifiques
- * @param roleName - Le nom du rôle d'interface à créer
- * @param layouts - Les noms des dispositions à associer
- * @param components - Les composants à associer
- * @returns Promise<void>
- */
-export async function createOrUpdateInterfaceRoleWithPermissions(
-  roleName: string,
-  layouts?: string[],
-  components?: string[]
-): Promise<void> {
-  try {
-    if (
-      !(
-        layouts?.every((layout) => layoutPermissionsList.includes(layout)) &&
-        components?.every((component) =>
-          componentPermissionsList.includes(component)
-        )
-      )
-    ) {
-      throw new Error("Invalid resource in permissions");
-    }
-
-    const formattedRoleName = `interface:${roleName}`;
-
-    const layoutPermissions = layouts?.map((layout) => `layout:${layout}`);
-    const componentsPermissions = components?.map(
-      (component) => `component:${component}`
-    );
-    const allPermissions = [
-      ...(layoutPermissions || []),
-      ...(componentsPermissions || []),
-    ];
-
-    let role = await Role.findOne({ role: formattedRoleName });
-    if (!role) {
-      role = new Role({
-        role: formattedRoleName,
-        label: formattedRoleName,
-        rank: layouts?.includes("student") ? 3 : 1,
-        protection: 2,
-      });
-      await role.save();
-    }
-
-    const permissionIds = [];
-    for (const permissionName of allPermissions) {
-      const permission = await Permission.findOneAndUpdate(
-        { name: permissionName },
-        { $setOnInsert: { name: permissionName } },
-        { upsert: true, new: true }
-      );
-      permissionIds.push(permission._id);
-    }
-    await Role.findByIdAndUpdate(role._id, {
-      $set: { permissions: permissionIds },
-    });
-  } catch (error) {
-    logger.error(`Error creating interface role ${roleName}:`, error);
-    throw new Error(`Failed to create interface role with permissions`);
-  }
 }

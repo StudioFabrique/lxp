@@ -17,13 +17,11 @@ describe("CASL ability construction", () => {
       "write:module",
       "update:module",
       "delete:module",
-      "layout:admin",
     ]);
 
     for (const action of ["read", "write", "update", "delete"] as const) {
       expect(ability.can(action, "module")).toBe(true);
     }
-    expect(ability.can("layout", "admin")).toBe(true);
     expect(ability.can("read", "role")).toBe(false);
   });
 
@@ -31,11 +29,15 @@ describe("CASL ability construction", () => {
     expect(permissionNameToRule("module")).toBeNull();
     expect(permissionNameToRule("create:module")).toBeNull();
     expect(permissionNameToRule("read:not-declared")).toBeNull();
+    expect(permissionNameToRule("layout:admin")).toBeNull();
+    expect(permissionNameToRule("component:calendar")).toBeNull();
 
     const ability = buildAbility([
       "module",
       "create:module",
       "read:not-declared",
+      "layout:admin",
+      "component:calendar",
     ]);
     expect(ability.rules).toHaveLength(0);
   });
