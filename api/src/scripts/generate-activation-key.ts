@@ -134,7 +134,7 @@ async function main() {
   console.log("");
 
   const token = jwt.sign({ purpose: "first-admin" }, registerSecret, {
-    expiresIn: "30m",
+    expiresIn: env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES * 60,
   });
 
   console.log("[3/3] Génération de la clé d'activation...");
@@ -157,7 +157,9 @@ async function main() {
   console.log("\n══════════════════════════════════════════════════");
   console.log("  Clé d'activation du premier administrateur");
   console.log(`\n  ${token}`);
-  console.log("\n  Ce token est valide pendant 30 minutes.");
+  console.log(
+    `\n  Ce token est valide pendant ${env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES} minute(s).`,
+  );
   console.log("══════════════════════════════════════════════════\n");
 
   await mongoose.disconnect();

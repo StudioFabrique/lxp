@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../../utils/db.ts";
 import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
 import Role from "../../utils/interfaces/db/role.ts";
+import { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { env } from "../../config/env.ts";
 
@@ -14,7 +15,7 @@ type FirstAdminInput = {
   password: string;
 };
 
-function verifyFirstAdminToken(token: string) {
+function verifyRootActivationToken(token: string) {
   let data: any;
   try {
     data = jwt.verify(token, env.REGISTER_SECRET);
@@ -50,7 +51,7 @@ export async function getSetupStatus() {
 }
 
 export async function validateFirstAdminToken(token: string) {
-  verifyFirstAdminToken(token);
+  verifyRootActivationToken(token);
   const { adminCount } = await findAdminRoleAndCount();
   if (adminCount > 0) {
     throw {
@@ -61,7 +62,7 @@ export async function validateFirstAdminToken(token: string) {
 }
 
 export async function createFirstAdmin(input: FirstAdminInput) {
-  verifyFirstAdminToken(input.token);
+  verifyRootActivationToken(input.token);
 
   if (await BlackListedToken.findOne({ token: input.token })) {
     throw { statusCode: 400, message: "Ce token a déjà été utilisé." };
@@ -102,4 +103,35 @@ export async function createFirstAdmin(input: FirstAdminInput) {
   await prisma.admin.create({ data: { idMdb: createdUser._id.toString() } });
   await BlackListedToken.create({ token: input.token });
   return createdUser._id.toString();
+}
+
+export async function promoteAdminToRoot(token: string, userId: string) {
+  verifyRootActivationToken(token);
+
+  if (await BlackListedToken.findOne({ token })) {
+    throw { statusCode: 400, message: "Ce token a déjà été utilisé." };
+  }
+
+  const [rootRole, user] = await Promise.all([
+    Role.findOne({ role: "root", rank: 0 }),
+    User.findById(userId).populate("roles"),
+  ]);
+
+  if (!rootRole) {
+    throw { statusCode: 500, message: "Le rôle root n'existe pas." };
+  }
+  if (!user || !user.isActive) {
+    throw { statusCode: 404, message: "Utilisateur introuvable." };
+  }
+
+  const roles = user.roles as unknown as IRole[];
+  if (!roles.some(({ role, rank }) => role === "admin" && rank === 1)) {
+    throw {
+      statusCode: 403,
+      message: "Seul un utilisateur administrateur peut devenir root.",
+    };
+  }
+
+  await User.updateOne({ _id: user._id }, { $set: { roles: [rootRole._id] } });
+  await BlackListedToken.create({ token });
 }

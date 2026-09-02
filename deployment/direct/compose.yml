@@ -32,6 +32,7 @@ services:
 
       SECRET: ${SECRET:?Set SECRET}
       REGISTER_SECRET: ${REGISTER_SECRET:?Set REGISTER_SECRET}
+      ROOT_ACTIVATION_TOKEN_TTL_MINUTES: ${ROOT_ACTIVATION_TOKEN_TTL_MINUTES:-30}
 
       # Mode démonstration. Sur `true`, l'API refuse toute écriture et expose
       # l'ouverture d'une session publique. Réservé à l'instance dédiée.

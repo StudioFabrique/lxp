@@ -1,14 +1,20 @@
-import { FC, Ref } from "react";
+import { FC, Ref, useContext } from "react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ManagePassword from "./manage-password";
 import { passwordSchema } from "../../schemas/password-schema";
 import { profileApi } from "../../api/profile.api";
+import PromoteToRoot from "./promote-to-root";
+import { AuthContext } from "../../../../store/AuthProvider";
 
 const Account: FC<{
   formRef: Ref<HTMLFormElement>;
 }> = ({ formRef }) => {
+  const { user } = useContext(AuthContext);
+  const canBecomeRoot =
+    user?.roles.some(({ role, rank }) => role === "admin" && rank === 1) ??
+    false;
   const {
     register,
     handleSubmit,
@@ -33,8 +39,7 @@ const Account: FC<{
         toast.success("Informations du compte sauvegardé avec succès !"),
       )
       .catch((err) => {
-        const errorMessage =
-          err?.response?.data?.message ?? "Erreur inconnue";
+        const errorMessage = err?.response?.data?.message ?? "Erreur inconnue";
         toast.error(errorMessage);
       });
   };
@@ -48,10 +53,9 @@ const Account: FC<{
           if (firstError?.message) toast.error(firstError.message);
         })}
       >
-        <div className="grid grid-cols-2 gap-5">
-          <ManagePassword formProps={{ register, errors }} />
-        </div>
+        <ManagePassword formProps={{ register, errors }} />
       </form>
+      {canBecomeRoot ? <PromoteToRoot /> : null}
     </>
   );
 };

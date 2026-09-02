@@ -2,6 +2,7 @@ import apiClient from "../../../lib/axios";
 
 const getSetupStatus = async (): Promise<{
   hasAdmins: boolean;
+  activationTokenTtlMinutes: number;
   /** Identifiant du conteneur applicatif, servi tant qu'aucun admin n'existe. */
   containerId?: string;
 }> => {
