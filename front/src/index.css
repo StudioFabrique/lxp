@@ -25,23 +25,24 @@
 
 /* Preserve a clear keyboard focus indicator on every interactive control. */
 :where(
-  input:not([type="hidden"]),
-  textarea,
-  select,
-  button,
-  a[href],
-  [role="button"],
-  [tabindex]:not([tabindex="-1"])
+    input:not([type="hidden"]),
+    textarea,
+    select,
+    button,
+    a[href],
+    [role="button"],
+    [tabindex]:not([tabindex="-1"])
 ):focus-visible {
-  outline: 1px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
-  outline-offset: 1px;
+    outline: 1px solid
+        color-mix(in oklab, var(--color-primary) 55%, transparent);
+    outline-offset: 1px;
 }
 
 :where(input:not([type="hidden"]), textarea, select):focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--color-primary);
-  border-radius: var(--radius-field);
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: var(--color-primary);
+    border-radius: var(--radius-field);
 }
 
 /* =================================== */
@@ -94,7 +95,7 @@
     --color-primary: #0369a1; /* Bleu océan profond */
     --color-primary-content: #ffffff;
     --color-secondary: #0891b2; /* Cyan */
-    --color-secondary-content: #03131a;
+    --color-secondary-content: #dfeef5;
     --color-accent: #059669; /* Émeraude */
     --color-accent-content: #031713;
     --color-neutral: #164e63;

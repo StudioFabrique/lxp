@@ -42,6 +42,10 @@ import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-ge
 import httpPatchParcours from "../../../controllers/parcours/http-patch-parcours.ts";
 import checkContentAccess from "../../../middleware/check-content-access.ts";
 import checkFormationAccess from "../../../middleware/check-formation-access.ts";
+import httpExportParcours from "../../../controllers/parcours/http-export-parcours.ts";
+import httpImportParcours from "../../../controllers/parcours/http-import-parcours.ts";
+import uploadParcoursArchive from "../../../middleware/upload-parcours-archive.ts";
+import checkRoleRank from "../../../middleware/check-role-rank.ts";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -49,12 +53,29 @@ const parcoursRouter = express.Router();
 // Route GET pour récupérer la liste complète des parcours
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
 
+parcoursRouter.get(
+  "/export/:parcoursId",
+  checkPermissions("parcours", "read"),
+  checkRoleRank([0, 1]),
+  checkContentAccess("parcours", "parcoursId"),
+  parcoursIdValidator,
+  httpExportParcours,
+);
+
+parcoursRouter.post(
+  "/import",
+  checkPermissions("parcours", "write"),
+  checkRoleRank([0, 1]),
+  uploadParcoursArchive,
+  httpImportParcours,
+);
+
 // Route GET pour récupérer une liste simplifiée des parcours
 parcoursRouter.get(
   "/select/:formationId?",
   checkPermissions("parcours"),
   getParcoursSelectValidator,
-  httpGetSelectParcours
+  httpGetSelectParcours,
 );
 
 // Route POST pour créer un nouveau parcours
@@ -63,7 +84,7 @@ parcoursRouter.post(
   checkPermissions("parcours"),
   postParcoursValidator,
   checkFormationAccess("formation"),
-  httpCreateParcours
+  httpCreateParcours,
 );
 
 // Endpoint unifié, introduit progressivement en remplacement des routes PUT granulaires.
@@ -81,7 +102,7 @@ parcoursRouter.delete(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   parcoursByIdValidator,
-  httpDeleteParcoursById
+  httpDeleteParcoursById,
 );
 
 // Route GET pour récupérer les parcours associés à une formation
@@ -89,7 +110,7 @@ parcoursRouter.get(
   "/parcours-by-formation/:formationId",
   checkPermissions("parcours"),
   getParcoursByFormationValidator,
-  httpGetParcoursByFormation
+  httpGetParcoursByFormation,
 );
 
 // Route GET pour récupérer les détails d'un parcours spécifique
@@ -98,14 +119,14 @@ parcoursRouter.get(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   parcoursByIdValidator,
-  httpGetParcoursById
+  httpGetParcoursById,
 );
 
 // Route GET pour récupérer les parcours d'un étudiant
 parcoursRouter.get(
   "/parcours-as-student",
   checkPermissions("cursus"),
-  httpGetParcoursAsStudent
+  httpGetParcoursAsStudent,
 );
 
 // Route PUT pour mettre à jour les informations générales d'un parcours
@@ -114,7 +135,7 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   updateInfosValidator,
-  httpUpdateParcoursInfos
+  httpUpdateParcoursInfos,
 );
 
 // Route PUT pour mettre à jour les dates d'un parcours
@@ -123,7 +144,7 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   updateDatesValidator,
-  httpUpdateParcoursDates
+  httpUpdateParcoursDates,
 );
 
 // Route PUT pour mettre à jour les tags d'un parcours
@@ -132,7 +153,7 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   putParcoursTagsValidator,
-  httpPutParcoursTags
+  httpPutParcoursTags,
 );
 
 // Route PUT pour mettre à jour les contacts d'un parcours
@@ -141,7 +162,7 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   putParcoursContactsValidator,
-  httpPutParcoursContacts
+  httpPutParcoursContacts,
 );
 
 // Route PUT pour mettre à jour la classe virtuelle d'un parcours
@@ -150,7 +171,7 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   virtualClassValidator,
-  httpPutVirtualClass
+  httpPutVirtualClass,
 );
 
 // Route PUT pour mettre à jour les objectifs d'un parcours
@@ -161,7 +182,7 @@ parcoursRouter.put(
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
-  httpPutParcoursObjectives
+  httpPutParcoursObjectives,
 );
 
 // Route PUT pour réorganiser les objectifs d'un parcours
@@ -169,7 +190,7 @@ parcoursRouter.put(
   "/reorder-objectives",
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
-  httpPutReorderObjectives
+  httpPutReorderObjectives,
 );
 
 // Route PUT pour mettre à jour l'image d'un parcours
@@ -179,7 +200,7 @@ parcoursRouter.put(
   checkContentAccess("parcours", "parcoursId"),
   createFileUploadMiddleware(headerImageMaxSize),
   parcoursIdValidator,
-  httpUpdateImage
+  httpUpdateImage,
 );
 
 // Route PUT pour mettre à jour les groupes d'un parcours
@@ -187,7 +208,7 @@ parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
-  httpPutParcoursGroups
+  httpPutParcoursGroups,
 );
 
 // Route PUT pour publier un parcours
@@ -195,14 +216,14 @@ parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
-  httpPublishParcours
+  httpPublishParcours,
 );
 
 // Route GET pour récupérer les formations avec tous leurs parcours
 parcoursRouter.get(
   "/root-parcours",
   checkPermissions("parcours"),
-  httpGetRootAdminParcours
+  httpGetRootAdminParcours,
 );
 
 // Route POST pour dupliquer un parcours existant
@@ -211,7 +232,7 @@ parcoursRouter.post(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
-  httpPostDuplicateParcours
+  httpPostDuplicateParcours,
 );
 
 // Route GET pour récupérer les contacts et compétences d'un parcours
@@ -220,7 +241,7 @@ parcoursRouter.get(
   checkPermissions("parcours"),
   checkContentAccess("parcours", "parcoursId"),
   parcoursIdValidator,
-  httpGetParcoursSkillsContacts
+  httpGetParcoursSkillsContacts,
 );
 
 export default parcoursRouter;

@@ -39,6 +39,10 @@ type LastParcoursItemProps = {
   onDeleteParcours?: (
     parcours: FormationParcoursSummary["parcours"][number],
   ) => void;
+  onExportParcours?: (
+    parcours: FormationParcoursSummary["parcours"][number],
+  ) => void;
+  exportingParcoursId?: number | null;
 };
 
 const ParcoursRow = ({
@@ -46,11 +50,15 @@ const ParcoursRow = ({
   baseRoute,
   showManagementActions = false,
   onDelete,
+  onExport,
+  isExporting,
 }: {
   item: FormationParcoursSummary["parcours"][number];
   baseRoute: "admin" | "student";
   showManagementActions?: boolean;
   onDelete?: (item: FormationParcoursSummary["parcours"][number]) => void;
+  onExport?: (item: FormationParcoursSummary["parcours"][number]) => void;
+  isExporting?: boolean;
 }) => (
   <li className="list-row" key={item.id}>
     <div className="self-center">
@@ -69,7 +77,12 @@ const ParcoursRow = ({
     </div>
 
     {showManagementActions && onDelete ? (
-      <ParcoursActionsMenu parcours={item} onDelete={onDelete} />
+      <ParcoursActionsMenu
+        parcours={item}
+        onDelete={onDelete}
+        onExport={onExport}
+        isExporting={isExporting}
+      />
     ) : (
       <Link
         className="btn btn-square btn-sm btn-ghost self-center"
@@ -90,6 +103,8 @@ const LastParcoursItem = ({
   onCreateFormation,
   onEditFormation,
   onDeleteParcours,
+  onExportParcours,
+  exportingParcoursId = null,
 }: LastParcoursItemProps) => {
   const [showRemainingParcours, setShowRemainingParcours] = useState(false);
   const remainingParcours = formation?.parcours.slice(maxParcoursShown) ?? [];
@@ -157,6 +172,8 @@ const LastParcoursItem = ({
                     isManagementView && baseRoute === "admin"
                   }
                   onDelete={requestParcoursDeletion}
+                  onExport={onExportParcours}
+                  isExporting={exportingParcoursId === item.id}
                 />
               ))}
               {isManagementView && remainingParcours.length > 0 ? (
@@ -226,6 +243,8 @@ const LastParcoursItem = ({
                 baseRoute={baseRoute}
                 showManagementActions={baseRoute === "admin"}
                 onDelete={requestParcoursDeletion}
+                onExport={onExportParcours}
+                isExporting={exportingParcoursId === item.id}
               />
             ))}
           </ul>

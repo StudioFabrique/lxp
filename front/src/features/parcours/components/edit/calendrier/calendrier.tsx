@@ -27,19 +27,15 @@ const Calendrier = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [activeModal, setActiveModal] = useState<"edit" | "details" | null>(
-    null
+    null,
   );
   const [detailsCardPosition, setDetailsCardPosition] =
     useState<TimelineDetailsPosition>();
   const requestedModuleId = Number(searchParams.get("editModuleDates"));
 
   const datesParcours = {
-    startDate: parcours?.startDate
-      ? new Date(parcours.startDate)
-      : new Date(),
-    endDate: parcours?.endDate
-      ? new Date(parcours.endDate)
-      : new Date(),
+    startDate: parcours?.startDate ? new Date(parcours.startDate) : new Date(),
+    endDate: parcours?.endDate ? new Date(parcours.endDate) : new Date(),
   };
 
   const modulesTimelineEvents: TimelineEvent[] = (modules || [])
@@ -60,7 +56,7 @@ const Calendrier = () => {
 
   const handleSelectModule = (
     moduleId: number | string,
-    mode: "edit" | "details"
+    mode: "edit" | "details",
   ) => {
     const selectedModule = modules.find((m) => m.id === moduleId);
     if (selectedModule) {
@@ -78,7 +74,7 @@ const Calendrier = () => {
   // --- HANDLER: SHOW DETAILS ---
   const handleShowModuleDetails = (
     moduleId: number | string,
-    position: DOMRect
+    position: DOMRect,
   ) => {
     const containerPosition = containerRef.current?.getBoundingClientRect();
 
@@ -125,7 +121,7 @@ const Calendrier = () => {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 border rounded-xl shadow-sm overflow-hidden">
+      <div className="flex-1 min-h-0 rounded-xl overflow-hidden">
         <Calendar
           currentDate={currentDate}
           events={[]}
