@@ -1,8 +1,11 @@
+import { useContext } from "react";
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";
 import { SourceModule } from "../../../interfaces/new-module";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { getModulesLabel } from "../../../../../utils/helpers/user-role";
 
 type ModuleDrawerProps = {
   sourceModules: SourceModule[] | null;
@@ -19,11 +22,12 @@ export default function ModuleDrawer({
   currentParcoursId,
   onCopyModule,
 }: ModuleDrawerProps) {
+  const { user } = useContext(AuthContext);
   const hasModules = sourceModules && sourceModules.length > 0;
 
   return (
     <RightSideDrawer
-      title="Modules associés à la formation"
+      title={getModulesLabel(user, "Modules associés à la formation")}
       id="duplicate_module_drawer"
       visible={false}
     >

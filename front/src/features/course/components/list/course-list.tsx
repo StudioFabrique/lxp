@@ -1,164 +1,151 @@
-// Imports des dépendances React et React Router
-import { useNavigate } from "react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
+import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
+import { Link } from "react-router";
 
-// Imports des hooks et utilitaires personnalisés
-import useEagerLoadingList from "../../../../../src/hooks/useEagerLoadingList";
-import { createSearchFilter } from "../../../../utils/helpers/search-filter";
-import { courseSearchOptions } from "../../../../config/search-options";
-
-// Imports des composants UI
-import ToggleList from "../../../../components/UI/toggle-list";
-import CourseTable from "./course-table";
-import Pagination from "../../../../components/UI/pagination/pagination";
-import CustomCourse from "./interfaces/custom-course";
-import CourseCardsList from "./course-cards-list";
-import useDeleteCourse from "../../hooks/useDeleteCourse";
+import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card";
 import Modal from "../../../../components/UI/modal/modal";
+import Pagination from "../../../../components/UI/pagination/pagination";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import ListHeader from "../../../../components/UI/list-header";
+import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import { courseSearchOptions } from "../../../../config/search-options";
+import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
+import { AuthContext } from "../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../utils/helpers/user-role";
+import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
+import type CustomCourse from "./interfaces/custom-course";
 
-// Interface définissant les props du composant
-interface CourseListProps {
+type CourseListProps = {
   coursesList: CustomCourse[];
   onRefreshCourses: () => void;
-}
+};
 
-export default function CourseList(props: CourseListProps) {
-  // Hook de navigation
-  const nav = useNavigate();
+export default function CourseList({
+  coursesList,
+  onRefreshCourses,
+}: CourseListProps) {
+  const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
+  const [filter, setFilter] = useState<{
+    field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
+    value: string;
+  } | null>(null);
+  const filteredCourses = useMemo(() => {
+    if (!filter) return coursesList;
 
-  // État local pour gérer l'affichage en liste ou en cartes
-  const [showList, setShowList] = useState(true);
-
-  // Hook personnalisé pour gérer le chargement et le tri de la liste
-  const {
-    list,
-    sortData,
-    page,
-    totalPages,
-    fieldSort,
-    direction,
-    getFilteredList,
-    resetFilters,
-    setPage,
-  } = useEagerLoadingList(props.coursesList, "title", 15);
-
-  // Hook personnalisé pour gérer la suppression d'un cours
-  const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
-    useDeleteCourse<CustomCourse>(props.onRefreshCourses);
-
-  /**
-   * Gère la navigation vers la page d'édition d'un cours
-   * @param id Identifiant du cours à éditer
-   */
-  const handleEditCourse = useCallback(
-    (id: number) => {
-      const course = props.coursesList.find((item) => item.id === id);
-      if (!course) return;
-      nav(
-        `/admin/parcours/module/${course.moduleId}?editCourseId=${course.id}`,
-      );
-    },
-    [nav, props.coursesList],
+    return coursesList.filter((course) =>
+      course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
+    );
+  }, [coursesList, filter]);
+  const { list, page, totalPages, setPage } = useEagerLoadingList(
+    filteredCourses,
+    "title",
+    12,
   );
-
-  /**
-   * Gère la recherche et le filtrage des cours
-   * @param entityToSearch Propriété sur laquelle effectuer la recherche
-   * @param searchValue Valeur recherchée
-   */
-  const courseFieldMap: Record<string, { field: string; property: string; value: string }> = {
-    title: { field: "title", property: "", value: "" },
-    module: { field: "module", property: "", value: "" },
-    parcours: { field: "parcours", property: "", value: "" },
-    auteur: { field: "author", property: "", value: "" },
+  const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
+    useDeleteCourse<CustomCourse>(onRefreshCourses);
+  const handleSearch = (field: string, value: string) => {
+    if (!["title", "module", "parcours", "author"].includes(field)) return;
+    setPage(1);
+    setFilter({
+      field: field as "title" | "module" | "parcours" | "author",
+      value: value.toLocaleLowerCase("fr"),
+    });
   };
-
-  const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    const filters = createSearchFilter(courseFieldMap, entityToSearch, searchValue);
-    getFilteredList(filters);
+  const resetSearch = () => {
+    setPage(1);
+    setFilter(null);
   };
-
-  /**
-   * Réinitialise les filtres de recherche
-   */
-  const handleResetSearch = () => {
-    resetFilters();
-  };
-
-  // Affiche la modale de confirmation lors de la suppression d'un cours
-  useEffect(() => {
-    if (showModal) {
-      (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
-    }
-  }, [showModal]);
 
   return (
-    <ListHeader>
-      {/* En-tête avec titre et bouton d'ajout */}
+    <main className="flex w-full flex-col gap-8">
       <CourseHeader />
 
-      {/* Barre de recherche et bouton de réinitialisation */}
-      {!showList ? (
-        <section className="w-5/6 flex justify-end">
-          <SearchAndRefresh
-            searchOptions={courseSearchOptions}
-            onSearch={handleSearchResult}
-            onResetInput={handleResetSearch}
-            placeholder="Filtrer"
-          />
+      <SearchAndRefresh
+        searchOptions={courseSearchOptions}
+        onSearch={handleSearch}
+        onResetInput={resetSearch}
+      />
+
+      {list && list.length > 0 ? (
+        <section
+          className={`grid items-start gap-5 ${
+            isTeacher ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
+          }`}
+        >
+          {(list as CustomCourse[]).map((course) => (
+            <HierarchicalListCard
+              key={course.id}
+              label="Cours"
+              title={course.title}
+              description={
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  <span>{course.module}</span>
+                </div>
+              }
+              action={
+                <div className="flex items-center gap-1">
+                  <PermissionGuard action="read" object="course">
+                    <Link
+                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      data-tip="Prévisualiser le cours"
+                      to={`/admin/parcours/module/${course.moduleId}`}
+                      state={{ lessonId: course.lessons[0]?.id }}
+                      aria-label={`Prévisualiser le cours ${course.title}`}
+                    >
+                      <SquareArrowRightEnter className="size-[1.2em]" />
+                    </Link>
+                  </PermissionGuard>
+                  <PermissionGuard action="update" object="course">
+                    <Link
+                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      data-tip="Modifier le cours"
+                      to={`/admin/parcours/module/${course.moduleId}?editCourseId=${course.id}`}
+                      aria-label={`Modifier le cours ${course.title}`}
+                    >
+                      <Pencil className="size-[1.2em]" />
+                    </Link>
+                  </PermissionGuard>
+                  <PermissionGuard action="delete" object="course">
+                    <button
+                      type="button"
+                      className="btn btn-square btn-sm btn-ghost text-error tooltip tooltip-left"
+                      data-tip="Supprimer le cours"
+                      aria-label={`Supprimer le cours ${course.title}`}
+                      onClick={() => handleShowModal(course)}
+                    >
+                      <Trash2 className="size-[1.2em]" />
+                    </button>
+                  </PermissionGuard>
+                </div>
+              }
+              items={course.lessons.map((lesson) => ({
+                id: lesson.id,
+                title: lesson.title,
+                description: `Leçon ${lesson.order + 1}`,
+                icon: <BookOpen />,
+                to: `/admin/parcours/module/${course.moduleId}`,
+                state: { lessonId: lesson.id },
+              }))}
+              emptyMessage="Aucune leçon associée"
+              moreItemsLabel={(count) => `Afficher plus de leçons (${count})`}
+              overflowTitle={`Autres leçons de ${course.title}`}
+              fullWidth={isTeacher}
+            />
+          ))}
         </section>
+      ) : (
+        <EmptyStatePlaceholder title="Aucun cours trouvé" />
+      )}
+
+      {totalPages > 1 ? (
+        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
       ) : null}
 
-      {/* Section principale avec la liste des cours */}
-      <section className="w-full flex flex-col gap-y-4">
-        <article className="w-full flex justify-end items-center gap-x-4">
-          <ToggleList showList={showList} onToggle={setShowList} />
-        </article>
-        {list ? (
-          <>
-            {showList ? (
-              <Wrapper>
-                <CourseTable
-                  coursesList={list}
-                  onSorting={sortData}
-                  direction={direction}
-                  fieldSort={fieldSort}
-                  onEditCourse={handleEditCourse}
-                  onDeleteCourse={handleShowModal}
-                >
-                  <SearchAndRefresh
-                    searchOptions={courseSearchOptions}
-                    onSearch={handleSearchResult}
-                    onResetInput={handleResetSearch}
-                    placeholder="Filtrer"
-                  />
-                </CourseTable>
-              </Wrapper>
-            ) : (
-              <CourseCardsList
-                courseList={list}
-                onDeleteCourse={handleShowModal}
-              />
-            )}
-          </>
-        ) : null}
-      </section>
-
-      {/* Pagination */}
-      <section className="w-full">
-        {totalPages > 1 ? (
-          <Pagination page={page} totalPages={totalPages} setPage={setPage} />
-        ) : null}
-      </section>
-
-      {/* Modal de confirmation de suppression */}
       {showModal ? (
         <Modal
-          title={`Supprimer le cours : ${showModal.title}`}
+          title={`Supprimer le cours « ${showModal.title} »`}
           onLeftClick={handleCloseModal}
           onRightClick={handleDeleteCourse}
           leftLabel="Annuler"
@@ -170,6 +157,6 @@ export default function CourseList(props: CourseListProps) {
           </p>
         </Modal>
       ) : null}
-    </ListHeader>
+    </main>
   );
 }

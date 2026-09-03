@@ -63,13 +63,6 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       icon: BookMarked,
     },
     {
-      key: "lesson",
-      subject: "lesson",
-      path: "lesson",
-      label: "Leçons",
-      icon: FileEdit,
-    },
-    {
       key: "group",
       subject: "group",
       path: "group",

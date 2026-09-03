@@ -46,9 +46,7 @@ const AdminDashboard = () => {
         <div className="flex-1 flex flex-col gap-6">
           <article className="w-full flex flex-col gap-10">
             <LastParcours parcours={parcours} isLoading={isParcoursLoading} />
-            {modules.length > 0 && (
-              <LastModules modules={modules} isLoading={isModulesLoading} />
-            )}
+            <LastModules modules={modules} isLoading={isModulesLoading} />
           </article>
 
           <article className="w-full flex flex-col xl:flex-row gap-6">

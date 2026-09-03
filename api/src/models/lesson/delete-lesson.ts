@@ -8,7 +8,13 @@ export default async function deleteLesson(userId: string, lessonId: number) {
     include: {
       course: {
         select: {
-          contacts: { select: { contact: { select: { idMdb: true } } } },
+          module: {
+            select: {
+              contacts: {
+                select: { contact: { select: { idMdb: true } } },
+              },
+            },
+          },
         },
       },
     },
@@ -23,7 +29,7 @@ export default async function deleteLesson(userId: string, lessonId: number) {
   // Vérification des droits
   await userBelongsToContacts(
     userId,
-    existingLesson.course.contacts.map((contact) => contact.contact),
+    existingLesson.course.module.contacts.map(({ contact }) => contact),
     "Vous n'êtes pas autorisé à supprimer cette leçon.",
   );
 

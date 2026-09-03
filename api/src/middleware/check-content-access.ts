@@ -6,6 +6,7 @@ import {
   type AccessCheckedContent,
   type AccessScope,
   findContentAccessCoordinates,
+  isContentAllowedForScope,
   resolveAccessScope,
 } from "../utils/services/permissions/accessible-parcours.ts";
 
@@ -45,20 +46,7 @@ export default function checkContentAccess(
         return res.status(404).json({ message: noData });
       }
 
-      const parcoursAllowed = scope.parcoursIds.includes(coordinates.parcoursId);
-      const directParcoursAssignmentRequired =
-        scope.kind === "teacher" &&
-        type === "parcours" &&
-        req.method !== "GET";
-      const directlyAssignedToParcours =
-        !directParcoursAssignmentRequired ||
-        scope.directParcoursIds?.includes(coordinates.parcoursId);
-      const moduleAllowed =
-        scope.moduleIds === null ||
-        coordinates.moduleId === null ||
-        scope.moduleIds.includes(coordinates.moduleId);
-
-      if (!parcoursAllowed || !moduleAllowed || !directlyAssignedToParcours) {
+      if (!isContentAllowedForScope(scope, type, req.method, coordinates)) {
         return res.status(404).json({ message: noData });
       }
 

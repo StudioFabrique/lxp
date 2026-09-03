@@ -1,115 +1,66 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from "react";
-import Module from "../../../../src/utils/interfaces/module";
-import ModuleHomeList from "../components/list/module-home";
-import ModalSuppression from "../components/list/modal-suppression";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+
 import Loader from "../../../components/loaders/Loader";
-import { moduleApi } from "../api/module.api";
+import Modal from "../../../components/UI/modal/modal";
+import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import ModuleHomeList from "../components/list/module-home";
+import { moduleApi, type ModuleListItem } from "../api/module.api";
 
 const ModuleHome = () => {
-  const [modules, setModules] = useState<Module[] | null>(null);
-  const [moduleToDelete, setModuleToDelete] = useState<any>(null);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [moduleToDelete, setModuleToDelete] =
+    useState<ModuleListItem | null>(null);
+  const queryClient = useQueryClient();
+  const { data: modules = [], isLoading } = useQuery(moduleApi.queries.list());
 
-  // retourne la liste de tous les modules
-  const getModules = useCallback(() => {
-    setIsLoading(true);
-    moduleApi.queries
-      .getAll()
-      .then((data) => {
-        const updatedModules = data.response.map((item: any) => ({
-          ...item,
-          formation: item.formation,
-        }));
-        setModules(updatedModules);
-      })
-      .catch((err) => {
-        setError(err?.response?.data?.message ?? "Erreur inconnue");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  const handleDeleteModule = (module: any) => {
-    setModuleToDelete(module);
-  };
-
-  /**
-   * ferme la modal de confirmation de suppression du module
-   */
-  const handleCloseModal = () => {
-    setModuleToDelete(null);
-  };
-
-  const handleConfirmDelete = useCallback(() => {
-    if (!moduleToDelete) return;
-    moduleApi.mutations
-      .remove(moduleToDelete.id)
-      .then((data) => {
-        toast.success(data.message);
-        handleCloseModal();
-        modules?.filter((item) => item.id !== moduleToDelete.id);
-        setModuleToDelete(null);
-        getModules();
-      })
-      .catch((err) => {
-        setError(err?.response?.data?.message ?? "Erreur inconnue");
-      });
-  }, [getModules, moduleToDelete, modules]);
-
-  useEffect(() => {
-    getModules();
-  }, [getModules]);
-
-  // affiche la modal de confirmation de suppression du module
-  useEffect(() => {
-    if (moduleToDelete) {
-      (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
-    }
-  }, [moduleToDelete]);
-
-  const message =
-    "Confirmez la suppression définitive du module et de son contenu.";
-  const rightLabel = "Confirmer";
-
-  // gère les erreurs HTTP
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
+  const deleteModuleMutation = useMutation({
+    mutationFn: moduleApi.mutations.remove,
+    onSuccess: (data) => {
+      toast.success(data.message);
       setModuleToDelete(null);
-    }
-  }, [error]);
+      void queryClient.invalidateQueries({ queryKey: ["modules"] });
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(error, "Le module n’a pas pu être supprimé."),
+      );
+    },
+  });
+
+  const handleConfirmDelete = () => {
+    if (!moduleToDelete) return;
+    deleteModuleMutation.mutate(moduleToDelete.id);
+  };
 
   return (
-    <main className="flex flex-col items-center gap-y-8 w-full">
-      <section className="w-full flex justify-center">
-        {isLoading ? (
-          <div className="flex items-center">
-            <Loader />
-          </div>
-        ) : (
-          <div className="w-full">
-            {modules ? (
-              <ModuleHomeList
-                modulesList={modules}
-                onDeleteModule={handleDeleteModule}
-              />
-            ) : null}
-          </div>
-        )}
-      </section>
-      <section>
-        {moduleToDelete ? (
-          <ModalSuppression
-            moduleTitle={moduleToDelete.title}
-            message={message}
-            rightLabel={rightLabel}
-            onCloseModal={handleCloseModal}
-            onConfirm={handleConfirmDelete}
-          />
-        ) : null}
-      </section>
+    <main className="w-full">
+      {isLoading ? (
+        <div className="flex items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <ModuleHomeList
+          modulesList={modules}
+          onDeleteModule={setModuleToDelete}
+        />
+      )}
+
+      {moduleToDelete ? (
+        <Modal
+          title={`Supprimer le module « ${moduleToDelete.title} »`}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+          isSubmitting={deleteModuleMutation.isPending}
+          onLeftClick={() => setModuleToDelete(null)}
+          onRightClick={handleConfirmDelete}
+        >
+          <p className="py-4">
+            Le module, ses cours, ses leçons et les ressources associées seront
+            définitivement supprimés.
+          </p>
+        </Modal>
+      ) : null}
     </main>
   );
 };

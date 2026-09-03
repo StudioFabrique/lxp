@@ -13,6 +13,7 @@ import { AbilityContext } from "../../../../../rbac/AbilityProvider";
 import { Edit, Plus } from "lucide-react";
 import { cn } from "../../../../../utils/cn";
 import { sortModulesByStartDate } from "../../../helpers/sort-modules-by-start-date";
+import { getModulesLabel } from "../../../../../utils/helpers/user-role";
 
 type ContenuProps = {
   modules: Module[];
@@ -38,7 +39,7 @@ const Contenu = ({ modules }: ContenuProps) => {
   );
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    sortedModules.find((module) => module.hasAccess !== false) ?? null,
+    sortedModules[0] ?? null,
   );
 
   const canEditParcoursContent =
@@ -46,16 +47,15 @@ const Contenu = ({ modules }: ContenuProps) => {
     (ability.can("update", "parcours") ||
       userBelongsToContacts(user, parcours?.contacts));
   const canEditModule =
-    selectedModule?.hasAccess !== false &&
-    (ability.can("update", "module") ||
-      userBelongsToContacts(user, selectedModule?.contacts));
+    ability.can("update", "module") ||
+    userBelongsToContacts(user, selectedModule?.contacts);
 
   return (
     <Wrapper>
       <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
           <h2 className="text-2xl font-bold text-primary select-none">
-            Contenu du parcours
+            {getModulesLabel(user, "Contenu du parcours")}
           </h2>
           {canEditParcoursContent && (
             <div>

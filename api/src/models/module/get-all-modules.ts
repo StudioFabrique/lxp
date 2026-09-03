@@ -1,39 +1,55 @@
 import { prisma } from "../../utils/db.ts";
-import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
+import {
+  moduleWhereForScope,
+  type AccessScope,
+} from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getAllModules(scope: AccessScope = null) {
   const modules = await prisma.module.findMany({
-    where:
-      scope === null ? undefined : { parcoursId: { in: scope.parcoursIds } },
+    where: moduleWhereForScope(scope),
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
       title: true,
       thumb: true,
-      author: true,
       createdAt: true,
-      updatedAt: true,
       parcoursId: true,
       parcours: {
         select: {
           title: true,
-          formation: { select: { id: true, title: true } },
+          formation: { select: { title: true } },
         },
       },
-      courses: { select: { id: true } },
+      courses: {
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          title: true,
+          order: true,
+          isPublished: true,
+          lessons: {
+            orderBy: { order: "asc" },
+            take: 1,
+            select: { id: true },
+          },
+        },
+      },
     },
   });
 
-  return modules.map(({ parcours, courses, ...module }) => ({
-    ...module,
-    parcours: parcours.title,
-    formationId: parcours.formation.id,
-    formation: parcours.formation.title,
-    coursesCount: courses.length,
-    hasAccess:
-      scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id),
-    thumb: module.thumb
-      ? Buffer.from(module.thumb as any).toString("base64")
-      : null,
-  }));
+  return modules.map(({ parcours, courses, thumb, ...module }) => {
+    const mappedCourses = courses.map(({ lessons, ...course }) => ({
+      ...course,
+      firstLessonId: lessons[0]?.id,
+    }));
+
+    return {
+      ...module,
+      thumb: thumb ? Buffer.from(thumb as any).toString("base64") : null,
+      parcours: parcours.title,
+      formation: parcours.formation.title,
+      coursesCount: courses.length,
+      courses: mappedCourses,
+    };
+  });
 }

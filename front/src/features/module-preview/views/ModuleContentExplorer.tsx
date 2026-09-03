@@ -200,6 +200,9 @@ const ModuleContentExplorer = () => {
             dispatch({ type: "select_lesson", lesson: undefined });
             navigate(".", { replace: true });
           }}
+          showPublishAll={state.module.courses.some(
+            (course) => !course.isPublished,
+          )}
           publishAllAction={
             <RoleRankGuard ranks={[0, 1, 2]}>
               <PermissionGuard object="course" action="update">

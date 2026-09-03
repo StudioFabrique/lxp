@@ -1,6 +1,9 @@
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
-import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
+import {
+  moduleWhereForScope,
+  type AccessScope,
+} from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getModulesFormation(
   formationId: number,
@@ -9,7 +12,7 @@ export default async function getModulesFormation(
   const modules = await prisma.module.findMany({
     where: {
       parcours: { formationId },
-      ...(scope !== null && { parcoursId: { in: scope.parcoursIds } }),
+      ...(moduleWhereForScope(scope) ?? {}),
     },
     orderBy: [{ parcours: { title: "asc" } }, { createdAt: "asc" }],
     select: {
@@ -51,19 +54,6 @@ export default async function getModulesFormation(
     const thumb = module.thumb
       ? Buffer.from(module.thumb as any).toString("base64")
       : null;
-    const hasAccess =
-      scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id);
-
-    if (!hasAccess) {
-      return {
-        id: module.id,
-        title: module.title,
-        parcours: module.parcours,
-        thumb,
-        hasAccess: false,
-      };
-    }
-
     return {
       ...module,
       thumb,
@@ -75,7 +65,6 @@ export default async function getModulesFormation(
         ...course,
         aiIndexed: Boolean(course.courseSlug),
       })),
-      hasAccess: true,
     };
   });
 }

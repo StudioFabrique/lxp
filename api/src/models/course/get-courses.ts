@@ -15,19 +15,22 @@ async function getCourses(scope: AccessScope = null) {
         select: {
           id: true,
           title: true,
-          description: true,
-          thumb: true,
           parcours: {
             select: {
-              id: true,
               title: true,
             },
           },
         },
       },
-
+      lessons: {
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          title: true,
+          order: true,
+        },
+      },
       author: true,
-      createdAt: true,
       updatedAt: true,
       isPublished: true,
       visibility: true,
@@ -38,17 +41,13 @@ async function getCourses(scope: AccessScope = null) {
     id: item.id,
     title: item.title,
     moduleId: item.module.id,
-    parcoursId: item.module.parcours.id,
     module: item.module.title,
     parcours: item.module.parcours.title,
     author: item.author,
-    createdAt: item.createdAt,
     updatedAt: item.updatedAt,
     isPublished: item.isPublished,
     visibility: item.visibility,
-    thumb: item.module.thumb
-      ? Buffer.from(item.module.thumb as any).toString("base64")
-      : null,
+    lessons: item.lessons,
   }));
 
   return result;

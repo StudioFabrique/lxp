@@ -3,7 +3,6 @@ import { Navigate, RouteObject } from "react-router";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { adminGroupRoutes } from "../features/group/routes";
 import { adminCourseRoutes } from "../features/course/routes";
-import { adminLessonRoutes } from "../features/lesson/routes";
 import { adminTagsRoutes } from "../features/tags/routes";
 import { adminRoleRoutes } from "../features/role/routes";
 import { adminUserRoutes } from "../features/user/routes";
@@ -31,7 +30,6 @@ export const adminRoutes: RouteObject[] = [
       guard("group", adminGroupRoutes),
       guard("module", adminModuleRoutes),
       guard("course", adminCourseRoutes),
-      guard("lesson", adminLessonRoutes),
       guard("tag", adminTagsRoutes),
       guard("role", adminRoleRoutes),
       guard("user", adminUserRoutes),

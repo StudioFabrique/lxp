@@ -108,6 +108,26 @@ export function moduleWhereForScope(scope: AccessScope) {
     : { id: { in: scope.moduleIds } };
 }
 
+export function isContentAllowedForScope(
+  scope: Exclude<AccessScope, null>,
+  type: AccessCheckedContent,
+  method: string,
+  coordinates: { parcoursId: number; moduleId: number | null },
+) {
+  const parcoursAllowed = scope.parcoursIds.includes(coordinates.parcoursId);
+  const directParcoursAssignmentRequired =
+    scope.kind === "teacher" && type === "parcours" && method !== "GET";
+  const directlyAssignedToParcours =
+    !directParcoursAssignmentRequired ||
+    scope.directParcoursIds?.includes(coordinates.parcoursId);
+  const moduleAllowed =
+    scope.moduleIds === null ||
+    coordinates.moduleId === null ||
+    scope.moduleIds.includes(coordinates.moduleId);
+
+  return parcoursAllowed && moduleAllowed && directlyAssignedToParcours;
+}
+
 export async function getAccessibleParcoursIds(
   userIdMdb: string,
 ): Promise<number[]> {

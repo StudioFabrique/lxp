@@ -7,6 +7,18 @@ export const hasRoleRank = (
   ranks: readonly number[],
 ) => user?.roles.some((role) => ranks.includes(role.rank)) ?? false;
 
+export const isTeacherUser = (
+  user: Pick<User, "roles"> | null | undefined,
+) =>
+  user?.roles.length
+    ? Math.min(...user.roles.map(({ rank }) => rank), 4) === 2
+    : false;
+
+export const getModulesLabel = (
+  user: Pick<User, "roles"> | null | undefined,
+  defaultLabel = "Modules",
+) => (isTeacherUser(user) ? "Mes modules" : defaultLabel);
+
 export const getUserArea = (
   user: Pick<User, "roles"> | null | undefined,
 ): AppArea | null => {

@@ -1,0 +1,230 @@
+import { useState, type Key, type ReactNode } from "react";
+import { ExternalLink } from "lucide-react";
+import { Link, type LinkProps } from "react-router";
+
+import { cn } from "../../utils/cn";
+import CursorGlowCard from "./cursor-glow-card";
+import Modal from "./modal/modal";
+
+export type HierarchicalListCardItem = {
+  id: Key;
+  title: string;
+  description?: ReactNode;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  icon?: ReactNode;
+  to?: LinkProps["to"];
+  state?: LinkProps["state"];
+  action?: ReactNode | ((dismissOverflow: () => void) => ReactNode);
+  ariaLabel?: string;
+};
+
+type HierarchicalListCardProps = {
+  label?: string;
+  title?: string;
+  description?: ReactNode;
+  action?: ReactNode;
+  items?: HierarchicalListCardItem[];
+  maxItemsShown?: number;
+  showMore?: boolean;
+  emptyMessage?: string;
+  moreItemsLabel?: (remainingItemsCount: number) => string;
+  overflowTitle?: string;
+  footer?: ReactNode;
+  placeholder?: ReactNode;
+  fullWidth?: boolean;
+};
+
+const HierarchicalListRow = ({
+  item,
+  showTitleTooltip,
+  dismissOverflow,
+}: {
+  item: HierarchicalListCardItem;
+  showTitleTooltip: boolean;
+  dismissOverflow: () => void;
+}) => {
+  const itemAction =
+    typeof item.action === "function"
+      ? item.action(dismissOverflow)
+      : item.action;
+
+  return (
+    <li className="list-row">
+      {item.image ? (
+        <div className="self-center">
+          <img
+            src={item.image.src}
+            alt={item.image.alt}
+            className="size-10 rounded-lg object-cover"
+          />
+        </div>
+      ) : item.icon ? (
+        <div className="flex size-10 items-center justify-center self-center rounded-lg text-primary [&>svg]:size-5">
+          {item.icon}
+        </div>
+      ) : null}
+
+      <div className="list-col-grow min-w-0 self-center">
+        <div
+          className={cn("block max-w-full text-left", {
+            "tooltip tooltip-bottom tooltip-start": showTitleTooltip,
+          })}
+          data-tip={showTitleTooltip ? item.title : undefined}
+        >
+          <div className="truncate font-semibold">{item.title}</div>
+        </div>
+        {item.description ? (
+          <div className="truncate text-xs font-light opacity-60">
+            {item.description}
+          </div>
+        ) : null}
+      </div>
+
+      {itemAction ??
+        (item.to ? (
+          <Link
+            className="btn btn-square btn-sm btn-ghost self-center"
+            to={item.to}
+            state={item.state}
+            aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
+          >
+            <ExternalLink className="size-[1.2em]" />
+          </Link>
+        ) : null)}
+    </li>
+  );
+};
+
+const HierarchicalListCard = ({
+  label,
+  title,
+  description,
+  action,
+  items = [],
+  maxItemsShown = 4,
+  showMore = true,
+  emptyMessage = "Aucun élément associé",
+  moreItemsLabel = (remainingItemsCount) =>
+    `Afficher plus (${remainingItemsCount})`,
+  overflowTitle = title ? `Autres éléments de ${title}` : "Autres éléments",
+  footer,
+  placeholder,
+  fullWidth = false,
+}: HierarchicalListCardProps) => {
+  const [showRemainingItems, setShowRemainingItems] = useState(false);
+  const visibleItems = items.slice(0, maxItemsShown);
+  const remainingItems = items.slice(maxItemsShown);
+  const hasHeader = Boolean(title);
+
+  return (
+    <>
+      <CursorGlowCard
+        glowColor="secondary"
+        glowSize={2.4}
+        className={cn("rounded-box", { "h-full": !fullWidth })}
+      >
+        <ul
+          className={cn(
+            "list overflow-hidden rounded-box border border-base-300",
+            {
+              "h-full min-h-52": !fullWidth,
+              "border-dashed border-primary/25": !hasHeader,
+              "bg-base-200": hasHeader,
+            },
+          )}
+        >
+          {hasHeader ? (
+            <>
+              <li className="p-4 pb-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    {label ? (
+                      <p className="select-none text-xs tracking-wide opacity-60">
+                        {label}
+                      </p>
+                    ) : null}
+                    <h4 className="truncate text-xl font-bold">{title}</h4>
+                    {description ? (
+                      <div className="mt-1 text-xs opacity-60">
+                        {description}
+                      </div>
+                    ) : null}
+                  </div>
+                  {action ? <div className="shrink-0">{action}</div> : null}
+                </div>
+              </li>
+
+              {visibleItems.map((item) => (
+                <HierarchicalListRow
+                  key={item.id}
+                  item={item}
+                  showTitleTooltip={!fullWidth}
+                  dismissOverflow={() => {}}
+                />
+              ))}
+
+              {items.length === 0 ? (
+                <li className="flex flex-1 items-center justify-center px-5 py-8 text-sm opacity-60">
+                  {emptyMessage}
+                </li>
+              ) : null}
+
+              {showMore && remainingItems.length > 0 ? (
+                <li className="flex justify-center px-5 pt-3">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost text-primary"
+                    onClick={() => setShowRemainingItems(true)}
+                  >
+                    {moreItemsLabel(remainingItems.length)}
+                  </button>
+                </li>
+              ) : null}
+
+              {footer ? (
+                <li
+                  className={cn("flex flex-col items-center gap-2 py-5", {
+                    "mt-auto": items.length > 0,
+                    "flex-1 justify-center": items.length === 0,
+                  })}
+                >
+                  {footer}
+                </li>
+              ) : null}
+            </>
+          ) : (
+            <li className="flex flex-1 items-center justify-center p-6">
+              {placeholder}
+            </li>
+          )}
+        </ul>
+      </CursorGlowCard>
+
+      {showMore && showRemainingItems ? (
+        <Modal
+          title={overflowTitle}
+          leftLabel="Fermer"
+          onLeftClick={() => setShowRemainingItems(false)}
+          modalBoxStyle="max-w-2xl"
+          dialogAdditionalClass="z-20"
+        >
+          <ul className="list mt-5 overflow-hidden rounded-box border border-base-300 bg-base-200">
+            {remainingItems.map((item) => (
+              <HierarchicalListRow
+                key={item.id}
+                item={item}
+                showTitleTooltip={false}
+                dismissOverflow={() => setShowRemainingItems(false)}
+              />
+            ))}
+          </ul>
+        </Modal>
+      ) : null}
+    </>
+  );
+};
+
+export default HierarchicalListCard;

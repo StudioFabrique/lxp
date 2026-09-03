@@ -320,7 +320,7 @@ const useModuleContentExplorer = () => {
         dispatch({ type: "delete_course", id: courseId });
       }
     } catch {
-      // silently fail
+      toast.error("Impossible de supprimer le cours");
     }
   }, []);
 
@@ -452,7 +452,7 @@ const useModuleContentExplorer = () => {
         dispatch({ type: "delete_lesson", id: lessonId });
       }
     } catch {
-      // silently fail
+      toast.error("Impossible de supprimer la leçon");
     }
   }, []);
 

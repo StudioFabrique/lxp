@@ -1,6 +1,9 @@
+import { useContext } from "react";
 import { ModuleData } from "../../../interfaces/new-module";
 import ElementNotFound from "../../../../../components/UI/element-not-found";
 import ModuleCard from "./ModuleCard";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 type ModuleGridProps = {
   modules: ModuleData[];
@@ -15,8 +18,16 @@ export default function ModuleGrid({
   onUpdate,
   onDelete,
 }: ModuleGridProps) {
+  const { user } = useContext(AuthContext);
+
   if (modules.length === 0) {
-    return <ElementNotFound message="Aucun module trouvé" />;
+    return (
+      <ElementNotFound
+        message={
+          isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
+        }
+      />
+    );
   }
 
   return (

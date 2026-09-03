@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
-import { ArrowRightCircle, CalendarOffIcon, Lock } from "lucide-react";
+import { ArrowRightCircle, CalendarOffIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
@@ -27,17 +27,13 @@ const ContenuItem: FC<{
 
   const navigate = useNavigate();
   const isSelected = selectedModuleId === module.id;
-  const hasAccess = module.hasAccess !== false;
 
   return (
     <div
       data-testid="contenu-item"
-      className={cn("flex gap-x-3 items-center group", {
-        "cursor-pointer": hasAccess,
-        "cursor-not-allowed opacity-70": !hasAccess,
-      })}
-      onClick={() => hasAccess && setSelectedModule(module)}
-      onDoubleClick={() => hasAccess && navigate(`../module/${module.id}`)}
+      className="flex cursor-pointer items-center gap-x-3 group"
+      onClick={() => setSelectedModule(module)}
+      onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
       <div
         className={cn(
@@ -78,28 +74,18 @@ const ContenuItem: FC<{
           >{`Module ${iterationCount}`}</p>
           <p className="text-base font-semibold">{module.title}</p>
         </div>
-        {hasAccess ? (
-          <Link
-            className={cn(
-              "btn btn-sm btn-ghost self-end",
-              isSelected
-                ? "text-primary-content hover:text-primary"
-                : "hover:text-primary",
-            )}
-            to={`../module/${module.id}`}
-            aria-label={`Voir le module ${module.title}`}
-          >
-            <ArrowRightCircle />
-          </Link>
-        ) : (
-          <span
-            className="tooltip tooltip-left"
-            data-tip="Vous n'êtes pas affecté à ce module"
-            aria-label="Module non accessible"
-          >
-            <Lock className="h-5 w-5" />
-          </span>
-        )}
+        <Link
+          className={cn(
+            "btn btn-sm btn-ghost self-end",
+            isSelected
+              ? "text-primary-content hover:text-primary"
+              : "hover:text-primary",
+          )}
+          to={`../module/${module.id}`}
+          aria-label={`Voir le module ${module.title}`}
+        >
+          <ArrowRightCircle />
+        </Link>
       </div>
     </div>
   );

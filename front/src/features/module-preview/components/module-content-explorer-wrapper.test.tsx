@@ -11,6 +11,7 @@ const renderWrapper = (
   container: HTMLDivElement,
   selectedLesson?: Lesson,
   onPublishAll = vi.fn(),
+  showPublishAll = true,
 ) => {
   const root = createRoot(container);
   roots.push(root);
@@ -21,6 +22,7 @@ const renderWrapper = (
         selectedLesson={selectedLesson}
         onTogglePanel={vi.fn()}
         onCloseAll={vi.fn()}
+        showPublishAll={showPublishAll}
         publishAllAction={
           <button type="button" aria-label="Tout publier" onClick={onPublishAll} />
         }
@@ -55,7 +57,7 @@ describe("ModuleContentExplorerWrapper", () => {
     expect(publishButton).toBeTruthy();
     expect(collapseButton).toBeTruthy();
     expect(
-      publishButton?.compareDocumentPosition(collapseButton!) &
+      publishButton!.compareDocumentPosition(collapseButton!) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
@@ -72,6 +74,15 @@ describe("ModuleContentExplorerWrapper", () => {
     ).toBeTruthy();
     expect(
       container.querySelector('button[aria-label="Tout réduire"]'),
+    ).toBeNull();
+  });
+
+  it("masque Tout publier lorsque tous les cours sont publiés", () => {
+    const container = document.createElement("div");
+    renderWrapper(container, undefined, vi.fn(), false);
+
+    expect(
+      container.querySelector('button[aria-label="Tout publier"]'),
     ).toBeNull();
   });
 });
