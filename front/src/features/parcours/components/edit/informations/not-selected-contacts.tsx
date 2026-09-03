@@ -32,8 +32,7 @@ type Teacher = {
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   const { user } = useContext(AuthContext);
-  const canCreateTeacher =
-    user?.roles.some(({ rank }) => rank < 2) ?? false;
+  const canCreateTeacher = user?.roles.some(({ rank }) => rank < 2) ?? false;
   const {
     allChecked,
     list,
@@ -191,7 +190,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           {canCreateTeacher ? (
             <RightSideDrawer
               id="new-contact"
-              title="Ajouter un Formateur"
+              title="Ajouter une ressource pédagogique"
               visible={false}
             >
               <UserQuickCreate
@@ -216,7 +215,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
               </button>
               <RightSideDrawer
                 id="new-contact"
-                title="Ajouter un Formateur"
+                title="Ajouter une ressource pédagogique"
                 visible={false}
               >
                 <UserQuickCreate

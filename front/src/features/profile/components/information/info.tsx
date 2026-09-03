@@ -61,6 +61,19 @@ const Info: FC<{
             error={formProps.errors.email}
             disabled
           />
+          <div className="flex flex-col gap-y-2 w-full">
+            <label htmlFor="current-role" className="text-sm font-bold">
+              Rôle
+            </label>
+            <input
+              id="current-role"
+              className="w-full input input-bordered capitalize disabled:cursor-not-allowed disabled:text-base-content/60"
+              type="text"
+              value={user?.roles[0]?.label ?? ""}
+              disabled
+              readOnly
+            />
+          </div>
           <FormInput
             label="Adresse"
             name="address"

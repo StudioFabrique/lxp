@@ -1,5 +1,10 @@
 import { useContext } from "react";
-import { BookMarked, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import {
+  BookMarked,
+  Pencil,
+  SquareArrowRightEnter,
+  Trash2,
+} from "lucide-react";
 import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
@@ -58,7 +63,7 @@ const ModuleHomeList = ({
                       to={`/admin/parcours/module/${module.id}`}
                       aria-label={`Prévisualiser le module ${module.title}`}
                     >
-                      <ExternalLink className="size-[1.2em]" />
+                      <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>
                   </PermissionGuard>
                   <PermissionGuard action="update" object="module">
@@ -105,9 +110,7 @@ const ModuleHomeList = ({
         </section>
       ) : (
         <EmptyStatePlaceholder
-          title={
-            isTeacher ? "Aucun module affecté" : "Aucun module trouvé"
-          }
+          title={isTeacher ? "Aucun module affecté" : "Aucun module trouvé"}
         />
       )}
 
