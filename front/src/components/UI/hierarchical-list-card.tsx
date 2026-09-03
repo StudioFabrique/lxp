@@ -10,6 +10,7 @@ export type HierarchicalListCardItem = {
   id: Key;
   title: string;
   description?: ReactNode;
+  subDescription?: ReactNode;
   image?: {
     src: string;
     alt: string;
@@ -79,6 +80,11 @@ const HierarchicalListRow = ({
         {item.description ? (
           <div className="truncate text-xs font-light opacity-60">
             {item.description}
+          </div>
+        ) : null}
+        {item.subDescription ? (
+          <div className="truncate text-xs font-light opacity-60">
+            {item.subDescription}
           </div>
         ) : null}
       </div>

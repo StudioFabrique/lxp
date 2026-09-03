@@ -66,6 +66,11 @@ const LastParcoursItem = ({
         id: item.id,
         title: item.title,
         description: getDatesTooltip(item.startDate, item.endDate),
+        subDescription: item.isPublished ? (
+          <span className="text-success">Publié</span>
+        ) : (
+          <span className="text-warning">Non publié</span>
+        ),
         image: {
           src: normalizeImageSource(item.thumb) ?? defaultParcoursImage,
           alt: `Illustration du parcours ${item.title}`,

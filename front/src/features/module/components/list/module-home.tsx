@@ -92,9 +92,12 @@ const ModuleHomeList = ({
               items={module.courses.map((course) => ({
                 id: course.id,
                 title: course.title,
-                description: `Cours ${course.order + 1} · ${
-                  course.isPublished ? "Publié" : "Brouillon"
-                }`,
+                description: `Cours ${course.order + 1}`,
+                subDescription: course.isPublished ? (
+                  <span className="text-success">Publié</span>
+                ) : (
+                  <span className="text-warning">Non publié</span>
+                ),
                 icon: <BookMarked />,
                 to: `/admin/parcours/module/${module.id}`,
                 state: course.firstLessonId
