@@ -70,7 +70,12 @@ const ParcoursRow = ({
     </div>
 
     <div className="list-col-grow min-w-0 self-center">
-      <div className="font-semibold truncate">{item.title}</div>
+      <div
+        className="tooltip tooltip-bottom block max-w-full text-left"
+        data-tip={item.title}
+      >
+        <div className="font-semibold truncate">{item.title}</div>
+      </div>
       <div className="text-xs font-light opacity-50">
         {getDatesTooltip(item.startDate, item.endDate)}
       </div>

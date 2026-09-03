@@ -63,6 +63,13 @@ describe("LastParcoursItem", () => {
     expect(markup).toContain("min-h-52");
   });
 
+  it("affiche le titre complet du parcours au survol", () => {
+    const markup = renderCard();
+
+    expect(markup).toContain("tooltip tooltip-bottom");
+    expect(markup).toContain('data-tip="Parcours test"');
+  });
+
   it("ne montre pas le menu d’administration dans la vue étudiante", () => {
     const markup = renderCard({
       isManagementView: true,
