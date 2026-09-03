@@ -8,8 +8,7 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 import { SortAsc, SortDesc } from "lucide-react";
-import TableEmpty from "./TableEmpty";
-import FadeWrapper from "../wrappers/FadeWrapper";
+import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
 
@@ -35,7 +34,7 @@ export function DataTable<TData, TValue>({
   sorting = [],
   setSorting,
   isLoading,
-  emptyMessage = "Aucune donnée disponible",
+  emptyMessage = "Aucun élément disponible",
   onRowClick,
   isRowClickable = () => true,
   canSelectRow = () => true,
@@ -61,12 +60,8 @@ export function DataTable<TData, TValue>({
     enableRowSelection: (row) => canSelectRow(row.original),
   });
 
-  if (!isLoading && data.length === 0) {
-    return (
-      <FadeWrapper>
-        <TableEmpty message={emptyMessage} />
-      </FadeWrapper>
-    );
+  if (data.length === 0) {
+    return isLoading ? null : <EmptyStatePlaceholder title={emptyMessage} />;
   }
 
   return (

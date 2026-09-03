@@ -66,7 +66,7 @@ describe("LastParcoursItem", () => {
   it("affiche le titre complet du parcours au survol", () => {
     const markup = renderCard();
 
-    expect(markup).toContain("tooltip tooltip-bottom");
+    expect(markup).toContain("tooltip tooltip-bottom tooltip-start");
     expect(markup).toContain('data-tip="Parcours test"');
   });
 
@@ -80,5 +80,15 @@ describe("LastParcoursItem", () => {
     expect(markup).not.toContain("parcours-actions-11");
     expect(markup).toContain("/student/parcours/view/11");
     expect(markup).not.toContain("min-h-52");
+    expect(markup).not.toContain('data-tip="Parcours test"');
+  });
+
+  it("utilise aussi la pleine largeur dans l’espace formateur", () => {
+    const markup = renderCard({ baseRoute: "admin", fullWidth: true });
+
+    expect(markup).toContain("/admin/parcours/view/11");
+    expect(markup).not.toContain("min-h-52");
+    expect(markup).not.toContain("Ajouter un parcours");
+    expect(markup).not.toContain('data-tip="Parcours test"');
   });
 });

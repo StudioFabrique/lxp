@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { MoveUpRight } from "lucide-react";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
@@ -7,6 +7,9 @@ import QuickActions from "./quick-actions";
 import FormationModal from "../../formation/components/FormationModal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
+import { AuthContext } from "../../../store/AuthProvider";
+import { hasRoleRank } from "../../../utils/helpers/user-role";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -17,6 +20,11 @@ export default function LastParcours({
   parcours,
   isLoading,
 }: LastParcoursProps) {
+  const { user } = useContext(AuthContext);
+  const isTeacher = hasRoleRank(user, [2]);
+  const gridClassName = isTeacher
+    ? "grid-cols-1"
+    : "lg:grid-cols-2 xl:grid-cols-3";
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFormationModalOpen, setIsFormationModalOpen] = useState(
     searchParams.get("createFormation") === "true",
@@ -49,7 +57,7 @@ export default function LastParcours({
 
       <div className="w-full mt-4">
         {isLoading ? (
-          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+          <div className={`grid gap-5 ${gridClassName}`}>
             {[0, 1, 2].map((item) => (
               <div
                 className="h-72 skeleton rounded-box"
@@ -58,10 +66,16 @@ export default function LastParcours({
               />
             ))}
           </div>
+        ) : isTeacher && parcours.length === 0 ? (
+          <EmptyStatePlaceholder title="Aucun parcours disponible" />
         ) : (
-          <div className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+          <div className={`grid items-start gap-5 ${gridClassName}`}>
             {parcours.slice(0, 6).map((formation) => (
-              <LastParcoursItem key={formation.id} formation={formation} />
+              <LastParcoursItem
+                key={formation.id}
+                formation={formation}
+                fullWidth={isTeacher}
+              />
             ))}
             <PermissionGuard action="write" object="parcours">
               <LastParcoursItem onCreateFormation={openFormationModal} />

@@ -104,7 +104,10 @@ const GroupUserList = ({
   );
 
   return (
-    <Wrapper additionalClassname="px-10">
+    <Wrapper
+      additionalClassname={displayedUsers.length > 0 ? "px-10" : ""}
+      unstyled={displayedUsers.length === 0}
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold">Étudiants</h2>
@@ -139,23 +142,25 @@ const GroupUserList = ({
           />
         </div>
 
-        <div className="min-w-0 flex-1 xl:max-w-2xl">
-          <SearchBar
-            placeholder="Rechercher un étudiant par nom, prénom ou email"
-            onSetFilter={setFilter}
-          >
-            {selectedUserIds.length > 0 && (
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm whitespace-nowrap text-error"
-                onClick={handleDeleteSelectedUsers}
-              >
-                <Trash2 className="h-4 w-4" />
-                Retirer la sélection
-              </button>
-            )}
-          </SearchBar>
-        </div>
+        {usersToAdd.length > 0 || filter ? (
+          <div className="min-w-0 flex-1 xl:max-w-2xl">
+            <SearchBar
+              placeholder="Rechercher un étudiant par nom, prénom ou email"
+              onSetFilter={setFilter}
+            >
+              {selectedUserIds.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm whitespace-nowrap text-error"
+                  onClick={handleDeleteSelectedUsers}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Retirer la sélection
+                </button>
+              )}
+            </SearchBar>
+          </div>
+        ) : null}
       </div>
 
       <DataTable
@@ -167,25 +172,27 @@ const GroupUserList = ({
         setSorting={setSorting}
         emptyMessage={
           filter
-            ? "Aucun étudiant ne correspond à la recherche"
-            : "Aucun étudiant dans ce groupe"
+            ? "Aucun étudiant disponible pour cette recherche"
+            : "Aucun étudiant disponible"
         }
       />
 
-      <TablePagination
-        currentPage={displayedPage}
-        maxPage={maxPage}
-        itemsPerPage={itemsPerPage}
-        leftText={`Étudiants : ${filteredUsers.length}`}
-        onSetCurrentPage={setCurrentPage}
-        onSetItemsPerPage={handleSetItemsPerPage}
-        onSetPreviousPage={() =>
-          setCurrentPage((page) => Math.max(page - 1, 1))
-        }
-        onSetNextPage={() =>
-          setCurrentPage((page) => Math.min(page + 1, maxPage))
-        }
-      />
+      {displayedUsers.length > 0 ? (
+        <TablePagination
+          currentPage={displayedPage}
+          maxPage={maxPage}
+          itemsPerPage={itemsPerPage}
+          leftText={`Étudiants : ${filteredUsers.length}`}
+          onSetCurrentPage={setCurrentPage}
+          onSetItemsPerPage={handleSetItemsPerPage}
+          onSetPreviousPage={() =>
+            setCurrentPage((page) => Math.max(page - 1, 1))
+          }
+          onSetNextPage={() =>
+            setCurrentPage((page) => Math.min(page + 1, maxPage))
+          }
+        />
+      ) : null}
     </Wrapper>
   );
 };

@@ -103,10 +103,12 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
         onCloseDrawer={handleClose}
       >
         <div className="flex min-h-full flex-col gap-5">
-          <SearchBar
-            placeholder="Rechercher par nom, prénom ou email"
-            onSubmitSearchValue={onSubmitSearchValue}
-          />
+          {isLoading || data.length > 0 || searchValue ? (
+            <SearchBar
+              placeholder="Rechercher par nom, prénom ou email"
+              onSubmitSearchValue={onSubmitSearchValue}
+            />
+          ) : null}
 
           <DataTable
             columns={columns}
@@ -118,15 +120,17 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
             setSorting={handleSortingChange}
             emptyMessage={
               searchValue
-                ? "Aucun étudiant ne correspond à la recherche"
+                ? "Aucun étudiant disponible pour cette recherche"
                 : "Aucun étudiant disponible"
             }
           />
 
-          <TablePagination
-            leftText={`Étudiants disponibles : ${totalItems}`}
-            {...pagination}
-          />
+          {data.length > 0 ? (
+            <TablePagination
+              leftText={`Étudiants disponibles : ${totalItems}`}
+              {...pagination}
+            />
+          ) : null}
 
           <div className="mt-auto flex items-center justify-between border-t border-base-300 pt-4">
             <span className="text-sm text-base-content/70">

@@ -221,7 +221,10 @@ const UserHome = () => {
         <UserStats stats={stats} />
       </div>
 
-      <Wrapper additionalClassname="px-10 items-center">
+      <Wrapper
+        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0}
+      >
         <div className="w-full" data-page-tour="role-filters">
           {roles.length > 0 && currentRole && (
             <div className="flex w-full justify-start gap-2 mb-4">
@@ -242,43 +245,44 @@ const UserHome = () => {
           )}
         </div>
 
-        <div className="w-full" data-page-tour="filters">
-          <SearchBar
-            title=""
-            placeholder="Rechercher un utilisateur"
-            onSubmitSearchValue={onSubmitSearchValue}
-          >
-            <button
-              type="button"
-              onClick={() => onRefreshData()}
-              disabled={isLoading}
-              className="btn btn-sm btn-ghost disabled:bg-transparent"
-              aria-label="Rafraîchir la liste des utilisateurs"
+        {isLoading || data.length > 0 || searchValue ? (
+          <div className="w-full" data-page-tour="filters">
+            <SearchBar
+              placeholder="Rechercher un utilisateur"
+              onSubmitSearchValue={onSubmitSearchValue}
             >
-              <RefreshCw className={isLoading ? "animate-spin" : ""} />
-            </button>
-            <PermissionGuard object="user" action="delete">
-              <TableActionsButtons<User>
-                isLoading={isLoading || isDeleting}
-                isDisabled={selectedIds.length === 0}
-                onRefreshData={onRefreshData}
-                showRefresh={false}
-                actions={[
-                  {
-                    title: "Supprimer les utilisateurs sélectionnés",
-                    description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
-                    rightButtonTitle: "Supprimer",
-                    alertMessageBottom:
-                      "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
-                    onConfirm: () => onDeleteSelected(selectedIds),
-                  },
-                ]}
-                retreiveItemsProperty="lastname"
-                onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
-              />
-            </PermissionGuard>
-          </SearchBar>
-        </div>
+              <button
+                type="button"
+                onClick={() => onRefreshData()}
+                disabled={isLoading}
+                className="btn btn-sm btn-ghost disabled:bg-transparent"
+                aria-label="Rafraîchir la liste des utilisateurs"
+              >
+                <RefreshCw className={isLoading ? "animate-spin" : ""} />
+              </button>
+              <PermissionGuard object="user" action="delete">
+                <TableActionsButtons<User>
+                  isLoading={isLoading || isDeleting}
+                  isDisabled={selectedIds.length === 0}
+                  onRefreshData={onRefreshData}
+                  showRefresh={false}
+                  actions={[
+                    {
+                      title: "Supprimer les utilisateurs sélectionnés",
+                      description: `${selectedIds.length} utilisateur(s) vont être supprimé(s). Cette action est irréversible.`,
+                      rightButtonTitle: "Supprimer",
+                      alertMessageBottom:
+                        "Les données liées aux comptes sélectionnés seront également supprimées ou transférées selon leur rôle.",
+                      onConfirm: () => onDeleteSelected(selectedIds),
+                    },
+                  ]}
+                  retreiveItemsProperty="lastname"
+                  onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
+                />
+              </PermissionGuard>
+            </SearchBar>
+          </div>
+        ) : null}
 
         <div className="w-full" data-page-tour="table">
           <DataTable
@@ -296,18 +300,20 @@ const UserHome = () => {
             }
             emptyMessage={
               searchValue
-                ? "Aucun utilisateur trouvé"
+                ? "Aucun utilisateur disponible pour cette recherche"
                 : "Aucun utilisateur disponible"
             }
           />
         </div>
 
-        <div className="w-full mt-5" data-page-tour="pagination">
-          <TablePagination
-            leftText={`Utilisateurs : ${totalItems}`}
-            {...pagination}
-          />
-        </div>
+        {data.length > 0 ? (
+          <div className="w-full mt-5" data-page-tour="pagination">
+            <TablePagination
+              leftText={`Utilisateurs : ${totalItems}`}
+              {...pagination}
+            />
+          </div>
+        ) : null}
       </Wrapper>
 
       <TableActionsModal

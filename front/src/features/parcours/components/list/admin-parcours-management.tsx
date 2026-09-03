@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
 import { PlusCircle } from "lucide-react";
@@ -14,6 +14,8 @@ import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-s
 import type { FormationParcoursSummary } from "../../../dashboard-admin/interfaces/parcours-summary";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import { hasRoleRank } from "../../../../utils/helpers/user-role";
+import { AuthContext } from "../../../../store/AuthProvider";
 import { parcoursApi } from "../../api/parcours.api";
 
 type AdminParcoursManagementProps = {
@@ -26,6 +28,9 @@ const AdminParcoursManagement = ({
   layout,
 }: AdminParcoursManagementProps) => {
   const isAdmin = layout === "admin";
+  const { user } = useContext(AuthContext);
+  const isTeacher = hasRoleRank(user, [2]);
+  const usesFullWidthLayout = !isAdmin || isTeacher;
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const [parcoursToDelete, setParcoursToDelete] =
@@ -169,19 +174,16 @@ const AdminParcoursManagement = ({
 
       <section
         className={`grid items-start gap-5 ${
-          isAdmin ? "lg:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"
+          usesFullWidthLayout
+            ? "grid-cols-1"
+            : "lg:grid-cols-2 xl:grid-cols-3"
         }`}
         data-page-tour="parcours-cards"
       >
-        {isAdmin && formations.length === 0 ? (
+        {formations.length === 0 ? (
           <div className="col-span-full">
             <EmptyStatePlaceholder title="Aucun parcours disponible" />
           </div>
-        ) : null}
-        {!isAdmin && formations.length === 0 ? (
-          <p className="text-base-content">
-            Aucun parcours ne vous est attribué pour le moment.
-          </p>
         ) : null}
         {formations.map((formation) => (
           <LastParcoursItem
@@ -190,6 +192,7 @@ const AdminParcoursManagement = ({
             formation={formation}
             isManagementView
             baseRoute={layout}
+            fullWidth={usesFullWidthLayout}
             onEditFormation={isAdmin ? openFormationEdition : undefined}
             onDeleteParcours={isAdmin ? openParcoursDeletion : undefined}
             onExportParcours={

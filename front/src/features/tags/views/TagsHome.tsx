@@ -162,30 +162,36 @@ const TagsHome = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <Wrapper additionalClassname="px-10 items-center">
-        <div className="w-full" data-page-tour="filters">
-          <SearchBar
-            title="Tags"
-            placeholder="Rechercher un tag"
-            onSubmitSearchValue={onSubmitSearchValue}
-          >
-            <TableActionsButtons<TagRow>
-              isLoading={isLoading || isDeleting}
-              isDisabled={idsList.length === 0}
-              onRefreshData={onRefreshData}
-              actions={[
-                {
-                  title: "Supprimer les tags sélectionnés",
-                  description: `${idsList.length} tag(s) vont être supprimé(s)`,
-                  rightButtonTitle: "Supprimer",
-                  onConfirm: () => onDeleteSelected(idsList),
-                },
-              ]}
-              retreiveItemsProperty="name"
-              onRetreiveItemsValuesByPropertyFromIdList={onRetreiveItemsValues}
-            />
-          </SearchBar>
-        </div>
+      <Wrapper
+        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0}
+      >
+        {isLoading || data.length > 0 || searchValue ? (
+          <div className="w-full" data-page-tour="filters">
+            <SearchBar
+              placeholder="Rechercher un tag"
+              onSubmitSearchValue={onSubmitSearchValue}
+            >
+              <TableActionsButtons<TagRow>
+                isLoading={isLoading || isDeleting}
+                isDisabled={idsList.length === 0}
+                onRefreshData={onRefreshData}
+                actions={[
+                  {
+                    title: "Supprimer les tags sélectionnés",
+                    description: `${idsList.length} tag(s) vont être supprimé(s)`,
+                    rightButtonTitle: "Supprimer",
+                    onConfirm: () => onDeleteSelected(idsList),
+                  },
+                ]}
+                retreiveItemsProperty="name"
+                onRetreiveItemsValuesByPropertyFromIdList={
+                  onRetreiveItemsValues
+                }
+              />
+            </SearchBar>
+          </div>
+        ) : null}
 
         <div className="w-full" data-page-tour="table">
           <DataTable
@@ -197,14 +203,18 @@ const TagsHome = () => {
             sorting={sorting}
             setSorting={handleSortingChange}
             emptyMessage={
-              searchValue ? "Aucun tag trouvé" : "Aucun tag disponible"
+              searchValue
+                ? "Aucun tag disponible pour cette recherche"
+                : "Aucun tag disponible"
             }
           />
         </div>
 
-        <div className="w-full mt-5" data-page-tour="pagination">
-          <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
-        </div>
+        {data.length > 0 ? (
+          <div className="w-full mt-5" data-page-tour="pagination">
+            <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
+          </div>
+        ) : null}
       </Wrapper>
 
       <TableActionsModal
