@@ -1,3 +1,5 @@
+import { useContext, useMemo } from "react";
+
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import HeaderIcon from "../../../../src/components/UI/svg/header-icon";
@@ -18,8 +20,11 @@ import Stepper from "../../../components/UI/stepper-component/stepper-component"
 import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
+import { AuthContext } from "../../../store/AuthProvider";
+import { getModulesLabel } from "../../../utils/helpers/user-role";
 
 const EditParcours = () => {
+  const { user } = useContext(AuthContext);
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const onboardingNavigationLocked =
     onboardingStatus === "in_progress" &&
@@ -47,6 +52,15 @@ const EditParcours = () => {
     handleUpdateStep,
     handleRetour,
   } = useParcoursEdit();
+  const contextualStepsList = useMemo(
+    () =>
+      stepsList.map((step) =>
+        step.id === 4
+          ? { ...step, label: getModulesLabel(user, step.label) }
+          : step,
+      ),
+    [stepsList, user],
+  );
 
   const renderActualStep = () => {
     switch (actualStep.id) {
@@ -121,7 +135,7 @@ const EditParcours = () => {
             <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
               <Stepper
                 actualStep={actualStep}
-                stepsList={stepsList}
+                stepsList={contextualStepsList}
                 updateStep={updateStep}
                 disabled={onboardingNavigationLocked}
               />

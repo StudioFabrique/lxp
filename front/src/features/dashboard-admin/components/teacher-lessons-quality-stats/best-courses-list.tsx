@@ -19,7 +19,9 @@ const BestLessonsList = ({ coursesRating }: BesCoursesListProps) => {
           />
         ))
       ) : (
-        <span className="text-base-300">Aucun cours n'a encore été noté</span>
+        <span className="text-base-content">
+          Aucun cours n'a encore été noté
+        </span>
       )}
     </div>
   );

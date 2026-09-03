@@ -325,7 +325,7 @@ describe("Cloisonnement des contenus par parcours", () => {
         .set("Cookie", cookieFormateur).expect(404);
     });
 
-    it("une affectation directe ouvre le parcours, puis sa suppression révoque l'accès même si un module reste affecté", async () => {
+    it("l'affectation au parcours n'ouvre que les modules affectés, puis sa suppression révoque tout accès", async () => {
       await prisma.contactsOnParcours.create({
         data: {
           contactId: teacherContactId,
@@ -342,6 +342,29 @@ describe("Cloisonnement des contenus par parcours", () => {
           (parcours: { id: number }) => parcours.id,
         ),
       ).toContain(inscrit.parcoursId);
+
+      const modulesDuParcours = await request(app)
+        .get(`/v1/modules/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .expect(200);
+      expect(modulesDuParcours.body.modules).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: inscrit.moduleId, hasAccess: true }),
+          expect.objectContaining({
+            id: moduleVisibleMaisVerrouille,
+            hasAccess: false,
+          }),
+        ]),
+      );
+
+      await request(app)
+        .get(`/v1/modules/detail/${inscrit.moduleId}`)
+        .set("Cookie", cookieFormateur)
+        .expect(200);
+      await request(app)
+        .get(`/v1/modules/detail/${moduleVisibleMaisVerrouille}`)
+        .set("Cookie", cookieFormateur)
+        .expect(404);
 
       await request(app)
         .patch(`/v1/parcours/${inscrit.parcoursId}`)

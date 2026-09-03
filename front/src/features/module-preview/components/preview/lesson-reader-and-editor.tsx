@@ -165,7 +165,9 @@ const LessonReaderAndEditor = ({
               cancelDisabled={isLoading}
               onCancel={mode === "edit" ? handleFinishResourceEditing : onBack}
             />
-          ) : !hasOwnEditorHeader && canEdit && (mode === "write" || mode === "edit") ? (
+          ) : !hasOwnEditorHeader &&
+            canEdit &&
+            (mode === "write" || mode === "edit") ? (
             <ActivityHeader
               title={textActivityTitle || ""}
               activityType={activityType}
@@ -173,7 +175,7 @@ const LessonReaderAndEditor = ({
               autoFocusTitle={mode === "write"}
               titleError={textActivityTitleError}
               onEditTitle={onEditTitle}
-              className="font-semibold text-primary flex justify-between items-center mb-6"
+              className="font-semibold flex justify-between items-center mb-6"
               titleClassName="text-2xl font-bold flex-1"
               cancelLabel="Annuler"
               cancelClassName="btn btn-sm btn-error text-base-100"

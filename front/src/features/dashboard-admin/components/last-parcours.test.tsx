@@ -23,7 +23,10 @@ const formation: FormationParcoursSummary = {
   ],
 };
 
-const renderDashboardList = (rank: number) => {
+const renderDashboardList = (
+  rank: number,
+  formations: FormationParcoursSummary[] = [formation],
+) => {
   const auth = {
     user: { roles: [{ rank }] } as User,
   } as React.ContextType<typeof AuthContext>;
@@ -31,7 +34,7 @@ const renderDashboardList = (rank: number) => {
   return renderToStaticMarkup(
     <AuthContext.Provider value={auth}>
       <MemoryRouter>
-        <LastParcours parcours={[formation]} isLoading={false} />
+        <LastParcours parcours={formations} isLoading={false} />
       </MemoryRouter>
     </AuthContext.Provider>,
   );
@@ -53,12 +56,30 @@ describe("LastParcours", () => {
     expect(markup).toContain("Aucun parcours disponible");
   });
 
-  it("affiche la liste du formateur sur toute la largeur", () => {
+  it("affiche le parcours unique du formateur sur toute la largeur", () => {
     const markup = renderDashboardList(2);
 
     expect(markup).toContain("grid-cols-1");
     expect(markup).not.toContain("xl:grid-cols-3");
     expect(markup).not.toContain("min-h-52");
+  });
+
+  it("conserve la grille compacte quand plusieurs parcours sont affichés au formateur", () => {
+    const formationWithTwoParcours: FormationParcoursSummary = {
+      ...formation,
+      parcours: [
+        ...formation.parcours,
+        {
+          ...formation.parcours[0],
+          id: 12,
+          title: "Deuxième parcours",
+        },
+      ],
+    };
+    const markup = renderDashboardList(2, [formationWithTwoParcours]);
+
+    expect(markup).toContain("xl:grid-cols-3");
+    expect(markup).toContain("min-h-52");
   });
 
   it("conserve la grille du dashboard administrateur", () => {

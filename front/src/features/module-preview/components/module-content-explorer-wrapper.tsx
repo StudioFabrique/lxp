@@ -12,6 +12,8 @@ type ModuleContentExplorerWrapperProps = {
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
+  publishAllAction?: React.ReactNode;
+  showPublishAll?: boolean;
   scrollTopRef: React.RefObject<HTMLDivElement | null>;
   header: React.ReactNode;
   progressionSide: React.ReactNode;
@@ -29,6 +31,8 @@ const ModuleContentExplorerWrapper = ({
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
+  publishAllAction,
+  showPublishAll = true,
   scrollTopRef,
   header,
   progressionSide,
@@ -63,6 +67,7 @@ const ModuleContentExplorerWrapper = ({
         >
           {topProgressBar}
         </span>
+        {showPublishAll ? publishAllAction : null}
         {selectedLesson ? (
           <button
             type="button"

@@ -26,10 +26,10 @@ export default function HeaderChatbot({
   onNewChat,
 }: Props) {
   return (
-    <div className="bg-primary text-primary-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
+    <div className="bg-info text-info-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-white rounded-full p-1 shadow-inner">
-          <Bot className="w-full h-full object-contain text-black" />
+        <div className="w-10 h-10 bg-base-300 text-base-content rounded-full p-1 shadow-inner">
+          <Bot className="w-full h-full object-contain" />
         </div>
         <div>
           <h2 className="text-lg font-bold leading-tight">Chatbot ANDRIA</h2>

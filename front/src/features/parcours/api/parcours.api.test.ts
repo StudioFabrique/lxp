@@ -32,6 +32,7 @@ describe("parcoursApi.mutations.importParcours", () => {
       formationId: 3,
       teacherContactId: 7,
       teacherModuleIndexes: [0, 2],
+      publishCourses: true,
     });
 
     const [url, body] = vi.mocked(apiClient.post).mock.calls[0];
@@ -42,5 +43,17 @@ describe("parcoursApi.mutations.importParcours", () => {
     expect(formData.get("formationId")).toBe("3");
     expect(formData.get("teacherContactId")).toBe("7");
     expect(formData.get("teacherModuleIndexes")).toBe("[0,2]");
+    expect(formData.get("publishCourses")).toBe("true");
+  });
+
+  it("laisse les cours en brouillon par défaut", async () => {
+    const archive = new File(["archive"], "parcours.zip", {
+      type: "application/zip",
+    });
+
+    await parcoursApi.mutations.importParcours({ archive });
+
+    const [, body] = vi.mocked(apiClient.post).mock.calls[0];
+    expect((body as FormData).get("publishCourses")).toBe("false");
   });
 });

@@ -28,7 +28,8 @@ async function httpPostTeacher(req: CustomRequest, res: Response) {
 
     return res.status(201).json({
       success: true,
-      message: "Ressource pédagogique créée avec succès",
+      message:
+        "Ressource pédagogique créée. Le mail d'activation est en cours d'envoi.",
       contact: response,
     });
   } catch (error: any) {

@@ -1,8 +1,15 @@
+import { useContext } from "react";
+
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
+
 /**
  * Placeholder component shown when no modules are available
  * Displays an icon and message
  */
 export default function EmptyModulePlaceholder() {
+  const { user } = useContext(AuthContext);
+
   return (
     <div className="flex flex-col items-center justify-center h-64">
       <svg
@@ -20,7 +27,9 @@ export default function EmptyModulePlaceholder() {
         />
       </svg>
       <p className="text-base-content/70 text-center">
-        Aucun module disponible pour cette formation
+        {isTeacherUser(user)
+          ? "Aucun de mes modules n'est disponible pour cette formation"
+          : "Aucun module disponible pour cette formation"}
       </p>
     </div>
   );

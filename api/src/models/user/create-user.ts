@@ -19,7 +19,7 @@ import {
  * ne doit donc pas propager d'erreur. L'échec est journalisé avec sa cause, et
  * `invitationSent` reste à faux, ce qui laisse le renvoi manuel disponible.
  */
-async function sendActivationInvitation(
+export async function sendActivationInvitation(
   userId: string,
   email: string,
   role: IRole,

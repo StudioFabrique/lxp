@@ -16,8 +16,8 @@ export type AccessScope =
       directParcoursIds: number[] | null;
       /**
        * `null` signifie que tous les modules des parcours autorisés le sont.
-       * Pour un formateur, la liste contient uniquement les modules des
-       * parcours auxquels il est directement affecté.
+       * Pour un formateur, la liste contient uniquement les modules auxquels
+       * il est directement affecté.
        */
       moduleIds: number[] | null;
     }
@@ -55,9 +55,9 @@ export async function resolveAccessScope(auth: {
 /**
  * Périmètre d'un formateur.
  *
- * Une affectation au parcours donne accès à tous ses modules. Les contacts
- * posés uniquement sur un module ou un cours ne confèrent aucun accès : le
- * rattachement direct au parcours reste toujours la source de vérité.
+ * Le rattachement direct au parcours ouvre le parcours parent, tandis que
+ * chaque module reste borné à sa propre affectation. Une affectation orpheline
+ * à un module ou à un cours ne suffit jamais à rendre le parcours accessible.
  */
 export async function getTeacherAccessScope(
   userIdMdb: string,
@@ -66,6 +66,12 @@ export async function getTeacherAccessScope(
     where: { idMdb: userIdMdb },
     select: {
       parcours: { select: { parcoursId: true } },
+      modules: {
+        select: {
+          moduleId: true,
+          module: { select: { parcoursId: true } },
+        },
+      },
     },
   });
 
@@ -79,19 +85,15 @@ export async function getTeacherAccessScope(
   }
 
   const directParcoursIds = contact.parcours.map(({ parcoursId }) => parcoursId);
-  const inheritedModules =
-    directParcoursIds.length === 0
-      ? []
-      : await prisma.module.findMany({
-          where: { parcoursId: { in: directParcoursIds } },
-          select: { id: true },
-        });
+  const directlyAssignedModuleIds = contact.modules
+    .filter(({ module }) => directParcoursIds.includes(module.parcoursId))
+    .map(({ moduleId }) => moduleId);
 
   return {
     kind: "teacher",
     parcoursIds: directParcoursIds,
     directParcoursIds,
-    moduleIds: inheritedModules.map(({ id }) => id),
+    moduleIds: directlyAssignedModuleIds,
   };
 }
 
@@ -104,6 +106,26 @@ export function moduleWhereForScope(scope: AccessScope) {
   return scope.moduleIds === null
     ? { parcoursId: { in: scope.parcoursIds } }
     : { id: { in: scope.moduleIds } };
+}
+
+export function isContentAllowedForScope(
+  scope: Exclude<AccessScope, null>,
+  type: AccessCheckedContent,
+  method: string,
+  coordinates: { parcoursId: number; moduleId: number | null },
+) {
+  const parcoursAllowed = scope.parcoursIds.includes(coordinates.parcoursId);
+  const directParcoursAssignmentRequired =
+    scope.kind === "teacher" && type === "parcours" && method !== "GET";
+  const directlyAssignedToParcours =
+    !directParcoursAssignmentRequired ||
+    scope.directParcoursIds?.includes(coordinates.parcoursId);
+  const moduleAllowed =
+    scope.moduleIds === null ||
+    coordinates.moduleId === null ||
+    scope.moduleIds.includes(coordinates.moduleId);
+
+  return parcoursAllowed && moduleAllowed && directlyAssignedToParcours;
 }
 
 export async function getAccessibleParcoursIds(

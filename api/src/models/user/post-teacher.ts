@@ -3,6 +3,7 @@ import Role from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
+import { sendActivationInvitation } from "./create-user.ts";
 
 async function postTeacher(teacher: IUser) {
   const email = normalizeEmail(teacher.email ?? "");
@@ -31,14 +32,20 @@ async function postTeacher(teacher: IUser) {
 
   // enregistrement du contact dans la base de données Mongodb
   const password = await bcrypt.hash(generateRandomString(), 10);
-  const fetchedRole = await Role.findOne({ role: "teacher" }, { _id: 1 });
+  const fetchedRole = await Role.findOne({ role: "teacher" });
+  if (!fetchedRole) {
+    throw {
+      statusCode: 500,
+      message: "Le rôle de formateur n'existe pas.",
+    };
+  }
 
   const newTeacher = await User.create({
     ...teacher,
     email,
     password,
-    isActive: teacher.isActive ?? false,
-    roles: [new Object(fetchedRole!._id)],
+    isActive: false,
+    roles: [new Object(fetchedRole._id)],
   });
 
   // si l'enregistement de l'utisilateur dans la base de données Mongodb a réussi
@@ -68,6 +75,16 @@ async function postTeacher(teacher: IUser) {
 
         return createdContact;
       });
+
+      await User.updateOne(
+        { _id: newTeacher._id },
+        { $set: { invitationPendingSince: new Date() } },
+      );
+      void sendActivationInvitation(
+        newTeacher._id.toString(),
+        newTeacher.email,
+        fetchedRole,
+      );
 
       return {
         ...contact,

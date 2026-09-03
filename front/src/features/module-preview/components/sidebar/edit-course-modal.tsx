@@ -101,13 +101,8 @@ export default function EditCourseModal({
           </label>
 
           <label className="flex cursor-pointer items-center justify-between gap-3 border-y border-base-300 py-4">
-            <span>
-              <span className="block text-sm font-semibold">
-                Visible par les apprenants
-              </span>
-              <span className="text-xs text-base-content/60">
-                Contrôle l’accès au cours une fois celui-ci publié.
-              </span>
+            <span className="block text-sm font-semibold">
+              Visible par les apprenants
             </span>
             <input
               type="checkbox"

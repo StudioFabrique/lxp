@@ -17,13 +17,11 @@ import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by
 // Middleware de vérification des permissions
 import checkPermissions from "../../../middleware/check-permissions.ts";
 import checkContentAccess from "../../../middleware/check-content-access.ts";
-import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list.ts";
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail.ts";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson.ts";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons.ts";
 // Contrôleurs pour le suivi de lecture des leçons
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read.ts";
-import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson.ts";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating.ts";
 import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson.ts";
 import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson.ts";
@@ -48,9 +46,6 @@ lessonRouter.get(
   getLessonsByTagValidator,
   httpGetLessonsByTag
 );
-
-// Route pour obtenir la liste complète des leçons
-lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
 
 // Route pour obtenir les dernières leçons lues par l'utilisateur
 lessonRouter.get(
@@ -115,14 +110,6 @@ lessonRouter.post(
   checkContentAccess("lesson", "lessonId"),
   [...lessonIdValidator, ...lessonRateValidator],
   httpPostRateLesson
-);
-
-lessonRouter.get(
-  "/edit/:lessonId",
-  checkPermissions("lesson"),
-  checkContentAccess("lesson", "lessonId"),
-  lessonIdValidator,
-  httpGetOneLesson
 );
 
 lessonRouter.post(

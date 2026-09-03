@@ -9,7 +9,7 @@ import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import { AuthContext } from "../../../store/AuthProvider";
-import { hasRoleRank } from "../../../utils/helpers/user-role";
+import { isTeacherUser } from "../../../utils/helpers/user-role";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -21,8 +21,14 @@ export default function LastParcours({
   isLoading,
 }: LastParcoursProps) {
   const { user } = useContext(AuthContext);
-  const isTeacher = hasRoleRank(user, [2]);
-  const gridClassName = isTeacher
+  const isTeacher = isTeacherUser(user);
+  const displayedFormations = parcours.slice(0, 6);
+  const displayedParcoursCount = displayedFormations.reduce(
+    (count, formation) => count + formation.parcours.length,
+    0,
+  );
+  const usesSingleParcoursLayout = isTeacher && displayedParcoursCount === 1;
+  const gridClassName = usesSingleParcoursLayout
     ? "grid-cols-1"
     : "lg:grid-cols-2 xl:grid-cols-3";
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,11 +76,11 @@ export default function LastParcours({
           <EmptyStatePlaceholder title="Aucun parcours disponible" />
         ) : (
           <div className={`grid items-start gap-5 ${gridClassName}`}>
-            {parcours.slice(0, 6).map((formation) => (
+            {displayedFormations.map((formation) => (
               <LastParcoursItem
                 key={formation.id}
                 formation={formation}
-                fullWidth={isTeacher}
+                fullWidth={usesSingleParcoursLayout}
               />
             ))}
             <PermissionGuard action="write" object="parcours">

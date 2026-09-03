@@ -11,9 +11,11 @@ import Formation from "../../../../utils/interfaces/formation";
 import Header from "../../../../components/headers/Header";
 import { Link } from "react-router";
 import Module from "../../../../utils/interfaces/module";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import SelectableSubCard from "../../../../components/UI/selectable-sub-card";
 import FloatingBottomNavigation from "../../../../components/buttons/FloatingBottomNavigation";
+import { AuthContext } from "../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../utils/helpers/user-role";
 
 type Props = {
   formationsList: Formation[];
@@ -47,6 +49,8 @@ const ParcoursSelection = ({
   onConfirm,
   onGoBack,
 }: Props) => {
+  const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
   const [showReloadModulesButton, setShowReloadModulesButton] = useState(false);
 
   const canConfirm = Boolean(
@@ -164,7 +168,9 @@ const ParcoursSelection = ({
             data-course-import-tour="module"
           >
             <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
-              Choisir un module pour :
+              {isTeacher
+                ? "Choisir parmi mes modules pour :"
+                : "Choisir un module pour :"}
               <Link
                 to={`/admin/parcours/edit/${selectedParcours.id}?step=4`}
                 target="_blank"
@@ -178,7 +184,11 @@ const ParcoursSelection = ({
                 <button
                   type="button"
                   className="btn btn-xs btn-ghost tooltip"
-                  data-tip="Recharger la liste des modules"
+                  data-tip={
+                    isTeacher
+                      ? "Recharger mes modules"
+                      : "Recharger la liste des modules"
+                  }
                   onClick={onRefreshModules}
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -188,7 +198,9 @@ const ParcoursSelection = ({
 
             {modulesList?.length === 0 ? (
               <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
-                Aucun module disponible pour ce parcours.
+                {isTeacher
+                  ? "Aucun de mes modules n'est disponible pour ce parcours."
+                  : "Aucun module disponible pour ce parcours."}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

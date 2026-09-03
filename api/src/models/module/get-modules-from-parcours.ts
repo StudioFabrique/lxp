@@ -1,6 +1,9 @@
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
-import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
+import {
+  moduleWhereForScope,
+  type AccessScope,
+} from "../../utils/services/permissions/accessible-parcours.ts";
 
 async function getModulesFromParcours(
   parcoursId: number,
@@ -10,6 +13,7 @@ async function getModulesFromParcours(
     where: { id: +parcoursId },
     select: {
       modules: {
+        where: moduleWhereForScope(scope),
         select: {
           id: true,
           title: true,
@@ -55,13 +59,6 @@ async function getModulesFromParcours(
       const thumb = module.thumb
         ? Buffer.from(module.thumb as any).toString("base64")
         : null;
-      const hasAccess =
-        scope?.kind !== "teacher" || scope.moduleIds?.includes(module.id);
-
-      if (!hasAccess) {
-        return { id: module.id, title: module.title, thumb, hasAccess: false };
-      }
-
       return {
         ...module,
         thumb,
@@ -69,7 +66,6 @@ async function getModulesFromParcours(
           ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
         ),
         skills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
-        hasAccess: true,
       };
     }),
     parcoursData: {

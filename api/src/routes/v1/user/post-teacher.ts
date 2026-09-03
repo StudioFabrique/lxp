@@ -3,7 +3,6 @@ import { body } from "express-validator";
 
 import httpPostTeacher from "../../../controllers/user/http-post-teacher.ts";
 import {
-  isBoolean,
   stringValidateGeneric,
   stringValidateOptional,
 } from "../../../helpers/custom-validators.ts";
@@ -26,10 +25,6 @@ postTeacherRouter.post(
     .withMessage("Le nom n'est pas une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le nom contient des caractères non autorisés."),
-  body("isActive")
-    .custom(isBoolean)
-    .withMessage("La propriété isActive doit être une valeur booléenne.")
-    .optional(),
   body("nickname")
     .isString()
     .withMessage("Le pseudo doit être une chaîne de caractères.")

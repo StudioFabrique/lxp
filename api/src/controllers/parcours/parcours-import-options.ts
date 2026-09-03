@@ -2,6 +2,7 @@ export type ParcoursImportOptions = {
   formationId?: number;
   teacherContactId?: number;
   teacherModuleIndexes: number[];
+  publishCourses: boolean;
 };
 
 function badRequest(message: string) {
@@ -13,6 +14,13 @@ function optionalPositiveInteger(value: unknown, errorMessage: string) {
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed <= 0) throw badRequest(errorMessage);
   return parsed;
+}
+
+function optionalBoolean(value: unknown, errorMessage: string) {
+  if (value === undefined || value === "") return false;
+  if (value === true || value === "true") return true;
+  if (value === false || value === "false") return false;
+  throw badRequest(errorMessage);
 }
 
 export function parseParcoursImportOptions(
@@ -29,6 +37,10 @@ export function parseParcoursImportOptions(
   const teacherContactId = optionalPositiveInteger(
     fields.teacherContactId,
     "La ressource pédagogique sélectionnée n'est pas valide.",
+  );
+  const publishCourses = optionalBoolean(
+    fields.publishCourses,
+    "L'option de publication des cours n'est pas valide.",
   );
 
   let teacherModuleIndexes: unknown = [];
@@ -60,6 +72,7 @@ export function parseParcoursImportOptions(
   return {
     formationId,
     teacherContactId,
+    publishCourses,
     teacherModuleIndexes: [
       ...new Set(teacherModuleIndexes.map((index) => Number(index))),
     ],

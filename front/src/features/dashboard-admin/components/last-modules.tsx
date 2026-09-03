@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { ExternalLink, MoveUpRight, Pencil } from "lucide-react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
@@ -6,6 +7,11 @@ import type { ModuleSummary } from "../api/dashboard-admin.api";
 import { localeDate } from "../../../utils/helpers/locale-date";
 import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultModuleImage from "../../../assets/images/module-default-thumb.png";
+import { AuthContext } from "../../../store/AuthProvider";
+import {
+  getModulesLabel,
+  isTeacherUser,
+} from "../../../utils/helpers/user-role";
 
 type Props = {
   modules: ModuleSummary[];
@@ -13,12 +19,15 @@ type Props = {
 };
 
 export default function LastModules({ modules, isLoading }: Props) {
+  const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
+
   return isLoading ? (
     <span className="loading loading-spinner loading-sm my-5" />
   ) : modules?.length ? (
     <div className="p-2">
       <h3 className="text-xl font-bold text-primary select-none">
-        Derniers modules créés
+        {getModulesLabel(user, "Derniers modules créés")}
       </h3>
       <ul className="list border border-base-300 rounded-box overflow-hidden bg-base-200 mt-4">
         {modules.map((module) => (
@@ -79,11 +88,10 @@ export default function LastModules({ modules, isLoading }: Props) {
           className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline select-none"
           to="/admin/module"
         >
-          Voir tous les modules <MoveUpRight className="w-4 h-4" />
+          {isTeacher ? "Voir mes modules" : "Voir tous les modules"}{" "}
+          <MoveUpRight className="w-4 h-4" />
         </Link>
       </div>
     </div>
-  ) : (
-    <p className="text-base-content/70 italic py-4">Aucun module trouvé.</p>
-  );
+  ) : null;
 }

@@ -1,8 +1,11 @@
+import { useContext } from "react";
 import { convertMilisToWeeks } from "../../../helpers/date-helpers";
 import QuickStatItem from "./quick-stat-item";
 import { useParams } from "react-router";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { getModulesLabel } from "../../../../../utils/helpers/user-role";
 
 type QuickStatistiquesProps = {
   studentCount?: number;
@@ -13,6 +16,7 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
   const parcoursId = Number(id);
   const { modules } = useParcoursModules(parcoursId);
   const { data: parcours } = useParcoursQuery(parcoursId);
+  const { user } = useContext(AuthContext);
 
   const modulesHourSum = () => {
     let hours: number = 0;
@@ -44,7 +48,10 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
         item={`Niveau ${parcours?.formation.level}`}
       />
       <QuickStatItem title="Étudiants" item={studentCount || "-"} />
-      <QuickStatItem title="Modules" item={modules?.length || 0} />
+      <QuickStatItem
+        title={getModulesLabel(user)}
+        item={modules?.length || 0}
+      />
       <QuickStatItem title="Semaines" item={parcoursWeeks()} />
       <QuickStatItem title="Heures" item={modulesHourSum()} />
     </div>
