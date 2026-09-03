@@ -2,6 +2,7 @@ import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-name
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
+import { includeCreatorContact } from "./module-contact-ids.ts";
 
 async function postModule(
   moduleToAdd: any,
@@ -16,7 +17,7 @@ async function postModule(
     };
   }
 
-  const [parcours, user, admin] = await Promise.all([
+  const [parcours, user, admin, creatorContact] = await Promise.all([
     prisma.parcours.findUnique({
       where: { id: +moduleToAdd.parcoursId },
       include: {
@@ -27,6 +28,10 @@ async function postModule(
     }),
     User.findById(userId, { firstname: 1, lastname: 1 }),
     prisma.admin.findFirst({ where: { idMdb: userId } }),
+    prisma.contact.findUnique({
+      where: { idMdb: userId },
+      select: { id: true },
+    }),
   ]);
 
   if (!parcours) throw { statusCode: 404, message: "Parcours introuvable." };
@@ -40,14 +45,14 @@ async function postModule(
     throw { statusCode: 404, message: "Administrateur introuvable." };
   }
 
-  const contactIds = [...new Set<number>(moduleToAdd.contacts ?? [])];
+  const selectedContactIds = [...new Set<number>(moduleToAdd.contacts ?? [])];
   const skillIds = [...new Set<number>(moduleToAdd.skills ?? [])];
   const allowedContactIds = new Set(
     parcours.contacts.map(({ contactId }) => contactId),
   );
   const allowedSkillIds = new Set(parcours.bonusSkills.map(({ id }) => id));
   if (
-    contactIds.some((id) => !allowedContactIds.has(id)) ||
+    selectedContactIds.some((id) => !allowedContactIds.has(id)) ||
     skillIds.some((id) => !allowedSkillIds.has(id))
   ) {
     throw {
@@ -57,6 +62,12 @@ async function postModule(
     };
   }
 
+  const contactIds = includeCreatorContact(
+    selectedContactIds,
+    allowedContactIds,
+    creatorContact?.id,
+  );
+
   const duplicate = await prisma.module.findFirst({
     where: {
       parcours: { formationId: parcours.formationId },
@@ -65,7 +76,10 @@ async function postModule(
     select: { id: true },
   });
   if (duplicate) {
-    throw { statusCode: 406, message: "MODULE_ALREADY_EXISTS" };
+    throw {
+      statusCode: 409,
+      message: "Un module portant ce nom existe déjà dans cette formation.",
+    };
   }
 
   const defaultImage = image

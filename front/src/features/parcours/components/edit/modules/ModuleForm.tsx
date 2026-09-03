@@ -16,6 +16,7 @@ type ModuleFormProps = {
   isLoading: boolean;
   isSubmitting: boolean;
   currentContacts: Contact[];
+  lockedContactId?: number;
   currentSkills: Skill[];
   contacts: Contact[];
   skills: Skill[];
@@ -38,6 +39,7 @@ export default function ModuleForm({
   isLoading,
   isSubmitting,
   currentContacts,
+  lockedContactId,
   currentSkills,
   contacts,
   skills,
@@ -85,6 +87,9 @@ export default function ModuleForm({
               >
                 <ModuleToParcours
                   currentContacts={currentContacts}
+                  lockedContactIds={
+                    lockedContactId !== undefined ? [lockedContactId] : []
+                  }
                   currentSkills={currentSkills}
                   contacts={contacts}
                   skills={skills}

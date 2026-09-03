@@ -81,10 +81,10 @@ export default function CourseList({
                   <PermissionGuard action="read" object="course">
                     <Link
                       className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip="Prévisualiser le cours"
+                      data-tip="Accéder au cours"
                       to={`/admin/parcours/module/${course.moduleId}`}
                       state={{ lessonId: course.lessons[0]?.id }}
-                      aria-label={`Prévisualiser le cours ${course.title}`}
+                      aria-label={`Accéder au cours ${course.title}`}
                     >
                       <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>

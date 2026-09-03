@@ -6,6 +6,7 @@ import type { ModuleData } from "../../../interfaces/new-module";
 import {
   initialState,
   moduleReducer,
+  withRequiredContact,
   withSelectedModuleAssociations,
 } from "./useNewModuleReducer";
 
@@ -32,6 +33,19 @@ const moduleData: ModuleData = {
 };
 
 describe("moduleReducer", () => {
+  it("préremplit la ressource pédagogique du formateur à la création", () => {
+    const creationState = moduleReducer(initialState, {
+      type: "START_CREATE",
+      payload: contacts,
+    });
+
+    expect(creationState.currentContacts).toEqual(contacts);
+  });
+
+  it("réinsère la ressource pédagogique verrouillée si elle est retirée", () => {
+    expect(withRequiredContact([], contacts[0])).toEqual(contacts);
+  });
+
   it("rend immédiatement les associations sélectionnées après une création", () => {
     const createdModule = withSelectedModuleAssociations(moduleData, {
       contacts,

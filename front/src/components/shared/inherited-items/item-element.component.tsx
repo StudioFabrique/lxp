@@ -6,6 +6,7 @@ interface ItemElementProps {
   onRemoveItem: (value: unknown) => void;
   property: string | string[];
   additionalProperty?: string;
+  removable?: boolean;
 }
 
 const ItemElement = (props: ItemElementProps) => {
@@ -29,15 +30,17 @@ const ItemElement = (props: ItemElementProps) => {
           {props.item[props.additionalProperty]}
         </p>
       ) : null}
-      <div
-        className="w-4 h-4 cursor-pointer flex justify-end text-error"
-        aria-label="supprimer l'objet"
-        onClick={handleRemoveItem}
-      >
-        <div>
-          <DeleteIcon />
+      {props.removable !== false ? (
+        <div
+          className="w-4 h-4 cursor-pointer flex justify-end text-error"
+          aria-label="supprimer l'objet"
+          onClick={handleRemoveItem}
+        >
+          <div>
+            <DeleteIcon />
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };

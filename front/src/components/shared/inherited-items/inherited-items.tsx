@@ -18,6 +18,7 @@ interface InheritedItemsProps {
   loading: boolean;
   initialList: unknown[];
   selectedItems: unknown[];
+  lockedItemIds?: number[];
   isDisabled?: boolean;
   property: string | string[]; // propriété(s) affichée(s) dans les listes
   onSubmit: (items: any[]) => void;
@@ -74,6 +75,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param value any (Constact)
    */
   const handleRemoveItem = (value: any) => {
+    if (props.lockedItemIds?.includes(value.id)) return;
     const updatedItems = currentItems.filter((item) => item.id !== value.id);
     setCurrentItems(updatedItems);
     props.onSubmit(updatedItems);
@@ -134,6 +136,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
                 list: currentItems,
                 property: props.property,
                 onRemoveItem: handleRemoveItem,
+                lockedItemIds: props.lockedItemIds,
               } as any,
             )}
           </>

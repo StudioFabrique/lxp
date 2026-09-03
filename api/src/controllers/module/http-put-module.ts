@@ -41,7 +41,7 @@ export default async function httpPutModule(
     }
 
     // Mise à jour du module en base de données
-    const response = await putModule(module, image, thumb);
+    const response = await putModule(module, image, thumb, req.auth?.userId);
     if (uploadedFile) await deleteTempUploadedFile(req);
     next({
       statusCode: 200,

@@ -11,6 +11,7 @@ type Props = {
   isLoading: boolean;
   skills: Skill[];
   currentContacts: Contact[];
+  lockedContactIds?: number[];
   currentSkills: Skill[];
   setCurrentContacts: (contacts: Contact[]) => void;
   setCurrentSkills: (skills: Skill[]) => void;
@@ -32,6 +33,7 @@ type Props = {
  */
 export default function ModuleToParcours({
   currentContacts,
+  lockedContactIds = [],
   currentSkills,
   setCurrentContacts,
   setCurrentSkills,
@@ -51,6 +53,7 @@ export default function ModuleToParcours({
         loading={isLoading}
         initialList={contacts}
         selectedItems={currentContacts}
+        lockedItemIds={lockedContactIds}
         property={["firstname", "lastname"]}
         onSubmit={setCurrentContacts}
         titleSize="medium"

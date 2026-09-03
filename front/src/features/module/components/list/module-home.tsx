@@ -55,9 +55,9 @@ const ModuleHomeList = ({
                   <PermissionGuard action="read" object="module">
                     <Link
                       className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip="Prévisualiser le module"
+                      data-tip="Accéder au module"
                       to={`/admin/parcours/module/${module.id}`}
-                      aria-label={`Prévisualiser le module ${module.title}`}
+                      aria-label={`Accéder au module ${module.title}`}
                     >
                       <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>
