@@ -39,7 +39,7 @@ const ParcoursStudents = () => {
     [groups],
   );
   const { data: students = [] } = useParcoursStudentsQuery(groupIds);
-  const updateGroups = useUpdateParcoursGroups(parcoursId);
+  const { mutate: updateGroups } = useUpdateParcoursGroups(parcoursId);
 
   const handleDrawer = (id: string) => {
     if (fetchedGroups.length === 0) void fetchGroups();
@@ -49,7 +49,7 @@ const ParcoursStudents = () => {
   useEffect(() => {
     if (!draftGroups) return;
     const timer = setTimeout(() => {
-      updateGroups.mutate(groupIds, {
+      updateGroups(groupIds, {
         onSuccess: () => toast.success("Le parcours a été mis à jour"),
         onError: () => toast.error("Erreur lors de la mise à jour"),
       });

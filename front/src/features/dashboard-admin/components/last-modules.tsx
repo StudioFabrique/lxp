@@ -93,9 +93,5 @@ export default function LastModules({ modules, isLoading }: Props) {
         </Link>
       </div>
     </div>
-  ) : (
-    <p className="text-base-content/70 italic py-4">
-      {isTeacher ? "Aucun module affecté." : "Aucun module trouvé."}
-    </p>
-  );
+  ) : null;
 }
