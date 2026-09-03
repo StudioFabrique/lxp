@@ -120,7 +120,7 @@ const CompanyPictureUpload = () => {
   };
 
   return (
-    <div className="card h-full">
+    <div className="card h-full" data-recommended-tour="company-logo">
       <div className="card-body p-6">
         {/* Header */}
         <h2 className="card-title text-lg font-medium mb-4">

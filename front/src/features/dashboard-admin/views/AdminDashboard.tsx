@@ -10,11 +10,19 @@ import LastModules from "../components/last-modules";
 import Header from "../../../components/headers/Header";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
+import RecommendedActions from "../components/recommended-actions";
+import { buildRecommendedActions } from "../components/build-recommended-actions";
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
   const { status: onboardingStatus } = useOnboarding();
   const showOnboardingWelcome = onboardingStatus === "pending";
+  const userRank = user?.roles.length
+    ? Math.min(...user.roles.map(({ rank }) => rank), 4)
+    : 4;
+  const isAdministrator = userRank <= 1;
+  const isRoot = userRank === 0;
+  const isTeacher = userRank === 2;
 
   const { data: parcours = [], isLoading: isParcoursLoading } = useQuery({
     queryKey: ["root-parcours"],
@@ -25,6 +33,47 @@ const AdminDashboard = () => {
     queryKey: ["dashboard", "last-modules"],
     queryFn: dashboardAdminApi.queries.getLastModules,
   });
+
+  const teachersCount = useQuery({
+    queryKey: ["dashboard", "recommended-actions", "users", "teacher"],
+    queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("teacher"),
+    enabled: isAdministrator,
+  });
+
+  const adminsCount = useQuery({
+    queryKey: ["dashboard", "recommended-actions", "users", "admin"],
+    queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("admin"),
+    enabled: isRoot,
+  });
+
+  const studentsCount = useQuery({
+    queryKey: ["dashboard", "recommended-actions", "users", "student"],
+    queryFn: () => dashboardAdminApi.queries.getUsersCountByRole("student"),
+    enabled: isTeacher,
+  });
+
+  const groupsCount = useQuery({
+    queryKey: ["dashboard", "recommended-actions", "groups"],
+    queryFn: dashboardAdminApi.queries.getStudentGroupsCount,
+    enabled: isTeacher,
+  });
+
+  const recommendedActions = buildRecommendedActions({
+    userRank,
+    teachersCount: teachersCount.data,
+    adminsCount: adminsCount.data,
+    studentsCount: studentsCount.data,
+    groupsCount: groupsCount.data,
+    parcours,
+  });
+
+  const areRecommendationsLoading =
+    (isAdministrator && teachersCount.isLoading) ||
+    (isRoot && adminsCount.isLoading) ||
+    (isTeacher &&
+      (studentsCount.isLoading ||
+        groupsCount.isLoading ||
+        isParcoursLoading));
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -45,6 +94,13 @@ const AdminDashboard = () => {
       <section className="w-full flex flex-col 2xl:flex-row gap-6">
         <div className="flex-1 flex flex-col gap-6">
           <article className="w-full flex flex-col gap-10">
+            {user ? (
+              <RecommendedActions
+                userId={user._id}
+                actions={recommendedActions}
+                isLoading={areRecommendationsLoading}
+              />
+            ) : null}
             <LastParcours parcours={parcours} isLoading={isParcoursLoading} />
             <LastModules modules={modules} isLoading={isModulesLoading} />
           </article>

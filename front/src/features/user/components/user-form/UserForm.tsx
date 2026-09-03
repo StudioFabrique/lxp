@@ -30,6 +30,7 @@ type Props = {
   fieldsDisabled?: boolean;
   editMode?: boolean;
   initialRoleRank?: number;
+  initialSendEmail?: boolean;
   cancelTo?: string;
 };
 
@@ -42,6 +43,7 @@ const UserForm = ({
   fieldsDisabled = false,
   editMode = false,
   initialRoleRank,
+  initialSendEmail = false,
   cancelTo,
 }: Props) => {
   const {
@@ -63,7 +65,7 @@ const UserForm = ({
     sendEmail, setSendEmail,
     formIsValid,
     buildUserData,
-  } = useUserForm(user);
+  } = useUserForm(user, initialSendEmail);
 
   useEffect(() => {
     if (error && error.length > 0) {
@@ -96,7 +98,11 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <form className="flex flex-col gap-y-8" autoComplete="off">
+    <form
+      className="flex flex-col gap-y-8"
+      autoComplete="off"
+      data-recommended-tour="user-form"
+    >
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
@@ -116,6 +122,7 @@ const UserForm = ({
           type="button"
           className="btn btn-primary normal-case"
           disabled={disabled}
+          data-recommended-tour="user-save"
         >
           {isLoading ? (
             <span className="flex items-center gap-x-2">
@@ -129,17 +136,19 @@ const UserForm = ({
       </Header>
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
-          <UserFormInformations
-            lastname={lastname} lastnameError={lastnameError} onLastname={setLastname}
-            firstname={firstname} firstnameError={firstnameError} onFirstname={setFirstname}
-            nickname={nickname} nicknameError={nicknameError} onNickname={setNickname}
-            email={email}
-            emailError={emailError || emailIsRefused}
-            emailMessage={emailMessage}
-            onEmail={setEmail}
-            onSetFile={setFile}
-            disabled={disabled}
-          />
+          <div data-recommended-tour="user-informations">
+            <UserFormInformations
+              lastname={lastname} lastnameError={lastnameError} onLastname={setLastname}
+              firstname={firstname} firstnameError={firstnameError} onFirstname={setFirstname}
+              nickname={nickname} nicknameError={nicknameError} onNickname={setNickname}
+              email={email}
+              emailError={emailError || emailIsRefused}
+              emailMessage={emailMessage}
+              onEmail={setEmail}
+              onSetFile={setFile}
+              disabled={disabled}
+            />
+          </div>
           <UserFormContact
             address={address} addressError={addressError} onAddress={setAddress}
             city={city} cityError={cityError} onCity={setCity}
@@ -148,7 +157,10 @@ const UserForm = ({
             birthDate={birthDate} onChangeDate={setBirthDate}
             disabled={disabled}
           />
-          <div className="grid grid-rows-1 gap-y-5">
+          <div
+            className="grid grid-rows-1 gap-y-5"
+            data-recommended-tour="user-role"
+          >
             <UserFormTypeUser
               roleId={roleId}
               sendEmail={sendEmail}

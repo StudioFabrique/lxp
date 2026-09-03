@@ -7,6 +7,8 @@ import { useLocation } from "react-router";
 import Header from "../../../components/headers/Header";
 import Journal from "../components/journal/journal";
 import TeacherCalendar from "../components/teacher-calendar";
+import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
+import { logoTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 
 enum Tab {
   Info,
@@ -141,6 +143,7 @@ const Profile = () => {
           </button>
         </div>
       )}
+      <RecommendedActionTour tutorial="logo" steps={logoTourSteps} />
     </div>
   );
 };

@@ -79,7 +79,10 @@ export default function ModuleForm({
 
               <div className="mx-auto divider divider-vertical lg:divider-horizontal" />
 
-              <span className="col-span-5">
+              <span
+                className="col-span-5"
+                data-recommended-tour="module-assignments"
+              >
                 <ModuleToParcours
                   currentContacts={currentContacts}
                   currentSkills={currentSkills}

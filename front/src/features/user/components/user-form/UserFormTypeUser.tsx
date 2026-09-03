@@ -102,7 +102,11 @@ const UserFormTypeUser = ({
             {!editMode && (
               <>
                 <div className="divider" />
-                <label className="flex place-items-center gap-x-2" htmlFor="sendEmail">
+                <label
+                  className="flex place-items-center gap-x-2"
+                  htmlFor="sendEmail"
+                  data-recommended-tour="user-invitation"
+                >
                   <input
                     className="checkbox checkbox-primary"
                     type="checkbox"

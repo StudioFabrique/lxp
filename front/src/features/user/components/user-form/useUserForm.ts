@@ -5,7 +5,7 @@ import type { Link as LinkI } from "../../interfaces/link";
 import type Hobby from "../../interfaces/hobby";
 import { regexGeneric, regexMail, regexNumber } from "../../../../config/constantes";
 
-export function useUserForm(user: User | null) {
+export function useUserForm(user: User | null, initialSendEmail = false) {
   const [email, setEmail] = useState(user?.email ?? "");
   const [firstname, setFirstname] = useState(user?.firstname ?? "");
   const [lastname, setLastname] = useState(user?.lastname ?? "");
@@ -21,7 +21,7 @@ export function useUserForm(user: User | null) {
   const [links, setLinks] = useState<Array<LinkI>>([]);
   const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
   const [roleId, setRoleId] = useState<string | null>(null);
-  const [sendEmail, setSendEmail] = useState(false);
+  const [sendEmail, setSendEmail] = useState(initialSendEmail);
 
   useEffect(() => {
     if (user) {
