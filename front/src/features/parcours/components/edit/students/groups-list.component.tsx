@@ -13,6 +13,7 @@ interface GroupsListProps {
   onCancel: (id: string) => void; // Fonction appelée pour annuler/fermer
   groups: GroupList[]; // Liste des groupes à afficher
   onAdd: (groups: Group[]) => void;
+  createGroupHref: string;
 }
 
 /**
@@ -60,10 +61,11 @@ const GroupsList = (props: GroupsListProps) => {
           onSorting={sortData}
           fieldSort={fieldSort}
           direction={direction}
+          createGroupHref={props.createGroupHref}
         />
       ) : null}
       {/* Affichage conditionnel de la pagination si plus d'une page */}
-      {totalPages && totalPages > 1 ? (
+      {list && list.length > 0 && totalPages && totalPages > 1 ? (
         <Pagination page={page} totalPages={totalPages} setPage={setPage} />
       ) : null}
       {/* Séparateur visuel */}

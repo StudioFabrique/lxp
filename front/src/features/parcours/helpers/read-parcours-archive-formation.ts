@@ -4,6 +4,9 @@ type ParcoursArchiveManifest = {
   formation?: {
     title?: unknown;
   };
+  parcours?: {
+    modules?: Array<{ title?: unknown }>;
+  };
 };
 
 type FormationItem = {
@@ -23,7 +26,14 @@ export function findDetectedFormationId(
   )?.id;
 }
 
-export async function readParcoursArchiveFormationTitle(archive: File) {
+export type ParcoursArchiveImportMetadata = {
+  formationTitle: string;
+  modules: Array<{ index: number; title: string }>;
+};
+
+export async function readParcoursArchiveMetadata(
+  archive: File,
+): Promise<ParcoursArchiveImportMetadata> {
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive);
@@ -48,5 +58,21 @@ export async function readParcoursArchiveFormationTitle(archive: File) {
     throw new Error("La formation est absente du manifeste.");
   }
 
-  return formationTitle.trim();
+  const archiveModules = manifest.parcours?.modules;
+  if (!Array.isArray(archiveModules)) {
+    throw new Error("Les modules sont absents du manifeste.");
+  }
+
+  const modules = archiveModules.map((module, index) => {
+    if (typeof module.title !== "string" || module.title.trim() === "") {
+      throw new Error(`Le module ${index + 1} n’a pas de titre valide.`);
+    }
+    return { index, title: module.title.trim() };
+  });
+
+  return { formationTitle: formationTitle.trim(), modules };
+}
+
+export async function readParcoursArchiveFormationTitle(archive: File) {
+  return (await readParcoursArchiveMetadata(archive)).formationTitle;
 }

@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 import bgImage from "../../../../src/assets/images/new-parcours-default.jpg";
 import { parcoursApi } from "../api/parcours.api";
+import { parcoursKeys } from "../api/parcours.keys";
 import NewParcoursForm from "../components/edit/new-parcours-form";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -19,8 +20,10 @@ import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import {
   findDetectedFormationId,
-  readParcoursArchiveFormationTitle,
+  readParcoursArchiveMetadata,
 } from "../helpers/read-parcours-archive-formation";
+import type Contact from "../../../utils/interfaces/contact";
+import { getContactFullName } from "../../../utils/helpers/contact-full-name";
 
 type Item = {
   id: number;
@@ -46,6 +49,15 @@ const AddParcours = () => {
   const [importFormationId, setImportFormationId] = useState<
     number | undefined
   >();
+  const [importTeacherContactId, setImportTeacherContactId] = useState<
+    number | undefined
+  >();
+  const [importModules, setImportModules] = useState<
+    Array<{ index: number; title: string }>
+  >([]);
+  const [importTeacherModuleIndexes, setImportTeacherModuleIndexes] = useState<
+    number[]
+  >([]);
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -54,6 +66,13 @@ const AddParcours = () => {
     queryFn: () => parcoursApi.queries.getFormations(),
   });
   const formationList: Item[] = Array.isArray(formations) ? formations : [];
+
+  const { data: importContacts = [], isLoading: areImportContactsLoading } =
+    useQuery<Contact[]>({
+      queryKey: parcoursKeys.availableContacts(),
+      queryFn: parcoursApi.queries.getContacts,
+      enabled: showImportModal,
+    });
 
   const { mutate: createParcours, isPending: isCreating } = useMutation({
     mutationFn: (data: { title: string; formationId: number }) =>
@@ -152,6 +171,9 @@ const AddParcours = () => {
     setShowImportModal(false);
     setPendingArchive(undefined);
     setImportFormationId(undefined);
+    setImportTeacherContactId(undefined);
+    setImportModules([]);
+    setImportTeacherModuleIndexes([]);
   };
 
   const handleImportParcours = () => {
@@ -159,6 +181,11 @@ const AddParcours = () => {
     importParcours({
       archive: pendingArchive,
       formationId: importFormationId,
+      teacherContactId: importTeacherContactId,
+      teacherModuleIndexes:
+        importTeacherContactId === undefined
+          ? undefined
+          : importTeacherModuleIndexes,
     });
   };
 
@@ -173,10 +200,15 @@ const AddParcours = () => {
       return;
     }
     try {
-      const formationTitle = await readParcoursArchiveFormationTitle(archive);
+      const metadata = await readParcoursArchiveMetadata(archive);
       setPendingArchive(archive);
       setImportFormationId(
-        findDetectedFormationId(formationList, formationTitle),
+        findDetectedFormationId(formationList, metadata.formationTitle),
+      );
+      setImportTeacherContactId(undefined);
+      setImportModules(metadata.modules);
+      setImportTeacherModuleIndexes(
+        metadata.modules.map((module) => module.index),
       );
       setShowImportModal(true);
     } catch (error) {
@@ -362,6 +394,107 @@ const AddParcours = () => {
                 ))}
               </select>
             </div>
+
+            <div>
+              <label
+                className="mb-2 block text-sm font-semibold"
+                htmlFor="import-teacher"
+              >
+                Première ressource pédagogique (facultatif)
+              </label>
+              <select
+                id="import-teacher"
+                className="select select-primary w-full border border-neutral/50 focus:outline-none"
+                value={importTeacherContactId ?? ""}
+                disabled={areImportContactsLoading}
+                onChange={(event) => {
+                  const value = Number(event.currentTarget.value);
+                  setImportTeacherContactId(value > 0 ? value : undefined);
+                }}
+              >
+                <option value="">
+                  {areImportContactsLoading
+                    ? "Chargement des ressources pédagogiques…"
+                    : "Aucune ressource pédagogique"}
+                </option>
+                {importContacts
+                  .filter(
+                    (contact): contact is Contact & { id: number } =>
+                      typeof contact.id === "number",
+                  )
+                  .map((contact) => (
+                    <option key={contact.idMdb} value={contact.id}>
+                      {getContactFullName(contact)}
+                    </option>
+                  ))}
+              </select>
+              <p className="mt-2 text-xs text-base-content/60">
+                La ressource pédagogique sélectionnée sera ajoutée aux
+                ressources pédagogiques du parcours.
+              </p>
+            </div>
+
+            {importTeacherContactId !== undefined ? (
+              <div className="rounded-xl border border-base-300 p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-semibold">
+                    Modules associés à la ressource pédagogique
+                  </p>
+                  {importModules.length > 0 ? (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      onClick={() =>
+                        setImportTeacherModuleIndexes(
+                          importTeacherModuleIndexes.length ===
+                            importModules.length
+                            ? []
+                            : importModules.map((module) => module.index),
+                        )
+                      }
+                    >
+                      {importTeacherModuleIndexes.length ===
+                      importModules.length
+                        ? "Tout désélectionner"
+                        : "Tout sélectionner"}
+                    </button>
+                  ) : null}
+                </div>
+
+                {importModules.length === 0 ? (
+                  <p className="mt-3 text-sm text-base-content/60">
+                    Cette archive ne contient aucun module.
+                  </p>
+                ) : (
+                  <div className="mt-3 max-h-48 space-y-2 overflow-y-auto pr-1">
+                    {importModules.map((module) => (
+                      <label
+                        key={module.index}
+                        className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-2"
+                      >
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-primary checkbox-sm"
+                          checked={importTeacherModuleIndexes.includes(
+                            module.index,
+                          )}
+                          onChange={() =>
+                            setImportTeacherModuleIndexes((currentIndexes) =>
+                              currentIndexes.includes(module.index)
+                                ? currentIndexes.filter(
+                                    (index) => index !== module.index,
+                                  )
+                                : [...currentIndexes, module.index],
+                            )
+                          }
+                        />
+                        <span className="text-sm">{module.title}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : null}
           </div>
         </Modal>
       )}

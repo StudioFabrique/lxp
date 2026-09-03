@@ -4,7 +4,7 @@ import useSmartQuizPrompt from "../../../quiz/hooks/use-smart-quiz-prompt";
 import AdminActivityNavigation from "./admin-activity-navigation";
 import ActivityTypeSelection from "./activity-type-selection";
 import LessonReaderAndEditor from "./lesson-reader-and-editor";
-import NoActivityPlaceholder from "./no-activity-placeholder";
+import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import StudentActivityNavigation from "./student-activity-navigation";
 import { ExplorerStore } from "../../views/ModuleContentExplorer";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
@@ -73,22 +73,19 @@ const ModuleExplorerPreview = ({
     !["activity_type_selection", "write"].includes(mode)
   ) {
     return (
-      <NoActivityPlaceholder>
-        <div className="flex flex-col items-center gap-5">
-          <p className="text-2xl font-bold text-primary">Aucune activité</p>
-          {canNavigateAsAdmin && computed.hasNextLesson && (
-            <button
-              type="button"
-              className="btn btn-primary text-base-100"
-              onClick={lessonActions.nextLesson}
-            >
-              {computed.isLastLessonOfCurrentCourse
-                ? "Cours suivant"
-                : "Leçon suivante"}
-            </button>
-          )}
-        </div>
-      </NoActivityPlaceholder>
+      <EmptyStatePlaceholder title="Aucune activité">
+        {canNavigateAsAdmin && computed.hasNextLesson && (
+          <button
+            type="button"
+            className="btn btn-primary text-base-100"
+            onClick={lessonActions.nextLesson}
+          >
+            {computed.isLastLessonOfCurrentCourse
+              ? "Cours suivant"
+              : "Leçon suivante"}
+          </button>
+        )}
+      </EmptyStatePlaceholder>
     );
   }
 

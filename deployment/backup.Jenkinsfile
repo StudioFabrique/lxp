@@ -14,6 +14,7 @@ pipeline {
         string(name: 'INFISICAL_PATH_PREFIX', defaultValue: "${params.INFISICAL_PATH_PREFIX ?: ''}", trim: true, description: 'Obligatoire en prod : /instances/<slug> ; sélectionne notamment <préfixe>/backup.')
         string(name: 'DEPLOY_PATH', defaultValue: "${params.DEPLOY_PATH ?: ''}", trim: true, description: 'Vide pour deduire le chemin du foyer distant.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: "${params.LXP_DEPLOYMENT_NAME ?: 'lxp'}", trim: true, description: 'Nom exact de la stack Docker.')
+        string(name: 'BACKUP_CRON', defaultValue: "${params.BACKUP_CRON ?: 'H H/6 * * *'}", trim: true, description: 'Frequence des sauvegardes planifiees, au format cron Jenkins.')
         choice(name: 'OPERATION', choices: ['backup', 'list-backup', 'verify-backup', 'stop-backup'], description: 'Le cron utilise backup ; les autres operations sont declenchables manuellement.')
     }
 
@@ -94,13 +95,17 @@ pipeline {
             }
             steps {
                 script {
+                    if (!params.BACKUP_CRON?.trim()) {
+                        error('BACKUP_CRON doit contenir une expression cron Jenkins.')
+                    }
+                    def backupCron = params.BACKUP_CRON.trim()
                     properties([
                         pipelineTriggers([
-                            cron('H H/6 * * *')
+                            cron(backupCron)
                         ])
                     ])
+                    echo "Planification des sauvegardes activee avec la frequence ${backupCron}."
                 }
-                echo 'Planification des sauvegardes activee toutes les six heures.'
             }
         }
     }

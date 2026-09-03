@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
@@ -10,7 +10,6 @@ import StudentsList from "./students-list";
 import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import toast from "react-hot-toast";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
-import QuestionMarkTooltip from "../../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
 import { useStudentGroupsQuery } from "../../../hooks/useStudentGroupsQuery";
 import { useUpdateParcoursGroups } from "../../../hooks/useUpdateParcoursGroups";
@@ -79,6 +78,7 @@ const ParcoursStudents = () => {
             <GroupsList
               onCancel={handleDrawer}
               groups={fetchedGroups}
+              createGroupHref={`/admin/group/add?parcours=${id}`}
               onAdd={(selectedGroups) =>
                 setDraftGroups([
                   ...groups,
@@ -89,21 +89,6 @@ const ParcoursStudents = () => {
                 ])
               }
             />
-            <span className="flex items-center gap-x-2 text-xs">
-              <p className="text-info">
-                Votre groupe ne se trouve pas dans la liste ?
-              </p>
-              <Link
-                className="underline"
-                to={`/admin/group/add?parcours=${id}`}
-              >
-                Créez-en un nouveau :)
-              </Link>
-              <QuestionMarkTooltip
-                tooltipPosition="left"
-                tooltipValue="Vous pouvez créer un groupe d'étudiants en suivant ce lien. Une fois la création du groupe terminée, vous serez redirigé vers cette vue."
-              />
-            </span>
           </div>
         </RightSideDrawer>
       </section>

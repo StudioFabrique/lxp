@@ -8,7 +8,6 @@ import {
 } from "react";
 
 export type SearchBarProps = {
-  title?: string;
   placeholder?: string;
   additionalClassname?: string;
   onSubmitSearchValue?: (value: string) => void;
@@ -16,7 +15,6 @@ export type SearchBarProps = {
 };
 
 const SearchBar = ({
-  title,
   placeholder,
   additionalClassname,
   onSetFilter,
@@ -42,10 +40,6 @@ const SearchBar = ({
     <div
       className={`flex flex-col lg:flex-row justify-between gap-5 items-center w-full ${additionalClassname}`}
     >
-      {title ? (
-        <h2 className="text-lg font-bold text-base-content w-full">{title}</h2>
-      ) : null}
-
       <div className="flex items-center justify-end gap-5 w-full">
         <form
           onSubmit={handleSubmit}

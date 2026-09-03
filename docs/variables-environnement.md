@@ -317,6 +317,7 @@ Variables utilisées lors d’une commande manuelle :
 | `RESTORE_SOURCE`             | `local`, `external-volume` ou `s3`.                                                              |
 | `RESTORE_SNAPSHOT`           | `latest` pour un contrôle, ou l’identifiant Restic pour une restauration.                        |
 | `RESTORE_CONFIRM`            | Nom exact de la stack. Obligatoire pour remplacer les données.                                   |
+| `BACKUP_CRON`                | Fréquence du job Jenkins au format cron. La valeur par défaut est `H H/6 * * *`.                  |
 | `OPERATION`                  | Action du job Jenkins de sauvegarde : `backup`, `list-backup`, `verify-backup` ou `stop-backup`. |
 
 Les variables `BACKUP_RESTIC_IMAGE`, `BACKUP_HELPER_IMAGE`,

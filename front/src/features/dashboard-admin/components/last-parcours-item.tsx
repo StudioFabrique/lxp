@@ -43,6 +43,7 @@ type LastParcoursItemProps = {
     parcours: FormationParcoursSummary["parcours"][number],
   ) => void;
   exportingParcoursId?: number | null;
+  fullWidth?: boolean;
 };
 
 const ParcoursRow = ({
@@ -52,6 +53,7 @@ const ParcoursRow = ({
   onDelete,
   onExport,
   isExporting,
+  showTitleTooltip = true,
 }: {
   item: FormationParcoursSummary["parcours"][number];
   baseRoute: "admin" | "student";
@@ -59,6 +61,7 @@ const ParcoursRow = ({
   onDelete?: (item: FormationParcoursSummary["parcours"][number]) => void;
   onExport?: (item: FormationParcoursSummary["parcours"][number]) => void;
   isExporting?: boolean;
+  showTitleTooltip?: boolean;
 }) => (
   <li className="list-row" key={item.id}>
     <div className="self-center">
@@ -70,7 +73,14 @@ const ParcoursRow = ({
     </div>
 
     <div className="list-col-grow min-w-0 self-center">
-      <div className="font-semibold truncate">{item.title}</div>
+      <div
+        className={cn("block max-w-full text-left", {
+          "tooltip tooltip-bottom tooltip-start": showTitleTooltip,
+        })}
+        data-tip={showTitleTooltip ? item.title : undefined}
+      >
+        <div className="font-semibold truncate">{item.title}</div>
+      </div>
       <div className="text-xs font-light opacity-50">
         {getDatesTooltip(item.startDate, item.endDate)}
       </div>
@@ -105,8 +115,10 @@ const LastParcoursItem = ({
   onDeleteParcours,
   onExportParcours,
   exportingParcoursId = null,
+  fullWidth,
 }: LastParcoursItemProps) => {
   const [showRemainingParcours, setShowRemainingParcours] = useState(false);
+  const usesFullWidthLayout = fullWidth ?? baseRoute === "student";
   const remainingParcours = formation?.parcours.slice(maxParcoursShown) ?? [];
   const requestParcoursDeletion = (
     parcours: FormationParcoursSummary["parcours"][number],
@@ -121,14 +133,14 @@ const LastParcoursItem = ({
         glowColor="secondary"
         glowSize={2.4}
         className={cn("rounded-box", {
-          "h-full": baseRoute === "admin",
+          "h-full": !usesFullWidthLayout,
         })}
       >
         <ul
           className={cn(
             "list border border-base-300 rounded-box overflow-hidden",
             {
-              "h-full min-h-52": baseRoute === "admin",
+              "h-full min-h-52": !usesFullWidthLayout,
               "border-dashed border-primary/25": !formation,
               "bg-base-200": Boolean(formation),
             },
@@ -174,6 +186,7 @@ const LastParcoursItem = ({
                   onDelete={requestParcoursDeletion}
                   onExport={onExportParcours}
                   isExporting={exportingParcoursId === item.id}
+                  showTitleTooltip={!usesFullWidthLayout}
                 />
               ))}
               {isManagementView && remainingParcours.length > 0 ? (
@@ -187,7 +200,7 @@ const LastParcoursItem = ({
                   </button>
                 </li>
               ) : null}
-              {baseRoute === "admin" ? (
+              {baseRoute === "admin" && !usesFullWidthLayout ? (
                 <li
                   className={cn("flex flex-col gap-2 items-center py-5", {
                     "mt-auto": formation.parcours.length > 0,

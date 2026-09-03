@@ -47,16 +47,27 @@ const RoleList = () => {
     refetch();
   };
 
-  const { onDeleteSelected, onDeleteOne, isDeleting } = useRoleActions(
-    refreshAndClearSelection,
-  );
+  const {
+    onDeleteSelected,
+    onDeleteOne,
+    isDeleting,
+    deleteError,
+    resetDeleteError,
+  } = useRoleActions(refreshAndClearSelection);
 
   const roleToDelete = useMemo(
     () => data.find((r) => r._id === idToDelete),
     [data, idToDelete],
   );
 
-  const columns = useMemo(() => getRoleColumns((id) => setIdToDelete(id)), []);
+  const columns = useMemo(
+    () =>
+      getRoleColumns((id) => {
+        resetDeleteError();
+        setIdToDelete(id);
+      }),
+    [resetDeleteError],
+  );
 
   const onRetreiveItemsValues = (property: keyof RoleCounts) =>
     data
@@ -65,9 +76,18 @@ const RoleList = () => {
 
   const handleConfirmSingleDelete = async () => {
     if (idToDelete) {
-      await onDeleteOne(idToDelete);
-      setIdToDelete(null);
+      try {
+        await onDeleteOne(idToDelete);
+        setIdToDelete(null);
+      } catch {
+        // Le toast et la modale affichent le message porté par la mutation.
+      }
     }
+  };
+
+  const handleCancelSingleDelete = () => {
+    setIdToDelete(null);
+    resetDeleteError();
   };
 
   const handleRoleCreated = useCallback(() => {
@@ -84,38 +104,42 @@ const RoleList = () => {
         tourSteps={rolesPageTourSteps}
       />
 
-      <Wrapper additionalClassname="px-10 items-center">
-        <div className="w-full" data-page-tour="filters">
-          <SearchBar
-            title=""
-            placeholder="Rechercher un rôle"
-            onSubmitSearchValue={(value) => {
-              setSearchValue(value.length > 0 ? value : null);
-            }}
-          >
-            <PermissionGuard action="delete" object="role">
-              <TableActionsButtons
-                isLoading={isLoading || isDeleting}
-                isDisabled={idsList.length === 0}
-                onRefreshData={refetch}
-                actions={[
-                  {
-                    title: "Supprimer les rôles sélectionnés",
-                    description: `${idsList.length} rôle(s) vont être supprimé(s)`,
-                    rightButtonTitle: "Confirmer",
-                    alertMessageBottom:
-                      "Attention: Cette opération ne peut pas être annulée",
-                    onConfirm: () => onDeleteSelected(idsList),
-                  },
-                ]}
-                retreiveItemsProperty="role"
-                onRetreiveItemsValuesByPropertyFromIdList={
-                  onRetreiveItemsValues as any
-                }
-              />
-            </PermissionGuard>
-          </SearchBar>
-        </div>
+      <Wrapper
+        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0}
+      >
+        {isLoading || data.length > 0 || isSearching ? (
+          <div className="w-full" data-page-tour="filters">
+            <SearchBar
+              placeholder="Rechercher un rôle"
+              onSubmitSearchValue={(value) => {
+                setSearchValue(value.length > 0 ? value : null);
+              }}
+            >
+              <PermissionGuard action="delete" object="role">
+                <TableActionsButtons
+                  isLoading={isLoading || isDeleting}
+                  isDisabled={idsList.length === 0}
+                  onRefreshData={refetch}
+                  actions={[
+                    {
+                      title: "Supprimer les rôles sélectionnés",
+                      description: `${idsList.length} rôle(s) vont être supprimé(s)`,
+                      rightButtonTitle: "Confirmer",
+                      alertMessageBottom:
+                        "Attention: Cette opération ne peut pas être annulée",
+                      onConfirm: () => onDeleteSelected(idsList),
+                    },
+                  ]}
+                  retreiveItemsProperty="role"
+                  onRetreiveItemsValuesByPropertyFromIdList={
+                    onRetreiveItemsValues as any
+                  }
+                />
+              </PermissionGuard>
+            </SearchBar>
+          </div>
+        ) : null}
 
         <div className="w-full" data-page-tour="table">
           <DataTable
@@ -126,15 +150,17 @@ const RoleList = () => {
             setRowSelection={setRowSelection}
             emptyMessage={
               isSearching
-                ? "Aucun rôle ne correspond à votre recherche"
-                : "Aucun rôle créé"
+                ? "Aucun rôle disponible pour cette recherche"
+                : "Aucun rôle disponible"
             }
           />
         </div>
 
-        <div className="w-full mt-2 text-sm text-base-content/60">
-          Total : {data.length} rôle(s)
-        </div>
+        {data.length > 0 ? (
+          <div className="w-full mt-2 text-sm text-base-content/60">
+            Total : {data.length} rôle(s)
+          </div>
+        ) : null}
       </Wrapper>
 
       <div data-page-tour="role-form">
@@ -148,10 +174,11 @@ const RoleList = () => {
       <PermissionGuard action="delete" object="role">
         <TableActionsModal
           isOpen={!!idToDelete}
-          onCancel={() => setIdToDelete(null)}
+          onCancel={handleCancelSingleDelete}
           title="Confirmation de suppression"
           description="Êtes-vous sûr de vouloir supprimer ce rôle ?"
           descList={roleToDelete ? [roleToDelete.label] : undefined}
+          error={deleteError}
         >
           <button
             className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}

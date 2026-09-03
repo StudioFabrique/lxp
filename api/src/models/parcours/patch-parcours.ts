@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
+import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 export type PatchParcoursPayload = {
   title?: string;
@@ -34,6 +35,7 @@ async function patchParcours(
         startDate: true,
         endDate: true,
         formationId: true,
+        contacts: { select: { contactId: true } },
       },
     });
 
@@ -72,6 +74,16 @@ async function patchParcours(
           statusCode: 404,
         };
       }
+
+      const retainedContactIds = new Set(contactIds);
+      const removedContactIds = existingParcours.contacts
+        .map(({ contactId }) => contactId)
+        .filter((contactId) => !retainedContactIds.has(contactId));
+      await removeParcoursContactsFromModules(
+        tx,
+        parcoursId,
+        removedContactIds,
+      );
     }
     const startDate =
       payload.startDate === undefined

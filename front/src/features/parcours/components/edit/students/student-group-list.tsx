@@ -6,7 +6,11 @@ import {
   useEffect,
   useMemo,
 } from "react";
+import { Plus } from "lucide-react";
+import { Link } from "react-router";
+
 import Role from "../../../../../../src/utils/interfaces/role";
+import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
 import { GroupList } from "./parcours-students.component";
 
@@ -21,6 +25,7 @@ type Props = {
   onSorting: (column: string) => void;
   fieldSort: string;
   direction: boolean;
+  createGroupHref: string;
 };
 
 // Composant principal pour afficher la liste des groupes d'étudiants
@@ -32,6 +37,7 @@ function StudentGroupList({
   onSorting,
   fieldSort,
   direction,
+  createGroupHref,
 }: Props) {
   // Gestion de la sélection/désélection de tous les éléments
   const handleAllChecked = useCallback(() => {
@@ -43,10 +49,12 @@ function StudentGroupList({
     onAllChecked(false);
   }, [onAllChecked]);
 
-  console.log({ groupList });
-
   // Mémoisation du contenu du tableau pour optimiser les performances
   const content = useMemo(() => {
+    if (groupList.length === 0) {
+      return <EmptyStatePlaceholder title="Aucun groupe disponible" />;
+    }
+
     return (
       <table className="table w-full">
         <thead className="bg-none">
@@ -112,7 +120,6 @@ function StudentGroupList({
           </tr>
         </thead>
         <tbody>
-          {/* Mapping des groupes pour créer les lignes du tableau */}
           {groupList.map((item) => (
             <tr key={item._id}>
               {/* Checkbox individuelle pour chaque groupe */}
@@ -147,7 +154,20 @@ function StudentGroupList({
     onRowCheck,
   ]);
 
-  return content;
+  return (
+    <>
+      <div className="flex justify-end">
+        <Link
+          className="btn btn-primary btn-outline btn-sm"
+          to={createGroupHref}
+        >
+          <Plus className="size-4" aria-hidden="true" />
+          Créer un groupe
+        </Link>
+      </div>
+      {content}
+    </>
+  );
 }
 
 export default StudentGroupList;

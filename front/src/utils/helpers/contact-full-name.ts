@@ -4,4 +4,4 @@ export const getContactFullName = (
   contact: Pick<Contact, "firstname" | "lastname">,
 ) =>
   [contact.firstname, contact.lastname].filter(Boolean).join(" ").trim() ||
-  "Formateur supprimé";
+  "Ressource supprimée";

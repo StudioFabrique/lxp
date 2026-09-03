@@ -105,32 +105,36 @@ const GroupList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <Wrapper additionalClassname="px-10 items-center">
-        <div className="w-full" data-page-tour="filters">
-          <SearchBar
-            title="Groupes"
-            placeholder="Rechercher un groupe"
-            onSubmitSearchValue={onSubmitSearchValue}
-          >
-            <TableActionsButtons
-              isLoading={isLoading || isDeleting}
-              isDisabled={idsList.length === 0}
-              onRefreshData={onRefreshData}
-              actions={[
-                {
-                  title: "Supprimer les groupes sélectionnés",
-                  description: `${idsList.length} groupe(s) vont être supprimé(s)`,
-                  rightButtonTitle: "Supprimer",
-                  onConfirm: () => onDeleteSelected(idsList),
-                },
-              ]}
-              retreiveItemsProperty="name"
-              onRetreiveItemsValuesByPropertyFromIdList={
-                onRetreiveItemsValues
-              }
-            />
-          </SearchBar>
-        </div>
+      <Wrapper
+        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0}
+      >
+        {isLoading || data.length > 0 || searchValue ? (
+          <div className="w-full" data-page-tour="filters">
+            <SearchBar
+              placeholder="Rechercher un groupe"
+              onSubmitSearchValue={onSubmitSearchValue}
+            >
+              <TableActionsButtons
+                isLoading={isLoading || isDeleting}
+                isDisabled={idsList.length === 0}
+                onRefreshData={onRefreshData}
+                actions={[
+                  {
+                    title: "Supprimer les groupes sélectionnés",
+                    description: `${idsList.length} groupe(s) vont être supprimé(s)`,
+                    rightButtonTitle: "Supprimer",
+                    onConfirm: () => onDeleteSelected(idsList),
+                  },
+                ]}
+                retreiveItemsProperty="name"
+                onRetreiveItemsValuesByPropertyFromIdList={
+                  onRetreiveItemsValues
+                }
+              />
+            </SearchBar>
+          </div>
+        ) : null}
 
         <div className="w-full" data-page-tour="table">
           <DataTable
@@ -142,17 +146,21 @@ const GroupList = () => {
             sorting={sorting}
             setSorting={handleSortingChange}
             emptyMessage={
-              searchValue ? "Aucun groupe trouvé" : "Aucun groupe disponible"
+              searchValue
+                ? "Aucun groupe disponible pour cette recherche"
+                : "Aucun groupe disponible"
             }
           />
         </div>
 
-        <div className="w-full mt-5" data-page-tour="pagination">
-          <TablePagination
-            leftText={`Groupes : ${totalItems}`}
-            {...pagination}
-          />
-        </div>
+        {data.length > 0 ? (
+          <div className="w-full mt-5" data-page-tour="pagination">
+            <TablePagination
+              leftText={`Groupes : ${totalItems}`}
+              {...pagination}
+            />
+          </div>
+        ) : null}
       </Wrapper>
 
       <TableActionsModal

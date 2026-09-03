@@ -51,9 +51,17 @@ grep -Fq 'properties([pipelineTriggers([])])' \
     "$repository_root/deployment/backup.Jenkinsfile" \
     || fail "stop-backup ne desactive pas le cron Jenkins"
 
-grep -Fq "cron('H H/6 * * *')" \
+grep -Fq "string(name: 'BACKUP_CRON', defaultValue: \"\${params.BACKUP_CRON ?: 'H H/6 * * *'}\"" \
     "$repository_root/deployment/backup.Jenkinsfile" \
-    || fail "backup ne reactive pas le cron Jenkins"
+    || fail "la frequence cron Jenkins n'est pas configurable"
+
+grep -Fq 'cron(backupCron)' \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "backup ne reactive pas le cron Jenkins avec la frequence configuree"
+
+grep -Fq "error('BACKUP_CRON doit contenir une expression cron Jenkins.')" \
+    "$repository_root/deployment/backup.Jenkinsfile" \
+    || fail "une frequence cron Jenkins vide n'est pas refusee"
 
 [[ "$(grep -c '^[[:space:]]*script {$' "$repository_root/deployment/backup.Jenkinsfile")" -eq 2 ]] \
     || fail "les appels dynamiques a properties ne sont pas encapsules dans des blocs script"
