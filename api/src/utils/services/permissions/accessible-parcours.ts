@@ -16,8 +16,8 @@ export type AccessScope =
       directParcoursIds: number[] | null;
       /**
        * `null` signifie que tous les modules des parcours autorisés le sont.
-       * Pour un formateur, la liste contient les modules auxquels il est
-       * affecté directement ainsi que ceux des parcours auxquels il est affecté.
+       * Pour un formateur, la liste contient uniquement les modules des
+       * parcours auxquels il est directement affecté.
        */
       moduleIds: number[] | null;
     }
@@ -31,9 +31,9 @@ function highestPrivilegeRank(userRoles: IRole[]): number {
  * Périmètre de contenus visible par l'appelant.
  *
  * `null` signifie « aucune restriction » : c'est le cas des administrateurs.
- * Les formateurs sont bornés aux parcours et modules auxquels ils sont
- * affectés comme ressources pédagogiques. L'affectation d'un cours n'entre
- * volontairement pas dans ce calcul.
+ * Les formateurs sont bornés aux parcours auxquels ils sont directement
+ * affectés comme ressources pédagogiques. Une affectation orpheline à un
+ * module ou à un cours ne doit jamais rendre son parcours parent visible.
  */
 export async function resolveAccessScope(auth: {
   userId: string;
@@ -55,10 +55,9 @@ export async function resolveAccessScope(auth: {
 /**
  * Périmètre d'un formateur.
  *
- * Une affectation au parcours donne accès à tous ses modules. Une affectation
- * au module donne accès à ce module et fait apparaître son parcours et sa
- * formation parents. Les contacts posés directement sur un cours ne confèrent
- * aucun accès supplémentaire.
+ * Une affectation au parcours donne accès à tous ses modules. Les contacts
+ * posés uniquement sur un module ou un cours ne confèrent aucun accès : le
+ * rattachement direct au parcours reste toujours la source de vérité.
  */
 export async function getTeacherAccessScope(
   userIdMdb: string,
@@ -67,12 +66,6 @@ export async function getTeacherAccessScope(
     where: { idMdb: userIdMdb },
     select: {
       parcours: { select: { parcoursId: true } },
-      modules: {
-        select: {
-          moduleId: true,
-          module: { select: { parcoursId: true } },
-        },
-      },
     },
   });
 
@@ -86,10 +79,6 @@ export async function getTeacherAccessScope(
   }
 
   const directParcoursIds = contact.parcours.map(({ parcoursId }) => parcoursId);
-  const directModuleIds = contact.modules.map(({ moduleId }) => moduleId);
-  const moduleParcoursIds = contact.modules.map(
-    ({ module }) => module.parcoursId,
-  );
   const inheritedModules =
     directParcoursIds.length === 0
       ? []
@@ -100,14 +89,9 @@ export async function getTeacherAccessScope(
 
   return {
     kind: "teacher",
-    parcoursIds: [...new Set([...directParcoursIds, ...moduleParcoursIds])],
+    parcoursIds: directParcoursIds,
     directParcoursIds,
-    moduleIds: [
-      ...new Set([
-        ...directModuleIds,
-        ...inheritedModules.map(({ id }) => id),
-      ]),
-    ],
+    moduleIds: inheritedModules.map(({ id }) => id),
   };
 }
 

@@ -3,6 +3,7 @@ import { type Contact } from "@prisma/client";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
+import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 async function putParcoursContacts(
   parcoursId: number,
@@ -12,9 +13,18 @@ async function putParcoursContacts(
   try {
     const transaction = await prisma.$transaction(async (tx) => {
       const admin = await getAdmin(userId);
+      const currentParcoursContacts = await tx.contactsOnParcours.findMany({
+        where: { parcoursId },
+        select: { contactId: true },
+      });
 
       if (newContacts.length === 0) {
-        const updatedParcours = await prisma.contactsOnParcours.deleteMany({
+        await removeParcoursContactsFromModules(
+          tx,
+          parcoursId,
+          currentParcoursContacts.map(({ contactId }) => contactId),
+        );
+        const updatedParcours = await tx.contactsOnParcours.deleteMany({
           where: { parcoursId },
         });
         return updatedParcours;
@@ -63,7 +73,17 @@ async function putParcoursContacts(
           status: 403,
         };
       }
-      await prisma.contactsOnParcours.deleteMany({
+      const retainedContactIds = new Set(
+        existingContacts.map(({ id }) => id),
+      );
+      await removeParcoursContactsFromModules(
+        tx,
+        parcoursId,
+        currentParcoursContacts
+          .map(({ contactId }) => contactId)
+          .filter((contactId) => !retainedContactIds.has(contactId)),
+      );
+      await tx.contactsOnParcours.deleteMany({
         where: { parcoursId },
       });
 

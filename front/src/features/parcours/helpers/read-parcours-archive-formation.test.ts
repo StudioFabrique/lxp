@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   findDetectedFormationId,
+  readParcoursArchiveMetadata,
   readParcoursArchiveFormationTitle,
 } from "./read-parcours-archive-formation";
 
@@ -17,11 +18,29 @@ describe("readParcoursArchiveFormationTitle", () => {
   it("retourne le titre de la formation du manifeste", async () => {
     const archive = await archiveWithManifest({
       formation: { title: " Formation détectée " },
+      parcours: { modules: [] },
     });
 
     await expect(readParcoursArchiveFormationTitle(archive)).resolves.toBe(
       "Formation détectée",
     );
+  });
+
+  it("retourne les modules disponibles pour l’affectation du formateur", async () => {
+    const archive = await archiveWithManifest({
+      formation: { title: "Formation" },
+      parcours: {
+        modules: [{ title: " Module 1 " }, { title: "Module 2" }],
+      },
+    });
+
+    await expect(readParcoursArchiveMetadata(archive)).resolves.toEqual({
+      formationTitle: "Formation",
+      modules: [
+        { index: 0, title: "Module 1" },
+        { index: 1, title: "Module 2" },
+      ],
+    });
   });
 
   it("refuse une archive sans manifeste", async () => {

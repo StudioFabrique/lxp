@@ -3,6 +3,7 @@ import type Parcours from "../../../utils/interfaces/parcours";
 import type Skill from "../../../utils/interfaces/skill";
 import type SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 import type Tag from "../../../utils/interfaces/tag";
+import type Contact from "../../../utils/interfaces/contact";
 
 export type UpdateParcoursPayload = Partial<{
   title: string;
@@ -58,8 +59,8 @@ const queries = {
     const res = await apiClient.get<Tag[]>("/tag");
     return res.data;
   },
-  getContacts: async () => {
-    const res = await apiClient.get("/user/contacts");
+  getContacts: async (): Promise<Contact[]> => {
+    const res = await apiClient.get<Contact[]>("/user/contacts");
     return res.data;
   },
   getStudentsByGroupIds: async (groupIds: string[]) => {
@@ -126,14 +127,25 @@ const mutations = {
   importParcours: async ({
     archive,
     formationId,
+    teacherContactId,
+    teacherModuleIndexes,
   }: {
     archive: File;
     formationId?: number;
+    teacherContactId?: number;
+    teacherModuleIndexes?: number[];
   }) => {
     const formData = new FormData();
     formData.append("archive", archive);
     if (formationId !== undefined) {
       formData.append("formationId", formationId.toString());
+    }
+    if (teacherContactId !== undefined) {
+      formData.append("teacherContactId", teacherContactId.toString());
+      formData.append(
+        "teacherModuleIndexes",
+        JSON.stringify(teacherModuleIndexes ?? []),
+      );
     }
     const res = await apiClient.post<{
       success: true;

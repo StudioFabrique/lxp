@@ -2,6 +2,7 @@ import type { NextFunction, Response } from "express";
 
 import { importParcoursArchive } from "../../models/parcours/parcours-archive.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { parseParcoursImportOptions } from "./parcours-import-options.ts";
 
 export default async function httpImportParcours(
   req: CustomRequest,
@@ -14,23 +15,11 @@ export default async function httpImportParcours(
         .status(400)
         .json({ message: "Aucun fichier ZIP n'a été envoyé." });
     }
-    const rawFormationId = req.body?.formationId;
-    const formationId =
-      rawFormationId === undefined || rawFormationId === ""
-        ? undefined
-        : Number(rawFormationId);
-    if (
-      formationId !== undefined &&
-      (!Number.isInteger(formationId) || formationId <= 0)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "La formation sélectionnée n'est pas valide." });
-    }
+    const options = parseParcoursImportOptions(req.body);
     const result = await importParcoursArchive(
       req.file.buffer,
       req.auth!.userId,
-      formationId,
+      options,
     );
     return res.status(201).json(result);
   } catch (error) {

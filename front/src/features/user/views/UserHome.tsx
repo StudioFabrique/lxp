@@ -221,30 +221,32 @@ const UserHome = () => {
         <UserStats stats={stats} />
       </div>
 
+      {roles.length > 0 && currentRole ? (
+        <div
+          className="mb-4 flex w-full flex-wrap justify-start gap-2"
+          data-page-tour="role-filters"
+        >
+          {roles.map((role) => (
+            <button
+              key={role._id}
+              type="button"
+              onClick={() => handleRoleSwitch(role)}
+              className={`btn btn-sm ${
+                currentRole._id === role._id
+                  ? "btn-primary"
+                  : "btn-outline btn-primary"
+              }`}
+            >
+              {role.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       <Wrapper
         additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
         unstyled={!isLoading && data.length === 0}
       >
-        <div className="w-full" data-page-tour="role-filters">
-          {roles.length > 0 && currentRole && (
-            <div className="flex w-full justify-start gap-2 mb-4">
-              {roles.map((role) => (
-                <button
-                  key={role._id}
-                  onClick={() => handleRoleSwitch(role)}
-                  className={`btn btn-sm ${
-                    currentRole._id === role._id
-                      ? "btn-primary"
-                      : "btn-outline btn-primary"
-                  }`}
-                >
-                  {role.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
             <SearchBar

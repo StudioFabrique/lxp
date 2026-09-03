@@ -8,6 +8,7 @@ import { z } from "zod";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import type { ParcoursImportOptions } from "../../controllers/parcours/parcours-import-options.ts";
 
 const ARCHIVE_FORMAT = "andria-parcours";
 const ARCHIVE_VERSION = 1;
@@ -27,8 +28,7 @@ const activitiesRoot = path.join(uploadsRoot, "activities");
 type AssetKind = "text" | "image" | "video" | "resource" | "cover";
 type ActivityType = "text" | "image" | "video" | "resource" | "iframe";
 type AssetReference =
-  | { kind: "asset"; path: string }
-  | { kind: "url"; url: string };
+  { kind: "asset"; path: string } | { kind: "url"; url: string };
 
 type ArchiveTag = { name: string; color: string };
 type ArchiveQuiz = {
@@ -671,8 +671,9 @@ async function createQuiz(
 export async function importParcoursArchive(
   archive: Buffer,
   userId: string,
-  formationId?: number,
+  options: ParcoursImportOptions = { teacherModuleIndexes: [] },
 ) {
+  const { formationId, teacherContactId, teacherModuleIndexes } = options;
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive, { checkCRC32: true });
@@ -711,6 +712,17 @@ export async function importParcoursArchive(
     throw httpError(400, "Le manifeste JSON est invalide.");
   }
   const manifest = parseParcoursArchiveManifest(parsedJson);
+  const selectedTeacherModuleIndexes = new Set(teacherModuleIndexes);
+  if (
+    [...selectedTeacherModuleIndexes].some(
+      (index) => index < 0 || index >= manifest.parcours.modules.length,
+    )
+  ) {
+    throw httpError(
+      400,
+      "La sélection contient un module absent du parcours importé.",
+    );
+  }
 
   const [admin, mongoUser] = await Promise.all([
     prisma.admin.findFirst({ where: { idMdb: userId } }),
@@ -822,6 +834,18 @@ export async function importParcoursArchive(
         if (formationId !== undefined && !selectedFormation) {
           throw httpError(404, "La formation sélectionnée n'existe pas.");
         }
+        const selectedTeacherContact =
+          teacherContactId === undefined
+            ? null
+            : await tx.contact.findUnique({
+                where: { id: teacherContactId },
+              });
+        if (teacherContactId !== undefined && !selectedTeacherContact) {
+          throw httpError(
+            404,
+            "La ressource pédagogique sélectionnée n'existe pas.",
+          );
+        }
         const existingFormation = selectedFormation
           ? null
           : await tx.formation.findUnique({
@@ -882,6 +906,17 @@ export async function importParcoursArchive(
                 description,
               })),
             },
+            contacts: selectedTeacherContact
+              ? {
+                  create: [
+                    {
+                      contact: {
+                        connect: { id: selectedTeacherContact.id },
+                      },
+                    },
+                  ],
+                }
+              : undefined,
             tags: {
               create: manifest.parcours.tags.map((tag) => ({
                 tag: {
@@ -912,7 +947,12 @@ export async function importParcoursArchive(
           });
           bonusSkillIds.set(skill.key, created.id);
         }
-        for (const module of manifest.parcours.modules) {
+        for (
+          let moduleIndex = 0;
+          moduleIndex < manifest.parcours.modules.length;
+          moduleIndex += 1
+        ) {
+          const module = manifest.parcours.modules[moduleIndex];
           const createdModule = await tx.module.create({
             data: {
               title: module.title,
@@ -927,6 +967,19 @@ export async function importParcoursArchive(
               author,
               adminId: admin.id,
               parcoursId: createdParcours.id,
+              contacts:
+                selectedTeacherContact &&
+                selectedTeacherModuleIndexes.has(moduleIndex)
+                  ? {
+                      create: [
+                        {
+                          contact: {
+                            connect: { id: selectedTeacherContact.id },
+                          },
+                        },
+                      ],
+                    }
+                  : undefined,
               bonusSkills: {
                 create: module.bonusSkillKeys
                   .map((key) => bonusSkillIds.get(key))
