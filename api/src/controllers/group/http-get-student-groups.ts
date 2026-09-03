@@ -1,5 +1,6 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import getStudentGroups from "../../models/group/get-student-groups.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /**
  * Contrôleur HTTP pour récupérer la liste des groupes d'étudiants
@@ -8,13 +9,13 @@ import getStudentGroups from "../../models/group/get-student-groups.ts";
  * @param next - Fonction suivante dans le middleware
  */
 export default async function httpGetStudentGroups(
-  _req: Request,
+  req: CustomRequest,
   _res: Response,
   next: NextFunction
 ) {
   try {
     // Appel au modèle pour récupérer les groupes
-    const response = await getStudentGroups();
+    const response = await getStudentGroups(req.auth!);
 
     // Transmission de la réponse au middleware suivant
     next({

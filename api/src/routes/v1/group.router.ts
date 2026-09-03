@@ -21,6 +21,10 @@ import httpDeleteManyGroups from "../../controllers/group/http-delete-many-group
 import { body, param, query } from "express-validator";
 import { regexStringManyMongoId } from "../../utils/constantes.ts";
 import httpGetStudentGroups from "../../controllers/group/http-get-student-groups.ts";
+import {
+  checkGroupAccess,
+  checkGroupParcoursAccess,
+} from "../../middleware/check-group-access.ts";
 const groupRouter = Router();
 
 // Retourne la liste des groupes d'étudiants avec des informations minimales destinées à être affichées dans un tableau
@@ -47,7 +51,11 @@ groupRouter.get(
 groupRouter.get(
   "/:id",
   checkPermissions("group"),
-  param("id").isMongoId().withMessage("ID de groupe invalide"),
+  [
+    param("id").isMongoId().withMessage("ID de groupe invalide"),
+    checkValidatorResult,
+  ],
+  checkGroupAccess({ location: "params", key: "id" }),
   httpGetGroupDetails,
 );
 
@@ -58,6 +66,7 @@ groupRouter.post(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
+  checkGroupParcoursAccess,
   httpCreateGroup,
 );
 
@@ -74,6 +83,7 @@ groupRouter.put(
     body("usersId.*").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
+  checkGroupAccess({ location: "params", key: "id" }),
   httpPutAddUsersGroup,
 );
 
@@ -83,6 +93,12 @@ groupRouter.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
+  [
+    param("id").isMongoId().withMessage("ID de groupe invalide"),
+    checkValidatorResult,
+  ],
+  checkGroupAccess({ location: "params", key: "id" }),
+  checkGroupParcoursAccess,
   httpPutGroup,
 );
 
@@ -95,6 +111,7 @@ groupRouter.delete(
     param("userId").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
+  checkGroupAccess({ location: "params", key: "groupId" }),
   httpDeleteUserFromGroup,
 );
 
@@ -107,6 +124,11 @@ groupRouter.delete(
       .withMessage("IDs de groupes invalides"),
     checkValidatorResult,
   ],
+  checkGroupAccess({
+    location: "query",
+    key: "ids",
+    commaSeparated: true,
+  }),
   httpDeleteManyGroups,
 );
 
@@ -117,6 +139,7 @@ groupRouter.delete(
     param("id").isMongoId().withMessage("ID de groupe invalide"),
     checkValidatorResult,
   ],
+  checkGroupAccess({ location: "params", key: "id" }),
   httpDeleteGroup,
 );
 

@@ -72,8 +72,6 @@ export default function LastParcours({
               />
             ))}
           </div>
-        ) : isTeacher && parcours.length === 0 ? (
-          <EmptyStatePlaceholder title="Aucun parcours disponible" />
         ) : (
           <div className={`grid items-start gap-5 ${gridClassName}`}>
             {displayedFormations.map((formation) => (

@@ -264,6 +264,10 @@ export const groupValidator = [
   body("data.users.*._id")
     .isString()
     .withMessage("les id du tableau users doivent être de type string"),
+  body("data.parcoursId")
+    .optional({ nullable: true })
+    .isInt({ min: 0 })
+    .withMessage("ID de parcours invalide"),
   checkValidatorResult,
 ];
 

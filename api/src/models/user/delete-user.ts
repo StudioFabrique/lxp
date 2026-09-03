@@ -1,5 +1,6 @@
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import removeUserFromGroups from "./remove-user-from-groups.ts";
 
 /**
  * Supprime un utilisateur et les données PostgreSQL qui représentent son rôle.
@@ -122,10 +123,20 @@ export default async function deleteUser(userId: string, connectedId: string) {
     await tx.student.deleteMany({ where: { idMdb: userId } });
 
     /*
-     * MongoDB n'est pas transactionnel avec PostgreSQL. L'opération est placée
-     * en dernier dans le callback : toute erreur Mongo annule les changements
-     * Prisma tant que leur transaction n'est pas encore validée.
+     * Les groupes MongoDB portent eux aussi la relation vers l'utilisateur.
+     * La supprimer uniquement depuis la collection User laissait donc des
+     * ObjectId orphelins dans Group.users, visibles notamment dans le compteur
+     * d'apprenants.
+     *
+     * MongoDB n'est pas transactionnel avec PostgreSQL. Ces opérations sont
+     * placées en dernier dans le callback : toute erreur Mongo annule les
+     * changements Prisma tant que leur transaction n'est pas encore validée.
+     * Le retrait des groupes précède la suppression du compte ; si cette
+     * dernière échoue exceptionnellement, le compte reste récupérable plutôt
+     * que d'être supprimé en laissant à nouveau des références orphelines.
      */
+    await removeUserFromGroups(userToDelete._id);
+
     const deletion = await User.deleteOne({ _id: userId });
     if (deletion.deletedCount !== 1) {
       throw {

@@ -6,6 +6,7 @@ import request from "supertest";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import Role from "../src/utils/interfaces/db/role.ts";
 import User, { type IUser } from "../src/utils/interfaces/db/user.ts";
+import Group from "../src/utils/interfaces/db/group.ts";
 import app from "../src/app.ts";
 
 dotenv.config();
@@ -1221,6 +1222,59 @@ describe("HTTP /user", () => {
         .put(`/v1/user/${admin!.id}`)
         .set("Cookie", login.headers["set-cookie"])
         .expect(403);
+    });
+  });
+
+  describe("suppression d’un apprenant", () => {
+    test("retire aussi sa référence de tous les groupes MongoDB", async () => {
+      const studentRole = await Role.findOne({ role: "student" });
+      if (!studentRole) throw new Error("Rôle apprenant absent");
+
+      const student = await User.create({
+        email: "student-delete-group@test.fr",
+        firstname: "élève",
+        lastname: "à supprimer",
+        password: "not-used",
+        isActive: true,
+        roles: [studentRole._id],
+      });
+      const groups = await Group.create([
+        {
+          name: "Groupe suppression apprenant A",
+          roles: [studentRole._id],
+          users: [student._id],
+        },
+        {
+          name: "Groupe suppression apprenant B",
+          roles: [studentRole._id],
+          users: [student._id],
+        },
+      ]);
+
+      try {
+        await request(app)
+          .delete(`/v1/user/${student._id.toString()}`)
+          .set("Cookie", [`${authToken}`])
+          .expect(200);
+
+        const storedGroups = await Group.find({
+          _id: { $in: groups.map(({ _id }) => _id) },
+        }).lean();
+
+        expect(storedGroups).toHaveLength(2);
+        expect(
+          storedGroups.every(({ users }) =>
+            (users ?? []).every(
+              (userId: unknown) => String(userId) !== student._id.toString(),
+            ),
+          ),
+        ).toBe(true);
+      } finally {
+        await Group.deleteMany({
+          _id: { $in: groups.map(({ _id }) => _id) },
+        });
+        await User.deleteOne({ _id: student._id });
+      }
     });
   });
 

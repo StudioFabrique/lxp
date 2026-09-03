@@ -63,6 +63,7 @@ import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby.ts";
 import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby.ts";
 import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network.ts";
 import httpDeleteSocialNetwork from "../../../controllers/user/social-network/http-delete-social-network.ts";
+import { checkGroupAccess } from "../../../middleware/check-group-access.ts";
 
 const userRouter = express.Router();
 
@@ -267,7 +268,17 @@ userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
 userRouter.get("/contacts", checkPermissions("user"), httpGetContacts);
 
 // Rechercher des groupes en fonctions d'une liste d'ids de groupes passé en body et populate les users
-userRouter.post("/group", checkPermissions("user"), httpGetUsersByGroup);
+userRouter.post(
+  "/group",
+  checkPermissions("user"),
+  [
+    body().isArray({ min: 1, max: 500 }),
+    body("*").isMongoId().withMessage("ID de groupe invalide"),
+    checkValidatorResult,
+  ],
+  checkGroupAccess({ location: "body" }),
+  httpGetUsersByGroup,
+);
 
 userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
 

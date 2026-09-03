@@ -46,6 +46,8 @@ import httpExportParcours from "../../../controllers/parcours/http-export-parcou
 import httpImportParcours from "../../../controllers/parcours/http-import-parcours.ts";
 import uploadParcoursArchive from "../../../middleware/upload-parcours-archive.ts";
 import checkRoleRank from "../../../middleware/check-role-rank.ts";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
+import { checkGroupAccess } from "../../../middleware/check-group-access.ts";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -208,7 +210,14 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
+  [
+    body("parcoursId").isInt({ min: 1 }).withMessage("ID de parcours invalide"),
+    body("groupsIds").isArray({ max: 500 }),
+    body("groupsIds.*").isMongoId().withMessage("ID de groupe invalide"),
+    checkValidatorResult,
+  ],
   checkContentAccess("parcours", "parcoursId"),
+  checkGroupAccess({ location: "body", key: "groupsIds", allowEmpty: true }),
   httpPutParcoursGroups,
 );
 

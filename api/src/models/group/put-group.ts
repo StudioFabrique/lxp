@@ -49,6 +49,9 @@ export default async function putGroup(
   await activateMultipleUsers(users);
 
   const updateData: any = { ...group };
+  // Le créateur est une donnée serveur et ne peut pas être remplacé par le
+  // contenu envoyé depuis le formulaire.
+  delete updateData.createdBy;
 
   if (image) {
     updateData.image = image;
