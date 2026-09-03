@@ -63,6 +63,13 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       icon: BookMarked,
     },
     {
+      key: "resource",
+      subject: "resource",
+      path: "resources",
+      label: "Ressources supplémentaires",
+      icon: FileEdit,
+    },
+    {
       key: "group",
       subject: "group",
       path: "group",
@@ -89,13 +96,6 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       path: "mediatheque",
       label: "Médiathèque",
       icon: Library,
-    },
-    {
-      key: "resource",
-      subject: "resource",
-      path: "resources",
-      label: "Ressources supplémentaires",
-      icon: FileEdit,
     },
   ],
   student: [
