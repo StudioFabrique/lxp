@@ -2,7 +2,7 @@ import useModuleContentExplorer from "../hooks/use-module-content-explorer";
 import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentExplorerSkeleton from "./ModulePreviewSkeleton";
 import { Link, useNavigate } from "react-router";
-import { PenBox } from "lucide-react";
+import { LoaderCircle, PenBox, UploadCloud } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../../store/AuthProvider";
 import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
@@ -200,6 +200,26 @@ const ModuleContentExplorer = () => {
             dispatch({ type: "select_lesson", lesson: undefined });
             navigate(".", { replace: true });
           }}
+          publishAllAction={
+            <RoleRankGuard ranks={[0, 1, 2]}>
+              <PermissionGuard object="course" action="update">
+                <button
+                  type="button"
+                  className="btn tooltip tooltip-left border-secondary/20"
+                  aria-label="Tout publier"
+                  data-tip="Tout publier"
+                  disabled={explorerStore.isPublishingAllCourses}
+                  onClick={explorerStore.courseActions.publishAllCourses}
+                >
+                  {explorerStore.isPublishingAllCourses ? (
+                    <LoaderCircle className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <UploadCloud className="w-5 h-5" />
+                  )}
+                </button>
+              </PermissionGuard>
+            </RoleRankGuard>
+          }
           header={<ModuleContentExplorerHeader moduleData={state.module} />}
           progressionSide={
             /* Sidebar */

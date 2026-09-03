@@ -54,6 +54,7 @@ const useModuleContentExplorer = () => {
 
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPublishingAllCourses, setIsPublishingAllCourses] = useState(false);
 
   const [state, dispatch] = useReducer(
     moduleExplorerContentReducer,
@@ -282,6 +283,34 @@ const useModuleContentExplorer = () => {
     },
     [fetchModuleData],
   );
+
+  const publishAllCourses = useCallback(async () => {
+    const unpublishedCourseIds =
+      state.module?.courses
+        .filter((course) => !course.isPublished)
+        .map((course) => course.id) ?? [];
+
+    if (unpublishedCourseIds.length === 0) {
+      toast.success("Tous les cours sont déjà publiés");
+      return;
+    }
+
+    setIsPublishingAllCourses(true);
+    try {
+      await Promise.all(
+        unpublishedCourseIds.map((courseId) =>
+          modulePreviewApi.mutations.publishCourse(courseId),
+        ),
+      );
+      await fetchModuleData();
+      toast.success("Tous les cours ont été publiés avec succès");
+    } catch {
+      await fetchModuleData();
+      toast.error("Impossible de publier tous les cours");
+    } finally {
+      setIsPublishingAllCourses(false);
+    }
+  }, [fetchModuleData, state.module?.courses]);
 
   const deleteCourse = useCallback(async (courseId: number) => {
     try {
@@ -789,6 +818,7 @@ const useModuleContentExplorer = () => {
       isLastLessonOfCurrentCourse,
     },
     isLoading: isLoading || isLoadingRequest,
+    isPublishingAllCourses,
     dispatch,
     moduleActions: {
       fetchModuleData,
@@ -797,6 +827,7 @@ const useModuleContentExplorer = () => {
     courseActions: {
       enableCourse,
       publishCourse,
+      publishAllCourses,
       deleteCourse,
       createCourse,
       updateCourse,
