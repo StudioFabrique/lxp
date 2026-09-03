@@ -13,20 +13,22 @@ type Props = {
 /**
  * Choix proposé avant de lancer un tutoriel, sur une instance ordinaire.
  *
- * Le tutoriel guidé fait réellement créer du contenu, ce qui ne convient pas à
- * tout le monde ; la démonstration donne un aperçu complet sans rien produire.
- * Le libellé du premier choix suit donc le rôle : créer du contenu pour une
- * équipe pédagogique, découvrir l'interface pour un apprenant.
+ * Le tutoriel guidé fait réellement créer un parcours ou du contenu selon le
+ * rôle, ce qui ne convient pas à tout le monde ; la démonstration donne un
+ * aperçu complet sans rien produire.
  */
 const TutorialChoiceModal = ({ demoUrl, onClose, onStartTutorial }: Props) => {
   const { user } = useContext(AuthContext);
   const isStaff = hasRoleRank(user, [0, 1, 2]);
+  const isTeacher = hasRoleRank(user, [2]) && !hasRoleRank(user, [0, 1]);
 
   const tutorialLabel = isStaff ? "Tutoriel guidé" : "Tutoriel de découverte";
 
-  const tutorialDescription = isStaff
-    ? "Un pas à pas dans votre espace, de la formation jusqu'à la première activité."
-    : "Un tour de votre espace d'apprentissage et des outils qui vous accompagnent.";
+  const tutorialDescription = isTeacher
+    ? "Un pas à pas pour créer un module puis votre première activité dans un parcours qui vous est affecté."
+    : isStaff
+      ? "Un pas à pas pour créer votre première formation puis votre premier parcours."
+      : "Un tour de votre espace d'apprentissage et des outils qui vous accompagnent.";
 
   return (
     <div

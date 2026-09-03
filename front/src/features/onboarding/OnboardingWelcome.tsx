@@ -9,6 +9,7 @@ import OnboardingWelcomeTooltip from "./OnboardingWelcomeTooltip";
 import { onboardingWelcomeTourSteps } from "./onboarding-welcome-tour-steps";
 import { useDemoMode } from "../../store/DemoContext";
 import TutorialChoiceModal from "../demo/components/TutorialChoiceModal";
+import { isTeacherUser } from "../../utils/helpers/user-role";
 
 type Props = {
   layout: "admin" | "student";
@@ -18,6 +19,7 @@ const OnboardingWelcome = ({ layout }: Props) => {
   const { user } = useContext(AuthContext);
   const { isSaving, start, skip } = useOnboarding();
   const { demoUrl } = useDemoMode();
+  const isTeacher = layout === "admin" && isTeacherUser(user);
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
 
   // Le choix n'est proposé que si une instance de démonstration existe ; sinon
@@ -98,8 +100,10 @@ const OnboardingWelcome = ({ layout }: Props) => {
       : <>Bienvenue {formattedFullname} sur la plateforme ANDRIA !</>;
 
   const description =
-    layout === "admin"
-      ? "Découvrez les outils essentiels pour administrer la plateforme et créer vos premiers contenus."
+    isTeacher
+      ? "Créez un premier module dans l’un de vos parcours, puis votre première activité pédagogique."
+      : layout === "admin"
+        ? "Créez votre première formation puis votre premier parcours pas à pas."
       : "Découvrez votre espace d’apprentissage et les outils qui vous accompagneront dans votre parcours.";
 
   return (

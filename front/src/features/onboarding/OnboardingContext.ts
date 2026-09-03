@@ -6,6 +6,7 @@ type OnboardingContextValue = {
   status: OnboardingStatus;
   step: string;
   isSaving: boolean;
+  canStart: boolean;
   start: () => Promise<void>;
   skip: () => Promise<void>;
 };

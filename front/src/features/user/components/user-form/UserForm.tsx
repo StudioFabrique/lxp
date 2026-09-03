@@ -47,7 +47,7 @@ const UserForm = ({
   cancelTo,
 }: Props) => {
   const {
-    email, setEmail, emailError,
+    email, setEmail, emailError, touchEmail,
     firstname, setFirstname, firstnameError,
     lastname, setLastname, lastnameError,
     nickname, setNickname, nicknameError,
@@ -85,6 +85,7 @@ const UserForm = ({
 
   const handleSubmit = () => {
     if (!formIsValid) {
+      touchEmail();
       toast.error("Certains champs du formulaire sont manquants ou mal remplis.");
       return;
     }
@@ -145,6 +146,7 @@ const UserForm = ({
               emailError={emailError || emailIsRefused}
               emailMessage={emailMessage}
               onEmail={setEmail}
+              onEmailBlur={touchEmail}
               onSetFile={setFile}
               disabled={disabled}
             />

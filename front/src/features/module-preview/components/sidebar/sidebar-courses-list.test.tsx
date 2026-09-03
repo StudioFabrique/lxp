@@ -61,6 +61,7 @@ const renderCourses = (
           status: "in_progress",
           step,
           isSaving: false,
+          canStart: true,
           start: vi.fn().mockResolvedValue(undefined),
           skip: vi.fn().mockResolvedValue(undefined),
         }}

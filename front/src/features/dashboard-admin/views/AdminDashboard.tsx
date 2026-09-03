@@ -15,8 +15,10 @@ import { buildRecommendedActions } from "../components/build-recommended-actions
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const { status: onboardingStatus } = useOnboarding();
-  const showOnboardingWelcome = onboardingStatus === "pending";
+  const { status: onboardingStatus, canStart: canStartOnboarding } =
+    useOnboarding();
+  const showOnboardingWelcome =
+    onboardingStatus === "pending" && canStartOnboarding;
   const userRank = user?.roles.length
     ? Math.min(...user.roles.map(({ rank }) => rank), 4)
     : 4;

@@ -10,6 +10,7 @@ import {
 import { useLocation, useNavigate } from "react-router";
 import { EVENTS, Joyride, type Step } from "react-joyride";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 import { AuthContext } from "../../store/AuthProvider";
 import type {
@@ -27,6 +28,13 @@ import {
   type OnboardingEventDetail,
 } from "./onboarding-events";
 import { useDemoMode } from "../../store/DemoContext";
+import { dashboardAdminApi } from "../dashboard-admin/api/dashboard-admin.api";
+import {
+  ADMINISTRATOR_ONBOARDING_STAGES,
+  resolveOnboardingFlow,
+  TEACHER_ONBOARDING_STAGES,
+  type OnboardingFlow,
+} from "./onboarding-flow";
 
 type Layout = "admin" | "student";
 
@@ -135,127 +143,16 @@ const getResumableToken = (token: string) => {
   return withContext(resumableStage[stage] ?? stage, contextId);
 };
 
-const adminStages: Record<string, Omit<StageDefinition, "total">> = {
-  "admin-navigation": {
-    target: '[data-onboarding="sidebar-navigation"]',
-    title: "Votre barre de navigation",
-    content:
-      "La barre latérale donne accès au tableau de bord et aux espaces de gestion de vos parcours, utilisateurs et ressources.",
-    placement: "right",
-    next: "admin-dashboard",
-    index: 1,
-  },
-  "admin-dashboard": {
-    target: '[data-onboarding="admin-dashboard-header"]',
-    title: "Votre tableau de bord",
-    content:
-      "Le tableau de bord rassemble vos derniers parcours, vos modules et les actions utiles pour administrer la plateforme.",
-    placement: "bottom",
-    previous: "admin-navigation",
-    next: "admin-formation-entry",
-    index: 2,
-  },
-  "admin-formation-entry": {
-    target: '[data-onboarding="dashboard-formation-create-entry"]',
-    title: "Créez votre première formation",
-    content:
-      'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
-    placement: "top",
-    waitingForAction: true,
-    previous: "admin-dashboard",
-    index: 3,
-  },
-  "admin-formation-fields": {
-    target: '[data-onboarding="formation-fields"]',
-    title: "Votre première formation",
-    content:
-      "Une formation est le plus haut niveau de vos contenus. Donnez-lui un nom, un niveau et au moins un tag. La description et le code RNCP restent facultatifs.",
-    placement: "right",
-    next: "admin-formation-save",
-    previous: "admin-formation-entry",
-    nextLabel: "J’ai compris",
-    requirements: [
-      {
-        selector: '[data-onboarding-field="formation-title"]',
-        label: "le nom de la formation",
-        highlightSelector: '[data-onboarding-label="formation-title"]',
-      },
-      {
-        selector: '[data-onboarding-field="formation-level"]',
-        label: "le niveau de la formation",
-        highlightSelector: '[data-onboarding-label="formation-level"]',
-      },
-      {
-        selector: '[data-onboarding-field="formation-tags"]',
-        label: "au moins un tag",
-        highlightSelector: '[data-onboarding-field="formation-tags"] label',
-      },
-    ],
-    index: 4,
-  },
-  "admin-formation-save": {
-    target: '[data-onboarding="formation-save"]',
-    title: "Enregistrez la formation",
-    content:
-      "Lorsque les informations sont prêtes, utilisez ce bouton. Le guide reprendra automatiquement dès que la formation sera créée.",
-    placement: "top",
-    waitingForAction: true,
-    previous: "admin-formation-fields",
-    index: 5,
-  },
-  "admin-parcours-create": {
-    target: '[data-onboarding="parcours-create"]',
-    title: "Créez un parcours",
-    content:
-      "Le parcours organise l’expérience d’un groupe d’apprenants. La formation créée est déjà sélectionnée : saisissez simplement un titre puis cliquez sur Créer.",
-    placement: "right",
-    waitingForAction: true,
-    requirements: [
-      {
-        selector: '[data-onboarding="parcours-create"] select[name="menu"]',
-        label: "la formation associée",
-        invalidValues: ["0"],
-      },
-      {
-        selector: '[data-onboarding-field="parcours-title"]',
-        label: "le titre du parcours",
-        highlightSelector:
-          '[data-onboarding="parcours-create"] label[for="title"]',
-      },
-    ],
-    index: 6,
-  },
-  "admin-parcours-info": {
-    target: '[data-onboarding-field="parcours-tags"]',
-    title: "Ajoutez un tag au parcours",
-    content:
-      "Vérifiez le titre du parcours et ajoutez au moins un tag. La description reste facultative et ces informations se sauvegardent automatiquement.",
-    placement: "left",
-    next: "admin-module-title",
-    nextLabel: "Créer un module",
-    requirements: [
-      {
-        selector:
-          '[data-onboarding="parcours-essential-information"] input[name="title"]',
-        label: "le titre du parcours",
-        highlightSelector:
-          '[data-onboarding="parcours-essential-information"] label[for="title"]',
-      },
-      {
-        selector: '[data-onboarding-field="parcours-tags"]',
-        label: "au moins un tag pour le parcours",
-        highlightSelector: '[data-onboarding-field="parcours-tags"] h2',
-      },
-    ],
-    index: 7,
-  },
+const contentStageTemplates: Record<
+  string,
+  Omit<StageDefinition, "total">
+> = {
   "admin-module-title": {
     target: '[data-onboarding="module-title-field"]',
     title: "Nommez votre module",
     content:
       "Un module regroupe plusieurs cours. Commencez par saisir un titre clair pour l’identifier facilement.",
     placement: "right",
-    previous: "admin-parcours-info",
     next: "admin-module-description",
     requirements: [
       {
@@ -429,12 +326,107 @@ const adminStages: Record<string, Omit<StageDefinition, "total">> = {
   },
   "admin-complete": {
     target: "#main-scroll-container",
-    title: "Votre premier contenu est prêt",
+    title: "Votre première activité est prête",
     content:
-      "Vous connaissez maintenant la chaîne complète : formation, parcours, module, cours, leçon et activité. Vous pourrez relancer ce guide depuis le menu latéral.",
+      "Vous avez créé un module puis votre premier contenu pédagogique. Vous pourrez relancer ce guide depuis le menu latéral.",
     placement: "center",
     nextLabel: "Compris",
     index: 20,
+  },
+};
+
+const teacherStages = Object.fromEntries(
+  TEACHER_ONBOARDING_STAGES.map((name, index) => [
+    name,
+    {
+      ...contentStageTemplates[name],
+      index: index + 1,
+      ...(name === "admin-module-title" ? { previous: undefined } : {}),
+    },
+  ]),
+) as Record<string, Omit<StageDefinition, "total">>;
+
+const administratorStages: Record<
+  string,
+  Omit<StageDefinition, "total">
+> = {
+  "admin-formation-entry": {
+    target: '[data-onboarding="dashboard-formation-create-entry"]',
+    title: "Créez votre première formation",
+    content:
+      'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
+    placement: "top",
+    waitingForAction: true,
+    index: 1,
+  },
+  "admin-formation-fields": {
+    target: '[data-onboarding="formation-fields"]',
+    title: "Votre première formation",
+    content:
+      "Donnez-lui un nom, un niveau et au moins un tag. La description et le code RNCP restent facultatifs.",
+    placement: "right",
+    next: "admin-formation-save",
+    previous: "admin-formation-entry",
+    nextLabel: "J’ai compris",
+    requirements: [
+      {
+        selector: '[data-onboarding-field="formation-title"]',
+        label: "le nom de la formation",
+        highlightSelector: '[data-onboarding-label="formation-title"]',
+      },
+      {
+        selector: '[data-onboarding-field="formation-level"]',
+        label: "le niveau de la formation",
+        highlightSelector: '[data-onboarding-label="formation-level"]',
+      },
+      {
+        selector: '[data-onboarding-field="formation-tags"]',
+        label: "au moins un tag",
+        highlightSelector: '[data-onboarding-field="formation-tags"] label',
+      },
+    ],
+    index: 2,
+  },
+  "admin-formation-save": {
+    target: '[data-onboarding="formation-save"]',
+    title: "Enregistrez la formation",
+    content:
+      "Lorsque les informations sont prêtes, utilisez ce bouton. Le guide reprendra automatiquement dès que la formation sera créée.",
+    placement: "top",
+    waitingForAction: true,
+    previous: "admin-formation-fields",
+    index: 3,
+  },
+  "admin-parcours-create": {
+    target: '[data-onboarding="parcours-create"]',
+    title: "Créez un parcours",
+    content:
+      "Sélectionnez la formation associée, saisissez un titre puis cliquez sur Créer.",
+    placement: "right",
+    waitingForAction: true,
+    requirements: [
+      {
+        selector: '[data-onboarding="parcours-create"] select[name="menu"]',
+        label: "la formation associée",
+        invalidValues: ["0"],
+      },
+      {
+        selector: '[data-onboarding-field="parcours-title"]',
+        label: "le titre du parcours",
+        highlightSelector:
+          '[data-onboarding="parcours-create"] label[for="title"]',
+      },
+    ],
+    index: 4,
+  },
+  "admin-complete": {
+    target: "#main-scroll-container",
+    title: "Votre premier parcours est prêt",
+    content:
+      "Le parcours est créé. Vous pouvez maintenant le compléter et l’organiser depuis son espace de gestion.",
+    placement: "center",
+    nextLabel: "Compris",
+    index: 5,
   },
 };
 
@@ -482,10 +474,14 @@ const studentStages: Record<string, Omit<StageDefinition, "total">> = {
 
 const OnboardingTourContent = ({
   layout,
+  flow,
+  isEligibilityResolved,
   initialOnboarding,
   children,
 }: PropsWithChildren<{
   layout: Layout;
+  flow: OnboardingFlow;
+  isEligibilityResolved: boolean;
   initialOnboarding: UserOnboarding;
 }>) => {
   const { updateOnboarding } = useContext(AuthContext);
@@ -517,14 +513,21 @@ const OnboardingTourContent = ({
   );
 
   const start = useCallback(async () => {
+    if (!flow.canStart || !flow.firstStep) {
+      toast.error(
+        flow.kind === "teacher"
+          ? "Le tutoriel sera disponible dès que vous serez affecté à un parcours."
+          : "Créez d’abord une formation pour pouvoir lancer ce tutoriel.",
+      );
+      return;
+    }
+
     setIsSaving(true);
     setFailedStepToken(undefined);
     navigatedStepRef.current = "";
-    const firstStep =
-      layout === "admin" ? "admin-navigation" : "student-navigation";
-    await saveState("in_progress", firstStep);
+    await saveState("in_progress", flow.firstStep);
     setIsSaving(false);
-  }, [layout, saveState]);
+  }, [flow, saveState]);
 
   const stop = useCallback(async () => {
     setIsSaving(true);
@@ -544,6 +547,47 @@ const OnboardingTourContent = ({
     },
     [saveState],
   );
+
+  const stageDefinitions = useMemo(() => {
+    if (flow.kind === "teacher") return teacherStages;
+    if (flow.kind === "administrator") return administratorStages;
+    return studentStages;
+  }, [flow.kind]);
+
+  useEffect(() => {
+    if (status !== "in_progress" || !isEligibilityResolved) return;
+
+    let nextState: { status: OnboardingStatus; step: string } | undefined;
+    if (!flow.canStart || !flow.firstStep) {
+      nextState = { status: "pending", step: "" };
+    } else {
+      const { stage, contextId } = splitToken(stepToken);
+      const inaccessibleTeacherParcours =
+        flow.kind === "teacher" &&
+        stage.startsWith("admin-module-") &&
+        (!contextId || !flow.accessibleParcoursIds.includes(contextId));
+
+      if (!stageDefinitions[stage] || inaccessibleTeacherParcours) {
+        nextState = { status: "in_progress", step: flow.firstStep };
+      }
+    }
+
+    if (!nextState) return;
+    const timeout = window.setTimeout(() => {
+      void saveState(nextState.status, nextState.step);
+    });
+    return () => window.clearTimeout(timeout);
+  }, [
+    flow.canStart,
+    flow.accessibleParcoursIds,
+    flow.firstStep,
+    flow.kind,
+    isEligibilityResolved,
+    saveState,
+    stageDefinitions,
+    status,
+    stepToken,
+  ]);
 
   useEffect(() => {
     if (status !== "in_progress" || failedStepToken === stepToken) return;
@@ -624,18 +668,14 @@ const OnboardingTourContent = ({
     let target: string | undefined;
     if (stage.startsWith("student-")) {
       target = "/student/dashboard";
-    } else if (
-      ["admin-navigation", "admin-dashboard", "admin-formation-entry"].includes(
-        stage,
-      )
-    ) {
+    } else if (stage === "admin-formation-entry") {
       target = "/admin/dashboard";
-    } else if (stage.startsWith("admin-formation")) {
+    } else if (stage.startsWith("admin-formation-")) {
       target = "/admin/dashboard?createFormation=true";
-    } else if (stage === "admin-parcours-create" && contextId) {
-      target = `/admin/parcours/new?formationId=${contextId}`;
-    } else if (stage === "admin-parcours-info" && contextId) {
-      target = `/admin/parcours/edit/${contextId}?step=1`;
+    } else if (stage === "admin-parcours-create") {
+      target = contextId
+        ? `/admin/parcours/new?formationId=${contextId}`
+        : "/admin/parcours/new";
     } else if (stage.startsWith("admin-module-") && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=4&create=true`;
     } else if (
@@ -672,33 +712,41 @@ const OnboardingTourContent = ({
       const { stage, contextId } = splitToken(stepToken);
       switch (event.type) {
         case "formation_entry_clicked":
-          if (stage === "admin-formation-entry") {
+          if (
+            flow.kind === "administrator" &&
+            stage === "admin-formation-entry"
+          ) {
             goToStage("admin-formation-fields");
           }
           break;
         case "formation_modal_cancelled":
           if (
-            stage === "admin-formation-fields" ||
-            stage === "admin-formation-save"
+            flow.kind === "administrator" &&
+            (stage === "admin-formation-fields" ||
+              stage === "admin-formation-save")
           ) {
             goToStage("admin-formation-entry");
           }
           break;
         case "formation_created":
           if (
-            stage === "admin-formation-fields" ||
-            stage === "admin-formation-save"
+            flow.kind === "administrator" &&
+            (stage === "admin-formation-fields" ||
+              stage === "admin-formation-save")
           ) {
             goToStage("admin-parcours-create", event.id);
           }
           break;
         case "parcours_created":
-          if (stage === "admin-parcours-create") {
-            goToStage("admin-parcours-info", event.id);
+          if (
+            flow.kind === "administrator" &&
+            stage === "admin-parcours-create"
+          ) {
+            goToStage("admin-complete");
           }
           break;
         case "module_created":
-          if (stage === "admin-module-save") {
+          if (flow.kind === "teacher" && stage === "admin-module-save") {
             goToStage("admin-course-create", event.id);
           }
           break;
@@ -742,21 +790,24 @@ const OnboardingTourContent = ({
           break;
       }
     });
-  }, [goToStage, layout, start, status, stepToken]);
+  }, [flow.kind, goToStage, layout, start, status, stepToken]);
 
   const stageDefinition = useMemo<StageDefinition | undefined>(() => {
     const { stage, contextId } = splitToken(stepToken);
-    const definitions = layout === "admin" ? adminStages : studentStages;
-    const definition = definitions[stage];
+    const definition = stageDefinitions[stage];
     if (!definition) return undefined;
 
-    const total = layout === "admin" ? 20 : 4;
+    const total =
+      flow.kind === "administrator"
+        ? ADMINISTRATOR_ONBOARDING_STAGES.length
+        : flow.kind === "teacher"
+          ? TEACHER_ONBOARDING_STAGES.length
+          : 4;
     const resolveToken = (next?: string) =>
       next
         ? withContext(
             next,
             next.startsWith("admin-") &&
-              !next.startsWith("admin-formation") &&
               next !== "admin-complete"
               ? contextId
               : undefined,
@@ -769,7 +820,7 @@ const OnboardingTourContent = ({
       next: resolveToken(definition.next),
       previous: resolveToken(definition.previous),
     };
-  }, [layout, stepToken]);
+  }, [flow.kind, stageDefinitions, stepToken]);
 
   const missingRequirements = useMemo(
     () =>
@@ -888,7 +939,14 @@ const OnboardingTourContent = ({
 
   return (
     <OnboardingContext
-      value={{ status, step: stepToken, isSaving, start, skip: stop }}
+      value={{
+        status,
+        step: stepToken,
+        isSaving,
+        canStart: flow.canStart,
+        start,
+        skip: stop,
+      }}
     >
       {children}
       {run && (
@@ -974,6 +1032,7 @@ const InertOnboarding = ({ children }: PropsWithChildren) => (
       status: "skipped",
       step: "",
       isSaving: false,
+      canStart: true,
       start: async () => {},
       skip: async () => {},
     }}
@@ -988,14 +1047,34 @@ const OnboardingTour = ({
 }: PropsWithChildren<{ layout: Layout }>) => {
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
+  const userRank = user?.roles.length
+    ? Math.min(...user.roles.map(({ rank }) => rank), 4)
+    : 4;
+  const staffParcours = useQuery({
+    queryKey: ["root-parcours"],
+    queryFn: dashboardAdminApi.queries.getRootParcours,
+    enabled: layout === "admin" && Boolean(user) && !demoMode,
+  });
+  const flow = useMemo(
+    () =>
+      resolveOnboardingFlow(layout, userRank, staffParcours.data ?? []),
+    [layout, staffParcours.data, userRank],
+  );
+  const isEligibilityResolved =
+    layout === "student" || demoMode || !staffParcours.isLoading;
 
   if (demoMode) return <InertOnboarding>{children}</InertOnboarding>;
-  if (!user) return children;
+  // À la déconnexion, la barre latérale peut rester montée pendant le rendu où
+  // `user` vient de passer à null. Le contexte inerte évite que ses composants
+  // consommateurs se retrouvent momentanément hors fournisseur.
+  if (!user) return <InertOnboarding>{children}</InertOnboarding>;
 
   return (
     <OnboardingTourContent
       key={user._id}
       layout={layout}
+      flow={flow}
+      isEligibilityResolved={isEligibilityResolved}
       initialOnboarding={
         user.onboarding ?? {
           status: "pending",
