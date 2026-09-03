@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import Header from "../../../../components/headers/Header";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import Modal from "../../../../components/UI/modal/modal";
 import FormationModal from "../../../formation/components/FormationModal";
 import LastParcoursItem from "../../../dashboard-admin/components/last-parcours-item";
@@ -172,6 +173,11 @@ const AdminParcoursManagement = ({
         }`}
         data-page-tour="parcours-cards"
       >
+        {isAdmin && formations.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyStatePlaceholder title="Aucun parcours disponible" />
+          </div>
+        ) : null}
         {!isAdmin && formations.length === 0 ? (
           <p className="text-base-content">
             Aucun parcours ne vous est attribué pour le moment.
@@ -198,7 +204,7 @@ const AdminParcoursManagement = ({
             }
           />
         ))}
-        {isAdmin ? (
+        {isAdmin && formations.length > 0 ? (
           <PermissionGuard action="write" object="parcours">
             <LastParcoursItem onCreateFormation={openFormationCreation} />
           </PermissionGuard>
