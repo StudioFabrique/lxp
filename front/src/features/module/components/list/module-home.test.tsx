@@ -42,6 +42,25 @@ const module: ModuleListItem = {
   ],
 };
 
+const moduleWithFourCourses: ModuleListItem = {
+  ...module,
+  courses: [
+    ...module.courses,
+    {
+      id: 6,
+      title: "Troisième cours",
+      order: 2,
+      isPublished: true,
+    },
+    {
+      id: 7,
+      title: "Quatrième cours",
+      order: 3,
+      isPublished: true,
+    },
+  ],
+};
+
 describe("ModuleHomeList", () => {
   it("affiche chaque module avec ses cours en sous-éléments", () => {
     const markup = renderToStaticMarkup(
@@ -71,7 +90,22 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("Aucun module affecté");
   });
 
-  it("affiche les modules du formateur sur toute la largeur", () => {
+  it("affiche au maximum trois cours dans une carte", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <ModuleHomeList
+          modulesList={[moduleWithFourCourses]}
+          onDeleteModule={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain("Troisième cours");
+    expect(markup).not.toContain("Quatrième cours");
+    expect(markup).toContain("Afficher plus de cours (1)");
+  });
+
+  it("affiche aussi les modules du formateur dans la grille de cartes", () => {
     const auth = {
       user: { roles: [{ rank: 2 }] } as User,
     } as React.ContextType<typeof AuthContext>;
@@ -83,8 +117,8 @@ describe("ModuleHomeList", () => {
       </AuthContext.Provider>,
     );
 
-    expect(markup).toContain("grid-cols-1");
-    expect(markup).not.toContain("xl:grid-cols-3");
-    expect(markup).not.toContain("min-h-52");
+    expect(markup).toContain("lg:grid-cols-2");
+    expect(markup).toContain("xl:grid-cols-3");
+    expect(markup).toContain("min-h-52");
   });
 });

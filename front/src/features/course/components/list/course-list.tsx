@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 
@@ -10,8 +10,6 @@ import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { courseSearchOptions } from "../../../../config/search-options";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
-import { AuthContext } from "../../../../store/AuthProvider";
-import { isTeacherUser } from "../../../../utils/helpers/user-role";
 import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
 import type CustomCourse from "./interfaces/custom-course";
@@ -25,8 +23,6 @@ export default function CourseList({
   coursesList,
   onRefreshCourses,
 }: CourseListProps) {
-  const { user } = useContext(AuthContext);
-  const isTeacher = isTeacherUser(user);
   const [filter, setFilter] = useState<{
     field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
     value: string;
@@ -69,11 +65,7 @@ export default function CourseList({
       />
 
       {list && list.length > 0 ? (
-        <section
-          className={`grid items-start gap-5 ${
-            isTeacher ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
-          }`}
-        >
+        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as CustomCourse[]).map((course) => (
             <HierarchicalListCard
               key={course.id}
@@ -128,10 +120,10 @@ export default function CourseList({
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
               }))}
+              maxItemsShown={3}
               emptyMessage="Aucune leçon associée"
               moreItemsLabel={(count) => `Afficher plus de leçons (${count})`}
               overflowTitle={`Autres leçons de ${course.title}`}
-              fullWidth={isTeacher}
             />
           ))}
         </section>

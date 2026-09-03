@@ -39,11 +39,7 @@ const ModuleHomeList = ({
       <ModuleHeader />
 
       {list && list.length > 0 ? (
-        <section
-          className={`grid items-start gap-5 ${
-            isTeacher ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
-          }`}
-        >
+        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as ModuleListItem[]).map((module) => (
             <HierarchicalListCard
               key={module.id}
@@ -104,10 +100,10 @@ const ModuleHomeList = ({
                   ? { lessonId: course.firstLessonId }
                   : undefined,
               }))}
+              maxItemsShown={3}
               emptyMessage="Aucun cours associé"
               moreItemsLabel={(count) => `Afficher plus de cours (${count})`}
               overflowTitle={`Autres cours de ${module.title}`}
-              fullWidth={isTeacher}
             />
           ))}
         </section>

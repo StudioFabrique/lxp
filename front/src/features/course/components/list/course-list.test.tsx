@@ -4,8 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import CourseList from "./course-list";
 import type CustomCourse from "./interfaces/custom-course";
-import { AuthContext } from "../../../../store/AuthProvider";
-import type User from "../../../../utils/interfaces/user";
 
 vi.mock("../../../../components/guards/PermissionGuard", () => ({
   default: ({ children }: { children: React.ReactNode }) => children,
@@ -35,6 +33,15 @@ const course: CustomCourse = {
   ],
 };
 
+const courseWithFourLessons: CustomCourse = {
+  ...course,
+  lessons: [
+    ...course.lessons,
+    { id: 6, title: "Troisième leçon", order: 2 },
+    { id: 7, title: "Quatrième leçon", order: 3 },
+  ],
+};
+
 describe("CourseList", () => {
   it("affiche chaque cours avec ses leçons en sous-éléments", () => {
     const markup = renderToStaticMarkup(
@@ -49,20 +56,30 @@ describe("CourseList", () => {
     expect(markup).toContain("/admin/parcours/module/2");
   });
 
-  it("affiche les cours du formateur sur toute la largeur", () => {
-    const auth = {
-      user: { roles: [{ rank: 2 }] } as User,
-    } as React.ContextType<typeof AuthContext>;
+  it("affiche les cours dans la grille de cartes de l'admin", () => {
     const markup = renderToStaticMarkup(
-      <AuthContext.Provider value={auth}>
-        <MemoryRouter>
-          <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
-        </MemoryRouter>
-      </AuthContext.Provider>,
+      <MemoryRouter>
+        <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
+      </MemoryRouter>,
     );
 
-    expect(markup).toContain("grid-cols-1");
-    expect(markup).not.toContain("xl:grid-cols-3");
-    expect(markup).not.toContain("min-h-52");
+    expect(markup).toContain("lg:grid-cols-2");
+    expect(markup).toContain("xl:grid-cols-3");
+    expect(markup).toContain("min-h-52");
+  });
+
+  it("affiche au maximum trois leçons dans une carte", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList
+          coursesList={[courseWithFourLessons]}
+          onRefreshCourses={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain("Troisième leçon");
+    expect(markup).not.toContain("Quatrième leçon");
+    expect(markup).toContain("Afficher plus de leçons (1)");
   });
 });

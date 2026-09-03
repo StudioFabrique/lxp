@@ -70,7 +70,7 @@ const HierarchicalListRow = ({
 
       <div className="list-col-grow min-w-0 self-center">
         <div
-          className={cn("block max-w-full text-left", {
+          className={cn("block max-w-full text-left first-letter:uppercase", {
             "tooltip tooltip-bottom tooltip-start": showTitleTooltip,
           })}
           data-tip={showTitleTooltip ? item.title : undefined}
@@ -152,7 +152,9 @@ const HierarchicalListCard = ({
                         {label}
                       </p>
                     ) : null}
-                    <h4 className="truncate text-xl font-bold">{title}</h4>
+                    <h4 className="truncate first-letter:uppercase text-xl font-bold">
+                      {title}
+                    </h4>
                     {description ? (
                       <div className="mt-1 text-xs opacity-60">
                         {description}
