@@ -70,9 +70,15 @@ sauvegarde manuelle avec les bons paramètres :
 
 - préfixe Infisical ;
 - nom de la stack ;
-- chemin de déploiement.
+- chemin de déploiement ;
+- fréquence `BACKUP_CRON`, au format cron Jenkins.
 
-Après cette première sauvegarde, Jenkins lance le job toutes les six heures.
+Après cette première sauvegarde, Jenkins lance le job à la fréquence indiquée.
+La valeur par défaut `H H/6 * * *` répartit la charge et exécute une sauvegarde
+toutes les six heures. Par exemple, `H 2 * * *` planifie une sauvegarde chaque
+jour autour de 2 h. Une valeur vide ou une expression cron invalide fait échouer
+la configuration de la planification.
+
 Le paramètre `OPERATION` propose quatre actions :
 
 | Action | Effet |
