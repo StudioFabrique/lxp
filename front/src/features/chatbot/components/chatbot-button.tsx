@@ -21,7 +21,7 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
       </div>
 
       <motion.button
-        className="w-16 h-16 bg-primary rounded-full p-3 shadow-xl cursor-pointer flex items-center justify-center hover:shadow-2xl relative"
+        className="w-16 h-16 bg-info rounded-full p-3 shadow-xl cursor-pointer flex items-center justify-center hover:shadow-2xl relative"
         onClick={handleOpenChatbot}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -30,7 +30,7 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
         exit={{ opacity: 0, x: 20, scale: 0.95 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <Bot className="w-full h-full object-contain text-primary-content" />
+        <Bot className="w-full h-full object-contain text-info-content" />
       </motion.button>
     </div>
   );
