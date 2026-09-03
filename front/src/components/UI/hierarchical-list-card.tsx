@@ -173,7 +173,7 @@ const HierarchicalListCard = ({
               ) : null}
 
               {showMore && remainingItems.length > 0 ? (
-                <li className="flex justify-center px-5 pt-3">
+                <li className="flex justify-center px-5 py-3">
                   <button
                     type="button"
                     className="btn btn-sm btn-ghost text-primary"

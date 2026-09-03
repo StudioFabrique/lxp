@@ -27,7 +27,6 @@ type Teacher = {
   city?: string;
   postCode?: string;
   phoneNumber?: string;
-  isActive: boolean;
 };
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {

@@ -129,17 +129,20 @@ const mutations = {
     formationId,
     teacherContactId,
     teacherModuleIndexes,
+    publishCourses,
   }: {
     archive: File;
     formationId?: number;
     teacherContactId?: number;
     teacherModuleIndexes?: number[];
+    publishCourses?: boolean;
   }) => {
     const formData = new FormData();
     formData.append("archive", archive);
     if (formationId !== undefined) {
       formData.append("formationId", formationId.toString());
     }
+    formData.append("publishCourses", String(publishCourses ?? false));
     if (teacherContactId !== undefined) {
       formData.append("teacherContactId", teacherContactId.toString());
       formData.append(

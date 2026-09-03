@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DrawerFormButtons from "../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
@@ -14,7 +13,6 @@ type Props = {
 };
 
 const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
-  const [isActive, setIsActive] = useState(true);
   const {
     register,
     handleSubmit,
@@ -34,11 +32,6 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
     },
   });
 
-  // détermine si le compte de l'utilisateur sera activé dès sa création
-  const handleToggleIsActive = () => {
-    setIsActive((prevState) => !prevState);
-  };
-
   // ferme le drawer et reset le formulaire
   const handleCancel = () => {
     reset();
@@ -47,7 +40,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
 
   // vérifie si le formulaire est valide et le transmet les valeurs des champs au parent
   const onSubmit = handleSubmit((data: any) => {
-    onSubmitUser({ ...data, isActive });
+    onSubmitUser(data);
     reset();
     onCloseDrawer("new-contact");
   });
@@ -55,25 +48,6 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   return (
     <div className="flex flex-col">
       <form className="flex flex-col gap-y-4" onSubmit={onSubmit}>
-        <div className="flex flex-col gap-y-4 px-4">
-          <label className="flex gap-x-4 items-center cursor-pointer">
-            <span className="text-primary/50">Status</span>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary"
-              checked={isActive}
-              onChange={handleToggleIsActive}
-            />
-            <span
-              className={`label-text font-bold ${
-                !isActive ? "text-primary/50" : "text-primary"
-              }`}
-            >
-              {isActive ? "Actif" : "Inactif"}
-            </span>
-          </label>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <BoxWrapper>
             <FormInput
@@ -145,8 +119,8 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
         </div>
         <div className="w-full flex flex-col gap-y-4">
           <p className="text-xs px-2 mt-2">
-            Note : Les identifiants de l'utilisateur lui seront envoyés par mail
-            à la validation du formulaire
+            Note : Le formateur recevra un lien par mail pour créer son mot de
+            passe. Son compte sera activé à cette occasion.
           </p>
           <div className="w-full flex flex-col items-center gap-x-2 pr-2">
             <DrawerFormButtons onCancel={handleCancel} />

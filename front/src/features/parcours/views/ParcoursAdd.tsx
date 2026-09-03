@@ -58,6 +58,7 @@ const AddParcours = () => {
   const [importTeacherModuleIndexes, setImportTeacherModuleIndexes] = useState<
     number[]
   >([]);
+  const [publishImportedCourses, setPublishImportedCourses] = useState(false);
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -174,6 +175,7 @@ const AddParcours = () => {
     setImportTeacherContactId(undefined);
     setImportModules([]);
     setImportTeacherModuleIndexes([]);
+    setPublishImportedCourses(false);
   };
 
   const handleImportParcours = () => {
@@ -186,6 +188,7 @@ const AddParcours = () => {
         importTeacherContactId === undefined
           ? undefined
           : importTeacherModuleIndexes,
+      publishCourses: publishImportedCourses,
     });
   };
 
@@ -210,6 +213,7 @@ const AddParcours = () => {
       setImportTeacherModuleIndexes(
         metadata.modules.map((module) => module.index),
       );
+      setPublishImportedCourses(false);
       setShowImportModal(true);
     } catch (error) {
       toast.error(
@@ -370,6 +374,24 @@ const AddParcours = () => {
             <p className="text-sm text-base-content/70">
               Archive sélectionnée : {pendingArchive.name}
             </p>
+            <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-base-300 p-4">
+              <span>
+                <span className="block text-sm font-semibold">
+                  Publier tous les cours
+                </span>
+                <span className="mt-1 block text-xs text-base-content/60">
+                  Les cours importés seront immédiatement publiés.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                className="toggle toggle-primary"
+                checked={publishImportedCourses}
+                onChange={(event) =>
+                  setPublishImportedCourses(event.currentTarget.checked)
+                }
+              />
+            </label>
             <div>
               <label
                 className="mb-2 block text-sm font-semibold"

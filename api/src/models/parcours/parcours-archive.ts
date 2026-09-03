@@ -671,9 +671,17 @@ async function createQuiz(
 export async function importParcoursArchive(
   archive: Buffer,
   userId: string,
-  options: ParcoursImportOptions = { teacherModuleIndexes: [] },
+  options: ParcoursImportOptions = {
+    teacherModuleIndexes: [],
+    publishCourses: false,
+  },
 ) {
-  const { formationId, teacherContactId, teacherModuleIndexes } = options;
+  const {
+    formationId,
+    teacherContactId,
+    teacherModuleIndexes,
+    publishCourses,
+  } = options;
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive, { checkCRC32: true });
@@ -1001,7 +1009,7 @@ export async function importParcoursArchive(
                 scenario: course.scenario,
                 dates: course.dates as Prisma.InputJsonValue[],
                 order: course.order,
-                isPublished: false,
+                isPublished: publishCourses,
                 author,
                 adminId: admin.id,
                 moduleId: createdModule.id,
