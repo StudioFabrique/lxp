@@ -167,7 +167,7 @@ const HierarchicalListCard = ({
               ))}
 
               {items.length === 0 ? (
-                <li className="flex flex-1 items-center justify-center px-5 py-8 text-sm opacity-60">
+                <li className="flex flex-1 items-center justify-center px-5 py-8 text-sm opacity-60 select-none">
                   {emptyMessage}
                 </li>
               ) : null}

@@ -117,8 +117,8 @@ const LastParcoursItem = ({
           <PermissionGuard action="write" object="parcours">
             <Link
               to={`/admin/parcours/new?formationId=${formation.id}`}
-              className={cn("btn btn-dash mx-5", {
-                "self-end btn-sm": formation.parcours.length > 0,
+              className={cn("btn btn-sm btn-dash mx-5", {
+                "self-end": formation.parcours.length > 0,
               })}
             >
               <Plus className="size-[1.2em]" />
