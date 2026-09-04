@@ -245,12 +245,27 @@ const CourseItem = ({
       />
 
       <div className="flex flex-col w-full relative select-none">
-        {!course.isPublished ? (
+        {!course.isPublished || !course.visibility ? (
           <div
-            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-11"
-            data-tip="Ce cours n'est pas publié"
+            className={cn(
+              "badge absolute -top-3 -left-3 tooltip tooltip-right z-11",
+              {
+                "badge-info tooltip-info": !course.isPublished,
+                "badge-warning tooltip-warning":
+                  course.isPublished && !course.visibility,
+              },
+            )}
+            data-tip={
+              !course.isPublished
+                ? "Ce cours n'est pas publié"
+                : "Cours invisible"
+            }
           >
-            <CloudOff className="w-4 h-4" />
+            {!course.isPublished ? (
+              <CloudOff className="w-4 h-4" />
+            ) : (
+              <EyeOff className="w-4 h-4" />
+            )}
           </div>
         ) : null}
         <div
@@ -276,14 +291,6 @@ const CourseItem = ({
                 <h3 className="font-semibold text-secondary-content/80 truncate first-letter:uppercase">
                   {course.title}
                 </h3>
-                {course.isPublished && !course.visibility && (
-                  <div
-                    className={cn("tooltip ml-1.5")}
-                    data-tip="Cours invisible"
-                  >
-                    <EyeOff className="w-3.5 h-3.5" />
-                  </div>
-                )}
               </span>
               {isCourseCompleted && (
                 <Check className="text-success group-hover:text-primary-content" />

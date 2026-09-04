@@ -9,6 +9,14 @@ vi.mock("../../../../components/guards/PermissionGuard", () => ({
   default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+vi.mock("@radix-ui/react-dropdown-menu", () => ({
+  Root: ({ children }: { children: React.ReactNode }) => children,
+  Trigger: ({ children }: { children: React.ReactNode }) => children,
+  Portal: ({ children }: { children: React.ReactNode }) => children,
+  Content: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
 vi.mock("../../../../components/UI/cursor-glow-card", () => ({
   default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -113,6 +121,10 @@ describe("CourseList", () => {
 
     expect(markup).toContain('aria-label="Actions pour Première leçon"');
     expect(markup).toContain('aria-label="Actions pour Deuxième leçon"');
+    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain("Accéder à la leçon");
+    expect(markup).toContain("Modifier la leçon");
+    expect(markup).toContain("Supprimer la leçon");
     expect(markup).toContain("ml-auto self-center justify-self-end");
   });
 });

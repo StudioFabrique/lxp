@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
 import { PlusCircle } from "lucide-react";
@@ -93,12 +93,6 @@ const AdminParcoursManagement = ({
     onError: () => toast.error("Le parcours n’a pas pu être exporté."),
   });
 
-  useEffect(() => {
-    if (searchParams.get("createFormation") === "true") {
-      setFormationModal({ isOpen: true, formationId: null });
-    }
-  }, [searchParams]);
-
   const openFormationCreation = () => {
     setFormationModal({ isOpen: true, formationId: null });
     emitOnboardingEvent({ type: "formation_entry_clicked" });
@@ -174,9 +168,7 @@ const AdminParcoursManagement = ({
 
       <section
         className={`grid items-start gap-5 ${
-          usesFullWidthLayout
-            ? "grid-cols-1"
-            : "lg:grid-cols-2 xl:grid-cols-3"
+          usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
         }`}
         data-page-tour="parcours-cards"
       >

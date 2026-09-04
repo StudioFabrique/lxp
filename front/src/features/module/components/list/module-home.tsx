@@ -22,11 +22,15 @@ import ModuleHeader from "./module-header";
 type ModuleHomeListProps = {
   modulesList: ModuleListItem[];
   onDeleteModule: (module: ModuleListItem) => void;
+  onDeleteCourse: (
+    course: ModuleListItem["courses"][number] & { moduleTitle: string },
+  ) => void;
 };
 
 const ModuleHomeList = ({
   modulesList,
   onDeleteModule,
+  onDeleteCourse,
 }: ModuleHomeListProps) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
@@ -108,13 +112,33 @@ const ModuleHomeList = ({
                 action: (dismissOverflow) => (
                   <HierarchicalListItemActions
                     title={course.title}
-                    to={`/admin/parcours/module/${module.id}`}
-                    state={
-                      course.firstLessonId
-                        ? { lessonId: course.firstLessonId }
-                        : undefined
-                    }
-                    navigationLabel="Accéder au cours"
+                    actions={[
+                      {
+                        label: "Accéder au cours",
+                        icon: <SquareArrowRightEnter />,
+                        to: `/admin/parcours/module/${module.id}`,
+                        state: course.firstLessonId
+                          ? { lessonId: course.firstLessonId }
+                          : undefined,
+                      },
+                      {
+                        label: "Modifier le cours",
+                        icon: <Pencil />,
+                        to: `/admin/parcours/module/${module.id}?editCourseId=${course.id}`,
+                        permission: { action: "update", object: "course" },
+                      },
+                      {
+                        label: "Supprimer le cours",
+                        icon: <Trash2 />,
+                        onSelect: () =>
+                          onDeleteCourse({
+                            ...course,
+                            moduleTitle: module.title,
+                          }),
+                        destructive: true,
+                        permission: { action: "delete", object: "course" },
+                      },
+                    ]}
                     dismissOverflow={dismissOverflow}
                   />
                 ),

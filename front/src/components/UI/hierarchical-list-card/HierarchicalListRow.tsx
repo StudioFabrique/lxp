@@ -3,6 +3,8 @@ import { ExternalLink, MoreVertical } from "lucide-react";
 import { type Key, type ReactNode } from "react";
 import { Link, type LinkProps } from "react-router";
 
+import PermissionGuard from "../../guards/PermissionGuard";
+
 export type HierarchicalListCardItem = {
   id: Key;
   title: string;
@@ -20,19 +22,28 @@ export type HierarchicalListCardItem = {
   ariaLabel?: string;
 };
 
+export type HierarchicalListAction = {
+  label: string;
+  icon: ReactNode;
+  to?: LinkProps["to"];
+  state?: LinkProps["state"];
+  onSelect?: () => void;
+  destructive?: boolean;
+  permission?: {
+    action: string;
+    object: string;
+  };
+};
+
 type HierarchicalListItemActionsProps = {
   title: string;
-  to: LinkProps["to"];
-  state?: LinkProps["state"];
-  navigationLabel: string;
+  actions: HierarchicalListAction[];
   dismissOverflow?: () => void;
 };
 
 export const HierarchicalListItemActions = ({
   title,
-  to,
-  state,
-  navigationLabel,
+  actions,
   dismissOverflow = () => {},
 }: HierarchicalListItemActionsProps) => (
   <DropdownMenu.Root>
@@ -41,6 +52,7 @@ export const HierarchicalListItemActions = ({
         type="button"
         className="btn btn-square btn-sm btn-ghost"
         aria-label={`Actions pour ${title}`}
+        data-actions-count={actions.length}
       >
         <MoreVertical className="size-[1.2em]" />
       </button>
@@ -52,16 +64,45 @@ export const HierarchicalListItemActions = ({
         sideOffset={4}
         className="menu z-[100] w-max rounded-box border border-base-300 bg-base-100 p-2 shadow-lg"
       >
-        <DropdownMenu.Item asChild onSelect={dismissOverflow}>
-          <Link
-            className="flex cursor-pointer items-center gap-2 rounded-field px-3 py-2 text-sm outline-none hover:bg-base-200 focus:bg-base-200 data-[highlighted]:bg-base-200"
-            to={to}
-            state={state}
-          >
-            <ExternalLink className="size-4" />
-            {navigationLabel}
-          </Link>
-        </DropdownMenu.Item>
+        {actions.map((action) => {
+          const className = `flex w-full cursor-pointer items-center gap-2 rounded-field px-3 py-2 text-sm outline-none hover:bg-base-200 focus:bg-base-200 data-[highlighted]:bg-base-200 [&>svg]:size-4 ${
+            action.destructive ? "text-error" : ""
+          }`;
+          const menuItem = (
+            <DropdownMenu.Item
+              key={action.label}
+              asChild
+              onSelect={() => {
+                dismissOverflow();
+                action.onSelect?.();
+              }}
+            >
+              {action.to ? (
+                <Link className={className} to={action.to} state={action.state}>
+                  {action.icon}
+                  {action.label}
+                </Link>
+              ) : (
+                <button type="button" className={className}>
+                  {action.icon}
+                  {action.label}
+                </button>
+              )}
+            </DropdownMenu.Item>
+          );
+
+          return action.permission ? (
+            <PermissionGuard
+              key={action.label}
+              action={action.permission.action}
+              object={action.permission.object}
+            >
+              {menuItem}
+            </PermissionGuard>
+          ) : (
+            menuItem
+          );
+        })}
       </DropdownMenu.Content>
     </DropdownMenu.Portal>
   </DropdownMenu.Root>

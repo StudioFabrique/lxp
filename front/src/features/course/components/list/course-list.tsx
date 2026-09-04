@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
 import { Link } from "react-router";
+import toast from "react-hot-toast";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
@@ -12,6 +13,8 @@ import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import { courseSearchOptions } from "../../../../config/search-options";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
+import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import { courseApi } from "../../api/course.api";
 import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
 import type CustomCourse from "./interfaces/custom-course";
@@ -25,6 +28,12 @@ export default function CourseList({
   coursesList,
   onRefreshCourses,
 }: CourseListProps) {
+  const [lessonToDelete, setLessonToDelete] = useState<{
+    id: number;
+    title: string;
+    courseTitle: string;
+  } | null>(null);
+  const [isDeletingLesson, setIsDeletingLesson] = useState(false);
   const [filter, setFilter] = useState<{
     field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
     value: string;
@@ -54,6 +63,23 @@ export default function CourseList({
   const resetSearch = () => {
     setPage(1);
     setFilter(null);
+  };
+  const handleDeleteLesson = async () => {
+    if (!lessonToDelete) return;
+
+    setIsDeletingLesson(true);
+    try {
+      const data = await courseApi.mutations.deleteLesson(lessonToDelete.id);
+      toast.success(data.message);
+      setLessonToDelete(null);
+      onRefreshCourses();
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "La leçon n’a pas pu être supprimée."),
+      );
+    } finally {
+      setIsDeletingLesson(false);
+    }
   };
 
   return (
@@ -129,9 +155,33 @@ export default function CourseList({
                 action: (dismissOverflow) => (
                   <HierarchicalListItemActions
                     title={lesson.title}
-                    to={`/admin/parcours/module/${course.moduleId}`}
-                    state={{ lessonId: lesson.id }}
-                    navigationLabel="Accéder à la leçon"
+                    actions={[
+                      {
+                        label: "Accéder à la leçon",
+                        icon: <SquareArrowRightEnter />,
+                        to: `/admin/parcours/module/${course.moduleId}`,
+                        state: { lessonId: lesson.id },
+                      },
+                      {
+                        label: "Modifier la leçon",
+                        icon: <Pencil />,
+                        to: `/admin/parcours/module/${course.moduleId}?editLessonId=${lesson.id}`,
+                        state: { lessonId: lesson.id },
+                        permission: { action: "update", object: "lesson" },
+                      },
+                      {
+                        label: "Supprimer la leçon",
+                        icon: <Trash2 />,
+                        onSelect: () =>
+                          setLessonToDelete({
+                            id: lesson.id,
+                            title: lesson.title,
+                            courseTitle: course.title,
+                          }),
+                        destructive: true,
+                        permission: { action: "delete", object: "lesson" },
+                      },
+                    ]}
                     dismissOverflow={dismissOverflow}
                   />
                 ),
@@ -162,6 +212,22 @@ export default function CourseList({
           <p className="py-4">
             Le cours et les ressources qui lui sont associées seront
             définitivement supprimés.
+          </p>
+        </Modal>
+      ) : null}
+
+      {lessonToDelete ? (
+        <Modal
+          title={`Supprimer la leçon « ${lessonToDelete.title} »`}
+          onLeftClick={() => setLessonToDelete(null)}
+          onRightClick={handleDeleteLesson}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+          isSubmitting={isDeletingLesson}
+        >
+          <p className="py-4">
+            La leçon du cours « {lessonToDelete.courseTitle} » et ses ressources
+            associées seront définitivement supprimées.
           </p>
         </Modal>
       ) : null}

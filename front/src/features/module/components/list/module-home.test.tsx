@@ -11,6 +11,14 @@ vi.mock("../../../../components/guards/PermissionGuard", () => ({
   default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+vi.mock("@radix-ui/react-dropdown-menu", () => ({
+  Root: ({ children }: { children: React.ReactNode }) => children,
+  Trigger: ({ children }: { children: React.ReactNode }) => children,
+  Portal: ({ children }: { children: React.ReactNode }) => children,
+  Content: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
 vi.mock("../../../../components/UI/cursor-glow-card", () => ({
   default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -69,7 +77,11 @@ describe("ModuleHomeList", () => {
   it("affiche chaque module avec ses cours en sous-éléments", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
-        <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+        <ModuleHomeList
+          modulesList={[module]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+        />
       </MemoryRouter>,
     );
 
@@ -86,7 +98,11 @@ describe("ModuleHomeList", () => {
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={auth}>
         <MemoryRouter>
-          <ModuleHomeList modulesList={[]} onDeleteModule={vi.fn()} />
+          <ModuleHomeList
+            modulesList={[]}
+            onDeleteModule={vi.fn()}
+            onDeleteCourse={vi.fn()}
+          />
         </MemoryRouter>
       </AuthContext.Provider>,
     );
@@ -100,6 +116,7 @@ describe("ModuleHomeList", () => {
         <ModuleHomeList
           modulesList={[moduleWithFourCourses]}
           onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -116,7 +133,11 @@ describe("ModuleHomeList", () => {
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={auth}>
         <MemoryRouter>
-          <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+          <ModuleHomeList
+            modulesList={[module]}
+            onDeleteModule={vi.fn()}
+            onDeleteCourse={vi.fn()}
+          />
         </MemoryRouter>
       </AuthContext.Provider>,
     );
@@ -129,7 +150,11 @@ describe("ModuleHomeList", () => {
   it("signale les cours invisibles et affiche leurs menus d’actions", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
-        <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+        <ModuleHomeList
+          modulesList={[module]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+        />
       </MemoryRouter>,
     );
 
@@ -137,6 +162,10 @@ describe("ModuleHomeList", () => {
     expect(markup).not.toContain('data-tip="Cours invisible"');
     expect(markup).toContain('aria-label="Actions pour Premier cours"');
     expect(markup).toContain('aria-label="Actions pour Deuxième cours"');
+    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain("Accéder au cours");
+    expect(markup).toContain("Modifier le cours");
+    expect(markup).toContain("Supprimer le cours");
     expect(markup).toContain("ml-auto self-center justify-self-end");
   });
 });
