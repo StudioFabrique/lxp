@@ -8,7 +8,7 @@ import { DataTable } from "./DataTable";
 type Row = { id: string; name: string };
 
 describe("DataTable", () => {
-  it("utilise l’état vide partagé avec le message fourni", () => {
+  it("utilise l'état vide partagé avec le message fourni", () => {
     const markup = renderToStaticMarkup(
       <DataTable
         columns={[{ accessorKey: "name", header: "Nom" }]}

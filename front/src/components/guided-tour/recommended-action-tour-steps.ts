@@ -8,14 +8,14 @@ export const getUserCreationTourSteps = (
     target: '[data-recommended-tour="user-form"]',
     title: `Créer un compte ${roleLabel}`,
     content:
-      "Ce formulaire rassemble les informations nécessaires à la création du compte. Les champs marqués d’un astérisque sont obligatoires.",
+      "Ce formulaire rassemble les informations nécessaires à la création du compte. Les champs marqués d'un astérisque sont obligatoires.",
     placement: "bottom",
   },
   {
     target: '[data-recommended-tour="user-informations"]',
     title: "Renseignez son identité",
     content:
-      "Indiquez au minimum le prénom, le nom et une adresse e-mail valide. L’avatar et les autres informations pourront être ajoutés plus tard.",
+      "Indiquez au minimum le prénom, le nom et une adresse e-mail valide. L'avatar et les autres informations pourront être ajoutés plus tard.",
     placement: "right",
   },
   {
@@ -28,9 +28,9 @@ export const getUserCreationTourSteps = (
     ? [
         {
           target: '[data-recommended-tour="user-invitation"]',
-          title: "Envoyez l’invitation",
+          title: "Envoyez l'invitation",
           content:
-            "L’envoi de l’e-mail est activé. La personne recevra le lien lui permettant d’activer son compte et de choisir son mot de passe.",
+            "L'envoi de l'e-mail est activé. La personne recevra le lien lui permettant d'activer son compte et de choisir son mot de passe.",
           placement: "left" as const,
         },
       ]
@@ -47,7 +47,7 @@ export const getUserCreationTourSteps = (
 export const groupCreationTourSteps: Step[] = [
   {
     target: '[data-recommended-tour="group-form"]',
-    title: "Créer un groupe d’apprenants",
+    title: "Créer un groupe d'apprenants",
     content:
       "Un groupe permet de réunir les apprenants qui suivront le même parcours.",
     placement: "bottom",
@@ -79,7 +79,7 @@ export const logoTourSteps: Step[] = [
     target: '[data-recommended-tour="company-logo"]',
     title: "Personnalisez votre organisme",
     content:
-      "Choisissez la couleur d’arrière-plan puis ajoutez votre logo au format JPG ou PNG. La personnalisation est enregistrée automatiquement.",
+      "Choisissez la couleur d'arrière-plan puis ajoutez votre logo au format JPG ou PNG. La personnalisation est enregistrée automatiquement.",
     placement: "left",
   },
 ];
@@ -89,7 +89,7 @@ export const moduleCreationTourSteps: Step[] = [
     target: '[data-onboarding="module-form"]',
     title: "Créer votre premier module",
     content:
-      "Le formulaire est déjà ouvert dans un parcours qui vous est rattaché. Un module regroupe les cours d’une même séquence pédagogique.",
+      "Le formulaire est déjà ouvert dans un parcours qui vous est rattaché. Un module regroupe les cours d'une même séquence pédagogique.",
     placement: "top",
   },
   {
@@ -109,14 +109,14 @@ export const moduleCreationTourSteps: Step[] = [
     target: '[data-recommended-tour="module-assignments"]',
     title: "Vérifiez les rattachements",
     content:
-      "Associez les membres de l’équipe pédagogique concernés, dont vous-même si vous souhaitez retrouver ce module dans votre espace.",
+      "Associez les membres de l'équipe pédagogique concernés, dont vous-même si vous souhaitez retrouver ce module dans votre espace.",
     placement: "left",
   },
   {
     target: '[data-onboarding="module-save"]',
     title: "Enregistrez le module",
     content:
-      "Le titre et la durée suffisent pour démarrer. Une image sera générée automatiquement si vous n’en ajoutez pas.",
+      "Le titre et la durée suffisent pour démarrer. Une image sera générée automatiquement si vous n'en ajoutez pas.",
     placement: "top",
   },
 ];

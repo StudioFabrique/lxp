@@ -22,7 +22,7 @@ const parcours: FormationParcoursSummary[] = [
 ];
 
 describe("buildRecommendedActions", () => {
-  it("ordonne les actions root et exclut bien le compte root du besoin d’admin", () => {
+  it("ordonne les actions root et exclut bien le compte root du besoin d'admin", () => {
     const actions = buildRecommendedActions({
       userRank: 0,
       teachersCount: 0,
@@ -63,7 +63,7 @@ describe("buildRecommendedActions", () => {
     expect(actions[2].to).toContain("/admin/parcours/edit/42");
   });
 
-  it("n’affiche pas la création de module sans parcours rattaché", () => {
+  it("n'affiche pas la création de module sans parcours rattaché", () => {
     const actions = buildRecommendedActions({
       userRank: 2,
       studentsCount: 1,

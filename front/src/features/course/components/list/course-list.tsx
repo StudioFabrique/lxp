@@ -75,7 +75,7 @@ export default function CourseList({
       onRefreshCourses();
     } catch (error) {
       toast.error(
-        getApiErrorMessage(error, "La leçon n’a pas pu être supprimée."),
+        getApiErrorMessage(error, "La leçon n'a pas pu être supprimée."),
       );
     } finally {
       setIsDeletingLesson(false);

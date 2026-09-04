@@ -41,7 +41,7 @@ const renderDashboardList = (
 };
 
 describe("LastParcours", () => {
-  it("affiche l’état vide partagé sur le dashboard formateur", () => {
+  it("affiche l'état vide partagé sur le dashboard formateur", () => {
     const auth = {
       user: { roles: [{ rank: 2 }] } as User,
     } as React.ContextType<typeof AuthContext>;

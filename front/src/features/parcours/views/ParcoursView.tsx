@@ -92,7 +92,7 @@ const ParcoursView = () => {
       URL.revokeObjectURL(url);
       toast.success("Archive du parcours téléchargée.");
     },
-    onError: () => toast.error("Le parcours n’a pas pu être exporté."),
+    onError: () => toast.error("Le parcours n'a pas pu être exporté."),
   });
 
   const handleClickResume = () => {
@@ -198,9 +198,7 @@ const ParcoursView = () => {
               <Contenu modules={modules} />
             </PermissionGuard>
             <div className="grid items-start gap-4 lg:grid-cols-3">
-              <div
-                className={hasSupplementaryContent ? "" : "lg:col-span-3"}
-              >
+              <div className={hasSupplementaryContent ? "" : "lg:col-span-3"}>
                 <Informations />
               </div>
               {hasSupplementaryContent ? (

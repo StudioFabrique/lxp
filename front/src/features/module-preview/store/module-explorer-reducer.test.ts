@@ -58,6 +58,19 @@ describe("moduleExplorerContentReducer", () => {
     expect(state.selectedLesson).toBe(loadedLesson);
     expect(state.selectedLesson?.activities).toEqual(loadedActivities);
     expect(state.selectedActivity?.id).toBe(11);
+    expect(state.lessonIdToScroll).toBe(5);
+  });
+
+  it("consomme la demande de scroll après avoir affiché la leçon ciblée", () => {
+    const state = moduleExplorerContentReducer(
+      {
+        ...initialModuleExplorerContentState,
+        lessonIdToScroll: 5,
+      },
+      { type: "acknowledge_lesson_scroll", lessonId: 5 },
+    );
+
+    expect(state.lessonIdToScroll).toBeUndefined();
   });
 
   it("passe à la première leçon du cours suivant", () => {

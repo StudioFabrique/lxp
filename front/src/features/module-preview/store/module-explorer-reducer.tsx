@@ -23,6 +23,7 @@ type StaticStateProperties = {
   module?: Module & { parcours: string };
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
+  lessonIdToScroll?: number;
   textActivityContent?: string;
 };
 
@@ -68,6 +69,7 @@ type ModuleExplorerContentAction =
       lessonId: number;
       activityId?: number;
     }
+  | { type: "acknowledge_lesson_scroll"; lessonId: number }
   | { type: "set_lesson_rating"; rating: LessonRating[] }
   | { type: "mark_lesson_as_complete"; lesson: Lesson; lessonRead: LessonRead }
   | { type: "go_to_next_lesson" }
@@ -120,6 +122,7 @@ export function moduleExplorerContentReducer(
           ? {
               selectedLesson: undefined,
               selectedActivity: undefined,
+              lessonIdToScroll: undefined,
             }
           : {}),
       };
@@ -169,6 +172,10 @@ export function moduleExplorerContentReducer(
         mode: "read",
         selectedLesson: action.lesson,
         selectedActivity,
+        lessonIdToScroll:
+          action.lesson?.id === state.lessonIdToScroll
+            ? state.lessonIdToScroll
+            : undefined,
       };
     }
 
@@ -185,6 +192,7 @@ export function moduleExplorerContentReducer(
         ...state,
         selectedLesson,
         selectedActivity: selectedLesson?.activities?.[0],
+        lessonIdToScroll: undefined,
         mode: "read",
       };
     }
@@ -205,9 +213,15 @@ export function moduleExplorerContentReducer(
         ...state,
         selectedLesson,
         selectedActivity,
+        lessonIdToScroll: selectedLesson ? action.lessonId : undefined,
         mode: "read",
       };
     }
+
+    case "acknowledge_lesson_scroll":
+      return state.lessonIdToScroll === action.lessonId
+        ? { ...state, lessonIdToScroll: undefined }
+        : state;
 
     case "set_lesson_rating":
       if (!state.selectedLesson) return state;
@@ -274,6 +288,7 @@ export function moduleExplorerContentReducer(
       return {
         ...state,
         selectedLesson: nextLesson,
+        lessonIdToScroll: undefined,
         mode: "read",
         modalVisibility: "none",
       };
@@ -284,6 +299,7 @@ export function moduleExplorerContentReducer(
         ...state,
         selectedActivity: undefined,
         selectedLesson: undefined,
+        lessonIdToScroll: undefined,
         module: state.module && {
           ...state.module,
           courses:

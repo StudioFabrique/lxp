@@ -143,15 +143,12 @@ const getResumableToken = (token: string) => {
   return withContext(resumableStage[stage] ?? stage, contextId);
 };
 
-const contentStageTemplates: Record<
-  string,
-  Omit<StageDefinition, "total">
-> = {
+const contentStageTemplates: Record<string, Omit<StageDefinition, "total">> = {
   "admin-module-title": {
     target: '[data-onboarding="module-title-field"]',
     title: "Nommez votre module",
     content:
-      "Un module regroupe plusieurs cours. Commencez par saisir un titre clair pour l’identifier facilement.",
+      "Un module regroupe plusieurs cours. Commencez par saisir un titre clair pour l'identifier facilement.",
     placement: "right",
     next: "admin-module-description",
     requirements: [
@@ -206,7 +203,7 @@ const contentStageTemplates: Record<
     target: '[data-onboarding="module-save"]',
     title: "Enregistrez le module",
     content:
-      "L’image, les ressources et les compétences sont facultatives. Enregistrez maintenant le module sans ouvrir les drawers associés.",
+      "L'image, les ressources et les compétences sont facultatives. Enregistrez maintenant le module sans ouvrir les drawers associés.",
     placement: "top",
     waitingForAction: true,
     previous: "admin-module-duration",
@@ -230,7 +227,7 @@ const contentStageTemplates: Record<
     target: '[data-onboarding="course-create"]',
     title: "Ajoutez un cours",
     content:
-      "Les cours structurent les leçons d’un module. Cliquez sur Ajouter un cours, saisissez un titre, puis validez pour ouvrir les informations détaillées.",
+      "Les cours structurent les leçons d'un module. Cliquez sur Ajouter un cours, saisissez un titre, puis validez pour ouvrir les informations détaillées.",
     placement: "right",
     waitingForAction: true,
     index: 13,
@@ -269,7 +266,7 @@ const contentStageTemplates: Record<
     target: '[data-onboarding="lesson-details"]',
     title: "Décrivez la leçon",
     content:
-      "Saisissez un titre, choisissez le tag du cours et précisez la modalité. La description aide les apprenants à comprendre l’objectif de la leçon.",
+      "Saisissez un titre, choisissez le tag du cours et précisez la modalité. La description aide les apprenants à comprendre l'objectif de la leçon.",
     placement: "left",
     waitingForAction: true,
     requirements: [
@@ -290,14 +287,14 @@ const contentStageTemplates: Record<
     target: '[data-onboarding="activity-create"]',
     title: "Créez une activité",
     content:
-      "Une activité est l’unité de contenu affichée aux apprenants. Cliquez ici pour choisir son format.",
+      "Une activité est l'unité de contenu affichée aux apprenants. Cliquez ici pour choisir son format.",
     placement: "right",
     waitingForAction: true,
     index: 17,
   },
   "admin-activity-type": {
     target: '[data-onboarding="activity-type-text"]',
-    title: "Choisissez l’activité texte",
+    title: "Choisissez l'activité texte",
     content:
       "Andria accepte aussi les images, vidéos, ressources et contenus interactifs. Pour ce premier contenu, choisissez Texte.",
     placement: "bottom",
@@ -309,17 +306,17 @@ const contentStageTemplates: Record<
     target: '[data-onboarding="text-editor"]',
     title: "Rédigez votre première activité",
     content:
-      "Donnez un titre à l’activité, saisissez quelques lignes et explorez la barre de mise en forme. Le bouton d’enregistrement apparaît dès que l’éditeur contient du texte.",
+      "Donnez un titre à l'activité, saisissez quelques lignes et explorez la barre de mise en forme. Le bouton d'enregistrement apparaît dès que l'éditeur contient du texte.",
     placement: "top",
     waitingForAction: true,
     requirements: [
       {
         selector: '[data-onboarding-field="activity-title"]',
-        label: "le titre de l’activité",
+        label: "le titre de l'activité",
       },
       {
         selector: '[data-onboarding-field="activity-content"]',
-        label: "le contenu de l’activité",
+        label: "le contenu de l'activité",
       },
     ],
     index: 19,
@@ -346,10 +343,7 @@ const teacherStages = Object.fromEntries(
   ]),
 ) as Record<string, Omit<StageDefinition, "total">>;
 
-const administratorStages: Record<
-  string,
-  Omit<StageDefinition, "total">
-> = {
+const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
   "admin-formation-entry": {
     target: '[data-onboarding="dashboard-formation-create-entry"]',
     title: "Créez votre première formation",
@@ -367,7 +361,7 @@ const administratorStages: Record<
     placement: "right",
     next: "admin-formation-save",
     previous: "admin-formation-entry",
-    nextLabel: "J’ai compris",
+    nextLabel: "J'ai compris",
     requirements: [
       {
         selector: '[data-onboarding-field="formation-title"]',
@@ -423,7 +417,7 @@ const administratorStages: Record<
     target: "#main-scroll-container",
     title: "Votre premier parcours est prêt",
     content:
-      "Le parcours est créé. Vous pouvez maintenant le compléter et l’organiser depuis son espace de gestion.",
+      "Le parcours est créé. Vous pouvez maintenant le compléter et l'organiser depuis son espace de gestion.",
     placement: "center",
     nextLabel: "Compris",
     index: 5,
@@ -444,7 +438,7 @@ const studentStages: Record<string, Omit<StageDefinition, "total">> = {
     target: '[data-onboarding="student-dashboard-header"]',
     title: "Votre tableau de bord",
     content:
-      "L’accueil résume ce qui compte aujourd’hui et vous permet de reprendre rapidement votre apprentissage.",
+      "L'accueil résume ce qui compte aujourd'hui et vous permet de reprendre rapidement votre apprentissage.",
     placement: "bottom",
     previous: "student-navigation",
     next: "student-content",
@@ -506,7 +500,7 @@ const OnboardingTourContent = ({
       try {
         await updateOnboarding(nextStatus, nextStep);
       } catch {
-        toast.error("Le tutoriel n’a pas pu enregistrer votre progression.");
+        toast.error("Le tutoriel n'a pas pu enregistrer votre progression.");
       }
     },
     [updateOnboarding],
@@ -517,7 +511,7 @@ const OnboardingTourContent = ({
       toast.error(
         flow.kind === "teacher"
           ? "Le tutoriel sera disponible dès que vous serez affecté à un parcours."
-          : "Créez d’abord une formation pour pouvoir lancer ce tutoriel.",
+          : "Créez d'abord une formation pour pouvoir lancer ce tutoriel.",
       );
       return;
     }
@@ -807,8 +801,7 @@ const OnboardingTourContent = ({
       next
         ? withContext(
             next,
-            next.startsWith("admin-") &&
-              next !== "admin-complete"
+            next.startsWith("admin-") && next !== "admin-complete"
               ? contextId
               : undefined,
           )
@@ -918,7 +911,7 @@ const OnboardingTourContent = ({
         blockTargetInteraction: false,
         disableFocusTrap: Boolean(
           stageDefinition.waitingForAction ||
-            stageDefinition.requirements?.length,
+          stageDefinition.requirements?.length,
         ),
         spotlightPadding: 8,
       },
@@ -962,7 +955,7 @@ const OnboardingTourContent = ({
             const resumableToken = getResumableToken(stepToken);
             if (resumableToken !== stepToken) {
               toast.error(
-                "Cette étape n’est plus ouverte. Le tutoriel reprend à l’étape précédente.",
+                "Cette étape n'est plus ouverte. Le tutoriel reprend à l'étape précédente.",
               );
               void saveState("in_progress", resumableToken);
               return;
@@ -970,7 +963,7 @@ const OnboardingTourContent = ({
 
             setFailedStepToken(stepToken);
             toast.error(
-              "Le tutoriel a été mis en pause car cette étape n’est plus disponible. Vous pouvez le relancer depuis le menu.",
+              "Le tutoriel a été mis en pause car cette étape n'est plus disponible. Vous pouvez le relancer depuis le menu.",
             );
           }}
           floatingOptions={{
@@ -1056,8 +1049,7 @@ const OnboardingTour = ({
     enabled: layout === "admin" && Boolean(user) && !demoMode,
   });
   const flow = useMemo(
-    () =>
-      resolveOnboardingFlow(layout, userRank, staffParcours.data ?? []),
+    () => resolveOnboardingFlow(layout, userRank, staffParcours.data ?? []),
     [layout, staffParcours.data, userRank],
   );
   const isEligibilityResolved =

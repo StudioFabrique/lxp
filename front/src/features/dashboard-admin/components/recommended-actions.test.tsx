@@ -12,7 +12,7 @@ import {
 const actions: RecommendedAction[] = [
   {
     id: "teachers",
-    title: "Inviter l’équipe pédagogique",
+    title: "Inviter l'équipe pédagogique",
     description: "Créer un formateur",
     to: "/teachers",
     icon: recommendedActionIcons.inviteTeachers,
@@ -26,7 +26,7 @@ const actions: RecommendedAction[] = [
   },
   {
     id: "logo",
-    title: "Changer le logo de l’organisme",
+    title: "Changer le logo de l'organisme",
     description: "Personnaliser la plateforme",
     to: "/logo",
     icon: recommendedActionIcons.changeLogo,
@@ -44,7 +44,7 @@ describe("RecommendedActions", () => {
     localStorage.clear();
   });
 
-  it("conserve l’ordre fourni et numérote uniquement les actions visibles", () => {
+  it("conserve l'ordre fourni et numérote uniquement les actions visibles", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <RecommendedActions userId="root-id" actions={actions} />
@@ -62,7 +62,7 @@ describe("RecommendedActions", () => {
     expect(markup).toContain("Étape 3");
   });
 
-  it("masque durablement le bloc pour l’utilisateur courant", () => {
+  it("masque durablement le bloc pour l'utilisateur courant", () => {
     const container = document.createElement("div");
     root = createRoot(container);
 

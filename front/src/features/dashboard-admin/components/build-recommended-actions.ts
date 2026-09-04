@@ -28,7 +28,7 @@ export function buildRecommendedActions({
         ? [
             {
               id: "invite-teachers",
-              title: "Inviter l’équipe pédagogique",
+              title: "Inviter l'équipe pédagogique",
               description: "Créez le premier compte formateur.",
               to: "/admin/user/add?roleRank=2&invite=true&tutorial=teacher",
               icon: recommendedActionIcons.inviteTeachers,
@@ -48,8 +48,8 @@ export function buildRecommendedActions({
         : []),
       {
         id: "change-logo",
-        title: "Changer le logo de l’organisme",
-        description: "Personnalisez l’identité visuelle de la plateforme.",
+        title: "Changer le logo de l'organisme",
+        description: "Personnalisez l'identité visuelle de la plateforme.",
         to: "/admin/profil?tutorial=logo",
         icon: recommendedActionIcons.changeLogo,
       },
@@ -78,7 +78,7 @@ export function buildRecommendedActions({
       ? [
           {
             id: "create-group",
-            title: "Créer un groupe d’apprenants",
+            title: "Créer un groupe d'apprenants",
             description: "Réunissez les apprenants dans un groupe.",
             to: "/admin/group/add?tutorial=group",
             icon: recommendedActionIcons.createGroup,
@@ -90,7 +90,7 @@ export function buildRecommendedActions({
           {
             id: "create-module",
             title: "Créer mon premier module",
-            description: "Ajoutez un module à l’un de vos parcours.",
+            description: "Ajoutez un module à l'un de vos parcours.",
             to: `/admin/parcours/edit/${firstManagedParcours.id}?step=4&create=true&tutorial=module`,
             icon: recommendedActionIcons.createModule,
           },

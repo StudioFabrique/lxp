@@ -95,16 +95,17 @@ const OnboardingWelcome = ({ layout }: Props) => {
   );
 
   const title =
-    layout === "admin"
-      ? <>{formattedFullname}, Bienvenue sur la plateforme ANDRIA !</>
-      : <>Bienvenue {formattedFullname} sur la plateforme ANDRIA !</>;
+    layout === "admin" ? (
+      <>{formattedFullname}, Bienvenue sur la plateforme ANDRIA !</>
+    ) : (
+      <>Bienvenue {formattedFullname} sur la plateforme ANDRIA !</>
+    );
 
-  const description =
-    isTeacher
-      ? "Créez un premier module dans l’un de vos parcours, puis votre première activité pédagogique."
-      : layout === "admin"
-        ? "Créez votre première formation puis votre premier parcours pas à pas."
-      : "Découvrez votre espace d’apprentissage et les outils qui vous accompagneront dans votre parcours.";
+  const description = isTeacher
+    ? "Créez un premier module dans l'un de vos parcours, puis votre première activité pédagogique."
+    : layout === "admin"
+      ? "Créez votre première formation puis votre premier parcours pas à pas."
+      : "Découvrez votre espace d'apprentissage et les outils qui vous accompagneront dans votre parcours.";
 
   return (
     <>

@@ -64,7 +64,7 @@ const OnboardingTooltip = ({ step, tooltipProps }: TooltipRenderProps) => {
       {data.waitingForAction && (
         <p className="mt-4 flex items-center gap-2 rounded-lg bg-primary/10 p-3 text-xs font-medium text-primary">
           <MousePointerClick className="h-4 w-4 shrink-0" />
-          Effectuez l’action mise en évidence pour continuer.
+          Effectuez l'action mise en évidence pour continuer.
         </p>
       )}
 

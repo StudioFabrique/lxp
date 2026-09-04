@@ -45,6 +45,8 @@ type CourseItemProps = {
   openEditOnMount?: boolean;
   editLessonId?: number;
   isOpen: boolean;
+  lessonIdToScroll?: number;
+  onLessonScrolled?: (lessonId: number) => void;
   onToggle: () => void;
   onOpen: () => void;
   onDeleteLesson: (lessonId: number) => Promise<void>;
@@ -81,6 +83,8 @@ const CourseItem = ({
   openEditOnMount = false,
   editLessonId,
   isOpen: isCourseOpen,
+  lessonIdToScroll,
+  onLessonScrolled,
   onToggle,
   onOpen,
   onDeleteLesson,
@@ -384,6 +388,9 @@ const CourseItem = ({
                         selectedLesson={selectedLesson}
                         canEditLesson={canEditCourse}
                         openEditOnMount={lesson.id === editLessonId}
+                        isCourseOpen={isCourseOpen}
+                        shouldScrollIntoView={lesson.id === lessonIdToScroll}
+                        onScrolledIntoView={onLessonScrolled}
                         onSelectLesson={onSelectLesson}
                         onOpenModal={handleOpenLessonDeletionModal}
                         onUpdateLesson={onUpdateLesson}

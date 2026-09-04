@@ -1,9 +1,9 @@
-# Variables d’environnement
+# Variables d'environnement
 
 Cette page liste les variables à connaître pour démarrer ou déployer ANDRIA.
 Les fichiers `env.example` restent les modèles à copier :
 
-- `api/env.example` pour l’API en développement ;
+- `api/env.example` pour l'API en développement ;
 - `front/env.example` pour le front en développement ;
 - `deployment/env.example` pour Infisical et les pipelines.
 
@@ -13,24 +13,24 @@ secret.
 
 ## Développement local
 
-La commande `npm run init` copie les deux fichiers d’exemple. Vous pouvez
+La commande `npm run init` copie les deux fichiers d'exemple. Vous pouvez
 démarrer le projet sans modifier leurs valeurs.
 
 ### API : variables nécessaires
 
 Fichier : `api/.env`
 
-| Variable          | Valeur locale                                              | Rôle                                     |
-| ----------------- | ---------------------------------------------------------- | ---------------------------------------- |
-| `DATABASE_URL`    | `postgresql://postgres:postgres@localhost:5500/lxp`        | Connexion de l’API à PostgreSQL.         |
-| `MONGO_LOCAL_URL` | `mongodb://root:root@localhost:27000/lxp?authSource=admin` | Connexion de l’API à MongoDB.            |
-| `SECRET`          | une valeur locale longue                                   | Signe les sessions.                      |
-| `REGISTER_SECRET` | une autre valeur locale longue                             | Signe les liens de création de compte.   |
-| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `30`                                     | Durée de validité des clés root, en minutes. |
-| `ENVIRONMENT`     | `development`                                              | Active le comportement de développement. |
-| `PORT`            | `3000`                                                     | Port de l’API.                           |
+| Variable                            | Valeur locale                                              | Rôle                                         |
+| ----------------------------------- | ---------------------------------------------------------- | -------------------------------------------- |
+| `DATABASE_URL`                      | `postgresql://postgres:postgres@localhost:5500/lxp`        | Connexion de l'API à PostgreSQL.             |
+| `MONGO_LOCAL_URL`                   | `mongodb://root:root@localhost:27000/lxp?authSource=admin` | Connexion de l'API à MongoDB.                |
+| `SECRET`                            | une valeur locale longue                                   | Signe les sessions.                          |
+| `REGISTER_SECRET`                   | une autre valeur locale longue                             | Signe les liens de création de compte.       |
+| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `30`                                                       | Durée de validité des clés root, en minutes. |
+| `ENVIRONMENT`                       | `development`                                              | Active le comportement de développement.     |
+| `PORT`                              | `3000`                                                     | Port de l'API.                               |
 
-`NODE_ENV` n’a pas besoin d’être ajouté au fichier. Les commandes npm le
+`NODE_ENV` n'a pas besoin d'être ajouté au fichier. Les commandes npm le
 définissent pour le développement, les tests et la production.
 
 ### Bases Docker locales
@@ -51,8 +51,8 @@ variable manque.
 | `ANDRIA_POSTGRES_PASSWORD` | `andria`          | Mot de passe de la base IA.       |
 | `ANDRIA_POSTGRES_DB`       | `lxp_ai`          | Nom de la base IA.                |
 
-Si vous changez un identifiant, mettez aussi à jour l’URL de connexion qui
-l’utilise.
+Si vous changez un identifiant, mettez aussi à jour l'URL de connexion qui
+l'utilise.
 
 ### Front
 
@@ -60,16 +60,16 @@ Fichier : `front/.env`
 
 | Variable                | Valeur locale            | Rôle                                         |
 | ----------------------- | ------------------------ | -------------------------------------------- |
-| `VITE_API_BASE_URL`     | `http://localhost:3000/` | Adresse de l’API.                            |
+| `VITE_API_BASE_URL`     | `http://localhost:3000/` | Adresse de l'API.                            |
 | `VITE_CSV_DOWNLOAD_URL` | `http://localhost:3000`  | Adresse utilisée pour les exports CSV.       |
-| `VITE_ENVIRONMENT`      | `development`            | Nom de l’environnement affiché par le front. |
+| `VITE_ENVIRONMENT`      | `development`            | Nom de l'environnement affiché par le front. |
 
 Vite lit ces variables au démarrage. Relancez `npm run dev` après une
 modification.
 
 ### Fonctions facultatives en développement
 
-Ces variables peuvent rester vides si vous n’utilisez pas la fonction
+Ces variables peuvent rester vides si vous n'utilisez pas la fonction
 associée.
 
 | Variable                 | Rôle                                                                         |
@@ -80,15 +80,15 @@ associée.
 | `MAILER_SMTP`            | Nom du serveur SMTP.                                                         |
 | `MAILER_DEV_RECIPIENT`   | Destinataire de redirection des messages en développement.                   |
 | `MAILER_SMTP_PORT`       | Port du serveur SMTP.                                                        |
-| `MAILER_FROM`            | Nom et adresse de l’expéditeur.                                              |
+| `MAILER_FROM`            | Nom et adresse de l'expéditeur.                                              |
 | `UNSPLASH_ACCESS_KEY`    | Clé utilisée pour les images de connexion.                                   |
 | `DOCKER_IA_API_BASE_URL` | Adresse du service IA, en général `http://localhost:8000`.                   |
 | `DOCKER_IA_AUTH_SECRET`  | Secret partagé avec `SECRET_KEY` dans ANDRIA-IA.                             |
 | `DISABLE_AI_FEATURES`    | `true` coupe les fonctions IA. La valeur par défaut est `false`.             |
 | `DEMO_MODE`              | `true` active le mode de démonstration. La valeur par défaut est `false`.    |
-| `DEMO_URL`               | Adresse de l’instance de démonstration annoncée aux utilisateurs.            |
+| `DEMO_URL`               | Adresse de l'instance de démonstration annoncée aux utilisateurs.            |
 | `DEMO_EXIT_URL`          | Adresse ouverte quand un visiteur quitte la démonstration.                   |
-| `ALTCHA_HMAC_KEY`        | Signe le contrôle anti-robot. L’API utilise `SECRET` si cette valeur manque. |
+| `ALTCHA_HMAC_KEY`        | Signe le contrôle anti-robot. L'API utilise `SECRET` si cette valeur manque. |
 | `DEMO_ADMIN_EMAIL`       | Compte administrateur utilisé par la démonstration.                          |
 | `DEMO_STUDENT_EMAIL`     | Compte apprenant utilisé par la démonstration.                               |
 
@@ -114,7 +114,7 @@ Le service IA est présent dans un dépôt séparé. Copiez son fichier
 | `MISTRAL_MODEL`            | non         | `mistral-small-latest`                                     |
 | `DB_INGEST_MIN_WORDS`      | non         | Nombre minimal de mots à indexer. Valeur courante : `20`.  |
 | `DB_WATCH_RECONNECT_DELAY` | non         | Délai de reconnexion du watcher. Valeur courante : `5`.    |
-| `DEV_BYPASS_AUTH`          | non         | Gardez `false` pour utiliser l’authentification normale.   |
+| `DEV_BYPASS_AUTH`          | non         | Gardez `false` pour utiliser l'authentification normale.   |
 
 Les clés Mistral de développement se trouvent dans Infisical EU, projet LXP,
 environnement `dev`, dossier `/runtime`. Le guide
@@ -130,42 +130,42 @@ déploiement.
 
 Le front de production utilise `front/.env.production`. Ses trois variables
 `VITE_*` valent `/`, `/` et `production`. Le build les place dans les fichiers
-du front. Elles ne viennent pas d’Infisical.
+du front. Elles ne viennent pas d'Infisical.
 
 ### Variables requises pour toutes les instances
 
 Ces variables vont dans le dossier `runtime` de la cible, sauf indication dans
 la colonne « Source ».
 
-| Variable               | Source    | Rôle                                                                                         |
-| ---------------------- | --------- | -------------------------------------------------------------------------------------------- |
-| `DEMO_MODE`            | `runtime` | `false` pour une instance normale, `true` pour la démonstration. La valeur doit être écrite. |
-| `PORT`                 | `runtime` | Port interne de l’API, en général `3000`.                                                    |
-| `ENVIRONMENT`          | `runtime` | `production`.                                                                                |
-| `FRONT_URL`            | `runtime` | Adresse publique avec `https://` et un `/` final.                                            |
-| `REGISTER_SECRET`      | `runtime` | Secret long pour les liens de création de compte.                                            |
-| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `runtime` | Durée de validité des clés root, en minutes (`30` par défaut).                   |
-| `SECRET`               | `runtime` | Secret long et différent pour les sessions.                                                  |
-| `POSTGRES_USER`        | `runtime` | Compte PostgreSQL du LXP.                                                                    |
-| `POSTGRES_PASSWORD`    | `runtime` | Mot de passe PostgreSQL du LXP.                                                              |
-| `POSTGRES_DB`          | `runtime` | Nom de la base PostgreSQL du LXP.                                                            |
-| `DATABASE_URL`         | `runtime` | URL complète vers `db-pg:5432`.                                                              |
-| `MONGO_ADMIN_USERNAME` | `runtime` | Compte administrateur MongoDB.                                                               |
-| `MONGO_ADMIN_PASSWORD` | `runtime` | Mot de passe MongoDB.                                                                        |
-| `MONGO_DATABASE`       | `runtime` | Nom de la base MongoDB.                                                                      |
-| `MONGO_LOCAL_URL`      | `runtime` | URL complète vers `db-mongo:27017` avec `authSource=admin`.                                  |
-| `MAILER_EMAIL`         | `runtime` | Compte de connexion SMTP.                                                                    |
-| `MAILER_PASSWORD`      | `runtime` | Mot de passe SMTP.                                                                           |
-| `MAILER_SMTP`          | `runtime` | Nom du serveur SMTP.                                                                         |
-| `MAILER_DEV_RECIPIENT` | `runtime` | Destinataire de redirection des messages en développement.                                   |
-| `MAILER_SMTP_PORT`     | `runtime` | Port SMTP.                                                                                   |
-| `MAILER_FROM`          | `runtime` | Nom et adresse de l’expéditeur.                                                              |
-| `UNSPLASH_ACCESS_KEY`  | `runtime` | Clé Unsplash. L’API l’exige en production.                                                   |
-| `LXP_IMAGE`            | pipeline  | Nom de l’image du LXP.                                                                       |
-| `LXP_IMAGE_TAG`        | pipeline  | Tag de l’image du LXP. Utilisez un tag fixe pour pouvoir revenir en arrière.                 |
-| `LXP_DEPLOYMENT_NAME`  | pipeline  | Nom stable de la stack, des conteneurs et des volumes.                                       |
+| Variable                            | Source    | Rôle                                                                                         |
+| ----------------------------------- | --------- | -------------------------------------------------------------------------------------------- |
+| `DEMO_MODE`                         | `runtime` | `false` pour une instance normale, `true` pour la démonstration. La valeur doit être écrite. |
+| `PORT`                              | `runtime` | Port interne de l'API, en général `3000`.                                                    |
+| `ENVIRONMENT`                       | `runtime` | `production`.                                                                                |
+| `FRONT_URL`                         | `runtime` | Adresse publique avec `https://` et un `/` final.                                            |
+| `REGISTER_SECRET`                   | `runtime` | Secret long pour les liens de création de compte.                                            |
+| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `runtime` | Durée de validité des clés root, en minutes (`30` par défaut).                               |
+| `SECRET`                            | `runtime` | Secret long et différent pour les sessions.                                                  |
+| `POSTGRES_USER`                     | `runtime` | Compte PostgreSQL du LXP.                                                                    |
+| `POSTGRES_PASSWORD`                 | `runtime` | Mot de passe PostgreSQL du LXP.                                                              |
+| `POSTGRES_DB`                       | `runtime` | Nom de la base PostgreSQL du LXP.                                                            |
+| `DATABASE_URL`                      | `runtime` | URL complète vers `db-pg:5432`.                                                              |
+| `MONGO_ADMIN_USERNAME`              | `runtime` | Compte administrateur MongoDB.                                                               |
+| `MONGO_ADMIN_PASSWORD`              | `runtime` | Mot de passe MongoDB.                                                                        |
+| `MONGO_DATABASE`                    | `runtime` | Nom de la base MongoDB.                                                                      |
+| `MONGO_LOCAL_URL`                   | `runtime` | URL complète vers `db-mongo:27017` avec `authSource=admin`.                                  |
+| `MAILER_EMAIL`                      | `runtime` | Compte de connexion SMTP.                                                                    |
+| `MAILER_PASSWORD`                   | `runtime` | Mot de passe SMTP.                                                                           |
+| `MAILER_SMTP`                       | `runtime` | Nom du serveur SMTP.                                                                         |
+| `MAILER_DEV_RECIPIENT`              | `runtime` | Destinataire de redirection des messages en développement.                                   |
+| `MAILER_SMTP_PORT`                  | `runtime` | Port SMTP.                                                                                   |
+| `MAILER_FROM`                       | `runtime` | Nom et adresse de l'expéditeur.                                                              |
+| `UNSPLASH_ACCESS_KEY`               | `runtime` | Clé Unsplash. L'API l'exige en production.                                                   |
+| `LXP_IMAGE`                         | pipeline  | Nom de l'image du LXP.                                                                       |
+| `LXP_IMAGE_TAG`                     | pipeline  | Tag de l'image du LXP. Utilisez un tag fixe pour pouvoir revenir en arrière.                 |
+| `LXP_DEPLOYMENT_NAME`               | pipeline  | Nom stable de la stack, des conteneurs et des volumes.                                       |
 
-### Variables requises avec l’IA
+### Variables requises avec l'IA
 
 Le script déploie la couche IA quand `DEMO_MODE=false`. Il exige alors toutes
 les variables de ce tableau, même si `DISABLE_AI_FEATURES=true`.
@@ -183,8 +183,8 @@ les variables de ce tableau, même si `DISABLE_AI_FEATURES=true`.
 | `MISTRAL_STUDENT_API_KEY`  | Clé Mistral pour les fonctions apprenant.                                           |
 | `MISTRAL_CONTENT_API_KEY`  | Clé Mistral pour la création de contenu.                                            |
 | `LXP_PUBLIC_BASE`          | Adresse publique du LXP, sans `/` final.                                            |
-| `LXP_AI_IMAGE`             | Nom de l’image ANDRIA-IA, fourni par le pipeline.                                   |
-| `LXP_AI_IMAGE_TAG`         | Tag de l’image ANDRIA-IA, fourni par le pipeline.                                   |
+| `LXP_AI_IMAGE`             | Nom de l'image ANDRIA-IA, fourni par le pipeline.                                   |
+| `LXP_AI_IMAGE_TAG`         | Tag de l'image ANDRIA-IA, fourni par le pipeline.                                   |
 
 Réglages facultatifs de la couche IA :
 
@@ -253,11 +253,11 @@ Jenkins demande les valeurs suivantes :
 | `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` | Secret de la Machine Identity, fourni par le credential Jenkins.           |
 | `INFISICAL_PROJECT_ID`                   | Identifiant du projet LXP.                                                 |
 | `INFISICAL_ENVIRONMENT`                  | `dev` ou `prod`.                                                           |
-| `INFISICAL_PATH_PREFIX`                  | Préfixe d’une cible hors développement, par exemple `/instances/<slug>`.   |
+| `INFISICAL_PATH_PREFIX`                  | Préfixe d'une cible hors développement, par exemple `/instances/<slug>`.   |
 | `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                     |
 | `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`. |
 
-GitHub Actions demande trois variables dans l’environnement GitHub
+GitHub Actions demande trois variables dans l'environnement GitHub
 `development` :
 
 | Variable GitHub          | Rôle                                                                                           |
@@ -274,8 +274,8 @@ GitHub Actions demande trois variables dans l’environnement GitHub
 | Production    | `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et `<préfixe>/backup` |
 
 - `/ci` contient seulement `REGISTRY_USER` et `REGISTRY_TOKEN` ;
-- `runtime` contient la configuration de l’application ;
-- le dossier `ci` préfixé contient l’accès SSH de la cible ;
+- `runtime` contient la configuration de l'application ;
+- le dossier `ci` préfixé contient l'accès SSH de la cible ;
 - `backup` contient les variables de sauvegarde.
 
 Les variables calculées par un pipeline utilisent le préfixe `PIPELINE_`. Ne
@@ -283,7 +283,7 @@ les ajoutez pas dans Infisical. Les scripts les remettent sous leur nom normal
 avant le déploiement.
 
 `INFISICAL_SECRET_PATHS` sert aux scripts Jenkins pour choisir les dossiers à
-charger. Les jobs du dépôt la définissent. Vous n’avez pas besoin de l’ajouter
+charger. Les jobs du dépôt la définissent. Vous n'avez pas besoin de l'ajouter
 dans Infisical.
 
 Les autres noms créés par les scripts, comme `AI_ENABLED`, `COMPOSE_FILES`,
@@ -302,29 +302,29 @@ Les trois destinations sont désactivées par défaut.
 | `BACKUP_EXTERNAL_VOLUME_REPOSITORY` | volume externe actif   | Dossier Restic sur un autre système de fichiers.                             |
 | `BACKUP_S3_ENABLED`                 | non                    | Active une copie S3. La valeur par défaut est `false`.                       |
 | `BACKUP_S3_REPOSITORY`              | S3 actif               | URL Restic du dépôt S3.                                                      |
-| `BACKUP_S3_ACCESS_KEY`              | S3 actif               | Clé d’accès S3.                                                              |
+| `BACKUP_S3_ACCESS_KEY`              | S3 actif               | Clé d'accès S3.                                                              |
 | `BACKUP_S3_SECRET_KEY`              | S3 actif               | Clé secrète S3.                                                              |
 | `BACKUP_S3_REGION`                  | non                    | Région S3. La valeur par défaut du script est `us-east-1`.                   |
 | `BACKUP_RESTIC_PASSWORD`            | une destination active | Mot de passe de chiffrement Restic.                                          |
 
-Variables utilisées lors d’une commande manuelle :
+Variables utilisées lors d'une commande manuelle :
 
 | Variable                     | Rôle                                                                                             |
 | ---------------------------- | ------------------------------------------------------------------------------------------------ |
 | `BACKUP_REASON`              | `scheduled`, `pre-deploy`, `post-deploy` ou `manual`.                                            |
-| `BACKUP_ALLOW_UNINITIALIZED` | Autorise l’absence de bases avant le premier déploiement.                                        |
-| `BACKUP_REQUIRE_ENABLED`     | Fait échouer la commande si aucune destination n’est active.                                     |
+| `BACKUP_ALLOW_UNINITIALIZED` | Autorise l'absence de bases avant le premier déploiement.                                        |
+| `BACKUP_REQUIRE_ENABLED`     | Fait échouer la commande si aucune destination n'est active.                                     |
 | `RESTORE_SOURCE`             | `local`, `external-volume` ou `s3`.                                                              |
-| `RESTORE_SNAPSHOT`           | `latest` pour un contrôle, ou l’identifiant Restic pour une restauration.                        |
+| `RESTORE_SNAPSHOT`           | `latest` pour un contrôle, ou l'identifiant Restic pour une restauration.                        |
 | `RESTORE_CONFIRM`            | Nom exact de la stack. Obligatoire pour remplacer les données.                                   |
-| `BACKUP_CRON`                | Fréquence du job Jenkins au format cron. La valeur par défaut est `H H/6 * * *`.                  |
+| `BACKUP_CRON`                | Fréquence du job Jenkins au format cron. La valeur par défaut est `H H/6 * * *`.                 |
 | `OPERATION`                  | Action du job Jenkins de sauvegarde : `backup`, `list-backup`, `verify-backup` ou `stop-backup`. |
 
 Les variables `BACKUP_RESTIC_IMAGE`, `BACKUP_HELPER_IMAGE`,
 `BACKUP_POSTGRES_IMAGE` et `BACKUP_MONGO_IMAGE` servent seulement à remplacer
 les images des outils. Gardez leurs valeurs par défaut hors des tests.
 
-L’ancienne variable `BACKUP_ENABLED` n’est plus utilisée. Retirez-la
-d’Infisical. Les scripts arrêtent l’opération s’ils la trouvent.
+L'ancienne variable `BACKUP_ENABLED` n'est plus utilisée. Retirez-la
+d'Infisical. Les scripts arrêtent l'opération s'ils la trouvent.
 
 Le guide [Sauvegarder et restaurer](sauvegardes.md) décrit les commandes.

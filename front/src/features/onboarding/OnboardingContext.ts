@@ -11,15 +11,16 @@ type OnboardingContextValue = {
   skip: () => Promise<void>;
 };
 
-export const OnboardingContext =
-  createContext<OnboardingContextValue | null>(null);
+export const OnboardingContext = createContext<OnboardingContextValue | null>(
+  null,
+);
 
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
 
   if (!context) {
     throw new Error(
-      "useOnboarding doit être utilisé à l’intérieur de OnboardingTour.",
+      "useOnboarding doit être utilisé à l'intérieur de OnboardingTour.",
     );
   }
 

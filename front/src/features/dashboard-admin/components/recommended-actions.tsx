@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, FastForward, X } from "lucide-react";
 import { Link } from "react-router";
 import type { RecommendedAction } from "./recommended-action-config";
 
@@ -29,15 +29,12 @@ export default function RecommendedActions({
   };
 
   return (
-    <section
-      className="rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:p-5"
-      aria-labelledby="recommended-actions-title"
-    >
+    <section className="p-2" aria-labelledby="recommended-actions-title">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h2
             id="recommended-actions-title"
-            className="text-lg font-bold text-primary"
+            className="text-xl font-bold text-primary"
           >
             Actions recommandées
           </h2>
@@ -52,7 +49,7 @@ export default function RecommendedActions({
           aria-label="Masquer les actions recommandées"
         >
           <span className="hidden sm:inline">Passer</span>
-          <X className="h-4 w-4" />
+          <FastForward className="h-4 w-4" />
         </button>
       </div>
 
@@ -64,7 +61,7 @@ export default function RecommendedActions({
         </div>
       ) : (
         <ol className="grid gap-3 lg:grid-cols-3">
-          {actions.map((action, index) => {
+          {actions.map((action) => {
             const Icon = action.icon;
             return (
               <li key={action.id} className="h-full">
@@ -76,9 +73,6 @@ export default function RecommendedActions({
                     <Icon className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-primary/70">
-                      Étape {index + 1}
-                    </span>
                     <span className="block font-semibold">{action.title}</span>
                     <span className="mt-1 block text-sm text-base-content/65">
                       {action.description}

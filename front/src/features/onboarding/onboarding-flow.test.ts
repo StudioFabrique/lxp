@@ -27,7 +27,7 @@ const assignedParcours: FormationParcoursSummary[] = [
 ];
 
 describe("resolveOnboardingFlow", () => {
-  it("ne propose pas l’onboarding à un formateur sans parcours affecté", () => {
+  it("ne propose pas l'onboarding à un formateur sans parcours affecté", () => {
     expect(resolveOnboardingFlow("admin", 2, [])).toMatchObject({
       kind: "teacher",
       canStart: false,
@@ -35,7 +35,7 @@ describe("resolveOnboardingFlow", () => {
     });
   });
 
-  it("démarre le formateur sur la création d’un module de son parcours", () => {
+  it("démarre le formateur sur la création d'un module de son parcours", () => {
     expect(resolveOnboardingFlow("admin", 2, assignedParcours)).toMatchObject({
       kind: "teacher",
       canStart: true,
@@ -43,7 +43,7 @@ describe("resolveOnboardingFlow", () => {
     });
   });
 
-  it("guide l’administrateur de la création d’une formation à celle d’un parcours", () => {
+  it("guide l'administrateur de la création d'une formation à celle d'un parcours", () => {
     expect(resolveOnboardingFlow("admin", 1, assignedParcours)).toMatchObject({
       kind: "administrator",
       canStart: true,

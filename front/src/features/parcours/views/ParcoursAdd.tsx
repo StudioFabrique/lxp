@@ -91,7 +91,7 @@ const AddParcours = () => {
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message ??
-          "Le parcours n’a pas pu être enregistré.",
+          "Le parcours n'a pas pu être enregistré.",
       );
     },
   });
@@ -112,14 +112,14 @@ const AddParcours = () => {
       toast.success(`Le parcours « ${data.title} » a été importé.`);
       if (data.warnings.length > 0) {
         toast(
-          `${data.warnings.length} fichier(s) étaient manquants lors de l’export.`,
+          `${data.warnings.length} fichier(s) étaient manquants lors de l'export.`,
         );
       }
       nav(`/admin/parcours/edit/${data.parcoursId}`);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
-        error.response?.data?.message ?? "Le parcours n’a pas pu être importé.",
+        error.response?.data?.message ?? "Le parcours n'a pas pu être importé.",
       );
     },
   });
@@ -219,7 +219,7 @@ const AddParcours = () => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Le parcours n’a pas pu être importé.",
+          : "Le parcours n'a pas pu être importé.",
       );
     }
   };

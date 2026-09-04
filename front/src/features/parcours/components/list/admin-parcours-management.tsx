@@ -54,7 +54,7 @@ const AdminParcoursManagement = ({
     },
     onError: (error) => {
       toast.error(
-        getApiErrorMessage(error, "Le parcours n’a pas pu être supprimé."),
+        getApiErrorMessage(error, "Le parcours n'a pas pu être supprimé."),
       );
     },
   });
@@ -90,7 +90,7 @@ const AdminParcoursManagement = ({
       URL.revokeObjectURL(url);
       toast.success("Archive du parcours téléchargée.");
     },
-    onError: () => toast.error("Le parcours n’a pas pu être exporté."),
+    onError: () => toast.error("Le parcours n'a pas pu être exporté."),
   });
 
   const openFormationCreation = () => {

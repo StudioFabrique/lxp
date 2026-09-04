@@ -17,7 +17,7 @@ const getStepIds = (
   }).map((tourStep) => tourStep.id);
 
 describe("getCourseImportTourSteps", () => {
-  it("présente le dépôt puis le contrôle détaillé de l’archive", () => {
+  it("présente le dépôt puis le contrôle détaillé de l'archive", () => {
     expect(getStepIds(CoursesImportStep.MbzImport)).toContain(
       "course-import-upload",
     );
@@ -46,7 +46,7 @@ describe("getCourseImportTourSteps", () => {
     expect(parcoursIds).toContain("course-import-module");
   });
 
-  it("propose l’action finale uniquement quand le traitement est terminé ou interrompu", () => {
+  it("propose l'action finale uniquement quand le traitement est terminé ou interrompu", () => {
     expect(getStepIds(CoursesImportStep.ImportResult)).not.toContain(
       "course-import-result-actions",
     );

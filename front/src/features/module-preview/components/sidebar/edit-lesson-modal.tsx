@@ -143,7 +143,7 @@ export default function EditLessonModal({
 
           {courseTags.length === 0 && (
             <p className="text-sm text-error">
-              Ajoutez d’abord un tag au cours pour modifier cette leçon.
+              Ajoutez d'abord un tag au cours pour modifier cette leçon.
             </p>
           )}
         </form>

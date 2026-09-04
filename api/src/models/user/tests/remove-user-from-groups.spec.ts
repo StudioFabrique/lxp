@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import removeUserFromGroups from "../remove-user-from-groups.ts";
 
-describe("retrait d’un utilisateur des groupes MongoDB", () => {
+describe("retrait d'un utilisateur des groupes MongoDB", () => {
   it("retire sa référence de tous les groupes auxquels il appartient", async () => {
     const updateMany = jest
       .fn<(filter: object, update: object) => Promise<unknown>>()

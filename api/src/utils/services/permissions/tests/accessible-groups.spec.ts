@@ -3,7 +3,7 @@ import {
   buildTeacherGroupVisibilityFilter,
 } from "../accessible-groups.ts";
 
-describe("périmètre des groupes d’un formateur", () => {
+describe("périmètre des groupes d'un formateur", () => {
   it("inclut les groupes rattachés à ses parcours et ses groupes non rattachés", () => {
     expect(
       buildTeacherGroupVisibilityFilter(
@@ -26,7 +26,7 @@ describe("périmètre des groupes d’un formateur", () => {
     });
   });
 
-  it("n’accorde pas un groupe rattaché inaccessible même s’il a été créé par le formateur", () => {
+  it("n'accorde pas un groupe rattaché inaccessible même s'il a été créé par le formateur", () => {
     const filter = buildTeacherGroupVisibilityFilter(
       "teacher-id",
       [],

@@ -1225,7 +1225,7 @@ describe("HTTP /user", () => {
     });
   });
 
-  describe("suppression d’un apprenant", () => {
+  describe("suppression d'un apprenant", () => {
     test("retire aussi sa référence de tous les groupes MongoDB", async () => {
       const studentRole = await Role.findOne({ role: "student" });
       if (!studentRole) throw new Error("Rôle apprenant absent");

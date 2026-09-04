@@ -33,6 +33,8 @@ type SidebarCoursesListProps = {
   editCourseId?: number;
   editLessonId?: number;
   openedCourseId?: number;
+  lessonIdToScroll?: number;
+  onLessonScrolled?: (lessonId: number) => void;
   onDeleteLesson: (lessonId: number) => Promise<void>;
   onCreateLesson: (
     courseId: number,
@@ -59,6 +61,8 @@ const SidebarCoursesList = ({
   editCourseId,
   editLessonId,
   openedCourseId,
+  lessonIdToScroll,
+  onLessonScrolled,
   onDeleteLesson,
   onCreateLesson,
   onLessonCreated,
@@ -182,6 +186,8 @@ const SidebarCoursesList = ({
               openEditOnMount={course.id === editCourseId}
               editLessonId={editLessonId}
               isOpen={course.id === openCourseId}
+              lessonIdToScroll={lessonIdToScroll}
+              onLessonScrolled={onLessonScrolled}
               onToggle={() =>
                 setOpenCourseId((currentId) => {
                   if (

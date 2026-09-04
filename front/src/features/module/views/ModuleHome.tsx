@@ -14,8 +14,9 @@ type CourseToDelete = ModuleListItem["courses"][number] & {
 };
 
 const ModuleHome = () => {
-  const [moduleToDelete, setModuleToDelete] =
-    useState<ModuleListItem | null>(null);
+  const [moduleToDelete, setModuleToDelete] = useState<ModuleListItem | null>(
+    null,
+  );
   const [courseToDelete, setCourseToDelete] = useState<CourseToDelete | null>(
     null,
   );
@@ -31,7 +32,7 @@ const ModuleHome = () => {
     },
     onError: (error) => {
       toast.error(
-        getApiErrorMessage(error, "Le module n’a pas pu être supprimé."),
+        getApiErrorMessage(error, "Le module n'a pas pu être supprimé."),
       );
     },
   });
@@ -46,7 +47,7 @@ const ModuleHome = () => {
     },
     onError: (error) => {
       toast.error(
-        getApiErrorMessage(error, "Le cours n’a pas pu être supprimé."),
+        getApiErrorMessage(error, "Le cours n'a pas pu être supprimé."),
       );
     },
   });

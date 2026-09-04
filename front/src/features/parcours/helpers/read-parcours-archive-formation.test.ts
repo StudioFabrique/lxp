@@ -26,7 +26,7 @@ describe("readParcoursArchiveFormationTitle", () => {
     );
   });
 
-  it("retourne les modules disponibles pour l’affectation du formateur", async () => {
+  it("retourne les modules disponibles pour l'affectation du formateur", async () => {
     const archive = await archiveWithManifest({
       formation: { title: "Formation" },
       parcours: {

@@ -13,12 +13,16 @@ vi.mock("@radix-ui/react-dropdown-menu", () => ({
   Root: ({ children }: { children: React.ReactNode }) => children,
   Trigger: ({ children }: { children: React.ReactNode }) => children,
   Portal: ({ children }: { children: React.ReactNode }) => children,
-  Content: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Content: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock("../../../../components/UI/cursor-glow-card", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("./course-header", () => ({
@@ -112,7 +116,7 @@ describe("CourseList", () => {
     expect(markup).not.toContain('data-tip="Cours invisible"');
   });
 
-  it("affiche un menu d’actions sur chaque leçon", () => {
+  it("affiche un menu d'actions sur chaque leçon", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />

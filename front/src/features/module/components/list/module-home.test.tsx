@@ -15,12 +15,16 @@ vi.mock("@radix-ui/react-dropdown-menu", () => ({
   Root: ({ children }: { children: React.ReactNode }) => children,
   Trigger: ({ children }: { children: React.ReactNode }) => children,
   Portal: ({ children }: { children: React.ReactNode }) => children,
-  Content: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Content: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock("../../../../components/UI/cursor-glow-card", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("./module-header", () => ({
@@ -147,7 +151,7 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("min-h-52");
   });
 
-  it("signale les cours invisibles et affiche leurs menus d’actions", () => {
+  it("signale les cours invisibles et affiche leurs menus d'actions", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <ModuleHomeList

@@ -2,7 +2,7 @@ import { env } from "../config/env.ts";
 export const getTemplate = (
   template: string,
   token: string,
-  email?: string
+  email?: string,
 ) => {
   let link = "";
   switch (template) {
@@ -16,14 +16,14 @@ Votre compte a bien été créé pour l'email : ${email!}.<br/>Pour finaliser vo
 <br/>
 👉 <a href=${link}>Lien d'activation</a><br/><br/>
 
-Ce lien expirera dans 24 heures, alors n’attendez pas trop longtemps !<br/><br/>
+Ce lien expirera dans 24 heures, alors n'attendez pas trop longtemps !<br/><br/>
 
-Si vous n’avez pas demandé la création de ce compte, vous pouvez ignorer cet email.<br/><br/>
+Si vous n'avez pas demandé la création de ce compte, vous pouvez ignorer cet email.<br/><br/>
 
 Si vous avez des questions, notre équipe est là pour vous aider : <a href="mailto:studio@step.eco">support</a> .<br/><br/>
 
 À bientôt,
-l’équipe Andria<br/>
+l'équipe Andria<br/>
 <br/>
 <svg width="230" height="78.41" viewBox="0 0 2130 1040" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1575.33 150C1552.62 150 1534.28 143.069 1520.31 129.208C1506.77 114.851 1500 97.0297 1500 75.7426C1500 53.9604 1506.77 35.8911 1520.31 21.5347C1534.28 7.17823 1552.62 0 1575.33 0C1597.6 0 1615.5 7.17823 1629.04 21.5347C1643.01 35.8911 1650 53.9604 1650 75.7426C1650 97.0297 1643.01 114.851 1629.04 129.208C1615.5 143.069 1597.6 150 1575.33 150Z" fill="#FFA800" fill-opacity="0.5"/>

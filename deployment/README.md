@@ -13,7 +13,7 @@ avant de préparer une nouvelle instance.
 | --------------------- | ---------------------------------- | ----------------------------------------------------------- |
 | `caddy`               | `deployment/caddy/Jenkinsfile`     | Le serveur utilise un proxy Caddy partagé.                  |
 | `direct`              | `deployment/direct/Jenkinsfile`    | Le LXP publie lui-même le port 80 du serveur.               |
-| développement partagé | `.github/workflows/deploy-dev.yml` | Une fusion dans `beta` déploie l’instance de développement. |
+| développement partagé | `.github/workflows/deploy-dev.yml` | Une fusion dans `beta` déploie l'instance de développement. |
 
 Le mode `caddy` demande un réseau Docker externe nommé `caddy` par défaut. Le
 mode `direct` ne demande pas de proxy.
@@ -22,7 +22,7 @@ mode `direct` ne demande pas de proxy.
 
 Le fichier `compose.yml` démarre :
 
-- l’application `app` ;
+- l'application `app` ;
 - PostgreSQL `db-pg` ;
 - MongoDB `db-mongo`.
 
@@ -41,7 +41,7 @@ Le serveur doit fournir :
 - un compte SSH autorisé à utiliser Docker ;
 - `rsync` ;
 - le réseau Caddy pour un déploiement en mode `caddy` ;
-- assez d’espace pour les bases, les fichiers et les images Docker.
+- assez d'espace pour les bases, les fichiers et les images Docker.
 
 Le pipeline crée ces dossiers sous `DEPLOY_PATH` :
 
@@ -67,7 +67,7 @@ Le workflow GitHub Actions lit :
 /backup   sauvegardes
 ```
 
-Il utilise toujours l’environnement Infisical `dev`.
+Il utilise toujours l'environnement Infisical `dev`.
 
 ### Instance de production
 
@@ -90,7 +90,7 @@ dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et
 
 Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
 secret. La page
-[Variables d’environnement](../docs/variables-environnement.md#répartition-dans-infisical)
+[Variables d'environnement](../docs/variables-environnement.md#répartition-dans-infisical)
 explique où placer chaque valeur.
 
 ## Déployer avec Jenkins
@@ -99,7 +99,7 @@ explique où placer chaque valeur.
 
 Créez un credential Jenkins de type « Username with password » :
 
-- le nom d’utilisateur contient le Client ID Universal Auth ;
+- le nom d'utilisateur contient le Client ID Universal Auth ;
 - le mot de passe contient le Client Secret Universal Auth.
 
 Le nom proposé par les Jenkinsfiles est `INFISICAL_CREDENTIALS`. Vous pouvez le
@@ -109,7 +109,7 @@ changer avec le paramètre `INFISICAL_CREDENTIAL_ID`.
 
 | Job                    | Script Path                     |
 | ---------------------- | ------------------------------- |
-| Construire l’image LXP | `build.Jenkinsfile`             |
+| Construire l'image LXP | `build.Jenkinsfile`             |
 | Déployer avec Caddy    | `deployment/caddy/Jenkinsfile`  |
 | Déployer sans Caddy    | `deployment/direct/Jenkinsfile` |
 | Sauvegarder une cible  | `deployment/backup.Jenkinsfile` |
@@ -125,14 +125,14 @@ Vérifiez au minimum :
 - `APP_HOST` en mode Caddy ;
 - les tags des images.
 
-Gardez le même `LXP_DEPLOYMENT_NAME` pendant toute la vie d’une instance. Un
-nouveau nom crée de nouveaux volumes Docker et donne l’impression que les
+Gardez le même `LXP_DEPLOYMENT_NAME` pendant toute la vie d'une instance. Un
+nouveau nom crée de nouveaux volumes Docker et donne l'impression que les
 données ont disparu.
 
 ### 4. Lancer le job
 
-Le job effectue une sauvegarde, déploie l’application, puis crée une seconde
-sauvegarde. Aucune sauvegarde n’est créée si les trois variables
+Le job effectue une sauvegarde, déploie l'application, puis crée une seconde
+sauvegarde. Aucune sauvegarde n'est créée si les trois variables
 `BACKUP_*_ENABLED` valent `false`.
 
 La [documentation des serveurs STEP](https://docs.dev.step.eco/2-deploiement-lxp/0-deployer-avec-jenkins/)
@@ -143,10 +143,10 @@ explique la création des jobs et le retour à une ancienne image.
 Le workflow `.github/workflows/deploy-dev.yml` effectue deux actions :
 
 - sur une pull request vers `beta`, il lance le lint, les types et les tests ;
-- après une fusion dans `beta`, il construit l’image et déploie le serveur de
+- après une fusion dans `beta`, il construit l'image et déploie le serveur de
   développement.
 
-Ajoutez ces variables dans l’environnement GitHub `development` :
+Ajoutez ces variables dans l'environnement GitHub `development` :
 
 - `INFISICAL_IDENTITY_ID` ;
 - `INFISICAL_PROJECT_SLUG` ;
@@ -156,7 +156,7 @@ Le workflow utilise OIDC pour accéder à Infisical. Aucun secret Infisical ne
 doit être enregistré dans GitHub.
 
 La [documentation des serveurs STEP](https://docs.dev.step.eco/2-deploiement-lxp/1-deployer-avec-github-actions/)
-décrit la configuration de l’identité OIDC.
+décrit la configuration de l'identité OIDC.
 
 ## Déployer une instance de démonstration
 
@@ -165,12 +165,12 @@ Définissez `DEMO_MODE=true` dans le dossier `runtime` de la cible. Ajoutez auss
 
 Le pipeline :
 
-1. ignore les variables et l’image IA ;
+1. ignore les variables et l'image IA ;
 2. remet les bases dans leur état de démonstration ;
 3. charge les données présentes dans `api/dumps/demo/` ;
 4. prépare les deux comptes de visite.
 
-N’activez pas `DEMO_MODE` sur une instance qui contient des données à garder.
+N'activez pas `DEMO_MODE` sur une instance qui contient des données à garder.
 Le déploiement efface les données de cette instance.
 
 Consultez [Mode démonstration](../docs/mode-demo.md) pour produire les données
@@ -196,7 +196,7 @@ fichier `.env` est présent à cette racine.
 Les déploiements peuvent copier PostgreSQL, MongoDB et `uploads` vers un dépôt
 Restic local, un volume externe ou S3. Consultez
 [Sauvegarder et restaurer](../docs/sauvegardes.md) pour préparer les dépôts,
-contrôler un snapshot ou remplacer les données d’une instance.
+contrôler un snapshot ou remplacer les données d'une instance.
 
 ## Fichiers principaux
 
@@ -204,7 +204,7 @@ contrôler un snapshot ou remplacer les données d’une instance.
 | ------------------------------ | ---------------------------------------------------------------------- |
 | `deployment/deploy.sh`         | Valide les variables, applique les migrations et démarre les services. |
 | `deployment/with-infisical.sh` | Charge les secrets Infisical pour Jenkins.                             |
-| `deployment/build.sh`          | Construit et publie l’image du LXP.                                    |
+| `deployment/build.sh`          | Construit et publie l'image du LXP.                                    |
 | `deployment/backup.sh`         | Crée une sauvegarde.                                                   |
 | `deployment/restore.sh`        | Contrôle ou restaure une sauvegarde.                                   |
 | `deployment/env.example`       | Liste les variables avec des exemples sans secret.                     |

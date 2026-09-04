@@ -15,7 +15,7 @@ const pageIntroduction: Step = {
   target: '[data-page-tour="header"]',
   title: "Importer un cours Moodle",
   content:
-    "Ce parcours vous accompagne de l’archive Moodle jusqu’à la création des cours, leçons et activités dans ANDRIA.",
+    "Ce parcours vous accompagne de l'archive Moodle jusqu'à la création des cours, leçons et activités dans ANDRIA.",
   placement: "bottom",
 };
 
@@ -32,7 +32,7 @@ const uploadSteps: Step[] = [
   {
     id: "course-import-upload",
     target: '[data-course-import-tour="upload"]',
-    title: "Sélectionner l’archive Moodle",
+    title: "Sélectionner l'archive Moodle",
     content:
       "Choisissez un fichier .mbz de 50 Mo maximum. Son analyse peut prendre un moment : attendez la fin du traitement avant de quitter la page.",
     placement: "bottom",
@@ -44,9 +44,9 @@ const previewSteps: Step[] = [
   {
     id: "course-import-preview-actions",
     target: '[data-course-import-tour="preview-actions"]',
-    title: "Compléter ou confirmer l’import",
+    title: "Compléter ou confirmer l'import",
     content:
-      "Vous pouvez ajouter d’autres archives .mbz. Lorsque la sélection est prête, confirmez pour passer au rattachement des cours.",
+      "Vous pouvez ajouter d'autres archives .mbz. Lorsque la sélection est prête, confirmez pour passer au rattachement des cours.",
     placement: "bottom",
   },
   {
@@ -54,13 +54,13 @@ const previewSteps: Step[] = [
     target: '[data-course-import-tour="course-selection"]',
     title: "Choisir les cours à contrôler",
     content:
-      "Chaque carte résume un cours et le nombre de leçons retenues. Vous pouvez renommer un cours, afficher ses détails ou le retirer de l’import.",
+      "Chaque carte résume un cours et le nombre de leçons retenues. Vous pouvez renommer un cours, afficher ses détails ou le retirer de l'import.",
     placement: "bottom",
   },
   {
     id: "course-import-tree",
     target: '[data-course-import-tour="course-tree"]',
-    title: "Vérifier l’arborescence",
+    title: "Vérifier l'arborescence",
     content:
       "Décochez les leçons inutiles, corrigez les titres et inspectez les avertissements. Les éléments retirés ne seront pas créés dans ANDRIA.",
     placement: "right",
@@ -70,7 +70,7 @@ const previewSteps: Step[] = [
     target: '[data-course-import-tour="activity-preview"]',
     title: "Prévisualiser les activités",
     content:
-      "Sélectionnez une activité dans l’arborescence pour vérifier son contenu avant l’import définitif.",
+      "Sélectionnez une activité dans l'arborescence pour vérifier son contenu avant l'import définitif.",
     placement: "left",
   },
 ];
@@ -115,7 +115,7 @@ const getAssignmentSteps = ({
           target: '[data-course-import-tour="module"]',
           title: "3. Sélectionner un module",
           content:
-            "Sélectionnez le module exact dans lequel les cours seront créés. Rechargez la liste si vous venez de créer un module dans l’autre onglet.",
+            "Sélectionnez le module exact dans lequel les cours seront créés. Rechargez la liste si vous venez de créer un module dans l'autre onglet.",
           placement: "bottom" as const,
         },
       ]
@@ -123,9 +123,9 @@ const getAssignmentSteps = ({
   {
     id: "course-import-launch",
     target: '[data-course-import-tour="assignment-actions"]',
-    title: "Lancer l’importation",
+    title: "Lancer l'importation",
     content:
-      "Le bouton devient disponible lorsque les trois niveaux sont sélectionnés. Après le lancement, gardez la page ouverte jusqu’au résultat final.",
+      "Le bouton devient disponible lorsque les trois niveaux sont sélectionnés. Après le lancement, gardez la page ouverte jusqu'au résultat final.",
     placement: "top",
   },
 ];
@@ -144,7 +144,7 @@ const getResultSteps = ({
         ? "Importation terminée"
         : "Importation en cours",
     content: hasCriticalError
-      ? "Le bandeau présente la cause de l’interruption. Les éléments déjà créés sont conservés pour permettre une reprise."
+      ? "Le bandeau présente la cause de l'interruption. Les éléments déjà créés sont conservés pour permettre une reprise."
       : isComplete
         ? "Tous les contenus prévus ont été traités. Vous pouvez maintenant rejoindre le module."
         : "Ne fermez pas et ne rechargez pas cette page pendant la création et le transfert des contenus.",
@@ -155,7 +155,7 @@ const getResultSteps = ({
     target: '[data-course-import-tour="result-progress"]',
     title: "Suivre la progression globale",
     content:
-      "La progression et le message courant indiquent précisément l’opération en cours ou le résultat final.",
+      "La progression et le message courant indiquent précisément l'opération en cours ou le résultat final.",
     placement: "bottom",
   },
   {
@@ -163,7 +163,7 @@ const getResultSteps = ({
     target: '[data-course-import-tour="result-items"]',
     title: "Contrôler chaque élément",
     content:
-      "Cette liste détaille l’état de chaque cours et activité : en attente, en traitement, réussi ou en erreur.",
+      "Cette liste détaille l'état de chaque cours et activité : en attente, en traitement, réussi ou en erreur.",
     placement: "top",
   },
   ...(isComplete || hasCriticalError
@@ -171,7 +171,7 @@ const getResultSteps = ({
         {
           id: "course-import-result-actions",
           target: '[data-course-import-tour="result-actions"]',
-          title: hasCriticalError ? "Reprendre l’import" : "Ouvrir le module",
+          title: hasCriticalError ? "Reprendre l'import" : "Ouvrir le module",
           content: hasCriticalError
             ? "Réessayez pour reprendre les éléments non terminés, ou revenez au module pour examiner ce qui a déjà été créé."
             : "Terminez le workflow pour ouvrir le module contenant les nouveaux cours.",
