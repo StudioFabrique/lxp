@@ -159,7 +159,7 @@ export const HierarchicalListRow = ({
       </div>
 
       {itemAction || item.to ? (
-        <div className="relative z-20 ml-auto self-center justify-self-end">
+        <div className="relative z-10 ml-auto self-center justify-self-end">
           {itemAction ??
             (item.to ? (
               <Link

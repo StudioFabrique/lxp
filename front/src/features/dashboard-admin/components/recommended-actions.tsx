@@ -67,7 +67,7 @@ export default function RecommendedActions({
               <li key={action.id} className="h-full">
                 <Link
                   to={action.to}
-                  className="group flex h-full min-h-28 items-start gap-3 rounded-xl border border-base-300 bg-base-100 p-4 shadow-sm transition hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="group flex h-full items-start gap-3 rounded-xl border border-base-300 bg-base-100 p-4 shadow-sm transition hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <Icon className="h-5 w-5" />
