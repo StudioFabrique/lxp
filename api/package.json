@@ -23,6 +23,7 @@
     "test:debug": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
     "test:list": "jest --listTests",
     "generate-activation-key": "node src/scripts/generate-activation-key.ts",
+    "send-root-invitation": "node src/scripts/send-root-invitation.ts",
     "demo:seed": "node src/scripts/demo-seed.ts",
     "notify-triggers": "docker compose exec -T db-pg sh -c 'psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"' < src/scripts/andria_notify_triggers.sql"
   },

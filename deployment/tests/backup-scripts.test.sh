@@ -30,6 +30,7 @@ bash -n \
     "$list_script" \
     "$repository_root/deployment/restore.sh"
 sh -n "$infisical_wrapper"
+sh -n "$repository_root/deployment/deploy.sh"
 [[ -x "$list_script" ]] || fail "le script de liste n'est pas executable"
 
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
@@ -88,6 +89,30 @@ case "$1" in
 esac
 EOF
 chmod +x "$temporary_dir/infisical-bin/infisical"
+
+default_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=dev \
+        "$infisical_wrapper" true
+)"
+[[ "$default_paths_output" == *"--path=/mailer"* ]] \
+    || fail "le déploiement ne charge pas le dossier /mailer par défaut"
+
+for jenkinsfile in \
+    "$repository_root/deployment/caddy/Jenkinsfile" \
+    "$repository_root/deployment/direct/Jenkinsfile"
+do
+    grep -Fq "string(name: 'ROOT_ACCOUNT_EMAIL'" "$jenkinsfile" \
+        || fail "le paramètre d'invitation root manque dans $jenkinsfile"
+done
+
+grep -Fq 'npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"' \
+    "$repository_root/deployment/deploy.sh" \
+    || fail "le déploiement n'envoie pas l'invitation root demandée"
 
 dev_paths_output="$(
     env -i \

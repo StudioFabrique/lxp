@@ -57,10 +57,14 @@ const Info: FC<{
           <FormInput
             label="Email"
             name="email"
+            type="email"
             register={formProps.register}
             error={formProps.errors.email}
-            disabled
           />
+          <p className="text-xs text-base-content/60">
+            Toute nouvelle adresse doit être validée depuis l'email reçu avant
+            de remplacer l'adresse actuelle.
+          </p>
           <div className="flex flex-col gap-y-2 w-full">
             <label htmlFor="current-role" className="text-sm font-bold">
               Rôle

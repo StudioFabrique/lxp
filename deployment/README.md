@@ -64,6 +64,7 @@ Le workflow GitHub Actions lit :
 ```text
 /ci       accès au registre Docker
 /runtime  application et accès SSH
+/mailer   accès SMTP
 /backup   sauvegardes
 ```
 
@@ -77,6 +78,7 @@ Un job Jenkins lit :
 /ci                    accès commun au registre Docker
 <préfixe>/ci           accès SSH de la cible
 <préfixe>/runtime      application
+/mailer                 accès SMTP communs
 <préfixe>/backup       sauvegardes
 ```
 
@@ -84,9 +86,9 @@ Exemple de préfixe :
 
 - `/instances/<slug>` pour une instance cliente.
 
-Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Le
-dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et
-`REGISTRY_TOKEN`.
+Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Les
+dossiers `/ci` et `/mailer` sont communs : le premier contient les accès au
+registre, le second les variables `MAILER_*`.
 
 Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
 secret. La page
@@ -184,7 +186,7 @@ depuis un agent qui possède Docker, `rsync` et toutes les variables requises.
 Sans `DEPLOY_SSH_HOST`, le script utilise le Docker local :
 
 ```bash
-infisical run --env=dev --path=/ci --path=/runtime -- \
+infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- \
   ./deployment/deploy.sh
 ```
 

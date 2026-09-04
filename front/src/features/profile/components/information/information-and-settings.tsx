@@ -103,7 +103,6 @@ const InformationAndSettings: FC<{
   const onSubmit = (data: Record<string, any>) => {
     const completeData = {
       ...data,
-      email: userData?.email ?? data.email,
       hobbies,
       links,
     };
@@ -114,8 +113,12 @@ const InformationAndSettings: FC<{
 
     profileApi.mutations
       .updateInformation(formData)
-      .then(() => {
-        toast.success("Profil sauvegardé avec succès !");
+      .then((response) => {
+        toast.success(
+          response.emailChangeRequested
+            ? "Profil sauvegardé. Consultez votre nouvelle adresse pour valider l'email."
+            : "Profil sauvegardé avec succès !",
+        );
       })
       .catch((err) => {
         const errorMessage =

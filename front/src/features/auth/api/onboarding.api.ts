@@ -28,8 +28,28 @@ const createFirstAdmin = async (data: {
   return res.data;
 };
 
+const createRootAccount = async (data: {
+  token: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+}): Promise<{ success: boolean; message: string }> => {
+  const res = await apiClient.post("/auth/root-account", data);
+  return res.data;
+};
+
+const confirmEmail = async (
+  token: string,
+): Promise<{ success: boolean; email: string; message: string }> => {
+  const res = await apiClient.post("/auth/confirm-email", { token });
+  return res.data;
+};
+
 export const onboardingApi = {
   getSetupStatus,
   verifyActivationToken,
   createFirstAdmin,
+  createRootAccount,
+  confirmEmail,
 };

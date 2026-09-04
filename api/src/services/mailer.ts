@@ -87,20 +87,11 @@ export async function sendUpdatedUserEmail(email: string) {
     // Vérification du format de l'email
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
-    // Si la variable d'environnement n'est pas définie, log dans la console et un return
-    if (!env.MAILER_DEV_RECIPIENT) {
-      //si en prod, on lance une erreur
-      if (env.ENVIRONMENT === "production") {
-        throw {
-          statusCode: 500,
-          message:
-            "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
-        };
-      }
-
-      // si en développement, on log l'erreur
+    // Cette redirection ne concerne que le développement. En production, le
+    // message part toujours vers son véritable destinataire.
+    if (env.ENVIRONMENT === "development" && !env.MAILER_DEV_RECIPIENT) {
       logger.error(
-        "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie."
+        "La variable d'environnement MAILER_DEV_RECIPIENT n'est pas définie.",
       );
       return;
     }
@@ -126,4 +117,56 @@ export async function sendUpdatedUserEmail(email: string) {
   } catch (error) {
     throw error;
   }
+}
+
+async function sendAccountEmail(
+  email: string,
+  token: string,
+  template: "email-change" | "root-account-init" | "root-account",
+  subject: string,
+) {
+  if (!regexMail.test(email)) {
+    throw { statusCode: 400, message: badQuery };
+  }
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+
+  try {
+    return await transporter.sendMail({
+      from: env.MAILER_FROM,
+      to: destination,
+      subject,
+      html: getTemplate(template, token, email),
+    });
+  } catch (error: any) {
+    logger.error(`Envoi du mail « ${subject} » impossible`, error);
+    throw {
+      statusCode: 500,
+      message: "Le mail n'a pas pu être envoyé au destinataire",
+      error: error?.message,
+    };
+  }
+}
+
+export function sendEmailChangeConfirmation(email: string, token: string) {
+  return sendAccountEmail(
+    email,
+    token,
+    "email-change",
+    "Validation de votre nouvelle adresse email",
+  );
+}
+
+export function sendRootAccountInvitation(
+  email: string,
+  token: string,
+  firstRoot: boolean,
+) {
+  return sendAccountEmail(
+    email,
+    token,
+    firstRoot ? "root-account-init" : "root-account",
+    "Création de votre compte root ANDRIA",
+  );
 }

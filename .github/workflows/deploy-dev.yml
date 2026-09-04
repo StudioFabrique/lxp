@@ -152,7 +152,8 @@ jobs:
           fi
 
       # `/ci` porte uniquement les identifiants du registre. `/runtime` porte
-      # la configuration applicative et l'acces SSH. `/backup` porte les
+      # la configuration applicative et l'acces SSH, `/mailer` les accès SMTP.
+      # `/backup` porte les
       # secrets Restic et S3 utilises par les deux sauvegardes du deploiement.
       - name: Charger les acces au registre
         uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
@@ -184,6 +185,16 @@ jobs:
           secret-path: /backup
           domain: https://eu.infisical.com
 
+      - name: Charger la configuration du mailer
+        uses: Infisical/secrets-action@77ab1f4ccd183a543cb5b42435fbd181189f4995 # v1.0.16
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
+          env-slug: dev
+          secret-path: /mailer
+          domain: https://eu.infisical.com
+
       # Signale un ancien APP_ENV importe tel quel. `deploy.sh` protège aussi
       # ces valeurs, mais une clé mal classée doit être retirée d'Infisical.
       - name: Verifier le classement des secrets
@@ -194,12 +205,13 @@ jobs:
           DEPLOY_MODE DEPLOY_PATH LXP_DEPLOYMENT_NAME
           LXP_IMAGE LXP_IMAGE_TAG LXP_AI_IMAGE LXP_AI_IMAGE_TAG
           APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK
+          ROOT_ACCOUNT_EMAIL
           "
 
           for name in $reserved; do
             eval "is_set=\${$name+x}"
             if [ "$is_set" = x ]; then
-              echo "$name est reserve au pipeline et ne doit pas se trouver dans /ci, /runtime ou /backup." >&2
+              echo "$name est reserve au pipeline et ne doit pas se trouver dans /ci, /runtime, /mailer ou /backup." >&2
               exit 1
             fi
           done

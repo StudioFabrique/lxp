@@ -4,7 +4,7 @@
 # Le script ne lit aucun fichier de secrets : toute la configuration arrive par
 # l'environnement du processus, typiquement via
 #
-#   infisical run --env=dev --path=/ci --path=/runtime -- ./deployment/deploy.sh
+#   infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- ./deployment/deploy.sh
 #
 # Il pilote le démon Docker du serveur cible par `DOCKER_HOST=ssh://` lorsque
 # `DEPLOY_SSH_HOST` est renseigné, et le démon local sinon. Le serveur cible
@@ -43,7 +43,8 @@ restore_pipeline_metadata() {
     for name in \
         DEPLOY_MODE DEPLOY_PATH LXP_DEPLOYMENT_NAME \
         LXP_IMAGE LXP_IMAGE_TAG \
-        APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK
+        APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK \
+        ROOT_ACCOUNT_EMAIL
     do
         eval "is_set=\${PIPELINE_$name+x}"
         if [ "$is_set" = x ]; then
@@ -163,7 +164,7 @@ settings="
 PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
 POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
 MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
-MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
+MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
 LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
 "
 
@@ -449,11 +450,16 @@ fi
 # `--remove-orphans` retire les conteneurs IA d'une stack qui bascule en
 # démonstration.
 echo "Démarrage des applications..."
-compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-240}" app
+compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
 
 if [ "$DEMO_ENABLED" = "false" ]; then
     echo "Génération de la clé d'activation..."
     compose exec -T app npm run generate-activation-key
+
+    if [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
+        echo "Envoi de l'invitation de création d'un compte root..."
+        compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
+    fi
 fi
 
 echo "État des services..."

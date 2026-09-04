@@ -73,7 +73,9 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
-      start_period: 60s
+      # Une instance neuve doit d'abord remplir le cache Hugging Face et peut
+      # mettre plusieurs minutes avant d'exposer /health.
+      start_period: 300s
     security_opt:
       - no-new-privileges:true
     logging:

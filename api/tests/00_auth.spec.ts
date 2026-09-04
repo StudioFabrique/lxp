@@ -10,9 +10,11 @@ import Role from "../src/utils/interfaces/db/role.ts";
 import BlackListedToken from "../src/utils/interfaces/db/blacklisted-token.ts";
 import {
   createFirstAdmin,
+  createRootAccount,
   promoteAdminToRoot,
 } from "../src/models/auth/setup.ts";
 import { env } from "../src/config/env.ts";
+import { confirmEmailChange } from "../src/models/user/change-email.ts";
 
 dotenv.config();
 
@@ -397,6 +399,84 @@ describe("HTTP auth", () => {
         await User.updateOne(
           { _id: admin!._id },
           { $set: { roles: initialRoles } },
+        );
+        await BlackListedToken.deleteOne({ token });
+      }
+    });
+
+    test("une invitation liée à un email crée un nouveau compte root", async () => {
+      const email = "nouveau-root@test.fr";
+      const token = jwt.sign(
+        { purpose: "root-account", email },
+        env.REGISTER_SECRET,
+        { expiresIn: "5m" },
+      );
+      let rootUserId: string | undefined;
+
+      try {
+        rootUserId = await createRootAccount({
+          token,
+          email,
+          firstname: "Nouveau",
+          lastname: "Root",
+          password: "RootPassword@123",
+        });
+
+        const rootUser = await User.findById(rootUserId).populate("roles");
+        expect(rootUser).toEqual(
+          expect.objectContaining({
+            email,
+            emailVerified: true,
+            isActive: true,
+          }),
+        );
+        expect(rootUser?.roles).toEqual([
+          expect.objectContaining({ role: "root", rank: 0 }),
+        ]);
+      } finally {
+        if (rootUserId) {
+          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await User.deleteOne({ _id: rootUserId });
+        }
+        await BlackListedToken.deleteOne({ token });
+      }
+    });
+
+    test("le changement d'email n'est appliqué qu'avec le lien de validation", async () => {
+      const user = await User.findOne({ email: "admin@studio.eco" });
+      expect(user).not.toBeNull();
+      const originalEmail = user!.email;
+      const email = "admin-valide@test.fr";
+      const token = jwt.sign(
+        {
+          purpose: "email-change",
+          userId: user!._id.toString(),
+          email,
+        },
+        env.REGISTER_SECRET,
+        { expiresIn: "5m" },
+      );
+
+      try {
+        await User.updateOne(
+          { _id: user!._id },
+          { $set: { pendingEmail: email } },
+        );
+        expect((await User.findById(user!._id))?.email).toBe(originalEmail);
+
+        await confirmEmailChange(token);
+
+        const updated = await User.findById(user!._id);
+        expect(updated?.email).toBe(email);
+        expect(updated?.emailVerified).toBe(true);
+        expect(updated?.pendingEmail).toBeUndefined();
+      } finally {
+        await User.updateOne(
+          { _id: user!._id },
+          {
+            $set: { email: originalEmail, emailVerified: true },
+            $unset: { pendingEmail: 1 },
+          },
         );
         await BlackListedToken.deleteOne({ token });
       }

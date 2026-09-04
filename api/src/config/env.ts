@@ -87,7 +87,6 @@ const schema = z
           "MAILER_EMAIL",
           "MAILER_PASSWORD",
           "MAILER_SMTP",
-          "MAILER_DEV_RECIPIENT",
           "MAILER_SMTP_PORT",
           "MAILER_FROM",
           "UNSPLASH_ACCESS_KEY",

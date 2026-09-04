@@ -7,6 +7,7 @@ import {
   isDuplicateKeyError,
   normalizeEmail,
 } from "../../utils/unique-fields.ts";
+import { requestEmailChange } from "./change-email.ts";
 
 export default async function editUser(userId: string, user: IUser) {
   // Vérifier si l'utilisateur existe
@@ -46,7 +47,6 @@ export default async function editUser(userId: string, user: IUser) {
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     {
-      email,
       firstname: user.firstname.toLowerCase(),
       lastname: user.lastname.toLowerCase(),
       nickname: user.nickname?.toLowerCase(),
@@ -71,6 +71,8 @@ export default async function editUser(userId: string, user: IUser) {
     throw error;
   });
 
+  const emailChangeRequested = await requestEmailChange(userId, email);
+
   // Notification de courtoisie, détachée de la réponse : l'objet de l'appel est
   // la mise à jour du profil, pas la remise du message. L'attendre faisait
   // dépendre le temps de réponse du serveur SMTP.
@@ -82,5 +84,5 @@ export default async function editUser(userId: string, user: IUser) {
   });
 
   // Retourner l'utilisateur mis à jour et le rang du rôle
-  return { updatedUser };
+  return { updatedUser, emailChangeRequested };
 }

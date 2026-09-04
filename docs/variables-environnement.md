@@ -132,10 +132,11 @@ Le front de production utilise `front/.env.production`. Ses trois variables
 `VITE_*` valent `/`, `/` et `production`. Le build les place dans les fichiers
 du front. Elles ne viennent pas d'Infisical.
 
-### Variables requises pour toutes les instances
+### Variables de configuration de toutes les instances
 
 Ces variables vont dans le dossier `runtime` de la cible, sauf indication dans
-la colonne « Source ».
+la colonne « Source ». Elles sont obligatoires en production, à l'exception de
+`MAILER_DEV_RECIPIENT`, qui ne sert qu'en développement.
 
 | Variable                            | Source    | Rôle                                                                                         |
 | ----------------------------------- | --------- | -------------------------------------------------------------------------------------------- |
@@ -154,12 +155,12 @@ la colonne « Source ».
 | `MONGO_ADMIN_PASSWORD`              | `runtime` | Mot de passe MongoDB.                                                                        |
 | `MONGO_DATABASE`                    | `runtime` | Nom de la base MongoDB.                                                                      |
 | `MONGO_LOCAL_URL`                   | `runtime` | URL complète vers `db-mongo:27017` avec `authSource=admin`.                                  |
-| `MAILER_EMAIL`                      | `runtime` | Compte de connexion SMTP.                                                                    |
-| `MAILER_PASSWORD`                   | `runtime` | Mot de passe SMTP.                                                                           |
-| `MAILER_SMTP`                       | `runtime` | Nom du serveur SMTP.                                                                         |
-| `MAILER_DEV_RECIPIENT`              | `runtime` | Destinataire de redirection des messages en développement.                                   |
-| `MAILER_SMTP_PORT`                  | `runtime` | Port SMTP.                                                                                   |
-| `MAILER_FROM`                       | `runtime` | Nom et adresse de l'expéditeur.                                                              |
+| `MAILER_EMAIL`                      | `mailer`  | Compte de connexion SMTP.                                                                    |
+| `MAILER_PASSWORD`                   | `mailer`  | Mot de passe SMTP.                                                                           |
+| `MAILER_SMTP`                       | `mailer`  | Nom du serveur SMTP.                                                                         |
+| `MAILER_DEV_RECIPIENT`              | `mailer`  | Facultatif en production. Destinataire de redirection des messages en développement.         |
+| `MAILER_SMTP_PORT`                  | `mailer`  | Port SMTP.                                                                                   |
+| `MAILER_FROM`                       | `mailer`  | Nom et adresse de l'expéditeur.                                                              |
 | `UNSPLASH_ACCESS_KEY`               | `runtime` | Clé Unsplash. L'API l'exige en production.                                                   |
 | `LXP_IMAGE`                         | pipeline  | Nom de l'image du LXP.                                                                       |
 | `LXP_IMAGE_TAG`                     | pipeline  | Tag de l'image du LXP. Utilisez un tag fixe pour pouvoir revenir en arrière.                 |
@@ -252,10 +253,11 @@ Jenkins demande les valeurs suivantes :
 | `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID`     | Identifiant de la Machine Identity, fourni par le credential Jenkins.      |
 | `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` | Secret de la Machine Identity, fourni par le credential Jenkins.           |
 | `INFISICAL_PROJECT_ID`                   | Identifiant du projet LXP.                                                 |
-| `INFISICAL_ENVIRONMENT`                  | `dev` ou `prod`.                                                           |
+| `INFISICAL_ENVIRONMENT`                  | `dev`, `pre-prod` (Caddy) ou `prod`.                                       |
 | `INFISICAL_PATH_PREFIX`                  | Préfixe d'une cible hors développement, par exemple `/instances/<slug>`.   |
 | `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                     |
 | `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`. |
+| `ROOT_ACCOUNT_EMAIL`                     | Optionnel. Adresse qui reçoit un nouveau lien root après chaque déploiement. |
 
 GitHub Actions demande trois variables dans l'environnement GitHub
 `development` :
@@ -270,11 +272,12 @@ GitHub Actions demande trois variables dans l'environnement GitHub
 
 | Cible         | Dossiers lus                                                     |
 | ------------- | ---------------------------------------------------------------- |
-| Développement | `/ci`, `/runtime` et `/backup`                                   |
-| Production    | `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et `<préfixe>/backup` |
+| Développement | `/ci`, `/runtime`, `/mailer` et `/backup`                                    |
+| Production    | `/ci`, `<préfixe>/ci`, `<préfixe>/runtime`, `/mailer` et `<préfixe>/backup` |
 
 - `/ci` contient seulement `REGISTRY_USER` et `REGISTRY_TOKEN` ;
 - `runtime` contient la configuration de l'application ;
+- `/mailer` contient les six variables `MAILER_*`, partagées avec Jenkins ;
 - le dossier `ci` préfixé contient l'accès SSH de la cible ;
 - `backup` contient les variables de sauvegarde.
 

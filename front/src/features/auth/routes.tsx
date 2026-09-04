@@ -11,6 +11,14 @@ export const authRoutes: RouteObject[] = [
         lazy: lazyRoute(() => import("./views/AdminInit")),
       },
       {
+        path: "/createRoot",
+        lazy: lazyRoute(() => import("./views/CreateRoot")),
+      },
+      {
+        path: "/confirm-email",
+        lazy: lazyRoute(() => import("./views/ConfirmEmail")),
+      },
+      {
         path: "/login",
         lazy: lazyRoute(() => import("./views/Login")),
       },
