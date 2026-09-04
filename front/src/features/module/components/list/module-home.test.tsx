@@ -93,6 +93,8 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("Premier cours");
     expect(markup).toContain("Deuxième cours");
     expect(markup).toContain("/admin/parcours/module/1");
+    expect(markup).toContain("Modules : 1");
+    expect(markup).toContain("bg-primary text-primary-content");
   });
 
   it("indique au formateur qu'aucun module ne lui est affecté", () => {

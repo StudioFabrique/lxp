@@ -2,7 +2,7 @@
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { useState } from "react";
-import Pagination from "../../../../../components/UI/pagination/pagination";
+import TablePagination from "../../../../../components/table/TablePagination";
 import Search from "../../../../../../src/components/UI/search/search.component";
 import { userInGroupSearchOptions } from "../../../../../config/search-options";
 import RefreshIcon from "../../../../../../src/components/UI/svg/refresh-icon.component";
@@ -19,15 +19,23 @@ interface StudentsListProps {
 const StudentsList = (props: StudentsListProps) => {
   const {
     list,
+    limit,
     page,
     fieldSort,
     direction,
     totalPages,
     setPage,
+    setLimit,
     getFilteredList,
     resetFilters,
     sortData,
-  } = useEagerLoadingList(props.initalList, "lastname");
+  } = useEagerLoadingList(
+    props.initalList,
+    "lastname",
+    15,
+    "id",
+    "parcours-students",
+  );
   const groups = props.groups;
   const [filter, setFilter] = useState<string | null>(null);
 
@@ -109,7 +117,23 @@ const StudentsList = (props: StudentsListProps) => {
             />
           </article>
           <article>
-            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+            <TablePagination
+              currentPage={page}
+              maxPage={totalPages}
+              itemsPerPage={limit}
+              leftText={`Apprenants : ${props.initalList.length}`}
+              onSetCurrentPage={setPage}
+              onSetItemsPerPage={(itemsPerPage) => {
+                setLimit(itemsPerPage);
+                setPage(1);
+              }}
+              onSetPreviousPage={() =>
+                setPage((current) => Math.max(current - 1, 1))
+              }
+              onSetNextPage={() =>
+                setPage((current) => Math.min(current + 1, totalPages))
+              }
+            />
           </article>
         </>
       ) : (

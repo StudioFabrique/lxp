@@ -11,8 +11,8 @@ import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeho
 import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
-import Pagination from "../../../../components/UI/pagination/pagination";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import TablePagination from "../../../../components/table/TablePagination";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../utils/helpers/user-role";
@@ -34,11 +34,8 @@ const ModuleHomeList = ({
 }: ModuleHomeListProps) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
-  const { list, page, totalPages, setPage } = useEagerLoadingList(
-    modulesList,
-    "title",
-    12,
-  );
+  const { list, limit, page, totalPages, setLimit, setPage } =
+    useEagerLoadingList(modulesList, "title", 15, "id", "sidebar-modules");
 
   return (
     <main className="flex w-full flex-col gap-8">
@@ -157,8 +154,24 @@ const ModuleHomeList = ({
         />
       )}
 
-      {totalPages > 1 ? (
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      {list && list.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Modules : ${modulesList.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
       ) : null}
     </main>
   );

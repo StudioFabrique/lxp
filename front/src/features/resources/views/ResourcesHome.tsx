@@ -4,7 +4,7 @@ import ListHeader from "../../../components/UI/list-header";
 import ToggleList from "../../../components/UI/toggle-list";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import ResourcesListTable from "../components/list/ResourcesListTable";
-import Pagination from "../../../components/UI/pagination/pagination";
+import TablePagination from "../../../components/table/TablePagination";
 import usePagination from "../../../../src/hooks/use-pagination";
 import { useState } from "react";
 import Modal from "../../../components/UI/modal/modal";
@@ -40,7 +40,7 @@ export default function ResourcesHome() {
     setPage,
     perPage,
     getList,
-  } = usePagination("title", "/resources");
+  } = usePagination("title", "/resources", "admin-resources");
 
   const handleToggleList = (value: boolean) => {
     setShowList(value);
@@ -93,12 +93,21 @@ export default function ResourcesHome() {
         </section>
         <section className="w-full flex justify-end mt-4">
           {totalPages && totalPages > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={setPage}
-              perPage={perPage}
-              setPerPages={setPerPage}
+            <TablePagination
+              currentPage={page}
+              maxPage={totalPages}
+              itemsPerPage={perPage}
+              onSetCurrentPage={setPage}
+              onSetItemsPerPage={(itemsPerPage) => {
+                setPerPage(itemsPerPage);
+                setPage(1);
+              }}
+              onSetPreviousPage={() =>
+                setPage((current) => Math.max(current - 1, 1))
+              }
+              onSetNextPage={() =>
+                setPage((current) => Math.min(current + 1, totalPages))
+              }
             />
           ) : null}
         </section>

@@ -1,7 +1,7 @@
 // Import des dépendances nécessaires
 import { useContext } from "react";
 
-import Pagination from "../../../../../components/UI/pagination/pagination";
+import TablePagination from "../../../../../components/table/TablePagination";
 import Group from "../../../../../../src/utils/interfaces/group";
 import StudentGroupList from "./student-group-list";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
@@ -30,13 +30,21 @@ const GroupsList = (props: GroupsListProps) => {
     handleRowCheck, // Fonction pour gérer la sélection d'une ligne
     setAllChecked, // Fonction pour définir la sélection globale
     list, // Liste paginée des groupes
+    limit, // Nombre d'éléments par page
     sortData, // Fonction pour trier les données
     page, // Page courante
     totalPages, // Nombre total de pages
     fieldSort, // Champ de tri actuel
     direction, // Direction du tri (asc/desc)
     setPage, // Fonction pour changer de page
-  } = useEagerLoadingList(props.groups, "formation", 15, "_id");
+    setLimit, // Fonction pour changer le nombre d'éléments par page
+  } = useEagerLoadingList(
+    props.groups,
+    "formation",
+    15,
+    "_id",
+    "parcours-groups",
+  );
 
   /**
    * Gère la soumission des groupes sélectionnés
@@ -66,7 +74,23 @@ const GroupsList = (props: GroupsListProps) => {
       ) : null}
       {/* Affichage conditionnel de la pagination si plus d'une page */}
       {list && list.length > 0 && totalPages && totalPages > 1 ? (
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Groupes : ${props.groups.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
       ) : null}
       {/* Séparateur visuel */}
       <div className="divider" />

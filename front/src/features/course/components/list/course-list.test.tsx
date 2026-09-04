@@ -73,6 +73,8 @@ describe("CourseList", () => {
     expect(markup).toContain("Première leçon");
     expect(markup).toContain("Deuxième leçon");
     expect(markup).toContain("/admin/parcours/module/2");
+    expect(markup).toContain("Cours : 1");
+    expect(markup).toContain("bg-primary text-primary-content");
   });
 
   it("affiche les cours dans la grille de cartes de l'admin", () => {

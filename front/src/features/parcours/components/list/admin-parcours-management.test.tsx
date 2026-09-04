@@ -70,5 +70,7 @@ describe("AdminParcoursManagement", () => {
 
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
+    expect(markup).toContain("Parcours : 1");
+    expect(markup).toContain("bg-primary text-primary-content");
   });
 });

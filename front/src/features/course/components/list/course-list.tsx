@@ -8,9 +8,9 @@ import HierarchicalListCard from "../../../../components/UI/hierarchical-list-ca
 import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import Modal from "../../../../components/UI/modal/modal";
-import Pagination from "../../../../components/UI/pagination/pagination";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import TablePagination from "../../../../components/table/TablePagination";
 import { courseSearchOptions } from "../../../../config/search-options";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
@@ -45,11 +45,14 @@ export default function CourseList({
       course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
     );
   }, [coursesList, filter]);
-  const { list, page, totalPages, setPage } = useEagerLoadingList(
-    filteredCourses,
-    "title",
-    12,
-  );
+  const { list, limit, page, totalPages, setLimit, setPage } =
+    useEagerLoadingList(
+      filteredCourses,
+      "title",
+      15,
+      "id",
+      "sidebar-courses",
+    );
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleSearch = (field: string, value: string) => {
@@ -198,8 +201,24 @@ export default function CourseList({
         <EmptyStatePlaceholder title="Aucun cours trouvé" />
       )}
 
-      {totalPages > 1 ? (
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      {list && list.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Cours : ${filteredCourses.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
       ) : null}
 
       {showModal ? (

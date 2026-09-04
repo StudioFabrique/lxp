@@ -21,7 +21,7 @@ function MediathequeHomePage() {
     type, // Type de média sélectionné
     setType, // Fonction pour modifier le type de média
     setSort, // Fonction pour modifier le tri
-  } = usePaginatedMediatheque<Media>();
+  } = usePaginatedMediatheque<Media>("mediatheque");
 
   return (
     <div className="w-full flex flex-col items-center gap-8">
