@@ -18,7 +18,7 @@ const getCoursesByModule = vi.mocked(
   parcoursApi.queries.getCoursesByModule,
 );
 
-const courses = Array.from({ length: 3 }, (_, index) =>
+const courses = Array.from({ length: 4 }, (_, index) =>
   ({
     id: index + 1,
     title: `Cours test ${index + 1}`,
@@ -45,7 +45,7 @@ describe("Contenu du module dans l'aperçu du parcours", () => {
     vi.clearAllMocks();
   });
 
-  it("limite la liste à deux cours et renvoie vers l'aperçu complet du module", async () => {
+  it("limite la liste à trois cours et renvoie vers l'aperçu complet du module", async () => {
     await act(async () => {
       root.render(
         <MemoryRouter initialEntries={["/admin/parcours/view/42"]}>
@@ -64,7 +64,8 @@ describe("Contenu du module dans l'aperçu du parcours", () => {
 
     expect(container.textContent).toContain("Cours test 1");
     expect(container.textContent).toContain("Cours test 2");
-    expect(container.textContent).not.toContain("Cours test 3");
+    expect(container.textContent).toContain("Cours test 3");
+    expect(container.textContent).not.toContain("Cours test 4");
 
     const fullContentLink = Array.from(container.querySelectorAll("a")).find(
       (link) => link.textContent?.includes("Afficher tout le contenu"),

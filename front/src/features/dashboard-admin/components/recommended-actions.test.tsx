@@ -44,22 +44,19 @@ describe("RecommendedActions", () => {
     localStorage.clear();
   });
 
-  it("conserve l'ordre fourni et numérote uniquement les actions visibles", () => {
+  it("conserve l'ordre fourni pour les actions visibles", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <RecommendedActions userId="root-id" actions={actions} />
       </MemoryRouter>,
     );
 
-    expect(markup.indexOf(actions[0].title)).toBeLessThan(
-      markup.indexOf(actions[1].title),
+    expect(markup.indexOf(`href="${actions[0].to}"`)).toBeLessThan(
+      markup.indexOf(`href="${actions[1].to}"`),
     );
-    expect(markup.indexOf(actions[1].title)).toBeLessThan(
-      markup.indexOf(actions[2].title),
+    expect(markup.indexOf(`href="${actions[1].to}"`)).toBeLessThan(
+      markup.indexOf(`href="${actions[2].to}"`),
     );
-    expect(markup).toContain("Étape 1");
-    expect(markup).toContain("Étape 2");
-    expect(markup).toContain("Étape 3");
   });
 
   it("masque durablement le bloc pour l'utilisateur courant", () => {

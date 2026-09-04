@@ -56,7 +56,7 @@ describe("PromoteToRoot", () => {
   });
 
   it("affiche la durée configurée et promeut le compte avec la clé", async () => {
-    expect(container.textContent).toContain("45 minute(s)");
+    expect(container.textContent).toContain("45 minutes");
 
     const input = container.querySelector<HTMLInputElement>("input");
     await act(async () => {

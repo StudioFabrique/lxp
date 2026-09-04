@@ -8,9 +8,9 @@ describe("getContactFullName", () => {
     ).toBe("Camille Martin");
   });
 
-  it("affiche un libellé explicite quand le formateur n'existe plus", () => {
+  it("affiche un libellé générique quand la ressource n'existe plus", () => {
     expect(getContactFullName({ firstname: "", lastname: "" })).toBe(
-      "Formateur supprimé",
+      "Ressource supprimée",
     );
   });
 });
