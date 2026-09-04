@@ -6,6 +6,7 @@ import Role from "../../utils/interfaces/db/role.ts";
 import { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { env } from "../../config/env.ts";
+import { regexMail } from "../../utils/constantes.ts";
 import {
   exactInsensitive,
   isDuplicateKeyError,
@@ -51,7 +52,8 @@ function verifyRootActivationToken(token: string): RootActivationPayload {
   const payload = data as RootActivationPayload;
   if (
     payload.purpose === "root-account" &&
-    (typeof payload.email !== "string" || payload.email.length === 0)
+    (typeof payload.email !== "string" ||
+      !regexMail.test(normalizeEmail(payload.email)))
   ) {
     throw {
       statusCode: 401,
@@ -97,6 +99,22 @@ async function createRootUser(
 ) {
   const payload = verifyRootActivationToken(input.token);
 
+  const email = normalizeEmail(input.email);
+  if (!regexMail.test(email)) {
+    throw {
+      statusCode: 400,
+      message: "L'adresse email n'est pas valide.",
+    };
+  }
+
+  if (!expectedExistingAdmins && payload.purpose !== "root-account") {
+    throw {
+      statusCode: 401,
+      message:
+        "La création du premier compte root nécessite une invitation reçue par email.",
+    };
+  }
+
   if (expectedExistingAdmins && payload.purpose !== "root-account") {
     throw {
       statusCode: 401,
@@ -128,7 +146,6 @@ async function createRootUser(
     };
   }
 
-  const email = normalizeEmail(input.email);
   if (
     payload.purpose === "root-account" &&
     normalizeEmail(payload.email ?? "") !== email

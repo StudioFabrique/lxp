@@ -340,9 +340,12 @@ describe("HTTP auth", () => {
         roles: { $in: privilegedRoles.map(({ _id }) => _id) },
         isActive: true,
       }).select("_id");
-      const token = jwt.sign({ purpose: "first-admin" }, env.REGISTER_SECRET, {
-        expiresIn: "5m",
-      });
+      const email = "root-init@test.fr";
+      const token = jwt.sign(
+        { purpose: "root-account", email },
+        env.REGISTER_SECRET,
+        { expiresIn: "5m" },
+      );
       let rootUserId: string | undefined;
 
       await User.updateMany(
@@ -353,7 +356,7 @@ describe("HTTP auth", () => {
       try {
         rootUserId = await createFirstAdmin({
           token,
-          email: "root-init@test.fr",
+          email,
           firstname: "Compte",
           lastname: "Root",
           password: "RootPassword@123",

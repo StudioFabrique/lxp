@@ -229,6 +229,7 @@ jobs:
         env:
           PIPELINE_DEPLOY_MODE: caddy
           PIPELINE_COMPOSE_WAIT_TIMEOUT: 240
+          PIPELINE_ROOT_ACCOUNT_EMAIL: ${{ vars.ROOT_ACCOUNT_EMAIL }}
         run: |
           set -eu
           ./deployment/deploy.sh

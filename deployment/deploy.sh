@@ -182,6 +182,7 @@ if [ "$DEMO_ENABLED" = "true" ]; then
     settings="$settings DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
 else
     settings="$settings
+    ROOT_ACCOUNT_EMAIL
     ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD
     DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
@@ -190,6 +191,11 @@ else
 fi
 
 require "$settings"
+
+if [ "$DEMO_ENABLED" = "false" ] && \
+   ! printf '%s' "$ROOT_ACCOUNT_EMAIL" | grep -Eq '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$'; then
+    die "ROOT_ACCOUNT_EMAIL doit être une adresse email valide."
+fi
 
 if { [ -n "${LXP_DB_USER:-}" ] && [ -z "${LXP_DB_PASSWORD:-}" ]; } || \
    { [ -z "${LXP_DB_USER:-}" ] && [ -n "${LXP_DB_PASSWORD:-}" ]; }; then
@@ -472,13 +478,8 @@ echo "Démarrage des applications..."
 compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
 
 if [ "$DEMO_ENABLED" = "false" ]; then
-    echo "Génération de la clé d'activation..."
-    compose exec -T app npm run generate-activation-key
-
-    if [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
-        echo "Envoi de l'invitation de création d'un compte root..."
-        compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
-    fi
+    echo "Vérification SMTP et envoi de l'invitation de création d'un compte root..."
+    compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
 fi
 
 echo "État des services..."

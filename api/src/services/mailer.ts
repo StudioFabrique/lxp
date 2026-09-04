@@ -5,14 +5,7 @@ import nodemailer from "nodemailer";
 import { logger } from "../utils/logs/logger.ts";
 import { env } from "../config/env.ts";
 
-/**
- * Transporteur SMTP.
- *
- * `verify()` n'est plus appelé avant chaque envoi : il ouvrait une connexion
- * complète — connexion, EHLO, authentification — que `sendMail` refaisait
- * intégralement juste après, doublant la latence de chaque message pour une
- * information que `sendMail` remonte de toute façon en cas d'échec.
- */
+/** Transporteur SMTP partagé par les différents flux d'email. */
 // `MAILER_SMTP_PORT` n'est exigé qu'en production, où `config/env.ts` en
 // contrôle la présence. Hors production, le port de soumission standard évite le `NaN`
 // silencieux que produisait l'ancien `+process.env.MAILER_SMTP_PORT!` quand la
@@ -31,6 +24,26 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
+
+/**
+ * Vérifie explicitement la connexion et l'authentification SMTP.
+ *
+ * Cette étape est volontairement obligatoire pour une invitation root : sans
+ * serveur SMTP opérationnel, aucun compte root ne doit pouvoir être créé par
+ * ce flux.
+ */
+export async function verifySmtpConnection() {
+  try {
+    await transporter.verify();
+  } catch (error: any) {
+    logger.error("Vérification de la connexion SMTP impossible", error);
+    throw {
+      statusCode: 503,
+      message: "La connexion au serveur SMTP n'a pas pu être vérifiée.",
+      error: error?.message,
+    };
+  }
+}
 
 /**
  * Envoie un email pour l'activation du compte ou la réinitialisation du mot de passe
@@ -158,11 +171,16 @@ export function sendEmailChangeConfirmation(email: string, token: string) {
   );
 }
 
-export function sendRootAccountInvitation(
+export async function sendRootAccountInvitation(
   email: string,
   token: string,
   firstRoot: boolean,
 ) {
+  if (!regexMail.test(email)) {
+    throw { statusCode: 400, message: badQuery };
+  }
+
+  await verifySmtpConnection();
   return sendAccountEmail(
     email,
     token,

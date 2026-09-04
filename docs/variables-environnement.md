@@ -268,7 +268,7 @@ Jenkins demande les valeurs suivantes :
 | `INFISICAL_PATH_PREFIX`                  | Instance hors développement au premier niveau, par exemple `/client-a`.    |
 | `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                     |
 | `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`. |
-| `ROOT_ACCOUNT_EMAIL`                     | Optionnel. Adresse qui reçoit un nouveau lien root après chaque déploiement. |
+| `ROOT_ACCOUNT_EMAIL`                     | Obligatoire hors démonstration. Destinataire du lien root ; la connexion SMTP est vérifiée avant l'envoi. |
 
 GitHub Actions demande trois variables dans l'environnement GitHub
 `development` :
@@ -280,6 +280,7 @@ GitHub Actions demande trois variables dans l'environnement GitHub
 | `APP_HOST`               | Domaine du LXP de développement. Le workflow utilise `lxp.dev.step.eco` si la variable manque. |
 | `LXP_IMAGE`              | Facultatif. Nom complet de l'image LXP si elle n'est pas sur Docker Hub.                        |
 | `LXP_AI_IMAGE`           | Facultatif. Nom complet de l'image IA si elle n'est pas sur Docker Hub.                         |
+| `ROOT_ACCOUNT_EMAIL`     | Obligatoire. Adresse qui reçoit le lien de création du compte root.                             |
 
 ### Répartition dans Infisical
 

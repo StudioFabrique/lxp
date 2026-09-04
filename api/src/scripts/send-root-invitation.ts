@@ -26,9 +26,17 @@ async function main() {
 
 main()
   .catch((error: unknown) => {
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "object" &&
+            error !== null &&
+            "message" in error
+          ? String(error.message)
+          : String(error);
     console.error(
       "L'invitation root n'a pas pu être envoyée :",
-      error instanceof Error ? error.message : String(error),
+      message,
     );
     process.exitCode = 1;
   })
