@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ExternalLink, MoreVertical } from "lucide-react";
-import { type Key, type ReactNode } from "react";
+import { type Key, type ReactNode, useState } from "react";
 import { Link, type LinkProps } from "react-router";
 
 import PermissionGuard from "../../guards/PermissionGuard";
@@ -18,8 +18,18 @@ export type HierarchicalListCardItem = {
   icon?: ReactNode;
   to?: LinkProps["to"];
   state?: LinkProps["state"];
-  action?: ReactNode | ((dismissOverflow: () => void) => ReactNode);
+  action?:
+    | ReactNode
+    | ((
+        dismissOverflow: () => void,
+        menuControl: HierarchicalListMenuControl,
+      ) => ReactNode);
   ariaLabel?: string;
+};
+
+export type HierarchicalListMenuControl = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 export type HierarchicalListAction = {
@@ -39,14 +49,19 @@ type HierarchicalListItemActionsProps = {
   title: string;
   actions: HierarchicalListAction[];
   dismissOverflow?: () => void;
+  menuControl?: HierarchicalListMenuControl;
 };
 
 export const HierarchicalListItemActions = ({
   title,
   actions,
   dismissOverflow = () => {},
+  menuControl,
 }: HierarchicalListItemActionsProps) => (
-  <DropdownMenu.Root>
+  <DropdownMenu.Root
+    open={menuControl?.open}
+    onOpenChange={menuControl?.onOpenChange}
+  >
     <DropdownMenu.Trigger asChild>
       <button
         type="button"
@@ -115,13 +130,26 @@ export const HierarchicalListRow = ({
   item: HierarchicalListCardItem;
   dismissOverflow: () => void;
 }) => {
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+  const menuControl = {
+    open: isActionMenuOpen,
+    onOpenChange: setIsActionMenuOpen,
+  };
   const itemAction =
     typeof item.action === "function"
-      ? item.action(dismissOverflow)
+      ? item.action(dismissOverflow, menuControl)
       : item.action;
 
   return (
-    <li className="list-row relative mx-2 hover:bg-accent/2">
+    <li
+      className="list-row relative mx-2 hover:bg-accent/2"
+      onContextMenu={(event) => {
+        if (!itemAction) return;
+
+        event.preventDefault();
+        setIsActionMenuOpen(true);
+      }}
+    >
       {item.image ? (
         <div className="pointer-events-none relative z-10 self-center">
           <img

@@ -109,9 +109,10 @@ const ModuleHomeList = ({
                 state: course.firstLessonId
                   ? { lessonId: course.firstLessonId }
                   : undefined,
-                action: (dismissOverflow) => (
+                action: (dismissOverflow, menuControl) => (
                   <HierarchicalListItemActions
                     title={course.title}
+                    menuControl={menuControl}
                     actions={[
                       {
                         label: "Accéder au cours",

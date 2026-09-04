@@ -40,7 +40,7 @@ export function buildRecommendedActions({
             {
               id: "create-admin",
               title: "Créer un administrateur",
-              description: "Ajoutez un administrateur hors compte root.",
+              description: "Ajoutez un administrateur supplémentaire.",
               to: "/admin/user/add?roleRank=1&tutorial=admin",
               icon: recommendedActionIcons.createAdmin,
             },

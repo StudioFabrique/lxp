@@ -80,9 +80,10 @@ const LastParcoursItem = ({
         ariaLabel: `Prévisualiser le parcours ${item.title}`,
         action:
           isManagementView && baseRoute === "admin" && onDeleteParcours
-            ? (dismissOverflow) => (
+            ? (dismissOverflow, menuControl) => (
                 <ParcoursActionsMenu
                   parcours={item}
+                  menuControl={menuControl}
                   onDelete={(parcours) => {
                     dismissOverflow();
                     onDeleteParcours(parcours);

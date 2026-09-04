@@ -152,9 +152,10 @@ export default function CourseList({
                 icon: <BookOpen strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
-                action: (dismissOverflow) => (
+                action: (dismissOverflow, menuControl) => (
                   <HierarchicalListItemActions
                     title={lesson.title}
+                    menuControl={menuControl}
                     actions={[
                       {
                         label: "Accéder à la leçon",
