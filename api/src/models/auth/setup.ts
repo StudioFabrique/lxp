@@ -116,7 +116,10 @@ async function createRootUser(
   }
 
   if (await BlackListedToken.findOne({ token: input.token })) {
-    throw { statusCode: 400, message: "Ce token a déjà été utilisé." };
+    throw {
+      statusCode: 400,
+      message: "Cette clé d'activation a déjà été utilisé.",
+    };
   }
 
   const { rootRole, adminCount } = await findAdminRoleAndCount();
@@ -135,7 +138,8 @@ async function createRootUser(
   if (expectedExistingAdmins && adminCount === 0) {
     throw {
       statusCode: 400,
-      message: "Aucun administrateur n'existe encore. Utilisez la page d'initialisation.",
+      message:
+        "Aucun administrateur n'existe encore. Utilisez la page d'initialisation.",
     };
   }
 
@@ -172,7 +176,8 @@ async function createRootUser(
     if (isDuplicateKeyError(error)) {
       throw {
         statusCode: 409,
-        message: "Un utilisateur a déjà été enregistré avec cette adresse email.",
+        message:
+          "Un utilisateur a déjà été enregistré avec cette adresse email.",
       };
     }
     throw error;
@@ -221,7 +226,10 @@ export async function promoteAdminToRoot(token: string, userId: string) {
   }
 
   if (await BlackListedToken.findOne({ token })) {
-    throw { statusCode: 400, message: "Ce token a déjà été utilisé." };
+    throw {
+      statusCode: 400,
+      message: "Cette clé d'activation a déjà été utilisé.",
+    };
   }
 
   const [rootRole, user] = await Promise.all([
