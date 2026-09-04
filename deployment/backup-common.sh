@@ -152,8 +152,12 @@ backup_resolve_deploy_path() {
 backup_validate_local_repository() {
     backup_require BACKUP_LOCAL_REPOSITORY BACKUP_RESTIC_PASSWORD
     backup_validate_host_path BACKUP_LOCAL_REPOSITORY
-    backup_target_sh "test -d '$BACKUP_LOCAL_REPOSITORY'" \
-        || backup_die "BACKUP_LOCAL_REPOSITORY doit etre cree avant la sauvegarde : $BACKUP_LOCAL_REPOSITORY"
+    if ! backup_target_sh "test -d '$BACKUP_LOCAL_REPOSITORY'"; then
+        # En mode distant, cette commande passe par SSH : le dossier appartient
+        # donc au compte Linux DEPLOY_SSH_USER, pas à root ni à l'agent CI.
+        backup_target_sh "mkdir -p '$BACKUP_LOCAL_REPOSITORY'" \
+            || backup_die "Impossible de creer BACKUP_LOCAL_REPOSITORY avec l'utilisateur de deploiement : $BACKUP_LOCAL_REPOSITORY"
+    fi
 }
 
 backup_validate_external_volume_repository() {

@@ -5,6 +5,7 @@ import updateUser from "../../../models/user/update-user.ts";
 import updateUserAvatar from "../../../models/user/update-user-avatar.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import { deleteTempUploadedFile } from "../../../middleware/fileUpload.ts";
+import { requestEmailChange } from "../../../models/user/change-email.ts";
 
 export default async function httpUpdateUserProfile(
   req: CustomRequest,
@@ -38,10 +39,18 @@ export default async function httpUpdateUserProfile(
       return res.status(404).json({ message: "non trouvé" });
     }
 
+    const emailChangeRequested = await requestEmailChange(id, user.email);
+
+    return res.status(201).json({
+      message: emailChangeRequested
+        ? "Profil mis à jour. Un email de validation a été envoyé à la nouvelle adresse."
+        : "Utilisateur mis à jour avec succès.",
+      data: response,
+      emailChangeRequested,
+    });
+  } catch (error: any) {
     return res
-      .status(201)
-      .json({ message: "utilisateur mis à jour avec succès", data: response });
-  } catch (error) {
-    return res.status(500).json({ message: "erreur serveur" });
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? "Erreur serveur." });
   }
 }

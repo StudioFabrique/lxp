@@ -45,6 +45,8 @@ export interface IUser extends Document {
   connectionInfos?: IConnectionInfos["_id"];
   studentFeedbacks?: IStudentFeedback["_id"];
   emailVerified: boolean;
+  /** Nouvelle adresse en attente de validation par son propriétaire. */
+  pendingEmail?: string;
   invitationSent: boolean;
   invitationSentAt?: Date;
   /**
@@ -93,6 +95,7 @@ const userSchema: Schema = new Schema(
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
     emailVerified: { type: Boolean, default: false },
+    pendingEmail: { type: String, required: false },
     invitationSent: { type: Boolean, default: false },
     invitationSentAt: { type: Date, required: false },
     invitationPendingSince: { type: Date, required: false },

@@ -8,6 +8,8 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 type Props = {
   token: string;
   onSuccess: () => void;
+  email?: string;
+  mode?: "first" | "additional";
 };
 
 type AdminSignInValues = {
@@ -18,9 +20,15 @@ type AdminSignInValues = {
   confirmPassword: string;
 };
 
-const AdminSignInForm = ({ token, onSuccess }: Props) => {
+const AdminSignInForm = ({
+  token,
+  onSuccess,
+  email = "",
+  mode = "first",
+}: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activationEmail, setActivationEmail] = useState("");
 
   const {
     register,
@@ -29,7 +37,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
     formState: { errors },
   } = useForm<AdminSignInValues>({
     defaultValues: {
-      email: "",
+      email,
       firstname: "",
       lastname: "",
       password: "",
@@ -41,13 +49,23 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
     setError("");
     setIsLoading(true);
     try {
-      await onboardingApi.createFirstAdmin({
+      const createAccount =
+        mode === "additional"
+          ? onboardingApi.createRootAccount
+          : onboardingApi.createFirstAdmin;
+      const response = await createAccount({
         token,
         email: data.email.trim(),
         firstname: data.firstname.trim(),
         lastname: data.lastname.trim(),
         password: data.password,
       });
+
+      if (mode === "first" && response.pendingActivation) {
+        setActivationEmail(data.email.trim());
+        return;
+      }
+
       onSuccess();
     } catch (err: unknown) {
       setError(
@@ -61,10 +79,30 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
     }
   };
 
+  if (activationEmail) {
+    return (
+      <div className="my-auto flex flex-col gap-4 text-center">
+        <h1 className="text-xl font-bold text-base-content">
+          Activez votre compte root
+        </h1>
+        <p className="text-sm text-base-content/70">
+          Un lien d'activation a été envoyé à {activationEmail}. Consultez
+          votre boîte mail pour terminer la création du compte.
+        </p>
+        <p className="text-xs text-base-content/50">
+          Le compte restera inaccessible tant que cette adresse n'aura pas été
+          validée.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-5 my-auto">
       <h1 className="font-bold text-xl text-base-content text-center">
-        Créer votre administrateur
+        {mode === "additional"
+          ? "Créer votre compte root"
+          : "Créer votre administrateur"}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
@@ -73,6 +111,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
           <input
             type="email"
             placeholder="Adresse email"
+            readOnly={email.length > 0}
             {...register("email", {
               required: "L'adresse email est requise.",
               pattern: {
@@ -80,7 +119,7 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
                 message: "L'adresse email n'est pas valide.",
               },
             })}
-            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg read-only:cursor-not-allowed read-only:text-base-content/60"
           />
           {errors.email && (
             <span className="text-xs text-error mt-1">
@@ -140,7 +179,9 @@ const AdminSignInForm = ({ token, onSuccess }: Props) => {
               Création...
             </>
           ) : (
-            "Créer l'administrateur"
+            mode === "additional"
+              ? "Créer le compte root"
+              : "Créer l'administrateur"
           )}
         </button>
       </form>

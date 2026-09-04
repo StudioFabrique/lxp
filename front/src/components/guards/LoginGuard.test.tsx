@@ -44,6 +44,8 @@ const renderAt = async (path: string, demoMode: boolean) => {
                   <Route path="/login" element={<p>page-connexion</p>} />
                   <Route path="/register" element={<p>page-inscription</p>} />
                   <Route path="/init" element={<p>page-premier-admin</p>} />
+                  <Route path="/createRoot" element={<p>page-nouveau-root</p>} />
+                  <Route path="/confirm-email" element={<p>page-email</p>} />
                 </Route>
                 <Route path="/demo" element={<p>page-demo</p>} />
               </Routes>
@@ -74,7 +76,7 @@ describe("LoginGuard", () => {
     container.remove();
   });
 
-  it.each(["/login", "/register", "/init"])(
+  it.each(["/login", "/register", "/init", "/createRoot", "/confirm-email"])(
     "renvoie %s vers l'entrée de démonstration",
     async (path) => {
       expect(await renderAt(path, true)).toBe("page-demo");
@@ -93,4 +95,14 @@ describe("LoginGuard", () => {
 
     expect(await renderAt("/login", false)).toBe("page-premier-admin");
   });
+
+  it.each([
+    ["/createRoot", "page-nouveau-root"],
+    ["/confirm-email", "page-email"],
+  ])(
+    "laisse accessible le lien public %s quand des administrateurs existent",
+    async (path, expected) => {
+      expect(await renderAt(path, false)).toBe(expected);
+    },
+  );
 });

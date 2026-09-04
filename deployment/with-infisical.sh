@@ -33,43 +33,42 @@ require \
 # « Invalid credentials » avec des identifiants pourtant valides.
 infisical_domain="${INFISICAL_DOMAIN:-https://eu.infisical.com}"
 infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
-secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime}"
+secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime /mailer}"
 
-# `/ci` à la racine est global dans chaque environnement et contient les accès
-# au registre. En prod, le dossier `<préfixe>/ci` contient les accès SSH et les
-# secrets CI de la cible ; `<préfixe>/runtime` porte l'application et
-# `<préfixe>/backup` porte les secrets de sauvegarde.
-registry_ci_path="/ci"
-target_ci_path=""
-backup_path=""
+# En développement, les dossiers restent à la racine. En prod et pre-prod,
+# chaque instance est un dossier de premier niveau et possède toute sa
+# configuration, y compris les accès au registre : `/<instance>/ci`,
+# `/<instance>/runtime` et `/<instance>/backup`. Seul `/mailer` reste partagé.
+ci_path="/ci"
+runtime_path="/runtime"
+backup_path="/backup"
+mailer_path="/mailer"
 
 case "$secret_paths" in
-    /ci | "/ci /runtime" | "/ci /runtime /backup") ;;
-    *) die "INFISICAL_SECRET_PATHS doit valoir /ci, /ci /runtime ou /ci /runtime /backup." ;;
+    /ci | "/ci /runtime /mailer" | "/ci /runtime /backup" | "/ci /runtime /mailer /backup") ;;
+    *) die "INFISICAL_SECRET_PATHS doit valoir /ci, /ci /runtime /mailer, /ci /runtime /backup ou /ci /runtime /mailer /backup." ;;
 esac
 
 case "$INFISICAL_ENVIRONMENT" in
-    dev)
-        runtime_path="/runtime"
-        backup_path="/backup"
+    dev) ;;
+    prod | pre-prod)
+        [ -n "$infisical_path_prefix" ] \
+            || die "INFISICAL_PATH_PREFIX est obligatoire dans l'environnement $INFISICAL_ENVIRONMENT."
+        case "$infisical_path_prefix" in
+            /?*) ;;
+            *) die "INFISICAL_PATH_PREFIX doit commencer par / et contenir le nom de l'instance." ;;
+        esac
+        instance_slug="${infisical_path_prefix#/}"
+        case "$instance_slug" in
+            */*) die "INFISICAL_PATH_PREFIX doit placer l'instance au premier niveau, par exemple /client-a." ;;
+            . | ..) die "INFISICAL_PATH_PREFIX contient un nom d'instance interdit." ;;
+            *[!A-Za-z0-9._-]*) die "INFISICAL_PATH_PREFIX ne peut contenir que des lettres, chiffres, points, tirets et underscores." ;;
+        esac
+        ci_path="${infisical_path_prefix}/ci"
+        runtime_path="${infisical_path_prefix}/runtime"
+        backup_path="${infisical_path_prefix}/backup"
         ;;
-    prod)
-        if [ "$secret_paths" != "/ci" ]; then
-            [ -n "$infisical_path_prefix" ] \
-                || die "INFISICAL_PATH_PREFIX est obligatoire pour charger les secrets d'une cible dans l'environnement prod."
-            case "$infisical_path_prefix" in
-                */) die "INFISICAL_PATH_PREFIX ne doit pas se terminer par /." ;;
-                /*) ;;
-                *) die "INFISICAL_PATH_PREFIX doit commencer par /." ;;
-            esac
-            target_ci_path="${infisical_path_prefix}/ci"
-            runtime_path="${infisical_path_prefix}/runtime"
-            backup_path="${infisical_path_prefix}/backup"
-        else
-            runtime_path=""
-        fi
-        ;;
-    *) die "INFISICAL_ENVIRONMENT doit valoir dev ou prod." ;;
+    *) die "INFISICAL_ENVIRONMENT doit valoir dev, pre-prod ou prod." ;;
 esac
 
 # La CLI reconnaît les deux variables Universal Auth. Elles ne passent donc
@@ -91,69 +90,54 @@ export INFISICAL_TOKEN
 export INFISICAL_DISABLE_UPDATE_CHECK=true
 unset INFISICAL_UNIVERSAL_AUTH_CLIENT_ID INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
 
-# Le job de build se limite aux identifiants de registre de `/ci`. Les
-# déploiements ajoutent les accès SSH de la cible et sa configuration runtime.
-# Les opérations de sauvegarde demandent explicitement `/backup`, préfixé par
-# la cible dans l'environnement prod.
+# Le job de build se limite au dossier `ci`. En production, même ce chemin est
+# propre à l'instance : aucun `/ci` global n'est consulté.
 case "$secret_paths" in
     /ci)
         printf 'Chargement Infisical : environnement=%s, chemin=%s.\n' \
-            "$INFISICAL_ENVIRONMENT" "$registry_ci_path"
+            "$INFISICAL_ENVIRONMENT" "$ci_path"
         exec infisical run \
             --domain="$infisical_domain" \
             --projectId="$INFISICAL_PROJECT_ID" \
             --env="$INFISICAL_ENVIRONMENT" \
-            --path="$registry_ci_path" \
+            --path="$ci_path" \
             -- "$@"
         ;;
-    "/ci /runtime")
-        if [ "$INFISICAL_ENVIRONMENT" = "prod" ]; then
-            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
-                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$target_ci_path" "$runtime_path"
-            exec infisical run \
-                --domain="$infisical_domain" \
-                --projectId="$INFISICAL_PROJECT_ID" \
-                --env="$INFISICAL_ENVIRONMENT" \
-                --path="$registry_ci_path" \
-                --path="$target_ci_path" \
-                --path="$runtime_path" \
-                -- "$@"
-        else
-            printf 'Chargement Infisical : environnement=%s, chemins=%s et %s.\n' \
-                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$runtime_path"
-            exec infisical run \
-                --domain="$infisical_domain" \
-                --projectId="$INFISICAL_PROJECT_ID" \
-                --env="$INFISICAL_ENVIRONMENT" \
-                --path="$registry_ci_path" \
-                --path="$runtime_path" \
-                -- "$@"
-        fi
+    "/ci /runtime /mailer")
+        printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
+            "$INFISICAL_ENVIRONMENT" "$ci_path" "$runtime_path" "$mailer_path"
+        exec infisical run \
+            --domain="$infisical_domain" \
+            --projectId="$INFISICAL_PROJECT_ID" \
+            --env="$INFISICAL_ENVIRONMENT" \
+            --path="$ci_path" \
+            --path="$runtime_path" \
+            --path="$mailer_path" \
+            -- "$@"
         ;;
     "/ci /runtime /backup")
-        if [ "$INFISICAL_ENVIRONMENT" = "prod" ]; then
-            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s, %s et %s.\n' \
-                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$target_ci_path" "$runtime_path" "$backup_path"
-            exec infisical run \
-                --domain="$infisical_domain" \
-                --projectId="$INFISICAL_PROJECT_ID" \
-                --env="$INFISICAL_ENVIRONMENT" \
-                --path="$registry_ci_path" \
-                --path="$target_ci_path" \
-                --path="$runtime_path" \
-                --path="$backup_path" \
-                -- "$@"
-        else
-            printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
-                "$INFISICAL_ENVIRONMENT" "$registry_ci_path" "$runtime_path" "$backup_path"
-            exec infisical run \
-                --domain="$infisical_domain" \
-                --projectId="$INFISICAL_PROJECT_ID" \
-                --env="$INFISICAL_ENVIRONMENT" \
-                --path="$registry_ci_path" \
-                --path="$runtime_path" \
-                --path="$backup_path" \
-                -- "$@"
-        fi
+        printf 'Chargement Infisical : environnement=%s, chemins=%s, %s et %s.\n' \
+            "$INFISICAL_ENVIRONMENT" "$ci_path" "$runtime_path" "$backup_path"
+        exec infisical run \
+            --domain="$infisical_domain" \
+            --projectId="$INFISICAL_PROJECT_ID" \
+            --env="$INFISICAL_ENVIRONMENT" \
+            --path="$ci_path" \
+            --path="$runtime_path" \
+            --path="$backup_path" \
+            -- "$@"
+        ;;
+    "/ci /runtime /mailer /backup")
+        printf 'Chargement Infisical : environnement=%s, chemins=%s, %s, %s et %s.\n' \
+            "$INFISICAL_ENVIRONMENT" "$ci_path" "$runtime_path" "$mailer_path" "$backup_path"
+        exec infisical run \
+            --domain="$infisical_domain" \
+            --projectId="$INFISICAL_PROJECT_ID" \
+            --env="$INFISICAL_ENVIRONMENT" \
+            --path="$ci_path" \
+            --path="$runtime_path" \
+            --path="$mailer_path" \
+            --path="$backup_path" \
+            -- "$@"
         ;;
 esac

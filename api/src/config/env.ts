@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { z } from "zod";
+import { ensureDatabaseUrls } from "./database-urls.ts";
 
 // Chargé ici, et nulle part ailleurs : en ESM, un `dotenv.config()` placé dans
 // le corps d'un module s'exécute après l'évaluation de tous ses imports, donc
@@ -11,6 +12,8 @@ import { z } from "zod";
 if (process.env.NODE_ENV !== "test") {
   dotenv.config();
 }
+
+ensureDatabaseUrls(process.env);
 
 const emptyStringToUndefined = (value: unknown) =>
   value === "" ? undefined : value;
@@ -87,7 +90,6 @@ const schema = z
           "MAILER_EMAIL",
           "MAILER_PASSWORD",
           "MAILER_SMTP",
-          "MAILER_DEV_RECIPIENT",
           "MAILER_SMTP_PORT",
           "MAILER_FROM",
           "UNSPLASH_ACCESS_KEY",

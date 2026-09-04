@@ -230,14 +230,14 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `DEMO_STUDENT_EMAIL`.
 
 Le fichier `compose.yml` démarre l'application et ses bases. En `dev`, le
-déploiement lit `/ci`, `/runtime` et `/backup`. En `prod`, il demande un
-préfixe et lit `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et
-`<préfixe>/backup`.
+déploiement lit `/ci`, `/runtime`, `/mailer` et `/backup`. En `prod`, il demande
+un préfixe de premier niveau et lit `<préfixe>/ci`, `<préfixe>/runtime`,
+`/mailer` et `<préfixe>/backup`.
 
-Une démonstration de production peut utiliser les dossiers `/ci`, `/instances/demo/ci`,
-`/instances/demo/runtime` et `/instances/demo/backup`. Placez `DEMO_MODE=true` dans
-`/instances/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
-`LXP_DEPLOYMENT_NAME` et ses propres secrets de base de données.
+Une démonstration de production utilise par exemple `/demo/ci`,
+`/demo/runtime`, `/mailer` et `/demo/backup`. Placez `DEMO_MODE=true` dans
+`/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
+`LXP_DEPLOYMENT_NAME` et ses propres identifiants de base de données.
 
 Le pipeline ne charge pas `compose.ai.yml`. Le service `ai`, sa base pgvector
 et le cache des modèles ne démarrent pas. Le script retire aussi les variables

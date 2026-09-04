@@ -1,5 +1,11 @@
 import apiClient from "../../../lib/axios";
 
+type CreateRootResponse = {
+  success: boolean;
+  pendingActivation?: boolean;
+  message: string;
+};
+
 const getSetupStatus = async (): Promise<{
   hasAdmins: boolean;
   activationTokenTtlMinutes: number;
@@ -23,8 +29,26 @@ const createFirstAdmin = async (data: {
   firstname: string;
   lastname: string;
   password: string;
-}): Promise<{ success: boolean; message: string }> => {
+}): Promise<CreateRootResponse> => {
   const res = await apiClient.post("/auth/first-admin", data);
+  return res.data;
+};
+
+const createRootAccount = async (data: {
+  token: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+}): Promise<CreateRootResponse> => {
+  const res = await apiClient.post("/auth/root-account", data);
+  return res.data;
+};
+
+const confirmEmail = async (
+  token: string,
+): Promise<{ success: boolean; email: string; message: string }> => {
+  const res = await apiClient.post("/auth/confirm-email", { token });
   return res.data;
 };
 
@@ -32,4 +56,6 @@ export const onboardingApi = {
   getSetupStatus,
   verifyActivationToken,
   createFirstAdmin,
+  createRootAccount,
+  confirmEmail,
 };

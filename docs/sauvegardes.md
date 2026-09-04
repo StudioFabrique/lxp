@@ -31,15 +31,18 @@ liste toutes les variables Restic et S3.
 
 ## Préparer une cible
 
-1. Créez le dossier ou le bucket de chaque destination.
-2. Donnez au démon Docker le droit d'écrire dans les dossiers locaux.
+1. Créez le bucket S3 et montez le volume externe, si ces destinations sont
+   utilisées.
+2. Donnez au démon Docker le droit d'écrire dans le volume externe.
 3. Placez les variables dans `/backup` en développement ou dans
    `<préfixe>/backup` en production.
 4. Définissez `BACKUP_RESTIC_PASSWORD`.
 5. Passez la variable `BACKUP_*_ENABLED` de chaque destination prête à `true`.
 
 Placez `BACKUP_LOCAL_REPOSITORY` hors de `DEPLOY_PATH`. Le dépôt sur volume
-externe doit utiliser un autre système de fichiers.
+externe doit utiliser un autre système de fichiers. Si le dossier local
+`BACKUP_LOCAL_REPOSITORY` n'existe pas, le script le crée via SSH avec le
+compte Linux `DEPLOY_SSH_USER`.
 
 Conservez une copie de `BACKUP_RESTIC_PASSWORD` dans un autre coffre. Sans ce
 mot de passe, Restic ne peut pas lire les sauvegardes.

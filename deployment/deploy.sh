@@ -4,7 +4,7 @@
 # Le script ne lit aucun fichier de secrets : toute la configuration arrive par
 # l'environnement du processus, typiquement via
 #
-#   infisical run --env=dev --path=/ci --path=/runtime -- ./deployment/deploy.sh
+#   infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- ./deployment/deploy.sh
 #
 # Il pilote le démon Docker du serveur cible par `DOCKER_HOST=ssh://` lorsque
 # `DEPLOY_SSH_HOST` est renseigné, et le démon local sinon. Le serveur cible
@@ -18,6 +18,8 @@ set -eu
 # Jamais de `set -x` : `ssh`, `rsync` et `docker` héritent de tout
 # l'environnement, jeton Infisical compris.
 set +x
+
+. "$(dirname "$0")/database-urls.sh"
 
 die() {
     printf '%s\n' "$*" >&2
@@ -43,7 +45,8 @@ restore_pipeline_metadata() {
     for name in \
         DEPLOY_MODE DEPLOY_PATH LXP_DEPLOYMENT_NAME \
         LXP_IMAGE LXP_IMAGE_TAG \
-        APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK
+        APP_HOST COMPOSE_WAIT_TIMEOUT DEPLOY_PRUNE CADDY_NETWORK \
+        ROOT_ACCOUNT_EMAIL
     do
         eval "is_set=\${PIPELINE_$name+x}"
         if [ "$is_set" = x ]; then
@@ -122,7 +125,7 @@ AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.ai.yml"
 # l'environnement d'un déploiement de démonstration.
 AI_SETTINGS="
 ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-ANDRIA_AI_DB_URL LXP_DB_URL
+ANDRIA_AI_DB_URL LXP_DB_USER LXP_DB_PASSWORD LXP_DB_URL
 DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
 MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY MISTRAL_MODEL
 LXP_PUBLIC_BASE DISABLE_AI_FEATURES
@@ -161,9 +164,9 @@ fi
 
 settings="
 PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
-POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
-MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
-MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
+POSTGRES_USER POSTGRES_PASSWORD
+MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD
+MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
 LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
 "
 
@@ -179,8 +182,7 @@ if [ "$DEMO_ENABLED" = "true" ]; then
     settings="$settings DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
 else
     settings="$settings
-    ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-    ANDRIA_AI_DB_URL LXP_DB_URL
+    ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD
     DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
     LXP_AI_IMAGE LXP_AI_IMAGE_TAG
@@ -188,6 +190,20 @@ else
 fi
 
 require "$settings"
+
+if { [ -n "${LXP_DB_USER:-}" ] && [ -z "${LXP_DB_PASSWORD:-}" ]; } || \
+   { [ -z "${LXP_DB_USER:-}" ] && [ -n "${LXP_DB_PASSWORD:-}" ]; }; then
+    die "LXP_DB_USER et LXP_DB_PASSWORD doivent être définies ensemble."
+fi
+
+# Les URL complètes sont des données dérivées : seules les paires
+# utilisateur/mot de passe sont conservées dans Infisical. Les noms de bases
+# gardent des valeurs conventionnelles, surchargeables si nécessaire.
+if [ "$AI_ENABLED" = "true" ]; then
+    database_build_urls db-pg 5432 db-mongo 27017 db-ai 5432
+else
+    database_build_urls db-pg 5432 db-mongo 27017
+fi
 
 if [ "$DEPLOY_MODE" = "caddy" ]; then
     # `APP_HOST` alimente les labels du proxy partagé : un nom mal formé y
@@ -349,7 +365,11 @@ fi
 compose config --quiet
 
 if [ -n "${REGISTRY_USER:-}" ] && [ -n "${REGISTRY_TOKEN:-}" ]; then
-    printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+    if [ -n "${REGISTRY_URL:-}" ]; then
+        printf '%s' "$REGISTRY_TOKEN" | docker login "$REGISTRY_URL" --username "$REGISTRY_USER" --password-stdin
+    else
+        printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+    fi
 fi
 
 echo "Récupération des images..."
@@ -449,11 +469,16 @@ fi
 # `--remove-orphans` retire les conteneurs IA d'une stack qui bascule en
 # démonstration.
 echo "Démarrage des applications..."
-compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-240}" app
+compose up -d --remove-orphans --wait --wait-timeout "${COMPOSE_WAIT_TIMEOUT:-600}" app
 
 if [ "$DEMO_ENABLED" = "false" ]; then
     echo "Génération de la clé d'activation..."
     compose exec -T app npm run generate-activation-key
+
+    if [ -n "${ROOT_ACCOUNT_EMAIL:-}" ]; then
+        echo "Envoi de l'invitation de création d'un compte root..."
+        compose exec -T app npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"
+    fi
 fi
 
 echo "État des services..."

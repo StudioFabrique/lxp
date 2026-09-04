@@ -65,7 +65,10 @@ export default async function httpUpdateUser(req: Request, res: Response) {
     // Send success response
     return res.status(201).json({
       success: true,
-      message: "L'utilisateur a été modifié avec succès.",
+      message: userResponse.emailChangeRequested
+        ? "L'utilisateur a été modifié. La nouvelle adresse email doit être validée."
+        : "L'utilisateur a été modifié avec succès.",
+      emailChangeRequested: userResponse.emailChangeRequested,
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({ message: error.message });

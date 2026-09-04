@@ -20,6 +20,8 @@ import httpGetAuthBackgrounds from "../../../controllers/auth/http-get-auth-back
 import httpPostResendActivation from "../../../controllers/auth/http-post-resend-activation.ts";
 import httpPatchOnboarding from "../../../controllers/auth/http-patch-onboarding.ts";
 import httpPostPromoteRoot from "../../../controllers/auth/http-post-promote-root.ts";
+import httpPostRootAccount from "../../../controllers/auth/http-post-root-account.ts";
+import httpPostConfirmEmail from "../../../controllers/auth/http-post-confirm-email.ts";
 
 const authRouter = express.Router();
 
@@ -60,6 +62,16 @@ authRouter.post(
     .withMessage("Adresse email invalide.")
     .normalizeEmail(),
   httpPostResendActivation,
+);
+authRouter.post(
+  "/confirm-email",
+  rateLimiter(5, 60_000),
+  body("token")
+    .notEmpty()
+    .withMessage("Le token est requis.")
+    .isString()
+    .withMessage("Le token doit être une chaîne de caractères."),
+  httpPostConfirmEmail,
 );
 authRouter.get("/handshake", checkToken, httpHandshake);
 authRouter.get("/logout", httpLogout);
@@ -124,8 +136,7 @@ authRouter.post(
   body("email")
     .isEmail()
     .withMessage("L'adresse email n'est pas valide.")
-    .trim()
-    .escape(),
+    .trim(),
   body("firstname")
     .notEmpty()
     .withMessage("Le prénom est requis.")
@@ -150,6 +161,44 @@ authRouter.post(
       "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
     ),
   httpPostFirstAdmin
+);
+
+// Création d'un compte root supplémentaire depuis une invitation envoyée par
+// le pipeline. Le token est lié à l'adresse email et n'est utilisable qu'une
+// fois, ce qui permet de garder cette route publique.
+authRouter.post(
+  "/root-account",
+  rateLimiter(3, 60_000),
+  body("token")
+    .notEmpty()
+    .withMessage("Le token est requis.")
+    .isString()
+    .withMessage("Le token doit être une chaîne de caractères."),
+  body("email")
+    .isEmail()
+    .withMessage("L'adresse email n'est pas valide.")
+    .trim(),
+  body("firstname")
+    .notEmpty()
+    .withMessage("Le prénom est requis.")
+    .isString()
+    .trim()
+    .escape(),
+  body("lastname")
+    .notEmpty()
+    .withMessage("Le nom est requis.")
+    .isString()
+    .trim()
+    .escape(),
+  body("password")
+    .notEmpty()
+    .withMessage("Le mot de passe est requis.")
+    .isString()
+    .custom(newPasswordValidate)
+    .withMessage(
+      "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
+    ),
+  httpPostRootAccount,
 );
 
 export default authRouter;

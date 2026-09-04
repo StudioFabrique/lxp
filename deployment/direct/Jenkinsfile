@@ -10,12 +10,15 @@ pipeline {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Laisser tel quel : le credential du dossier Jenkins est résolu en premier. À changer seulement pour un job hors dossier ou deux instances dans le même dossier.')
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Région Infisical. L\'organisation est sur EU ; l\'instance US ne connaît pas ses identités et répond 401.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID du projet LXP. Identifiant public, inutilisable sans les credentials.')
-        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'Charge /ci et /runtime en dev ; en prod, /ci puis <préfixe>/ci et <préfixe>/runtime. Les sauvegardes ajoutent le dossier backup de la cible.')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /instances/<slug> ; détermine aussi <préfixe>/backup.')
+        choice(name: 'INFISICAL_ENVIRONMENT', choices: ['prod', 'dev'], description: 'Charge les dossiers ci, runtime et backup de la cible, plus /mailer.')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: '', trim: true, description: 'Ignoré en dev. Obligatoire en prod : /<instance>.')
         string(name: 'DEPLOY_PATH', defaultValue: '', trim: true, description: 'Répertoire persistant sur le serveur cible. Laisser vide : déduit en <foyer du compte de déploiement>/<nom de la stack>.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: 'lxp', trim: true, description: 'Nom stable de la stack et de ses volumes')
+        string(name: 'LXP_IMAGE', defaultValue: 'studiostep/lxp', trim: true, description: 'Nom complet de l’image LXP')
         string(name: 'LXP_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag LXP, latest ou SHA Jenkins pour un retour arrière')
+        string(name: 'LXP_AI_IMAGE', defaultValue: 'studiostep/lxp-ai', trim: true, description: 'Nom complet de l’image ANDRIA-IA')
         string(name: 'LXP_AI_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag de l’image ANDRIA-IA')
+        string(name: 'ROOT_ACCOUNT_EMAIL', defaultValue: '', trim: true, description: 'Optionnel : envoie à chaque déploiement un lien personnel de création de compte root à cette adresse.')
     }
 
     // Les paramètres sont lus ici par `params`, jamais depuis l'environnement du
@@ -32,13 +35,14 @@ pipeline {
         PIPELINE_DEPLOY_MODE         = 'direct'
         PIPELINE_DEPLOY_PATH         = "${params.DEPLOY_PATH}"
         PIPELINE_LXP_DEPLOYMENT_NAME = "${params.LXP_DEPLOYMENT_NAME}"
+        PIPELINE_ROOT_ACCOUNT_EMAIL  = "${params.ROOT_ACCOUNT_EMAIL}"
 
-        PIPELINE_LXP_IMAGE        = 'studiostep/lxp'
+        PIPELINE_LXP_IMAGE        = "${params.LXP_IMAGE}"
         PIPELINE_LXP_IMAGE_TAG    = "${params.LXP_IMAGE_TAG}"
-        PIPELINE_LXP_AI_IMAGE     = 'studiostep/lxp-ai'
+        PIPELINE_LXP_AI_IMAGE     = "${params.LXP_AI_IMAGE}"
         PIPELINE_LXP_AI_IMAGE_TAG = "${params.LXP_AI_IMAGE_TAG}"
 
-        PIPELINE_COMPOSE_WAIT_TIMEOUT = '240'
+        PIPELINE_COMPOSE_WAIT_TIMEOUT = '600'
         PIPELINE_DEPLOY_PRUNE         = 'true'
     }
 

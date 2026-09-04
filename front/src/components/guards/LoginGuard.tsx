@@ -12,6 +12,9 @@ const LoginGuard = () => {
   const location = useLocation();
   const [setupChecked, setSetupChecked] = useState(false);
   const [hasAdmins, setHasAdmins] = useState(true);
+  const isTokenRoute = ["/createRoot", "/confirm-email"].includes(
+    location.pathname,
+  );
 
   useEffect(() => {
     let active = true;
@@ -43,7 +46,7 @@ const LoginGuard = () => {
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked))
     return <Loader />;
 
-  if (isLoggedIn && user) {
+  if (isLoggedIn && user && !isTokenRoute) {
     const homePath = getUserHomePath(user);
     if (homePath) return <Navigate replace to={homePath} />;
     return <Navigate replace to="/access-denied" />;
@@ -58,7 +61,12 @@ const LoginGuard = () => {
     return <Navigate replace to="/demo" />;
   }
 
-  if (!isLoggedIn && !hasAdmins && location.pathname !== "/init") {
+  if (
+    !isLoggedIn &&
+    !hasAdmins &&
+    location.pathname !== "/init" &&
+    location.pathname !== "/confirm-email"
+  ) {
     return <Navigate replace to="/init" />;
   }
 

@@ -75,4 +75,18 @@ describe("Info", () => {
     expect(roleInput?.value).toBe("administrateur");
     expect(roleInput?.disabled).toBe(true);
   });
+
+  it("permet de modifier l'adresse email", () => {
+    act(() => {
+      root = createRoot(container);
+      root.render(<TestInfo />);
+    });
+
+    const emailInput = container.querySelector<HTMLInputElement>(
+      'input[name="email"]',
+    );
+    expect(emailInput).not.toBeNull();
+    expect(emailInput?.disabled).toBe(false);
+    expect(emailInput?.readOnly).toBe(false);
+  });
 });

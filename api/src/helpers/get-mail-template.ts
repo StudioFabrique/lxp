@@ -1,10 +1,51 @@
 import { env } from "../config/env.ts";
+
+const publicUrl = (path: string, params: Record<string, string>) => {
+  const configuredUrl = env.FRONT_URL ?? "http://localhost:5173/";
+  const baseUrl = configuredUrl.endsWith("/")
+    ? configuredUrl
+    : `${configuredUrl}/`;
+  const query = new URLSearchParams(params).toString();
+  return `${baseUrl}${path}?${query}`;
+};
+
+const escapeHtml = (value: string) =>
+  value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[character]!,
+  );
+
 export const getTemplate = (
   template: string,
   token: string,
   email?: string,
 ) => {
   let link = "";
+
+  if (template === "email-change") {
+    link = publicUrl("confirm-email", { token });
+    return `<p>Bonjour,</p><p>Confirmez votre nouvelle adresse email en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Valider mon adresse email</a></p><p>Ce lien expire dans 24 heures. Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message.</p>`;
+  }
+
+  if (template === "root-email-verification") {
+    link = publicUrl("confirm-email", { token });
+    return `<p>Bonjour,</p><p>Votre compte root ANDRIA a été créé pour l'adresse ${escapeHtml(email ?? "")}.</p><p>Activez-le en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Activer mon compte root</a></p><p>Ce lien expire dans 24 heures. Tant que vous ne l'avez pas utilisé, le compte reste inactif.</p>`;
+  }
+
+  if (template === "root-account-init" || template === "root-account") {
+    const rootEmail = email ?? "";
+    const path = template === "root-account-init" ? "init" : "createRoot";
+    link = publicUrl(path, { token, email: rootEmail });
+    return `<p>Bonjour,</p><p>Vous êtes invité à créer un compte root ANDRIA pour l'adresse ${escapeHtml(rootEmail)}.</p><p><a href="${link}">Créer mon compte root</a></p><p>La clé d'activation et l'adresse email sont déjà renseignées. Ce lien est personnel et expire après le délai configuré pour les clés root.</p>`;
+  }
+
   switch (template) {
     case "activation":
       link = `${env.FRONT_URL}register?id=${token}`;

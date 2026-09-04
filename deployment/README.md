@@ -64,6 +64,7 @@ Le workflow GitHub Actions lit :
 ```text
 /ci       accès au registre Docker
 /runtime  application et accès SSH
+/mailer   accès SMTP
 /backup   sauvegardes
 ```
 
@@ -74,19 +75,29 @@ Il utilise toujours l'environnement Infisical `dev`.
 Un job Jenkins lit :
 
 ```text
-/ci                    accès commun au registre Docker
-<préfixe>/ci           accès SSH de la cible
-<préfixe>/runtime      application
-<préfixe>/backup       sauvegardes
+/<instance>/ci         accès au registre et accès SSH de la cible
+/<instance>/runtime    application
+/mailer                accès SMTP communs
+/<instance>/backup     sauvegardes
 ```
 
-Exemple de préfixe :
+Le préfixe place obligatoirement l'instance au premier niveau :
 
-- `/instances/<slug>` pour une instance cliente.
+- `/client-a` pour une instance cliente ;
+- `/demo` pour la démonstration.
 
-Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Le
-dossier `/ci` reste commun et contient seulement `REGISTRY_USER` et
-`REGISTRY_TOKEN`.
+Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Les
+variables `REGISTRY_USER`, `REGISTRY_TOKEN` et éventuellement `REGISTRY_URL`
+sont donc dupliquées dans le dossier `ci` de chaque instance. Seul `/mailer`
+reste commun et contient les variables `MAILER_*`.
+
+Pour migrer une configuration existante :
+
+1. déplacez `/instances/<slug>` vers `/<slug>` ;
+2. copiez `REGISTRY_USER`, `REGISTRY_TOKEN` et, si nécessaire, `REGISTRY_URL`
+   dans `/<slug>/ci` pour chaque instance, puis supprimez le `/ci` global ;
+3. remplacez le paramètre Jenkins `/instances/<slug>` par `/<slug>` ;
+4. retirez les quatre variables d'URL de base de données du dossier `runtime`.
 
 Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
 secret. La page
@@ -120,10 +131,10 @@ Vérifiez au minimum :
 
 - `INFISICAL_PROJECT_ID` ;
 - `INFISICAL_ENVIRONMENT` ;
-- `INFISICAL_PATH_PREFIX` pour une cible hors développement ;
+- `INFISICAL_PATH_PREFIX` sous la forme `/<instance>` pour une cible hors développement, y compris le job de build ;
 - `LXP_DEPLOYMENT_NAME` ;
 - `APP_HOST` en mode Caddy ;
-- les tags des images.
+- les noms complets et les tags des images.
 
 Gardez le même `LXP_DEPLOYMENT_NAME` pendant toute la vie d'une instance. Un
 nouveau nom crée de nouveaux volumes Docker et donne l'impression que les
@@ -184,7 +195,7 @@ depuis un agent qui possède Docker, `rsync` et toutes les variables requises.
 Sans `DEPLOY_SSH_HOST`, le script utilise le Docker local :
 
 ```bash
-infisical run --env=dev --path=/ci --path=/runtime -- \
+infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- \
   ./deployment/deploy.sh
 ```
 

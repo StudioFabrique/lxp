@@ -8,6 +8,7 @@ backup_script="$repository_root/deployment/backup.sh"
 restore_script="$repository_root/deployment/restore.sh"
 list_script="$repository_root/deployment/list-backups.sh"
 infisical_wrapper="$repository_root/deployment/with-infisical.sh"
+database_script="$repository_root/deployment/database-urls.sh"
 temporary_dir="$(mktemp -d "${TMPDIR:-/tmp}/lxp-backup-tests.XXXXXX")"
 trap 'rm -rf -- "$temporary_dir"' EXIT
 
@@ -27,9 +28,11 @@ expect_failure() {
 bash -n \
     "$repository_root/deployment/backup-common.sh" \
     "$repository_root/deployment/backup.sh" \
+    "$database_script" \
     "$list_script" \
     "$repository_root/deployment/restore.sh"
 sh -n "$infisical_wrapper"
+sh -n "$repository_root/deployment/deploy.sh"
 [[ -x "$list_script" ]] || fail "le script de liste n'est pas executable"
 
 grep -q "INFISICAL_ENVIRONMENT = 'prod'" "$repository_root/deployment/backup.Jenkinsfile" \
@@ -89,6 +92,30 @@ esac
 EOF
 chmod +x "$temporary_dir/infisical-bin/infisical"
 
+default_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=dev \
+        "$infisical_wrapper" true
+)"
+[[ "$default_paths_output" == *"--path=/mailer"* ]] \
+    || fail "le déploiement ne charge pas le dossier /mailer par défaut"
+
+for jenkinsfile in \
+    "$repository_root/deployment/caddy/Jenkinsfile" \
+    "$repository_root/deployment/direct/Jenkinsfile"
+do
+    grep -Fq "string(name: 'ROOT_ACCOUNT_EMAIL'" "$jenkinsfile" \
+        || fail "le paramètre d'invitation root manque dans $jenkinsfile"
+done
+
+grep -Fq 'npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"' \
+    "$repository_root/deployment/deploy.sh" \
+    || fail "le déploiement n'envoie pas l'invitation root demandée"
+
 dev_paths_output="$(
     env -i \
         PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
@@ -115,6 +142,59 @@ prod_paths_output="$(
 )"
 [[ "$prod_paths_output" == *"--path=/demo/backup"* ]] \
     || fail "le wrapper Infisical ne charge pas le dossier backup prefixe en prod"
+[[ "$prod_paths_output" == *"--path=/demo/ci"* ]] \
+    || fail "le wrapper Infisical ne charge pas le dossier ci de l'instance en prod"
+if printf '%s\n' "$prod_paths_output" | grep -Fxq -- '--path=/ci'; then
+    fail "le wrapper Infisical charge encore le dossier /ci global en prod"
+fi
+
+prod_build_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=prod \
+        INFISICAL_PATH_PREFIX=/demo \
+        INFISICAL_SECRET_PATHS=/ci \
+        "$infisical_wrapper" true
+)"
+[[ "$prod_build_paths_output" == *"--path=/demo/ci"* ]] \
+    || fail "le build ne charge pas le dossier ci de l'instance en prod"
+
+expect_failure "un prefixe Infisical imbrique a ete accepte en prod" \
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=prod \
+        INFISICAL_PATH_PREFIX=/instances/demo \
+        "$infisical_wrapper" true
+
+encoded_urls_output="$(
+    env -i PATH="/usr/bin:/bin" bash -c "
+        source '$database_script'
+        POSTGRES_USER='lxp+user'
+        POSTGRES_PASSWORD='p@ss:/?#%'
+        MONGO_ADMIN_USERNAME='mongo user'
+        MONGO_ADMIN_PASSWORD='m@ngo/pass'
+        ANDRIA_POSTGRES_USER='andria'
+        ANDRIA_POSTGRES_PASSWORD='ai@pass'
+        LXP_DB_USER='reader'
+        LXP_DB_PASSWORD='read@pass'
+        database_build_urls db-pg 5432 db-mongo 27017 db-ai 5432
+        printf '%s\n%s\n%s\n%s\n' \"\$DATABASE_URL\" \"\$MONGO_LOCAL_URL\" \"\$ANDRIA_AI_DB_URL\" \"\$LXP_DB_URL\"
+    "
+)"
+[[ "$encoded_urls_output" == *'postgresql://lxp%2buser:p%40ss%3a%2f%3f%23%25@db-pg:5432/lxp'* ]] \
+    || fail "les identifiants PostgreSQL ne sont pas encodes dans DATABASE_URL"
+[[ "$encoded_urls_output" == *'mongodb://mongo%20user:m%40ngo%2fpass@db-mongo:27017/lxp?authSource=admin'* ]] \
+    || fail "les identifiants MongoDB ne sont pas encodes dans MONGO_LOCAL_URL"
+[[ "$encoded_urls_output" == *'postgresql://andria:ai%40pass@db-ai:5432/lxp_ai'* ]] \
+    || fail "ANDRIA_AI_DB_URL n'est pas generee"
+[[ "$encoded_urls_output" == *'postgresql://reader:read%40pass@db-pg:5432/lxp'* ]] \
+    || fail "LXP_DB_URL n'utilise pas le compte de lecture configure"
 
 disabled_output="$(
     env -i PATH="/usr/bin:/bin" HOME="$temporary_dir" TMPDIR="$temporary_dir" \
@@ -254,6 +334,19 @@ bash -c "
     BACKUP_REMOTE=false
     backup_validate_repositories
 " || fail "le depot local sur le disque du VPS a ete refuse"
+
+missing_local_repository="$temporary_dir/new-local-backup"
+bash -c "
+    source '$common_script'
+    DEPLOY_PATH='$temporary_dir/data'
+    BACKUP_LOCAL_ENABLED=true
+    BACKUP_LOCAL_REPOSITORY='$missing_local_repository'
+    BACKUP_RESTIC_PASSWORD='test'
+    BACKUP_REMOTE=false
+    backup_validate_repositories
+" || fail "le depot local absent n'a pas ete cree"
+[[ -d "$missing_local_repository" ]] \
+    || fail "le repertoire du depot local est toujours absent"
 
 bash -c "
     source '$common_script'

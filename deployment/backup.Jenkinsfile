@@ -11,7 +11,7 @@ pipeline {
         string(name: 'INFISICAL_CREDENTIAL_ID', defaultValue: 'INFISICAL_CREDENTIALS', trim: true, description: 'Credential Universal Auth visible par le job.')
         choice(name: 'INFISICAL_DOMAIN', choices: ['https://eu.infisical.com', 'https://app.infisical.com'], description: 'Region Infisical.')
         string(name: 'INFISICAL_PROJECT_ID', defaultValue: '7f01d005-b9ab-4c92-bbad-3d6e8798c347', trim: true, description: 'Project ID LXP.')
-        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: "${params.INFISICAL_PATH_PREFIX ?: ''}", trim: true, description: 'Obligatoire en prod : /instances/<slug> ; sélectionne notamment <préfixe>/backup.')
+        string(name: 'INFISICAL_PATH_PREFIX', defaultValue: "${params.INFISICAL_PATH_PREFIX ?: ''}", trim: true, description: 'Obligatoire en prod : /<instance> ; sélectionne les dossiers ci, runtime et backup de la cible.')
         string(name: 'DEPLOY_PATH', defaultValue: "${params.DEPLOY_PATH ?: ''}", trim: true, description: 'Vide pour deduire le chemin du foyer distant.')
         string(name: 'LXP_DEPLOYMENT_NAME', defaultValue: "${params.LXP_DEPLOYMENT_NAME ?: 'lxp'}", trim: true, description: 'Nom exact de la stack Docker.')
         string(name: 'BACKUP_CRON', defaultValue: "${params.BACKUP_CRON ?: 'H H/6 * * *'}", trim: true, description: 'Frequence des sauvegardes planifiees, au format cron Jenkins.')

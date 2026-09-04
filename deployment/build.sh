@@ -1,5 +1,5 @@
 #!/bin/sh
-# Construction Jenkins de l'image LXP avec les identifiants de `/ci`.
+# Construction Jenkins de l'image LXP avec les identifiants du dossier `ci`.
 
 set -eu
 set +x
@@ -25,8 +25,13 @@ export DOCKER_CONFIG
 mkdir -p "$DOCKER_CONFIG"
 chmod 700 "$DOCKER_CONFIG"
 
-printf '%s' "$REGISTRY_TOKEN" | \
-    docker login --username "$REGISTRY_USER" --password-stdin
+if [ -n "${REGISTRY_URL:-}" ]; then
+    printf '%s' "$REGISTRY_TOKEN" | \
+        docker login "$REGISTRY_URL" --username "$REGISTRY_USER" --password-stdin
+else
+    printf '%s' "$REGISTRY_TOKEN" | \
+        docker login --username "$REGISTRY_USER" --password-stdin
+fi
 
 docker build -t "$image:$tag" .
 docker push "$image:$tag"

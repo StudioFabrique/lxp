@@ -1,13 +1,7 @@
 import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
-import {
-  accessExpire,
-  refreshExpire,
-  sessionCookieOptions,
-} from "../../config/config.ts";
 import { createFirstAdmin } from "../../models/auth/setup.ts";
 import { regexMail, regexNewPassword } from "../../utils/constantes.ts";
-import { setTokens } from "../../utils/services/auth/set-tokens.ts";
 
 export default async function httpPostFirstAdmin(req: Request, res: Response) {
   try {
@@ -32,25 +26,19 @@ export default async function httpPostFirstAdmin(req: Request, res: Response) {
       });
     }
 
-    const userId = await createFirstAdmin({
+    await createFirstAdmin({
       token,
       email,
       firstname,
       lastname,
       password,
     });
-    const accessToken = setTokens(userId, "access", accessExpire);
-    const refreshToken = setTokens(userId, "refresh", refreshExpire);
-
-    return res
-      .cookie("accessToken", accessToken, sessionCookieOptions("accessToken"))
-      .cookie(
-        "refreshToken",
-        refreshToken,
-        sessionCookieOptions("refreshToken"),
-      )
-      .status(200)
-      .json({ success: true, message: "Compte root créé avec succès." });
+    return res.status(201).json({
+      success: true,
+      pendingActivation: true,
+      message:
+        "Un lien d'activation a été envoyé à votre adresse email.",
+    });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({
       message:

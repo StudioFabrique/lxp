@@ -41,7 +41,7 @@ const renderDashboardList = (
 };
 
 describe("LastParcours", () => {
-  it("affiche l'état vide partagé sur le dashboard formateur", () => {
+  it("ne propose pas de création au formateur sans parcours affecté", () => {
     const auth = {
       user: { roles: [{ rank: 2 }] } as User,
     } as React.ContextType<typeof AuthContext>;
@@ -53,7 +53,9 @@ describe("LastParcours", () => {
       </AuthContext.Provider>,
     );
 
-    expect(markup).toContain("Aucun parcours disponible");
+    expect(markup).not.toContain("Derniers parcours ajoutés");
+    expect(markup).not.toContain("Créer un parcours");
+    expect(markup).not.toContain("Créer une formation");
   });
 
   it("affiche le parcours unique du formateur sur toute la largeur", () => {
