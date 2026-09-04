@@ -8,7 +8,7 @@ import {
 import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
-import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
@@ -45,6 +45,7 @@ const ModuleHomeList = ({
               key={module.id}
               label="Module"
               title={module.title}
+              truncateTitle
               description={
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span>{module.parcours}</span>
@@ -94,7 +95,7 @@ const ModuleHomeList = ({
                 ) : (
                   <span className="text-warning">Non publié</span>
                 ),
-                icon: <BookMarked />,
+                icon: <BookMarked stroke-width="1.5" />,
                 to: `/admin/parcours/module/${module.id}`,
                 state: course.firstLessonId
                   ? { lessonId: course.firstLessonId }

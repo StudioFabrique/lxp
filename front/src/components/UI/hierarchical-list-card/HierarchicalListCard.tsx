@@ -1,30 +1,17 @@
-import { useState, type Key, type ReactNode } from "react";
-import { ExternalLink } from "lucide-react";
-import { Link, type LinkProps } from "react-router";
+import { useState, type ReactNode } from "react";
 
-import { cn } from "../../utils/cn";
-import CursorGlowCard from "./cursor-glow-card";
-import Modal from "./modal/modal";
-
-export type HierarchicalListCardItem = {
-  id: Key;
-  title: string;
-  description?: ReactNode;
-  subDescription?: ReactNode;
-  image?: {
-    src: string;
-    alt: string;
-  };
-  icon?: ReactNode;
-  to?: LinkProps["to"];
-  state?: LinkProps["state"];
-  action?: ReactNode | ((dismissOverflow: () => void) => ReactNode);
-  ariaLabel?: string;
-};
+import { cn } from "../../../utils/cn";
+import CursorGlowCard from "../cursor-glow-card";
+import Modal from "../modal/modal";
+import {
+  HierarchicalListCardItem,
+  HierarchicalListRow,
+} from "./HierarchicalListRow";
 
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
+  truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
   items?: HierarchicalListCardItem[];
@@ -38,75 +25,10 @@ type HierarchicalListCardProps = {
   fullWidth?: boolean;
 };
 
-const HierarchicalListRow = ({
-  item,
-  showTitleTooltip,
-  dismissOverflow,
-}: {
-  item: HierarchicalListCardItem;
-  showTitleTooltip: boolean;
-  dismissOverflow: () => void;
-}) => {
-  const itemAction =
-    typeof item.action === "function"
-      ? item.action(dismissOverflow)
-      : item.action;
-
-  return (
-    <li className="list-row">
-      {item.image ? (
-        <div className="self-center">
-          <img
-            src={item.image.src}
-            alt={item.image.alt}
-            className="size-10 rounded-lg object-cover"
-          />
-        </div>
-      ) : item.icon ? (
-        <div className="flex size-10 items-center justify-center self-center rounded-lg text-primary [&>svg]:size-5">
-          {item.icon}
-        </div>
-      ) : null}
-
-      <div className="list-col-grow min-w-0 self-center">
-        <div
-          className={cn("block max-w-full text-left first-letter:uppercase", {
-            "tooltip tooltip-bottom tooltip-start": showTitleTooltip,
-          })}
-          data-tip={showTitleTooltip ? item.title : undefined}
-        >
-          <div className="truncate font-semibold">{item.title}</div>
-        </div>
-        {item.description ? (
-          <div className="truncate text-xs font-light opacity-60">
-            {item.description}
-          </div>
-        ) : null}
-        {item.subDescription ? (
-          <div className="truncate text-xs font-light opacity-60">
-            {item.subDescription}
-          </div>
-        ) : null}
-      </div>
-
-      {itemAction ??
-        (item.to ? (
-          <Link
-            className="btn btn-square btn-sm btn-ghost self-center"
-            to={item.to}
-            state={item.state}
-            aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
-          >
-            <ExternalLink className="size-[1.2em]" />
-          </Link>
-        ) : null)}
-    </li>
-  );
-};
-
 const HierarchicalListCard = ({
   label,
   title,
+  truncateTitle,
   description,
   action,
   items = [],
@@ -152,7 +74,12 @@ const HierarchicalListCard = ({
                         {label}
                       </p>
                     ) : null}
-                    <h4 className="truncate first-letter:uppercase text-xl font-bold">
+                    <h4
+                      className={cn(
+                        "first-letter:uppercase text-xl font-bold",
+                        { truncate: truncateTitle },
+                      )}
+                    >
                       {title}
                     </h4>
                     {description ? (

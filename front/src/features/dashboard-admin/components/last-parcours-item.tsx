@@ -6,7 +6,7 @@ import { normalizeImageSource } from "../../../utils/images/image-source";
 import defaultParcoursImage from "../../../assets/images/new-parcours-default.jpg";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import ParcoursActionsMenu from "../../parcours/components/list/parcours-actions-menu";
-import HierarchicalListCard from "../../../components/UI/hierarchical-list-card";
+import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 
 const fullDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -62,6 +62,7 @@ const LastParcoursItem = ({
     <HierarchicalListCard
       label={formation ? "Formation" : undefined}
       title={formation?.title}
+      truncateTitle
       items={formation?.parcours.map((item) => ({
         id: item.id,
         title: item.title,

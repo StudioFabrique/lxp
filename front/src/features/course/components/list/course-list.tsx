@@ -3,7 +3,7 @@ import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
-import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import Modal from "../../../../components/UI/modal/modal";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
@@ -116,7 +116,7 @@ export default function CourseList({
                 id: lesson.id,
                 title: lesson.title,
                 description: `Leçon ${lesson.order + 1}`,
-                icon: <BookOpen />,
+                icon: <BookOpen stroke-width="1.5" />,
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
               }))}
