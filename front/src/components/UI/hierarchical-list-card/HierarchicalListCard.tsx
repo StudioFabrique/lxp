@@ -11,7 +11,7 @@ import {
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
-  titleAccessory?: ReactNode;
+  labelAccessory?: ReactNode;
   truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
@@ -29,7 +29,7 @@ type HierarchicalListCardProps = {
 const HierarchicalListCard = ({
   label,
   title,
-  titleAccessory,
+  labelAccessory,
   truncateTitle,
   description,
   action,
@@ -71,11 +71,16 @@ const HierarchicalListCard = ({
               <li className="p-4 pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    {label ? (
-                      <p className="select-none text-xs tracking-wide opacity-60">
-                        {label}
-                      </p>
-                    ) : null}
+                    <div className="flex gap-2">
+                      {label ? (
+                        <p className="select-none text-xs tracking-wide opacity-60">
+                          {label}
+                        </p>
+                      ) : null}
+                      {labelAccessory ? (
+                        <div className="shrink-0">{labelAccessory}</div>
+                      ) : null}
+                    </div>
                     <div className="flex min-w-0 items-center gap-2">
                       <h4
                         className={cn(
@@ -85,9 +90,6 @@ const HierarchicalListCard = ({
                       >
                         {title}
                       </h4>
-                      {titleAccessory ? (
-                        <div className="shrink-0">{titleAccessory}</div>
-                      ) : null}
                     </div>
                     {description ? (
                       <div className="mt-1 text-xs opacity-60">

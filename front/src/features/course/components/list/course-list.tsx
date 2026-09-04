@@ -72,12 +72,12 @@ export default function CourseList({
             <HierarchicalListCard
               key={course.id}
               label="Cours"
-              title={course.title}
-              titleAccessory={
+              labelAccessory={
                 !course.visibility ? (
                   <InvisibleIndicator label="Cours invisible" />
                 ) : null
               }
+              title={course.title}
               description={
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span>{course.module}</span>
