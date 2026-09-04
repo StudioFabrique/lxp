@@ -133,12 +133,11 @@ describe("HTTP /user", () => {
           postCode: 64000,
           city: true,
           phoneNumber: 4,
-          isActive: "toto",
         })
         .set("Cookie", [`${authToken}`]);
 
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(9);
+      expect(res.body.errors).toHaveLength(8);
     });
 
     // Malicious code

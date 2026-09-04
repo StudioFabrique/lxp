@@ -116,13 +116,6 @@ grep -Fq 'npm run send-root-invitation -- "$ROOT_ACCOUNT_EMAIL"' \
     "$repository_root/deployment/deploy.sh" \
     || fail "le déploiement n'envoie pas l'invitation root demandée"
 
-grep -Fq 'ROOT_ACCOUNT_EMAIL' "$repository_root/deployment/deploy.sh" \
-    || fail "l'adresse du compte root n'est pas obligatoire"
-
-if grep -Fq 'npm run generate-activation-key' "$repository_root/deployment/deploy.sh"; then
-    fail "le déploiement permet encore de contourner l'invitation SMTP"
-fi
-
 dev_paths_output="$(
     env -i \
         PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \

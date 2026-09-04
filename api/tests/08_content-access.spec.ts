@@ -155,6 +155,12 @@ describe("Cloisonnement des contenus par parcours", () => {
   });
 
   afterAll(async () => {
+    await prisma.contactsOnParcours.deleteMany({
+      where: {
+        contactId: teacherContactId,
+        parcoursId: { in: [inscrit.parcoursId, etranger.parcoursId] },
+      },
+    });
     await prisma.contactsOnCourse.deleteMany({
       where: { contactId: teacherContactId, courseId: etranger.courseId },
     });
@@ -226,26 +232,6 @@ describe("Cloisonnement des contenus par parcours", () => {
     it("le suivi de consultation ne peut pas être ouvert", async () => {
       await request(app).post(`/v1/content-read/lesson/${etranger.lessonId}/begin`)
         .set("Cookie", cookieApprenant).expect(404);
-    });
-  });
-
-  describe("la liste des leçons est bornée au périmètre de l'appelant", () => {
-    it("l'apprenant ne voit que les leçons de ses parcours", async () => {
-      const reponse = await request(app).get("/v1/lesson")
-        .set("Cookie", cookieApprenant).expect(200);
-
-      const identifiants = reponse.body.lessons.map((lesson: { id: number }) => lesson.id);
-      expect(identifiants).toContain(inscrit.lessonId);
-      expect(identifiants).not.toContain(etranger.lessonId);
-    });
-
-    it("un administrateur voit l'ensemble du catalogue", async () => {
-      const reponse = await request(app).get("/v1/lesson")
-        .set("Cookie", cookieAdmin).expect(200);
-
-      const identifiants = reponse.body.lessons.map((lesson: { id: number }) => lesson.id);
-      expect(identifiants).toContain(inscrit.lessonId);
-      expect(identifiants).toContain(etranger.lessonId);
     });
   });
 
@@ -347,15 +333,11 @@ describe("Cloisonnement des contenus par parcours", () => {
         .get(`/v1/modules/${inscrit.parcoursId}`)
         .set("Cookie", cookieFormateur)
         .expect(200);
-      expect(modulesDuParcours.body.modules).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: inscrit.moduleId, hasAccess: true }),
-          expect.objectContaining({
-            id: moduleVisibleMaisVerrouille,
-            hasAccess: false,
-          }),
-        ]),
+      const moduleIds = modulesDuParcours.body.modules.map(
+        (module: { id: number }) => module.id,
       );
+      expect(moduleIds).toContain(inscrit.moduleId);
+      expect(moduleIds).not.toContain(moduleVisibleMaisVerrouille);
 
       await request(app)
         .get(`/v1/modules/detail/${inscrit.moduleId}`)

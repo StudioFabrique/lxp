@@ -34,6 +34,11 @@ export const getTemplate = (
     return `<p>Bonjour,</p><p>Confirmez votre nouvelle adresse email en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Valider mon adresse email</a></p><p>Ce lien expire dans 24 heures. Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message.</p>`;
   }
 
+  if (template === "root-email-verification") {
+    link = publicUrl("confirm-email", { token });
+    return `<p>Bonjour,</p><p>Votre compte root ANDRIA a été créé pour l'adresse ${escapeHtml(email ?? "")}.</p><p>Activez-le en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Activer mon compte root</a></p><p>Ce lien expire dans 24 heures. Tant que vous ne l'avez pas utilisé, le compte reste inactif.</p>`;
+  }
+
   if (template === "root-account-init" || template === "root-account") {
     const rootEmail = email ?? "";
     const path = template === "root-account-init" ? "init" : "createRoot";

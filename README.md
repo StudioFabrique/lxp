@@ -42,6 +42,9 @@ L'API de l'application est disponible sur <http://localhost:3000>.
 5. applique les migrations et affiche la clé de création du premier compte
    administrateur.
 
+Après saisie de cette clé dans `/init`, un lien est envoyé à l'adresse indiquée.
+Le compte root reste inactif jusqu'à l'ouverture de ce lien.
+
 ### Commandes courantes
 
 | Action                                    | Commande                                         |

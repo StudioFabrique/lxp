@@ -19,7 +19,7 @@ pipeline {
         string(name: 'LXP_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag LXP, latest ou SHA Jenkins pour un retour arrière')
         string(name: 'LXP_AI_IMAGE', defaultValue: 'studiostep/lxp-ai', trim: true, description: 'Nom complet de l’image ANDRIA-IA')
         string(name: 'LXP_AI_IMAGE_TAG', defaultValue: 'latest', trim: true, description: 'Tag de l’image ANDRIA-IA')
-        string(name: 'ROOT_ACCOUNT_EMAIL', defaultValue: '', trim: true, description: 'Obligatoire : destinataire du lien root. La connexion SMTP est vérifiée avant l’envoi.')
+        string(name: 'ROOT_ACCOUNT_EMAIL', defaultValue: '', trim: true, description: 'Optionnel : envoie à chaque déploiement un lien personnel de création de compte root à cette adresse.')
     }
 
     // Les paramètres sont lus ici par `params`, jamais depuis l'environnement du

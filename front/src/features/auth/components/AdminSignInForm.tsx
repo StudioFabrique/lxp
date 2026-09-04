@@ -28,6 +28,7 @@ const AdminSignInForm = ({
 }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activationEmail, setActivationEmail] = useState("");
 
   const {
     register,
@@ -52,13 +53,19 @@ const AdminSignInForm = ({
         mode === "additional"
           ? onboardingApi.createRootAccount
           : onboardingApi.createFirstAdmin;
-      await createAccount({
+      const response = await createAccount({
         token,
         email: data.email.trim(),
         firstname: data.firstname.trim(),
         lastname: data.lastname.trim(),
         password: data.password,
       });
+
+      if (mode === "first" && response.pendingActivation) {
+        setActivationEmail(data.email.trim());
+        return;
+      }
+
       onSuccess();
     } catch (err: unknown) {
       setError(
@@ -71,6 +78,24 @@ const AdminSignInForm = ({
       setIsLoading(false);
     }
   };
+
+  if (activationEmail) {
+    return (
+      <div className="my-auto flex flex-col gap-4 text-center">
+        <h1 className="text-xl font-bold text-base-content">
+          Activez votre compte root
+        </h1>
+        <p className="text-sm text-base-content/70">
+          Un lien d'activation a été envoyé à {activationEmail}. Consultez
+          votre boîte mail pour terminer la création du compte.
+        </p>
+        <p className="text-xs text-base-content/50">
+          Le compte restera inaccessible tant que cette adresse n'aura pas été
+          validée.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5 my-auto">

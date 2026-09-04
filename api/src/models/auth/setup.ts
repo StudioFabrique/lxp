@@ -6,6 +6,7 @@ import Role from "../../utils/interfaces/db/role.ts";
 import { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { env } from "../../config/env.ts";
+import { sendRootEmailVerification } from "../../services/mailer.ts";
 import { regexMail } from "../../utils/constantes.ts";
 import {
   exactInsensitive,
@@ -107,14 +108,6 @@ async function createRootUser(
     };
   }
 
-  if (!expectedExistingAdmins && payload.purpose !== "root-account") {
-    throw {
-      statusCode: 401,
-      message:
-        "La création du premier compte root nécessite une invitation reçue par email.",
-    };
-  }
-
   if (expectedExistingAdmins && payload.purpose !== "root-account") {
     throw {
       statusCode: 401,
@@ -164,14 +157,15 @@ async function createRootUser(
   }
 
   let createdUser;
+  const requiresEmailVerification = !expectedExistingAdmins;
   try {
     createdUser = await User.create({
       email,
       firstname: input.firstname.toLowerCase(),
       lastname: input.lastname.toLowerCase(),
       password: await hash(input.password, 10),
-      isActive: true,
-      emailVerified: true,
+      isActive: !requiresEmailVerification,
+      emailVerified: !requiresEmailVerification,
       roles: [rootRole._id],
     });
   } catch (error) {
@@ -184,9 +178,29 @@ async function createRootUser(
     throw error;
   }
 
-  await prisma.admin.create({ data: { idMdb: createdUser._id.toString() } });
-  await BlackListedToken.create({ token: input.token });
-  return createdUser._id.toString();
+  const userId = createdUser._id.toString();
+  try {
+    await prisma.admin.create({ data: { idMdb: userId } });
+    await BlackListedToken.create({ token: input.token });
+
+    if (requiresEmailVerification && env.ENVIRONMENT !== "test") {
+      const verificationToken = jwt.sign(
+        { purpose: "root-email-verification", userId, email },
+        env.REGISTER_SECRET,
+        { expiresIn: "24h" },
+      );
+      await sendRootEmailVerification(email, verificationToken);
+    }
+  } catch (error) {
+    await Promise.allSettled([
+      prisma.admin.deleteMany({ where: { idMdb: userId } }),
+      BlackListedToken.deleteOne({ token: input.token }),
+      User.deleteOne({ _id: createdUser._id }),
+    ]);
+    throw error;
+  }
+
+  return userId;
 }
 
 export async function createFirstAdmin(input: FirstAdminInput) {

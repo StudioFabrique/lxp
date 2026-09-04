@@ -15,6 +15,7 @@ import {
 } from "../src/models/auth/setup.ts";
 import { env } from "../src/config/env.ts";
 import { confirmEmailChange } from "../src/models/user/change-email.ts";
+import { confirmRootEmail } from "../src/models/auth/confirm-root-email.ts";
 
 dotenv.config();
 
@@ -332,7 +333,7 @@ describe("HTTP auth", () => {
   });
 
   describe("Initialisation du compte root", () => {
-    test("le premier compte créé par /init reçoit le rôle root", async () => {
+    test("le premier root reste inactif jusqu'à la validation de son email", async () => {
       const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select(
         "_id",
       );
@@ -341,12 +342,11 @@ describe("HTTP auth", () => {
         isActive: true,
       }).select("_id");
       const email = "root-init@test.fr";
-      const token = jwt.sign(
-        { purpose: "root-account", email },
-        env.REGISTER_SECRET,
-        { expiresIn: "5m" },
-      );
+      const token = jwt.sign({ purpose: "first-admin" }, env.REGISTER_SECRET, {
+        expiresIn: "5m",
+      });
       let rootUserId: string | undefined;
+      let verificationToken: string | undefined;
 
       await User.updateMany(
         { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
@@ -363,17 +363,52 @@ describe("HTTP auth", () => {
         });
 
         const rootUser = await User.findById(rootUserId).populate("roles");
+        expect(rootUser).toEqual(
+          expect.objectContaining({
+            email,
+            emailVerified: false,
+            isActive: false,
+          }),
+        );
         expect(rootUser?.roles).toEqual(
           expect.arrayContaining([
             expect.objectContaining({ role: "root", rank: 0 }),
           ]),
         );
+
+        verificationToken = jwt.sign(
+          {
+            purpose: "root-email-verification",
+            userId: rootUserId,
+            email,
+          },
+          env.REGISTER_SECRET,
+          { expiresIn: "24h" },
+        );
+        await confirmRootEmail(verificationToken);
+
+        expect(await User.findById(rootUserId)).toEqual(
+          expect.objectContaining({
+            emailVerified: true,
+            isActive: true,
+          }),
+        );
+        expect(
+          await BlackListedToken.exists({ token: verificationToken }),
+        ).not.toBeNull();
+        await expect(confirmRootEmail(verificationToken)).rejects.toMatchObject({
+          statusCode: 400,
+          message: "Ce lien a déjà été utilisé.",
+        });
       } finally {
         if (rootUserId) {
           await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
           await User.deleteOne({ _id: rootUserId });
         }
         await BlackListedToken.deleteOne({ token });
+        if (verificationToken) {
+          await BlackListedToken.deleteOne({ token: verificationToken });
+        }
         await User.updateMany(
           { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
           { $set: { isActive: true } },

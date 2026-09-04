@@ -1,45 +1,47 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
-const smtpCalls: string[] = [];
-const verify = jest.fn(async () => {
-  smtpCalls.push("verify");
-  return true;
-});
-const sendMail = jest.fn(async () => {
-  smtpCalls.push("send");
+const sendMail = jest.fn(async (_message: unknown) => {
   return { accepted: ["root@test.fr"] };
 });
 
 jest.unstable_mockModule("nodemailer", () => ({
   default: {
-    createTransport: () => ({ verify, sendMail }),
+    createTransport: () => ({ sendMail }),
   },
 }));
+jest.unstable_mockModule("../src/utils/logs/logger.ts", () => ({
+  logger: { error: jest.fn() },
+}));
 
-const { sendRootAccountInvitation } = await import("../src/services/mailer.ts");
+const { sendRootEmailVerification } = await import(
+  "../src/services/mailer.ts"
+);
 
-describe("Invitation SMTP du compte root", () => {
+describe("Activation SMTP du compte root", () => {
   beforeEach(() => {
-    smtpCalls.length = 0;
-    verify.mockClear();
     sendMail.mockClear();
   });
 
-  test("vérifie la connexion SMTP avant d'envoyer l'invitation", async () => {
-    await sendRootAccountInvitation("root@test.fr", "token", true);
+  test("envoie le lien d'activation à l'adresse du root", async () => {
+    await sendRootEmailVerification("root@test.fr", "token");
 
-    expect(smtpCalls).toEqual(["verify", "send"]);
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "root@test.fr",
+        subject: "Activation de votre compte root ANDRIA",
+        html: expect.stringContaining("confirm-email?token=token"),
+      }),
+    );
   });
 
-  test("n'envoie pas l'invitation lorsque la vérification SMTP échoue", async () => {
-    verify.mockRejectedValueOnce(new Error("SMTP indisponible"));
+  test("fait échouer le flux lorsque l'envoi SMTP échoue", async () => {
+    sendMail.mockRejectedValueOnce(new Error("SMTP indisponible"));
 
     await expect(
-      sendRootAccountInvitation("root@test.fr", "token", true),
+      sendRootEmailVerification("root@test.fr", "token"),
     ).rejects.toMatchObject({
-      statusCode: 503,
-      message: "La connexion au serveur SMTP n'a pas pu être vérifiée.",
+      statusCode: 500,
+      message: "Le mail n'a pas pu être envoyé au destinataire",
     });
-    expect(sendMail).not.toHaveBeenCalled();
   });
 });
