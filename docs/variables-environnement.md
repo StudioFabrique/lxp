@@ -22,8 +22,10 @@ Fichier : `api/.env`
 
 | Variable                            | Valeur locale                                              | Rôle                                         |
 | ----------------------------------- | ---------------------------------------------------------- | -------------------------------------------- |
-| `DATABASE_URL`                      | `postgresql://postgres:postgres@localhost:5500/lxp`        | Connexion de l'API à PostgreSQL.             |
-| `MONGO_LOCAL_URL`                   | `mongodb://root:root@localhost:27000/lxp?authSource=admin` | Connexion de l'API à MongoDB.                |
+| `POSTGRES_USER`                     | `postgres`                                                 | Compte PostgreSQL utilisé pour générer l'URL. |
+| `POSTGRES_PASSWORD`                 | `postgres`                                                 | Mot de passe PostgreSQL utilisé pour générer l'URL. |
+| `MONGO_ADMIN_USERNAME`              | `root`                                                     | Compte MongoDB utilisé pour générer l'URL.   |
+| `MONGO_ADMIN_PASSWORD`              | `root`                                                     | Mot de passe MongoDB utilisé pour générer l'URL. |
 | `SECRET`                            | une valeur locale longue                                   | Signe les sessions.                          |
 | `REGISTER_SECRET`                   | une autre valeur locale longue                             | Signe les liens de création de compte.       |
 | `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `30`                                                       | Durée de validité des clés root, en minutes. |
@@ -32,6 +34,11 @@ Fichier : `api/.env`
 
 `NODE_ENV` n'a pas besoin d'être ajouté au fichier. Les commandes npm le
 définissent pour le développement, les tests et la production.
+
+L'API calcule `DATABASE_URL` et `MONGO_LOCAL_URL` en mémoire. Par défaut, elle
+utilise PostgreSQL sur `localhost:5500`, MongoDB sur `localhost:27000` et la
+base `lxp`. L'API accepte encore les anciennes URL explicites pour
+compatibilité. Vous pouvez les retirer de `api/.env`.
 
 ### Bases Docker locales
 
@@ -51,8 +58,8 @@ variable manque.
 | `ANDRIA_POSTGRES_PASSWORD` | `andria`          | Mot de passe de la base IA.       |
 | `ANDRIA_POSTGRES_DB`       | `lxp_ai`          | Nom de la base IA.                |
 
-Si vous changez un identifiant, mettez aussi à jour l'URL de connexion qui
-l'utilise.
+Si vous changez un identifiant, l'API recalcule l'URL de connexion au prochain
+démarrage.
 
 ### Front
 
@@ -149,12 +156,8 @@ la colonne « Source ». Elles sont obligatoires en production, à l'exception d
 | `SECRET`                            | `runtime` | Secret long et différent pour les sessions.                                                  |
 | `POSTGRES_USER`                     | `runtime` | Compte PostgreSQL du LXP.                                                                    |
 | `POSTGRES_PASSWORD`                 | `runtime` | Mot de passe PostgreSQL du LXP.                                                              |
-| `POSTGRES_DB`                       | `runtime` | Nom de la base PostgreSQL du LXP.                                                            |
-| `DATABASE_URL`                      | `runtime` | URL complète vers `db-pg:5432`.                                                              |
 | `MONGO_ADMIN_USERNAME`              | `runtime` | Compte administrateur MongoDB.                                                               |
 | `MONGO_ADMIN_PASSWORD`              | `runtime` | Mot de passe MongoDB.                                                                        |
-| `MONGO_DATABASE`                    | `runtime` | Nom de la base MongoDB.                                                                      |
-| `MONGO_LOCAL_URL`                   | `runtime` | URL complète vers `db-mongo:27017` avec `authSource=admin`.                                  |
 | `MAILER_EMAIL`                      | `mailer`  | Compte de connexion SMTP.                                                                    |
 | `MAILER_PASSWORD`                   | `mailer`  | Mot de passe SMTP.                                                                           |
 | `MAILER_SMTP`                       | `mailer`  | Nom du serveur SMTP.                                                                         |
@@ -166,6 +169,10 @@ la colonne « Source ». Elles sont obligatoires en production, à l'exception d
 | `LXP_IMAGE_TAG`                     | pipeline  | Tag de l'image du LXP. Utilisez un tag fixe pour pouvoir revenir en arrière.                 |
 | `LXP_DEPLOYMENT_NAME`               | pipeline  | Nom stable de la stack, des conteneurs et des volumes.                                       |
 
+`POSTGRES_DB` et `MONGO_DATABASE` sont facultatives et valent `lxp` par
+défaut. Le pipeline génère et encode `DATABASE_URL` et `MONGO_LOCAL_URL` ; ne
+les ajoutez pas dans Infisical.
+
 ### Variables requises avec l'IA
 
 Le script déploie la couche IA quand `DEMO_MODE=false`. Il exige alors toutes
@@ -175,9 +182,6 @@ les variables de ce tableau, même si `DISABLE_AI_FEATURES=true`.
 | -------------------------- | ----------------------------------------------------------------------------------- |
 | `ANDRIA_POSTGRES_USER`     | Compte PostgreSQL du service IA.                                                    |
 | `ANDRIA_POSTGRES_PASSWORD` | Mot de passe PostgreSQL du service IA.                                              |
-| `ANDRIA_POSTGRES_DB`       | Nom de la base IA.                                                                  |
-| `ANDRIA_AI_DB_URL`         | URL complète vers `db-ai:5432`.                                                     |
-| `LXP_DB_URL`               | URL de la base LXP lue par le service IA. Un compte en lecture seule est conseillé. |
 | `DOCKER_IA_API_BASE_URL`   | Adresse interne `http://ai:8000`.                                                   |
 | `DOCKER_IA_AUTH_SECRET`    | Secret partagé avec `SECRET_KEY`.                                                   |
 | `SECRET_KEY`               | Même valeur que `DOCKER_IA_AUTH_SECRET`.                                            |
@@ -186,6 +190,12 @@ les variables de ce tableau, même si `DISABLE_AI_FEATURES=true`.
 | `LXP_PUBLIC_BASE`          | Adresse publique du LXP, sans `/` final.                                            |
 | `LXP_AI_IMAGE`             | Nom de l'image ANDRIA-IA, fourni par le pipeline.                                   |
 | `LXP_AI_IMAGE_TAG`         | Tag de l'image ANDRIA-IA, fourni par le pipeline.                                   |
+
+`ANDRIA_POSTGRES_DB` est facultative et vaut `lxp_ai` par défaut. Le pipeline
+calcule `ANDRIA_AI_DB_URL` avec ces identifiants et fournit `LXP_DB_URL` à
+partir du compte PostgreSQL du LXP. Pour conserver un accès en lecture seule,
+définissez la paire facultative `LXP_DB_USER` et `LXP_DB_PASSWORD` ; l'URL est
+alors calculée avec ce compte.
 
 Réglages facultatifs de la couche IA :
 
@@ -231,8 +241,9 @@ démonstration.
 
 | Variable                 | Obligatoire              | Dossier Infisical                         | Rôle                       |
 | ------------------------ | ------------------------ | ----------------------------------------- | -------------------------- |
-| `REGISTRY_USER`          | si le registre est privé | `/ci`                                     | Compte du registre Docker. |
-| `REGISTRY_TOKEN`         | si le registre est privé | `/ci`                                     | Jeton du registre Docker.  |
+| `REGISTRY_USER`          | si le registre est privé | dev:`/ci`, production:`/<instance>/ci`    | Compte du registre Docker. |
+| `REGISTRY_TOKEN`         | si le registre est privé | même dossier                              | Jeton du registre Docker.  |
+| `REGISTRY_URL`           | non                      | même dossier                              | Registre alternatif, par exemple `ghcr.io`; vide pour Docker Hub. |
 | `DEPLOY_SSH_HOST`        | pour un serveur distant  | `dev:/runtime`, production:`<préfixe>/ci` | Nom ou adresse du serveur. |
 | `DEPLOY_SSH_USER`        | avec `DEPLOY_SSH_HOST`   | même dossier                              | Compte SSH.                |
 | `DEPLOY_SSH_PORT`        | non                      | même dossier                              | Port SSH, `22` par défaut. |
@@ -254,7 +265,7 @@ Jenkins demande les valeurs suivantes :
 | `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET` | Secret de la Machine Identity, fourni par le credential Jenkins.           |
 | `INFISICAL_PROJECT_ID`                   | Identifiant du projet LXP.                                                 |
 | `INFISICAL_ENVIRONMENT`                  | `dev`, `pre-prod` (Caddy) ou `prod`.                                       |
-| `INFISICAL_PATH_PREFIX`                  | Préfixe d'une cible hors développement, par exemple `/instances/<slug>`.   |
+| `INFISICAL_PATH_PREFIX`                  | Instance hors développement au premier niveau, par exemple `/client-a`.    |
 | `INFISICAL_DOMAIN`                       | `https://eu.infisical.com` par défaut.                                     |
 | `INFISICAL_CREDENTIAL_ID`                | Nom du credential Jenkins. La valeur proposée est `INFISICAL_CREDENTIALS`. |
 | `ROOT_ACCOUNT_EMAIL`                     | Optionnel. Adresse qui reçoit un nouveau lien root après chaque déploiement. |
@@ -267,19 +278,24 @@ GitHub Actions demande trois variables dans l'environnement GitHub
 | `INFISICAL_IDENTITY_ID`  | Identité OIDC autorisée à lire les secrets.                                                    |
 | `INFISICAL_PROJECT_SLUG` | Nom du projet Infisical.                                                                       |
 | `APP_HOST`               | Domaine du LXP de développement. Le workflow utilise `lxp.dev.step.eco` si la variable manque. |
+| `LXP_IMAGE`              | Facultatif. Nom complet de l'image LXP si elle n'est pas sur Docker Hub.                        |
+| `LXP_AI_IMAGE`           | Facultatif. Nom complet de l'image IA si elle n'est pas sur Docker Hub.                         |
 
 ### Répartition dans Infisical
 
-| Cible         | Dossiers lus                                                     |
-| ------------- | ---------------------------------------------------------------- |
-| Développement | `/ci`, `/runtime`, `/mailer` et `/backup`                                    |
-| Production    | `/ci`, `<préfixe>/ci`, `<préfixe>/runtime`, `/mailer` et `<préfixe>/backup` |
+| Cible         | Dossiers lus                                                              |
+| ------------- | ------------------------------------------------------------------------- |
+| Développement | `/ci`, `/runtime`, `/mailer` et `/backup`                                 |
+| Production    | `/<instance>/ci`, `/<instance>/runtime`, `/mailer` et `/<instance>/backup` |
 
-- `/ci` contient seulement `REGISTRY_USER` et `REGISTRY_TOKEN` ;
+- le dossier `ci` contient `REGISTRY_USER`, `REGISTRY_TOKEN`, éventuellement
+  `REGISTRY_URL`, et l'accès SSH de l'instance en production ;
 - `runtime` contient la configuration de l'application ;
 - `/mailer` contient les six variables `MAILER_*`, partagées avec Jenkins ;
-- le dossier `ci` préfixé contient l'accès SSH de la cible ;
 - `backup` contient les variables de sauvegarde.
+
+Il n'existe plus de `/ci` global en production. Chaque instance est placée
+directement à la racine : `/client-a`, et non `/instances/client-a`.
 
 Les variables calculées par un pipeline utilisent le préfixe `PIPELINE_`. Ne
 les ajoutez pas dans Infisical. Les scripts les remettent sous leur nom normal

@@ -31,9 +31,9 @@ concurrency:
 env:
   # Le préfixe protège les métadonnées calculées par le workflow. `deploy.sh`
   # les restaure après l'injection Infisical, avant d'appeler Compose.
-  PIPELINE_LXP_IMAGE: studiostep/lxp
+  PIPELINE_LXP_IMAGE: ${{ vars.LXP_IMAGE || 'studiostep/lxp' }}
   PIPELINE_LXP_IMAGE_TAG: ${{ inputs.image_tag || format('dev-{0}', github.sha) }}
-  PIPELINE_LXP_AI_IMAGE: studiostep/lxp-ai
+  PIPELINE_LXP_AI_IMAGE: ${{ vars.LXP_AI_IMAGE || 'studiostep/lxp-ai' }}
   PIPELINE_LXP_AI_IMAGE_TAG: latest
   PIPELINE_LXP_DEPLOYMENT_NAME: lxp-dev
   PIPELINE_APP_HOST: ${{ vars.APP_HOST || 'lxp.dev.step.eco' }}
@@ -111,9 +111,10 @@ jobs:
           secret-path: /ci
           domain: https://eu.infisical.com
 
-      - name: Log in to Docker Hub
+      - name: Log in to the image registry
         uses: docker/login-action@v3
         with:
+          registry: ${{ env.REGISTRY_URL || 'docker.io' }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_TOKEN }}
 
@@ -242,4 +243,4 @@ jobs:
       - name: Remove the local credentials
         if: always()
         run: |
-          docker logout >/dev/null 2>&1 || true
+          docker logout "${REGISTRY_URL:-docker.io}" >/dev/null 2>&1 || true

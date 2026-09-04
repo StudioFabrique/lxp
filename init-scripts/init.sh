@@ -1,4 +1,6 @@
 #!/bin/bash
+. ./deployment/database-urls.sh
+
 restore_data=false
 demo_mode=false
 # Dossier des données à restaurer. Le jeu de démonstration vit à part et est
@@ -46,11 +48,13 @@ if [ -f "./api/.env" ]; then
   POSTGRES_USER=$(grep '^POSTGRES_USER=' ./api/.env | cut -d'=' -f2)
   POSTGRES_PASSWORD=$(grep '^POSTGRES_PASSWORD=' ./api/.env | cut -d'=' -f2)
   POSTGRES_DB=$(grep '^POSTGRES_DB=' ./api/.env | cut -d'=' -f2)
-  if [ "$restore_data" = true ]; then
-    MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
-    MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
-  fi
+  MONGO_ADMIN_USERNAME=$(grep '^MONGO_ADMIN_USERNAME=' ./api/.env | cut -d'=' -f2)
+  MONGO_ADMIN_PASSWORD=$(grep '^MONGO_ADMIN_PASSWORD=' ./api/.env | cut -d'=' -f2)
 fi
+
+# Prisma a besoin de DATABASE_URL, mais le développeur ne conserve que les
+# identifiants dans api/.env. La valeur n'existe que dans ce processus.
+database_build_urls localhost 5500 localhost 27000
 
 # Naviguer vers le repertoire api pour la suite
 cd api

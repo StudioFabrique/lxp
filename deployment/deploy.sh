@@ -19,6 +19,8 @@ set -eu
 # l'environnement, jeton Infisical compris.
 set +x
 
+. "$(dirname "$0")/database-urls.sh"
+
 die() {
     printf '%s\n' "$*" >&2
     exit 1
@@ -123,7 +125,7 @@ AI_COMPOSE_FILE="deployment/$DEPLOY_MODE/compose.ai.yml"
 # l'environnement d'un déploiement de démonstration.
 AI_SETTINGS="
 ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-ANDRIA_AI_DB_URL LXP_DB_URL
+ANDRIA_AI_DB_URL LXP_DB_USER LXP_DB_PASSWORD LXP_DB_URL
 DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
 MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY MISTRAL_MODEL
 LXP_PUBLIC_BASE DISABLE_AI_FEATURES
@@ -162,8 +164,8 @@ fi
 
 settings="
 PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
-POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL
-MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD MONGO_DATABASE MONGO_LOCAL_URL
+POSTGRES_USER POSTGRES_PASSWORD
+MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD
 MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
 LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
 "
@@ -180,8 +182,7 @@ if [ "$DEMO_ENABLED" = "true" ]; then
     settings="$settings DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
 else
     settings="$settings
-    ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD ANDRIA_POSTGRES_DB
-    ANDRIA_AI_DB_URL LXP_DB_URL
+    ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD
     DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE
     LXP_AI_IMAGE LXP_AI_IMAGE_TAG
@@ -189,6 +190,20 @@ else
 fi
 
 require "$settings"
+
+if { [ -n "${LXP_DB_USER:-}" ] && [ -z "${LXP_DB_PASSWORD:-}" ]; } || \
+   { [ -z "${LXP_DB_USER:-}" ] && [ -n "${LXP_DB_PASSWORD:-}" ]; }; then
+    die "LXP_DB_USER et LXP_DB_PASSWORD doivent être définies ensemble."
+fi
+
+# Les URL complètes sont des données dérivées : seules les paires
+# utilisateur/mot de passe sont conservées dans Infisical. Les noms de bases
+# gardent des valeurs conventionnelles, surchargeables si nécessaire.
+if [ "$AI_ENABLED" = "true" ]; then
+    database_build_urls db-pg 5432 db-mongo 27017 db-ai 5432
+else
+    database_build_urls db-pg 5432 db-mongo 27017
+fi
 
 if [ "$DEPLOY_MODE" = "caddy" ]; then
     # `APP_HOST` alimente les labels du proxy partagé : un nom mal formé y
@@ -350,7 +365,11 @@ fi
 compose config --quiet
 
 if [ -n "${REGISTRY_USER:-}" ] && [ -n "${REGISTRY_TOKEN:-}" ]; then
-    printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+    if [ -n "${REGISTRY_URL:-}" ]; then
+        printf '%s' "$REGISTRY_TOKEN" | docker login "$REGISTRY_URL" --username "$REGISTRY_USER" --password-stdin
+    else
+        printf '%s' "$REGISTRY_TOKEN" | docker login --username "$REGISTRY_USER" --password-stdin
+    fi
 fi
 
 echo "Récupération des images..."
