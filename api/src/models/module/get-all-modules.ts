@@ -27,6 +27,7 @@ export default async function getAllModules(scope: AccessScope = null) {
           title: true,
           order: true,
           isPublished: true,
+          visibility: true,
           lessons: {
             orderBy: { order: "asc" },
             take: 1,

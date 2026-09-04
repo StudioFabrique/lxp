@@ -42,6 +42,13 @@ const courseWithFourLessons: CustomCourse = {
   ],
 };
 
+const invisibleCourse: CustomCourse = {
+  ...course,
+  id: 2,
+  title: "Cours masqué",
+  visibility: false,
+};
+
 describe("CourseList", () => {
   it("affiche chaque cours avec ses leçons en sous-éléments", () => {
     const markup = renderToStaticMarkup(
@@ -81,5 +88,31 @@ describe("CourseList", () => {
     expect(markup).toContain("Troisième leçon");
     expect(markup).not.toContain("Quatrième leçon");
     expect(markup).toContain("Afficher plus de leçons (1)");
+  });
+
+  it("signale un cours invisible avec une icône discrète", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList
+          coursesList={[invisibleCourse]}
+          onRefreshCourses={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('aria-label="Cours invisible"');
+    expect(markup).not.toContain('data-tip="Cours invisible"');
+  });
+
+  it("affiche un menu d’actions sur chaque leçon", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('aria-label="Actions pour Première leçon"');
+    expect(markup).toContain('aria-label="Actions pour Deuxième leçon"');
+    expect(markup).toContain("ml-auto self-center justify-self-end");
   });
 });

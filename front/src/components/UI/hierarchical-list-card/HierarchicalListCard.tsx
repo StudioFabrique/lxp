@@ -11,6 +11,7 @@ import {
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
+  titleAccessory?: ReactNode;
   truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
@@ -28,6 +29,7 @@ type HierarchicalListCardProps = {
 const HierarchicalListCard = ({
   label,
   title,
+  titleAccessory,
   truncateTitle,
   description,
   action,
@@ -74,14 +76,19 @@ const HierarchicalListCard = ({
                         {label}
                       </p>
                     ) : null}
-                    <h4
-                      className={cn(
-                        "first-letter:uppercase text-xl font-bold",
-                        { truncate: truncateTitle },
-                      )}
-                    >
-                      {title}
-                    </h4>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <h4
+                        className={cn(
+                          "min-w-0 first-letter:uppercase text-xl font-bold",
+                          { truncate: truncateTitle },
+                        )}
+                      >
+                        {title}
+                      </h4>
+                      {titleAccessory ? (
+                        <div className="shrink-0">{titleAccessory}</div>
+                      ) : null}
+                    </div>
                     {description ? (
                       <div className="mt-1 text-xs opacity-60">
                         {description}
@@ -96,7 +103,6 @@ const HierarchicalListCard = ({
                 <HierarchicalListRow
                   key={item.id}
                   item={item}
-                  showTitleTooltip={!fullWidth}
                   dismissOverflow={() => {}}
                 />
               ))}
@@ -151,7 +157,6 @@ const HierarchicalListCard = ({
               <HierarchicalListRow
                 key={item.id}
                 item={item}
-                showTitleTooltip={false}
                 dismissOverflow={() => setShowRemainingItems(false)}
               />
             ))}

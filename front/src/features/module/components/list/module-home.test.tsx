@@ -31,6 +31,7 @@ const module: ModuleListItem = {
       title: "Premier cours",
       order: 0,
       isPublished: true,
+      visibility: true,
       firstLessonId: 6,
     },
     {
@@ -38,6 +39,7 @@ const module: ModuleListItem = {
       title: "Deuxième cours",
       order: 1,
       isPublished: false,
+      visibility: false,
     },
   ],
 };
@@ -51,12 +53,14 @@ const moduleWithFourCourses: ModuleListItem = {
       title: "Troisième cours",
       order: 2,
       isPublished: true,
+      visibility: true,
     },
     {
       id: 7,
       title: "Quatrième cours",
       order: 3,
       isPublished: true,
+      visibility: true,
     },
   ],
 };
@@ -120,5 +124,19 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("lg:grid-cols-2");
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
+  });
+
+  it("signale les cours invisibles et affiche leurs menus d’actions", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('aria-label="Cours invisible"');
+    expect(markup).not.toContain('data-tip="Cours invisible"');
+    expect(markup).toContain('aria-label="Actions pour Premier cours"');
+    expect(markup).toContain('aria-label="Actions pour Deuxième cours"');
+    expect(markup).toContain("ml-auto self-center justify-self-end");
   });
 });

@@ -9,6 +9,8 @@ import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
+import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
@@ -89,17 +91,33 @@ const ModuleHomeList = ({
               items={module.courses.map((course) => ({
                 id: course.id,
                 title: course.title,
+                titleAccessory: !course.visibility ? (
+                  <InvisibleIndicator label="Cours invisible" />
+                ) : null,
                 description: `Cours ${course.order + 1}`,
                 subDescription: course.isPublished ? (
                   <span className="text-success">Publié</span>
                 ) : (
                   <span className="text-warning">Non publié</span>
                 ),
-                icon: <BookMarked stroke-width="1.5" />,
+                icon: <BookMarked strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${module.id}`,
                 state: course.firstLessonId
                   ? { lessonId: course.firstLessonId }
                   : undefined,
+                action: (dismissOverflow) => (
+                  <HierarchicalListItemActions
+                    title={course.title}
+                    to={`/admin/parcours/module/${module.id}`}
+                    state={
+                      course.firstLessonId
+                        ? { lessonId: course.firstLessonId }
+                        : undefined
+                    }
+                    navigationLabel="Accéder au cours"
+                    dismissOverflow={dismissOverflow}
+                  />
+                ),
               }))}
               maxItemsShown={3}
               emptyMessage="Aucun cours associé"

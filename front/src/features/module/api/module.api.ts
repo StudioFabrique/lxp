@@ -12,6 +12,7 @@ export type ModuleListItem = {
     title: string;
     order: number;
     isPublished: boolean;
+    visibility: boolean | null;
     firstLessonId?: number;
   }>;
 };

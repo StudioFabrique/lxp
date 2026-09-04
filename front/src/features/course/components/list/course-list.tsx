@@ -4,6 +4,8 @@ import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
+import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import Modal from "../../../../components/UI/modal/modal";
 import Pagination from "../../../../components/UI/pagination/pagination";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
@@ -71,6 +73,11 @@ export default function CourseList({
               key={course.id}
               label="Cours"
               title={course.title}
+              titleAccessory={
+                !course.visibility ? (
+                  <InvisibleIndicator label="Cours invisible" />
+                ) : null
+              }
               description={
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span>{course.module}</span>
@@ -116,9 +123,18 @@ export default function CourseList({
                 id: lesson.id,
                 title: lesson.title,
                 description: `Leçon ${lesson.order + 1}`,
-                icon: <BookOpen stroke-width="1.5" />,
+                icon: <BookOpen strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
+                action: (dismissOverflow) => (
+                  <HierarchicalListItemActions
+                    title={lesson.title}
+                    to={`/admin/parcours/module/${course.moduleId}`}
+                    state={{ lessonId: lesson.id }}
+                    navigationLabel="Accéder à la leçon"
+                    dismissOverflow={dismissOverflow}
+                  />
+                ),
               }))}
               maxItemsShown={3}
               emptyMessage="Aucune leçon associée"

@@ -63,11 +63,11 @@ describe("LastParcoursItem", () => {
     expect(markup).toContain("min-h-52");
   });
 
-  it("affiche le titre complet du parcours au survol", () => {
+  it("n’ajoute pas de tooltip aux sous-éléments", () => {
     const markup = renderCard();
 
-    expect(markup).toContain("tooltip tooltip-bottom tooltip-start");
-    expect(markup).toContain('data-tip="Parcours test"');
+    expect(markup).not.toContain("tooltip");
+    expect(markup).not.toContain('data-tip="Parcours test"');
   });
 
   it("ne montre pas le menu d’administration dans la vue étudiante", () => {

@@ -7,7 +7,7 @@ export default interface CustomCourse {
   parcours: string;
   updatedAt: string;
   isPublished: boolean;
-  visibility: boolean;
+  visibility: boolean | null;
   lessons: Array<{
     id: number;
     title: string;
