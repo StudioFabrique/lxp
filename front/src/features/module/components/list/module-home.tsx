@@ -8,9 +8,11 @@ import {
 import { Link } from "react-router";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
-import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card";
-import Pagination from "../../../../components/UI/pagination/pagination";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
+import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import TablePagination from "../../../../components/table/TablePagination";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../utils/helpers/user-role";
@@ -20,35 +22,33 @@ import ModuleHeader from "./module-header";
 type ModuleHomeListProps = {
   modulesList: ModuleListItem[];
   onDeleteModule: (module: ModuleListItem) => void;
+  onDeleteCourse: (
+    course: ModuleListItem["courses"][number] & { moduleTitle: string },
+  ) => void;
 };
 
 const ModuleHomeList = ({
   modulesList,
   onDeleteModule,
+  onDeleteCourse,
 }: ModuleHomeListProps) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
-  const { list, page, totalPages, setPage } = useEagerLoadingList(
-    modulesList,
-    "title",
-    12,
-  );
+  const { list, limit, page, totalPages, setLimit, setPage } =
+    useEagerLoadingList(modulesList, "title", 15, "id", "sidebar-modules");
 
   return (
     <main className="flex w-full flex-col gap-8">
       <ModuleHeader />
 
       {list && list.length > 0 ? (
-        <section
-          className={`grid items-start gap-5 ${
-            isTeacher ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
-          }`}
-        >
+        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as ModuleListItem[]).map((module) => (
             <HierarchicalListCard
               key={module.id}
               label="Module"
               title={module.title}
+              truncateTitle
               description={
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   <span>{module.parcours}</span>
@@ -59,9 +59,9 @@ const ModuleHomeList = ({
                   <PermissionGuard action="read" object="module">
                     <Link
                       className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip="Prévisualiser le module"
+                      data-tip="Accéder au module"
                       to={`/admin/parcours/module/${module.id}`}
-                      aria-label={`Prévisualiser le module ${module.title}`}
+                      aria-label={`Accéder au module ${module.title}`}
                     >
                       <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>
@@ -92,22 +92,59 @@ const ModuleHomeList = ({
               items={module.courses.map((course) => ({
                 id: course.id,
                 title: course.title,
+                titleAccessory: !course.visibility ? (
+                  <InvisibleIndicator label="Cours invisible" />
+                ) : null,
                 description: `Cours ${course.order + 1}`,
                 subDescription: course.isPublished ? (
                   <span className="text-success">Publié</span>
                 ) : (
                   <span className="text-warning">Non publié</span>
                 ),
-                icon: <BookMarked />,
+                icon: <BookMarked strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${module.id}`,
                 state: course.firstLessonId
                   ? { lessonId: course.firstLessonId }
                   : undefined,
+                action: (dismissOverflow, menuControl) => (
+                  <HierarchicalListItemActions
+                    title={course.title}
+                    menuControl={menuControl}
+                    actions={[
+                      {
+                        label: "Accéder au cours",
+                        icon: <SquareArrowRightEnter />,
+                        to: `/admin/parcours/module/${module.id}`,
+                        state: course.firstLessonId
+                          ? { lessonId: course.firstLessonId }
+                          : undefined,
+                      },
+                      {
+                        label: "Modifier le cours",
+                        icon: <Pencil />,
+                        to: `/admin/parcours/module/${module.id}?editCourseId=${course.id}`,
+                        permission: { action: "update", object: "course" },
+                      },
+                      {
+                        label: "Supprimer le cours",
+                        icon: <Trash2 />,
+                        onSelect: () =>
+                          onDeleteCourse({
+                            ...course,
+                            moduleTitle: module.title,
+                          }),
+                        destructive: true,
+                        permission: { action: "delete", object: "course" },
+                      },
+                    ]}
+                    dismissOverflow={dismissOverflow}
+                  />
+                ),
               }))}
+              maxItemsShown={3}
               emptyMessage="Aucun cours associé"
               moreItemsLabel={(count) => `Afficher plus de cours (${count})`}
               overflowTitle={`Autres cours de ${module.title}`}
-              fullWidth={isTeacher}
             />
           ))}
         </section>
@@ -117,8 +154,24 @@ const ModuleHomeList = ({
         />
       )}
 
-      {totalPages > 1 ? (
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      {list && list.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Modules : ${modulesList.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
       ) : null}
     </main>
   );

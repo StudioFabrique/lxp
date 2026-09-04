@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useParams, useSearchParams } from "react-router";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -11,6 +18,7 @@ import { scrollToTop } from "../../../../../utils/helpers/scroll-to-top";
 import {
   moduleReducer,
   initialState,
+  withRequiredContact,
   withSelectedModuleAssociations,
 } from "./useNewModuleReducer";
 import type SuccessWithMessage from "../../../../../../src/utils/interfaces/success-with-message";
@@ -24,6 +32,9 @@ import { parcoursApi } from "../../../api/parcours.api";
 import { useQueryClient } from "@tanstack/react-query";
 import { parcoursKeys } from "../../../api/parcours.keys";
 import { emitOnboardingEvent } from "../../../../onboarding/onboarding-events";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
+import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 
 const emptyModuleFormValues = {
   moduleId: undefined,
@@ -34,6 +45,7 @@ const emptyModuleFormValues = {
 };
 
 const useNewModule = () => {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const moduleIdParam = searchParams.get("moduleId");
@@ -50,6 +62,9 @@ const useNewModule = () => {
   const [error, setError] = useState<string>("");
 
   const [state, dispatch] = useReducer(moduleReducer, initialState);
+  const currentTeacherContact = isTeacherUser(user)
+    ? state.parcours?.contacts.find((contact) => contact.idMdb === user?._id)
+    : undefined;
 
   const {
     register,
@@ -70,11 +85,10 @@ const useNewModule = () => {
       const data = await parcoursApi.queries.getModules(+id!);
       dispatch({ type: "SET_MODULES", payload: data.modules });
       dispatch({ type: "SET_PARCOURS", payload: data.parcoursData });
-    } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Erreur inconnue";
-      setError(message);
+    } catch (error) {
+      setError(
+        getApiErrorMessage(error, "Erreur lors du chargement des modules"),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -132,8 +146,10 @@ const useNewModule = () => {
           }),
         ]);
         scrollToTop();
-      } catch {
-        toast.error("Erreur lors de la création du module");
+      } catch (error) {
+        toast.error(
+          getApiErrorMessage(error, "Erreur lors de la création du module"),
+        );
       }
     });
   };
@@ -146,8 +162,11 @@ const useNewModule = () => {
 
   const handleCreateNewModule = useCallback(() => {
     reset(emptyModuleFormValues);
-    dispatch({ type: "START_CREATE" });
-  }, [reset]);
+    dispatch({
+      type: "START_CREATE",
+      payload: currentTeacherContact ? [currentTeacherContact] : [],
+    });
+  }, [currentTeacherContact, reset]);
 
   const showDeleteModal = (id: number) => {
     const item = state.modules.find((module) => module.id === id);
@@ -165,8 +184,10 @@ const useNewModule = () => {
         queryKey: parcoursKeys.detail(+id!),
       });
       toast.success(data.message);
-    } catch {
-      toast.error("Erreur lors de la suppression du module");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Erreur lors de la suppression du module"),
+      );
     }
   };
 
@@ -194,8 +215,10 @@ const useNewModule = () => {
       dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
-    } catch {
-      toast.error("Erreur lors du chargement des modules");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Erreur lors du chargement des modules"),
+      );
     }
   };
 
@@ -281,8 +304,10 @@ const useNewModule = () => {
           toast.success(data.message);
           scrollToTop();
         }
-      } catch {
-        toast.error("Erreur lors de la duplication du module");
+      } catch (error) {
+        toast.error(
+          getApiErrorMessage(error, "Erreur lors de la duplication du module"),
+        );
       }
     });
   };
@@ -326,8 +351,10 @@ const useNewModule = () => {
           reset();
           scrollToTop();
         }
-      } catch {
-        toast.error("Erreur lors de la mise à jour du module");
+      } catch (error) {
+        toast.error(
+          getApiErrorMessage(error, "Erreur lors de la mise à jour du module"),
+        );
       }
     });
   };
@@ -344,6 +371,7 @@ const useNewModule = () => {
       return;
     }
 
+    if (!state.parcours) return;
     if (handledCreateRef.current) return;
 
     handledCreateRef.current = true;
@@ -357,6 +385,7 @@ const useNewModule = () => {
     searchParams,
     setSearchParams,
     shouldCreateModule,
+    state.parcours,
   ]);
 
   useEffect(() => {
@@ -425,7 +454,11 @@ const useNewModule = () => {
     handleCancelForm,
     handleCreateNewModule,
     setCurrentContacts: (contacts: Contact[]) =>
-      dispatch({ type: "SET_CURRENT_CONTACTS", payload: contacts }),
+      dispatch({
+        type: "SET_CURRENT_CONTACTS",
+        payload: withRequiredContact(contacts, currentTeacherContact),
+      }),
+    lockedContactId: currentTeacherContact?.id,
     setCurrentSkills: (skills: Skill[]) =>
       dispatch({ type: "SET_CURRENT_SKILLS", payload: skills }),
     setFile: (file: File | null) =>

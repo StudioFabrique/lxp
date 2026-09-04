@@ -21,7 +21,7 @@ const showFormationMutationError = (error: FormationMutationError) => {
   toast.error(
     error.response?.data?.message ??
       error.response?.data?.errors?.[0]?.msg ??
-      "La formation n’a pas pu être enregistrée.",
+      "La formation n'a pas pu être enregistrée.",
   );
 };
 
@@ -40,9 +40,8 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
     null,
   );
-  const [createdFormation, setCreatedFormation] = useState<FormationItem | null>(
-    null,
-  );
+  const [createdFormation, setCreatedFormation] =
+    useState<FormationItem | null>(null);
 
   const { data: allTags = [], refetch: refetchTags } = useQuery({
     queryKey: ["formation-tags"],
@@ -102,9 +101,7 @@ export function useFormationForm(options: UseFormationFormOptions = {}) {
         return;
       }
 
-      setCurrentTags((current) =>
-        addPendingTag(current, allTags, committed),
-      );
+      setCurrentTags((current) => addPendingTag(current, allTags, committed));
       setTagInputState(pending);
     },
     [allTags],

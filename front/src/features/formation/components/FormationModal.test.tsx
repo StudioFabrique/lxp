@@ -40,7 +40,9 @@ vi.mock("../hooks/useFormationForm", () => ({
 }));
 
 vi.mock("../../../components/UI/modal/modal", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("./FormationForm", () => ({
@@ -59,22 +61,20 @@ afterEach(() => {
   mocks.cancelEdit.mockReset();
 });
 
-describe("FormationModal pendant l’onboarding", () => {
-  it("se ferme lorsque le tutoriel revient à l’étape précédente", () => {
+describe("FormationModal pendant l'onboarding", () => {
+  it("se ferme lorsque le tutoriel revient à l'étape précédente", () => {
     const container = document.createElement("div");
     const onClose = vi.fn();
     root = createRoot(container);
 
     act(() => root?.render(<FormationModal onClose={onClose} />));
-    act(() =>
-      emitOnboardingEvent({ type: "formation_modal_close_requested" }),
-    );
+    act(() => emitOnboardingEvent({ type: "formation_modal_close_requested" }));
 
     expect(mocks.cancelEdit).toHaveBeenCalledOnce();
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it("prévient le tutoriel lorsque l’utilisateur annule", () => {
+  it("prévient le tutoriel lorsque l'utilisateur annule", () => {
     const container = document.createElement("div");
     const onClose = vi.fn();
     const events: OnboardingEventDetail[] = [];

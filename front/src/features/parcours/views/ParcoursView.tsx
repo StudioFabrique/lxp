@@ -1,5 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { Fragment, useContext, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import Error404 from "../../../components/error404";
@@ -15,11 +17,21 @@ import QuickStatistiques from "../components/display/quick-statistiques/quick-st
 import ProgressModulesStats from "../components/display/progress-stats";
 import HeaderMenu from "../../../components/UI/header-menu";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import { Bell, Edit, GraduationCap, RocketIcon, Search } from "lucide-react";
+import {
+  Bell,
+  Download,
+  Edit,
+  GraduationCap,
+  LoaderCircle,
+  RocketIcon,
+  Search,
+} from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
+import { parcoursApi } from "../api/parcours.api";
 
 const ParcoursView = () => {
   const {
@@ -49,6 +61,39 @@ const ParcoursView = () => {
   ].some((skill) => Boolean(skill.badge));
   const hasSupplementaryContent =
     hasDescription || hasTags || hasContacts || hasBadges;
+
+  const exportParcoursMutation = useMutation({
+    mutationFn: () => parcoursApi.mutations.exportParcours(Number(id)),
+    onSuccess: ({ archive, contentDisposition }) => {
+      const encodedFilename = contentDisposition?.match(
+        /filename\*=UTF-8''([^;]+)/i,
+      )?.[1];
+      const plainFilename = contentDisposition?.match(
+        /filename="?([^";]+)"?/i,
+      )?.[1];
+      const fallbackFilename = `${
+        parcoursInfos?.title
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+          .toLowerCase() || "parcours"
+      }.zip`;
+      const filename = encodedFilename
+        ? decodeURIComponent(encodedFilename)
+        : plainFilename || fallbackFilename;
+      const url = URL.createObjectURL(archive);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Archive du parcours téléchargée.");
+    },
+    onError: () => toast.error("Le parcours n'a pas pu être exporté."),
+  });
 
   const handleClickResume = () => {
     const resumeModuleId =
@@ -80,13 +125,32 @@ const ParcoursView = () => {
       >
         <div className="flex gap-4 w-full">
           {canEditParcours ? (
-            <Link
-              to={`/admin/parcours/edit/${id}`}
-              className="btn btn-outline btn-primary"
-            >
-              <Edit />
-              Modifier le parcours
-            </Link>
+            <>
+              <Link
+                to={`/admin/parcours/edit/${id}`}
+                className="btn btn-outline btn-primary"
+              >
+                <Edit />
+                Modifier le parcours
+              </Link>
+              <RoleRankGuard ranks={[0, 1]}>
+                <PermissionGuard action="read" object="parcours">
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-primary"
+                    disabled={exportParcoursMutation.isPending}
+                    onClick={() => exportParcoursMutation.mutate()}
+                  >
+                    {exportParcoursMutation.isPending ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : (
+                      <Download />
+                    )}
+                    Exporter (.zip)
+                  </button>
+                </PermissionGuard>
+              </RoleRankGuard>
+            </>
           ) : (
             <>
               <button className="btn btn-outline btn-primary">
@@ -134,9 +198,7 @@ const ParcoursView = () => {
               <Contenu modules={modules} />
             </PermissionGuard>
             <div className="grid items-start gap-4 lg:grid-cols-3">
-              <div
-                className={hasSupplementaryContent ? "" : "lg:col-span-3"}
-              >
+              <div className={hasSupplementaryContent ? "" : "lg:col-span-3"}>
                 <Informations />
               </div>
               {hasSupplementaryContent ? (

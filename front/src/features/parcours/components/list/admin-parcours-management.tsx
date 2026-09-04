@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router";
 import { PlusCircle } from "lucide-react";
@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import Header from "../../../../components/headers/Header";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import TablePagination from "../../../../components/table/TablePagination";
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import Modal from "../../../../components/UI/modal/modal";
 import FormationModal from "../../../formation/components/FormationModal";
@@ -16,6 +17,7 @@ import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
 import { hasRoleRank } from "../../../../utils/helpers/user-role";
 import { AuthContext } from "../../../../store/AuthProvider";
+import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { parcoursApi } from "../../api/parcours.api";
 
 type AdminParcoursManagementProps = {
@@ -36,6 +38,28 @@ const AdminParcoursManagement = ({
   const [parcoursToDelete, setParcoursToDelete] =
     useState<ParcoursSummary | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const totalParcours = useMemo(
+    () =>
+      formations.reduce(
+        (total, formation) => total + formation.parcours.length,
+        0,
+      ),
+    [formations],
+  );
+  const {
+    list: paginatedFormations,
+    limit,
+    page,
+    totalPages,
+    setLimit,
+    setPage,
+  } = useEagerLoadingList(
+    formations,
+    "title",
+    5,
+    "id",
+    `sidebar-parcours-${layout}`,
+  );
   const [formationModal, setFormationModal] = useState<{
     isOpen: boolean;
     formationId: number | null;
@@ -54,7 +78,7 @@ const AdminParcoursManagement = ({
     },
     onError: (error) => {
       toast.error(
-        getApiErrorMessage(error, "Le parcours n’a pas pu être supprimé."),
+        getApiErrorMessage(error, "Le parcours n'a pas pu être supprimé."),
       );
     },
   });
@@ -90,14 +114,8 @@ const AdminParcoursManagement = ({
       URL.revokeObjectURL(url);
       toast.success("Archive du parcours téléchargée.");
     },
-    onError: () => toast.error("Le parcours n’a pas pu être exporté."),
+    onError: () => toast.error("Le parcours n'a pas pu être exporté."),
   });
-
-  useEffect(() => {
-    if (searchParams.get("createFormation") === "true") {
-      setFormationModal({ isOpen: true, formationId: null });
-    }
-  }, [searchParams]);
 
   const openFormationCreation = () => {
     setFormationModal({ isOpen: true, formationId: null });
@@ -174,45 +192,65 @@ const AdminParcoursManagement = ({
 
       <section
         className={`grid items-start gap-5 ${
-          usesFullWidthLayout
-            ? "grid-cols-1"
-            : "lg:grid-cols-2 xl:grid-cols-3"
+          usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
         }`}
         data-page-tour="parcours-cards"
       >
-        {formations.length === 0 ? (
+        {paginatedFormations?.length === 0 ? (
           <div className="col-span-full">
             <EmptyStatePlaceholder title="Aucun parcours disponible" />
           </div>
         ) : null}
-        {formations.map((formation) => (
-          <LastParcoursItem
-            key={formation.id}
-            maxParcoursShown={4}
-            formation={formation}
-            isManagementView
-            baseRoute={layout}
-            fullWidth={usesFullWidthLayout}
-            onEditFormation={isAdmin ? openFormationEdition : undefined}
-            onDeleteParcours={isAdmin ? openParcoursDeletion : undefined}
-            onExportParcours={
-              isAdmin
-                ? (parcours) => exportParcoursMutation.mutate(parcours)
-                : undefined
-            }
-            exportingParcoursId={
-              exportParcoursMutation.isPending
-                ? exportParcoursMutation.variables?.id
-                : null
-            }
-          />
-        ))}
+        {(paginatedFormations as FormationParcoursSummary[] | null)?.map(
+          (formation) => (
+            <LastParcoursItem
+              key={formation.id}
+              maxParcoursShown={4}
+              formation={formation}
+              isManagementView
+              baseRoute={layout}
+              fullWidth={usesFullWidthLayout}
+              onEditFormation={isAdmin ? openFormationEdition : undefined}
+              onDeleteParcours={isAdmin ? openParcoursDeletion : undefined}
+              onExportParcours={
+                isAdmin
+                  ? (parcours) => exportParcoursMutation.mutate(parcours)
+                  : undefined
+              }
+              exportingParcoursId={
+                exportParcoursMutation.isPending
+                  ? exportParcoursMutation.variables?.id
+                  : null
+              }
+            />
+          ),
+        )}
         {isAdmin && formations.length > 0 ? (
           <PermissionGuard action="write" object="parcours">
             <LastParcoursItem onCreateFormation={openFormationCreation} />
           </PermissionGuard>
         ) : null}
       </section>
+
+      {paginatedFormations && paginatedFormations.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Parcours : ${totalParcours}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
+      ) : null}
 
       {isAdmin && formationModal.isOpen ? (
         <FormationModal

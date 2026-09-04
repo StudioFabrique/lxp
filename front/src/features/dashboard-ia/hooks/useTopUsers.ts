@@ -1,10 +1,16 @@
 import { useCallback, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { dashboardIAApi } from "../api/dashboardIA.api";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../components/table/pagination-storage";
 
 const useTopUsers = () => {
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPageState] = useState(() =>
+    getStoredItemsPerPage("dashboard-ia-users", 10),
+  );
   const [sortProperty, setSortProperty] = useState("totalTokens");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
@@ -46,6 +52,11 @@ const useTopUsers = () => {
   const handleSearch = useCallback((value: string) => {
     setSearchTerm(value || null);
     setPage(1);
+  }, []);
+
+  const setPerPage = useCallback((value: number) => {
+    storeItemsPerPage("dashboard-ia-users", value);
+    setPerPageState(value);
   }, []);
 
   return {

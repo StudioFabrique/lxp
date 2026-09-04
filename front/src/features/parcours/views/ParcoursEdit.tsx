@@ -22,6 +22,8 @@ import FloatingBottomNavigation from "../../../components/buttons/FloatingBottom
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { AuthContext } from "../../../store/AuthProvider";
 import { getModulesLabel } from "../../../utils/helpers/user-role";
+import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
+import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
@@ -165,6 +167,10 @@ const EditParcours = () => {
               }
             />
           ) : null}
+          <RecommendedActionTour
+            tutorial="module"
+            steps={moduleCreationTourSteps}
+          />
         </FadeWrapper>
       ) : (
         <Error404 />

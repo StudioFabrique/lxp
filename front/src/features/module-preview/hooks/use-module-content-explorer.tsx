@@ -721,6 +721,10 @@ const useModuleContentExplorer = () => {
 
   const scrollTopRef = useRef<HTMLDivElement>(null);
 
+  const acknowledgeLessonScroll = useCallback((lessonId: number) => {
+    dispatch({ type: "acknowledge_lesson_scroll", lessonId });
+  }, []);
+
   useEffect(() => {
     if (!state.selectedActivity?.id) return;
 
@@ -848,6 +852,7 @@ const useModuleContentExplorer = () => {
       refreshSelectedLesson,
     },
     scrollTopRef,
+    acknowledgeLessonScroll,
   };
 };
 

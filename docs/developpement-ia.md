@@ -19,7 +19,7 @@ LXP :5173 / API :3000
                       └────────────────────────┘
 ```
 
-Les dépôts doivent partager le même dossier parent. Le Compose d’ANDRIA-IA
+Les dépôts doivent partager le même dossier parent. Le Compose d'ANDRIA-IA
 monte `../lxp/api/uploads/activities` et rejoint le réseau Docker `lxp`.
 
 ```text
@@ -78,8 +78,8 @@ DEV_BYPASS_AUTH=false
 ```
 
 Récupérez les clés Mistral dans Infisical EU, projet LXP, environnement `dev`,
-chemin `/runtime`. Le Compose d’ANDRIA-IA lit un fichier `.env` local : gardez
-ce fichier hors de Git et n’utilisez aucune clé de production.
+chemin `/runtime`. Le Compose d'ANDRIA-IA lit un fichier `.env` local : gardez
+ce fichier hors de Git et n'utilisez aucune clé de production.
 
 Les identifiants des URL doivent correspondre à `lxp/api/.env` :
 
@@ -89,7 +89,7 @@ Les identifiants des URL doivent correspondre à `lxp/api/.env` :
 
 `SECRET_KEY` et `DOCKER_IA_AUTH_SECRET` dans `lxp/api/.env` doivent contenir le
 même secret. Les noms `lxp-prisma`, `lxp-mongo` et `lxp-ai-postgres` sont des
-noms de conteneurs. Depuis ANDRIA-IA, n’utilisez pas les ports hôte `5500`,
+noms de conteneurs. Depuis ANDRIA-IA, n'utilisez pas les ports hôte `5500`,
 `5501` ou `27000`.
 
 ## 3. Premier démarrage
@@ -117,7 +117,7 @@ Le premier endpoint doit renvoyer `{"status":"ok"}`. Le second doit indiquer
 `"status":"ok"` et `"thread_alive":true`.
 
 Modifiez ensuite un cours, une leçon ou une activité dans le LXP. Les logs
-d’ANDRIA-IA doivent afficher un événement `INGEST`. La suppression d’un cours
+d'ANDRIA-IA doivent afficher un événement `INGEST`. La suppression d'un cours
 produit un événement `PRUNE`.
 
 ## Démarrages suivants
@@ -131,10 +131,10 @@ cd ../ANDRIA-IA
 docker compose up -d
 ```
 
-## Couper l’IA en local
+## Couper l'IA en local
 
 Pour travailler sans ANDRIA-IA, définissez cette valeur dans `lxp/api/.env`,
-puis relancez l’API :
+puis relancez l'API :
 
 ```dotenv
 DISABLE_AI_FEATURES=true
@@ -151,4 +151,4 @@ DISABLE_AI_FEATURES=true
 | Watcher sans événement                  | Lancez `npm run notify-triggers --prefix api`, puis redémarrez `ai-service`. |
 
 La liste des variables et de leurs valeurs par défaut se trouve dans
-[Variables d’environnement](variables-environnement.md#andria-ia-en-développement).
+[Variables d'environnement](variables-environnement.md#andria-ia-en-développement).

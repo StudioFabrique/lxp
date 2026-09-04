@@ -3,7 +3,7 @@
 Le dépôt regroupe deux applications. Le fichier `package.json` à la racine
 contient les commandes communes.
 
-## Vue d’ensemble
+## Vue d'ensemble
 
 ```bash
 lxp/
@@ -15,10 +15,10 @@ lxp/
 └── package.json       # Scripts transverses (install, dev, build, test)
 ```
 
-En production, l’API sert les fichiers créés par le build du front. Le code se
+En production, l'API sert les fichiers créés par le build du front. Le code se
 trouve dans `api/src/app.ts`.
 
-Le code du service IA est présent dans le dépôt séparé `ANDRIA-IA`. L’API
+Le code du service IA est présent dans le dépôt séparé `ANDRIA-IA`. L'API
 appelle ce service depuis `api/src/services/ai/`.
 
 Voir [Service IA et synchronisation en développement](developpement-ia.md).
@@ -67,7 +67,7 @@ components/
 
 Un composant utilisé par une seule feature reste dans cette feature.
 
-### Structure d’une fonction métier
+### Structure d'une fonction métier
 
 ```bash
 features/parcours/
@@ -98,7 +98,7 @@ compose les `routes.tsx` des features concernées sous son layout
 (`AdminLayout` ou `StudentLayout`), et les protège avec les gardes de
 `components/guards/`.
 
-### Droits d’accès
+### Droits d'accès
 
 Les permissions sont portées par CASL. `rbac/ability.ts` définit les actions
 et les sujets, `rbac/AbilityProvider.tsx` expose l'ability de l'utilisateur
@@ -136,7 +136,7 @@ L'API est écrite en TypeScript exécuté nativement par Node (les imports
 portent l'extension `.ts`). En développement, `node --watch src/server.ts` ;
 en production, le build `tsc` est lancé depuis `dist/`.
 
-### Traitement d’une requête
+### Traitement d'une requête
 
 Chaque route utilise les mêmes couches. Chaque fichier garde un rôle précis :
 

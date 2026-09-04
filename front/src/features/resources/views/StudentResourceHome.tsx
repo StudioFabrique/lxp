@@ -2,7 +2,7 @@ import ResourcesListCard from "../components/list/ResourcesListCard";
 import ElementNotFound from "../../../components/UI/element-not-found";
 import Header from "../../../components/headers/Header";
 import ListHeader from "../../../components/UI/list-header";
-import Pagination from "../../../components/UI/pagination/pagination";
+import TablePagination from "../../../components/table/TablePagination";
 import useStudentResources from "../hooks/useStudentResources";
 
 export default function StudentResourceHome() {
@@ -53,12 +53,21 @@ export default function StudentResourceHome() {
           {/*pagination */}
           <section className="w-full flex justify-end mt-4">
             {totalPages && totalPages > 0 ? (
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                setPage={setPage}
-                perPage={perPage}
-                setPerPages={setPerPage}
+              <TablePagination
+                currentPage={page}
+                maxPage={totalPages}
+                itemsPerPage={perPage}
+                onSetCurrentPage={setPage}
+                onSetItemsPerPage={(itemsPerPage) => {
+                  setPerPage(itemsPerPage);
+                  setPage(1);
+                }}
+                onSetPreviousPage={() =>
+                  setPage((current) => Math.max(current - 1, 1))
+                }
+                onSetNextPage={() =>
+                  setPage((current) => Math.min(current + 1, totalPages))
+                }
               />
             ) : null}
           </section>

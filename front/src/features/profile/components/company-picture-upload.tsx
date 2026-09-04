@@ -83,7 +83,8 @@ const CompanyPictureUpload = () => {
         }
       })
       .catch((error) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
+        if (error instanceof DOMException && error.name === "AbortError")
+          return;
       });
 
     return () => abortController.abort();
@@ -112,15 +113,14 @@ const CompanyPictureUpload = () => {
         toast.success(data.message);
       })
       .catch((err) => {
-        const errorMessage =
-          err?.response?.data?.message ?? "Erreur inconnue";
+        const errorMessage = err?.response?.data?.message ?? "Erreur inconnue";
         toast.error(errorMessage);
       })
       .finally(() => setIsDeleting(false));
   };
 
   return (
-    <div className="card h-full">
+    <div className="card h-full" data-recommended-tour="company-logo">
       <div className="card-body p-6">
         {/* Header */}
         <h2 className="card-title text-lg font-medium mb-4">
@@ -188,8 +188,7 @@ const CompanyPictureUpload = () => {
               </svg>
               <div className="text-sm">
                 <span>
-                  Rechargement requis pour répercuter les modifications du
-                  logo
+                  Rechargement requis pour répercuter les modifications du logo
                 </span>
               </div>
               <button
@@ -206,7 +205,7 @@ const CompanyPictureUpload = () => {
           isOpen={showDeleteConfirmation}
           onCancel={() => setShowDeleteConfirmation(false)}
           title="Supprimer le logo"
-          description="Êtes-vous sûr de vouloir supprimer le logo de l’organisme ?"
+          description="Êtes-vous sûr de vouloir supprimer le logo de l'organisme ?"
           alertMessageBottom="La couleur de fond associée sera également supprimée."
         >
           <button

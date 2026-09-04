@@ -49,7 +49,7 @@ export const groupsPageTourSteps: Step[] = [
     target: '[data-page-tour="header"]',
     title: "Gestion des groupes",
     content:
-      "Cette vue permet d’organiser les apprenants en groupes et d’accéder à leur gestion.",
+      "Cette vue permet d'organiser les apprenants en groupes et d'accéder à leur gestion.",
     placement: "bottom",
   },
   {
@@ -57,7 +57,7 @@ export const groupsPageTourSteps: Step[] = [
     target: '[data-page-tour="header-actions"]',
     title: "Créer un groupe",
     content:
-      "Lancez ici la création d’un groupe lorsque votre rôle vous y autorise.",
+      "Lancez ici la création d'un groupe lorsque votre rôle vous y autorise.",
     placement: "left",
   },
   {
@@ -81,7 +81,7 @@ export const groupsPageTourSteps: Step[] = [
     target: '[data-page-tour="pagination"]',
     title: "Parcourir les groupes",
     content:
-      "Ces contrôles permettent de changer de page et d’adapter le nombre de groupes affichés.",
+      "Ces contrôles permettent de changer de page et d'adapter le nombre de groupes affichés.",
     placement: "top",
   },
 ];
@@ -100,7 +100,7 @@ export const usersPageTourSteps: Step[] = [
     target: '[data-page-tour="header-actions"]',
     title: "Créer un utilisateur",
     content:
-      "Ce bouton ouvre le formulaire de création d’un compte si vous disposez de la permission nécessaire.",
+      "Ce bouton ouvre le formulaire de création d'un compte si vous disposez de la permission nécessaire.",
     placement: "left",
   },
   {
@@ -108,7 +108,7 @@ export const usersPageTourSteps: Step[] = [
     target: '[data-page-tour="stats"]',
     title: "Indicateurs utilisateurs",
     content:
-      "Ces cartes résument les principaux chiffres de votre population d’utilisateurs.",
+      "Ces cartes résument les principaux chiffres de votre population d'utilisateurs.",
     placement: "bottom",
   },
   {
@@ -139,8 +139,7 @@ export const usersPageTourSteps: Step[] = [
     id: "users-pagination",
     target: '[data-page-tour="pagination"]',
     title: "Parcourir les comptes",
-    content:
-      "Changez de page ou ajustez le nombre d’utilisateurs visibles.",
+    content: "Changez de page ou ajustez le nombre d'utilisateurs visibles.",
     placement: "top",
   },
 ];
@@ -186,7 +185,7 @@ export const roleEditPageTourSteps: Step[] = [
     target: '[data-page-tour="header"]',
     title: "Modification du rôle",
     content:
-      "Cette page permet de modifier l’identité du rôle et l’ensemble de ses autorisations.",
+      "Cette page permet de modifier l'identité du rôle et l'ensemble de ses autorisations.",
     placement: "bottom",
   },
   {

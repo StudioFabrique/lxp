@@ -68,7 +68,7 @@ describe("partitionTagInput", () => {
     });
   });
 
-  it("conserve une saisie simple jusqu’à sa validation", () => {
+  it("conserve une saisie simple jusqu'à sa validation", () => {
     expect(partitionTagInput("produit")).toEqual({
       committed: "",
       pending: "produit",

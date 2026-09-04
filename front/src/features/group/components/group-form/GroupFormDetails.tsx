@@ -88,7 +88,7 @@ const GroupFormDetails = () => {
                   ? "Chargement des parcours…"
                   : formationId
                     ? "Aucun parcours"
-                    : "Choisissez d’abord une formation"}
+                    : "Choisissez d'abord une formation"}
               </option>
               {parcoursList.map((parcours) => (
                 <option key={parcours.id} value={parcours.id}>

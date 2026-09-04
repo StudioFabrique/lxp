@@ -46,11 +46,11 @@ const renderPage = (
 };
 
 describe("AdminParcoursManagement", () => {
-  it("utilise l’état vide partagé sur la page Gestion des parcours", () => {
+  it("utilise l'état vide partagé sur la page Gestion des parcours", () => {
     expect(renderPage("admin")).toContain("Aucun parcours disponible");
   });
 
-  it("utilise aussi l’état vide partagé sur la page étudiante", () => {
+  it("utilise aussi l'état vide partagé sur la page étudiante", () => {
     const markup = renderPage("student");
 
     expect(markup).toContain("Aucun parcours disponible");
@@ -70,5 +70,7 @@ describe("AdminParcoursManagement", () => {
 
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
+    expect(markup).toContain("Parcours : 1");
+    expect(markup).toContain("bg-primary text-primary-content");
   });
 });

@@ -7,6 +7,10 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { mediathequeApi } from "../api/mediatheque.api";
 import toast from "react-hot-toast";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../components/table/pagination-storage";
 
 /**
  * Interface définissant la structure de l'état de pagination
@@ -76,21 +80,32 @@ const paginationReducer = <T>(
 /**
  * Hook principal qui gère la pagination des médias
  */
-const usePaginatedMediatheque = <T>() => {
+const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(
     paginationReducer,
-    initialState as PaginationState<T>
+    initialState as PaginationState<T>,
+    (state) => ({
+      ...state,
+      perPage: getStoredItemsPerPage(
+        paginationStorageLocation,
+        state.perPage,
+      ),
+    }),
   );
 
   const setPage = useCallback((page: number) => {
     dispatch({ type: "SET_PAGE", payload: page });
   }, []);
 
-  const setLimit = useCallback((limit: number) => {
-    dispatch({ type: "SET_LIMIT", payload: limit });
-  }, []);
+  const setLimit = useCallback(
+    (limit: number) => {
+      storeItemsPerPage(paginationStorageLocation, limit);
+      dispatch({ type: "SET_LIMIT", payload: limit });
+    },
+    [paginationStorageLocation],
+  );
 
   const setTotalPages = useCallback((totalPages: number) => {
     dispatch({ type: "SET_TOTAL_PAGES", payload: totalPages });

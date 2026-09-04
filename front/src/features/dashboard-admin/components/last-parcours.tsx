@@ -7,7 +7,6 @@ import QuickActions from "./quick-actions";
 import FormationModal from "../../formation/components/FormationModal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 
@@ -72,8 +71,6 @@ export default function LastParcours({
               />
             ))}
           </div>
-        ) : isTeacher && parcours.length === 0 ? (
-          <EmptyStatePlaceholder title="Aucun parcours disponible" />
         ) : (
           <div className={`grid items-start gap-5 ${gridClassName}`}>
             {displayedFormations.map((formation) => (

@@ -2,6 +2,8 @@ import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
 
 async function searchGroup(
   entity: string,
@@ -11,6 +13,7 @@ async function searchGroup(
   limit: number,
   stype: string,
   sdir: string,
+  auth: NonNullable<CustomRequest["auth"]>,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
@@ -19,6 +22,8 @@ async function searchGroup(
   if (!fetchedRole) {
     return false;
   }
+
+  const visibilityFilter = await getGroupVisibilityFilter(auth);
 
   let field: any;
 
@@ -40,21 +45,28 @@ async function searchGroup(
   }
 
   if (fetchedRole.rank < 3) {
-    const groups = await Group.find({ [entity]: field, roles: fetchedRole._id })
+    const groupFilter = {
+      [entity]: field,
+      roles: fetchedRole._id,
+      ...visibilityFilter,
+    };
+    const groups = await Group.find(groupFilter)
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [stype]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
 
-    const total = await Group.count({
-      [entity]: field,
-      roles: fetchedRole._id,
-    });
+    const total = await Group.countDocuments(groupFilter);
 
     return { total, groupsWithFormation: groups };
   } else if (fetchedRole.rank > 2) {
+    const groupFilter = {
+      [entity]: field,
+      roles: fetchedRole._id,
+      ...visibilityFilter,
+    };
     const groups = await Group.find(
-      { [entity]: field, roles: fetchedRole._id },
+      groupFilter,
       { password: 0 },
     )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
@@ -97,10 +109,7 @@ async function searchGroup(
       }),
     );
 
-    const total = await Group.count({
-      [entity]: field,
-      roles: fetchedRole._id,
-    });
+    const total = await Group.countDocuments(groupFilter);
     return { total, groupsWithFormation };
   }
 }

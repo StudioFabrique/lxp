@@ -3,6 +3,8 @@ import type FormationItem from "../../formation/interfaces/formation-item";
 import type { FormationParcoursSummary } from "../interfaces/parcours-summary";
 import type LessonsQualityStats from "../interfaces/lessons-quality-stats";
 
+type GroupsResponse = { data?: unknown[] };
+
 export type ModuleSummary = {
   id: number;
   parcoursId: number;
@@ -37,6 +39,17 @@ const queries = {
   getLastModules: async (): Promise<ModuleSummary[]> => {
     const res = await apiClient.get("/modules");
     return (res.data.response ?? []).slice(0, 5);
+  },
+  getUsersCountByRole: async (role: "admin" | "teacher" | "student") => {
+    const res = await apiClient.get<{ total: number }>(
+      `/user/list/${role}/lastname/asc`,
+      { params: { page: 1, limit: 1 } },
+    );
+    return res.data.total;
+  },
+  getStudentGroupsCount: async () => {
+    const res = await apiClient.get<GroupsResponse>("/group/student");
+    return res.data.data?.length ?? 0;
   },
 };
 

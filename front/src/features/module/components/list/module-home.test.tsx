@@ -11,8 +11,20 @@ vi.mock("../../../../components/guards/PermissionGuard", () => ({
   default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+vi.mock("@radix-ui/react-dropdown-menu", () => ({
+  Root: ({ children }: { children: React.ReactNode }) => children,
+  Trigger: ({ children }: { children: React.ReactNode }) => children,
+  Portal: ({ children }: { children: React.ReactNode }) => children,
+  Content: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
 vi.mock("../../../../components/UI/cursor-glow-card", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("./module-header", () => ({
@@ -31,6 +43,7 @@ const module: ModuleListItem = {
       title: "Premier cours",
       order: 0,
       isPublished: true,
+      visibility: true,
       firstLessonId: 6,
     },
     {
@@ -38,6 +51,28 @@ const module: ModuleListItem = {
       title: "Deuxième cours",
       order: 1,
       isPublished: false,
+      visibility: false,
+    },
+  ],
+};
+
+const moduleWithFourCourses: ModuleListItem = {
+  ...module,
+  courses: [
+    ...module.courses,
+    {
+      id: 6,
+      title: "Troisième cours",
+      order: 2,
+      isPublished: true,
+      visibility: true,
+    },
+    {
+      id: 7,
+      title: "Quatrième cours",
+      order: 3,
+      isPublished: true,
+      visibility: true,
     },
   ],
 };
@@ -46,7 +81,11 @@ describe("ModuleHomeList", () => {
   it("affiche chaque module avec ses cours en sous-éléments", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
-        <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+        <ModuleHomeList
+          modulesList={[module]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+        />
       </MemoryRouter>,
     );
 
@@ -54,6 +93,8 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("Premier cours");
     expect(markup).toContain("Deuxième cours");
     expect(markup).toContain("/admin/parcours/module/1");
+    expect(markup).toContain("Modules : 1");
+    expect(markup).toContain("bg-primary text-primary-content");
   });
 
   it("indique au formateur qu'aucun module ne lui est affecté", () => {
@@ -63,7 +104,11 @@ describe("ModuleHomeList", () => {
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={auth}>
         <MemoryRouter>
-          <ModuleHomeList modulesList={[]} onDeleteModule={vi.fn()} />
+          <ModuleHomeList
+            modulesList={[]}
+            onDeleteModule={vi.fn()}
+            onDeleteCourse={vi.fn()}
+          />
         </MemoryRouter>
       </AuthContext.Provider>,
     );
@@ -71,20 +116,62 @@ describe("ModuleHomeList", () => {
     expect(markup).toContain("Aucun module affecté");
   });
 
-  it("affiche les modules du formateur sur toute la largeur", () => {
+  it("affiche au maximum trois cours dans une carte", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <ModuleHomeList
+          modulesList={[moduleWithFourCourses]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain("Troisième cours");
+    expect(markup).not.toContain("Quatrième cours");
+    expect(markup).toContain("Afficher plus de cours (1)");
+  });
+
+  it("affiche aussi les modules du formateur dans la grille de cartes", () => {
     const auth = {
       user: { roles: [{ rank: 2 }] } as User,
     } as React.ContextType<typeof AuthContext>;
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={auth}>
         <MemoryRouter>
-          <ModuleHomeList modulesList={[module]} onDeleteModule={vi.fn()} />
+          <ModuleHomeList
+            modulesList={[module]}
+            onDeleteModule={vi.fn()}
+            onDeleteCourse={vi.fn()}
+          />
         </MemoryRouter>
       </AuthContext.Provider>,
     );
 
-    expect(markup).toContain("grid-cols-1");
-    expect(markup).not.toContain("xl:grid-cols-3");
-    expect(markup).not.toContain("min-h-52");
+    expect(markup).toContain("lg:grid-cols-2");
+    expect(markup).toContain("xl:grid-cols-3");
+    expect(markup).toContain("min-h-52");
+  });
+
+  it("signale les cours invisibles et affiche leurs menus d'actions", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <ModuleHomeList
+          modulesList={[module]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('aria-label="Cours invisible"');
+    expect(markup).not.toContain('data-tip="Cours invisible"');
+    expect(markup).toContain('aria-label="Actions pour Premier cours"');
+    expect(markup).toContain('aria-label="Actions pour Deuxième cours"');
+    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain("Accéder au cours");
+    expect(markup).toContain("Modifier le cours");
+    expect(markup).toContain("Supprimer le cours");
+    expect(markup).toContain("ml-auto self-center justify-self-end");
   });
 });

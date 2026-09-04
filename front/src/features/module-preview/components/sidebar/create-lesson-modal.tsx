@@ -158,7 +158,7 @@ export default function CreateLessonModal({
           </div>
           {courseTags.length === 0 && (
             <p className="text-sm text-error">
-              Ajoutez d’abord un tag au cours pour pouvoir créer une leçon.
+              Ajoutez d'abord un tag au cours pour pouvoir créer une leçon.
             </p>
           )}
         </div>

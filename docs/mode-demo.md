@@ -7,21 +7,21 @@ l'interface de l'équipe pédagogique comme celle d'un apprenant.
 
 ## Principe
 
-Une configuration d’exécution active le mode démonstration. L’instance utilise
+Une configuration d'exécution active le mode démonstration. L'instance utilise
 la même image Docker, des variables différentes et des bases dédiées. Elle ne
 peut pas accéder aux données de production.
 
 Sur une instance ordinaire, gardez `DEMO_MODE=false`. Définissez `DEMO_URL`
 pour afficher le bouton « Mode démonstration » à côté du tutoriel guidé.
 
-## Pourquoi le front lit le mode depuis l’API
+## Pourquoi le front lit le mode depuis l'API
 
 Le front est construit une seule fois, dans l'étape `build` du `Dockerfile`, et
 `front/.env.production` est versionné puis copié dans l'image. Une variable
 `VITE_*` a donc **la même valeur sur toutes les instances** : elle ne peut pas
 distinguer la production de la démonstration.
 
-L’API fournit le mode au moment de l’exécution avec
+L'API fournit le mode au moment de l'exécution avec
 `GET /v1/demo/config`, une route publique qui renvoie :
 
 ```json
@@ -78,7 +78,7 @@ Trois exceptions seulement, dans `api/src/config/demo-read-only-allowlist.ts` :
   servie en POST**. Sans elle, les pages Groupes cassent.
 
 Une quatrième route mérite d'être connue : `POST /v1/indicators/:userId/prediction`
-est une lecture, sous forme d’inférence sans écriture. Elle reste bloquée
+est une lecture, sous forme d'inférence sans écriture. Elle reste bloquée
 parce que l'IA est coupée en démonstration ; l'autoriser suppose d'accepter le
 coût des appels au fournisseur depuis une instance publique.
 
@@ -229,7 +229,7 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 `getDemoUser` cherche en base les comptes désignés par `DEMO_ADMIN_EMAIL` et
 `DEMO_STUDENT_EMAIL`.
 
-Le fichier `compose.yml` démarre l’application et ses bases. En `dev`, le
+Le fichier `compose.yml` démarre l'application et ses bases. En `dev`, le
 déploiement lit `/ci`, `/runtime` et `/backup`. En `prod`, il demande un
 préfixe et lit `/ci`, `<préfixe>/ci`, `<préfixe>/runtime` et
 `<préfixe>/backup`.

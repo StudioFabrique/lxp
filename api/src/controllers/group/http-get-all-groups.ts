@@ -1,9 +1,10 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 import getAllGroups from "../../models/group/get-all-groups.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-async function httpGetAllGroups(req: Request, res: Response) {
+async function httpGetAllGroups(req: CustomRequest, res: Response) {
   const result = validationResult(req);
 
   const { role, stype, sdir } = req.params;
@@ -15,7 +16,14 @@ async function httpGetAllGroups(req: Request, res: Response) {
   }
 
   try {
-    const result = await getAllGroups(+page!, +limit!, role, stype, sdir);
+    const result = await getAllGroups(
+      +page!,
+      +limit!,
+      role,
+      stype,
+      sdir,
+      req.auth!,
+    );
 
     if (!result) {
       return res.status(400).json({ message: badQuery });

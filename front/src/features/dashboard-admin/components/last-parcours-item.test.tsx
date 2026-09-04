@@ -10,7 +10,9 @@ vi.mock("../../../components/guards/PermissionGuard", () => ({
 }));
 
 vi.mock("../../../components/UI/cursor-glow-card", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("../../parcours/components/list/parcours-actions-menu", () => ({
@@ -45,7 +47,7 @@ const renderCard = (
   );
 
 describe("LastParcoursItem", () => {
-  it("affiche le menu d’actions dans la gestion administrateur", () => {
+  it("affiche le menu d'actions dans la gestion administrateur", () => {
     const markup = renderCard({
       isManagementView: true,
       baseRoute: "admin",
@@ -63,14 +65,14 @@ describe("LastParcoursItem", () => {
     expect(markup).toContain("min-h-52");
   });
 
-  it("affiche le titre complet du parcours au survol", () => {
+  it("n'ajoute pas de tooltip aux sous-éléments", () => {
     const markup = renderCard();
 
-    expect(markup).toContain("tooltip tooltip-bottom tooltip-start");
-    expect(markup).toContain('data-tip="Parcours test"');
+    expect(markup).not.toContain("tooltip");
+    expect(markup).not.toContain('data-tip="Parcours test"');
   });
 
-  it("ne montre pas le menu d’administration dans la vue étudiante", () => {
+  it("ne montre pas le menu d'administration dans la vue étudiante", () => {
     const markup = renderCard({
       isManagementView: true,
       baseRoute: "student",
@@ -83,7 +85,7 @@ describe("LastParcoursItem", () => {
     expect(markup).not.toContain('data-tip="Parcours test"');
   });
 
-  it("utilise aussi la pleine largeur dans l’espace formateur", () => {
+  it("utilise aussi la pleine largeur dans l'espace formateur", () => {
     const markup = renderCard({ baseRoute: "admin", fullWidth: true });
 
     expect(markup).toContain("/admin/parcours/view/11");

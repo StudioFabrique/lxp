@@ -1,30 +1,18 @@
-import { useState, type Key, type ReactNode } from "react";
-import { ExternalLink } from "lucide-react";
-import { Link, type LinkProps } from "react-router";
+import { useState, type ReactNode } from "react";
 
-import { cn } from "../../utils/cn";
-import CursorGlowCard from "./cursor-glow-card";
-import Modal from "./modal/modal";
-
-export type HierarchicalListCardItem = {
-  id: Key;
-  title: string;
-  description?: ReactNode;
-  subDescription?: ReactNode;
-  image?: {
-    src: string;
-    alt: string;
-  };
-  icon?: ReactNode;
-  to?: LinkProps["to"];
-  state?: LinkProps["state"];
-  action?: ReactNode | ((dismissOverflow: () => void) => ReactNode);
-  ariaLabel?: string;
-};
+import { cn } from "../../../utils/cn";
+import CursorGlowCard from "../cursor-glow-card";
+import Modal from "../modal/modal";
+import {
+  HierarchicalListCardItem,
+  HierarchicalListRow,
+} from "./HierarchicalListRow";
 
 type HierarchicalListCardProps = {
   label?: string;
   title?: string;
+  labelAccessory?: ReactNode;
+  truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
   items?: HierarchicalListCardItem[];
@@ -38,75 +26,11 @@ type HierarchicalListCardProps = {
   fullWidth?: boolean;
 };
 
-const HierarchicalListRow = ({
-  item,
-  showTitleTooltip,
-  dismissOverflow,
-}: {
-  item: HierarchicalListCardItem;
-  showTitleTooltip: boolean;
-  dismissOverflow: () => void;
-}) => {
-  const itemAction =
-    typeof item.action === "function"
-      ? item.action(dismissOverflow)
-      : item.action;
-
-  return (
-    <li className="list-row">
-      {item.image ? (
-        <div className="self-center">
-          <img
-            src={item.image.src}
-            alt={item.image.alt}
-            className="size-10 rounded-lg object-cover"
-          />
-        </div>
-      ) : item.icon ? (
-        <div className="flex size-10 items-center justify-center self-center rounded-lg text-primary [&>svg]:size-5">
-          {item.icon}
-        </div>
-      ) : null}
-
-      <div className="list-col-grow min-w-0 self-center">
-        <div
-          className={cn("block max-w-full text-left", {
-            "tooltip tooltip-bottom tooltip-start": showTitleTooltip,
-          })}
-          data-tip={showTitleTooltip ? item.title : undefined}
-        >
-          <div className="truncate font-semibold">{item.title}</div>
-        </div>
-        {item.description ? (
-          <div className="truncate text-xs font-light opacity-60">
-            {item.description}
-          </div>
-        ) : null}
-        {item.subDescription ? (
-          <div className="truncate text-xs font-light opacity-60">
-            {item.subDescription}
-          </div>
-        ) : null}
-      </div>
-
-      {itemAction ??
-        (item.to ? (
-          <Link
-            className="btn btn-square btn-sm btn-ghost self-center"
-            to={item.to}
-            state={item.state}
-            aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
-          >
-            <ExternalLink className="size-[1.2em]" />
-          </Link>
-        ) : null)}
-    </li>
-  );
-};
-
 const HierarchicalListCard = ({
   label,
   title,
+  labelAccessory,
+  truncateTitle,
   description,
   action,
   items = [],
@@ -147,12 +71,26 @@ const HierarchicalListCard = ({
               <li className="p-4 pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    {label ? (
-                      <p className="select-none text-xs tracking-wide opacity-60">
-                        {label}
-                      </p>
-                    ) : null}
-                    <h4 className="truncate text-xl font-bold">{title}</h4>
+                    <div className="flex gap-2">
+                      {label ? (
+                        <p className="select-none text-xs tracking-wide opacity-60">
+                          {label}
+                        </p>
+                      ) : null}
+                      {labelAccessory ? (
+                        <div className="shrink-0">{labelAccessory}</div>
+                      ) : null}
+                    </div>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <h4
+                        className={cn(
+                          "min-w-0 first-letter:uppercase text-xl font-bold",
+                          { truncate: truncateTitle },
+                        )}
+                      >
+                        {title}
+                      </h4>
+                    </div>
                     {description ? (
                       <div className="mt-1 text-xs opacity-60">
                         {description}
@@ -167,7 +105,6 @@ const HierarchicalListCard = ({
                 <HierarchicalListRow
                   key={item.id}
                   item={item}
-                  showTitleTooltip={!fullWidth}
                   dismissOverflow={() => {}}
                 />
               ))}
@@ -222,7 +159,6 @@ const HierarchicalListCard = ({
               <HierarchicalListRow
                 key={item.id}
                 item={item}
-                showTitleTooltip={false}
                 dismissOverflow={() => setShowRemainingItems(false)}
               />
             ))}

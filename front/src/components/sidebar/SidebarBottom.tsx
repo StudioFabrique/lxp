@@ -12,6 +12,7 @@ import DemoExitConfirmation from "../../features/demo/components/DemoExitConfirm
 import { clearDemoTour } from "../../features/demo/demo-tour-storage";
 import { emitDemoTourEvent } from "../../features/demo/demo-tour-events";
 import TutorialChoiceModal from "../../features/demo/components/TutorialChoiceModal";
+import { useOnboarding } from "../../features/onboarding/OnboardingContext";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -19,6 +20,7 @@ type SharedSideBarProps = {
 
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   const { user, logout } = useContext(AuthContext);
+  const { canStart: canStartOnboarding } = useOnboarding();
   const navigate = useNavigate();
   const { demoMode, demoUrl, exitUrl, aiDisabled } = useDemoMode();
   const [isExitOpen, setIsExitOpen] = useState(false);
@@ -86,17 +88,19 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Bouton + modal questionnaire */}
       {!demoMode && interfaceType === "student" && <Questionnaire />}
 
-      <li className="w-full">
-        <button
-          type="button"
-          className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
-          onClick={handleClickTutorial}
-          data-tip="Relancer le tutoriel"
-        >
-          <CircleHelp className="w-4" />
-          <span className="xl:block hidden">Tutoriel guidée</span>
-        </button>
-      </li>
+      {(demoMode || canStartOnboarding) && (
+        <li className="w-full">
+          <button
+            type="button"
+            className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
+            onClick={handleClickTutorial}
+            data-tip="Relancer le tutoriel"
+          >
+            <CircleHelp className="w-4" />
+            <span className="xl:block hidden">Tutoriel guidé</span>
+          </button>
+        </li>
+      )}
 
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}

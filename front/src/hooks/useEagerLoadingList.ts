@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "./get-pagination";
 import { sortArray } from "../utils/helpers/sort-array";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../components/table/pagination-storage";
 
 const useEagerLoadingList = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,16 +12,31 @@ const useEagerLoadingList = (
   defaultSort: string,
   defaultLimit: number | null = 15,
   idProperty: "id" | "_id" = "id",
+  paginationStorageLocation?: string,
 ) => {
   const paginationDisabled = defaultLimit === null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [list, setList] = useState<Array<any> | null>(initialList);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(defaultLimit ?? 15);
-  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimitState] = useState(() =>
+    getStoredItemsPerPage(paginationStorageLocation, defaultLimit ?? 15),
+  );
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);
   const [direction, setDirection] = useState<boolean>(true);
+  const totalPages = paginationDisabled
+    ? initialList.length > 0
+      ? 1
+      : 0
+    : Math.ceil(initialList.length / limit);
+
+  const setLimit = useCallback(
+    (value: number) => {
+      storeItemsPerPage(paginationStorageLocation, value);
+      setLimitState(value);
+    },
+    [paginationStorageLocation],
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleRowCheck = (id: any) => {
@@ -107,17 +126,9 @@ const useEagerLoadingList = (
   }, [initialList, limit, page, paginationDisabled]);
 
   useEffect(() => {
-    if (paginationDisabled) {
-      setTotalPages(initialList.length > 0 ? 1 : 0);
-      return;
-    }
-
-    const pages =
-      initialList.length % limit === 0
-        ? initialList.length / limit
-        : Math.trunc(initialList.length / limit) + 1;
-    setTotalPages(pages);
-  }, [limit, initialList, paginationDisabled]);
+    const lastAvailablePage = Math.max(totalPages, 1);
+    if (page > lastAvailablePage) setPage(lastAvailablePage);
+  }, [page, totalPages]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,6 +144,7 @@ const useEagerLoadingList = (
     direction,
     fieldSort,
     list,
+    limit,
     page,
     totalPages,
     setAllChecked,

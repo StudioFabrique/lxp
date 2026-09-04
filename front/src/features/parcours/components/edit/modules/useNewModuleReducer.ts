@@ -31,6 +31,17 @@ function withSelectedModuleAssociations(
   };
 }
 
+function withRequiredContact(contacts: Contact[], requiredContact?: Contact) {
+  if (
+    !requiredContact ||
+    contacts.some((contact) => contact.id === requiredContact.id)
+  ) {
+    return contacts;
+  }
+
+  return [requiredContact, ...contacts];
+}
+
 // Centralized state type
 type ModuleState = {
   image: string | null;
@@ -50,7 +61,7 @@ type ModuleState = {
 
 // Action types
 type ModuleAction =
-  | { type: "START_CREATE" }
+  | { type: "START_CREATE"; payload?: Contact[] }
   | { type: "SET_MODE"; payload: "create" | "edit" }
   | { type: "SET_MODULES"; payload: ModuleData[] }
   | { type: "ADD_MODULE"; payload: ModuleData }
@@ -99,7 +110,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         ...state,
         showForm: true,
         mode: "create",
-        currentContacts: [],
+        currentContacts: action.payload ?? [],
         currentSkills: [],
         file: null,
         moduleToDuplicate: null,
@@ -243,5 +254,10 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
   }
 }
 
-export { moduleReducer, initialState, withSelectedModuleAssociations };
+export {
+  moduleReducer,
+  initialState,
+  withRequiredContact,
+  withSelectedModuleAssociations,
+};
 export type { ModuleState, ModuleAction };

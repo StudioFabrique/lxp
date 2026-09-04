@@ -1,6 +1,8 @@
 import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { prisma } from "../../utils/db.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
 
 type GroupsList = {
   _id: string;
@@ -10,15 +12,19 @@ type GroupsList = {
   nbStudents: number;
 };
 
-export default async function getStudentGroups() {
+export default async function getStudentGroups(
+  auth: NonNullable<CustomRequest["auth"]>,
+) {
   const studentRole = await Role.find({ role: "student" }, { _id: 1 });
+  const visibilityFilter = await getGroupVisibilityFilter(auth);
 
   const groups = await Group.find(
-    { roles: { $in: studentRole } },
+    { roles: { $in: studentRole }, ...visibilityFilter },
     { _id: 1, name: 1, desc: 1, users: 1 }
   );
 
   const prismaGroups = await prisma.group.findMany({
+    where: { idMdb: { in: groups.map(({ id }) => String(id)) } },
     select: {
       idMdb: true,
       parcours: {

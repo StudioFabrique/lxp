@@ -21,11 +21,11 @@ export default function AccessDenied() {
       <div className="max-w-lg text-center space-y-4">
         <h1 className="text-3xl font-semibold">Accès refusé</h1>
         <p className="text-base-content/70">
-          Votre rôle actuel ne permet pas d’accéder à cette page.
+          Votre rôle actuel ne permet pas d'accéder à cette page.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link className="btn btn-primary" to="/">
-            Revenir à l’accueil
+            Revenir à l'accueil
           </Link>
           <button
             type="button"

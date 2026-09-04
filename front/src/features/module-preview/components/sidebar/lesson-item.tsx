@@ -14,6 +14,9 @@ type LessonItemProps = {
   selectedLesson: Lesson | undefined;
   canEditLesson?: boolean;
   openEditOnMount?: boolean;
+  isCourseOpen?: boolean;
+  shouldScrollIntoView?: boolean;
+  onScrolledIntoView?: (lessonId: number) => void;
   onSelectLesson: (lesson: Lesson) => void;
   onOpenModal: (lesson: Lesson) => void;
   onUpdateLesson: (
@@ -28,6 +31,9 @@ const LessonItem = ({
   selectedLesson,
   canEditLesson,
   openEditOnMount = false,
+  isCourseOpen = false,
+  shouldScrollIntoView = false,
+  onScrolledIntoView,
   onSelectLesson,
   onOpenModal,
   onUpdateLesson,
@@ -84,6 +90,32 @@ const LessonItem = ({
       updatePosition();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isLessonSelected || !isCourseOpen || !shouldScrollIntoView) return;
+
+    const isDesktop = window.matchMedia?.("(min-width: 768px)").matches;
+    if (isDesktop === false) return;
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      const lessonElement = lessonRef.current;
+      if (!lessonElement) return;
+
+      lessonElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      if (lesson.id) onScrolledIntoView?.(lesson.id);
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [
+    isCourseOpen,
+    isLessonSelected,
+    lesson.id,
+    onScrolledIntoView,
+    shouldScrollIntoView,
+  ]);
 
   // Handle scroll - update position or close dropdown
   useEffect(() => {

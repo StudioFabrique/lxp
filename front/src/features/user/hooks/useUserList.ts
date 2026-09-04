@@ -4,6 +4,10 @@ import { queries } from "../api/user.api";
 import type User from "../../../utils/interfaces/user";
 import type UsersStats from "../interfaces/users-stats";
 import type Role from "../../../utils/interfaces/role";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../components/table/pagination-storage";
 
 /**
  * Cadence de relance tant qu'une invitation est en cours de remise. Assez
@@ -14,10 +18,9 @@ const INVITATION_POLL_INTERVAL_MS = 3000;
 
 export function useUserList(role: Role | null) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
-    const stored = localStorage.getItem("itemsPerPage");
-    return stored ? parseInt(stored) : 10;
-  });
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    getStoredItemsPerPage("users", 10),
+  );
   const [sortProperty, setSortProperty] = useState<string | null>("lastname");
   const [isAscDirection, setIsAscDirection] = useState(true);
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -39,7 +42,7 @@ export function useUserList(role: Role | null) {
   };
 
   const handleSetItemsPerPage = (value: number) => {
-    localStorage.setItem("itemsPerPage", value.toString());
+    storeItemsPerPage("users", value);
     setItemsPerPage(value);
     setCurrentPage(1);
   };

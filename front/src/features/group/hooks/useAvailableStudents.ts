@@ -1,16 +1,19 @@
 import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { groupApi } from "../api/group.api";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../components/table/pagination-storage";
 
 export function useAvailableStudents(
   excludedUserIds: string[],
   enabled: boolean,
 ) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
-    const storedValue = localStorage.getItem("itemsPerPage");
-    return storedValue ? Number(storedValue) : 10;
-  });
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    getStoredItemsPerPage("group-available-students", 10),
+  );
   const [sortProperty, setSortProperty] = useState("lastname");
   const [isAscDirection, setIsAscDirection] = useState(true);
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -62,7 +65,7 @@ export function useAvailableStudents(
   };
 
   const handleSetItemsPerPage = (value: number) => {
-    localStorage.setItem("itemsPerPage", String(value));
+    storeItemsPerPage("group-available-students", value);
     setItemsPerPage(value);
     setCurrentPage(1);
   };

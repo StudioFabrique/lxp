@@ -5,12 +5,14 @@ import {
   ExternalLink,
   LoaderCircle,
   Pencil,
+  Send,
   Trash2,
 } from "lucide-react";
 import { Link } from "react-router";
 
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
+import type { HierarchicalListMenuControl } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import type ParcoursSummary from "../../../dashboard-admin/interfaces/parcours-summary";
 
 type ParcoursActionsMenuProps = {
@@ -18,6 +20,7 @@ type ParcoursActionsMenuProps = {
   onDelete: (parcours: ParcoursSummary) => void;
   onExport?: (parcours: ParcoursSummary) => void;
   isExporting?: boolean;
+  menuControl?: HierarchicalListMenuControl;
 };
 
 const itemBaseClassName =
@@ -29,8 +32,12 @@ const ParcoursActionsMenu = ({
   onDelete,
   onExport,
   isExporting = false,
+  menuControl,
 }: ParcoursActionsMenuProps) => (
-  <DropdownMenu.Root>
+  <DropdownMenu.Root
+    open={menuControl?.open}
+    onOpenChange={menuControl?.onOpenChange}
+  >
     <DropdownMenu.Trigger asChild>
       <button
         type="button"
@@ -59,15 +66,29 @@ const ParcoursActionsMenu = ({
 
         {parcours.canManage !== false ? (
           <PermissionGuard action="update" object="parcours">
-            <DropdownMenu.Item asChild>
-              <Link
-                className={itemClassName}
-                to={`/admin/parcours/edit/${parcours.id}`}
-              >
-                <Pencil className="size-4" />
-                Modifier
-              </Link>
-            </DropdownMenu.Item>
+            <>
+              <DropdownMenu.Item asChild>
+                <Link
+                  className={itemClassName}
+                  to={`/admin/parcours/edit/${parcours.id}`}
+                >
+                  <Pencil className="size-4" />
+                  Modifier
+                </Link>
+              </DropdownMenu.Item>
+
+              {!parcours.isPublished ? (
+                <DropdownMenu.Item asChild>
+                  <Link
+                    className={itemClassName}
+                    to={`/admin/parcours/edit/${parcours.id}?step=7`}
+                  >
+                    <Send className="size-4" />
+                    Publier
+                  </Link>
+                </DropdownMenu.Item>
+              ) : null}
+            </>
           </PermissionGuard>
         ) : null}
 

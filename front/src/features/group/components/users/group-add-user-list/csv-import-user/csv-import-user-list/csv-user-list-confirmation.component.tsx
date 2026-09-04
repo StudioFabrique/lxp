@@ -33,7 +33,7 @@ const CsvUserListConfirmation = ({
   if (usersFromCsv.length === 0) {
     return (
       <p className="text-center text-sm text-base-content/70">
-        Aucun utilisateur disponible. Vérifiez le fichier d’importation.
+        Aucun utilisateur disponible. Vérifiez le fichier d'importation.
       </p>
     );
   }

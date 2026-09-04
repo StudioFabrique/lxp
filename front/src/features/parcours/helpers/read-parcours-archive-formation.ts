@@ -43,7 +43,7 @@ export async function readParcoursArchiveMetadata(
 
   const manifestFile = zip.file("manifest.json");
   if (!manifestFile) {
-    throw new Error("Le fichier manifest.json est absent de l’archive.");
+    throw new Error("Le fichier manifest.json est absent de l'archive.");
   }
 
   let manifest: ParcoursArchiveManifest;
@@ -65,7 +65,7 @@ export async function readParcoursArchiveMetadata(
 
   const modules = archiveModules.map((module, index) => {
     if (typeof module.title !== "string" || module.title.trim() === "") {
-      throw new Error(`Le module ${index + 1} n’a pas de titre valide.`);
+      throw new Error(`Le module ${index + 1} n'a pas de titre valide.`);
     }
     return { index, title: module.title.trim() };
   });

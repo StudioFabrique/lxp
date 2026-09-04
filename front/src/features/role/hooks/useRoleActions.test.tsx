@@ -8,8 +8,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { roleApi } from "../api/role.api";
 import { useRoleActions } from "./useRoleActions";
 
-(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean })
-  .IS_REACT_ACT_ENVIRONMENT = true;
+(
+  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 vi.mock("../api/role.api", () => ({
   roleApi: {
@@ -51,7 +52,7 @@ describe("useRoleActions", () => {
     vi.clearAllMocks();
   });
 
-  it("expose et affiche le message renvoyé lors d’un refus de suppression", async () => {
+  it("expose et affiche le message renvoyé lors d'un refus de suppression", async () => {
     const message = "Impossible de supprimer un rôle protégé";
     vi.mocked(roleApi.mutations.deleteOne).mockRejectedValue(apiError(message));
 

@@ -11,7 +11,7 @@ const useStudentResources = () => {
     setPage,
     perPage,
     handleSearch,
-  } = usePagination("title", "/resources");
+  } = usePagination("title", "/resources", "student-resources");
   const [searchTerm, setSearchTerm] = useState("");
   const initialRender = useRef(true);
   const [searchError, setSearchError] = useState<string | null>(null);

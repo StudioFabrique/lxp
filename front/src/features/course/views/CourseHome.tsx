@@ -1,4 +1,3 @@
- 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import CourseList from "../components/list/course-list";

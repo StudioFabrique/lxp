@@ -5,8 +5,9 @@ import type { Link as LinkI } from "../../interfaces/link";
 import type Hobby from "../../interfaces/hobby";
 import { regexGeneric, regexMail, regexNumber } from "../../../../config/constantes";
 
-export function useUserForm(user: User | null) {
+export function useUserForm(user: User | null, initialSendEmail = false) {
   const [email, setEmail] = useState(user?.email ?? "");
+  const [emailTouched, setEmailTouched] = useState(false);
   const [firstname, setFirstname] = useState(user?.firstname ?? "");
   const [lastname, setLastname] = useState(user?.lastname ?? "");
   const [nickname, setNickname] = useState(user?.nickname ?? "");
@@ -21,11 +22,12 @@ export function useUserForm(user: User | null) {
   const [links, setLinks] = useState<Array<LinkI>>([]);
   const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
   const [roleId, setRoleId] = useState<string | null>(null);
-  const [sendEmail, setSendEmail] = useState(false);
+  const [sendEmail, setSendEmail] = useState(initialSendEmail);
 
   useEffect(() => {
     if (user) {
       setEmail(user.email ?? "");
+      setEmailTouched(false);
       setFirstname(user.firstname ?? "");
       setLastname(user.lastname ?? "");
       setNickname(user.nickname ?? "");
@@ -42,7 +44,9 @@ export function useUserForm(user: User | null) {
     }
   }, [user]);
 
-  const emailError = email.length > 0 && !regexMail.test(email);
+  const emailIsInvalid = email.length > 0 && !regexMail.test(email);
+  const emailError = emailTouched && emailIsInvalid;
+  const touchEmail = () => setEmailTouched(true);
   const firstnameError = firstname.length > 0 && !regexGeneric.test(firstname);
   const lastnameError = lastname.length > 0 && !regexGeneric.test(lastname);
   const nicknameError = nickname.length > 0 && !regexGeneric.test(nickname);
@@ -55,7 +59,7 @@ export function useUserForm(user: User | null) {
     email.length > 0 &&
     firstname.length > 0 &&
     lastname.length > 0 &&
-    !emailError &&
+    !emailIsInvalid &&
     !firstnameError &&
     !lastnameError;
 
@@ -78,7 +82,7 @@ export function useUserForm(user: User | null) {
   });
 
   return {
-    email, setEmail, emailError,
+    email, setEmail, emailError, touchEmail,
     firstname, setFirstname, firstnameError,
     lastname, setLastname, lastnameError,
     nickname, setNickname, nicknameError,

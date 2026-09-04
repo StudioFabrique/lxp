@@ -14,7 +14,7 @@ const role: Role = {
 };
 
 describe("StudentGroupList", () => {
-  it("place la création d’un groupe en haut à droite du tableau", () => {
+  it("place la création d'un groupe en haut à droite du tableau", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <StudentGroupList

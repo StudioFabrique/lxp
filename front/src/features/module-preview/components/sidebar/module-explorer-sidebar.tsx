@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import { ExplorerStore } from "../../views/ModuleContentExplorer";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -22,12 +22,40 @@ const ModuleExplorerSidebar = ({
 }: Props) => {
   const { state, dispatch, courseActions, lessonActions, activityActions } =
     store;
-  const { module, selectedLesson, selectedActivity } = state;
+  const {
+    module,
+    selectedLesson,
+    selectedActivity,
+    lessonIdToScroll,
+  } = state;
+  const { acknowledgeLessonScroll } = store;
   const [searchParams] = useSearchParams();
   const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
   const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
   const createCourse = searchParams.get("createCourse") === "true";
   const [openedCourseId, setOpenedCourseId] = useState<number>();
+  const selectedMobileLessonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const lessonId = lessonIdToScroll;
+    if (!lessonId || selectedLesson?.id !== lessonId) return;
+
+    const isDesktop = window.matchMedia?.("(min-width: 768px)").matches;
+    if (isDesktop !== false) return;
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      const lessonElement = selectedMobileLessonRef.current;
+      if (!lessonElement) return;
+
+      lessonElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      acknowledgeLessonScroll(lessonId);
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [acknowledgeLessonScroll, lessonIdToScroll, selectedLesson?.id]);
 
   if (!module) return null;
 
@@ -94,6 +122,11 @@ const ModuleExplorerSidebar = ({
                     return (
                       <div className="flex flex-col gap-1" key={lesson.id}>
                         <button
+                          ref={
+                            isSelectedLesson
+                              ? selectedMobileLessonRef
+                              : undefined
+                          }
                           type="button"
                           title={`Leçon ${lessonIndex + 1} : ${lesson.title}`}
                           aria-label={`Leçon ${lessonIndex + 1} : ${lesson.title}`}
@@ -182,6 +215,8 @@ const ModuleExplorerSidebar = ({
           editCourseId={editCourseId}
           editLessonId={editLessonId}
           openedCourseId={openedCourseId}
+          lessonIdToScroll={lessonIdToScroll}
+          onLessonScrolled={acknowledgeLessonScroll}
           onDeleteLesson={lessonActions.deleteLesson}
           onCreateLesson={lessonActions.createLesson}
           onLessonCreated={(lessonId) =>

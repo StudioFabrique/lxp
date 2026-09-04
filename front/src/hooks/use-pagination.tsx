@@ -5,6 +5,10 @@ import apiClient from "../lib/axios";
 import { rowsPerPage } from "../config/pagination";
 import { localeDate } from "../utils/helpers/locale-date";
 import toast from "react-hot-toast";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../components/table/pagination-storage";
 
 const initialState = {
   page: 1,
@@ -12,11 +16,17 @@ const initialState = {
   totalPages: null,
 };
 
-const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
+const usePagination = (
+  defaultSortValue: string,
+  defaultUrlPath: string,
+  paginationStorageLocation?: string,
+) => {
   const [sdir, setSdir] = useState(false);
   const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
-  const [perPage, setPerPage] = useState(initialState.perPage);
+  const [perPage, setPerPageState] = useState(() =>
+    getStoredItemsPerPage(paginationStorageLocation, initialState.perPage),
+  );
   const [totalPages, setTotalPages] = useState<number | null>(
     initialState.totalPages,
   );
@@ -28,6 +38,14 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const handlePageNumber = useCallback((value: number) => {
     setPage(value);
   }, []);
+
+  const setPerPage = useCallback(
+    (value: number) => {
+      storeItemsPerPage(paginationStorageLocation, value);
+      setPerPageState(value);
+    },
+    [paginationStorageLocation],
+  );
 
   const initPagination = useCallback(() => {
     setPage(1);

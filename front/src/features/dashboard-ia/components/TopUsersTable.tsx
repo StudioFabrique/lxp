@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
-import Pagination from "../../../components/UI/pagination/pagination";
+import TablePagination from "../../../components/table/TablePagination";
 import type { TopUser } from "../types";
 
 type Props = {
@@ -113,12 +113,17 @@ const TopUsersTable = ({
           </tbody>
         </table>
       </Wrapper>
-      <Pagination
-        page={page}
-        setPage={setPage as React.Dispatch<React.SetStateAction<number>>}
-        totalPages={totalPages}
-        perPage={perPage}
-        setPerPages={setPerPage as React.Dispatch<React.SetStateAction<number>>}
+      <TablePagination
+        currentPage={page}
+        maxPage={totalPages}
+        itemsPerPage={perPage}
+        onSetCurrentPage={setPage}
+        onSetItemsPerPage={(itemsPerPage) => {
+          setPerPage(itemsPerPage);
+          setPage(1);
+        }}
+        onSetPreviousPage={() => setPage(Math.max(page - 1, 1))}
+        onSetNextPage={() => setPage(Math.min(page + 1, totalPages))}
       />
     </div>
   );

@@ -10,6 +10,7 @@ export interface IGroup extends Document {
   users?: IUser["_id"];
   tags?: ITag["_id"];
   roles: IRole["_id"];
+  createdBy?: IUser["_id"];
   image: Buffer;
   isActive: boolean;
   createdAt: Date;
@@ -30,6 +31,11 @@ const groupSchema: Schema = new Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
     },
     isActive: { type: Boolean, default: false },
     image: { type: Buffer, required: false },

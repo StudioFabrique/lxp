@@ -49,22 +49,22 @@ L'API de l'application est disponible sur <http://localhost:3000>.
 | Initialiser des bases vides               | `npm run init`                                   |
 | Restaurer un dump placé dans `api/dumps/` | `npm run init:data`                              |
 | Charger les données de démonstration      | `npm run init:demo`                              |
-| Démarrer l’API et le front                | `npm run dev`                                    |
+| Démarrer l'API et le front                | `npm run dev`                                    |
 | Démarrer les bases sans les réinitialiser | `docker compose -f api/docker-compose.yml up -d` |
 | Sauvegarder les données locales           | `npm run dump`                                   |
-| Lancer les tests de l’API                 | `npm test`                                       |
+| Lancer les tests de l'API                 | `npm test`                                       |
 
-## Variables d’environnement
+## Variables d'environnement
 
 Le projet utilise deux fichiers en développement :
 
-- `api/.env` pour l’API et les bases Docker ;
-- `front/.env` pour l’interface.
+- `api/.env` pour l'API et les bases Docker ;
+- `front/.env` pour l'interface.
 
 `npm run init` crée ces fichiers à partir des fichiers `env.example`. Les
 valeurs fournies permettent de démarrer le LXP en local.
 
-La page [Variables d’environnement](docs/variables-environnement.md) indique :
+La page [Variables d'environnement](docs/variables-environnement.md) indique :
 
 - les variables obligatoires en développement ;
 - les variables du service IA ;
@@ -83,7 +83,7 @@ projets/
 └── ANDRIA-IA/
 ```
 
-Initialisez d’abord le LXP, puis suivez le guide
+Initialisez d'abord le LXP, puis suivez le guide
 [Démarrer ANDRIA-IA en développement](docs/developpement-ia.md). Le guide
 explique où trouver les clés Mistral, quelles variables renseigner et comment
 contrôler le service.
@@ -117,9 +117,9 @@ avant le premier lancement.
 
 | Besoin                                      | Page                                                         |
 | ------------------------------------------- | ------------------------------------------------------------ |
-| Installer le projet et régler les variables | [Variables d’environnement](docs/variables-environnement.md) |
+| Installer le projet et régler les variables | [Variables d'environnement](docs/variables-environnement.md) |
 | Comprendre le code                          | [Structure du projet](docs/structure-et-architecture.md)     |
 | Démarrer le service IA                      | [Développement avec ANDRIA-IA](docs/developpement-ia.md)     |
 | Déployer une instance                       | [Guide de déploiement](deployment/README.md)                 |
 | Sauvegarder ou restaurer une instance       | [Sauvegardes](docs/sauvegardes.md)                           |
-| Gérer l’instance de démonstration           | [Mode démonstration](docs/mode-demo.md)                      |
+| Gérer l'instance de démonstration           | [Mode démonstration](docs/mode-demo.md)                      |

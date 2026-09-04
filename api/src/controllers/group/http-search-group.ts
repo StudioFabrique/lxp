@@ -1,8 +1,9 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import searchGroup from "../../models/group/search-group.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-async function httpSearchGroup(req: Request, res: Response) {
+async function httpSearchGroup(req: CustomRequest, res: Response) {
   const { entity, role, value, stype, sdir } = req.params;
   const { page, limit } = req.query;
 
@@ -15,6 +16,7 @@ async function httpSearchGroup(req: Request, res: Response) {
       +limit!,
       stype,
       sdir,
+      req.auth!,
     );
 
     if (!result) {

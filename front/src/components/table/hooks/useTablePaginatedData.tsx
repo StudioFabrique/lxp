@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { tableQueries } from "../table.api";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../pagination-storage";
 
 function useTablePaginatedData<TData>(
   apiEndpoint: string,
@@ -11,17 +15,18 @@ function useTablePaginatedData<TData>(
     queryKeyPrefix?: string;
   },
 ) {
+  const paginationStorageLocation =
+    options?.queryKeyPrefix ?? apiEndpoint.replace(/\//g, "-");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortProperty, setSortProperty] = useState<string | null>("name");
   const [isAscDirection, setAscDirection] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string | null>(null);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
-    const stored = localStorage.getItem("itemsPerPage");
-    return stored ? parseInt(stored) : 5;
-  });
+  const [itemsPerPage, setItemsPerPage] = useState<number>(() =>
+    getStoredItemsPerPage(paginationStorageLocation, 5),
+  );
 
   const handleSetItemsPerPage = (value: number) => {
-    localStorage.setItem("itemsPerPage", value.toString());
+    storeItemsPerPage(paginationStorageLocation, value);
     setItemsPerPage(value);
     setCurrentPage(1);
   };

@@ -28,4 +28,26 @@ describe("ItemElement", () => {
       act(() => root.unmount());
     }
   });
+
+  it("masque la suppression d'un élément verrouillé", () => {
+    const container = document.createElement("div");
+    const root: Root = createRoot(container);
+
+    try {
+      act(() => {
+        root.render(
+          <ItemElement
+            item={{ id: 1, description: "Formateur actuel" }}
+            property="description"
+            onRemoveItem={vi.fn()}
+            removable={false}
+          />,
+        );
+      });
+
+      expect(container.querySelector('[aria-label="supprimer l\'objet"]')).toBeNull();
+    } finally {
+      act(() => root.unmount());
+    }
+  });
 });

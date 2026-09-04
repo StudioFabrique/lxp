@@ -2,6 +2,8 @@ import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
 import { prisma } from "../../utils/db.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
 
 async function getAllGroups(
   page: number,
@@ -9,6 +11,7 @@ async function getAllGroups(
   role: string,
   stype: string,
   sdir: string,
+  auth: NonNullable<CustomRequest["auth"]>,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
@@ -23,7 +26,10 @@ async function getAllGroups(
     return false;
   }
 
-  const groups = await Group.find({ roles: { $in: fetchedRoles } })
+  const visibilityFilter = await getGroupVisibilityFilter(auth);
+  const groupFilter = { roles: { $in: fetchedRoles }, ...visibilityFilter };
+
+  const groups = await Group.find(groupFilter)
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort({ [stype]: dir })
     .skip(getPagination(page, limit))
@@ -64,7 +70,7 @@ async function getAllGroups(
     }),
   );
 
-  const total = await Group.count({ roles: { $in: fetchedRoles } });
+  const total = await Group.countDocuments(groupFilter);
   return { total, groupsWithFormation };
 }
 

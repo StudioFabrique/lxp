@@ -1,17 +1,20 @@
-import { useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
 import { Link } from "react-router";
+import toast from "react-hot-toast";
 
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
-import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
+import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import Modal from "../../../../components/UI/modal/modal";
-import Pagination from "../../../../components/UI/pagination/pagination";
 import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import TablePagination from "../../../../components/table/TablePagination";
 import { courseSearchOptions } from "../../../../config/search-options";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
-import { AuthContext } from "../../../../store/AuthProvider";
-import { isTeacherUser } from "../../../../utils/helpers/user-role";
+import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import { courseApi } from "../../api/course.api";
 import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
 import type CustomCourse from "./interfaces/custom-course";
@@ -25,8 +28,12 @@ export default function CourseList({
   coursesList,
   onRefreshCourses,
 }: CourseListProps) {
-  const { user } = useContext(AuthContext);
-  const isTeacher = isTeacherUser(user);
+  const [lessonToDelete, setLessonToDelete] = useState<{
+    id: number;
+    title: string;
+    courseTitle: string;
+  } | null>(null);
+  const [isDeletingLesson, setIsDeletingLesson] = useState(false);
   const [filter, setFilter] = useState<{
     field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
     value: string;
@@ -38,11 +45,14 @@ export default function CourseList({
       course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
     );
   }, [coursesList, filter]);
-  const { list, page, totalPages, setPage } = useEagerLoadingList(
-    filteredCourses,
-    "title",
-    12,
-  );
+  const { list, limit, page, totalPages, setLimit, setPage } =
+    useEagerLoadingList(
+      filteredCourses,
+      "title",
+      15,
+      "id",
+      "sidebar-courses",
+    );
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleSearch = (field: string, value: string) => {
@@ -57,6 +67,23 @@ export default function CourseList({
     setPage(1);
     setFilter(null);
   };
+  const handleDeleteLesson = async () => {
+    if (!lessonToDelete) return;
+
+    setIsDeletingLesson(true);
+    try {
+      const data = await courseApi.mutations.deleteLesson(lessonToDelete.id);
+      toast.success(data.message);
+      setLessonToDelete(null);
+      onRefreshCourses();
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "La leçon n'a pas pu être supprimée."),
+      );
+    } finally {
+      setIsDeletingLesson(false);
+    }
+  };
 
   return (
     <main className="flex w-full flex-col gap-8">
@@ -69,15 +96,16 @@ export default function CourseList({
       />
 
       {list && list.length > 0 ? (
-        <section
-          className={`grid items-start gap-5 ${
-            isTeacher ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
-          }`}
-        >
+        <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {(list as CustomCourse[]).map((course) => (
             <HierarchicalListCard
               key={course.id}
               label="Cours"
+              labelAccessory={
+                !course.visibility ? (
+                  <InvisibleIndicator label="Cours invisible" />
+                ) : null
+              }
               title={course.title}
               description={
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
@@ -89,10 +117,10 @@ export default function CourseList({
                   <PermissionGuard action="read" object="course">
                     <Link
                       className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip="Prévisualiser le cours"
+                      data-tip="Accéder au cours"
                       to={`/admin/parcours/module/${course.moduleId}`}
                       state={{ lessonId: course.lessons[0]?.id }}
-                      aria-label={`Prévisualiser le cours ${course.title}`}
+                      aria-label={`Accéder au cours ${course.title}`}
                     >
                       <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>
@@ -124,14 +152,48 @@ export default function CourseList({
                 id: lesson.id,
                 title: lesson.title,
                 description: `Leçon ${lesson.order + 1}`,
-                icon: <BookOpen />,
+                icon: <BookOpen strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
+                action: (dismissOverflow, menuControl) => (
+                  <HierarchicalListItemActions
+                    title={lesson.title}
+                    menuControl={menuControl}
+                    actions={[
+                      {
+                        label: "Accéder à la leçon",
+                        icon: <SquareArrowRightEnter />,
+                        to: `/admin/parcours/module/${course.moduleId}`,
+                        state: { lessonId: lesson.id },
+                      },
+                      {
+                        label: "Modifier la leçon",
+                        icon: <Pencil />,
+                        to: `/admin/parcours/module/${course.moduleId}?editLessonId=${lesson.id}`,
+                        state: { lessonId: lesson.id },
+                        permission: { action: "update", object: "lesson" },
+                      },
+                      {
+                        label: "Supprimer la leçon",
+                        icon: <Trash2 />,
+                        onSelect: () =>
+                          setLessonToDelete({
+                            id: lesson.id,
+                            title: lesson.title,
+                            courseTitle: course.title,
+                          }),
+                        destructive: true,
+                        permission: { action: "delete", object: "lesson" },
+                      },
+                    ]}
+                    dismissOverflow={dismissOverflow}
+                  />
+                ),
               }))}
+              maxItemsShown={3}
               emptyMessage="Aucune leçon associée"
               moreItemsLabel={(count) => `Afficher plus de leçons (${count})`}
               overflowTitle={`Autres leçons de ${course.title}`}
-              fullWidth={isTeacher}
             />
           ))}
         </section>
@@ -139,8 +201,24 @@ export default function CourseList({
         <EmptyStatePlaceholder title="Aucun cours trouvé" />
       )}
 
-      {totalPages > 1 ? (
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      {list && list.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Cours : ${filteredCourses.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
       ) : null}
 
       {showModal ? (
@@ -154,6 +232,22 @@ export default function CourseList({
           <p className="py-4">
             Le cours et les ressources qui lui sont associées seront
             définitivement supprimés.
+          </p>
+        </Modal>
+      ) : null}
+
+      {lessonToDelete ? (
+        <Modal
+          title={`Supprimer la leçon « ${lessonToDelete.title} »`}
+          onLeftClick={() => setLessonToDelete(null)}
+          onRightClick={handleDeleteLesson}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+          isSubmitting={isDeletingLesson}
+        >
+          <p className="py-4">
+            La leçon du cours « {lessonToDelete.courseTitle} » et ses ressources
+            associées seront définitivement supprimées.
           </p>
         </Modal>
       ) : null}

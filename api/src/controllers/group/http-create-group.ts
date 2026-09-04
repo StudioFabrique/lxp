@@ -1,12 +1,13 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import type { IGroup } from "../../utils/interfaces/db/group.ts";
 import createGroup from "../../models/group/create-group.ts";
 import { creationSuccessfull, serverIssue } from "../../utils/constantes.ts";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-export default async function httpCreateGroup(req: Request, res: Response) {
+export default async function httpCreateGroup(req: CustomRequest, res: Response) {
   const uploadedFile = req.file;
 
   const {
@@ -25,7 +26,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     if (!!uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
-    await createGroup(group, users, image, parcoursId);
+    await createGroup(group, users, image, req.auth!.userId, parcoursId);
 
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });

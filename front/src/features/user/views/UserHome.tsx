@@ -152,7 +152,7 @@ const UserHome = () => {
     }
 
     if (userToDelete.roles.some((role) => role.rank === 2)) {
-      return "L'utilisateur sera détaché de ses parcours, modules et cours. Les contenus qu’il a créés seront conservés et transférés.";
+      return "L'utilisateur sera détaché de ses parcours, modules et cours. Les contenus qu'il a créés seront conservés et transférés.";
     }
 
     if (userToDelete.roles.some((role) => role.rank === 1)) {

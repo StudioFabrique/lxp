@@ -58,8 +58,8 @@ export default function ModuleCard({
           <Link
             className="btn btn-sm btn-ghost bg-white/90 text-primary hover:bg-white"
             to={`/admin/parcours/module/${module.id}`}
-            title="Prévisualiser le module"
-            aria-label="Prévisualiser le module"
+            title="Accéder au module"
+            aria-label="Accéder au module"
           >
             <Eye className="w-4 h-4" />
             Aperçu

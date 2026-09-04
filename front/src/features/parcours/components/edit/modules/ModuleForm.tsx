@@ -16,6 +16,7 @@ type ModuleFormProps = {
   isLoading: boolean;
   isSubmitting: boolean;
   currentContacts: Contact[];
+  lockedContactId?: number;
   currentSkills: Skill[];
   contacts: Contact[];
   skills: Skill[];
@@ -38,6 +39,7 @@ export default function ModuleForm({
   isLoading,
   isSubmitting,
   currentContacts,
+  lockedContactId,
   currentSkills,
   contacts,
   skills,
@@ -79,9 +81,15 @@ export default function ModuleForm({
 
               <div className="mx-auto divider divider-vertical lg:divider-horizontal" />
 
-              <span className="col-span-5">
+              <span
+                className="col-span-5"
+                data-recommended-tour="module-assignments"
+              >
                 <ModuleToParcours
                   currentContacts={currentContacts}
+                  lockedContactIds={
+                    lockedContactId !== undefined ? [lockedContactId] : []
+                  }
                   currentSkills={currentSkills}
                   contacts={contacts}
                   skills={skills}

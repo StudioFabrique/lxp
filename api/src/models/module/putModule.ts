@@ -1,22 +1,36 @@
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
+import { includeCreatorContact } from "../formation/module-contact-ids.ts";
 
-async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
-  const existingModule = await prisma.module.findUnique({
-    where: { id: module.id },
-    include: {
-      parcours: {
-        include: {
-          contacts: { select: { contactId: true } },
-          bonusSkills: { select: { id: true } },
+async function putModule(
+  module: any,
+  image?: Buffer,
+  thumb?: Buffer,
+  userId?: string,
+) {
+  const [existingModule, currentContact] = await Promise.all([
+    prisma.module.findUnique({
+      where: { id: module.id },
+      include: {
+        parcours: {
+          include: {
+            contacts: { select: { contactId: true } },
+            bonusSkills: { select: { id: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    userId
+      ? prisma.contact.findUnique({
+          where: { idMdb: userId },
+          select: { id: true },
+        })
+      : null,
+  ]);
   if (!existingModule) {
     throw { message: "Le module n'existe pas.", statusCode: 404 };
   }
-  const contactIds = [...new Set<number>(module.contactsIds ?? [])];
+  const selectedContactIds = [...new Set<number>(module.contactsIds ?? [])];
   const bonusSkillIds = [...new Set<number>(module.bonusSkillsIds ?? [])];
   const allowedContactIds = new Set(
     existingModule.parcours.contacts.map(({ contactId }) => contactId),
@@ -25,7 +39,7 @@ async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
     existingModule.parcours.bonusSkills.map(({ id }) => id),
   );
   if (
-    contactIds.some((id) => !allowedContactIds.has(id)) ||
+    selectedContactIds.some((id) => !allowedContactIds.has(id)) ||
     bonusSkillIds.some((id) => !allowedSkillIds.has(id))
   ) {
     throw {
@@ -34,6 +48,11 @@ async function putModule(module: any, image?: Buffer, thumb?: Buffer) {
       statusCode: 400,
     };
   }
+  const contactIds = includeCreatorContact(
+    selectedContactIds,
+    allowedContactIds,
+    currentContact?.id,
+  );
 
   const updated = await prisma.$transaction(async (tx) => {
     await tx.contactsOnModule.deleteMany({ where: { moduleId: module.id } });

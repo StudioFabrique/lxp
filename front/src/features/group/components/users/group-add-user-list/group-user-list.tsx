@@ -10,6 +10,10 @@ import TablePagination from "../../../../../components/table/TablePagination";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
 import { getGroupStudentColumns } from "../group-user-table-columns";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../../../components/table/pagination-storage";
 
 const compareValues = (left: unknown, right: unknown) =>
   String(left ?? "").localeCompare(String(right ?? ""), "fr", {
@@ -35,10 +39,9 @@ const GroupUserList = ({
     { id: "lastname", desc: false },
   ]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
-    const storedValue = localStorage.getItem("itemsPerPage");
-    return storedValue ? Number(storedValue) : 10;
-  });
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    getStoredItemsPerPage("group-students", 10),
+  );
 
   const filteredUsers = useMemo(() => {
     const searchValue = filter?.trim().toLocaleLowerCase("fr");
@@ -93,7 +96,7 @@ const GroupUserList = ({
   };
 
   const handleSetItemsPerPage = (value: number) => {
-    localStorage.setItem("itemsPerPage", String(value));
+    storeItemsPerPage("group-students", value);
     setItemsPerPage(value);
     setCurrentPage(1);
   };

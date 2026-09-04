@@ -9,6 +9,7 @@ export default async function createGroup(
   group: IGroup,
   users: IUser[],
   image: Buffer | undefined,
+  creatorId: string,
   parcoursId?: number,
 ) {
   const name = group.name?.trim() ?? "";
@@ -36,6 +37,7 @@ export default async function createGroup(
   await activateMultipleUsers(users);
 
   group.roles = await Role.find({ role: "student", rank: 3 });
+  group.createdBy = creatorId;
 
   const usersId = users.map((user) => user._id);
 

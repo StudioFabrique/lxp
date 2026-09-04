@@ -108,7 +108,7 @@ export default function useCourseQuiz(
   const onLoadQuizzes = async () => {
     if (!aiIndexed) {
       toastWarning(
-        "Les quiz IA sont désactivés pour ce cours dupliqué tant que son contenu n’a pas été réindexé.",
+        "Les quiz IA sont désactivés pour ce cours dupliqué tant que son contenu n'a pas été réindexé.",
       );
       return;
     }
@@ -370,7 +370,14 @@ export default function useCourseQuiz(
         setIsReplacing(false);
       }
     },
-    [activityContent, currentIndex, quizzes, isAnswered, isCorrect, attemptTracking],
+    [
+      activityContent,
+      currentIndex,
+      quizzes,
+      isAnswered,
+      isCorrect,
+      attemptTracking,
+    ],
   );
 
   return {

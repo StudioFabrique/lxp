@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import BoxWrapper from "./BoxWrapper";
 
 describe("BoxWrapper", () => {
-  it("retire l’encadré lorsque la variante sans style est utilisée", () => {
+  it("retire l'encadré lorsque la variante sans style est utilisée", () => {
     const markup = renderToStaticMarkup(
       <BoxWrapper unstyled>
         <p>Contenu vide</p>

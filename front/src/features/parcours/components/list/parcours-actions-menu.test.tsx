@@ -30,7 +30,10 @@ const parcours: ParcoursSummary = {
   thumb: null,
 };
 
-const renderMenu = (rank: number) => {
+const renderMenu = (
+  rank: number,
+  parcoursOverrides: Partial<ParcoursSummary> = {},
+) => {
   const user = {
     roles: [{ rank }],
   } as User;
@@ -41,7 +44,10 @@ const renderMenu = (rank: number) => {
   return renderToStaticMarkup(
     <AuthContext.Provider value={auth}>
       <MemoryRouter>
-        <ParcoursActionsMenu parcours={parcours} onDelete={vi.fn()} />
+        <ParcoursActionsMenu
+          parcours={{ ...parcours, ...parcoursOverrides }}
+          onDelete={vi.fn()}
+        />
       </MemoryRouter>
     </AuthContext.Provider>,
   );
@@ -54,5 +60,16 @@ describe("ParcoursActionsMenu", () => {
 
   it("affiche la suppression pour un administrateur", () => {
     expect(renderMenu(1)).toContain("Supprimer");
+  });
+
+  it("permet d'accéder directement à l'étape de publication d'un brouillon", () => {
+    const markup = renderMenu(1);
+
+    expect(markup).toContain("Publier");
+    expect(markup).toContain("/admin/parcours/edit/42?step=7");
+  });
+
+  it("masque l'action de publication pour un parcours déjà publié", () => {
+    expect(renderMenu(1, { isPublished: true })).not.toContain("Publier");
   });
 });

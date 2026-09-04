@@ -61,6 +61,7 @@ const renderCourses = (
           status: "in_progress",
           step,
           isSaving: false,
+          canStart: true,
           start: vi.fn().mockResolvedValue(undefined),
           skip: vi.fn().mockResolvedValue(undefined),
         }}
@@ -91,7 +92,7 @@ const getCourseButton = (container: HTMLDivElement) => {
   const button = container.querySelector<HTMLButtonElement>(
     '[data-testid="course-1"]',
   );
-  if (!button) throw new Error("Le cours de test n’a pas été rendu.");
+  if (!button) throw new Error("Le cours de test n'a pas été rendu.");
   return button;
 };
 
@@ -111,7 +112,7 @@ afterEach(() => {
 });
 
 describe("SidebarCoursesList pendant le tutoriel", () => {
-  it("empêche de replier le cours à l’étape de création d’activité", () => {
+  it("empêche de replier le cours à l'étape de création d'activité", () => {
     const container = document.createElement("div");
     renderCourses(container, "admin-activity-create:42");
 
@@ -136,13 +137,14 @@ describe("SidebarCoursesList pendant le tutoriel", () => {
   });
 });
 
-describe("SidebarCoursesList pendant l’édition d’une activité texte", () => {
+describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
   it("ne fait pas flotter le bouton de création de cours", () => {
     const container = document.createElement("div");
     renderCourses(container, "admin-activity-create:42", true);
 
-    const createCourseButton = Array.from(container.querySelectorAll("span"))
-      .find((element) => element.textContent === "Créer un cours");
+    const createCourseButton = Array.from(
+      container.querySelectorAll("span"),
+    ).find((element) => element.textContent === "Créer un cours");
     const actionsContainer = createCourseButton?.parentElement;
 
     expect(actionsContainer).toBeTruthy();

@@ -45,6 +45,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     id,
     isLoading,
     isSubmittingModule,
+    lockedContactId,
     sourceModules,
     mode,
     moduleToDuplicate,
@@ -117,6 +118,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
             isLoading={isLoading}
             isSubmitting={isSubmittingModule}
             currentContacts={currentContacts ?? []}
+            lockedContactId={lockedContactId}
             currentSkills={currentSkills ?? []}
             contacts={parcours?.contacts ?? []}
             skills={parcours?.bonusSkills ?? []}
