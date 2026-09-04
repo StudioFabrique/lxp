@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, FastForward, X } from "lucide-react";
+import { ArrowRight, FastForward } from "lucide-react";
 import { Link } from "react-router";
 import type { RecommendedAction } from "./recommended-action-config";
 
