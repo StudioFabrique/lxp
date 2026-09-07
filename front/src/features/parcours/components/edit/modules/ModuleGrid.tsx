@@ -16,6 +16,9 @@ type ModuleGridProps = {
   parcoursSkills: Skill[];
   isAssigningContacts: boolean;
   isAssigningSkills: boolean;
+  removingContact: { moduleId: number; contactId: number } | null;
+  removingSkill: { moduleId: number; skillId: number } | null;
+  lockedContactId?: number;
   highlightedModuleId?: number | null;
   emptyMessage: string;
   onUpdate: (module: ModuleData) => void;
@@ -25,6 +28,8 @@ type ModuleGridProps = {
     contactIds: number[],
   ) => Promise<boolean>;
   onAssignSkills: (moduleId: number, skillIds: number[]) => Promise<boolean>;
+  onRemoveContact: (moduleId: number, contactId: number) => Promise<boolean>;
+  onRemoveSkill: (moduleId: number, skillId: number) => Promise<boolean>;
 };
 
 export default function ModuleGrid({
@@ -33,12 +38,17 @@ export default function ModuleGrid({
   parcoursSkills,
   isAssigningContacts,
   isAssigningSkills,
+  removingContact,
+  removingSkill,
+  lockedContactId,
   highlightedModuleId,
   emptyMessage,
   onUpdate,
   onDelete,
   onAssignContacts,
   onAssignSkills,
+  onRemoveContact,
+  onRemoveSkill,
 }: ModuleGridProps) {
   const [moduleForContacts, setModuleForContacts] = useState<ModuleData | null>(
     null,
@@ -95,6 +105,25 @@ export default function ModuleGrid({
             }
             onAssignContacts={setModuleForContacts}
             onAssignSkills={setModuleForSkills}
+            removingContactId={
+              removingContact?.moduleId === module.id
+                ? removingContact.contactId
+                : null
+            }
+            removingSkillId={
+              removingSkill?.moduleId === module.id
+                ? removingSkill.skillId
+                : null
+            }
+            isRemovingContact={removingContact !== null}
+            isRemovingSkill={removingSkill !== null}
+            lockedContactId={lockedContactId}
+            onRemoveContact={(contactId) =>
+              void onRemoveContact(module.id, contactId)
+            }
+            onRemoveSkill={(skillId) =>
+              void onRemoveSkill(module.id, skillId)
+            }
           />
         ))}
       </section>

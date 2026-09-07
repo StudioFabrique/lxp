@@ -1,3 +1,5 @@
+import { act } from "react";
+import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
@@ -49,12 +51,16 @@ describe("ModuleGrid", () => {
         parcoursSkills={module.skills}
         isAssigningContacts={false}
         isAssigningSkills={false}
+        removingContact={null}
+        removingSkill={null}
         highlightedModuleId={module.id}
         emptyMessage="Aucun module"
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
         onAssignContacts={vi.fn()}
         onAssignSkills={vi.fn()}
+        onRemoveContact={vi.fn()}
+        onRemoveSkill={vi.fn()}
       />,
     );
 
@@ -69,6 +75,15 @@ describe("ModuleGrid", () => {
     expect(markup).toContain("min-h-24");
     expect(markup).toContain("py-2");
     expect(markup).toContain("after:hidden");
+    expect(markup).toContain(
+      "Retirer la ressource pédagogique Ada Lovelace du module Module illustré",
+    );
+    expect(markup).toContain(
+      "Retirer la compétence Compétence avec badge du module Module illustré",
+    );
+    expect(markup).toContain("group/skill");
+    expect(markup).toContain("group-hover/skill:opacity-100");
+    expect(markup).toContain("backdrop-blur-sm");
 
     const contactPosition = markup.indexOf("Ada Lovelace");
     const contactButtonPosition = markup.indexOf(
@@ -88,5 +103,75 @@ describe("ModuleGrid", () => {
     expect(markup).toContain('data-tip="Compétence avec badge"');
     expect(markup).not.toContain("Affecter des ressources pédagogiques");
     expect(markup).not.toContain("Ajouter des compétences");
+    expect(markup).not.toContain("Retirer la ressource pédagogique");
+    expect(markup).not.toContain("Retirer la compétence");
+  });
+
+  it("identifie les modules incomplets dans les modules associés", () => {
+    const markup = renderToStaticMarkup(
+      <ModuleGrid
+        modules={[module, { ...module, id: 2, contacts: [] }]}
+        parcoursContacts={module.contacts}
+        parcoursSkills={module.skills}
+        isAssigningContacts={false}
+        isAssigningSkills={false}
+        removingContact={null}
+        removingSkill={null}
+        emptyMessage="Aucun module"
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onAssignContacts={vi.fn()}
+        onAssignSkills={vi.fn()}
+        onRemoveContact={vi.fn()}
+        onRemoveSkill={vi.fn()}
+      />,
+    );
+
+    expect(markup.match(/>Incomplet</g)).toHaveLength(1);
+  });
+
+  it("retire une ressource ou une compétence depuis leurs actions dédiées", async () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const onRemoveContact = vi.fn(async () => true);
+    const onRemoveSkill = vi.fn(async () => true);
+
+    await act(async () => {
+      root.render(
+        <ModuleGrid
+          modules={[module]}
+          parcoursContacts={module.contacts}
+          parcoursSkills={module.skills}
+          isAssigningContacts={false}
+          isAssigningSkills={false}
+          removingContact={null}
+          removingSkill={null}
+          emptyMessage="Aucun module"
+          onUpdate={vi.fn()}
+          onDelete={vi.fn()}
+          onAssignContacts={vi.fn()}
+          onAssignSkills={vi.fn()}
+          onRemoveContact={onRemoveContact}
+          onRemoveSkill={onRemoveSkill}
+        />,
+      );
+    });
+
+    const removeContactButton = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Retirer la ressource pédagogique Ada Lovelace du module Module illustré"]',
+    );
+    const removeSkillButton = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Retirer la compétence Compétence avec badge du module Module illustré"]',
+    );
+
+    await act(async () => removeContactButton?.click());
+    await act(async () => removeSkillButton?.click());
+
+    expect(onRemoveContact).toHaveBeenCalledWith(1, 3);
+    expect(onRemoveSkill).toHaveBeenCalledWith(1, 5);
+
+    await act(async () => root.unmount());
+    container.remove();
   });
 });

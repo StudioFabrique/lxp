@@ -308,6 +308,26 @@ const mutations = {
     );
     return res.data;
   },
+  removeModuleContact: async (data: {
+    parcoursId: number;
+    moduleId: number;
+    contactId: number;
+  }): Promise<SuccessWithMessage> => {
+    const res = await apiClient.delete<SuccessWithMessage>(
+      `/modules/parcours/${data.parcoursId}/${data.moduleId}/contacts/${data.contactId}`,
+    );
+    return res.data;
+  },
+  removeModuleSkill: async (data: {
+    parcoursId: number;
+    moduleId: number;
+    skillId: number;
+  }): Promise<SuccessWithMessage> => {
+    const res = await apiClient.delete<SuccessWithMessage>(
+      `/modules/parcours/${data.parcoursId}/${data.moduleId}/skills/${data.skillId}`,
+    );
+    return res.data;
+  },
   updateModuleCalendarDates: async (data: {
     moduleId: number;
     minDate: string;

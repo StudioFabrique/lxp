@@ -55,6 +55,32 @@ export const assignSkillsToModulesValidator = [
   checkValidatorResult,
 ];
 
+export const removeContactFromModuleValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  param("moduleId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de module non valide"),
+  param("contactId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de ressource pédagogique non valide"),
+  checkValidatorResult,
+];
+
+export const removeSkillFromModuleValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  param("moduleId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de module non valide"),
+  param("skillId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de compétence non valide"),
+  checkValidatorResult,
+];
+
 export const moduleIdFromBodyValidator = [
   body("moduleId")
     .isNumeric()

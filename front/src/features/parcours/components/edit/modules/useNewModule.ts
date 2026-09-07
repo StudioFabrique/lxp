@@ -37,6 +37,8 @@ import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
 import { useAssignModuleContacts } from "../../../hooks/useAssignModuleContacts";
 import { useAssignModuleSkills } from "../../../hooks/useAssignModuleSkills";
+import { useRemoveModuleContact } from "../../../hooks/useRemoveModuleContact";
+import { useRemoveModuleSkill } from "../../../hooks/useRemoveModuleSkill";
 
 const emptyModuleFormValues = {
   moduleId: undefined,
@@ -59,6 +61,8 @@ const useNewModule = () => {
   const queryClient = useQueryClient();
   const assignContactsMutation = useAssignModuleContacts(Number(id));
   const assignSkillsMutation = useAssignModuleSkills(Number(id));
+  const removeContactMutation = useRemoveModuleContact(Number(id));
+  const removeSkillMutation = useRemoveModuleSkill(Number(id));
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
   const [moduleImageFile, setModuleImageFile] = useState<File | null>(null);
@@ -433,6 +437,26 @@ const useNewModule = () => {
     }
   };
 
+  const handleRemoveContact = async (moduleId: number, contactId: number) => {
+    try {
+      await removeContactMutation.mutateAsync({ moduleId, contactId });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleRemoveSkill = async (moduleId: number, skillId: number) => {
+    try {
+      await removeSkillMutation.mutateAsync({ moduleId, skillId });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     // Le chargement est volontairement relancé lorsque l'identifiant du parcours change.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -508,6 +532,12 @@ const useNewModule = () => {
     isSubmittingModule,
     isAssigningContacts: assignContactsMutation.isPending,
     isAssigningSkills: assignSkillsMutation.isPending,
+    removingContact: removeContactMutation.isPending
+      ? (removeContactMutation.variables ?? null)
+      : null,
+    removingSkill: removeSkillMutation.isPending
+      ? (removeSkillMutation.variables ?? null)
+      : null,
     highlightedModuleId,
     existingModuleImage,
     refForm,
@@ -536,6 +566,8 @@ const useNewModule = () => {
     handleSubmitDuplicateModule,
     handleAssignContacts,
     handleAssignSkills,
+    handleRemoveContact,
+    handleRemoveSkill,
   };
 };
 

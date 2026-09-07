@@ -54,6 +54,9 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     isSubmittingModule,
     isAssigningContacts,
     isAssigningSkills,
+    removingContact,
+    removingSkill,
+    lockedContactId,
     highlightedModuleId,
     sourceModules,
     mode,
@@ -67,6 +70,8 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     showForm,
     handleAssignContacts,
     handleAssignSkills,
+    handleRemoveContact,
+    handleRemoveSkill,
     setModuleImageFile,
   } = useNewModule();
 
@@ -116,6 +121,9 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
           parcoursSkills={parcours?.bonusSkills ?? []}
           isAssigningContacts={isAssigningContacts}
           isAssigningSkills={isAssigningSkills}
+          removingContact={removingContact}
+          removingSkill={removingSkill}
+          lockedContactId={lockedContactId}
           highlightedModuleId={highlightedModuleId}
           emptyMessage={
             isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
@@ -124,6 +132,8 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
           onDelete={showDeleteModal}
           onAssignContacts={handleAssignContacts}
           onAssignSkills={handleAssignSkills}
+          onRemoveContact={handleRemoveContact}
+          onRemoveSkill={handleRemoveSkill}
         />
 
         {showForm && (

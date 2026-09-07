@@ -69,7 +69,38 @@ describe("ParcoursPreviewModules", () => {
     expect(markup).toContain("Compétence illustrée");
     expect(markup).not.toContain("Affecter des ressources pédagogiques");
     expect(markup).not.toContain("Ajouter des compétences");
+    expect(markup).not.toContain("Retirer la ressource pédagogique");
+    expect(markup).not.toContain("Retirer la compétence");
     expect(markup).toContain("?step=4&amp;moduleId=7");
+  });
+
+  it("identifie les modules incomplets dans la liste", () => {
+    vi.mocked(useParcoursModules).mockReturnValue({
+      modules: [
+        module,
+        {
+          ...module,
+          id: 8,
+          title: "Module sans compétence",
+          bonusSkills: [],
+        },
+      ],
+    } as ReturnType<typeof useParcoursModules>);
+
+    const markup = renderToStaticMarkup(
+      <MemoryRouter initialEntries={["/admin/parcours/edit/12?step=7"]}>
+        <Routes>
+          <Route
+            path="/admin/parcours/edit/:id"
+            element={<ParcoursPreviewModules onEdit={vi.fn()} />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain("Module sans compétence");
+    expect(markup.match(/>Incomplet</g)).toHaveLength(1);
+    expect(markup).toContain("flex items-center gap-2");
   });
 
   it("redéclenche l'étape Modules à chaque clic sur Modifier", async () => {

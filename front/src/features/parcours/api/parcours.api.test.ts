@@ -5,6 +5,7 @@ import { parcoursApi } from "./parcours.api";
 
 vi.mock("../../../lib/axios", () => ({
   default: {
+    delete: vi.fn(),
     post: vi.fn(),
     patch: vi.fn(),
   },
@@ -27,6 +28,9 @@ describe("parcoursApi.mutations.importParcours", () => {
         message: "Ressources affectées",
         assignmentsCreated: 2,
       },
+    });
+    vi.mocked(apiClient.delete).mockResolvedValue({
+      data: { success: true, message: "Association retirée" },
     });
   });
 
@@ -86,6 +90,30 @@ describe("parcoursApi.mutations.importParcours", () => {
     expect(apiClient.patch).toHaveBeenCalledWith(
       "/modules/parcours/12/skills",
       { moduleIds: [2, 3], skillIds: [9] },
+    );
+  });
+
+  it("retire une ressource pédagogique d'un module", async () => {
+    await parcoursApi.mutations.removeModuleContact({
+      parcoursId: 12,
+      moduleId: 2,
+      contactId: 7,
+    });
+
+    expect(apiClient.delete).toHaveBeenCalledWith(
+      "/modules/parcours/12/2/contacts/7",
+    );
+  });
+
+  it("retire une compétence d'un module", async () => {
+    await parcoursApi.mutations.removeModuleSkill({
+      parcoursId: 12,
+      moduleId: 2,
+      skillId: 9,
+    });
+
+    expect(apiClient.delete).toHaveBeenCalledWith(
+      "/modules/parcours/12/2/skills/9",
     );
   });
 
