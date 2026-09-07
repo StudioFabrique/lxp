@@ -14,7 +14,6 @@ describe("ModuleForm", () => {
     const markup = renderToStaticMarkup(
       <ModuleForm
         mode="create"
-        refForm={{ current: null }}
         register={register}
         errors={{}}
         isSubmitting={false}
@@ -39,7 +38,6 @@ describe("ModuleForm", () => {
     const markup = renderToStaticMarkup(
       <ModuleForm
         mode="edit"
-        refForm={{ current: null }}
         register={register}
         errors={{}}
         isSubmitting={false}

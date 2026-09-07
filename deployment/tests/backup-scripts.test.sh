@@ -86,7 +86,30 @@ cat >"$temporary_dir/infisical-bin/infisical" <<'EOF'
 #!/bin/sh
 case "$1" in
     login) printf 'test-token\n' ;;
-    run) printf '%s\n' "$@" ;;
+    run)
+        runtime_loaded=false
+        for argument in "$@"; do
+            printf '%s\n' "$argument"
+            case "$argument" in
+                --path=*/runtime) runtime_loaded=true ;;
+            esac
+        done
+
+        if [ "${MOCK_INFISICAL_EXECUTE:-false}" = "true" ]; then
+            shift
+            while [ "$1" != "--" ]; do
+                shift
+            done
+            shift
+
+            if [ "$runtime_loaded" = "true" ]; then
+                DEMO_MODE="${MOCK_INFISICAL_DEMO_MODE:-}"
+                export DEMO_MODE
+            fi
+
+            "$@"
+        fi
+        ;;
     *) exit 2 ;;
 esac
 EOF
@@ -99,10 +122,12 @@ default_paths_output="$(
         INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
         INFISICAL_PROJECT_ID=test \
         INFISICAL_ENVIRONMENT=dev \
+        MOCK_INFISICAL_EXECUTE=true \
+        MOCK_INFISICAL_DEMO_MODE=false \
         "$infisical_wrapper" true
 )"
 [[ "$default_paths_output" == *"--path=/mailer"* ]] \
-    || fail "le déploiement ne charge pas le dossier /mailer par défaut"
+    || fail "le déploiement normal ne charge pas le dossier /mailer"
 
 for jenkinsfile in \
     "$repository_root/deployment/caddy/Jenkinsfile" \
@@ -156,6 +181,8 @@ prod_default_paths_output="$(
         INFISICAL_PROJECT_ID=test \
         INFISICAL_ENVIRONMENT=prod \
         INFISICAL_PATH_PREFIX=/demo \
+        MOCK_INFISICAL_EXECUTE=true \
+        MOCK_INFISICAL_DEMO_MODE=false \
         "$infisical_wrapper" true
 )"
 [[ "$prod_default_paths_output" == *"--path=/demo/mailer"* ]] \
@@ -163,6 +190,33 @@ prod_default_paths_output="$(
 if printf '%s\n' "$prod_default_paths_output" | grep -Fxq -- '--path=/mailer'; then
     fail "le wrapper Infisical charge encore le dossier /mailer global en prod"
 fi
+
+prod_demo_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=prod \
+        INFISICAL_PATH_PREFIX=/demo \
+        MOCK_INFISICAL_EXECUTE=true \
+        MOCK_INFISICAL_DEMO_MODE=true \
+        MAILER_EMAIL=unexpected \
+        MAILER_PASSWORD=unexpected \
+        MAILER_SMTP=unexpected \
+        MAILER_DEV_RECIPIENT=unexpected \
+        MAILER_SMTP_PORT=587 \
+        MAILER_FROM=unexpected \
+        "$infisical_wrapper" env
+)"
+if [[ "$prod_demo_output" == *"--path=/demo/mailer"* ]]; then
+    fail "le wrapper Infisical consulte le dossier mailer de la demonstration"
+fi
+if printf '%s\n' "$prod_demo_output" | grep -Eq '^MAILER_[A-Z_]+='; then
+    fail "le wrapper Infisical transmet des variables MAILER_* a la demonstration"
+fi
+[[ "$prod_demo_output" == *"Mode démonstration : le wrapper ne charge pas la configuration Infisical du mailer."* ]] \
+    || fail "le wrapper Infisical ne signale pas que le mailer est ignore en demonstration"
 
 preprod_default_paths_output="$(
     env -i \
@@ -172,6 +226,8 @@ preprod_default_paths_output="$(
         INFISICAL_PROJECT_ID=test \
         INFISICAL_ENVIRONMENT=pre-prod \
         INFISICAL_PATH_PREFIX=/demo \
+        MOCK_INFISICAL_EXECUTE=true \
+        MOCK_INFISICAL_DEMO_MODE=false \
         "$infisical_wrapper" true
 )"
 [[ "$preprod_default_paths_output" == *"--path=/mailer"* ]] \

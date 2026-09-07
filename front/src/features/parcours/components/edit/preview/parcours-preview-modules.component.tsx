@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Pencil } from "lucide-react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 
 import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
@@ -17,6 +17,18 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
   const { id } = useParams();
   const { modules } = useParcoursModules(Number(id));
   const { user } = useContext(AuthContext);
+  const [, setSearchParams] = useSearchParams();
+
+  const handleEditModules = () => {
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      next.set("step", "4");
+      next.delete("moduleId");
+      next.delete("create");
+      return next;
+    });
+    props.onEdit(4);
+  };
 
   return (
     <Wrapper>
@@ -24,12 +36,14 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
         <h2 className="text-xl font-bold">
           {getModulesLabel(user, "Liste des modules")}
         </h2>
-        <div
+        <button
+          type="button"
           className="w-6 h-6 text-primary cursor-pointer"
-          onClick={() => props.onEdit(4)}
+          onClick={handleEditModules}
+          aria-label="Modifier la liste des modules"
         >
           <EditIcon />
-        </div>
+        </button>
       </span>
       <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) =>

@@ -57,7 +57,6 @@ const useNewModule = () => {
     moduleIdParam !== null ? Number(moduleIdParam) : null;
   const shouldCreateModule = searchParams.get("create") === "true";
   const handledCreateRef = useRef(false);
-  const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
   const assignContactsMutation = useAssignModuleContacts(Number(id));
   const assignSkillsMutation = useAssignModuleSkills(Number(id));
@@ -498,12 +497,6 @@ const useNewModule = () => {
   }, [highlightedModuleId, searchParams, setSearchParams]);
 
   useEffect(() => {
-    if (state.showForm && refForm.current) {
-      refForm.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [state.showForm]);
-
-  useEffect(() => {
     if (error && error.length > 0) {
       if (error === "MODULE_ALREADY_EXISTS") {
         dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: true });
@@ -540,7 +533,6 @@ const useNewModule = () => {
       : null,
     highlightedModuleId,
     existingModuleImage,
-    refForm,
     setModuleImageFile,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,

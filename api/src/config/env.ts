@@ -91,14 +91,25 @@ const schema = z
       requireFields(
         [
           "FRONT_URL",
+          "UNSPLASH_ACCESS_KEY",
+        ],
+        "requis en production",
+      );
+    }
+
+    if (
+      values.ENVIRONMENT === "production" &&
+      values.DEMO_MODE !== "true"
+    ) {
+      requireFields(
+        [
           "MAILER_EMAIL",
           "MAILER_PASSWORD",
           "MAILER_SMTP",
           "MAILER_SMTP_PORT",
           "MAILER_FROM",
-          "UNSPLASH_ACCESS_KEY",
         ],
-        "requis en production",
+        "requis en production hors mode démonstration",
       );
     }
 

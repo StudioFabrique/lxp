@@ -1,7 +1,7 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type Module from "../../../../../utils/interfaces/module";
@@ -131,6 +131,43 @@ describe("ParcoursPreviewModules", () => {
     expect(onEdit).toHaveBeenCalledTimes(2);
     expect(onEdit).toHaveBeenNthCalledWith(1, 4);
     expect(onEdit).toHaveBeenNthCalledWith(2, 4);
+
+    await act(async () => root.unmount());
+    container.remove();
+  });
+
+  it("ouvre la liste sans réactiver une ancienne sélection de module", async () => {
+    const CurrentLocation = () => <output>{useLocation().search}</output>;
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const onEdit = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <MemoryRouter
+          initialEntries={[
+            "/admin/parcours/edit/12?step=7&moduleId=7&create=true&keep=1",
+          ]}
+        >
+          <CurrentLocation />
+          <Routes>
+            <Route
+              path="/admin/parcours/edit/:id"
+              element={<ParcoursPreviewModules onEdit={onEdit} />}
+            />
+          </Routes>
+        </MemoryRouter>,
+      );
+    });
+
+    const editButton = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Modifier la liste des modules"]',
+    );
+    await act(async () => editButton?.click());
+
+    expect(onEdit).toHaveBeenCalledWith(4);
+    expect(container.querySelector("output")?.textContent).toBe("?step=4&keep=1");
 
     await act(async () => root.unmount());
     container.remove();
