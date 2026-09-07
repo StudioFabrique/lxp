@@ -52,6 +52,46 @@ const ModuleHome = () => {
     },
   });
 
+  const refreshCourseLists = () => {
+    void queryClient.invalidateQueries({ queryKey: ["modules"] });
+    void queryClient.invalidateQueries({ queryKey: ["courses"] });
+  };
+
+  const publishCourseMutation = useMutation({
+    mutationFn: courseApi.mutations.publish,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refreshCourseLists();
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(error, "Le cours n'a pas pu être publié."),
+      );
+    },
+  });
+
+  const visibilityMutation = useMutation({
+    mutationFn: ({
+      courseId,
+      visibility,
+    }: {
+      courseId: number;
+      visibility: boolean;
+    }) => courseApi.mutations.setVisibility(courseId, visibility),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refreshCourseLists();
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "La visibilité du cours n'a pas pu être modifiée.",
+        ),
+      );
+    },
+  });
+
   const handleConfirmDelete = () => {
     if (!moduleToDelete) return;
     deleteModuleMutation.mutate(moduleToDelete.id);
@@ -73,6 +113,10 @@ const ModuleHome = () => {
           modulesList={modules}
           onDeleteModule={setModuleToDelete}
           onDeleteCourse={setCourseToDelete}
+          onPublishCourse={(courseId) => publishCourseMutation.mutate(courseId)}
+          onToggleCourseVisibility={(courseId, visibility) =>
+            visibilityMutation.mutate({ courseId, visibility })
+          }
         />
       )}
 

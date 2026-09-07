@@ -7,7 +7,7 @@ type Props = {
 
 const PasswordUpdateSuccess = ({ message, url }: Props) => {
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-10">
       <span className="text-center text-success">{message}</span>
       <Link className="btn btn-primary btn-sm" to={url}>
         Retour à la page de connexion

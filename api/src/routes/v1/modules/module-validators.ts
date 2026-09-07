@@ -87,6 +87,20 @@ export const putModuleValidator = [
     .optional() // Optionnel
     .custom(stringValidateOptional)
     .withMessage("La description du module contient des caractères invalides."),
+  body("module.quizInstructions")
+    .isString()
+    .withMessage(
+      "Les instructions pour le quiz doivent être une chaîne de caractères.",
+    )
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Les instructions pour le quiz sont obligatoires.")
+    .bail()
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Les instructions pour le quiz contiennent des caractères invalides.",
+    ),
   body("module.duration")
     .isInt({ gt: 0 })
     .withMessage("La durée doit être un nombre entier positif.")
@@ -131,6 +145,20 @@ export const putModuleParcoursValidator = [
     .isString()
     .withMessage("La description doit être une chaîne de caractères.")
     .custom(stringValidateOptional),
+  body("module.quizInstructions")
+    .isString()
+    .withMessage(
+      "Les instructions pour le quiz doivent être une chaîne de caractères.",
+    )
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Les instructions pour le quiz sont obligatoires.")
+    .bail()
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Les instructions pour le quiz contiennent des caractères invalides.",
+    ),
   body("module.duration")
     .isInt({ gt: 0 })
     .withMessage("La durée doit être un nombre entier positif."),

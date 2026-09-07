@@ -30,7 +30,7 @@ const EditParcours = () => {
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const onboardingNavigationLocked =
     onboardingStatus === "in_progress" &&
-    (onboardingStep.startsWith("admin-parcours-info") ||
+    (onboardingStep.startsWith("admin-parcours-tags") ||
       onboardingStep.startsWith("admin-module-"));
   const {
     id,

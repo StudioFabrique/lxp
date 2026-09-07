@@ -71,6 +71,20 @@ export const validationModule = [
     .matches(/[<>]/)
     .withMessage("La description du module contient des balises non autorisées.")
     .optional(),
+  body("module.quizInstructions")
+    .isString()
+    .withMessage(
+      "Les instructions pour le quiz doivent être une chaîne de caractères.",
+    )
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Les instructions pour le quiz sont obligatoires.")
+    .bail()
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Les instructions pour le quiz contiennent des caractères invalides.",
+    ),
   body("module.duration")
     .isInt({ min: 1 })
     .withMessage("La durée doit être un nombre entier positif.")

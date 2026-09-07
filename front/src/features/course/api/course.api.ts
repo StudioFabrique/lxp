@@ -172,8 +172,22 @@ const mutations = {
     return res.data;
   },
 
-  publish: async (courseId: string): Promise<{ success: boolean; message: string }> => {
+  publish: async (
+    courseId: number | string,
+  ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.put(`/course/publish/${courseId}`);
+    return res.data;
+  },
+
+  setVisibility: async (
+    courseId: number,
+    visibility: boolean,
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await apiClient.put(
+      `/course/enable-course/${courseId}`,
+      undefined,
+      { params: { visibility } },
+    );
     return res.data;
   },
 

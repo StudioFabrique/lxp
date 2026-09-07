@@ -169,6 +169,7 @@ describe("HTTP Formation", () => {
         parcoursId: 1,
         title: "Random title",
         description: "Description random",
+        quizInstructions: "Vérifier les notions fondamentales.",
       };
       await request(app)
         .post("/v1/formation/new-module")
@@ -185,12 +186,34 @@ describe("HTTP Formation", () => {
         parcoursId: 1,
         title: "Second random title",
         description: "Description random",
+        quizInstructions: "Vérifier les notions fondamentales.",
       };
       await request(app)
         .post("/v1/formation/new-module")
         .field("module", JSON.stringify(module))
         .set("Cookie", [`${authToken}`])
         .expect(201);
+    });
+
+    test("It should reject empty quiz instructions", async () => {
+      const module = {
+        formationId: 1,
+        parcoursId: 1,
+        title: "Module without quiz instructions",
+        description: "Description random",
+        quizInstructions: "   ",
+      };
+      const res = await request(app)
+        .post("/v1/formation/new-module")
+        .field("module", JSON.stringify(module))
+        .set("Cookie", [`${authToken}`]);
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: "module.quizInstructions" }),
+        ]),
+      );
     });
 
     // Datas are missing
@@ -202,7 +225,7 @@ describe("HTTP Formation", () => {
         .attach("image", filePath)
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(3);
+      expect(res.body.errors).toHaveLength(4);
     });
 
     // Wrong data types
@@ -212,6 +235,7 @@ describe("HTTP Formation", () => {
         parcoursId: "toto",
         title: 12,
         description: false,
+        quizInstructions: "Instructions valides",
       };
       const res = await request(app)
         .post("/v1/formation/new-module")
@@ -229,6 +253,7 @@ describe("HTTP Formation", () => {
         parcoursId: 1,
         title: "<hacked>lol</hacked>",
         description: "<malicious>code</malicious>",
+        quizInstructions: "Instructions valides",
       };
       const res = await request(app)
         .post("/v1/formation/new-module")

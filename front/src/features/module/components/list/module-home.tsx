@@ -1,9 +1,12 @@
 import { useContext } from "react";
 import {
   BookMarked,
+  Eye,
+  EyeOff,
   Pencil,
   SquareArrowRightEnter,
   Trash2,
+  UploadCloud,
 } from "lucide-react";
 import { Link } from "react-router";
 
@@ -25,12 +28,16 @@ type ModuleHomeListProps = {
   onDeleteCourse: (
     course: ModuleListItem["courses"][number] & { moduleTitle: string },
   ) => void;
+  onPublishCourse: (courseId: number) => void;
+  onToggleCourseVisibility: (courseId: number, visibility: boolean) => void;
 };
 
 const ModuleHomeList = ({
   modulesList,
   onDeleteModule,
   onDeleteCourse,
+  onPublishCourse,
+  onToggleCourseVisibility,
 }: ModuleHomeListProps) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
@@ -111,6 +118,31 @@ const ModuleHomeList = ({
                     title={course.title}
                     menuControl={menuControl}
                     actions={[
+                      ...(!course.isPublished
+                        ? [
+                            {
+                              label: "Publier le cours",
+                              icon: <UploadCloud />,
+                              onSelect: () => onPublishCourse(course.id),
+                              permission: {
+                                action: "update",
+                                object: "course",
+                              },
+                            },
+                          ]
+                        : []),
+                      {
+                        label: course.visibility
+                          ? "Rendre le cours invisible"
+                          : "Rendre le cours visible",
+                        icon: course.visibility ? <EyeOff /> : <Eye />,
+                        onSelect: () =>
+                          onToggleCourseVisibility(
+                            course.id,
+                            !course.visibility,
+                          ),
+                        permission: { action: "update", object: "course" },
+                      },
                       {
                         label: "Accéder au cours",
                         icon: <SquareArrowRightEnter />,

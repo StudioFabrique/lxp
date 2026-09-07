@@ -61,6 +61,13 @@ const invisibleCourse: CustomCourse = {
   visibility: false,
 };
 
+const unpublishedCourse: CustomCourse = {
+  ...course,
+  id: 3,
+  title: "Cours en préparation",
+  isPublished: false,
+};
+
 describe("CourseList", () => {
   it("affiche chaque cours avec ses leçons en sous-éléments", () => {
     const markup = renderToStaticMarkup(
@@ -116,6 +123,29 @@ describe("CourseList", () => {
 
     expect(markup).toContain('aria-label="Cours invisible"');
     expect(markup).not.toContain('data-tip="Cours invisible"');
+    expect(markup).toContain(
+      'aria-label="Rendre visible le cours Cours masqué"',
+    );
+  });
+
+  it("affiche l'état de publication et les actions correspondantes", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList
+          coursesList={[course, unpublishedCourse]}
+          onRefreshCourses={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('aria-label="Cours publié"');
+    expect(markup).toContain('aria-label="Cours non publié"');
+    expect(markup).toContain(
+      'aria-label="Publier le cours Cours en préparation"',
+    );
+    expect(markup).toContain(
+      'aria-label="Rendre invisible le cours Cours principal"',
+    );
   });
 
   it("affiche un menu d'actions sur chaque leçon", () => {

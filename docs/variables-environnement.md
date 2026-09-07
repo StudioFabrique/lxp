@@ -28,7 +28,8 @@ Fichier : `api/.env`
 | `MONGO_ADMIN_PASSWORD`              | `root`                                                     | Mot de passe MongoDB utilisé pour générer l'URL. |
 | `SECRET`                            | une valeur locale longue                                   | Signe les sessions.                          |
 | `REGISTER_SECRET`                   | une autre valeur locale longue                             | Signe les liens de création de compte.       |
-| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `30`                                                       | Durée de validité des clés root, en minutes. |
+| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `30`                                                       | Durée des clés root générées sur le serveur, en minutes. |
+| `ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS` | `24`                                                    | Durée des liens d'activation root envoyés par email, en heures. |
 | `ENVIRONMENT`                       | `development`                                              | Active le comportement de développement.     |
 | `PORT`                              | `3000`                                                     | Port de l'API.                               |
 
@@ -152,7 +153,8 @@ la colonne « Source ». Elles sont obligatoires en production, à l'exception d
 | `ENVIRONMENT`                       | `runtime` | `production`.                                                                                |
 | `FRONT_URL`                         | `runtime` | Adresse publique avec `https://` et un `/` final.                                            |
 | `REGISTER_SECRET`                   | `runtime` | Secret long pour les liens de création de compte.                                            |
-| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `runtime` | Durée de validité des clés root, en minutes (`30` par défaut).                               |
+| `ROOT_ACTIVATION_TOKEN_TTL_MINUTES` | `runtime` | Durée des clés root générées sur le serveur, en minutes (`30` par défaut).                    |
+| `ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS` | `runtime` | Durée des liens d'activation root envoyés par email, en heures (`24` par défaut).         |
 | `SECRET`                            | `runtime` | Secret long et différent pour les sessions.                                                  |
 | `POSTGRES_USER`                     | `runtime` | Compte PostgreSQL du LXP.                                                                    |
 | `POSTGRES_PASSWORD`                 | `runtime` | Mot de passe PostgreSQL du LXP.                                                              |

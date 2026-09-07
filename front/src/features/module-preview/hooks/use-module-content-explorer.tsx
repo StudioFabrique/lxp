@@ -413,7 +413,12 @@ const useModuleContentExplorer = () => {
         );
         await fetchModuleData();
         toast.success("Leçon créée");
-        emitOnboardingEvent({ type: "lesson_created", id: created.id });
+        // Le composant appelant sélectionne la nouvelle leçon une fois cette
+        // promesse résolue. Différer l'événement laisse React afficher le
+        // bouton de création d'activité avant que Joyride ne cherche sa cible.
+        window.setTimeout(() => {
+          emitOnboardingEvent({ type: "lesson_created", id: created.id });
+        });
         return created.id;
       } catch {
         toast.error("Impossible de créer la leçon");

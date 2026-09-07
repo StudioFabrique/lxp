@@ -46,6 +46,10 @@ const schema = z
       emptyStringToUndefined,
       z.coerce.number().int().min(1).default(30),
     ),
+    ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS: z.preprocess(
+      emptyStringToUndefined,
+      z.coerce.number().int().min(1).default(24),
+    ),
 
     FRONT_URL: optionalUrl,
     MAILER_EMAIL: optionalString,

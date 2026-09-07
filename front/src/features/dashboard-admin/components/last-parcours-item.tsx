@@ -92,7 +92,20 @@ const LastParcoursItem = ({
                   isExporting={exportingParcoursId === item.id}
                 />
               )
-            : undefined,
+            : baseRoute === "admin" && item.canManage !== false
+              ? (
+                  <PermissionGuard action="update" object="parcours">
+                    <Link
+                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      data-tip="Modifier le parcours"
+                      to={`/admin/parcours/edit/${item.id}`}
+                      aria-label={`Modifier le parcours ${item.title}`}
+                    >
+                      <Edit3 className="size-[1.2em]" />
+                    </Link>
+                  </PermissionGuard>
+                )
+              : undefined,
       }))}
       action={
         formation &&

@@ -239,7 +239,10 @@ async function createRootUser(
         const verificationToken = jwt.sign(
           { purpose: "root-email-verification", userId, email },
           env.REGISTER_SECRET,
-          { expiresIn: "24h" },
+          {
+            expiresIn:
+              env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+          },
         );
         await sendRootEmailVerification(email, verificationToken);
       }
@@ -299,7 +302,9 @@ async function createRootUser(
       const verificationToken = jwt.sign(
         { purpose: "root-email-verification", userId, email },
         env.REGISTER_SECRET,
-        { expiresIn: "24h" },
+        {
+          expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+        },
       );
       await sendRootEmailVerification(email, verificationToken);
     }

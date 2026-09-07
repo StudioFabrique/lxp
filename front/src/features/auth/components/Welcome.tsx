@@ -12,7 +12,7 @@ const Welcome = ({ onNext }: Props) => {
         Un premier utilisateur administrateur est requis avant d'accéder à la
         plateforme.
       </p>
-      <p className="text-info">
+      <p className="text-info/80 text-sm">
         L'étape suivante vous assistera à sa création.
       </p>
       <button className="btn" onClick={onNext}>

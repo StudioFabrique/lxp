@@ -85,6 +85,8 @@ describe("ModuleHomeList", () => {
           modulesList={[module]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -108,6 +110,8 @@ describe("ModuleHomeList", () => {
             modulesList={[]}
             onDeleteModule={vi.fn()}
             onDeleteCourse={vi.fn()}
+            onPublishCourse={vi.fn()}
+            onToggleCourseVisibility={vi.fn()}
           />
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -123,6 +127,8 @@ describe("ModuleHomeList", () => {
           modulesList={[moduleWithFourCourses]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -143,6 +149,8 @@ describe("ModuleHomeList", () => {
             modulesList={[module]}
             onDeleteModule={vi.fn()}
             onDeleteCourse={vi.fn()}
+            onPublishCourse={vi.fn()}
+            onToggleCourseVisibility={vi.fn()}
           />
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -160,6 +168,8 @@ describe("ModuleHomeList", () => {
           modulesList={[module]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -168,7 +178,11 @@ describe("ModuleHomeList", () => {
     expect(markup).not.toContain('data-tip="Cours invisible"');
     expect(markup).toContain('aria-label="Actions pour Premier cours"');
     expect(markup).toContain('aria-label="Actions pour Deuxième cours"');
-    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain('data-actions-count="4"');
+    expect(markup).toContain('data-actions-count="5"');
+    expect(markup).toContain("Publier le cours");
+    expect(markup).toContain("Rendre le cours invisible");
+    expect(markup).toContain("Rendre le cours visible");
     expect(markup).toContain("Accéder au cours");
     expect(markup).toContain("Modifier le cours");
     expect(markup).toContain("Supprimer le cours");

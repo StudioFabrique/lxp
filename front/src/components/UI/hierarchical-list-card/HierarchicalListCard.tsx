@@ -58,7 +58,7 @@ const HierarchicalListCard = ({
       >
         <ul
           className={cn(
-            "list overflow-hidden rounded-box border border-base-300",
+            "list overflow-hidden pb-2 rounded-box border border-base-300",
             {
               "h-full min-h-52": !fullWidth,
               "border-dashed border-primary/25": !hasHeader,

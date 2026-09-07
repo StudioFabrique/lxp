@@ -56,7 +56,7 @@ function ModuleFields({
           data-onboarding="module-quiz-instructions-field"
         >
           <FormTextarea
-            label="Instructions pour le quiz"
+            label="Instructions pour le quiz *"
             name="quizInstructions"
             register={register}
             error={errors.quizInstructions}

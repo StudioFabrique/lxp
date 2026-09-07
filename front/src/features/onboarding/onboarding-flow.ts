@@ -8,18 +8,16 @@ export type OnboardingFlow = {
 };
 
 export const ADMINISTRATOR_ONBOARDING_STAGES = [
-  "admin-tag-entry",
-  "admin-tag-form",
   "admin-formation-entry",
   "admin-formation-fields",
   "admin-formation-save",
   "admin-parcours-create",
+  "admin-parcours-tags",
   "admin-complete",
 ] as const;
 
 export const TEACHER_ONBOARDING_STAGES = [
-  "admin-tag-entry",
-  "admin-tag-form",
+  "admin-parcours-tags",
   "admin-module-title",
   "admin-module-description",
   "admin-module-quiz-instructions",
@@ -58,7 +56,7 @@ export function resolveOnboardingFlow(
     return {
       kind: "teacher",
       canStart: Boolean(parcours),
-      firstStep: parcours ? `admin-tag-entry:${parcours.id}` : "",
+      firstStep: parcours ? `admin-parcours-tags:${parcours.id}` : "",
       accessibleParcoursIds: parcoursList.map(({ id }) => id),
     };
   }
@@ -66,7 +64,7 @@ export function resolveOnboardingFlow(
   return {
     kind: "administrator",
     canStart: userRank <= 1,
-    firstStep: "admin-tag-entry",
+    firstStep: "admin-formation-entry",
     accessibleParcoursIds: [],
   };
 }

@@ -78,17 +78,13 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <div className="my-auto flex flex-col gap-4 text-center">
+      <div className="my-auto grid min-h-72 w-full shrink-0 grid-rows-[auto_1fr_auto] text-center">
         <h1 className="text-xl font-bold text-base-content">
           Activez votre compte root
         </h1>
-        <p className="text-sm text-base-content/70">
+        <p className="self-center text-sm text-base-content/70">
           Un lien d'activation a été envoyé à {activationEmail}. Consultez votre
           boîte mail pour terminer la création du compte.
-        </p>
-        <p className="text-xs text-base-content/50">
-          Le compte restera inaccessible tant que cette adresse n'aura pas été
-          validée.
         </p>
       </div>
     );

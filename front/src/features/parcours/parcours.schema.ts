@@ -27,13 +27,13 @@ export const moduleCreateSchema = z.object({
     .number({ error: "La durée du module est obligatoire" })
     .positive("La durée du module doit être supérieure à 0 heure"),
   quizInstructions: z
-    .string()
-    .regex(regexOptionalGeneric, {
+    .string({ error: "Les instructions pour le quiz sont obligatoires" })
+    .trim()
+    .min(1, "Les instructions pour le quiz sont obligatoires")
+    .regex(regexGeneric, {
       message:
         "Les instructions du professeur du module contiennent des caractères invalides",
-    })
-    .optional()
-    .default(""),
+    }),
 });
 
 export type ModuleCreateFormValues = z.input<typeof moduleCreateSchema>;

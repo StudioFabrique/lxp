@@ -70,10 +70,7 @@ const TagsHomeAdding = ({
   };
 
   return (
-    <div
-      data-onboarding="tag-form"
-      data-onboarding-valid={canSubmit ? "true" : "false"}
-    >
+    <div>
       <AddTag
         error={tagError}
         tag={tag}

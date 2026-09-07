@@ -133,7 +133,6 @@ const withContext = (stage: string, contextId?: number) =>
 const getResumableToken = (token: string) => {
   const { stage, contextId } = splitToken(token);
   const resumableStage: Record<string, string> = {
-    "admin-tag-form": "admin-tag-entry",
     "admin-module-form": "admin-module-title",
     "admin-course-details": "admin-course-create",
     "admin-lesson-details": "admin-lesson-create",
@@ -144,34 +143,23 @@ const getResumableToken = (token: string) => {
   return withContext(resumableStage[stage] ?? stage, contextId);
 };
 
-const tagStageTemplates: Record<
+const parcoursStageTemplates: Record<
   string,
   Omit<StageDefinition, "total">
 > = {
-  "admin-tag-entry": {
-    target: '[data-onboarding="tag-create-entry"]',
-    title: "Créez un tag",
+  "admin-parcours-tags": {
+    target: '[data-onboarding-field="parcours-tags"]',
+    title: "Ajoutez un tag au parcours",
     content:
-      "Les tags servent à classer et retrouver les contenus. Cliquez sur Créer un nouveau tag pour commencer.",
-    placement: "bottom",
-    waitingForAction: true,
-    index: 1,
-  },
-  "admin-tag-form": {
-    target: '[data-onboarding="tag-form"]',
-    title: "Nommez votre tag",
-    content:
-      "Saisissez un nom inédit, puis validez la fenêtre. Ce tag pourra être utilisé dans les prochaines étapes du tutoriel.",
-    placement: "right",
-    waitingForAction: true,
-    previous: "admin-tag-entry",
+      "Cliquez sur Sélectionner pour choisir un tag existant, ou créez-en un nouveau. Il sera directement associé au parcours.",
+    placement: "left",
     requirements: [
       {
-        selector: '[data-onboarding="tag-form"]',
-        label: "le nom du tag",
+        selector: '[data-onboarding-field="parcours-tags"]',
+        label: "au moins un tag pour le parcours",
       },
     ],
-    index: 2,
+    index: 1,
   },
 };
 
@@ -206,10 +194,19 @@ const contentStageTemplates: Record<string, Omit<StageDefinition, "total">> = {
     target: '[data-onboarding="module-quiz-instructions-field"]',
     title: "Préparez les futurs quiz",
     content:
-      "Ces instructions guideront la génération des quiz du module. Ce champ est primordial.",
+      "Ces instructions obligatoires guideront la génération des quiz du module.",
     placement: "right",
     previous: "admin-module-description",
     next: "admin-module-duration",
+    requirements: [
+      {
+        selector:
+          '[data-onboarding="module-form"] textarea[name="quizInstructions"]',
+        label: "les instructions pour le quiz",
+        highlightSelector:
+          '[data-onboarding="module-quiz-instructions-field"] label[for="quizInstructions"]',
+      },
+    ],
     index: 10,
   },
   "admin-module-duration": {
@@ -251,6 +248,13 @@ const contentStageTemplates: Record<string, Omit<StageDefinition, "total">> = {
         invalidValues: ["0"],
         highlightSelector:
           '[data-onboarding="module-form"] label[for="duration"]',
+      },
+      {
+        selector:
+          '[data-onboarding="module-form"] textarea[name="quizInstructions"]',
+        label: "les instructions pour le quiz",
+        highlightSelector:
+          '[data-onboarding="module-quiz-instructions-field"] label[for="quizInstructions"]',
       },
     ],
     index: 12,
@@ -368,15 +372,16 @@ const teacherStages = Object.fromEntries(
   TEACHER_ONBOARDING_STAGES.map((name, index) => [
     name,
     {
-      ...{ ...tagStageTemplates, ...contentStageTemplates }[name],
+      ...{ ...parcoursStageTemplates, ...contentStageTemplates }[name],
       index: index + 1,
-      ...(name === "admin-tag-entry" ? { previous: undefined } : {}),
+      ...(name === "admin-parcours-tags"
+        ? { previous: undefined, next: "admin-module-title" }
+        : {}),
     },
   ]),
 ) as Record<string, Omit<StageDefinition, "total">>;
 
 const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
-  ...tagStageTemplates,
   "admin-formation-entry": {
     target: '[data-onboarding="dashboard-formation-create-entry"]',
     title: "Créez votre première formation",
@@ -384,7 +389,7 @@ const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
       'Cliquez sur "Créer une formation" pour ouvrir le formulaire : le guide vous accompagnera ensuite à chaque étape.',
     placement: "top",
     waitingForAction: true,
-    index: 3,
+    index: 1,
   },
   "admin-formation-fields": {
     target: '[data-onboarding="formation-fields"]',
@@ -412,7 +417,7 @@ const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
         highlightSelector: '[data-onboarding-field="formation-tags"] label',
       },
     ],
-    index: 4,
+    index: 2,
   },
   "admin-formation-save": {
     target: '[data-onboarding="formation-save"]',
@@ -422,7 +427,7 @@ const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
     placement: "top",
     waitingForAction: true,
     previous: "admin-formation-fields",
-    index: 5,
+    index: 3,
   },
   "admin-parcours-create": {
     target: '[data-onboarding="parcours-create"]',
@@ -444,16 +449,21 @@ const administratorStages: Record<string, Omit<StageDefinition, "total">> = {
           '[data-onboarding="parcours-create"] label[for="title"]',
       },
     ],
-    index: 6,
+    index: 4,
+  },
+  "admin-parcours-tags": {
+    ...parcoursStageTemplates["admin-parcours-tags"],
+    next: "admin-complete",
+    index: 5,
   },
   "admin-complete": {
     target: "#main-scroll-container",
     title: "Votre premier parcours est prêt",
     content:
-      "Le parcours est créé. Vous pouvez maintenant le compléter et l'organiser depuis son espace de gestion.",
+      "Le parcours est créé et son premier tag est associé. Vous pouvez maintenant le compléter et l'organiser depuis son espace de gestion.",
     placement: "center",
     nextLabel: "Compris",
-    index: 7,
+    index: 6,
   },
 };
 
@@ -591,7 +601,8 @@ const OnboardingTourContent = ({
       const { stage, contextId } = splitToken(stepToken);
       const inaccessibleTeacherParcours =
         flow.kind === "teacher" &&
-        stage.startsWith("admin-module-") &&
+        (stage.startsWith("admin-module-") ||
+          stage === "admin-parcours-tags") &&
         (!contextId || !flow.accessibleParcoursIds.includes(contextId));
 
       if (!stageDefinitions[stage] || inaccessibleTeacherParcours) {
@@ -695,10 +706,6 @@ const OnboardingTourContent = ({
     let target: string | undefined;
     if (stage.startsWith("student-")) {
       target = "/student/dashboard";
-    } else if (stage === "admin-tag-entry") {
-      target = "/admin/tags";
-    } else if (stage === "admin-tag-form") {
-      target = "/admin/tags?openModal=true";
     } else if (stage === "admin-formation-entry") {
       target = "/admin/dashboard";
     } else if (stage.startsWith("admin-formation-")) {
@@ -707,6 +714,8 @@ const OnboardingTourContent = ({
       target = contextId
         ? `/admin/parcours/new?formationId=${contextId}`
         : "/admin/parcours/new";
+    } else if (stage === "admin-parcours-tags" && contextId) {
+      target = `/admin/parcours/edit/${contextId}?step=1`;
     } else if (stage.startsWith("admin-module-") && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=4&create=true`;
     } else if (
@@ -742,24 +751,6 @@ const OnboardingTourContent = ({
 
       const { stage, contextId } = splitToken(stepToken);
       switch (event.type) {
-        case "tag_entry_clicked":
-          if (stage === "admin-tag-entry") {
-            goToStage("admin-tag-form", contextId);
-          }
-          break;
-        case "tag_modal_cancelled":
-          if (stage === "admin-tag-form") {
-            goToStage("admin-tag-entry", contextId);
-          }
-          break;
-        case "tag_created":
-          if (stage !== "admin-tag-form") break;
-          if (flow.kind === "administrator") {
-            goToStage("admin-formation-entry");
-          } else if (flow.kind === "teacher" && contextId) {
-            goToStage("admin-module-title", contextId);
-          }
-          break;
         case "formation_entry_clicked":
           if (
             flow.kind === "administrator" &&
@@ -791,7 +782,7 @@ const OnboardingTourContent = ({
             flow.kind === "administrator" &&
             stage === "admin-parcours-create"
           ) {
-            goToStage("admin-complete");
+            goToStage("admin-parcours-tags", event.id);
           }
           break;
         case "module_created":
