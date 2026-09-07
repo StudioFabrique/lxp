@@ -11,6 +11,7 @@ import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 interface ContactsWithDrawerProps {
   loading: boolean;
   onSubmit: (items: Contact[]) => void;
+  readOnly?: boolean;
 }
 
 const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
@@ -52,8 +53,9 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           selectedItems={currentContacts}
           property={["firstname", "lastname"]}
           onSubmit={handleUpdateContacts}
+          isDisabled={props.readOnly}
         >
-          <InheritedTextList additionalProperty="role" />
+          <InheritedTextList />
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}

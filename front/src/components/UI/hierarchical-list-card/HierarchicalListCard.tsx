@@ -15,6 +15,8 @@ type HierarchicalListCardProps = {
   truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
+  headerBackgroundImage?: string;
+  headerClassName?: string;
   items?: HierarchicalListCardItem[];
   maxItemsShown?: number;
   showMore?: boolean;
@@ -22,6 +24,9 @@ type HierarchicalListCardProps = {
   moreItemsLabel?: (remainingItemsCount: number) => string;
   overflowTitle?: string;
   footer?: ReactNode;
+  footerClassName?: string;
+  footerAtBottom?: boolean;
+  hideLastItemDivider?: boolean;
   placeholder?: ReactNode;
   fullWidth?: boolean;
 };
@@ -33,6 +38,8 @@ const HierarchicalListCard = ({
   truncateTitle,
   description,
   action,
+  headerBackgroundImage,
+  headerClassName,
   items = [],
   maxItemsShown = 4,
   showMore = true,
@@ -41,6 +48,9 @@ const HierarchicalListCard = ({
     `Afficher plus (${remainingItemsCount})`,
   overflowTitle = title ? `Autres éléments de ${title}` : "Autres éléments",
   footer,
+  footerClassName,
+  footerAtBottom = false,
+  hideLastItemDivider = false,
   placeholder,
   fullWidth = false,
 }: HierarchicalListCardProps) => {
@@ -58,7 +68,7 @@ const HierarchicalListCard = ({
       >
         <ul
           className={cn(
-            "list overflow-hidden rounded-box border border-base-300",
+            "list overflow-hidden pb-2 rounded-box border border-base-300",
             {
               "h-full min-h-52": !fullWidth,
               "border-dashed border-primary/25": !hasHeader,
@@ -68,17 +78,35 @@ const HierarchicalListCard = ({
         >
           {hasHeader ? (
             <>
-              <li className="p-4 pb-3">
-                <div className="flex items-start justify-between gap-3">
+              <li
+                className={cn(
+                  "p-4 pb-3",
+                  {
+                    "flex min-h-32 items-end bg-cover bg-center text-white":
+                      Boolean(headerBackgroundImage),
+                  },
+                  headerClassName,
+                )}
+                style={
+                  headerBackgroundImage
+                    ? {
+                        backgroundImage: `linear-gradient(to top, rgb(0 0 0 / 0.78), rgb(0 0 0 / 0.15)), url(${JSON.stringify(headerBackgroundImage)})`,
+                      }
+                    : undefined
+                }
+              >
+                <div className="flex w-full items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       {label ? (
                         <p className="select-none text-xs tracking-wide opacity-60">
                           {label}
                         </p>
                       ) : null}
                       {labelAccessory ? (
-                        <div className="shrink-0">{labelAccessory}</div>
+                        <div className="flex shrink-0 items-center">
+                          {labelAccessory}
+                        </div>
                       ) : null}
                     </div>
                     <div className="flex min-w-0 items-center gap-2">
@@ -101,11 +129,14 @@ const HierarchicalListCard = ({
                 </div>
               </li>
 
-              {visibleItems.map((item) => (
+              {visibleItems.map((item, index) => (
                 <HierarchicalListRow
                   key={item.id}
                   item={item}
                   dismissOverflow={() => {}}
+                  hideDivider={
+                    hideLastItemDivider && index === visibleItems.length - 1
+                  }
                 />
               ))}
 
@@ -129,10 +160,15 @@ const HierarchicalListCard = ({
 
               {footer ? (
                 <li
-                  className={cn("flex flex-col items-center gap-2 py-5", {
-                    "mt-auto": items.length > 0,
-                    "flex-1 justify-center": items.length === 0,
-                  })}
+                  className={cn(
+                    "flex flex-col items-center gap-2 py-5",
+                    {
+                      "mt-auto": items.length > 0 || footerAtBottom,
+                      "flex-1 justify-center":
+                        items.length === 0 && !footerAtBottom,
+                    },
+                    footerClassName,
+                  )}
                 >
                   {footer}
                 </li>

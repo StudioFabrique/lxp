@@ -1,11 +1,13 @@
-import { RefObject } from "react";
+import { RefObject, useState } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
-import Contact from "../../../../../../src/utils/interfaces/contact";
-import Skill from "../../../../../../src/utils/interfaces/skill";
+import ImageFileUpload, {
+  type TemporaryImage,
+} from "../../../../../components/UI/image-file-upload/image-file-upload";
+import { headerImageMaxSize } from "../../../../../config/images-sizes";
 import ModuleFields from "./ModuleFields";
-import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
+import TrophyIcon from "../../../../../components/UI/svg/trophy-icon.component";
+import type Skill from "../../../../../utils/interfaces/skill";
 import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type ModuleFormProps = {
@@ -13,116 +15,163 @@ type ModuleFormProps = {
   refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<ModuleCreateFormValues>;
   errors: FieldErrors<ModuleCreateFormValues>;
-  isLoading: boolean;
   isSubmitting: boolean;
-  currentContacts: Contact[];
-  lockedContactId?: number;
-  currentSkills: Skill[];
-  contacts: Contact[];
-  skills: Skill[];
+  duplicatedSkills?: Skill[];
+  existingImage?: string | null;
+  onSetFile: (file: File | null) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onSetFile: (file: File | null) => void;
-  setCurrentContacts: (contacts: Contact[]) => void;
-  setCurrentSkills: (skills: Skill[]) => void;
 };
 
 /**
- * Form component for creating a new module
- * Includes metadata fields and parcours associations
+ * Form component for creating or editing a module's general information.
  */
 export default function ModuleForm({
   mode,
   refForm,
   register,
   errors,
-  isLoading,
   isSubmitting,
-  currentContacts,
-  lockedContactId,
-  currentSkills,
-  contacts,
-  skills,
+  duplicatedSkills,
+  existingImage,
+  onSetFile,
   onSubmit,
   onCancel,
-  onSetFile,
-  setCurrentContacts,
-  setCurrentSkills,
 }: ModuleFormProps) {
+  const [temporaryImage, setTemporaryImage] = useState<TemporaryImage>({
+    file: null,
+    url: null,
+  });
+
+  const handleTemporaryImageChange = (image: TemporaryImage) => {
+    setTemporaryImage(image);
+    onSetFile(image.file);
+  };
+
   return (
-    <>
-      <div className="divider text-primary text-xs">
-        {mode === "create" ? "Création d'un" : "Édition du"} module
-      </div>
-      <div data-onboarding="module-form">
-        <Wrapper>
-          <form onSubmit={onSubmit} ref={refForm} noValidate>
-            <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
-              <span className="col-span-5">
-                <ModuleFields
-                  mode={mode}
-                  register={register}
-                  errors={errors}
-                  onSetFile={onSetFile}
-                >
-                  <div data-onboarding="module-duration-field">
-                    <FormNumberInput
-                      label="Durée du module en heures *"
-                      name="duration"
-                      placeholder="Ex : 12"
-                      min={0}
-                      helperText="Saisissez une durée supérieure à 0. Les valeurs décimales sont acceptées."
-                      register={register}
-                      error={errors.duration}
-                    />
-                  </div>
-                </ModuleFields>
-              </span>
+    <form
+      className="mt-6"
+      data-onboarding="module-form"
+      onSubmit={onSubmit}
+      ref={refForm}
+      noValidate
+    >
+      <div className="mx-auto max-w-3xl">
+        <section className="flex min-w-0 flex-col gap-5">
+          <header>
+            <h4 className="font-semibold">Informations générales</h4>
+            <p className="mt-1 text-sm text-base-content/60">
+              Définissez le contenu et la durée estimée du module.
+            </p>
+          </header>
 
-              <div className="mx-auto divider divider-vertical lg:divider-horizontal" />
+          <ModuleFields register={register} errors={errors}>
+            <div data-onboarding="module-duration-field">
+              <FormNumberInput
+                label="Durée du module en heures *"
+                name="duration"
+                placeholder="Ex : 12"
+                min={0}
+                helperText="Saisissez une durée supérieure à 0. Les valeurs décimales sont acceptées."
+                register={register}
+                error={errors.duration}
+              />
+            </div>
+          </ModuleFields>
 
-              <span
-                className="col-span-5"
-                data-recommended-tour="module-assignments"
-              >
-                <ModuleToParcours
-                  currentContacts={currentContacts}
-                  lockedContactIds={
-                    lockedContactId !== undefined ? [lockedContactId] : []
-                  }
-                  currentSkills={currentSkills}
-                  contacts={contacts}
-                  skills={skills}
-                  isLoading={isLoading}
-                  setCurrentContacts={setCurrentContacts}
-                  setCurrentSkills={setCurrentSkills}
-                />
-              </span>
+          <div
+            className="flex flex-col gap-3"
+            data-onboarding="module-image-field"
+          >
+            <p className="text-sm font-bold">
+              {mode === "edit"
+                ? "Modifier l’image du module"
+                : "Image du module"}
+            </p>
+            <ImageFileUpload
+              temporaryImage={temporaryImage}
+              onSetTemporaryImage={handleTemporaryImageChange}
+              existingImage={existingImage ?? undefined}
+              maxSize={headerImageMaxSize}
+              variant="image"
+            >
+              Téléverser une image
+            </ImageFileUpload>
+            <p className="text-xs text-base-content/60">
+              JPG, PNG, WebP ou GIF — 1 Mo maximum.
+              {mode === "create" && !temporaryImage.file
+                ? " Une image sera générée automatiquement si aucune image n’est téléversée."
+                : null}
+            </p>
+          </div>
+
+          {duplicatedSkills ? (
+            <div className="rounded-box border border-base-300 bg-base-200/50 p-4">
+              <h4 className="text-sm font-semibold">Compétences dupliquées</h4>
+              <p className="mt-1 text-xs text-base-content/55">
+                Ces compétences proviennent du module source et sont affichées
+                en lecture seule.
+              </p>
+              {duplicatedSkills.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {duplicatedSkills.map((skill, index) => (
+                    <div
+                      key={skill.id ?? `${skill.description}-${index}`}
+                      className="tooltip tooltip-top"
+                      data-tip={skill.description}
+                    >
+                      <div className="flex size-11 items-center justify-center rounded-lg bg-secondary/10 p-1.5">
+                        {skill.badge ? (
+                          <img
+                            src={skill.badge}
+                            alt=""
+                            className="size-full object-contain"
+                          />
+                        ) : (
+                          <span
+                            className="size-6 text-primary"
+                            aria-hidden="true"
+                          >
+                            <TrophyIcon />
+                          </span>
+                        )}
+                        <span className="sr-only">{skill.description}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-base-content/55">
+                  Aucune compétence du module source n’est disponible dans ce
+                  parcours.
+                </p>
+              )}
             </div>
-            <div className="flex gap-x-2 justify-end mt-4">
-              <button
-                type="button"
-                className="btn btn-secondary mr-2"
-                onClick={onCancel}
-                disabled={isSubmitting}
-              >
-                Annuler
-              </button>
-              <button
-                data-onboarding="module-save"
-                type="submit"
-                className="btn btn-primary"
-                disabled={isSubmitting}
-              >
-                {isSubmitting && (
-                  <span className="loading loading-spinner loading-sm" />
-                )}
-                {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
-              </button>
-            </div>
-          </form>
-        </Wrapper>
+          ) : null}
+        </section>
       </div>
-    </>
+
+      <footer className="sticky bottom-0 -mx-5 mt-8 flex justify-end gap-3 border-t border-base-300 bg-base-100/95 px-5 pb-5 pt-4 backdrop-blur-sm sm:-mx-7 sm:px-7 sm:pb-7">
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
+          Annuler
+        </button>
+        <button
+          data-onboarding="module-save"
+          type="submit"
+          className="btn btn-primary min-w-44"
+          disabled={isSubmitting}
+        >
+          {isSubmitting && (
+            <span className="loading loading-spinner loading-sm" />
+          )}
+          {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
+        </button>
+      </footer>
+    </form>
   );
 }

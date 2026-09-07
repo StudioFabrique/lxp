@@ -35,15 +35,15 @@ describe("resolveOnboardingFlow", () => {
     });
   });
 
-  it("démarre le formateur sur la création d'un module de son parcours", () => {
+  it("fait associer un tag au parcours du formateur avant son module", () => {
     expect(resolveOnboardingFlow("admin", 2, assignedParcours)).toMatchObject({
       kind: "teacher",
       canStart: true,
-      firstStep: "admin-module-title:42",
+      firstStep: "admin-parcours-tags:42",
     });
   });
 
-  it("guide l'administrateur de la création d'une formation à celle d'un parcours", () => {
+  it("commence par la formation et associe le tag après le parcours", () => {
     expect(resolveOnboardingFlow("admin", 1, assignedParcours)).toMatchObject({
       kind: "administrator",
       canStart: true,
@@ -55,19 +55,21 @@ describe("resolveOnboardingFlow", () => {
       "admin-formation-fields",
       "admin-formation-save",
       "admin-parcours-create",
+      "admin-parcours-tags",
       "admin-complete",
     ]);
   });
 
   it("limite le scénario formateur au module et à sa première activité", () => {
-    expect(TEACHER_ONBOARDING_STAGES[0]).toBe("admin-module-title");
+    expect(TEACHER_ONBOARDING_STAGES[0]).toBe("admin-parcours-tags");
     expect(
       TEACHER_ONBOARDING_STAGES[TEACHER_ONBOARDING_STAGES.length - 1],
     ).toBe("admin-complete");
     expect(
       TEACHER_ONBOARDING_STAGES.some(
-        (stage) => stage.includes("formation") || stage.includes("parcours"),
+        (stage) => stage.includes("formation"),
       ),
     ).toBe(false);
+    expect(TEACHER_ONBOARDING_STAGES).not.toContain("admin-parcours-create");
   });
 });

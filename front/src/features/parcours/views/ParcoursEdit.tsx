@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -21,16 +21,20 @@ import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { AuthContext } from "../../../store/AuthProvider";
-import { getModulesLabel } from "../../../utils/helpers/user-role";
+import {
+  getModulesLabel,
+  isTeacherUser,
+} from "../../../utils/helpers/user-role";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const onboardingNavigationLocked =
     onboardingStatus === "in_progress" &&
-    (onboardingStep.startsWith("admin-parcours-info") ||
+    (onboardingStep.startsWith("admin-parcours-tags") ||
       onboardingStep.startsWith("admin-module-"));
   const {
     id,
@@ -56,13 +60,37 @@ const EditParcours = () => {
   } = useParcoursEdit();
   const contextualStepsList = useMemo(
     () =>
-      stepsList.map((step) =>
-        step.id === 4
-          ? { ...step, label: getModulesLabel(user, step.label) }
-          : step,
-      ),
+      stepsList.map((step) => {
+        if (step.id === 4) {
+          return { ...step, label: getModulesLabel(user, step.label) };
+        }
+        return step;
+      }),
     [stepsList, user],
   );
+  const actualStepTitle =
+    actualStep.id === 4
+      ? getModulesLabel(user, "Modules associés au Parcours")
+      : {
+          1: "Informations",
+          2: "Objectifs",
+          3: "Compétences",
+          5: "Calendrier des modules",
+          6: "Groupe d'apprenants",
+          7: "Aperçu général",
+        }[actualStep.id] ?? actualStep.label;
+  const stepperRef = useRef<HTMLDivElement>(null);
+  const previousStepIdRef = useRef(actualStep.id);
+
+  useEffect(() => {
+    if (previousStepIdRef.current === actualStep.id) return;
+
+    previousStepIdRef.current = actualStep.id;
+    stepperRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [actualStep.id]);
 
   const renderActualStep = () => {
     switch (actualStep.id) {
@@ -71,11 +99,11 @@ const EditParcours = () => {
       case 2:
         return (
           <ParcoursSection
-            section="Objectifs"
             title="Importer une liste d'objectifs"
             onResetList={handleResetImportedObjectives}
+            readOnly={isTeacher}
             children={[
-              <ObjectivesList />,
+              <ObjectivesList readOnly={isTeacher} />,
               <ImportObjectives
                 importedObjectives={importedObjectives}
                 onImport={setImportedObjectives}
@@ -87,7 +115,6 @@ const EditParcours = () => {
       case 3:
         return (
           <ParcoursSection
-            section="Compétences"
             title="Importer des compétences"
             onResetList={handleResetImportedSkills}
             children={[
@@ -134,7 +161,11 @@ const EditParcours = () => {
                 <HeaderIcon />
               </ImageHeaderMutable>
             ) : null}
-            <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
+
+            <div
+              ref={stepperRef}
+              className="w-full scroll-mt-4 rounded-xl border-[0.5px] border-secondary p-4"
+            >
               <Stepper
                 actualStep={actualStep}
                 stepsList={contextualStepsList}
@@ -143,10 +174,12 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full mt-16">{renderActualStep()}</div>
-          {actualStep.id !== stepsList.length ? (
+          <div className="mt-16 w-full">
+            <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
+            <div className="mt-4">{renderActualStep()}</div>
+          </div>
+          {actualStep.id !== stepsList.length && !moduleFormOpened ? (
             <FloatingBottomNavigation
-              stickyActivationOffset={moduleFormOpened ? 150 : undefined}
               startActions={
                 <button
                   className="btn btn-outline"

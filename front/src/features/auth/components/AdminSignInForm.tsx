@@ -4,6 +4,7 @@ import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import AuthPageWrapper from "./AuthPageWrapper";
 
 type Props = {
   token: string;
@@ -69,10 +70,7 @@ const AdminSignInForm = ({
       onSuccess();
     } catch (err: unknown) {
       setError(
-        getApiErrorMessage(
-          err,
-          "Une erreur est survenue. Veuillez réessayer.",
-        ),
+        getApiErrorMessage(err, "Une erreur est survenue. Veuillez réessayer."),
       );
     } finally {
       setIsLoading(false);
@@ -81,30 +79,25 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <div className="my-auto flex flex-col gap-4 text-center">
-        <h1 className="text-xl font-bold text-base-content">
-          Activez votre compte root
-        </h1>
-        <p className="text-sm text-base-content/70">
-          Un lien d'activation a été envoyé à {activationEmail}. Consultez
-          votre boîte mail pour terminer la création du compte.
-        </p>
-        <p className="text-xs text-base-content/50">
-          Le compte restera inaccessible tant que cette adresse n'aura pas été
-          validée.
-        </p>
-      </div>
+      <AuthPageWrapper title="Activez votre compte root">
+        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70">
+          <p>Un lien d'activation a été envoyé à {activationEmail}.</p>
+          <p className="mt-2">
+            Consultez votre boîte mail pour terminer la création du compte.
+          </p>
+        </span>
+      </AuthPageWrapper>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5 my-auto">
-      <h1 className="font-bold text-xl text-base-content text-center">
-        {mode === "additional"
+    <AuthPageWrapper
+      title={
+        mode === "additional"
           ? "Créer votre compte root"
-          : "Créer votre administrateur"}
-      </h1>
-
+          : "Créer votre administrateur"
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         {/* Email */}
         <div className="form-control w-full">
@@ -178,14 +171,14 @@ const AdminSignInForm = ({
               <span className="loading loading-spinner loading-sm"></span>
               Création...
             </>
+          ) : mode === "additional" ? (
+            "Créer le compte root"
           ) : (
-            mode === "additional"
-              ? "Créer le compte root"
-              : "Créer l'administrateur"
+            "Créer l'administrateur"
           )}
         </button>
       </form>
-    </div>
+    </AuthPageWrapper>
   );
 };
 

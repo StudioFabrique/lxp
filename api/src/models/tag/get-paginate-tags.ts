@@ -1,10 +1,12 @@
 import { prisma } from "../../utils/db.ts";
+import { canManageTag, type TagActor } from "./tag-access.ts";
 
 export default async function getPaginateTags(
   page: number,
   limit: number,
   stype: string | null,
   sdir: "asc" | "desc",
+  actor: TagActor,
 ) {
   try {
     const skip = (page - 1) * limit;
@@ -49,15 +51,20 @@ export default async function getPaginateTags(
       prisma.tag.count(),
     ]);
 
-    const tagsWithUsage = tags.map((tag) => ({
-      ...tag,
-      totalUses:
-        tag._count.lessons +
-        tag._count.courses +
-        tag._count.formations +
-        tag._count.parcours,
-      parcours: tag.formations.flatMap((f) => f.formation.parcours),
-    }));
+    const tagsWithUsage = tags.map((tag) => {
+      const { createdBy, ...publicTag } = tag;
+      return {
+        ...publicTag,
+        canDelete: canManageTag({ createdBy }, actor),
+        canUpdate: canManageTag({ createdBy }, actor),
+        totalUses:
+          tag._count.lessons +
+          tag._count.courses +
+          tag._count.formations +
+          tag._count.parcours,
+        parcours: tag.formations.flatMap((f) => f.formation.parcours),
+      };
+    });
 
     return {
       list: tagsWithUsage,

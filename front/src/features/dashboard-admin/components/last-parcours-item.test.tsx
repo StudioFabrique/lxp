@@ -62,14 +62,18 @@ describe("LastParcoursItem", () => {
 
     expect(markup).not.toContain("parcours-actions-11");
     expect(markup).toContain("Prévisualiser le parcours Parcours test");
+    expect(markup).toContain(
+      'aria-label="Modifier le parcours Parcours test"',
+    );
+    expect(markup).toContain('/admin/parcours/edit/11');
     expect(markup).toContain("min-h-52");
   });
 
-  it("n'ajoute pas de tooltip aux sous-éléments", () => {
+  it("limite le tooltip au bouton d'édition", () => {
     const markup = renderCard();
 
-    expect(markup).not.toContain("tooltip");
     expect(markup).not.toContain('data-tip="Parcours test"');
+    expect(markup).toContain('data-tip="Modifier le parcours"');
   });
 
   it("ne montre pas le menu d'administration dans la vue étudiante", () => {

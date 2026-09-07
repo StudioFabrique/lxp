@@ -66,7 +66,7 @@ const TagsHome = () => {
     isSubmitting,
   } = useTagActions(refreshAndClearSelection);
 
-  const handleDismissModal = () => {
+  const closeModal = () => {
     setCanSubmitTags(false);
     navigate(".", { replace: true });
   };
@@ -106,7 +106,7 @@ const TagsHome = () => {
         <Modal
           title={editId ? "Modification du tag" : "Création des tags"}
           leftLabel="Annuler"
-          onLeftClick={handleDismissModal}
+          onLeftClick={closeModal}
           rightLabel="Valider"
           onRightClick={() => {
             const btn = document.getElementById(
@@ -128,7 +128,7 @@ const TagsHome = () => {
               }
               onSubmitTag={(id, name) => {
                 onEditTag(id, name);
-                handleDismissModal();
+                closeModal();
               }}
             />
           ) : (
@@ -139,7 +139,7 @@ const TagsHome = () => {
                   await onCreateTags(
                     tags.map((t) => ({ name: t.name, color: t.color })),
                   );
-                  handleDismissModal();
+                  closeModal();
                 } catch {
                   // La mutation affiche l'erreur et garde la modale ouverte.
                 }
@@ -155,7 +155,10 @@ const TagsHome = () => {
         tourSteps={tagsPageTourSteps}
       >
         <PermissionGuard object="tag" action="write">
-          <Link className="btn btn-primary btn-soft" to="?openModal=true">
+          <Link
+            className="btn btn-primary btn-soft"
+            to="?openModal=true"
+          >
             <PlusCircle className="mr-2 h-5 w-5" />
             Créer un nouveau tag
           </Link>
@@ -202,6 +205,7 @@ const TagsHome = () => {
             setRowSelection={setRowSelection}
             sorting={sorting}
             setSorting={handleSortingChange}
+            canSelectRow={(tag) => tag.canDelete}
             emptyMessage={
               searchValue
                 ? "Aucun tag disponible pour cette recherche"

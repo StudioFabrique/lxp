@@ -232,10 +232,10 @@ La démonstration revient donc à l'état versionné à chaque déploiement. L'A
 Le fichier `compose.yml` démarre l'application et ses bases. En `dev`, le
 déploiement lit `/ci`, `/runtime`, `/mailer` et `/backup`. En `prod`, il demande
 un préfixe de premier niveau et lit `<préfixe>/ci`, `<préfixe>/runtime`,
-`/mailer` et `<préfixe>/backup`.
+`<préfixe>/mailer` et `<préfixe>/backup`.
 
 Une démonstration de production utilise par exemple `/demo/ci`,
-`/demo/runtime`, `/mailer` et `/demo/backup`. Placez `DEMO_MODE=true` dans
+`/demo/runtime`, `/demo/mailer` et `/demo/backup`. Placez `DEMO_MODE=true` dans
 `/demo/runtime`. Donnez aussi à la cible son propre `DEPLOY_PATH`, son propre
 `LXP_DEPLOYMENT_NAME` et ses propres identifiants de base de données.
 

@@ -10,7 +10,7 @@ import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
-const ObjectivesList = () => {
+const ObjectivesList = ({ readOnly = false }: { readOnly?: boolean }) => {
   const { id } = useParams();
   const parcoursId = Number(id);
   const { data: parcours } = useParcoursQuery(parcoursId);
@@ -83,6 +83,7 @@ const ObjectivesList = () => {
                 objective={item}
                 onDelete={handleDeletion}
                 onUpdate={handleUpdateObjective}
+                readOnly={readOnly}
               />
             </li>
           ))
@@ -95,37 +96,42 @@ const ObjectivesList = () => {
         <ButtonAdd
           label="Ajouter un objectif"
           onClickEvent={() => handleOpenDrawer("add-objective")}
+          isDisabled={readOnly}
         />
       </div>
 
       {/* Ajout d'un objectif */}
-      <RightSideDrawer
-        id="add-objective"
-        title="Ajouter un objectif"
-        onCloseDrawer={handleCloseDrawer}
-        visible={false}
-      >
-        <FormObjective
+      {!readOnly ? (
+        <RightSideDrawer
+          id="add-objective"
+          title="Ajouter un objectif"
           onCloseDrawer={handleCloseDrawer}
-          onSubmit={handleSubmit}
-        />
-      </RightSideDrawer>
+          visible={false}
+        >
+          <FormObjective
+            onCloseDrawer={handleCloseDrawer}
+            onSubmit={handleSubmit}
+          />
+        </RightSideDrawer>
+      ) : null}
 
       {/* Mise à jour d'un objectif */}
-      <RightSideDrawer
-        id="update-objective"
-        title="Modifier un objectif"
-        onCloseDrawer={handleCloseDrawer}
-        visible={false}
-      >
-        {itemToUpdate ? (
-          <FormObjective
-            objective={itemToUpdate}
-            onCloseDrawer={handleCloseDrawer}
-            onSubmit={submitUpdateObjective}
-          />
-        ) : null}
-      </RightSideDrawer>
+      {!readOnly ? (
+        <RightSideDrawer
+          id="update-objective"
+          title="Modifier un objectif"
+          onCloseDrawer={handleCloseDrawer}
+          visible={false}
+        >
+          {itemToUpdate ? (
+            <FormObjective
+              objective={itemToUpdate}
+              onCloseDrawer={handleCloseDrawer}
+              onSubmit={submitUpdateObjective}
+            />
+          ) : null}
+        </RightSideDrawer>
+      ) : null}
     </>
   );
 };

@@ -12,10 +12,12 @@ export const ADMINISTRATOR_ONBOARDING_STAGES = [
   "admin-formation-fields",
   "admin-formation-save",
   "admin-parcours-create",
+  "admin-parcours-tags",
   "admin-complete",
 ] as const;
 
 export const TEACHER_ONBOARDING_STAGES = [
+  "admin-parcours-tags",
   "admin-module-title",
   "admin-module-description",
   "admin-module-quiz-instructions",
@@ -54,7 +56,7 @@ export function resolveOnboardingFlow(
     return {
       kind: "teacher",
       canStart: Boolean(parcours),
-      firstStep: parcours ? `admin-module-title:${parcours.id}` : "",
+      firstStep: parcours ? `admin-parcours-tags:${parcours.id}` : "",
       accessibleParcoursIds: parcoursList.map(({ id }) => id),
     };
   }

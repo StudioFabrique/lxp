@@ -35,6 +35,10 @@ import { emitOnboardingEvent } from "../../../../onboarding/onboarding-events";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
+import { useAssignModuleContacts } from "../../../hooks/useAssignModuleContacts";
+import { useAssignModuleSkills } from "../../../hooks/useAssignModuleSkills";
+import { useRemoveModuleContact } from "../../../hooks/useRemoveModuleContact";
+import { useRemoveModuleSkill } from "../../../hooks/useRemoveModuleSkill";
 
 const emptyModuleFormValues = {
   moduleId: undefined,
@@ -53,11 +57,15 @@ const useNewModule = () => {
     moduleIdParam !== null ? Number(moduleIdParam) : null;
   const shouldCreateModule = searchParams.get("create") === "true";
   const handledCreateRef = useRef(false);
-  const handledModuleIdRef = useRef<number | null>(null);
   const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
+  const assignContactsMutation = useAssignModuleContacts(Number(id));
+  const assignSkillsMutation = useAssignModuleSkills(Number(id));
+  const removeContactMutation = useRemoveModuleContact(Number(id));
+  const removeSkillMutation = useRemoveModuleSkill(Number(id));
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
+  const [moduleImageFile, setModuleImageFile] = useState<File | null>(null);
   const isModuleSubmissionRunning = useRef(false);
   const [error, setError] = useState<string>("");
 
@@ -78,6 +86,29 @@ const useNewModule = () => {
     mode: "onBlur",
     reValidateMode: "onChange",
   });
+  const highlightedModuleId =
+    requestedModuleId !== null &&
+    Number.isInteger(requestedModuleId) &&
+    state.modules.some((module) => module.id === requestedModuleId)
+      ? requestedModuleId
+      : null;
+  const existingModuleImage = state.moduleToDuplicate
+    ? state.moduleToDuplicate.thumb
+    : state.moduleToUpdate !== null
+      ? state.modules.find((module) => module.id === state.moduleToUpdate)
+          ?.thumb
+      : null;
+
+  const highlightModule = (moduleId: number) => {
+    setSearchParams(
+      (currentSearchParams) => {
+        const nextSearchParams = new URLSearchParams(currentSearchParams);
+        nextSearchParams.set("moduleId", String(moduleId));
+        return nextSearchParams;
+      },
+      { replace: true },
+    );
+  };
 
   const getParcoursModules = useCallback(async () => {
     setIsLoading(true);
@@ -126,7 +157,7 @@ const useNewModule = () => {
       };
 
       formData.append("module", JSON.stringify(moduleData));
-      if (state.file) formData.append("image", state.file);
+      if (moduleImageFile) formData.append("image", moduleImageFile);
 
       try {
         const data = await parcoursApi.mutations.createModule(formData);
@@ -145,7 +176,8 @@ const useNewModule = () => {
             queryKey: parcoursKeys.detail(+id!),
           }),
         ]);
-        scrollToTop();
+        highlightModule(data.data.id);
+        setModuleImageFile(null);
       } catch (error) {
         toast.error(
           getApiErrorMessage(error, "Erreur lors de la création du module"),
@@ -155,12 +187,14 @@ const useNewModule = () => {
   };
 
   const handleCancelForm = () => {
+    setModuleImageFile(null);
     reset(emptyModuleFormValues);
     dispatch({ type: "CANCEL_FORM" });
     scrollToTop();
   };
 
   const handleCreateNewModule = useCallback(() => {
+    setModuleImageFile(null);
     reset(emptyModuleFormValues);
     dispatch({
       type: "START_CREATE",
@@ -227,15 +261,28 @@ const useNewModule = () => {
   };
 
   const handleCopyModule = (module: SourceModule) => {
+    setModuleImageFile(null);
+    const sourceSkillDescriptions = new Set(
+      module.bonusSkills.map((skill) => skill.description.trim().toLowerCase()),
+    );
+    const duplicatedSkills = (state.parcours?.bonusSkills ?? []).filter(
+      (skill) =>
+        sourceSkillDescriptions.has(skill.description.trim().toLowerCase()),
+    );
+
     dispatch({
       type: "PREPARE_DUPLICATE",
-      payload: { source: module, image: module.thumb },
+      payload: {
+        source: module,
+        skills: duplicatedSkills,
+      },
     });
 
     reset({
       moduleId: module.id,
       title: module.title,
       description: module.description,
+      duration: module.duration ?? undefined,
       quizInstructions: module.quizInstructions,
     });
     const drawer = document.getElementById("duplicate_module_drawer");
@@ -243,6 +290,7 @@ const useNewModule = () => {
   };
 
   const handleUpdateModule = useCallback((moduleToUpdate: ModuleData) => {
+    setModuleImageFile(null);
     dispatch({
       type: "UPDATE_MODULE",
       payload: {
@@ -302,7 +350,7 @@ const useNewModule = () => {
             }),
           ]);
           toast.success(data.message);
-          scrollToTop();
+          highlightModule(data.response.id);
         }
       } catch (error) {
         toast.error(
@@ -331,7 +379,7 @@ const useNewModule = () => {
         };
         const formData = new FormData();
         formData.append("module", JSON.stringify(updatedModule));
-        if (state.file) formData.append("image", state.file);
+        if (moduleImageFile) formData.append("image", moduleImageFile);
         const data = await parcoursApi.mutations.updateModule(formData);
         if (data.success) {
           dispatch({
@@ -349,7 +397,8 @@ const useNewModule = () => {
             }),
           ]);
           reset();
-          scrollToTop();
+          highlightModule(data.response.id);
+          setModuleImageFile(null);
         }
       } catch (error) {
         toast.error(
@@ -357,6 +406,55 @@ const useNewModule = () => {
         );
       }
     });
+  };
+
+  const handleAssignContacts = async (
+    moduleId: number,
+    contactIds: number[],
+  ) => {
+    try {
+      await assignContactsMutation.mutateAsync({
+        moduleIds: [moduleId],
+        contactIds,
+      });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleAssignSkills = async (moduleId: number, skillIds: number[]) => {
+    try {
+      await assignSkillsMutation.mutateAsync({
+        moduleIds: [moduleId],
+        skillIds,
+      });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleRemoveContact = async (moduleId: number, contactId: number) => {
+    try {
+      await removeContactMutation.mutateAsync({ moduleId, contactId });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleRemoveSkill = async (moduleId: number, skillId: number) => {
+    try {
+      await removeSkillMutation.mutateAsync({ moduleId, skillId });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -389,32 +487,15 @@ const useNewModule = () => {
   ]);
 
   useEffect(() => {
-    if (
-      requestedModuleId === null ||
-      !Number.isInteger(requestedModuleId) ||
-      handledModuleIdRef.current === requestedModuleId
-    ) {
-      return;
-    }
+    if (highlightedModuleId === null) return;
 
-    const requestedModule = state.modules.find(
-      (module) => module.id === requestedModuleId,
-    );
-    if (!requestedModule) return;
-
-    handledModuleIdRef.current = requestedModuleId;
-    handleUpdateModule(requestedModule);
-
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.delete("moduleId");
-    setSearchParams(nextSearchParams, { replace: true });
-  }, [
-    handleUpdateModule,
-    requestedModuleId,
-    searchParams,
-    setSearchParams,
-    state.modules,
-  ]);
+    const timeout = window.setTimeout(() => {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete("moduleId");
+      setSearchParams(nextSearchParams, { replace: true });
+    }, 4000);
+    return () => window.clearTimeout(timeout);
+  }, [highlightedModuleId, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (state.showForm && refForm.current) {
@@ -449,7 +530,18 @@ const useNewModule = () => {
     getValues,
     isLoading,
     isSubmittingModule,
+    isAssigningContacts: assignContactsMutation.isPending,
+    isAssigningSkills: assignSkillsMutation.isPending,
+    removingContact: removeContactMutation.isPending
+      ? (removeContactMutation.variables ?? null)
+      : null,
+    removingSkill: removeSkillMutation.isPending
+      ? (removeSkillMutation.variables ?? null)
+      : null,
+    highlightedModuleId,
+    existingModuleImage,
     refForm,
+    setModuleImageFile,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,
     handleCreateNewModule,
@@ -461,8 +553,6 @@ const useNewModule = () => {
     lockedContactId: currentTeacherContact?.id,
     setCurrentSkills: (skills: Skill[]) =>
       dispatch({ type: "SET_CURRENT_SKILLS", payload: skills }),
-    setFile: (file: File | null) =>
-      dispatch({ type: "SET_FILE", payload: file }),
     showDeleteModal,
     moduleToDelete: state.moduleToDelete,
     handleDeleteModule,
@@ -474,6 +564,10 @@ const useNewModule = () => {
     handleUpdateModule,
     handleSubmitUpdateModule,
     handleSubmitDuplicateModule,
+    handleAssignContacts,
+    handleAssignSkills,
+    handleRemoveContact,
+    handleRemoveSkill,
   };
 };
 

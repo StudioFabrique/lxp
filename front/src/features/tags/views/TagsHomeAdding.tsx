@@ -70,7 +70,7 @@ const TagsHomeAdding = ({
   };
 
   return (
-    <>
+    <div>
       <AddTag
         error={tagError}
         tag={tag}
@@ -90,7 +90,7 @@ const TagsHomeAdding = ({
         type="button"
       />
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
-    </>
+    </div>
   );
 };
 

@@ -5,15 +5,20 @@ type CollapsibleSectionProps = {
   title: string;
   preview: ReactNode;
   children: ReactNode;
+  defaultOpen?: boolean;
 };
 
 const CollapsibleSection = ({
   title,
   preview,
   children,
+  defaultOpen = false,
 }: CollapsibleSectionProps) => {
   return (
-    <details className="group min-w-0 rounded-lg bg-secondary/20">
+    <details
+      className="group min-w-0 rounded-lg bg-secondary/20"
+      open={defaultOpen}
+    >
       <summary className="min-h-28 cursor-pointer list-none px-5 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-open:min-h-14 [&::-webkit-details-marker]:hidden">
         <span className="flex items-center justify-between gap-4">
           <span

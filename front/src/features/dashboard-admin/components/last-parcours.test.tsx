@@ -66,7 +66,7 @@ describe("LastParcours", () => {
     expect(markup).not.toContain("min-h-52");
   });
 
-  it("conserve la grille compacte quand plusieurs parcours sont affichés au formateur", () => {
+  it("conserve la pleine largeur quand plusieurs parcours appartiennent à une seule formation", () => {
     const formationWithTwoParcours: FormationParcoursSummary = {
       ...formation,
       parcours: [
@@ -80,7 +80,20 @@ describe("LastParcours", () => {
     };
     const markup = renderDashboardList(2, [formationWithTwoParcours]);
 
-    expect(markup).toContain("xl:grid-cols-3");
+    expect(markup).toContain("grid-cols-1");
+    expect(markup).not.toContain("xl:grid-cols-3");
+    expect(markup).not.toContain("min-h-52");
+  });
+
+  it("affiche les formations du formateur sous forme de cartes lorsqu'il en a plusieurs", () => {
+    const secondFormation: FormationParcoursSummary = {
+      ...formation,
+      id: 2,
+      title: "Deuxième formation",
+    };
+    const markup = renderDashboardList(2, [formation, secondFormation]);
+
+    expect(markup).toContain("lg:grid-cols-2 xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
   });
 

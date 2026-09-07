@@ -73,8 +73,10 @@ export async function getRolesForUser(userId: string) {
   return roles;
 }
 
-export async function getAllRoles() {
-  const roles = await Role.find({ rank: { $gt: 0 } }).populate("permissions");
+export async function getAllRoles(minimumRank = 0) {
+  const roles = await Role.find({
+    rank: { $gt: minimumRank },
+  }).populate("permissions");
 
   return roles.map((role) => {
     const permissions = role.permissions.map((perm) => perm.name);
@@ -96,7 +98,7 @@ export async function getAllRoles() {
   });
 }
 
-export async function getAllRolesWithSearch(search: string) {
+export async function getAllRolesWithSearch(search: string, minimumRank = 0) {
   // Construction de la query avec la valeur de recherche
   // Recherche dans la propriété role mais aussi dans la propriété
   const queryWithSearch = {
@@ -107,7 +109,7 @@ export async function getAllRolesWithSearch(search: string) {
   };
   const roles = await Role.find({
     ...queryWithSearch,
-    rank: { $gt: 0 },
+    rank: { $gt: minimumRank },
   }).populate("permissions");
 
   return roles.map((role) => {

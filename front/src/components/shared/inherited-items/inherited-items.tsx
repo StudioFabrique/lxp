@@ -57,6 +57,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param contactsIds string[]
    */
   const handleAddItem = (ids: number[]) => {
+    if (isDisabled) return;
     let updatedItems = currentItems;
     (ids ?? []).forEach((item: any) => {
       const foundItem = props.initialList?.find(
@@ -75,6 +76,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param value any (Constact)
    */
   const handleRemoveItem = (value: any) => {
+    if (isDisabled) return;
     if (props.lockedItemIds?.includes(value.id)) return;
     const updatedItems = currentItems.filter((item) => item.id !== value.id);
     setCurrentItems(updatedItems);
@@ -137,6 +139,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
                 property: props.property,
                 onRemoveItem: handleRemoveItem,
                 lockedItemIds: props.lockedItemIds,
+                isDisabled,
               } as any,
             )}
           </>

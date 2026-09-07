@@ -15,18 +15,21 @@ async function httpPutParcoursTags(req: CustomRequest, res: Response) {
   const { parcoursId, tags } = req.body;
 
   try {
-    const response = await putParcoursTags(+parcoursId, tags, userId);
+    await putParcoursTags(+parcoursId, tags, {
+      userId,
+      isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+    });
     return res
       .status(200)
       .json({ success: true, message: "Tags mis à jour avec succès" });
   } catch (error: any) {
     let returnedError = error;
-    if (error.status === 403) {
+    if (error.statusCode === 403 || error.status === 403) {
       returnedError = { ...returnedError, from: req.socket.remoteAddress };
       logger.error(returnedError);
     }
     return res
-      .status(returnedError.status ?? 500)
+      .status(returnedError.statusCode ?? returnedError.status ?? 500)
       .json({ message: returnedError.message ?? serverIssue });
   }
 }

@@ -4,6 +4,7 @@ import {
   useResetPassword,
 } from "../hooks/useResetPassword";
 import ResetPasswordFormEmail from "../components/ResetPasswordFormEmail";
+import AuthPageWrapper from "../components/AuthPageWrapper";
 
 type RecoveryNavigationState = {
   email?: string;
@@ -36,33 +37,40 @@ const ResetPasswordHome = () => {
 
   if (requestSent) {
     return (
-      <div className="flex flex-col gap-6 my-auto w-full text-center">
-        <h2 className="leading-relaxed">{successMessage}</h2>
-        <p className="text-sm text-base-content/70">
-          Consultez votre boîte de réception pour poursuivre la procédure.
-        </p>
-        <Link className="btn btn-outline btn-primary w-full" to="/login">
-          Retour à la page de connexion
-        </Link>
-      </div>
+      <AuthPageWrapper
+        title={
+          isActivation
+            ? "Lien d'activation envoyé"
+            : "Lien de récupération envoyé"
+        }
+      >
+        <div className="flex flex-col gap-6 text-center">
+          <p className="text-sm text-base-content/70">{successMessage}</p>
+          <p className="text-sm text-base-content/70">
+            Consultez votre boîte de réception pour poursuivre la procédure.
+          </p>
+          <Link className="btn btn-outline btn-primary w-full" to="/login">
+            Retour à la page de connexion
+          </Link>
+        </div>
+      </AuthPageWrapper>
     );
   }
 
   return (
-    <form className="flex flex-col flex-1 w-full" onSubmit={handleCheckEmail}>
-      <div className="flex flex-col gap-4 my-auto w-full">
-        <h1 className="font-bold text-2xl text-base-content mb-2">
-          {isActivation
-            ? "Activation du compte"
-            : "Réinitialisation du mot de passe"}
-        </h1>
-
-        <p className="text-sm text-base-content/70 mb-2">
-          {isActivation
-            ? "Entrez l'adresse email associée à votre compte pour recevoir un nouveau lien d'activation."
-            : "Entrez l'adresse email associée à votre compte pour recevoir un lien de récupération."}
-        </p>
-
+    <AuthPageWrapper
+      title={
+        isActivation
+          ? "Activation du compte"
+          : "Réinitialisation du mot de passe"
+      }
+      description={
+        isActivation
+          ? "Entrez l'adresse email associée à votre compte pour recevoir un nouveau lien d'activation."
+          : "Entrez l'adresse email associée à votre compte pour recevoir un lien de récupération."
+      }
+    >
+      <form className="flex w-full flex-col gap-4" onSubmit={handleCheckEmail}>
         <div className="form-control w-full">
           <ResetPasswordFormEmail
             email={email}
@@ -110,8 +118,8 @@ const ResetPasswordHome = () => {
             Retour à la page de connexion
           </Link>
         </div>
-      </div>
-    </form>
+      </form>
+    </AuthPageWrapper>
   );
 };
 

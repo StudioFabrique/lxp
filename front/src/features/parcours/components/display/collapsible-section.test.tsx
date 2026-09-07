@@ -41,4 +41,20 @@ describe("CollapsibleSection", () => {
 
     expect(details?.open).toBe(true);
   });
+
+  it("peut être dépliée par défaut", async () => {
+    await act(async () => {
+      root.render(
+        <CollapsibleSection
+          title="Ressources pédagogiques"
+          preview={<span>Aperçu des ressources</span>}
+          defaultOpen
+        >
+          <p>Deux ressources</p>
+        </CollapsibleSection>,
+      );
+    });
+
+    expect(container.querySelector("details")?.open).toBe(true);
+  });
 });

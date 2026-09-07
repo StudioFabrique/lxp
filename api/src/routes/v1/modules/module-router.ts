@@ -5,12 +5,16 @@ import httpParcoursModules from "../../../controllers/module/http-parcours-modul
 import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module.ts";
 import httpDeleteModule from "../../../controllers/module/http-delete-module.ts";
 import {
+  assignContactsToModulesValidator,
+  assignSkillsToModulesValidator,
   getModuleFormationValidator,
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
   moduleIdValidator,
   putModuleParcoursValidator,
   putModuleValidator,
+  removeContactFromModuleValidator,
+  removeSkillFromModuleValidator,
   updateDatesModulesValidator,
 } from "./module-validators.ts";
 import checkPermissions from "../../../middleware/check-permissions.ts";
@@ -30,8 +34,46 @@ import jsonParser from "../../../middleware/json-parser.ts";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail.ts";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module.ts";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules.ts";
+import httpAssignContactsToModules from "../../../controllers/module/http-assign-contacts-to-modules.ts";
+import httpAssignSkillsToModules from "../../../controllers/module/http-assign-skills-to-modules.ts";
+import httpRemoveContactFromModule from "../../../controllers/module/http-remove-contact-from-module.ts";
+import httpRemoveSkillFromModule from "../../../controllers/module/http-remove-skill-from-module.ts";
 
 const modules = Router();
+
+modules.patch(
+  "/parcours/:parcoursId/contacts",
+  checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
+  assignContactsToModulesValidator,
+  httpAssignContactsToModules,
+);
+
+modules.patch(
+  "/parcours/:parcoursId/skills",
+  checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
+  assignSkillsToModulesValidator,
+  httpAssignSkillsToModules,
+);
+
+modules.delete(
+  "/parcours/:parcoursId/:moduleId/contacts/:contactId",
+  checkPermissions("module", "update"),
+  checkContentAccess("parcours", "parcoursId"),
+  checkContentAccess("module", "moduleId"),
+  removeContactFromModuleValidator,
+  httpRemoveContactFromModule,
+);
+
+modules.delete(
+  "/parcours/:parcoursId/:moduleId/skills/:skillId",
+  checkPermissions("module", "update"),
+  checkContentAccess("parcours", "parcoursId"),
+  checkContentAccess("module", "moduleId"),
+  removeSkillFromModuleValidator,
+  httpRemoveSkillFromModule,
+);
 
 modules.get(
   "/parcours-modules/:parcoursId",

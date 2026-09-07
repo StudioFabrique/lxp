@@ -67,26 +67,28 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
           )}
         </div>
         {props.children}
-        <div className="modal-action">
-          {props.onLeftClick && (
-            <button
-              className="btn btn-outline btn-primary"
-              onClick={props.onLeftClick}
-            >
-              {props.leftLabel}
-            </button>
-          )}
-          {props.onRightClick && (
-            <button
-              className="btn btn-warning flex items-center gap-x-2"
-              disabled={isSubmitting || props.rightDisabled}
-              onClick={props.onRightClick}
-            >
-              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
-              <span>{props.rightLabel}</span>
-            </button>
-          )}
-        </div>
+        {(props.onLeftClick || props.onRightClick) && (
+          <div className="modal-action">
+            {props.onLeftClick && (
+              <button
+                className="btn btn-outline btn-primary"
+                onClick={props.onLeftClick}
+              >
+                {props.leftLabel}
+              </button>
+            )}
+            {props.onRightClick && (
+              <button
+                className="btn btn-warning flex items-center gap-x-2"
+                disabled={isSubmitting || props.rightDisabled}
+                onClick={props.onRightClick}
+              >
+                {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+                <span>{props.rightLabel}</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </dialog>
   );

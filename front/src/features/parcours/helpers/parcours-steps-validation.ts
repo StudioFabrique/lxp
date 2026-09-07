@@ -32,23 +32,32 @@ const testSkills = (skills: Array<Skill>) => {
   return skills.length > 0;
 };
 
-export const testModules = (modules: Array<Module>) => {
-  let result = modules.length > 0;
-  modules.forEach((module) => {
-    if (module.contacts !== undefined && module.bonusSkills !== undefined) {
-      if (
-        module.duration === undefined ||
-        module.contacts.length === 0 ||
-        module.bonusSkills.length === 0
-      ) {
-        result = false;
-      }
-    } else {
-      result = false;
-    }
-  });
-  return result;
+type ModuleCompletionRequirements = {
+  duration?: number;
+  contacts?: readonly unknown[];
+  skills?: readonly unknown[];
 };
+
+export const hasCompleteModuleRequirements = ({
+  duration,
+  contacts,
+  skills,
+}: ModuleCompletionRequirements) =>
+  duration !== undefined &&
+  contacts !== undefined &&
+  contacts.length > 0 &&
+  skills !== undefined &&
+  skills.length > 0;
+
+export const isModuleComplete = (module: Module) =>
+  hasCompleteModuleRequirements({
+    duration: module.duration,
+    contacts: module.contacts,
+    skills: module.bonusSkills,
+  });
+
+export const testModules = (modules: Array<Module>) =>
+  modules.length > 0 && modules.every(isModuleComplete);
 
 const testGroups = (groups: Array<Group>) => {
   return groups.length > 0;

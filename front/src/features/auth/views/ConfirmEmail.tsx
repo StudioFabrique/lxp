@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { onboardingApi } from "../api/onboarding.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import AuthPageWrapper from "../components/AuthPageWrapper";
 
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
@@ -38,22 +39,26 @@ const ConfirmEmail = () => {
   }, [token]);
 
   return (
-    <div className="my-auto flex flex-col gap-4 text-center">
-      <h1 className="text-xl font-bold text-base-content">
-        Validation de l'adresse email
-      </h1>
-      {state === "loading" && (
-        <span className="loading loading-spinner loading-md mx-auto" />
-      )}
-      <p className={state === "error" ? "text-error" : "text-base-content/70"}>
-        {message}
-      </p>
+    <AuthPageWrapper title="Validation de l'adresse email">
+      <div className="flex min-h-40 flex-col justify-center gap-4 text-center">
+        {state === "loading" && (
+          <span className="loading loading-spinner loading-md mx-auto" />
+        )}
+        <p
+          className={state === "error" ? "text-error" : "text-base-content/70"}
+        >
+          {message}
+        </p>
+      </div>
       {state !== "loading" && (
-        <Link className="btn btn-primary" to={state === "success" ? "/" : "/login"}>
+        <Link
+          className="btn btn-primary"
+          to={state === "success" ? "/" : "/login"}
+        >
           Continuer
         </Link>
       )}
-    </div>
+    </AuthPageWrapper>
   );
 };
 

@@ -16,11 +16,12 @@ export function useTagActions(onSuccessCallback: () => void) {
       toast.success("Tags supprimés !");
       onSuccessCallback();
     },
+    onError: showMutationError,
   });
 
   const handleDeleteSelected = async (idsList: string[]) => {
     if (idsList.length === 0) return;
-    deleteManyMutation.mutate(idsList);
+    await deleteManyMutation.mutateAsync(idsList);
   };
 
   const deleteOneMutation = useMutation({
@@ -29,6 +30,7 @@ export function useTagActions(onSuccessCallback: () => void) {
       toast.success("Tag supprimé !");
       onSuccessCallback();
     },
+    onError: showMutationError,
   });
 
   const handleDeleteOne = async (id: number) => {

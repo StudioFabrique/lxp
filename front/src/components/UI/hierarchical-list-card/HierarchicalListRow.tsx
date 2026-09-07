@@ -77,7 +77,7 @@ export const HierarchicalListItemActions = ({
       <DropdownMenu.Content
         align="end"
         sideOffset={4}
-        className="menu z-[100] w-max rounded-box border border-base-300 bg-base-100 p-2 shadow-lg"
+        className="menu z-100 w-max rounded-box border border-base-300 bg-base-100 p-2 shadow-lg"
       >
         {actions.map((action) => {
           const className = `flex w-full cursor-pointer items-center gap-2 rounded-field px-3 py-2 text-sm outline-none hover:bg-base-200 focus:bg-base-200 data-[highlighted]:bg-base-200 [&>svg]:size-4 ${
@@ -126,9 +126,11 @@ export const HierarchicalListItemActions = ({
 export const HierarchicalListRow = ({
   item,
   dismissOverflow,
+  hideDivider = false,
 }: {
   item: HierarchicalListCardItem;
   dismissOverflow: () => void;
+  hideDivider?: boolean;
 }) => {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const menuControl = {
@@ -142,7 +144,7 @@ export const HierarchicalListRow = ({
 
   return (
     <li
-      className="list-row relative mx-2 hover:bg-accent/2"
+      className={`list-row relative mx-2 hover:bg-accent/2 ${hideDivider ? "after:hidden" : ""}`}
       onContextMenu={(event) => {
         if (!itemAction) return;
 

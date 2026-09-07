@@ -7,19 +7,23 @@ import PreviewObjectives from "../../../../../../src/components/preview/preview-
 import PreviewSkills from "../../../../../../src/components/preview/preview-skills";
 import { useNavigate, useParams } from "react-router";
 import useValidateParcours from "../../../hooks/useValidateParcours";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { parcoursApi } from "../../../api/parcours.api";
 import FloatingBottomNavigation from "../../../../../components/buttons/FloatingBottomNavigation";
 import { useParcoursStudentsQuery } from "../../../hooks/useParcoursStudentsQuery";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursSkills } from "../../../hooks/useParcoursSkills";
 import { useParcoursGroupsQuery } from "../../../hooks/useParcoursGroupsQuery";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
 }
 
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
+  const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
   const { id } = useParams();
   const parcoursId = Number(id);
   const { data: parcours } = useParcoursQuery(parcoursId);
@@ -56,11 +60,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
   };
 
   return (
-    /* En tête de l'aperçu */
     <div className="w-full flex flex-col gap-y-8">
-      <section>
-        <h1 className="text-3xl font-extrabold">Aperçu général</h1>
-      </section>
       {/* Infos générales du parcours */}
       <section>
         <ParcoursPreviewInfos onEdit={props.onEdit} />
@@ -106,16 +106,18 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
                 Sauvegarder comme brouillon
               </button>
             )}
-            <button
-              className="btn btn-primary"
-              onClick={() =>
-                parcours?.isPublished
-                  ? handleNavigateToParcoursPreview()
-                  : handlePublishParcours(true)
-              }
-            >
-              {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
-            </button>
+            {!isTeacher && !parcours?.isPublished && (
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  parcours?.isPublished
+                    ? handleNavigateToParcoursPreview()
+                    : handlePublishParcours(true)
+                }
+              >
+                {!parcours?.isPublished ? "Publier" : "Consulter le parcours"}
+              </button>
+            )}
           </>
         }
       />

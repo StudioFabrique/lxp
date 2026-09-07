@@ -148,6 +148,35 @@ if printf '%s\n' "$prod_paths_output" | grep -Fxq -- '--path=/ci'; then
     fail "le wrapper Infisical charge encore le dossier /ci global en prod"
 fi
 
+prod_default_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=prod \
+        INFISICAL_PATH_PREFIX=/demo \
+        "$infisical_wrapper" true
+)"
+[[ "$prod_default_paths_output" == *"--path=/demo/mailer"* ]] \
+    || fail "le wrapper Infisical ne charge pas le dossier mailer prefixe en prod"
+if printf '%s\n' "$prod_default_paths_output" | grep -Fxq -- '--path=/mailer'; then
+    fail "le wrapper Infisical charge encore le dossier /mailer global en prod"
+fi
+
+preprod_default_paths_output="$(
+    env -i \
+        PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=test \
+        INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=test \
+        INFISICAL_PROJECT_ID=test \
+        INFISICAL_ENVIRONMENT=pre-prod \
+        INFISICAL_PATH_PREFIX=/demo \
+        "$infisical_wrapper" true
+)"
+[[ "$preprod_default_paths_output" == *"--path=/mailer"* ]] \
+    || fail "le wrapper Infisical ne conserve pas le dossier /mailer global hors prod"
+
 prod_build_paths_output="$(
     env -i \
         PATH="$temporary_dir/infisical-bin:/usr/bin:/bin" \

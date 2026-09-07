@@ -4,6 +4,8 @@ export type TagRow = {
   id: number;
   name: string;
   color: string;
+  canDelete: boolean;
+  canUpdate: boolean;
   totalUses: number;
   parcours: { id: number; title: string }[];
 };

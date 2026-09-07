@@ -5,7 +5,15 @@ import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
 import Modal from "../../../../../components/UI/modal/modal";
-import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 type Props = {
   setModuleFormOpened: Dispatch<SetStateAction<boolean>>;
@@ -26,8 +34,8 @@ type Props = {
  * @returns JSX.Element - The complete module management interface
  */
 export default function ModuleComponent({ setModuleFormOpened }: Props) {
+  const { user } = useContext(AuthContext);
   const {
-    currentContacts,
     currentSkills,
     register,
     errors,
@@ -43,22 +51,28 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     handleSubmitUpdateModule,
     handleUpdateModule,
     id,
-    isLoading,
     isSubmittingModule,
+    isAssigningContacts,
+    isAssigningSkills,
+    removingContact,
+    removingSkill,
     lockedContactId,
+    highlightedModuleId,
     sourceModules,
     mode,
     moduleToDuplicate,
     moduleToDelete,
-    moduleToUpdate,
     modules,
     parcours,
+    existingModuleImage,
     refForm,
-    setCurrentContacts,
-    setCurrentSkills,
-    setFile,
     showDeleteModal,
     showForm,
+    handleAssignContacts,
+    handleAssignSkills,
+    handleRemoveContact,
+    handleRemoveSkill,
+    setModuleImageFile,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
@@ -103,31 +117,52 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
         {/* Module grid display */}
         <ModuleGrid
           modules={modules}
-          selectedModuleId={moduleToUpdate ?? undefined}
+          parcoursContacts={parcours?.contacts ?? []}
+          parcoursSkills={parcours?.bonusSkills ?? []}
+          isAssigningContacts={isAssigningContacts}
+          isAssigningSkills={isAssigningSkills}
+          removingContact={removingContact}
+          removingSkill={removingSkill}
+          lockedContactId={lockedContactId}
+          highlightedModuleId={highlightedModuleId}
+          emptyMessage={
+            isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
+          }
           onUpdate={handleUpdateModule}
           onDelete={showDeleteModal}
+          onAssignContacts={handleAssignContacts}
+          onAssignSkills={handleAssignSkills}
+          onRemoveContact={handleRemoveContact}
+          onRemoveSkill={handleRemoveSkill}
         />
 
-        {/* Module creation form (conditional) */}
         {showForm && (
-          <ModuleForm
-            mode={mode}
-            refForm={refForm}
-            register={register}
-            errors={errors}
-            isLoading={isLoading}
-            isSubmitting={isSubmittingModule}
-            currentContacts={currentContacts ?? []}
-            lockedContactId={lockedContactId}
-            currentSkills={currentSkills ?? []}
-            contacts={parcours?.contacts ?? []}
-            skills={parcours?.bonusSkills ?? []}
-            onSubmit={submitFunction}
-            onCancel={handleCancelForm}
-            onSetFile={setFile}
-            setCurrentContacts={setCurrentContacts}
-            setCurrentSkills={setCurrentSkills}
-          />
+          <Modal
+            title={
+              mode === "create"
+                ? "Créer un module"
+                : moduleToDuplicate
+                  ? "Ajouter un module existant"
+                  : "Modifier le module"
+            }
+            modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto px-5 pt-5 pb-0 sm:px-7 sm:pt-7"
+            dialogAdditionalClass="z-[70]"
+          >
+            <ModuleForm
+              mode={mode}
+              refForm={refForm}
+              register={register}
+              errors={errors}
+              isSubmitting={isSubmittingModule}
+              duplicatedSkills={
+                moduleToDuplicate ? (currentSkills ?? []) : undefined
+              }
+              existingImage={existingModuleImage}
+              onSetFile={setModuleImageFile}
+              onSubmit={submitFunction}
+              onCancel={handleCancelForm}
+            />
+          </Modal>
         )}
       </div>
 

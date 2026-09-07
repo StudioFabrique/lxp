@@ -92,10 +92,6 @@ const ParcoursStudents = () => {
           </div>
         </RightSideDrawer>
       </section>
-      {/* Titre de la page */}
-      <section>
-        <h1 className="text-3xl font-extrabold">Groupe d'apprenants</h1>
-      </section>
       {/* Affichage conditionnel selon la présence ou non de groupes */}
       {!groups || groups.length === 0 ? (
         // Si aucun groupe n'est présent, affiche un bouton pour en ajouter

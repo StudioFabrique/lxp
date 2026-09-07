@@ -3,6 +3,10 @@ import { Prisma } from "@prisma/client";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
+import {
+  assertCanUnassignTags,
+  canUnassignTag,
+} from "../tag/tag-access.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 export type PatchParcoursPayload = {
@@ -17,24 +21,61 @@ export type PatchParcoursPayload = {
   objectives?: string[];
 };
 
+export type PatchParcoursActor = {
+  userId: string;
+  rank: number;
+};
+
 async function patchParcours(
   parcoursId: number,
   payload: PatchParcoursPayload,
-  userId: string,
+  actor: PatchParcoursActor,
 ) {
-  const admin = await getAdmin(userId);
+  const isAdmin = actor.rank <= 1;
+  const updatedFields = Object.entries(payload)
+    .filter(([, value]) => value !== undefined)
+    .map(([field]) => field);
+
+  if (
+    !isAdmin &&
+    (actor.rank !== 2 ||
+      updatedFields.length !== 1 ||
+      updatedFields[0] !== "tagIds")
+  ) {
+    throw {
+      message: "Vous n'êtes pas autorisé à modifier ces informations.",
+      statusCode: 403,
+    };
+  }
+
+  const admin = isAdmin ? await getAdmin(actor.userId) : null;
 
   const tagIds = [...new Set(payload.tagIds ?? [])];
   const contactIds = [...new Set(payload.contactIds ?? [])];
 
   const updated = await prisma.$transaction(async (tx) => {
     const existingParcours = await tx.parcours.findFirst({
-      where: { id: parcoursId, adminId: admin.id },
+      where: {
+        id: parcoursId,
+        ...(admin
+          ? { adminId: admin.id }
+          : {
+              contacts: {
+                some: { contact: { idMdb: actor.userId } },
+              },
+            }),
+      },
       select: {
         id: true,
         startDate: true,
         endDate: true,
         formationId: true,
+        tags: {
+          select: {
+            tagId: true,
+            addedBy: true,
+          },
+        },
         contacts: { select: { contactId: true } },
       },
     });
@@ -61,6 +102,39 @@ async function patchParcours(
       const tagsCount = await tx.tag.count({ where: { id: { in: tagIds } } });
       if (tagsCount !== tagIds.length) {
         throw { message: "Un ou plusieurs tags n'existent pas.", statusCode: 404 };
+      }
+
+      const requestedTagIds = new Set(tagIds);
+      const existingTagIds = new Set(
+        existingParcours.tags.map(({ tagId }) => tagId),
+      );
+      const removedAssignments = existingParcours.tags.filter(
+        ({ tagId }) => !requestedTagIds.has(tagId),
+      );
+
+      if (!isAdmin) {
+        assertCanUnassignTags(
+          removedAssignments,
+          { userId: actor.userId, isAdmin: false },
+        );
+      }
+
+      const removedTagIds = removedAssignments.map(({ tagId }) => tagId);
+      if (removedTagIds.length > 0) {
+        await tx.tagsOnParcours.deleteMany({
+          where: { parcoursId, tagId: { in: removedTagIds } },
+        });
+      }
+
+      const addedTagIds = tagIds.filter((tagId) => !existingTagIds.has(tagId));
+      if (addedTagIds.length > 0) {
+        await tx.tagsOnParcours.createMany({
+          data: addedTagIds.map((tagId) => ({
+            parcoursId,
+            tagId,
+            addedBy: isAdmin ? null : actor.userId,
+          })),
+        });
       }
     }
 
@@ -116,12 +190,7 @@ async function patchParcours(
     if (payload.formationId !== undefined) {
       data.formation = { connect: { id: payload.formationId } };
     }
-    if (payload.tagIds !== undefined) {
-      data.tags = {
-        deleteMany: {},
-        create: tagIds.map((id) => ({ tag: { connect: { id } } })),
-      };
-    }
+    if (payload.tagIds !== undefined) data.updatedAt = new Date();
     if (payload.contactIds !== undefined) {
       data.contacts = {
         deleteMany: {},
@@ -161,7 +230,7 @@ async function patchParcours(
             tags: { select: { tag: true } },
           },
         },
-        tags: { select: { tag: true } },
+        tags: { select: { addedBy: true, tag: true } },
         contacts: { select: { contact: true } },
         objectives: {
           orderBy: { id: "asc" },
@@ -178,7 +247,13 @@ async function patchParcours(
   );
   return {
     ...updated,
-    tags: updated.tags.map(({ tag }) => tag),
+    tags: updated.tags.map(({ tag, addedBy }) => ({
+      ...tag,
+      canUnassign: canUnassignTag(
+        { addedBy },
+        { userId: actor.userId, isAdmin },
+      ),
+    })),
     contacts,
   };
 }

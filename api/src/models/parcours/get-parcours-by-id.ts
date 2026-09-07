@@ -6,6 +6,7 @@ import {
   moduleWhereForScope,
   type AccessScope,
 } from "../../utils/services/permissions/accessible-parcours.ts";
+import { canUnassignTag } from "../tag/tag-access.ts";
 
 /**
  * Récupère les détails d'un parcours par son ID
@@ -41,7 +42,10 @@ async function getParcoursById(
         },
       },
       tags: {
-        select: { tag: { select: { id: true, name: true, color: true } } },
+        select: {
+          addedBy: true,
+          tag: { select: { id: true, name: true, color: true } },
+        },
       },
       contacts: {
         select: {
@@ -61,7 +65,9 @@ async function getParcoursById(
           contacts: { select: { contact: true } },
           bonusSkills: {
             select: {
-              bonusSkill: { select: { id: true, description: true } },
+              bonusSkill: {
+                select: { id: true, description: true, badge: true },
+              },
             },
           },
           courses: {
@@ -136,7 +142,13 @@ async function getParcoursById(
   result.contacts = parcours.contacts.map(
     ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
   );
-  result.tags = parcours.tags.map((item) => item.tag);
+  result.tags = parcours.tags.map(({ tag, addedBy }) => ({
+    ...tag,
+    canUnassign: canUnassignTag(
+      { addedBy },
+      { userId, isAdmin: scope === null },
+    ),
+  }));
 
   // 6. Traitement des modules (si présents)
   if (parcours.modules && parcours.modules.length > 0) {

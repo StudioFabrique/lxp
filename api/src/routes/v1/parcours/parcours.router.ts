@@ -225,6 +225,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
+  checkRoleRank([0, 1]),
   checkContentAccess("parcours", "parcoursId"),
   httpPublishParcours,
 );

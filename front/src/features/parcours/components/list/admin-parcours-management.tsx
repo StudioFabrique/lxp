@@ -32,7 +32,8 @@ const AdminParcoursManagement = ({
   const isAdmin = layout === "admin";
   const { user } = useContext(AuthContext);
   const isTeacher = hasRoleRank(user, [2]);
-  const usesFullWidthLayout = !isAdmin || isTeacher;
+  const usesFullWidthLayout =
+    !isAdmin || (isTeacher && formations.length <= 1);
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const [parcoursToDelete, setParcoursToDelete] =

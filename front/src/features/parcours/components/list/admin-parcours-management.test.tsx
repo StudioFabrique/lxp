@@ -57,12 +57,24 @@ describe("AdminParcoursManagement", () => {
     expect(markup).toContain("min-h-[50vh]");
   });
 
-  it("affiche les parcours du formateur sur toute la largeur", () => {
+  it("affiche l'unique formation du formateur sur toute la largeur", () => {
     const markup = renderPage("admin", 2, [formation]);
 
     expect(markup).toContain("grid-cols-1");
     expect(markup).not.toContain("xl:grid-cols-3");
     expect(markup).not.toContain("min-h-52");
+  });
+
+  it("affiche les formations du formateur sous forme de cartes lorsqu'il en a plusieurs", () => {
+    const secondFormation = {
+      ...formation,
+      id: 2,
+      title: "Deuxième formation",
+    };
+    const markup = renderPage("admin", 2, [formation, secondFormation]);
+
+    expect(markup).toContain("lg:grid-cols-2 xl:grid-cols-3");
+    expect(markup).toContain("min-h-52");
   });
 
   it("conserve la grille de cartes pour un administrateur", () => {

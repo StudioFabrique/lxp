@@ -17,7 +17,9 @@ async function main() {
   const token = jwt.sign(
     { purpose: "root-account", email },
     env.REGISTER_SECRET,
-    { expiresIn: env.ROOT_ACTIVATION_TOKEN_TTL_MINUTES * 60 },
+    {
+      expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+    },
   );
 
   await sendRootAccountInvitation(email, token, !hasAdmins);

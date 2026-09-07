@@ -24,12 +24,9 @@ const Contacts = () => {
       key={contact.id}
       className="flex flex-col bg-base-200 border border-base-300 p-4 rounded-lg text-base-content"
     >
-      <span className="flex justify-between items-center">
-        <p className="capitalize font-bold text-primary">
-          {getContactFullName(contact)}
-        </p>
-        <p className="capitalize text-xs opacity-70">{contact.role}</p>
-      </span>
+      <p className="capitalize font-bold text-primary">
+        {getContactFullName(contact)}
+      </p>
       <span className="text-xs flex flex-col items-start opacity-80">
         {contact.email && (
           <p className="flex gap-x-2 items-center">
@@ -52,6 +49,7 @@ const Contacts = () => {
   return (
     <CollapsibleSection
       title="Ressources pédagogiques"
+      defaultOpen={contacts.length <= 2}
       preview={
         <span className="flex min-w-0 flex-col gap-1.5 text-sm">
           {previewContacts.map((contact, index) => (
@@ -62,12 +60,12 @@ const Contacts = () => {
               <span className="truncate font-semibold text-primary">
                 {getContactFullName(contact)}
               </span>
-              <span className="shrink-0 text-xs capitalize opacity-60">
-                {contact.role}
-                {index === previewContacts.length - 1 && remainingContacts > 0
-                  ? ` +${remainingContacts}`
-                  : ""}
-              </span>
+              {index === previewContacts.length - 1 &&
+              remainingContacts > 0 ? (
+                <span className="shrink-0 text-xs opacity-60">
+                  +{remainingContacts}
+                </span>
+              ) : null}
             </span>
           ))}
         </span>

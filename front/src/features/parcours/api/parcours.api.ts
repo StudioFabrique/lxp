@@ -127,14 +127,10 @@ const mutations = {
   importParcours: async ({
     archive,
     formationId,
-    teacherContactId,
-    teacherModuleIndexes,
     publishCourses,
   }: {
     archive: File;
     formationId?: number;
-    teacherContactId?: number;
-    teacherModuleIndexes?: number[];
     publishCourses?: boolean;
   }) => {
     const formData = new FormData();
@@ -143,13 +139,6 @@ const mutations = {
       formData.append("formationId", formationId.toString());
     }
     formData.append("publishCourses", String(publishCourses ?? false));
-    if (teacherContactId !== undefined) {
-      formData.append("teacherContactId", teacherContactId.toString());
-      formData.append(
-        "teacherModuleIndexes",
-        JSON.stringify(teacherModuleIndexes ?? []),
-      );
-    }
     const res = await apiClient.post<{
       success: true;
       parcoursId: number;
@@ -277,11 +266,66 @@ const mutations = {
       parcoursId: number;
     },
   ) => {
-    const res = await apiClient.post(`/modules/duplicate/${id}`, data);
+    const res = await apiClient.post(`/modules/duplicate/${id}`, {
+      duration: data.duration,
+      contacts: data.contactsIds,
+      skills: data.skillsIds,
+      parcoursId: data.parcoursId,
+    });
     return res.data;
   },
   updateModule: async (data: FormData) => {
     const res = await apiClient.put("/modules/new-module/update/", data);
+    return res.data;
+  },
+  assignModuleContacts: async (data: {
+    parcoursId: number;
+    moduleIds: number[];
+    contactIds: number[];
+  }): Promise<{
+    success: true;
+    message: string;
+    assignmentsCreated: number;
+  }> => {
+    const res = await apiClient.patch(
+      `/modules/parcours/${data.parcoursId}/contacts`,
+      { moduleIds: data.moduleIds, contactIds: data.contactIds },
+    );
+    return res.data;
+  },
+  assignModuleSkills: async (data: {
+    parcoursId: number;
+    moduleIds: number[];
+    skillIds: number[];
+  }): Promise<{
+    success: true;
+    message: string;
+    assignmentsCreated: number;
+  }> => {
+    const res = await apiClient.patch(
+      `/modules/parcours/${data.parcoursId}/skills`,
+      { moduleIds: data.moduleIds, skillIds: data.skillIds },
+    );
+    return res.data;
+  },
+  removeModuleContact: async (data: {
+    parcoursId: number;
+    moduleId: number;
+    contactId: number;
+  }): Promise<SuccessWithMessage> => {
+    const res = await apiClient.delete<SuccessWithMessage>(
+      `/modules/parcours/${data.parcoursId}/${data.moduleId}/contacts/${data.contactId}`,
+    );
+    return res.data;
+  },
+  removeModuleSkill: async (data: {
+    parcoursId: number;
+    moduleId: number;
+    skillId: number;
+  }): Promise<SuccessWithMessage> => {
+    const res = await apiClient.delete<SuccessWithMessage>(
+      `/modules/parcours/${data.parcoursId}/${data.moduleId}/skills/${data.skillId}`,
+    );
     return res.data;
   },
   updateModuleCalendarDates: async (data: {

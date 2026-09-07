@@ -2,6 +2,7 @@ import { type Admin, type Resource, type Tag } from "@prisma/client";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import { tagOwnerFor } from "../tag/tag-access.ts";
 
 export default async function putResource(
   userId: string,
@@ -10,6 +11,7 @@ export default async function putResource(
   description: string,
   tags: string[],
   filename: string | null,
+  isAdmin: boolean,
 ) {
   let updatedResource: Resource | null = null;
   const existingResource = await prisma.resource.findFirst({
@@ -43,6 +45,7 @@ export default async function putResource(
   const newTags = remainingTags.map((tag) => ({
     name: tag,
     color: getSoftColor(),
+    createdBy: tagOwnerFor({ userId, isAdmin }),
   }));
 
   if (newTags.length > 0) {

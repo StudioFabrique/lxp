@@ -11,6 +11,7 @@ type Props = {
   label?: string;
   startDateProp?: string;
   endDateProp?: string;
+  disabled?: boolean;
 };
 
 const DatesSelecter: FC<Props> = ({
@@ -18,6 +19,7 @@ const DatesSelecter: FC<Props> = ({
   endDateProp = "",
   label = "",
   onSubmitDates,
+  disabled = false,
 }) => {
   const tommorowDate = new Date(new Date().setDate(new Date().getDate() + 1));
 
@@ -44,6 +46,7 @@ const DatesSelecter: FC<Props> = ({
   }, [startDate.value, endDate.value]);
 
   useEffect(() => {
+    if (disabled) return;
     const timer = setTimeout(() => {
       if (submit) {
         const sDate = new Date(startDate.value).getTime();
@@ -72,22 +75,25 @@ const DatesSelecter: FC<Props> = ({
     endDate.isValid,
     endDate.value,
     onSubmitDates,
+    disabled,
   ]);
 
   const handleChangeStartDate = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
+      if (disabled) return;
       startDate.datePicking(event.currentTarget.value);
       setSubmit(true);
     },
-    [startDate],
+    [disabled, startDate],
   );
 
   const handleChangeEndDate = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
+      if (disabled) return;
       endDate.datePicking(event.currentTarget.value);
       setSubmit(true);
     },
-    [endDate],
+    [disabled, endDate],
   );
   return (
     <div className="flex flex-col gap-y-4">
@@ -99,6 +105,7 @@ const DatesSelecter: FC<Props> = ({
           label="Début"
           date={dates.startDate}
           onChangeDate={handleChangeStartDate}
+          disabled={disabled}
         />
         <DatePicker
           id="date2"
@@ -106,6 +113,7 @@ const DatesSelecter: FC<Props> = ({
           label="Fin"
           date={dates.endDate}
           onChangeDate={handleChangeEndDate}
+          disabled={disabled}
         />
       </div>
       {error ? (

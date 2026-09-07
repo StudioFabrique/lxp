@@ -5,6 +5,7 @@ import QuestionMarkTooltip from "./UI/question-mark-tooltip/question-mark-toolti
 interface VirtualClassProps {
   virtualClass: any;
   onChangeValue: (event: React.FormEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const VirtualClass = (props: VirtualClassProps) => {
@@ -22,6 +23,7 @@ const VirtualClass = (props: VirtualClassProps) => {
           onChange={onChangeValue}
           onBlur={virtualClass.valueBlurHandler}
           placeholder="Lien vers la classe virtuelle"
+          disabled={props.disabled}
         />
         <QuestionMarkTooltip
           tooltipValue="Si vous gérez une classe virtuelle sur Zoom, Google meet, Teams … vous pouvez saisir le lien ici."

@@ -1,5 +1,15 @@
 import { useMemo, useState } from "react";
-import { BookOpen, Pencil, SquareArrowRightEnter, Trash2 } from "lucide-react";
+import {
+  BookOpen,
+  CloudOff,
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  Pencil,
+  SquareArrowRightEnter,
+  Trash2,
+  UploadCloud,
+} from "lucide-react";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
 
@@ -21,7 +31,7 @@ import type CustomCourse from "./interfaces/custom-course";
 
 type CourseListProps = {
   coursesList: CustomCourse[];
-  onRefreshCourses: () => void;
+  onRefreshCourses: () => void | Promise<void>;
 };
 
 export default function CourseList({
@@ -34,6 +44,10 @@ export default function CourseList({
     courseTitle: string;
   } | null>(null);
   const [isDeletingLesson, setIsDeletingLesson] = useState(false);
+  const [pendingCourseAction, setPendingCourseAction] = useState<{
+    courseId: number;
+    type: "publish" | "visibility";
+  } | null>(null);
   const [filter, setFilter] = useState<{
     field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
     value: string;
@@ -45,14 +59,18 @@ export default function CourseList({
       course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
     );
   }, [coursesList, filter]);
+  const sortedCourses = useMemo(
+    () =>
+      [...filteredCourses].sort((firstCourse, secondCourse) =>
+        firstCourse.title.localeCompare(secondCourse.title, "fr", {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      ),
+    [filteredCourses],
+  );
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(
-      filteredCourses,
-      "title",
-      15,
-      "id",
-      "sidebar-courses",
-    );
+    useEagerLoadingList(sortedCourses, "title", 15, "id", "sidebar-courses");
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleSearch = (field: string, value: string) => {
@@ -85,6 +103,47 @@ export default function CourseList({
     }
   };
 
+  const handlePublishCourse = async (course: CustomCourse) => {
+    setPendingCourseAction({ courseId: course.id, type: "publish" });
+    try {
+      const data = await courseApi.mutations.publish(course.id);
+      if (data.success) {
+        toast.success(data.message);
+        await onRefreshCourses();
+      }
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Le cours n'a pas pu être publié."),
+      );
+    } finally {
+      setPendingCourseAction(null);
+    }
+  };
+
+  const handleToggleCourseVisibility = async (course: CustomCourse) => {
+    const visibility = !course.visibility;
+    setPendingCourseAction({ courseId: course.id, type: "visibility" });
+    try {
+      const data = await courseApi.mutations.setVisibility(
+        course.id,
+        visibility,
+      );
+      if (data.success) {
+        toast.success(data.message);
+        await onRefreshCourses();
+      }
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "La visibilité du cours n'a pas pu être modifiée.",
+        ),
+      );
+    } finally {
+      setPendingCourseAction(null);
+    }
+  };
+
   return (
     <main className="flex w-full flex-col gap-8">
       <CourseHeader />
@@ -102,9 +161,23 @@ export default function CourseList({
               key={course.id}
               label="Cours"
               labelAccessory={
-                !course.visibility ? (
-                  <InvisibleIndicator label="Cours invisible" />
-                ) : null
+                <div className="flex items-center gap-1.5">
+                  <span
+                    role="img"
+                    className="opacity-50"
+                    aria-label={
+                      course.isPublished ? "Cours publié" : "Cours non publié"
+                    }
+                  >
+                    {!course.isPublished && (
+                      <CloudOff
+                        className="size-4 text-info"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </span>
+                  {!course.visibility ? <InvisibleIndicator /> : null}
+                </div>
               }
               title={course.title}
               description={
@@ -124,6 +197,52 @@ export default function CourseList({
                     >
                       <SquareArrowRightEnter className="size-[1.2em]" />
                     </Link>
+                  </PermissionGuard>
+                  <PermissionGuard action="update" object="course">
+                    {!course.isPublished ? (
+                      <button
+                        type="button"
+                        className="btn btn-square btn-sm btn-ghost text-primary tooltip tooltip-left"
+                        data-tip="Publier le cours"
+                        aria-label={`Publier le cours ${course.title}`}
+                        disabled={pendingCourseAction?.courseId === course.id}
+                        onClick={() => handlePublishCourse(course)}
+                      >
+                        {pendingCourseAction?.courseId === course.id &&
+                        pendingCourseAction.type === "publish" ? (
+                          <LoaderCircle className="size-[1.2em] animate-spin" />
+                        ) : (
+                          <UploadCloud className="size-[1.2em]" />
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                        data-tip={
+                          course.visibility
+                            ? "Rendre invisible"
+                            : "Rendre visible"
+                        }
+                        aria-label={`${
+                          course.visibility
+                            ? "Rendre invisible"
+                            : "Rendre visible"
+                        } le cours ${course.title}`}
+                        aria-pressed={Boolean(course.visibility)}
+                        disabled={pendingCourseAction?.courseId === course.id}
+                        onClick={() => handleToggleCourseVisibility(course)}
+                      >
+                        {pendingCourseAction?.courseId === course.id &&
+                        pendingCourseAction.type === "visibility" ? (
+                          <LoaderCircle className="size-[1.2em] animate-spin" />
+                        ) : course.visibility ? (
+                          <EyeOff className="size-[1.2em]" />
+                        ) : (
+                          <Eye className="size-[1.2em]" />
+                        )}
+                      </button>
+                    )}
                   </PermissionGuard>
                   <PermissionGuard action="update" object="course">
                     <Link

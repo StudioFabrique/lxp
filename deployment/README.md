@@ -77,7 +77,7 @@ Un job Jenkins lit :
 ```text
 /<instance>/ci         accès au registre et accès SSH de la cible
 /<instance>/runtime    application
-/mailer                accès SMTP communs
+/<instance>/mailer     accès SMTP de la cible
 /<instance>/backup     sauvegardes
 ```
 
@@ -86,10 +86,10 @@ Le préfixe place obligatoirement l'instance au premier niveau :
 - `/client-a` pour une instance cliente ;
 - `/demo` pour la démonstration.
 
-Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Les
-variables `REGISTRY_USER`, `REGISTRY_TOKEN` et éventuellement `REGISTRY_URL`
-sont donc dupliquées dans le dossier `ci` de chaque instance. Seul `/mailer`
-reste commun et contient les variables `MAILER_*`.
+Chaque cible doit avoir ses propres dossiers `ci`, `runtime`, `mailer` et
+`backup`. Les variables `REGISTRY_USER`, `REGISTRY_TOKEN` et éventuellement
+`REGISTRY_URL` sont donc dupliquées dans le dossier `ci` de chaque instance.
+Le dossier `mailer` contient les variables `MAILER_*` propres à l'instance.
 
 Pour migrer une configuration existante :
 
@@ -97,7 +97,9 @@ Pour migrer une configuration existante :
 2. copiez `REGISTRY_USER`, `REGISTRY_TOKEN` et, si nécessaire, `REGISTRY_URL`
    dans `/<slug>/ci` pour chaque instance, puis supprimez le `/ci` global ;
 3. remplacez le paramètre Jenkins `/instances/<slug>` par `/<slug>` ;
-4. retirez les quatre variables d'URL de base de données du dossier `runtime`.
+4. copiez les variables `MAILER_*` dans `/<slug>/mailer`, puis supprimez le
+   dossier `/mailer` global une fois toutes les instances migrées ;
+5. retirez les quatre variables d'URL de base de données du dossier `runtime`.
 
 Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
 secret. La page
@@ -120,7 +122,7 @@ changer avec le paramètre `INFISICAL_CREDENTIAL_ID`.
 
 | Job                    | Script Path                     |
 | ---------------------- | ------------------------------- |
-| Construire l'image LXP | `build.Jenkinsfile`             |
+| Construire l'image LXP | `deployment/build.Jenkinsfile`  |
 | Déployer avec Caddy    | `deployment/caddy/Jenkinsfile`  |
 | Déployer sans Caddy    | `deployment/direct/Jenkinsfile` |
 | Sauvegarder une cible  | `deployment/backup.Jenkinsfile` |

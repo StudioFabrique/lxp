@@ -22,35 +22,61 @@ function fail(statusCode: number, message: string): never {
   throw { statusCode, message };
 }
 
-export const listRoles = () => getAllRoles();
-export const searchRoles = (value: string) => getAllRolesWithSearch(value);
-export async function listRolePermissions(role: string) {
-  await assertInterfaceRole({ identifier: "role", role });
+export function getActorRank(currentRoles: Pick<IRole, "rank">[]) {
+  return Math.min(...currentRoles.map(({ rank }) => rank), 4);
+}
+
+export const listRoles = (actorRank: number) => getAllRoles(actorRank);
+export const searchRoles = (value: string, actorRank: number) =>
+  getAllRolesWithSearch(value, actorRank);
+export async function listRolePermissions(role: string, actorRank: number) {
+  await assertInterfaceRole({ identifier: "role", role }, actorRank);
   return getAllActionsPermissionsForRole({ identifier: "role", role });
 }
-export async function grantPermission(roleId: string, permission: string) {
-  await assertInterfaceRole({ identifier: "_id", _id: roleId });
+export async function grantPermission(
+  roleId: string,
+  permission: string,
+  actorRank: number,
+) {
+  await assertInterfaceRole({ identifier: "_id", _id: roleId }, actorRank);
   return addPermissionToRole(roleId, permission);
 }
-export async function revokePermission(roleId: string, permission: string) {
-  await assertInterfaceRole({ identifier: "_id", _id: roleId });
+export async function revokePermission(
+  roleId: string,
+  permission: string,
+  actorRank: number,
+) {
+  await assertInterfaceRole({ identifier: "_id", _id: roleId }, actorRank);
   return removePermissionFromRole(roleId, permission);
 }
 
-async function assertInterfaceRole(identifier: RoleIdentifier) {
+async function assertInterfaceRole(
+  identifier: RoleIdentifier,
+  actorRank: number,
+) {
   const role = await Role.findOne(
     identifier.identifier === "role"
       ? { role: identifier.role }
       : { _id: identifier._id },
   ).select("rank");
   if (!role || role.rank === 0) fail(404, "Le rôle demandé n'existe pas");
+  if (role.rank <= actorRank) {
+    fail(
+      403,
+      "Vous ne pouvez pas consulter ou modifier un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
+  return role;
 }
 
-export async function getRoleResources(identifier: RoleIdentifier) {
-  await assertInterfaceRole(identifier);
+export async function getRoleResources(
+  identifier: RoleIdentifier,
+  actorRank: number,
+) {
+  await assertInterfaceRole(identifier, actorRank);
   const [permissions, roles] = await Promise.all([
     getAllActionsPermissionsForRole(identifier),
-    Role.find({ rank: { $gt: 0 } }),
+    Role.find({ rank: { $gt: actorRank } }),
   ]);
   if (!permissions) fail(404, "aucune permissions n'a été trouvé");
   if (resourcesRbac.length === 0)
@@ -69,7 +95,18 @@ export async function getRoleResources(identifier: RoleIdentifier) {
   return data;
 }
 
-export async function createRole(role: string, label: string, rank: number) {
+export async function createRole(
+  role: string,
+  label: string,
+  rank: number,
+  actorRank: number,
+) {
+  if (rank <= actorRank) {
+    fail(
+      403,
+      "Vous ne pouvez pas créer un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
   const createdRole = await createOrUpdateRoleWithPermissions(
     role,
     label,
@@ -102,9 +139,17 @@ export async function updateRole(
   role: string,
   label: string,
   rank: number,
+  actorRank: number,
 ) {
   const existingRole = await Role.findById(id);
   if (existingRole?.rank === 0) fail(404, "Le rôle demandé n'existe pas");
+  if (!existingRole) fail(404, "Le rôle demandé n'existe pas");
+  if (existingRole.rank <= actorRank || rank <= actorRank) {
+    fail(
+      403,
+      "Vous ne pouvez pas modifier un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
   return existingRole?.rank !== rank
     ? createOrUpdateRoleWithPermissions(
         role,
@@ -116,10 +161,16 @@ export async function updateRole(
     : createOrUpdateRoleWithPermissions(role, label, rank, id);
 }
 
-export async function resetRole(id: string) {
+export async function resetRole(id: string, actorRank: number) {
   const role = await Role.findById(id);
   if (!role) fail(400, "Paramètres de requête non conformes.");
   if (role.rank === 0) fail(404, "Le rôle demandé n'existe pas");
+  if (role.rank <= actorRank) {
+    fail(
+      403,
+      "Vous ne pouvez pas modifier un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
   return createOrUpdateRoleWithPermissions(
     role.role,
     role.label,
@@ -153,6 +204,12 @@ export async function deleteRole(id: string, currentRoles: IRole[]) {
   const role = await Role.findById(id);
   if (!role)
     fail(404, "Le rôle demandé pour la suppression n'existe pas");
+  if (role.rank <= getActorRank(currentRoles)) {
+    fail(
+      403,
+      "Vous ne pouvez pas supprimer un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
   if (role.protection >= 1)
     fail(400, "Impossible de supprimer un rôle protégé");
 
@@ -180,6 +237,17 @@ export async function deleteRole(id: string, currentRoles: IRole[]) {
 export async function deleteManyRoles(ids: string[], currentRoles: IRole[]) {
   if (currentRoles.some((role) => ids.includes(role._id.toString())))
     fail(400, "Impossible de supprimer ses propres rôles");
+
+  const higherRoles = await Role.find({
+    _id: { $in: ids },
+    rank: { $lte: getActorRank(currentRoles) },
+  }).select("_id");
+  if (higherRoles.length > 0) {
+    fail(
+      403,
+      "Vous ne pouvez pas supprimer un rôle de rang égal ou supérieur au vôtre.",
+    );
+  }
 
   const protectedRoles = await Role.find({
     _id: { $in: ids },

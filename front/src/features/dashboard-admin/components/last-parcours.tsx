@@ -22,12 +22,8 @@ export default function LastParcours({
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
   const displayedFormations = parcours.slice(0, 6);
-  const displayedParcoursCount = displayedFormations.reduce(
-    (count, formation) => count + formation.parcours.length,
-    0,
-  );
-  const usesSingleParcoursLayout = isTeacher && displayedParcoursCount === 1;
-  const gridClassName = usesSingleParcoursLayout
+  const usesFullWidthLayout = isTeacher && displayedFormations.length === 1;
+  const gridClassName = usesFullWidthLayout
     ? "grid-cols-1"
     : "lg:grid-cols-2 xl:grid-cols-3";
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,7 +73,7 @@ export default function LastParcours({
               <LastParcoursItem
                 key={formation.id}
                 formation={formation}
-                fullWidth={usesSingleParcoursLayout}
+                fullWidth={usesFullWidthLayout}
               />
             ))}
             <PermissionGuard action="write" object="parcours">

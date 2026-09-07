@@ -3,21 +3,37 @@ import Role from "../../interfaces/db/role.ts";
 
 /** Aligne les rôles formateur existants sur les restrictions du modèle. */
 export default async function syncTeacherContentRbac() {
-  const permissions = await Permission.find({
-    name: {
-      $in: [
-        "write:formation",
-        "write:parcours",
-        "update:formation",
-        "delete:formation",
-      ],
+  const [permissionsToRemove, tagPermissions] = await Promise.all([
+    Permission.find({
+      name: {
+        $in: [
+          "write:formation",
+          "write:parcours",
+          "update:formation",
+          "delete:formation",
+        ],
+      },
+    }).select("_id"),
+    Promise.all(
+      ["write:tag", "update:tag", "delete:tag"].map((name) =>
+        Permission.findOneAndUpdate(
+          { name },
+          { $setOnInsert: { name, isRole: false } },
+          { upsert: true, new: true },
+        ),
+      ),
+    ),
+  ]);
+
+  const teacherFilter = { role: "teacher", rank: 2 };
+  await Role.updateMany(teacherFilter, {
+    $pull: {
+      permissions: { $in: permissionsToRemove.map(({ _id }) => _id) },
     },
-  }).select("_id");
-
-  if (permissions.length === 0) return;
-
-  await Role.updateMany(
-    { role: "teacher", rank: 2 },
-    { $pull: { permissions: { $in: permissions.map(({ _id }) => _id) } } },
-  );
+  });
+  await Role.updateMany(teacherFilter, {
+    $addToSet: {
+      permissions: { $each: tagPermissions.map(({ _id }) => _id) },
+    },
+  });
 }

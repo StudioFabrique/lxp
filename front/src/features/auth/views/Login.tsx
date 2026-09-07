@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import useInput from "../../../hooks/useInput";
 import { AuthContext } from "../../../store/AuthProvider";
 import PasswordVisibilityToggle from "../components/PasswordVisibilityToggle";
+import AuthPageWrapper from "../components/AuthPageWrapper";
 
 const Login = () => {
   const {
@@ -45,13 +46,8 @@ const Login = () => {
   };
 
   return (
-    <form className="flex flex-col flex-1" onSubmit={submitHandler}>
-      <div className="flex flex-col gap-4 my-auto">
-        {/* Titre */}
-        <h1 className="font-bold text-2xl text-base-content mb-2 text-center">
-          Connectez-vous à votre espace
-        </h1>
-
+    <AuthPageWrapper title="Connectez-vous à votre espace">
+      <form className="flex flex-col gap-4" onSubmit={submitHandler}>
         {/* Champ email */}
         <div className="form-control w-full">
           <input
@@ -125,8 +121,8 @@ const Login = () => {
             Mot de passe oublié ?
           </Link>
         </div>
-      </div>
-    </form>
+      </form>
+    </AuthPageWrapper>
   );
 };
 

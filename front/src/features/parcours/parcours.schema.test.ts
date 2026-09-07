@@ -5,7 +5,7 @@ import { moduleCreateSchema } from "./parcours.schema";
 const validModule = {
   title: "Module de test",
   description: "",
-  quizInstructions: "",
+  quizInstructions: "Privilégier les notions fondamentales.",
   duration: 1,
 };
 
@@ -29,4 +29,23 @@ describe("moduleCreateSchema - durée", () => {
       moduleCreateSchema.safeParse({ ...validModule, duration: 1.5 }).success,
     ).toBe(true);
   });
+});
+
+describe("moduleCreateSchema - instructions pour le quiz", () => {
+  it.each([undefined, "", "   "])(
+    "refuse la valeur %s",
+    (quizInstructions) => {
+      const result = moduleCreateSchema.safeParse({
+        ...validModule,
+        quizInstructions,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe(
+          "Les instructions pour le quiz sont obligatoires",
+        );
+      }
+    },
+  );
 });

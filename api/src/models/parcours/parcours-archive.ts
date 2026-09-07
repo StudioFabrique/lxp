@@ -672,16 +672,10 @@ export async function importParcoursArchive(
   archive: Buffer,
   userId: string,
   options: ParcoursImportOptions = {
-    teacherModuleIndexes: [],
     publishCourses: false,
   },
 ) {
-  const {
-    formationId,
-    teacherContactId,
-    teacherModuleIndexes,
-    publishCourses,
-  } = options;
+  const { formationId, publishCourses } = options;
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive, { checkCRC32: true });
@@ -720,18 +714,6 @@ export async function importParcoursArchive(
     throw httpError(400, "Le manifeste JSON est invalide.");
   }
   const manifest = parseParcoursArchiveManifest(parsedJson);
-  const selectedTeacherModuleIndexes = new Set(teacherModuleIndexes);
-  if (
-    [...selectedTeacherModuleIndexes].some(
-      (index) => index < 0 || index >= manifest.parcours.modules.length,
-    )
-  ) {
-    throw httpError(
-      400,
-      "La sélection contient un module absent du parcours importé.",
-    );
-  }
-
   const [admin, mongoUser] = await Promise.all([
     prisma.admin.findFirst({ where: { idMdb: userId } }),
     User.findById(userId),
@@ -842,18 +824,6 @@ export async function importParcoursArchive(
         if (formationId !== undefined && !selectedFormation) {
           throw httpError(404, "La formation sélectionnée n'existe pas.");
         }
-        const selectedTeacherContact =
-          teacherContactId === undefined
-            ? null
-            : await tx.contact.findUnique({
-                where: { id: teacherContactId },
-              });
-        if (teacherContactId !== undefined && !selectedTeacherContact) {
-          throw httpError(
-            404,
-            "La ressource pédagogique sélectionnée n'existe pas.",
-          );
-        }
         const existingFormation = selectedFormation
           ? null
           : await tx.formation.findUnique({
@@ -914,17 +884,6 @@ export async function importParcoursArchive(
                 description,
               })),
             },
-            contacts: selectedTeacherContact
-              ? {
-                  create: [
-                    {
-                      contact: {
-                        connect: { id: selectedTeacherContact.id },
-                      },
-                    },
-                  ],
-                }
-              : undefined,
             tags: {
               create: manifest.parcours.tags.map((tag) => ({
                 tag: {
@@ -975,19 +934,6 @@ export async function importParcoursArchive(
               author,
               adminId: admin.id,
               parcoursId: createdParcours.id,
-              contacts:
-                selectedTeacherContact &&
-                selectedTeacherModuleIndexes.has(moduleIndex)
-                  ? {
-                      create: [
-                        {
-                          contact: {
-                            connect: { id: selectedTeacherContact.id },
-                          },
-                        },
-                      ],
-                    }
-                  : undefined,
               bonusSkills: {
                 create: module.bonusSkillKeys
                   .map((key) => bonusSkillIds.get(key))

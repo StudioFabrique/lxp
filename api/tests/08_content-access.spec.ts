@@ -29,6 +29,10 @@ describe("Cloisonnement des contenus par parcours", () => {
   let moduleVisibleMaisVerrouille = 0;
   let teacherContactId = 0;
   let sharedFormationId = 0;
+  let referenceTagId = 0;
+  let teacherTagId = 0;
+  let adminTagId = 0;
+  let teacherUserId = "";
 
   let mongoGroupId: string;
   let pgGroupId: number;
@@ -96,12 +100,14 @@ describe("Cloisonnement des contenus par parcours", () => {
     ]);
     if (!admin || !formation || !tag) throw new Error("Fixtures PostgreSQL incomplètes");
     sharedFormationId = formation.id;
+    referenceTagId = tag.id;
 
     await creerArborescence("Acces inscrit", inscrit, admin.id, formation.id, tag.id);
     await creerArborescence("Acces etranger", etranger, admin.id, formation.id, tag.id);
 
     const teacher = await User.findOne({ email: "formateur@studio.eco" });
     if (!teacher) throw new Error("Fixture formateur absente");
+    teacherUserId = teacher.id;
     const teacherContact = await prisma.contact.upsert({
       where: { idMdb: teacher.id },
       update: {},
@@ -155,6 +161,16 @@ describe("Cloisonnement des contenus par parcours", () => {
   });
 
   afterAll(async () => {
+    const temporaryTagIds = [teacherTagId, adminTagId].filter(Boolean);
+    if (temporaryTagIds.length > 0) {
+      await prisma.tagsOnParcours.deleteMany({
+        where: { tagId: { in: temporaryTagIds } },
+      });
+      await prisma.tagsOnFormation.deleteMany({
+        where: { tagId: { in: temporaryTagIds } },
+      });
+      await prisma.tag.deleteMany({ where: { id: { in: temporaryTagIds } } });
+    }
     await prisma.contactsOnParcours.deleteMany({
       where: {
         contactId: teacherContactId,
@@ -258,6 +274,14 @@ describe("Cloisonnement des contenus par parcours", () => {
         .expect(403);
     });
 
+    it("ne peut pas gérer la publication d'un parcours", async () => {
+      await request(app)
+        .put(`/v1/parcours/publish/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ isPublished: false })
+        .expect(403);
+    });
+
     it("une affectation au module seule n'affiche jamais son parcours", async () => {
       const liste = await request(app).get("/v1/parcours")
         .set("Cookie", cookieFormateur).expect(200);
@@ -338,6 +362,135 @@ describe("Cloisonnement des contenus par parcours", () => {
       );
       expect(moduleIds).toContain(inscrit.moduleId);
       expect(moduleIds).not.toContain(moduleVisibleMaisVerrouille);
+
+      const creationTag = await request(app)
+        .post("/v1/tag")
+        .set("Cookie", cookieFormateur)
+        .send({
+          tags: [
+            {
+              name: `Tag formateur parcours ${inscrit.parcoursId}`,
+              color: "rgba(18, 52, 86, 0.5)",
+            },
+          ],
+        })
+        .expect(201);
+      teacherTagId = creationTag.body[0].id;
+
+      await expect(
+        prisma.tag.findUnique({
+          where: { id: teacherTagId },
+          select: { createdBy: true },
+        }),
+      ).resolves.toEqual({ createdBy: teacherUserId });
+
+      await request(app)
+        .put(`/v1/tag/${teacherTagId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ name: `Tag formateur modifie ${inscrit.parcoursId}` })
+        .expect(201);
+
+      await request(app)
+        .put(`/v1/tag/${teacherTagId}`)
+        .set("Cookie", cookieAdmin)
+        .send({ name: `Tag formateur corrige ${inscrit.parcoursId}` })
+        .expect(201);
+
+      await expect(
+        prisma.tag.findUnique({
+          where: { id: teacherTagId },
+          select: { createdBy: true },
+        }),
+      ).resolves.toEqual({ createdBy: teacherUserId });
+
+      await request(app)
+        .put(`/v1/tag/${referenceTagId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ name: "Modification tag administrateur interdite" })
+        .expect(403);
+
+      const creationTagAdmin = await request(app)
+        .post("/v1/tag")
+        .set("Cookie", cookieAdmin)
+        .send({
+          tags: [
+            {
+              name: `Tag administrateur parcours ${inscrit.parcoursId}`,
+              color: "rgba(86, 52, 18, 0.5)",
+            },
+          ],
+        })
+        .expect(201);
+      adminTagId = creationTagAdmin.body[0].id;
+
+      await expect(
+        prisma.tag.findUnique({
+          where: { id: adminTagId },
+          select: { createdBy: true },
+        }),
+      ).resolves.toEqual({ createdBy: null });
+
+      await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieAdmin)
+        .send({ tagIds: [referenceTagId] })
+        .expect(200);
+
+      await prisma.tagsOnParcours.create({
+        data: {
+          parcoursId: inscrit.parcoursId,
+          tagId: adminTagId,
+          addedBy: "other-teacher-id",
+        },
+      });
+
+      const associationParFormateur = await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ tagIds: [referenceTagId, teacherTagId, adminTagId] })
+        .expect(200);
+
+      const tagsParId = new Map<
+        number,
+        { id: number; canUnassign: boolean }
+      >(
+        associationParFormateur.body.parcours.tags.map(
+          (tag: { id: number; canUnassign: boolean }): [
+            number,
+            { id: number; canUnassign: boolean },
+          ] => [tag.id, tag],
+        ),
+      );
+      expect(tagsParId.get(referenceTagId)?.canUnassign).toBe(false);
+      expect(tagsParId.get(adminTagId)?.canUnassign).toBe(false);
+      expect(tagsParId.get(teacherTagId)?.canUnassign).toBe(true);
+
+      await expect(
+        prisma.tagsOnParcours.count({
+          where: {
+            parcoursId: inscrit.parcoursId,
+            tagId: { in: [referenceTagId, teacherTagId, adminTagId] },
+          },
+        }),
+      ).resolves.toBe(3);
+
+      await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ tagIds: [teacherTagId] })
+        .expect(403);
+
+      await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ tagIds: [referenceTagId, adminTagId] })
+        .expect(200);
+
+      await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieFormateur)
+        .send({ description: "Modification interdite" })
+        .expect(403);
 
       await request(app)
         .get(`/v1/modules/detail/${inscrit.moduleId}`)

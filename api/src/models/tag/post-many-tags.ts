@@ -1,11 +1,14 @@
 import { prisma } from "../../utils/db.ts";
+import { tagOwnerFor, type TagActor } from "./tag-access.ts";
 
 export default async function postManyTags(
   tags: { name: string; color: string }[],
+  actor: TagActor,
 ) {
   const normalizedTags = tags.map((tag) => ({
     name: tag.name.trim(),
     color: tag.color,
+    createdBy: tagOwnerFor(actor),
   }));
   const uniqueTags = normalizedTags.filter(
     (tag, index, list) =>
@@ -48,6 +51,13 @@ export default async function postManyTags(
   return prisma.tag.findMany({
     where: {
       name: { in: tagNames, mode: "insensitive" },
+    },
+    select: {
+      id: true,
+      name: true,
+      color: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 }

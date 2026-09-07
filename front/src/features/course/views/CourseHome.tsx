@@ -8,9 +8,8 @@ const CourseHome = () => {
   const queryClient = useQueryClient();
   const { data: coursesList, isLoading } = useQuery(courseApi.queries.list());
 
-  const handleRefreshCourses = () => {
+  const handleRefreshCourses = () =>
     queryClient.invalidateQueries({ queryKey: ["courses"] });
-  };
 
   return (
     <main className="w-full min-h-screen flex justify-center">

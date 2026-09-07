@@ -153,11 +153,121 @@ async function createRootUser(
     };
   }
 
-  if (await User.findOne({ email: exactInsensitive(email) })) {
-    throw {
-      statusCode: 409,
-      message: "Un utilisateur a déjà été enregistré avec cette adresse email.",
+  const existingUser = await User.findOne({
+    email: exactInsensitive(email),
+  });
+  const hashedPassword = await hash(input.password, 10);
+
+  if (existingUser) {
+    const isPendingFirstRoot =
+      !expectedExistingAdmins &&
+      !existingUser.isActive &&
+      !existingUser.emailVerified &&
+      existingUser.roles.some(
+        (roleId: unknown) => String(roleId) === rootRole._id.toString(),
+      );
+
+    // Une nouvelle clé d'initialisation permet de reprendre la création du
+    // premier root si son email n'a jamais été validé. Les comptes actifs,
+    // désactivés par un administrateur ou associés à un autre rôle restent
+    // protégés par la règle d'unicité habituelle.
+    if (!isPendingFirstRoot) {
+      throw {
+        statusCode: 409,
+        message:
+          "Un utilisateur a déjà été enregistré avec cette adresse email.",
+      };
+    }
+
+    const previousUser = {
+      email: existingUser.email,
+      firstname: existingUser.firstname,
+      lastname: existingUser.lastname,
+      password: existingUser.password,
+      roles: [...existingUser.roles],
     };
+    const replacement = {
+      email,
+      firstname: input.firstname.toLowerCase(),
+      lastname: input.lastname.toLowerCase(),
+      password: hashedPassword,
+      roles: [rootRole._id],
+      isActive: false,
+      emailVerified: false,
+    };
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: existingUser._id,
+        roles: rootRole._id,
+        isActive: false,
+        emailVerified: false,
+      },
+      { $set: replacement },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw {
+        statusCode: 409,
+        message:
+          "Le compte a changé pendant l'initialisation. Veuillez recommencer.",
+      };
+    }
+
+    const userId = updatedUser._id.toString();
+    let createdAdminId: number | undefined;
+    let tokenConsumed = false;
+
+    try {
+      const existingAdmin = await prisma.admin.findFirst({
+        where: { idMdb: userId },
+        select: { id: true },
+      });
+      if (!existingAdmin) {
+        const createdAdmin = await prisma.admin.create({
+          data: { idMdb: userId },
+          select: { id: true },
+        });
+        createdAdminId = createdAdmin.id;
+      }
+
+      await BlackListedToken.create({ token: input.token });
+      tokenConsumed = true;
+
+      if (env.ENVIRONMENT !== "test") {
+        const verificationToken = jwt.sign(
+          { purpose: "root-email-verification", userId, email },
+          env.REGISTER_SECRET,
+          {
+            expiresIn:
+              env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+          },
+        );
+        await sendRootEmailVerification(email, verificationToken);
+      }
+    } catch (error) {
+      await Promise.allSettled([
+        ...(createdAdminId === undefined
+          ? []
+          : [prisma.admin.delete({ where: { id: createdAdminId } })]),
+        ...(tokenConsumed
+          ? [BlackListedToken.deleteOne({ token: input.token })]
+          : []),
+        User.updateOne(
+          {
+            _id: existingUser._id,
+            password: hashedPassword,
+            isActive: false,
+            emailVerified: false,
+          },
+          { $set: previousUser },
+        ),
+      ]);
+      throw error;
+    }
+
+    return userId;
   }
 
   let createdUser;
@@ -167,7 +277,7 @@ async function createRootUser(
       email,
       firstname: input.firstname.toLowerCase(),
       lastname: input.lastname.toLowerCase(),
-      password: await hash(input.password, 10),
+      password: hashedPassword,
       isActive: !requiresEmailVerification,
       emailVerified: !requiresEmailVerification,
       roles: [rootRole._id],
@@ -192,7 +302,9 @@ async function createRootUser(
       const verificationToken = jwt.sign(
         { purpose: "root-email-verification", userId, email },
         env.REGISTER_SECRET,
-        { expiresIn: "24h" },
+        {
+          expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+        },
       );
       await sendRootEmailVerification(email, verificationToken);
     }

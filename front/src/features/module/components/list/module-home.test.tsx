@@ -34,6 +34,7 @@ vi.mock("./module-header", () => ({
 const module: ModuleListItem = {
   id: 1,
   title: "Module principal",
+  thumb: "data:image/png;base64,module-image",
   parcoursId: 2,
   parcours: "Parcours associé",
   formation: "Formation associée",
@@ -85,16 +86,21 @@ describe("ModuleHomeList", () => {
           modulesList={[module]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
 
     expect(markup).toContain("Module principal");
+    expect(markup).toContain("module-image");
+    expect(markup).toContain("min-h-24");
     expect(markup).toContain("Premier cours");
     expect(markup).toContain("Deuxième cours");
     expect(markup).toContain("/admin/parcours/module/1");
     expect(markup).toContain("Modules : 1");
     expect(markup).toContain("bg-primary text-primary-content");
+    expect(markup).toContain("bg-base-100/90");
   });
 
   it("indique au formateur qu'aucun module ne lui est affecté", () => {
@@ -108,6 +114,8 @@ describe("ModuleHomeList", () => {
             modulesList={[]}
             onDeleteModule={vi.fn()}
             onDeleteCourse={vi.fn()}
+            onPublishCourse={vi.fn()}
+            onToggleCourseVisibility={vi.fn()}
           />
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -123,6 +131,8 @@ describe("ModuleHomeList", () => {
           modulesList={[moduleWithFourCourses]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -143,6 +153,8 @@ describe("ModuleHomeList", () => {
             modulesList={[module]}
             onDeleteModule={vi.fn()}
             onDeleteCourse={vi.fn()}
+            onPublishCourse={vi.fn()}
+            onToggleCourseVisibility={vi.fn()}
           />
         </MemoryRouter>
       </AuthContext.Provider>,
@@ -160,6 +172,8 @@ describe("ModuleHomeList", () => {
           modulesList={[module]}
           onDeleteModule={vi.fn()}
           onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -168,7 +182,11 @@ describe("ModuleHomeList", () => {
     expect(markup).not.toContain('data-tip="Cours invisible"');
     expect(markup).toContain('aria-label="Actions pour Premier cours"');
     expect(markup).toContain('aria-label="Actions pour Deuxième cours"');
-    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain('data-actions-count="4"');
+    expect(markup).toContain('data-actions-count="5"');
+    expect(markup).toContain("Publier le cours");
+    expect(markup).toContain("Rendre le cours invisible");
+    expect(markup).toContain("Rendre le cours visible");
     expect(markup).toContain("Accéder au cours");
     expect(markup).toContain("Modifier le cours");
     expect(markup).toContain("Supprimer le cours");

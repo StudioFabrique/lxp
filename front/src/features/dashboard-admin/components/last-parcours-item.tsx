@@ -70,7 +70,7 @@ const LastParcoursItem = ({
         subDescription: item.isPublished ? (
           <span className="text-success">Publié</span>
         ) : (
-          <span className="text-warning">Non publié</span>
+          <span className="text-info">Non publié</span>
         ),
         image: {
           src: normalizeImageSource(item.thumb) ?? defaultParcoursImage,
@@ -79,20 +79,31 @@ const LastParcoursItem = ({
         to: `/${baseRoute}/parcours/view/${item.id}`,
         ariaLabel: `Prévisualiser le parcours ${item.title}`,
         action:
-          isManagementView && baseRoute === "admin" && onDeleteParcours
-            ? (dismissOverflow, menuControl) => (
-                <ParcoursActionsMenu
-                  parcours={item}
-                  menuControl={menuControl}
-                  onDelete={(parcours) => {
-                    dismissOverflow();
-                    onDeleteParcours(parcours);
-                  }}
-                  onExport={onExportParcours}
-                  isExporting={exportingParcoursId === item.id}
-                />
-              )
-            : undefined,
+          isManagementView && baseRoute === "admin" && onDeleteParcours ? (
+            (dismissOverflow, menuControl) => (
+              <ParcoursActionsMenu
+                parcours={item}
+                menuControl={menuControl}
+                onDelete={(parcours) => {
+                  dismissOverflow();
+                  onDeleteParcours(parcours);
+                }}
+                onExport={onExportParcours}
+                isExporting={exportingParcoursId === item.id}
+              />
+            )
+          ) : baseRoute === "admin" && item.canManage !== false ? (
+            <PermissionGuard action="update" object="parcours">
+              <Link
+                className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                data-tip="Modifier le parcours"
+                to={`/admin/parcours/edit/${item.id}`}
+                aria-label={`Modifier le parcours ${item.title}`}
+              >
+                <Edit3 className="size-[1.2em]" />
+              </Link>
+            </PermissionGuard>
+          ) : undefined,
       }))}
       action={
         formation &&

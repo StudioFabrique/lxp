@@ -15,6 +15,72 @@ export const moduleIdValidator = [
   checkValidatorResult,
 ];
 
+export const assignContactsToModulesValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  body("moduleIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins un module doit être sélectionné."),
+  body("moduleIds.*")
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de module n'est pas valide."),
+  body("contactIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins une ressource pédagogique doit être sélectionnée."),
+  body("contactIds.*")
+    .isInt({ min: 1 })
+    .withMessage(
+      "Un identifiant de ressource pédagogique n'est pas valide.",
+    ),
+  checkValidatorResult,
+];
+
+export const assignSkillsToModulesValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  body("moduleIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins un module doit être sélectionné."),
+  body("moduleIds.*")
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de module n'est pas valide."),
+  body("skillIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins une compétence doit être sélectionnée."),
+  body("skillIds.*")
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de compétence n'est pas valide."),
+  checkValidatorResult,
+];
+
+export const removeContactFromModuleValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  param("moduleId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de module non valide"),
+  param("contactId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de ressource pédagogique non valide"),
+  checkValidatorResult,
+];
+
+export const removeSkillFromModuleValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  param("moduleId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de module non valide"),
+  param("skillId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de compétence non valide"),
+  checkValidatorResult,
+];
+
 export const moduleIdFromBodyValidator = [
   body("moduleId")
     .isNumeric()
@@ -87,6 +153,20 @@ export const putModuleValidator = [
     .optional() // Optionnel
     .custom(stringValidateOptional)
     .withMessage("La description du module contient des caractères invalides."),
+  body("module.quizInstructions")
+    .isString()
+    .withMessage(
+      "Les instructions pour le quiz doivent être une chaîne de caractères.",
+    )
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Les instructions pour le quiz sont obligatoires.")
+    .bail()
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Les instructions pour le quiz contiennent des caractères invalides.",
+    ),
   body("module.duration")
     .isInt({ gt: 0 })
     .withMessage("La durée doit être un nombre entier positif.")
@@ -131,6 +211,20 @@ export const putModuleParcoursValidator = [
     .isString()
     .withMessage("La description doit être une chaîne de caractères.")
     .custom(stringValidateOptional),
+  body("module.quizInstructions")
+    .isString()
+    .withMessage(
+      "Les instructions pour le quiz doivent être une chaîne de caractères.",
+    )
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Les instructions pour le quiz sont obligatoires.")
+    .bail()
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Les instructions pour le quiz contiennent des caractères invalides.",
+    ),
   body("module.duration")
     .isInt({ gt: 0 })
     .withMessage("La durée doit être un nombre entier positif."),

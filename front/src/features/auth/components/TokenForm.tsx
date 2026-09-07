@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
+import AuthPageWrapper from "./AuthPageWrapper";
 
 const LOCAL_COMMAND = "npm run generate-activation-key";
 
@@ -92,16 +93,10 @@ const TokenForm = ({ onNext }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 my-auto">
-      <h1 className="font-bold text-xl text-base-content text-center">
-        Création du premier administrateur
-      </h1>
-
-      <p className="text-sm text-base-content/70 text-center">
-        Veuillez renseigner la clé d'activation pour créer votre premier
-        utilisateur.
-      </p>
-
+    <AuthPageWrapper
+      title="Création du premier administrateur"
+      description="Veuillez renseigner la clé d'activation pour créer votre premier utilisateur."
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="form-control w-full">
           <input
@@ -145,7 +140,7 @@ const TokenForm = ({ onNext }: Props) => {
         </button>
       </form>
 
-      <div className="group collapse collapse-arrow bg-base-200 rounded-lg">
+      <div className="group collapse collapse-arrow bg-base-200 rounded-lg mt-5">
         <input type="checkbox" />
         <div className="collapse-title text-sm font-medium text-warning/60 group-hover:text-warning/80">
           Vous ne trouvez pas la clé d'activation ?
@@ -189,7 +184,7 @@ const TokenForm = ({ onNext }: Props) => {
           </p>
         </div>
       </div>
-    </div>
+    </AuthPageWrapper>
   );
 };
 
