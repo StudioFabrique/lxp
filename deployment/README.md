@@ -64,7 +64,7 @@ Le workflow GitHub Actions lit :
 ```text
 /ci       accès au registre Docker
 /runtime  application et accès SSH
-/mailer   accès SMTP
+/mailer   accès SMTP (hors démonstration)
 /backup   sauvegardes
 ```
 
@@ -77,7 +77,7 @@ Un job Jenkins lit :
 ```text
 /<instance>/ci         accès au registre et accès SSH de la cible
 /<instance>/runtime    application
-/<instance>/mailer     accès SMTP de la cible
+/<instance>/mailer     accès SMTP de la cible (hors démonstration)
 /<instance>/backup     sauvegardes
 ```
 
@@ -86,9 +86,10 @@ Le préfixe place obligatoirement l'instance au premier niveau :
 - `/client-a` pour une instance cliente ;
 - `/demo` pour la démonstration.
 
-Chaque cible doit avoir ses propres dossiers `ci`, `runtime`, `mailer` et
-`backup`. Les variables `REGISTRY_USER`, `REGISTRY_TOKEN` et éventuellement
-`REGISTRY_URL` sont donc dupliquées dans le dossier `ci` de chaque instance.
+Chaque cible doit avoir ses propres dossiers `ci`, `runtime` et `backup`. Les
+instances normales ont aussi un dossier `mailer`, inutile sur une cible où
+`DEMO_MODE=true`. Chaque instance conserve `REGISTRY_USER`, `REGISTRY_TOKEN` et
+`REGISTRY_URL`, si elle l'utilise, dans son dossier `ci`.
 Le dossier `mailer` contient les variables `MAILER_*` propres à l'instance.
 
 Pour migrer une configuration existante :
@@ -97,8 +98,9 @@ Pour migrer une configuration existante :
 2. copiez `REGISTRY_USER`, `REGISTRY_TOKEN` et, si nécessaire, `REGISTRY_URL`
    dans `/<slug>/ci` pour chaque instance, puis supprimez le `/ci` global ;
 3. remplacez le paramètre Jenkins `/instances/<slug>` par `/<slug>` ;
-4. copiez les variables `MAILER_*` dans `/<slug>/mailer`, puis supprimez le
-   dossier `/mailer` global une fois toutes les instances migrées ;
+4. pour chaque instance normale, copiez les variables `MAILER_*` dans
+   `/<slug>/mailer`, puis supprimez le dossier `/mailer` global une fois toutes
+   les instances migrées ;
 5. retirez les quatre variables d'URL de base de données du dossier `runtime`.
 
 Le fichier [`deployment/env.example`](env.example) fournit un modèle sans
@@ -178,7 +180,8 @@ Définissez `DEMO_MODE=true` dans le dossier `runtime` de la cible. Ajoutez auss
 
 Le pipeline :
 
-1. ignore les variables et l'image IA ;
+1. ignore les variables et l'image IA, ainsi que le dossier Infisical et les
+   variables du mailer ;
 2. remet les bases dans leur état de démonstration ;
 3. charge les données présentes dans `api/dumps/demo/` ;
 4. prépare les deux comptes de visite.
@@ -197,9 +200,11 @@ depuis un agent qui possède Docker, `rsync` et toutes les variables requises.
 Sans `DEPLOY_SSH_HOST`, le script utilise le Docker local :
 
 ```bash
-infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- \
-  ./deployment/deploy.sh
+./deployment/with-infisical.sh ./deployment/deploy.sh
 ```
+
+Le wrapper lit `runtime` avant `mailer` et omet ce dernier lorsque
+`DEMO_MODE=true`.
 
 Le script doit partir de la racine du dépôt. Il refuse de démarrer si un
 fichier `.env` est présent à cette racine.

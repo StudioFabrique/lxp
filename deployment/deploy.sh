@@ -4,7 +4,7 @@
 # Le script ne lit aucun fichier de secrets : toute la configuration arrive par
 # l'environnement du processus, typiquement via
 #
-#   infisical run --env=dev --path=/ci --path=/runtime --path=/mailer -- ./deployment/deploy.sh
+#   ./deployment/with-infisical.sh ./deployment/deploy.sh
 #
 # Il pilote le démon Docker du serveur cible par `DOCKER_HOST=ssh://` lorsque
 # `DEPLOY_SSH_HOST` est renseigné, et le démon local sinon. Le serveur cible
@@ -135,6 +135,11 @@ LXP_AI_IMAGE LXP_AI_IMAGE_TAG
 PIPELINE_LXP_AI_IMAGE PIPELINE_LXP_AI_IMAGE_TAG
 "
 
+MAILER_SETTINGS="
+MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP
+MAILER_DEV_RECIPIENT MAILER_SMTP_PORT MAILER_FROM
+"
+
 [ -f "$BASE_COMPOSE_FILE" ] || die "Fichier Compose introuvable : $BASE_COMPOSE_FILE (le script se lance depuis la racine du dépôt)."
 
 # La couche IA est superposée au socle sauf en mode démonstration, où
@@ -150,7 +155,10 @@ if [ "${DEMO_MODE:-false}" = "true" ]; then
     for name in $AI_SETTINGS; do
         unset "$name"
     done
-    echo "Mode démonstration : la couche IA et sa configuration sont ignorées."
+    for name in $MAILER_SETTINGS; do
+        unset "$name"
+    done
+    echo "Mode démonstration : le déploiement ignore les couches IA et mailer ainsi que leur configuration."
 else
     DEMO_ENABLED=false
     AI_ENABLED=true
@@ -166,7 +174,7 @@ settings="
 PORT ENVIRONMENT FRONT_URL REGISTER_SECRET SECRET
 POSTGRES_USER POSTGRES_PASSWORD
 MONGO_ADMIN_USERNAME MONGO_ADMIN_PASSWORD
-MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM UNSPLASH_ACCESS_KEY
+UNSPLASH_ACCESS_KEY
 LXP_IMAGE LXP_IMAGE_TAG LXP_DEPLOYMENT_NAME
 "
 
@@ -182,6 +190,7 @@ if [ "$DEMO_ENABLED" = "true" ]; then
     settings="$settings DEMO_ADMIN_EMAIL DEMO_STUDENT_EMAIL"
 else
     settings="$settings
+    MAILER_EMAIL MAILER_PASSWORD MAILER_SMTP MAILER_SMTP_PORT MAILER_FROM
     ANDRIA_POSTGRES_USER ANDRIA_POSTGRES_PASSWORD
     DOCKER_IA_API_BASE_URL DOCKER_IA_AUTH_SECRET SECRET_KEY
     MISTRAL_STUDENT_API_KEY MISTRAL_CONTENT_API_KEY LXP_PUBLIC_BASE

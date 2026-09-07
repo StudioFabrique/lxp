@@ -65,7 +65,6 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     modules,
     parcours,
     existingModuleImage,
-    refForm,
     showDeleteModal,
     showForm,
     handleAssignContacts,
@@ -150,7 +149,6 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
           >
             <ModuleForm
               mode={mode}
-              refForm={refForm}
               register={register}
               errors={errors}
               isSubmitting={isSubmittingModule}

@@ -140,11 +140,12 @@ Le front de production utilise `front/.env.production`. Ses trois variables
 `VITE_*` valent `/`, `/` et `production`. Le build les place dans les fichiers
 du front. Elles ne viennent pas d'Infisical.
 
-### Variables de configuration de toutes les instances
+### Variables de configuration des instances
 
 Ces variables vont dans le dossier `runtime` de la cible, sauf indication dans
-la colonne « Source ». Elles sont obligatoires en production, à l'exception de
-`MAILER_DEV_RECIPIENT`, qui ne sert qu'en développement.
+la colonne « Source ». Elles sont obligatoires en production normale, à
+l'exception de `MAILER_DEV_RECIPIENT`, qui ne sert qu'en développement. En mode
+démonstration, le wrapper omet le dossier `mailer` et les variables `MAILER_*`.
 
 | Variable                            | Source    | Rôle                                                                                         |
 | ----------------------------------- | --------- | -------------------------------------------------------------------------------------------- |
@@ -216,7 +217,8 @@ Réglages facultatifs de la couche IA :
 ### Variables du mode démonstration
 
 Définissez `DEMO_MODE=true`. Le déploiement ignore alors toutes les variables
-IA et demande ces deux comptes :
+IA et `MAILER_*`, ne consulte pas le dossier Infisical `mailer`, et demande ces
+deux comptes :
 
 | Variable             | Obligatoire | Rôle                                                            |
 | -------------------- | ----------- | --------------------------------------------------------------- |

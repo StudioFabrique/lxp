@@ -1,4 +1,4 @@
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import ImageFileUpload, {
   type TemporaryImage,
@@ -12,7 +12,6 @@ import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
-  refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<ModuleCreateFormValues>;
   errors: FieldErrors<ModuleCreateFormValues>;
   isSubmitting: boolean;
@@ -28,7 +27,6 @@ type ModuleFormProps = {
  */
 export default function ModuleForm({
   mode,
-  refForm,
   register,
   errors,
   isSubmitting,
@@ -53,7 +51,6 @@ export default function ModuleForm({
       className="mt-6"
       data-onboarding="module-form"
       onSubmit={onSubmit}
-      ref={refForm}
       noValidate
     >
       <div className="mx-auto max-w-3xl">

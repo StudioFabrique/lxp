@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useMemo } from "react";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -8,6 +8,7 @@ import ParcoursInformations from "../components/edit/informations/parcours-infor
 import ImportObjectives from "../components/edit/objectives/import-objectives";
 import ObjectivesList from "../components/edit/objectives/objectives-list";
 import ParcoursSection from "../components/edit/parcours-section";
+import ParcoursStepContent from "../components/edit/parcours-step-content";
 import ParcoursStudents from "../components/edit/students/parcours-students.component";
 import ParcoursPreview from "../components/edit/preview/parcours-preview.component";
 import ImportSkills from "../components/edit/skills/import-skills.component";
@@ -79,19 +80,6 @@ const EditParcours = () => {
           6: "Groupe d'apprenants",
           7: "Aperçu général",
         }[actualStep.id] ?? actualStep.label;
-  const stepperRef = useRef<HTMLDivElement>(null);
-  const previousStepIdRef = useRef(actualStep.id);
-
-  useEffect(() => {
-    if (previousStepIdRef.current === actualStep.id) return;
-
-    previousStepIdRef.current = actualStep.id;
-    stepperRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, [actualStep.id]);
-
   const renderActualStep = () => {
     switch (actualStep.id) {
       case 1:
@@ -162,44 +150,43 @@ const EditParcours = () => {
               </ImageHeaderMutable>
             ) : null}
 
-            <div
-              ref={stepperRef}
-              className="w-full scroll-mt-4 rounded-xl border-[0.5px] border-secondary p-4"
-            >
-              <Stepper
-                actualStep={actualStep}
-                stepsList={contextualStepsList}
-                updateStep={updateStep}
-                disabled={onboardingNavigationLocked}
-              />
-            </div>
-          </div>
-          <div className="mt-16 w-full">
-            <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
-            <div className="mt-4">{renderActualStep()}</div>
-          </div>
-          {actualStep.id !== stepsList.length && !moduleFormOpened ? (
-            <FloatingBottomNavigation
-              startActions={
-                <button
-                  className="btn btn-outline"
-                  onClick={handleRetour}
+            <ParcoursStepContent stepId={actualStep.id}>
+              <div className="w-full rounded-xl border-[0.5px] border-secondary p-4">
+                <Stepper
+                  actualStep={actualStep}
+                  stepsList={contextualStepsList}
+                  updateStep={updateStep}
                   disabled={onboardingNavigationLocked}
-                >
-                  Retour
-                </button>
-              }
-              endActions={
-                <button
-                  className="btn btn-info px-6"
-                  onClick={() => handleUpdateStep(actualStep.id)}
-                  disabled={onboardingNavigationLocked}
-                >
-                  Étape suivante
-                </button>
-              }
-            />
-          ) : null}
+                />
+              </div>
+              <div className="mt-16 w-full">
+                <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
+                <div className="mt-4">{renderActualStep()}</div>
+              </div>
+              {actualStep.id !== stepsList.length && !moduleFormOpened ? (
+                <FloatingBottomNavigation
+                  startActions={
+                    <button
+                      className="btn btn-outline"
+                      onClick={handleRetour}
+                      disabled={onboardingNavigationLocked}
+                    >
+                      Retour
+                    </button>
+                  }
+                  endActions={
+                    <button
+                      className="btn btn-info px-6"
+                      onClick={() => handleUpdateStep(actualStep.id)}
+                      disabled={onboardingNavigationLocked}
+                    >
+                      Étape suivante
+                    </button>
+                  }
+                />
+              ) : null}
+            </ParcoursStepContent>
+          </div>
           <RecommendedActionTour
             tutorial="module"
             steps={moduleCreationTourSteps}
