@@ -1,52 +1,32 @@
 import { RefObject } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import Contact from "../../../../../../src/utils/interfaces/contact";
-import Skill from "../../../../../../src/utils/interfaces/skill";
 import ModuleFields from "./ModuleFields";
-import ModuleToParcours from "../../../../module/components/add/module-to-parcours";
 import FormNumberInput from "../../../../../components/form/FormNumberInput";
+import TrophyIcon from "../../../../../components/UI/svg/trophy-icon.component";
+import type Skill from "../../../../../utils/interfaces/skill";
 import type { ModuleCreateFormValues } from "../../../parcours.schema";
 
 type ModuleFormProps = {
-  mode: "create" | "edit";
   refForm: RefObject<HTMLFormElement | null>;
   register: UseFormRegister<ModuleCreateFormValues>;
   errors: FieldErrors<ModuleCreateFormValues>;
-  isLoading: boolean;
   isSubmitting: boolean;
-  currentContacts: Contact[];
-  lockedContactId?: number;
-  currentSkills: Skill[];
-  contacts: Contact[];
-  skills: Skill[];
+  duplicatedSkills?: Skill[];
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onSetFile: (file: File | null) => void;
-  setCurrentContacts: (contacts: Contact[]) => void;
-  setCurrentSkills: (skills: Skill[]) => void;
 };
 
 /**
- * Form component for creating a new module
- * Includes metadata fields and parcours associations
+ * Form component for creating or editing a module's general information.
  */
 export default function ModuleForm({
-  mode,
   refForm,
   register,
   errors,
-  isLoading,
   isSubmitting,
-  currentContacts,
-  lockedContactId,
-  currentSkills,
-  contacts,
-  skills,
+  duplicatedSkills,
   onSubmit,
   onCancel,
-  onSetFile,
-  setCurrentContacts,
-  setCurrentSkills,
 }: ModuleFormProps) {
   return (
     <form
@@ -56,7 +36,7 @@ export default function ModuleForm({
       ref={refForm}
       noValidate
     >
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
+      <div className="mx-auto max-w-3xl">
         <section className="flex min-w-0 flex-col gap-5">
           <header>
             <h4 className="font-semibold">Informations générales</h4>
@@ -65,12 +45,7 @@ export default function ModuleForm({
             </p>
           </header>
 
-          <ModuleFields
-            mode={mode}
-            register={register}
-            errors={errors}
-            onSetFile={onSetFile}
-          >
+          <ModuleFields register={register} errors={errors}>
             <div data-onboarding="module-duration-field">
               <FormNumberInput
                 label="Durée du module en heures *"
@@ -83,31 +58,49 @@ export default function ModuleForm({
               />
             </div>
           </ModuleFields>
-        </section>
 
-        <section
-          className="min-w-0 border-t border-base-300 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
-          data-recommended-tour="module-assignments"
-        >
-          <header className="mb-5">
-            <h4 className="font-semibold">Affectations</h4>
-            <p className="mt-1 text-sm text-base-content/60">
-              Associez les ressources pédagogiques et les compétences utiles.
-            </p>
-          </header>
-
-          <ModuleToParcours
-            currentContacts={currentContacts}
-            lockedContactIds={
-              lockedContactId !== undefined ? [lockedContactId] : []
-            }
-            currentSkills={currentSkills}
-            contacts={contacts}
-            skills={skills}
-            isLoading={isLoading}
-            setCurrentContacts={setCurrentContacts}
-            setCurrentSkills={setCurrentSkills}
-          />
+          {duplicatedSkills ? (
+            <div className="rounded-box border border-base-300 bg-base-200/50 p-4">
+              <h4 className="text-sm font-semibold">
+                Compétences dupliquées
+              </h4>
+              <p className="mt-1 text-xs text-base-content/55">
+                Ces compétences proviennent du module source et sont affichées
+                en lecture seule.
+              </p>
+              {duplicatedSkills.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {duplicatedSkills.map((skill, index) => (
+                    <div
+                      key={skill.id ?? `${skill.description}-${index}`}
+                      className="tooltip tooltip-top"
+                      data-tip={skill.description}
+                    >
+                      <div className="flex size-11 items-center justify-center rounded-lg bg-secondary/10 p-1.5">
+                        {skill.badge ? (
+                          <img
+                            src={skill.badge}
+                            alt=""
+                            className="size-full object-contain"
+                          />
+                        ) : (
+                          <span className="size-6 text-primary" aria-hidden="true">
+                            <TrophyIcon />
+                          </span>
+                        )}
+                        <span className="sr-only">{skill.description}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-base-content/55">
+                  Aucune compétence du module source n’est disponible dans ce
+                  parcours.
+                </p>
+              )}
+            </div>
+          ) : null}
         </section>
       </div>
 

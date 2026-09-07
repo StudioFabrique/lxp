@@ -104,7 +104,9 @@ async function putModule(
         },
         bonusSkills: {
           select: {
-            bonusSkill: { select: { id: true, description: true } },
+            bonusSkill: {
+              select: { id: true, description: true, badge: true },
+            },
           },
         },
       },

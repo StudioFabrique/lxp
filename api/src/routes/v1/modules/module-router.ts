@@ -6,6 +6,7 @@ import httpUpdateDatesModule from "../../../controllers/module/http-update-dates
 import httpDeleteModule from "../../../controllers/module/http-delete-module.ts";
 import {
   assignContactsToModulesValidator,
+  assignSkillsToModulesValidator,
   getModuleFormationValidator,
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
@@ -32,6 +33,7 @@ import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-lim
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module.ts";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules.ts";
 import httpAssignContactsToModules from "../../../controllers/module/http-assign-contacts-to-modules.ts";
+import httpAssignSkillsToModules from "../../../controllers/module/http-assign-skills-to-modules.ts";
 
 const modules = Router();
 
@@ -41,6 +43,14 @@ modules.patch(
   checkContentAccess("parcours", "parcoursId"),
   assignContactsToModulesValidator,
   httpAssignContactsToModules,
+);
+
+modules.patch(
+  "/parcours/:parcoursId/skills",
+  checkPermissions("module"),
+  checkContentAccess("parcours", "parcoursId"),
+  assignSkillsToModulesValidator,
+  httpAssignSkillsToModules,
 );
 
 modules.get(

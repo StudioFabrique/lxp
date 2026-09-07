@@ -1,7 +1,4 @@
-import { useContext } from "react";
 import { Copy, PlusCircle } from "lucide-react";
-import { AuthContext } from "../../../../../store/AuthProvider";
-import { getModulesLabel } from "../../../../../utils/helpers/user-role";
 
 type ModuleHeaderProps = {
   showForm: boolean;
@@ -21,13 +18,8 @@ export default function ModuleHeader({
   onCreateNew,
   onAddExisting,
 }: ModuleHeaderProps) {
-  const { user } = useContext(AuthContext);
-
   return (
-    <div className="flex items-center justify-between mb-4">
-      <h1 className="text-2xl font-bold text-primary">
-        {getModulesLabel(user, "Modules associés au Parcours")}
-      </h1>
+    <div className="flex items-center justify-end">
       <span className="flex gap-x-4 items-center">
         <button
           className="btn btn-primary"

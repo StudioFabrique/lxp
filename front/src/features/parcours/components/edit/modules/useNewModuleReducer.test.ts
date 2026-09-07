@@ -87,4 +87,21 @@ describe("moduleReducer", () => {
       skills,
     });
   });
+
+  it("prépare les compétences disponibles en lecture seule pour une duplication", () => {
+    const source = {
+      ...moduleData,
+      duration: moduleData.duration ?? null,
+      parcours: { id: 3, title: "Parcours source" },
+      courses: [],
+      bonusSkills: skills,
+    };
+    const duplicateState = moduleReducer(initialState, {
+      type: "PREPARE_DUPLICATE",
+      payload: { source, skills },
+    });
+
+    expect(duplicateState.moduleToDuplicate).toEqual(source);
+    expect(duplicateState.currentSkills).toEqual(skills);
+  });
 });

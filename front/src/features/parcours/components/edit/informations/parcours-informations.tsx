@@ -173,7 +173,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
         data-onboarding="parcours-information"
       >
         <Wrapper>
-          <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
             <ParcoursInformationsForm
               parcoursId={parcoursId}

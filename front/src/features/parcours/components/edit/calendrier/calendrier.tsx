@@ -106,8 +106,7 @@ const Calendrier = () => {
 
   return (
     <div ref={containerRef} className="relative flex flex-col gap-y-5 h-full">
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <h1 className="text-2xl font-bold">Calendrier des Modules</h1>
+      <div className="flex justify-end">
         <div
           className={`text-sm px-4 py-2 rounded-lg border ${
             darkMode

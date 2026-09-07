@@ -65,7 +65,9 @@ async function getParcoursById(
           contacts: { select: { contact: true } },
           bonusSkills: {
             select: {
-              bonusSkill: { select: { id: true, description: true } },
+              bonusSkill: {
+                select: { id: true, description: true, badge: true },
+              },
             },
           },
           courses: {

@@ -75,4 +75,33 @@ describe("parcoursApi.mutations.importParcours", () => {
       { moduleIds: [2, 3], contactIds: [7] },
     );
   });
+
+  it("ajoute des compétences aux modules sélectionnés", async () => {
+    await parcoursApi.mutations.assignModuleSkills({
+      parcoursId: 12,
+      moduleIds: [2, 3],
+      skillIds: [9],
+    });
+
+    expect(apiClient.patch).toHaveBeenCalledWith(
+      "/modules/parcours/12/skills",
+      { moduleIds: [2, 3], skillIds: [9] },
+    );
+  });
+
+  it("transmet les associations avec les noms attendus lors d'une duplication", async () => {
+    await parcoursApi.mutations.duplicateModule(4, {
+      duration: 2,
+      contactsIds: [7],
+      skillsIds: [9],
+      parcoursId: 12,
+    });
+
+    expect(apiClient.post).toHaveBeenCalledWith("/modules/duplicate/4", {
+      duration: 2,
+      contacts: [7],
+      skills: [9],
+      parcoursId: 12,
+    });
+  });
 });

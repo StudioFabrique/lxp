@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   BookOpen,
-  CircleCheck,
   CloudOff,
   Eye,
   EyeOff,

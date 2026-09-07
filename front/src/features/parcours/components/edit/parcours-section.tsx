@@ -7,7 +7,6 @@ import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 type Props = {
   title: string;
   children: [ReactNode, ReactElement<{ onCloseDrawer: (id: string) => void }>];
-  section: string;
   onResetList: () => void;
   readOnly?: boolean;
 };
@@ -15,7 +14,6 @@ type Props = {
 const ParcoursSection: FC<Props> = ({
   title,
   children,
-  section,
   onResetList,
   readOnly = false,
 }) => {
@@ -33,7 +31,6 @@ const ParcoursSection: FC<Props> = ({
 
   return (
     <div className="w-full">
-      <h3 className="text-3xl font-extrabold mb-4">{section}</h3>
       <BoxWrapper>
         <ParcoursSectionHeader
           label={title}

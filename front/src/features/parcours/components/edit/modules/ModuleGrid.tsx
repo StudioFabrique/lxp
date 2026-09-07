@@ -1,18 +1,22 @@
-import { useState } from "react";
-import { Pencil, Trash2, UserPlus, UserRound } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
-import HierarchicalListCard from "../../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
-import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import type Contact from "../../../../../utils/interfaces/contact";
+import type Skill from "../../../../../utils/interfaces/skill";
 import type { ModuleData } from "../../../interfaces/new-module";
 import AssignModuleContactsModal from "./AssignModuleContactsModal";
+import AssignModuleSkillsModal from "./AssignModuleSkillsModal";
+import ModuleCard from "./ModuleCard";
 
 type ModuleGridProps = {
   modules: ModuleData[];
   parcoursContacts: Contact[];
+  parcoursSkills: Skill[];
   isAssigningContacts: boolean;
+  isAssigningSkills: boolean;
+  highlightedModuleId?: number | null;
   emptyMessage: string;
   onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
@@ -20,20 +24,36 @@ type ModuleGridProps = {
     moduleId: number,
     contactIds: number[],
   ) => Promise<boolean>;
+  onAssignSkills: (moduleId: number, skillIds: number[]) => Promise<boolean>;
 };
 
 export default function ModuleGrid({
   modules,
   parcoursContacts,
+  parcoursSkills,
   isAssigningContacts,
+  isAssigningSkills,
+  highlightedModuleId,
   emptyMessage,
   onUpdate,
   onDelete,
   onAssignContacts,
+  onAssignSkills,
 }: ModuleGridProps) {
   const [moduleForContacts, setModuleForContacts] = useState<ModuleData | null>(
     null,
   );
+  const [moduleForSkills, setModuleForSkills] = useState<ModuleData | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (highlightedModuleId == null) return;
+
+    document
+      .getElementById(`parcours-module-${highlightedModuleId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedModuleId, modules]);
 
   if (modules.length === 0) {
     return <EmptyStatePlaceholder title={emptyMessage} />;
@@ -43,31 +63,16 @@ export default function ModuleGrid({
     <>
       <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
         {modules.map((module) => (
-          <HierarchicalListCard
+          <ModuleCard
             key={module.id}
-            label="Module"
-            title={module.title}
-            truncateTitle
-            description={
-              module.duration ? `${module.duration} heure(s)` : undefined
-            }
-            action={
+            module={module}
+            highlighted={highlightedModuleId === module.id}
+            headerAction={
               <div className="flex items-center gap-1">
                 <PermissionGuard action="update" object="module">
                   <button
                     type="button"
-                    className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                    data-tip="Affecter des ressources pédagogiques"
-                    aria-label={`Affecter des ressources pédagogiques au module ${module.title}`}
-                    onClick={() => setModuleForContacts(module)}
-                  >
-                    <UserPlus className="size-[1.2em]" />
-                  </button>
-                </PermissionGuard>
-                <PermissionGuard action="update" object="module">
-                  <button
-                    type="button"
-                    className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                    className="btn btn-square btn-sm border-white/60 bg-base-100/90 text-base-content shadow-sm tooltip tooltip-left hover:bg-base-100"
                     data-tip="Modifier le module"
                     aria-label={`Modifier le module ${module.title}`}
                     onClick={() => onUpdate(module)}
@@ -78,7 +83,7 @@ export default function ModuleGrid({
                 <PermissionGuard action="delete" object="module">
                   <button
                     type="button"
-                    className="btn btn-square btn-sm btn-ghost text-error tooltip tooltip-left"
+                    className="btn btn-square btn-sm border-white/60 bg-base-100/90 text-error shadow-sm tooltip tooltip-left hover:bg-base-100"
                     data-tip="Supprimer le module"
                     aria-label={`Supprimer le module ${module.title}`}
                     onClick={() => onDelete(module.id)}
@@ -88,15 +93,8 @@ export default function ModuleGrid({
                 </PermissionGuard>
               </div>
             }
-            items={module.contacts.map((contact) => ({
-              id: contact.id ?? contact.idMdb,
-              title: getContactFullName(contact),
-              icon: <UserRound strokeWidth="1.5" />,
-            }))}
-            maxItemsShown={3}
-            emptyMessage="Aucune ressource pédagogique affectée"
-            moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
-            overflowTitle={`Autres ressources de ${module.title}`}
+            onAssignContacts={setModuleForContacts}
+            onAssignSkills={setModuleForSkills}
           />
         ))}
       </section>
@@ -113,6 +111,19 @@ export default function ModuleGrid({
               contactIds,
             );
             if (success) setModuleForContacts(null);
+          }}
+        />
+      ) : null}
+
+      {moduleForSkills ? (
+        <AssignModuleSkillsModal
+          module={moduleForSkills}
+          parcoursSkills={parcoursSkills}
+          isSubmitting={isAssigningSkills}
+          onClose={() => setModuleForSkills(null)}
+          onSubmit={async (skillIds) => {
+            const success = await onAssignSkills(moduleForSkills.id, skillIds);
+            if (success) setModuleForSkills(null);
           }}
         />
       ) : null}

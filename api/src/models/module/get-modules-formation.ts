@@ -37,7 +37,11 @@ export default async function getModulesFormation(
         },
       },
       bonusSkills: {
-        select: { bonusSkill: { select: { id: true, description: true } } },
+        select: {
+          bonusSkill: {
+            select: { id: true, description: true, badge: true },
+          },
+        },
       },
     },
   });

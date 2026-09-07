@@ -15,6 +15,7 @@ type HierarchicalListCardProps = {
   truncateTitle?: boolean;
   description?: ReactNode;
   action?: ReactNode;
+  headerBackgroundImage?: string;
   items?: HierarchicalListCardItem[];
   maxItemsShown?: number;
   showMore?: boolean;
@@ -22,6 +23,7 @@ type HierarchicalListCardProps = {
   moreItemsLabel?: (remainingItemsCount: number) => string;
   overflowTitle?: string;
   footer?: ReactNode;
+  footerAtBottom?: boolean;
   placeholder?: ReactNode;
   fullWidth?: boolean;
 };
@@ -33,6 +35,7 @@ const HierarchicalListCard = ({
   truncateTitle,
   description,
   action,
+  headerBackgroundImage,
   items = [],
   maxItemsShown = 4,
   showMore = true,
@@ -41,6 +44,7 @@ const HierarchicalListCard = ({
     `Afficher plus (${remainingItemsCount})`,
   overflowTitle = title ? `Autres éléments de ${title}` : "Autres éléments",
   footer,
+  footerAtBottom = false,
   placeholder,
   fullWidth = false,
 }: HierarchicalListCardProps) => {
@@ -68,8 +72,20 @@ const HierarchicalListCard = ({
         >
           {hasHeader ? (
             <>
-              <li className="p-4 pb-3">
-                <div className="flex items-start justify-between gap-3">
+              <li
+                className={cn("p-4 pb-3", {
+                  "flex min-h-32 items-end bg-cover bg-center text-white":
+                    Boolean(headerBackgroundImage),
+                })}
+                style={
+                  headerBackgroundImage
+                    ? {
+                        backgroundImage: `linear-gradient(to top, rgb(0 0 0 / 0.78), rgb(0 0 0 / 0.15)), url(${JSON.stringify(headerBackgroundImage)})`,
+                      }
+                    : undefined
+                }
+              >
+                <div className="flex w-full items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex gap-2">
                       {label ? (
@@ -130,8 +146,9 @@ const HierarchicalListCard = ({
               {footer ? (
                 <li
                   className={cn("flex flex-col items-center gap-2 py-5", {
-                    "mt-auto": items.length > 0,
-                    "flex-1 justify-center": items.length === 0,
+                    "mt-auto": items.length > 0 || footerAtBottom,
+                    "flex-1 justify-center":
+                      items.length === 0 && !footerAtBottom,
                   })}
                 >
                   {footer}

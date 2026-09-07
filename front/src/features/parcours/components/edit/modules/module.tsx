@@ -36,7 +36,6 @@ type Props = {
 export default function ModuleComponent({ setModuleFormOpened }: Props) {
   const { user } = useContext(AuthContext);
   const {
-    currentContacts,
     currentSkills,
     register,
     errors,
@@ -52,10 +51,10 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     handleSubmitUpdateModule,
     handleUpdateModule,
     id,
-    isLoading,
     isSubmittingModule,
     isAssigningContacts,
-    lockedContactId,
+    isAssigningSkills,
+    highlightedModuleId,
     sourceModules,
     mode,
     moduleToDuplicate,
@@ -63,12 +62,10 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     modules,
     parcours,
     refForm,
-    setCurrentContacts,
-    setCurrentSkills,
-    setFile,
     showDeleteModal,
     showForm,
     handleAssignContacts,
+    handleAssignSkills,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
@@ -114,40 +111,41 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
         <ModuleGrid
           modules={modules}
           parcoursContacts={parcours?.contacts ?? []}
+          parcoursSkills={parcours?.bonusSkills ?? []}
           isAssigningContacts={isAssigningContacts}
+          isAssigningSkills={isAssigningSkills}
+          highlightedModuleId={highlightedModuleId}
           emptyMessage={
             isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
           }
           onUpdate={handleUpdateModule}
           onDelete={showDeleteModal}
           onAssignContacts={handleAssignContacts}
+          onAssignSkills={handleAssignSkills}
         />
 
         {showForm && (
           <Modal
             title={
-              mode === "create" ? "Créer un module" : "Modifier le module"
+              mode === "create"
+                ? "Créer un module"
+                : moduleToDuplicate
+                  ? "Ajouter un module existant"
+                  : "Modifier le module"
             }
             modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto p-5 sm:p-7"
             dialogAdditionalClass="z-[70]"
           >
             <ModuleForm
-              mode={mode}
               refForm={refForm}
               register={register}
               errors={errors}
-              isLoading={isLoading}
               isSubmitting={isSubmittingModule}
-              currentContacts={currentContacts ?? []}
-              lockedContactId={lockedContactId}
-              currentSkills={currentSkills ?? []}
-              contacts={parcours?.contacts ?? []}
-              skills={parcours?.bonusSkills ?? []}
+              duplicatedSkills={
+                moduleToDuplicate ? (currentSkills ?? []) : undefined
+              }
               onSubmit={submitFunction}
               onCancel={handleCancelForm}
-              onSetFile={setFile}
-              setCurrentContacts={setCurrentContacts}
-              setCurrentSkills={setCurrentSkills}
             />
           </Modal>
         )}

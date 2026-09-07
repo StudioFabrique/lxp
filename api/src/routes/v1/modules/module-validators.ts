@@ -36,6 +36,25 @@ export const assignContactsToModulesValidator = [
   checkValidatorResult,
 ];
 
+export const assignSkillsToModulesValidator = [
+  param("parcoursId")
+    .isInt({ min: 1 })
+    .withMessage("Identifiant de parcours non valide"),
+  body("moduleIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins un module doit être sélectionné."),
+  body("moduleIds.*")
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de module n'est pas valide."),
+  body("skillIds")
+    .isArray({ min: 1, max: 500 })
+    .withMessage("Au moins une compétence doit être sélectionnée."),
+  body("skillIds.*")
+    .isInt({ min: 1 })
+    .withMessage("Un identifiant de compétence n'est pas valide."),
+  checkValidatorResult,
+];
+
 export const moduleIdFromBodyValidator = [
   body("moduleId")
     .isNumeric()

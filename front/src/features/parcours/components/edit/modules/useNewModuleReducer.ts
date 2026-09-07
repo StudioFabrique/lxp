@@ -44,14 +44,12 @@ function withRequiredContact(contacts: Contact[], requiredContact?: Contact) {
 
 // Centralized state type
 type ModuleState = {
-  image: string | null;
   showForm: boolean;
   mode: "create" | "edit";
   modules: ModuleData[];
   parcours: ParcoursModuleResources | null;
   currentContacts: Contact[];
   currentSkills: Skill[];
-  file: File | null;
   moduleToDelete: ModuleData | null;
   showDuplicateModal: boolean;
   sourceModules: SourceModule[] | null;
@@ -69,7 +67,6 @@ type ModuleAction =
   | { type: "SET_PARCOURS"; payload: ParcoursModuleResources }
   | { type: "SET_CURRENT_CONTACTS"; payload: Contact[] }
   | { type: "SET_CURRENT_SKILLS"; payload: Skill[] }
-  | { type: "SET_FILE"; payload: File | null }
   | { type: "SET_MODULE_TO_DELETE"; payload: ModuleData | null }
   | { type: "SET_SHOW_DUPLICATE_MODAL"; payload: boolean }
   | { type: "SET_SOURCE_MODULES"; payload: SourceModule[] | null }
@@ -79,7 +76,10 @@ type ModuleAction =
   | { type: "MODULE_CREATED"; payload: ModuleData }
   | {
       type: "PREPARE_DUPLICATE";
-      payload: { source: SourceModule; image: string | null };
+      payload: {
+        source: SourceModule;
+        skills: Skill[];
+      };
     }
   | { type: "CLOSE_DELETE_MODAL" }
   | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
@@ -87,14 +87,12 @@ type ModuleAction =
 
 // Initial state
 const initialState: ModuleState = {
-  image: null,
   showForm: false,
   mode: "create",
   modules: [],
   parcours: null,
   currentContacts: [],
   currentSkills: [],
-  file: null,
   moduleToDelete: null,
   showDuplicateModal: false,
   sourceModules: null,
@@ -112,10 +110,8 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         mode: "create",
         currentContacts: action.payload ?? [],
         currentSkills: [],
-        file: null,
         moduleToDuplicate: null,
         moduleToUpdate: null,
-        image: null,
       };
 
     case "SET_MODE":
@@ -142,9 +138,6 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
     case "SET_CURRENT_SKILLS":
       return { ...state, currentSkills: action.payload };
 
-    case "SET_FILE":
-      return { ...state, file: action.payload };
-
     case "SET_MODULE_TO_DELETE":
       return { ...state, moduleToDelete: action.payload };
 
@@ -165,10 +158,8 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         mode: "create",
         currentContacts: [],
         currentSkills: [],
-        file: null,
         moduleToDuplicate: null,
         moduleToUpdate: null,
-        image: null,
       };
 
     // Complex action: Cancel form editing
@@ -179,8 +170,6 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         mode: "create",
         currentContacts: [],
         currentSkills: [],
-        file: null,
-        image: null,
         moduleToDuplicate: null,
         moduleToUpdate: null,
       };
@@ -194,7 +183,6 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         modules: [...state.modules, action.payload],
         currentContacts: [],
         currentSkills: [],
-        file: null,
         moduleToDuplicate: null,
         sourceModules: null,
       };
@@ -206,7 +194,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         showForm: true,
         mode: "edit",
         moduleToDuplicate: action.payload.source,
-        image: action.payload.image,
+        currentSkills: action.payload.skills,
       };
 
     // Complex action: Close delete modal and reset
@@ -225,9 +213,6 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         mode: "edit",
         currentContacts: action.payload.contacts,
         currentSkills: action.payload.skills,
-        file: null,
-        image:
-          state.modules.find((m) => m.id === action.payload.id)?.thumb ?? null,
       };
 
     case "SUCCESSFUL_MODULE_UPDATE":
@@ -245,7 +230,6 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         ),
         currentContacts: [],
         currentSkills: [],
-        file: null,
         moduleToUpdate: null,
       };
 

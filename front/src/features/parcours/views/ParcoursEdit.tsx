@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
@@ -68,6 +68,29 @@ const EditParcours = () => {
       }),
     [stepsList, user],
   );
+  const actualStepTitle =
+    actualStep.id === 4
+      ? getModulesLabel(user, "Modules associés au Parcours")
+      : {
+          1: "Informations",
+          2: "Objectifs",
+          3: "Compétences",
+          5: "Calendrier des modules",
+          6: "Groupe d'apprenants",
+          7: "Aperçu général",
+        }[actualStep.id] ?? actualStep.label;
+  const stepperRef = useRef<HTMLDivElement>(null);
+  const previousStepIdRef = useRef(actualStep.id);
+
+  useEffect(() => {
+    if (previousStepIdRef.current === actualStep.id) return;
+
+    previousStepIdRef.current = actualStep.id;
+    stepperRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [actualStep.id]);
 
   const renderActualStep = () => {
     switch (actualStep.id) {
@@ -76,7 +99,6 @@ const EditParcours = () => {
       case 2:
         return (
           <ParcoursSection
-            section="Objectifs"
             title="Importer une liste d'objectifs"
             onResetList={handleResetImportedObjectives}
             readOnly={isTeacher}
@@ -93,7 +115,6 @@ const EditParcours = () => {
       case 3:
         return (
           <ParcoursSection
-            section="Compétences"
             title="Importer des compétences"
             onResetList={handleResetImportedSkills}
             children={[
@@ -141,7 +162,10 @@ const EditParcours = () => {
               </ImageHeaderMutable>
             ) : null}
 
-            <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
+            <div
+              ref={stepperRef}
+              className="w-full scroll-mt-4 rounded-xl border-[0.5px] border-secondary p-4"
+            >
               <Stepper
                 actualStep={actualStep}
                 stepsList={contextualStepsList}
@@ -150,7 +174,10 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full mt-16">{renderActualStep()}</div>
+          <div className="mt-16 w-full">
+            <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
+            <div className="mt-4">{renderActualStep()}</div>
+          </div>
           {actualStep.id !== stepsList.length && !moduleFormOpened ? (
             <FloatingBottomNavigation
               startActions={

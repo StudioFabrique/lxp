@@ -266,7 +266,12 @@ const mutations = {
       parcoursId: number;
     },
   ) => {
-    const res = await apiClient.post(`/modules/duplicate/${id}`, data);
+    const res = await apiClient.post(`/modules/duplicate/${id}`, {
+      duration: data.duration,
+      contacts: data.contactsIds,
+      skills: data.skillsIds,
+      parcoursId: data.parcoursId,
+    });
     return res.data;
   },
   updateModule: async (data: FormData) => {
@@ -285,6 +290,21 @@ const mutations = {
     const res = await apiClient.patch(
       `/modules/parcours/${data.parcoursId}/contacts`,
       { moduleIds: data.moduleIds, contactIds: data.contactIds },
+    );
+    return res.data;
+  },
+  assignModuleSkills: async (data: {
+    parcoursId: number;
+    moduleIds: number[];
+    skillIds: number[];
+  }): Promise<{
+    success: true;
+    message: string;
+    assignmentsCreated: number;
+  }> => {
+    const res = await apiClient.patch(
+      `/modules/parcours/${data.parcoursId}/skills`,
+      { moduleIds: data.moduleIds, skillIds: data.skillIds },
     );
     return res.data;
   },
