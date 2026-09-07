@@ -30,59 +30,56 @@ function ModuleFields({
   }, [image, onSetImageBase64]);
 
   return (
-    <div>
-      <article className="flex flex-col gap-y-4">
-        <div data-onboarding="module-title-field">
-          <FormInput
-            label="Titre du module *"
-            name="title"
-            placeholder="Ex : Javascript"
-            register={register}
-            error={errors.title}
-          />
-        </div>
+    <div className="flex flex-col gap-5">
+      <div data-onboarding="module-title-field">
+        <FormInput
+          label="Titre du module *"
+          name="title"
+          placeholder="Ex : Javascript"
+          register={register}
+          error={errors.title}
+        />
+      </div>
 
-        <div data-onboarding="module-description-field">
-          <FormTextarea
-            label="Description"
-            name="description"
-            register={register}
-            error={errors.description}
-          />
-        </div>
+      <div data-onboarding="module-description-field">
+        <FormTextarea
+          label="Description"
+          name="description"
+          register={register}
+          error={errors.description}
+        />
+      </div>
 
-        <div
-          className="flex flex-col gap-2"
-          data-onboarding="module-quiz-instructions-field"
-        >
-          <FormTextarea
-            label="Instructions pour le quiz *"
-            name="quizInstructions"
-            register={register}
-            error={errors.quizInstructions}
-          />
-          <p className="text-base-content/40 text-xs">
-            Exemple : Questionnaire diagnostique en français, ton clair et
-            pédagogique. Priorité aux prérequis et bases avant le module.
-            Inclure uniquement des questions auto-corrigeables. Éviter
-            l'ambiguïté.
+      <div
+        className="flex flex-col gap-2"
+        data-onboarding="module-quiz-instructions-field"
+      >
+        <FormTextarea
+          label="Instructions pour le quiz *"
+          name="quizInstructions"
+          register={register}
+          error={errors.quizInstructions}
+        />
+        <p className="text-xs leading-relaxed text-base-content/50">
+          Exemple : questionnaire diagnostique en français, au ton clair et
+          pédagogique, centré sur les prérequis et composé uniquement de
+          questions auto-corrigeables.
+        </p>
+      </div>
+
+      {children}
+
+      <div className="flex w-full flex-col gap-2">
+        <p className="text-sm font-bold">
+          {mode === "edit" ? "Modifier l'image du module" : "Image du module"}
+        </p>
+        <FormUploadImage onSetFile={handleSelectedFile} />
+        {!image && mode === "create" && (
+          <p className="text-xs text-base-content/50">
+            Une image sera générée automatiquement si aucune n'est importée.
           </p>
-        </div>
-
-        {children ? children : null}
-
-        <div className="w-full h-full flex flex-col gap-2">
-          <p className="text-sm font-bold">
-            {mode === "edit" ? "Modifier l'image du module" : "Image du module"}
-          </p>
-          <FormUploadImage onSetFile={handleSelectedFile} />
-          {!image && mode === "create" && (
-            <p className="text-base-content/40 text-xs">
-              Une image sera générée automatiquement si aucune n'est importée.
-            </p>
-          )}
-        </div>
-      </article>
+        )}
+      </div>
     </div>
   );
 }

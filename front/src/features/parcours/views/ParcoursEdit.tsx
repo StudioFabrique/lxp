@@ -151,9 +151,8 @@ const EditParcours = () => {
             </div>
           </div>
           <div className="w-full mt-16">{renderActualStep()}</div>
-          {actualStep.id !== stepsList.length ? (
+          {actualStep.id !== stepsList.length && !moduleFormOpened ? (
             <FloatingBottomNavigation
-              stickyActivationOffset={moduleFormOpened ? 150 : undefined}
               startActions={
                 <button
                   className="btn btn-outline"

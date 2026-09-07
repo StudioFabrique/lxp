@@ -128,8 +128,8 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
             title={
               mode === "create" ? "Créer un module" : "Modifier le module"
             }
-            modalBoxStyle="w-11/12 max-w-6xl"
-            dialogAdditionalClass="z-20"
+            modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto p-5 sm:p-7"
+            dialogAdditionalClass="z-[70]"
           >
             <ModuleForm
               mode={mode}

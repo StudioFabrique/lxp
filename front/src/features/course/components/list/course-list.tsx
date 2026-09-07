@@ -160,12 +160,7 @@ export default function CourseList({
                       course.isPublished ? "Cours publié" : "Cours non publié"
                     }
                   >
-                    {course.isPublished ? (
-                      <CircleCheck
-                        className="size-4 text-success"
-                        aria-hidden="true"
-                      />
-                    ) : (
+                    {!course.isPublished && (
                       <CloudOff
                         className="size-4 text-info"
                         aria-hidden="true"
