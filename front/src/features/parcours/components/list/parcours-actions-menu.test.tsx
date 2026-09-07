@@ -69,6 +69,13 @@ describe("ParcoursActionsMenu", () => {
     expect(markup).toContain("/admin/parcours/edit/42?step=7");
   });
 
+  it("masque l'action de publication pour un teacher", () => {
+    const markup = renderMenu(2);
+
+    expect(markup).not.toContain("Publier");
+    expect(markup).not.toContain("/admin/parcours/edit/42?step=7");
+  });
+
   it("masque l'action de publication pour un parcours déjà publié", () => {
     expect(renderMenu(1, { isPublished: true })).not.toContain("Publier");
   });

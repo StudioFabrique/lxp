@@ -78,15 +78,17 @@ const ParcoursActionsMenu = ({
               </DropdownMenu.Item>
 
               {!parcours.isPublished ? (
-                <DropdownMenu.Item asChild>
-                  <Link
-                    className={itemClassName}
-                    to={`/admin/parcours/edit/${parcours.id}?step=7`}
-                  >
-                    <Send className="size-4" />
-                    Publier
-                  </Link>
-                </DropdownMenu.Item>
+                <RoleRankGuard ranks={[0, 1]}>
+                  <DropdownMenu.Item asChild>
+                    <Link
+                      className={itemClassName}
+                      to={`/admin/parcours/edit/${parcours.id}?step=7`}
+                    >
+                      <Send className="size-4" />
+                      Publier
+                    </Link>
+                  </DropdownMenu.Item>
+                </RoleRankGuard>
               ) : null}
             </>
           </PermissionGuard>

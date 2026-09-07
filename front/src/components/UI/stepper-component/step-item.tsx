@@ -37,7 +37,7 @@ const StepItem: FC<Props> = ({
           "after:bg-info",
           "cursor-auto",
         ],
-        disabled && "pointer-events-none cursor-not-allowed opacity-50",
+        disabled && "pointer-events-none",
       )}
       onClick={disabled ? undefined : handleClick}
       aria-disabled={disabled}
