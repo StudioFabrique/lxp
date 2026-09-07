@@ -432,9 +432,38 @@ describe("Cloisonnement des contenus par parcours", () => {
 
       await request(app)
         .patch(`/v1/parcours/${inscrit.parcoursId}`)
+        .set("Cookie", cookieAdmin)
+        .send({ tagIds: [referenceTagId] })
+        .expect(200);
+
+      await prisma.tagsOnParcours.create({
+        data: {
+          parcoursId: inscrit.parcoursId,
+          tagId: adminTagId,
+          addedBy: "other-teacher-id",
+        },
+      });
+
+      const associationParFormateur = await request(app)
+        .patch(`/v1/parcours/${inscrit.parcoursId}`)
         .set("Cookie", cookieFormateur)
         .send({ tagIds: [referenceTagId, teacherTagId, adminTagId] })
         .expect(200);
+
+      const tagsParId = new Map<
+        number,
+        { id: number; canUnassign: boolean }
+      >(
+        associationParFormateur.body.parcours.tags.map(
+          (tag: { id: number; canUnassign: boolean }): [
+            number,
+            { id: number; canUnassign: boolean },
+          ] => [tag.id, tag],
+        ),
+      );
+      expect(tagsParId.get(referenceTagId)?.canUnassign).toBe(false);
+      expect(tagsParId.get(adminTagId)?.canUnassign).toBe(false);
+      expect(tagsParId.get(teacherTagId)?.canUnassign).toBe(true);
 
       await expect(
         prisma.tagsOnParcours.count({

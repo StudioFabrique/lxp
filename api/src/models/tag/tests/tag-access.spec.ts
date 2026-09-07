@@ -1,8 +1,10 @@
 import {
   assertCanDeleteTags,
   assertCanManageTags,
+  assertCanUnassignTags,
   canDeleteTag,
   canManageTag,
+  canUnassignTag,
   tagOwnerFor,
   type TagActor,
 } from "../tag-access.ts";
@@ -19,6 +21,15 @@ describe("ownership des tags", () => {
   it("autorise un teacher à supprimer son propre tag", () => {
     expect(canDeleteTag({ createdBy: teacher.userId }, teacher)).toBe(true);
     expect(canManageTag({ createdBy: teacher.userId }, teacher)).toBe(true);
+  });
+
+  it("autorise uniquement l'auteur de l'assignation à retirer le tag", () => {
+    expect(canUnassignTag({ addedBy: teacher.userId }, teacher)).toBe(true);
+    expect(canUnassignTag({ addedBy: "teacher-2" }, teacher)).toBe(false);
+    expect(canUnassignTag({ addedBy: null }, teacher)).toBe(false);
+    expect(() =>
+      assertCanUnassignTags([{ addedBy: "teacher-2" }], teacher),
+    ).toThrow(expect.objectContaining({ statusCode: 403 }));
   });
 
   it("interdit à un teacher les tags d'un autre compte et les tags historiques", () => {
@@ -47,6 +58,8 @@ describe("ownership des tags", () => {
     expect(canDeleteTag({ createdBy: "teacher-1" }, admin)).toBe(true);
     expect(canDeleteTag({ createdBy: null }, admin)).toBe(true);
     expect(canManageTag({ createdBy: "teacher-1" }, admin)).toBe(true);
+    expect(canUnassignTag({ addedBy: "teacher-1" }, admin)).toBe(true);
+    expect(canUnassignTag({ addedBy: null }, admin)).toBe(true);
     expect(() =>
       assertCanDeleteTags(
         [{ createdBy: "teacher-1" }, { createdBy: null }],

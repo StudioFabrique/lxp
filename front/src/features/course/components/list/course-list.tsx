@@ -161,7 +161,10 @@ export default function CourseList({
                     }
                   >
                     {!course.isPublished ? (
-                      <CloudOff className="size-4" aria-hidden="true" />
+                      <CloudOff
+                        className="size-4 text-info"
+                        aria-hidden="true"
+                      />
                     ) : (
                       !course.visibility && <EyeOff className="size-4" />
                     )}
@@ -176,6 +179,17 @@ export default function CourseList({
               }
               action={
                 <div className="flex items-center gap-1">
+                  <PermissionGuard action="read" object="course">
+                    <Link
+                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      data-tip="Accéder au cours"
+                      to={`/admin/parcours/module/${course.moduleId}`}
+                      state={{ lessonId: course.lessons[0]?.id }}
+                      aria-label={`Accéder au cours ${course.title}`}
+                    >
+                      <SquareArrowRightEnter className="size-[1.2em]" />
+                    </Link>
+                  </PermissionGuard>
                   <PermissionGuard action="update" object="course">
                     {!course.isPublished ? (
                       <button
@@ -221,17 +235,6 @@ export default function CourseList({
                         )}
                       </button>
                     )}
-                  </PermissionGuard>
-                  <PermissionGuard action="read" object="course">
-                    <Link
-                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip="Accéder au cours"
-                      to={`/admin/parcours/module/${course.moduleId}`}
-                      state={{ lessonId: course.lessons[0]?.id }}
-                      aria-label={`Accéder au cours ${course.title}`}
-                    >
-                      <SquareArrowRightEnter className="size-[1.2em]" />
-                    </Link>
                   </PermissionGuard>
                   <PermissionGuard action="update" object="course">
                     <Link

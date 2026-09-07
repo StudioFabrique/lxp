@@ -30,6 +30,9 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const [draftTags, setDraftTags] = useState<Tag[] | null>(null);
   const currentTags =
     draftTags ?? props.selectedTags ?? selectedParcoursTags;
+  const lockedTagIds = currentTags
+    .filter(({ canUnassign }) => canUnassign === false)
+    .map(({ id }) => id);
 
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
@@ -53,6 +56,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           loading={props.loading}
           initialList={availableTags ?? []}
           selectedItems={currentTags}
+          lockedItemIds={lockedTagIds}
           property="name"
           onSubmit={handleUpdateTags}
           isDisabled={props.readOnly}

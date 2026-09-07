@@ -3,7 +3,10 @@ import { Prisma } from "@prisma/client";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
-import { assertCanManageTags } from "../tag/tag-access.ts";
+import {
+  assertCanUnassignTags,
+  canUnassignTag,
+} from "../tag/tag-access.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 export type PatchParcoursPayload = {
@@ -70,7 +73,7 @@ async function patchParcours(
         tags: {
           select: {
             tagId: true,
-            tag: { select: { createdBy: true } },
+            addedBy: true,
           },
         },
         contacts: { select: { contactId: true } },
@@ -101,16 +104,37 @@ async function patchParcours(
         throw { message: "Un ou plusieurs tags n'existent pas.", statusCode: 404 };
       }
 
+      const requestedTagIds = new Set(tagIds);
+      const existingTagIds = new Set(
+        existingParcours.tags.map(({ tagId }) => tagId),
+      );
+      const removedAssignments = existingParcours.tags.filter(
+        ({ tagId }) => !requestedTagIds.has(tagId),
+      );
+
       if (!isAdmin) {
-        const requestedTagIds = new Set(tagIds);
-        const removedTags = existingParcours.tags
-          .filter(({ tagId }) => !requestedTagIds.has(tagId))
-          .map(({ tag }) => tag);
-        assertCanManageTags(
-          removedTags,
+        assertCanUnassignTags(
+          removedAssignments,
           { userId: actor.userId, isAdmin: false },
-          "Vous ne pouvez pas désassigner un tag créé par un administrateur ou une autre équipe pédagogique.",
         );
+      }
+
+      const removedTagIds = removedAssignments.map(({ tagId }) => tagId);
+      if (removedTagIds.length > 0) {
+        await tx.tagsOnParcours.deleteMany({
+          where: { parcoursId, tagId: { in: removedTagIds } },
+        });
+      }
+
+      const addedTagIds = tagIds.filter((tagId) => !existingTagIds.has(tagId));
+      if (addedTagIds.length > 0) {
+        await tx.tagsOnParcours.createMany({
+          data: addedTagIds.map((tagId) => ({
+            parcoursId,
+            tagId,
+            addedBy: isAdmin ? null : actor.userId,
+          })),
+        });
       }
     }
 
@@ -166,12 +190,7 @@ async function patchParcours(
     if (payload.formationId !== undefined) {
       data.formation = { connect: { id: payload.formationId } };
     }
-    if (payload.tagIds !== undefined) {
-      data.tags = {
-        deleteMany: {},
-        create: tagIds.map((id) => ({ tag: { connect: { id } } })),
-      };
-    }
+    if (payload.tagIds !== undefined) data.updatedAt = new Date();
     if (payload.contactIds !== undefined) {
       data.contacts = {
         deleteMany: {},
@@ -211,7 +230,7 @@ async function patchParcours(
             tags: { select: { tag: true } },
           },
         },
-        tags: { select: { tag: true } },
+        tags: { select: { addedBy: true, tag: true } },
         contacts: { select: { contact: true } },
         objectives: {
           orderBy: { id: "asc" },
@@ -228,7 +247,13 @@ async function patchParcours(
   );
   return {
     ...updated,
-    tags: updated.tags.map(({ tag }) => tag),
+    tags: updated.tags.map(({ tag, addedBy }) => ({
+      ...tag,
+      canUnassign: canUnassignTag(
+        { addedBy },
+        { userId: actor.userId, isAdmin },
+      ),
+    })),
     contacts,
   };
 }

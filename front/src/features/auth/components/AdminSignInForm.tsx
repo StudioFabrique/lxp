@@ -80,10 +80,12 @@ const AdminSignInForm = ({
   if (activationEmail) {
     return (
       <AuthPageWrapper title="Activez votre compte root">
-        <p className="my-auto min-h-40 content-center text-center text-sm text-base-content/70">
-          Un lien d'activation a été envoyé à {activationEmail}. Consultez votre
-          boîte mail pour terminer la création du compte.
-        </p>
+        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70">
+          <p>Un lien d'activation a été envoyé à {activationEmail}.</p>
+          <p className="mt-2">
+            Consultez votre boîte mail pour terminer la création du compte.
+          </p>
+        </span>
       </AuthPageWrapper>
     );
   }

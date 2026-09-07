@@ -8,6 +8,7 @@ interface CurrentTagsProps {
   list?: Tag[];
   onRemoveItem?: (value: any) => void;
   isDisabled?: boolean;
+  lockedItemIds?: number[];
 }
 
 const CurrentTags = (props: CurrentTagsProps) => {
@@ -15,14 +16,23 @@ const CurrentTags = (props: CurrentTagsProps) => {
     <>
       {props.list && props.list.length > 0 ? (
         <ul className="flex gap-2 flex-wrap">
-          {sortArray(props.list, "name").map((item) => (
-            <li
-              key={item.id}
-              onClick={() => !props.isDisabled && props.onRemoveItem!(item)}
-            >
-              <TagItem tag={item} noIcon={props.isDisabled} />
-            </li>
-          ))}
+          {sortArray(props.list, "name").map((item) => {
+            const isLocked =
+              props.isDisabled || props.lockedItemIds?.includes(item.id);
+            return (
+              <li
+                key={item.id}
+                onClick={() => !isLocked && props.onRemoveItem?.(item)}
+                title={
+                  isLocked
+                    ? "Ce tag a été ajouté par un administrateur ou une autre équipe pédagogique"
+                    : undefined
+                }
+              >
+                <TagItem tag={item} noIcon={isLocked} disabled={isLocked} />
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <SubBoxWrapper>

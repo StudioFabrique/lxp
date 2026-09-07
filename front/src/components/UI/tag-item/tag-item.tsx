@@ -2,9 +2,10 @@ import { FC } from "react";
 
 import Tag from "../../../utils/interfaces/tag";
 
-const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
+const TagItem: FC<{ tag: Tag; noIcon?: boolean; disabled?: boolean }> = ({
   tag,
   noIcon = false,
+  disabled = false,
 }) => {
   let tagClass =
     "btn btn-sm px-4 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
@@ -23,6 +24,7 @@ const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
         className={tagClass}
         type="button"
         style={{ backgroundColor: tag.color }}
+        disabled={disabled}
       >
         <p>{`#${tag.name}`}</p>
         {noIcon ? null : (

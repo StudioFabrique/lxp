@@ -130,7 +130,7 @@ const ContenuDetail: FC<{
         </div>
       ))
     ) : (
-      <p className="ml-4 opacity-70">Aucun cours publié</p>
+      <p className="ml-4 opacity-70">Aucun cours disponible</p>
     );
 
   return (

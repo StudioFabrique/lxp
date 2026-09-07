@@ -16,6 +16,26 @@ export function canManageTag(
 
 export const canDeleteTag = canManageTag;
 
+export function canUnassignTag(
+  assignment: { addedBy: string | null },
+  actor: TagActor,
+) {
+  return actor.isAdmin || assignment.addedBy === actor.userId;
+}
+
+export function assertCanUnassignTags(
+  assignments: Array<{ addedBy: string | null }>,
+  actor: TagActor,
+) {
+  if (assignments.some((assignment) => !canUnassignTag(assignment, actor))) {
+    throw {
+      statusCode: 403,
+      message:
+        "Vous ne pouvez pas désassigner un tag ajouté par un administrateur ou une autre équipe pédagogique.",
+    };
+  }
+}
+
 export function assertCanManageTags(
   tags: Array<{ createdBy: string | null }>,
   actor: TagActor,

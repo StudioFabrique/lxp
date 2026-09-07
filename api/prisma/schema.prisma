@@ -418,10 +418,12 @@ model TagsOnFormation {
 model TagsOnParcours {
   tagId      Int
   parcoursId Int
+  addedBy    String?
   parcours   Parcours @relation(fields: [parcoursId], references: [id])
   tag        Tag      @relation(fields: [tagId], references: [id])
 
   @@id([tagId, parcoursId])
+  @@index([addedBy])
 }
 
 model TagsOnResources {

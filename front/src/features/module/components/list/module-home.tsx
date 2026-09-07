@@ -106,7 +106,7 @@ const ModuleHomeList = ({
                 subDescription: course.isPublished ? (
                   <span className="text-success">Publié</span>
                 ) : (
-                  <span className="text-warning">Non publié</span>
+                  <span className="text-info">Non publié</span>
                 ),
                 icon: <BookMarked strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${module.id}`,
