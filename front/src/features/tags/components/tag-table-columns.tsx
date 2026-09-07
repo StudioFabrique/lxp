@@ -23,6 +23,12 @@ export const getTagColumns = (
         className="checkbox checkbox-sm checkbox-primary"
         checked={row.getIsSelected()}
         onChange={row.getToggleSelectedHandler()}
+        disabled={!row.getCanSelect()}
+        aria-label={
+          row.getCanSelect()
+            ? `Sélectionner le tag ${row.original.name}`
+            : `Le tag ${row.original.name} ne peut pas être supprimé`
+        }
       />
     ),
     enableSorting: false,
@@ -78,21 +84,25 @@ export const getTagColumns = (
       const tagId = row.original.id;
       return (
         <div className="flex gap-2 justify-center">
-          <Link
-            to={`?openModal=true&editId=${tagId}`}
-            className="btn btn-ghost btn-xs btn-square text-primary tooltip"
-            data-tip="Modifier"
-          >
-            <Pencil className="w-4 h-4" />
-          </Link>
+          {row.original.canUpdate ? (
+            <Link
+              to={`?openModal=true&editId=${tagId}`}
+              className="btn btn-ghost btn-xs btn-square text-primary tooltip"
+              data-tip="Modifier"
+            >
+              <Pencil className="w-4 h-4" />
+            </Link>
+          ) : null}
 
-          <button
-            onClick={() => onDelete(tagId)}
-            className="btn btn-ghost btn-xs btn-square text-error tooltip"
-            data-tip="Supprimer"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          {row.original.canDelete ? (
+            <button
+              onClick={() => onDelete(tagId)}
+              className="btn btn-ghost btn-xs btn-square text-error tooltip"
+              data-tip="Supprimer"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          ) : null}
         </div>
       );
     },

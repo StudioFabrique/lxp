@@ -13,9 +13,13 @@ import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 
 type Props = {
   parcoursId?: string;
+  readOnly?: boolean;
 };
 
-const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
+const ParcoursInformationsForm: FC<Props> = ({
+  parcoursId = "12",
+  readOnly = false,
+}) => {
   const numericParcoursId = Number(parcoursId);
   const { data: parcours } = useParcoursQuery(numericParcoursId);
   const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
@@ -58,6 +62,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   );
 
   const onSave = useCallback(() => {
+    if (readOnly) return;
     if (isInitialRender.current) {
       isInitialRender.current = false;
       return;
@@ -66,7 +71,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
       const firstError = Object.values(errs)[0];
       if (firstError?.message) toast.error(firstError.message);
     })();
-  }, [rhfHandleSubmit, saveInfos]);
+  }, [readOnly, rhfHandleSubmit, saveInfos]);
 
   useAutoSave(watch, onSave);
 
@@ -92,6 +97,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                   register={register}
                   error={errors.title}
                   placeholder="Ex : CDA - Promo 2023"
+                  disabled={readOnly}
                 />
 
                 <FormTextarea
@@ -99,6 +105,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                   name="description"
                   register={register}
                   error={errors.description}
+                  disabled={readOnly}
                 />
               </div>
 

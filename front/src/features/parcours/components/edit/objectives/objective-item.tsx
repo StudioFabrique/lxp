@@ -8,9 +8,15 @@ type Props = {
   objective: Objective;
   onDelete: (id: number) => void;
   onUpdate: (id: number) => void;
+  readOnly?: boolean;
 };
 
-const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
+const ObjectiveItem: FC<Props> = ({
+  objective,
+  onDelete,
+  onUpdate,
+  readOnly,
+}) => {
   const handleUpdate = () => {
     onUpdate(objective.id!);
   };
@@ -27,6 +33,10 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
         type="button"
         onClick={handleUpdate}
         aria-label="modification de l'objectif"
+        disabled={readOnly}
+        title={
+          readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+        }
       >
         <div className="w-6 h-6">
           <EditIcon />
@@ -36,6 +46,10 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
         className="btn btn-primary btn-circle rounded-lg"
         onClick={() => onDelete(objective.id!)}
         aria-label="suppression de l'objectif"
+        disabled={readOnly}
+        title={
+          readOnly ? "Lecture seule pour l'équipe pédagogique" : undefined
+        }
       >
         <div className="w-6 h-6">
           <DeleteIcon />

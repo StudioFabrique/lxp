@@ -1,19 +1,26 @@
-import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
+import {
+  assertCanManageTags,
+  type TagActor,
+} from "../tag/tag-access.ts";
 
 async function putParcoursTags(
   parcoursId: number,
   newTags: Array<number>,
-  userId: string,
+  actor: TagActor,
 ) {
-  const admin = await getAdmin(userId);
-
   // on verifie l'existence du parcours et on récupère les tags de la formation avec laquelle il est en relation
   const existingParcours = await prisma.parcours.findUnique({
-    where: { id: parcoursId /* adminId: admin.id */ },
+    where: { id: parcoursId },
     include: {
       formation: {
         include: { tags: true },
+      },
+      tags: {
+        select: {
+          tagId: true,
+          tag: { select: { createdBy: true } },
+        },
       },
     },
   });
@@ -22,31 +29,34 @@ async function putParcoursTags(
     throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
   }
 
-  // on créé un tableau avec les identifiants des tags de la formation
-  const tagsIds = existingParcours.formation.tags.map((item) => item.tagId);
-
-  // on ajoute les tags passés en arguments s'ils ne sont pas déjà associés à la formation
-  newTags.forEach(async (newTag: number) => {
-    if (!tagsIds.includes(newTag)) {
-      await prisma.formation.update({
-        where: { id: existingParcours.formation.id },
-        data: {
-          tags: {
-            create: { tag: { connect: { id: newTag } } },
-          },
-        },
-      });
-    }
-  });
+  if (!actor.isAdmin) {
+    const requestedTagIds = new Set(newTags);
+    const removedTags = existingParcours.tags
+      .filter(({ tagId }) => !requestedTagIds.has(tagId))
+      .map(({ tag }) => tag);
+    assertCanManageTags(
+      removedTags,
+      actor,
+      "Vous ne pouvez pas désassigner un tag créé par un administrateur ou une autre équipe pédagogique.",
+    );
+  }
 
   // on met à jour les tags du parcours
-  const transaction = await prisma.$transaction(async (tx) => {
-    await prisma.tagsOnParcours.deleteMany({
+  await prisma.$transaction(async (tx) => {
+    await tx.tagsOnFormation.createMany({
+      data: newTags.map((tagId) => ({
+        tagId,
+        formationId: existingParcours.formation.id,
+      })),
+      skipDuplicates: true,
+    });
+
+    await tx.tagsOnParcours.deleteMany({
       where: { parcoursId },
     });
 
-    const updatedParcours = await prisma.parcours.update({
-      where: { id: parcoursId /*  adminId: admin.id  */ },
+    await tx.parcours.update({
+      where: { id: parcoursId },
       data: {
         tags: {
           create: newTags.map((tag: number) => {

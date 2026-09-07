@@ -61,13 +61,7 @@ export default function CourseList({
     );
   }, [coursesList, filter]);
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(
-      filteredCourses,
-      "title",
-      15,
-      "id",
-      "sidebar-courses",
-    );
+    useEagerLoadingList(filteredCourses, "title", 15, "id", "sidebar-courses");
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleSearch = (field: string, value: string) => {
@@ -160,23 +154,18 @@ export default function CourseList({
               labelAccessory={
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={
-                      course.isPublished ? "text-success" : "text-warning"
-                    }
                     role="img"
+                    className="opacity-50"
                     aria-label={
                       course.isPublished ? "Cours publié" : "Cours non publié"
                     }
                   >
-                    {course.isPublished ? (
-                      <CircleCheck className="size-4" aria-hidden="true" />
-                    ) : (
+                    {!course.isPublished ? (
                       <CloudOff className="size-4" aria-hidden="true" />
+                    ) : (
+                      !course.visibility && <EyeOff className="size-4" />
                     )}
                   </span>
-                  {!course.visibility ? (
-                    <InvisibleIndicator label="Cours invisible" />
-                  ) : null}
                 </div>
               }
               title={course.title}
@@ -204,29 +193,34 @@ export default function CourseList({
                           <UploadCloud className="size-[1.2em]" />
                         )}
                       </button>
-                    ) : null}
-                    <button
-                      type="button"
-                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                      data-tip={
-                        course.visibility ? "Rendre invisible" : "Rendre visible"
-                      }
-                      aria-label={`${
-                        course.visibility ? "Rendre invisible" : "Rendre visible"
-                      } le cours ${course.title}`}
-                      aria-pressed={Boolean(course.visibility)}
-                      disabled={pendingCourseAction?.courseId === course.id}
-                      onClick={() => handleToggleCourseVisibility(course)}
-                    >
-                      {pendingCourseAction?.courseId === course.id &&
-                      pendingCourseAction.type === "visibility" ? (
-                        <LoaderCircle className="size-[1.2em] animate-spin" />
-                      ) : course.visibility ? (
-                        <EyeOff className="size-[1.2em]" />
-                      ) : (
-                        <Eye className="size-[1.2em]" />
-                      )}
-                    </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                        data-tip={
+                          course.visibility
+                            ? "Rendre invisible"
+                            : "Rendre visible"
+                        }
+                        aria-label={`${
+                          course.visibility
+                            ? "Rendre invisible"
+                            : "Rendre visible"
+                        } le cours ${course.title}`}
+                        aria-pressed={Boolean(course.visibility)}
+                        disabled={pendingCourseAction?.courseId === course.id}
+                        onClick={() => handleToggleCourseVisibility(course)}
+                      >
+                        {pendingCourseAction?.courseId === course.id &&
+                        pendingCourseAction.type === "visibility" ? (
+                          <LoaderCircle className="size-[1.2em] animate-spin" />
+                        ) : course.visibility ? (
+                          <EyeOff className="size-[1.2em]" />
+                        ) : (
+                          <Eye className="size-[1.2em]" />
+                        )}
+                      </button>
+                    )}
                   </PermissionGuard>
                   <PermissionGuard action="read" object="course">
                     <Link

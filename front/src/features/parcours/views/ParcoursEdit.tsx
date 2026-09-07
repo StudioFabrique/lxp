@@ -21,12 +21,16 @@ import { useParcoursEdit } from "../hooks/useParcoursEdit";
 import FloatingBottomNavigation from "../../../components/buttons/FloatingBottomNavigation";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { AuthContext } from "../../../store/AuthProvider";
-import { getModulesLabel } from "../../../utils/helpers/user-role";
+import {
+  getModulesLabel,
+  isTeacherUser,
+} from "../../../utils/helpers/user-role";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
   const { status: onboardingStatus, step: onboardingStep } = useOnboarding();
   const onboardingNavigationLocked =
     onboardingStatus === "in_progress" &&
@@ -56,11 +60,12 @@ const EditParcours = () => {
   } = useParcoursEdit();
   const contextualStepsList = useMemo(
     () =>
-      stepsList.map((step) =>
-        step.id === 4
-          ? { ...step, label: getModulesLabel(user, step.label) }
-          : step,
-      ),
+      stepsList.map((step) => {
+        if (step.id === 4) {
+          return { ...step, label: getModulesLabel(user, step.label) };
+        }
+        return step;
+      }),
     [stepsList, user],
   );
 
@@ -74,8 +79,9 @@ const EditParcours = () => {
             section="Objectifs"
             title="Importer une liste d'objectifs"
             onResetList={handleResetImportedObjectives}
+            readOnly={isTeacher}
             children={[
-              <ObjectivesList />,
+              <ObjectivesList readOnly={isTeacher} />,
               <ImportObjectives
                 importedObjectives={importedObjectives}
                 onImport={setImportedObjectives}
@@ -134,6 +140,7 @@ const EditParcours = () => {
                 <HeaderIcon />
               </ImageHeaderMutable>
             ) : null}
+
             <div className="w-full p-4 rounded-xl border-[0.5px] border-secondary">
               <Stepper
                 actualStep={actualStep}

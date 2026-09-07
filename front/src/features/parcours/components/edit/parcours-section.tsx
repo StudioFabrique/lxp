@@ -9,6 +9,7 @@ type Props = {
   children: [ReactNode, ReactElement<{ onCloseDrawer: (id: string) => void }>];
   section: string;
   onResetList: () => void;
+  readOnly?: boolean;
 };
 
 const ParcoursSection: FC<Props> = ({
@@ -16,6 +17,7 @@ const ParcoursSection: FC<Props> = ({
   children,
   section,
   onResetList,
+  readOnly = false,
 }) => {
   // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
@@ -36,18 +38,21 @@ const ParcoursSection: FC<Props> = ({
         <ParcoursSectionHeader
           label={title}
           onImport={handleOpenImportDrawer}
+          disabled={readOnly}
         />
         {children[0]}
-        <RightSideDrawer
-          title={title}
-          id="import-data"
-          visible={false}
-          onCloseDrawer={handleCloseDrawer}
-        >
-          {React.cloneElement(children[1], {
-            onCloseDrawer: handleCloseDrawer,
-          })}
-        </RightSideDrawer>
+        {!readOnly ? (
+          <RightSideDrawer
+            title={title}
+            id="import-data"
+            visible={false}
+            onCloseDrawer={handleCloseDrawer}
+          >
+            {React.cloneElement(children[1], {
+              onCloseDrawer: handleCloseDrawer,
+            })}
+          </RightSideDrawer>
+        ) : null}
       </BoxWrapper>
     </div>
   );

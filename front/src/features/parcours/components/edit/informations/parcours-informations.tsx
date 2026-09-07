@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
@@ -16,12 +16,16 @@ import TagsWithDrawer from "./tags-with-drawer";
 import useInfosService from "../../../hooks/useInfosService";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 type Props = {
   parcoursId: string;
 };
 
 const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
+  const { user } = useContext(AuthContext);
+  const readOnly = isTeacherUser(user);
   const numericParcoursId = Number(parcoursId);
   const { data: parcours } = useParcoursQuery(numericParcoursId);
   const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
@@ -92,6 +96,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const handleVirtualClassValue = (
     event: React.FormEvent<HTMLInputElement>,
   ) => {
+    if (readOnly) return;
     if (!submitVirtualClass) {
       setSubmitVirtualClass(true);
     }
@@ -100,6 +105,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
 
   // met à jour la classe virtuelle vers la bdd
   useEffect(() => {
+    if (readOnly) return;
     const timer = setTimeout(async () => {
       const formIsValid = virtualClass.isValid;
       if (formIsValid && submitVirtualClass) {
@@ -130,9 +136,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.isValid,
     submitVirtualClass,
     updateParcours,
+    readOnly,
   ]);
 
   return (
+    <div className="flex flex-col gap-y-4">
       <div
         className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8"
         data-onboarding="parcours-information"
@@ -140,16 +148,21 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
-            <ParcoursInformationsForm parcoursId={parcoursId} />
+            <ParcoursInformationsForm
+              parcoursId={parcoursId}
+              readOnly={readOnly}
+            />
             <DatesSelecter
               startDateProp={parcoursStartDate}
               endDateProp={parcoursEndDate}
               label="Dates de parcours"
               onSubmitDates={submitDates}
+              disabled={readOnly}
             />
             <VirtualClass
               onChangeValue={handleVirtualClassValue}
               virtualClass={virtualClass}
+              disabled={readOnly}
             />
           </div>
         </Wrapper>
@@ -158,6 +171,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
             <ContactsWithDrawer
               loading={loadingContacts}
               onSubmit={handleUpdateContacts}
+              readOnly={readOnly}
             />
           </Wrapper>
           <Wrapper>
@@ -169,6 +183,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           </Wrapper>
         </div>
       </div>
+    </div>
   );
 };
 

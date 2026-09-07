@@ -205,6 +205,7 @@ const TagsHome = () => {
             setRowSelection={setRowSelection}
             sorting={sorting}
             setSorting={handleSortingChange}
+            canSelectRow={(tag) => tag.canDelete}
             emptyMessage={
               searchValue
                 ? "Aucun tag disponible pour cette recherche"

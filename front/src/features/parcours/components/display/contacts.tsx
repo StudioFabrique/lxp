@@ -52,6 +52,7 @@ const Contacts = () => {
   return (
     <CollapsibleSection
       title="Ressources pédagogiques"
+      defaultOpen={contacts.length <= 2}
       preview={
         <span className="flex min-w-0 flex-col gap-1.5 text-sm">
           {previewContacts.map((contact, index) => (

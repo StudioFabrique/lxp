@@ -1,8 +1,9 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { serverIssue } from "../../utils/constantes.ts";
 import getPaginateTags from "../../models/tag/get-paginate-tags.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-async function httpGetPaginateTags(req: Request, res: Response) {
+async function httpGetPaginateTags(req: CustomRequest, res: Response) {
   const { stype, sdir } = req.params;
   const { page, limit } = req.query;
 
@@ -18,6 +19,10 @@ async function httpGetPaginateTags(req: Request, res: Response) {
       +limit,
       stype,
       sdir as "asc" | "desc",
+      {
+        userId: req.auth!.userId,
+        isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+      },
     );
     return res.status(200).json(result);
   } catch (error) {

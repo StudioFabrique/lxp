@@ -27,7 +27,8 @@ export default async function httpPostResource(
       title,
       description,
       tags,
-      filename ?? null
+      filename ?? null,
+      req.auth!.userRoles.some(({ rank }) => rank <= 1),
     );
     next({
       statusCode: 201,

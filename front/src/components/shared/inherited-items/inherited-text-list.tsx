@@ -9,6 +9,7 @@ interface InheritedTextListProps {
   onRemoveItem?: (item: any) => void;
   onDelete?: (id: number) => void;
   lockedItemIds?: number[];
+  isDisabled?: boolean;
 }
 
 const InheritedTextList = (props: InheritedTextListProps) => {
@@ -27,7 +28,9 @@ const InheritedTextList = (props: InheritedTextListProps) => {
                 onRemoveItem={() => handleRemoveItem(item)}
                 property={props.property! ?? "name"}
                 additionalProperty={props.additionalProperty}
-                removable={!props.lockedItemIds?.includes(item.id)}
+                removable={
+                  !props.isDisabled && !props.lockedItemIds?.includes(item.id)
+                }
               />
             </SubBoxWrapper>
           </li>

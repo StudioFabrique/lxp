@@ -122,7 +122,7 @@ changer avec le paramètre `INFISICAL_CREDENTIAL_ID`.
 
 | Job                    | Script Path                     |
 | ---------------------- | ------------------------------- |
-| Construire l'image LXP | `build.Jenkinsfile`             |
+| Construire l'image LXP | `deployment/build.Jenkinsfile`  |
 | Déployer avec Caddy    | `deployment/caddy/Jenkinsfile`  |
 | Déployer sans Caddy    | `deployment/direct/Jenkinsfile` |
 | Sauvegarder une cible  | `deployment/backup.Jenkinsfile` |

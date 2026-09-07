@@ -2,13 +2,15 @@ import { mongo } from "mongoose";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";
+import { tagOwnerFor } from "../tag/tag-access.ts";
 
 export default async function postResource(
   userId: string,
   title: string,
   description: string,
   tags: string[],
-  filename: string | null
+  filename: string | null,
+  isAdmin: boolean,
 ) {
   const existingResource = await prisma.resource.findFirst({
     where: { title },
@@ -41,6 +43,7 @@ export default async function postResource(
   const newTags = remainingTags.map((tag) => ({
     name: tag,
     color: getSoftColor(),
+    createdBy: tagOwnerFor({ userId, isAdmin }),
   }));
 
   if (newTags.length > 0) {

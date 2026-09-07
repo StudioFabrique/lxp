@@ -15,6 +15,7 @@ interface TagsWithDrawerProps {
   tags: Tag[];
   selectedTags?: Tag[];
   inheritedTagsLabel?: string;
+  readOnly?: boolean;
 }
 
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
@@ -54,6 +55,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           selectedItems={currentTags}
           property="name"
           onSubmit={handleUpdateTags}
+          isDisabled={props.readOnly}
         >
           <CurrentTags />
           <ParcoursTagsSelecter
@@ -70,13 +72,21 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           className="pl-2 text-xs text-primary btn btn-sm btn-ghost underline"
           onClick={() => document.getElementById("create-tags")?.click()}
           type="button"
+          disabled={props.readOnly}
+          title={
+            props.readOnly
+              ? "Lecture seule pour l'équipe pédagogique"
+              : undefined
+          }
         >
           <Plus className="w-4 h-4" />
           <span>Créer de nouveaux tags</span>
         </button>
-        <CreateNewTag
-          onCreated={(tags) => handleUpdateTags([...currentTags, ...tags])}
-        />
+        {!props.readOnly ? (
+          <CreateNewTag
+            onCreated={(tags) => handleUpdateTags([...currentTags, ...tags])}
+          />
+        ) : null}
       </div>
     </div>
   );

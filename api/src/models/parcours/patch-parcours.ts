@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
+import { assertCanManageTags } from "../tag/tag-access.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 export type PatchParcoursPayload = {
@@ -17,24 +18,61 @@ export type PatchParcoursPayload = {
   objectives?: string[];
 };
 
+export type PatchParcoursActor = {
+  userId: string;
+  rank: number;
+};
+
 async function patchParcours(
   parcoursId: number,
   payload: PatchParcoursPayload,
-  userId: string,
+  actor: PatchParcoursActor,
 ) {
-  const admin = await getAdmin(userId);
+  const isAdmin = actor.rank <= 1;
+  const updatedFields = Object.entries(payload)
+    .filter(([, value]) => value !== undefined)
+    .map(([field]) => field);
+
+  if (
+    !isAdmin &&
+    (actor.rank !== 2 ||
+      updatedFields.length !== 1 ||
+      updatedFields[0] !== "tagIds")
+  ) {
+    throw {
+      message: "Vous n'êtes pas autorisé à modifier ces informations.",
+      statusCode: 403,
+    };
+  }
+
+  const admin = isAdmin ? await getAdmin(actor.userId) : null;
 
   const tagIds = [...new Set(payload.tagIds ?? [])];
   const contactIds = [...new Set(payload.contactIds ?? [])];
 
   const updated = await prisma.$transaction(async (tx) => {
     const existingParcours = await tx.parcours.findFirst({
-      where: { id: parcoursId, adminId: admin.id },
+      where: {
+        id: parcoursId,
+        ...(admin
+          ? { adminId: admin.id }
+          : {
+              contacts: {
+                some: { contact: { idMdb: actor.userId } },
+              },
+            }),
+      },
       select: {
         id: true,
         startDate: true,
         endDate: true,
         formationId: true,
+        tags: {
+          select: {
+            tagId: true,
+            tag: { select: { createdBy: true } },
+          },
+        },
         contacts: { select: { contactId: true } },
       },
     });
@@ -61,6 +99,18 @@ async function patchParcours(
       const tagsCount = await tx.tag.count({ where: { id: { in: tagIds } } });
       if (tagsCount !== tagIds.length) {
         throw { message: "Un ou plusieurs tags n'existent pas.", statusCode: 404 };
+      }
+
+      if (!isAdmin) {
+        const requestedTagIds = new Set(tagIds);
+        const removedTags = existingParcours.tags
+          .filter(({ tagId }) => !requestedTagIds.has(tagId))
+          .map(({ tag }) => tag);
+        assertCanManageTags(
+          removedTags,
+          { userId: actor.userId, isAdmin: false },
+          "Vous ne pouvez pas désassigner un tag créé par un administrateur ou une autre équipe pédagogique.",
+        );
       }
     }
 
