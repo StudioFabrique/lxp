@@ -160,15 +160,19 @@ export default function CourseList({
                       course.isPublished ? "Cours publié" : "Cours non publié"
                     }
                   >
-                    {!course.isPublished ? (
+                    {course.isPublished ? (
+                      <CircleCheck
+                        className="size-4 text-success"
+                        aria-hidden="true"
+                      />
+                    ) : (
                       <CloudOff
                         className="size-4 text-info"
                         aria-hidden="true"
                       />
-                    ) : (
-                      !course.visibility && <EyeOff className="size-4" />
                     )}
                   </span>
+                  {!course.visibility ? <InvisibleIndicator /> : null}
                 </div>
               }
               title={course.title}

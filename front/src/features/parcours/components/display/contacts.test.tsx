@@ -60,6 +60,7 @@ describe("Ressources pédagogiques du parcours", () => {
     await renderContacts(2);
 
     expect(container.querySelector("details")?.open).toBe(true);
+    expect(container.textContent).not.toContain("formateur");
   });
 
   it("est repliée avec plus de deux ressources", async () => {

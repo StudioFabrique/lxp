@@ -32,10 +32,12 @@ const useInfosService = (parcoursId: number) => {
         const data = await updateContacts({ contactIds });
         if (data.success) {
           toast.success(data.message);
+          return true;
         }
       } catch {
         toast.error("Erreur lors de la mise à jour des contacts");
       }
+      return false;
     },
     [updateContacts],
   );

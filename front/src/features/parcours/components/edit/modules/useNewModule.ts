@@ -35,6 +35,7 @@ import { emitOnboardingEvent } from "../../../../onboarding/onboarding-events";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 import { getApiErrorMessage } from "../../../../../utils/helpers/api-error-message";
+import { useAssignModuleContacts } from "../../../hooks/useAssignModuleContacts";
 
 const emptyModuleFormValues = {
   moduleId: undefined,
@@ -56,6 +57,7 @@ const useNewModule = () => {
   const handledModuleIdRef = useRef<number | null>(null);
   const refForm = useRef<HTMLFormElement | null>(null);
   const queryClient = useQueryClient();
+  const assignContactsMutation = useAssignModuleContacts(Number(id));
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
   const isModuleSubmissionRunning = useRef(false);
@@ -359,6 +361,22 @@ const useNewModule = () => {
     });
   };
 
+  const handleAssignContacts = async (
+    moduleId: number,
+    contactIds: number[],
+  ) => {
+    try {
+      await assignContactsMutation.mutateAsync({
+        moduleIds: [moduleId],
+        contactIds,
+      });
+      await getParcoursModules();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     // Le chargement est volontairement relancé lorsque l'identifiant du parcours change.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -449,6 +467,7 @@ const useNewModule = () => {
     getValues,
     isLoading,
     isSubmittingModule,
+    isAssigningContacts: assignContactsMutation.isPending,
     refForm,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,
@@ -474,6 +493,7 @@ const useNewModule = () => {
     handleUpdateModule,
     handleSubmitUpdateModule,
     handleSubmitDuplicateModule,
+    handleAssignContacts,
   };
 };
 

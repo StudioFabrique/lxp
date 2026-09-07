@@ -1,7 +1,5 @@
 export type ParcoursImportOptions = {
   formationId?: number;
-  teacherContactId?: number;
-  teacherModuleIndexes: number[];
   publishCourses: boolean;
 };
 
@@ -34,47 +32,13 @@ export function parseParcoursImportOptions(
     fields.formationId,
     "La formation sélectionnée n'est pas valide.",
   );
-  const teacherContactId = optionalPositiveInteger(
-    fields.teacherContactId,
-    "La ressource pédagogique sélectionnée n'est pas valide.",
-  );
   const publishCourses = optionalBoolean(
     fields.publishCourses,
     "L'option de publication des cours n'est pas valide.",
   );
 
-  let teacherModuleIndexes: unknown = [];
-  if (
-    fields.teacherModuleIndexes !== undefined &&
-    fields.teacherModuleIndexes !== ""
-  ) {
-    try {
-      teacherModuleIndexes = JSON.parse(String(fields.teacherModuleIndexes));
-    } catch {
-      throw badRequest("La sélection des modules n'est pas valide.");
-    }
-  }
-  if (
-    !Array.isArray(teacherModuleIndexes) ||
-    teacherModuleIndexes.length > 10_000 ||
-    teacherModuleIndexes.some(
-      (index) => !Number.isInteger(index) || Number(index) < 0,
-    )
-  ) {
-    throw badRequest("La sélection des modules n'est pas valide.");
-  }
-  if (teacherContactId === undefined && teacherModuleIndexes.length > 0) {
-    throw badRequest(
-      "Une ressource pédagogique doit être sélectionnée pour l'associer aux modules.",
-    );
-  }
-
   return {
     formationId,
-    teacherContactId,
     publishCourses,
-    teacherModuleIndexes: [
-      ...new Set(teacherModuleIndexes.map((index) => Number(index))),
-    ],
   };
 }

@@ -55,7 +55,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           onSubmit={handleUpdateContacts}
           isDisabled={props.readOnly}
         >
-          <InheritedTextList additionalProperty="role" />
+          <InheritedTextList />
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}

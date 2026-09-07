@@ -100,7 +100,7 @@ const ModuleHomeList = ({
                 id: course.id,
                 title: course.title,
                 titleAccessory: !course.visibility ? (
-                  <EyeOff className="size-4 opacity-50" />
+                  <InvisibleIndicator />
                 ) : null,
                 description: `Cours ${course.order + 1}`,
                 subDescription: course.isPublished ? (

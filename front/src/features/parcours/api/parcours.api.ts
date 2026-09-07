@@ -127,14 +127,10 @@ const mutations = {
   importParcours: async ({
     archive,
     formationId,
-    teacherContactId,
-    teacherModuleIndexes,
     publishCourses,
   }: {
     archive: File;
     formationId?: number;
-    teacherContactId?: number;
-    teacherModuleIndexes?: number[];
     publishCourses?: boolean;
   }) => {
     const formData = new FormData();
@@ -143,13 +139,6 @@ const mutations = {
       formData.append("formationId", formationId.toString());
     }
     formData.append("publishCourses", String(publishCourses ?? false));
-    if (teacherContactId !== undefined) {
-      formData.append("teacherContactId", teacherContactId.toString());
-      formData.append(
-        "teacherModuleIndexes",
-        JSON.stringify(teacherModuleIndexes ?? []),
-      );
-    }
     const res = await apiClient.post<{
       success: true;
       parcoursId: number;
@@ -282,6 +271,21 @@ const mutations = {
   },
   updateModule: async (data: FormData) => {
     const res = await apiClient.put("/modules/new-module/update/", data);
+    return res.data;
+  },
+  assignModuleContacts: async (data: {
+    parcoursId: number;
+    moduleIds: number[];
+    contactIds: number[];
+  }): Promise<{
+    success: true;
+    message: string;
+    assignmentsCreated: number;
+  }> => {
+    const res = await apiClient.patch(
+      `/modules/parcours/${data.parcoursId}/contacts`,
+      { moduleIds: data.moduleIds, contactIds: data.contactIds },
+    );
     return res.data;
   },
   updateModuleCalendarDates: async (data: {

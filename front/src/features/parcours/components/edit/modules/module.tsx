@@ -5,7 +5,15 @@ import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
 import Modal from "../../../../../components/UI/modal/modal";
-import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { AuthContext } from "../../../../../store/AuthProvider";
+import { isTeacherUser } from "../../../../../utils/helpers/user-role";
 
 type Props = {
   setModuleFormOpened: Dispatch<SetStateAction<boolean>>;
@@ -26,6 +34,7 @@ type Props = {
  * @returns JSX.Element - The complete module management interface
  */
 export default function ModuleComponent({ setModuleFormOpened }: Props) {
+  const { user } = useContext(AuthContext);
   const {
     currentContacts,
     currentSkills,
@@ -45,12 +54,12 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     id,
     isLoading,
     isSubmittingModule,
+    isAssigningContacts,
     lockedContactId,
     sourceModules,
     mode,
     moduleToDuplicate,
     moduleToDelete,
-    moduleToUpdate,
     modules,
     parcours,
     refForm,
@@ -59,6 +68,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     setFile,
     showDeleteModal,
     showForm,
+    handleAssignContacts,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
@@ -103,31 +113,43 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
         {/* Module grid display */}
         <ModuleGrid
           modules={modules}
-          selectedModuleId={moduleToUpdate ?? undefined}
+          parcoursContacts={parcours?.contacts ?? []}
+          isAssigningContacts={isAssigningContacts}
+          emptyMessage={
+            isTeacherUser(user) ? "Aucun module affecté" : "Aucun module trouvé"
+          }
           onUpdate={handleUpdateModule}
           onDelete={showDeleteModal}
+          onAssignContacts={handleAssignContacts}
         />
 
-        {/* Module creation form (conditional) */}
         {showForm && (
-          <ModuleForm
-            mode={mode}
-            refForm={refForm}
-            register={register}
-            errors={errors}
-            isLoading={isLoading}
-            isSubmitting={isSubmittingModule}
-            currentContacts={currentContacts ?? []}
-            lockedContactId={lockedContactId}
-            currentSkills={currentSkills ?? []}
-            contacts={parcours?.contacts ?? []}
-            skills={parcours?.bonusSkills ?? []}
-            onSubmit={submitFunction}
-            onCancel={handleCancelForm}
-            onSetFile={setFile}
-            setCurrentContacts={setCurrentContacts}
-            setCurrentSkills={setCurrentSkills}
-          />
+          <Modal
+            title={
+              mode === "create" ? "Créer un module" : "Modifier le module"
+            }
+            modalBoxStyle="w-11/12 max-w-6xl"
+            dialogAdditionalClass="z-20"
+          >
+            <ModuleForm
+              mode={mode}
+              refForm={refForm}
+              register={register}
+              errors={errors}
+              isLoading={isLoading}
+              isSubmitting={isSubmittingModule}
+              currentContacts={currentContacts ?? []}
+              lockedContactId={lockedContactId}
+              currentSkills={currentSkills ?? []}
+              contacts={parcours?.contacts ?? []}
+              skills={parcours?.bonusSkills ?? []}
+              onSubmit={submitFunction}
+              onCancel={handleCancelForm}
+              onSetFile={setFile}
+              setCurrentContacts={setCurrentContacts}
+              setCurrentSkills={setCurrentSkills}
+            />
+          </Modal>
         )}
       </div>
 

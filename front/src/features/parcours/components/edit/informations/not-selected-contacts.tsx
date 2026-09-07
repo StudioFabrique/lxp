@@ -95,21 +95,6 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                 />
               </div>
             </th>
-            <th
-              className="cursor-pointer"
-              onClick={() => {
-                sortData("role");
-              }}
-            >
-              <div className="flex items-center gap-x-2">
-                <p>Role</p>
-                <SortColumnIcon
-                  fieldSort={fieldSort}
-                  column="role"
-                  direction={direction}
-                />
-              </div>
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -130,7 +115,6 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                   />
                 </td>
                 <td>{getContactFullName(item)}</td>
-                <td>{item.role}</td>
               </tr>
             ))}
         </tbody>

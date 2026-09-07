@@ -14,11 +14,8 @@ const ContactItem: FC<{
   };
 
   return (
-    <div className="grid grid-cols-3 gap-2 text-xs items-center">
+    <div className="flex items-center justify-between gap-2 text-xs">
       <p className="capitalize">{getContactFullName(user)}</p>
-      <div className="w-full text-ellipsis whitespace-nowrap capitalize">
-        {user.role}
-      </div>
       {onRemoveUser ? (
         <div className="flex justify-end text-error" onClick={handleRemoveUser}>
           <svg

@@ -18,6 +18,8 @@ import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useUpdateParcours } from "../../../hooks/useUpdateParcours";
 import { AuthContext } from "../../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../../utils/helpers/user-role";
+import AssignContactsToModulesModal from "./assign-contacts-to-modules-modal";
+import { useAssignModuleContacts } from "../../../hooks/useAssignModuleContacts";
 
 type Props = {
   parcoursId: string;
@@ -30,6 +32,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const { data: parcours } = useParcoursQuery(numericParcoursId);
   const { mutateAsync: updateParcours } = useUpdateParcours(numericParcoursId);
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
+  const [contactsToAssign, setContactsToAssign] = useState<Contact[]>([]);
 
   const parcoursStartDate = parcours?.startDate ?? "";
   const parcoursEndDate = parcours?.endDate ?? "";
@@ -39,6 +42,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     updateParcoursContacts,
     updateParcoursTags,
   } = useInfosService(numericParcoursId);
+  const assignContactsMutation = useAssignModuleContacts(numericParcoursId);
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
     parcours?.virtualClass ?? "",
@@ -65,15 +69,38 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   );
 
   const handleUpdateContacts = useCallback(
-    (updatedContacts: Contact[]) => {
-      updateParcoursContacts(
+    async (updatedContacts: Contact[]) => {
+      const currentContactIds = new Set(
+        (parcours?.contacts ?? []).flatMap(({ id }) =>
+          typeof id === "number" ? [id] : [],
+        ),
+      );
+      const addedContacts = updatedContacts.filter(
+        ({ id }) => typeof id === "number" && !currentContactIds.has(id),
+      );
+      const success = await updateParcoursContacts(
         updatedContacts.flatMap((contact) =>
           contact.id === undefined ? [] : [contact.id],
         ),
       );
+      if (success && addedContacts.length > 0 && parcours?.modules.length) {
+        setContactsToAssign(addedContacts);
+      }
     },
-    [updateParcoursContacts],
+    [parcours?.contacts, parcours?.modules, updateParcoursContacts],
   );
+
+  const handleAssignContactsToModules = async (moduleIds: number[]) => {
+    const contactIds = contactsToAssign.flatMap(({ id }) =>
+      typeof id === "number" ? [id] : [],
+    );
+    try {
+      await assignContactsMutation.mutateAsync({ moduleIds, contactIds });
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   /**
    * met à jour la liste des tags associés au parcours dans la bdd
@@ -183,6 +210,19 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           </Wrapper>
         </div>
       </div>
+      {contactsToAssign.length > 0 && parcours?.modules.length ? (
+        <AssignContactsToModulesModal
+          contacts={contactsToAssign}
+          modules={parcours.modules.flatMap((module) =>
+            typeof module.id === "number"
+              ? [{ id: module.id, title: module.title }]
+              : [],
+          )}
+          isSubmitting={assignContactsMutation.isPending}
+          onClose={() => setContactsToAssign([])}
+          onSubmit={handleAssignContactsToModules}
+        />
+      ) : null}
     </div>
   );
 };

@@ -60,7 +60,7 @@ export default function ModuleToParcours({
         isDisabled={isDisabled}
       >
         {/* Composant qui affiche les contacts selectionnés */}
-        <InheritedTextList additionalProperty="role" />
+        <InheritedTextList />
         {/* Composant qui affiche les contacts qui ne sont pas selectionnés */}
         <NotSelectedContacts />
       </InheritedItems>
