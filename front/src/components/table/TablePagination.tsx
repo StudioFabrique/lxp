@@ -3,6 +3,17 @@ import DropdownSelector from "../../components/UI/dropdown-selector/dropdown-sel
 import { SolarAltArrowDownBold } from "../../../src/components/UI/svg/alt-arrow-icon";
 import iterateNumberToArray from "./iterate-number-to-array";
 
+const scrollToListTop = () => {
+  const scrollContainer = document.getElementById("main-scroll-container");
+
+  if (scrollContainer) {
+    scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 export type TablePaginationProps = {
   currentPage: number | null;
   maxPage: number | null;
@@ -23,6 +34,11 @@ const TablePagination = (props: TablePaginationProps) => {
   const isLastPage = props.currentPage === props.maxPage;
   const isSinglePage = props.maxPage === 1;
 
+  const changePage = (onChange: () => void) => {
+    onChange();
+    scrollToListTop();
+  };
+
   return (
     <div className="bg-primary text-primary-content w-full rounded-lg px-4 py-2">
       <div className="flex gap-4 flex-row items-center justify-between">
@@ -37,7 +53,7 @@ const TablePagination = (props: TablePaginationProps) => {
           {!isSinglePage && (
             <div className="join flex items-center justify-center">
               <button
-                onClick={props.onSetPreviousPage}
+                onClick={() => changePage(props.onSetPreviousPage)}
                 disabled={isFirstPage}
                 className="join-item btn btn-sm btn-ghost text-primary-content hover:bg-transparent disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page précédente"
@@ -46,14 +62,16 @@ const TablePagination = (props: TablePaginationProps) => {
               </button>
 
               <DropdownSelector
-                onSelect={(val) => props.onSetCurrentPage(Number(val))}
+                onSelect={(val) =>
+                  changePage(() => props.onSetCurrentPage(Number(val)))
+                }
                 valueList={pageValueArray}
               >
                 {props.currentPage} / {props.maxPage}
               </DropdownSelector>
 
               <button
-                onClick={props.onSetNextPage}
+                onClick={() => changePage(props.onSetNextPage)}
                 disabled={isLastPage}
                 className="join-item btn btn-sm btn-ghost text-primary-content hover:bg-transparent disabled:bg-transparent disabled:text-base-100/30"
                 aria-label="Page suivante"
@@ -65,7 +83,9 @@ const TablePagination = (props: TablePaginationProps) => {
           {/* Sélecteur d'éléments par page */}
           <div className="flex items-center justify-center gap-2">
             <DropdownSelector
-              onSelect={(val) => props.onSetItemsPerPage(Number(val))}
+              onSelect={(val) =>
+                changePage(() => props.onSetItemsPerPage(Number(val)))
+              }
               valueList={[5, 10, 15]}
             >
               <div className="flex items-center gap-1">

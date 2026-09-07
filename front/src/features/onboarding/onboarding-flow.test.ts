@@ -35,22 +35,24 @@ describe("resolveOnboardingFlow", () => {
     });
   });
 
-  it("démarre le formateur sur la création d'un module de son parcours", () => {
+  it("fait créer un tag au formateur avant le module de son parcours", () => {
     expect(resolveOnboardingFlow("admin", 2, assignedParcours)).toMatchObject({
       kind: "teacher",
       canStart: true,
-      firstStep: "admin-module-title:42",
+      firstStep: "admin-tag-entry:42",
     });
   });
 
-  it("guide l'administrateur de la création d'une formation à celle d'un parcours", () => {
+  it("fait créer un tag à l'administrateur avant sa formation", () => {
     expect(resolveOnboardingFlow("admin", 1, assignedParcours)).toMatchObject({
       kind: "administrator",
       canStart: true,
-      firstStep: "admin-formation-entry",
+      firstStep: "admin-tag-entry",
     });
     expect(resolveOnboardingFlow("admin", 1, []).canStart).toBe(true);
     expect(ADMINISTRATOR_ONBOARDING_STAGES).toEqual([
+      "admin-tag-entry",
+      "admin-tag-form",
       "admin-formation-entry",
       "admin-formation-fields",
       "admin-formation-save",
@@ -60,7 +62,10 @@ describe("resolveOnboardingFlow", () => {
   });
 
   it("limite le scénario formateur au module et à sa première activité", () => {
-    expect(TEACHER_ONBOARDING_STAGES[0]).toBe("admin-module-title");
+    expect(TEACHER_ONBOARDING_STAGES.slice(0, 2)).toEqual([
+      "admin-tag-entry",
+      "admin-tag-form",
+    ]);
     expect(
       TEACHER_ONBOARDING_STAGES[TEACHER_ONBOARDING_STAGES.length - 1],
     ).toBe("admin-complete");

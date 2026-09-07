@@ -70,7 +70,10 @@ const TagsHomeAdding = ({
   };
 
   return (
-    <>
+    <div
+      data-onboarding="tag-form"
+      data-onboarding-valid={canSubmit ? "true" : "false"}
+    >
       <AddTag
         error={tagError}
         tag={tag}
@@ -90,7 +93,7 @@ const TagsHomeAdding = ({
         type="button"
       />
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
-    </>
+    </div>
   );
 };
 

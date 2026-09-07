@@ -24,6 +24,7 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import { tagsPageTourSteps } from "../../../components/headers/page-tour-steps";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 
 const TagsHome = () => {
   const navigate = useNavigate();
@@ -66,9 +67,14 @@ const TagsHome = () => {
     isSubmitting,
   } = useTagActions(refreshAndClearSelection);
 
-  const handleDismissModal = () => {
+  const closeModal = () => {
     setCanSubmitTags(false);
     navigate(".", { replace: true });
+  };
+
+  const handleDismissModal = () => {
+    emitOnboardingEvent({ type: "tag_modal_cancelled" });
+    closeModal();
   };
 
   const tagToDelete = useMemo(
@@ -128,7 +134,7 @@ const TagsHome = () => {
               }
               onSubmitTag={(id, name) => {
                 onEditTag(id, name);
-                handleDismissModal();
+                closeModal();
               }}
             />
           ) : (
@@ -139,7 +145,8 @@ const TagsHome = () => {
                   await onCreateTags(
                     tags.map((t) => ({ name: t.name, color: t.color })),
                   );
-                  handleDismissModal();
+                  emitOnboardingEvent({ type: "tag_created" });
+                  closeModal();
                 } catch {
                   // La mutation affiche l'erreur et garde la modale ouverte.
                 }
@@ -155,7 +162,12 @@ const TagsHome = () => {
         tourSteps={tagsPageTourSteps}
       >
         <PermissionGuard object="tag" action="write">
-          <Link className="btn btn-primary btn-soft" to="?openModal=true">
+          <Link
+            className="btn btn-primary btn-soft"
+            to="?openModal=true"
+            data-onboarding="tag-create-entry"
+            onClick={() => emitOnboardingEvent({ type: "tag_entry_clicked" })}
+          >
             <PlusCircle className="mr-2 h-5 w-5" />
             Créer un nouveau tag
           </Link>
