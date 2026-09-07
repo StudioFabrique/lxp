@@ -1,11 +1,21 @@
-import { type Request, type Response } from "express";
-import { searchRoles } from "../../models/permission/roles.ts";
+import { type Response } from "express";
+import {
+  getActorRank,
+  searchRoles,
+} from "../../models/permission/roles.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-export default async function httpGetSearchRoles(req: Request, res: Response) {
+export default async function httpGetSearchRoles(
+  req: CustomRequest,
+  res: Response,
+) {
   try {
     return res.status(200).json({
       message: "les rôles ont bien été récupérés",
-      data: await searchRoles(req.params.searchValue),
+      data: await searchRoles(
+        req.params.searchValue,
+        getActorRank(req.auth!.userRoles),
+      ),
     });
   } catch {
     return res.status(500).json({ message: "Problème serveur" });

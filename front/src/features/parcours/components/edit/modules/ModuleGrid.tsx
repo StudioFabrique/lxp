@@ -1,16 +1,8 @@
 import { useState } from "react";
-import {
-  Pencil,
-  SquareArrowRightEnter,
-  Trash2,
-  UserPlus,
-  UserRound,
-} from "lucide-react";
-import { Link } from "react-router";
+import { Pencil, Trash2, UserPlus, UserRound } from "lucide-react";
 
 import EmptyStatePlaceholder from "../../../../../components/UI/empty-state-placeholder";
 import HierarchicalListCard from "../../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
-import { HierarchicalListItemActions } from "../../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import type Contact from "../../../../../utils/interfaces/contact";
@@ -39,8 +31,9 @@ export default function ModuleGrid({
   onDelete,
   onAssignContacts,
 }: ModuleGridProps) {
-  const [moduleForContacts, setModuleForContacts] =
-    useState<ModuleData | null>(null);
+  const [moduleForContacts, setModuleForContacts] = useState<ModuleData | null>(
+    null,
+  );
 
   if (modules.length === 0) {
     return <EmptyStatePlaceholder title={emptyMessage} />;
@@ -60,40 +53,39 @@ export default function ModuleGrid({
             }
             action={
               <div className="flex items-center gap-1">
-                <PermissionGuard action="read" object="module">
-                  <Link
+                <PermissionGuard action="update" object="module">
+                  <button
+                    type="button"
                     className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
-                    data-tip="Accéder au module"
-                    to={`/admin/parcours/module/${module.id}`}
-                    aria-label={`Accéder au module ${module.title}`}
+                    data-tip="Affecter des ressources pédagogiques"
+                    aria-label={`Affecter des ressources pédagogiques au module ${module.title}`}
+                    onClick={() => setModuleForContacts(module)}
                   >
-                    <SquareArrowRightEnter className="size-[1.2em]" />
-                  </Link>
+                    <UserPlus className="size-[1.2em]" />
+                  </button>
                 </PermissionGuard>
-                <HierarchicalListItemActions
-                  title={module.title}
-                  actions={[
-                    {
-                      label: "Affecter des ressources pédagogiques",
-                      icon: <UserPlus />,
-                      onSelect: () => setModuleForContacts(module),
-                      permission: { action: "update", object: "module" },
-                    },
-                    {
-                      label: "Modifier le module",
-                      icon: <Pencil />,
-                      onSelect: () => onUpdate(module),
-                      permission: { action: "update", object: "module" },
-                    },
-                    {
-                      label: "Supprimer le module",
-                      icon: <Trash2 />,
-                      onSelect: () => onDelete(module.id),
-                      destructive: true,
-                      permission: { action: "delete", object: "module" },
-                    },
-                  ]}
-                />
+                <PermissionGuard action="update" object="module">
+                  <button
+                    type="button"
+                    className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                    data-tip="Modifier le module"
+                    aria-label={`Modifier le module ${module.title}`}
+                    onClick={() => onUpdate(module)}
+                  >
+                    <Pencil className="size-[1.2em]" />
+                  </button>
+                </PermissionGuard>
+                <PermissionGuard action="delete" object="module">
+                  <button
+                    type="button"
+                    className="btn btn-square btn-sm btn-ghost text-error tooltip tooltip-left"
+                    data-tip="Supprimer le module"
+                    aria-label={`Supprimer le module ${module.title}`}
+                    onClick={() => onDelete(module.id)}
+                  >
+                    <Trash2 className="size-[1.2em]" />
+                  </button>
+                </PermissionGuard>
               </div>
             }
             items={module.contacts.map((contact) => ({
@@ -103,9 +95,7 @@ export default function ModuleGrid({
             }))}
             maxItemsShown={3}
             emptyMessage="Aucune ressource pédagogique affectée"
-            moreItemsLabel={(count) =>
-              `Afficher plus de ressources (${count})`
-            }
+            moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
             overflowTitle={`Autres ressources de ${module.title}`}
           />
         ))}

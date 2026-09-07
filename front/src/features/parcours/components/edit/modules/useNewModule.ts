@@ -238,6 +238,7 @@ const useNewModule = () => {
       moduleId: module.id,
       title: module.title,
       description: module.description,
+      duration: module.duration ?? undefined,
       quizInstructions: module.quizInstructions,
     });
     const drawer = document.getElementById("duplicate_module_drawer");

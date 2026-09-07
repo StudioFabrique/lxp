@@ -1,11 +1,21 @@
-import { type Request, type Response } from "express";
-import { getRoleResources } from "../../models/permission/roles.ts";
+import { type Response } from "express";
+import {
+  getActorRank,
+  getRoleResources,
+} from "../../models/permission/roles.ts";
 import { serverIssue } from "../../utils/constantes.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
-export default async function httpGetResourcesByRole(req: Request, res: Response) {
+export default async function httpGetResourcesByRole(
+  req: CustomRequest,
+  res: Response,
+) {
   try {
     return res.status(200).json({
-      data: await getRoleResources({ identifier: "role", role: req.params.role }),
+      data: await getRoleResources(
+        { identifier: "role", role: req.params.role },
+        getActorRank(req.auth!.userRoles),
+      ),
     });
   } catch (error: any) {
     return res

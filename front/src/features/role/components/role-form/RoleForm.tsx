@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { regexGeneric } from "../../../../config/constantes";
 import { setInputStyle } from "../../helpers/formClasses";
 import { useMutation } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import RoleTypeSelector from "./RoleTypeSelector";
 import type Role from "../../../../../src/utils/interfaces/role";
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { AuthContext } from "../../../../store/AuthProvider";
 
 type RoleFormProps = {
   role?: Role;
@@ -15,9 +16,17 @@ type RoleFormProps = {
 };
 
 const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
+  const { user } = useContext(AuthContext);
+  const actorRank = Math.min(
+    ...(user?.roles.map(({ rank }) => rank) ?? []),
+    4,
+  );
+  const defaultRoleType = Math.min(actorRank + 1, 4);
   const [name, setName] = useState(role?.role ?? "");
   const [label, setLabel] = useState(role?.label ?? "");
-  const [currentRoleType, setCurrentRoleType] = useState(role?.rank ?? 1);
+  const [currentRoleType, setCurrentRoleType] = useState(
+    role?.rank ?? defaultRoleType,
+  );
 
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const nameHasError = name.length > 0 && !regexGeneric.test(name);
@@ -30,7 +39,7 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
       toast.success(data.message);
       setName("");
       setLabel("");
-      setCurrentRoleType(1);
+      setCurrentRoleType(defaultRoleType);
       onRoleCreated?.();
     },
   });
@@ -149,6 +158,7 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
                   onSetCurrentRoleType={setCurrentRoleType}
                   editMode={Boolean(role)}
                   disabled={!!(role && role.protection >= 1)}
+                  minimumRank={actorRank}
                 />
               </div>
               <div className="w-full">

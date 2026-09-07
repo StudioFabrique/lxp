@@ -17,6 +17,7 @@ export type SourceModule = {
   id: number;
   title: string;
   description: string;
+  duration: number | null;
   quizInstructions?: string;
   thumb: string | null;
   contacts: Contact[];

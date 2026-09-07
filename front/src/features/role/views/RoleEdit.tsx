@@ -7,6 +7,7 @@ import RoleForm from "../components/role-form/RoleForm";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import Loader from "../../../../src/components/loaders/Loader";
+import ElementNotFound from "../../../components/UI/element-not-found";
 import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { roleEditPageTourSteps } from "../../../components/headers/page-tour-steps";
 
@@ -25,12 +26,16 @@ const RoleEdit = () => {
     remainingResources,
     role,
     isLoading,
+    isError,
     onAddPermission,
     onDeletePermission,
     onResetPermissions,
   } = useRoleEdit(id || "");
 
-  if (isLoading || !role) return <Loader />;
+  if (isLoading) return <Loader />;
+  if (isError || !role) {
+    return <ElementNotFound message="Ce rôle n'est pas accessible." />;
+  }
 
   return (
     <div className="w-full flex flex-col gap-6">

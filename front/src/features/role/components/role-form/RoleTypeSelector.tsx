@@ -12,13 +12,18 @@ const RoleTypeSelector = ({
   onSetCurrentRoleType,
   editMode,
   disabled,
+  minimumRank,
 }: {
   currentRoleType: number;
   onSetCurrentRoleType: Dispatch<SetStateAction<number>>;
   editMode?: boolean;
   disabled?: boolean;
+  minimumRank: number;
 }) => {
   const [showAlertRoleType, setShowAlertRoleType] = useState(false);
+  const availableRoleTypes = roleTypes.filter(
+    ({ rank }) => rank > minimumRank,
+  );
 
   return (
     <div className="flex flex-col gap-1 relative">
@@ -28,7 +33,7 @@ const RoleTypeSelector = ({
         id="menu"
         value={currentRoleType}
         onChange={(e) => {
-          const found = roleTypes.find(
+          const found = availableRoleTypes.find(
             (rt) => e.currentTarget.value === rt.rank.toString(),
           );
           onSetCurrentRoleType(() => found?.rank ?? currentRoleType);
@@ -37,7 +42,7 @@ const RoleTypeSelector = ({
         onBlur={() => setShowAlertRoleType(false)}
         disabled={disabled}
       >
-        {roleTypes.map((item) => (
+        {availableRoleTypes.map((item) => (
           <option key={item.rank} value={item.rank}>
             {item.name}
           </option>
