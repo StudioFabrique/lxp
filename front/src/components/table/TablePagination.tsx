@@ -40,7 +40,7 @@ const TablePagination = (props: TablePaginationProps) => {
   };
 
   return (
-    <div className="bg-primary text-primary-content w-full rounded-lg px-4 py-2">
+    <div className="bg-secondary text-secondary-content w-full rounded-lg px-4 py-2">
       <div className="flex gap-4 flex-row items-center justify-between">
         {/* Section Gauche : Texte informatif */}
         <div className="text-center md:text-left">

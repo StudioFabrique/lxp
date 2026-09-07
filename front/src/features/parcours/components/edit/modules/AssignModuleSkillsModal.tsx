@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import Modal from "../../../../../components/UI/modal/modal";
+import TrophyIcon from "../../../../../components/UI/svg/trophy-icon.component";
 import type Skill from "../../../../../utils/interfaces/skill";
 import type { ModuleData } from "../../../interfaces/new-module";
 
@@ -71,6 +72,19 @@ export default function AssignModuleSkillsModal({
                   checked={selectedSkillIds.includes(skill.id)}
                   onChange={() => toggleSkill(skill.id)}
                 />
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary/10 p-1.5">
+                  {skill.badge ? (
+                    <img
+                      src={skill.badge}
+                      alt=""
+                      className="size-full object-contain"
+                    />
+                  ) : (
+                    <span className="size-6 text-primary" aria-hidden="true">
+                      <TrophyIcon />
+                    </span>
+                  )}
+                </span>
                 <span className="text-sm first-letter:uppercase">
                   {skill.description}
                 </span>

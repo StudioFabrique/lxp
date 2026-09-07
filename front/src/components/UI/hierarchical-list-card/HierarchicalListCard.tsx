@@ -16,6 +16,7 @@ type HierarchicalListCardProps = {
   description?: ReactNode;
   action?: ReactNode;
   headerBackgroundImage?: string;
+  headerClassName?: string;
   items?: HierarchicalListCardItem[];
   maxItemsShown?: number;
   showMore?: boolean;
@@ -23,7 +24,9 @@ type HierarchicalListCardProps = {
   moreItemsLabel?: (remainingItemsCount: number) => string;
   overflowTitle?: string;
   footer?: ReactNode;
+  footerClassName?: string;
   footerAtBottom?: boolean;
+  hideLastItemDivider?: boolean;
   placeholder?: ReactNode;
   fullWidth?: boolean;
 };
@@ -36,6 +39,7 @@ const HierarchicalListCard = ({
   description,
   action,
   headerBackgroundImage,
+  headerClassName,
   items = [],
   maxItemsShown = 4,
   showMore = true,
@@ -44,7 +48,9 @@ const HierarchicalListCard = ({
     `Afficher plus (${remainingItemsCount})`,
   overflowTitle = title ? `Autres éléments de ${title}` : "Autres éléments",
   footer,
+  footerClassName,
   footerAtBottom = false,
+  hideLastItemDivider = false,
   placeholder,
   fullWidth = false,
 }: HierarchicalListCardProps) => {
@@ -73,10 +79,14 @@ const HierarchicalListCard = ({
           {hasHeader ? (
             <>
               <li
-                className={cn("p-4 pb-3", {
-                  "flex min-h-32 items-end bg-cover bg-center text-white":
-                    Boolean(headerBackgroundImage),
-                })}
+                className={cn(
+                  "p-4 pb-3",
+                  {
+                    "flex min-h-32 items-end bg-cover bg-center text-white":
+                      Boolean(headerBackgroundImage),
+                  },
+                  headerClassName,
+                )}
                 style={
                   headerBackgroundImage
                     ? {
@@ -117,11 +127,14 @@ const HierarchicalListCard = ({
                 </div>
               </li>
 
-              {visibleItems.map((item) => (
+              {visibleItems.map((item, index) => (
                 <HierarchicalListRow
                   key={item.id}
                   item={item}
                   dismissOverflow={() => {}}
+                  hideDivider={
+                    hideLastItemDivider && index === visibleItems.length - 1
+                  }
                 />
               ))}
 
@@ -145,11 +158,15 @@ const HierarchicalListCard = ({
 
               {footer ? (
                 <li
-                  className={cn("flex flex-col items-center gap-2 py-5", {
-                    "mt-auto": items.length > 0 || footerAtBottom,
-                    "flex-1 justify-center":
-                      items.length === 0 && !footerAtBottom,
-                  })}
+                  className={cn(
+                    "flex flex-col items-center gap-2 py-5",
+                    {
+                      "mt-auto": items.length > 0 || footerAtBottom,
+                      "flex-1 justify-center":
+                        items.length === 0 && !footerAtBottom,
+                    },
+                    footerClassName,
+                  )}
                 >
                   {footer}
                 </li>

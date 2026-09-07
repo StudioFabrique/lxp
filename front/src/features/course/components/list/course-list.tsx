@@ -59,8 +59,18 @@ export default function CourseList({
       course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
     );
   }, [coursesList, filter]);
+  const sortedCourses = useMemo(
+    () =>
+      [...filteredCourses].sort((firstCourse, secondCourse) =>
+        firstCourse.title.localeCompare(secondCourse.title, "fr", {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      ),
+    [filteredCourses],
+  );
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(filteredCourses, "title", 15, "id", "sidebar-courses");
+    useEagerLoadingList(sortedCourses, "title", 15, "id", "sidebar-courses");
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
   const handleSearch = (field: string, value: string) => {

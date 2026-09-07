@@ -61,11 +61,13 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
     moduleToDelete,
     modules,
     parcours,
+    existingModuleImage,
     refForm,
     showDeleteModal,
     showForm,
     handleAssignContacts,
     handleAssignSkills,
+    setModuleImageFile,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
@@ -133,10 +135,11 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
                   ? "Ajouter un module existant"
                   : "Modifier le module"
             }
-            modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto p-5 sm:p-7"
+            modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto px-5 pt-5 pb-0 sm:px-7 sm:pt-7"
             dialogAdditionalClass="z-[70]"
           >
             <ModuleForm
+              mode={mode}
               refForm={refForm}
               register={register}
               errors={errors}
@@ -144,6 +147,8 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
               duplicatedSkills={
                 moduleToDuplicate ? (currentSkills ?? []) : undefined
               }
+              existingImage={existingModuleImage}
+              onSetFile={setModuleImageFile}
               onSubmit={submitFunction}
               onCancel={handleCancelForm}
             />

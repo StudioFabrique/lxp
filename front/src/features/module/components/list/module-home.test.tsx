@@ -34,6 +34,7 @@ vi.mock("./module-header", () => ({
 const module: ModuleListItem = {
   id: 1,
   title: "Module principal",
+  thumb: "data:image/png;base64,module-image",
   parcoursId: 2,
   parcours: "Parcours associé",
   formation: "Formation associée",
@@ -92,11 +93,14 @@ describe("ModuleHomeList", () => {
     );
 
     expect(markup).toContain("Module principal");
+    expect(markup).toContain("module-image");
+    expect(markup).toContain("min-h-24");
     expect(markup).toContain("Premier cours");
     expect(markup).toContain("Deuxième cours");
     expect(markup).toContain("/admin/parcours/module/1");
     expect(markup).toContain("Modules : 1");
     expect(markup).toContain("bg-primary text-primary-content");
+    expect(markup).toContain("bg-base-100/90");
   });
 
   it("indique au formateur qu'aucun module ne lui est affecté", () => {

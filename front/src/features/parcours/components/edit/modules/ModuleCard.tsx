@@ -42,6 +42,7 @@ export default function ModuleCard({
         headerBackgroundImage={
           normalizeImageSource(module.thumb) ?? defaultModuleImage
         }
+        headerClassName="min-h-24"
         description={
           module.duration ? `${module.duration} heure(s)` : undefined
         }
@@ -56,6 +57,8 @@ export default function ModuleCard({
         moreItemsLabel={(count) => `Afficher plus de ressources (${count})`}
         overflowTitle={`Autres ressources de ${module.title}`}
         footerAtBottom
+        footerClassName="py-2"
+        hideLastItemDivider
         footer={
           <div className="flex w-full flex-col gap-3 px-4">
             {onAssignContacts ? (

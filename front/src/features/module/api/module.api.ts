@@ -4,6 +4,7 @@ import { queryOptions } from "@tanstack/react-query";
 export type ModuleListItem = {
   id: number;
   title: string;
+  thumb: string | null;
   parcoursId: number;
   parcours: string;
   formation: string;

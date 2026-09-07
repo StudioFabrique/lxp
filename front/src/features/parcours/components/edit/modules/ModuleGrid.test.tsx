@@ -66,6 +66,9 @@ describe("ModuleGrid", () => {
     expect(markup).toContain("skill-badge");
     expect(markup).toContain('id="parcours-module-1"');
     expect(markup).toContain('data-highlighted="true"');
+    expect(markup).toContain("min-h-24");
+    expect(markup).toContain("py-2");
+    expect(markup).toContain("after:hidden");
 
     const contactPosition = markup.indexOf("Ada Lovelace");
     const contactButtonPosition = markup.indexOf(

@@ -96,6 +96,23 @@ describe("CourseList", () => {
     expect(markup).toContain("min-h-52");
   });
 
+  it("trie les cours par nom", () => {
+    const courseZ = { ...course, id: 8, title: "Zoologie" };
+    const courseA = { ...course, id: 9, title: "Algorithmique" };
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList
+          coursesList={[courseZ, courseA]}
+          onRefreshCourses={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup.indexOf("Algorithmique")).toBeLessThan(
+      markup.indexOf("Zoologie"),
+    );
+  });
+
   it("affiche au maximum trois leçons dans une carte", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>

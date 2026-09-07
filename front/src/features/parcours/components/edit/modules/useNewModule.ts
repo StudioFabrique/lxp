@@ -61,6 +61,7 @@ const useNewModule = () => {
   const assignSkillsMutation = useAssignModuleSkills(Number(id));
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
+  const [moduleImageFile, setModuleImageFile] = useState<File | null>(null);
   const isModuleSubmissionRunning = useRef(false);
   const [error, setError] = useState<string>("");
 
@@ -86,6 +87,12 @@ const useNewModule = () => {
     Number.isInteger(requestedModuleId) &&
     state.modules.some((module) => module.id === requestedModuleId)
       ? requestedModuleId
+      : null;
+  const existingModuleImage = state.moduleToDuplicate
+    ? state.moduleToDuplicate.thumb
+    : state.moduleToUpdate !== null
+      ? state.modules.find((module) => module.id === state.moduleToUpdate)
+          ?.thumb
       : null;
 
   const highlightModule = (moduleId: number) => {
@@ -146,6 +153,7 @@ const useNewModule = () => {
       };
 
       formData.append("module", JSON.stringify(moduleData));
+      if (moduleImageFile) formData.append("image", moduleImageFile);
 
       try {
         const data = await parcoursApi.mutations.createModule(formData);
@@ -165,6 +173,7 @@ const useNewModule = () => {
           }),
         ]);
         highlightModule(data.data.id);
+        setModuleImageFile(null);
       } catch (error) {
         toast.error(
           getApiErrorMessage(error, "Erreur lors de la création du module"),
@@ -174,12 +183,14 @@ const useNewModule = () => {
   };
 
   const handleCancelForm = () => {
+    setModuleImageFile(null);
     reset(emptyModuleFormValues);
     dispatch({ type: "CANCEL_FORM" });
     scrollToTop();
   };
 
   const handleCreateNewModule = useCallback(() => {
+    setModuleImageFile(null);
     reset(emptyModuleFormValues);
     dispatch({
       type: "START_CREATE",
@@ -246,6 +257,7 @@ const useNewModule = () => {
   };
 
   const handleCopyModule = (module: SourceModule) => {
+    setModuleImageFile(null);
     const sourceSkillDescriptions = new Set(
       module.bonusSkills.map((skill) => skill.description.trim().toLowerCase()),
     );
@@ -274,6 +286,7 @@ const useNewModule = () => {
   };
 
   const handleUpdateModule = useCallback((moduleToUpdate: ModuleData) => {
+    setModuleImageFile(null);
     dispatch({
       type: "UPDATE_MODULE",
       payload: {
@@ -362,6 +375,7 @@ const useNewModule = () => {
         };
         const formData = new FormData();
         formData.append("module", JSON.stringify(updatedModule));
+        if (moduleImageFile) formData.append("image", moduleImageFile);
         const data = await parcoursApi.mutations.updateModule(formData);
         if (data.success) {
           dispatch({
@@ -380,6 +394,7 @@ const useNewModule = () => {
           ]);
           reset();
           highlightModule(data.response.id);
+          setModuleImageFile(null);
         }
       } catch (error) {
         toast.error(
@@ -494,7 +509,9 @@ const useNewModule = () => {
     isAssigningContacts: assignContactsMutation.isPending,
     isAssigningSkills: assignSkillsMutation.isPending,
     highlightedModuleId,
+    existingModuleImage,
     refForm,
+    setModuleImageFile,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,
     handleCreateNewModule,
