@@ -77,7 +77,7 @@ export default function RegisterHome() {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn btn-primary w-full"
+              className="mt-2 btn btn-primary w-full"
             >
               {isLoading ? (
                 <span className="loading loading-spinner loading-sm"></span>
