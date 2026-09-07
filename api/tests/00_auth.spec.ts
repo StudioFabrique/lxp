@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { compare } from "bcrypt";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import app from "../src/app.ts";
 import User from "../src/utils/interfaces/db/user.ts";
@@ -409,6 +410,88 @@ describe("HTTP auth", () => {
         if (verificationToken) {
           await BlackListedToken.deleteOne({ token: verificationToken });
         }
+        await User.updateMany(
+          { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
+          { $set: { isActive: true } },
+        );
+      }
+    });
+
+    test("une nouvelle clé remplace le mot de passe du root encore inactif", async () => {
+      const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select(
+        "_id",
+      );
+      const activeAdmins = await User.find({
+        roles: { $in: privilegedRoles.map(({ _id }) => _id) },
+        isActive: true,
+      }).select("_id");
+      const email = "root-init-reprise@test.fr";
+      const firstToken = jwt.sign(
+        { purpose: "first-admin" },
+        env.REGISTER_SECRET,
+        { expiresIn: "5m" },
+      );
+      const replacementToken = jwt.sign(
+        { purpose: "first-admin", nonce: "replacement" },
+        env.REGISTER_SECRET,
+        { expiresIn: "5m" },
+      );
+      let rootUserId: string | undefined;
+
+      await User.updateMany(
+        { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
+        { $set: { isActive: false } },
+      );
+
+      try {
+        rootUserId = await createFirstAdmin({
+          token: firstToken,
+          email,
+          firstname: "Ancien",
+          lastname: "Compte",
+          password: "OldRootPassword@123",
+        });
+
+        const replacedUserId = await createFirstAdmin({
+          token: replacementToken,
+          email: email.toUpperCase(),
+          firstname: "Nouveau",
+          lastname: "Root",
+          password: "NewRootPassword@456",
+        });
+
+        const rootUser = await User.findById(rootUserId);
+        expect(replacedUserId).toBe(rootUserId);
+        expect(await User.countDocuments({ email })).toBe(1);
+        expect(rootUser).toEqual(
+          expect.objectContaining({
+            email,
+            firstname: "nouveau",
+            lastname: "root",
+            isActive: false,
+            emailVerified: false,
+          }),
+        );
+        expect(
+          await compare("NewRootPassword@456", rootUser!.password),
+        ).toBe(true);
+        expect(
+          await compare("OldRootPassword@123", rootUser!.password),
+        ).toBe(false);
+        expect(
+          await BlackListedToken.exists({ token: replacementToken }),
+        ).not.toBeNull();
+        expect(
+          await prisma.admin.count({ where: { idMdb: rootUserId } }),
+        ).toBe(1);
+      } finally {
+        if (rootUserId) {
+          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await User.deleteOne({ _id: rootUserId });
+        }
+        await BlackListedToken.deleteMany({
+          token: { $in: [firstToken, replacementToken] },
+        });
         await User.updateMany(
           { _id: { $in: activeAdmins.map(({ _id }) => _id) } },
           { $set: { isActive: true } },

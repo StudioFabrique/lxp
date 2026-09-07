@@ -78,7 +78,7 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <div className="my-auto flex flex-col gap-10 text-center">
+      <div className="my-auto flex flex-col gap-4 text-center">
         <h1 className="text-xl font-bold text-base-content">
           Activez votre compte root
         </h1>
