@@ -283,15 +283,15 @@ GitHub Actions demande trois variables dans l'environnement GitHub
 
 ### Répartition dans Infisical
 
-| Cible         | Dossiers lus                                                              |
-| ------------- | ------------------------------------------------------------------------- |
-| Développement | `/ci`, `/runtime`, `/mailer` et `/backup`                                 |
-| Production    | `/<instance>/ci`, `/<instance>/runtime`, `/mailer` et `/<instance>/backup` |
+| Cible         | Dossiers lus                                                                          |
+| ------------- | ------------------------------------------------------------------------------------- |
+| Développement | `/ci`, `/runtime`, `/mailer` et `/backup`                                             |
+| Production    | `/<instance>/ci`, `/<instance>/runtime`, `/<instance>/mailer` et `/<instance>/backup` |
 
 - le dossier `ci` contient `REGISTRY_USER`, `REGISTRY_TOKEN`, éventuellement
   `REGISTRY_URL`, et l'accès SSH de l'instance en production ;
 - `runtime` contient la configuration de l'application ;
-- `/mailer` contient les six variables `MAILER_*`, partagées avec Jenkins ;
+- `mailer` contient les six variables `MAILER_*` de la cible ;
 - `backup` contient les variables de sauvegarde.
 
 Il n'existe plus de `/ci` global en production. Chaque instance est placée

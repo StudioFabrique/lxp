@@ -69,10 +69,7 @@ const AdminSignInForm = ({
       onSuccess();
     } catch (err: unknown) {
       setError(
-        getApiErrorMessage(
-          err,
-          "Une erreur est survenue. Veuillez réessayer.",
-        ),
+        getApiErrorMessage(err, "Une erreur est survenue. Veuillez réessayer."),
       );
     } finally {
       setIsLoading(false);
@@ -81,13 +78,13 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <div className="my-auto flex flex-col gap-4 text-center">
+      <div className="my-auto flex flex-col gap-10 text-center">
         <h1 className="text-xl font-bold text-base-content">
           Activez votre compte root
         </h1>
         <p className="text-sm text-base-content/70">
-          Un lien d'activation a été envoyé à {activationEmail}. Consultez
-          votre boîte mail pour terminer la création du compte.
+          Un lien d'activation a été envoyé à {activationEmail}. Consultez votre
+          boîte mail pour terminer la création du compte.
         </p>
         <p className="text-xs text-base-content/50">
           Le compte restera inaccessible tant que cette adresse n'aura pas été
@@ -178,10 +175,10 @@ const AdminSignInForm = ({
               <span className="loading loading-spinner loading-sm"></span>
               Création...
             </>
+          ) : mode === "additional" ? (
+            "Créer le compte root"
           ) : (
-            mode === "additional"
-              ? "Créer le compte root"
-              : "Créer l'administrateur"
+            "Créer l'administrateur"
           )}
         </button>
       </form>

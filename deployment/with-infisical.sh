@@ -36,9 +36,9 @@ infisical_path_prefix="${INFISICAL_PATH_PREFIX:-}"
 secret_paths="${INFISICAL_SECRET_PATHS:-/ci /runtime /mailer}"
 
 # En développement, les dossiers restent à la racine. En prod et pre-prod,
-# chaque instance est un dossier de premier niveau et possède toute sa
-# configuration, y compris les accès au registre : `/<instance>/ci`,
-# `/<instance>/runtime` et `/<instance>/backup`. Seul `/mailer` reste partagé.
+# chaque instance porte ses dossiers `ci`, `runtime` et `backup`. Le dossier
+# `mailer` est lui aussi propre à l'instance en prod, mais reste global dans les
+# autres environnements.
 ci_path="/ci"
 runtime_path="/runtime"
 backup_path="/backup"
@@ -67,6 +67,9 @@ case "$INFISICAL_ENVIRONMENT" in
         ci_path="${infisical_path_prefix}/ci"
         runtime_path="${infisical_path_prefix}/runtime"
         backup_path="${infisical_path_prefix}/backup"
+        if [ "$INFISICAL_ENVIRONMENT" = "prod" ]; then
+            mailer_path="${infisical_path_prefix}/mailer"
+        fi
         ;;
     *) die "INFISICAL_ENVIRONMENT doit valoir dev, pre-prod ou prod." ;;
 esac
