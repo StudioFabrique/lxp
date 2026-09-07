@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { onboardingApi } from "../api/onboarding.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import AuthPageWrapper from "../components/AuthPageWrapper";
 
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
@@ -38,11 +39,8 @@ const ConfirmEmail = () => {
   }, [token]);
 
   return (
-    <div className="my-auto grid min-h-72 w-full shrink-0 grid-rows-[auto_1fr_auto] text-center">
-      <h1 className="text-xl font-bold text-base-content">
-        Validation de l'adresse email
-      </h1>
-      <div className="flex flex-col self-center gap-4">
+    <AuthPageWrapper title="Validation de l'adresse email">
+      <div className="flex min-h-40 flex-col justify-center gap-4 text-center">
         {state === "loading" && (
           <span className="loading loading-spinner loading-md mx-auto" />
         )}
@@ -60,7 +58,7 @@ const ConfirmEmail = () => {
           Continuer
         </Link>
       )}
-    </div>
+    </AuthPageWrapper>
   );
 };
 

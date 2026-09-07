@@ -12,6 +12,7 @@ import { accountApi } from "../api/account.api";
 import PasswordUpdateError from "../components/PasswordUpdateError";
 import PasswordUpdateSuccess from "../components/PasswordUpdateSuccess";
 import PasswordForm from "../components/PasswordForm";
+import AuthPageWrapper from "../components/AuthPageWrapper";
 
 type RegisterValues = {
   password: string;
@@ -58,9 +59,7 @@ export default function RegisterHome() {
   };
 
   return (
-    <main className="flex flex-col justify-between h-72 gap-y-8 p-2">
-      <h1 className="text-3xl text-center font-bold">Activation du compte</h1>
-
+    <AuthPageWrapper title="Activation du compte">
       {error.length > 0 ? (
         <PasswordUpdateError error={error} url="/" />
       ) : success ? (
@@ -89,6 +88,6 @@ export default function RegisterHome() {
           </form>
         </section>
       )}
-    </main>
+    </AuthPageWrapper>
   );
 }

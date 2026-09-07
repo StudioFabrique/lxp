@@ -4,6 +4,7 @@ import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import AuthPageWrapper from "./AuthPageWrapper";
 
 type Props = {
   token: string;
@@ -78,26 +79,23 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <div className="my-auto grid min-h-72 w-full shrink-0 grid-rows-[auto_1fr_auto] text-center">
-        <h1 className="text-xl font-bold text-base-content">
-          Activez votre compte root
-        </h1>
-        <p className="self-center text-sm text-base-content/70">
+      <AuthPageWrapper title="Activez votre compte root">
+        <p className="my-auto min-h-40 content-center text-center text-sm text-base-content/70">
           Un lien d'activation a été envoyé à {activationEmail}. Consultez votre
           boîte mail pour terminer la création du compte.
         </p>
-      </div>
+      </AuthPageWrapper>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5 my-auto">
-      <h1 className="font-bold text-xl text-base-content text-center">
-        {mode === "additional"
+    <AuthPageWrapper
+      title={
+        mode === "additional"
           ? "Créer votre compte root"
-          : "Créer votre administrateur"}
-      </h1>
-
+          : "Créer votre administrateur"
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         {/* Email */}
         <div className="form-control w-full">
@@ -178,7 +176,7 @@ const AdminSignInForm = ({
           )}
         </button>
       </form>
-    </div>
+    </AuthPageWrapper>
   );
 };
 
