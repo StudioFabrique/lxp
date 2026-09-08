@@ -8,6 +8,7 @@ import LastFeedback from "../components/last-feedback";
 import TeacherLessonsQualityStats from "../components/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 import LastModules from "../components/last-modules";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 import RecommendedActions from "../components/recommended-actions";
@@ -78,7 +79,7 @@ const AdminDashboard = () => {
         isParcoursLoading));
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       {/* --- Bannière de bienvenue --- */}
       <div data-onboarding="admin-dashboard-header">
         {showOnboardingWelcome ? (
@@ -117,7 +118,7 @@ const AdminDashboard = () => {
           </article>
         </div>
       </section>
-    </div>
+    </PageWrapper>
   );
 };
 

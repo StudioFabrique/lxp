@@ -20,6 +20,7 @@ interface DataTableProps<TData, TValue> {
   sorting?: SortingState;
   setSorting?: OnChangeFn<SortingState>;
   isLoading?: boolean;
+  isSearching?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: TData) => void;
   isRowClickable?: (row: TData) => boolean;
@@ -34,6 +35,7 @@ export function DataTable<TData, TValue>({
   sorting = [],
   setSorting,
   isLoading,
+  isSearching = false,
   emptyMessage = "Aucun élément disponible",
   onRowClick,
   isRowClickable = () => true,
@@ -61,12 +63,17 @@ export function DataTable<TData, TValue>({
   });
 
   if (data.length === 0) {
-    return isLoading ? null : <EmptyStatePlaceholder title={emptyMessage} />;
+    return isLoading ? null : (
+      <EmptyStatePlaceholder
+        title={emptyMessage}
+        withBorder={!isSearching}
+      />
+    );
   }
 
   return (
     <TableOverflowContainer>
-      <table className="data-table table w-full min-w-full border-separate border-spacing-y-5">
+      <table className="data-table table w-full min-w-full border-separate border-spacing-y-5 bg-transparent">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -136,7 +143,7 @@ export function DataTable<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className={`pl-6 bg-base-100 first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
+                    className={`border-y border-base-300/50 pl-6 bg-base-100 text-base-content first:rounded-l-xl first:border-l last:rounded-r-xl last:border-r group-hover:bg-base-100/60 transition-colors ${
                       cell.column.id === "actions"
                         ? "data-table-actions text-center"
                         : ""

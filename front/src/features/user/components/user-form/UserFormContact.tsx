@@ -1,5 +1,7 @@
 import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
+import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
+import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
 
 type Props = {
   address: string;
@@ -34,13 +36,13 @@ const UserFormContact = ({
   <Wrapper>
     <h2 className="font-bold text-xl">Contact</h2>
     <span className="flex flex-col gap-y-2">
-      <label>Date de naissance</label>
-      <input
-        className="input input-sm input-bordered focus:outline-none w-full"
-        type="date"
-        onChange={(e) => onChangeDate(e.currentTarget.valueAsDate)}
+      <DatePicker
+        id="birthDate"
+        name="birthDate"
+        label="Date de naissance"
+        onChange={(value) => onChangeDate(parseDateValue(value) ?? null)}
         value={birthDate ? formatDateToYYYYMMDD(new Date(birthDate)) : ""}
-        autoComplete="off"
+        max={formatDateToYYYYMMDD(new Date())}
         disabled={disabled}
       />
     </span>

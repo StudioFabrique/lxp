@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import Calendar from "../components/calendar";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import CalendarHeader from "../components/calendar-header";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import {
@@ -78,7 +79,7 @@ const CalendarHome = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       <Header
         title="Calendrier"
         description="Consulter le calendrier des prochains cours."
@@ -140,7 +141,7 @@ const CalendarHome = () => {
           Naviguer vers le cours
         </Link>
       </EventDetailsModal>
-    </div>
+    </PageWrapper>
   );
 };
 

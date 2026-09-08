@@ -46,6 +46,14 @@ const renderPage = (
 };
 
 describe("AdminParcoursManagement", () => {
+  it("propose une recherche multicritère sur les parcours", () => {
+    const markup = renderPage("admin", 1, [formation]);
+
+    expect(markup).toContain(
+      'placeholder="Rechercher un parcours ou une formation..."',
+    );
+  });
+
   it("utilise l'état vide partagé sur la page Gestion des parcours", () => {
     expect(renderPage("admin")).toContain("Aucun parcours disponible");
   });
@@ -83,6 +91,6 @@ describe("AdminParcoursManagement", () => {
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
     expect(markup).toContain("Parcours : 1");
-    expect(markup).toContain("bg-primary text-primary-content");
+    expect(markup).toContain("bg-secondary text-secondary-content");
   });
 });

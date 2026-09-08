@@ -72,6 +72,7 @@ type Props = {
   icon?: ReactNode;
   error?: string | null;
   className?: string;
+  buttonClassName?: string;
 };
 
 export default function FileUpload({
@@ -89,6 +90,7 @@ export default function FileUpload({
   icon,
   error,
   className = "",
+  buttonClassName,
 }: Props) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -136,6 +138,7 @@ export default function FileUpload({
               ? "btn-ghost text-white hover:underline hover:bg-transparent hover:border-transparent"
               : "",
             error ? "btn-error" : "",
+            buttonClassName,
           )}
         >
           {isLoading ? (

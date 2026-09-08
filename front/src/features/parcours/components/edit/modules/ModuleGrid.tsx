@@ -82,8 +82,8 @@ export default function ModuleGrid({
                 <PermissionGuard action="update" object="module">
                   <button
                     type="button"
-                    className="btn btn-square btn-sm border-white/60 bg-base-100/90 text-base-content shadow-sm tooltip tooltip-left hover:bg-base-100"
-                    data-tip="Modifier le module"
+                    className="btn btn-square btn-sm border-white/60 bg-base-100/90 text-base-content shadow-sm tooltip tooltip-bottom tooltip-end hover:bg-base-100"
+                    data-tip="Modifier les informations du module"
                     aria-label={`Modifier le module ${module.title}`}
                     onClick={() => onUpdate(module)}
                   >
@@ -121,9 +121,7 @@ export default function ModuleGrid({
             onRemoveContact={(contactId) =>
               void onRemoveContact(module.id, contactId)
             }
-            onRemoveSkill={(skillId) =>
-              void onRemoveSkill(module.id, skillId)
-            }
+            onRemoveSkill={(skillId) => void onRemoveSkill(module.id, skillId)}
           />
         ))}
       </section>

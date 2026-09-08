@@ -15,7 +15,7 @@ import { getGroupColumns } from "../components/group-table-columns";
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import useTablePaginatedData from "../../../components/table/hooks/useTablePaginatedData";
 import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
@@ -106,16 +106,18 @@ const GroupList = () => {
       </PageHeader>
 
       <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0}
+        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={onSubmitSearchValue}
               placeholder="Rechercher un groupe"
-              onSubmitSearchValue={onSubmitSearchValue}
-            >
-              <TableActionsButtons
+              criteria={["nom"]}
+              actions={
+                <TableActionsButtons
                 isLoading={isLoading || isDeleting}
                 isDisabled={idsList.length === 0}
                 onRefreshData={onRefreshData}
@@ -131,8 +133,9 @@ const GroupList = () => {
                 onRetreiveItemsValuesByPropertyFromIdList={
                   onRetreiveItemsValues
                 }
-              />
-            </SearchBar>
+                />
+              }
+            />
           </div>
         ) : null}
 
@@ -141,6 +144,7 @@ const GroupList = () => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             sorting={sorting}

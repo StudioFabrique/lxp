@@ -7,6 +7,7 @@ import Informations from "./GroupFormInformations";
 import Details from "./GroupFormDetails";
 import FromParcoursWarning from "./GroupFormParcoursWarning";
 import Header from "../../../../../src/components/headers/Header";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import type { GroupFormValues } from "../../group.schema";
 
 type Props = {
@@ -34,8 +35,8 @@ const GroupForm = ({
 
   return (
     <FormProvider {...form}>
-      <form
-        className="flex flex-col gap-y-10"
+      <PageWrapper
+        as="form"
         autoComplete="off"
         onSubmit={form.handleSubmit(onSubmitForm)}
         data-recommended-tour="group-form"
@@ -79,7 +80,7 @@ const GroupForm = ({
           )}
         </div>
 
-      </form>
+      </PageWrapper>
       {children}
     </FormProvider>
   );

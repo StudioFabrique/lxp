@@ -23,6 +23,19 @@ describe("DataTable", () => {
     expect(markup).not.toContain("Nom");
   });
 
+  it("retire la bordure de l'état vide lorsqu'une recherche est active", () => {
+    const markup = renderToStaticMarkup(
+      <DataTable
+        columns={[{ accessorKey: "name", header: "Nom" }]}
+        data={[]}
+        isSearching
+      />,
+    );
+
+    expect(markup).toContain("Aucun élément disponible");
+    expect(markup).not.toContain("border-base-300");
+  });
+
   it("déclenche le clic de ligne depuis une cellule de données", () => {
     const row: Row = { id: "student-id", name: "Camille Martin" };
     const onRowClick = vi.fn();
@@ -53,5 +66,20 @@ describe("DataTable", () => {
       act(() => root.unmount());
       container.remove();
     }
+  });
+
+  it("utilise la surface claire du thème pour le fond des lignes", () => {
+    const markup = renderToStaticMarkup(
+      <DataTable
+        columns={[{ accessorKey: "name", header: "Nom" }]}
+        data={[{ id: "student-id", name: "Camille Martin" }]}
+      />,
+    );
+
+    expect(markup).toContain("bg-base-100");
+    expect(markup).toContain("border-base-300/50");
+    expect(markup).toContain("first:border-l");
+    expect(markup).toContain("last:border-r");
+    expect(markup).not.toContain("bg-base-300 text-base-content");
   });
 });

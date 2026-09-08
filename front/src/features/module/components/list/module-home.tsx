@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   BookMarked,
   Eye,
@@ -16,11 +16,15 @@ import HierarchicalListCard from "../../../../components/UI/hierarchical-list-ca
 import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import TablePagination from "../../../../components/table/TablePagination";
+import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
+import ParcoursFilterBadges from "../../../../components/UI/parcours-filter-badges";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { isTeacherUser } from "../../../../utils/helpers/user-role";
 import { normalizeImageSource } from "../../../../utils/images/image-source";
+import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import type { ModuleListItem } from "../../api/module.api";
 import ModuleHeader from "./module-header";
 
@@ -43,12 +47,52 @@ const ModuleHomeList = ({
 }: ModuleHomeListProps) => {
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
+  const parcours = useMemo(
+    () => modulesList.map((module) => module.parcours),
+    [modulesList],
+  );
+  const filteredModules = useMemo(() => {
+    const normalizedQuery = normalizeSearchText(searchQuery);
+
+    return modulesList.filter((module) => {
+      const matchesParcours =
+        selectedParcours === null || module.parcours === selectedParcours;
+      const matchesSearch =
+        !normalizedQuery ||
+        [module.title, module.parcours, module.formation].some((value) =>
+          normalizeSearchText(value).includes(normalizedQuery),
+        );
+
+      return matchesParcours && matchesSearch;
+    });
+  }, [modulesList, searchQuery, selectedParcours]);
   const { list, limit, page, totalPages, setLimit, setPage } =
-    useEagerLoadingList(modulesList, "title", 15, "id", "sidebar-modules");
+    useEagerLoadingList(filteredModules, "title", 15, "id", "sidebar-modules");
 
   return (
-    <main className="flex w-full flex-col gap-8">
+    <PageWrapper as="main">
       <ModuleHeader />
+
+      <ParcoursFilterBadges
+        parcours={parcours}
+        selectedParcours={selectedParcours}
+        onSelect={(value) => {
+          setSelectedParcours(value);
+          setPage(1);
+        }}
+      />
+
+      <MultiCriteriaSearch
+        value={searchQuery}
+        onChange={(value) => {
+          setSearchQuery(value);
+          setPage(1);
+        }}
+        criteria={["titre du module", "parcours", "formation"]}
+        placeholder="Rechercher un module..."
+      />
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
@@ -188,7 +232,11 @@ const ModuleHomeList = ({
         </section>
       ) : (
         <EmptyStatePlaceholder
-          title={isTeacher ? "Aucun module affecté" : "Aucun module trouvé"}
+          title={
+            isTeacher && !searchQuery && selectedParcours === null
+              ? "Aucun module affecté"
+              : "Aucun module trouvé"
+          }
         />
       )}
 
@@ -197,7 +245,7 @@ const ModuleHomeList = ({
           currentPage={page}
           maxPage={totalPages}
           itemsPerPage={limit}
-          leftText={`Modules : ${modulesList.length}`}
+          leftText={`Modules : ${filteredModules.length}`}
           onSetCurrentPage={setPage}
           onSetItemsPerPage={(itemsPerPage) => {
             setLimit(itemsPerPage);
@@ -211,7 +259,7 @@ const ModuleHomeList = ({
           }
         />
       ) : null}
-    </main>
+    </PageWrapper>
   );
 };
 

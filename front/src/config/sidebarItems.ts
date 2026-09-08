@@ -42,6 +42,13 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       icon: User,
     },
     {
+      key: "group",
+      subject: "group",
+      path: "group",
+      label: "Groupes",
+      icon: Users,
+    },
+    {
       key: "parcours",
       subject: "parcours",
       path: "parcours",
@@ -69,13 +76,7 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       label: "Ressources supplémentaires",
       icon: FileEdit,
     },
-    {
-      key: "group",
-      subject: "group",
-      path: "group",
-      label: "Groupes",
-      icon: Users,
-    },
+
     {
       key: "role",
       subject: "role",

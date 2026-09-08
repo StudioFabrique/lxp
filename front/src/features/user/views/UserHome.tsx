@@ -25,7 +25,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const UserHome = () => {
@@ -231,10 +231,10 @@ const UserHome = () => {
               key={role._id}
               type="button"
               onClick={() => handleRoleSwitch(role)}
-              className={`btn btn-sm ${
+              className={`badge cursor-pointer transition-colors ${
                 currentRole._id === role._id
-                  ? "btn-primary"
-                  : "btn-outline btn-primary"
+                  ? "badge-primary bg-primary text-primary-content"
+                  : "badge-outline hover:badge-primary"
               }`}
             >
               {role.label}
@@ -244,15 +244,18 @@ const UserHome = () => {
       ) : null}
 
       <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0}
+        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={onSubmitSearchValue}
               placeholder="Rechercher un utilisateur"
-              onSubmitSearchValue={onSubmitSearchValue}
-            >
+              criteria={["prénom", "nom", "email"]}
+              actions={
+                <>
               <button
                 type="button"
                 onClick={() => onRefreshData()}
@@ -282,7 +285,9 @@ const UserHome = () => {
                   onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
                 />
               </PermissionGuard>
-            </SearchBar>
+                </>
+              }
+            />
           </div>
         ) : null}
 
@@ -291,6 +296,7 @@ const UserHome = () => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             sorting={sorting}

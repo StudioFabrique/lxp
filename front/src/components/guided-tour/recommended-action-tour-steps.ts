@@ -91,6 +91,7 @@ export const moduleCreationTourSteps: Step[] = [
     content:
       "Le formulaire est déjà ouvert dans un parcours qui vous est rattaché. Un module regroupe les cours d'une même séquence pédagogique.",
     placement: "top",
+    hideOverlay: true,
   },
   {
     target: '[data-onboarding="module-title-field"]',
@@ -98,12 +99,14 @@ export const moduleCreationTourSteps: Step[] = [
     content:
       "Choisissez un titre clair. La description et les instructions de génération de quiz peuvent être complétées maintenant ou plus tard.",
     placement: "right",
+    hideOverlay: true,
   },
   {
     target: '[data-onboarding="module-duration-field"]',
     title: "Estimez sa durée",
     content: "Indiquez une durée supérieure à zéro, exprimée en heures.",
     placement: "right",
+    hideOverlay: true,
   },
   {
     target: '[data-recommended-tour="module-assignments"]',
@@ -111,6 +114,7 @@ export const moduleCreationTourSteps: Step[] = [
     content:
       "Associez les membres de l'équipe pédagogique concernés, dont vous-même si vous souhaitez retrouver ce module dans votre espace.",
     placement: "left",
+    hideOverlay: true,
   },
   {
     target: '[data-onboarding="module-save"]',
@@ -118,5 +122,6 @@ export const moduleCreationTourSteps: Step[] = [
     content:
       "Le titre et la durée suffisent pour démarrer. Une image sera générée automatiquement si vous n'en ajoutez pas.",
     placement: "top",
+    hideOverlay: true,
   },
 ];

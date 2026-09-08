@@ -1,11 +1,10 @@
-import type { Dispatch, SetStateAction } from "react";
 import type User from "../../../../../../../utils/interfaces/user";
 
 type Props = {
   usersFromCsv: User[];
   usersToAdd: User[];
   onConfirmSubmit: () => void;
-  setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
+  onCancel: () => void;
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
   isLoading: boolean;
@@ -17,7 +16,7 @@ const CsvUserListConfirmation = ({
   usersFromCsv,
   usersToAdd,
   onConfirmSubmit,
-  setDrawerOpenState,
+  onCancel,
   onAddSelectedUser,
   onDeleteSelectedUser,
   isLoading,
@@ -89,7 +88,7 @@ const CsvUserListConfirmation = ({
         <button
           type="button"
           className="btn btn-outline"
-          onClick={() => setDrawerOpenState(false)}
+          onClick={onCancel}
         >
           Annuler
         </button>

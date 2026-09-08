@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
+import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date";
 import DatePicker from "./date-picker";
 import {
   getInitialTimelineDates,
@@ -124,18 +125,22 @@ const ModuleTimelineDateModal = ({
               Modifiez les dates de disponibilité pour ce module.
             </p>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
               <DatePicker
                 id="minDate"
                 label="Date de début"
-                date={datesModule.minDate}
-                onSubmitDate={handleSetDates}
+                value={datesModule.minDate}
+                min={formatDateToYYYYMMDD(datesParcours.startDate)}
+                max={datesModule.maxDate}
+                onChange={(date) => handleSetDates("minDate", date)}
               />
               <DatePicker
                 id="maxDate"
                 label="Date de fin"
-                date={datesModule.maxDate}
-                onSubmitDate={handleSetDates}
+                value={datesModule.maxDate}
+                min={datesModule.minDate}
+                max={formatDateToYYYYMMDD(datesParcours.endDate)}
+                onChange={(date) => handleSetDates("maxDate", date)}
               />
             </div>
 

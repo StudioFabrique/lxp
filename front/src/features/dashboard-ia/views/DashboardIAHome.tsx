@@ -7,6 +7,7 @@ import GroupsStats from "../components/GroupsStats";
 import TopFiveUsers from "../components/TopFiveUsers";
 import TopUsersTable from "../components/TopUsersTable";
 import Header from "../../../../src/components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import ElementNotFound from "../../../components/UI/element-not-found";
 
@@ -47,7 +48,7 @@ const DashboardIAHome = () => {
     : [];
 
   return (
-    <main className="w-full min-h-screen flex flex-col items-center gap-y-8">
+    <PageWrapper as="main" className="min-h-screen items-center">
       <Header
         title="Tableau de bord IA"
         description="Consultez les statistiques de consommation de l'IA par vos apprenants."
@@ -138,7 +139,7 @@ const DashboardIAHome = () => {
           </Wrapper>
         )}
       </section>
-    </main>
+    </PageWrapper>
   );
 };
 

@@ -79,6 +79,26 @@ const moduleWithFourCourses: ModuleListItem = {
 };
 
 describe("ModuleHomeList", () => {
+  it("propose une recherche multicritère et les filtres parcours en dessous", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <ModuleHomeList
+          modulesList={[module]}
+          onDeleteModule={vi.fn()}
+          onDeleteCourse={vi.fn()}
+          onPublishCourse={vi.fn()}
+          onToggleCourseVisibility={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('placeholder="Rechercher un module..."');
+    expect(markup).toContain("Filtrer par parcours");
+    expect(markup.indexOf("Rechercher un module...")).toBeLessThan(
+      markup.indexOf("Filtrer par parcours"),
+    );
+  });
+
   it("affiche chaque module avec ses cours en sous-éléments", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>

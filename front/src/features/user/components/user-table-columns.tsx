@@ -71,17 +71,8 @@ export const getUsersColumns = (
     header: "Rôle(s)",
     cell: ({ row }) => {
       const roles = row.original.roles;
-      const label = roles
-        .map((r) => r.label)
-        .join(", ");
-      return (
-        <span
-          className="tooltip tooltip-bottom truncate max-w-24"
-          data-tip={label}
-        >
-          {label || "ND"}
-        </span>
-      );
+      const label = roles.map((r) => r.label).join(", ");
+      return <span className="truncate max-w-24">{label || "ND"}</span>;
     },
     enableSorting: false,
   },

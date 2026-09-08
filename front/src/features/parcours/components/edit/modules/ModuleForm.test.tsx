@@ -29,8 +29,14 @@ describe("ModuleForm", () => {
     expect(markup).toContain('type="file"');
     expect(markup).not.toContain("Modifier l&#x27;image du module");
     expect(markup).toContain(
-      '<footer class="sticky bottom-0 -mx-5 mt-8',
+      '<footer class="relative z-10 -mx-5 mt-6',
     );
+    expect(markup).toContain(
+      'id="module-form" class="mt-6 min-h-0 flex-1 overflow-y-auto"',
+    );
+    expect(markup).toContain('</form><footer class="relative z-10');
+    expect(markup).toContain("shrink-0");
+    expect(markup).toContain('type="submit" form="module-form"');
     expect(markup).toContain("sm:pb-7");
   });
 

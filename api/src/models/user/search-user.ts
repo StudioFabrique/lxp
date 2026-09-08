@@ -86,7 +86,15 @@ async function searchUser(
 
   // Query users with the specified criteria, excluding the password field
   const userFilter = {
-    [entity]: field,
+    ...(entity === "all"
+      ? {
+          $or: [
+            { firstname: field },
+            { lastname: field },
+            { email: field },
+          ],
+        }
+      : { [entity]: field }),
     $and: [
       { roles: { $in: fetchedRoles.map(({ _id }) => _id) } },
       { roles: { $nin: hiddenRoles.map(({ _id }) => _id) } },

@@ -93,6 +93,8 @@ describe("ModuleGrid", () => {
     const skillButtonPosition = markup.indexOf("Ajouter des compétences");
 
     expect(contactButtonPosition).toBeGreaterThan(contactPosition);
+    expect(contactButtonPosition).toBeGreaterThan(skillPosition);
+    expect(contactButtonPosition).toBeLessThan(skillButtonPosition);
     expect(skillButtonPosition).toBeGreaterThan(skillPosition);
   });
 

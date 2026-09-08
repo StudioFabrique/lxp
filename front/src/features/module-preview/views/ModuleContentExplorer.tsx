@@ -22,6 +22,7 @@ import ProgressBar from "../components/progress-bar";
 import ModuleExplorerPreview from "../components/preview/module-explorer-preview";
 import ModuleData from "../components/module-data/module-data";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
@@ -123,7 +124,7 @@ const ModuleContentExplorer = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       {/* --- Section Modales --- */}
       <QuizModal
         isOpen={quizState.isOpen}
@@ -255,7 +256,7 @@ const ModuleContentExplorer = () => {
         /* Skeleton */
         <ModuleContentExplorerSkeleton />
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

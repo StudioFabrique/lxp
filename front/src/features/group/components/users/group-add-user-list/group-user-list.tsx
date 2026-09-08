@@ -3,7 +3,7 @@ import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { Trash2, UserRoundPlus } from "lucide-react";
 import type User from "../../../../../utils/interfaces/user";
 import Wrapper from "../../../../../components/wrappers/BoxWrapper";
-import SearchBar from "../../../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../../../components/UI/multi-criteria-search";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { DataTable } from "../../../../../components/table/DataTable";
 import TablePagination from "../../../../../components/table/TablePagination";
@@ -42,6 +42,7 @@ const GroupUserList = ({
   const [itemsPerPage, setItemsPerPage] = useState(() =>
     getStoredItemsPerPage("group-students", 10),
   );
+  const isSearching = Boolean(filter?.trim());
 
   const filteredUsers = useMemo(() => {
     const searchValue = filter?.trim().toLocaleLowerCase("fr");
@@ -108,8 +109,10 @@ const GroupUserList = ({
 
   return (
     <Wrapper
-      additionalClassname={displayedUsers.length > 0 ? "px-10" : ""}
-      unstyled={displayedUsers.length === 0}
+      additionalClassname={
+        displayedUsers.length > 0 || isSearching ? "px-10" : ""
+      }
+      unstyled={displayedUsers.length === 0 && !isSearching}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -134,24 +137,20 @@ const GroupUserList = ({
               Créer un nouvel étudiant
             </button>
           </PermissionGuard>
+          <CsvImportUserList onAddUsers={onAddUsers} />
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 border-t border-base-content/30 p-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex flex-col gap-2">
-          <CsvImportUserList
-            onAddUsers={onAddUsers}
-            usersAddedInTable={usersToAdd}
-          />
-        </div>
-
-        {usersToAdd.length > 0 || filter ? (
+      <div className="flex flex-col gap-4 border-t border-base-content/30 p-4 xl:flex-row xl:items-center xl:justify-end">
+        {usersToAdd.length > 0 || isSearching ? (
           <div className="min-w-0 flex-1 xl:max-w-2xl">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={filter ?? ""}
+              onChange={(value) => setFilter(value || undefined)}
               placeholder="Rechercher un étudiant par nom, prénom ou email"
-              onSetFilter={setFilter}
-            >
-              {selectedUserIds.length > 0 && (
+              criteria={["prénom", "nom", "email"]}
+              actions={
+                selectedUserIds.length > 0 && (
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm whitespace-nowrap text-error"
@@ -160,8 +159,9 @@ const GroupUserList = ({
                   <Trash2 className="h-4 w-4" />
                   Retirer la sélection
                 </button>
-              )}
-            </SearchBar>
+                )
+              }
+            />
           </div>
         ) : null}
       </div>
@@ -169,12 +169,13 @@ const GroupUserList = ({
       <DataTable
         columns={columns}
         data={displayedUsers}
+        isSearching={isSearching}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
         sorting={sorting}
         setSorting={setSorting}
         emptyMessage={
-          filter
+          isSearching
             ? "Aucun étudiant disponible pour cette recherche"
             : "Aucun étudiant disponible"
         }

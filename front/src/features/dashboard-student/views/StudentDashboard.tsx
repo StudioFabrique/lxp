@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import Header from "../../../../src/components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
 import ResumeActivity from "../components/resume-activity";
@@ -25,7 +26,7 @@ const StudentDashboard = () => {
   });
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       <div data-onboarding="student-dashboard-header">
         {showOnboardingWelcome ? (
           <OnboardingWelcome layout="student" />
@@ -72,7 +73,7 @@ const StudentDashboard = () => {
           {/* <Chat /> */}
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

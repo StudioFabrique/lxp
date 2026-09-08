@@ -8,7 +8,7 @@ import type {
 import { UserPlus } from "lucide-react";
 import type User from "../../../../../../utils/interfaces/user";
 import RightSideDrawer from "../../../../../../components/UI/right-side-drawer/right-side-drawer";
-import SearchBar from "../../../../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../../../../components/UI/multi-criteria-search";
 import { DataTable } from "../../../../../../components/table/DataTable";
 import TablePagination from "../../../../../../components/table/TablePagination";
 import { useAvailableStudents } from "../../../../hooks/useAvailableStudents";
@@ -104,9 +104,11 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
       >
         <div className="flex min-h-full flex-col gap-5">
           {isLoading || data.length > 0 || searchValue ? (
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={onSubmitSearchValue}
               placeholder="Rechercher par nom, prénom ou email"
-              onSubmitSearchValue={onSubmitSearchValue}
+              criteria={["prénom", "nom", "email"]}
             />
           ) : null}
 
@@ -114,6 +116,7 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
             setRowSelection={handleSelectionChange}
             sorting={sorting}

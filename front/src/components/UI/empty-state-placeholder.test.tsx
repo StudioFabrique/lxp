@@ -25,6 +25,15 @@ describe("EmptyStatePlaceholder", () => {
     expect(markup).toContain("Leçon suivante");
   });
 
+  it("peut être affiché sans bordure ni ombre", () => {
+    const markup = renderToStaticMarkup(
+      <EmptyStatePlaceholder title="Aucune activité" withBorder={false} />,
+    );
+
+    expect(markup).not.toContain("border-base-300");
+    expect(markup).not.toContain("shadow-sm");
+  });
+
   it("sélectionne une nouvelle illustration au montage", () => {
     vi.useFakeTimers();
     const random = vi.spyOn(Math, "random").mockReturnValue(0.999);

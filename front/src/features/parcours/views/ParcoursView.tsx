@@ -9,7 +9,6 @@ import Contenu from "../components/display/contenu/contenu";
 import Informations from "../components/display/informations";
 import Description from "../components/display/description";
 import Tags from "../components/display/tags";
-import Awards from "../components/display/awards";
 import Contacts from "../components/display/contacts";
 import Competences from "../components/display/competences";
 import Objectifs from "../components/display/objectifs";
@@ -28,6 +27,7 @@ import {
 } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
@@ -55,12 +55,7 @@ const ParcoursView = () => {
   const hasDescription = Boolean(parcoursInfos?.description?.trim());
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
-  const hasBadges = [
-    ...(parcoursInfos?.skills ?? []),
-    ...(parcoursInfos?.bonusSkills ?? []),
-  ].some((skill) => Boolean(skill.badge));
-  const hasSupplementaryContent =
-    hasDescription || hasTags || hasContacts || hasBadges;
+  const hasSupplementaryContent = hasDescription || hasTags || hasContacts;
 
   const exportParcoursMutation = useMutation({
     mutationFn: () => parcoursApi.mutations.exportParcours(Number(id)),
@@ -117,7 +112,7 @@ const ParcoursView = () => {
   }, [pathname]);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       <Header
         title="Aperçu du parcours"
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
@@ -206,7 +201,6 @@ const ParcoursView = () => {
                   {hasDescription ? <Description /> : null}
                   {hasTags ? <Tags /> : null}
                   {hasContacts ? <Contacts /> : null}
-                  {hasBadges ? <Awards /> : null}
                 </div>
               ) : null}
             </div>
@@ -219,7 +213,7 @@ const ParcoursView = () => {
       ) : (
         <Error404 />
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

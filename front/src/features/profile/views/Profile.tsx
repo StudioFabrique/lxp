@@ -5,6 +5,7 @@ import Account from "../components/account/account";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { useLocation } from "react-router";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Journal from "../components/journal/journal";
 import TeacherCalendar from "../components/teacher-calendar";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
@@ -63,7 +64,7 @@ const Profile = () => {
   }, [state?.refreshId, state?.tab, state?.editMode]);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       <Header title="Mon profil" />
 
       {/* Tabs */}
@@ -144,7 +145,7 @@ const Profile = () => {
         </div>
       )}
       <RecommendedActionTour tutorial="logo" steps={logoTourSteps} />
-    </div>
+    </PageWrapper>
   );
 };
 
