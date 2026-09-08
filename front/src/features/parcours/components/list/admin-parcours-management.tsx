@@ -5,6 +5,7 @@ import { PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 import Header from "../../../../components/headers/Header";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import TablePagination from "../../../../components/table/TablePagination";
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
@@ -34,8 +35,7 @@ const AdminParcoursManagement = ({
   const isAdmin = layout === "admin";
   const { user } = useContext(AuthContext);
   const isTeacher = hasRoleRank(user, [2]);
-  const usesFullWidthLayout =
-    !isAdmin || (isTeacher && formations.length <= 1);
+  const usesFullWidthLayout = !isAdmin || (isTeacher && formations.length <= 1);
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const [parcoursToDelete, setParcoursToDelete] =
@@ -178,7 +178,7 @@ const AdminParcoursManagement = ({
   };
 
   return (
-    <main className="w-full flex flex-col gap-8">
+    <PageWrapper as="main">
       <Header
         title={isAdmin ? "Gestion des parcours" : "Liste des parcours"}
         description={
@@ -327,7 +327,7 @@ const AdminParcoursManagement = ({
           </div>
         </Modal>
       ) : null}
-    </main>
+    </PageWrapper>
   );
 };
 

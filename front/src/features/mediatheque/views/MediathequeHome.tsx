@@ -1,6 +1,7 @@
 import TabsMedia from "../components/tabs-media";
 import Pagination from "../../../../src/components/pagination";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import PaginationLimitSelect from "../../../../src/components/UI/pagination-limit-select";
 import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import Media from "../interfaces/media";
@@ -24,7 +25,7 @@ function MediathequeHomePage() {
   } = usePaginatedMediatheque<Media>("mediatheque");
 
   return (
-    <div className="w-full flex flex-col items-center gap-8">
+    <PageWrapper className="items-center">
       {/* Section d'en-tête avec titre et description */}
       <section className="w-full flex flex-col items-center">
         <Header
@@ -57,7 +58,7 @@ function MediathequeHomePage() {
           </div>
         </TabsMedia>
       </section>
-    </div>
+    </PageWrapper>
   );
 }
 

@@ -67,4 +67,19 @@ describe("DataTable", () => {
       container.remove();
     }
   });
+
+  it("utilise la surface claire du thème pour le fond des lignes", () => {
+    const markup = renderToStaticMarkup(
+      <DataTable
+        columns={[{ accessorKey: "name", header: "Nom" }]}
+        data={[{ id: "student-id", name: "Camille Martin" }]}
+      />,
+    );
+
+    expect(markup).toContain("bg-base-100");
+    expect(markup).toContain("border-base-300/50");
+    expect(markup).toContain("first:border-l");
+    expect(markup).toContain("last:border-r");
+    expect(markup).not.toContain("bg-base-300 text-base-content");
+  });
 });

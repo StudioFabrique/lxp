@@ -16,6 +16,7 @@ import HierarchicalListCard from "../../../../components/UI/hierarchical-list-ca
 import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import TablePagination from "../../../../components/table/TablePagination";
 import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
 import ParcoursFilterBadges from "../../../../components/UI/parcours-filter-badges";
@@ -71,7 +72,7 @@ const ModuleHomeList = ({
     useEagerLoadingList(filteredModules, "title", 15, "id", "sidebar-modules");
 
   return (
-    <main className="flex w-full flex-col gap-8">
+    <PageWrapper as="main">
       <ModuleHeader />
 
       <ParcoursFilterBadges
@@ -258,7 +259,7 @@ const ModuleHomeList = ({
           }
         />
       ) : null}
-    </main>
+    </PageWrapper>
   );
 };
 

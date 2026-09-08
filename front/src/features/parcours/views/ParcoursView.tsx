@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
@@ -111,7 +112,7 @@ const ParcoursView = () => {
   }, [pathname]);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <PageWrapper>
       <Header
         title="Aperçu du parcours"
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
@@ -212,7 +213,7 @@ const ParcoursView = () => {
       ) : (
         <Error404 />
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

@@ -21,6 +21,7 @@ import Modal from "../../../../components/UI/modal/modal";
 import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
 import ParcoursFilterBadges from "../../../../components/UI/parcours-filter-badges";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import TablePagination from "../../../../components/table/TablePagination";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
@@ -144,7 +145,7 @@ export default function CourseList({
   };
 
   return (
-    <main className="flex w-full flex-col gap-8">
+    <PageWrapper as="main">
       <CourseHeader />
 
       <ParcoursFilterBadges
@@ -382,6 +383,6 @@ export default function CourseList({
           </p>
         </Modal>
       ) : null}
-    </main>
+    </PageWrapper>
   );
 }

@@ -10,6 +10,7 @@ import UserFormTypeUser from "./UserFormTypeUser";
 import UserFormPresentation from "./UserFormPresentation";
 import UserFormCertifications from "./UserFormCertifications";
 import Header from "../../../../../src/components/headers/Header";
+import PageWrapper from "../../../../components/wrappers/PageWrapper";
 import ItemsAdder from "../../../../../src/components/UI/items-adder";
 import { regexGeneric } from "../../../../config/constantes";
 import { transformLink, urlIsValid } from "../../helpers/link-transform";
@@ -99,8 +100,8 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <form
-      className="flex flex-col gap-y-8"
+    <PageWrapper
+      as="form"
       autoComplete="off"
       data-recommended-tour="user-form"
     >
@@ -241,7 +242,7 @@ const UserForm = ({
           />
         </div>
       </div>
-    </form>
+    </PageWrapper>
   );
 };
 

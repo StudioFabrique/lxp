@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Header from "../../../components/headers/Header";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import Loader from "../../../components/loaders/Loader";
 import ElementNotFound from "../../../components/UI/element-not-found";
@@ -36,7 +37,7 @@ export default function UserData() {
   };
 
   return (
-    <main className="flex flex-col gap-y-4">
+    <PageWrapper as="main">
       <Header title="Informations de l'apprenant">
         <PredictionButton
           onAnalyze={() => predictionQuery.predict()}
@@ -85,6 +86,6 @@ export default function UserData() {
           </BoxWrapper>
         </>
       ) : null}
-    </main>
+    </PageWrapper>
   );
 }
