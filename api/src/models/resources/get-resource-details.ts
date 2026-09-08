@@ -55,7 +55,10 @@ export default async function getResourceDetails(resourceId: number) {
   // Return formatted resource with renamed activities and flattened tags
   return {
     ...rest,
-    activities: bonusActivities,
+    activities: bonusActivities.map((activity) => ({
+      ...activity,
+      resourceActivities: activity.resourceBonusActivities,
+    })),
     tags: existingResource.tags.map((t) => t.tag),
   };
 }

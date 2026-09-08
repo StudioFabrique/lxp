@@ -7,6 +7,7 @@ type ActivityActionsMenuProps = {
   onEditActivity: (activity: Activity) => void;
   onOpenDeleteModal: (activity: Activity) => void;
   disabled?: boolean;
+  permissionSubject?: "lesson" | "resource";
 };
 
 const ActivityActionsMenu = ({
@@ -14,17 +15,19 @@ const ActivityActionsMenu = ({
   onEditActivity,
   onOpenDeleteModal,
   disabled = false,
+  permissionSubject = "lesson",
 }: ActivityActionsMenuProps) => {
   return (
     <div className="flex items-center gap-1">
       {["text", "iframe", "image", "video", "resource"].includes(
         activity.type,
       ) && (
-        <PermissionGuard action="update" object="lesson">
+        <PermissionGuard action="update" object={permissionSubject}>
           <button
             type="button"
             className="btn btn-ghost btn-sm btn-square tooltip tooltip-bottom"
             data-tip="Modifier"
+            aria-label="Modifier l’activité"
             onClick={() => onEditActivity(activity)}
             disabled={disabled}
           >
@@ -32,11 +35,12 @@ const ActivityActionsMenu = ({
           </button>
         </PermissionGuard>
       )}
-      <PermissionGuard action="delete" object="lesson">
+      <PermissionGuard action="delete" object={permissionSubject}>
         <button
           type="button"
           className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10 tooltip tooltip-bottom"
           data-tip="Supprimer"
+          aria-label="Supprimer l’activité"
           onClick={() => onOpenDeleteModal(activity)}
           disabled={disabled}
         >

@@ -1,6 +1,5 @@
 import { type Response, type NextFunction } from "express";
 import { serverIssue } from "../../utils/constantes.ts";
-import postResource from "../../models/resources/post-resource.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import putResource from "../../models/resources/put-resource.ts";
 
@@ -29,7 +28,7 @@ export default async function httpPutResource(
     );
     next({
       statusCode: 201,
-      data: { response },
+      data: response,
     });
   } catch (error: any) {
 

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 
 // Middleware d'authentification et de permissions
 import checkPermissions from "../../../middleware/check-permissions.ts";
@@ -217,8 +217,12 @@ activityRouter.put(
 // Route pour récupérer toutes les ressources d'une activité
 activityRouter.get(
   "/resources/:activityId/:parent",
-  checkPermissions("activity"),
-  checkContentAccess("activity", "activityId"),
+  (req: Request, res: Response, next: NextFunction) => req.params.parent === "resource"
+    ? checkPermissions("resource")(req, res, next)
+    : checkPermissions("activity")(req, res, next),
+  (req: Request, res: Response, next: NextFunction) => req.params.parent === "resource"
+    ? next()
+    : checkContentAccess("activity", "activityId")(req, res, next),
   activityIdValidator,
   httpGetResourceActivity,
 );

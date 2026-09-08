@@ -15,6 +15,8 @@ type ModalProps = {
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
   dialogAdditionalClass?: string;
+  actionsClassName?: string;
+  rightClassName?: string;
 };
 
 const Modal = (props: PropsWithChildren<ModalProps>) => {
@@ -28,7 +30,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
     >
       <div className={`modal-box ${props.modalBoxStyle}`}>
         {props.buttonsBothTopBottom && (
-          <div className="modal-action mb-4">
+          <div className={`modal-action mb-4 ${props.actionsClassName ?? ""}`}>
             {props.leftLabel && (
               <button
                 className="btn btn-outline btn-primary"
@@ -39,7 +41,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className="btn btn-warning flex items-center gap-x-2"
+                className={`btn flex items-center gap-x-2 ${props.rightClassName ?? "btn-warning"}`}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >
@@ -68,7 +70,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
         </div>
         {props.children}
         {(props.onLeftClick || props.onRightClick) && (
-          <div className="modal-action">
+          <div className={`modal-action ${props.actionsClassName ?? ""}`}>
             {props.onLeftClick && (
               <button
                 className="btn btn-outline btn-primary"
@@ -79,7 +81,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
             {props.onRightClick && (
               <button
-                className="btn btn-warning flex items-center gap-x-2"
+                className={`btn flex items-center gap-x-2 ${props.rightClassName ?? "btn-warning"}`}
                 disabled={isSubmitting || props.rightDisabled}
                 onClick={props.onRightClick}
               >

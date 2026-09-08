@@ -42,11 +42,15 @@ const mutations = {
     const res = await apiClient.delete(`/activity/${type}/${activityId}/resource`);
     return res.data;
   },
+  saveActivityTitle: async (id: number, title: string) => {
+    const res = await apiClient.put(`/activity/title/${id}/resource`, { title });
+    return res.data;
+  },
   saveTextActivity: async (id: number, body: unknown, isUpdate: boolean) => {
     const res = isUpdate
       ? await apiClient.put(`/activity/text/${id}`, body)
       : await apiClient.post(`/activity/text/${id}`, body);
-    return res.data;
+    return res.data.success !== undefined ? res.data : { success: Boolean(res.data.id), message: "Activité créée avec succès.", response: res.data };
   },
   saveVideoActivity: async (id: number, payload: FormData, isUpdate: boolean) => {
     const res = isUpdate
@@ -63,7 +67,7 @@ const mutations = {
     const res = isUpdate
       ? await apiClient.put(`/activity/iframe/${id}`, payload)
       : await apiClient.post(`/activity/iframe/${id}`, payload);
-    return res.data;
+    return res.data.success !== undefined ? res.data : { success: Boolean(res.data.id), message: "Activité enregistrée avec succès.", response: res.data };
   },
   saveImageActivity: async (id: number, payload: FormData, isUpdate: boolean) => {
     const res = await apiClient.request({

@@ -35,19 +35,14 @@ export default async function getResourcesList(
   limit: number,
   searchTerm?: string,
 ) {
-  // Construire la condition conditionnellement
   const whereCondition = searchTerm
     ? {
-        tags: {
-          some: {
-            tag: {
-              name: {
-                contains: searchTerm,
-                mode: "insensitive" as const,
-              },
-            },
-          },
-        },
+        OR: [
+          ...["title", "description", "author"].map((field) => ({
+            [field]: { contains: searchTerm, mode: "insensitive" as const },
+          })),
+          { tags: { some: { tag: { name: { contains: searchTerm, mode: "insensitive" as const } } } } },
+        ],
       }
     : {};
 
@@ -56,11 +51,22 @@ export default async function getResourcesList(
     orderBy: sortClause(stype, sdir),
     skip: getPagination(page, limit),
     take: limit,
+    include: {
+      bonusActivities: {
+        orderBy: { order: "asc" },
+        select: { id: true, title: true, type: true, order: true },
+      },
+    },
   });
 
   const totaltResources = await prisma.resource.count({
     where: whereCondition,
   });
 
-  return { resources, totaltResources };
+  return {
+    resources: resources.map(({ bonusActivities, ...resource }) => ({
+      ...resource, activities: bonusActivities,
+    })),
+    totaltResources,
+  };
 }

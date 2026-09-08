@@ -20,6 +20,8 @@ import ResourceUpload from "../../../lesson/components/edit/activities/resources
 
 type Props = {
   mode: ActivitySelectMode;
+  parent?: "lesson" | "resource";
+  parentId?: number;
   canEdit?: boolean;
   isLessonCompleted: boolean;
   selectedLesson?: Lesson;
@@ -52,6 +54,8 @@ type Props = {
 // Composant pour prévisualiser et editer une leçon avec son activité selectionné
 const LessonReaderAndEditor = ({
   mode,
+  parent = "lesson",
+  parentId,
   canEdit,
   isLessonCompleted,
   selectedLesson,
@@ -195,6 +199,7 @@ const LessonReaderAndEditor = ({
               {selectedActivity && canEdit && (
                 <ActivityActionsMenu
                   activity={selectedActivity}
+                  permissionSubject={parent}
                   onEditActivity={onEditActivity}
                   onOpenDeleteModal={onOpenDeleteModal}
                   disabled={mode !== "read"}
@@ -234,8 +239,8 @@ const LessonReaderAndEditor = ({
               key={selectedActivity?.id ?? "new-video"}
               activity={selectedActivity}
               isEditing={mode === "edit"}
-              parentId={selectedLesson?.id}
-              parent="lesson"
+              parentId={parentId ?? selectedLesson?.id}
+              parent={parent}
               onCancel={mode === "write" ? onBack : onClose}
               onSaved={handleMediaSaved}
             />
@@ -243,16 +248,16 @@ const LessonReaderAndEditor = ({
             <ImageActivityEditor
               key={selectedActivity?.id ?? "new-image"}
               activity={selectedActivity}
-              parentId={selectedLesson?.id}
-              parent="lesson"
+              parentId={parentId ?? selectedLesson?.id}
+              parent={parent}
               onCancel={() => (mode === "write" ? onBack() : onClose())}
               onSaved={handleMediaSaved}
             />
           ) : activityType === "resource" && isResourceEditor ? (
             mode === "write" ? (
               <ResourceUpload
-                parentId={selectedLesson?.id}
-                parent="lesson"
+                parentId={parentId ?? selectedLesson?.id}
+                parent={parent}
                 title={textActivityTitle}
                 onCancel={() => onBack()}
                 onSaved={handleMediaSaved}
@@ -260,7 +265,7 @@ const LessonReaderAndEditor = ({
             ) : selectedActivity ? (
               <ResourcePreview
                 activity={selectedActivity}
-                parent="lesson"
+                parent={parent}
                 onCancel={() => undefined}
               />
             ) : null
