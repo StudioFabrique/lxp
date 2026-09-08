@@ -25,7 +25,7 @@ import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import { usersPageTourSteps } from "../../../components/headers/page-tour-steps";
 
 const UserHome = () => {
@@ -249,10 +249,13 @@ const UserHome = () => {
       >
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={onSubmitSearchValue}
               placeholder="Rechercher un utilisateur"
-              onSubmitSearchValue={onSubmitSearchValue}
-            >
+              criteria={["prénom", "nom", "email"]}
+              actions={
+                <>
               <button
                 type="button"
                 onClick={() => onRefreshData()}
@@ -282,7 +285,9 @@ const UserHome = () => {
                   onRetreiveItemsValuesByPropertyFromIdList={selectedUserNames}
                 />
               </PermissionGuard>
-            </SearchBar>
+                </>
+              }
+            />
           </div>
         ) : null}
 

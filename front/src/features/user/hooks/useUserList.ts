@@ -48,7 +48,7 @@ export function useUserList(role: Role | null) {
   };
 
   const baseEndpoint = searchValue
-    ? `/user/search/${roleName}/lastname/${searchValue}`
+    ? `/user/search/${roleName}/all/${searchValue}`
     : `/user/list/${roleName}`;
 
   const { data, isLoading, isFetching, refetch } = useQuery({

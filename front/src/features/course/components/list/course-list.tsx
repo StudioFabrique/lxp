@@ -147,6 +147,15 @@ export default function CourseList({
     <main className="flex w-full flex-col gap-8">
       <CourseHeader />
 
+      <ParcoursFilterBadges
+        parcours={parcours}
+        selectedParcours={selectedParcours}
+        onSelect={(value) => {
+          setSelectedParcours(value);
+          setPage(1);
+        }}
+      />
+
       <MultiCriteriaSearch
         value={searchQuery}
         onChange={(value) => {
@@ -155,16 +164,7 @@ export default function CourseList({
         }}
         criteria={["titre du cours", "module", "parcours", "auteur"]}
         placeholder="Rechercher un cours..."
-      >
-        <ParcoursFilterBadges
-          parcours={parcours}
-          selectedParcours={selectedParcours}
-          onSelect={(value) => {
-            setSelectedParcours(value);
-            setPage(1);
-          }}
-        />
-      </MultiCriteriaSearch>
+      />
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">

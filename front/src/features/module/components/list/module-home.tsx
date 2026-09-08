@@ -74,6 +74,15 @@ const ModuleHomeList = ({
     <main className="flex w-full flex-col gap-8">
       <ModuleHeader />
 
+      <ParcoursFilterBadges
+        parcours={parcours}
+        selectedParcours={selectedParcours}
+        onSelect={(value) => {
+          setSelectedParcours(value);
+          setPage(1);
+        }}
+      />
+
       <MultiCriteriaSearch
         value={searchQuery}
         onChange={(value) => {
@@ -82,16 +91,7 @@ const ModuleHomeList = ({
         }}
         criteria={["titre du module", "parcours", "formation"]}
         placeholder="Rechercher un module..."
-      >
-        <ParcoursFilterBadges
-          parcours={parcours}
-          selectedParcours={selectedParcours}
-          onSelect={(value) => {
-            setSelectedParcours(value);
-            setPage(1);
-          }}
-        />
-      </MultiCriteriaSearch>
+      />
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">

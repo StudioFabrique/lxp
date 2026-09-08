@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <TableOverflowContainer>
-      <table className="data-table table w-full min-w-full border-separate border-spacing-y-5">
+      <table className="data-table table w-full min-w-full border-separate border-spacing-y-5 bg-transparent">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

@@ -14,7 +14,9 @@ const BoxWrapper: FC<Props> = ({
   return (
     <div
       className={`flex min-w-0 flex-col gap-y-4 h-full relative ${
-        unstyled ? "" : "p-5 rounded-lg bg-secondary/20"
+        unstyled
+          ? ""
+          : "p-5 rounded-lg bg-base-200 border border-base-300 shadow-sm"
       } ${additionalClassname}`}
     >
       {children}
