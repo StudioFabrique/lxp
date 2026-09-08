@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Search, X } from "lucide-react";
 
 type MultiCriteriaSearchProps = {
@@ -18,7 +18,11 @@ const MultiCriteriaSearch = ({
   actions,
   children,
 }: MultiCriteriaSearchProps) => {
-  const helpId = `search-help-${criteria.join("-").replace(/\s+/g, "-")}`;
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const displayedPlaceholder =
+    isInputFocused && value.length === 0
+      ? `Recherche dans : ${criteria.join(", ")}.`
+      : placeholder;
 
   return (
     <section aria-label="Rechercher et filtrer la liste">
@@ -32,9 +36,10 @@ const MultiCriteriaSearch = ({
             className="min-w-0 grow"
             value={value}
             onChange={(event) => onChange(event.target.value)}
-            placeholder={placeholder}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+            placeholder={displayedPlaceholder}
             aria-label={placeholder}
-            aria-describedby={helpId}
             autoComplete="off"
           />
           {value && (
@@ -51,10 +56,6 @@ const MultiCriteriaSearch = ({
           <div className="flex shrink-0 items-center gap-2">{actions}</div>
         ) : null}
       </div>
-
-      <p id={helpId} className="mt-2 text-xs text-base-content/60">
-        Recherche dans : {criteria.join(", ")}.
-      </p>
 
       {children ? <div className="mt-4">{children}</div> : null}
     </section>

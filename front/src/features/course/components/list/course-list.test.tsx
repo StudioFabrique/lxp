@@ -77,9 +77,6 @@ describe("CourseList", () => {
     );
 
     expect(markup).toContain('placeholder="Rechercher un cours..."');
-    expect(markup).toContain(
-      "Recherche dans : titre du cours, module, parcours, auteur.",
-    );
     expect(markup).toContain("Filtrer par parcours");
     expect(markup.indexOf("Rechercher un cours...")).toBeLessThan(
       markup.indexOf("Filtrer par parcours"),

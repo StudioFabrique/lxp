@@ -93,9 +93,6 @@ describe("ModuleHomeList", () => {
     );
 
     expect(markup).toContain('placeholder="Rechercher un module..."');
-    expect(markup).toContain(
-      "Recherche dans : titre du module, parcours, formation.",
-    );
     expect(markup).toContain("Filtrer par parcours");
     expect(markup.indexOf("Rechercher un module...")).toBeLessThan(
       markup.indexOf("Filtrer par parcours"),

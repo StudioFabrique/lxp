@@ -52,9 +52,6 @@ describe("AdminParcoursManagement", () => {
     expect(markup).toContain(
       'placeholder="Rechercher un parcours ou une formation..."',
     );
-    expect(markup).toContain(
-      "Recherche dans : titre du parcours, formation, niveau.",
-    );
   });
 
   it("utilise l'état vide partagé sur la page Gestion des parcours", () => {
