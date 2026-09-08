@@ -231,10 +231,10 @@ const UserHome = () => {
               key={role._id}
               type="button"
               onClick={() => handleRoleSwitch(role)}
-              className={`btn btn-sm ${
+              className={`badge cursor-pointer transition-colors ${
                 currentRole._id === role._id
-                  ? "btn-primary"
-                  : "btn-outline btn-primary"
+                  ? "badge-primary bg-primary text-primary-content"
+                  : "badge-outline hover:badge-primary"
               }`}
             >
               {role.label}

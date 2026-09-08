@@ -38,9 +38,6 @@ const ParcoursFilterBadges = ({
 
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-semibold">
-        Filtrer par parcours
-      </legend>
       <div
         className="flex flex-wrap items-center gap-2"
         aria-label="Filtres par parcours"
@@ -48,7 +45,7 @@ const ParcoursFilterBadges = ({
       >
         <button
           type="button"
-          className={`badge badge-lg cursor-pointer transition-colors ${
+          className={`badge cursor-pointer transition-colors ${
             selectedParcours === null
               ? "badge-primary bg-primary text-primary-content"
               : "badge-outline hover:badge-primary"
@@ -66,7 +63,7 @@ const ParcoursFilterBadges = ({
             <button
               key={parcoursTitle}
               type="button"
-              className={`badge badge-lg cursor-pointer transition-colors ${
+              className={`badge cursor-pointer transition-colors ${
                 isSelected
                   ? "badge-primary bg-primary text-primary-content"
                   : "badge-outline hover:badge-primary"
@@ -82,7 +79,7 @@ const ParcoursFilterBadges = ({
         {hasMore ? (
           <button
             type="button"
-            className="badge badge-secondary badge-soft badge-lg cursor-pointer gap-1"
+            className="badge badge-secondary badge-soft cursor-pointer gap-1"
             aria-expanded={showAll}
             onClick={() => setShowAll((current) => !current)}
           >
@@ -94,9 +91,8 @@ const ParcoursFilterBadges = ({
             ) : (
               <>
                 <ChevronDown className="size-3.5" aria-hidden />
-                Afficher plus de parcours ({
-                  uniqueParcours.length - INITIAL_PARCOURS_COUNT
-                })
+                Afficher plus de parcours (
+                {uniqueParcours.length - INITIAL_PARCOURS_COUNT})
               </>
             )}
           </button>
