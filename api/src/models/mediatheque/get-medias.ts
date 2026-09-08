@@ -8,6 +8,21 @@ export type GetMediasParams = {
   limit?: string;
   type?: string;
   sort?: string;
+  search?: string;
+};
+
+type AssociatedActivity = {
+  id: number;
+  title: string;
+  type: string;
+  order: number;
+  parent: "lesson" | "resource";
+  parentTitle: string;
+  courseTitle?: string;
+  moduleTitle?: string;
+  moduleId?: number;
+  lessonId?: number;
+  resourceId?: number;
 };
 
 /**
@@ -17,6 +32,7 @@ export type GetMediasParams = {
  */
 export default async function getMedias(params: GetMediasParams) {
   let { page, limit, type, sort } = params;
+  const search = params.search?.trim();
   const types = ["image", "resource", "video", "audio"];
   const sorts = ["createdAt", "size", "used", "name"];
 
@@ -35,11 +51,13 @@ export default async function getMedias(params: GetMediasParams) {
   }
 
   // Retourne le nombre total de médias de type "image"
-  const totalMedias = await prisma.mediatheque.count({
-    where: {
-      type: type as "image" | "resource" | "video" | "audio", // Filtre uniquement les médias de type image
-    },
-  });
+  const where = {
+    type: type as "image" | "resource" | "video" | "audio",
+    ...(search
+      ? { name: { contains: search, mode: "insensitive" as const } }
+      : {}),
+  };
+  const totalMedias = await prisma.mediatheque.count({ where });
 
   const totalPages = Math.ceil(totalMedias / +limit!);
 
@@ -49,9 +67,7 @@ export default async function getMedias(params: GetMediasParams) {
   // Recherche dans la table mediatheque tous les éléments de type "image"
   // avec pagination et tri par date de création décroissante
   const medias = await prisma.mediatheque.findMany({
-    where: {
-      type: type as "image" | "video" | "audio" | "resource", // Filtre uniquement les médias de type image
-    },
+    where,
     skip: offset, // Nombre d'éléments à sauter (pagination)
     take: +limit!, // Nombre d'éléments à retourner
     orderBy: {
@@ -59,5 +75,121 @@ export default async function getMedias(params: GetMediasParams) {
     },
   });
 
-  return { medias, totalPages: totalPages === 0 ? 1 : totalPages };
+  const urls = medias.map((media) => media.url);
+  if (urls.length === 0) {
+    return {
+      medias: [],
+      total: totalMedias,
+      totalPages: totalPages === 0 ? 1 : totalPages,
+    };
+  }
+
+  const [lessonActivities, bonusActivities] = await Promise.all([
+    prisma.activity.findMany({
+      where: {
+        OR: [
+          { url: { in: urls } },
+          { resourceActivities: { some: { url: { in: urls } } } },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        order: true,
+        url: true,
+        resourceActivities: {
+          where: { url: { in: urls } },
+          select: { url: true },
+        },
+        lesson: {
+          select: {
+            id: true,
+            title: true,
+            course: {
+              select: {
+                title: true,
+                module: { select: { id: true, title: true } },
+              },
+            },
+          },
+        },
+      },
+    }),
+    prisma.bonusActivity.findMany({
+      where: {
+        OR: [
+          { url: { in: urls } },
+          { resourceBonusActivities: { some: { url: { in: urls } } } },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        order: true,
+        url: true,
+        resourceBonusActivities: {
+          where: { url: { in: urls } },
+          select: { url: true },
+        },
+        resource: { select: { id: true, title: true } },
+      },
+    }),
+  ]);
+
+  const associations = new Map<string, AssociatedActivity[]>();
+  const addAssociation = (url: string, activity: AssociatedActivity) => {
+    if (!url || !urls.includes(url)) return;
+
+    const current = associations.get(url) ?? [];
+    if (!current.some((item) => item.id === activity.id && item.parent === activity.parent)) {
+      current.push(activity);
+      associations.set(url, current);
+    }
+  };
+
+  for (const activity of lessonActivities) {
+    const association: AssociatedActivity = {
+      id: activity.id,
+      title: activity.title?.trim() || "Activité sans titre",
+      type: activity.type,
+      order: activity.order,
+      parent: "lesson",
+      parentTitle: activity.lesson.title,
+      courseTitle: activity.lesson.course.title,
+      moduleTitle: activity.lesson.course.module.title,
+      moduleId: activity.lesson.course.module.id,
+      lessonId: activity.lesson.id,
+    };
+    addAssociation(activity.url, association);
+    for (const resource of activity.resourceActivities) {
+      addAssociation(resource.url, association);
+    }
+  }
+
+  for (const activity of bonusActivities) {
+    const association: AssociatedActivity = {
+      id: activity.id,
+      title: activity.title?.trim() || "Activité sans titre",
+      type: activity.type,
+      order: activity.order,
+      parent: "resource",
+      parentTitle: activity.resource.title,
+      resourceId: activity.resource.id,
+    };
+    addAssociation(activity.url, association);
+    for (const resource of activity.resourceBonusActivities) {
+      addAssociation(resource.url, association);
+    }
+  }
+
+  return {
+    medias: medias.map((media) => ({
+      ...media,
+      associatedActivities: associations.get(media.url) ?? [],
+    })),
+    total: totalMedias,
+    totalPages: totalPages === 0 ? 1 : totalPages,
+  };
 }

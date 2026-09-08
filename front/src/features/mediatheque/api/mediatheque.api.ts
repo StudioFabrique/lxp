@@ -5,10 +5,12 @@ export type MediathequeQuery = {
   limit: number;
   type: string;
   sort: string;
+  search?: string;
 };
 
 export type MediathequePage<T> = {
   medias: T[];
+  total: number;
   totalPages: number;
 };
 
