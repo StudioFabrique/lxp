@@ -25,17 +25,21 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
 
             return (
               <CursorGlowCard key={item.id}>
-                <div
-                  className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20"
-                >
+                <div className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20">
                   <div className="w-full text-left">
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                     <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
                     <div className="flex flex-wrap gap-2">
-                      {item.lesson.course.bonusSkills?.slice(0, 5).map((skill) => (
-                        <SkillBadge key={skill.id} skill={skill} size="small" />
-                      ))}
+                      {item.lesson.course.bonusSkills
+                        ?.slice(0, 5)
+                        .map((skill) => (
+                          <SkillBadge
+                            key={skill.id}
+                            skill={skill}
+                            size="small"
+                          />
+                        ))}
                     </div>
                   </div>
                   <Link

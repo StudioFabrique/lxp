@@ -1,8 +1,7 @@
-import React, { FC } from "react";
+import React, { ComponentPropsWithoutRef, FC } from "react";
 import { cn } from "../../utils/cn";
 
-type Props = {
-  className?: string;
+type Props = ComponentPropsWithoutRef<"div"> & {
   children: React.ReactNode;
   unstyled?: boolean;
 };
@@ -11,9 +10,11 @@ const BoxWrapper: FC<Props> = ({
   className,
   children,
   unstyled = false,
+  ...props
 }) => {
   return (
     <div
+      {...props}
       className={cn(
         "relative flex h-full min-w-0 flex-col gap-y-4",
         !unstyled &&

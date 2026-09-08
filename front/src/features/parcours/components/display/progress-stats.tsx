@@ -1,11 +1,15 @@
 import Module from "../../../../../src/utils/interfaces/module";
 import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { Link, useLocation } from "react-router";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
 };
 
 const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
+  const { pathname } = useLocation();
+  const space = pathname.split("/")[1];
+
   return (
     <BoxWrapper>
       <div className="flex flex-col gap-5 justify-between">
@@ -20,8 +24,10 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                 const moduleProgress = module.stats?.progress ?? 0;
 
                 return (
-                  <div
-                    className="flex flex-col justify-between gap-4 bg-base-200 border border-base-300 rounded-lg p-4 w-full shadow-sm hover:bg-base-300 transition-colors tooltip tooltip-bottom"
+                  <Link
+                    to={`/${space}/parcours/module/${module.id}`}
+                    aria-label={`Accéder au module ${module.title}`}
+                    className="tooltip tooltip-bottom flex w-full flex-col justify-between gap-4 rounded-lg border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     data-tip={module.title}
                     key={module.id}
                   >
@@ -37,7 +43,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                       value={moduleProgress}
                       max="100"
                     />
-                  </div>
+                  </Link>
                 );
               })}
           </div>

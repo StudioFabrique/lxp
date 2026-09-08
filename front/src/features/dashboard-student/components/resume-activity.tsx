@@ -37,6 +37,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   });
 
   const image = imageBlob ? normalizeImageSource(imageBlob) : defaultImage;
+  const parcoursId =
+    lastLesson.parcoursId ?? lastLesson.lesson.course.module.parcours?.id;
 
   return (
     <div className="flex flex-col gap-2 xl:flex-row">
@@ -62,11 +64,15 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                 <ComponentIcon className="stroke-white" />
                 <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
               </div>
-              <div className="flex gap-1">
-                {lastLesson.lesson.course.bonusSkills?.slice(0, 5).map((skill) => (
-                  <SkillBadge key={skill.id} skill={skill} size="small" />
-                ))}
-              </div>
+              {(lastLesson.lesson.course.bonusSkills?.length ?? 0) > 0 ? (
+                <div className="flex gap-1 rounded-xl border border-white/20 bg-base-100/50 p-1.5 shadow-sm backdrop-blur-sm">
+                  {lastLesson.lesson.course.bonusSkills
+                    ?.slice(0, 5)
+                    .map((skill) => (
+                      <SkillBadge key={skill.id} skill={skill} size="small" />
+                    ))}
+                </div>
+              ) : null}
             </div>,
             <div key="link">
               <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5 pb-9">
@@ -86,8 +92,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
           ]}
         />
       </div>
-      {lastLesson.parcoursId ? (
-        <ParcoursStatistiques parcoursId={lastLesson.parcoursId} />
+      {parcoursId ? (
+        <ParcoursStatistiques parcoursId={parcoursId} />
       ) : null}
     </div>
   );

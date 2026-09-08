@@ -6,6 +6,7 @@ import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import { getContactFullName } from "../../../../utils/helpers/contact-full-name";
 import CollapsibleSection from "./collapsible-section";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 const Contacts = () => {
   const { user } = useContext(AuthContext);
@@ -47,34 +48,37 @@ const Contacts = () => {
   ));
 
   return (
-    <CollapsibleSection
-      title="Ressources pédagogiques"
-      defaultOpen={contacts.length <= 2}
-      preview={
-        <span className="flex min-w-0 flex-col gap-1.5 text-sm">
-          {previewContacts.map((contact, index) => (
-            <span
-              key={contact.id}
-              className="flex min-w-0 items-center justify-between gap-3"
-            >
-              <span className="truncate font-semibold text-primary">
-                {getContactFullName(contact)}
-              </span>
-              {index === previewContacts.length - 1 &&
-              remainingContacts > 0 ? (
-                <span className="shrink-0 text-xs opacity-60">
-                  +{remainingContacts}
+    <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
+      <CollapsibleSection
+        title="Ressources pédagogiques"
+        className="bg-transparent"
+        defaultOpen={contacts.length <= 2}
+        preview={
+          <span className="flex min-w-0 flex-col gap-1.5 text-sm">
+            {previewContacts.map((contact, index) => (
+              <span
+                key={contact.id}
+                className="flex min-w-0 items-center justify-between gap-3"
+              >
+                <span className="truncate font-semibold text-primary">
+                  {getContactFullName(contact)}
                 </span>
-              ) : null}
-            </span>
-          ))}
-        </span>
-      }
-    >
-      <div className="flex flex-col gap-y-2 overflow-y-auto max-h-72">
-        {contactsList}
-      </div>
-    </CollapsibleSection>
+                {index === previewContacts.length - 1 &&
+                remainingContacts > 0 ? (
+                  <span className="shrink-0 text-xs opacity-60">
+                    +{remainingContacts}
+                  </span>
+                ) : null}
+              </span>
+            ))}
+          </span>
+        }
+      >
+        <div className="flex flex-col gap-y-2 overflow-y-auto max-h-72">
+          {contactsList}
+        </div>
+      </CollapsibleSection>
+    </BoxWrapper>
   );
 };
 

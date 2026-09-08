@@ -122,6 +122,7 @@ export default async function getLastLessonsRead(
     if (!firstLesson) return null;
 
     const lessonReformatted = {
+      parcoursId: firstLesson.course.module.parcours.id,
       lesson: {
         id: firstLesson.id,
         title: firstLesson.title,
@@ -136,7 +137,6 @@ export default async function getLastLessonsRead(
           // Aucune leçon n'a encore été ouverte dans ce parcours.
           stats: { progress: 0 },
         },
-        parcoursId: firstLesson.course.module.parcours.id,
       },
     };
 

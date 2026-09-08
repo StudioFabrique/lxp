@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { dashboardStudentApi } from "../../api/dashboard-student.api";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 const MostReadCourses = () => {
   const { data: courses } = useQuery({
@@ -12,8 +13,8 @@ const MostReadCourses = () => {
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   return (
-    <div
-      className={`flex flex-col items-center bg-secondary text-secondary-content rounded-lg p-5 gap-5 ${
+    <BoxWrapper
+      className={`items-center gap-5 ${
         courses && courses?.length < 3 && "h-75"
       }`}
     >
@@ -44,7 +45,7 @@ const MostReadCourses = () => {
       ) : (
         <p>Aucun cours disponibles</p>
       )}
-    </div>
+    </BoxWrapper>
   );
 };
 

@@ -3,6 +3,8 @@
  */
 
 import { PropsWithChildren, type ReactNode } from "react";
+import { cn } from "../../utils/cn";
+import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 
 interface HeaderProps {
@@ -20,9 +22,18 @@ interface HeaderProps {
 
 const Header = (props: PropsWithChildren<HeaderProps>) => {
   return (
-    <div
+    <BoxWrapper
       onClick={props.onClick}
-      className={`w-full flex px-4 ${props.isSubHeader ? "py-2" : "py-4"} ${props.isSubHeader && !props.disabled ? "ring-1" : ""} ${props.hasError && "ring-2 ring-error"} items-center justify-between rounded-lg  ${props.alternateBgColor ? "bg-base-200" : props.successBgColor ? "bg-success" : "bg-secondary/20"} select-none ${props.disabled && "opacity-15"} ${props.onClick ? "cursor-pointer hover:opacity-50" : ""} ${props.containerClassname ?? ""}`}
+      className={cn(
+        "h-auto w-full flex-row items-center justify-between px-4 shadow-none select-none",
+        props.isSubHeader ? "py-2" : "py-4",
+        props.isSubHeader && !props.disabled && "ring-1",
+        props.hasError && "ring-2 ring-error",
+        props.successBgColor && "bg-success",
+        props.disabled && "opacity-15",
+        props.onClick && "cursor-pointer hover:opacity-50",
+        props.containerClassname,
+      )}
     >
       <div className="flex min-w-0 items-center gap-3">
         {!props.isSubHeader && <SidebarRouteIcon />}
@@ -42,7 +53,7 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
       <div className="flex shrink-0 justify-end items-center">
         {props.children}
       </div>
-    </div>
+    </BoxWrapper>
   );
 };
 

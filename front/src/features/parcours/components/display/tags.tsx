@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 import type Tag from "../../../../utils/interfaces/tag";
 import CollapsibleSection from "./collapsible-section";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 const Tags = () => {
   const { id } = useParams();
@@ -17,33 +18,36 @@ const Tags = () => {
   const remainingTags = tags.length - previewTags.length;
 
   return (
-    <CollapsibleSection
-      title="Tags"
-      preview={
-        <span className="flex min-w-0 items-center gap-2 overflow-hidden">
-          {previewTags.map((tag) => (
-            <span
-              key={tag.id}
-              className="max-w-32 truncate rounded-md px-2 py-1 text-xs font-bold"
-              style={{ backgroundColor: tag.color }}
-            >
-              #{tag.name}
-            </span>
+    <BoxWrapper className="h-auto gap-0 overflow-hidden p-0">
+      <CollapsibleSection
+        title="Tags"
+        className="bg-transparent"
+        preview={
+          <span className="flex min-w-0 items-center gap-2 overflow-hidden">
+            {previewTags.map((tag) => (
+              <span
+                key={tag.id}
+                className="max-w-32 truncate rounded-md px-2 py-1 text-xs font-bold"
+                style={{ backgroundColor: tag.color }}
+              >
+                #{tag.name}
+              </span>
+            ))}
+            {remainingTags > 0 ? (
+              <span className="shrink-0 text-xs opacity-60">
+                +{remainingTags}
+              </span>
+            ) : null}
+          </span>
+        }
+      >
+        <div className="flex gap-4 flex-wrap overflow-y-auto">
+          {tags.map((tag) => (
+            <TagItem key={tag.id} tag={tag} noIcon />
           ))}
-          {remainingTags > 0 ? (
-            <span className="shrink-0 text-xs opacity-60">
-              +{remainingTags}
-            </span>
-          ) : null}
-        </span>
-      }
-    >
-      <div className="flex gap-4 flex-wrap overflow-y-auto">
-        {tags.map((tag) => (
-          <TagItem key={tag.id} tag={tag} noIcon />
-        ))}
-      </div>
-    </CollapsibleSection>
+        </div>
+      </CollapsibleSection>
+    </BoxWrapper>
   );
 };
 
