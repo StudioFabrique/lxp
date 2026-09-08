@@ -8,12 +8,16 @@ import type CustomRequest from "../../../utils/interfaces/express/custom-request
  */
 export default async function putResource(req: CustomRequest) {
   // Extraction des données de la requête
-  const { label } = req.body;
+  const { label, parent = "lesson" } = req.body;
+  if (parent !== "lesson" && parent !== "resource")
+    throw { statusCode: 400, message: "Parent invalide." };
   const { resourceId } = req.params;
   const userId = req.auth?.userId;
 
   // Recherche de la ressource existante
-  const existingResource = await prisma.resourceActivity.findFirst({
+  const existingResource = parent === "resource"
+    ? await prisma.resourceBonusActivity.findFirst({ where: { id: +resourceId }, select: { id: true } })
+    : await prisma.resourceActivity.findFirst({
     where: { id: +resourceId },
     select: { id: true },
   });
@@ -31,7 +35,9 @@ export default async function putResource(req: CustomRequest) {
   if (!existingUser)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
-  const updatedResource = await prisma.resourceActivity.update({
+  const updatedResource = parent === "resource"
+    ? await prisma.resourceBonusActivity.update({ where: { id: +resourceId }, data: { label } })
+    : await prisma.resourceActivity.update({
     where: { id: +resourceId },
     data: {
       label,

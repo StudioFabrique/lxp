@@ -1,132 +1,101 @@
-import type { PropsWithChildren } from "react";
-import { UseFormRegister, FieldErrors } from "react-hook-form";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import LessonReaderAndEditor from "../../../module-preview/components/preview/lesson-reader-and-editor";
 import { Activity } from "../../../../utils/interfaces/activity";
-import ResourcePreview from "../../../../features/lesson/components/edit/activities/resources/preview/resource-preview";
-import ResourceUpload from "../../../../features/lesson/components/edit/activities/resources/resource-upload";
-import ActivityWrapper from "./ActivityWrapper";
-import IFrameActivityResource from "./IFrameActivityResource";
-import ImageActivityResource from "./ImageActivityResource";
-
-import TextActivityResource from "./TextActivityResource";
-import VideoActivityResource from "./VideoActivityResource";
+import { ACTIVITIES } from "../../../../config/urls";
+import { regexGeneric } from "../../../../config/constantes";
+import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import { resourcesApi } from "../../api/resources.api";
 
 type Props = {
-  activityState: "read" | "edit" | "write";
   parentId: number;
-  previewActivity: Activity | null;
-  activityType: "text" | "image" | "video" | "iframe" | "resource";
+  activity?: Activity;
+  activityType: Activity["type"];
+  mode: "read" | "write" | "edit";
+  canEdit: boolean;
   onClose: () => void;
-  setActivityState: (state: "read" | "edit" | "write") => void;
-  setPreviewActivity: (activity: Activity | null) => void;
-  refreshActivityList: (message: string) => void;
-  closePreviewActivity: () => void;
-  uploadVideo: (fd: FormData) => void;
-  data: {
-    register: UseFormRegister<any>;
-    errors: FieldErrors;
-  };
-  resourceActivitiesSubmitted: () => void;
-  submitIframeActivity: (newActivity: { title: string; url: string }) => void;
-  onCloseTextEditor: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onRefresh: (selectLast?: boolean) => Promise<boolean>;
 };
 
-export default function ActivityContent(props: PropsWithChildren<Props>) {
-  console.log("PROPS", props.parentId);
+export default function ActivityContent({ parentId, activity, activityType, mode, canEdit, onClose, onEdit, onDelete, onRefresh }: Props) {
+  const [title, setTitle] = useState(activity?.title ?? "");
+  const [content, setContent] = useState("");
+  const [src, setSrc] = useState(activity?.url ?? "");
+  const [titleError, setTitleError] = useState("");
+  const [loading, setLoading] = useState(activityType === "text" && Boolean(activity));
+  const [loadError, setLoadError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  return (
-    <>
-      {props.activityType && props.activityType !== "text" ? (
-        <ActivityWrapper
-          activity={props.previewActivity}
-          mode={props.activityState}
-          onSwitchMode={props.setActivityState}
-          onClose={props.closePreviewActivity}
-        >
-          {props.activityType === "video" ? (
-            <VideoActivityResource
-              activity={props.previewActivity ? props.previewActivity : null}
-              mode={props.activityState}
-              onClose={props.closePreviewActivity}
-              onSubmit={props.uploadVideo}
-              parent="resource"
-            />
-          ) : null}
+  useEffect(() => {
+    if (activityType !== "text" || !activity) return;
+    const controller = new AbortController();
+    fetch(`${ACTIVITIES}${activity.url}`, { credentials: "include", signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Le contenu n'a pas pu être chargé.");
+        return response.text();
+      })
+      .then(setContent)
+      .catch((error) => { if (!controller.signal.aborted) setLoadError(error.message); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [activity, activityType]);
 
-          {props.activityState === "write" &&
-          props.activityType === "resource" ? (
-            <ResourceUpload
-              onCancel={props.closePreviewActivity}
-              onResetForm={() => {}}
-              onSubmit={props.resourceActivitiesSubmitted}
-            />
-          ) : props.activityType === "resource" &&
-            props.activityState !== "write" ? (
-            <ResourcePreview
-              activity={props.previewActivity!}
-              onCancel={props.closePreviewActivity}
-              parent="resource"
-            />
-          ) : null}
+  const saveActivity = async (_id?: number, newTitle = title, newContent = content) => {
+    if (saving || !canEdit) return false;
+    if (!newTitle.trim() || !regexGeneric.test(newTitle)) {
+      setTitleError("Saisissez un titre valide.");
+      return false;
+    }
+    setTitleError("");
+    setSaving(true);
+    try {
+      const id = activity?.id ?? parentId;
+      const result = activityType === "text"
+        ? await resourcesApi.mutations.saveTextActivity(id, { title: newTitle.trim(), value: newContent, description: activity?.description ?? "", parent: "resource" }, mode === "edit")
+        : activityType === "iframe"
+          ? await resourcesApi.mutations.saveIframeActivity(id, { title: newTitle.trim(), url: src }, mode === "edit")
+          : await resourcesApi.mutations.saveActivityTitle(id, newTitle.trim());
+      if (!result.success) throw new Error(result.message);
+      toast.success(result.message);
+      return true;
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "L'activité n'a pas pu être enregistrée."));
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
 
-          {props.activityType === "image" ? (
-            <ImageActivityResource
-              resourceId={props.parentId}
-              activity={props.previewActivity!}
-              mode={props.activityState}
-              onCancel={props.closePreviewActivity}
-            />
-          ) : null}
+  if (loading) return <div role="status" className="skeleton h-64">Chargement de l'activité…</div>;
+  if (loadError) return <div role="alert" className="alert alert-error">{loadError}</div>;
 
-          {props.activityType === "iframe" ? (
-            <IFrameActivityResource
-              activity={props.previewActivity}
-              mode={props.activityState}
-              onSubmit={props.submitIframeActivity}
-              onCancel={props.closePreviewActivity}
-            />
-          ) : null}
-        </ActivityWrapper>
-      ) : (
-        <>
-          {props.activityType === "text" ? (
-            <>
-              {props.activityState !== "read" ? (
-                <TextActivityResource
-                  parentId={props.parentId!}
-                  activity={
-                    props.previewActivity ? props.previewActivity : undefined
-                  }
-                  activityType={props.activityType}
-                  onClose={props.onCloseTextEditor}
-                  mode={props.activityState}
-                  onSubmit={props.refreshActivityList}
-                />
-              ) : null}
-              {props.activityState === "read" ? (
-                <ActivityWrapper
-                  activity={props.previewActivity}
-                  mode={props.activityState}
-                  onSwitchMode={props.setActivityState}
-                  onClose={() => props.setPreviewActivity(null)}
-                >
-                  <TextActivityResource
-                    parentId={props.parentId!}
-                    activity={
-                      props.previewActivity ? props.previewActivity : undefined
-                    }
-                    activityType={props.activityType}
-                    onClose={props.onClose}
-                    mode={props.activityState}
-                    onSubmit={props.refreshActivityList}
-                  />
-                </ActivityWrapper>
-              ) : null}
-            </>
-          ) : (
-            props.children
-          )}
-        </>
-      )}
-    </>
-  );
+  return <LessonReaderAndEditor
+    parent="resource"
+    parentId={parentId}
+    mode={mode}
+    canEdit={canEdit}
+    isLessonCompleted={false}
+    selectedActivity={activity}
+    activityType={activityType}
+    textActivityTitle={title}
+    textActivityTitleError={titleError}
+    textActivityContent={content}
+    iframeActivitySrc={src}
+    showDeleteModal={false}
+    isLoading={saving}
+    onEditTitle={setTitle}
+    onEditContent={setContent}
+    onEditIframeSrc={setSrc}
+    onRateActivity={() => {}}
+    onEditActivity={onEdit}
+    onOpenDeleteModal={onDelete}
+    onDeleteActivity={onDelete}
+    onCloseDeleteModal={() => {}}
+    onClose={() => { void onRefresh(mode === "write"); }}
+    onBack={onClose}
+    onRefreshActivity={onRefresh}
+    onSaveActivity={saveActivity}
+  />;
 }

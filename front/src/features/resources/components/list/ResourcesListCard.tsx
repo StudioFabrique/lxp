@@ -1,16 +1,15 @@
-import { Edit, Trash2 } from "lucide-react";
-import React, { useContext } from "react";
-import { ResourceListItem } from "../../views/ResourcesHome";
-import { DOWNLOAD_URL } from "../../../../config/urls";
-import { AbilityContext } from "../../../../rbac/AbilityProvider";
-import { ThemeContext } from "../../../../store/ThemeProvider";
+import { Pencil, Trash2 } from "lucide-react";
+import { cloneElement, ReactNode, useContext } from "react";
 import { Link } from "react-router";
+import { ResourceListItem } from "../../views/ResourcesHome";
+import { AbilityContext } from "../../../../rbac/AbilityProvider";
+import PermissionGuard from "../../../../components/guards/PermissionGuard";
+import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import activityIconType from "../../../../utils/helpers/activity-icon-type";
 
 type Props = {
   resourcesList?: ResourceListItem[] | null;
-  children?: React.ReactNode;
-  // Le bouton de suppression n'est rendu qu'aux profils habilités : la vue
-  // apprenante n'a donc pas de rappel à fournir.
+  children?: ReactNode;
   onDeleteResource?: (resource: ResourceListItem) => void;
 };
 
@@ -19,80 +18,69 @@ export default function ResourcesListCard({
   children,
   onDeleteResource,
 }: Props) {
-  // Defensive: if resourcesList is not an array treat as empty
-  const list = Array.isArray(resourcesList) ? resourcesList : [];
-  const { theme } = useContext(ThemeContext);
-  const baseStyle = "card glass image-full w-62 shadow-sm h-42";
   const ability = useContext(AbilityContext);
-
-  const style = theme === "light" ? baseStyle + " bg-primary/75" : baseStyle;
-
-  const isAllowed = ability.can("update", "resource");
-
-  // If no data, render the provided children (fallback UI) if valid
-  if (list.length === 0) {
-    // If children is a valid React node, render it, otherwise render null
-    return (
-      <>
-        {React.isValidElement(children) || typeof children === "string"
-          ? children
-          : null}
-      </>
-    );
-  }
-
-  const deleteRsource = (resource: ResourceListItem) => {
-    onDeleteResource?.(resource);
-  };
-
+  const adminView = Boolean(onDeleteResource);
+  const list = Array.isArray(resourcesList) ? resourcesList : [];
+  if (!list.length) return <>{children}</>;
   return (
-    <>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-10 text-lg font-semibold text-center">
-        {list.map((item) => (
-          <div key={item.id ?? JSON.stringify(item)} className={style}>
-            {item.imageUrl ? (
-              <figure>
-                <img
-                  src={DOWNLOAD_URL + "/activities/images/" + item.imageUrl}
-                  alt="Shoes"
-                />
-              </figure>
-            ) : null}
-            <div className="card-body">
-              <h2 className="card-title">{item.title}</h2>
-
-              <div className="flex justify-around items-end h-full">
-                {isAllowed ? (
-                  <>
+    <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">
+      {list.map((resource) => {
+        const path = adminView
+          ? `/admin/resources/edit/${resource.id}`
+          : `/student/ressources/details/${resource.id}`;
+        return (
+          <HierarchicalListCard
+            key={resource.id}
+            label="Ressource supplémentaire"
+            title={resource.title}
+            description={
+              <div className="flex flex-wrap gap-x-2 gap-y-1">
+                <span>{resource.author}</span>
+              </div>
+            }
+            action={
+              <div className="flex items-center gap-1">
+                {adminView && (
+                  <PermissionGuard action="update" object="resource">
                     <Link
-                      className="text-primary"
-                      to={`add/${item.id}`}
-                      aria-label="modifier la ressource"
+                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      data-tip="Modifier la ressource"
+                      to={path}
+                      aria-label={`Modifier la ressource ${resource.title}`}
                     >
-                      <Edit className="w-4 h-4" />
+                      <Pencil className="size-[1.2em]" />
                     </Link>
-                    <button
-                      aria-label="supprimer la ressource tooltip-bottom"
-                      className="tooltip tooltip-bottom cursor-pointer"
-                      data-tip="Supprimer la ressource"
-                      onClick={() => deleteRsource(item)}
-                    >
-                      <Trash2 className="text-error w-4 h-4" />
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    to={`/student/ressources/details/${item.id}`}
-                    className="text-primary text-xs underline cursor-pointer"
+                  </PermissionGuard>
+                )}
+                {onDeleteResource && ability.can("delete", "resource") && (
+                  <button
+                    type="button"
+                    className="btn btn-square btn-sm btn-ghost text-error tooltip tooltip-left"
+                    data-tip="Supprimer la ressource"
+                    aria-label={`Supprimer la ressource ${resource.title}`}
+                    onClick={() => onDeleteResource(resource)}
                   >
-                    Voir les détails
-                  </Link>
+                    <Trash2 className="size-[1.2em]" />
+                  </button>
                 )}
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
+            }
+            items={(resource.activities ?? []).map((activity) => ({
+              id: activity.id,
+              title: activity.title ?? "Activité",
+              description: `Activité ${activity.order + 1}`,
+              icon: cloneElement(activityIconType(activity.type), {
+                strokeWidth: 1.5,
+              }),
+              to: `${path}?activityId=${activity.id}`,
+            }))}
+            maxItemsShown={3}
+            emptyMessage="Aucune activité associée"
+            moreItemsLabel={(count) => `Afficher plus d'activités (${count})`}
+            overflowTitle={`Activités de ${resource.title}`}
+          />
+        );
+      })}
+    </section>
   );
 }

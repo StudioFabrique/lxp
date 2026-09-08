@@ -27,6 +27,7 @@ type Props = {
   tagError: boolean;
   onTagError: (tagError: boolean) => void;
   onSetFile: (file: File | null) => void;
+  showSubmitButton?: boolean;
 };
 
 let i = 0;
@@ -41,6 +42,7 @@ export default function ResourceForm({
   tagError,
   onTagError,
   onSetFile,
+  showSubmitButton = true,
 }: Props) {
   const [inputTag, setInputTag] = useState<string>("");
   const { handleSelectedFile } = useImageUpload(5000000, onSetFile);
@@ -66,10 +68,7 @@ export default function ResourceForm({
       );
       if (alreadyExists) return currentTags;
 
-      return [
-        ...currentTags,
-        { name, color: getSoftColor(), id: i++ },
-      ];
+      return [...currentTags, { name, color: getSoftColor(), id: i++ }];
     }, tags);
 
     setTags(updatedTags);
@@ -104,8 +103,7 @@ export default function ResourceForm({
 
   return (
     <>
-      <h2 className="text-lg font-bold">Ressource</h2>
-      <form className="flex flex-col gap-y-4">
+      <form className="flex flex-col gap-y-4 mt-4" onSubmit={onSubmit}>
         <FormInput
           placeholder="Titre de la ressource"
           label="Titre"
@@ -144,25 +142,26 @@ export default function ResourceForm({
           error={data.errors.description}
         />
         <FormUploadImage onSetFile={handleSelectedFile} />
-        <div className="w-full flex justify-end">
-          <button
-            disabled={isLoading}
-            className="btn btn-primary"
-            type="button"
-            onClick={onSubmit}
-          >
-            {isLoading ? (
-              <>
-                <Loader className="animate-spin" />
-                <p>Envoi...</p>
-              </>
-            ) : mode === "create" ? (
-              "Ajouter la ressource"
-            ) : (
-              "Mettre à jour la ressource"
-            )}
-          </button>
-        </div>
+        {showSubmitButton && (
+          <div className="w-full flex justify-end">
+            <button
+              disabled={isLoading}
+              className="btn btn-primary"
+              type="submit"
+            >
+              {isLoading ? (
+                <>
+                  <Loader className="animate-spin" />
+                  <p>Envoi...</p>
+                </>
+              ) : mode === "create" ? (
+                "Ajouter la ressource"
+              ) : (
+                "Mettre à jour la ressource"
+              )}
+            </button>
+          </div>
+        )}
       </form>
     </>
   );

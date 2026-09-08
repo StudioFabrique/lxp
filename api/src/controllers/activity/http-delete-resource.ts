@@ -10,7 +10,10 @@ export default async function httpDeleteResource(
   const { resourceId } = req.params;
   const userId = req.auth!.userId;
   try {
-    await deleteResource(+resourceId, userId);
+    const parent = req.query.parent ?? "lesson";
+    if (parent !== "lesson" && parent !== "resource")
+      throw { statusCode: 400, message: "Parent invalide." };
+    await deleteResource(+resourceId, userId, parent);
     res.status(200).json({
       success: true,
       message: "La ressource a été supprimée avec succès.",

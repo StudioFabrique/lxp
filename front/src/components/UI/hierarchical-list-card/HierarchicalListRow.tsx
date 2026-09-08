@@ -144,7 +144,7 @@ export const HierarchicalListRow = ({
 
   return (
     <li
-      className={`list-row relative mx-2 hover:bg-accent/2 ${hideDivider ? "after:hidden" : ""}`}
+      className={`list-row relative mx-2 hover:bg-accent/2 ${item.to ? "cursor-pointer" : ""} ${hideDivider ? "after:hidden" : ""}`}
       onContextMenu={(event) => {
         if (!itemAction) return;
 
@@ -206,7 +206,7 @@ export const HierarchicalListRow = ({
 
       {item.to ? (
         <Link
-          className="absolute inset-0 z-0 rounded-box"
+          className="absolute inset-0 z-0 cursor-pointer rounded-box"
           to={item.to}
           state={item.state}
           aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}

@@ -74,18 +74,21 @@ const mutations = {
   updateResource: async (
     resourceId: number,
     label: string,
+    parent: "lesson" | "resource" = "lesson",
   ): Promise<{ success: boolean; message: string; data: any }> => {
     const res = await apiClient.put(`/activity/resource/${resourceId}`, {
-      label,
+      label, parent,
     });
     return res.data;
   },
 
   deleteResource: async (
     resourceId: number,
+    parent: "lesson" | "resource" = "lesson",
   ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.delete(
       `/activity/activity-resource/${resourceId}`,
+      { params: { parent } },
     );
     return res.data;
   },

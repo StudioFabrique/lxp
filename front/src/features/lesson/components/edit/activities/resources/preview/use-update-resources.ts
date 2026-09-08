@@ -6,6 +6,7 @@ import type {
 } from "../../../../../../../../src/utils/interfaces/activity";
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "../../../../../../../utils/helpers/api-error-message";
 import { regexGeneric } from "../../../../../../../config/constantes";
 import { allowedMimeTypes, Resource } from "../useUploadResources";
 
@@ -31,18 +32,23 @@ const useUpdateResources = (
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const [isUpdating, setIsUpdating] = useState<ActivityResource | null>(null);
 
-  const handleUpdateResource = (value: string, id: number) => {
-    lessonApi.mutations.updateResource(id, value).then((data: { success: boolean; message: string; data: any }) => {
-      if (data.success) {
-        setResources((prevState) =>
-          prevState.map((resource) =>
-            resource.id === data.data.id ? data.data : resource,
-          ),
-        );
-      }
+  const handleUpdateResource = async (value: string, id: number) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const data = await lessonApi.mutations.updateResource(id, value, parent);
+      if (!data.success) throw new Error(data.message);
+      setResources((current) => current.map((resource) =>
+        resource.id === data.data.id ? data.data : resource,
+      ));
       setIsUpdating(null);
+      toast.success(data.message);
       onSubmit?.();
-    });
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Le fichier n'a pas pu être renommé."));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReorderResources = useCallback(() => {
@@ -66,6 +72,8 @@ const useUpdateResources = (
       .getResources(activity.id, parent)
       .then((data: { success: boolean; resources: any[] }) => {
         if (data.success) setResources(data.resources);
+      }).catch((error) => {
+        toast.error(getApiErrorMessage(error, "Les fichiers n'ont pas pu être chargés."));
       });
   }, [activity.id, parent]);
 
@@ -174,15 +182,20 @@ const useUpdateResources = (
     setIsDeleting(null);
   };
 
-  const handleDeleteResource = () => {
-    if (isDeleting) {
-      lessonApi.mutations.deleteResource(isDeleting).then((data: { success: boolean; message: string }) => {
-        if (data.success) toast.success(data.message);
-        setIsDeleting(null);
-        setResources((prevState) =>
-          prevState.filter((resource) => resource.id !== isDeleting),
-        );
-      });
+  const handleDeleteResource = async () => {
+    if (!isDeleting || isLoading) return;
+    setIsLoading(true);
+    try {
+      const data = await lessonApi.mutations.deleteResource(isDeleting, parent);
+      if (!data.success) throw new Error(data.message);
+      toast.success(data.message);
+      setResources((current) => current.filter((resource) => resource.id !== isDeleting));
+      setIsDeleting(null);
+      onSubmit?.();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Le fichier n'a pas pu être supprimé."));
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -15,11 +15,17 @@ export default async function putResource(
 ) {
   let updatedResource: Resource | null = null;
   const existingResource = await prisma.resource.findFirst({
-    where: { title },
+    where: { id: resourceId },
   });
 
   if (!existingResource)
-    throw { message: "La ressource n'existe pas", status: 404 };
+    throw { message: "La ressource n'existe pas", statusCode: 404 };
+
+  const duplicate = await prisma.resource.findFirst({
+    where: { title, id: { not: resourceId } },
+  });
+  if (duplicate)
+    throw { message: "Une ressource portant ce nom existe déjà", statusCode: 409 };
 
   const existingAuthor = await prisma.admin.findFirst({
     where: { idMdb: userId },
@@ -101,7 +107,7 @@ async function updateResource(
       description,
       admin: { connect: { id: existingAuthor.id } },
       author: mongoUser.firstname + " " + mongoUser.lastname,
-      imageUrl: filename,
+      ...(filename ? { imageUrl: filename } : {}),
       tags: {
         deleteMany: {}, // Supprime toutes les associations existantes
         create: tags.map((tag) => ({

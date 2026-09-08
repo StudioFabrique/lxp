@@ -6,17 +6,23 @@ import {
 
 export default async function deleteResource(
   resourceId: number,
-  userId: string
+  userId: string,
+  parent: "lesson" | "resource" = "lesson",
 ) {
-  const existingResource = await prisma.resourceActivity.findFirst({
+  const existingResource = parent === "resource"
+    ? await prisma.resourceBonusActivity.findFirst({
+        where: { id: resourceId },
+        select: { url: true },
+      })
+    : await prisma.resourceActivity.findFirst({
     where: { id: resourceId },
-    select: { url: true, activity: { select: { authorId: true } } },
+    select: { url: true },
   });
   if (!existingResource)
     throw { statusCode: 404, message: "La ressource n'existe pas." };
 
   const existingAuthor = await prisma.admin.findFirst({
-    where: { id: existingResource.activity.authorId },
+    where: { idMdb: userId },
   });
   if (!existingAuthor)
     throw {
@@ -24,7 +30,9 @@ export default async function deleteResource(
       message: "L'auteur de la ressource n'existe pas.",
     };
   const filesToDelete = await prisma.$transaction(async (tx) => {
-    const deletedResource = await tx.resourceActivity.delete({
+    const deletedResource = parent === "resource"
+      ? await tx.resourceBonusActivity.delete({ where: { id: resourceId } })
+      : await tx.resourceActivity.delete({
       where: { id: resourceId },
     });
 

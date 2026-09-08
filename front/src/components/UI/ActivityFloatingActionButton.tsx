@@ -7,7 +7,9 @@ import {
 } from "lucide-react";
 
 type Props = {
-  onTypeSelection: (type: "video" | "text" | "image" | "resource") => void;
+  onTypeSelection: (
+    type: "video" | "text" | "image" | "resource" | "iframe",
+  ) => void;
 };
 
 export default function ActivityFloatingActionButton(props: Props) {
@@ -15,25 +17,25 @@ export default function ActivityFloatingActionButton(props: Props) {
 
   const activitiesTypes = [
     {
+      type: "text",
+      icon: <TextInitial className={style} />,
+      tooltip: "Ajouter une activité de type texte",
+    },
+    {
+      type: "resource",
+      icon: <FileStack className={style} />,
+      tooltip: "Ajouter une activité de type fichier",
+    },
+    {
       type: "video",
       icon: <Video className={style} />,
       tooltip: "Ajouter une activité de type vidéo",
       //tooltip: "Ajouter une activité de type vidéo",
     },
     {
-      type: "text",
-      icon: <TextInitial className={style} />,
-      tooltip: "Ajouter une activité de type texte",
-    },
-    {
       type: "image",
       icon: <Image className={style} />,
       tooltip: "Ajouter une activité de type image",
-    },
-    {
-      type: "resource",
-      icon: <FileStack className={style} />,
-      tooltip: "Ajouter une activité de type fichier",
     },
     {
       type: "iframe",
@@ -44,10 +46,12 @@ export default function ActivityFloatingActionButton(props: Props) {
 
   return (
     <div className="fab absolute">
-      {/* a focusable div with tabIndex is necessary to work on all browsers. role="button" is necessary for accessibility */}
+      {/* a focusable div with tabIndex is necessary to work on all browsers. role="button"
+        aria-label="Créer une activité" is necessary for accessibility */}
       <div
         tabIndex={0}
         role="button"
+        aria-label="Créer une activité"
         className="btn btn-circle btn-lg btn-primary"
       >
         <svg
@@ -62,7 +66,11 @@ export default function ActivityFloatingActionButton(props: Props) {
       </div>
 
       {/* Main Action button replaces the original button when FAB is open */}
-      <button className="fab-main-action btn btn-circle btn-lg btn-primary">
+      <button
+        type="button"
+        aria-label="Choisir le type d’activité"
+        className="fab-main-action btn btn-circle btn-lg btn-primary"
+      >
         <svg
           aria-label="New post"
           xmlns="http://www.w3.org/2000/svg"
@@ -82,12 +90,14 @@ export default function ActivityFloatingActionButton(props: Props) {
 
       {activitiesTypes.map((activity) => (
         <button
+          type="button"
           key={activity.type}
           className="fab-action btn btn-circle btn-lg btn-primary tooltip tooltip-left"
           data-tip={activity.tooltip}
           onClick={() =>
             props.onTypeSelection(
-              activity.type as "video" | "text" | "image" | "resource",
+              activity.type as
+                "video" | "text" | "image" | "resource" | "iframe",
             )
           }
           aria-label={`Ajouter une activité de type ${activity.type}`}

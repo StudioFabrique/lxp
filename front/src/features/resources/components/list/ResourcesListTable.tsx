@@ -71,12 +71,12 @@ Props) {
                 <div className="flex items-center justify-around gap-x-2 h-full">
                   <div
                     className="tooltip tooltip-bottom"
-                    data-tip="Modifier la ressource"
+                    data-tip="Modifier les détails de la ressource"
                   >
                     <Link
                       className="btn btn-ghost btn-xs btn-square text-primary"
-                      to={`add/${item.id}`}
-                      aria-label="modifier la ressource"
+                      to={`edit/${item.id}`}
+                      aria-label="Modifier les détails de la ressource"
                     >
                       <EditIcon className="w-4 h-4" />
                     </Link>

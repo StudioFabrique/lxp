@@ -1,129 +1,163 @@
-import ResourcesHeader from "../components/list/ResourcesHeader";
-import ResourcesListCard from "../components/list/ResourcesListCard";
-import ListHeader from "../../../components/UI/list-header";
-import ToggleList from "../../../components/UI/toggle-list";
-import ElementNotFound from "../../../components/UI/element-not-found";
-import ResourcesListTable from "../components/list/ResourcesListTable";
-import TablePagination from "../../../components/table/TablePagination";
-import usePagination from "../../../../src/hooks/use-pagination";
-import { useState } from "react";
-import Modal from "../../../components/UI/modal/modal";
-import { resourcesApi } from "../api/resources.api";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import ResourcesHeader from "../components/list/ResourcesHeader";
+import CreateResourceModal from "../components/add/CreateResourceModal";
+import ResourcesListCard from "../components/list/ResourcesListCard";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
+import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
+import TablePagination from "../../../components/table/TablePagination";
+import Modal from "../../../components/UI/modal/modal";
+import {
+  getStoredItemsPerPage,
+  storeItemsPerPage,
+} from "../../../components/table/pagination-storage";
+import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import { resourcesApi } from "../api/resources.api";
+import { resourcesKeys } from "../api/resources.keys";
+import { Activity } from "../../../utils/interfaces/activity";
 
 export type ResourceListItem = {
   id: number;
   title: string;
   author: string;
+  description?: string;
   createdAt: string;
   imageUrl?: string;
+  activities?: Pick<Activity, "id" | "title" | "type" | "order">[];
 };
 
 export default function ResourcesHome() {
-  const [showList, setShowList] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [resourceToDelete, setResourceToDelete] =
     useState<ResourceListItem | null>(null);
-
-
-  const notFoundMessage = (
-    <ElementNotFound message="Aucune ressource disponible pour le moment." />
+  const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(() =>
+    getStoredItemsPerPage("admin-resources", 15),
   );
-
-  const {
-    page,
-    totalPages,
-    dataList,
-    stype,
-    sdir,
-    sortData,
-    setPerPage,
-    setPage,
-    perPage,
-    getList,
-  } = usePagination("title", "/resources", "admin-resources");
-
-  const handleToggleList = (value: boolean) => {
-    setShowList(value);
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(search.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+  const query = useQuery<{ list: ResourceListItem[]; total: number }>({
+    queryKey: [...resourcesKeys.list(), { page, limit, searchTerm }],
+    queryFn: () =>
+      resourcesApi.queries.getList({
+        stype: "title",
+        sdir: "asc",
+        page,
+        limit,
+        searchTerm: searchTerm || undefined,
+      }),
+  });
+  const total = query.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  useEffect(() => {
+    if (query.data && page > totalPages) setPage(totalPages);
+  }, [query.data, page, totalPages]);
 
   const handleDeleteResource = async () => {
+    if (!resourceToDelete || deleting) return;
+    setDeleting(true);
     try {
-      const data = await resourcesApi.mutations.remove(resourceToDelete!.id);
-      if (data.success) {
-        setResourceToDelete(null);
-        toast.success(data.message);
-        getList();
-      }
+      const result = await resourcesApi.mutations.remove(resourceToDelete.id);
+      if (!result.success) throw new Error(result.message);
+      toast.success(result.message);
+      setResourceToDelete(null);
+      await query.refetch();
     } catch (err) {
       toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Erreur inconnue",
+        getApiErrorMessage(err, "La ressource n'a pas pu être supprimée."),
       );
+    } finally {
+      setDeleting(false);
     }
   };
 
   return (
-    <main className="w-full flex justify-center">
-      <ListHeader>
-        <ResourcesHeader />
-        <article className="w-full flex justify-end items-center gap-x-4">
-          <ToggleList showList={showList} onToggle={handleToggleList} />
-        </article>
-
-        <section className="w-full">
-          {showList ? (
-            <ResourcesListTable
-              resourcesList={dataList}
-              fieldSort={stype}
-              direction={sdir}
-              onSorting={sortData}
-              onDeleteResource={setResourceToDelete}
-              loading={false}
-            >
-              {notFoundMessage}
-            </ResourcesListTable>
-          ) : (
-            <ResourcesListCard
-              resourcesList={dataList}
-              onDeleteResource={setResourceToDelete}
-            >
-              {notFoundMessage}
-            </ResourcesListCard>
+    <PageWrapper as="main">
+      <ResourcesHeader onCreate={() => setShowCreateModal(true)} />
+      {showCreateModal && (
+        <CreateResourceModal onClose={() => setShowCreateModal(false)} />
+      )}
+      <MultiCriteriaSearch
+        value={search}
+        onChange={setSearch}
+        criteria={["titre", "description", "auteur", "tags"]}
+        placeholder="Rechercher une ressource..."
+      />
+      {query.isPending ? (
+        <div role="status" className="skeleton h-64">
+          Chargement des ressources…
+        </div>
+      ) : query.isError ? (
+        <div role="alert" className="alert alert-error">
+          {getApiErrorMessage(
+            query.error,
+            "Les ressources n'ont pas pu être chargées.",
           )}
-        </section>
-        <section className="w-full flex justify-end mt-4">
-          {totalPages && totalPages > 0 ? (
-            <TablePagination
-              currentPage={page}
-              maxPage={totalPages}
-              itemsPerPage={perPage}
-              onSetCurrentPage={setPage}
-              onSetItemsPerPage={(itemsPerPage) => {
-                setPerPage(itemsPerPage);
-                setPage(1);
-              }}
-              onSetPreviousPage={() =>
-                setPage((current) => Math.max(current - 1, 1))
-              }
-              onSetNextPage={() =>
-                setPage((current) => Math.min(current + 1, totalPages))
-              }
-            />
-          ) : null}
-        </section>
-      </ListHeader>
-      {resourceToDelete ? (
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={() => query.refetch()}
+          >
+            Réessayer
+          </button>
+        </div>
+      ) : (
+        <ResourcesListCard
+          resourcesList={query.data.list}
+          onDeleteResource={setResourceToDelete}
+        >
+          <EmptyStatePlaceholder
+            title={
+              searchTerm
+                ? "Aucune ressource trouvée"
+                : "Aucune ressource disponible"
+            }
+          />
+        </ResourcesListCard>
+      )}
+      {total > 0 && (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Ressources : ${total}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(value) => {
+            storeItemsPerPage("admin-resources", value);
+            setLimit(value);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(1, current - 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(totalPages, current + 1))
+          }
+        />
+      )}
+      {resourceToDelete && (
         <Modal
+          title="Supprimer une ressource supplémentaire"
+          leftLabel="Annuler"
+          rightLabel="Supprimer"
+          isSubmitting={deleting}
           onLeftClick={() => setResourceToDelete(null)}
           onRightClick={handleDeleteResource}
-          title="Supprimer une ressource supplémentaire"
-          isSubmitting={false}
-          leftLabel="Annuler"
-          rightLabel="Confirmer"
         >
-          Attention l'activité sera supprimée définitivement.
+          La ressource « {resourceToDelete.title} » et toutes ses activités
+          seront supprimées définitivement.
         </Modal>
-      ) : null}
-    </main>
+      )}
+    </PageWrapper>
   );
 }
