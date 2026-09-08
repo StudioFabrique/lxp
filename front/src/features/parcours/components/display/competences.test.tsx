@@ -98,4 +98,28 @@ describe("Compétences dans l'aperçu du parcours", () => {
     expect(container.querySelector("li svg")).not.toBeNull();
     expect(container.textContent).toContain("Travailler en équipe");
   });
+
+  it("réduit aussi l'opacité des trophées non acquis par l'étudiant", async () => {
+    mockUseParcoursSkills.mockReturnValue({
+      skills: [
+        { id: 1, description: "À obtenir", isEarned: false },
+        { id: 2, description: "Obtenu", isEarned: true },
+      ],
+    });
+
+    await renderCompetences(3);
+
+    const trophyContainers = [...container.querySelectorAll("li svg")].map(
+      (trophy) => trophy.parentElement,
+    );
+    expect(trophyContainers[0]?.classList.contains("opacity-30")).toBe(true);
+    expect(trophyContainers[1]?.classList.contains("opacity-100")).toBe(true);
+
+    await renderCompetences(2);
+    expect(
+      [...container.querySelectorAll("li svg")].every((trophy) =>
+        trophy.parentElement?.classList.contains("opacity-100"),
+      ),
+    ).toBe(true);
+  });
 });

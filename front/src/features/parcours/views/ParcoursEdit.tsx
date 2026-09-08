@@ -28,6 +28,7 @@ import {
 } from "../../../utils/helpers/user-role";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { moduleCreationTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 
 const EditParcours = () => {
   const { user } = useContext(AuthContext);
@@ -72,14 +73,14 @@ const EditParcours = () => {
   const actualStepTitle =
     actualStep.id === 4
       ? getModulesLabel(user, "Modules associés au Parcours")
-      : {
+      : ({
           1: "Informations",
           2: "Objectifs",
           3: "Compétences",
           5: "Calendrier des modules",
           6: "Groupe d'apprenants",
           7: "Aperçu général",
-        }[actualStep.id] ?? actualStep.label;
+        }[actualStep.id] ?? actualStep.label);
   const renderActualStep = () => {
     switch (actualStep.id) {
       case 1:
@@ -151,15 +152,15 @@ const EditParcours = () => {
             ) : null}
 
             <ParcoursStepContent stepId={actualStep.id}>
-              <div className="w-full rounded-xl border-[0.5px] border-secondary p-4">
+              <BoxWrapper className="w-full h-auto">
                 <Stepper
                   actualStep={actualStep}
                   stepsList={contextualStepsList}
                   updateStep={updateStep}
                   disabled={onboardingNavigationLocked}
                 />
-              </div>
-              <div className="mt-16 w-full">
+              </BoxWrapper>
+              <div className="mt-12 w-full">
                 <h1 className="text-3xl font-extrabold">{actualStepTitle}</h1>
                 <div className="mt-4">{renderActualStep()}</div>
               </div>

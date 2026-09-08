@@ -97,6 +97,18 @@ describe("Complétion du module", () => {
     expect(store.badgeCompletion).toBeNull();
   });
 
+  it.each([{ skills: [] }, { skills: [{ id: 2, description: "Badge partagé", isEarned: false }] }])(
+    "ouvre la modale à la fin du module même sans nouveau badge obtenu (%j)",
+    async ({ skills }) => {
+      await renderExplorer();
+      const module = { ...makeModule(true), bonusSkills: skills };
+      vi.mocked(modulePreviewApi.queries.getModuleDetail).mockResolvedValue({ data: module });
+      await act(async () => store.lessonActions.completeLesson(3));
+      expect(store.badgeCompletion).not.toBeNull();
+      expect(store.badgeCompletion?.badges).toEqual(module.bonusSkills);
+    },
+  );
+
   it("ne termine pas les niveaux supérieurs lorsqu'il reste des leçons", async () => {
     await renderExplorer();
     await act(async () => store.lessonActions.completeLesson(3));

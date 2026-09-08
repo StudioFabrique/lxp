@@ -8,7 +8,7 @@ import { parcoursApi } from "../api/parcours.api";
 import NewParcoursForm from "../components/edit/new-parcours-form";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import Selecter from "../../../components/UI/selecter/selecter.component";
 import { Copy, Layers3, LoaderCircle, Upload } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
@@ -213,7 +213,7 @@ const AddParcours = () => {
                 </h3>
 
                 <div data-onboarding="parcours-create">
-                  <Wrapper>
+                  <BoxWrapper>
                     <h2 className="text-lg font-bold">
                       Créer un nouveau parcours
                     </h2>
@@ -222,7 +222,7 @@ const AddParcours = () => {
                       initialFormationId={initialFormationId}
                       onSubmit={handleSubmit}
                     />
-                  </Wrapper>
+                  </BoxWrapper>
                 </div>
 
                 <div className="divider">ou</div>

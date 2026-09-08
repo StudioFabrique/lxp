@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
 import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { useEffect, useState } from "react";
@@ -56,7 +56,7 @@ const UserFormInformations = ({
   }, [temporaryAvatar.file, onSetFile]);
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <div className="flex flex-col items-center gap-2">
         <label className="font-medium">Avatar</label>
@@ -121,7 +121,7 @@ const UserFormInformations = ({
           </span>
         ) : null}
       </span>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

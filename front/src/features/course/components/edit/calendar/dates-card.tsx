@@ -1,6 +1,6 @@
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import CourseDates from "../../../interfaces/course-dates";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 
 interface DatesCardProps {
   datesItem: CourseDates;
@@ -12,40 +12,40 @@ const DatesCard = (props: DatesCardProps) => {
 
   return (
     <article className="text-xs grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <Wrapper>
-        <Wrapper>
+      <BoxWrapper>
+        <BoxWrapper>
           <span className="w-full flex justify-between items-center">
             <p>Début</p>
             <p>{localeDate(datesItem.minDate)}</p>
           </span>
-        </Wrapper>
-        <Wrapper>
+        </BoxWrapper>
+        <BoxWrapper>
           <span className="w-full flex justify-between items-center">
             <p>Fin</p>
             <p>{localeDate(datesItem.maxDate)}</p>
           </span>
-        </Wrapper>
-      </Wrapper>
-      <Wrapper>
+        </BoxWrapper>
+      </BoxWrapper>
+      <BoxWrapper>
         <button
           className="absolute top-1 right-1 btn btn-xs btn-error btn-circle lowercase"
           onClick={() => props.onDeleteItem(datesItem.id!)}
         >
           x
         </button>
-        <Wrapper>
+        <BoxWrapper>
           <span className="w-full flex justify-between items-center">
             <p>Synchrone</p>
             <p>{datesItem.synchroneDuration}</p>
           </span>
-        </Wrapper>
-        <Wrapper>
+        </BoxWrapper>
+        <BoxWrapper>
           <span className="w-full flex justify-between items-center">
             <p>Asynchrone</p>
             <p>{datesItem.asynchroneDuration}</p>
           </span>
-        </Wrapper>
-      </Wrapper>
+        </BoxWrapper>
+      </BoxWrapper>
     </article>
   );
 };

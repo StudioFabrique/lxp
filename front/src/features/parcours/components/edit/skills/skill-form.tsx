@@ -5,7 +5,7 @@ import Badge from "../../../interfaces/badge";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import BadgeList from "./badge/badge-list.component";
 
 type Props = {
@@ -75,7 +75,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   return (
     <div className="flex flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
-        <Wrapper>
+        <BoxWrapper>
           <div className="flex flex-col gap-y-2">
             <label htmlFor="description">Description de la compétence *</label>
             <textarea
@@ -85,10 +85,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
               onBlur={description.valueBlurHandler}
             />
           </div>
-        </Wrapper>
-        <Wrapper>
+        </BoxWrapper>
+        <BoxWrapper>
           <BadgeList badgeProp={skill?.badge} onSubmitBadge={addBadge} />
-        </Wrapper>
+        </BoxWrapper>
         <DrawerFormButtons onCancel={handleCancel} />
       </form>
     </div>

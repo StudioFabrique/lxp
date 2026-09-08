@@ -2,6 +2,8 @@ import { motion, useReducedMotion } from "motion/react";
 import Confetti from "react-confetti";
 import Modal from "../../../components/UI/modal/modal";
 import type Skill from "../../../utils/interfaces/skill";
+import SkillBadge from "../../../components/skills/skill-badge";
+import SkillModules from "../../../components/skills/skill-modules";
 
 function easeOutElastic(value: number) {
   if (value === 0 || value === 1) return value;
@@ -43,35 +45,41 @@ export default function ModuleCompletionModal({
         />
       )}
       <div className="py-8 text-center">
-        <p className="text-lg font-semibold">Félicitations pour vos badges obtenus !</p>
-        <ul aria-label="Badges obtenus" className="flex flex-wrap justify-center gap-8 px-4 py-10">
-          {badges.map((badge, index) => (
-            <motion.li
-              key={badge.id}
-              className="flex w-36 flex-col items-center gap-3"
-              initial={reduceMotion ? false : { scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={
-                reduceMotion
-                  ? { duration: 0 }
-                  : {
-                      duration: 0.9,
-                      delay: index * 0.9,
-                      ease: easeOutElastic,
-                    }
-              }
-            >
-              <img
-                src={badge.badge}
-                alt={badge.description}
-                className="size-28 object-contain"
-              />
-              <span className="text-sm font-medium first-letter:uppercase">
-                {badge.description}
-              </span>
-            </motion.li>
-          ))}
-        </ul>
+        <p className="text-lg font-semibold">Félicitations, vous avez terminé tous les cours de ce module !</p>
+        {badges.length === 0 && <p className="mt-4">Aucun badge n’est associé à ce module.</p>}
+        {[
+          { title: "Badges obtenus", items: badges.filter((badge) => badge.isEarned) },
+          { title: "Badges restant à obtenir", items: badges.filter((badge) => !badge.isEarned) },
+        ].filter((group) => group.items.length > 0).map((group) => (
+          <section key={group.title} className="mt-6">
+            <h4 className="text-lg font-semibold">{group.title}</h4>
+            <ul aria-label={group.title} className="grid gap-6 py-6 sm:grid-cols-2">
+              {group.items.map((badge, index) => (
+                <motion.li
+                  key={badge.id}
+                  className="flex min-w-0 flex-col items-center gap-3"
+                  initial={reduceMotion ? false : { scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : {
+                          duration: 0.9,
+                          delay: index * 0.15,
+                          ease: easeOutElastic,
+                        }
+                  }
+                >
+                  <SkillBadge skill={badge} size="large" inModal />
+                  <span className="text-sm font-medium first-letter:uppercase">
+                    {badge.description}
+                  </span>
+                  <SkillModules skill={badge} onNavigate={onClose} />
+                </motion.li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </Modal>
   );

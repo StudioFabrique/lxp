@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import ContenuItem from "./contenu-item";
 import Module from "../../../../../../src/utils/interfaces/module";
 import ContenuDetail from "./contenu-detail/contenu-detail";
@@ -51,7 +51,7 @@ const Contenu = ({ modules }: ContenuProps) => {
     userBelongsToContacts(user, selectedModule?.contacts);
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
           <h2 className="text-2xl font-bold text-primary select-none">
@@ -126,7 +126,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           )}
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

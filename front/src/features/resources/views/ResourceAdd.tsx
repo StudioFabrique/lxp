@@ -1,6 +1,6 @@
 import ResourcesAddHeader from "../components/add/ResourcesAddHeader";
 import ListHeader from "../../../components/UI/list-header";
-import Wrapper from "../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import ResourceForm from "../components/add/ResourceForm";
 import PermissionGuard from "../../../../src/components/guards/PermissionGuard";
 import BonusActivityItem from "../components/add/BonusActivityItem";
@@ -69,7 +69,7 @@ export default function ResourceAdd() {
         <div className="w-full flex-1 flex lg:flex-row flex-col pb-24 gap-8">
           <section className="w-full lg:w-[25rem] h-full flex flex-col gap-4">
             <article className="flex-1">
-              <Wrapper>
+              <BoxWrapper>
                 <ResourceForm
                   mode={mode}
                   data={data}
@@ -81,10 +81,10 @@ export default function ResourceAdd() {
                   onTagError={setTagError}
                   onSetFile={setFile}
                 />
-              </Wrapper>
+              </BoxWrapper>
             </article>
             <article>
-              <Wrapper>
+              <BoxWrapper>
                 {resource &&
                 resource.activities &&
                 resource.activities.length > 0 ? (
@@ -106,7 +106,7 @@ export default function ResourceAdd() {
                     <ElementNotFound message="Aucune activité liée à cette ressource pour le moment. Vous pourrez en ajouter une fois que vous aurez enregistré la ressource." />
                   </div>
                 )}
-              </Wrapper>
+              </BoxWrapper>
             </article>
           </section>
 

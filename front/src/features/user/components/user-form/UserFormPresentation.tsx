@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
   description: string;
@@ -7,7 +7,7 @@ type Props = {
 };
 
 const UserFormPresentation = ({ description, onDescription, disabled }: Props) => (
-  <Wrapper>
+  <BoxWrapper>
     <h2 className="font-bold text-xl">Présentation</h2>
     <label>Qui suis-je ?</label>
     <textarea
@@ -17,7 +17,7 @@ const UserFormPresentation = ({ description, onDescription, disabled }: Props) =
       autoComplete="off"
       disabled={disabled}
     />
-  </Wrapper>
+  </BoxWrapper>
 );
 
 export default UserFormPresentation;

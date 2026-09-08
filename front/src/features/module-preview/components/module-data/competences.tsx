@@ -1,6 +1,6 @@
 import { CableCar } from "lucide-react";
 import Skill from "../../../../../src/utils/interfaces/skill";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 type Props = {
   skills: Skill[];
@@ -8,7 +8,7 @@ type Props = {
 
 const Competences = ({ skills }: Props) => {
   return (
-    <Wrapper additionalClassname="w-full">
+    <BoxWrapper className="w-full">
       <div className="flex flex-col gap-2 p-2">
         <div className="flex gap-2">
           <CableCar />
@@ -22,7 +22,7 @@ const Competences = ({ skills }: Props) => {
           ))}
         </ul>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

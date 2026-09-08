@@ -2,7 +2,7 @@ import useTags from "../../../../../hooks/useTags";
 import TagsList from "../../../../../components/tags/TagsList";
 import AddTag from "../../../../../components/UI/add-tag";
 import Tag from "../../../../../../src/utils/interfaces/tag";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -84,7 +84,7 @@ function CreateNewTag(props: Props) {
 
   return (
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">
-      <Wrapper>
+      <BoxWrapper>
         <span className="w-[30rem] flex flex-col gap-y-4">
           <AddTag
             tag={tag}
@@ -116,7 +116,7 @@ function CreateNewTag(props: Props) {
             </button>
           </div>
         </span>
-      </Wrapper>
+      </BoxWrapper>
     </RightSideDrawer>
   );
 }

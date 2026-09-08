@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { roleApi } from "../../api/role.api";
 import RoleTypeSelector from "./RoleTypeSelector";
 import type Role from "../../../../../src/utils/interfaces/role";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { AuthContext } from "../../../../store/AuthProvider";
 
@@ -107,7 +107,7 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
         )}
       </span>
       <div className="h-full">
-        <Wrapper>
+        <BoxWrapper>
           <form
             autoComplete="off"
             className="flex flex-col gap-y-5"
@@ -175,7 +175,7 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
               </div>
             </div>
           </form>
-        </Wrapper>
+        </BoxWrapper>
       </div>
     </div>
   );

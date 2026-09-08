@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { Trash2, UserRoundPlus } from "lucide-react";
 import type User from "../../../../../utils/interfaces/user";
-import Wrapper from "../../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 import MultiCriteriaSearch from "../../../../../components/UI/multi-criteria-search";
 import PermissionGuard from "../../../../../components/guards/PermissionGuard";
 import { DataTable } from "../../../../../components/table/DataTable";
@@ -108,8 +108,8 @@ const GroupUserList = ({
   );
 
   return (
-    <Wrapper
-      additionalClassname={
+    <BoxWrapper
+      className={
         displayedUsers.length > 0 || isSearching ? "px-10" : ""
       }
       unstyled={displayedUsers.length === 0 && !isSearching}
@@ -197,7 +197,7 @@ const GroupUserList = ({
           }
         />
       ) : null}
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

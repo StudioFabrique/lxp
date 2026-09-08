@@ -4,7 +4,7 @@ import ListHeader from "../../../components/UI/list-header";
 import { ArrowLeft } from "lucide-react";
 import useResource from "../hooks/useResource";
 import ActivityContent from "../components/add/ActivityContent";
-import Wrapper from "../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import BonusActivityItem from "../components/add/BonusActivityItem";
 import { Activity } from "../../../../src/utils/interfaces/activity";
 import ElementNotFound from "../../../components/UI/element-not-found";
@@ -58,7 +58,7 @@ export default function StudentResourceDetails() {
         <div className="w-full flex-1 flex lg:flex-row flex-col pb-24 gap-8">
           <section className="w-full lg:w-[25rem] h-full flex flex-col gap-4">
             <article className="flex-1">
-              <Wrapper>
+              <BoxWrapper>
                 {resource &&
                 resource.activities &&
                 resource.activities.length > 0 ? (
@@ -80,7 +80,7 @@ export default function StudentResourceDetails() {
                     <ElementNotFound message="Aucune activité liée à cette ressource pour le moment. Vous pourrez en ajouter une fois que vous aurez enregistré la ressource." />
                   </div>
                 )}
-              </Wrapper>
+              </BoxWrapper>
             </article>
           </section>
 

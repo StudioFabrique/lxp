@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
 import VirtualClass from "../../../../../../src/components/virtual-class";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DatesSelecter from "../../../../../components/UI/dates-selecter/dates-selecter.component";
 
 import Tag from "../../../../../../src/utils/interfaces/tag";
@@ -172,7 +172,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
         className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8"
         data-onboarding="parcours-information"
       >
-        <Wrapper>
+        <BoxWrapper>
           <div className="flex flex-col gap-y-8">
             <ParcoursInformationsForm
               parcoursId={parcoursId}
@@ -191,22 +191,22 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
               disabled={readOnly}
             />
           </div>
-        </Wrapper>
+        </BoxWrapper>
         <div className="flex flex-col gap-y-8">
-          <Wrapper>
+          <BoxWrapper>
             <ContactsWithDrawer
               loading={loadingContacts}
               onSubmit={handleUpdateContacts}
               readOnly={readOnly}
             />
-          </Wrapper>
-          <Wrapper>
+          </BoxWrapper>
+          <BoxWrapper>
             <TagsWithDrawer
               loading={loadingTags}
               onSubmit={handleUpdateTags}
               tags={parentTags}
             />
-          </Wrapper>
+          </BoxWrapper>
         </div>
       </div>
       {contactsToAssign.length > 0 && parcours?.modules.length ? (

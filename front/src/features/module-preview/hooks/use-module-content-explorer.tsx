@@ -36,7 +36,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { getUserArea } from "../../../utils/helpers/user-role";
 import { parcoursKeys } from "../../parcours/api/parcours.keys";
-import { newlyEarnedBadges } from "../helpers/newly-earned-badges";
 import type Skill from "../../../utils/interfaces/skill";
 
 const useModuleContentExplorer = () => {
@@ -257,13 +256,13 @@ const useModuleContentExplorer = () => {
               finishContent("module", state.module.id);
             }
 
-            const badges = newlyEarnedBadges(state.module, updatedModule);
-            if (isStudent && badges.length > 0) {
+            void queryClient.invalidateQueries({ queryKey: ["last-read-lessons"] });
+            if (isStudent && !state.module.stats?.isCompleted && updatedModule.stats?.isCompleted) {
               dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
               setBadgeCompletion({
                 moduleId: state.module.id,
                 moduleTitle: updatedModule.title,
-                badges,
+                badges: updatedModule.bonusSkills,
               });
             }
           }

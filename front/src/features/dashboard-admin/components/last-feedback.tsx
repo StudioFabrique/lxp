@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import StudentFeedback from "../../../utils/interfaces/student-feedback";
 import { AuthContext } from "../../../store/AuthProvider";
 import { dashboardAdminApi } from "../api/dashboard-admin.api";
-import Wrapper from "../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
 import AvatarCard from "../../../components/UI/avatar-card";
 
@@ -63,7 +63,7 @@ export default function LastFeedback() {
         <ul className="flex flex-col gap-y-2">
           {feedbacks.map((item) => (
             <li key={item._id}>
-              <Wrapper>
+              <BoxWrapper>
                 <AvatarCard
                   _id={item._id}
                   avatarSrc={item.avatar ?? imageProfileReplacement}
@@ -75,15 +75,15 @@ export default function LastFeedback() {
                   studentId={item.studentId}
                   onReview={reviewFeedback}
                 />
-              </Wrapper>
+              </BoxWrapper>
             </li>
           ))}
         </ul>
       ) : (
         <div className="mt-2">
-          <Wrapper>
+          <BoxWrapper>
             <p>Aucun feedback récent.</p>
-          </Wrapper>
+          </BoxWrapper>
         </div>
       )}
     </div>

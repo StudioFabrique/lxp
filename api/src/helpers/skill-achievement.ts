@@ -1,4 +1,4 @@
-import { countCourseProgress } from "./calculate-module-progress.ts";
+import { calculateModuleProgress, countCourseProgress } from "./calculate-module-progress.ts";
 
 // Seul le contenu accessible à l'apprenant participe à l'obtention du badge.
 export const skillAchievementSelect = (userId: string) => ({
@@ -9,6 +9,8 @@ export const skillAchievementSelect = (userId: string) => ({
     select: {
       module: {
         select: {
+          id: true,
+          title: true,
           courses: {
             where: { visibility: true, isPublished: true },
             select: {
@@ -36,13 +38,21 @@ export function isModuleCompleted(module: ModuleProgress): boolean {
 }
 
 export function withSkillAchievement<
-  T extends { modules?: { module: ModuleProgress }[] },
+  T extends { modules?: { module: ModuleProgress & { id: number; title: string } }[] },
 >(skill: T) {
   const { modules = [], ...details } = skill;
+  const associatedModules = modules.map(({ module }) => ({
+    id: module.id,
+    title: module.title,
+    progress: calculateModuleProgress(module),
+    isCompleted: isModuleCompleted(module),
+  }));
+  const completedModules = associatedModules.filter((module) => module.isCompleted).length;
   return {
     ...details,
-    isEarned:
-      modules.length > 0 &&
-      modules.every(({ module }) => isModuleCompleted(module)),
+    modules: associatedModules,
+    completedModules,
+    totalModules: associatedModules.length,
+    isEarned: associatedModules.length > 0 && completedModules === associatedModules.length,
   };
 }

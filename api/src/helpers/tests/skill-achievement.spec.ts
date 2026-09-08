@@ -6,20 +6,28 @@ import {
 
 const done = { lessonsRead: [{ finishedAt: new Date() }] };
 const unfinished = { lessonsRead: [{ finishedAt: null }] };
-const moduleWith = (...lessons: typeof unfinished[]) => ({ courses: [{ lessons }] });
+const moduleWith = (...lessons: typeof unfinished[]) => ({ id: 2, title: "Module 2", courses: [{ lessons }] });
 
 describe("Obtention des badges", () => {
   it("attend la fin de tous les modules liés", () => {
     const skill = {
       id: 1,
       modules: [
-        { module: { courses: [{ lessons: [done] }] } },
+        { module: { id: 1, title: "Module 1", courses: [{ lessons: [done] }] } },
         { module: moduleWith(unfinished) },
       ],
     };
     expect(withSkillAchievement(skill).isEarned).toBe(false);
-    skill.modules[1] = { module: { courses: [{ lessons: [done] }] } };
-    expect(withSkillAchievement(skill)).toEqual({ id: 1, isEarned: true });
+    expect(withSkillAchievement(skill)).toMatchObject({
+      totalModules: 2,
+      completedModules: 1,
+      modules: [
+        { id: 1, title: "Module 1", progress: 100, isCompleted: true },
+        { id: 2, title: "Module 2", progress: 0, isCompleted: false },
+      ],
+    });
+    skill.modules[1] = { module: { id: 2, title: "Module 2", courses: [{ lessons: [done] }] } };
+    expect(withSkillAchievement(skill)).toMatchObject({ id: 1, isEarned: true, completedModules: 2, totalModules: 2 });
   });
 
   it("ne valide pas une compétence sans module ou avec un module vide", () => {

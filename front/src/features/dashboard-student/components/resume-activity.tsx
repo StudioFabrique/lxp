@@ -12,6 +12,7 @@ import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques"
 import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
+import SkillBadge from "../../../components/skills/skill-badge";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -55,27 +56,16 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
           children={[
             <div
               key="title-and-badges"
-              className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%] overflow-x-hidden"
+              className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%]"
             >
               <div className="flex gap-2">
                 <ComponentIcon className="stroke-white" />
                 <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
               </div>
               <div className="flex gap-1">
-                {lastLesson.lesson.course.bonusSkills &&
-                  lastLesson.lesson.course.bonusSkills
-                    .filter((skill) => skill.badge)
-                    .map(
-                      (skill, i) =>
-                        i < 5 && (
-                          <img
-                            key={skill.id}
-                            className="w-20 h-20 p-2"
-                            src={skill.badge}
-                            alt="illustration badge"
-                          />
-                        ),
-                    )}
+                {lastLesson.lesson.course.bonusSkills?.slice(0, 5).map((skill) => (
+                  <SkillBadge key={skill.id} skill={skill} size="small" />
+                ))}
               </div>
             </div>,
             <div key="link">

@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import CourseDates from "../../../interfaces/course-dates";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
@@ -132,7 +132,7 @@ const DatesForm = (props: DatesFormProps) => {
       className="grid grid-cols-1 lg:grid-cols-2 gap-8"
       onSubmit={handleSubmit}
     >
-      <Wrapper>
+      <BoxWrapper>
         <h2 className="text-sm font-bold">Dates de cours *</h2>
         <div className="flex flex-col gap-y-8">
           <div className="flex flex-col gap-y-4">
@@ -178,8 +178,8 @@ const DatesForm = (props: DatesFormProps) => {
             </div>
           </div>
         </div>
-      </Wrapper>
-      <Wrapper>
+      </BoxWrapper>
+      <BoxWrapper>
         <h2 className="text-sm font-bold">Durée du cours (nombre d'heures)</h2>
         <div className="flex flex-col gap-y-8">
           <div className="flex justify-between items-center gap-x-4">
@@ -213,7 +213,7 @@ const DatesForm = (props: DatesFormProps) => {
             />
           </div>
         </div>
-      </Wrapper>
+      </BoxWrapper>
       <div>
         <ButtonAdd
           label="Ajouter une plage"

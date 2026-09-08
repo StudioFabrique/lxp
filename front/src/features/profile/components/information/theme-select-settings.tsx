@@ -1,7 +1,7 @@
 import CompanyPictureUpload from "../company-picture-upload";
 import ThemeSelect from "../theme-select";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { darkThemes, lightThemes } from "../../../../config/themes";
 import { useContext } from "react";
 import { ThemeContext } from "../../../../store/ThemeProvider";
@@ -22,20 +22,20 @@ const ThemeSelectSettings = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col gap-2">
-          <Wrapper>
+          <BoxWrapper>
             <ThemeSelect
               label="Thème clair"
               themesList={lightThemes}
               onThemeChange={handleThemeChange}
             />
-          </Wrapper>
-          <Wrapper>
+          </BoxWrapper>
+          <BoxWrapper>
             <ThemeSelect
               label="Thème sombre"
               themesList={darkThemes}
               onThemeChange={handleThemeChange}
             />
-          </Wrapper>
+          </BoxWrapper>
         </div>
 
         <div>

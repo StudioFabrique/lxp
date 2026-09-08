@@ -10,7 +10,7 @@ import { getRoleColumns } from "../components/role-table-columns";
 import RoleForm from "../components/role-form/RoleForm";
 
 import PageHeader from "../../../components/headers/PageHeader";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
@@ -104,8 +104,8 @@ const RoleList = () => {
         tourSteps={rolesPageTourSteps}
       />
 
-      <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading || isSearching ? "px-10" : ""} items-center`}
+      <BoxWrapper
+        className={`${data.length > 0 || isLoading || isSearching ? "px-10" : ""} items-center`}
         unstyled={!isLoading && data.length === 0 && !isSearching}
       >
         {isLoading || data.length > 0 || isSearching ? (
@@ -163,7 +163,7 @@ const RoleList = () => {
             Total : {data.length} rôle(s)
           </div>
         ) : null}
-      </Wrapper>
+      </BoxWrapper>
 
       <div data-page-tour="role-form">
         <PermissionGuard action="write" object="role">

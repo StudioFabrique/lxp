@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
 import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
 import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
@@ -33,7 +33,7 @@ const UserFormContact = ({
   phone, phoneError, onPhone,
   birthDate, onChangeDate, disabled,
 }: Props) => (
-  <Wrapper>
+  <BoxWrapper>
     <h2 className="font-bold text-xl">Contact</h2>
     <span className="flex flex-col gap-y-2">
       <DatePicker
@@ -90,7 +90,7 @@ const UserFormContact = ({
         disabled={disabled}
       />
     </span>
-  </Wrapper>
+  </BoxWrapper>
 );
 
 export default UserFormContact;

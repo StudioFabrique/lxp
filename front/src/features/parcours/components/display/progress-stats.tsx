@@ -1,5 +1,5 @@
 import Module from "../../../../../src/utils/interfaces/module";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
@@ -7,7 +7,7 @@ type ProgressModulesStatsProps = {
 
 const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-5 justify-between">
         <h2 className="text-2xl font-bold text-primary">
           Votre avancement dans le parcours
@@ -43,7 +43,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
           </div>
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 
