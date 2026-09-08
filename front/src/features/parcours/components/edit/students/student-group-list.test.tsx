@@ -71,6 +71,8 @@ describe("StudentGroupList", () => {
     );
 
     expect(markup).toContain("Aucun groupe disponible");
+    expect(markup).not.toContain("border-base-300");
+    expect(markup).not.toContain("shadow-sm");
     expect(markup).not.toContain("<table");
     expect(markup).not.toContain("Formation / Parcours");
   });

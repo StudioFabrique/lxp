@@ -134,17 +134,11 @@ const GroupUserList = ({
               Créer un nouvel étudiant
             </button>
           </PermissionGuard>
+          <CsvImportUserList onAddUsers={onAddUsers} />
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 border-t border-base-content/30 p-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex flex-col gap-2">
-          <CsvImportUserList
-            onAddUsers={onAddUsers}
-            usersAddedInTable={usersToAdd}
-          />
-        </div>
-
+      <div className="flex flex-col gap-4 border-t border-base-content/30 p-4 xl:flex-row xl:items-center xl:justify-end">
         {usersToAdd.length > 0 || filter ? (
           <div className="min-w-0 flex-1 xl:max-w-2xl">
             <SearchBar

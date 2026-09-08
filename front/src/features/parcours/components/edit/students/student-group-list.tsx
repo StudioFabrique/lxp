@@ -52,7 +52,12 @@ function StudentGroupList({
   // Mémoisation du contenu du tableau pour optimiser les performances
   const content = useMemo(() => {
     if (groupList.length === 0) {
-      return <EmptyStatePlaceholder title="Aucun groupe disponible" />;
+      return (
+        <EmptyStatePlaceholder
+          title="Aucun groupe disponible"
+          withBorder={false}
+        />
+      );
     }
 
     return (

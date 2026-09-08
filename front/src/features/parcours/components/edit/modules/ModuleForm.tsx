@@ -47,14 +47,15 @@ export default function ModuleForm({
   };
 
   return (
-    <form
-      className="mt-6"
-      data-onboarding="module-form"
-      onSubmit={onSubmit}
-      noValidate
-    >
-      <div className="mx-auto max-w-3xl">
-        <section className="flex min-w-0 flex-col gap-5">
+    <>
+      <form
+        id="module-form"
+        className="mt-6 min-h-0 flex-1 overflow-y-auto"
+        data-onboarding="module-form"
+        onSubmit={onSubmit}
+        noValidate
+      >
+        <section className="mx-auto flex max-w-3xl min-w-0 flex-col gap-5">
           <header>
             <h4 className="font-semibold">Informations générales</h4>
             <p className="mt-1 text-sm text-base-content/60">
@@ -146,9 +147,8 @@ export default function ModuleForm({
             </div>
           ) : null}
         </section>
-      </div>
-
-      <footer className="sticky bottom-0 -mx-5 mt-8 flex justify-end gap-3 border-t border-base-300 bg-base-100/95 px-5 pb-5 pt-4 backdrop-blur-sm sm:-mx-7 sm:px-7 sm:pb-7">
+      </form>
+      <footer className="relative z-10 -mx-5 mt-6 flex shrink-0 justify-end gap-3 border-t border-base-300 bg-base-100 px-5 pb-5 pt-4 sm:-mx-7 sm:px-7 sm:pb-7">
         <button
           type="button"
           className="btn btn-ghost"
@@ -160,6 +160,7 @@ export default function ModuleForm({
         <button
           data-onboarding="module-save"
           type="submit"
+          form="module-form"
           className="btn btn-primary min-w-44"
           disabled={isSubmitting}
         >
@@ -169,6 +170,6 @@ export default function ModuleForm({
           {isSubmitting ? "Enregistrement..." : "Enregistrer le module"}
         </button>
       </footer>
-    </form>
+    </>
   );
 }

@@ -121,23 +121,6 @@ export default function ModuleCard({
         hideLastItemDivider
         footer={
           <div className="flex w-full flex-col gap-3 px-4">
-            {onAssignContacts ? (
-              <div className="flex justify-end">
-                <PermissionGuard action="update" object="module">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-ghost text-primary"
-                    aria-label={`Affecter des ressources pédagogiques au module ${module.title}`}
-                    disabled={isRemovingContact}
-                    onClick={() => onAssignContacts(module)}
-                  >
-                    <UserPlus className="size-4" />
-                    Affecter des ressources pédagogiques
-                  </button>
-                </PermissionGuard>
-              </div>
-            ) : null}
-
             {module.skills.length > 0 && (
               <div className="border-t border-base-300 pt-3">
                 <p className="mb-2 text-xs font-semibold tracking-wide text-base-content/55">
@@ -202,6 +185,23 @@ export default function ModuleCard({
                 </div>
               </div>
             )}
+
+            {onAssignContacts ? (
+              <div className="flex justify-end">
+                <PermissionGuard action="update" object="module">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost text-primary"
+                    aria-label={`Affecter des ressources pédagogiques au module ${module.title}`}
+                    disabled={isRemovingContact}
+                    onClick={() => onAssignContacts(module)}
+                  >
+                    <UserPlus className="size-4" />
+                    Affecter des ressources pédagogiques
+                  </button>
+                </PermissionGuard>
+              </div>
+            ) : null}
 
             {onAssignSkills ? (
               <div className="flex justify-end">

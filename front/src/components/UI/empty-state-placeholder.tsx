@@ -53,11 +53,13 @@ const EMPTY_STATE_ICONS = [
 
 type EmptyStatePlaceholderProps = PropsWithChildren<{
   title: string;
+  withBorder?: boolean;
 }>;
 
 const EmptyStatePlaceholder = ({
   title,
   children,
+  withBorder = true,
 }: EmptyStatePlaceholderProps) => {
   const iconClassName = "w-40 h-40 text-primary";
   const [iconIndex, setIconIndex] = useState(0);
@@ -73,7 +75,9 @@ const EmptyStatePlaceholder = ({
   const PlaceholderIcon = EMPTY_STATE_ICONS[iconIndex];
 
   return (
-    <div className="select-none shadow-sm bg-base-200 border border-base-300 rounded-lg">
+    <div
+      className={`select-none bg-base-200 rounded-lg ${withBorder ? "border border-base-300 shadow-sm" : ""}`}
+    >
       <FadeWrapper>
         <div className="flex flex-col items-center gap-10 min-h-[50vh] justify-center">
           <PlaceholderIcon className={iconClassName} />

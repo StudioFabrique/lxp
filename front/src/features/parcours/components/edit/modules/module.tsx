@@ -144,7 +144,7 @@ export default function ModuleComponent({ setModuleFormOpened }: Props) {
                   ? "Ajouter un module existant"
                   : "Modifier le module"
             }
-            modalBoxStyle="max-h-[92dvh] w-11/12 max-w-6xl overflow-y-auto px-5 pt-5 pb-0 sm:px-7 sm:pt-7"
+            modalBoxStyle="flex max-h-[92dvh] w-11/12 max-w-6xl flex-col overflow-hidden px-5 pt-5 pb-0 sm:px-7 sm:pt-7"
             dialogAdditionalClass="z-[70]"
           >
             <ModuleForm
