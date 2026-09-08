@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className={`pl-6 bg-base-100 first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
+                    className={`pl-6 bg-base-300 text-base-content first:rounded-l-xl last:rounded-r-xl group-hover:bg-base-100/60 transition-colors ${
                       cell.column.id === "actions"
                         ? "data-table-actions text-center"
                         : ""

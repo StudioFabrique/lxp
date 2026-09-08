@@ -47,7 +47,7 @@ const ParcoursFilterBadges = ({
           type="button"
           className={`badge cursor-pointer transition-colors ${
             selectedParcours === null
-              ? "badge-primary bg-primary text-primary-content"
+              ? "badge-primary"
               : "badge-outline hover:badge-primary"
           }`}
           aria-pressed={selectedParcours === null}

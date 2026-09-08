@@ -14,3 +14,9 @@
   left: auto;
   transform: translateX(0) translateY(var(--tt-pos, 0.25rem));
 }
+
+/* Keep every cell centered when its content has a different line height. */
+.data-table th,
+.data-table td {
+  vertical-align: middle;
+}
