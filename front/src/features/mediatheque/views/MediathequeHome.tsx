@@ -33,7 +33,6 @@ const sortOptions = [
   { value: "createdAt", label: "Date de création" },
   { value: "name", label: "Nom du fichier" },
   { value: "size", label: "Taille" },
-  { value: "used", label: "Nombre d’utilisations" },
 ] as const;
 
 const getActivityDestination = (activity: MediaAssociatedActivity) => {
@@ -138,8 +137,7 @@ function MediathequeHomePage() {
                   event.currentTarget.value as
                     | "createdAt"
                     | "name"
-                    | "size"
-                    | "used",
+                    | "size",
                 )
               }
             >

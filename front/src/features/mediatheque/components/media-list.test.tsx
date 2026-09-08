@@ -56,8 +56,7 @@ describe("Liste de la médiathèque", () => {
     });
 
     expect(container.textContent).toContain("illustration.png");
-    expect(container.textContent).toContain("2 utilisations");
-    expect(container.textContent).toContain("1");
+    expect(container.textContent).not.toContain("2 utilisations");
 
     const previewButton = container.querySelector(
       'button[aria-label="Afficher un aperçu de illustration.png"]',
@@ -65,9 +64,16 @@ describe("Liste de la médiathèque", () => {
     const activitiesButton = container.querySelector(
       'button[aria-label="Voir les activités associées à illustration.png"]',
     );
+    expect(activitiesButton?.textContent).toBe("1");
 
-    act(() => previewButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
-    act(() => activitiesButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    act(() =>
+      previewButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
+    );
+    act(() =>
+      activitiesButton?.dispatchEvent(
+        new MouseEvent("click", { bubbles: true }),
+      ),
+    );
 
     expect(onPreview).toHaveBeenCalledWith(media);
     expect(onShowActivities).toHaveBeenCalledWith(media);

@@ -1,6 +1,10 @@
-// Import du client Prisma pour interagir avec la base de données
+import fs from "node:fs/promises";
+
+import {
+  extractLocalImagesFromHtml,
+  resolveActivityFilePath,
+} from "../../helpers/activity-file-cleanup.ts";
 import { prisma } from "../../utils/db.ts";
-// Import de l'utilitaire de pagination
 import { getPagination } from "../../utils/services/getPagination.ts";
 
 export type GetMediasParams = {
@@ -24,6 +28,10 @@ type AssociatedActivity = {
   lessonId?: number;
   resourceId?: number;
 };
+
+// Les fichiers de texte sont immuables : une modification crée un nouveau
+// fichier. Ce cache évite donc de relire tous les contenus à chaque page.
+const inlineImageReferencesCache = new Map<string, string[]>();
 
 /**
  * Récupère toutes les images stockées dans la médiathèque de façon paginée
@@ -90,6 +98,7 @@ export default async function getMedias(params: GetMediasParams) {
         OR: [
           { url: { in: urls } },
           { resourceActivities: { some: { url: { in: urls } } } },
+          ...(type === "image" ? [{ type: "text" as const }] : []),
         ],
       },
       select: {
@@ -121,6 +130,7 @@ export default async function getMedias(params: GetMediasParams) {
         OR: [
           { url: { in: urls } },
           { resourceBonusActivities: { some: { url: { in: urls } } } },
+          ...(type === "image" ? [{ type: "text" as const }] : []),
         ],
       },
       select: {
@@ -143,46 +153,86 @@ export default async function getMedias(params: GetMediasParams) {
     if (!url || !urls.includes(url)) return;
 
     const current = associations.get(url) ?? [];
-    if (!current.some((item) => item.id === activity.id && item.parent === activity.parent)) {
+    if (
+      !current.some(
+        (item) => item.id === activity.id && item.parent === activity.parent,
+      )
+    ) {
       current.push(activity);
       associations.set(url, current);
     }
   };
 
-  for (const activity of lessonActivities) {
-    const association: AssociatedActivity = {
-      id: activity.id,
-      title: activity.title?.trim() || "Activité sans titre",
-      type: activity.type,
-      order: activity.order,
-      parent: "lesson",
-      parentTitle: activity.lesson.title,
-      courseTitle: activity.lesson.course.title,
-      moduleTitle: activity.lesson.course.module.title,
-      moduleId: activity.lesson.course.module.id,
-      lessonId: activity.lesson.id,
-    };
-    addAssociation(activity.url, association);
-    for (const resource of activity.resourceActivities) {
-      addAssociation(resource.url, association);
-    }
-  }
+  const addInlineImageAssociations = async (
+    activityUrl: string,
+    association: AssociatedActivity,
+  ) => {
+    if (association.type !== "text") return;
 
-  for (const activity of bonusActivities) {
-    const association: AssociatedActivity = {
-      id: activity.id,
-      title: activity.title?.trim() || "Activité sans titre",
-      type: activity.type,
-      order: activity.order,
-      parent: "resource",
-      parentTitle: activity.resource.title,
-      resourceId: activity.resource.id,
-    };
-    addAssociation(activity.url, association);
-    for (const resource of activity.resourceBonusActivities) {
-      addAssociation(resource.url, association);
+    const filePath = resolveActivityFilePath({
+      url: activityUrl,
+      type: "text",
+      trackedInMediatheque: false,
+    });
+    if (!filePath) return;
+
+    try {
+      let referencedUrls = inlineImageReferencesCache.get(activityUrl);
+      if (!referencedUrls) {
+        const html = await fs.readFile(filePath, "utf8");
+        referencedUrls = extractLocalImagesFromHtml(html).map(
+          (reference) => reference.url,
+        );
+        inlineImageReferencesCache.set(activityUrl, referencedUrls);
+      }
+      for (const referencedUrl of referencedUrls) {
+        addAssociation(referencedUrl, association);
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
-  }
+  };
+
+  await Promise.all(
+    lessonActivities.map(async (activity) => {
+      const association: AssociatedActivity = {
+        id: activity.id,
+        title: activity.title?.trim() || "Activité sans titre",
+        type: activity.type,
+        order: activity.order,
+        parent: "lesson",
+        parentTitle: activity.lesson.title,
+        courseTitle: activity.lesson.course.title,
+        moduleTitle: activity.lesson.course.module.title,
+        moduleId: activity.lesson.course.module.id,
+        lessonId: activity.lesson.id,
+      };
+      addAssociation(activity.url, association);
+      for (const resource of activity.resourceActivities) {
+        addAssociation(resource.url, association);
+      }
+      await addInlineImageAssociations(activity.url, association);
+    }),
+  );
+
+  await Promise.all(
+    bonusActivities.map(async (activity) => {
+      const association: AssociatedActivity = {
+        id: activity.id,
+        title: activity.title?.trim() || "Activité sans titre",
+        type: activity.type,
+        order: activity.order,
+        parent: "resource",
+        parentTitle: activity.resource.title,
+        resourceId: activity.resource.id,
+      };
+      addAssociation(activity.url, association);
+      for (const resource of activity.resourceBonusActivities) {
+        addAssociation(resource.url, association);
+      }
+      await addInlineImageAssociations(activity.url, association);
+    }),
+  );
 
   return {
     medias: medias.map((media) => ({

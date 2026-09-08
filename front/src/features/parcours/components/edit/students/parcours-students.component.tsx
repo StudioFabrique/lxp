@@ -34,6 +34,12 @@ const ParcoursStudents = () => {
     useStudentGroupsQuery();
   const [draftGroups, setDraftGroups] = useState<Group[] | null>(null);
   const groups = draftGroups ?? persistedGroups;
+  const availableGroups = useMemo(() => {
+    const addedGroupIds = new Set(groups.map(({ _id }) => _id));
+    return (fetchedGroups as GroupList[]).filter(
+      ({ _id }) => !addedGroupIds.has(_id),
+    );
+  }, [fetchedGroups, groups]);
   const groupIds = useMemo(
     () => groups.map((group) => group._id).filter(Boolean) as string[],
     [groups],
@@ -77,7 +83,7 @@ const ParcoursStudents = () => {
           <div className="flex flex-col gap-y-12">
             <GroupsList
               onCancel={handleDrawer}
-              groups={fetchedGroups}
+              groups={availableGroups}
               createGroupHref={`/admin/group/add?parcours=${id}`}
               onAdd={(selectedGroups) =>
                 setDraftGroups([
@@ -118,10 +124,12 @@ const ParcoursStudents = () => {
                 initalList={students}
                 groups={groups}
                 onRemoveGroup={(groupId) =>
-                  setDraftGroups(groups.filter((group) => group._id !== groupId))
+                  setDraftGroups(
+                    groups.filter((group) => group._id !== groupId),
+                  )
                 }
               />
-              <div className="mt-2">
+              <div className="mt-2 self-end">
                 <ButtonAdd
                   label="Ajouter un groupe d'apprenants"
                   outline={true}

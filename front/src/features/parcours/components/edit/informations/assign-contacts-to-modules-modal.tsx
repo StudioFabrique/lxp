@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import Modal from "../../../../../components/UI/modal/modal";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
@@ -7,6 +7,7 @@ import type Contact from "../../../../../utils/interfaces/contact";
 type ModuleChoice = {
   id: number;
   title: string;
+  contacts: Contact[];
 };
 
 type Props = {
@@ -24,14 +25,25 @@ export default function AssignContactsToModulesModal({
   onClose,
   onSubmit,
 }: Props) {
+  const assignableModules = useMemo(
+    () =>
+      modules.filter((module) =>
+        contacts.some(
+          ({ id: contactId }) =>
+            typeof contactId === "number" &&
+            !module.contacts.some(({ id }) => id === contactId),
+        ),
+      ),
+    [contacts, modules],
+  );
   const [selectedModuleIds, setSelectedModuleIds] = useState<number[]>(() =>
-    modules.map(({ id }) => id),
+    assignableModules.map(({ id }) => id),
   );
 
   const resourceNames = contacts.map(getContactFullName).join(", ");
   const allModulesSelected =
-    modules.length > 0 &&
-    modules.every(({ id }) => selectedModuleIds.includes(id));
+    assignableModules.length > 0 &&
+    assignableModules.every(({ id }) => selectedModuleIds.includes(id));
 
   const toggleModule = (moduleId: number) => {
     setSelectedModuleIds((current) =>
@@ -63,39 +75,49 @@ export default function AssignContactsToModulesModal({
           <span className="capitalize">{resourceNames}</span> aux modules
           suivants ?
         </p>
-        <label className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-3 font-medium">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-primary checkbox-sm"
-            checked={allModulesSelected}
-            onChange={(event) =>
-              setSelectedModuleIds(
-                event.currentTarget.checked
-                  ? modules.map(({ id }) => id)
-                  : [],
-              )
-            }
-          />
-          <span className="text-sm">
-            {allModulesSelected ? "Tout désélectionner" : "Tout sélectionner"}
-          </span>
-        </label>
-        <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
-          {modules.map((module) => (
-            <label
-              key={module.id}
-              className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-3"
-            >
+        {assignableModules.length === 0 ? (
+          <p className="rounded-box bg-base-200 p-5 text-sm text-base-content/65">
+            Cette ressource pédagogique est déjà affectée à tous les modules.
+          </p>
+        ) : (
+          <>
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-3 font-medium">
               <input
                 type="checkbox"
                 className="checkbox checkbox-primary checkbox-sm"
-                checked={selectedModuleIds.includes(module.id)}
-                onChange={() => toggleModule(module.id)}
+                checked={allModulesSelected}
+                onChange={(event) =>
+                  setSelectedModuleIds(
+                    event.currentTarget.checked
+                      ? assignableModules.map(({ id }) => id)
+                      : [],
+                  )
+                }
               />
-              <span className="text-sm">{module.title}</span>
+              <span className="text-sm">
+                {allModulesSelected
+                  ? "Tout désélectionner"
+                  : "Tout sélectionner"}
+              </span>
             </label>
-          ))}
-        </div>
+            <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+              {assignableModules.map((module) => (
+                <label
+                  key={module.id}
+                  className="flex cursor-pointer items-center gap-3 rounded-lg bg-base-200/60 px-3 py-3"
+                >
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-primary checkbox-sm"
+                    checked={selectedModuleIds.includes(module.id)}
+                    onChange={() => toggleModule(module.id)}
+                  />
+                  <span className="text-sm">{module.title}</span>
+                </label>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );

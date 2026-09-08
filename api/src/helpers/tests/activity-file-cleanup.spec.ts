@@ -28,10 +28,10 @@ describe("activity file cleanup", () => {
     ).toBeNull();
   });
 
-  it("extrait uniquement les images locales d'un contenu texte", () => {
+  it("extrait les images locales des HTML Moodle et des archives de parcours", () => {
     const references = extractLocalImagesFromHtml(`
       <img src="http://localhost:3000/activities/images/image-a.png?size=large">
-      <img src='activities/images/image-b.webp'>
+      <img src='/activities/images/image-b.webp'>
       <img src="https://example.com/external.png">
     `);
 
