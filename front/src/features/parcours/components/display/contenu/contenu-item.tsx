@@ -38,7 +38,7 @@ const ContenuItem: FC<{
       <div
         className={cn(
           "flex flex-col bg-secondary text-secondary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors",
-          { "bg-base-200 text-base-content": !isSelected },
+          { "bg-base-100 text-base-content": !isSelected },
         )}
       >
         {minDate.day === null ? (
@@ -64,8 +64,8 @@ const ContenuItem: FC<{
       <div
         className={`flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
           isSelected
-            ? "bg-primary text-primary-content shadow-md"
-            : "bg-base-200 text-base-content group-hover:bg-base-300"
+            ? "bg-secondary text-secondary-content shadow-md"
+            : "bg-base-100 text-base-content group-hover:bg-base-200"
         }`}
       >
         <div>

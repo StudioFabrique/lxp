@@ -11,7 +11,7 @@ type LessonCompletionModal = {
   isLessonCompleted: boolean;
   isLastLessonSelected: boolean;
   isLastActivitySelected: boolean;
-  onRateAndComplete: (rating: number) => void;
+  onRateAndComplete: (rating: number) => Promise<void>;
   onClickNextLesson: () => void;
   onClickMinimizeButton: () => void;
 };
@@ -29,14 +29,21 @@ const LessonCompletionModal = ({
 
   const [selectedStars, setSelectedStars] = useState<number>(3);
   const [canShowButton, setShowButton] = useState<boolean>(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const handleSelectStarRate = (stars: number) => {
     setSelectedStars(stars);
   };
 
-  const handleRateContent = () => {
-    onRateAndComplete(selectedStars);
-    setShowButton(true);
+  const handleRateContent = async () => {
+    if (isCompleting) return;
+    setIsCompleting(true);
+    try {
+      await onRateAndComplete(selectedStars);
+      setShowButton(true);
+    } finally {
+      setIsCompleting(false);
+    }
   };
 
   const handleNavigateHome = () => {
@@ -60,6 +67,7 @@ const LessonCompletionModal = ({
               : undefined
         }
         onMinimizeClick={onClickMinimizeButton}
+        rightDisabled={isCompleting}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
           <h3 className="text-lg font-semibold mb-2">
@@ -76,7 +84,7 @@ const LessonCompletionModal = ({
             elementCount={selectedStars}
             onClick={handleRateContent}
             showFeedback={!isLessonCompleted}
-            disabled={isLessonCompleted}
+            disabled={isLessonCompleted || isCompleting}
           >
             Évaluer ce contenu
           </FeedbacksButton>

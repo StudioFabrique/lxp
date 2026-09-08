@@ -3,6 +3,7 @@ import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { FileText } from "lucide-react";
 import Competences from "./competences";
 import Contacts from "./contacts";
+import ModuleBadges from "./module-badges";
 // import Objectifs from "./objectifs";
 
 // Type pour les props du composant ModuleData
@@ -12,7 +13,8 @@ type ModuleDataProps = { moduleData: Module };
 const ModuleData = ({ moduleData }: ModuleDataProps) => (
   <>
     <div className="flex w-full flex-col gap-2">
-      {moduleData.description.trim() && (
+      <ModuleBadges skills={moduleData.bonusSkills} />
+      {moduleData.description?.trim() && (
         <Wrapper additionalClassname="w-full">
           <div className="flex flex-col gap-2 p-2">
             <div className="flex gap-2">

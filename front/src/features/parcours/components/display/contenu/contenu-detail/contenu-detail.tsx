@@ -75,14 +75,16 @@ const ContenuDetail: FC<{
             })
           }
           key={course?.id}
-          className="relative flex justify-between items-center bg-base-200 hover:bg-base-300 text-base-content p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
+          className="relative flex justify-between items-center bg-base-100 hover:bg-base-300 text-base-content p-4 rounded-lg cursor-pointer transition-colors shadow-sm"
         >
           <span className="w-12 h-12 shrink-0 text-primary">
             <BookIcon />
           </span>
           <div className="flex flex-col truncate w-full px-4">
             <span className="truncate text-sm opacity-70">{`Cours ${i + 1}`}</span>
-            <span className="text-base font-bold truncate">{course.title}</span>
+            <span className="text-base-content font-bold truncate">
+              {course.title}
+            </span>
           </div>
 
           <PermissionGuard action="update" object="course">

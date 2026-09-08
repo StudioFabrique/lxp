@@ -35,7 +35,7 @@ export default interface Course {
    * (`api/src/helpers/calculate-module-progress.ts`). Ne jamais la recalculer
    * ici : c'est ce qui avait produit quatre formules divergentes.
    */
-  stats?: { progress?: number };
+  stats?: { progress?: number; isCompleted?: boolean };
 }
 
 export interface CourseTimeline {

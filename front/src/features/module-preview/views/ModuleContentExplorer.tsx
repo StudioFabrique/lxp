@@ -24,6 +24,7 @@ import ModuleData from "../components/module-data/module-data";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
+import ModuleCompletionModal from "../components/module-completion-modal";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -126,6 +127,13 @@ const ModuleContentExplorer = () => {
   return (
     <PageWrapper>
       {/* --- Section Modales --- */}
+      {explorerStore.badgeCompletion && (
+        <ModuleCompletionModal
+          moduleTitle={explorerStore.badgeCompletion.moduleTitle}
+          badges={explorerStore.badgeCompletion.badges}
+          onClose={explorerStore.closeBadgeCompletion}
+        />
+      )}
       <QuizModal
         isOpen={quizState.isOpen}
         quiz={quizState.currentQuiz}

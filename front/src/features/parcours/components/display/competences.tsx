@@ -2,10 +2,15 @@ import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import TrophyIcon from "../../../../../src/components/UI/svg/trophy-icon.component";
 import { useParams } from "react-router";
 import { useParcoursSkills } from "../../hooks/useParcoursSkills";
+import { useContext } from "react";
+import { AuthContext } from "../../../../store/AuthProvider";
+import { getUserArea } from "../../../../utils/helpers/user-role";
 
 const Competences = () => {
   const { id } = useParams();
   const { skills } = useParcoursSkills(Number(id));
+  const { user } = useContext(AuthContext);
+  const isStudent = getUserArea(user) === "student";
 
   const skillList =
     skills.length > 0 ? (
@@ -18,9 +23,10 @@ const Competences = () => {
             <span className="size-8 shrink-0 text-primary">
               {skill.badge ? (
                 <img
-                  className="size-full object-contain"
+                  className={`size-full object-contain transition-opacity ${isStudent && !skill.isEarned ? "opacity-30" : "opacity-100"}`}
                   src={skill.badge}
                   alt={skill.description}
+                  title={isStudent ? (skill.isEarned ? "Badge obtenu" : "Badge à obtenir") : undefined}
                 />
               ) : (
                 <TrophyIcon />
