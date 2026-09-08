@@ -23,6 +23,19 @@ describe("DataTable", () => {
     expect(markup).not.toContain("Nom");
   });
 
+  it("retire la bordure de l'état vide lorsqu'une recherche est active", () => {
+    const markup = renderToStaticMarkup(
+      <DataTable
+        columns={[{ accessorKey: "name", header: "Nom" }]}
+        data={[]}
+        isSearching
+      />,
+    );
+
+    expect(markup).toContain("Aucun élément disponible");
+    expect(markup).not.toContain("border-base-300");
+  });
+
   it("déclenche le clic de ligne depuis une cellule de données", () => {
     const row: Row = { id: "student-id", name: "Camille Martin" };
     const onRowClick = vi.fn();

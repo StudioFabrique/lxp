@@ -14,7 +14,7 @@ import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { rolesPageTourSteps } from "../../../components/headers/page-tour-steps";
 
@@ -105,18 +105,18 @@ const RoleList = () => {
       />
 
       <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0}
+        additionalClassname={`${data.length > 0 || isLoading || isSearching ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0 && !isSearching}
       >
         {isLoading || data.length > 0 || isSearching ? (
           <div className="w-full" data-page-tour="filters">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={(value) => setSearchValue(value.length > 0 ? value : null)}
               placeholder="Rechercher un rôle"
-              onSubmitSearchValue={(value) => {
-                setSearchValue(value.length > 0 ? value : null);
-              }}
-            >
-              <PermissionGuard action="delete" object="role">
+              criteria={["nom"]}
+              actions={
+                <PermissionGuard action="delete" object="role">
                 <TableActionsButtons
                   isLoading={isLoading || isDeleting}
                   isDisabled={idsList.length === 0}
@@ -136,8 +136,9 @@ const RoleList = () => {
                     onRetreiveItemsValues as any
                   }
                 />
-              </PermissionGuard>
-            </SearchBar>
+                </PermissionGuard>
+              }
+            />
           </div>
         ) : null}
 
@@ -146,6 +147,7 @@ const RoleList = () => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={isSearching}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             emptyMessage={

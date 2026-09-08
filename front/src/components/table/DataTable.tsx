@@ -20,6 +20,7 @@ interface DataTableProps<TData, TValue> {
   sorting?: SortingState;
   setSorting?: OnChangeFn<SortingState>;
   isLoading?: boolean;
+  isSearching?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: TData) => void;
   isRowClickable?: (row: TData) => boolean;
@@ -34,6 +35,7 @@ export function DataTable<TData, TValue>({
   sorting = [],
   setSorting,
   isLoading,
+  isSearching = false,
   emptyMessage = "Aucun élément disponible",
   onRowClick,
   isRowClickable = () => true,
@@ -61,7 +63,12 @@ export function DataTable<TData, TValue>({
   });
 
   if (data.length === 0) {
-    return isLoading ? null : <EmptyStatePlaceholder title={emptyMessage} />;
+    return isLoading ? null : (
+      <EmptyStatePlaceholder
+        title={emptyMessage}
+        withBorder={!isSearching}
+      />
+    );
   }
 
   return (

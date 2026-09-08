@@ -14,7 +14,7 @@ import { getTagColumns } from "../components/tag-table-columns";
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
-import SearchBar from "../../../components/UI/search-bar/search-bar";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import Modal from "../../../components/UI/modal/modal";
 import TagsHomeAdding from "./TagsHomeAdding";
 import TagsHomeEditing from "./TagsHomeEditing";
@@ -166,16 +166,18 @@ const TagsHome = () => {
       </PageHeader>
 
       <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0}
+        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
-            <SearchBar
+            <MultiCriteriaSearch
+              value={searchValue ?? ""}
+              onChange={onSubmitSearchValue}
               placeholder="Rechercher un tag"
-              onSubmitSearchValue={onSubmitSearchValue}
-            >
-              <TableActionsButtons<TagRow>
+              criteria={["nom", "couleur"]}
+              actions={
+                <TableActionsButtons<TagRow>
                 isLoading={isLoading || isDeleting}
                 isDisabled={idsList.length === 0}
                 onRefreshData={onRefreshData}
@@ -191,8 +193,9 @@ const TagsHome = () => {
                 onRetreiveItemsValuesByPropertyFromIdList={
                   onRetreiveItemsValues
                 }
-              />
-            </SearchBar>
+                />
+              }
+            />
           </div>
         ) : null}
 
@@ -201,6 +204,7 @@ const TagsHome = () => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             sorting={sorting}

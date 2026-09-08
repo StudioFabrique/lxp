@@ -244,8 +244,8 @@ const UserHome = () => {
       ) : null}
 
       <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0}
+        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
@@ -296,6 +296,7 @@ const UserHome = () => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
             sorting={sorting}
