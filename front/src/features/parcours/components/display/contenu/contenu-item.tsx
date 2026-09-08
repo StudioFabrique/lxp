@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
 import { ArrowRightCircle, CalendarOffIcon } from "lucide-react";
