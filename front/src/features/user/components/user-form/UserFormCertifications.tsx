@@ -3,6 +3,8 @@ import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import Graduation from "../../interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
+import DatePicker from "../../../../../src/components/UI/date-picker/date-picker";
+import { parseDateValue } from "../../../../../src/components/UI/date-picker/date-picker.utils";
 
 type EditState = {
   isActive: boolean;
@@ -74,10 +76,17 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
       case "degree":
         setCurrent({ title: current.title ?? "", degree: e.currentTarget.value, date: current.date ?? new Date() });
         break;
-      case "date":
-        setCurrent({ title: current.title ?? "", degree: current.degree!, date: new Date(e.currentTarget.value) });
-        break;
     }
+  };
+
+  const handleDateChange = (value: string) => {
+    const date = parseDateValue(value);
+    if (!date) return;
+    setCurrent({
+      title: current.title ?? "",
+      degree: current.degree!,
+      date,
+    });
   };
 
   return (
@@ -111,14 +120,14 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
               />
             </span>
             <span className="flex flex-col gap-y-2">
-              <label>Date de certification</label>
-              <input
+              <DatePicker
+                id="certificationDate"
                 name="date"
-                className="input input-sm input-bordered focus:outline-none w-full"
-                type="date"
+                label="Date de certification"
                 value={formatDateToYYYYMMDD(new Date(current.date))}
-                onChange={handleChange}
-                autoComplete="off"
+                onChange={handleDateChange}
+                max={formatDateToYYYYMMDD(new Date())}
+                clearable={false}
                 disabled={disabled}
               />
             </span>

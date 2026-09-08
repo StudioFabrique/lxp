@@ -18,6 +18,8 @@ import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message"
 import { hasRoleRank } from "../../../../utils/helpers/user-role";
 import { AuthContext } from "../../../../store/AuthProvider";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
+import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
+import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import { parcoursApi } from "../../api/parcours.api";
 
 type AdminParcoursManagementProps = {
@@ -39,13 +41,30 @@ const AdminParcoursManagement = ({
   const [parcoursToDelete, setParcoursToDelete] =
     useState<ParcoursSummary | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const normalizedSearchQuery = normalizeSearchText(searchQuery);
+  const filteredFormations = useMemo(() => {
+    if (!normalizedSearchQuery) return formations;
+
+    return formations.flatMap((formation) => {
+      const matchingParcours = formation.parcours.filter((parcours) =>
+        [parcours.title, formation.title, formation.level].some((value) =>
+          normalizeSearchText(value).includes(normalizedSearchQuery),
+        ),
+      );
+
+      return matchingParcours.length > 0
+        ? [{ ...formation, parcours: matchingParcours }]
+        : [];
+    });
+  }, [formations, normalizedSearchQuery]);
   const totalParcours = useMemo(
     () =>
-      formations.reduce(
+      filteredFormations.reduce(
         (total, formation) => total + formation.parcours.length,
         0,
       ),
-    [formations],
+    [filteredFormations],
   );
   const {
     list: paginatedFormations,
@@ -55,7 +74,7 @@ const AdminParcoursManagement = ({
     setLimit,
     setPage,
   } = useEagerLoadingList(
-    formations,
+    filteredFormations,
     "title",
     5,
     "id",
@@ -191,6 +210,16 @@ const AdminParcoursManagement = ({
         ) : null}
       </Header>
 
+      <MultiCriteriaSearch
+        value={searchQuery}
+        onChange={(value) => {
+          setSearchQuery(value);
+          setPage(1);
+        }}
+        criteria={["titre du parcours", "formation", "niveau"]}
+        placeholder="Rechercher un parcours ou une formation..."
+      />
+
       <section
         className={`grid items-start gap-5 ${
           usesFullWidthLayout ? "grid-cols-1" : "lg:grid-cols-2 xl:grid-cols-3"
@@ -199,7 +228,13 @@ const AdminParcoursManagement = ({
       >
         {paginatedFormations?.length === 0 ? (
           <div className="col-span-full">
-            <EmptyStatePlaceholder title="Aucun parcours disponible" />
+            <EmptyStatePlaceholder
+              title={
+                searchQuery
+                  ? "Aucun parcours ne correspond à votre recherche"
+                  : "Aucun parcours disponible"
+              }
+            />
           </div>
         ) : null}
         {(paginatedFormations as FormationParcoursSummary[] | null)?.map(

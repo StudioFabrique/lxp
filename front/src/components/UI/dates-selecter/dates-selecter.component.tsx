@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { formatDateToYYYYMMDD } from "../../../../src/utils/helpers/convert-date";
-import DatePicker from "../../../features/parcours/components/edit/calendrier/date-picker";
+import DatePicker from "../date-picker/date-picker";
 import useInput from "../../../hooks/useInput";
 import { regexGeneric } from "../../../config/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
@@ -79,18 +79,18 @@ const DatesSelecter: FC<Props> = ({
   ]);
 
   const handleChangeStartDate = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
+    (value: string) => {
       if (disabled) return;
-      startDate.datePicking(event.currentTarget.value);
+      startDate.datePicking(value);
       setSubmit(true);
     },
     [disabled, startDate],
   );
 
   const handleChangeEndDate = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
+    (value: string) => {
       if (disabled) return;
-      endDate.datePicking(event.currentTarget.value);
+      endDate.datePicking(value);
       setSubmit(true);
     },
     [disabled, endDate],
@@ -103,16 +103,18 @@ const DatesSelecter: FC<Props> = ({
           id="date1"
           name="startingDate"
           label="Début"
-          date={dates.startDate}
-          onChangeDate={handleChangeStartDate}
+          value={dates.startDate}
+          max={dates.endDate}
+          onChange={handleChangeStartDate}
           disabled={disabled}
         />
         <DatePicker
           id="date2"
-          name="startingDate"
+          name="endingDate"
           label="Fin"
-          date={dates.endDate}
-          onChangeDate={handleChangeEndDate}
+          value={dates.endDate}
+          min={dates.startDate}
+          onChange={handleChangeEndDate}
           disabled={disabled}
         />
       </div>

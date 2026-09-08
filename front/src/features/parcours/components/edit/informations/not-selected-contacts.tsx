@@ -185,7 +185,6 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         </>
       ) : (
         <div className="flex flex-col gap-y-8">
-          <p>Tous les contacts ont déja été ajoutés</p>
           {canCreateTeacher ? (
             <>
               <button

@@ -18,12 +18,13 @@ import HierarchicalListCard from "../../../../components/UI/hierarchical-list-ca
 import { HierarchicalListItemActions } from "../../../../components/UI/hierarchical-list-card/HierarchicalListRow";
 import InvisibleIndicator from "../../../../components/UI/invisible-indicator";
 import Modal from "../../../../components/UI/modal/modal";
-import SearchAndRefresh from "../../../../components/UI/search-and-refresh";
+import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
+import ParcoursFilterBadges from "../../../../components/UI/parcours-filter-badges";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import TablePagination from "../../../../components/table/TablePagination";
-import { courseSearchOptions } from "../../../../config/search-options";
 import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import { courseApi } from "../../api/course.api";
 import useDeleteCourse from "../../hooks/useDeleteCourse";
 import CourseHeader from "./course-header";
@@ -48,17 +49,27 @@ export default function CourseList({
     courseId: number;
     type: "publish" | "visibility";
   } | null>(null);
-  const [filter, setFilter] = useState<{
-    field: keyof Pick<CustomCourse, "title" | "module" | "parcours" | "author">;
-    value: string;
-  } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
+  const parcours = useMemo(
+    () => coursesList.map((course) => course.parcours),
+    [coursesList],
+  );
   const filteredCourses = useMemo(() => {
-    if (!filter) return coursesList;
+    const normalizedQuery = normalizeSearchText(searchQuery);
 
-    return coursesList.filter((course) =>
-      course[filter.field].toLocaleLowerCase("fr").includes(filter.value),
-    );
-  }, [coursesList, filter]);
+    return coursesList.filter((course) => {
+      const matchesParcours =
+        selectedParcours === null || course.parcours === selectedParcours;
+      const matchesSearch =
+        !normalizedQuery ||
+        [course.title, course.module, course.parcours, course.author].some(
+          (value) => normalizeSearchText(value).includes(normalizedQuery),
+        );
+
+      return matchesParcours && matchesSearch;
+    });
+  }, [coursesList, searchQuery, selectedParcours]);
   const sortedCourses = useMemo(
     () =>
       [...filteredCourses].sort((firstCourse, secondCourse) =>
@@ -73,18 +84,6 @@ export default function CourseList({
     useEagerLoadingList(sortedCourses, "title", 15, "id", "sidebar-courses");
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(onRefreshCourses);
-  const handleSearch = (field: string, value: string) => {
-    if (!["title", "module", "parcours", "author"].includes(field)) return;
-    setPage(1);
-    setFilter({
-      field: field as "title" | "module" | "parcours" | "author",
-      value: value.toLocaleLowerCase("fr"),
-    });
-  };
-  const resetSearch = () => {
-    setPage(1);
-    setFilter(null);
-  };
   const handleDeleteLesson = async () => {
     if (!lessonToDelete) return;
 
@@ -148,11 +147,24 @@ export default function CourseList({
     <main className="flex w-full flex-col gap-8">
       <CourseHeader />
 
-      <SearchAndRefresh
-        searchOptions={courseSearchOptions}
-        onSearch={handleSearch}
-        onResetInput={resetSearch}
-      />
+      <MultiCriteriaSearch
+        value={searchQuery}
+        onChange={(value) => {
+          setSearchQuery(value);
+          setPage(1);
+        }}
+        criteria={["titre du cours", "module", "parcours", "auteur"]}
+        placeholder="Rechercher un cours..."
+      >
+        <ParcoursFilterBadges
+          parcours={parcours}
+          selectedParcours={selectedParcours}
+          onSelect={(value) => {
+            setSelectedParcours(value);
+            setPage(1);
+          }}
+        />
+      </MultiCriteriaSearch>
 
       {list && list.length > 0 ? (
         <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">

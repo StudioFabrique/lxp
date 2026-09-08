@@ -51,9 +51,9 @@ export const getTemplate = (
       link = `${env.FRONT_URL}register?id=${token}`;
       return `Bonjour,<br/>
 <br/>
-bienvenue sur la plateforme ANDRIA ! 🎉<br/>
+Bienvenue sur la plateforme ANDRIA ! 🎉<br/>
 
-Votre compte a bien été créé pour l'email : ${email!}.<br/>Pour finaliser votre inscription et accéder à toutes les fonctionnalités, veuillez activer votre compte en cliquant sur le lien ci-dessous : <br/>
+Votre compte a bien été créé pour l'email : <b>${email!}</b>.<br/>Pour finaliser votre inscription et accéder à toutes les fonctionnalités, veuillez activer votre compte en cliquant sur le lien ci-dessous : <br/>
 <br/>
 👉 <a href=${link}>Lien d'activation</a><br/><br/>
 

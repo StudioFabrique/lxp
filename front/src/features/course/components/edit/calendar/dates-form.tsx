@@ -7,6 +7,8 @@ import Module from "../../../../../../src/utils/interfaces/module";
 import { useEffect, useState } from "react";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import ButtonAdd from "../../../../../components/UI/button-add/button-add";
+import DatePicker from "../../../../../components/UI/date-picker/date-picker";
+import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date";
 
 interface DatesFormProps {
   isLoading: boolean;
@@ -68,12 +70,12 @@ const DatesForm = (props: DatesFormProps) => {
     );
   };
 
-  const handleChangeStartDate = (event: React.FormEvent<HTMLInputElement>) => {
-    startDate.datePicking(event.currentTarget.value);
+  const handleChangeStartDate = (value: string) => {
+    startDate.datePicking(value);
   };
 
-  const handleChangeEndDate = (event: React.FormEvent<HTMLInputElement>) => {
-    endDate.datePicking(event.currentTarget.value);
+  const handleChangeEndDate = (value: string) => {
+    endDate.datePicking(value);
   };
 
   const formIsValid = () => {
@@ -134,23 +136,43 @@ const DatesForm = (props: DatesFormProps) => {
         <h2 className="text-sm font-bold">Dates de cours *</h2>
         <div className="flex flex-col gap-y-8">
           <div className="flex flex-col gap-y-4">
-            <div className="flex justify-between items-center">
-              <p className="whitespace-nowrap w-20">Début</p>
-              <input
-                className="flex-1 input input-sm input-bordered focus:outline-none w-full"
+            <div className="flex justify-between items-end gap-4">
+              <DatePicker
+                id="startingDate"
                 name="startingDate"
-                type="date"
+                label="Début"
                 value={startDate.value}
+                min={
+                  props.module.minDate
+                    ? formatDateToYYYYMMDD(new Date(props.module.minDate))
+                    : undefined
+                }
+                max={
+                  endDate.value ||
+                  (props.module.maxDate
+                    ? formatDateToYYYYMMDD(new Date(props.module.maxDate))
+                    : undefined)
+                }
                 onChange={handleChangeStartDate}
               />
             </div>
-            <div className="flex justify-between items-center">
-              <p className="whitespace-nowrap w-20">Fin</p>
-              <input
-                className="flex-1 input input-sm input-bordered focus:outline-none w-full"
+            <div className="flex justify-between items-end gap-4">
+              <DatePicker
+                id="endingDate"
                 name="endingDate"
-                type="date"
+                label="Fin"
                 value={endDate.value}
+                min={
+                  startDate.value ||
+                  (props.module.minDate
+                    ? formatDateToYYYYMMDD(new Date(props.module.minDate))
+                    : undefined)
+                }
+                max={
+                  props.module.maxDate
+                    ? formatDateToYYYYMMDD(new Date(props.module.maxDate))
+                    : undefined
+                }
                 onChange={handleChangeEndDate}
               />
             </div>

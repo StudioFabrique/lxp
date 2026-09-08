@@ -69,6 +69,23 @@ const unpublishedCourse: CustomCourse = {
 };
 
 describe("CourseList", () => {
+  it("propose une recherche multicritère et les filtres parcours en dessous", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
+      </MemoryRouter>,
+    );
+
+    expect(markup).toContain('placeholder="Rechercher un cours..."');
+    expect(markup).toContain(
+      "Recherche dans : titre du cours, module, parcours, auteur.",
+    );
+    expect(markup).toContain("Filtrer par parcours");
+    expect(markup.indexOf("Rechercher un cours...")).toBeLessThan(
+      markup.indexOf("Filtrer par parcours"),
+    );
+  });
+
   it("affiche chaque cours avec ses leçons en sous-éléments", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>

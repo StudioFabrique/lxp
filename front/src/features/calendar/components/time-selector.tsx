@@ -1,10 +1,9 @@
 import { CalendarClock, ChevronLeft, ChevronRight } from "lucide-react";
 import { MouseEvent } from "react";
-import { DayPicker } from "react-day-picker";
-import { fr } from "react-day-picker/locale";
-import "react-day-picker/style.css";
+import DatePicker from "../../../components/UI/date-picker/date-picker";
+import { parseDateValue } from "../../../components/UI/date-picker/date-picker.utils";
+import { formatDateToYYYYMMDD } from "../../../utils/helpers/convert-date";
 import { CalendarView } from "./calendar-configuration";
-import { formatDate } from "./calendar-utils";
 
 type Props = {
   view?: CalendarView;
@@ -76,42 +75,31 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
       >
         <ChevronLeft className="w-5" />
       </button>
-      <div className="dropdown">
-        <div
-          tabIndex={0}
-          role="button"
-          className="cursor-pointer input input-border input-sm w-[10rem] rounded-xl flex justify-between items-center"
-        >
-          {date ? formatDate(date.toLocaleDateString()) : "Pick a date"}
-
-          {!isToday && (
-            <button
-              type="button"
-              className="btn btn-xs btn-ghost btn-square text-primary tooltip tooltip-right transition-transform hover:scale-105"
-              data-tip="Revenir à aujourd'hui"
-              aria-label="Revenir à la date d'aujourd'hui" // Accessibility
-              onMouseDown={(e) => e.preventDefault()} // Prevents focus stealing
-              onClick={handleClickToday}
-            >
-              <CalendarClock className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-        <div
-          tabIndex={0}
-          className="dropdown-content z-50 shadow-md mt-2 bg-base-100 p-2 rounded-box"
-        >
-          <DayPicker
-            required
-            className="react-day-picker"
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            animate
-            locale={fr}
-          />
-        </div>
+      <div className="w-44">
+        <DatePicker
+          value={date ? formatDateToYYYYMMDD(date) : ""}
+          onChange={(value) => {
+            const selectedDate = parseDateValue(value);
+            if (selectedDate) setDate(selectedDate);
+          }}
+          ariaLabel="Date affichée"
+          placeholder="Choisir une date"
+          display="short"
+          clearable={false}
+        />
       </div>
+      {!isToday && (
+        <button
+          type="button"
+          className="btn btn-sm btn-ghost btn-square text-primary tooltip tooltip-right transition-transform hover:scale-105"
+          data-tip="Revenir à aujourd'hui"
+          aria-label="Revenir à la date d'aujourd'hui"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={handleClickToday}
+        >
+          <CalendarClock className="w-4 h-4" />
+        </button>
+      )}
       <button
         type="button"
         className="btn btn-sm rounded-xl"

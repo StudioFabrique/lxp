@@ -56,7 +56,7 @@ const CsvImportUser: FC<Props> = ({ onParseCsv, fields }) => {
       helperText="Fichier CSV conforme au modèle fourni"
       error={fileError}
       onFileSelect={handleSelectedFile}
-      className="max-w-md"
+      className="w-full max-w-md"
       buttonClassName="h-32 w-full border-2 border-dashed border-primary bg-transparent text-primary hover:border-primary hover:bg-primary/10"
     />
   );
