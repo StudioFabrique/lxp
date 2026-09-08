@@ -54,7 +54,7 @@ export default function MediaList({
             id: media.id,
             title: media.name || media.url,
             description: typeLabels[media.type],
-            subDescription: `${displaySize(media.size)} · ${media.used} utilisation${media.used > 1 ? "s" : ""} · Ajouté le ${new Date(media.createdAt).toLocaleDateString("fr")}`,
+            subDescription: `${displaySize(media.size)}`,
             image:
               media.type === "image"
                 ? { src: getMediaUrl(media), alt: "" }
@@ -92,7 +92,7 @@ export default function MediaList({
   );
 }
 
-export function getMediaUrl(media: Media) {
+function getMediaUrl(media: Media) {
   const base = import.meta.env.VITE_API_BASE_URL ?? "/";
   const normalizedBase = base.endsWith("/") ? base : `${base}/`;
   const directories: Record<Media["type"], string> = {

@@ -189,6 +189,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
 
   return {
     isLoading,
+    error,
     list: state.list,
     page: state.page,
     perPage: state.perPage,
@@ -201,6 +202,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
     setSearch,
     search: state.search,
     total,
+    refetch: getPaginatedList,
     totalPages: state.totalPages,
     type: state.type,
   };

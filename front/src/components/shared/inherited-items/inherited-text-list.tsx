@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ReactNode } from "react";
+
 import SubBoxWrapper from "../../wrappers/SubBoxWrapper";
 import ItemElement from "./item-element.component";
 
@@ -10,6 +12,7 @@ interface InheritedTextListProps {
   onDelete?: (id: number) => void;
   lockedItemIds?: number[];
   isDisabled?: boolean;
+  renderAction?: (item: any) => ReactNode;
 }
 
 const InheritedTextList = (props: InheritedTextListProps) => {
@@ -31,6 +34,7 @@ const InheritedTextList = (props: InheritedTextListProps) => {
                 removable={
                   !props.isDisabled && !props.lockedItemIds?.includes(item.id)
                 }
+                action={props.renderAction?.(item)}
               />
             </SubBoxWrapper>
           </li>

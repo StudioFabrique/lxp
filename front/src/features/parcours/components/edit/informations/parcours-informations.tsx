@@ -197,6 +197,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
             <ContactsWithDrawer
               loading={loadingContacts}
               onSubmit={handleUpdateContacts}
+              onAssignToModules={(contact) => setContactsToAssign([contact])}
               readOnly={readOnly}
             />
           </BoxWrapper>
