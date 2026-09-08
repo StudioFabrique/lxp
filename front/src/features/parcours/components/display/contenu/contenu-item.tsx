@@ -44,7 +44,7 @@ const ContenuItem = ({
     >
       <div
         className={cn(
-          "flex flex-col bg-secondary text-secondary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors shadow-sm",
+          "flex flex-col bg-primary text-primary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors shadow-sm",
           { "bg-base-100 text-base-content": !isSelected },
         )}
       >
@@ -71,7 +71,7 @@ const ContenuItem = ({
       <div
         className={`shadow-sm flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
           isSelected
-            ? "bg-secondary text-secondary-content shadow-md"
+            ? "bg-primary text-primary-content shadow-md"
             : "bg-base-100 text-base-content group-hover:bg-base-200"
         }`}
       >

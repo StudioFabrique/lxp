@@ -49,7 +49,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
             )}
           </div>
         )}
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-5">
           <h3 className="font-bold text-lg">{props.title}</h3>
           {props.titleTooltip && (
             <QuestionMarkTooltip

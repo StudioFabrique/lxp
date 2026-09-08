@@ -36,13 +36,12 @@ export default function ModuleCompletionModal({
       modalBoxStyle="relative isolate w-11/12 max-w-3xl"
     >
       {!reduceMotion && (
-        <Confetti
-          className="pointer-events-none fixed inset-0"
-          style={{ zIndex: -1 }}
-          recycle={false}
-          numberOfPieces={400}
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           aria-hidden="true"
-        />
+        >
+          <Confetti recycle={false} numberOfPieces={400} />
+        </div>
       )}
       <div className="py-8 text-center">
         <p className="text-lg font-semibold">Félicitations, vous avez terminé tous les cours de ce module !</p>

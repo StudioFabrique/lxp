@@ -30,7 +30,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                     <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {item.lesson.course.bonusSkills
                         ?.slice(0, 5)
                         .map((skill) => (

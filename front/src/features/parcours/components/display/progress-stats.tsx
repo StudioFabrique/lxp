@@ -19,7 +19,14 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
         <div className="flex gap-10 items-center">
           <div className="grid grid-cols-4 gap-5 w-full">
             {modules
-              ?.filter((_x, i) => i < 4)
+              ?.filter(
+                (module) =>
+                  modules.length <= 4 || (module.stats?.progress ?? 0) < 100,
+              )
+              .sort(
+                (a, b) => (b.stats?.progress ?? 0) - (a.stats?.progress ?? 0),
+              )
+              .slice(0, 4)
               .map((module) => {
                 const moduleProgress = module.stats?.progress ?? 0;
 
