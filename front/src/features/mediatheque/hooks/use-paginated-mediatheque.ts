@@ -23,6 +23,7 @@ type PaginationState<T> = {
   list: T[];
   type: "image" | "video" | "audio" | "resource";
   sort: "createdAt" | "size" | "used" | "name";
+  search: string;
 };
 
 /**
@@ -35,6 +36,7 @@ const initialState = {
   list: [],
   type: "image",
   sort: "createdAt",
+  search: "",
 };
 
 /**
@@ -46,7 +48,8 @@ type PaginationAction<T> =
   | { type: "SET_TOTAL_PAGES"; payload: number }
   | { type: "SET_LIST"; payload: { list: T[]; totalPages: number } }
   | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "resource" }
-  | { type: "SET_SORT"; payload: "createdAt" | "size" | "used" | "name" };
+  | { type: "SET_SORT"; payload: "createdAt" | "size" | "used" | "name" }
+  | { type: "SET_SEARCH"; payload: string };
 
 /**
  * Reducer qui gère les différentes actions de pagination
@@ -72,6 +75,8 @@ const paginationReducer = <T>(
       return { ...state, page: 1, type: action.payload };
     case "SET_SORT":
       return { ...state, page: 1, sort: action.payload };
+    case "SET_SEARCH":
+      return { ...state, page: 1, search: action.payload };
     default:
       return state;
   }
@@ -83,6 +88,7 @@ const paginationReducer = <T>(
 const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [total, setTotal] = useState(0);
   const [state, dispatch] = useReducer(
     paginationReducer,
     initialState as PaginationState<T>,
@@ -132,9 +138,18 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
     []
   );
 
+  const setSearch = useCallback((search: string) => {
+    dispatch({ type: "SET_SEARCH", payload: search });
+  }, []);
+
   const getPaginatedList = useCallback(() => {
-    const applyData = (data: { medias: T[]; totalPages: number }) => {
+    const applyData = (data: {
+      medias: T[];
+      total: number;
+      totalPages: number;
+    }) => {
       setList(data.medias, data.totalPages);
+      setTotal(data.total);
     };
     setIsLoading(true);
     setError("");
@@ -144,6 +159,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
         limit: state.perPage,
         type: state.type,
         sort: state.sort,
+        search: state.search || undefined,
       })
       .then(applyData)
       .catch((err) => {
@@ -152,7 +168,14 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
         setError(errorMessage);
       })
       .finally(() => setIsLoading(false));
-  }, [setList, state.page, state.perPage, state.sort, state.type]);
+  }, [
+    setList,
+    state.page,
+    state.perPage,
+    state.search,
+    state.sort,
+    state.type,
+  ]);
 
   useEffect(() => {
     getPaginatedList();
@@ -166,6 +189,7 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
 
   return {
     isLoading,
+    error,
     list: state.list,
     page: state.page,
     perPage: state.perPage,
@@ -175,6 +199,10 @@ const usePaginatedMediatheque = <T>(paginationStorageLocation?: string) => {
     setTotalPages,
     setType,
     setSort,
+    setSearch,
+    search: state.search,
+    total,
+    refetch: getPaginatedList,
     totalPages: state.totalPages,
     type: state.type,
   };

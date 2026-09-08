@@ -19,6 +19,14 @@ const group = {
   isSelected: true,
 };
 
+const availableGroup = {
+  ...group,
+  _id: "available-group-id",
+  name: "Groupe B",
+};
+
+let parcoursGroups: (typeof group)[] = [];
+
 const updateGroups = vi.fn();
 
 vi.mock("react-router", () => ({
@@ -34,10 +42,21 @@ vi.mock("../../../../../../src/components/wrappers/BoxWrapper", () => ({
 }));
 
 vi.mock("./groups-list.component", () => ({
-  default: ({ onAdd }: { onAdd: (groups: (typeof group)[]) => void }) => (
-    <button type="button" onClick={() => onAdd([group])}>
-      Ajouter le groupe test
-    </button>
+  default: ({
+    groups,
+    onAdd,
+  }: {
+    groups: (typeof group)[];
+    onAdd: (groups: (typeof group)[]) => void;
+  }) => (
+    <>
+      {groups.map(({ _id, name }) => (
+        <span key={_id}>{name}</span>
+      ))}
+      <button type="button" onClick={() => onAdd([group])}>
+        Ajouter le groupe test
+      </button>
+    </>
   ),
 }));
 
@@ -47,11 +66,14 @@ vi.mock("../../../../../components/UI/button-add/button-add", () => ({
 }));
 
 vi.mock("../../../hooks/useParcoursGroupsQuery", () => ({
-  useParcoursGroupsQuery: () => ({ data: [] }),
+  useParcoursGroupsQuery: () => ({ data: parcoursGroups }),
 }));
 
 vi.mock("../../../hooks/useStudentGroupsQuery", () => ({
-  useStudentGroupsQuery: () => ({ data: [group], refetch: vi.fn() }),
+  useStudentGroupsQuery: () => ({
+    data: [group, availableGroup],
+    refetch: vi.fn(),
+  }),
 }));
 
 vi.mock("../../../hooks/useParcoursStudentsQuery", () => ({
@@ -75,6 +97,7 @@ describe("ParcoursStudents", () => {
     container = undefined;
     vi.useRealTimers();
     vi.clearAllMocks();
+    parcoursGroups = [];
   });
 
   it("ne relance pas l'autosauvegarde quand l'objet mutation change", () => {
@@ -102,5 +125,17 @@ describe("ParcoursStudents", () => {
     act(() => vi.advanceTimersByTime(autoSubmitTimer * 2));
 
     expect(updateGroups).toHaveBeenCalledTimes(1);
+  });
+
+  it("ne propose pas dans le drawer les groupes déjà ajoutés", () => {
+    parcoursGroups = [group];
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => root?.render(<ParcoursStudents />));
+
+    expect(container.textContent).not.toContain("Groupe A");
+    expect(container.textContent).toContain("Groupe B");
   });
 });

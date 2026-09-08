@@ -50,4 +50,34 @@ describe("ItemElement", () => {
       act(() => root.unmount());
     }
   });
+
+  it("affiche l'action avant la suppression", () => {
+    const container = document.createElement("div");
+    const root: Root = createRoot(container);
+
+    try {
+      act(() => {
+        root.render(
+          <ItemElement
+            item={{ id: 1, description: "Ressource" }}
+            property="description"
+            onRemoveItem={vi.fn()}
+            action={<button type="button">Affecter à plusieurs modules</button>}
+          />,
+        );
+      });
+
+      const action = container.querySelector("button");
+      const remove = container.querySelector('[aria-label="supprimer l\'objet"]');
+
+      expect(action).toBeInstanceOf(HTMLButtonElement);
+      expect(
+        action && remove
+          ? action.compareDocumentPosition(remove) & Node.DOCUMENT_POSITION_FOLLOWING
+          : 0,
+      ).toBeTruthy();
+    } finally {
+      act(() => root.unmount());
+    }
+  });
 });

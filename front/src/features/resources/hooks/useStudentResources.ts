@@ -16,10 +16,13 @@ const useStudentResources = () => {
   const initialRender = useRef(true);
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const handleOnChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!regexGeneric.test(event.currentTarget.value))
+  const handleOnChangeValue = (value: string) => {
+    if (!regexGeneric.test(value)) {
       setSearchError("Caractères non autorisés.");
-    setSearchTerm(event.target.value);
+    } else {
+      setSearchError(null);
+    }
+    setSearchTerm(value);
   };
 
   const getFilteredData = useCallback(() => {
@@ -27,9 +30,7 @@ const useStudentResources = () => {
   }, [searchTerm, handleSearch]);
 
   useEffect(() => {
-    console.log("Hello world!");
     if (initialRender.current) {
-      console.log("FAUX");
       initialRender.current = false;
       return;
     }
@@ -39,8 +40,6 @@ const useStudentResources = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm, getFilteredData]);
-
-  console.log("SEARCHTERM : ", searchTerm);
 
   return {
     page,

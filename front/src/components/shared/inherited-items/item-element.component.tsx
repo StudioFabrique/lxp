@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ReactNode } from "react";
+
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 
 interface ItemElementProps {
@@ -7,6 +9,7 @@ interface ItemElementProps {
   property: string | string[];
   additionalProperty?: string;
   removable?: boolean;
+  action?: ReactNode;
 }
 
 const ItemElement = (props: ItemElementProps) => {
@@ -30,6 +33,7 @@ const ItemElement = (props: ItemElementProps) => {
           {props.item[props.additionalProperty]}
         </p>
       ) : null}
+      {props.action}
       {props.removable !== false ? (
         <div
           className="w-4 h-4 cursor-pointer flex justify-end text-error"

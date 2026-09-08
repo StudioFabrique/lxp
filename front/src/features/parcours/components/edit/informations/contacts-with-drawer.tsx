@@ -7,10 +7,12 @@ import { autoSubmitTimer } from "../../../../../config/auto-submit-timer";
 import { useParcoursContactsQuery } from "../../../hooks/useParcoursContactsQuery";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { ListPlus } from "lucide-react";
 
 interface ContactsWithDrawerProps {
   loading: boolean;
   onSubmit: (items: Contact[]) => void;
+  onAssignToModules: (contact: Contact) => void;
   readOnly?: boolean;
 }
 
@@ -55,7 +57,22 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           onSubmit={handleUpdateContacts}
           isDisabled={props.readOnly}
         >
-          <InheritedTextList />
+          <InheritedTextList
+            renderAction={(contact: Contact) =>
+              props.readOnly ? null : (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost text-primary"
+                  aria-label={`Affecter ${contact.firstname} ${contact.lastname} à plusieurs modules`}
+                  disabled={!parcours?.modules.length}
+                  onClick={() => props.onAssignToModules(contact)}
+                >
+                  <ListPlus className="size-4" />
+                  Affecter à plusieurs modules
+                </button>
+              )
+            }
+          />
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}

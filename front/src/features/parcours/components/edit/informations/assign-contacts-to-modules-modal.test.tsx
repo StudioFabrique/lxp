@@ -26,8 +26,8 @@ describe("AssignContactsToModulesModal", () => {
             },
           ]}
           modules={[
-            { id: 10, title: "Premier module" },
-            { id: 20, title: "Deuxième module" },
+            { id: 10, title: "Premier module", contacts: [] },
+            { id: 20, title: "Deuxième module", contacts: [] },
           ]}
           isSubmitting={false}
           onClose={vi.fn()}
@@ -69,5 +69,45 @@ describe("AssignContactsToModulesModal", () => {
 
     expect(getCheckboxes().every(({ checked }) => checked)).toBe(true);
     expect(container.textContent).toContain("Tout désélectionner");
+  });
+
+  it("masque les modules auxquels la ressource est déjà affectée", () => {
+    act(() => {
+      root.render(
+        <AssignContactsToModulesModal
+          contacts={[
+            {
+              id: 1,
+              idMdb: "contact-1",
+              firstname: "jeanne",
+              lastname: "dupont",
+              role: "formatrice",
+            },
+          ]}
+          modules={[
+            {
+              id: 10,
+              title: "Module déjà affecté",
+              contacts: [
+                {
+                  id: 1,
+                  idMdb: "contact-1",
+                  firstname: "jeanne",
+                  lastname: "dupont",
+                  role: "formatrice",
+                },
+              ],
+            },
+            { id: 20, title: "Module disponible", contacts: [] },
+          ]}
+          isSubmitting={false}
+          onClose={vi.fn()}
+          onSubmit={vi.fn()}
+        />,
+      );
+    });
+
+    expect(container.textContent).not.toContain("Module déjà affecté");
+    expect(container.textContent).toContain("Module disponible");
   });
 });

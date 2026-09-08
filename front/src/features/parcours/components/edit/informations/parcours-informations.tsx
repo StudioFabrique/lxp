@@ -197,6 +197,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
             <ContactsWithDrawer
               loading={loadingContacts}
               onSubmit={handleUpdateContacts}
+              onAssignToModules={(contact) => setContactsToAssign([contact])}
               readOnly={readOnly}
             />
           </BoxWrapper>
@@ -214,7 +215,13 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           contacts={contactsToAssign}
           modules={parcours.modules.flatMap((module) =>
             typeof module.id === "number"
-              ? [{ id: module.id, title: module.title }]
+              ? [
+                  {
+                    id: module.id,
+                    title: module.title,
+                    contacts: module.contacts,
+                  },
+                ]
               : [],
           )}
           isSubmitting={assignContactsMutation.isPending}

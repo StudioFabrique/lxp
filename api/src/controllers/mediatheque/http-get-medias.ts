@@ -21,6 +21,7 @@ export default async function httpGetMedias(
       limit: req.query.limit?.toString(),
       type: req.query.type?.toString(),
       sort: req.query.sort?.toString(),
+      search: req.query.search?.toString(),
     });
 
     // Envoi de la réponse avec les images récupérées
