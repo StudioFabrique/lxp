@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCourseSelector, useCourseDispatch } from "../../../store/CourseContext";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 
 import LinearScenarioLessons from "./linear-scenario-lessons";
 import { useCallback, useEffect, useState } from "react";
@@ -107,7 +107,7 @@ const CourseScenario = () => {
 
   return (
     <main className="w-full flex flex-col gap-y-8">
-      <Wrapper>
+      <BoxWrapper>
         {scenario ? (
           <>
             <div className="flex justify-between items-center mb-4">
@@ -133,7 +133,7 @@ const CourseScenario = () => {
             tard
           </p>
         )}
-      </Wrapper>
+      </BoxWrapper>
       {scenario ? (
         <LessonsInDrawer onAddNewLessons={handleSaveManyLessons} />
       ) : null}

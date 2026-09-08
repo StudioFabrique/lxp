@@ -1,6 +1,6 @@
 import { ContactIcon } from "lucide-react";
 import Contact from "../../../../../src/utils/interfaces/contact";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { getContactFullName } from "../../../../utils/helpers/contact-full-name";
 
 type ContactsProps = {
@@ -9,7 +9,7 @@ type ContactsProps = {
 
 const Contacts = ({ contacts }: ContactsProps) => {
   return (
-    <Wrapper additionalClassname="w-full">
+    <BoxWrapper className="w-full">
       <div className="flex flex-col gap-2 p-2">
         <div className="flex gap-2">
           <ContactIcon />
@@ -23,7 +23,7 @@ const Contacts = ({ contacts }: ContactsProps) => {
           ))}
         </ul>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

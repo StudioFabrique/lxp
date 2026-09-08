@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import Graduation from "../../interfaces/graduation";
 import { addIdToObject } from "../../../../../src/utils/helpers/add-id-to-objects";
 import { formatDateToYYYYMMDD } from "../../../../../src/utils/helpers/convert-date";
@@ -90,7 +90,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
   };
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="grid grid-cols-2 gap-x-10">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
@@ -168,7 +168,7 @@ const UserFormCertifications = ({ graduations, setGraduations, disabled }: Props
           ))}
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

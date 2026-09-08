@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 
 import RightSideDrawer from "../../../../../components/UI/right-side-drawer/right-side-drawer";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import GroupsList from "./groups-list.component";
 import Group from "../../../../../../src/utils/interfaces/group";
 import StudentsList from "./students-list";
@@ -96,7 +96,7 @@ const ParcoursStudents = () => {
       {!groups || groups.length === 0 ? (
         // Si aucun groupe n'est présent, affiche un bouton pour en ajouter
         <section>
-          <Wrapper>
+          <BoxWrapper>
             <article className="w-full flex flex-col items-center">
               <div className="py-24">
                 <button
@@ -107,13 +107,13 @@ const ParcoursStudents = () => {
                 </button>
               </div>
             </article>
-          </Wrapper>
+          </BoxWrapper>
         </section>
       ) : (
         // Si des groupes sont présents, affiche la liste des étudiants
         <>
           <section>
-            <Wrapper>
+            <BoxWrapper>
               <StudentsList
                 initalList={students}
                 groups={groups}
@@ -128,7 +128,7 @@ const ParcoursStudents = () => {
                   onClickEvent={handleAddGroup}
                 />
               </div>
-            </Wrapper>
+            </BoxWrapper>
           </section>
         </>
       )}

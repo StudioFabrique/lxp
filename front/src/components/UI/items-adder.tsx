@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
-import Wrapper from "../wrappers/BoxWrapper";
+import BoxWrapper from "../wrappers/BoxWrapper";
 import { getRandomLightColor } from "../../utils/random-tailwind-color";
 import { Trash2 } from "lucide-react";
 
@@ -68,7 +68,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
   };
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div data-testid={testId} className="flex flex-col gap-y-2">
         <label
           htmlFor="hobby"
@@ -104,7 +104,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
           </button>
         ))}
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

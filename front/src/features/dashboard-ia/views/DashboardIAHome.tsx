@@ -8,7 +8,7 @@ import TopFiveUsers from "../components/TopFiveUsers";
 import TopUsersTable from "../components/TopUsersTable";
 import Header from "../../../../src/components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import ElementNotFound from "../../../components/UI/element-not-found";
 
 const DashboardIAHome = () => {
@@ -76,7 +76,7 @@ const DashboardIAHome = () => {
           <h2 className="font-semibold pl-1">
             Utilisation des tokens par promotions ce mois-ci
           </h2>
-          <Wrapper>
+          <BoxWrapper>
             <div className="grid grid-cols-5 text-left text-primary">
               <p className="text-xs font-semibold col-span-2">Promotion</p>
               <p className="text-xs font-semibold col-span-2">Quantité</p>
@@ -90,7 +90,7 @@ const DashboardIAHome = () => {
             ) : (
               <ElementNotFound message="Aucune promotion active trouvée." />
             )}
-          </Wrapper>
+          </BoxWrapper>
           {groupsStats && groupsStats.length > 0 ? (
             <p className="text-xs text-justify w-11/12 mx-auto">
               * Attention, les pourcentages peuvent être approximatifs, par
@@ -103,7 +103,7 @@ const DashboardIAHome = () => {
           <h2 className="font-semibold pl-1">
             Top consommateurs de tokens (5 premiers)
           </h2>
-          <Wrapper>
+          <BoxWrapper>
             <div className="grid grid-cols-2 text-xs font-semibold text-primary">
               <p>Apprenant</p>
               <p>Quantité</p>
@@ -113,7 +113,7 @@ const DashboardIAHome = () => {
             ) : (
               <ElementNotFound message="Aucune donnée de disponible." />
             )}
-          </Wrapper>
+          </BoxWrapper>
         </article>
       </section>
       <section className="w-full">
@@ -134,9 +134,9 @@ const DashboardIAHome = () => {
             onSearch={handleSearch}
           />
         ) : (
-          <Wrapper>
+          <BoxWrapper>
             <ElementNotFound message="Aucune donnée de disponible." />
-          </Wrapper>
+          </BoxWrapper>
         )}
       </section>
     </PageWrapper>

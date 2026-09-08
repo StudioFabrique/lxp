@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
+import { cn } from "../../../../utils/cn";
 
 type CollapsibleSectionProps = {
   title: string;
   preview: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
+  className?: string;
 };
 
 const CollapsibleSection = ({
@@ -13,10 +15,11 @@ const CollapsibleSection = ({
   preview,
   children,
   defaultOpen = false,
+  className,
 }: CollapsibleSectionProps) => {
   return (
     <details
-      className="group min-w-0 rounded-lg bg-secondary/20"
+      className={cn("group min-w-0 rounded-lg bg-secondary/20", className)}
       open={defaultOpen}
     >
       <summary className="min-h-28 cursor-pointer list-none px-5 py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-open:min-h-14 [&::-webkit-details-marker]:hidden">

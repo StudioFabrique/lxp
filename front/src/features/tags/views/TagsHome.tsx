@@ -13,7 +13,7 @@ import { getTagColumns } from "../components/tag-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import Modal from "../../../components/UI/modal/modal";
 import TagsHomeAdding from "./TagsHomeAdding";
@@ -165,8 +165,8 @@ const TagsHome = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+      <BoxWrapper
+        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -223,7 +223,7 @@ const TagsHome = () => {
             <TablePagination leftText={`Tags : ${totalItems}`} {...pagination} />
           </div>
         ) : null}
-      </Wrapper>
+      </BoxWrapper>
 
       <TableActionsModal
         isOpen={idToDelete !== null}

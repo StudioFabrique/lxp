@@ -7,6 +7,7 @@ import { AuthContext } from "../../../../store/AuthProvider";
 import FeelingLevel from "../../../../components/UI/feeling-level";
 import Loader from "../../../../components/loaders/Loader";
 import { isSameDate } from "../../../calendar/components/calendar-utils";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 const FeelingFeedback = () => {
   const { socket } = useContext(AuthContext);
@@ -52,7 +53,7 @@ const FeelingFeedback = () => {
   });
 
   return (
-    <div className="flex flex-col gap-4 bg-base-100 text-base border border-base-300 p-5 rounded-lg">
+    <BoxWrapper className="h-auto text-base">
       <span className="flex justify-between items-center">
         <p className="font-bold">Comment vous sentez-vous aujourd'hui ?</p>
         <FeelingLevel value={currentProgressValue} />
@@ -89,7 +90,7 @@ const FeelingFeedback = () => {
           </>
         )
       )}
-    </div>
+    </BoxWrapper>
   );
 };
 

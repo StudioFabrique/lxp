@@ -2,7 +2,7 @@
 import { useCourseSelector } from "../../../store/CourseContext";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Course from "../../../../../../src/utils/interfaces/course";
 import ContactsList from "../../../../parcours/components/edit/preview/contacts-list.component";
 import TagsList from "../../../../parcours/components/edit/preview/tags-list.component";
@@ -17,7 +17,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
   ) as Course;
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-y-8">
         <span className="w-full flex justify-between items-center">
           <h2 className="text-xl font-bold">Informations</h2>
@@ -30,7 +30,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
         </span>
         <div className="grid lg:grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
-            <Wrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Module</h2>
               <SubWrapper>{course?.module?.title}</SubWrapper>
               <h2 className="text-xl font-bold">Titre du cours</h2>
@@ -47,21 +47,21 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
                   {course?.virtualClass || "Non renseigné"}
                 </p>
               </SubWrapper>
-            </Wrapper>
+            </BoxWrapper>
           </article>
           <article className="flex flex-col gap-y-8">
-            <Wrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
               <ContactsList contactsList={course?.contacts ?? []} />
-            </Wrapper>
-            <Wrapper>
+            </BoxWrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Tags</h2>
               <TagsList tagsList={course?.tags ?? []} />
-            </Wrapper>
+            </BoxWrapper>
           </article>
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

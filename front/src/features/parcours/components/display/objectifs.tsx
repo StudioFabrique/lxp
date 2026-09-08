@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { useParams } from "react-router";
 import { useParcoursQuery } from "../../hooks/useParcoursQuery";
 
@@ -22,12 +22,12 @@ const Objectifs = () => {
     );
 
   return (
-    <Wrapper additionalClassname="h-auto">
+    <BoxWrapper className="h-auto">
       <h2 className="text-xl font-bold text-primary">Objectifs</h2>
       <div className="flex flex-col gap-y-2 overflow-y-auto max-h-60">
         {objectivesList}
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

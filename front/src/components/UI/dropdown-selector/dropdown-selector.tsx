@@ -26,7 +26,7 @@ const DropdownSelector = ({
 
       <ul
         tabIndex={0}
-        className="dropdown-content menu bg-secondary rounded-box z-50 p-2 mb-2 shadow-lg"
+        className="dropdown-content menu bg-primary rounded-box z-50 p-2 mb-2 shadow-lg"
       >
         {valueList.length > 0 ? (
           valueList.map((value) => (
@@ -37,7 +37,9 @@ const DropdownSelector = ({
             </li>
           ))
         ) : (
-          <li className="text-gray-400 p-2 text-sm">{emptyListMessage}</li>
+          <li className="text-primary-content p-2 text-sm">
+            {emptyListMessage}
+          </li>
         )}
       </ul>
     </div>

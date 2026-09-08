@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { UseFormRegister } from "react-hook-form";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import FormPasswordInput from "../../../../components/form/FormPasswordInput";
 
 type FormProps = {
@@ -12,7 +12,7 @@ const ManagePassword: FC<{ formProps: FormProps }> = ({ formProps }) => {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Changer le mot de passe</h3>
-      <Wrapper>
+      <BoxWrapper>
         <div className="flex flex-col gap-4">
           <FormPasswordInput
             label="Ancien mot de passe"
@@ -33,7 +33,7 @@ const ManagePassword: FC<{ formProps: FormProps }> = ({ formProps }) => {
             error={formProps.errors.confirmNewPass}
           />
         </div>
-      </Wrapper>
+      </BoxWrapper>
     </div>
   );
 };

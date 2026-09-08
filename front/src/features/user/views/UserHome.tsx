@@ -20,7 +20,7 @@ import UserStats from "../components/user-data/UserStats";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import { DataTable } from "../../../components/table/DataTable";
 import TablePagination from "../../../components/table/TablePagination";
 import TableActionsModal from "../../../components/table/TableActionsModal";
@@ -243,8 +243,8 @@ const UserHome = () => {
         </div>
       ) : null}
 
-      <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+      <BoxWrapper
+        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -322,7 +322,7 @@ const UserHome = () => {
             />
           </div>
         ) : null}
-      </Wrapper>
+      </BoxWrapper>
 
       <TableActionsModal
         isOpen={!!idToDelete}

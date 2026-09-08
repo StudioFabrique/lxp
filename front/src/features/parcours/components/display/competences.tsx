@@ -1,5 +1,5 @@
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
-import TrophyIcon from "../../../../../src/components/UI/svg/trophy-icon.component";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import SkillBadge from "../../../../components/skills/skill-badge";
 import { useParams } from "react-router";
 import { useParcoursSkills } from "../../hooks/useParcoursSkills";
 
@@ -11,22 +11,8 @@ const Competences = () => {
     skills.length > 0 ? (
       <ul className="flex flex-col gap-y-2">
         {skills.map((skill) => (
-          <li
-            key={skill.id}
-            className="flex items-center gap-3 rounded-lg border border-base-300 bg-base-200 p-4 text-base-content shadow-sm"
-          >
-            <span className="size-8 shrink-0 text-primary">
-              {skill.badge ? (
-                <img
-                  className="size-full object-contain"
-                  src={skill.badge}
-                  alt={skill.description}
-                />
-              ) : (
-                <TrophyIcon />
-              )}
-            </span>
-            <p className="first-letter:uppercase">{skill.description}</p>
+          <li key={skill.id}>
+            <SkillBadge skill={skill} size="small" card />
           </li>
         ))}
       </ul>
@@ -35,12 +21,12 @@ const Competences = () => {
     );
 
   return (
-    <Wrapper additionalClassname="h-auto">
+    <BoxWrapper className="h-auto">
       <h2 className="text-xl font-bold text-primary">Badge & Compétences</h2>
       <div className="flex flex-col gap-y-2 overflow-y-auto max-h-60">
         {skillList}
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

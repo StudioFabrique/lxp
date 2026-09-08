@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import SortColumnIcon from "../../../components/UI/sort-column-icon/sort-column-icon";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import SearchBar from "../../../components/UI/search-bar/search-bar";
 import TablePagination from "../../../components/table/TablePagination";
 import type { TopUser } from "../types";
@@ -50,7 +50,7 @@ const TopUsersTable = ({
 
   return (
     <div>
-      <Wrapper additionalClassname="overflow-x-auto">
+      <BoxWrapper className="overflow-x-auto">
         <SearchBar
           placeholder="Rechercher par nom d'utilisateur"
           onSubmitSearchValue={handleSearch}
@@ -112,7 +112,7 @@ const TopUsersTable = ({
             ))}
           </tbody>
         </table>
-      </Wrapper>
+      </BoxWrapper>
       <TablePagination
         currentPage={page}
         maxPage={totalPages}

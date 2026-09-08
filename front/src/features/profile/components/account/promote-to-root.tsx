@@ -1,6 +1,6 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
 import { profileApi } from "../../api/profile.api";
 import { onboardingApi } from "../../../auth/api/onboarding.api";
@@ -91,7 +91,7 @@ const PromoteToRoot = () => {
   return (
     <div className="flex flex-col gap-2 mt-10">
       <h3 className="text-lg font-semibold">Devenir utilisateur root</h3>
-      <Wrapper>
+      <BoxWrapper>
         <form onSubmit={onSubmit} className="flex max-w-xl flex-col gap-4">
           <p className="text-sm text-base-content/70">
             Générez une clé sur le serveur avec la commande
@@ -136,7 +136,7 @@ const PromoteToRoot = () => {
             Devenir root
           </button>
         </form>
-      </Wrapper>
+      </BoxWrapper>
     </div>
   );
 };

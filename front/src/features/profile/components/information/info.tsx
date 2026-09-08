@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useContext } from "react";
 import { UseFormRegister } from "react-hook-form";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import FormInput from "../../../../components/form/FormInput";
 import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
@@ -23,7 +23,7 @@ const Info: FC<{
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Informations</h3>
-      <Wrapper>
+      <BoxWrapper>
         <div className="flex flex-col gap-2">
           <div className="flex gap-10 justify-between">
             <FormInput
@@ -103,7 +103,7 @@ const Info: FC<{
             error={formProps.errors.phoneNumber}
           />
         </div>
-      </Wrapper>
+      </BoxWrapper>
     </div>
   );
 };

@@ -5,12 +5,19 @@ import { ArrowRightCircle, CalendarOffIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "../../../../../utils/cn";
 
-const ContenuItem: FC<{
+type Props = {
   module: Module;
   iterationCount: number;
   selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
-}> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
+};
+
+const ContenuItem = ({
+  module,
+  iterationCount,
+  selectedModuleId,
+  setSelectedModule,
+}: Props) => {
   const minDate: { day: number | null; month: string } = useMemo(() => {
     if (!module.minDate) {
       return { day: null, month: "" };
@@ -37,8 +44,8 @@ const ContenuItem: FC<{
     >
       <div
         className={cn(
-          "flex flex-col bg-secondary text-secondary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors",
-          { "bg-base-200 text-base-content": !isSelected },
+          "flex flex-col bg-primary text-primary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors shadow-sm",
+          { "bg-base-100 text-base-content": !isSelected },
         )}
       >
         {minDate.day === null ? (
@@ -62,10 +69,10 @@ const ContenuItem: FC<{
       </div>
 
       <div
-        className={`flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
+        className={`shadow-sm flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
           isSelected
             ? "bg-primary text-primary-content shadow-md"
-            : "bg-base-200 text-base-content group-hover:bg-base-300"
+            : "bg-base-100 text-base-content group-hover:bg-base-200"
         }`}
       >
         <div>

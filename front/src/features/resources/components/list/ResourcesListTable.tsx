@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { truncateText } from "../../../../utils/helpers/truncate-text";
 import TableRowWrapper from "../../../../components/UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import SortColumnIcon from "../../../../components/UI/sort-column-icon/sort-column-icon";
 import TableWrapper from "../../../../components/UI/table-wrapper";
 import { ResourceListItem } from "../../views/ResourcesHome";
@@ -106,7 +106,7 @@ Props) {
   );
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="w-full flex justify-center items-center text-xs lg:text-sm">
         <TableWrapper>
           <thead>
@@ -164,6 +164,6 @@ Props) {
           <tbody>{content}</tbody>
         </TableWrapper>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 }

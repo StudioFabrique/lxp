@@ -2,6 +2,7 @@ import { PropsWithChildren, useMemo, useState, type MouseEvent } from "react";
 import { CircleHelp } from "lucide-react";
 import { EVENTS, Joyride, type Step } from "react-joyride";
 import { cn } from "../../utils/cn";
+import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 import PageTourTooltip from "./PageTourTooltip";
 import {
@@ -51,24 +52,15 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
   };
 
   return (
-    <div
+    <BoxWrapper
       onClick={props.onClick}
       data-page-tour="header"
       className={cn(
-        // Classes de base
-        "w-full flex px-4 items-center justify-between rounded-lg select-none mb-6",
-        // Padding vertical conditionnel
+        "mb-6 h-auto w-full flex-row items-center justify-between px-4 shadow-none select-none",
         props.isSubHeader ? "py-2" : "py-4",
-        // Ring / Bordures conditionnelles
         props.isSubHeader && !props.disabled && "ring-1",
         props.hasError && "ring-2 ring-error",
-        // Couleur de fond conditionnelle
-        props.alternateBgColor
-          ? "bg-base-200"
-          : props.successBgColor
-            ? "bg-success"
-            : "bg-secondary/20",
-        // États désactivé ou cliquable
+        props.successBgColor && "bg-success",
         props.disabled && "opacity-15",
         props.onClick && "cursor-pointer hover:opacity-50",
       )}
@@ -125,7 +117,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
         options={pageTourOptions}
         locale={pageTourLocale}
       />
-    </div>
+    </BoxWrapper>
   );
 };
 

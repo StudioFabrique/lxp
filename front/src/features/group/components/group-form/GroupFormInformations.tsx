@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import FormInput from "../../../../../src/components/form/FormInput";
 import type { GroupFormValues } from "../../group.schema";
 
@@ -14,7 +14,7 @@ const GroupFormInformations = ({
   } = useFormContext<GroupFormValues>();
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <span className="max-w-[70vh] flex flex-col gap-y-4">
         <FormInput
@@ -26,7 +26,7 @@ const GroupFormInformations = ({
           disabled={isLoading}
         />
       </span>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

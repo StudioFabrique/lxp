@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import CourseInfosForm from "./course-infos-form";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import Tag from "../../../../../../src/utils/interfaces/tag";
@@ -143,7 +143,7 @@ const CourseInfos = () => {
     <div className="w-full flex flex-col gap-y-8">
       <h2 className="text-3xl font-extrabold">Informations</h2>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
-        <Wrapper>
+        <BoxWrapper>
           <div className="flex flex-col gap-y-8">
             <span className="flex flex-col gap-y-4">
               <h2 className="font-bold">Titre du module</h2>
@@ -158,9 +158,9 @@ const CourseInfos = () => {
               visibility={visibility}
             />
           </div>
-        </Wrapper>
+        </BoxWrapper>
         <div className="flex flex-col gap-y-8">
-          <Wrapper>
+          <BoxWrapper>
             <ContactsWithDrawer
               loading={loadingContacts}
               initialList={contacts}
@@ -168,23 +168,23 @@ const CourseInfos = () => {
               property={["firstname", "lastname"]}
               onSubmit={handleUpdateContacts}
             />
-          </Wrapper>
-          <Wrapper>
+          </BoxWrapper>
+          <BoxWrapper>
             <CourseTags
               onSubmit={handleUpdateTags}
               loading={loadingTags}
               tags={currentTags || []}
               inheritedTags={inheritedTags || []}
             />
-          </Wrapper>
+          </BoxWrapper>
         </div>
       </div>
-      <Wrapper>
+      <BoxWrapper>
         <VirtualClass
           onChangeValue={handleChangeVirtualClass}
           virtualClass={virtualClass}
         />
-      </Wrapper>
+      </BoxWrapper>
     </div>
   );
 };

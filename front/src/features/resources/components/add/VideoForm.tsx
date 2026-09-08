@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import { UseFormRegister, UseFormWatch } from "react-hook-form";
 import FormInput from "../../../../components/form/FormInput";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import VideoPlayer from "../../../../components/UI/VideoPlayer";
 
 type Props = {
@@ -21,7 +21,7 @@ export default function VideoForm(props: Props) {
 
   return (
     <form className="flex flex-col gap-y-2">
-      <Wrapper>
+      <BoxWrapper>
         <FormInput
           label="Titre *"
           placeholder="Titre de l'activité"
@@ -29,9 +29,9 @@ export default function VideoForm(props: Props) {
           register={props.data.register}
           error={props.data.errors.title}
         />
-      </Wrapper>
+      </BoxWrapper>
 
-      <Wrapper>
+      <BoxWrapper>
         <span className="flex justify-between items-start gap-x-8">
           <FormInput
             label="URL de la vidéo *"
@@ -42,7 +42,7 @@ export default function VideoForm(props: Props) {
           />
           <VideoPlayer url={url as string} />
         </span>
-      </Wrapper>
+      </BoxWrapper>
 
       <div className="flex justify-end gap-x-4 items-center mt-4">
         <button

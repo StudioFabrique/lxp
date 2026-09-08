@@ -1,13 +1,17 @@
 import Module from "../../../../../src/utils/interfaces/module";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import { Link, useLocation } from "react-router";
 
 type ProgressModulesStatsProps = {
   modules: Module[];
 };
 
 const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
+  const { pathname } = useLocation();
+  const space = pathname.split("/")[1];
+
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-5 justify-between">
         <h2 className="text-2xl font-bold text-primary">
           Votre avancement dans le parcours
@@ -15,13 +19,22 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
         <div className="flex gap-10 items-center">
           <div className="grid grid-cols-4 gap-5 w-full">
             {modules
-              ?.filter((_x, i) => i < 4)
+              ?.filter(
+                (module) =>
+                  modules.length <= 4 || (module.stats?.progress ?? 0) < 100,
+              )
+              .sort(
+                (a, b) => (b.stats?.progress ?? 0) - (a.stats?.progress ?? 0),
+              )
+              .slice(0, 4)
               .map((module) => {
                 const moduleProgress = module.stats?.progress ?? 0;
 
                 return (
-                  <div
-                    className="flex flex-col justify-between gap-4 bg-base-200 border border-base-300 rounded-lg p-4 w-full shadow-sm hover:bg-base-300 transition-colors tooltip tooltip-bottom"
+                  <Link
+                    to={`/${space}/parcours/module/${module.id}`}
+                    aria-label={`Accéder au module ${module.title}`}
+                    className="tooltip tooltip-bottom flex w-full flex-col justify-between gap-4 rounded-lg border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     data-tip={module.title}
                     key={module.id}
                   >
@@ -37,13 +50,13 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                       value={moduleProgress}
                       max="100"
                     />
-                  </div>
+                  </Link>
                 );
               })}
           </div>
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

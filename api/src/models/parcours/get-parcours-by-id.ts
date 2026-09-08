@@ -7,6 +7,10 @@ import {
   type AccessScope,
 } from "../../utils/services/permissions/accessible-parcours.ts";
 import { canUnassignTag } from "../tag/tag-access.ts";
+import {
+  skillAchievementSelect,
+  withSkillAchievement,
+} from "../../helpers/skill-achievement.ts";
 
 /**
  * Récupère les détails d'un parcours par son ID
@@ -53,7 +57,7 @@ async function getParcoursById(
         },
       },
       skills: { include: { skill: true } },
-      bonusSkills: { select: { id: true, description: true, badge: true } },
+      bonusSkills: { select: skillAchievementSelect(userId) },
       objectives: { select: { id: true, description: true } },
       modules: {
         where: moduleWhereForScope(scope),
@@ -127,6 +131,7 @@ async function getParcoursById(
   // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
   let result: any = {
     ...parcours,
+    bonusSkills: parcours.bonusSkills.map(withSkillAchievement),
     canManage:
       scope?.kind !== "teacher" ||
       scope.directParcoursIds?.includes(parcours.id),

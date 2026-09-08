@@ -32,10 +32,24 @@ import type {
 import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
+import { useQueryClient } from "@tanstack/react-query";
+import { AuthContext } from "../../../store/AuthProvider";
+import { getUserArea } from "../../../utils/helpers/user-role";
+import { parcoursKeys } from "../../parcours/api/parcours.keys";
+import type Skill from "../../../utils/interfaces/skill";
 
 const useModuleContentExplorer = () => {
   // Le contexte du chatbot
   const { setCurrentActivity } = useContext(ChatbotContext);
+  const { user } = useContext(AuthContext);
+  const isStudent = getUserArea(user) === "student";
+  const queryClient = useQueryClient();
+  const completionInFlight = useRef(false);
+  const [badgeCompletion, setBadgeCompletion] = useState<{
+    moduleId: number;
+    moduleTitle: string;
+    badges: Skill[];
+  } | null>(null);
 
   const { moduleId } = useParams();
   const location = useLocation();
@@ -65,6 +79,13 @@ const useModuleContentExplorer = () => {
   const selectedActivityType = state.selectedActivity?.type;
   const selectedActivityUrl = state.selectedActivity?.url;
   const moduleCourses = state.module?.courses;
+  const activeModuleId = useRef(moduleId);
+  useEffect(() => {
+    activeModuleId.current = moduleId;
+    return () => {
+      activeModuleId.current = undefined;
+    };
+  }, [moduleId]);
   const requestedActivityId =
     stateFromUrl?.lessonId === selectedLessonId
       ? stateFromUrl?.activityId
@@ -144,6 +165,10 @@ const useModuleContentExplorer = () => {
       const { data } = (await modulePreviewApi.queries.getModuleDetail(
         moduleId,
       )) as { data: Module & { parcours: string } };
+      if (activeModuleId.current !== moduleId) return;
+      setBadgeCompletion((current) =>
+        current?.moduleId === data.id ? current : null,
+      );
       dispatch({ type: "update_module_data", module: data });
     } catch {
       // silently fail
@@ -177,7 +202,8 @@ const useModuleContentExplorer = () => {
   const completeLesson = useCallback(
     async (rating: number) => {
       const lessonId = state.selectedLesson?.id;
-      if (state.selectedLesson && lessonId) {
+      if (state.selectedLesson && lessonId && !completionInFlight.current) {
+        completionInFlight.current = true;
         try {
           // Deux responsabilités distinctes, longtemps servies par la même
           // route historique : clore le suivi de lecture, puis enregistrer la
@@ -187,36 +213,71 @@ const useModuleContentExplorer = () => {
             (await modulePreviewApi.tracking.finish("lesson", lessonId)) as {
               contentRead: LessonRead;
             };
-          const { data: lessonRating } =
-            (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
-              data: LessonRating;
-            };
+          if (activeModuleId.current !== String(state.module?.id)) return;
           dispatch({
             type: "mark_lesson_as_complete",
             lesson: state.selectedLesson,
             lessonRead,
           });
-          dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
-
-          // Terminer la dernière leçon d'un cours (ou du module) clôt aussi le
-          // niveau au-dessus : sans ça, `finishedAt` resterait toujours nul sur
-          // CourseRead et ModuleRead.
-          if (isLastLessonOfCurrentCourse && state.selectedLesson.courseId) {
-            finishContent("course", state.selectedLesson.courseId);
+          // La note ne conditionne pas l'obtention des compétences.
+          try {
+            const { data: lessonRating } =
+              (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
+                data: LessonRating;
+              };
+            if (activeModuleId.current !== String(state.module?.id)) return;
+            dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+          } catch {
+            toast.error(
+              "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
+            );
           }
-          if (isLastLessonSelected && state.module?.id) {
-            finishContent("module", state.module.id);
+
+          if (state.module?.id) {
+            if (state.module.parcoursId) {
+              void queryClient.invalidateQueries({
+                queryKey: parcoursKeys.detail(state.module.parcoursId),
+              });
+            }
+            const { data: updatedModule } =
+              (await modulePreviewApi.queries.getModuleDetail(state.module.id)) as {
+                data: Module & { parcours: string };
+              };
+            if (activeModuleId.current !== String(state.module.id)) return;
+            dispatch({ type: "update_module_data", module: updatedModule });
+
+            const completedCourse = updatedModule.courses.find(
+              (course) => course.id === state.selectedLesson?.courseId,
+            );
+            if (completedCourse?.stats?.isCompleted) {
+              finishContent("course", completedCourse.id);
+            }
+            if (updatedModule.stats?.isCompleted) {
+              finishContent("module", state.module.id);
+            }
+
+            void queryClient.invalidateQueries({ queryKey: ["last-read-lessons"] });
+            if (isStudent && !state.module.stats?.isCompleted && updatedModule.stats?.isCompleted) {
+              dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
+              setBadgeCompletion({
+                moduleId: state.module.id,
+                moduleTitle: updatedModule.title,
+                badges: updatedModule.bonusSkills,
+              });
+            }
           }
         } catch {
           // silently fail
+        } finally {
+          completionInFlight.current = false;
         }
       }
     },
     [
       state.selectedLesson,
-      state.module?.id,
-      isLastLessonOfCurrentCourse,
-      isLastLessonSelected,
+      state.module,
+      isStudent,
+      queryClient,
       finishContent,
     ],
   );
@@ -817,6 +878,9 @@ const useModuleContentExplorer = () => {
 
   return {
     state,
+    badgeCompletion:
+      badgeCompletion?.moduleId === Number(moduleId) ? badgeCompletion : null,
+    closeBadgeCompletion: () => setBadgeCompletion(null),
     computed: {
       isLessonCompleted,
       isFirstActivitySelected,

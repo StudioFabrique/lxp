@@ -4,6 +4,11 @@ import {
 } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
+import {
+  isModuleCompleted,
+  skillAchievementSelect,
+  withSkillAchievement,
+} from "../../helpers/skill-achievement.ts";
 
 export default async function getLimitedModuleDetail(
   moduleId: number,
@@ -31,7 +36,10 @@ export default async function getLimitedModuleDetail(
           tags: { select: { tag: true } },
         },
       },
-      bonusSkills: { select: { bonusSkill: true } },
+      bonusSkills: {
+        orderBy: { bonusSkillId: "asc" },
+        select: { bonusSkill: { select: skillAchievementSelect(userMongoId) } },
+      },
       contacts: {
         select: { contact: { select: { id: true, idMdb: true } } },
       },
@@ -87,17 +95,25 @@ export default async function getLimitedModuleDetail(
     parcours: module.parcours.title,
     parcoursId: module.parcours.id,
     tags: module.parcours.tags.map(({ tag }) => tag),
-    bonusSkills: module.bonusSkills.map(({ bonusSkill }) => bonusSkill),
+    bonusSkills: module.bonusSkills.map(({ bonusSkill }) =>
+      withSkillAchievement(bonusSkill),
+    ),
     contacts,
     // Progression calculée ici : `lessonsRead` est déjà chargé, aucune requête
     // supplémentaire. Le front se contente de lire `stats.progress`.
-    stats: { progress: calculateModuleProgress(module) },
+    stats: {
+      progress: calculateModuleProgress(module),
+      isCompleted: isModuleCompleted(module),
+    },
     courses: module.courses.map(({ contacts, tags, ...course }) => ({
       ...course,
       aiIndexed: Boolean(course.courseSlug),
       contacts: contacts.map(({ contact }) => contact),
       tags: tags.map(({ tag }) => tag),
-      stats: { progress: calculateCourseProgress(course) },
+      stats: {
+        progress: calculateCourseProgress(course),
+        isCompleted: isModuleCompleted({ courses: [course] }),
+      },
     })),
   };
 }

@@ -1,6 +1,7 @@
 import { calculateCourseProgress } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
+import { skillAchievementSelect, withSkillAchievement } from "../../helpers/skill-achievement.ts";
 
 /**
  * Get the list of last read lessons by a student and not finished.
@@ -54,7 +55,7 @@ export default async function getLastLessonsRead(
                   parcours: { select: { id: true } },
                   bonusSkills: {
                     select: {
-                      bonusSkill: { select: { id: true, badge: true } },
+                      bonusSkill: { select: skillAchievementSelect(userIdMdb) },
                     },
                   },
                 },
@@ -104,6 +105,9 @@ export default async function getLastLessonsRead(
                 id: true,
                 title: true,
                 parcours: { select: { id: true } },
+                bonusSkills: {
+                  select: { bonusSkill: { select: skillAchievementSelect(userIdMdb) } },
+                },
               },
             },
           },
@@ -118,12 +122,14 @@ export default async function getLastLessonsRead(
     if (!firstLesson) return null;
 
     const lessonReformatted = {
+      parcoursId: firstLesson.course.module.parcours.id,
       lesson: {
         id: firstLesson.id,
         title: firstLesson.title,
         order: firstLesson.order,
         course: {
           ...firstLesson.course,
+          bonusSkills: firstLesson.course.module.bonusSkills.map(({ bonusSkill }) => withSkillAchievement(bonusSkill)),
           module: {
             ...firstLesson.course.module,
             title: firstLesson.course.module.title,
@@ -131,7 +137,6 @@ export default async function getLastLessonsRead(
           // Aucune leçon n'a encore été ouverte dans ce parcours.
           stats: { progress: 0 },
         },
-        parcoursId: firstLesson.course.module.parcours.id,
       },
     };
 
@@ -142,7 +147,7 @@ export default async function getLastLessonsRead(
   const lessonsReformattedWithSkillBadge = lessons
     .map((lessonRead) => {
       const { course } = lessonRead.lesson;
-      const bonusSkills = course.module.bonusSkills.map((b) => b.bonusSkill);
+      const bonusSkills = course.module.bonusSkills.map((b) => withSkillAchievement(b.bonusSkill));
 
       return {
         ...lessonRead,

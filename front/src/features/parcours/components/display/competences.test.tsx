@@ -1,9 +1,10 @@
-import { act } from "react";
+import { act, type ContextType } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import Competences from "./competences";
+import { AuthContext } from "../../../../store/AuthProvider";
 
 const { mockUseParcoursSkills } = vi.hoisted(() => ({
   mockUseParcoursSkills: vi.fn(),
@@ -29,14 +30,18 @@ describe("Compétences dans l'aperçu du parcours", () => {
     vi.clearAllMocks();
   });
 
-  const renderCompetences = async () => {
+  const renderCompetences = async (rank = 0) => {
     await act(async () => {
       root.render(
-        <MemoryRouter initialEntries={["/parcours/42"]}>
-          <Routes>
-            <Route path="/parcours/:id" element={<Competences />} />
-          </Routes>
-        </MemoryRouter>,
+        <AuthContext.Provider
+          value={{ user: { roles: [{ rank }] } } as ContextType<typeof AuthContext>}
+        >
+          <MemoryRouter initialEntries={["/parcours/42"]}>
+            <Routes>
+              <Route path="/parcours/:id" element={<Competences />} />
+            </Routes>
+          </MemoryRouter>
+        </AuthContext.Provider>,
       );
     });
   };
@@ -64,6 +69,25 @@ describe("Compétences dans l'aperçu du parcours", () => {
     expect(badge?.getAttribute("alt")).toBe("Communiquer efficacement");
   });
 
+  it("réduit l'opacité uniquement des badges non acquis par l'étudiant", async () => {
+    mockUseParcoursSkills.mockReturnValue({
+      skills: [
+        { id: 1, description: "À obtenir", badge: "one.png", isEarned: false },
+        { id: 2, description: "Obtenu", badge: "two.png", isEarned: true },
+      ],
+    });
+    await renderCompetences(3);
+    const badges = container.querySelectorAll("img");
+    expect(badges[0].classList.contains("opacity-30")).toBe(true);
+    expect(badges[1].classList.contains("opacity-100")).toBe(true);
+    await renderCompetences(2);
+    expect(
+      [...container.querySelectorAll("img")].every((badge) =>
+        badge.classList.contains("opacity-100"),
+      ),
+    ).toBe(true);
+  });
+
   it("affiche un trophée de repli lorsqu'une compétence n'a pas de badge", async () => {
     mockUseParcoursSkills.mockReturnValue({
       skills: [{ id: 2, description: "Travailler en équipe" }],
@@ -73,5 +97,29 @@ describe("Compétences dans l'aperçu du parcours", () => {
 
     expect(container.querySelector("li svg")).not.toBeNull();
     expect(container.textContent).toContain("Travailler en équipe");
+  });
+
+  it("réduit aussi l'opacité des trophées non acquis par l'étudiant", async () => {
+    mockUseParcoursSkills.mockReturnValue({
+      skills: [
+        { id: 1, description: "À obtenir", isEarned: false },
+        { id: 2, description: "Obtenu", isEarned: true },
+      ],
+    });
+
+    await renderCompetences(3);
+
+    const trophyContainers = [...container.querySelectorAll("li svg")].map(
+      (trophy) => trophy.parentElement,
+    );
+    expect(trophyContainers[0]?.classList.contains("opacity-30")).toBe(true);
+    expect(trophyContainers[1]?.classList.contains("opacity-100")).toBe(true);
+
+    await renderCompetences(2);
+    expect(
+      [...container.querySelectorAll("li svg")].every((trophy) =>
+        trophy.parentElement?.classList.contains("opacity-100"),
+      ),
+    ).toBe(true);
   });
 });

@@ -14,7 +14,7 @@ import { getGroupColumns } from "../components/group-table-columns";
 
 import PageHeader from "../../../components/headers/PageHeader";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
 import useTablePaginatedData from "../../../components/table/hooks/useTablePaginatedData";
 import { DataTable } from "../../../components/table/DataTable";
@@ -105,8 +105,8 @@ const GroupList = () => {
         </PermissionGuard>
       </PageHeader>
 
-      <Wrapper
-        additionalClassname={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+      <BoxWrapper
+        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
         unstyled={!isLoading && data.length === 0 && !searchValue}
       >
         {isLoading || data.length > 0 || searchValue ? (
@@ -165,7 +165,7 @@ const GroupList = () => {
             />
           </div>
         ) : null}
-      </Wrapper>
+      </BoxWrapper>
 
       <TableActionsModal
         isOpen={!!idToDelete}

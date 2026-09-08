@@ -4,7 +4,7 @@ import { Link, createSearchParams } from "react-router";
 import { RefreshCcw } from "lucide-react";
 import { queries } from "../../api/user.api";
 import type Role from "../../../../utils/interfaces/role";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
 
 type Props = {
@@ -48,7 +48,7 @@ const UserFormTypeUser = ({
   }, [initialRoleRank, onSetRoleId, roleId, roles]);
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex justify-between h-fit items-center">
         <h2 className="font-bold text-xl">Type d'utilisateur</h2>
         <div className="flex gap-2 items-center">
@@ -122,7 +122,7 @@ const UserFormTypeUser = ({
           </div>
         )}
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

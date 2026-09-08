@@ -2,6 +2,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
+import SkillBadge from "../../../components/skills/skill-badge";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
@@ -24,36 +25,32 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
 
             return (
               <CursorGlowCard key={item.id}>
-                <Link
-                  to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
-                  state={{ lessonId: item.lesson.id }}
-                  className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20"
-                >
+                <div className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20">
                   <div className="w-full text-left">
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                     <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
-                    <div className="flex gap-1 overflow-x-hidden">
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {item.lesson.course.bonusSkills
-                        .filter((skill) => skill.badge)
-                        .map(
-                          (skill, i) =>
-                            i < 5 && (
-                              <img
-                                key={skill.id}
-                                className="w-16 h-16 p-2"
-                                src={skill.badge}
-                                alt="illustration badge"
-                              />
-                            ),
-                        )}
+                        ?.slice(0, 5)
+                        .map((skill) => (
+                          <SkillBadge
+                            key={skill.id}
+                            skill={skill}
+                            size="small"
+                          />
+                        ))}
                     </div>
                   </div>
-                  <div>
+                  <Link
+                    to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
+                    state={{ lessonId: item.lesson.id }}
+                    className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary"
+                  >
                     <span className="flex justify-between w-full">
                       <span className="flex gap-x-4 capitalize items-center text-sm min-w-0">
                         <p>{`${(item.lesson.order ?? 0) + 1}/${
-                          item.lesson.course.lessons.length
+                          item.lesson.course.lessons?.length ?? 0
                         }`}</p>
                         <p className="truncate overflow-clip min-w-0">
                           {item.lesson.title}
@@ -67,8 +64,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                       value={courseProgress}
                       max={100}
                     />
-                  </div>
-                </Link>
+                  </Link>
+                </div>
               </CursorGlowCard>
             );
           })}

@@ -3,7 +3,7 @@ import { FC, FormEvent, useState } from "react";
 import useInput from "../../../../../hooks/useInput";
 import { regexGeneric } from "../../../../../config/constantes";
 import Objective from "../../../../../../src/utils/interfaces/objective";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import DrawerFormButtons from "../../../../../components/UI/drawer-form-buttons/drawer-form-buttons.component";
 
 type Props = {
@@ -62,7 +62,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
   return (
     <div className="flex flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
-        <Wrapper>
+        <BoxWrapper>
           <div className="flex flex-col gap-y-2">
             <label htmlFor="description">Objectif de parcours *</label>
             <textarea
@@ -72,7 +72,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
               onBlur={description.valueBlurHandler}
             />
           </div>
-        </Wrapper>
+        </BoxWrapper>
         <DrawerFormButtons onCancel={handleCancel} />
       </form>
     </div>

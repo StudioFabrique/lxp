@@ -24,5 +24,5 @@ export default interface Module {
    * Progression en pourcentage, calculée par l'API
    * (`api/src/helpers/calculate-module-progress.ts`).
    */
-  stats?: { progress?: number };
+  stats?: { progress?: number; isCompleted?: boolean };
 }

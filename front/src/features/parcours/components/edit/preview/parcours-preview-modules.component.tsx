@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Pencil } from "lucide-react";
 import { Link, useParams, useSearchParams } from "react-router";
 
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
 import { AuthContext } from "../../../../../store/AuthProvider";
@@ -31,7 +31,7 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
   };
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <span className="w-full flex justify-between items-center">
         <h2 className="text-xl font-bold">
           {getModulesLabel(user, "Liste des modules")}
@@ -75,7 +75,7 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
           ),
         )}
       </section>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

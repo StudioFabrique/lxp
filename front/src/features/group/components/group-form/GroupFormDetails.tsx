@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useFormContext } from "react-hook-form";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { ExternalLink } from "lucide-react";
 import { groupApi } from "../../api/group.api";
 import type { GroupFormValues } from "../../group.schema";
@@ -37,7 +37,7 @@ const GroupFormDetails = () => {
   );
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-6">
         <div>
           <h2 className="font-bold text-xl">Parcours associé</h2>
@@ -123,7 +123,7 @@ const GroupFormDetails = () => {
           </div>
         )}
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 export default GroupFormDetails;

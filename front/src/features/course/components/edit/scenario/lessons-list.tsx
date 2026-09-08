@@ -1,7 +1,7 @@
 import { useCourseDispatch } from "../../../store/CourseContext";
 
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import LessonItem from "./lesson-item";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { DndWrapper } from "../../../../../components/UI/DndWrapper";
@@ -25,7 +25,7 @@ const LessonsList = (props: LessonsListProps) => {
   };
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <main className="max-h-[35rem] w-full pr-4 overflow-auto">
         <section className="flex items-center gap-x-2">
           <h2 className="font-bold text-xl mb-8">
@@ -64,7 +64,7 @@ const LessonsList = (props: LessonsListProps) => {
           ) : null}
         </section>
       </main>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

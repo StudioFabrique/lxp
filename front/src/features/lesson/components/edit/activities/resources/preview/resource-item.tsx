@@ -6,7 +6,7 @@ import {
   GripVertical,
   Trash2,
 } from "lucide-react";
-import Wrapper from "../../../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../../../src/components/wrappers/BoxWrapper";
 import { ActivityResource } from "../../../../../../../../src/utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../../../config/urls";
 import { Dispatch, SetStateAction } from "react";
@@ -53,7 +53,7 @@ function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Props) {
   };
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="grid grid-cols-4">
         <span className="col-span-1 flex gap-x-4 items-center">
           <GripVertical className="text-primary" /> {displayIcon(resource.url)}
@@ -71,7 +71,7 @@ function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Props) {
           </button>
         </span>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 }
 

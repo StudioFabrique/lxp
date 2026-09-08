@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Wrapper from "../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { CheckCircle2 } from "lucide-react";
 
 type Props = {
@@ -10,7 +10,7 @@ export default function GroupFormParcoursWarning({ parcoursId }: Props) {
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="w-full flex flex-col gap-y-4">
-        <Wrapper>
+        <BoxWrapper>
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center gap-5">
               <div className="flex gap-5 items-center">
@@ -29,7 +29,7 @@ export default function GroupFormParcoursWarning({ parcoursId }: Props) {
               </Link>
             </div>
           </div>
-        </Wrapper>
+        </BoxWrapper>
       </div>
     </div>
   );

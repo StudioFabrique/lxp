@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { feedbacksApi } from "../api/feedbacks.api";
 import FeedbacksList from "../components/FeedbacksList";
-import Wrapper from "../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 
 const FeedbacksHome = () => {
   const { data: feedbacks = [] } = useQuery({
@@ -17,11 +17,11 @@ const FeedbacksHome = () => {
           <FeedbacksList feedbacks={feedbacks} />
         ) : (
           <div className="w-full mt-2">
-            <Wrapper>
+            <BoxWrapper>
               <p>
                 Vous n'avez reçu aucun feedback de la part de vos apprenants.
               </p>
-            </Wrapper>
+            </BoxWrapper>
           </div>
         )}
       </section>

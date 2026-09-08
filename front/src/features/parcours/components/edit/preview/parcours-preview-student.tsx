@@ -1,4 +1,4 @@
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import Group from "../../../../../../src/utils/interfaces/group";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import StudentsListTable from "../students/students-list-table";
@@ -20,7 +20,7 @@ const ParcoursPreviewStudent = (props: ParcoursPreviewStudentProps) => {
   );
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <article className="flex flex-col gap-y-2">
         <div className="flex items-center">
           <span className="w-full flex justify-between items-center">
@@ -54,7 +54,7 @@ const ParcoursPreviewStudent = (props: ParcoursPreviewStudentProps) => {
           />
         ) : null}
       </article>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 

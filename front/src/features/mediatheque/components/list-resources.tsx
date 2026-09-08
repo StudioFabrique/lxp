@@ -1,7 +1,7 @@
 import { Download, Trash2 } from "lucide-react";
 import { displaySize } from "../../../utils/helpers/size-unit-conversion";
 import Media from "../interfaces/media";
-import Wrapper from "../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import MediaFilterSelect from "./media-filter-select";
 import { DOWNLOAD_URL } from "../../../config/urls";
 
@@ -52,7 +52,7 @@ function ListResources({ options, resources, onSort }: Props) {
               {/* Map through resources to create list items */}
               {(resources as Media[]).map((item) => (
                 <li key={item.id}>
-                  <Wrapper>
+                  <BoxWrapper>
                     <div className="w-full grid grid-cols-7 gap-4">
                       <p className="col-span-4">{item.name}</p>
                       <p className="text-center">{displaySize(item.size)}</p>
@@ -78,7 +78,7 @@ function ListResources({ options, resources, onSort }: Props) {
                         </button>
                       </span>
                     </div>
-                  </Wrapper>
+                  </BoxWrapper>
                 </li>
               ))}
             </ul>

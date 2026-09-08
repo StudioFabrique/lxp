@@ -1,6 +1,6 @@
 import { Activity } from "../../../../utils/interfaces/activity";
 import useResourceIFrame from "../../hooks/useResourceIFrame";
-import Wrapper from "../../../../components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import ResourceIFrameForm from "./ResourceIFrameForm";
 import ResourceIFramePreview from "./ResourceIFramePreview";
 
@@ -46,7 +46,7 @@ export default function IFrameActivityResource(props: Props) {
   if (props.mode !== "read") {
     return (
       <div>
-        <Wrapper>
+        <BoxWrapper>
           {/* Display URL validation error if present */}
           {urlError && urlError.length > 0 ? (
             <p className="text-error text-xs font-bold">{urlError}</p>
@@ -71,7 +71,7 @@ export default function IFrameActivityResource(props: Props) {
               <p>Saisir une URL ci-dessus pour prévisualiser le contenu.</p>
             </div>
           ) : null}
-        </Wrapper>
+        </BoxWrapper>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import Wrapper from "../../../../../../src/components/wrappers/BoxWrapper";
+import BoxWrapper from "../../../../../../src/components/wrappers/BoxWrapper";
 import SubWrapper from "../../../../../../src/components/wrappers/SubBoxWrapper";
 import ContactsList from "./contacts-list.component";
 import Tag from "../../../../../../src/utils/interfaces/tag";
@@ -22,7 +22,7 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
   );
 
   return (
-    <Wrapper>
+    <BoxWrapper>
       <div className="flex flex-col gap-y-8">
         <span className="w-full flex justify-between items-center">
           <h2 className="text-xl font-bold">Informations</h2>
@@ -36,7 +36,7 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Colonne #1 */}
           <article className="flex flex-col gap-y-4">
-            <Wrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Formation</h2>
               <SubWrapper>{parcours?.formation.title}</SubWrapper>
               <h2 className="text-xl font-bold">Titre du parcours</h2>
@@ -53,19 +53,19 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
               <SubWrapper>
                 <p>{parcours?.virtualClass || "Non renseigné"}</p>
               </SubWrapper>
-            </Wrapper>
+            </BoxWrapper>
           </article>
           {/* Colonne #2 */}
           <article className="flex flex-col gap-y-8">
-            <Wrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
               <ContactsList contactsList={contacts} />
-            </Wrapper>
-            <Wrapper>
+            </BoxWrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Tags</h2>
               <TagsList tagsList={tags} />
-            </Wrapper>
-            <Wrapper>
+            </BoxWrapper>
+            <BoxWrapper>
               <h2 className="text-xl font-bold">Dates du parcours</h2>
               <SubWrapper>
                 <span className="flex">
@@ -79,11 +79,11 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
                   <p>{localeDate(parcours?.endDate ?? "")}</p>
                 </span>
               </SubWrapper>
-            </Wrapper>
+            </BoxWrapper>
           </article>
         </div>
       </div>
-    </Wrapper>
+    </BoxWrapper>
   );
 };
 
