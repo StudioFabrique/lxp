@@ -18,7 +18,8 @@ export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
   onDelete: () => void;
 }) {
   const [draft, setDraft] = useState(() => dates.map(date => ({ ...date })));
-  const valid = draft.every(date => date.minDate && date.maxDate && dateInputValue(date.minDate) <= dateInputValue(date.maxDate) && validCourseTimes(date.startTime, date.endTime));
+  const validDates = draft.every(date => date.minDate && date.maxDate && dateInputValue(date.minDate) <= dateInputValue(date.maxDate));
+  const valid = validDates && draft.every(date => validCourseTimes(date.startTime, date.endTime));
   return <form
     className="flex flex-col gap-4"
     onSubmit={async e => { e.preventDefault(); if (valid) await onSave(draft); }}
@@ -26,15 +27,24 @@ export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
     <div className="max-h-[50vh] space-y-4 overflow-y-auto">
       {draft.map((date, index) => <fieldset key={index} disabled={isSaving} className="flex flex-col gap-3">
         {draft.length > 1 && <legend className="mb-2 text-sm font-medium">Plage {index + 1}</legend>}
-        <DatePicker label="Date de début" value={dateInputValue(date.minDate)} max={dateInputValue(date.maxDate)} clearable={false}
-          onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, minDate: `${value}T00:00:00.000Z` } : item))} />
-        <DatePicker label="Date de fin" value={dateInputValue(date.maxDate)} min={dateInputValue(date.minDate)} clearable={false}
-          onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, maxDate: `${value}T00:00:00.000Z` } : item))} />
-        <CourseTimeFields startTime={date.startTime} endTime={date.endTime}
-          onChange={times => setDraft(previous => previous.map((item, i) => i === index ? { ...item, ...times } : item))} />
+        <div className="grid grid-cols-2 divide-x divide-base-300">
+          <div className="@container min-w-0 space-y-2 pr-4">
+            <p className="text-sm font-medium">Dates</p>
+            <div className="grid grid-cols-1 gap-3 @min-[19rem]:grid-cols-2">
+              <DatePicker label="Date de début" display="short" className="min-w-0" value={dateInputValue(date.minDate)} max={dateInputValue(date.maxDate)} clearable={false}
+                onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, minDate: `${value}T00:00:00.000Z` } : item))} />
+              <DatePicker label="Date de fin" display="short" className="min-w-0" value={dateInputValue(date.maxDate)} min={dateInputValue(date.minDate)} clearable={false}
+                onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, maxDate: `${value}T00:00:00.000Z` } : item))} />
+            </div>
+          </div>
+          <div className="min-w-0 pl-4">
+            <CourseTimeFields startTime={date.startTime} endTime={date.endTime}
+              onChange={times => setDraft(previous => previous.map((item, i) => i === index ? { ...item, ...times } : item))} />
+          </div>
+        </div>
       </fieldset>)}
     </div>
-    {!valid && <p role="alert" className="text-sm text-error">Vérifiez les dates et les horaires de chaque plage.</p>}
+    {!validDates && <p role="alert" className="text-sm text-error">Vérifiez les dates de chaque plage.</p>}
     <button type="submit" className="btn btn-primary" disabled={isSaving || !valid}>{isSaving ? "Enregistrement…" : "Enregistrer"}</button>
     <button
       type="button"
@@ -145,11 +155,11 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
           side="top"
           updatePositionStrategy="always"
           hideWhenDetached
-          avoidCollisions={false}
+          avoidCollisions
           align="start"
           sideOffset={8}
           collisionPadding={16}
-          className="z-50 data-[detached]:invisible w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
+          className="z-50 data-[detached]:invisible w-[48rem] max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
           aria-label={`Dates du cours ${selectedCourse?.title}`}
           onCloseAutoFocus={e => e.preventDefault()}
         >

@@ -129,9 +129,10 @@ function ParcoursCalendar({
   const area = pathname.startsWith("/student/") ? "student" : "admin";
   const [selection, setSelection] = useState<{
     event: CalendarEvent;
-    rect: DOMRect;
   } | null>(null);
-  const anchor = useRef({ getBoundingClientRect: () => new DOMRect() });
+  const anchor = useRef<{ getBoundingClientRect: () => DOMRect }>({
+    getBoundingClientRect: () => new DOMRect(),
+  });
   const query = useQuery({
     queryKey: ["read-calendar", scopeKey, parcours.id],
     queryFn: async () =>
@@ -160,10 +161,10 @@ function ParcoursCalendar({
     19,
     ...timed.map((event) => Math.ceil(minutes(event.end) / 60)),
   );
-  const select = (event: CalendarEvent | undefined, rect: DOMRect) => {
-    if (!event) return;
-    anchor.current.getBoundingClientRect = () => rect;
-    setSelection({ event, rect });
+  const select = (event: CalendarEvent | undefined, element?: HTMLElement) => {
+    if (!event || !element) return;
+    anchor.current = element;
+    setSelection({ event });
   };
   const changeDate = (value: Date) => {
     setSelection(null);
@@ -191,13 +192,13 @@ function ParcoursCalendar({
             startHour={startHour}
             endHour={endHour}
             darkMode={theme === "dark"}
-            onClickEventDetails={(id, rect) =>
+            onClickEventDetails={(id, _rect, element) =>
               select(
                 events.find((event) => event.id === id),
-                rect,
+                element,
               )
             }
-            onClickTimelineYearEventDetails={(id, rect) => {
+            onClickTimelineYearEventDetails={(id, _rect, element) => {
               const module = query.data?.modules.find(
                 (module) => module.id === id,
               );
@@ -215,7 +216,7 @@ function ParcoursCalendar({
                     rangeEnd: module.maxDate ?? undefined,
                     to: `/${area}/parcours/module/${module.id}`,
                   },
-                  rect,
+                  element,
                 );
             }}
             header={
@@ -254,10 +255,13 @@ function ParcoursCalendar({
         <Popover.Portal>
           <Popover.Content
             side="top"
+            updatePositionStrategy="always"
+            hideWhenDetached
+            avoidCollisions
             align="start"
             sideOffset={8}
             collisionPadding={16}
-            className="z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
+            className="z-50 data-[detached]:invisible w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
             aria-label="Détails du calendrier"
             onCloseAutoFocus={(e) => e.preventDefault()}
           >

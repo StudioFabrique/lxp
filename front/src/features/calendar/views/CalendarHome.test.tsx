@@ -97,3 +97,28 @@ it("le clic sur un jour en en-tête de semaine ouvre cette date en vue Jour", as
   expect(container.querySelector('[aria-label="Cours du jour"]')?.textContent).toContain(dayLabel);
   expect(Array.from(container.querySelectorAll("button")).find(button => button.textContent === "Jour")?.getAttribute("aria-pressed")).toBe("true");
 });
+
+it.each(["Jour", "Semaine", "Mois", "Timeline"])("garde le popover ancré à l'item au défilement en vue %s", async (view) => {
+  await render();
+  await click(view);
+  const item = container.querySelector<HTMLButtonElement>(view === "Timeline"
+    ? '[aria-label="Détails de Module Web"]'
+    : view === "Mois" ? '[title="Cours 1"]' : '[data-calendar-event^="1:"]')!;
+  let rect = new DOMRect(120, 400, 160, 60);
+  const measure = vi.spyOn(item, "getBoundingClientRect").mockImplementation(() => rect);
+  act(() => item.click());
+  await flush();
+  const popover = document.querySelector('[aria-label="Détails du calendrier"]')!;
+  const wrapper = popover.parentElement!;
+  const before = wrapper.style.transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/)!;
+  expect(before).not.toBeNull();
+  measure.mockClear();
+  rect = new DOMRect(80, 280, 160, 60);
+  act(() => document.dispatchEvent(new Event("scroll")));
+  await flush();
+  const after = wrapper.style.transform.match(/translate\(([-\d.]+)px, ([-\d.]+)px\)/)!;
+  expect(measure).toHaveBeenCalled();
+  expect(Number(after[1]) - Number(before[1])).toBe(-40);
+  expect(Number(after[2]) - Number(before[2])).toBe(-120);
+  measure.mockRestore();
+});

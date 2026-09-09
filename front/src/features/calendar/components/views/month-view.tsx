@@ -13,7 +13,7 @@ type Props = {
   onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
   darkMode: boolean;
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
 };
 
 const MonthView = ({
@@ -107,6 +107,7 @@ const MonthView = ({
                         onClickEventDetails?.(
                           event.id,
                           e.currentTarget.getBoundingClientRect(),
+                          e.currentTarget,
                         )
                       }
                       className={`text-left text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}

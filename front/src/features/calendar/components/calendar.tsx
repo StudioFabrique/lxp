@@ -19,11 +19,12 @@ interface Props {
   planningDisabled?: boolean;
   onChangeTimelineEventDates?: (id: number | string, startDate: Date, endDate: Date) => void;
   events: CalendarEvent[];
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   timelineEvents?: TimelineEvent[];
   onClickTimelineYearEventDetails?: (
     id: number | string,
     rect: DOMRect,
+    element?: HTMLElement,
   ) => void;
   onClickEditTimelineYearEvent?: (id: number | string) => void;
   currentDate: Date;

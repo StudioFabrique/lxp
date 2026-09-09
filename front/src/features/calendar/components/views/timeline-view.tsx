@@ -13,7 +13,7 @@ type Props = {
   darkMode: boolean;
   currentWeekDayVisible: boolean;
   style?: { hourHeight: number };
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   onShowMore?: (events: CalendarEvent[]) => void;
 };
 
@@ -33,7 +33,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
   const hasHeader = view === "week" || currentWeekDayVisible;
   const hasUntimed = days.some(day => day.allDay.length || day.hidden.length);
   const eventClass = (event: CalendarEvent) => darkMode ? eventConfig[event.type].dark : eventConfig[event.type].light;
-  const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect());
+  const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect(), target);
   return <div className="overflow-auto max-h-[75vh]" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
     <div data-calendar-scroll-content className={view === "week" ? "min-w-[700px]" : "min-w-full"}>
       {hasHeader && <div className={`sticky top-0 z-30 flex border-b ${theme(darkMode).headerBg} ${theme(darkMode).border}`}>

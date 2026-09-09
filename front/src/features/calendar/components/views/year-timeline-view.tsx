@@ -5,7 +5,7 @@ import { formatDate } from "../calendar-utils";
 type Props = {
   events: TimelineEvent[];
   onClickEdit?: (id: number | string) => void;
-  onClickDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   darkMode: boolean;
 };
 
@@ -139,7 +139,8 @@ const YearTimelineView = ({
                   onClick={(e) =>
                     onClickDetails?.(
                       event.id,
-                      e.currentTarget.getBoundingClientRect()
+                      e.currentTarget.getBoundingClientRect(),
+                      e.currentTarget,
                     )
                   }
                   className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
@@ -203,7 +204,7 @@ const YearTimelineView = ({
                     <button
                       type="button"
                       aria-label={`Détails de ${event.title}`}
-                      onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect())}
+                      onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect(), e.currentTarget)}
                       className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,

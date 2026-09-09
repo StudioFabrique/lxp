@@ -106,7 +106,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
                 Sauvegarder comme brouillon
               </button>
             )}
-            {!isTeacher && !parcours?.isPublished && (
+            {(parcours?.isPublished || !isTeacher) && (
               <button
                 className="btn btn-primary"
                 onClick={() =>
