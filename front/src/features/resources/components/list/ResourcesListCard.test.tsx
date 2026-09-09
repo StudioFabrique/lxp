@@ -13,6 +13,7 @@ const resource = {
   title: "Compléments",
   author: "Auteur",
   createdAt: "2026-09-08",
+  imageUrl: "couverture ressource.webp",
   activities: [{ id: 12, type: "text" as const, title: "Lecture", order: 0 }],
 };
 function render(admin: boolean, permissions: ("update" | "delete")[] = ["update", "delete"]) {
@@ -46,6 +47,18 @@ describe("Cartes des ressources", () => {
     expect(html).toContain('href="/admin/resources/edit/7?activityId=12"');
     expect(html).toContain("Lecture");
     expect(html).not.toContain("/resources/add/7");
+  });
+  it("affiche l'image de la ressource dans le header", () => {
+    const html = render(false, []);
+    expect(html).toContain(
+      "activities/images/couverture%20ressource.webp",
+    );
+    expect(html).toContain("min-h-24");
+  });
+  it("renforce le contraste des actions sur l'image du header", () => {
+    const html = render(true);
+    expect(html).toContain("bg-base-100/90");
+    expect(html).toContain("border-white/60");
   });
   it("ne propose pas la suppression sans sa permission", () => {
     expect(render(true, ["update"])).not.toContain("Supprimer la ressource");

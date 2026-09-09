@@ -38,13 +38,13 @@ const ContenuItem = ({
   return (
     <div
       data-testid="contenu-item"
-      className="flex cursor-pointer items-center gap-x-3 group"
+      className="group flex cursor-pointer items-stretch gap-x-3"
       onClick={() => setSelectedModule(module)}
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
       <div
         className={cn(
-          "flex flex-col bg-primary text-primary-content items-center justify-center p-4 w-24 rounded-lg h-20 transition-colors shadow-sm",
+          "flex min-h-20 w-24 shrink-0 flex-col items-center justify-center rounded-lg bg-primary p-4 text-primary-content shadow-sm transition-colors",
           { "bg-base-100 text-base-content": !isSelected },
         )}
       >
@@ -69,21 +69,23 @@ const ContenuItem = ({
       </div>
 
       <div
-        className={`shadow-sm flex h-20 items-center p-4 justify-between rounded-lg w-full transition-colors select-none ${
+        className={`flex min-h-20 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg p-4 shadow-sm transition-colors select-none ${
           isSelected
             ? "bg-primary text-primary-content shadow-md"
             : "bg-base-100 text-base-content group-hover:bg-base-200"
         }`}
       >
-        <div>
+        <div className="min-w-0 flex-1">
           <p
             className={`text-sm opacity-80 ${isSelected ? "text-primary-content" : ""}`}
           >{`Module ${iterationCount}`}</p>
-          <p className="text-base font-semibold">{module.title}</p>
+          <p className="wrap-break-word text-base font-semibold">
+            {module.title}
+          </p>
         </div>
         <Link
           className={cn(
-            "btn btn-sm btn-ghost self-end",
+            "btn btn-sm btn-ghost shrink-0 self-center",
             isSelected
               ? "text-primary-content hover:text-primary"
               : "hover:text-primary",

@@ -12,6 +12,7 @@ import { parcoursApi } from "../../parcours/api/parcours.api";
 import {
   readParcoursArchiveFormationTitle,
 } from "../../parcours/helpers/read-parcours-archive-formation";
+import ParcoursImportModal from "../../parcours/components/import/ParcoursImportModal";
 import {
   emitOnboardingEvent,
   subscribeToOnboardingEvents,
@@ -24,6 +25,8 @@ type FormationModalProps = {
 
 const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [pendingArchive, setPendingArchive] = useState<File>();
+  const [detectedFormationTitle, setDetectedFormationTitle] = useState("");
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -49,6 +52,7 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     handleTagSubmit,
     handleRemoveTag,
     handleSubmit,
+    formationsList,
   } = useFormationForm({ onSaved: onClose });
 
   const { mutate: importParcours, isPending: isImporting } = useMutation({
@@ -115,12 +119,9 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
     }
 
     try {
-      await readParcoursArchiveFormationTitle(archive);
-      importParcours({
-        archive,
-        createFormation: true,
-        publishCourses: false,
-      });
+      const formationTitle = await readParcoursArchiveFormationTitle(archive);
+      setPendingArchive(archive);
+      setDetectedFormationTitle(formationTitle);
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -129,6 +130,27 @@ const FormationModal = ({ formationId, onClose }: FormationModalProps) => {
       );
     }
   };
+
+  const closeImportModal = () => {
+    if (isImporting) return;
+    setPendingArchive(undefined);
+    setDetectedFormationTitle("");
+  };
+
+  if (pendingArchive) {
+    return (
+      <ParcoursImportModal
+        archive={pendingArchive}
+        detectedFormationTitle={detectedFormationTitle}
+        formations={formationsList}
+        initialFormationChoice="create"
+        showAutomaticFormationOptionInitially
+        isImporting={isImporting}
+        onCancel={closeImportModal}
+        onImport={importParcours}
+      />
+    );
+  }
 
   if (showDeleteConfirmation && formationToEdit) {
     return (

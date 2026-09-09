@@ -82,7 +82,7 @@ const HierarchicalListCard = ({
                 className={cn(
                   "p-4 pb-3",
                   {
-                    "flex min-h-32 items-end bg-cover bg-center text-white":
+                    "flex min-h-24 items-end bg-cover bg-center text-white":
                       Boolean(headerBackgroundImage),
                   },
                   headerClassName,

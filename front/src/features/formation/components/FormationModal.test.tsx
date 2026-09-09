@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   importParcours: vi.fn(),
   invalidateQueries: vi.fn(),
   navigate: vi.fn(),
+  readArchiveTitle: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
@@ -38,6 +39,10 @@ vi.mock("react-router", async (importOriginal) => {
   };
 });
 
+vi.mock("../../parcours/helpers/read-parcours-archive-formation", () => ({
+  readParcoursArchiveFormationTitle: mocks.readArchiveTitle,
+}));
+
 vi.mock("../hooks/useFormationForm", () => ({
   useFormationForm: () => ({
     title: "",
@@ -61,6 +66,7 @@ vi.mock("../hooks/useFormationForm", () => ({
     handleTagSubmit: vi.fn(),
     handleRemoveTag: vi.fn(),
     handleSubmit: vi.fn(),
+    formationsList: [],
   }),
 }));
 
@@ -96,6 +102,7 @@ afterEach(() => {
   mocks.importParcours.mockReset();
   mocks.invalidateQueries.mockReset();
   mocks.navigate.mockReset();
+  mocks.readArchiveTitle.mockReset();
 });
 
 describe("FormationModal pendant l'onboarding", () => {
@@ -138,5 +145,31 @@ describe("FormationModal pendant l'onboarding", () => {
 
     expect(container.textContent).toContain("Créer depuis un parcours (.zip)");
     expect(container.querySelector('input[accept*=".zip"]')).not.toBeNull();
+  });
+
+  it("affiche la modale d'import avec la création de formation présélectionnée", async () => {
+    const container = document.createElement("div");
+    root = createRoot(container);
+    mocks.readArchiveTitle.mockResolvedValue("Formation de destination");
+
+    act(() => root?.render(<FormationModal onClose={vi.fn()} />));
+    const input = container.querySelector('input[accept*=".zip"]');
+    const archive = new File(["archive"], "parcours.zip", {
+      type: "application/zip",
+    });
+    Object.defineProperty(input, "files", { value: [archive] });
+
+    await act(async () => {
+      input?.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    const formationSelect = container.querySelector(
+      "#import-formation",
+    ) as HTMLSelectElement | null;
+    expect(formationSelect?.value).toBe("create");
+    expect(container.textContent).toContain(
+      "Créer automatiquement « Formation de destination »",
+    );
+    expect(mocks.importParcours).not.toHaveBeenCalled();
   });
 });

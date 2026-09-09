@@ -6,6 +6,8 @@ import { AbilityContext } from "../../../../rbac/AbilityProvider";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import HierarchicalListCard from "../../../../components/UI/hierarchical-list-card/HierarchicalListCard";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
+import { ACTIVITIES } from "../../../../config/urls";
+import { cn } from "../../../../utils/cn";
 
 type Props = {
   resourcesList?: ResourceListItem[] | null;
@@ -28,11 +30,17 @@ export default function ResourcesListCard({
         const path = adminView
           ? `/admin/resources/edit/${resource.id}`
           : `/student/ressources/details/${resource.id}`;
+        const hasHeaderImage = Boolean(resource.imageUrl);
         return (
           <HierarchicalListCard
             key={resource.id}
             label="Ressource supplémentaire"
             title={resource.title}
+            headerBackgroundImage={
+              resource.imageUrl
+                ? `${ACTIVITIES}images/${encodeURIComponent(resource.imageUrl)}`
+                : undefined
+            }
             description={
               <div className="flex flex-wrap gap-x-2 gap-y-1">
                 <span>{resource.author}</span>
@@ -43,7 +51,12 @@ export default function ResourcesListCard({
                 {adminView && (
                   <PermissionGuard action="update" object="resource">
                     <Link
-                      className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                      className={cn(
+                        "btn btn-square btn-sm tooltip tooltip-left",
+                        hasHeaderImage
+                          ? "border-white/60 bg-base-100/90 text-base-content shadow-sm hover:bg-base-100"
+                          : "btn-ghost",
+                      )}
                       data-tip="Modifier la ressource"
                       to={path}
                       aria-label={`Modifier la ressource ${resource.title}`}
@@ -55,7 +68,12 @@ export default function ResourcesListCard({
                 {onDeleteResource && ability.can("delete", "resource") && (
                   <button
                     type="button"
-                    className="btn btn-square btn-sm btn-ghost text-error tooltip tooltip-left"
+                    className={cn(
+                      "btn btn-square btn-sm text-error tooltip tooltip-left",
+                      hasHeaderImage
+                        ? "border-white/60 bg-base-100/90 shadow-sm hover:bg-base-100"
+                        : "btn-ghost",
+                    )}
                     data-tip="Supprimer la ressource"
                     aria-label={`Supprimer la ressource ${resource.title}`}
                     onClick={() => onDeleteResource(resource)}

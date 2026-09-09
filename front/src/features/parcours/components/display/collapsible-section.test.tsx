@@ -1,4 +1,4 @@
-import { act } from "react";
+import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -56,5 +56,51 @@ describe("CollapsibleSection", () => {
     });
 
     expect(container.querySelector("details")?.open).toBe(true);
+  });
+
+  it("peut partager son état avec une autre section", async () => {
+    const SynchronizedSections = () => {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <CollapsibleSection
+            title="Tags"
+            preview={<span>Aperçu des tags</span>}
+            open={open}
+            onOpenChange={setOpen}
+          >
+            <p>Tous les tags</p>
+          </CollapsibleSection>
+          <CollapsibleSection
+            title="Ressources pédagogiques"
+            preview={<span>Aperçu des ressources</span>}
+            open={open}
+            onOpenChange={setOpen}
+          >
+            <p>Toutes les ressources</p>
+          </CollapsibleSection>
+        </>
+      );
+    };
+
+    await act(async () => root.render(<SynchronizedSections />));
+
+    const details = container.querySelectorAll("details");
+    const summaries = container.querySelectorAll("summary");
+
+    expect([...details].every((section) => !section.open)).toBe(true);
+
+    await act(async () => {
+      summaries[0]?.click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect([...details].every((section) => section.open)).toBe(true);
+
+    await act(async () => {
+      summaries[1]?.click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect([...details].every((section) => !section.open)).toBe(true);
   });
 });

@@ -10,13 +10,7 @@ import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
 import Loader from "../../../../src/components/loaders/Loader";
 import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
 import Selecter from "../../../components/UI/selecter/selecter.component";
-import {
-  Copy,
-  Layers3,
-  LoaderCircle,
-  PlusCircle,
-  Upload,
-} from "lucide-react";
+import { Copy, Layers3, LoaderCircle, Upload } from "lucide-react";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Modal from "../../../components/UI/modal/modal";
 import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
@@ -28,14 +22,15 @@ import {
   readParcoursArchiveFormationTitle,
   selectImportFormationId,
 } from "../helpers/read-parcours-archive-formation";
+import ParcoursImportModal, {
+  type ImportFormationChoice,
+} from "../components/import/ParcoursImportModal";
 
 type Item = {
   id: number;
   title: string;
   formationId?: number;
 };
-
-type ImportFormationChoice = number | "create" | undefined;
 
 const AddParcours = () => {
   const [searchParams] = useSearchParams();
@@ -52,12 +47,9 @@ const AddParcours = () => {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [pendingArchive, setPendingArchive] = useState<File>();
-  const [importFormationChoice, setImportFormationChoice] =
+  const [initialImportFormationChoice, setInitialImportFormationChoice] =
     useState<ImportFormationChoice>();
-  const [showAutomaticFormationOption, setShowAutomaticFormationOption] =
-    useState(false);
   const [detectedFormationTitle, setDetectedFormationTitle] = useState("");
-  const [publishImportedCourses, setPublishImportedCourses] = useState(false);
   const archiveInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -163,23 +155,8 @@ const AddParcours = () => {
     if (isImporting) return;
     setShowImportModal(false);
     setPendingArchive(undefined);
-    setImportFormationChoice(undefined);
-    setShowAutomaticFormationOption(false);
+    setInitialImportFormationChoice(undefined);
     setDetectedFormationTitle("");
-    setPublishImportedCourses(false);
-  };
-
-  const handleImportParcours = () => {
-    if (!pendingArchive) return;
-    importParcours({
-      archive: pendingArchive,
-      formationId:
-        typeof importFormationChoice === "number"
-          ? importFormationChoice
-          : undefined,
-      createFormation: importFormationChoice === "create",
-      publishCourses: publishImportedCourses,
-    });
   };
 
   const handleArchiveSelection = async (
@@ -200,11 +177,9 @@ const AddParcours = () => {
       );
       setPendingArchive(archive);
       setDetectedFormationTitle(formationTitle);
-      setImportFormationChoice(
+      setInitialImportFormationChoice(
         selectImportFormationId(initialFormationId, detectedFormationId),
       );
-      setShowAutomaticFormationOption(false);
-      setPublishImportedCourses(false);
       setShowImportModal(true);
     } catch (error) {
       toast.error(
@@ -351,94 +326,15 @@ const AddParcours = () => {
         </Modal>
       )}
       {showImportModal && pendingArchive && (
-        <Modal
-          title="Importer un parcours"
-          leftLabel="Annuler"
-          rightLabel="Importer le parcours"
-          onLeftClick={closeImportModal}
-          onRightClick={handleImportParcours}
-          isSubmitting={isImporting}
-          rightDisabled={importFormationChoice === undefined}
-          modalBoxStyle="w-11/12 max-w-2xl"
-        >
-          <div className="mt-6 flex flex-col gap-5">
-            <p className="text-sm text-base-content/70">
-              Archive sélectionnée : {pendingArchive.name}
-            </p>
-            <label className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-base-300 p-4">
-              <span>
-                <span className="block text-sm font-semibold">
-                  Publier tous les cours
-                </span>
-                <span className="mt-1 block text-xs text-base-content/60">
-                  Les cours importés seront immédiatement publiés.
-                </span>
-              </span>
-              <input
-                type="checkbox"
-                className="toggle toggle-primary"
-                checked={publishImportedCourses}
-                onChange={(event) =>
-                  setPublishImportedCourses(event.currentTarget.checked)
-                }
-              />
-            </label>
-            <div>
-              <div className="mb-2 flex items-center justify-between gap-4">
-                <label
-                  className="text-sm font-semibold"
-                  htmlFor="import-formation"
-                >
-                  Formation de destination
-                </label>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary btn-soft"
-                  aria-pressed={importFormationChoice === "create"}
-                  onClick={() => {
-                    setShowAutomaticFormationOption(true);
-                    setImportFormationChoice("create");
-                  }}
-                >
-                  <PlusCircle className="size-4" />
-                  Créer une formation
-                </button>
-              </div>
-              <select
-                id="import-formation"
-                className="select select-primary w-full border border-neutral/50 focus:outline-none"
-                value={importFormationChoice ?? ""}
-                onChange={(event) => {
-                  if (event.currentTarget.value === "create") {
-                    setImportFormationChoice("create");
-                    return;
-                  }
-                  const value = Number(event.currentTarget.value);
-                  setImportFormationChoice(value > 0 ? value : undefined);
-                }}
-              >
-                <option value="">Sélectionner une formation</option>
-                {showAutomaticFormationOption ? (
-                  <option value="create">
-                    Créer automatiquement « {detectedFormationTitle} »
-                  </option>
-                ) : null}
-                {formationList.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.title}
-                  </option>
-                ))}
-              </select>
-              {importFormationChoice === "create" ? (
-                <p className="mt-2 text-xs text-base-content/60">
-                  Le nom, les informations et les tags de la formation seront
-                  repris automatiquement depuis l’archive. Si le nom existe
-                  déjà, il sera numéroté automatiquement.
-                </p>
-              ) : null}
-            </div>
-          </div>
-        </Modal>
+        <ParcoursImportModal
+          archive={pendingArchive}
+          detectedFormationTitle={detectedFormationTitle}
+          formations={formationList}
+          initialFormationChoice={initialImportFormationChoice}
+          isImporting={isImporting}
+          onCancel={closeImportModal}
+          onImport={importParcours}
+        />
       )}
     </FadeWrapper>
   );

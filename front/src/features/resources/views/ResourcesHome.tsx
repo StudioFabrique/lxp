@@ -24,7 +24,7 @@ export type ResourceListItem = {
   author: string;
   description?: string;
   createdAt: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   activities?: Pick<Activity, "id" | "title" | "type" | "order">[];
 };
 
