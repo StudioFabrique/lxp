@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   CalendarEvent,
   CalendarView,
@@ -9,13 +9,22 @@ import MonthView from "./views/month-view";
 import TimelineView from "./views/timeline-view";
 import YearTimelineView from "./views/year-timeline-view";
 
+import PlanningView from "./views/planning-view";
+
+import CalendarOverflowModal from "./calendar-overflow-modal";
+
 interface Props {
+  onSelectDay?: (date: Date) => void;
+  selectedTimelineEventId?: number | string;
+  planningDisabled?: boolean;
+  onChangeTimelineEventDates?: (id: number | string, startDate: Date, endDate: Date) => void;
   events: CalendarEvent[];
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   timelineEvents?: TimelineEvent[];
   onClickTimelineYearEventDetails?: (
     id: number | string,
     rect: DOMRect,
+    element?: HTMLElement,
   ) => void;
   onClickEditTimelineYearEvent?: (id: number | string) => void;
   currentDate: Date;
@@ -29,7 +38,11 @@ interface Props {
 }
 
 const Calendar = ({
+  onSelectDay,
   events,
+  selectedTimelineEventId,
+  planningDisabled,
+  onChangeTimelineEventDates,
   onClickEventDetails,
   timelineEvents = [], // Default to empty array
   onClickTimelineYearEventDetails,
@@ -43,9 +56,22 @@ const Calendar = ({
   header,
   style = { hourHeight: 60 },
 }: Props) => {
+  const [overflow, setOverflow] = useState<CalendarEvent[] | null>(null);
   // Render the body
   const renderBody = () => {
     switch (view) {
+      case "planning":
+        return (
+          <PlanningView
+            events={timelineEvents}
+            currentDate={currentDate}
+            darkMode={darkMode}
+            selectedEventId={selectedTimelineEventId}
+            disabled={planningDisabled}
+            onClickDetails={onClickTimelineYearEventDetails}
+            onChangeDates={onChangeTimelineEventDates}
+          />
+        );
       case "month":
         return (
           <MonthView
@@ -53,6 +79,7 @@ const Calendar = ({
             currentDate={currentDate}
             darkMode={darkMode}
             onClickEventDetails={onClickEventDetails}
+            onShowMore={setOverflow}
           />
         );
       case "year-timeline":
@@ -69,6 +96,7 @@ const Calendar = ({
       default:
         return (
           <TimelineView
+            onSelectDay={onSelectDay}
             events={events}
             view={view}
             startHour={startHour}
@@ -78,6 +106,7 @@ const Calendar = ({
             darkMode={darkMode}
             style={style}
             onClickEventDetails={onClickEventDetails}
+            onShowMore={setOverflow}
           />
         );
     }
@@ -94,6 +123,7 @@ const Calendar = ({
 
       {/* --- BODY --- */}
       {renderBody()}
+      {overflow && <CalendarOverflowModal events={overflow} onClose={() => setOverflow(null)} onClickDetails={onClickEventDetails} />}
     </div>
   );
 };

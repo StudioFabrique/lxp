@@ -1,18 +1,18 @@
 import type UsersStats from "../../interfaces/users-stats";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
 const UserStats = ({ stats }: { stats: UsersStats[] | null }) => {
   if (!stats) return null;
   return (
-    <ul className="flex justify-center gap-4 w-full mb-4">
+    <ul className="mb-4 grid w-full grid-cols-1 gap-4 md:grid-cols-3">
       {stats.map((item) => (
-        <li
-          key={item.stat}
-          className="flex flex-1 items-center w-full md:w-1/2 lg:w-1/3 xl:w-1/5 2xl:w-1/5"
-        >
-          <span className="h-[7rem] flex font-bold text-primary justify-evenly items-center flex-1 bg-secondary/20 rounded-lg p-4">
-            <p className="md:text:md lg:text-md xl:text-md">{item.stat}</p>
-            <p className="text-5xl lg:text-6xl xl:text-6xl">{item.value}</p>
-          </span>
+        <li key={item.stat}>
+          <BoxWrapper
+            className="h-28 flex-row items-center justify-between gap-4 p-4 font-bold text-primary"
+          >
+            <p className="text-base">{item.stat}</p>
+            <p className="shrink-0 text-5xl lg:text-6xl">{item.value}</p>
+          </BoxWrapper>
         </li>
       ))}
     </ul>

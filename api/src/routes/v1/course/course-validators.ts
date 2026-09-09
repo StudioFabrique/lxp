@@ -1,3 +1,4 @@
+import { isValidCourseTimes } from "../../../models/course/course-calendar-dates.ts";
 import { body, param, query } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators.ts";
@@ -175,6 +176,8 @@ export const putCourseDurationValidator = [
  * Valide les dates de début et de fin du cours
  */
 export const putCourseDatesValidator = [
+  body().custom(value => isValidCourseTimes(value.startTime, value.endTime))
+    .withMessage("Les horaires doivent former une plage complète, avec une fin après le début"),
   body("minDate")
     .custom(dateValidateGeneric)
     .withMessage("La date fournie contient des caractères non autorisés")

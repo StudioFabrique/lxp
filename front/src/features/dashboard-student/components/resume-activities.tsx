@@ -2,7 +2,7 @@ import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import CursorGlowCard from "../../../components/UI/cursor-glow-card";
-import SkillBadge from "../../../components/skills/skill-badge";
+import SkillBadgeSummary from "./skill-badge-summary";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
@@ -30,17 +30,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                     <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {item.lesson.course.bonusSkills
-                        ?.slice(0, 5)
-                        .map((skill) => (
-                          <SkillBadge
-                            key={skill.id}
-                            skill={skill}
-                            size="small"
-                          />
-                        ))}
-                    </div>
+                    <SkillBadgeSummary
+                      skills={item.lesson.course.bonusSkills}
+                      className="mt-2"
+                    />
                   </div>
                   <Link
                     to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}

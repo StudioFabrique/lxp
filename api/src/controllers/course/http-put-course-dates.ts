@@ -4,7 +4,7 @@ import putCourseDates from "../../models/course/put-course-dates.ts";
 
 async function httpPutCourseDates(req: Request, res: Response) {
   const { courseId } = req.params;
-  const { minDate, maxDate, synchroneDuration, asynchroneDuration, id } =
+  const { minDate, maxDate, synchroneDuration, asynchroneDuration, id, startTime, endTime } =
     req.body;
 
   try {
@@ -14,7 +14,9 @@ async function httpPutCourseDates(req: Request, res: Response) {
       maxDate,
       +synchroneDuration,
       +asynchroneDuration,
-      +id
+      +id,
+      startTime,
+      endTime
     );
     return res
       .status(201)

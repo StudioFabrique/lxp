@@ -11,6 +11,36 @@ import FormationModal from "./FormationModal";
 
 const mocks = vi.hoisted(() => ({
   cancelEdit: vi.fn(),
+  importParcours: vi.fn(),
+  invalidateQueries: vi.fn(),
+  navigate: vi.fn(),
+  readArchiveTitle: vi.fn(),
+}));
+
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@tanstack/react-query")>();
+  return {
+    ...original,
+    useMutation: () => ({
+      mutate: mocks.importParcours,
+      isPending: false,
+    }),
+    useQueryClient: () => ({
+      invalidateQueries: mocks.invalidateQueries,
+    }),
+  };
+});
+
+vi.mock("react-router", async (importOriginal) => {
+  const original = await importOriginal<typeof import("react-router")>();
+  return {
+    ...original,
+    useNavigate: () => mocks.navigate,
+  };
+});
+
+vi.mock("../../parcours/helpers/read-parcours-archive-formation", () => ({
+  readParcoursArchiveFormationTitle: mocks.readArchiveTitle,
 }));
 
 vi.mock("../hooks/useFormationForm", () => ({
@@ -36,6 +66,7 @@ vi.mock("../hooks/useFormationForm", () => ({
     handleTagSubmit: vi.fn(),
     handleRemoveTag: vi.fn(),
     handleSubmit: vi.fn(),
+    formationsList: [],
   }),
 }));
 
@@ -46,10 +77,19 @@ vi.mock("../../../components/UI/modal/modal", () => ({
 }));
 
 vi.mock("./FormationForm", () => ({
-  default: ({ onCancel }: { onCancel: () => void }) => (
-    <button type="button" onClick={onCancel}>
-      Annuler
-    </button>
+  default: ({
+    onCancel,
+    alternativeCreation,
+  }: {
+    onCancel: () => void;
+    alternativeCreation?: React.ReactNode;
+  }) => (
+    <>
+      <button type="button" onClick={onCancel}>
+        Annuler
+      </button>
+      {alternativeCreation}
+    </>
   ),
 }));
 
@@ -59,6 +99,10 @@ afterEach(() => {
   if (root) act(() => root?.unmount());
   root = null;
   mocks.cancelEdit.mockReset();
+  mocks.importParcours.mockReset();
+  mocks.invalidateQueries.mockReset();
+  mocks.navigate.mockReset();
+  mocks.readArchiveTitle.mockReset();
 });
 
 describe("FormationModal pendant l'onboarding", () => {
@@ -91,5 +135,41 @@ describe("FormationModal pendant l'onboarding", () => {
     expect(events).toContainEqual({ type: "formation_modal_cancelled" });
     expect(mocks.cancelEdit).toHaveBeenCalledOnce();
     expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it("propose de créer une formation depuis un parcours ZIP", () => {
+    const container = document.createElement("div");
+    root = createRoot(container);
+
+    act(() => root?.render(<FormationModal onClose={vi.fn()} />));
+
+    expect(container.textContent).toContain("Créer depuis un parcours (.zip)");
+    expect(container.querySelector('input[accept*=".zip"]')).not.toBeNull();
+  });
+
+  it("affiche la modale d'import avec la création de formation présélectionnée", async () => {
+    const container = document.createElement("div");
+    root = createRoot(container);
+    mocks.readArchiveTitle.mockResolvedValue("Formation de destination");
+
+    act(() => root?.render(<FormationModal onClose={vi.fn()} />));
+    const input = container.querySelector('input[accept*=".zip"]');
+    const archive = new File(["archive"], "parcours.zip", {
+      type: "application/zip",
+    });
+    Object.defineProperty(input, "files", { value: [archive] });
+
+    await act(async () => {
+      input?.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    const formationSelect = container.querySelector(
+      "#import-formation",
+    ) as HTMLSelectElement | null;
+    expect(formationSelect?.value).toBe("create");
+    expect(container.textContent).toContain(
+      "Créer automatiquement « Formation de destination »",
+    );
+    expect(mocks.importParcours).not.toHaveBeenCalled();
   });
 });

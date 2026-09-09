@@ -10,6 +10,9 @@ import ButtonAdd from "../../../../../components/UI/button-add/button-add";
 import DatePicker from "../../../../../components/UI/date-picker/date-picker";
 import { formatDateToYYYYMMDD } from "../../../../../utils/helpers/convert-date";
 
+import CourseTimeFields from "./course-time-fields";
+import { validCourseTimes } from "../../../helpers/course-times";
+
 interface DatesFormProps {
   isLoading: boolean;
   module: Module;
@@ -18,6 +21,7 @@ interface DatesFormProps {
 }
 
 const DatesForm = (props: DatesFormProps) => {
+  const [times, setTimes] = useState<{ startTime?: string; endTime?: string }>({});
   const [cumulDurations, setCumulDurations] = useState<number>(0);
   const { value: synchrone } = useInput(
     (value) => regexGeneric.test(value),
@@ -43,6 +47,7 @@ const DatesForm = (props: DatesFormProps) => {
     event.preventDefault();
     if (formIsValid()) {
       props.onSubmitDates({
+        ...times,
         minDate: startDate.value,
         maxDate: endDate.value,
         synchroneDuration: synchrone.value,
@@ -79,6 +84,10 @@ const DatesForm = (props: DatesFormProps) => {
   };
 
   const formIsValid = () => {
+    if (!validCourseTimes(times.startTime, times.endTime)) {
+      toast.error("Renseignez les deux heures, avec une fin après le début.");
+      return false;
+    }
     if (
       !(
         synchrone.isValid &&
@@ -177,6 +186,7 @@ const DatesForm = (props: DatesFormProps) => {
               />
             </div>
           </div>
+          <CourseTimeFields {...times} onChange={setTimes} />
         </div>
       </BoxWrapper>
       <BoxWrapper>

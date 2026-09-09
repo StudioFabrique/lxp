@@ -76,6 +76,12 @@ describe("LastParcoursItem", () => {
     expect(markup).toContain('data-tip="Modifier le parcours"');
   });
 
+  it("transmet la formation au formulaire d'ajout d'un parcours", () => {
+    const markup = renderCard();
+
+    expect(markup).toContain("/admin/parcours/new?formationId=1");
+  });
+
   it("ne montre pas le menu d'administration dans la vue étudiante", () => {
     const markup = renderCard({
       isManagementView: true,

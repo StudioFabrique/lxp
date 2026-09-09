@@ -1,22 +1,30 @@
 import { FC } from "react";
-import Skill from "../../../../utils/interfaces/skill";
+import SkillBadge from "../../../../components/skills/skill-badge";
+import type Skill from "../../../../utils/interfaces/skill";
 
 const Skills: FC<{ skillData: Skill[] }> = ({ skillData }) => {
-  const RenderSkills = () =>
+  const skillList =
     skillData.length > 0 ? (
-      <div>
+      <ul
+        aria-label="Badges de compétences"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+      >
         {skillData.map((skill) => (
-          <p key={skill.id}>{skill.description}</p>
+          <li key={skill.id}>
+            <SkillBadge skill={skill} size="small" card />
+          </li>
         ))}
-      </div>
+      </ul>
     ) : (
-      <p>Aucune compétence obtenue</p>
+      <p className="rounded-lg bg-base-200 p-4 text-base-content/70">
+        Aucun badge de compétence pour le moment.
+      </p>
     );
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-lg font-semibold">Compétences</h3>
-      <RenderSkills />
+      <h3 className="text-xl font-bold">Mes badges de compétences</h3>
+      {skillList}
     </div>
   );
 };

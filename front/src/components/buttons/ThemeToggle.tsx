@@ -1,23 +1,31 @@
 import { useContext } from "react";
 import { ThemeContext } from "../../store/ThemeProvider";
 
-const ThemeToggle = () => {
+type ThemeToggleProps = {
+  className?: string;
+};
+
+const ThemeToggle = ({ className = "size-6" }: ThemeToggleProps) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <div className="w-fit flex gap-x-2 justify-center items-center">
-      <label className="swap swap-rotate" htmlFor="mode-toggle">
+      <label
+        className={`swap swap-rotate place-items-center ${className}`}
+        htmlFor="mode-toggle"
+      >
         {/* this hidden checkbox controls the state */}
         <input
           type="checkbox"
           id="mode-toggle"
           checked={theme === "dark"}
           onChange={toggleTheme}
+          aria-label="Basculer entre les modes clair et sombre"
         />
 
         {/* sun icon */}
         <svg
-          className="swap-on fill-current"
+          className="swap-on size-4 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -26,7 +34,7 @@ const ThemeToggle = () => {
 
         {/* moon icon */}
         <svg
-          className="swap-off fill-current w-full"
+          className="swap-off size-4 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >

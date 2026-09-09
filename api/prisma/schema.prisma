@@ -137,6 +137,7 @@ model Course {
   visibility       Boolean?
   scenario         Boolean            @default(true)
   dates            Json[]
+  calendarInitialized Boolean         @default(false)
   order            Int
   isPublished      Boolean            @default(false)
   createdAt        DateTime           @default(now())

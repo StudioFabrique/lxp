@@ -8,7 +8,7 @@ function CourseHeader() {
     <section className="w-full">
       <Header
         title="Liste des cours"
-        description="Liste des cours associés à un module."
+        description="Liste des cours associés à un module"
       >
         <PermissionGuard action="write" object="course">
           <Link className="btn btn-primary btn-soft mr-5" to="import">

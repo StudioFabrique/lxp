@@ -2,6 +2,7 @@ import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
+import { sidebarControlClassName } from "./sidebar-styles";
 
 type Props = { textSize?: "text-sm" | "text-lg" };
 
@@ -25,21 +26,22 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   };
 
   return (
-    <li className="w-full">
-      <div className="relative z-50 w-full">
+    <li className="flex w-full justify-center xl:block">
+      <div className="relative z-50 flex w-full justify-center xl:block">
         <Link
           to="https://forms.gle/joWqE48La7S6NqCK8"
           onClick={handleClose}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex w-full gap-2 p-1 px-2 items-center rounded-lg hover:bg-[var(--sidebar-hover)] transition-colors ${
+          aria-label="Ouvrir le questionnaire des bêta-testeurs"
+          className={`${sidebarControlClassName} ${
             showTooltip
-              ? "ring-2 ring-primary ring-offset-1 rounded-full p-2 animate-pulse"
+              ? "ring-2 ring-primary ring-offset-1 animate-pulse"
               : ""
           }`}
         >
           <span>
-            <ClipboardList className="w-4" />
+            <ClipboardList className="size-4 shrink-0" />
           </span>
           <span className={`xl:block hidden ${textSize}`}>
             Questionnaire (Bêta Testeurs)

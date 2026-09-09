@@ -13,10 +13,7 @@ import type { Activity } from "../../../utils/interfaces/activity";
 import MediaList, { MediaPreview } from "../components/media-list";
 import usePaginatedMediatheque from "../hooks/use-paginated-mediatheque";
 import type Media from "../interfaces/media";
-import type {
-  MediaAssociatedActivity,
-  MediaType,
-} from "../interfaces/media";
+import type { MediaAssociatedActivity, MediaType } from "../interfaces/media";
 
 const mediaTypes: {
   type: MediaType;
@@ -96,7 +93,7 @@ function MediathequeHomePage() {
     <PageWrapper as="main">
       <Header
         title="Médiathèque"
-        description="Gérez toutes les ressources utilisées dans l’application."
+        description="Gérez toutes les ressources utilisées dans l’application"
       />
 
       <div
@@ -134,10 +131,7 @@ function MediathequeHomePage() {
               aria-label="Trier les médias"
               onChange={(event) =>
                 setSort(
-                  event.currentTarget.value as
-                    | "createdAt"
-                    | "name"
-                    | "size",
+                  event.currentTarget.value as "createdAt" | "name" | "size",
                 )
               }
             >
@@ -171,9 +165,7 @@ function MediathequeHomePage() {
       ) : (
         <EmptyStatePlaceholder
           title={
-            searchInput.trim()
-              ? "Aucun média trouvé"
-              : "Aucun média disponible"
+            searchInput.trim() ? "Aucun média trouvé" : "Aucun média disponible"
           }
         />
       )}

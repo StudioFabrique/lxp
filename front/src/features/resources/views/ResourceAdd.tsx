@@ -58,7 +58,7 @@ export default function ResourceAdd({
         title={state.resource?.title ?? "Nouvelle ressource supplémentaire"}
         description={
           state.resource?.description ??
-          "Enregistrez la ressource pour y ajouter des activités."
+          "Enregistrez la ressource pour y ajouter des activités"
         }
       >
         <div className="flex flex-wrap gap-2">

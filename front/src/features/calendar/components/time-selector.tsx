@@ -32,7 +32,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
         newDate.setDate(newDate.getDate() - 7);
         break;
       case "month":
-        newDate.setMonth(newDate.getMonth() - 1);
+        newDate.setMonth(newDate.getMonth() - 1, 1);
         break;
       case "year-timeline":
         break;
@@ -55,7 +55,7 @@ const TimeSelector = ({ view = "week", date, setDate }: Props) => {
         newDate.setDate(newDate.getDate() + 7);
         break;
       case "month":
-        newDate.setMonth(newDate.getMonth() + 1);
+        newDate.setMonth(newDate.getMonth() + 1, 1);
         break;
       case "year-timeline":
         break;

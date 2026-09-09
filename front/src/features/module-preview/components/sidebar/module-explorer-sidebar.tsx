@@ -5,11 +5,14 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 
+import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
+
 type Props = {
+  calendar?: ModuleCalendarStore;
   store: ExplorerStore;
   canEditModule?: boolean;
   canEditSelectedLesson?: boolean;
@@ -17,6 +20,7 @@ type Props = {
 
 const ModuleExplorerSidebar = ({
   store,
+  calendar,
   canEditModule,
   canEditSelectedLesson,
 }: Props) => {
@@ -29,11 +33,14 @@ const ModuleExplorerSidebar = ({
     lessonIdToScroll,
   } = state;
   const { acknowledgeLessonScroll } = store;
+  const location = useLocation();
+  const requestedCourseId = (location.state as { courseId?: number } | null)?.courseId;
   const [searchParams] = useSearchParams();
   const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
   const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
   const createCourse = searchParams.get("createCourse") === "true";
-  const [openedCourseId, setOpenedCourseId] = useState<number>();
+  const [openedCourse, setOpenedCourse] = useState({ key: location.key, id: requestedCourseId });
+  const openedCourseId = openedCourse.key === location.key ? openedCourse.id : requestedCourseId;
   const selectedMobileLessonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -62,7 +69,7 @@ const ModuleExplorerSidebar = ({
   return (
     <>
       <nav
-        className="sticky top-0 flex flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-2 shadow-sm md:hidden"
+        className={`${calendar ? "hidden" : "flex md:hidden"} sticky top-0 flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-2 shadow-sm`}
         aria-label="Navigation compacte du module"
       >
         {module.courses.map((course, courseIndex) => {
@@ -199,8 +206,13 @@ const ModuleExplorerSidebar = ({
         })}
       </nav>
 
-      <div className="hidden md:block">
+      <div className={calendar ? "block" : "hidden md:block"}>
         <SidebarCoursesList
+          calendarMode={Boolean(calendar)}
+          calendarSelectedCourseId={calendar?.selection?.courseId}
+          calendarAdding={calendar?.isAdding && !calendar.isSaving}
+          calendarOrphanIds={calendar?.orphanIds}
+          onAddCalendarCourse={calendar?.addCourse}
           courses={module.courses}
           moduleProgress={module.stats?.progress ?? 0}
           selectedLesson={selectedLesson}
@@ -235,8 +247,8 @@ const ModuleExplorerSidebar = ({
                 moduleId={module.id || 0}
                 parcoursTags={module.tags}
                 onCreate={courseActions.createCourse}
-                onCreated={setOpenedCourseId}
-                openDetailsOnMount={createCourse}
+                onCreated={id => setOpenedCourse({ key: location.key, id })}
+                openDetailsOnMount={!calendar && createCourse}
               />
             </PermissionGuard>
           )}

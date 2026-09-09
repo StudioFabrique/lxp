@@ -13,6 +13,10 @@ import { clearDemoTour } from "../../features/demo/demo-tour-storage";
 import { emitDemoTourEvent } from "../../features/demo/demo-tour-events";
 import TutorialChoiceModal from "../../features/demo/components/TutorialChoiceModal";
 import { useOnboarding } from "../../features/onboarding/OnboardingContext";
+import {
+  sidebarControlClassName,
+  sidebarListClassName,
+} from "./sidebar-styles";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -51,19 +55,20 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   };
 
   return (
-    <ul className="flex flex-col gap-1 px-2 select-none">
+    <ul className={sidebarListClassName}>
       {/* Avatar */}
-      <li className="w-full">
+      <li className="flex w-full justify-center xl:block">
         <Link
           to={`/${interfaceType}/profil`}
-          className="flex w-full gap-2 items-center justify-center xl:justify-start xl:p-1 py-2 capitalize rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
+          className={`${sidebarControlClassName} capitalize`}
           data-tip={fullName}
+          aria-label={fullName ? `Profil de ${fullName}` : "Profil utilisateur"}
         >
           {user && (
             <AvatarSmall
               user={user}
-              noImgClassName="text-xs flex justify-center items-center p-3 w-5 h-5 rounded-full bg-accent text-accent-content"
-              imgClassName="w-6 h-6 rounded-full object-cover"
+              noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
+              imgClassName="size-6 shrink-0 rounded-full object-cover"
             />
           )}
           <span className="xl:block hidden">{fullName}</span>
@@ -71,15 +76,14 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       </li>
 
       {interfaceType === "admin" && !aiDisabled && (
-        <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
-          data-tip="Déconnexion"
-        >
+        <li className="flex w-full justify-center xl:block">
           <Link
             to="/admin/dashboard-ia"
-            className="flex w-full gap-x-2 items-center"
+            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            data-tip="Consommation IA"
+            aria-label="Consommation IA"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="size-4 shrink-0" />
             <h2 className="xl:block hidden">Consommation IA</h2>
           </Link>
         </li>
@@ -89,14 +93,15 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {!demoMode && interfaceType === "student" && <Questionnaire />}
 
       {(demoMode || canStartOnboarding) && (
-        <li className="w-full">
+        <li className="flex w-full justify-center xl:block">
           <button
             type="button"
-            className="flex w-full cursor-pointer gap-2 items-center p-1 px-2 rounded-lg hover:bg-[var(--sidebar-hover)] text-sm transition-colors"
+            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
             onClick={handleClickTutorial}
             data-tip="Relancer le tutoriel"
+            aria-label="Relancer le tutoriel"
           >
-            <CircleHelp className="w-4" />
+            <CircleHelp className="size-4 shrink-0" />
             <span className="xl:block hidden">Tutoriel guidé</span>
           </button>
         </li>
@@ -105,39 +110,49 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
-          data-tip="Quitter la démonstration"
-          data-demo-tour="demo-exit"
-          onClick={() => setIsExitOpen(true)}
-        >
-          <DoorOpen className="w-4" />
-          <span className="xl:block hidden">Sortir de la démo</span>
+        <li className="flex w-full justify-center xl:block">
+          <button
+            type="button"
+            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            data-tip="Quitter la démonstration"
+            data-demo-tour="demo-exit"
+            onClick={() => setIsExitOpen(true)}
+            aria-label="Quitter la démonstration"
+          >
+            <DoorOpen className="size-4 shrink-0" />
+            <span className="xl:block hidden">Sortir de la démo</span>
+          </button>
         </li>
       ) : (
-        <li
-          className="flex w-full cursor-pointer gap-2 rounded-lg p-1 px-2 text-sm hover:bg-[var(--sidebar-hover)] transition-colors"
-          data-tip="Déconnexion"
-          onClick={handleClickLogout}
-        >
-          <LogOutIcon className="w-4" />
-          <span className="xl:block hidden">Déconnexion</span>
+        <li className="flex w-full justify-center xl:block">
+          <button
+            type="button"
+            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            data-tip="Déconnexion"
+            onClick={handleClickLogout}
+            aria-label="Déconnexion"
+          >
+            <LogOutIcon className="size-4 shrink-0" />
+            <span className="xl:block hidden">Déconnexion</span>
+          </button>
         </li>
       )}
 
-      <li className="my-2 gap-4 flex flex-col-reverse xl:flex-row items-center justify-between w-full xl:px-2">
+      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 xl:flex-row">
         {/* Logo */}
-        <img
-          className="xl:w-16 w-10 object-contain"
-          src={newLogo}
-          alt="logo ANDRIA en blanc et bleu"
-        />
+        <div className="flex size-8 items-center justify-center xl:w-16">
+          <img
+            className="w-full object-contain"
+            src={newLogo}
+            alt="logo ANDRIA en blanc et bleu"
+          />
+        </div>
         {/* Toggle clair/sombre */}
         <div
-          className="tooltip xl:tooltip-top tooltip-right xl:w-5 w-4"
+          className="tooltip tooltip-right xl:tooltip-top"
           data-tip="Mode Clair / Mode Sombre"
         >
-          <ThemeToggle />
+          <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />
         </div>
       </li>
       {isExitOpen && (

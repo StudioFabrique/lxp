@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate, useParams } from "react-router";
-import { Fragment, useContext, useEffect } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import FadeWrapper from "../../../../src/components/wrappers/FadeWrapper";
@@ -56,6 +56,7 @@ const ParcoursView = () => {
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
   const hasSupplementaryContent = hasDescription || hasTags || hasContacts;
+  const [areTagsAndResourcesOpen, setAreTagsAndResourcesOpen] = useState(false);
 
   const exportParcoursMutation = useMutation({
     mutationFn: () => parcoursApi.mutations.exportParcours(Number(id)),
@@ -115,8 +116,7 @@ const ParcoursView = () => {
     <PageWrapper>
       <Header
         title="Aperçu du parcours"
-        description="Bienvenue dans votre espace. Commencez votre apprentissage ou
-            reprenez là où vous vous êtes arrêté."
+        description="Prévisualiser les modules qui composent ce parcours"
       >
         <div className="flex gap-4 w-full">
           {canEditParcours ? (
@@ -192,15 +192,33 @@ const ParcoursView = () => {
             <PermissionGuard object="cursus" action="read">
               <Contenu modules={modules} />
             </PermissionGuard>
-            <div className="grid items-start gap-4 lg:grid-cols-3">
-              <div className={hasSupplementaryContent ? "" : "lg:col-span-3"}>
+            <div className="grid items-stretch gap-4 lg:grid-cols-3">
+              <div
+                className={
+                  hasSupplementaryContent ? "h-full" : "h-full lg:col-span-3"
+                }
+              >
                 <Informations />
               </div>
               {hasSupplementaryContent ? (
-                <div className="flex flex-wrap content-start gap-4 lg:col-span-2 [&>*]:min-w-0 [&>*]:basis-80 [&>*]:grow">
+                <div className="flex h-full flex-wrap items-stretch gap-4 lg:col-span-2 [&>*]:min-w-0 [&>*]:basis-80 [&>*]:grow">
                   {hasDescription ? <Description /> : null}
-                  {hasTags ? <Tags /> : null}
-                  {hasContacts ? <Contacts /> : null}
+                  {hasTags ? (
+                    <Tags
+                      open={hasContacts ? areTagsAndResourcesOpen : undefined}
+                      onOpenChange={
+                        hasContacts ? setAreTagsAndResourcesOpen : undefined
+                      }
+                    />
+                  ) : null}
+                  {hasContacts ? (
+                    <Contacts
+                      open={hasTags ? areTagsAndResourcesOpen : undefined}
+                      onOpenChange={
+                        hasTags ? setAreTagsAndResourcesOpen : undefined
+                      }
+                    />
+                  ) : null}
                 </div>
               ) : null}
             </div>

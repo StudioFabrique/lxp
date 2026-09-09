@@ -51,7 +51,7 @@ const DashboardIAHome = () => {
     <PageWrapper as="main" className="min-h-screen items-center">
       <Header
         title="Tableau de bord IA"
-        description="Consultez les statistiques de consommation de l'IA par vos apprenants."
+        description="Consultez les statistiques de consommation de l'IA par vos apprenants"
       />
       <section className="flex justify-start gap-x-4 items-center w-full">
         <div className="border border-primary/50 rounded-lg p-4">

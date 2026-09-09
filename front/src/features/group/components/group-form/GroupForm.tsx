@@ -43,13 +43,10 @@ const GroupForm = ({
       >
         <Header
           title={isEditing ? "Modifier un groupe" : "Créer un groupe"}
-          description="Renseignez les informations du groupe et choisissez les étudiants qui le composent."
+          description="Renseignez les informations du groupe et choisissez les étudiants qui le composent"
         >
           <div className="flex gap-2">
-            <Link
-              to={cancelTo}
-              className="btn btn-outline md:w-32 normal-case"
-            >
+            <Link to={cancelTo} className="btn btn-outline md:w-32 normal-case">
               Annuler
             </Link>
 
@@ -79,7 +76,6 @@ const GroupForm = ({
             <FromParcoursWarning parcoursId={Number(fromParcours)} />
           )}
         </div>
-
       </PageWrapper>
       {children}
     </FormProvider>

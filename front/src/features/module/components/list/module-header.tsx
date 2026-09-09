@@ -18,8 +18,8 @@ function ModuleHeader() {
         title={getModulesLabel(user, "Liste des modules")}
         description={
           isTeacher
-            ? "Consulter et gérer les modules qui vous sont affectés."
-            : "Gérer tous les modules qui sont créés au sein de l'application."
+            ? "Consulter et gérer les modules qui vous sont affectés"
+            : "Gérer tous les modules qui sont créés au sein de l'application"
         }
       ></Header>
     </section>

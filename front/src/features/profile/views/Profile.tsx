@@ -7,14 +7,12 @@ import { useLocation } from "react-router";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Journal from "../components/journal/journal";
-import TeacherCalendar from "../components/teacher-calendar";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { logoTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 
 enum Tab {
   Info,
-  Calendar,
-  Journal,
+  Journal = 2,
   Awards,
   Account,
 }
@@ -46,8 +44,6 @@ const Profile = () => {
             style={{ showStudentElements: currentRoute[0] === "student" }}
           />
         );
-      case Tab.Calendar:
-        return <TeacherCalendar />;
       case Tab.Journal:
         return <Journal />;
       case Tab.Awards:
@@ -76,15 +72,6 @@ const Profile = () => {
           onClick={handleChangeTab}
         >
           Informations
-        </a>
-
-        <a
-          role="tab"
-          className={`tab ${currentTab === Tab.Calendar ? "tab-active" : ""}`}
-          data-value="Calendar"
-          onClick={handleChangeTab}
-        >
-          Calendrier
         </a>
 
         {currentRoute[0] === "student" && (

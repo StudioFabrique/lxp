@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import Header from "../../../../src/components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import { Bell, Search } from "lucide-react";
 import { AuthContext } from "../../../store/AuthProvider";
 import ResumeActivity from "../components/resume-activity";
 import ResumeActivities from "../components/resume-activities";
@@ -33,18 +32,11 @@ const StudentDashboard = () => {
         ) : (
           <Header
             title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
-            description="Bienvenue dans votre espace. Commencez votre apprentissage ou
-                reprenez là où vous vous êtes arrêté."
+            description="Bienvenue dans votre espace, commencez votre apprentissage ou
+                reprenez là où vous vous êtes arrêté"
             classname="capitalize"
           >
-            <div className="flex gap-4 w-full">
-              <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-                <Search />
-              </button>
-              <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
-                <Bell />
-              </button>
-            </div>
+            {/* Ajouter boutons ici par la suite */}
           </Header>
         )}
       </div>

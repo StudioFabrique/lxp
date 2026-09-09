@@ -34,14 +34,14 @@ const EventDetailsModal = ({
         <div className="card bg-base-100 shadow-xl w-full">
           {/* --- CARD IMAGE --- */}
           {item?.img && (
-            <figure className="h-48 w-full relative overflow-hidden bg-gray-100">
+            <figure className="h-48 w-full relative overflow-hidden bg-base-200">
               <img
                 src={normalizeImageSource(item.img)}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              <h2 className="absolute bottom-4 left-4 text-white text-2xl font-bold drop-shadow-md">
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 to-transparent"></div>
+              <h2 className="absolute bottom-4 left-4 text-neutral-content text-2xl font-bold drop-shadow-md">
                 {item.title}
               </h2>
             </figure>
@@ -53,7 +53,7 @@ const EventDetailsModal = ({
               <h2 className="card-title text-2xl">{item?.title}</h2>
             )}
 
-            <p className="text-sm text-gray-500">{item?.description}</p>
+            <p className="text-sm text-base-content/60">{item?.description}</p>
 
             {/* --- CARD ACTIONS --- */}
             <div className="card-actions justify-end mt-4">

@@ -5,10 +5,12 @@ describe("options d'import d'un parcours", () => {
     expect(
       parseParcoursImportOptions({
         formationId: "3",
+        createFormation: "false",
         publishCourses: "true",
       }),
     ).toEqual({
       formationId: 3,
+      createFormation: false,
       publishCourses: true,
     });
   });
@@ -19,13 +21,29 @@ describe("options d'import d'un parcours", () => {
         teacherContactId: "7",
         teacherModuleIndexes: "[0,2]",
       }),
-    ).toEqual({ publishCourses: false });
+    ).toEqual({ createFormation: false, publishCourses: false });
   });
 
   it("laisse les cours en brouillon par défaut", () => {
     expect(parseParcoursImportOptions({})).toMatchObject({
+      createFormation: false,
       publishCourses: false,
     });
+  });
+
+  it("accepte la création automatique d'une formation", () => {
+    expect(
+      parseParcoursImportOptions({ createFormation: "true" }),
+    ).toEqual({ createFormation: true, publishCourses: false });
+  });
+
+  it("refuse de sélectionner et de créer une formation simultanément", () => {
+    expect(() =>
+      parseParcoursImportOptions({
+        formationId: "3",
+        createFormation: "true",
+      }),
+    ).toThrow("pas les deux");
   });
 
   it("refuse une option de publication invalide", () => {

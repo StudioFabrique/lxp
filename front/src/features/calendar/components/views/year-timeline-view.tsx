@@ -5,7 +5,7 @@ import { formatDate } from "../calendar-utils";
 type Props = {
   events: TimelineEvent[];
   onClickEdit?: (id: number | string) => void;
-  onClickDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   darkMode: boolean;
 };
 
@@ -44,10 +44,10 @@ const YearTimelineView = ({
       .map((e) => e.endDate?.getTime())
       .filter((date) => date !== undefined) as number[];
 
-    if (startTimes.length === 0) return { min: 0, max: 0, total: 0 };
+    if (startTimes.length === 0 || endTimes.length === 0) return { min: 0, max: 0, total: 0 };
 
     const min = Math.min(...startTimes);
-    const max = Math.max(...endTimes);
+    const max = Math.max(min, ...endTimes);
     const total = max === min ? 86400000 : max - min;
 
     return { min, max, total };
@@ -100,12 +100,12 @@ const YearTimelineView = ({
             {/* The Timeline Area */}
             <div className="flex-1 relative h-full">
               <div
-                className="absolute top-0 bottom-0 border-l-2 border-rose-500/50 dashed"
+                className="absolute top-0 bottom-0 border-l-2 border-primary/60 dashed"
                 style={{ left: `${todayPosition}%` }}
               >
                 {/* Badge Label */}
                 <div
-                  className={`absolute -top-2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded text-white shadow-sm bg-primary`}
+                  className={`absolute -top-2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded text-primary-content shadow-sm bg-primary`}
                 >
                   Aujourd'hui
                 </div>
@@ -131,24 +131,24 @@ const YearTimelineView = ({
             return (
               <div
                 key={event.id}
-                className={`flex items-center gap-4 group rounded-lg p-2 transition-colors group ${
-                  darkMode ? "hover:bg-slate-800/50" : "hover:bg-gray-50"
-                }`}
+                className="flex items-center gap-4 group rounded-lg p-2 transition-colors hover:bg-base-200"
               >
                 {/* LEFT: Info */}
-                <div
+                <button
+                  type="button"
                   onClick={(e) =>
                     onClickDetails?.(
                       event.id,
-                      e.currentTarget.getBoundingClientRect()
+                      e.currentTarget.getBoundingClientRect(),
+                      e.currentTarget,
                     )
                   }
-                  className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
+                  className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
                       theme(darkMode).border
-                    } ${darkMode ? "bg-slate-700" : "bg-gray-200"}`}
+                    } bg-base-300`}
                   >
                     {event.image ? (
                       <img
@@ -188,39 +188,36 @@ const YearTimelineView = ({
                       </div>
                     )}
                   </div>
-                </div>
+                </button>
 
                 {/* RIGHT: Bar */}
                 {event.startDate && event.endDate ? (
                   <div
                     className="flex-1 relative h-8 flex items-center"
-                    onClick={() => onClickEdit?.(event.id)}
                   >
                     {/* Background Track */}
                     <div
-                      className={`absolute w-full h-[1px] rounded ${
-                        darkMode ? "bg-slate-700" : "bg-gray-200"
-                      }`}
+                      className="absolute w-full h-[1px] rounded bg-base-300"
                     ></div>
 
                     {/* Event Bar */}
-                    <div
-                      className="absolute h-4 rounded-full shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
+                    <button
+                      type="button"
+                      aria-label={`Détails de ${event.title}`}
+                      onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect(), e.currentTarget)}
+                      className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,
                         width: `${widthPercent}%`,
-                        background: darkMode
-                          ? "linear-gradient(90deg, #6366f1 0%, #a855f7 100%)"
-                          : "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)",
                       }}
                       title={`${event.title}`}
                     >
                       {widthPercent > 3 && (
-                        <span className="text-[10px] text-white font-medium px-2 truncate drop-shadow-md">
+                        <span className="text-[10px] text-primary-content font-medium px-2 truncate drop-shadow-md">
                           {event.title}
                         </span>
                       )}
-                    </div>
+                    </button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">

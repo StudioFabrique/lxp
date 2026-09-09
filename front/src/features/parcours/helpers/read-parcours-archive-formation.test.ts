@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   findDetectedFormationId,
   readParcoursArchiveFormationTitle,
+  selectImportFormationId,
 } from "./read-parcours-archive-formation";
 
 async function archiveWithManifest(manifest: unknown) {
@@ -49,5 +50,15 @@ describe("findDetectedFormationId", () => {
     expect(
       findDetectedFormationId([{ id: 1, title: "Commerce" }], "Design"),
     ).toBeUndefined();
+  });
+});
+
+describe("selectImportFormationId", () => {
+  it("donne la priorité à la formation transmise depuis la carte", () => {
+    expect(selectImportFormationId(7, 2)).toBe(7);
+  });
+
+  it("utilise la formation détectée en l'absence de destination demandée", () => {
+    expect(selectImportFormationId(undefined, 2)).toBe(2);
   });
 });

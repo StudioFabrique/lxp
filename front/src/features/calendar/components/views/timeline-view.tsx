@@ -1,20 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  CalendarEvent,
-  CalendarView,
-  daysOfWeek,
-  eventConfig,
-  theme,
-} from "../calendar-configuration";
-import {
-  getCurrentTimeIndicator,
-  getEventStyle,
-  getRealDayIndex,
-  isSameDate,
-} from "../calendar-utils";
+import { CalendarEvent, CalendarView, eventConfig, theme } from "../calendar-configuration";
+import { getCurrentTimeIndicator, getEventStyle, getWeekBounds, isSameDate } from "../calendar-utils";
+import { layoutDayEvents, minutes } from "../read-calendar-utils";
 
 type Props = {
   events: CalendarEvent[];
+  onSelectDay?: (date: Date) => void;
   view: CalendarView;
   currentDate: Date;
   startHour: number;
@@ -22,218 +13,72 @@ type Props = {
   darkMode: boolean;
   currentWeekDayVisible: boolean;
   style?: { hourHeight: number };
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
+  onShowMore?: (events: CalendarEvent[]) => void;
 };
 
-const TimelineView = ({
-  events,
-  view,
-  currentDate,
-  startHour,
-  endHour,
-  darkMode,
-  currentWeekDayVisible,
-  style = { hourHeight: 60 },
-  onClickEventDetails,
-}: Props) => {
-  const [nowTime, setNowTime] = useState(new Date());
-
-  const hours = useMemo(() => {
-    return Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
-  }, [startHour, endHour]);
-
-  // Determine Visible Days for Day/Week views
-  const visibleDays = useMemo(() => {
-    if (view === "week") return daysOfWeek;
-    // For Day view, we use currentDate
-    let dayIndex = currentDate.getDay() - 1;
-    if (dayIndex === -1) dayIndex = 6;
-    return [daysOfWeek[dayIndex]];
-  }, [view, currentDate]);
-
-  const timeIndicator = getCurrentTimeIndicator(
-    nowTime,
-    startHour,
-    endHour,
-    style,
-  );
-
-  useEffect(() => {
-    // Update the "now" time every minute
-    const timer = setInterval(() => setNowTime(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="select-none flex flex-1 overflow-y-auto relative">
-      {/* TIME COLUMN */}
-      <div
-        className={`sticky left-0 z-10 w-16 flex-shrink-0 border-r ${
-          theme(darkMode).sidebarBg
-        } ${theme(darkMode).border}`}
-      >
-        {(view === "week" || currentWeekDayVisible) && <div className="h-10" />}
-        <div
-          className="relative"
-          style={{ height: hours.length * style.hourHeight }}
-        >
-          {hours.map((h) => (
-            <div
-              key={h}
-              className={`absolute w-full text-right pr-3 text-xs font-medium first:mt-1 -mt-2 ${
-                theme(darkMode).subText
-              }`}
-              style={{ top: `${(h - startHour) * style.hourHeight}px` }}
-            >
-              {h}:00
-            </div>
-          ))}
+export default function TimelineView({ onSelectDay, events, view, currentDate, startHour, endHour, darkMode, currentWeekDayVisible, style = { hourHeight: 60 }, onClickEventDetails, onShowMore }: Props) {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => { const timer = setInterval(() => setNow(new Date()), 60_000); return () => clearInterval(timer); }, []);
+  const days = useMemo(() => {
+    const first = view === "week" ? getWeekBounds(currentDate).firstDay : currentDate;
+    return Array.from({ length: view === "week" ? 7 : 1 }, (_, index) => {
+      const date = new Date(first); date.setDate(date.getDate() + index);
+      const dayIndex = (date.getDay() + 6) % 7;
+      return { date, ...layoutDayEvents(events.filter(event => event.date ? isSameDate(event.date, date) : event.dayIndex === dayIndex)) };
+    });
+  }, [events, view, currentDate]);
+  const hours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
+  const indicator = getCurrentTimeIndicator(now, startHour, endHour, style);
+  const hasHeader = view === "week" || currentWeekDayVisible;
+  const hasUntimed = days.some(day => day.allDay.length || day.hidden.length);
+  const eventClass = (event: CalendarEvent) => darkMode ? eventConfig[event.type].dark : eventConfig[event.type].light;
+  const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect(), target);
+  return <div className="overflow-auto max-h-[75vh]" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
+    <div data-calendar-scroll-content className={view === "week" ? "min-w-[700px]" : "min-w-full"}>
+      {hasHeader && <div className={`sticky top-0 z-30 flex border-b ${theme(darkMode).headerBg} ${theme(darkMode).border}`}>
+        <div className="w-16 shrink-0" />
+        {days.map(({ date }) => {
+          const label = date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+          const className = `min-w-0 flex-1 p-2 text-center text-sm font-bold ${isSameDate(date, now) ? "text-primary" : ""}`;
+          return view === "week" && onSelectDay
+            ? <button key={date.toDateString()} type="button" className={`${className} cursor-pointer hover:bg-primary/10 focus-visible:outline-primary`}
+                aria-label={`Voir le ${date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} en vue Jour`}
+                onClick={() => onSelectDay(new Date(date))}>{label}</button>
+            : <div key={date.toDateString()} className={className}>{label}</div>;
+        })}
+      </div>}
+      {hasUntimed && <div className="flex border-b border-base-300 bg-base-100">
+        <div className="w-16 shrink-0 p-2 text-xs text-base-content/60">Sans horaire</div>
+        {days.map(day => <div key={day.date.toDateString()} className="min-w-0 flex-1 space-y-1 border-r border-base-300 p-1">
+          {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={`block w-full truncate rounded border-l-2 p-1 text-left text-xs ${eventClass(event)}`} onClick={e => clickEvent(event, e.currentTarget)}>{event.title}</button>)}
+          {day.allDay.length > 2 && <button type="button" className="block text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.allDay.slice(2))}>Afficher plus ({day.allDay.length - 2})</button>}
+          {day.hidden.length > 0 && <button type="button" className="block text-left text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.hidden)}>Afficher plus ({day.hidden.length}) · cours superposés</button>}
+        </div>)}
+      </div>}
+      <div className="flex" style={{ height: hours.length * style.hourHeight }}>
+        <div className="sticky left-0 z-20 w-16 shrink-0 border-r border-base-300 bg-base-100">
+          {hours.map(hour => <div key={hour} className="pr-2 pt-1 text-right text-xs text-base-content/60" style={{ height: style.hourHeight }}>{hour}:00</div>)}
         </div>
-      </div>
-
-      {/* GRID */}
-      <div className="flex-1 min-w-[300px] overflow-x-auto">
-        {(view === "week" || currentWeekDayVisible) && (
-          <div
-            className={`flex h-10 sticky top-0 z-10 border-b ${
-              theme(darkMode).headerBg
-            } ${theme(darkMode).border}`}
-          >
-            {visibleDays.map((day, i) => {
-              // Calculate the specific date for this header to see if it is today
-              const headerDate = new Date(currentDate);
-              if (view === "week") {
-                const currentDay = headerDate.getDay();
-                const distanceToMonday = (currentDay + 6) % 7;
-                headerDate.setDate(headerDate.getDate() - distanceToMonday + i);
-              }
-
-              // Check if this header represents "Today"
-              const isTodayHeader = isSameDate(headerDate, nowTime);
-
-              return (
-                <div
-                  key={day}
-                  className={`flex-1 flex items-center justify-center font-bold text-sm min-w-[100px]
-                  ${
-                    isTodayHeader
-                      ? theme(darkMode).todayText
-                      : theme(darkMode).subText
-                  }`}
-                >
-                  {day}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div
-          className="relative"
-          style={{ height: hours.length * style.hourHeight }}
-        >
-          {/* GRID LINES */}
-          <div className="absolute inset-0 flex flex-col">
-            {hours.map((h) => (
-              <div
-                key={h}
-                className={`w-full border-b box-border ${
-                  theme(darkMode).gridLine
-                }`}
-                style={{ height: style.hourHeight }}
-              ></div>
-            ))}
-          </div>
-
-          {/* COLUMNS */}
-          <div className="absolute inset-0 flex">
-            {visibleDays.map((_, i) => {
-              const colDayIndex = getRealDayIndex(i, view, currentDate);
-
-              // Determine the specific date for this column
-              const columnDate = new Date(currentDate);
-
-              if (view === "week") {
-                // Calculate Monday of the current week
-                const currentDay = columnDate.getDay(); // 0 (Sun) to 6 (Sat)
-                const distanceToMonday = (currentDay + 6) % 7; // Convert to Mon=0, Sun=6
-                columnDate.setDate(columnDate.getDate() - distanceToMonday + i);
-              }
-
-              // Check if this specific column date matches "Today"
-              const isToday = isSameDate(columnDate, nowTime);
-
-              return (
-                <div
-                  key={i}
-                  className={`flex-1 border-r last:border-0 relative min-w-[100px] group ${
-                    theme(darkMode).border
-                  }`}
-                >
-                  {events
-                    .filter((e) => {
-                      const startH = parseInt(e.start.split(":")[0]);
-                      if (startH < startHour || startH >= endHour) return false;
-
-                      if (e.date) {
-                        return isSameDate(e.date, columnDate);
-                      } else {
-                        return e.dayIndex === colDayIndex;
-                      }
-                    })
-                    .map((event) => {
-                      const styleClass = darkMode
-                        ? eventConfig[event.type].dark
-                        : eventConfig[event.type].light;
-
-                      return (
-                        <div
-                          key={event.id}
-                          className={`absolute inset-x-1 rounded-md px-2 py-1 border-l-4 shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden z-10 group-hover:z-20 ${styleClass}`}
-                          style={getEventStyle(
-                            event.start,
-                            event.end,
-                            startHour,
-                            style,
-                          )}
-                          onClick={(e) =>
-                            onClickEventDetails?.(
-                              event.id,
-                              e.currentTarget.getBoundingClientRect(),
-                            )
-                          }
-                        >
-                          <div className="font-bold text-xs truncate leading-tight">
-                            {event.title}
-                          </div>
-                          {event.subtitle && (
-                            <div className="text-[10px] opacity-90 truncate">
-                              {event.subtitle}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-
-                  {/* NOW INDICATOR */}
-                  {/* Only render if we have an indicator AND this column is actually today */}
-                  {timeIndicator && isToday && (
-                    <div
-                      className="absolute w-full flex items-center z-10 pointer-events-none"
-                      style={{ top: timeIndicator.top }}
-                    >
-                      <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 shadow-sm ring-2 ring-transparent" />
-                      <div className="h-[2px] w-full bg-red-500 opacity-60" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {days.map(day => <div key={day.date.toDateString()} className="relative min-w-0 flex-1 border-r border-base-300">
+          {hours.map(hour => <div key={hour} className="border-b border-base-300/60" style={{ height: style.hourHeight }} />)}
+          {day.visible.map(({ event, lane, columns }) => {
+            if (minutes(event.end) <= startHour * 60 || minutes(event.start) >= endHour * 60) return null;
+            const start = minutes(event.start) < startHour * 60 ? `${startHour}:00` : event.start;
+            const end = minutes(event.end) > endHour * 60 ? `${endHour}:00` : event.end;
+            return <button key={event.id} type="button" data-calendar-event={event.id}
+              className={`absolute z-10 flex flex-col items-stretch justify-start overflow-hidden rounded-md border-l-4 px-1.5 py-1 text-left shadow-sm hover:z-20 hover:shadow-md focus:z-20 ${eventClass(event)}`}
+              style={{ ...getEventStyle(start, end, startHour, style), left: `calc(${lane * 100 / columns}% + 2px)`, width: `calc(${100 / columns}% - 4px)` }}
+              title={`${event.title} · ${event.start} – ${event.end}`}
+              onClick={e => clickEvent(event, e.currentTarget)}>
+              <div className="line-clamp-3 break-words text-xs font-bold leading-tight">{event.title}</div>
+              <div className="truncate text-[10px]">{event.start} – {event.end}</div>
+              {event.subtitle && <div className="truncate text-[10px] opacity-80">{event.subtitle}</div>}
+            </button>;
+          })}
+          {indicator && isSameDate(day.date, now) && <div className="pointer-events-none absolute z-20 w-full border-t-2 border-error" style={{ top: indicator.top }} />}
+        </div>)}
       </div>
     </div>
-  );
-};
-
-export default TimelineView;
+  </div>;
+}

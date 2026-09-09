@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 
 type ParcoursFilterBadgesProps = {
   parcours: string[];
+  allowAll?: boolean;
   selectedParcours: string | null;
   onSelect: (parcours: string | null) => void;
 };
@@ -11,6 +12,7 @@ const INITIAL_PARCOURS_COUNT = 5;
 
 const ParcoursFilterBadges = ({
   parcours,
+  allowAll = true,
   selectedParcours,
   onSelect,
 }: ParcoursFilterBadgesProps) => {
@@ -43,7 +45,7 @@ const ParcoursFilterBadges = ({
         aria-label="Filtres par parcours"
         role="group"
       >
-        <button
+        {allowAll && <button
           type="button"
           className={`badge cursor-pointer transition-colors ${
             selectedParcours === null
@@ -54,7 +56,7 @@ const ParcoursFilterBadges = ({
           onClick={() => onSelect(null)}
         >
           Tous les parcours
-        </button>
+        </button>}
 
         {visibleParcours.map((parcoursTitle) => {
           const isSelected = selectedParcours === parcoursTitle;
@@ -69,7 +71,7 @@ const ParcoursFilterBadges = ({
                   : "badge-outline hover:badge-primary"
               }`}
               aria-pressed={isSelected}
-              onClick={() => onSelect(isSelected ? null : parcoursTitle)}
+              onClick={() => onSelect(isSelected && allowAll ? null : parcoursTitle)}
             >
               {parcoursTitle}
             </button>

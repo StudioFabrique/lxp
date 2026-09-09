@@ -8,6 +8,8 @@ import {
 import { motion } from "motion/react";
 
 type ModuleContentExplorerWrapperProps = {
+  calendarAction?: React.ReactNode;
+  calendarContent?: React.ReactNode;
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
@@ -27,6 +29,8 @@ type ModuleContentExplorerWrapperProps = {
  * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props.
  */
 const ModuleContentExplorerWrapper = ({
+  calendarAction,
+  calendarContent,
   selectedLesson,
   isPanelClosed = false,
   onTogglePanel,
@@ -44,7 +48,7 @@ const ModuleContentExplorerWrapper = ({
     <div className="w-full overflow-x-clip">
       {header}
 
-      <div className="flex items-center gap-5 mt-5">
+      <div className="flex flex-wrap items-center gap-2 mt-5 sm:flex-nowrap sm:gap-5">
         <div
           data-tip={isPanelClosed ? "Ouvrir le panneau" : "Réduire le panneau"}
           className="tooltip tooltip-right"
@@ -63,10 +67,11 @@ const ModuleContentExplorerWrapper = ({
         </div>
         <span
           ref={scrollTopRef}
-          className="w-full bg-secondary/20 rounded-lg h-10 px-2 border border-secondary/20 flex items-center"
+          className="min-w-0 flex-1 bg-secondary/20 rounded-lg h-10 px-2 border border-secondary/20 flex items-center"
         >
           {topProgressBar}
         </span>
+        {calendarAction}
         {showPublishAll ? publishAllAction : null}
         {selectedLesson ? (
           <button
@@ -94,11 +99,13 @@ const ModuleContentExplorerWrapper = ({
           </motion.div>
         )}
         <div
-          className={`flex flex-col gap-2 min-h-[80vh] ${
-            isPanelClosed ? "col-span-2 lg:col-span-3" : "col-span-1 lg:col-span-2"
+          className={`flex flex-col gap-2 min-w-0 min-h-[80vh] ${
+            isPanelClosed
+              ? "col-span-2 lg:col-span-3"
+              : "col-span-1 lg:col-span-2"
           }`}
         >
-          {selectedLesson ? previewLesson : moduleData}
+          {calendarContent ?? (selectedLesson ? previewLesson : moduleData)}
         </div>
       </div>
     </div>

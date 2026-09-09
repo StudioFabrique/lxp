@@ -10,13 +10,15 @@ import { getMonthDays, isSameDate } from "../calendar-utils";
 
 type Props = {
   events: CalendarEvent[];
+  onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
   darkMode: boolean;
-  onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
+  onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
 };
 
 const MonthView = ({
   events,
+  onShowMore,
   currentDate,
   darkMode,
   onClickEventDetails,
@@ -73,20 +75,16 @@ const MonthView = ({
               className={`border-b border-r min-h-[80px] p-1 flex flex-col gap-1 transition-colors
                   ${theme(darkMode).border}
                   ${
-                    !cell.currentMonth
-                      ? darkMode
-                        ? "bg-slate-900/50 opacity-30"
-                        : "bg-gray-50 text-gray-400"
-                      : ""
+                    !cell.currentMonth ? "bg-base-200 text-base-content/40" : ""
                   }
                   ${
-                    isToday ? (darkMode ? "bg-slate-800" : "bg-blue-50/30") : ""
+                    isToday ? theme(darkMode).todayBg : ""
                   }
                 `}
             >
               <div
                 className={`text-right text-xs font-bold mb-1 ${
-                  isToday ? "text-blue-500" : theme(darkMode).subText
+                  isToday ? theme(darkMode).todayText : theme(darkMode).subText
                 }`}
               >
                 {cell.date.getDate() === 1
@@ -97,29 +95,32 @@ const MonthView = ({
               </div>
 
               <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] no-scrollbar">
-                {dayEvents.map((event) => {
+                {dayEvents.slice(0, 2).map((event) => {
                   const styleClass = darkMode
                     ? eventConfig[event.type].dark
                     : eventConfig[event.type].light;
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={`${event.id}-${idx}`}
                       onClick={(e) =>
                         onClickEventDetails?.(
                           event.id,
                           e.currentTarget.getBoundingClientRect(),
+                          e.currentTarget,
                         )
                       }
-                      className={`text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
+                      className={`text-left text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
                       title={event.title}
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
-                        {event.start}
+                        {event.allDay ? "Sans horaire" : event.start}
                       </span>
                       {event.title}
-                    </div>
+                    </button>
                   );
                 })}
+                {dayEvents.length > 2 && <button type="button" className="text-left text-xs text-primary hover:underline" onClick={() => onShowMore(dayEvents.slice(2))}>Afficher plus ({dayEvents.length - 2})</button>}
               </div>
             </div>
           );

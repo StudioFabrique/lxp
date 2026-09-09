@@ -19,6 +19,11 @@ import { useOnboarding } from "../../../onboarding/OnboardingContext";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
+  calendarMode?: boolean;
+  calendarSelectedCourseId?: number;
+  calendarAdding?: boolean;
+  calendarOrphanIds?: number[];
+  onAddCalendarCourse?: (courseId: number) => void;
   /** Pourcentage fourni par l'API, jamais recalculé ici. */
   moduleProgress: number;
   selectedLesson: Lesson | undefined;
@@ -51,6 +56,11 @@ type SidebarCoursesListProps = {
 
 const SidebarCoursesList = ({
   courses,
+  calendarMode = false,
+  calendarSelectedCourseId,
+  calendarAdding = false,
+  calendarOrphanIds = [],
+  onAddCalendarCourse,
   moduleProgress,
   selectedLesson,
   onSelectLesson,
@@ -76,7 +86,7 @@ const SidebarCoursesList = ({
     course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
   )?.id;
   const courseIdLockedOpen =
-    onboardingStatus === "in_progress" &&
+    !calendarMode && onboardingStatus === "in_progress" &&
     onboardingStep.split(":", 1)[0] === "admin-activity-create"
       ? selectedCourseId
       : undefined;
@@ -170,12 +180,23 @@ const SidebarCoursesList = ({
           </div>
         ) : null}
       </RoleRankGuard>
+      {calendarMode && calendarAdding && (
+        <p role="status" className="mb-5 rounded-lg border border-primary/30 bg-primary/10 p-3 text-sm font-medium text-base-content">
+          Cliquez sur un cours disponible ci-dessous pour l’ajouter au calendrier.
+          Les cours grisés sont déjà planifiés.
+        </p>
+      )}
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
           courses.map((course) => (
+            <div key={course.id} className={cn("relative w-full rounded-lg transition-opacity", {
+              "ring-2 ring-primary ring-offset-4 ring-offset-base-200": calendarMode && calendarSelectedCourseId === course.id,
+              "opacity-30": calendarMode && calendarAdding && !calendarOrphanIds.includes(course.id),
+            })}>
+            <div inert={calendarMode && calendarAdding} className={calendarMode && calendarAdding ? "pointer-events-none" : undefined}>
             <CourseItem
-              key={course.id}
+              calendarMode={calendarMode}
               course={course}
               selectedLesson={selectedLesson}
               onSelectLesson={onSelectLesson}
@@ -183,12 +204,13 @@ const SidebarCoursesList = ({
               onEnableCourse={onEnableCourse}
               onPublishCourse={onPublishCourse}
               onUpdateCourse={onUpdateCourse}
-              openEditOnMount={course.id === editCourseId}
-              editLessonId={editLessonId}
+              openEditOnMount={!calendarMode && course.id === editCourseId}
+              editLessonId={calendarMode ? undefined : editLessonId}
               isOpen={course.id === openCourseId}
               lessonIdToScroll={lessonIdToScroll}
               onLessonScrolled={onLessonScrolled}
-              onToggle={() =>
+              onToggle={() => {
+                if (calendarMode && calendarAdding) return;
                 setOpenCourseId((currentId) => {
                   if (
                     currentId === course.id &&
@@ -198,8 +220,8 @@ const SidebarCoursesList = ({
                   }
 
                   return currentId === course.id ? undefined : course.id;
-                })
-              }
+                });
+              }}
               onOpen={() => setOpenCourseId(course.id)}
               onDeleteLesson={onDeleteLesson}
               onCreateLesson={onCreateLesson}
@@ -207,6 +229,12 @@ const SidebarCoursesList = ({
               onUpdateLesson={onUpdateLesson}
               children={children[1]}
             />
+            </div>
+            {calendarMode && calendarAdding && calendarOrphanIds.includes(course.id) && (
+              <button type="button" className="absolute inset-0 z-20 cursor-pointer rounded-lg ring-2 ring-primary/30 hover:ring-primary focus-visible:ring-primary"
+                aria-label={`Ajouter ${course.title} au calendrier`} onClick={() => onAddCalendarCourse?.(course.id)} />
+            )}
+            </div>
           ))
         ) : (
           <RoleRankGuard ranks={[3]}>
@@ -218,6 +246,7 @@ const SidebarCoursesList = ({
       </div>
       <PermissionGuard action="update" object="course">
         <div
+          inert={calendarMode}
           className={cn(
             "z-30 w-full rounded-xl transition-all duration-300",
             {

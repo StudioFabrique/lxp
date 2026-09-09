@@ -5,6 +5,7 @@ import {
   SortingState,
   Updater,
 } from "@tanstack/react-table";
+import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { PlusCircle } from "lucide-react";
 
@@ -22,11 +23,16 @@ import TablePagination from "../../../components/table/TablePagination";
 import TableActionsButtons from "../../../components/table/TableActionsButtons";
 import TableActionsModal from "../../../components/table/TableActionsModal";
 import { groupsPageTourSteps } from "../../../components/headers/page-tour-steps";
+import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
+import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 
 const GroupList = () => {
   const { state } = useLocation();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [selectedParcours, setSelectedParcours] = useState<string | null>(
+    null,
+  );
   const idsList = Object.keys(rowSelection);
 
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
@@ -45,6 +51,11 @@ const GroupList = () => {
   } = useTablePaginatedData<Group>("/group/student", {
     apiSearchEndpoint: "/group/search/student",
     searchProperty: "name",
+  });
+
+  const { data: formations = [] } = useQuery({
+    queryKey: ["root-parcours"],
+    queryFn: dashboardAdminApi.queries.getRootParcours,
   });
 
   const refreshAndClearSelection = () => {
@@ -78,6 +89,25 @@ const GroupList = () => {
 
   const columns = useMemo(() => getGroupColumns((id) => setIdToDelete(id)), []);
 
+  const parcours = useMemo(
+    () =>
+      formations.flatMap((formation) =>
+        formation.parcours.map(({ title }) => title),
+      ),
+    [formations],
+  );
+  const filteredData = useMemo(
+    () =>
+      selectedParcours === null
+        ? data
+        : data.filter(
+            (group) =>
+              group.formation === selectedParcours ||
+              group.formation?.endsWith(` - ${selectedParcours}`),
+          ),
+    [data, selectedParcours],
+  );
+
   useEffect(() => {
     if (state?.toastFrom) toast.success(state.toastFrom);
   }, [state]);
@@ -105,11 +135,22 @@ const GroupList = () => {
         </PermissionGuard>
       </PageHeader>
 
+      <div className="mb-4">
+        <ParcoursFilterBadges
+          parcours={parcours}
+          selectedParcours={selectedParcours}
+          onSelect={(value) => {
+            setSelectedParcours(value);
+            setRowSelection({});
+          }}
+        />
+      </div>
+
       <BoxWrapper
-        className={`${data.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0 && !searchValue}
+        className={`${filteredData.length > 0 || isLoading || searchValue ? "px-10" : ""} items-center`}
+        unstyled={!isLoading && filteredData.length === 0 && !searchValue}
       >
-        {isLoading || data.length > 0 || searchValue ? (
+        {isLoading || filteredData.length > 0 || searchValue ? (
           <div className="w-full" data-page-tour="filters">
             <MultiCriteriaSearch
               value={searchValue ?? ""}
@@ -142,7 +183,7 @@ const GroupList = () => {
         <div className="w-full" data-page-tour="table">
           <DataTable
             columns={columns}
-            data={data}
+            data={filteredData}
             isLoading={isLoading}
             isSearching={Boolean(searchValue)}
             rowSelection={rowSelection}
@@ -157,7 +198,7 @@ const GroupList = () => {
           />
         </div>
 
-        {data.length > 0 ? (
+        {filteredData.length > 0 ? (
           <div className="w-full mt-5" data-page-tour="pagination">
             <TablePagination
               leftText={`Groupes : ${totalItems}`}

@@ -5,7 +5,12 @@ import type Tag from "../../../../utils/interfaces/tag";
 import CollapsibleSection from "./collapsible-section";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
-const Tags = () => {
+type TagsProps = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+const Tags = ({ open, onOpenChange }: TagsProps) => {
   const { id } = useParams();
   const { data: parcours } = useParcoursQuery(id ? Number(id) : undefined);
   const tags = (parcours?.tags ?? []).map((item) =>
@@ -22,6 +27,8 @@ const Tags = () => {
       <CollapsibleSection
         title="Tags"
         className="bg-transparent"
+        open={open}
+        onOpenChange={onOpenChange}
         preview={
           <span className="flex min-w-0 items-center gap-2 overflow-hidden">
             {previewTags.map((tag) => (

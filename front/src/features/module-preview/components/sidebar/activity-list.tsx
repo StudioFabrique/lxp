@@ -17,6 +17,7 @@ import { cn } from "../../../../utils/cn";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type ActivityListProps = {
+  readOnly?: boolean;
   activities?: Activity[];
   selectedActivity?: Activity | null;
   newActivityButtonDisabled?: boolean;
@@ -28,6 +29,7 @@ type ActivityListProps = {
 };
 
 export default function ActivityList({
+  readOnly = false,
   activities,
   selectedActivity,
   newActivityButtonDisabled,
@@ -41,9 +43,10 @@ export default function ActivityList({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  const canUserEdit = Boolean(canEdit && ability.can("update", "lesson"));
+  const canUserEdit = Boolean(!readOnly && canEdit && ability.can("update", "lesson"));
 
   useEffect(() => {
+    if (readOnly) return;
     return monitorForElements({
       onDrop({ source, location }) {
         const destination = location.current.dropTargets[0];
@@ -51,7 +54,7 @@ export default function ActivityList({
         onActivityReorder({ source, location });
       },
     });
-  }, [onActivityReorder]);
+  }, [onActivityReorder, readOnly]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -95,6 +98,7 @@ export default function ActivityList({
           activities.map((activity, index) => (
             <ActivityItem
               key={activity.id}
+              disabled={readOnly}
               activity={activity}
               index={index}
               isSelected={selectedActivity?.id === activity.id}
@@ -107,7 +111,7 @@ export default function ActivityList({
             Chargement des activités en cours...
           </span>
         ) : null}
-        {onClickCreateActivity && canEdit && !isDraggingOver && (
+        {!readOnly && onClickCreateActivity && canEdit && !isDraggingOver && (
           <PermissionGuard action="update" object="lesson">
             <button
               data-onboarding="activity-create"

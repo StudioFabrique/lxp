@@ -8,7 +8,12 @@ import { getContactFullName } from "../../../../utils/helpers/contact-full-name"
 import CollapsibleSection from "./collapsible-section";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 
-const Contacts = () => {
+type ContactsProps = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+const Contacts = ({ open, onOpenChange }: ContactsProps) => {
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const { id } = useParams();
@@ -25,7 +30,7 @@ const Contacts = () => {
       key={contact.id}
       className="flex flex-col bg-base-200 border border-base-300 p-4 rounded-lg text-base-content"
     >
-      <p className="capitalize font-bold text-primary">
+      <p className="capitalize font-bold text-secondary">
         {getContactFullName(contact)}
       </p>
       <span className="text-xs flex flex-col items-start opacity-80">
@@ -53,6 +58,8 @@ const Contacts = () => {
         title="Ressources pédagogiques"
         className="bg-transparent"
         defaultOpen={contacts.length <= 2}
+        open={open}
+        onOpenChange={onOpenChange}
         preview={
           <span className="flex min-w-0 flex-col gap-1.5 text-sm">
             {previewContacts.map((contact, index) => (
@@ -60,7 +67,7 @@ const Contacts = () => {
                 key={contact.id}
                 className="flex min-w-0 items-center justify-between gap-3"
               >
-                <span className="truncate font-semibold text-primary">
+                <span className="truncate font-semibold text-secondary">
                   {getContactFullName(contact)}
                 </span>
                 {index === previewContacts.length - 1 &&
