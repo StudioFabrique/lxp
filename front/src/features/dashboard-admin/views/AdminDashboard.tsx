@@ -74,9 +74,7 @@ const AdminDashboard = () => {
     (isAdministrator && teachersCount.isLoading) ||
     (isRoot && adminsCount.isLoading) ||
     (isTeacher &&
-      (studentsCount.isLoading ||
-        groupsCount.isLoading ||
-        isParcoursLoading));
+      (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
 
   return (
     <PageWrapper>
@@ -87,7 +85,7 @@ const AdminDashboard = () => {
         ) : (
           <Header
             title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
-            description="Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants."
+            description="Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants"
             classname="capitalize"
           />
         )}

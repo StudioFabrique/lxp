@@ -48,22 +48,47 @@ const UserForm = ({
   cancelTo,
 }: Props) => {
   const {
-    email, setEmail, emailError, touchEmail,
-    firstname, setFirstname, firstnameError,
-    lastname, setLastname, lastnameError,
-    nickname, setNickname, nicknameError,
-    address, setAddress, addressError,
-    city, setCity, cityError,
-    postCode, setPostCode, postCodeError,
-    phoneNumber, setPhoneNumber, phoneError,
-    description, setDescription,
-    birthDate, setBirthDate,
-    file, setFile,
-    graduations, setGraduations,
-    links, setLinks,
-    hobbies, setHobbies,
-    roleId, setRoleId,
-    sendEmail, setSendEmail,
+    email,
+    setEmail,
+    emailError,
+    touchEmail,
+    firstname,
+    setFirstname,
+    firstnameError,
+    lastname,
+    setLastname,
+    lastnameError,
+    nickname,
+    setNickname,
+    nicknameError,
+    address,
+    setAddress,
+    addressError,
+    city,
+    setCity,
+    cityError,
+    postCode,
+    setPostCode,
+    postCodeError,
+    phoneNumber,
+    setPhoneNumber,
+    phoneError,
+    description,
+    setDescription,
+    birthDate,
+    setBirthDate,
+    file,
+    setFile,
+    graduations,
+    setGraduations,
+    links,
+    setLinks,
+    hobbies,
+    setHobbies,
+    roleId,
+    setRoleId,
+    sendEmail,
+    setSendEmail,
     formIsValid,
     buildUserData,
   } = useUserForm(user, initialSendEmail);
@@ -87,7 +112,9 @@ const UserForm = ({
   const handleSubmit = () => {
     if (!formIsValid) {
       touchEmail();
-      toast.error("Certains champs du formulaire sont manquants ou mal remplis.");
+      toast.error(
+        "Certains champs du formulaire sont manquants ou mal remplis.",
+      );
       return;
     }
     if (!roleId || roleId.length < 1) {
@@ -100,17 +127,13 @@ const UserForm = ({
   const disabled = fieldsDisabled || isLoading;
 
   return (
-    <PageWrapper
-      as="form"
-      autoComplete="off"
-      data-recommended-tour="user-form"
-    >
+    <PageWrapper as="form" autoComplete="off" data-recommended-tour="user-form">
       <Header
         title={editMode ? "Modifier un utilisateur" : "Créer un utilisateur"}
         description={
           editMode
-            ? "Modifiez les informations de l'utilisateur."
-            : "Renseignez les informations du nouvel utilisateur."
+            ? "Modifiez les informations de l'utilisateur"
+            : "Renseignez les informations du nouvel utilisateur"
         }
       >
         <Link
@@ -140,9 +163,15 @@ const UserForm = ({
         <div className="grid grid-cols-3 gap-x-5">
           <div data-recommended-tour="user-informations">
             <UserFormInformations
-              lastname={lastname} lastnameError={lastnameError} onLastname={setLastname}
-              firstname={firstname} firstnameError={firstnameError} onFirstname={setFirstname}
-              nickname={nickname} nicknameError={nicknameError} onNickname={setNickname}
+              lastname={lastname}
+              lastnameError={lastnameError}
+              onLastname={setLastname}
+              firstname={firstname}
+              firstnameError={firstnameError}
+              onFirstname={setFirstname}
+              nickname={nickname}
+              nicknameError={nicknameError}
+              onNickname={setNickname}
               email={email}
               emailError={emailError || emailIsRefused}
               emailMessage={emailMessage}
@@ -153,11 +182,20 @@ const UserForm = ({
             />
           </div>
           <UserFormContact
-            address={address} addressError={addressError} onAddress={setAddress}
-            city={city} cityError={cityError} onCity={setCity}
-            postCode={postCode} postCodeError={postCodeError} onPostCode={setPostCode}
-            phone={phoneNumber} phoneError={phoneError} onPhone={setPhoneNumber}
-            birthDate={birthDate} onChangeDate={setBirthDate}
+            address={address}
+            addressError={addressError}
+            onAddress={setAddress}
+            city={city}
+            cityError={cityError}
+            onCity={setCity}
+            postCode={postCode}
+            postCodeError={postCodeError}
+            onPostCode={setPostCode}
+            phone={phoneNumber}
+            phoneError={phoneError}
+            onPhone={setPhoneNumber}
+            birthDate={birthDate}
+            onChangeDate={setBirthDate}
             disabled={disabled}
           />
           <div
@@ -186,17 +224,21 @@ const UserForm = ({
             disabled={disabled}
             getValue={(item) => item.title}
             onValidate={(value) => {
-              if (!(value.length > 0)) throw new Error("Le centre d'intérêt est vide");
+              if (!(value.length > 0))
+                throw new Error("Le centre d'intérêt est vide");
               if (hobbies.some((hobby) => hobby.title === value))
                 throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
-              if (!regexGeneric.test(value)) throw new Error("La valeur est incorrecte");
+              if (!regexGeneric.test(value))
+                throw new Error("La valeur est incorrecte");
             }}
             onAddItem={async (value) => {
               setHobbies((hobbies) => [...hobbies, { title: value }]);
               return true;
             }}
             onDelete={async (item) => {
-              setHobbies((hobbies) => hobbies.filter((hobby) => hobby.title !== item.title));
+              setHobbies((hobbies) =>
+                hobbies.filter((hobby) => hobby.title !== item.title),
+              );
               return true;
             }}
           />
@@ -219,7 +261,8 @@ const UserForm = ({
           <ItemsAdder
             styleOptions={{
               label: "Liens",
-              placeholder: "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
+              placeholder:
+                "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
               itemsHasColor: true,
             }}
             items={links}
@@ -236,7 +279,9 @@ const UserForm = ({
               return true;
             }}
             onDelete={async (item) => {
-              setLinks((hobbies) => hobbies.filter((hobby) => hobby.url !== item.url));
+              setLinks((hobbies) =>
+                hobbies.filter((hobby) => hobby.url !== item.url),
+              );
               return true;
             }}
           />

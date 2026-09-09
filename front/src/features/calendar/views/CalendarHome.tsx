@@ -82,7 +82,7 @@ const CalendarHome = () => {
     <PageWrapper>
       <Header
         title="Calendrier"
-        description="Consulter le calendrier des prochains cours."
+        description="Consulter le calendrier des prochains cours"
       />
       <Calendar
         currentDate={currentDate}

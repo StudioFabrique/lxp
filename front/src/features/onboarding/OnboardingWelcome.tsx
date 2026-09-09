@@ -102,10 +102,10 @@ const OnboardingWelcome = ({ layout }: Props) => {
     );
 
   const description = isTeacher
-    ? "Créez un premier module dans l'un de vos parcours, puis votre première activité pédagogique."
+    ? "Créez un premier module dans l'un de vos parcours, puis votre première activité pédagogique"
     : layout === "admin"
-      ? "Créez votre première formation puis votre premier parcours pas à pas."
-      : "Découvrez votre espace d'apprentissage et les outils qui vous accompagneront dans votre parcours.";
+      ? "Créez votre première formation puis votre premier parcours pas à pas"
+      : "Découvrez votre espace d'apprentissage et les outils qui vous accompagneront dans votre parcours";
 
   return (
     <>

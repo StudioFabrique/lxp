@@ -183,8 +183,8 @@ const AdminParcoursManagement = ({
         title={isAdmin ? "Gestion des parcours" : "Liste des parcours"}
         description={
           isAdmin
-            ? "Gérez les formations et les parcours qui leur sont associés."
-            : "Retrouvez les parcours qui vous sont attribués, regroupés par formation."
+            ? "Gérez les formations et les parcours qui leur sont associés"
+            : "Retrouvez les parcours qui vous sont attribués, regroupés par formation"
         }
       >
         {isAdmin ? (

@@ -56,8 +56,7 @@ const ParcoursView = () => {
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
   const hasSupplementaryContent = hasDescription || hasTags || hasContacts;
-  const [areTagsAndResourcesOpen, setAreTagsAndResourcesOpen] =
-    useState(false);
+  const [areTagsAndResourcesOpen, setAreTagsAndResourcesOpen] = useState(false);
 
   const exportParcoursMutation = useMutation({
     mutationFn: () => parcoursApi.mutations.exportParcours(Number(id)),
@@ -117,8 +116,7 @@ const ParcoursView = () => {
     <PageWrapper>
       <Header
         title="Aperçu du parcours"
-        description="Bienvenue dans votre espace. Commencez votre apprentissage ou
-            reprenez là où vous vous êtes arrêté."
+        description="Prévisualiser les modules qui composent ce parcours"
       >
         <div className="flex gap-4 w-full">
           {canEditParcours ? (
@@ -207,9 +205,7 @@ const ParcoursView = () => {
                   {hasDescription ? <Description /> : null}
                   {hasTags ? (
                     <Tags
-                      open={
-                        hasContacts ? areTagsAndResourcesOpen : undefined
-                      }
+                      open={hasContacts ? areTagsAndResourcesOpen : undefined}
                       onOpenChange={
                         hasContacts ? setAreTagsAndResourcesOpen : undefined
                       }
