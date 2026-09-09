@@ -2,8 +2,8 @@ import useModuleContentExplorer from "../hooks/use-module-content-explorer";
 import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentExplorerSkeleton from "./ModulePreviewSkeleton";
 import { Link, useNavigate } from "react-router";
-import { LoaderCircle, PenBox, UploadCloud } from "lucide-react";
-import { useContext } from "react";
+import { CalendarDays, LoaderCircle, PenBox, UploadCloud } from "lucide-react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../../store/AuthProvider";
 import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
 import useDiagnosticQuiz from "../../quiz/hooks/use-diagnostic-quiz";
@@ -25,6 +25,10 @@ import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import { AbilityContext } from "../../../rbac/AbilityProvider";
 import ModuleCompletionModal from "../components/module-completion-modal";
+
+import useModuleCalendar from "../hooks/use-module-calendar";
+import ModuleCourseCalendar from "../components/calendar/module-course-calendar";
+import { hasRoleRank } from "../../../utils/helpers/user-role";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -48,6 +52,11 @@ const ModuleContentExplorer = () => {
     moduleActions,
     scrollTopRef,
   } = explorerStore;
+
+  const [calendarModuleId, setCalendarModuleId] = useState<number | null>(null);
+  const canPlanCourses = hasRoleRank(user, [0, 1, 2]) && ability.can("update", "course");
+  const isCalendarView = canPlanCourses && Boolean(state.module?.id) && calendarModuleId === state.module?.id;
+  const calendar = useModuleCalendar(state.module, isCalendarView);
 
   const isModuleLoaded = Boolean(
     state.module && state.module.id && state.module.courses.length > 0,
@@ -201,6 +210,19 @@ const ModuleContentExplorer = () => {
       {state.module && state.module?.parcoursId && state.module.id ? (
         /* Wrapper */
         <ModuleContentExplorerWrapper
+          calendarAction={canPlanCourses && (
+            <button type="button" className={`btn gap-2 border-secondary/20 ${isCalendarView ? "btn-primary" : ""}`}
+              aria-pressed={isCalendarView} disabled={calendar.isSaving}
+              onClick={() => {
+                setCalendarModuleId(isCalendarView ? null : state.module!.id!);
+                calendar.setSelection(null);
+                calendar.setIsAdding(false);
+                if (!isCalendarView && state.isPanelClosed) dispatch({ type: "toggle_panel_visibility" });
+              }}>
+              <CalendarDays className="size-5" /> Calendrier
+            </button>
+          )}
+          calendarContent={isCalendarView ? <ModuleCourseCalendar key={state.module.id} module={state.module} store={calendar} /> : undefined}
           scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
           isPanelClosed={state.isPanelClosed}
@@ -237,6 +259,7 @@ const ModuleContentExplorer = () => {
             /* Sidebar */
             <ModuleExplorerSidebar
               store={explorerStore}
+              calendar={isCalendarView ? calendar : undefined}
               canEditModule={canEditModule}
               canEditSelectedLesson={canEditSelectedLesson}
             />

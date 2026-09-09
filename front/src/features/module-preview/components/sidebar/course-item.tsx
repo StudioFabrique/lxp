@@ -16,6 +16,7 @@ import {
 } from "react";
 import { motion } from "motion/react";
 import LessonItem from "./lesson-item";
+import CalendarLessonActivities from "./calendar-lesson-activities";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
@@ -32,6 +33,7 @@ import type { LessonFormValues } from "./lesson-form.types";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
 
 type CourseItemProps = {
+  calendarMode?: boolean;
   course: Course;
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
@@ -73,6 +75,7 @@ export type ModalCourseType =
   | "deleteLesson";
 
 const CourseItem = ({
+  calendarMode = false,
   course,
   selectedLesson,
   onSelectLesson,
@@ -97,8 +100,8 @@ const CourseItem = ({
   const ability = useContext(AbilityContext);
 
   const canEditCourse =
-    ability.can("update", "course") ||
-    userBelongsToContacts(user, course.contacts);
+    !calendarMode && (ability.can("update", "course") ||
+    userBelongsToContacts(user, course.contacts));
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalCourseType>("visibility");
@@ -223,14 +226,14 @@ const CourseItem = ({
   return (
     <>
       <CreateLessonModal
-        open={isCreatingLesson}
+        open={!calendarMode && isCreatingLesson}
         courseTitle={course.title}
         courseTags={course.tags ?? []}
         isSaving={isSavingLesson}
         onClose={() => setIsCreatingLesson(false)}
         onSubmit={handleCreateLesson}
       />
-      {isEditingCourse && (
+      {!calendarMode && isEditingCourse && (
         <EditCourseModal
           course={course}
           isSubmitting={isSavingCourse}
@@ -240,7 +243,7 @@ const CourseItem = ({
       )}
       <CourseActionsModal
         modalType={modalType}
-        showModal={showModal}
+        showModal={!calendarMode && showModal}
         isModalLoading={isModalLoading}
         course={course}
         lesson={selectedLessonToDelete}
@@ -278,8 +281,18 @@ const CourseItem = ({
               ? "bg-secondary/60 hover:bg-secondary/75"
               : "bg-secondary/50 hover:bg-secondary/75"
           } z-10 rounded-lg`}
+          role="button"
+          tabIndex={0}
+          aria-expanded={isCourseOpen}
+          aria-label={course.title}
           onClick={handleToggleCourseTab}
-          onKeyDown={handleToggleCourseTab}
+          onKeyDown={(event) => {
+            if (event.target !== event.currentTarget) return;
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleToggleCourseTab();
+            }
+          }}
         >
           {/* Header Content */}
           <div className="flex flex-col gap-1 p-4">
@@ -383,6 +396,7 @@ const CourseItem = ({
                   lesson.id && (
                     <div className={`w-full`} key={lesson.id}>
                       <LessonItem
+                        calendarMode={calendarMode}
                         lesson={lesson}
                         courseTags={course.tags ?? []}
                         selectedLesson={selectedLesson}
@@ -395,7 +409,11 @@ const CourseItem = ({
                         onOpenModal={handleOpenLessonDeletionModal}
                         onUpdateLesson={onUpdateLesson}
                       >
-                        {children}
+                        {calendarMode ? (
+                          <CalendarLessonActivities
+                            lesson={selectedLesson?.id === lesson.id ? selectedLesson : lesson}
+                          />
+                        ) : children}
                       </LessonItem>
                     </div>
                   ),

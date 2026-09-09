@@ -56,13 +56,35 @@ import { httpDeleteCourse } from "../../../controllers/course/http-delete-course
 import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline.ts";
 import httpGetCoursesFromModule from "../../../controllers/course/http-get-courses-from-module.ts";
 import { moduleIdValidator } from "../modules/module-validators.ts";
-import { query } from "express-validator";
+import { body, param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
 import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses.ts";
 import { httpEnableCourse } from "../../../controllers/course/http-enable-course.ts";
 import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz.ts";
 
+import { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } from "../../../controllers/course/http-course-calendar.ts";
+import { isValidCalendarDates } from "../../../models/course/course-calendar-dates.ts";
+
 const courseRouter = express.Router();
+
+courseRouter.post(
+  "/calendar/:moduleId/initialize",
+  checkPermissions("course", "update"),
+  param("moduleId").isInt({ min: 1 }),
+  checkValidatorResult,
+  checkContentAccess("module", "moduleId"),
+  httpInitializeCourseCalendar,
+);
+
+courseRouter.put(
+  "/calendar/:courseId/dates",
+  checkPermissions("course", "update"),
+  param("courseId").isInt({ min: 1 }),
+  body("dates").custom(isValidCalendarDates).withMessage("Les plages de dates sont invalides"),
+  checkValidatorResult,
+  checkContentAccess("course", "courseId"),
+  httpReplaceCourseCalendarDates,
+);
 
 /**
  * Configuration du stockage des fichiers uploadés avec multer

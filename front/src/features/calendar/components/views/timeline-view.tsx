@@ -222,8 +222,8 @@ const TimelineView = ({
                       className="absolute w-full flex items-center z-10 pointer-events-none"
                       style={{ top: timeIndicator.top }}
                     >
-                      <div className="w-2 h-2 rounded-full bg-red-500 -ml-1 shadow-sm ring-2 ring-transparent" />
-                      <div className="h-[2px] w-full bg-red-500 opacity-60" />
+                      <div className="w-2 h-2 rounded-full bg-error -ml-1 shadow-sm ring-2 ring-transparent" />
+                      <div className="h-[2px] w-full bg-error opacity-60" />
                     </div>
                   )}
                 </div>

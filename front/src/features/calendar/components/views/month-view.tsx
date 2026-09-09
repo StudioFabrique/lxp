@@ -73,20 +73,16 @@ const MonthView = ({
               className={`border-b border-r min-h-[80px] p-1 flex flex-col gap-1 transition-colors
                   ${theme(darkMode).border}
                   ${
-                    !cell.currentMonth
-                      ? darkMode
-                        ? "bg-slate-900/50 opacity-30"
-                        : "bg-gray-50 text-gray-400"
-                      : ""
+                    !cell.currentMonth ? "bg-base-200 text-base-content/40" : ""
                   }
                   ${
-                    isToday ? (darkMode ? "bg-slate-800" : "bg-blue-50/30") : ""
+                    isToday ? theme(darkMode).todayBg : ""
                   }
                 `}
             >
               <div
                 className={`text-right text-xs font-bold mb-1 ${
-                  isToday ? "text-blue-500" : theme(darkMode).subText
+                  isToday ? theme(darkMode).todayText : theme(darkMode).subText
                 }`}
               >
                 {cell.date.getDate() === 1

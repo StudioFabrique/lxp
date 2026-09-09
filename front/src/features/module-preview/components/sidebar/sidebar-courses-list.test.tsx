@@ -47,6 +47,10 @@ const renderCourses = (
   container: HTMLDivElement,
   step: string,
   disableCourseCreationFloating = false,
+  calendarMode = false,
+  orphanIds: number[] = [],
+  onAddCalendarCourse = vi.fn(),
+  calendarAdding = calendarMode,
 ) => {
   let root = roots[0];
   if (!root) {
@@ -67,6 +71,11 @@ const renderCourses = (
         }}
       >
         <SidebarCoursesList
+          calendarMode={calendarMode}
+          calendarAdding={calendarAdding}
+          calendarSelectedCourseId={calendarMode ? 1 : undefined}
+          calendarOrphanIds={orphanIds}
+          onAddCalendarCourse={onAddCalendarCourse}
           courses={[course]}
           moduleProgress={0}
           selectedLesson={lesson}
@@ -151,4 +160,43 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
     expect(actionsContainer?.classList.contains("sticky")).toBe(false);
     expect(actionsContainer?.classList.contains("backdrop-blur")).toBe(false);
   });
+});
+
+
+describe("sidebar en mode calendrier", () => {
+  it("bloque le dépliage pendant l'ajout et indique où sélectionner un cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "", false, true);
+    const button = getCourseButton(container);
+    expect(button.closest("[inert]")).toBeTruthy();
+    expect(container.querySelector('[role="status"]')?.textContent).toContain("Cliquez sur un cours disponible ci-dessous");
+    act(() => button.click());
+    expect(button.dataset.open).toBe("true");
+    expect(button.closest(".ring-primary")).toBeTruthy();
+    expect(container.querySelector('[aria-label="Ajouter Premier cours au calendrier"]')).toBeNull();
+    expect(button.closest(".opacity-30")).toBeTruthy();
+  });
+  it("permet seulement de sélectionner les cours orphelins pendant l'ajout", () => {
+    const container = document.createElement("div");
+    const onAdd = vi.fn();
+    renderCourses(container, "", false, true, [1], onAdd);
+    const add = container.querySelector<HTMLButtonElement>('[aria-label="Ajouter Premier cours au calendrier"]');
+    expect(add).toBeTruthy();
+    expect(add?.closest("[inert]")).toBeNull();
+    act(() => add?.click());
+    expect(onAdd).toHaveBeenCalledWith(1);
+  });
+});
+
+
+it("permet le dépliage en mode calendrier hors ajout, même pendant le tutoriel", () => {
+  const container = document.createElement("div");
+  renderCourses(container, "admin-activity-create:42", false, true, [], vi.fn(), false);
+  const button = getCourseButton(container);
+  expect(button.closest("[inert]")).toBeNull();
+  expect(container.querySelector('[role="status"]')).toBeNull();
+  act(() => button.click());
+  expect(button.dataset.open).toBe("false");
+  act(() => button.click());
+  expect(button.dataset.open).toBe("true");
 });

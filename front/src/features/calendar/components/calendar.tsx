@@ -9,7 +9,12 @@ import MonthView from "./views/month-view";
 import TimelineView from "./views/timeline-view";
 import YearTimelineView from "./views/year-timeline-view";
 
+import PlanningView from "./views/planning-view";
+
 interface Props {
+  selectedTimelineEventId?: number | string;
+  planningDisabled?: boolean;
+  onChangeTimelineEventDates?: (id: number | string, startDate: Date, endDate: Date) => void;
   events: CalendarEvent[];
   onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
   timelineEvents?: TimelineEvent[];
@@ -30,6 +35,9 @@ interface Props {
 
 const Calendar = ({
   events,
+  selectedTimelineEventId,
+  planningDisabled,
+  onChangeTimelineEventDates,
   onClickEventDetails,
   timelineEvents = [], // Default to empty array
   onClickTimelineYearEventDetails,
@@ -46,6 +54,18 @@ const Calendar = ({
   // Render the body
   const renderBody = () => {
     switch (view) {
+      case "planning":
+        return (
+          <PlanningView
+            events={timelineEvents}
+            currentDate={currentDate}
+            darkMode={darkMode}
+            selectedEventId={selectedTimelineEventId}
+            disabled={planningDisabled}
+            onClickDetails={onClickTimelineYearEventDetails}
+            onChangeDates={onChangeTimelineEventDates}
+          />
+        );
       case "month":
         return (
           <MonthView

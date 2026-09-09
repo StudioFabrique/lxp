@@ -12,6 +12,7 @@ const renderWrapper = (
   selectedLesson?: Lesson,
   onPublishAll = vi.fn(),
   showPublishAll = true,
+  calendar = false,
 ) => {
   const root = createRoot(container);
   roots.push(root);
@@ -19,6 +20,8 @@ const renderWrapper = (
   act(() => {
     root.render(
       <ModuleContentExplorerWrapper
+        calendarAction={calendar ? <button aria-label="Calendrier" /> : undefined}
+        calendarContent={calendar ? <div>Planification</div> : undefined}
         selectedLesson={selectedLesson}
         onTogglePanel={vi.fn()}
         onCloseAll={vi.fn()}
@@ -28,10 +31,10 @@ const renderWrapper = (
         }
         scrollTopRef={createRef<HTMLDivElement>()}
         header={null}
-        progressionSide={null}
+        progressionSide={<div>Liste des cours</div>}
         topProgressBar={null}
-        previewLesson={null}
-        moduleData={null}
+        previewLesson={<div>Activité sélectionnée</div>}
+        moduleData={<div>Données du module</div>}
       />,
     );
   });
@@ -85,4 +88,18 @@ describe("ModuleContentExplorerWrapper", () => {
       container.querySelector('button[aria-label="Tout publier"]'),
     ).toBeNull();
   });
+});
+
+
+it("place Calendrier en dernier et remplace le panneau droit avec ou sans leçon sélectionnée", () => {
+  for (const lesson of [undefined, { id: 1 } as Lesson]) {
+    const container = document.createElement("div");
+    renderWrapper(container, lesson, vi.fn(), true, true);
+    const buttons = container.querySelectorAll("button");
+    expect(buttons[buttons.length - 1].getAttribute("aria-label")).toBe("Calendrier");
+    expect(container.textContent).toContain("Planification");
+    expect(container.textContent).toContain("Liste des cours");
+    expect(container.textContent).not.toContain("Activité sélectionnée");
+    expect(container.textContent).not.toContain("Données du module");
+  }
 });

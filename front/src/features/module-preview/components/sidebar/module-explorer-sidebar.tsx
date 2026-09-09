@@ -9,7 +9,10 @@ import { useSearchParams } from "react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 
+import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
+
 type Props = {
+  calendar?: ModuleCalendarStore;
   store: ExplorerStore;
   canEditModule?: boolean;
   canEditSelectedLesson?: boolean;
@@ -17,6 +20,7 @@ type Props = {
 
 const ModuleExplorerSidebar = ({
   store,
+  calendar,
   canEditModule,
   canEditSelectedLesson,
 }: Props) => {
@@ -62,7 +66,7 @@ const ModuleExplorerSidebar = ({
   return (
     <>
       <nav
-        className="sticky top-0 flex flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-2 shadow-sm md:hidden"
+        className={`${calendar ? "hidden" : "flex md:hidden"} sticky top-0 flex-col gap-3 rounded-lg border border-base-300 bg-base-200 p-2 shadow-sm`}
         aria-label="Navigation compacte du module"
       >
         {module.courses.map((course, courseIndex) => {
@@ -199,8 +203,13 @@ const ModuleExplorerSidebar = ({
         })}
       </nav>
 
-      <div className="hidden md:block">
+      <div className={calendar ? "block" : "hidden md:block"}>
         <SidebarCoursesList
+          calendarMode={Boolean(calendar)}
+          calendarSelectedCourseId={calendar?.selection?.courseId}
+          calendarAdding={calendar?.isAdding && !calendar.isSaving}
+          calendarOrphanIds={calendar?.orphanIds}
+          onAddCalendarCourse={calendar?.addCourse}
           courses={module.courses}
           moduleProgress={module.stats?.progress ?? 0}
           selectedLesson={selectedLesson}
@@ -236,7 +245,7 @@ const ModuleExplorerSidebar = ({
                 parcoursTags={module.tags}
                 onCreate={courseActions.createCourse}
                 onCreated={setOpenedCourseId}
-                openDetailsOnMount={createCourse}
+                openDetailsOnMount={!calendar && createCourse}
               />
             </PermissionGuard>
           )}

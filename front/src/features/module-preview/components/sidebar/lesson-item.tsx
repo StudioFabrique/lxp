@@ -1,4 +1,4 @@
-import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
+import { Check, Trash2, Edit3, EllipsisIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -9,6 +9,7 @@ import type { LessonFormValues } from "./lesson-form.types";
 import type Tag from "../../../../utils/interfaces/tag";
 
 type LessonItemProps = {
+  calendarMode?: boolean;
   lesson: Lesson;
   courseTags: Tag[];
   selectedLesson: Lesson | undefined;
@@ -26,6 +27,7 @@ type LessonItemProps = {
 };
 
 const LessonItem = ({
+  calendarMode = false,
   lesson,
   courseTags,
   selectedLesson,
@@ -39,7 +41,8 @@ const LessonItem = ({
   onUpdateLesson,
   children,
 }: PropsWithChildren<LessonItemProps>) => {
-  const isLessonSelected = selectedLesson?.id === lesson.id;
+  const [calendarExpanded, setCalendarExpanded] = useState(selectedLesson?.id === lesson.id);
+  const isLessonSelected = calendarMode ? calendarExpanded : selectedLesson?.id === lesson.id;
   const lessonRef = useRef<HTMLDivElement>(null);
 
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -53,7 +56,11 @@ const LessonItem = ({
   );
 
   const handleBeginReadLesson = () => {
-    if (!isLessonSelected) onSelectLesson(lesson);
+    if (calendarMode) {
+      setCalendarExpanded(expanded => !expanded);
+    } else if (!isLessonSelected) {
+      onSelectLesson(lesson);
+    }
   };
 
   const handleDeleteClick = () => {
@@ -156,7 +163,7 @@ const LessonItem = ({
 
   return (
     <div className="w-full">
-      {isEditingLesson && (
+      {!calendarMode && isEditingLesson && (
         <EditLessonModal
           lesson={lesson}
           courseTags={courseTags}
@@ -167,7 +174,18 @@ const LessonItem = ({
       )}
       <div
         ref={lessonRef}
+        role="button"
+        tabIndex={0}
+        aria-label={lesson.title}
+        aria-expanded={isLessonSelected}
         onClick={handleBeginReadLesson}
+        onKeyDown={(event) => {
+          if (event.target !== event.currentTarget) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleBeginReadLesson();
+          }
+        }}
         className={cn(
           "flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group",
           isLessonSelected
@@ -176,10 +194,11 @@ const LessonItem = ({
         )}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
-          <p className="max-h-14 truncate text-sm">{lesson.title}</p>
+          {calendarMode && (isLessonSelected ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />)}
+          <p className="max-h-14 flex-1 truncate text-sm">{lesson.title}</p>
           {selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
-              {canEditLesson && (
+              {!calendarMode && canEditLesson && (
                 <PermissionGuard action="update" object="lesson">
                   <button
                     ref={buttonRef}

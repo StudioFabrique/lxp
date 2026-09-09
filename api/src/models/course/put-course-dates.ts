@@ -29,6 +29,7 @@ async function putCourseDates(
   const updatedCourse = await prisma.course.update({
     where: { id: courseId },
     data: {
+      calendarInitialized: true,
       dates: existingDates,
     } as Prisma.CourseUpdateInput,
     select: {

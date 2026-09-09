@@ -21,6 +21,7 @@ async function deleteCourseDates(courseId: number, datesId: number) {
   const updatedCourse = await prisma.course.update({
     where: { id: courseId },
     data: {
+      calendarInitialized: true,
       dates,
     } as Prisma.CourseUpdateInput,
   });

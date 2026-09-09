@@ -5,8 +5,10 @@ import { ArrowDownUp } from "lucide-react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Activity } from "../../../../../src/utils/interfaces/activity";
+import { cn } from "../../../../utils/cn";
 
 type ActivityItemProps = {
+  disabled?: boolean;
   activity: Activity;
   index: number;
   isSelected: boolean;
@@ -15,6 +17,7 @@ type ActivityItemProps = {
 };
 
 export default function ActivityItem({
+  disabled = false,
   activity,
   index,
   isSelected,
@@ -27,7 +30,7 @@ export default function ActivityItem({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !canEdit) return;
+    if (!el || !canEdit || disabled) return;
 
     return combine(
       draggable({
@@ -44,25 +47,30 @@ export default function ActivityItem({
         onDrop: () => setIsDraggedOver(false),
       }),
     );
-  }, [index, activity.id, canEdit]);
+  }, [index, activity.id, canEdit, disabled]);
 
   return (
     <button
       ref={ref}
       onClick={onSelect}
-      className={`btn btn-ghost justify-start text-start btn-sm w-full h-6 transition-all ${
-        isDragging ? "opacity-30" : "opacity-100"
-      } ${isDraggedOver ? "border-t-2 border-primary" : "border-t-2 border-transparent"}`}
+      className={cn(
+        "btn btn-ghost justify-start text-start btn-sm w-full h-6 transition-all opacity-100 border-t-2 border-transparent",
+        {
+          "opacity-30": isDragging,
+          "border-t-2 border-primary": isDraggedOver,
+          "hover:bg-transparent cursor-default": disabled,
+        },
+      )}
     >
-      <span className="cursor-pointer">
-        {activityIconType(activity.type, 4)}
-      </span>
+      {activityIconType(activity.type, 4)}
       <span
-        className={`truncate w-[90%] cursor-pointer first-letter:uppercase ${isSelected && "underline"}`}
+        className={`truncate w-[90%] first-letter:uppercase ${isSelected && "underline"}`}
       >
         {activity.title}
       </span>
-      {canEdit && <ArrowDownUp className="w-4 hover:text-primary ml-auto" />}
+      {canEdit && !disabled && (
+        <ArrowDownUp className="w-4 hover:text-primary ml-auto" />
+      )}
     </button>
   );
 }

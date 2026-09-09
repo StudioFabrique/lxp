@@ -2,23 +2,55 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type Course from "../../../../utils/interfaces/course";
 import type Lesson from "../../../../utils/interfaces/lesson";
-import LessonItem from "./lesson-item";
+import { OnboardingContext } from "../../../onboarding/OnboardingContext";
+import SidebarCoursesList from "./sidebar-courses-list";
 
-vi.mock("./edit-lesson-modal", () => ({ default: () => null }));
+vi.mock("./course-item", () => ({
+  default: ({
+    course,
+    isOpen,
+    onToggle,
+  }: {
+    course: { id: number };
+    isOpen: boolean;
+    onToggle: () => void;
+  }) => (
+    <button
+      type="button"
+      data-testid={`course-${course.id}`}
+      data-open={isOpen}
+      onClick={onToggle}
+    />
+  ),
+}));
+
+vi.mock("../../../../components/guards/PermissionGuard", () => ({
+  default: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+vi.mock("../../../../../src/components/wrappers/FadeWrapper", () => ({
+  default: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 const roots: Root[] = [];
-const lesson = { id: 12, title: "Leçon ciblée" } as Lesson;
-const originalScrollIntoView = Object.getOwnPropertyDescriptor(
-  Element.prototype,
-  "scrollIntoView",
-);
 
-const renderLesson = (
+const lesson = { id: 11, title: "Première leçon" } as Lesson;
+const course = {
+  id: 1,
+  title: "Premier cours",
+  lessons: [lesson],
+} as Course;
+
+const renderCourses = (
   container: HTMLDivElement,
-  isCourseOpen: boolean,
-  shouldScrollIntoView: boolean,
-  onScrolledIntoView = vi.fn(),
+  step: string,
+  disableCourseCreationFloating = false,
+  calendarMode = false,
+  orphanIds: number[] = [],
+  onAddCalendarCourse = vi.fn(),
+  calendarAdding = calendarMode,
 ) => {
   let root = roots[0];
   if (!root) {
@@ -28,70 +60,175 @@ const renderLesson = (
 
   act(() => {
     root.render(
-      <LessonItem
-        lesson={lesson}
-        courseTags={[]}
-        selectedLesson={lesson}
-        isCourseOpen={isCourseOpen}
-        shouldScrollIntoView={shouldScrollIntoView}
-        onScrolledIntoView={onScrolledIntoView}
-        onSelectLesson={vi.fn()}
-        onOpenModal={vi.fn()}
-        onUpdateLesson={vi.fn().mockResolvedValue(true)}
-      />,
+      <OnboardingContext
+        value={{
+          status: "in_progress",
+          step,
+          isSaving: false,
+          canStart: true,
+          start: vi.fn().mockResolvedValue(undefined),
+          skip: vi.fn().mockResolvedValue(undefined),
+        }}
+      >
+        <SidebarCoursesList
+          calendarMode={calendarMode}
+          calendarAdding={calendarAdding}
+          calendarSelectedCourseId={calendarMode ? 1 : undefined}
+          calendarOrphanIds={orphanIds}
+          onAddCalendarCourse={onAddCalendarCourse}
+          courses={[course]}
+          moduleProgress={0}
+          selectedLesson={lesson}
+          onSelectLesson={vi.fn()}
+          onDeleteCourse={vi.fn().mockResolvedValue(undefined)}
+          onEnableCourse={vi.fn().mockResolvedValue(undefined)}
+          onPublishCourse={vi.fn().mockResolvedValue(undefined)}
+          onUpdateCourse={vi.fn().mockResolvedValue(true)}
+          onDeleteLesson={vi.fn().mockResolvedValue(undefined)}
+          onCreateLesson={vi.fn().mockResolvedValue(11)}
+          onUpdateLesson={vi.fn().mockResolvedValue(true)}
+          disableCourseCreationFloating={disableCourseCreationFloating}
+        >
+          <span>Créer un cours</span>
+          <span>Créer une activité</span>
+        </SidebarCoursesList>
+      </OnboardingContext>,
     );
   });
 };
 
+const getCourseButton = (container: HTMLDivElement) => {
+  const button = container.querySelector<HTMLButtonElement>(
+    '[data-testid="course-1"]',
+  );
+  if (!button) throw new Error("Le cours de test n'a pas été rendu.");
+  return button;
+};
+
 beforeEach(() => {
-  Object.defineProperty(Element.prototype, "scrollIntoView", {
-    configurable: true,
-    value: vi.fn(),
-  });
-  vi.stubGlobal("matchMedia", () => ({ matches: true }));
-  vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
-    callback(0);
-    return 1;
-  });
-  vi.stubGlobal("cancelAnimationFrame", vi.fn());
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
 });
 
 afterEach(() => {
   roots.splice(0).forEach((root) => act(() => root.unmount()));
-  if (originalScrollIntoView) {
-    Object.defineProperty(
-      Element.prototype,
-      "scrollIntoView",
-      originalScrollIntoView,
-    );
-  } else {
-    Reflect.deleteProperty(Element.prototype, "scrollIntoView");
-  }
   vi.unstubAllGlobals();
 });
 
-describe("LessonItem", () => {
-  it("attend l'ouverture du cours avant de défiler vers la leçon externe", () => {
+describe("SidebarCoursesList pendant le tutoriel", () => {
+  it("empêche de replier le cours à l'étape de création d'activité", () => {
     const container = document.createElement("div");
-    const onScrolledIntoView = vi.fn();
+    renderCourses(container, "admin-activity-create:42");
 
-    renderLesson(container, false, true, onScrolledIntoView);
-    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+    const button = getCourseButton(container);
+    expect(button.dataset.open).toBe("true");
 
-    renderLesson(container, true, true, onScrolledIntoView);
+    act(() => button.click());
 
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
-      behavior: "smooth",
-      block: "nearest",
-    });
-    expect(onScrolledIntoView).toHaveBeenCalledWith(12);
+    expect(button.dataset.open).toBe("true");
   });
 
-  it("ne défile pas lors d'une sélection interne", () => {
+  it("rouvre le cours si cette étape commence après sa fermeture", () => {
     const container = document.createElement("div");
+    renderCourses(container, "admin-activity-type:42");
 
-    renderLesson(container, true, false);
+    act(() => getCourseButton(container).click());
+    expect(getCourseButton(container).dataset.open).toBe("false");
 
-    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+    renderCourses(container, "admin-activity-create:42");
+
+    expect(getCourseButton(container).dataset.open).toBe("true");
   });
+});
+
+describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
+  it("ne fait pas flotter le bouton de création de cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "admin-activity-create:42", true);
+
+    const createCourseButton = Array.from(
+      container.querySelectorAll("span"),
+    ).find((element) => element.textContent === "Créer un cours");
+    const actionsContainer = createCourseButton?.parentElement;
+
+    expect(actionsContainer).toBeTruthy();
+    expect(actionsContainer?.classList.contains("sticky")).toBe(false);
+    expect(actionsContainer?.classList.contains("backdrop-blur")).toBe(false);
+  });
+});
+
+
+describe("sidebar en mode calendrier", () => {
+  it("bloque le dépliage pendant l'ajout et indique où sélectionner un cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "", false, true);
+    const button = getCourseButton(container);
+    expect(button.closest("[inert]")).toBeTruthy();
+    expect(container.querySelector('[role="status"]')?.textContent).toContain("Cliquez sur un cours disponible ci-dessous");
+    act(() => button.click());
+    expect(button.dataset.open).toBe("true");
+    expect(button.closest(".ring-primary")).toBeTruthy();
+    expect(container.querySelector('[aria-label="Ajouter Premier cours au calendrier"]')).toBeNull();
+    expect(button.closest(".opacity-30")).toBeTruthy();
+  });
+  it("permet seulement de sélectionner les cours orphelins pendant l'ajout", () => {
+    const container = document.createElement("div");
+    const onAdd = vi.fn();
+    renderCourses(container, "", false, true, [1], onAdd);
+    const add = container.querySelector<HTMLButtonElement>('[aria-label="Ajouter Premier cours au calendrier"]');
+    expect(add).toBeTruthy();
+    expect(add?.closest("[inert]")).toBeNull();
+    act(() => add?.click());
+    expect(onAdd).toHaveBeenCalledWith(1);
+  });
+});
+
+
+it("permet le dépliage en mode calendrier hors ajout, même pendant le tutoriel", () => {
+  const container = document.createElement("div");
+  renderCourses(container, "admin-activity-create:42", false, true, [], vi.fn(), false);
+  const button = getCourseButton(container);
+  expect(button.closest("[inert]")).toBeNull();
+  expect(container.querySelector('[role="status"]')).toBeNull();
+  act(() => button.click());
+  expect(button.dataset.open).toBe("false");
+  act(() => button.click());
+  expect(button.dataset.open).toBe("true");
+});
+
+
+it("déplie et replie une leçon sans naviguer ni montrer les actions en mode calendrier", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const onSelect = vi.fn();
+  act(() => root.render(
+    <LessonItem
+      calendarMode
+      lesson={lesson}
+      courseTags={[]}
+      selectedLesson={undefined}
+      canEditLesson
+      onSelectLesson={onSelect}
+      onOpenModal={vi.fn()}
+      onUpdateLesson={vi.fn().mockResolvedValue(true)}
+    >
+      <span>Activités de la leçon</span>
+    </LessonItem>,
+  ));
+  const header = container.querySelector<HTMLElement>('[role="button"]')!;
+  expect(header.getAttribute("aria-expanded")).toBe("false");
+  act(() => header.click());
+  expect(header.getAttribute("aria-expanded")).toBe("true");
+  expect(container.textContent).toContain("Activités de la leçon");
+  expect(container.querySelector("button")).toBeNull();
+  act(() => header.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+  expect(header.getAttribute("aria-expanded")).toBe("false");
+  expect(container.textContent).not.toContain("Activités de la leçon");
+  expect(onSelect).not.toHaveBeenCalled();
 });
