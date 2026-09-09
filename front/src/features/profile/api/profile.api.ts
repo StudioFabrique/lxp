@@ -1,4 +1,5 @@
 import apiClient from "../../../lib/axios";
+import type Skill from "../../../utils/interfaces/skill";
 
 export type CompanyLogoResponse = { message: string };
 
@@ -10,6 +11,10 @@ const queries = {
   getAccomplishments: async () => {
     const res = await apiClient.get("/user/my-accomplishment");
     return res.data;
+  },
+  getSkills: async (): Promise<Skill[]> => {
+    const res = await apiClient.get<{ data: Skill[] }>("/user/profile/skills");
+    return res.data.data;
   },
 };
 

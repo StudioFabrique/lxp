@@ -44,6 +44,21 @@ describe("format d'archive des parcours", () => {
     });
   });
 
+  it("accepte les tags de la formation tout en gardant les anciennes archives compatibles", () => {
+    const manifest = validManifest();
+    manifest.formation.tags = [
+      { name: "Numérique", color: "#2563eb" },
+      { name: "Projet", color: "#16a34a" },
+    ];
+
+    expect(parseParcoursArchiveManifest(manifest).formation.tags).toEqual(
+      manifest.formation.tags,
+    );
+    expect(
+      parseParcoursArchiveManifest(validManifest()).formation.tags,
+    ).toBeUndefined();
+  });
+
   it("refuse une autre version du format", () => {
     expect(() =>
       parseParcoursArchiveManifest({ ...validManifest(), version: 2 }),

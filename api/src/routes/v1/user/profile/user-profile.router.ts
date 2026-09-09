@@ -7,6 +7,7 @@ import { createFileUploadMiddleware } from "../../../../middleware/fileUpload.ts
 import { avatarImageMaxSize } from "../../../../config/images-sizes.ts";
 import jsonParser from "../../../../middleware/json-parser.ts";
 import checkPermissions from "../../../../middleware/check-permissions.ts";
+import httpGetUserProfileSkills from "../../../../controllers/user/profile/http-get-user-profile-skills.ts";
 
 const userProfileRouter = Router();
 
@@ -17,6 +18,12 @@ userProfileRouter.get(
   "/information",
   checkPermissions("cursus", "read"),
   httpGetUserProfileInformation,
+);
+
+userProfileRouter.get(
+  "/skills",
+  checkPermissions("bonusSkill", "read"),
+  httpGetUserProfileSkills,
 );
 
 userProfileRouter.put(

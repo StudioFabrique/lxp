@@ -1,5 +1,6 @@
 export type ParcoursImportOptions = {
   formationId?: number;
+  createFormation: boolean;
   publishCourses: boolean;
 };
 
@@ -36,9 +37,19 @@ export function parseParcoursImportOptions(
     fields.publishCourses,
     "L'option de publication des cours n'est pas valide.",
   );
+  const createFormation = optionalBoolean(
+    fields.createFormation,
+    "L'option de création de la formation n'est pas valide.",
+  );
+  if (formationId !== undefined && createFormation) {
+    throw badRequest(
+      "Sélectionnez une formation existante ou créez-en une nouvelle, pas les deux.",
+    );
+  }
 
   return {
     formationId,
+    createFormation,
     publishCourses,
   };
 }

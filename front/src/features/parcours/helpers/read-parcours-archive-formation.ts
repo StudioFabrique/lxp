@@ -23,6 +23,13 @@ export function findDetectedFormationId(
   )?.id;
 }
 
+export function selectImportFormationId(
+  requestedFormationId: number | undefined,
+  detectedFormationId: number | undefined,
+) {
+  return requestedFormationId ?? detectedFormationId;
+}
+
 export async function readParcoursArchiveFormationTitle(archive: File) {
   let zip: JSZip;
   try {

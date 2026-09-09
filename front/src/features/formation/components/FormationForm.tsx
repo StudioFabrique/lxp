@@ -23,6 +23,7 @@ type Props = {
   onSubmit: () => void;
   onCancel: () => void;
   onDelete?: () => void;
+  alternativeCreation?: React.ReactNode;
 };
 
 const LEVELS = Array.from({ length: 8 }, (_, i) => `${i + 1}`);
@@ -36,7 +37,7 @@ const FormationForm = ({
   currentTags,
   onTagSubmit, onRemoveTag,
   isEditing, isPending, isDeleting = false, deleteDisabled = false,
-  onSubmit, onCancel, onDelete,
+  onSubmit, onCancel, onDelete, alternativeCreation,
 }: Props) => (
   <div className="flex flex-col gap-y-4">
     <div
@@ -119,6 +120,8 @@ const FormationForm = ({
         <TagsList tagsList={currentTags} onRemove={onRemoveTag} />
       </div>
     </div>
+
+    {!isEditing ? alternativeCreation : null}
 
     <div className="w-full flex flex-wrap justify-between gap-4">
       <div>

@@ -42,6 +42,7 @@ describe("parcoursApi.mutations.importParcours", () => {
     await parcoursApi.mutations.importParcours({
       archive,
       formationId: 3,
+      createFormation: false,
       publishCourses: true,
     });
 
@@ -51,6 +52,7 @@ describe("parcoursApi.mutations.importParcours", () => {
     const formData = body as FormData;
     expect(formData.get("archive")).toBe(archive);
     expect(formData.get("formationId")).toBe("3");
+    expect(formData.get("createFormation")).toBe("false");
     expect(formData.get("teacherContactId")).toBeNull();
     expect(formData.get("teacherModuleIndexes")).toBeNull();
     expect(formData.get("publishCourses")).toBe("true");
@@ -65,6 +67,22 @@ describe("parcoursApi.mutations.importParcours", () => {
 
     const [, body] = vi.mocked(apiClient.post).mock.calls[0];
     expect((body as FormData).get("publishCourses")).toBe("false");
+    expect((body as FormData).get("createFormation")).toBe("false");
+  });
+
+  it("demande la création automatique de la formation", async () => {
+    const archive = new File(["archive"], "parcours.zip", {
+      type: "application/zip",
+    });
+
+    await parcoursApi.mutations.importParcours({
+      archive,
+      createFormation: true,
+    });
+
+    const [, body] = vi.mocked(apiClient.post).mock.calls[0];
+    expect((body as FormData).get("formationId")).toBeNull();
+    expect((body as FormData).get("createFormation")).toBe("true");
   });
 
   it("affecte des ressources pédagogiques aux modules sélectionnés", async () => {

@@ -66,6 +66,7 @@ type ParcoursArchiveManifest = {
     description: string | null;
     code: string | null;
     level: string;
+    tags?: ArchiveTag[];
   };
   parcours: {
     title: string;
@@ -195,6 +196,7 @@ const manifestSchema: z.ZodType<ParcoursArchiveManifest> = z.object({
     description: safeString.nullable(),
     code: z.string().max(255).nullable(),
     level: z.string().max(255),
+    tags: z.array(tagSchema).max(10_000).optional(),
   }),
   parcours: z.object({
     title: z.string().min(1).max(500),
@@ -331,7 +333,9 @@ export async function exportParcoursArchive(parcoursId: number) {
   const source = await prisma.parcours.findUnique({
     where: { id: parcoursId },
     include: {
-      formation: true,
+      formation: {
+        include: { tags: { include: { tag: true } } },
+      },
       objectives: true,
       tags: { include: { tag: true } },
       skills: { include: { skill: true } },
@@ -558,6 +562,10 @@ export async function exportParcoursArchive(parcoursId: number) {
       description: source.formation.description,
       code: source.formation.code,
       level: source.formation.level,
+      tags: source.formation.tags.map(({ tag }) => ({
+        name: tag.name,
+        color: tag.color,
+      })),
     },
     parcours: {
       title: source.title,
@@ -672,10 +680,11 @@ export async function importParcoursArchive(
   archive: Buffer,
   userId: string,
   options: ParcoursImportOptions = {
+    createFormation: false,
     publishCourses: false,
   },
 ) {
-  const { formationId, publishCourses } = options;
+  const { formationId, createFormation, publishCourses } = options;
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(archive, { checkCRC32: true });
@@ -824,17 +833,56 @@ export async function importParcoursArchive(
         if (formationId !== undefined && !selectedFormation) {
           throw httpError(404, "La formation sélectionnée n'existe pas.");
         }
-        const existingFormation = selectedFormation
+        const existingFormation = selectedFormation || createFormation
           ? null
           : await tx.formation.findUnique({
               where: { title: manifest.formation.title },
             });
-        const formation =
-          selectedFormation ??
-          existingFormation ??
-          (await tx.formation.create({
-            data: { ...manifest.formation, adminId: admin.id },
-          }));
+        const { tags: formationTags = [], ...formationData } =
+          manifest.formation;
+        const createImportedFormation = async (title: string) =>
+          tx.formation.create({
+            data: {
+              ...formationData,
+              title,
+              adminId: admin.id,
+              tags: {
+                create: formationTags.map((tag) => ({
+                  tag: {
+                    connectOrCreate: {
+                      where: { name: tag.name },
+                      create: tag,
+                    },
+                  },
+                })),
+              },
+            },
+          });
+        let formation: Awaited<ReturnType<typeof createImportedFormation>>;
+        if (createFormation) {
+          const formationTitles = await tx.formation.findMany({
+            select: { title: true },
+          });
+          const normalizedTitles = new Set(
+            formationTitles.map(({ title }) =>
+              title.trim().toLocaleLowerCase(),
+            ),
+          );
+          const title = normalizedTitles.has(
+            manifest.formation.title.trim().toLocaleLowerCase(),
+          )
+            ? getDuplicateIdentity(
+                { title: manifest.formation.title, duplicationIndex: 0 },
+                formationTitles.map(({ title }) => title),
+              ).title
+            : manifest.formation.title;
+          formation = await createImportedFormation(title);
+        } else {
+          formation =
+            selectedFormation ??
+            existingFormation ??
+            (await createImportedFormation(manifest.formation.title));
+        }
         const existingTitles = await tx.parcours.findMany({
           select: { title: true },
         });

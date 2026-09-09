@@ -3,7 +3,7 @@ import { MonitorPlay } from "lucide-react";
 /** Indicateur persistant du mode démonstration, intégré à la navigation. */
 const DemoModeIndicator = () => (
   <div
-    className="max-xl:tooltip max-xl:tooltip-right w-fit mx-2 mb-3"
+    className="max-xl:tooltip max-xl:tooltip-right w-fit mb-3"
     data-tip="Mode démonstration"
   >
     <div

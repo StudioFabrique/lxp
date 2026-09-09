@@ -1,11 +1,12 @@
 import SidebarItem from "./SidebarItem";
 import PermissionGuard from "../guards/PermissionGuard";
 import { sidebarItems } from "../../config/sidebarItems";
+import { sidebarListClassName } from "./sidebar-styles";
 
 type SharedSideBarProps = { currentRoute: string[] };
 
 const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => (
-  <ul className="flex flex-col px-2 gap-1">
+  <ul className={sidebarListClassName}>
     {sidebarItems.student.map((item) => {
       const Icon = item.icon;
 

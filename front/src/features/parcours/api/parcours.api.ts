@@ -127,10 +127,12 @@ const mutations = {
   importParcours: async ({
     archive,
     formationId,
+    createFormation,
     publishCourses,
   }: {
     archive: File;
     formationId?: number;
+    createFormation?: boolean;
     publishCourses?: boolean;
   }) => {
     const formData = new FormData();
@@ -138,6 +140,7 @@ const mutations = {
     if (formationId !== undefined) {
       formData.append("formationId", formationId.toString());
     }
+    formData.append("createFormation", String(createFormation ?? false));
     formData.append("publishCourses", String(publishCourses ?? false));
     const res = await apiClient.post<{
       success: true;
