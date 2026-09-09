@@ -232,3 +232,34 @@ it("déplie et replie une leçon sans naviguer ni montrer les actions en mode ca
   expect(container.textContent).not.toContain("Activités de la leçon");
   expect(onSelect).not.toHaveBeenCalled();
 });
+
+it("déplie et replie une leçon sans naviguer ni montrer les actions en mode calendrier", () => {
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  roots.push(root);
+  const onSelect = vi.fn();
+  act(() => root.render(
+    <LessonItem
+      calendarMode
+      lesson={lesson}
+      courseTags={[]}
+      selectedLesson={undefined}
+      canEditLesson
+      onSelectLesson={onSelect}
+      onOpenModal={vi.fn()}
+      onUpdateLesson={vi.fn().mockResolvedValue(true)}
+    >
+      <span>Activités de la leçon</span>
+    </LessonItem>,
+  ));
+  const header = container.querySelector<HTMLElement>('[role="button"]')!;
+  expect(header.getAttribute("aria-expanded")).toBe("false");
+  act(() => header.click());
+  expect(header.getAttribute("aria-expanded")).toBe("true");
+  expect(container.textContent).toContain("Activités de la leçon");
+  expect(container.querySelector("button")).toBeNull();
+  act(() => header.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+  expect(header.getAttribute("aria-expanded")).toBe("false");
+  expect(container.textContent).not.toContain("Activités de la leçon");
+  expect(onSelect).not.toHaveBeenCalled();
+});

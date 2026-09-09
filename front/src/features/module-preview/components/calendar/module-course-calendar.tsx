@@ -44,9 +44,12 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
   const { theme } = useContext(ThemeContext);
   const { selection, setSelection, currentDate, setCurrentDate } = store;
   const container = useRef<HTMLDivElement>(null);
-  const anchorRect = useRef<DOMRect>(new DOMRect());
+  const anchorElement = useRef<HTMLElement | null>(null);
   const [anchorReady, setAnchorReady] = useState<string | null>(null);
-  const virtualAnchor = useRef({ getBoundingClientRect: () => anchorRect.current });
+  const virtualAnchor = useRef({
+    getBoundingClientRect: () => anchorElement.current?.getBoundingClientRect() ?? new DOMRect(),
+    get contextElement() { return anchorElement.current ?? undefined; },
+  });
   const selectedCourse = module.courses.find(course => course.id === selection?.courseId);
   const selectedDates = selection ? store.datesByCourse.get(selection.courseId) : undefined;
   const firstDate = store.events[0]?.startDate;
@@ -60,11 +63,24 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
 
   useLayoutEffect(() => {
     if (!selection) return;
-    const element = container.current?.querySelector<HTMLElement>(`[data-calendar-event="${selection.eventId}"]`);
-    const rect = selection.rect ?? element?.getBoundingClientRect();
-    if (!rect) return;
-    if (!selection.rect) element?.scrollIntoView({ block: "nearest" });
-    anchorRect.current = selection.rect ?? element?.getBoundingClientRect() ?? rect;
+    const elements = Array.from(container.current?.querySelectorAll<HTMLElement>(
+      `[data-calendar-event="${selection.eventId}"]`,
+    ) ?? []);
+    // Une plage peut occuper plusieurs semaines : ancrer le segment cliqué.
+    const clickedRect = selection.rect;
+    const element = clickedRect
+      ? elements.reduce<HTMLElement | undefined>((closest, candidate) => {
+          if (!closest) return candidate;
+          const distance = (item: HTMLElement) => {
+            const rect = item.getBoundingClientRect();
+            return Math.abs(rect.top - clickedRect.top) + Math.abs(rect.left - clickedRect.left);
+          };
+          return distance(candidate) < distance(closest) ? candidate : closest;
+        }, undefined)
+      : elements[0];
+    if (!element) return;
+    if (!clickedRect) element.scrollIntoView({ block: "nearest" });
+    anchorElement.current = element;
     setAnchorReady(selection.eventId);
   }, [selection, store.events]);
 
@@ -121,11 +137,14 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
       <Popover.Anchor virtualRef={virtualAnchor} />
       <Popover.Portal>
         <Popover.Content
-          side="bottom"
+          side="top"
+          updatePositionStrategy="always"
+          hideWhenDetached
+          avoidCollisions={false}
           align="start"
           sideOffset={8}
           collisionPadding={16}
-          className="z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
+          className="z-50 data-[detached]:invisible w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
           aria-label={`Dates du cours ${selectedCourse?.title}`}
           onCloseAutoFocus={e => e.preventDefault()}
         >
