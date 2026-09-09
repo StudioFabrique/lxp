@@ -20,6 +20,7 @@ const ViewSelector = ({
       {allowedViews.map((v) => (
         <button
           key={v}
+          aria-pressed={view === v}
           onClick={() => setView(v)}
           className={`px-3 py-1 btn btn-xs btn-ghost text-xs font-semibold rounded-md transition-all capitalize ${
             view === v
@@ -27,7 +28,7 @@ const ViewSelector = ({
               : `${theme(darkMode).subText} hover:opacity-80`
           }`}
         >
-          {v === "day" ? "Jour" : v === "week" ? "Semaine" : "Mois"}
+          {v === "day" ? "Jour" : v === "week" ? "Semaine" : v === "year-timeline" ? "Timeline" : "Mois"}
         </button>
       ))}
     </div>

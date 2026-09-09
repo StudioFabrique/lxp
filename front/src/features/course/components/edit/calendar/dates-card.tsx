@@ -25,6 +25,7 @@ const DatesCard = (props: DatesCardProps) => {
             <p>{localeDate(datesItem.maxDate)}</p>
           </span>
         </BoxWrapper>
+        <p>{datesItem.startTime && datesItem.endTime ? `${datesItem.startTime} – ${datesItem.endTime}, chaque jour` : "Sans horaire"}</p>
       </BoxWrapper>
       <BoxWrapper>
         <button

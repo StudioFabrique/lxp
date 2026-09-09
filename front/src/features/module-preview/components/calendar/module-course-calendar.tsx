@@ -8,14 +8,17 @@ import type CourseDates from "../../../course/interfaces/course-dates";
 import { dateInputValue, localCalendarDate, type ModuleCalendarStore } from "../../hooks/use-module-calendar";
 import DatePicker from "../../../../components/UI/date-picker/date-picker";
 
-function DatesEditor({ dates, isSaving, onSave, onDelete }: {
+import CourseTimeFields from "../../../course/components/edit/calendar/course-time-fields";
+import { validCourseTimes } from "../../../course/helpers/course-times";
+
+export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
   dates: CourseDates[];
   isSaving: boolean;
   onSave: (dates: CourseDates[]) => Promise<boolean>;
   onDelete: () => void;
 }) {
   const [draft, setDraft] = useState(() => dates.map(date => ({ ...date })));
-  const valid = draft.every(date => date.minDate && date.maxDate && dateInputValue(date.minDate) <= dateInputValue(date.maxDate));
+  const valid = draft.every(date => date.minDate && date.maxDate && dateInputValue(date.minDate) <= dateInputValue(date.maxDate) && validCourseTimes(date.startTime, date.endTime));
   return <form
     className="flex flex-col gap-4"
     onSubmit={async e => { e.preventDefault(); if (valid) await onSave(draft); }}
@@ -27,9 +30,11 @@ function DatesEditor({ dates, isSaving, onSave, onDelete }: {
           onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, minDate: `${value}T00:00:00.000Z` } : item))} />
         <DatePicker label="Date de fin" value={dateInputValue(date.maxDate)} min={dateInputValue(date.minDate)} clearable={false}
           onChange={value => setDraft(previous => previous.map((item, i) => i === index ? { ...item, maxDate: `${value}T00:00:00.000Z` } : item))} />
+        <CourseTimeFields startTime={date.startTime} endTime={date.endTime}
+          onChange={times => setDraft(previous => previous.map((item, i) => i === index ? { ...item, ...times } : item))} />
       </fieldset>)}
     </div>
-    {!valid && <p role="alert" className="text-sm text-error">La fin doit être postérieure ou égale au début.</p>}
+    {!valid && <p role="alert" className="text-sm text-error">Vérifiez les dates et les horaires de chaque plage.</p>}
     <button type="submit" className="btn btn-primary" disabled={isSaving || !valid}>{isSaving ? "Enregistrement…" : "Enregistrer"}</button>
     <button
       type="button"

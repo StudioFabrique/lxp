@@ -10,6 +10,7 @@ import { getMonthDays, isSameDate } from "../calendar-utils";
 
 type Props = {
   events: CalendarEvent[];
+  onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
   darkMode: boolean;
   onClickEventDetails?: (id: number | string, rect: DOMRect) => void;
@@ -17,6 +18,7 @@ type Props = {
 
 const MonthView = ({
   events,
+  onShowMore,
   currentDate,
   darkMode,
   onClickEventDetails,
@@ -93,12 +95,13 @@ const MonthView = ({
               </div>
 
               <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] no-scrollbar">
-                {dayEvents.map((event) => {
+                {dayEvents.slice(0, 2).map((event) => {
                   const styleClass = darkMode
                     ? eventConfig[event.type].dark
                     : eventConfig[event.type].light;
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={`${event.id}-${idx}`}
                       onClick={(e) =>
                         onClickEventDetails?.(
@@ -106,16 +109,17 @@ const MonthView = ({
                           e.currentTarget.getBoundingClientRect(),
                         )
                       }
-                      className={`text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
+                      className={`text-left text-[10px] px-1.5 py-0.5 rounded border-l-2 truncate font-medium cursor-pointer ${styleClass}`}
                       title={event.title}
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
-                        {event.start}
+                        {event.allDay ? "Sans horaire" : event.start}
                       </span>
                       {event.title}
-                    </div>
+                    </button>
                   );
                 })}
+                {dayEvents.length > 2 && <button type="button" className="text-left text-xs text-primary hover:underline" onClick={() => onShowMore(dayEvents.slice(2))}>Afficher plus ({dayEvents.length - 2})</button>}
               </div>
             </div>
           );

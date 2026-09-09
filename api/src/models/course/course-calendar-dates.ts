@@ -26,6 +26,14 @@ export function defaultCourseDates(
   };
 }
 
+/** Les heures sont facultatives, mais forment une plage quotidienne complète. */
+export function isValidCourseTimes(startTime: unknown, endTime: unknown): boolean {
+  if (startTime == null && endTime == null) return true;
+  const time = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+  return typeof startTime === "string" && typeof endTime === "string" &&
+    time.test(startTime) && time.test(endTime) && startTime < endTime;
+}
+
 export function isValidCalendarDates(value: unknown): boolean {
   if (!Array.isArray(value) || value.length > 1000) return false;
   const ids = new Set<number>();
@@ -34,7 +42,7 @@ export function isValidCalendarDates(value: unknown): boolean {
     const { id, minDate, maxDate, synchroneDuration, asynchroneDuration } = date;
     if (!Number.isSafeInteger(id) || id < 0 || ids.has(id)) return false;
     ids.add(id);
-    return typeof minDate === "string" && typeof maxDate === "string" &&
+    return isValidCourseTimes(date.startTime, date.endTime) && typeof minDate === "string" && typeof maxDate === "string" &&
       /^\d{4}-\d{2}-\d{2}T/.test(minDate) && /^\d{4}-\d{2}-\d{2}T/.test(maxDate) &&
       Number.isFinite(Date.parse(minDate)) && Number.isFinite(Date.parse(maxDate)) &&
       Date.parse(minDate) <= Date.parse(maxDate) &&

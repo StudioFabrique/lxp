@@ -1,148 +1,311 @@
-import { useContext, useState } from "react";
-import Calendar from "../components/calendar";
+import { useContext, useMemo, useRef, useState } from "react";
+import * as Popover from "@radix-ui/react-popover";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useLocation } from "react-router";
+import { ArrowRight, X } from "lucide-react";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import CalendarHeader from "../components/calendar-header";
+import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
+import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
-import {
+import apiClient from "../../../lib/axios";
+import Calendar from "../components/calendar";
+import type {
   CalendarEvent,
-  // CalendarEvent,
   CalendarView,
 } from "../components/calendar-configuration";
-import TitleWithSelector from "../components/title-with-selector";
 import ViewSelector from "../components/view-selector";
 import TimeSelector from "../components/time-selector";
-import EventDetailsModal from "../components/event-details-modal";
-import { Link } from "react-router";
+import {
+  calendarCourseEvents,
+  localDate,
+  minutes,
+  type ReadCalendar,
+} from "../components/read-calendar-utils";
+import { formatDate } from "../components/calendar-utils";
 
-const calendarTestEvents: CalendarEvent[] = [
-  {
-    id: 1,
-    title: "HTML & Sémantique Web",
-    subtitle: "Cours",
-    date: new Date(2025, 11, 4),
-    start: "08:30",
-    end: "12:00",
-    type: "primary",
-  },
-  {
-    id: 2,
-    title: "CSS et Design Web Responsive",
-    subtitle: "Cours",
-    date: new Date(2025, 11, 4),
-    start: "13:30",
-    end: "16:30",
-    type: "secondary",
-  },
-  {
-    id: 3,
-    title: "Versionnement avec Git & GitHub",
-    subtitle: "Cours",
-    date: new Date(2025, 11, 5),
-    start: "08:30",
-    end: "12:00",
-    type: "neutral",
-  },
-  {
-    id: 4,
-    title: "JavaScript Moderne (ES6+)",
-    subtitle: "Cours",
-    date: new Date(2025, 11, 5),
-    start: "13:0",
-    end: "14:30",
-    type: "danger",
-  },
-  {
-    id: 5,
-    title: "UI/UX : Conception d'Interfaces Utilisateur",
-    subtitle: "Cours",
-    date: new Date(2025, 11, 5),
-    start: "14:30",
-    end: "17:00",
-    type: "accent",
-  },
-];
+type ParcoursOption = { id: number; title: string };
 
-const CalendarHome = () => {
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === "dark";
-
-  const [view, setView] = useState<CalendarView>("week");
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const [showModal, setShowModal] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState<CalendarEvent>();
-
-  const handleShowCourseDetails = (id: number | string) => {
-    setShowModal(true);
-    setSelectedCourse(calendarTestEvents.find((item) => item.id === id));
-  };
-
+export default function CalendarHome() {
   return (
     <PageWrapper>
       <Header
         title="Calendrier"
-        description="Consulter le calendrier des prochains cours"
+        description="Consultez les cours et les modules d’un parcours."
       />
-      <Calendar
-        currentDate={currentDate}
-        currentWeekDayVisible={false}
-        events={calendarTestEvents}
-        onClickEventDetails={handleShowCourseDetails}
-        startHour={8}
-        endHour={18}
-        header={
-          <CalendarHeader
-            darkMode={darkMode}
-            children={[
-              <TitleWithSelector
-                key="title-with-selector"
-                currentTitle="Mon emploi du temps"
-                onSelectTitle={() => {}}
-                currentDate={currentDate}
-                view={view}
-                darkMode={darkMode}
-              />,
-              <div key="view-selector" className="flex gap-2">
-                <TimeSelector
-                  view={view}
-                  date={currentDate}
-                  setDate={setCurrentDate}
-                />
-                <ViewSelector
-                  view={view}
-                  setView={setView}
-                  darkMode={darkMode}
-                />
-              </div>,
-            ]}
-          />
-        }
-        view={view}
-        darkMode={darkMode}
-      />
-      <EventDetailsModal
-        modalId="event-details-modal"
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        item={
-          selectedCourse && {
-            id: selectedCourse.id,
-            title: selectedCourse.title,
-            description: selectedCourse.subtitle,
-            img: "https://img.freepik.com/vecteurs-premium/www-concept-illustration_114360-2143.jpg",
-          }
-        }
-      >
-        <Link
-          to={`/student/parcours/module/1`}
-          className="btn btn-primary text-white"
-        >
-          Naviguer vers le cours
-        </Link>
-      </EventDetailsModal>
+      <ReadCalendarBrowser />
     </PageWrapper>
   );
+}
+
+type ReadCalendarBrowserProps = {
+  allowedViews?: CalendarView[];
+  defaultView?: CalendarView;
 };
 
-export default CalendarHome;
+export function ReadCalendarBrowser({
+  allowedViews = ["day", "week", "month", "year-timeline"],
+  defaultView = "week",
+}: ReadCalendarBrowserProps = {}) {
+  const { user } = useContext(AuthContext);
+  const scopeKey = `${user?._id ?? "anonymous"}:${user?.roles.map(role => role.rank).sort().join(",") ?? ""}`;
+  const [view, setView] = useState<CalendarView>(defaultView);
+  const [date, setDate] = useState(new Date());
+  const [parcoursId, setParcoursId] = useState<number | null>(null);
+  const parcoursQuery = useQuery({
+    queryKey: ["read-calendar", scopeKey, "parcours"],
+    queryFn: async () =>
+      (await apiClient.get<ParcoursOption[]>("/course/calendar/parcours")).data,
+  });
+  const parcours = parcoursQuery.data ?? [];
+  const selected =
+    parcours.find((item) => item.id === parcoursId) ?? parcours[0];
+  return (
+    <>
+      {parcoursQuery.isPending ? (
+        <p role="status">Chargement des parcours…</p>
+      ) : parcoursQuery.isError ? (
+        <p role="alert">
+          Impossible de charger les parcours.{" "}
+          <button
+            className="btn btn-sm"
+            onClick={() => void parcoursQuery.refetch()}
+          >
+            Réessayer
+          </button>
+        </p>
+      ) : (
+        <>
+          {parcours.length > 1 && (
+            <ParcoursFilterBadges
+              parcours={parcours.map((item) => item.title)}
+              selectedParcours={selected?.title ?? null}
+              allowAll={false}
+              onSelect={(title) => {
+                const item = parcours.find((item) => item.title === title);
+                if (item) setParcoursId(item.id);
+              }}
+            />
+          )}
+          {selected ? (
+            <ParcoursCalendar
+              key={selected.id}
+              parcours={selected}
+              scopeKey={scopeKey}
+              allowedViews={allowedViews}
+              view={view}
+              setView={setView}
+              date={date}
+              setDate={setDate}
+            />
+          ) : (
+            <p className="py-10 text-center">Aucun parcours accessible.</p>
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+function ParcoursCalendar({
+  parcours,
+  scopeKey,
+  allowedViews,
+  view,
+  setView,
+  date,
+  setDate,
+}: {
+  allowedViews: CalendarView[];
+  parcours: ParcoursOption;
+  scopeKey: string;
+  view: CalendarView;
+  setView: (view: CalendarView) => void;
+  date: Date;
+  setDate: (date: Date) => void;
+}) {
+  const { theme } = useContext(ThemeContext);
+  const { pathname } = useLocation();
+  const area = pathname.startsWith("/student/") ? "student" : "admin";
+  const [selection, setSelection] = useState<{
+    event: CalendarEvent;
+    rect: DOMRect;
+  } | null>(null);
+  const anchor = useRef({ getBoundingClientRect: () => new DOMRect() });
+  const query = useQuery({
+    queryKey: ["read-calendar", scopeKey, parcours.id],
+    queryFn: async () =>
+      (
+        await apiClient.get<ReadCalendar>(
+          `/course/calendar/parcours/${parcours.id}`,
+        )
+      ).data,
+  });
+  const events = useMemo(
+    () => calendarCourseEvents(query.data, date, view, area),
+    [query.data, date, view, area],
+  );
+  const timeline = (query.data?.modules ?? []).map((module) => ({
+    id: module.id,
+    title: module.title,
+    startDate: module.minDate ? localDate(module.minDate) : undefined,
+    endDate: module.maxDate ? localDate(module.maxDate) : undefined,
+  }));
+  const timed = events.filter((event) => !event.allDay);
+  const startHour = Math.min(
+    8,
+    ...timed.map((event) => Math.floor(minutes(event.start) / 60)),
+  );
+  const endHour = Math.max(
+    19,
+    ...timed.map((event) => Math.ceil(minutes(event.end) / 60)),
+  );
+  const select = (event: CalendarEvent | undefined, rect: DOMRect) => {
+    if (!event) return;
+    anchor.current.getBoundingClientRect = () => rect;
+    setSelection({ event, rect });
+  };
+  const changeDate = (value: Date) => {
+    setSelection(null);
+    setDate(value);
+  };
+  return (
+    <div className="mt-4 space-y-3">
+      {query.isPending ? (
+        <p role="status">Chargement du calendrier…</p>
+      ) : query.isError ? (
+        <p role="alert">
+          Impossible de charger le calendrier.{" "}
+          <button className="btn btn-sm" onClick={() => void query.refetch()}>
+            Réessayer
+          </button>
+        </p>
+      ) : (
+        <>
+          <Calendar
+            onSelectDay={value => { changeDate(value); setView("day"); }}
+            events={events}
+            timelineEvents={timeline}
+            view={view}
+            currentDate={date}
+            startHour={startHour}
+            endHour={endHour}
+            darkMode={theme === "dark"}
+            onClickEventDetails={(id, rect) =>
+              select(
+                events.find((event) => event.id === id),
+                rect,
+              )
+            }
+            onClickTimelineYearEventDetails={(id, rect) => {
+              const module = query.data?.modules.find(
+                (module) => module.id === id,
+              );
+              if (module)
+                select(
+                  {
+                    id: module.id,
+                    title: module.title,
+                    subtitle: "Module",
+                    description: module.description ?? undefined,
+                    start: "",
+                    end: "",
+                    type: "primary",
+                    rangeStart: module.minDate ?? undefined,
+                    rangeEnd: module.maxDate ?? undefined,
+                    to: `/${area}/parcours/module/${module.id}`,
+                  },
+                  rect,
+                );
+            }}
+            header={
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 bg-base-200 p-4">
+                <h2 className="font-semibold">{parcours.title}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  {view !== "year-timeline" && (
+                    <TimeSelector
+                      view={view}
+                      date={date}
+                      setDate={changeDate}
+                    />
+                  )}
+                  <ViewSelector
+                    view={view}
+                    setView={(value) => {
+                      setSelection(null);
+                      setView(value);
+                    }}
+                    allowedViews={allowedViews}
+                    darkMode={theme === "dark"}
+                  />
+                </div>
+              </div>
+            }
+          />
+        </>
+      )}
+      <Popover.Root
+        open={Boolean(selection)}
+        onOpenChange={(open) => {
+          if (!open) setSelection(null);
+        }}
+      >
+        <Popover.Anchor virtualRef={anchor} />
+        <Popover.Portal>
+          <Popover.Content
+            side="top"
+            align="start"
+            sideOffset={8}
+            collisionPadding={16}
+            className="z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-base-300 bg-base-100 p-4 shadow-xl"
+            aria-label="Détails du calendrier"
+            onCloseAutoFocus={(e) => e.preventDefault()}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-semibold">{selection?.event.title}</h3>
+              <Popover.Close
+                className="btn btn-xs btn-ghost"
+                aria-label="Fermer les détails"
+              >
+                <X className="size-4" />
+              </Popover.Close>
+            </div>
+            <p className="mt-1 text-sm text-base-content/60">
+              {selection?.event.subtitle}
+            </p>
+            {selection?.event.description && (
+              <p className="mt-3 max-h-40 overflow-auto whitespace-pre-line text-sm">
+                {selection.event.description}
+              </p>
+            )}
+            <p className="mt-3 text-sm">
+              {formatDate(selection?.event.rangeStart)}
+              {selection?.event.rangeEnd &&
+                ` – ${formatDate(selection.event.rangeEnd)}`}
+            </p>
+            {selection?.event.date && (
+              <p className="mt-1 text-sm">
+                {selection.event.allDay
+                  ? "Sans horaire"
+                  : `${selection.event.start} – ${selection.event.end}, chaque jour`}
+              </p>
+            )}
+            {selection?.event.to && (
+              <Link
+                to={selection.event.to}
+                state={selection.event.navigationState}
+                className="btn btn-primary btn-sm mt-4 w-full"
+              >
+                {selection.event.subtitle === "Module" && !selection.event.date
+                  ? "Accéder au module"
+                  : "Accéder au cours"}
+                <ArrowRight className="size-4" />
+              </Link>
+            )}
+            <Popover.Arrow className="fill-base-100" />
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
+  );
+}

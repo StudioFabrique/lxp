@@ -65,7 +65,15 @@ import httpPostImportCourseMbz from "../../../controllers/course/http-post-impor
 import { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } from "../../../controllers/course/http-course-calendar.ts";
 import { isValidCalendarDates } from "../../../models/course/course-calendar-dates.ts";
 
+import { httpGetCalendarParcours, httpGetParcoursCalendar } from "../../../controllers/course/http-read-calendar.ts";
+
 const courseRouter = express.Router();
+
+courseRouter.get("/calendar/parcours", checkPermissions("course", "read"), httpGetCalendarParcours);
+courseRouter.get(
+  "/calendar/parcours/:parcoursId", checkPermissions("course", "read"),
+  param("parcoursId").isInt({ min: 1 }), checkValidatorResult, httpGetParcoursCalendar,
+);
 
 courseRouter.post(
   "/calendar/:moduleId/initialize",

@@ -26,3 +26,19 @@ describe("dates du calendrier de module", () => {
     expect(isValidCalendarDates([date, date])).toBe(false);
   });
 });
+
+describe("horaires facultatifs", () => {
+  const date = defaultCourseDates(0, 1, new Date("2026-09-01"), new Date("2026-09-05"));
+  it("accepte une plage quotidienne complète ou aucun horaire", () => {
+    expect(isValidCalendarDates([date])).toBe(true);
+    expect(isValidCalendarDates([{ ...date, startTime: "08:30", endTime: "12:00" }])).toBe(true);
+  });
+  it.each([
+    { startTime: "09:00" }, { endTime: "12:00" },
+    { startTime: "12:00", endTime: "09:00" }, { startTime: "12:00", endTime: "12:00" },
+    { startTime: "24:00", endTime: "25:00" }, { startTime: "09:60", endTime: "12:00" },
+    { startTime: "9:00", endTime: "12:00" }, { startTime: 900, endTime: 1200 },
+  ])("refuse les horaires incomplets ou invalides %j", times => {
+    expect(isValidCalendarDates([{ ...date, ...times }])).toBe(false);
+  });
+});

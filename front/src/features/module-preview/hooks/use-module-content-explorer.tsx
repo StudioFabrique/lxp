@@ -54,6 +54,7 @@ const useModuleContentExplorer = () => {
   const { moduleId } = useParams();
   const location = useLocation();
   const stateFromUrl = location.state as {
+    courseId?: number;
     lessonId?: number;
     activityId?: number;
   } | null;
@@ -824,6 +825,9 @@ const useModuleContentExplorer = () => {
         activityId: stateFromUrl.activityId,
       });
     }
+    if (stateFromUrl?.courseId && !stateFromUrl.lessonId) {
+      dispatch({ type: "select_lesson", lesson: undefined });
+    }
     handledLocationKey.current = location.key;
   }, [
     location.key,
@@ -831,6 +835,7 @@ const useModuleContentExplorer = () => {
     state.module,
     stateFromUrl?.activityId,
     stateFromUrl?.lessonId,
+    stateFromUrl?.courseId,
   ]);
 
   useEffect(() => {

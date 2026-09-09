@@ -5,7 +5,7 @@ import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 
@@ -33,11 +33,14 @@ const ModuleExplorerSidebar = ({
     lessonIdToScroll,
   } = state;
   const { acknowledgeLessonScroll } = store;
+  const location = useLocation();
+  const requestedCourseId = (location.state as { courseId?: number } | null)?.courseId;
   const [searchParams] = useSearchParams();
   const editCourseId = Number(searchParams.get("editCourseId")) || undefined;
   const editLessonId = Number(searchParams.get("editLessonId")) || undefined;
   const createCourse = searchParams.get("createCourse") === "true";
-  const [openedCourseId, setOpenedCourseId] = useState<number>();
+  const [openedCourse, setOpenedCourse] = useState({ key: location.key, id: requestedCourseId });
+  const openedCourseId = openedCourse.key === location.key ? openedCourse.id : requestedCourseId;
   const selectedMobileLessonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -244,7 +247,7 @@ const ModuleExplorerSidebar = ({
                 moduleId={module.id || 0}
                 parcoursTags={module.tags}
                 onCreate={courseActions.createCourse}
-                onCreated={setOpenedCourseId}
+                onCreated={id => setOpenedCourse({ key: location.key, id })}
                 openDetailsOnMount={!calendar && createCourse}
               />
             </PermissionGuard>

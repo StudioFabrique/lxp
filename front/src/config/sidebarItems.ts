@@ -70,6 +70,13 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       icon: BookMarked,
     },
     {
+      key: "calendar",
+      subject: "course",
+      path: "calendrier",
+      label: "Calendrier",
+      icon: Calendar,
+    },
+    {
       key: "resource",
       subject: "resource",
       path: "resources",

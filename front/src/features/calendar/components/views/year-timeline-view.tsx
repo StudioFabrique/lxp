@@ -44,10 +44,10 @@ const YearTimelineView = ({
       .map((e) => e.endDate?.getTime())
       .filter((date) => date !== undefined) as number[];
 
-    if (startTimes.length === 0) return { min: 0, max: 0, total: 0 };
+    if (startTimes.length === 0 || endTimes.length === 0) return { min: 0, max: 0, total: 0 };
 
     const min = Math.min(...startTimes);
-    const max = Math.max(...endTimes);
+    const max = Math.max(min, ...endTimes);
     const total = max === min ? 86400000 : max - min;
 
     return { min, max, total };
@@ -134,14 +134,15 @@ const YearTimelineView = ({
                 className="flex items-center gap-4 group rounded-lg p-2 transition-colors hover:bg-base-200"
               >
                 {/* LEFT: Info */}
-                <div
+                <button
+                  type="button"
                   onClick={(e) =>
                     onClickDetails?.(
                       event.id,
                       e.currentTarget.getBoundingClientRect()
                     )
                   }
-                  className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer"
+                  className="w-48 flex items-center gap-3 flex-shrink-0 cursor-pointer text-left"
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
@@ -186,13 +187,12 @@ const YearTimelineView = ({
                       </div>
                     )}
                   </div>
-                </div>
+                </button>
 
                 {/* RIGHT: Bar */}
                 {event.startDate && event.endDate ? (
                   <div
                     className="flex-1 relative h-8 flex items-center"
-                    onClick={() => onClickEdit?.(event.id)}
                   >
                     {/* Background Track */}
                     <div
@@ -200,7 +200,10 @@ const YearTimelineView = ({
                     ></div>
 
                     {/* Event Bar */}
-                    <div
+                    <button
+                      type="button"
+                      aria-label={`Détails de ${event.title}`}
+                      onClick={e => onClickEdit ? onClickEdit(event.id) : onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect())}
                       className="absolute h-4 rounded-full bg-primary shadow-sm cursor-pointer hover:h-5 transition-all duration-200 opacity-90 hover:opacity-100 flex items-center"
                       style={{
                         left: `${leftPercent}%`,
@@ -213,7 +216,7 @@ const YearTimelineView = ({
                           {event.title}
                         </span>
                       )}
-                    </div>
+                    </button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">

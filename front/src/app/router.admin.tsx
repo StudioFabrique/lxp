@@ -16,6 +16,8 @@ import { adminResourcesRoutes } from "../features/resources/routes";
 import { adminProfileRoutes } from "../features/profile/routes";
 import { adminModulePreviewRoutes } from "../features/module-preview/routes";
 
+import { studentCalendarRoutes } from "../features/calendar/routes";
+
 export const adminRoutes: RouteObject[] = [
   {
     path: "/admin",
@@ -24,6 +26,7 @@ export const adminRoutes: RouteObject[] = [
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
+      guard("course", studentCalendarRoutes),
       guard("stats", adminDashboardRoutes),
       guard("parcours", adminParcoursRoutes),
       guard("module", adminModulePreviewRoutes),

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   CalendarEvent,
   CalendarView,
@@ -11,7 +11,10 @@ import YearTimelineView from "./views/year-timeline-view";
 
 import PlanningView from "./views/planning-view";
 
+import CalendarOverflowModal from "./calendar-overflow-modal";
+
 interface Props {
+  onSelectDay?: (date: Date) => void;
   selectedTimelineEventId?: number | string;
   planningDisabled?: boolean;
   onChangeTimelineEventDates?: (id: number | string, startDate: Date, endDate: Date) => void;
@@ -34,6 +37,7 @@ interface Props {
 }
 
 const Calendar = ({
+  onSelectDay,
   events,
   selectedTimelineEventId,
   planningDisabled,
@@ -51,6 +55,7 @@ const Calendar = ({
   header,
   style = { hourHeight: 60 },
 }: Props) => {
+  const [overflow, setOverflow] = useState<CalendarEvent[] | null>(null);
   // Render the body
   const renderBody = () => {
     switch (view) {
@@ -73,6 +78,7 @@ const Calendar = ({
             currentDate={currentDate}
             darkMode={darkMode}
             onClickEventDetails={onClickEventDetails}
+            onShowMore={setOverflow}
           />
         );
       case "year-timeline":
@@ -89,6 +95,7 @@ const Calendar = ({
       default:
         return (
           <TimelineView
+            onSelectDay={onSelectDay}
             events={events}
             view={view}
             startHour={startHour}
@@ -98,6 +105,7 @@ const Calendar = ({
             darkMode={darkMode}
             style={style}
             onClickEventDetails={onClickEventDetails}
+            onShowMore={setOverflow}
           />
         );
     }
@@ -114,6 +122,7 @@ const Calendar = ({
 
       {/* --- BODY --- */}
       {renderBody()}
+      {overflow && <CalendarOverflowModal events={overflow} onClose={() => setOverflow(null)} onClickDetails={onClickEventDetails} />}
     </div>
   );
 };

@@ -62,6 +62,7 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
       client.setQueryData<CalendarCourse[]>(key, previous => previous?.map(course => course.id === courseId ? response.data : course));
       void client.invalidateQueries({ queryKey: ["course", String(courseId)] });
       void client.invalidateQueries({ queryKey: ["courses"] });
+      void client.invalidateQueries({ queryKey: ["read-calendar"] });
       return true;
     } catch {
       client.setQueryData(key, previous);
