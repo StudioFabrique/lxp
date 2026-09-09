@@ -79,7 +79,7 @@ const moduleWithFourCourses: ModuleListItem = {
 };
 
 describe("ModuleHomeList", () => {
-  it("propose une recherche multicritère et les filtres parcours en dessous", () => {
+  it("propose les filtres parcours au-dessus de la recherche multicritère", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <ModuleHomeList
@@ -93,9 +93,9 @@ describe("ModuleHomeList", () => {
     );
 
     expect(markup).toContain('placeholder="Rechercher un module..."');
-    expect(markup).toContain("Filtrer par parcours");
-    expect(markup.indexOf("Rechercher un module...")).toBeLessThan(
-      markup.indexOf("Filtrer par parcours"),
+    expect(markup).toContain('aria-label="Filtres par parcours"');
+    expect(markup.indexOf('aria-label="Filtres par parcours"')).toBeLessThan(
+      markup.indexOf("Rechercher un module..."),
     );
   });
 

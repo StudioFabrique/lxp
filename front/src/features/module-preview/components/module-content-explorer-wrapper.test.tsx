@@ -91,12 +91,18 @@ describe("ModuleContentExplorerWrapper", () => {
 });
 
 
-it("place Calendrier en dernier et remplace le panneau droit avec ou sans leçon sélectionnée", () => {
+it("place Calendrier avant Tout publier et remplace le panneau droit avec ou sans leçon sélectionnée", () => {
   for (const lesson of [undefined, { id: 1 } as Lesson]) {
     const container = document.createElement("div");
     renderWrapper(container, lesson, vi.fn(), true, true);
-    const buttons = container.querySelectorAll("button");
-    expect(buttons[buttons.length - 1].getAttribute("aria-label")).toBe("Calendrier");
+    const calendarButton = container.querySelector('button[aria-label="Calendrier"]');
+    const publishButton = container.querySelector('button[aria-label="Tout publier"]');
+    expect(calendarButton).toBeTruthy();
+    expect(publishButton).toBeTruthy();
+    expect(
+      calendarButton!.compareDocumentPosition(publishButton!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(container.textContent).toContain("Planification");
     expect(container.textContent).toContain("Liste des cours");
     expect(container.textContent).not.toContain("Activité sélectionnée");

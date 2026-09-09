@@ -69,7 +69,7 @@ const unpublishedCourse: CustomCourse = {
 };
 
 describe("CourseList", () => {
-  it("propose une recherche multicritère et les filtres parcours en dessous", () => {
+  it("propose les filtres parcours au-dessus de la recherche multicritère", () => {
     const markup = renderToStaticMarkup(
       <MemoryRouter>
         <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
@@ -77,9 +77,9 @@ describe("CourseList", () => {
     );
 
     expect(markup).toContain('placeholder="Rechercher un cours..."');
-    expect(markup).toContain("Filtrer par parcours");
-    expect(markup.indexOf("Rechercher un cours...")).toBeLessThan(
-      markup.indexOf("Filtrer par parcours"),
+    expect(markup).toContain('aria-label="Filtres par parcours"');
+    expect(markup.indexOf('aria-label="Filtres par parcours"')).toBeLessThan(
+      markup.indexOf("Rechercher un cours..."),
     );
   });
 
