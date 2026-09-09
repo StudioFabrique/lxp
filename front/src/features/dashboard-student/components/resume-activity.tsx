@@ -12,7 +12,7 @@ import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques"
 import defaultImage from "../../../assets/images/module-default.jpg";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import ImageHeader from "../../../../src/components/image-header/image-header";
-import SkillBadge from "../../../components/skills/skill-badge";
+import SkillBadgeSummary from "./skill-badge-summary";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -60,19 +60,14 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               key="title-and-badges"
               className="absolute md:top-[-200%] top-[-160%] flex justify-between w-[95%]"
             >
-              <div className="flex gap-2">
-                <ComponentIcon className="stroke-white" />
-                <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
+              <div className="flex min-w-0 gap-2">
+                <ComponentIcon className="shrink-0 stroke-white" />
+                <p className="truncate text-white">{`${lastLesson.lesson.course.module.title}`}</p>
               </div>
-              {(lastLesson.lesson.course.bonusSkills?.length ?? 0) > 0 ? (
-                <div className="flex gap-1 rounded-xl border border-white/20 bg-base-100/50 p-1.5 shadow-sm backdrop-blur-sm">
-                  {lastLesson.lesson.course.bonusSkills
-                    ?.slice(0, 5)
-                    .map((skill) => (
-                      <SkillBadge key={skill.id} skill={skill} size="small" />
-                    ))}
-                </div>
-              ) : null}
+              <SkillBadgeSummary
+                skills={lastLesson.lesson.course.bonusSkills}
+                className="rounded-xl border border-white/20 bg-base-100/50 p-1.5 shadow-sm backdrop-blur-sm"
+              />
             </div>,
             <div key="link">
               <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5 pb-9">

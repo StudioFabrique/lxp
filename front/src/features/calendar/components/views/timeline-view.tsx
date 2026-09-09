@@ -93,13 +93,17 @@ const TimelineView = ({
 
       {/* GRID */}
       <div className="flex-1 min-w-[300px] overflow-x-auto">
-        {(view === "week" || currentWeekDayVisible) && (
-          <div
-            className={`flex h-10 sticky top-0 z-10 border-b ${
-              theme(darkMode).headerBg
-            } ${theme(darkMode).border}`}
-          >
-            {visibleDays.map((day, i) => {
+        <div
+          data-calendar-scroll-content
+          className={view === "week" ? "min-w-[700px]" : "min-w-full"}
+        >
+          {(view === "week" || currentWeekDayVisible) && (
+            <div
+              className={`flex h-10 sticky top-0 z-10 border-b ${
+                theme(darkMode).headerBg
+              } ${theme(darkMode).border}`}
+            >
+              {visibleDays.map((day, i) => {
               // Calculate the specific date for this header to see if it is today
               const headerDate = new Date(currentDate);
               if (view === "week") {
@@ -124,14 +128,14 @@ const TimelineView = ({
                   {day}
                 </div>
               );
-            })}
-          </div>
-        )}
+              })}
+            </div>
+          )}
 
-        <div
-          className="relative"
-          style={{ height: hours.length * style.hourHeight }}
-        >
+          <div
+            className={`relative ${theme(darkMode).sidebarBg}`}
+            style={{ height: hours.length * style.hourHeight }}
+          >
           {/* GRID LINES */}
           <div className="absolute inset-0 flex flex-col">
             {hours.map((h) => (
@@ -229,6 +233,7 @@ const TimelineView = ({
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
       </div>
