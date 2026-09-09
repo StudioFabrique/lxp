@@ -13,7 +13,10 @@ import { clearDemoTour } from "../../features/demo/demo-tour-storage";
 import { emitDemoTourEvent } from "../../features/demo/demo-tour-events";
 import TutorialChoiceModal from "../../features/demo/components/TutorialChoiceModal";
 import { useOnboarding } from "../../features/onboarding/OnboardingContext";
-import { sidebarControlClassName, sidebarListClassName } from "./sidebar-styles";
+import {
+  sidebarControlClassName,
+  sidebarListClassName,
+} from "./sidebar-styles";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -64,7 +67,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           {user && (
             <AvatarSmall
               user={user}
-              noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs text-accent-content"
+              noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
               imgClassName="size-6 shrink-0 rounded-full object-cover"
             />
           )}
@@ -149,7 +152,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           className="tooltip tooltip-right xl:tooltip-top"
           data-tip="Mode Clair / Mode Sombre"
         >
-          <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-[var(--sidebar-hover)]" />
+          <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />
         </div>
       </li>
       {isExitOpen && (

@@ -10,7 +10,7 @@ export const AvatarSmall: FC<{
 }> = ({
   user,
   size = 8,
-  noImgClassName = `w-${size} h-${size} text-xs flex justify-center items-center p-4 rounded-full bg-accent text-secondary-content`,
+  noImgClassName = `w-${size} h-${size} text-xs flex justify-center items-center p-4 rounded-full bg-secondary text-secondary-content`,
   imgClassName = `w-${size} h-${size} rounded-full object-cover`,
 }) => {
   const firstname = user.firstname?.trim() ?? "";
@@ -23,9 +23,7 @@ export const AvatarSmall: FC<{
   return (
     <>
       {!user.avatar || user.avatar === undefined || user.avatar === "" ? (
-        <p className={noImgClassName}>
-          {initials || "?"}
-        </p>
+        <p className={noImgClassName}>{initials || "?"}</p>
       ) : (
         <AppImage
           src={user.avatar}

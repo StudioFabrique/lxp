@@ -52,12 +52,12 @@ const SidebarWrapper = ({
   return (
     <nav
       data-onboarding="sidebar-navigation"
-      className="h-full xl:w-[20rem] flex flex-col justify-between gap-4 p-4 rounded-xl border bg-[var(--sidebar-bg)] text-[var(--sidebar-content)] border-[var(--sidebar-border)] shadow-sm transition-colors duration-200"
+      className="h-full xl:w-[20rem] flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200"
     >
       <div>
         {showLogo && (
           <img
-            className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border object-contain p-1 mb-3 bg-white border-[var(--sidebar-border)]"
+            className="self-start xl:h-12.5 xl:w-12.5 h-8 w-8 rounded-full border object-contain p-1 mb-3 bg-white border-(--sidebar-border)"
             src={COMPANY_LOGO}
             style={{ backgroundColor: logoBgColor }}
             alt="Company logo"

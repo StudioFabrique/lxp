@@ -71,8 +71,8 @@ const ModuleContentExplorerWrapper = ({
         >
           {topProgressBar}
         </span>
-        {showPublishAll ? publishAllAction : null}
         {calendarAction}
+        {showPublishAll ? publishAllAction : null}
         {selectedLesson ? (
           <button
             type="button"
