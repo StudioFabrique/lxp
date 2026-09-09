@@ -9,7 +9,7 @@ import { calendarDay, shiftCalendarDate } from "../../calendar/components/planni
 export type CalendarCourse = { id: number; dates: CourseDates[]; };
 const EMPTY_COURSES: CalendarCourse[] = [];
 
-export type CalendarSelection = { courseId: number; eventId: string; rect?: DOMRect; };
+export type CalendarSelection = { courseId: number; eventId: string; rect?: DOMRect; showDetails?: boolean; };
 
 export const dateInputValue = (value: string) => value.slice(0, 10);
 export const localCalendarDate = (value: string) => new Date(`${dateInputValue(value)}T00:00:00`);
@@ -44,6 +44,16 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
       endDate: localCalendarDate(date.maxDate),
     }));
   }), [courses, module?.courses]);
+
+  const selectCourse = (courseId: number) => {
+    if (isAdding || saving.current) return;
+    const event = events
+      .filter(item => item.id.startsWith(`${courseId}:`))
+      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0];
+    if (!event) return;
+    setCurrentDate(event.startDate);
+    setSelection({ courseId, eventId: event.id, showDetails: false });
+  };
 
   const saveDates = async (courseId: number, dates: CourseDates[]) => {
     if (saving.current) return false;
@@ -101,7 +111,7 @@ export default function useModuleCalendar(module: Module | undefined, enabled: b
 
   return {
     ...query, events, datesByCourse, selection, setSelection, isAdding, setIsAdding,
-    currentDate, setCurrentDate, isSaving, saveDates, addCourse, changeDates,
+    currentDate, setCurrentDate, isSaving, saveDates, addCourse, changeDates, selectCourse,
     orphanIds: courses.filter(course => course.dates.length === 0).map(course => course.id),
   };
 }

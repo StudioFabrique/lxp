@@ -15,7 +15,6 @@ export default function CourseTimeFields({ startTime, endTime, onChange }: {
 }) {
   const [showError, setShowError] = useState(false);
   return <div className="@container space-y-2">
-    <p className="text-sm font-medium">Horaires quotidiens (facultatifs)</p>
     <div className="grid grid-cols-1 gap-3 @min-[16rem]:grid-cols-2">
       <label className="flex min-w-0 flex-col gap-1 text-sm">Heure de début
         <input type="time" className="input input-sm w-full" value={startTime ?? ""} max="23:58"

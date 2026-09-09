@@ -24,6 +24,7 @@ type SidebarCoursesListProps = {
   calendarAdding?: boolean;
   calendarOrphanIds?: number[];
   onAddCalendarCourse?: (courseId: number) => void;
+  onSelectCalendarCourse?: (courseId: number) => void;
   /** Pourcentage fourni par l'API, jamais recalculé ici. */
   moduleProgress: number;
   selectedLesson: Lesson | undefined;
@@ -61,6 +62,7 @@ const SidebarCoursesList = ({
   calendarAdding = false,
   calendarOrphanIds = [],
   onAddCalendarCourse,
+  onSelectCalendarCourse,
   moduleProgress,
   selectedLesson,
   onSelectLesson,
@@ -211,6 +213,7 @@ const SidebarCoursesList = ({
               onLessonScrolled={onLessonScrolled}
               onToggle={() => {
                 if (calendarMode && calendarAdding) return;
+                if (calendarMode) onSelectCalendarCourse?.(course.id);
                 setOpenCourseId((currentId) => {
                   if (
                     currentId === course.id &&

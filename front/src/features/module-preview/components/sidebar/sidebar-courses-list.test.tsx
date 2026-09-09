@@ -51,6 +51,7 @@ const renderCourses = (
   orphanIds: number[] = [],
   onAddCalendarCourse = vi.fn(),
   calendarAdding = calendarMode,
+  onSelectCalendarCourse = vi.fn(),
 ) => {
   let root = roots[0];
   if (!root) {
@@ -76,6 +77,7 @@ const renderCourses = (
           calendarSelectedCourseId={calendarMode ? 1 : undefined}
           calendarOrphanIds={orphanIds}
           onAddCalendarCourse={onAddCalendarCourse}
+          onSelectCalendarCourse={onSelectCalendarCourse}
           courses={[course]}
           moduleProgress={0}
           selectedLesson={lesson}
@@ -164,6 +166,24 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
 
 
 describe("sidebar en mode calendrier", () => {
+  it("sélectionne le cours du calendrier au clic tout en conservant son dépliage", () => {
+    const container = document.createElement("div");
+    const select = vi.fn();
+    renderCourses(container, "", false, true, [], vi.fn(), false, select);
+    const button = getCourseButton(container);
+    act(() => button.click());
+    expect(select).toHaveBeenCalledWith(1);
+    expect(button.dataset.open).toBe("false");
+    act(() => button.click());
+    expect(select).toHaveBeenCalledTimes(2);
+    expect(button.dataset.open).toBe("true");
+    renderCourses(container, "", false, true, [], vi.fn(), true, select);
+    act(() => button.click());
+    expect(select).toHaveBeenCalledTimes(2);
+    renderCourses(container, "", false, false, [], vi.fn(), false, select);
+    act(() => button.click());
+    expect(select).toHaveBeenCalledTimes(2);
+  });
   it("bloque le dépliage pendant l'ajout et indique où sélectionner un cours", () => {
     const container = document.createElement("div");
     renderCourses(container, "", false, true);

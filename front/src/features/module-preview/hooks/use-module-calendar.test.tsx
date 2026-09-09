@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type Module from "../../../utils/interfaces/module";
 import apiClient from "../../../lib/axios";
 import useModuleCalendar, { type CalendarCourse, type ModuleCalendarStore } from "./use-module-calendar";
+import ModuleCourseCalendar from "../components/calendar/module-course-calendar";
 
 vi.mock("../../../lib/axios", () => ({ default: { post: vi.fn(), put: vi.fn() } }));
 vi.mock("react-hot-toast", () => ({ default: { error: vi.fn() } }));
@@ -15,14 +16,15 @@ let store: ModuleCalendarStore;
 let root: Root | undefined;
 let client: QueryClient;
 let server: CalendarCourse[];
+let container: HTMLDivElement;
 
-function Harness({ enabled }: { enabled: boolean }) {
+function Harness({ enabled, showCalendar }: { enabled: boolean; showCalendar: boolean }) {
   const calendar = useModuleCalendar(module, enabled);
   useLayoutEffect(() => { store = calendar; });
-  return null;
+  return showCalendar ? <ModuleCourseCalendar module={module} store={calendar} /> : null;
 }
 const flush = async () => { await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); }); };
-async function render(enabled = true) {
+async function render(enabled = true, showCalendar = false) {
   if (!root) {
     server = [{ id: 1, dates: initialDates }, { id: 2, dates: [] }];
     vi.mocked(apiClient.post).mockImplementation(async () => ({ data: server }));
@@ -32,20 +34,76 @@ async function render(enabled = true) {
       server = server.map(course => course.id === id ? { ...course, dates } : course);
       return { data: { id, dates } };
     });
-    root = createRoot(document.createElement("div"));
+    container = document.createElement("div");
+    document.body.append(container);
+    root = createRoot(container);
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   }
-  await act(async () => root!.render(<QueryClientProvider client={client}><Harness enabled={enabled} /></QueryClientProvider>));
+  await act(async () => root!.render(<QueryClientProvider client={client}><Harness enabled={enabled} showCalendar={showCalendar} /></QueryClientProvider>));
   await flush();
 }
 afterEach(() => {
   act(() => root?.unmount());
   root = undefined;
+  container?.remove();
   client?.clear();
   vi.clearAllMocks();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("planification des cours du module", () => {
+  it("revient au mois du cours, surligne son item et réserve le popover au clic sur le calendrier", async () => {
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: scrollIntoView });
+    vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} });
+    try {
+      await render(true, true);
+      act(() => container.querySelector<HTMLButtonElement>('[aria-label="Mois suivant"]')!.click());
+      expect(container.textContent).toContain("octobre 2026");
+      act(() => store.selectCourse(1));
+      expect(container.textContent).toContain("septembre 2026");
+      const item = container.querySelector<HTMLElement>('[data-calendar-event="1:0"]')!;
+      expect(item.getAttribute("aria-pressed")).toBe("true");
+      expect(item.classList.contains("ring-primary")).toBe(true);
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
+      expect(document.querySelector('[aria-label="Dates du cours Cours 1"]')).toBeNull();
+      expect(apiClient.put).not.toHaveBeenCalled();
+      act(() => item.click());
+      await flush();
+      expect(document.querySelector('[aria-label="Dates du cours Cours 1"]')).not.toBeNull();
+    } finally {
+      Reflect.deleteProperty(HTMLElement.prototype, "scrollIntoView");
+    }
+  });
+
+  it("sélectionne la première plage chronologique sans modifier les dates", async () => {
+    await render();
+    server = server.map(course => course.id === 1 ? { ...course, dates: [
+      { ...initialDates[0], minDate: "2026-11-01T00:00:00.000Z", maxDate: "2026-11-05T00:00:00.000Z" },
+      initialDates[0],
+    ] } : course);
+    await act(async () => { await store.refetch(); });
+    await flush();
+    act(() => store.selectCourse(1));
+    expect(store.currentDate).toEqual(new Date(2026, 8, 1));
+    expect(store.selection).toEqual({ courseId: 1, eventId: "1:1", showDetails: false });
+    expect(apiClient.put).not.toHaveBeenCalled();
+  });
+
+  it("ne déplace pas le calendrier pour un cours sans dates ou pendant un ajout", async () => {
+    await render();
+    act(() => store.setCurrentDate(new Date(2027, 0, 1)));
+    act(() => store.selectCourse(2));
+    expect(store.currentDate).toEqual(new Date(2027, 0, 1));
+    expect(store.selection).toBeNull();
+    act(() => store.setIsAdding(true));
+    act(() => store.selectCourse(1));
+    expect(store.currentDate).toEqual(new Date(2027, 0, 1));
+    expect(store.selection).toBeNull();
+    expect(apiClient.put).not.toHaveBeenCalled();
+  });
+
   it("n'initialise rien avant l'ouverture du calendrier", async () => {
     await render(false);
     expect(apiClient.post).not.toHaveBeenCalled();

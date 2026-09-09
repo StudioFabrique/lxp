@@ -213,6 +213,7 @@ const ModuleExplorerSidebar = ({
           calendarAdding={calendar?.isAdding && !calendar.isSaving}
           calendarOrphanIds={calendar?.orphanIds}
           onAddCalendarCourse={calendar?.addCourse}
+          onSelectCalendarCourse={calendar?.selectCourse}
           courses={module.courses}
           moduleProgress={module.stats?.progress ?? 0}
           selectedLesson={selectedLesson}
