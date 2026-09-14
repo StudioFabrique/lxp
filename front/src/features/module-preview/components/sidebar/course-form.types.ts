@@ -1,7 +1,10 @@
+import type { AssignmentFormValue } from "../../interfaces/assignment";
+
 export type CourseFormValues = {
   title: string;
   description: string;
   visibility: boolean;
+  assignment: AssignmentFormValue;
 };
 
 export type CreateCourseFormValues = CourseFormValues & {

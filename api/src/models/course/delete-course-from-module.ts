@@ -12,6 +12,14 @@ export default async function deleteCourse(courseId: number, userId: string) {
       lessons: {
         select: { id: true },
       },
+      assignment: {
+        select: {
+          files: { select: { storedName: true } },
+          submissions: {
+            select: { files: { select: { storedName: true } } },
+          },
+        },
+      },
       module: {
         select: {
           contacts: { select: { contact: { select: { idMdb: true } } } },
@@ -44,5 +52,10 @@ export default async function deleteCourse(courseId: number, userId: string) {
     },
   });
 
-  return true;
+  return [
+    ...(existingCourse.assignment?.files ?? []).map((file) => file.storedName),
+    ...(existingCourse.assignment?.submissions ?? []).flatMap((submission) =>
+      submission.files.map((file) => file.storedName),
+    ),
+  ];
 }

@@ -9,6 +9,11 @@ import type { LessonWithActivitiesCount } from "../../../../utils/interfaces/les
 import type { CreateCourseFormValues } from "./course-form.types";
 import { cn } from "../../../../utils/cn";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import AssignmentFields from "./assignment-fields";
+import {
+  assignmentFormIsValid,
+  emptyAssignmentForm,
+} from "./assignment-form.helpers";
 
 type Props = {
   initialTitle: string;
@@ -36,6 +41,7 @@ export default function CreateCourseDetailsModal({
   const [selectedContents, setSelectedContents] = useState<
     LessonWithActivitiesCount[]
   >([]);
+  const [assignment, setAssignment] = useState(emptyAssignmentForm);
 
   const { data: lessonsResponse, isLoading: isLoadingLessons } = useQuery({
     ...courseApi.queries.lessonsByTag(
@@ -108,6 +114,7 @@ export default function CreateCourseDetailsModal({
       resourceIds: selectedContents
         .filter((content) => content.source === "resource")
         .map((content) => content.id),
+      assignment,
     });
     if (success) onClose();
   };
@@ -213,6 +220,8 @@ export default function CreateCourseDetailsModal({
               )}
             </div>
           </section>
+
+          <AssignmentFields value={assignment} onChange={setAssignment} />
 
           <section className="flex flex-col gap-4 rounded-xl border border-base-300 p-4">
             <div>
@@ -440,6 +449,7 @@ export default function CreateCourseDetailsModal({
             className="btn btn-primary"
             disabled={
               !title.trim() || selectedTagIds.length === 0 || isSubmitting
+              || !assignmentFormIsValid(assignment)
             }
           >
             {isSubmitting && (

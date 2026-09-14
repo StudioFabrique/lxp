@@ -26,6 +26,10 @@ export const eventConfig: Record<
     light: "bg-error/15 text-base-content border-error",
     dark: "bg-error/25 text-base-content border-error",
   },
+  warning: {
+    light: "bg-warning/20 text-warning-content border-warning",
+    dark: "bg-warning/30 text-warning-content border-warning",
+  },
 };
 
 export const theme = (darkMode?: boolean) => ({
@@ -73,7 +77,8 @@ export type CalendarEventType =
   | "secondary"
   | "accent"
   | "neutral"
-  | "danger";
+  | "danger"
+  | "warning";
 
 export type CalendarView = "day" | "week" | "month" | "year-timeline" | "planning";
 
@@ -86,7 +91,12 @@ export interface CalendarEvent {
   rangeStart?: string;
   rangeEnd?: string;
   to?: string;
-  navigationState?: { lessonId?: number; courseId?: number };
+  navigationState?: {
+    lessonId?: number;
+    courseId?: number;
+    assignmentCourseId?: number;
+  };
+  category?: "course" | "assignment";
   dayIndex?: number; // 0 = Monday, 6 = Sunday
   date?: Date;
   start: string; // Format "HH:MM"

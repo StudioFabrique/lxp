@@ -144,7 +144,7 @@ const ALERT_RULE_LABELS: Record<string, { name: string; description: string }> =
     "Critical academic failure": {
       name: "Résultats très insuffisants",
       description:
-        "Moins de 40 % de quiz réussis et des résultats toujours en baisse.",
+        "Moins de 40 % d’évaluations réussies et des résultats toujours en baisse.",
     },
     "Engagement fade": {
       name: "Engagement en perte de vitesse",
@@ -159,7 +159,7 @@ const ALERT_RULE_LABELS: Record<string, { name: string; description: string }> =
     "Academic decline": {
       name: "Résultats en baisse",
       description:
-        "Moins de 60 % de quiz réussis sur au moins deux quiz terminés.",
+        "Moins de 60 % d’évaluations réussies sur au moins deux évaluations rendues.",
     },
     "Early inactivity": {
       name: "Absence qui s'installe",
@@ -172,7 +172,7 @@ const ALERT_RULE_LABELS: Record<string, { name: string; description: string }> =
     },
     "Scores slipping": {
       name: "Résultats qui s'effritent",
-      description: "Résultats en léger recul après au moins un quiz terminé.",
+      description: "Résultats en léger recul après au moins une évaluation rendue.",
     },
   };
 
@@ -233,9 +233,9 @@ const MODEL_INDICATOR_LABELS: Record<string, string> = {
   quiz_interaction_count: "Quiz lancés",
   chatbot_proxy: "Questions posées au chatbot",
   score_evolution: "Évolution des résultats",
-  assessment_count: "Quiz terminés sur la période",
-  cumul_assessments: "Quiz terminés au total",
-  pass_rate: "Taux de réussite aux quiz",
+  assessment_count: "Évaluations rendues sur la période",
+  cumul_assessments: "Évaluations rendues au total",
+  pass_rate: "Taux de réussite aux évaluations",
 };
 
 export function formatModelIndicatorLabel(key: string): string {

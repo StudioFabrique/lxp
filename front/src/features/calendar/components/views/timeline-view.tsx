@@ -51,7 +51,7 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
       {hasUntimed && <div className="flex border-b border-base-300 bg-base-100">
         <div className="w-16 shrink-0 p-2 text-xs text-base-content/60">Sans horaire</div>
         {days.map(day => <div key={day.date.toDateString()} className="min-w-0 flex-1 space-y-1 border-r border-base-300 p-1">
-          {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={`block w-full truncate rounded border-l-2 p-1 text-left text-xs ${eventClass(event)}`} onClick={e => clickEvent(event, e.currentTarget)}>{event.title}</button>)}
+          {day.allDay.slice(0, 2).map(event => <button key={event.id} type="button" className={`block w-full truncate rounded border-l-2 p-1 text-left text-xs ${eventClass(event)}`} onClick={e => clickEvent(event, e.currentTarget)}>{event.title}{event.category === "assignment" ? ` · ${event.start}` : ""}</button>)}
           {day.allDay.length > 2 && <button type="button" className="block text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.allDay.slice(2))}>Afficher plus ({day.allDay.length - 2})</button>}
           {day.hidden.length > 0 && <button type="button" className="block text-left text-xs text-primary hover:underline" onClick={() => onShowMore?.(day.hidden)}>Afficher plus ({day.hidden.length}) · cours superposés</button>}
         </div>)}

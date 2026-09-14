@@ -8,6 +8,12 @@ import type Course from "../../../../utils/interfaces/course";
 import type Tag from "../../../../utils/interfaces/tag";
 import { cn } from "../../../../utils/cn";
 import type { UpdateCourseFormValues } from "./course-form.types";
+import AssignmentFields from "./assignment-fields";
+import {
+  assignmentDateForInput,
+  assignmentFormIsValid,
+  emptyAssignmentForm,
+} from "./assignment-form.helpers";
 
 type Props = {
   course: Course;
@@ -27,6 +33,24 @@ export default function EditCourseModal({
   const [visibility, setVisibility] = useState(course.visibility ?? true);
   const [selectedTagIds, setSelectedTagIds] = useState(
     (course.tags ?? []).map((tag) => tag.id),
+  );
+  const [assignment, setAssignment] = useState(() =>
+    course.assignment
+      ? {
+          required: true,
+          dueAt: assignmentDateForInput(course.assignment.dueAt),
+          maxScore: course.assignment.maxScore,
+          rubricVisible: course.assignment.rubricVisible,
+          instructions: course.assignment.instructions,
+          criteria: course.assignment.criteria.map((criterion) => ({
+            key: String(criterion.id),
+            label: criterion.label,
+            weight: criterion.weight,
+          })),
+          files: [],
+          removeFileIds: [],
+        }
+      : emptyAssignmentForm(),
   );
 
   const { data: tags = [] } = useQuery({
@@ -54,13 +78,14 @@ export default function EditCourseModal({
       description: description.trim(),
       visibility,
       tagIds: selectedTagIds,
+      assignment,
     });
     if (success) onClose();
   };
 
   return createPortal(
     <dialog className="modal modal-open z-[100]">
-      <div className="modal-box flex max-h-[90vh] w-11/12 max-w-2xl flex-col overflow-hidden p-0">
+      <div className="modal-box flex max-h-[90vh] max-w-[45vw] flex-col overflow-hidden p-0">
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Modifier le cours</h3>
@@ -144,6 +169,12 @@ export default function EditCourseModal({
               })}
             </div>
           </section>
+
+          <AssignmentFields
+            value={assignment}
+            existingFiles={course.assignment?.files}
+            onChange={setAssignment}
+          />
         </form>
 
         <div className="flex justify-end gap-3 border-t border-base-300 bg-base-100 px-6 py-4">
@@ -155,7 +186,10 @@ export default function EditCourseModal({
             form={`edit-course-form-${course.id}`}
             className="btn btn-primary"
             disabled={
-              !title.trim() || selectedTagIds.length === 0 || isSubmitting
+              !title.trim() ||
+              selectedTagIds.length === 0 ||
+              isSubmitting ||
+              !assignmentFormIsValid(assignment)
             }
           >
             {isSubmitting && (

@@ -400,6 +400,10 @@ const useModuleContentExplorer = () => {
           description: values.description,
           visibility: values.visibility,
         });
+        await modulePreviewApi.mutations.saveCourseAssignment(
+          data.course.id,
+          values.assignment,
+        );
         if (values.tagIds.length > 0) {
           await modulePreviewApi.mutations.setCourseTags(
             data.course.id,
@@ -450,6 +454,10 @@ const useModuleContentExplorer = () => {
           description: values.description,
           visibility: values.visibility,
         });
+        await modulePreviewApi.mutations.saveCourseAssignment(
+          courseId,
+          values.assignment,
+        );
         await modulePreviewApi.mutations.setCourseTags(courseId, values.tagIds);
         await fetchModuleData();
         toast.success("Cours mis à jour");

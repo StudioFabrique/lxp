@@ -31,7 +31,7 @@ export default function CalendarHome() {
     <PageWrapper>
       <Header
         title="Calendrier"
-        description="Consultez les cours et les modules d’un parcours."
+        description="Consultez les cours, les devoirs et les modules d’un parcours."
       />
       <ReadCalendarBrowser />
     </PageWrapper>
@@ -289,7 +289,9 @@ function ParcoursCalendar({
             </p>
             {selection?.event.date && (
               <p className="mt-1 text-sm">
-                {selection.event.allDay
+                {selection.event.category === "assignment"
+                  ? `À rendre avant ${selection.event.start}`
+                  : selection.event.allDay
                   ? "Sans horaire"
                   : `${selection.event.start} – ${selection.event.end}, chaque jour`}
               </p>
@@ -300,7 +302,9 @@ function ParcoursCalendar({
                 state={selection.event.navigationState}
                 className="btn btn-primary btn-sm mt-4 w-full"
               >
-                {selection.event.subtitle === "Module" && !selection.event.date
+                {selection.event.category === "assignment"
+                  ? "Accéder au devoir"
+                  : selection.event.subtitle === "Module" && !selection.event.date
                   ? "Accéder au module"
                   : "Accéder au cours"}
                 <ArrowRight className="size-4" />

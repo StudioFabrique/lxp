@@ -20,7 +20,7 @@ const STABLE_THRESHOLD_POINTS = 5;
 export default async function getCorrectAnswerRateEvolution(
   context: IndicatorContext,
 ): Promise<Indicator<number>> {
-  const label = "Évolution du taux de bonnes réponses";
+  const label = "Évolution des résultats";
 
   if (context.studentId === null) {
     return emptyIndicator(CORRECT_ANSWER_RATE_EVOLUTION_KEY, label, "trend", {
@@ -28,31 +28,57 @@ export default async function getCorrectAnswerRateEvolution(
     });
   }
 
-  const attempts = await prisma.quizAttempt.findMany({
-    where: {
-      studentId: context.studentId,
-      startedAt: { gte: context.from, lte: context.to },
-      answers: { some: {} },
-    },
-    select: {
-      startedAt: true,
-      answers: { select: { isCorrect: true } },
-    },
-    orderBy: { startedAt: "asc" },
-  });
+  const [attempts, submissions] = await Promise.all([
+    prisma.quizAttempt.findMany({
+      where: {
+        studentId: context.studentId,
+        startedAt: { gte: context.from, lte: context.to },
+        finishedAt: { not: null },
+        answers: { some: {} },
+      },
+      select: {
+        startedAt: true,
+        answers: { select: { isCorrect: true } },
+      },
+    }),
+    prisma.assignmentSubmission.findMany({
+      where: {
+        studentId: context.studentId,
+        gradedAt: { gte: context.from, lte: context.to },
+        grade: { not: null },
+      },
+      select: {
+        gradedAt: true,
+        grade: true,
+        assignment: { select: { maxScore: true } },
+      },
+    }),
+  ]);
 
-  const rates = attempts.map((attempt) => ({
-    date: toDayKey(attempt.startedAt),
-    value: Math.round(
-      (attempt.answers.filter((answer) => answer.isCorrect).length /
-        attempt.answers.length) *
-        100,
-    ),
-  }));
+  const rates = [
+    ...attempts.map((attempt) => ({
+      at: attempt.startedAt,
+      date: toDayKey(attempt.startedAt),
+      value: Math.round(
+        (attempt.answers.filter((answer) => answer.isCorrect).length /
+          attempt.answers.length) *
+          100,
+      ),
+    })),
+    ...submissions.map((submission) => ({
+      at: submission.gradedAt!,
+      date: toDayKey(submission.gradedAt!),
+      value: Math.round(
+        (submission.grade! / submission.assignment.maxScore) * 100,
+      ),
+    })),
+  ]
+    .sort((a, b) => a.at.getTime() - b.at.getTime())
+    .map(({ date, value }) => ({ date, value }));
 
   if (rates.length < 2) {
     return emptyIndicator(CORRECT_ANSWER_RATE_EVOLUTION_KEY, label, "trend", {
-      reason: "Au moins deux quiz terminés sont nécessaires pour dégager une tendance.",
+      reason: "Au moins deux évaluations notées sont nécessaires pour dégager une tendance.",
       attemptCount: rates.length,
     });
   }

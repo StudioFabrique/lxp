@@ -1,5 +1,9 @@
 import apiClient from "../../../lib/axios";
 import type { ContentType } from "../interfaces/content-type";
+import type {
+  AssignmentFormValue,
+  CourseAssignment,
+} from "../interfaces/assignment";
 
 export type CommandResult = { success: boolean; message: string };
 
@@ -15,6 +19,12 @@ const queries = {
   getTags: async () => {
     const res = await apiClient.get("/tag");
     return res.data;
+  },
+  getCourseAssignment: async (courseId: number) => {
+    const res = await apiClient.get<{ assignment: CourseAssignment }>(
+      `/assignment/course/${courseId}`,
+    );
+    return res.data.assignment;
   },
 };
 
@@ -83,6 +93,76 @@ const mutations = {
       `/course/delete-course/${courseId}`,
     );
     return res.data;
+  },
+  saveCourseAssignment: async (
+    courseId: number,
+    assignment: AssignmentFormValue,
+  ) => {
+    const formData = new FormData();
+    formData.append(
+      "payload",
+      JSON.stringify({
+        required: assignment.required,
+        dueAt: assignment.dueAt
+          ? new Date(assignment.dueAt).toISOString()
+          : "",
+        maxScore: assignment.maxScore,
+        rubricVisible: assignment.rubricVisible,
+        instructions: assignment.instructions,
+        criteria: assignment.criteria.map(({ label, weight }) => ({
+          label,
+          weight,
+        })),
+        removeFileIds: assignment.removeFileIds,
+      }),
+    );
+    assignment.files.forEach((file) => formData.append("files", file));
+    const res = await apiClient.put<{ assignment: CourseAssignment | null }>(
+      `/assignment/course/${courseId}`,
+      formData,
+    );
+    return res.data.assignment;
+  },
+  saveAssignmentSubmission: async (
+    courseId: number,
+    text: string,
+    files: File[],
+    submit: boolean,
+  ) => {
+    const formData = new FormData();
+    formData.append("text", text);
+    files.forEach((file) => formData.append("files", file));
+    const res = await apiClient.post(
+      `/assignment/course/${courseId}/submission/${submit ? "submit" : "draft"}`,
+      formData,
+    );
+    return res.data.submission;
+  },
+  gradeAssignmentSubmission: async (
+    courseId: number,
+    submissionId: number,
+    payload: {
+      grade?: number;
+      feedback?: string;
+      criterionScores?: Array<{ criterionId: number; score: number }>;
+    },
+  ) => {
+    const res = await apiClient.put(
+      `/assignment/course/${courseId}/submission/${submissionId}/grade`,
+      payload,
+    );
+    return res.data.submission;
+  },
+  downloadAssignmentFile: async (
+    courseId: number,
+    kind: "brief" | "submission",
+    fileId: number,
+  ) => {
+    const res = await apiClient.get(
+      `/assignment/course/${courseId}/file/${kind}/${fileId}`,
+      { responseType: "blob" },
+    );
+    return res.data as Blob;
   },
 
   // --- Leçons

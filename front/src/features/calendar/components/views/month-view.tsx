@@ -114,7 +114,11 @@ const MonthView = ({
                       title={event.title}
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
-                        {event.allDay ? "Sans horaire" : event.start}
+                        {event.category === "assignment"
+                          ? event.start
+                          : event.allDay
+                            ? "Sans horaire"
+                            : event.start}
                       </span>
                       {event.title}
                     </button>

@@ -118,7 +118,9 @@ describe("formatMatchedCondition", () => {
         threshold: 0.6,
         actual: 0.5,
       }),
-    ).toBe("Taux de réussite aux quiz : 50 % (seuil : en dessous de 60 %)");
+    ).toBe(
+      "Taux de réussite aux évaluations : 50 % (seuil : en dessous de 60 %)",
+    );
   });
 
   it("dit le seuil sans opérateur mathématique", () => {

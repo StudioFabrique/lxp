@@ -4,11 +4,10 @@ import { emptyIndicator, type Indicator, type IndicatorContext } from "./types.t
 export const CORRECT_ANSWER_RATE_KEY = "correct_answer_rate";
 
 /**
- * Taux global de bonnes réponses aux quiz, en pourcentage.
+ * Taux global de réussite aux évaluations, en pourcentage.
  *
- * Calculé sur les réponses individuelles plutôt qu'en moyennant les scores des
- * tentatives : sinon un quiz d'une seule question pèserait autant qu'un quiz
- * de vingt. `isCorrect` est toujours issu de la correction serveur.
+ * Les quiz sont pondérés question par question et les devoirs par leur barème :
+ * une évaluation courte ne pèse ainsi pas autant qu'une évaluation longue.
  */
 export default async function getCorrectAnswerRate(
   context: IndicatorContext,
@@ -16,39 +15,62 @@ export default async function getCorrectAnswerRate(
   if (context.studentId === null) {
     return emptyIndicator(
       CORRECT_ANSWER_RATE_KEY,
-      "Taux de bonnes réponses",
+      "Taux de réussite des évaluations",
       "percent",
       { reason: "Cet utilisateur n'est pas un apprenant." },
     );
   }
 
-  const answers = await prisma.quizAnswer.findMany({
-    where: {
-      attempt: {
-        studentId: context.studentId,
-        startedAt: { gte: context.from, lte: context.to },
+  const [answers, submissions] = await Promise.all([
+    prisma.quizAnswer.findMany({
+      where: {
+        attempt: {
+          studentId: context.studentId,
+          startedAt: { gte: context.from, lte: context.to },
+        },
       },
-    },
-    select: { isCorrect: true },
-  });
+      select: { isCorrect: true },
+    }),
+    prisma.assignmentSubmission.findMany({
+      where: {
+        studentId: context.studentId,
+        gradedAt: { gte: context.from, lte: context.to },
+        grade: { not: null },
+      },
+      select: { grade: true, assignment: { select: { maxScore: true } } },
+    }),
+  ]);
 
-  if (answers.length === 0) {
+  const earnedPoints =
+    answers.filter((answer) => answer.isCorrect).length +
+    submissions.reduce((sum, submission) => sum + submission.grade!, 0);
+  const possiblePoints =
+    answers.length +
+    submissions.reduce(
+      (sum, submission) => sum + submission.assignment.maxScore,
+      0,
+    );
+
+  if (possiblePoints === 0) {
     return emptyIndicator(
       CORRECT_ANSWER_RATE_KEY,
-      "Taux de bonnes réponses",
+      "Taux de réussite des évaluations",
       "percent",
-      { reason: "Aucune réponse enregistrée sur la période." },
+      { reason: "Aucune évaluation notée sur la période." },
     );
   }
 
-  const correct = answers.filter((answer) => answer.isCorrect).length;
-
   return {
     key: CORRECT_ANSWER_RATE_KEY,
-    label: "Taux de bonnes réponses",
-    value: Math.round((correct / answers.length) * 100),
+    label: "Taux de réussite des évaluations",
+    value: Math.round((earnedPoints / possiblePoints) * 100),
     unit: "percent",
     available: true,
-    meta: { correctAnswers: correct, totalAnswers: answers.length },
+    meta: {
+      earnedPoints,
+      possiblePoints,
+      quizAnswers: answers.length,
+      gradedAssignments: submissions.length,
+    },
   };
 }

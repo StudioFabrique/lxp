@@ -26,6 +26,9 @@ it("ne livre aux apprenants que les cours et liens de leçons publiés et visibl
   expect(query.where).toEqual({ AND: [{ id: 2 }, { id: { in: [2] } }] });
   expect(query.select.modules.where).toEqual({ parcoursId: { in: [2] } });
   expect(query.select.modules.select.courses.where).toEqual({ isPublished: true, visibility: true });
+  expect(query.select.modules.select.courses.select.assignment).toEqual({
+    select: { id: true, dueAt: true },
+  });
   expect(query.select.modules.select.courses.select.lessons.where).toEqual({ isPublished: true, visibility: true });
 });
 it("laisse l'administration consulter tous les modules du parcours choisi", async () => {

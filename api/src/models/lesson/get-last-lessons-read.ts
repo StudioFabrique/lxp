@@ -69,6 +69,14 @@ export default async function getLastLessonsRead(
                   },
                 },
               },
+              assignment: {
+                select: {
+                  submissions: {
+                    where: { student: { idMdb: userIdMdb } },
+                    select: { submittedAt: true },
+                  },
+                },
+              },
             },
           },
         },

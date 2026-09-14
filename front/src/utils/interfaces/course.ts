@@ -6,6 +6,7 @@ import Module from "./module";
 import Objective from "./objective";
 import Skill from "./skill";
 import Tag from "./tag";
+import type { CourseAssignment } from "../../features/module-preview/interfaces/assignment";
 
 export default interface Course {
   id: number;
@@ -24,6 +25,7 @@ export default interface Course {
   contacts: Contact[];
   scenario?: boolean;
   lessons: Lesson[];
+  assignment?: CourseAssignment | null;
   dates: CourseDates[];
   isPublished: boolean;
   objectives?: Objective[];

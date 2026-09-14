@@ -65,6 +65,14 @@ export default async function getParcoursProgression(
       courses: {
         orderBy: { order: "asc" },
         select: {
+          assignment: {
+            select: {
+              submissions: {
+                where: { student: { idMdb: context.userIdMdb } },
+                select: { submittedAt: true },
+              },
+            },
+          },
           lessons: {
             orderBy: { order: "asc" },
             select: {

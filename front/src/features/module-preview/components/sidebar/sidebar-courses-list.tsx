@@ -28,6 +28,8 @@ type SidebarCoursesListProps = {
   /** Pourcentage fourni par l'API, jamais recalculé ici. */
   moduleProgress: number;
   selectedLesson: Lesson | undefined;
+  selectedAssignmentCourseId?: number;
+  onSelectAssignment?: (courseId: number) => void;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
@@ -65,6 +67,8 @@ const SidebarCoursesList = ({
   onSelectCalendarCourse,
   moduleProgress,
   selectedLesson,
+  selectedAssignmentCourseId,
+  onSelectAssignment,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
@@ -86,7 +90,7 @@ const SidebarCoursesList = ({
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(false);
   const selectedCourseId = courses.find((course) =>
     course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
-  )?.id;
+  )?.id ?? selectedAssignmentCourseId;
   const courseIdLockedOpen =
     !calendarMode && onboardingStatus === "in_progress" &&
     onboardingStep.split(":", 1)[0] === "admin-activity-create"
@@ -111,7 +115,7 @@ const SidebarCoursesList = ({
   useEffect(() => {
     const selectedCourse = courses.find((course) =>
       course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
-    );
+    ) ?? courses.find((course) => course.id === selectedAssignmentCourseId);
     const editedCourse = courses.find((course) =>
       course.lessons.some((lesson) => lesson.id === editLessonId),
     );
@@ -130,6 +134,7 @@ const SidebarCoursesList = ({
     courses,
     editLessonId,
     openedCourseId,
+    selectedAssignmentCourseId,
     selectedLesson,
   ]);
 
@@ -201,6 +206,8 @@ const SidebarCoursesList = ({
               calendarMode={calendarMode}
               course={course}
               selectedLesson={selectedLesson}
+              assignmentSelected={selectedAssignmentCourseId === course.id}
+              onSelectAssignment={() => onSelectAssignment?.(course.id)}
               onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
