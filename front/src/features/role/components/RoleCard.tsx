@@ -84,13 +84,7 @@ export default function RoleCard({
           </span>
         ) : undefined
       }
-      description={
-        <div className="flex flex-wrap gap-x-2 gap-y-1">
-          <span>{role.role}</span>
-          <span aria-hidden="true">·</span>
-          <span className="capitalize">{role.model}</span>
-        </div>
-      }
+      description={<span className="capitalize">Modèle {role.model}</span>}
       action={
         <div className="flex items-center gap-0.5">
           <PermissionGuard action="update" object="role">
