@@ -77,6 +77,14 @@ async function getParcoursById(
           courses: {
             orderBy: { order: "asc" },
             select: {
+              assignment: {
+                select: {
+                  submissions: {
+                    where: { student: { idMdb: userId } },
+                    select: { submittedAt: true },
+                  },
+                },
+              },
               lessons: {
                 orderBy: { order: "asc" },
                 select: {

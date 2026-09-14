@@ -151,6 +151,31 @@ export class ContentReadRepository {
       where: { studentId, finishedAt: { gte: from, lte: to } },
     });
   }
+
+  async canFinish(type: ContentType, contentId: number, studentId: number) {
+    if (type === "course") {
+      const assignment = await this.database.courseAssignment.findUnique({
+        where: { courseId: contentId },
+        select: {
+          submissions: {
+            where: { studentId, submittedAt: { not: null } },
+            select: { id: true },
+          },
+        },
+      });
+      return !assignment || assignment.submissions.length > 0;
+    }
+    if (type === "module") {
+      const pending = await this.database.courseAssignment.count({
+        where: {
+          course: { moduleId: contentId },
+          submissions: { none: { studentId, submittedAt: { not: null } } },
+        },
+      });
+      return pending === 0;
+    }
+    return true;
+  }
 }
 
 export const contentReadRepository = new ContentReadRepository();

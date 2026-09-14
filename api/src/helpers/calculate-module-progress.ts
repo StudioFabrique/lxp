@@ -12,7 +12,14 @@
 
 type LessonReadLike = { finishedAt?: Date | null };
 type LessonLike = { lessonsRead?: LessonReadLike[] | null };
-type CourseLike = { lessons?: LessonLike[] | null };
+type AssignmentSubmissionLike = { submittedAt?: Date | null };
+type AssignmentLike = {
+  submissions?: AssignmentSubmissionLike[] | null;
+};
+type CourseLike = {
+  lessons?: LessonLike[] | null;
+  assignment?: AssignmentLike | null;
+};
 type ModuleLike = { courses?: CourseLike[] | null };
 
 export type ProgressCount = {
@@ -43,15 +50,29 @@ export function countLessonProgress(
   };
 }
 
+function assignmentProgress(assignment: AssignmentLike | null | undefined) {
+  if (!assignment) return { total: 0, completed: 0 };
+  return {
+    total: 1,
+    completed: (assignment.submissions ?? []).some(({ submittedAt }) =>
+      Boolean(submittedAt),
+    )
+      ? 1
+      : 0,
+  };
+}
+
 export function countCourseProgress(
   courses: CourseLike[] | null | undefined,
 ): ProgressCount {
   return (courses ?? []).reduce<ProgressCount>(
     (accumulator, course) => {
-      const { total, completed } = countLessonProgress(course.lessons);
+      const lessons = countLessonProgress(course.lessons);
+      const assignment = assignmentProgress(course.assignment);
       return {
-        total: accumulator.total + total,
-        completed: accumulator.completed + completed,
+        total: accumulator.total + lessons.total + assignment.total,
+        completed:
+          accumulator.completed + lessons.completed + assignment.completed,
       };
     },
     { total: 0, completed: 0 },
@@ -72,7 +93,7 @@ export function toProgressPercentage({
  * @param course - Le cours incluant lessons -> lessonsRead
  */
 export const calculateCourseProgress = (course: CourseLike): number =>
-  toProgressPercentage(countLessonProgress(course.lessons));
+  toProgressPercentage(countCourseProgress([course]));
 
 /**
  * Pourcentage de progression d'un module.

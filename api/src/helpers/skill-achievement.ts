@@ -14,6 +14,14 @@ export const skillAchievementSelect = (userId: string) => ({
           courses: {
             where: { visibility: true, isPublished: true },
             select: {
+              assignment: {
+                select: {
+                  submissions: {
+                    where: { student: { idMdb: userId } },
+                    select: { submittedAt: true },
+                  },
+                },
+              },
               lessons: {
                 select: {
                   lessonsRead: {

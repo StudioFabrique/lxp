@@ -30,6 +30,21 @@ describe("calculateCourseProgress", () => {
     };
     expect(calculateCourseProgress({ lessons: [readTwice, started] })).toBe(50);
   });
+
+  it("exige le rendu du devoir lorsqu'il est configuré", () => {
+    expect(
+      calculateCourseProgress({
+        lessons: [done],
+        assignment: { submissions: [{ submittedAt: null }] },
+      }),
+    ).toBe(50);
+    expect(
+      calculateCourseProgress({
+        lessons: [done],
+        assignment: { submissions: [{ submittedAt: new Date() }] },
+      }),
+    ).toBe(100);
+  });
 });
 
 describe("calculateModuleProgress", () => {

@@ -3,6 +3,7 @@ import { type Response, type NextFunction } from "express";
 import deleteCourse from "../../models/course/delete-course-from-module.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { badQuery } from "../../utils/constantes.ts";
+import { removeAssignmentFiles } from "../../middleware/upload-assignment-files.ts";
 
 export async function httpDeleteCourse(
   req: CustomRequest,
@@ -19,7 +20,8 @@ export async function httpDeleteCourse(
 
     //  appel de la fonction qui supprime le cours et ses ressources associés
     //  l'identifiant du cours est converti en type number
-    await deleteCourse(+courseId, userId);
+    const assignmentFiles = await deleteCourse(+courseId, userId);
+    await removeAssignmentFiles(assignmentFiles);
     //  retourne une réponse positive
     const result = {
       statusCode: 200,

@@ -22,5 +22,12 @@ export default async function putFinishContentRead(
 
   if (!student) return null;
 
+  if (!(await contentReadRepository.canFinish(type, contentId, student.id))) {
+    throw Object.assign(
+      new Error("Le devoir doit être rendu avant de terminer ce contenu."),
+      { statusCode: 409 },
+    );
+  }
+
   return contentReadRepository.finish(type, contentId, student.id);
 }

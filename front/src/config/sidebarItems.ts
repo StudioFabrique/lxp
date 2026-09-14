@@ -1,6 +1,7 @@
 import {
   BookMarked,
   Calendar,
+  ClipboardCheck,
   Component,
   FileEdit,
   Home,
@@ -127,6 +128,13 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       path: "calendrier",
       label: "Calendrier",
       icon: Calendar,
+    },
+    {
+      key: "assignments",
+      subject: "cursus",
+      path: "remises-evaluations",
+      label: "Remises & évaluations",
+      icon: ClipboardCheck,
     },
     {
       key: "resources",

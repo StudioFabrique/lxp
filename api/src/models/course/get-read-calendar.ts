@@ -25,6 +25,7 @@ export function getParcoursCalendar(parcoursId: number, scope: AccessScope) {
             orderBy: [{ order: "asc" }, { id: "asc" }],
             select: {
               id: true, title: true, description: true, dates: true,
+              assignment: { select: { id: true, dueAt: true } },
               lessons: { where: published, orderBy: [{ order: "asc" }, { id: "asc" }], take: 1, select: { id: true } },
             },
           },

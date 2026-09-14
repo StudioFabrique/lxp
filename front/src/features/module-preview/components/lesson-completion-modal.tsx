@@ -14,6 +14,8 @@ type LessonCompletionModal = {
   onRateAndComplete: (rating: number) => Promise<void>;
   onClickNextLesson: () => void;
   onClickMinimizeButton: () => void;
+  hasNextContent?: boolean;
+  nextContentLabel?: string;
 };
 
 const LessonCompletionModal = ({
@@ -24,6 +26,8 @@ const LessonCompletionModal = ({
   onRateAndComplete,
   onClickNextLesson,
   onClickMinimizeButton,
+  hasNextContent = false,
+  nextContentLabel,
 }: LessonCompletionModal) => {
   const navigate = useNavigate();
 
@@ -51,14 +55,19 @@ const LessonCompletionModal = ({
   };
 
   const canGoToNextLesson =
-    isLessonCompleted && !(isLastActivitySelected && isLastLessonSelected);
+    isLessonCompleted &&
+    (hasNextContent || !(isLastActivitySelected && isLastLessonSelected));
 
   return (
     <>
       <PortalConfetti />
       <Modal
         title={`La leçon "${lesson.title}" a été terminée !`}
-        rightLabel={canGoToNextLesson ? "Leçon suivante" : "Retour à l'accueil"}
+        rightLabel={
+          canGoToNextLesson
+            ? nextContentLabel ?? "Leçon suivante"
+            : "Retour à l'accueil"
+        }
         onRightClick={
           canGoToNextLesson
             ? onClickNextLesson

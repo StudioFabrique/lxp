@@ -6,7 +6,7 @@ import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
 import SidebarCoursesList from "./sidebar-courses-list";
 import { useLocation, useSearchParams } from "react-router";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { Check, ClipboardCheck, ChevronDown, ChevronRight } from "lucide-react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
 
 import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
@@ -16,6 +16,8 @@ type Props = {
   store: ExplorerStore;
   canEditModule?: boolean;
   canEditSelectedLesson?: boolean;
+  selectedAssignmentCourseId?: number;
+  onSelectAssignment: (courseId?: number) => void;
 };
 
 const ModuleExplorerSidebar = ({
@@ -23,6 +25,8 @@ const ModuleExplorerSidebar = ({
   calendar,
   canEditModule,
   canEditSelectedLesson,
+  selectedAssignmentCourseId,
+  onSelectAssignment,
 }: Props) => {
   const { state, dispatch, courseActions, lessonActions, activityActions } =
     store;
@@ -75,7 +79,7 @@ const ModuleExplorerSidebar = ({
         {module.courses.map((course, courseIndex) => {
           const isSelectedCourse = course.lessons.some(
             (lesson) => lesson.id === selectedLesson?.id,
-          );
+          ) || course.id === selectedAssignmentCourseId;
           // Même source que la version bureau : l'API, pas un calcul local.
           const courseProgress = course.stats?.progress ?? 0;
 
@@ -93,15 +97,16 @@ const ModuleExplorerSidebar = ({
                   title={`Cours ${courseIndex + 1} : ${course.title}`}
                   aria-label={`Cours ${courseIndex + 1} : ${course.title}`}
                   aria-expanded={isSelectedCourse}
-                  disabled={course.lessons.length === 0}
+                  disabled={course.lessons.length === 0 && !course.assignment}
                   onClick={() => {
                     const firstLessonId = course.lessons[0]?.id;
                     if (firstLessonId) {
+                      onSelectAssignment(undefined);
                       dispatch({
                         type: "select_lesson_by_id",
                         id: firstLessonId,
                       });
-                    }
+                    } else if (course.assignment) onSelectAssignment(course.id);
                   }}
                   className="flex w-full items-center gap-1 px-2 py-2 text-secondary-content/80"
                 >
@@ -142,6 +147,7 @@ const ModuleExplorerSidebar = ({
                           }
                           onClick={() => {
                             if (lesson.id) {
+                              onSelectAssignment(undefined);
                               dispatch({
                                 type: "select_lesson_by_id",
                                 id: lesson.id,
@@ -199,6 +205,32 @@ const ModuleExplorerSidebar = ({
                       </div>
                     );
                   })}
+                  {course.assignment && (
+                    <button
+                      type="button"
+                      aria-current={
+                        selectedAssignmentCourseId === course.id
+                          ? "step"
+                          : undefined
+                      }
+                      onClick={() => onSelectAssignment(course.id)}
+                      className={`flex h-8 w-full items-center justify-between gap-1 rounded-lg px-2 text-left text-[0.65rem] font-medium transition-colors ${
+                        selectedAssignmentCourseId === course.id
+                          ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
+                          : "bg-warning/25 text-warning-content hover:bg-warning/40"
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-1">
+                        <ClipboardCheck className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">Devoir</span>
+                      </span>
+                      {course.assignment.submissions.some(
+                        (submission) => submission.submittedAt,
+                      ) && (
+                        <Check className="h-4 w-4 shrink-0 rounded-full bg-success p-0.5 stroke-3 stroke-success-content" />
+                      )}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -217,7 +249,10 @@ const ModuleExplorerSidebar = ({
           courses={module.courses}
           moduleProgress={module.stats?.progress ?? 0}
           selectedLesson={selectedLesson}
+          selectedAssignmentCourseId={selectedAssignmentCourseId}
+          onSelectAssignment={(courseId) => onSelectAssignment(courseId)}
           onSelectLesson={(lesson: Lesson) => {
+            onSelectAssignment(undefined);
             if (lesson.id)
               dispatch({ type: "select_lesson_by_id", id: lesson.id });
           }}

@@ -17,6 +17,12 @@ describe("getSidebarItemForPath", () => {
     );
   });
 
+  it("matches the student assignments route", () => {
+    expect(
+      getSidebarItemForPath("/student/remises-evaluations")?.key,
+    ).toBe("assignments");
+  });
+
   it("matches the dashboard route with the home item", () => {
     expect(getSidebarItemForPath("/admin/dashboard")?.key).toBe("home");
   });

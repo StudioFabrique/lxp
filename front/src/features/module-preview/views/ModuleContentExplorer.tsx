@@ -1,7 +1,7 @@
 import useModuleContentExplorer from "../hooks/use-module-content-explorer";
 import useContentTracking from "../hooks/use-content-tracking";
 import ModuleContentExplorerSkeleton from "./ModulePreviewSkeleton";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { CalendarDays, LoaderCircle, PenBox, UploadCloud } from "lucide-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../store/AuthProvider";
@@ -28,7 +28,8 @@ import ModuleCompletionModal from "../components/module-completion-modal";
 
 import useModuleCalendar from "../hooks/use-module-calendar";
 import ModuleCourseCalendar from "../components/calendar/module-course-calendar";
-import { hasRoleRank } from "../../../utils/helpers/user-role";
+import { getUserArea, hasRoleRank } from "../../../utils/helpers/user-role";
+import CourseAssignmentView from "../components/assignment/course-assignment";
 
 export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
 
@@ -40,6 +41,10 @@ const ModuleContentExplorer = () => {
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const requestedAssignmentCourseId = (
+    location.state as { assignmentCourseId?: number } | null
+  )?.assignmentCourseId;
   const firstPathSegment = window.location.pathname.split("/")[1];
   const isAdminView = firstPathSegment === "admin";
 
@@ -54,6 +59,16 @@ const ModuleContentExplorer = () => {
   } = explorerStore;
 
   const [calendarModuleId, setCalendarModuleId] = useState<number | null>(null);
+  const [assignmentSelection, setAssignmentSelection] = useState({
+    locationKey: location.key,
+    courseId: requestedAssignmentCourseId,
+  });
+  const selectedAssignmentCourseId =
+    assignmentSelection.locationKey === location.key
+      ? assignmentSelection.courseId
+      : requestedAssignmentCourseId;
+  const setSelectedAssignmentCourseId = (courseId?: number) =>
+    setAssignmentSelection({ locationKey: location.key, courseId });
   const canPlanCourses = hasRoleRank(user, [0, 1, 2]) && ability.can("update", "course");
   const isCalendarView = canPlanCourses && Boolean(state.module?.id) && calendarModuleId === state.module?.id;
   const calendar = useModuleCalendar(state.module, isCalendarView);
@@ -68,7 +83,9 @@ const ModuleContentExplorer = () => {
     ability.can("update", "lesson") ||
     userBelongsToContacts(user, state.selectedLesson?.course?.contacts);
   const selectedCourse = state.module?.courses.find(
-    (course) => course.id === state.selectedLesson?.courseId,
+    (course) =>
+      course.id ===
+      (selectedAssignmentCourseId ?? state.selectedLesson?.courseId),
   );
   const isSelectedCourseAiIndexed = selectedCourse?.aiIndexed !== false;
 
@@ -175,7 +192,29 @@ const ModuleContentExplorer = () => {
             isLastLessonSelected={computed.isLastLessonSelected}
             isLastActivitySelected={computed.isLastActivitySelected}
             onRateAndComplete={lessonActions.completeLesson}
-            onClickNextLesson={lessonActions.nextLesson}
+            hasNextContent={Boolean(
+              computed.isLastLessonOfCurrentCourse && selectedCourse?.assignment,
+            )}
+            nextContentLabel={
+              computed.isLastLessonOfCurrentCourse && selectedCourse?.assignment
+                ? "Accéder au devoir"
+                : undefined
+            }
+            onClickNextLesson={() => {
+              if (
+                computed.isLastLessonOfCurrentCourse &&
+                selectedCourse?.assignment
+              ) {
+                setSelectedAssignmentCourseId(selectedCourse.id);
+                dispatch({ type: "select_lesson", lesson: undefined });
+                dispatch({
+                  type: "set_modal_visibility",
+                  modalVisibility: "none",
+                });
+                return;
+              }
+              lessonActions.nextLesson();
+            }}
             onClickMinimizeButton={() =>
               dispatch({
                 type: "set_modal_visibility",
@@ -225,9 +264,13 @@ const ModuleContentExplorer = () => {
           calendarContent={isCalendarView ? <ModuleCourseCalendar key={state.module.id} module={state.module} store={calendar} /> : undefined}
           scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
+          isContentSelected={Boolean(
+            state.selectedLesson || selectedAssignmentCourseId,
+          )}
           isPanelClosed={state.isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
           onCloseAll={() => {
+            setSelectedAssignmentCourseId(undefined);
             dispatch({ type: "select_lesson", lesson: undefined });
             navigate(".", { replace: true });
           }}
@@ -262,6 +305,13 @@ const ModuleContentExplorer = () => {
               calendar={isCalendarView ? calendar : undefined}
               canEditModule={canEditModule}
               canEditSelectedLesson={canEditSelectedLesson}
+              selectedAssignmentCourseId={selectedAssignmentCourseId}
+              onSelectAssignment={(courseId) => {
+                setSelectedAssignmentCourseId(courseId);
+                if (courseId) {
+                  dispatch({ type: "select_lesson", lesson: undefined });
+                }
+              }}
             />
           }
           /* Progress Bar */
@@ -272,14 +322,22 @@ const ModuleContentExplorer = () => {
           }
           /* Preview */
           previewLesson={
-            <ModuleExplorerPreview
-              store={explorerStore}
-              quizState={quizState}
-              aiIndexed={isSelectedCourseAiIndexed}
-              smartQuizState={smartQuizState}
-              canEditSelectedLesson={canEditSelectedLesson}
-              canNavigateAsAdmin={isAdminView}
-            />
+            selectedAssignmentCourseId && selectedCourse?.assignment ? (
+              <CourseAssignmentView
+                course={selectedCourse}
+                staff={getUserArea(user) === "staff"}
+                onChanged={moduleActions.fetchModuleData}
+              />
+            ) : (
+              <ModuleExplorerPreview
+                store={explorerStore}
+                quizState={quizState}
+                aiIndexed={isSelectedCourseAiIndexed}
+                smartQuizState={smartQuizState}
+                canEditSelectedLesson={canEditSelectedLesson}
+                canNavigateAsAdmin={isAdminView}
+              />
+            )
           }
           moduleData={<ModuleData moduleData={state.module} />}
         />

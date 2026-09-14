@@ -11,6 +11,7 @@ type ModuleContentExplorerWrapperProps = {
   calendarAction?: React.ReactNode;
   calendarContent?: React.ReactNode;
   selectedLesson?: Lesson;
+  isContentSelected?: boolean;
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
   onCloseAll: () => void;
@@ -32,6 +33,7 @@ const ModuleContentExplorerWrapper = ({
   calendarAction,
   calendarContent,
   selectedLesson,
+  isContentSelected = Boolean(selectedLesson),
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
@@ -73,7 +75,7 @@ const ModuleContentExplorerWrapper = ({
         </span>
         {calendarAction}
         {showPublishAll ? publishAllAction : null}
-        {selectedLesson ? (
+        {isContentSelected ? (
           <button
             type="button"
             className="btn tooltip tooltip-left border-secondary/20"
@@ -105,7 +107,7 @@ const ModuleContentExplorerWrapper = ({
               : "col-span-1 lg:col-span-2"
           }`}
         >
-          {calendarContent ?? (selectedLesson ? previewLesson : moduleData)}
+          {calendarContent ?? (isContentSelected ? previewLesson : moduleData)}
         </div>
       </div>
     </div>

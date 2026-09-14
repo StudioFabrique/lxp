@@ -3,6 +3,7 @@ import {
   ChevronDown,
   ChevronRight,
   CloudOff,
+  ClipboardCheck,
   EyeOff,
   Plus,
 } from "lucide-react";
@@ -36,6 +37,8 @@ type CourseItemProps = {
   calendarMode?: boolean;
   course: Course;
   selectedLesson: Lesson | undefined;
+  assignmentSelected?: boolean;
+  onSelectAssignment: () => void;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
@@ -78,6 +81,8 @@ const CourseItem = ({
   calendarMode = false,
   course,
   selectedLesson,
+  assignmentSelected,
+  onSelectAssignment,
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
@@ -418,12 +423,37 @@ const CourseItem = ({
                     </div>
                   ),
               )
-            ) : (
+            ) : !course.assignment ? (
               <div className="text-center">
                 <p className="text-base-content/60 text-sm">
                   Aucune leçon disponible pour ce cours
                 </p>
               </div>
+            ) : null}
+            {!calendarMode && course.assignment && (
+              <button
+                type="button"
+                className={cn(
+                  "flex h-10 w-full items-center justify-between gap-2 rounded-xl px-4 text-sm font-medium transition-colors",
+                  assignmentSelected
+                    ? "bg-warning/45 text-warning-content ring-1 ring-warning/30"
+                    : "bg-warning/25 text-warning-content hover:bg-warning/40",
+                )}
+                aria-current={assignmentSelected ? "step" : undefined}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onSelectAssignment();
+                }}
+              >
+                <span className="flex items-center gap-2">
+                  <ClipboardCheck className="h-4 w-4" /> Devoir
+                </span>
+                {course.assignment.submissions.some(
+                  (submission) => submission.submittedAt,
+                ) && (
+                  <Check className="h-5 w-5 rounded-full bg-success p-1 stroke-3 stroke-success-content" />
+                )}
+              </button>
             )}
           </div>
         </motion.div>

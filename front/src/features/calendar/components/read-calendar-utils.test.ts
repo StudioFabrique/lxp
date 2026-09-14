@@ -31,6 +31,34 @@ describe("cours en lecture", () => {
     expect(events[1].allDay).toBe(false);
     expect(events[0].id).not.toBe(events[1].id);
   });
+  it("ajoute le devoir à son échéance locale avec un lien vers sa vue dédiée", () => {
+    const copy = structuredClone(data);
+    const deadline = new Date(2026, 9, 27, 18, 30);
+    copy.modules[0].courses[0].assignment = {
+      id: 8,
+      dueAt: deadline.toISOString(),
+    };
+
+    const events = calendarCourseEvents(
+      copy,
+      new Date(2026, 9, 27),
+      "day",
+      "student",
+    );
+
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      id: "assignment:8",
+      title: "Devoir · Cours",
+      start: "18:30",
+      allDay: true,
+      type: "warning",
+      category: "assignment",
+      to: "/student/parcours/module/2",
+      navigationState: { courseId: 3, assignmentCourseId: 3 },
+    });
+    expect(dateKey(events[0].date!)).toBe("2026-10-27");
+  });
 });
 const event = (id: number, start: string, end: string): CalendarEvent => ({ id, start, end, title: `Cours ${id}`, type: "primary" });
 describe("chevauchements", () => {

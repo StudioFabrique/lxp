@@ -60,6 +60,25 @@ export default async function getLimitedModuleDetail(
             },
           },
           contacts: { select: { contact: { select: { idMdb: true } } } },
+          assignment: {
+            include: {
+              files: { orderBy: { id: "asc" } },
+              criteria: { orderBy: { order: "asc" } },
+              submissions: {
+                where: { student: { idMdb: userMongoId } },
+                select: {
+                  id: true,
+                  text: true,
+                  submittedAt: true,
+                  grade: true,
+                  feedback: true,
+                  gradedAt: true,
+                  files: { orderBy: { id: "asc" } },
+                  criterionScores: true,
+                },
+              },
+            },
+          },
           lessons: {
             include: {
               tag: true,
@@ -107,6 +126,15 @@ export default async function getLimitedModuleDetail(
     },
     courses: module.courses.map(({ contacts, tags, ...course }) => ({
       ...course,
+      assignment: course.assignment
+        ? {
+            ...course.assignment,
+            criteria:
+              isTeacher || course.assignment.rubricVisible
+                ? course.assignment.criteria
+                : [],
+          }
+        : null,
       aiIndexed: Boolean(course.courseSlug),
       contacts: contacts.map(({ contact }) => contact),
       tags: tags.map(({ tag }) => tag),

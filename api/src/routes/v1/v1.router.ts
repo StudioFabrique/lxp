@@ -36,6 +36,7 @@ import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 import demoRouter from "./demo/demo.router.ts";
+import assignmentRouter from "./assignment/assignment.router.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -63,6 +64,7 @@ v1Router.use("/permission", permissionRouter);
 v1Router.use("/course", checkPermissions("course"), courseRouter);
 v1Router.use("/lesson", lessonRouter);
 v1Router.use("/content-read", contentReadRouter);
+v1Router.use("/assignment", assignmentRouter);
 v1Router.use("/activity", activityRouter);
 
 // Routes pour les statistiques, évaluations et médias

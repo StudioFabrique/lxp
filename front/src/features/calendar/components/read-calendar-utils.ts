@@ -4,7 +4,14 @@ import { getMonthDays, getWeekBounds } from "./calendar-utils";
 
 export type ReadCalendarModule = {
   id: number; title: string; description?: string | null; minDate: string | null; maxDate: string | null;
-  courses: { id: number; title: string; description?: string | null; dates: CourseDates[]; lessons: { id: number }[] }[];
+  courses: {
+    id: number;
+    title: string;
+    description?: string | null;
+    dates: CourseDates[];
+    lessons: { id: number }[];
+    assignment?: { id: number; dueAt: string } | null;
+  }[];
 };
 export type ReadCalendar = { id: number; title: string; modules: ReadCalendarModule[] };
 export const localDate = (value: string) => new Date(`${value.slice(0, 10)}T00:00:00`);
@@ -24,27 +31,58 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
   if (!data || view === "year-timeline") return [];
   const { firstDay, lastDay } = visibleDateBounds(date, view);
   const first = dateKey(firstDay), last = dateKey(lastDay);
-  return data.modules.flatMap((module, moduleIndex) => module.courses.flatMap(course => course.dates.flatMap((range, index) => {
-    if (!range || !range.minDate || !range.maxDate) return [];
-    const start = range.minDate.slice(0, 10), end = range.maxDate.slice(0, 10);
-    if (start > last || end < first || start > end) return [];
+  return data.modules.flatMap((module, moduleIndex) => module.courses.flatMap(course => {
     const events: CalendarEvent[] = [];
-    const day = localDate(start > first ? start : first);
-    const final = end < last ? end : last;
-    while (Number.isFinite(day.getTime()) && dateKey(day) <= final) {
-      events.push({
-        id: `${course.id}:${index}:${dateKey(day)}`, title: course.title, subtitle: module.title,
-        description: course.description ?? undefined, date: new Date(day),
-        start: range.startTime ?? "", end: range.endTime ?? "", allDay: !range.startTime || !range.endTime,
-        rangeStart: range.minDate, rangeEnd: range.maxDate,
-        type: (["primary", "secondary", "accent", "neutral"] as const)[moduleIndex % 4],
-        to: `/${area}/parcours/module/${module.id}`,
-        navigationState: { lessonId: course.lessons[0]?.id, courseId: course.id },
-      });
-      day.setDate(day.getDate() + 1);
+    course.dates.forEach((range, index) => {
+      if (!range?.minDate || !range.maxDate) return;
+      const start = range.minDate.slice(0, 10), end = range.maxDate.slice(0, 10);
+      if (start > last || end < first || start > end) return;
+      const day = localDate(start > first ? start : first);
+      const final = end < last ? end : last;
+      while (Number.isFinite(day.getTime()) && dateKey(day) <= final) {
+        events.push({
+          id: `${course.id}:${index}:${dateKey(day)}`, title: course.title, subtitle: module.title,
+          description: course.description ?? undefined, date: new Date(day),
+          start: range.startTime ?? "", end: range.endTime ?? "", allDay: !range.startTime || !range.endTime,
+          rangeStart: range.minDate, rangeEnd: range.maxDate,
+          type: (["primary", "secondary", "accent", "neutral"] as const)[moduleIndex % 4],
+          category: "course",
+          to: `/${area}/parcours/module/${module.id}`,
+          navigationState: { lessonId: course.lessons[0]?.id, courseId: course.id },
+        });
+        day.setDate(day.getDate() + 1);
+      }
+    });
+
+    if (course.assignment) {
+      const deadline = new Date(course.assignment.dueAt);
+      if (Number.isFinite(deadline.getTime())) {
+        const deadlineDay = dateKey(deadline);
+        if (deadlineDay >= first && deadlineDay <= last) {
+          const deadlineTime = `${String(deadline.getHours()).padStart(2, "0")}:${String(deadline.getMinutes()).padStart(2, "0")}`;
+          events.push({
+            id: `assignment:${course.assignment.id}`,
+            title: `Devoir · ${course.title}`,
+            subtitle: module.title,
+            description: course.description ?? undefined,
+            date: new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate()),
+            start: deadlineTime,
+            end: deadlineTime,
+            allDay: true,
+            rangeStart: course.assignment.dueAt,
+            type: "warning",
+            category: "assignment",
+            to: `/${area}/parcours/module/${module.id}`,
+            navigationState: {
+              courseId: course.id,
+              assignmentCourseId: course.id,
+            },
+          });
+        }
+      }
     }
     return events;
-  })));
+  }));
 }
 
 export const minutes = (time: string) => { const [hour, minute] = time.split(":").map(Number); return hour * 60 + minute; };

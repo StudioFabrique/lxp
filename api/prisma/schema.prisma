@@ -129,32 +129,119 @@ model ContactsOnParcours {
 }
 
 model Course {
-  id               Int                @id @default(autoincrement())
-  title            String
-  description      String?
-  image            Bytes?
-  virtualClass     String?
-  visibility       Boolean?
-  scenario         Boolean            @default(true)
-  dates            Json[]
-  calendarInitialized Boolean         @default(false)
-  order            Int
-  isPublished      Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  author           String
-  adminId          Int
-  courseSlug       String?
-  accomplishments  Accomplishment[]
-  contacts         ContactsOnCourse[]
-  admin            Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  moduleId         Int
-  module           Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  lessons          Lesson[]
-  tags             TagsOnCourse[]
-  quizzes          Quiz[]
-  coursesRead      CourseRead[]
-  duplicationIndex Int                @default(0)
+  id                  Int                @id @default(autoincrement())
+  title               String
+  description         String?
+  image               Bytes?
+  virtualClass        String?
+  visibility          Boolean?
+  scenario            Boolean            @default(true)
+  dates               Json[]
+  calendarInitialized Boolean            @default(false)
+  order               Int
+  isPublished         Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  author              String
+  adminId             Int
+  courseSlug          String?
+  accomplishments     Accomplishment[]
+  contacts            ContactsOnCourse[]
+  admin               Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  moduleId            Int
+  module              Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons             Lesson[]
+  tags                TagsOnCourse[]
+  quizzes             Quiz[]
+  coursesRead         CourseRead[]
+  assignment          CourseAssignment?
+  duplicationIndex    Int                @default(0)
+}
+
+/// Devoir obligatoire affiché comme dernière étape d'un cours.
+model CourseAssignment {
+  id            Int                         @id @default(autoincrement())
+  courseId      Int                         @unique
+  dueAt         DateTime
+  maxScore      Float                       @default(20)
+  rubricVisible Boolean                     @default(true)
+  instructions  String
+  createdAt     DateTime                    @default(now())
+  updatedAt     DateTime                    @updatedAt
+  course        Course                      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  criteria      CourseAssignmentCriterion[]
+  files         CourseAssignmentFile[]
+  submissions   AssignmentSubmission[]
+}
+
+model CourseAssignmentCriterion {
+  id           Int                        @id @default(autoincrement())
+  assignmentId Int
+  label        String
+  weight       Float
+  order        Int
+  assignment   CourseAssignment           @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  scores       AssignmentCriterionScore[]
+
+  @@index([assignmentId, order])
+}
+
+model CourseAssignmentFile {
+  id           Int              @id @default(autoincrement())
+  assignmentId Int
+  originalName String
+  storedName   String           @unique
+  mimeType     String
+  size         Int
+  createdAt    DateTime         @default(now())
+  assignment   CourseAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@index([assignmentId])
+}
+
+model AssignmentSubmission {
+  id              Int                        @id @default(autoincrement())
+  assignmentId    Int
+  studentId       Int
+  text            String?
+  submittedAt     DateTime?
+  grade           Float?
+  feedback        String?
+  gradedAt        DateTime?
+  gradedBy        String?
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+  assignment      CourseAssignment           @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student         Student                    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  files           AssignmentSubmissionFile[]
+  criterionScores AssignmentCriterionScore[]
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId, submittedAt])
+}
+
+model AssignmentSubmissionFile {
+  id           Int                  @id @default(autoincrement())
+  submissionId Int
+  originalName String
+  storedName   String               @unique
+  mimeType     String
+  size         Int
+  createdAt    DateTime             @default(now())
+  submission   AssignmentSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+}
+
+model AssignmentCriterionScore {
+  id           Int                       @id @default(autoincrement())
+  submissionId Int
+  criterionId  Int
+  score        Float
+  submission   AssignmentSubmission      @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  criterion    CourseAssignmentCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, criterionId])
 }
 
 model Formation {
@@ -370,16 +457,17 @@ model SkillsOnParcours {
 }
 
 model Student {
-  id              Int              @id @default(autoincrement())
-  idMdb           String           @unique
-  accomplishments Accomplishment[]
-  lessonRating    LessonRating[]
-  lessonsRead     LessonRead[]
-  modulesRead     ModuleRead[]
-  coursesRead     CourseRead[]
-  activitiesRead  ActivityRead[]
-  quizzes         Quiz[]
-  quizAttempts    QuizAttempt[]
+  id                    Int                    @id @default(autoincrement())
+  idMdb                 String                 @unique
+  accomplishments       Accomplishment[]
+  lessonRating          LessonRating[]
+  lessonsRead           LessonRead[]
+  modulesRead           ModuleRead[]
+  coursesRead           CourseRead[]
+  activitiesRead        ActivityRead[]
+  quizzes               Quiz[]
+  quizAttempts          QuizAttempt[]
+  assignmentSubmissions AssignmentSubmission[]
 }
 
 model Tag {

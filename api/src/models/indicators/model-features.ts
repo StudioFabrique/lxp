@@ -36,7 +36,7 @@ export type ModelIndicatorKey = (typeof MODEL_INDICATOR_KEYS)[number];
 
 export type ModelIndicators = Record<ModelIndicatorKey, number | null>;
 
-/** Volumétrie des quiz d'un apprenant, calculée par `get-assessments-summary`. */
+/** Volumétrie des quiz et devoirs d'un apprenant. */
 export type AssessmentsSummary = {
   /** Tentatives terminées sur la période. */
   periodCount: number;
@@ -53,7 +53,7 @@ export type ModelFeatures = {
 };
 
 const NO_ASSESSMENT_SOURCE =
-  "Cet utilisateur n'est pas un apprenant : aucune tentative de quiz à comptabiliser.";
+  "Cet utilisateur n'est pas un apprenant : aucune évaluation à comptabiliser.";
 
 function readIndicator(
   payload: IndicatorsPayload,
@@ -128,7 +128,7 @@ export default function toModelIndicators(
     missing.cumul_assessments = NO_ASSESSMENT_SOURCE;
     missing.pass_rate = NO_ASSESSMENT_SOURCE;
   } else if (assessments.passRate === null) {
-    missing.pass_rate = "Aucune tentative de quiz terminée à ce jour.";
+    missing.pass_rate = "Aucune évaluation notée à ce jour.";
   }
 
   const indicators: ModelIndicators = {
