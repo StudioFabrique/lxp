@@ -4,6 +4,7 @@ import type CustomRequest from "../../utils/interfaces/express/custom-request.ts
 import {
   getAssignmentFile,
   getCourseAssignment,
+  getStudentAssignments,
   gradeSubmission,
   saveCourseAssignment,
   saveSubmission,
@@ -11,6 +12,7 @@ import {
   type AssignmentGradeInput,
   type UploadedAssignmentFile,
 } from "../../models/assignment/assignment.ts";
+import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 import {
   assignmentUploadsDirectory,
   removeAssignmentFiles,
@@ -60,6 +62,27 @@ export async function httpGetCourseAssignment(
       return res.status(404).json({ message: "Ce cours ne comporte aucun devoir." });
     }
     return res.status(200).json({ assignment });
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
+
+export async function httpGetStudentAssignments(
+  req: CustomRequest,
+  res: Response,
+) {
+  try {
+    const scope = await resolveAccessScope(req.auth!);
+    if (!scope || scope.kind !== "learner") {
+      return res.status(403).json({
+        message: "Cette liste est réservée aux apprenants.",
+      });
+    }
+    const assignments = await getStudentAssignments(
+      req.auth!.userId,
+      scope.parcoursIds,
+    );
+    return res.status(200).json({ assignments });
   } catch (error) {
     return sendError(res, error);
   }

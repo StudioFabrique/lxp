@@ -262,6 +262,50 @@ export async function getCourseAssignment(
   };
 }
 
+export function getStudentAssignments(
+  userIdMdb: string,
+  parcoursIds: readonly number[],
+) {
+  return prisma.courseAssignment.findMany({
+    where: {
+      course: {
+        isPublished: true,
+        visibility: true,
+        module: { parcoursId: { in: [...parcoursIds] } },
+      },
+    },
+    orderBy: [{ dueAt: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      dueAt: true,
+      maxScore: true,
+      course: {
+        select: {
+          id: true,
+          title: true,
+          module: {
+            select: {
+              id: true,
+              title: true,
+              parcours: { select: { id: true, title: true } },
+            },
+          },
+        },
+      },
+      submissions: {
+        where: { student: { idMdb: userIdMdb } },
+        take: 1,
+        select: {
+          id: true,
+          submittedAt: true,
+          grade: true,
+          gradedAt: true,
+        },
+      },
+    },
+  });
+}
+
 export async function saveSubmission(
   courseId: number,
   userIdMdb: string,

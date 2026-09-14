@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  CalendarClock,
   CheckCircle2,
   ClipboardCheck,
   Download,
@@ -18,6 +17,10 @@ import type {
   AssignmentFile,
   AssignmentSubmission,
 } from "../../interfaces/assignment";
+import {
+  assignmentScoreTextClass,
+  assignmentScoreTone,
+} from "./assignment-score-color";
 
 type Props = {
   course: Course;
@@ -195,7 +198,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
         <section className="rounded-2xl border border-base-300 bg-base-100 p-5">
           <div className="flex items-center justify-between gap-3">
             <h3 className="font-bold">Barème d’évaluation</h3>
-            <span className="badge badge-warning">
+            <span className="badge badge-primary">
               {assignment.maxScore} points
             </span>
           </div>
@@ -204,13 +207,19 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
               const awarded = submission?.criterionScores.find(
                 (score) => score.criterionId === criterion.id,
               )?.score;
+              const scoreClass =
+                awarded === undefined
+                  ? ""
+                  : assignmentScoreTextClass[
+                      assignmentScoreTone(awarded, criterion.weight)
+                    ];
               return (
                 <li
                   key={criterion.id}
                   className="flex justify-between gap-4 py-3 text-sm"
                 >
                   <span>{criterion.label}</span>
-                  <strong>
+                  <strong className={scoreClass}>
                     {awarded !== undefined ? `${awarded}/` : ""}
                     {criterion.weight} pts
                   </strong>
@@ -320,9 +329,18 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
         )}
 
         {submission?.grade !== null && submission?.grade !== undefined && (
-          <div className="mt-6 rounded-xl border border-success/30 bg-success/10 p-4">
+          <div className="mt-6 p-4 flex flex-col items-end">
             <p className="text-sm text-base-content/70">Note attribuée</p>
-            <p className="text-3xl font-bold text-success">
+            <p
+              className={`text-3xl font-bold ${
+                assignmentScoreTextClass[
+                  assignmentScoreTone(
+                    submission.grade,
+                    assignment.maxScore,
+                  )
+                ]
+              }`}
+            >
               {submission.grade}/{assignment.maxScore}
             </p>
             {submission.feedback && (
@@ -440,10 +458,10 @@ function StaffAssignment({ course, onChanged }: Omit<Props, "staff">) {
               <button
                 key={submission.id}
                 type="button"
-                className={`rounded-xl p-3 text-left text-sm ${
+                className={`rounded-xl bg-base-200 p-3 text-left text-sm ${
                   selected?.id === submission.id
-                    ? "bg-warning/20 ring-1 ring-warning"
-                    : "bg-base-200 hover:bg-base-300"
+                    ? "ring-1 ring-base-content"
+                    : "hover:bg-base-300"
                 }`}
                 onClick={() => selectSubmission(submission)}
               >
@@ -490,13 +508,13 @@ function StaffAssignment({ course, onChanged }: Omit<Props, "staff">) {
           <div className="divider" />
           <h3 className="font-bold">Notation</h3>
           {assignment.criteria.length > 0 ? (
-            <div className="mt-4 space-y-3">
+            <div className="mt-4 space-y-5">
               {assignment.criteria.map((criterion) => (
                 <label
                   key={criterion.id}
                   className="grid grid-cols-[1fr_8rem] items-center gap-3 text-sm"
                 >
-                  <span>{criterion.label}</span>
+                  <span className="text-end mr-10">{criterion.label}</span>
                   <span className="input input-bordered flex items-center gap-1">
                     <input
                       type="number"
@@ -512,7 +530,7 @@ function StaffAssignment({ course, onChanged }: Omit<Props, "staff">) {
                         }))
                       }
                     />
-                    <span className="text-xs">/{criterion.weight}</span>
+                    <span className="text-sm">/{criterion.weight}</span>
                   </span>
                 </label>
               ))}

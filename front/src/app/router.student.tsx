@@ -5,6 +5,7 @@ import { studentCalendarRoutes } from "../features/calendar/routes";
 import { studentProfileRoutes } from "../features/profile/routes";
 import RouterErrorBoundary from "../components/wrappers/layouts/RouterErrorBoundary";
 import { studentDashboardRoutes } from "../features/dashboard-student/routes";
+import { studentAssignmentRoutes } from "../features/assignments/routes";
 import { guard, lazyRoute } from "../utils/helpers/router-helpers";
 import { Navigate, RouteObject } from "react-router";
 
@@ -23,6 +24,7 @@ export const studentRoutes: RouteObject[] = [
       guard("module", studentModulePreviewRoutes),
       guard("resource", studentResourcesRoutes),
       guard("cursus", studentCalendarRoutes),
+      guard("cursus", studentAssignmentRoutes),
       guard("cursus", studentProfileRoutes),
       {
         path: "*",

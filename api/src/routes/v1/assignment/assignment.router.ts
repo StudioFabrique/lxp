@@ -7,6 +7,7 @@ import { uploadAssignmentFiles } from "../../../middleware/upload-assignment-fil
 import {
   httpDownloadAssignmentFile,
   httpGetCourseAssignment,
+  httpGetStudentAssignments,
   httpGradeAssignmentSubmission,
   httpPutCourseAssignment,
   httpSaveAssignmentDraft,
@@ -22,6 +23,12 @@ const submissionIdValidator = [
   param("submissionId").isInt({ min: 1 }).withMessage("Rendu invalide."),
   checkValidatorResult,
 ];
+
+assignmentRouter.get(
+  "/student",
+  checkPermissions("cursus", "read"),
+  httpGetStudentAssignments,
+);
 
 assignmentRouter.get(
   "/course/:courseId",
