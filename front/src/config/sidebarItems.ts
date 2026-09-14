@@ -24,6 +24,7 @@ export type SidebarItemConfig = {
   path: string;
   label: string;
   icon: LucideIcon;
+  teacherOnly?: boolean;
 };
 
 export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
@@ -76,6 +77,14 @@ export const sidebarItems: Record<SidebarLayout, SidebarItemConfig[]> = {
       path: "calendrier",
       label: "Calendrier",
       icon: Calendar,
+    },
+    {
+      key: "evaluations",
+      subject: "course",
+      path: "teacher/evaluations",
+      label: "Évaluations",
+      icon: ClipboardCheck,
+      teacherOnly: true,
     },
     {
       key: "resource",
@@ -152,11 +161,14 @@ const isSidebarLayout = (layout: string): layout is SidebarLayout =>
 export const getSidebarItemForPath = (
   pathname: string,
 ): SidebarItemConfig | undefined => {
-  const [layout, route] = pathname.split("/").filter(Boolean);
+  const [layout, ...routeSegments] = pathname.split("/").filter(Boolean);
 
-  if (!layout || !route || !isSidebarLayout(layout)) {
+  if (!layout || routeSegments.length === 0 || !isSidebarLayout(layout)) {
     return undefined;
   }
 
-  return sidebarItems[layout].find((item) => item.path === route);
+  const route = routeSegments.join("/");
+  return sidebarItems[layout].find(
+    (item) => route === item.path || route.startsWith(`${item.path}/`),
+  );
 };

@@ -1,6 +1,9 @@
 import { EllipsisVertical } from "lucide-react";
+import { useContext } from "react";
 import { Link } from "react-router";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
+import { AuthContext } from "../../../store/AuthProvider";
+import { isTeacherUser } from "../../../utils/helpers/user-role";
 
 const links = [
   {
@@ -10,7 +13,11 @@ const links = [
   },
   { path: "/admin/user/add", label: "Créer un utilisateur" },
   { path: "/admin/feedbacks", label: "Voir les feedbacks" },
-  { path: "/admin/teacher/evaluations", label: "Evaluer un apprenant" },
+  {
+    path: "/admin/teacher/evaluations",
+    label: "Évaluer un apprenant",
+    teacherOnly: true,
+  },
 ];
 
 export default function QuickActions({
@@ -18,6 +25,8 @@ export default function QuickActions({
 }: {
   onCreateFormation: () => void;
 }) {
+  const { user } = useContext(AuthContext);
+
   return (
     <details className="dropdown dropdown-end shrink-0 ml-auto">
       <summary className="btn flex gap-2 items-center">
@@ -37,6 +46,8 @@ export default function QuickActions({
           </li>
         </PermissionGuard>
         {links.map((item) => {
+          if (item.teacherOnly && !isTeacherUser(user)) return null;
+
           const content = (
             <li>
               <Link to={item.path}>{item.label}</Link>

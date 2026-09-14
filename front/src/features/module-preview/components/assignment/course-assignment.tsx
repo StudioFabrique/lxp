@@ -25,6 +25,7 @@ import {
 type Props = {
   course: Course;
   staff: boolean;
+  initialSubmissionId?: number;
   onChanged: () => void | Promise<void>;
 };
 
@@ -355,25 +356,33 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   );
 }
 
-function StaffAssignment({ course, onChanged }: Omit<Props, "staff">) {
+function StaffAssignment({
+  course,
+  initialSubmissionId,
+  onChanged,
+}: Omit<Props, "staff">) {
   const assignment = course.assignment!;
   const submitted = useMemo(
     () => assignment.submissions.filter((item) => item.submittedAt),
     [assignment.submissions],
   );
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const initiallySelected =
+    submitted.find((item) => item.id === initialSubmissionId) ?? submitted[0];
+  const [selectedId, setSelectedId] = useState<number | null>(
+    initiallySelected?.id ?? null,
+  );
   const selected =
     submitted.find((item) => item.id === selectedId) ?? submitted[0];
   const [scores, setScores] = useState<Record<number, number>>(() =>
     Object.fromEntries(
-      (submitted[0]?.criterionScores ?? []).map((score) => [
+      (initiallySelected?.criterionScores ?? []).map((score) => [
         score.criterionId,
         score.score,
       ]),
     ),
   );
   const [freeGrade, setFreeGrade] = useState<number | "">(
-    submitted[0]?.grade ?? "",
+    initiallySelected?.grade ?? "",
   );
   const [feedback, setFeedback] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -587,6 +596,7 @@ function StaffAssignment({ course, onChanged }: Omit<Props, "staff">) {
 export default function CourseAssignmentView({
   course,
   staff,
+  initialSubmissionId,
   onChanged,
 }: Props) {
   const queryClient = useQueryClient();
@@ -613,7 +623,11 @@ export default function CourseAssignmentView({
     <div className="flex flex-col gap-6">
       <AssignmentHeader course={hydratedCourse} />
       {staff ? (
-        <StaffAssignment course={hydratedCourse} onChanged={handleChanged} />
+        <StaffAssignment
+          course={hydratedCourse}
+          initialSubmissionId={initialSubmissionId}
+          onChanged={handleChanged}
+        />
       ) : (
         <StudentAssignment course={hydratedCourse} onChanged={handleChanged} />
       )}

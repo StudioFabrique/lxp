@@ -17,6 +17,7 @@ import { adminProfileRoutes } from "../features/profile/routes";
 import { adminModulePreviewRoutes } from "../features/module-preview/routes";
 
 import { studentCalendarRoutes } from "../features/calendar/routes";
+import { teacherAssignmentRoutes } from "../features/assignments/routes";
 
 export const adminRoutes: RouteObject[] = [
   {
@@ -27,6 +28,7 @@ export const adminRoutes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
       guard("course", studentCalendarRoutes),
+      guard("course", teacherAssignmentRoutes),
       guard("stats", adminDashboardRoutes),
       guard("parcours", adminParcoursRoutes),
       guard("module", adminModulePreviewRoutes),
