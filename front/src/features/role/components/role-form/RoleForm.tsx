@@ -1,43 +1,76 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import { regexGeneric } from "../../../../config/constantes";
-import { setInputStyle } from "../../helpers/formClasses";
+import { useContext, useEffect, useId, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { roleApi } from "../../api/role.api";
-import RoleTypeSelector from "./RoleTypeSelector";
-import type Role from "../../../../../src/utils/interfaces/role";
-import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
+
+import { regexGeneric } from "../../../../config/constantes";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import { AuthContext } from "../../../../store/AuthProvider";
+import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
+import type Role from "../../../../utils/interfaces/role";
+import {
+  roleApi,
+  type RoleFormPayload,
+} from "../../api/role.api";
+import { setInputStyle } from "../../helpers/formClasses";
+import RoleTypeSelector from "./RoleTypeSelector";
 
 type RoleFormProps = {
   role?: Role;
+  duplicateFrom?: Role;
+  embedded?: boolean;
   onRoleCreated?: () => void;
+  onSuccess?: () => void;
 };
 
-const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
+const getInitialName = (role?: Role, duplicateFrom?: Role) =>
+  role?.role ?? (duplicateFrom ? `${duplicateFrom.role}_copie` : "");
+
+const getInitialLabel = (role?: Role, duplicateFrom?: Role) =>
+  role?.label ?? (duplicateFrom ? `${duplicateFrom.label} (copie)` : "");
+
+const RoleForm = ({
+  role,
+  duplicateFrom,
+  embedded = false,
+  onRoleCreated,
+  onSuccess,
+}: RoleFormProps) => {
   const { user } = useContext(AuthContext);
   const actorRank = user?.roles[0]?.rank ?? 4;
   const defaultRoleType = Math.min(actorRank + 1, 4);
-  const [name, setName] = useState(role?.role ?? "");
-  const [label, setLabel] = useState(role?.label ?? "");
+  const formId = useId();
+  const [name, setName] = useState(() => getInitialName(role, duplicateFrom));
+  const [label, setLabel] = useState(() =>
+    getInitialLabel(role, duplicateFrom),
+  );
   const [currentRoleType, setCurrentRoleType] = useState(
-    role?.rank ?? defaultRoleType,
+    role?.rank ?? duplicateFrom?.rank ?? defaultRoleType,
   );
 
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const labelInputRef = useRef<HTMLInputElement | null>(null);
   const nameHasError = name.length > 0 && !regexGeneric.test(name);
   const labelHasError = label.length > 0 && !regexGeneric.test(label);
 
+  const finishMutation = () => {
+    onRoleCreated?.();
+    onSuccess?.();
+  };
+
   const createMutation = useMutation({
-    mutationFn: (body: { role: string; label: string; rank: number }) =>
-      roleApi.mutations.createRole(body),
+    mutationFn: (body: RoleFormPayload) => roleApi.mutations.createRole(body),
     onSuccess: (data) => {
       toast.success(data.message);
-      setName("");
-      setLabel("");
-      setCurrentRoleType(defaultRoleType);
-      onRoleCreated?.();
+      if (!duplicateFrom) {
+        setName("");
+        setLabel("");
+        setCurrentRoleType(defaultRoleType);
+      }
+      finishMutation();
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, "Impossible de créer ce rôle."));
     },
   });
 
@@ -47,133 +80,154 @@ const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
       body,
     }: {
       id: string;
-      body: { role: string; label: string; rank: number };
+      body: Omit<RoleFormPayload, "duplicateFromId">;
     }) => roleApi.mutations.updateRole(id, body),
     onSuccess: (data) => {
       toast.success(data.message);
+      finishMutation();
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, "Impossible de modifier ce rôle."));
     },
   });
 
   const isRequestLoading = createMutation.isPending || updateMutation.isPending;
 
   const handleMouseEnterFillLabel = () => {
-    if (role || label.length > 0) return;
+    if (role || duplicateFrom || label.length > 0) return;
     setLabel(name);
   };
 
   const handleSubmitRole = () => {
-    if (!regexGeneric.test(name) || !regexGeneric.test(label)) {
+    const trimmedName = name.trim();
+    const trimmedLabel = label.trim();
+    if (
+      !trimmedName ||
+      !trimmedLabel ||
+      !regexGeneric.test(trimmedName) ||
+      !regexGeneric.test(trimmedLabel)
+    ) {
       toast.error("Le formulaire n'est pas valide");
       return;
     }
 
     const body = {
-      role: name,
-      label,
+      role: trimmedName,
+      label: trimmedLabel,
       rank: currentRoleType,
     };
 
     if (role) {
       updateMutation.mutate({ id: role._id, body });
-    } else {
-      createMutation.mutate(body);
+      return;
     }
+
+    createMutation.mutate({
+      ...body,
+      duplicateFromId: duplicateFrom?._id,
+    });
   };
 
   useEffect(() => {
-    if (role) {
-      setCurrentRoleType(role.rank);
+    if (role?.protection && role.protection >= 1) {
+      labelInputRef.current?.focus();
+    } else {
       nameInputRef.current?.focus();
     }
-  }, [role]);
+  }, [role?.protection]);
+
+  const form = (
+    <form
+      autoComplete="off"
+      className="grid w-full min-w-0 gap-5 md:grid-cols-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmitRole();
+      }}
+    >
+      <div className="flex min-w-0 flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <label htmlFor={`${formId}-name`}>Nom du rôle</label>
+          <QuestionMarkTooltip tooltipValue="Nom technique utilisé principalement pour les opérations internes de l'application" />
+        </div>
+        <input
+          ref={nameInputRef}
+          type="text"
+          name="name"
+          id={`${formId}-name`}
+          className={setInputStyle(nameHasError)}
+          maxLength={50}
+          onChange={(event) => setName(event.target.value)}
+          value={name}
+          disabled={Boolean(role && role.protection >= 1)}
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <label htmlFor={`${formId}-label`}>Libellé</label>
+          <QuestionMarkTooltip
+            tooltipPosition="left"
+            tooltipValue="Nom du rôle visible pour les utilisateurs de l'application"
+          />
+        </div>
+        <input
+          ref={labelInputRef}
+          name="label"
+          id={`${formId}-label`}
+          className={setInputStyle(labelHasError)}
+          maxLength={50}
+          onClick={handleMouseEnterFillLabel}
+          onChange={(event) => setLabel(event.target.value)}
+          value={label}
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-col gap-y-1">
+        <div className="flex items-center gap-2">
+          <label htmlFor={`${formId}-model`}>Modèle de rôle</label>
+          <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfinies au rôle actuel" />
+        </div>
+        <RoleTypeSelector
+          id={`${formId}-model`}
+          currentRoleType={currentRoleType}
+          onSetCurrentRoleType={setCurrentRoleType}
+          editMode={Boolean(role)}
+          disabled={Boolean(
+            duplicateFrom || (role && role.protection >= 1),
+          )}
+          minimumRank={actorRank}
+        />
+      </div>
+
+      <div className="flex items-end md:justify-end">
+        <button
+          type="submit"
+          className="btn btn-primary text-base-100 w-full md:w-auto"
+          disabled={isRequestLoading}
+        >
+          {role ? "Enregistrer" : duplicateFrom ? "Dupliquer" : "Créer"}
+          {isRequestLoading ? <span className="loading loading-spinner" /> : null}
+        </button>
+      </div>
+    </form>
+  );
+
+  if (embedded) return form;
 
   return (
     <div className="flex flex-col gap-5">
-      <span className="flex flex-col gap-y-1 ml-2">
-        <h2 className="font-bold text-xl">
-          {role ? "Détails du rôle" : "Création de rôles"}
+      <span className="ml-2 flex flex-col gap-y-1">
+        <h2 className="text-xl font-bold">
+          {role ? "Détails du rôle" : "Création d'un rôle"}
         </h2>
-        {!role ? (
-          <p className="text-sm">
-            Après avoir créé un rôle, vous pourrez lui ajouter des permissions
-          </p>
-        ) : (
-          <p className="text-sm">
-            Vous pouvez modifier les informations du rôle
-          </p>
-        )}
+        <p className="text-sm">
+          {role
+            ? "Vous pouvez modifier les informations du rôle"
+            : "Après avoir créé un rôle, vous pourrez lui ajouter des permissions"}
+        </p>
       </span>
-      <div className="h-full">
-        <BoxWrapper>
-          <form
-            autoComplete="off"
-            className="flex flex-col gap-y-5"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="flex flex-row gap-10 w-full items-end">
-              <div className="flex flex-col gap-y-1 w-full">
-                <div className="flex items-center gap-2">
-                  <p>Nom du rôle</p>
-                  <QuestionMarkTooltip tooltipValue="Nom technique utilisé principalement pour des opérations interne par l'application" />
-                </div>
-                <input
-                  ref={nameInputRef}
-                  type="text"
-                  name="name"
-                  id="name"
-                  className={setInputStyle(nameHasError)}
-                  maxLength={50}
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                  disabled={!!(role && role.protection >= 1)}
-                />
-              </div>
-
-              <div className="flex flex-col gap-y-1 w-full">
-                <div className="flex items-center gap-2">
-                  <p>Label</p>
-                  <QuestionMarkTooltip tooltipValue="Nom du rôle visible pour les utilisateurs de l'application" />
-                </div>
-                <input
-                  name="label"
-                  id="label"
-                  className={setInputStyle(labelHasError)}
-                  maxLength={50}
-                  onClick={handleMouseEnterFillLabel}
-                  onChange={(e) => setLabel(e.target.value)}
-                  value={label}
-                />
-              </div>
-
-              <div className="flex flex-col gap-y-1 w-full">
-                <div className="flex items-center gap-2">
-                  <p>Modèle de rôle</p>
-                  <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénies au rôle actuel" />
-                </div>
-                <RoleTypeSelector
-                  currentRoleType={currentRoleType}
-                  onSetCurrentRoleType={setCurrentRoleType}
-                  editMode={Boolean(role)}
-                  disabled={!!(role && role.protection >= 1)}
-                  minimumRank={actorRank}
-                />
-              </div>
-              <div className="w-full">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary text-base-100 normal-case w-full"
-                  onClick={handleSubmitRole}
-                >
-                  {role ? "Valider" : "Ajouter"}
-                  {isRequestLoading && (
-                    <span className="loading loading-spinner" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </form>
-        </BoxWrapper>
-      </div>
+      <BoxWrapper>{form}</BoxWrapper>
     </div>
   );
 };

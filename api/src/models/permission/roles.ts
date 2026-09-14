@@ -100,6 +100,7 @@ export async function createRole(
   label: string,
   rank: number,
   actorRank: number,
+  duplicateFromId?: string,
 ) {
   if (rank <= actorRank) {
     fail(
@@ -107,6 +108,17 @@ export async function createRole(
       "Vous ne pouvez pas créer un rôle de rang égal ou supérieur au vôtre.",
     );
   }
+
+  const roleToDuplicate = duplicateFromId
+    ? await assertInterfaceRole(
+        { identifier: "_id", _id: duplicateFromId },
+        actorRank,
+      )
+    : null;
+  if (roleToDuplicate && roleToDuplicate.rank !== rank) {
+    fail(400, "Le rôle dupliqué doit conserver son modèle d'origine.");
+  }
+
   const createdRole = await createOrUpdateRoleWithPermissions(
     role,
     label,
@@ -115,6 +127,16 @@ export async function createRole(
     await getPermissionsByRank(rank),
   );
   if (!createdRole) fail(500, "Erreur lors de la création du rôle");
+
+  if (roleToDuplicate) {
+    const source = await Role.findById(roleToDuplicate._id).select(
+      "permissions",
+    );
+    if (!source) fail(404, "Le rôle à dupliquer n'existe pas");
+    await Role.findByIdAndUpdate(createdRole._id, {
+      $set: { permissions: source.permissions },
+    });
+  }
 
   const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select("_id");
   const permissions = await Promise.all(

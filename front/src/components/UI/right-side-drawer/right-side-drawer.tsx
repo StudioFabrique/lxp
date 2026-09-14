@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, HTMLAttributes, ReactNode, useEffect, useRef } from "react";
+import { cn } from "../../../utils/cn";
 
 type Props = {
   children: ReactNode;
@@ -10,6 +11,7 @@ type Props = {
   id?: string;
   zIndex?: number;
   isOpen?: boolean;
+  panelClassName?: string;
   buttonClassname?: HTMLAttributes<HTMLButtonElement>["className"];
   onCloseDrawer?: (id: string) => void;
 };
@@ -24,6 +26,7 @@ const RightSideDrawer: FC<Props> = ({
   id = "my-drawer-4",
   zIndex = 50,
   isOpen,
+  panelClassName,
   onCloseDrawer,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
@@ -109,7 +112,12 @@ const RightSideDrawer: FC<Props> = ({
           onClick={isOpen ? handleCloseDrawer : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
-        <div className="min-w-[35rem] flex flex-col bg-base-200 text-base-content rounded-l-2xl h-screen relative">
+        <div
+          className={cn(
+            "flex h-screen min-w-[35rem] flex-col rounded-l-2xl bg-base-200 text-base-content relative",
+            panelClassName,
+          )}
+        >
           <div className="flex-shrink-0 py-4 pl-4">
             <div className="flex items-center gap-x-4">
               <div

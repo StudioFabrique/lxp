@@ -1,197 +1,331 @@
-import { useMemo, useState, useCallback } from "react";
-import { RowSelectionState } from "@tanstack/react-table";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
-import { roleApi } from "../api/role.api";
-
-import type { RoleCounts } from "../api/role.api";
-import { useRoleActions } from "../hooks/useRoleActions";
-import { getRoleColumns } from "../components/role-table-columns";
-import RoleForm from "../components/role-form/RoleForm";
 
 import PageHeader from "../../../components/headers/PageHeader";
-import BoxWrapper from "../../../../src/components/wrappers/BoxWrapper";
-import { DataTable } from "../../../components/table/DataTable";
-import TableActionsButtons from "../../../components/table/TableActionsButtons";
-import TableActionsModal from "../../../components/table/TableActionsModal";
-import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
-import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { rolesPageTourSteps } from "../../../components/headers/page-tour-steps";
+import PermissionGuard from "../../../components/guards/PermissionGuard";
+import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
+import HierarchicalListCard from "../../../components/UI/hierarchical-list-card/HierarchicalListCard";
+import Modal from "../../../components/UI/modal/modal";
+import MultiCriteriaSearch from "../../../components/UI/multi-criteria-search";
+import PageWrapper from "../../../components/wrappers/PageWrapper";
+import TableActionsModal from "../../../components/table/TableActionsModal";
+import TablePagination from "../../../components/table/TablePagination";
+import Loader from "../../../components/loaders/Loader";
+import useEagerLoadingList from "../../../hooks/useEagerLoadingList";
+import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import { normalizeSearchText } from "../../../utils/helpers/normalize-search-text";
+import type Role from "../../../utils/interfaces/role";
+import { roleApi, type PermissionTypes, type RoleCounts } from "../api/role.api";
+import RoleCard from "../components/RoleCard";
+import RolePermissionsDrawer from "../components/permissions/RolePermissionsDrawer";
+import RoleForm from "../components/role-form/RoleForm";
+import { useRoleActions } from "../hooks/useRoleActions";
+
+type RoleFormModal =
+  | { mode: "create" }
+  | { mode: "edit" | "duplicate"; role: RoleCounts };
+
+type PermissionDrawer = {
+  role: RoleCounts;
+  type: PermissionTypes;
+  label: string;
+};
+
+const asRole = (role: RoleCounts): Role => role;
 
 const RoleList = () => {
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const idsList = Object.keys(rowSelection);
-  const [idToDelete, setIdToDelete] = useState<string | null>(null);
-  const [searchValue, setSearchValue] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [searchValue, setSearchValue] = useState("");
+  const [formModal, setFormModal] = useState<RoleFormModal | null>(null);
+  const [roleToDelete, setRoleToDelete] = useState<RoleCounts | null>(null);
+  const [roleToReset, setRoleToReset] = useState<RoleCounts | null>(null);
+  const [permissionDrawer, setPermissionDrawer] =
+    useState<PermissionDrawer | null>(null);
+  const normalizedSearch = normalizeSearchText(searchValue);
+  const isSearching = normalizedSearch.length > 0;
 
-  const isSearching = searchValue !== null && searchValue.length > 0;
-
-  const {
-    data: rawData,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["roles", searchValue],
-    queryFn: async () => {
-      return (await roleApi.queries.listRoles(
-        isSearching ? searchValue : undefined,
-      )) as RoleCounts[];
-    },
+  const { data: rawData, isLoading } = useQuery<RoleCounts[]>({
+    queryKey: ["roles"],
+    queryFn: () => roleApi.queries.listRoles(),
   });
+  const roles = useMemo(
+    () =>
+      [...(rawData ?? [])]
+        .filter(
+          (role) =>
+            !normalizedSearch ||
+            [role.role, role.label, role.model].some((value) =>
+              normalizeSearchText(value).includes(normalizedSearch),
+            ),
+        )
+        .sort((first, second) =>
+          first.label.localeCompare(second.label, "fr", {
+            numeric: true,
+            sensitivity: "base",
+          }),
+        ),
+    [normalizedSearch, rawData],
+  );
+  const { list, limit, page, totalPages, setLimit, setPage } =
+    useEagerLoadingList(roles, "label", 12, "_id", "sidebar-roles");
 
-  const data = rawData ?? [];
-
-  const refreshAndClearSelection = () => {
-    setRowSelection({});
-    refetch();
+  const refreshRoleQueries = () => {
+    void queryClient.invalidateQueries({ queryKey: ["roles"] });
+    void queryClient.invalidateQueries({ queryKey: ["permission-roles"] });
   };
 
   const {
-    onDeleteSelected,
     onDeleteOne,
     isDeleting,
     deleteError,
     resetDeleteError,
-  } = useRoleActions(refreshAndClearSelection);
+  } = useRoleActions(() => {
+    setRoleToDelete(null);
+    refreshRoleQueries();
+  });
 
-  const roleToDelete = useMemo(
-    () => data.find((r) => r._id === idToDelete),
-    [data, idToDelete],
-  );
+  const resetMutation = useMutation({
+    mutationFn: (roleId: string) => roleApi.mutations.resetPermissions(roleId),
+    onSuccess: (_data, roleId) => {
+      toast.success("Permissions réinitialisées avec succès");
+      setRoleToReset(null);
+      refreshRoleQueries();
+      void queryClient.invalidateQueries({
+        queryKey: ["permission-resources", roleId],
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "Impossible de réinitialiser les permissions.",
+        ),
+      );
+    },
+  });
 
-  const columns = useMemo(
-    () =>
-      getRoleColumns((id) => {
-        resetDeleteError();
-        setIdToDelete(id);
-      }),
-    [resetDeleteError],
-  );
+  const handleFormSuccess = () => {
+    setFormModal(null);
+    refreshRoleQueries();
+  };
 
-  const onRetreiveItemsValues = (property: keyof RoleCounts) =>
-    data
-      .filter((item) => item._id && rowSelection[item._id])
-      .map((item) => String(item[property]));
-
-  const handleConfirmSingleDelete = async () => {
-    if (idToDelete) {
-      try {
-        await onDeleteOne(idToDelete);
-        setIdToDelete(null);
-      } catch {
-        // Le toast et la modale affichent le message porté par la mutation.
-      }
+  const handleConfirmDelete = async () => {
+    if (!roleToDelete) return;
+    try {
+      await onDeleteOne(roleToDelete._id);
+    } catch {
+      // L'erreur de l'API reste visible dans la modale et dans le toast.
     }
   };
 
-  const handleCancelSingleDelete = () => {
-    setIdToDelete(null);
+  const openRoleDeletion = (role: RoleCounts) => {
+    if (role.protection >= 1) return;
     resetDeleteError();
+    setRoleToDelete(role);
   };
 
-  const handleRoleCreated = useCallback(() => {
-    toast.success("Rôle créé avec succès");
-    refreshAndClearSelection();
-    queryClient.invalidateQueries({ queryKey: ["/auth/roles"] });
-  }, [refreshAndClearSelection, queryClient]);
+  const formRole = formModal && "role" in formModal ? formModal.role : null;
 
   return (
-    <div>
+    <PageWrapper as="main">
       <PageHeader
-        title="Liste des rôles"
-        description="Créer et gérer des rôles, les droits et les permissions des utilisateurs"
+        title="Gestion des rôles"
+        description="Créez des rôles et gérez leurs droits d'accès"
         tourSteps={rolesPageTourSteps}
-      />
-
-      <BoxWrapper
-        className={`${data.length > 0 || isLoading || isSearching ? "px-10" : ""} items-center`}
-        unstyled={!isLoading && data.length === 0 && !isSearching}
       >
-        {isLoading || data.length > 0 || isSearching ? (
-          <div className="w-full" data-page-tour="filters">
-            <MultiCriteriaSearch
-              value={searchValue ?? ""}
-              onChange={(value) => setSearchValue(value.length > 0 ? value : null)}
-              placeholder="Rechercher un rôle"
-              criteria={["nom"]}
-              actions={
-                <PermissionGuard action="delete" object="role">
-                <TableActionsButtons
-                  isLoading={isLoading || isDeleting}
-                  isDisabled={idsList.length === 0}
-                  onRefreshData={refetch}
-                  actions={[
-                    {
-                      title: "Supprimer les rôles sélectionnés",
-                      description: `${idsList.length} rôle(s) vont être supprimé(s)`,
-                      rightButtonTitle: "Confirmer",
-                      alertMessageBottom:
-                        "Attention: Cette opération ne peut pas être annulée",
-                      onConfirm: () => onDeleteSelected(idsList),
-                    },
-                  ]}
-                  retreiveItemsProperty="role"
-                  onRetreiveItemsValuesByPropertyFromIdList={
-                    onRetreiveItemsValues as any
-                  }
-                />
-                </PermissionGuard>
+        <PermissionGuard action="write" object="role">
+          <button
+            type="button"
+            className="btn btn-primary btn-soft"
+            data-page-tour="role-create-header"
+            onClick={() => setFormModal({ mode: "create" })}
+          >
+            <Plus className="size-5" />
+            Créer un rôle
+          </button>
+        </PermissionGuard>
+      </PageHeader>
+
+      <div data-page-tour="role-filters">
+        <MultiCriteriaSearch
+          value={searchValue}
+          onChange={(value) => {
+            setSearchValue(value);
+            setPage(1);
+          }}
+          placeholder="Rechercher un rôle..."
+          criteria={["nom", "libellé", "modèle"]}
+        />
+      </div>
+
+      {isLoading ? (
+        <div className="min-h-72">
+          <Loader />
+        </div>
+      ) : (
+        <section
+          className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3"
+          data-page-tour="role-cards"
+        >
+          {roles.length === 0 ? (
+            <div className="col-span-full">
+              <EmptyStatePlaceholder
+                title={
+                  isSearching
+                    ? "Aucun rôle ne correspond à votre recherche"
+                    : "Aucun rôle disponible"
+                }
+              />
+            </div>
+          ) : null}
+
+          {(list as RoleCounts[] | null)?.map((role) => (
+            <RoleCard
+              key={role._id}
+              role={role}
+              onEdit={(selectedRole) =>
+                setFormModal({ mode: "edit", role: selectedRole })
+              }
+              onReset={setRoleToReset}
+              onDuplicate={(selectedRole) =>
+                setFormModal({ mode: "duplicate", role: selectedRole })
+              }
+              onDelete={openRoleDeletion}
+              onOpenPermissions={(selectedRole, type, label) =>
+                setPermissionDrawer({ role: selectedRole, type, label })
               }
             />
-          </div>
-        ) : null}
+          ))}
 
-        <div className="w-full" data-page-tour="table">
-          <DataTable
-            columns={columns}
-            data={data}
-            isLoading={isLoading}
-            isSearching={isSearching}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
-            emptyMessage={
-              isSearching
-                ? "Aucun rôle disponible pour cette recherche"
-                : "Aucun rôle disponible"
-            }
-          />
-        </div>
+          <PermissionGuard action="write" object="role">
+            <div data-page-tour="role-create-card">
+              <HierarchicalListCard
+                placeholder={
+                  <button
+                    type="button"
+                    className="btn btn-dash"
+                    onClick={() => setFormModal({ mode: "create" })}
+                  >
+                    <Plus className="size-[1.2em]" />
+                    Créer un rôle
+                  </button>
+                }
+              />
+            </div>
+          </PermissionGuard>
+        </section>
+      )}
 
-        {data.length > 0 ? (
-          <div className="w-full mt-2 text-sm text-base-content/60">
-            Total : {data.length} rôle(s)
-          </div>
-        ) : null}
-      </BoxWrapper>
+      {!isLoading && roles.length > 0 ? (
+        <TablePagination
+          currentPage={page}
+          maxPage={totalPages}
+          itemsPerPage={limit}
+          leftText={`Rôles : ${roles.length}`}
+          onSetCurrentPage={setPage}
+          onSetItemsPerPage={(itemsPerPage) => {
+            setLimit(itemsPerPage);
+            setPage(1);
+          }}
+          onSetPreviousPage={() =>
+            setPage((current) => Math.max(current - 1, 1))
+          }
+          onSetNextPage={() =>
+            setPage((current) => Math.min(current + 1, totalPages))
+          }
+        />
+      ) : null}
 
-      <div data-page-tour="role-form">
-        <PermissionGuard action="write" object="role">
-          <div className="mt-6">
-            <RoleForm onRoleCreated={handleRoleCreated} />
+      {formModal ? (
+        <Modal
+          title={
+            formModal.mode === "create"
+              ? "Créer un rôle"
+              : formModal.mode === "duplicate"
+                ? `Dupliquer le rôle « ${formRole?.label} »`
+                : `Modifier le rôle « ${formRole?.label} »`
+          }
+          leftLabel="Fermer"
+          onLeftClick={() => setFormModal(null)}
+          closeButtonAtTop
+          modalBoxStyle="max-w-3xl overflow-x-hidden"
+          dialogAdditionalClass="z-50"
+        >
+          <div className="pt-6">
+            {formModal.mode === "create" ? (
+              <RoleForm embedded onSuccess={handleFormSuccess} />
+            ) : formModal.mode === "duplicate" && formRole ? (
+              <RoleForm
+                embedded
+                duplicateFrom={asRole(formRole)}
+                onSuccess={handleFormSuccess}
+              />
+            ) : formRole ? (
+              <RoleForm
+                embedded
+                role={asRole(formRole)}
+                onSuccess={handleFormSuccess}
+              />
+            ) : null}
           </div>
-        </PermissionGuard>
-      </div>
+        </Modal>
+      ) : null}
+
+      {roleToReset ? (
+        <Modal
+          title={`Réinitialiser les permissions de « ${roleToReset.label} »`}
+          leftLabel="Annuler"
+          rightLabel="Réinitialiser"
+          rightClassName="btn-warning"
+          isSubmitting={resetMutation.isPending}
+          onLeftClick={() => setRoleToReset(null)}
+          onRightClick={() => resetMutation.mutate(roleToReset._id)}
+          modalBoxStyle="max-w-xl"
+          dialogAdditionalClass="z-50"
+        >
+          <p className="py-5">
+            Les permissions du rôle seront remplacées par celles de son modèle.
+          </p>
+        </Modal>
+      ) : null}
 
       <PermissionGuard action="delete" object="role">
         <TableActionsModal
-          isOpen={!!idToDelete}
-          onCancel={handleCancelSingleDelete}
+          isOpen={Boolean(roleToDelete)}
+          onCancel={() => {
+            setRoleToDelete(null);
+            resetDeleteError();
+          }}
           title="Confirmation de suppression"
           description="Êtes-vous sûr de vouloir supprimer ce rôle ?"
           descList={roleToDelete ? [roleToDelete.label] : undefined}
+          alertMessageBottom="Cette opération ne peut pas être annulée."
           error={deleteError}
         >
           <button
-            className={`btn btn-error btn-md ${isDeleting ? "loading" : ""}`}
-            onClick={handleConfirmSingleDelete}
+            type="button"
+            className="btn btn-error btn-md"
+            onClick={handleConfirmDelete}
             disabled={isDeleting}
           >
-            Confirmer
+            {isDeleting ? <span className="loading loading-spinner" /> : null}
+            Supprimer
           </button>
         </TableActionsModal>
       </PermissionGuard>
-    </div>
+
+      {permissionDrawer ? (
+        <RolePermissionsDrawer
+          role={permissionDrawer.role}
+          permissionType={permissionDrawer.type}
+          permissionLabel={permissionDrawer.label}
+          onClose={() => setPermissionDrawer(null)}
+        />
+      ) : null}
+    </PageWrapper>
   );
 };
 

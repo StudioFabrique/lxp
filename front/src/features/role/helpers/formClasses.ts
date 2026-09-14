@@ -5,7 +5,6 @@
  */
 export const setInputStyle = (hasError: boolean) => {
   return hasError
-    ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-    : "input input-sm input-bordered focus:outline-none w-full";
+    ? "input input-error text-error input-sm input-bordered focus:outline-none w-full min-w-0 max-w-full"
+    : "input input-sm input-bordered focus:outline-none w-full min-w-0 max-w-full";
 };
-
