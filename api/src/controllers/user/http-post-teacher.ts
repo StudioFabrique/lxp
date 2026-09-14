@@ -13,10 +13,7 @@ async function httpPostTeacher(req: CustomRequest, res: Response) {
   }
 
   try {
-    const actorRank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
     if (actorRank >= 2) {
       return res.status(403).json({
         message:

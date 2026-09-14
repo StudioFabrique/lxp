@@ -45,4 +45,11 @@ describe("user role navigation", () => {
     expect(getUserArea(userWithRank(4))).toBeNull();
     expect(getUserHomePath(undefined)).toBeNull();
   });
+
+  it("ne cumule pas les accès d'un compte multirôle invalide", () => {
+    const invalid = { roles: [{ rank: 1 }, { rank: 3 }] } as Pick<User, "roles">;
+    expect(hasRoleRank(invalid, [1])).toBe(false);
+    expect(hasRoleRank(invalid, [3])).toBe(false);
+    expect(getUserArea(invalid)).toBeNull();
+  });
 });

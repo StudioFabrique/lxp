@@ -71,7 +71,7 @@ export const getUsersColumns = (
     header: "Rôle(s)",
     cell: ({ row }) => {
       const roles = row.original.roles;
-      const label = roles.map((r) => r.label).join(", ");
+      const label = roles[0]?.label ?? "";
       return <span className="truncate max-w-24">{label || "ND"}</span>;
     },
     enableSorting: false,
@@ -178,6 +178,6 @@ export const getUsersColumns = (
 
 export function canManageUser(user: User, currentUserRank?: number): boolean {
   if (currentUserRank === undefined) return true;
-  const targetRank = Math.min(...user.roles.map(({ rank }) => rank), 4);
+  const targetRank = user.roles[0]?.rank ?? 4;
   return targetRank > currentUserRank;
 }

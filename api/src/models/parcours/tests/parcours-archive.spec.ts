@@ -45,11 +45,17 @@ describe("format d'archive des parcours", () => {
   });
 
   it("accepte les tags de la formation tout en gardant les anciennes archives compatibles", () => {
-    const manifest = validManifest();
-    manifest.formation.tags = [
-      { name: "Numérique", color: "#2563eb" },
-      { name: "Projet", color: "#16a34a" },
-    ];
+    const base = validManifest();
+    const manifest = {
+      ...base,
+      formation: {
+        ...base.formation,
+        tags: [
+          { name: "Numérique", color: "#2563eb" },
+          { name: "Projet", color: "#16a34a" },
+        ],
+      },
+    };
 
     expect(parseParcoursArchiveManifest(manifest).formation.tags).toEqual(
       manifest.formation.tags,

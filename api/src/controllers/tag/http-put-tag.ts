@@ -10,7 +10,7 @@ export default async function httpPutTag(req: CustomRequest, res: Response) {
 
     await putTag(+id, name, {
       userId: req.auth!.userId,
-      isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+      isAdmin: (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
     });
     return res
       .status(201)

@@ -29,7 +29,7 @@ const UserFormTypeUser = ({
   const [showRefreshButton, setShowRefreshButton] = useState(false);
   const { user: currentUser } = useContext(AuthContext);
   const currentUserRank = currentUser
-    ? Math.min(...currentUser.roles.map(({ rank }) => rank), 4)
+    ? (currentUser.roles[0]?.rank ?? 4)
     : 4;
 
   const { data: roles, isLoading } = useQuery({

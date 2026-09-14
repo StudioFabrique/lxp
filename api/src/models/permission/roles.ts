@@ -23,7 +23,7 @@ function fail(statusCode: number, message: string): never {
 }
 
 export function getActorRank(currentRoles: Pick<IRole, "rank">[]) {
-  return Math.min(...currentRoles.map(({ rank }) => rank), 4);
+  return currentRoles[0]?.rank ?? 4;
 }
 
 export const listRoles = (actorRank: number) => getAllRoles(actorRank);

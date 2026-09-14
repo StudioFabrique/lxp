@@ -37,7 +37,7 @@ async function userLogin(email: string, password: string) {
       user?.password || DUMMY_PASSWORD_HASH,
     );
 
-    if (!user || !user.password) {
+    if (!user || !user.password || user.roles.length !== 1) {
       throw { message: credentialsError, status: 401 };
     }
 

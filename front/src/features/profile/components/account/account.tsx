@@ -13,8 +13,7 @@ const Account: FC<{
 }> = ({ formRef }) => {
   const { user } = useContext(AuthContext);
   const canBecomeRoot =
-    user?.roles.some(({ role, rank }) => role === "admin" && rank === 1) ??
-    false;
+    user?.roles[0]?.role === "admin" && user.roles[0].rank === 1;
   const {
     register,
     handleSubmit,

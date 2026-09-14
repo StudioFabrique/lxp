@@ -3,6 +3,7 @@ import Permission from "../interfaces/db/permission.ts";
 import Role, { type IRole } from "../interfaces/db/role.ts";
 import User from "../interfaces/db/user.ts";
 import { logger } from "../logs/logger.ts";
+import updateUserRoles from "../../models/user/update-user-roles.ts";
 
 /**
  * Configure les rôles initiaux dans le système
@@ -19,43 +20,18 @@ import { logger } from "../logs/logger.ts";
 // }
 
 /**
- * Assigne le rôle 'user' à un utilisateur spécifique
+ * Assigne le rôle apprenant à un utilisateur spécifique
  * @param userId - L'identifiant de l'utilisateur
  */
 export async function assignRoleToUser(userId: string) {
-  const userRole = await Role.findOne({ name: "user" });
-  if (!userRole) {
-    logger.error("Le rôle n'existe pas");
-    return;
-  }
-
-  const user = await User.findByIdAndUpdate(userId, {
-    $addToSet: { roles: userRole._id },
-  });
-
-  if (!user) {
-    return;
-  }
+  return assignRoleAndSync(userId, "student");
 }
 
-/**
- * Assigne un rôle à un utilisateur et synchronise avec la base de données
- * @param userId - L'identifiant de l'utilisateur
- * @param role - Le rôle à assigner
- */
+/** Remplace le rôle, sans jamais cumuler les autorisations. */
 export async function assignRoleAndSync(userId: string, role: string) {
-  const userRole = await Role.findOne({ name: role });
-  if (!userRole) {
-    throw new Error("Role not found");
-  }
-
-  const user = await User.findByIdAndUpdate(userId, {
-    $addToSet: { roles: userRole._id },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const userRole = await Role.findOne({ role });
+  if (!userRole) throw new Error("Role not found");
+  return updateUserRoles([userId], [userRole._id.toString()]);
 }
 
 /**
@@ -68,7 +44,7 @@ export async function getRolesForUser(userId: string) {
   if (!user) {
     return [];
   }
-  const roles = user.roles.map((role: IRole) => role.role);
+  const roles = user.roles.length === 1 ? [user.roles[0].role] : [];
 
   return roles;
 }
@@ -150,7 +126,7 @@ function getRoleModelLabel(rank: number): string {
  * @returns Une liste des identifiants utilisateurs ayant ce rôle
  */
 export async function getUsersThatHaveRole(role: string) {
-  const foundRole = await Role.findOne({ name: role });
+  const foundRole = await Role.findOne({ role });
   if (!foundRole) {
     return [];
   }
@@ -165,19 +141,8 @@ export async function getUsersThatHaveRole(role: string) {
  * @param userId - L'identifiant de l'utilisateur
  * @param role - Le rôle à supprimer
  */
-export async function removeRoleFromUser(userId: string, role: string) {
-  const userRole = await Role.findOne({ name: role });
-  if (!userRole) {
-    logger.error(`Le rôle ${role} n'existe pas`);
-    return;
-  }
-
-  const user = await User.findByIdAndUpdate(userId, {
-    $pull: { roles: userRole._id },
-  });
-
-  if (user) {
-  }
+export async function removeRoleFromUser(_userId: string, _role: string) {
+  throw new Error("Un utilisateur doit conserver un rôle. Attribuez un rôle de remplacement.");
 }
 
 /**
@@ -219,15 +184,10 @@ export async function getAllPermissionsForUser(
     return [];
   }
 
-  const permissionList = Array.from(
-    new Set(
-      (user.roles as unknown as IRole[]).flatMap((role) =>
-        ((role.permissions || []) as any[])
-          .map((permission) => permission.name)
-          .filter(Boolean),
-      ),
-    ),
-  );
+  if (user.roles.length !== 1) return [];
+  const permissionList: string[] = (user.roles[0].permissions || [])
+    .map((permission: any) => permission.name)
+    .filter(Boolean);
 
   return permissionList;
 }

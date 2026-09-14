@@ -5,6 +5,10 @@ import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import AuthPageWrapper from "./AuthPageWrapper";
+import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+
+const ROOT_TRANSFER_TOOLTIP =
+  "Un seul utilisateur peut être root. Ce compte deviendra l’unique utilisateur root de l’application. L’utilisateur root actuel, s’il existe, sera automatiquement passé en administrateur et perdra ses droits root. Son compte sera conservé.";
 
 type Props = {
   token: string;

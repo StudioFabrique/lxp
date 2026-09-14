@@ -22,7 +22,7 @@ async function httpGetUsersByRank(req: CustomRequest, res: Response) {
       sdir,
       typeof search === "string" ? search : undefined,
       typeof exclude === "string" ? exclude.split(",").filter(Boolean) : [],
-      Math.min(...req.auth!.userRoles.map(({ rank }) => rank), 4),
+      (req.auth!.userRoles[0]?.rank ?? 4),
     );
 
     if (!result) {

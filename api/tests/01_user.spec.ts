@@ -390,6 +390,17 @@ describe("HTTP /user", () => {
   });
 
   describe("PUT /user-roles", () => {
+    test("refuse plusieurs rôles pour un même utilisateur", async () => {
+      const roles = await Role.find({ rank: { $in: [2, 3] } });
+      const response = await request(app)
+        .put("/v1/user/user-roles")
+        .send({ usersToUpdate: [studentId], rolesId: roles.map(({ _id }) => String(_id)) })
+        .set("Cookie", [`${authToken}`]);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toEqual(expect.arrayContaining([
+        expect.objectContaining({ path: "rolesId", msg: "Un utilisateur doit avoir exactement un rôle." }),
+      ]));
+    });
     // No authentication
     test("It should respond 401 unauthorized", async () => {
       await request(app).put("/v1/user/user-roles").expect(401);
@@ -401,7 +412,7 @@ describe("HTTP /user", () => {
         .put("/v1/user/user-roles")
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(400);
-      expect(res.body.errors).toHaveLength(4);
+      expect(res.body.errors).toHaveLength(3);
     });
 
     // Empty lists in the request body
@@ -506,7 +517,7 @@ describe("HTTP /user", () => {
         })
         .set("Cookie", [`${authToken}`]);
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe("Aucun rôle trouvé avec les ID fournis.");
+      expect(res.body.message).toBe("Le rôle n'existe pas.");
     });
 
     // Some users not found

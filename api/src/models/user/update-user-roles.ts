@@ -2,116 +2,49 @@ import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 
-/**
- * Updates roles for multiple users with proper authorization checks
- *
- * This function validates that users exist, roles are valid, and ensures proper
- * role hierarchy constraints are respected before updating user roles in bulk.
- *
- * @param usersToUpdate - Array of user MongoDB IDs to update
- * @param rolesId - Array of role MongoDB IDs to assign to the users
- * @returns Promise<BulkWriteResult> - MongoDB bulk operation result
- * @throws Error with message and statusCode for various validation failures
- */
-async function updateUserRoles(
-  usersToUpdate: Array<string>,
-  rolesId: Array<string>
-) {
-  // Fetch existing users with their current roles (including rank for authorization)
-  let actualUsers = await User.find({ _id: usersToUpdate }).populate("roles", {
-    rank: 1,
-  });
-
-  // Validate that users exist
-  if (!actualUsers) {
-    throw {
-      message: "Aucun utilisateur trouvé avec les ID fournis.",
-      statusCode: 404,
-    };
+/** Remplace le rôle unique, après validation de l'ensemble du lot. */
+async function updateUserRoles(usersToUpdate: string[], rolesId: string[]) {
+  if (!Array.isArray(rolesId) || rolesId.length !== 1) {
+    throw { statusCode: 400, message: "Un utilisateur doit avoir exactement un rôle." };
+  }
+  if (!Array.isArray(usersToUpdate) || usersToUpdate.length === 0 ||
+      new Set(usersToUpdate).size !== usersToUpdate.length) {
+    throw { statusCode: 400, message: "La liste d'utilisateurs est invalide." };
+  }
+  const role = await Role.findById(rolesId[0]);
+  if (!role) throw { statusCode: 404, message: "Le rôle n'existe pas." };
+  // La création/promotion root passe par les parcours dédiés avec clé serveur.
+  if (role.rank === 0) {
+    throw { statusCode: 403, message: "Utilisez le parcours de promotion root avec une clé d'activation." };
+  }
+  const users = await User.find({ _id: { $in: usersToUpdate } }).populate("roles");
+  if (users.length !== usersToUpdate.length) {
+    throw { statusCode: 404, message: "Un ou plusieurs utilisateurs n'existent pas." };
+  }
+  if (users.some((user) => user.roles.length !== 1 ||
+      user.roles[0].rank === 0 || (role.rank <= 2) !== (user.roles[0].rank <= 2))) {
+    throw { statusCode: 400, message: "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour." };
   }
 
-  // Fetch the roles to be assigned
-  let roles = await Role.find({ _id: rolesId });
-  {
-    // Validate that roles exist
-    if (!roles || roles.length === 0) {
-      throw {
-        message: "Aucun rôle trouvé avec les ID fournis.",
-        statusCode: 404,
-      };
-    }
-  }
-
-  if (roles.some((role) => role.rank == 2))
+  // Aucune écriture SQL avant validation : un lot refusé ne doit pas modifier
+  // les contacts pédagogiques des utilisateurs.
+  if (role.rank === 2) {
     await prisma.contact.createMany({
-      data: actualUsers.map((user) => ({
-        idMdb: user._id.toString(),
-        role: "équipe pédagogique",
-        email: user.email,
+      data: users.map((user) => ({
+        idMdb: user._id.toString(), role: "équipe pédagogique", email: user.email,
       })),
       skipDuplicates: true,
     });
-  else
+  } else {
     await prisma.contact.deleteMany({
-      where: {
-        idMdb: { in: actualUsers.map((user) => user._id.toString()) },
-        role: "équipe pédagogique",
-      },
+      where: { idMdb: { in: usersToUpdate }, role: "équipe pédagogique" },
     });
-
-  // Verify that all requested users were found (data integrity check)
-  if (actualUsers.length !== usersToUpdate.length) {
-    throw {
-      message: "Un ou plusieurs utilisateurs n'existent pas.",
-      statusCode: 404,
-    };
   }
-
-  // Authorization check: Ensure role hierarchy constraints are respected
-  // This prevents unauthorized role escalation/demotion based on rank system
-  for (let i = 0; i < usersToUpdate.length; i++) {
-    for (const role of roles) {
-      // Check if trying to assign high-rank role to low-rank user (escalation)
-      if (role.rank > 2 && actualUsers[i].roles[0].rank <= 2) {
-        throw {
-          message:
-            "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
-          statusCode: 400,
-        };
-      }
-      // Check if trying to assign low-rank role to high-rank user (demotion)
-      else if (role.rank <= 2 && actualUsers[i].roles[0].rank > 2) {
-        throw {
-          message:
-            "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
-          statusCode: 400,
-        };
-      }
-    }
-  }
-
-  // Debug logging: Display current user roles before update
-  for (const actualUser of actualUsers) {
-  }
-
-  // Prepare bulk update operations for efficient database modification
-  const bulkUpdate = usersToUpdate.map((student: string) => {
-    return {
-      updateOne: {
-        filter: {
-          _id: student,
-        },
-        update: {
-          roles, // Replace existing roles with new role set
-        },
-      },
-    };
-  });
-
-  // Execute bulk update operation on all users simultaneously
-  const updatedUsers = await User.bulkWrite(bulkUpdate);
-
-  return updatedUsers;
+  return User.updateMany(
+    { _id: { $in: usersToUpdate } },
+    { $set: { roles: [role._id] } },
+    { runValidators: true },
+  );
 }
 
 export default updateUserRoles;

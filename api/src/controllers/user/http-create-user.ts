@@ -32,10 +32,7 @@ export default async function httpCreateUser(
       return res.status(404).send({ message: badQuery });
     }
 
-    const actorRank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
     const userResponse = await createUser(
       userDataRequest,
       roleId,

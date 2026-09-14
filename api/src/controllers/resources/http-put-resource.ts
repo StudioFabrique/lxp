@@ -24,7 +24,7 @@ export default async function httpPutResource(
       description,
       tags,
       filename ?? null,
-      req.auth!.userRoles.some(({ rank }) => rank <= 1),
+      (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
     );
     next({
       statusCode: 201,

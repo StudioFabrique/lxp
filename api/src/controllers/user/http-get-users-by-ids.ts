@@ -15,10 +15,7 @@ export default async function httpGetUsersByIds(
 
   try {
     const ids = String(req.query.ids).split(",").filter(Boolean);
-    const actorRank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
     const users = await getUsersByIds(ids, actorRank);
     return res.status(200).json({ list: users });
   } catch (error: any) {

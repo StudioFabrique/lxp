@@ -17,10 +17,7 @@ type RoleFormProps = {
 
 const RoleForm = ({ role, onRoleCreated }: RoleFormProps) => {
   const { user } = useContext(AuthContext);
-  const actorRank = Math.min(
-    ...(user?.roles.map(({ rank }) => rank) ?? []),
-    4,
-  );
+  const actorRank = user?.roles[0]?.rank ?? 4;
   const defaultRoleType = Math.min(actorRank + 1, 4);
   const [name, setName] = useState(role?.role ?? "");
   const [label, setLabel] = useState(role?.label ?? "");

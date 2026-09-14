@@ -178,10 +178,8 @@ userRouter.put(
       "Chaque élément de studentsToUpdate doit être un identifiant MongoDB valide.",
     ),
   body("rolesId")
-    .isArray()
-    .withMessage("Un tableau d'identifiants de rôles est requis.")
-    .custom((arr) => Array.isArray(arr) && arr.length > 0)
-    .withMessage("Le tableau rolesId ne peut pas être vide."),
+    .isArray({ min: 1, max: 1 })
+    .withMessage("Un utilisateur doit avoir exactement un rôle."),
   body("rolesId.*")
     .isMongoId()
     .withMessage(

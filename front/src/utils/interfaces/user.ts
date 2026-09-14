@@ -34,6 +34,7 @@ export default interface User {
   city?: string;
   phoneNumber?: string;
   birthDate?: Date;
+  /** Le compte possède exactement un rôle (format API historique). */
   roles: Array<Role>;
   avatar?: string;
   createdAt?: Date;

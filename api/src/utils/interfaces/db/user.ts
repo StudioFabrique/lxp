@@ -36,6 +36,7 @@ export interface IUser extends Document {
   birthDate?: Date;
   phoneNumber?: string;
   group?: IGroup["_id"];
+  /** Tableau conservé pour les contrats API et les jointures ; exactement un élément. */
   roles: IRole["_id"];
   hobbies?: IHobby["_id"][];
   links?: ILink["_id"][];
@@ -124,6 +125,10 @@ const userSchema: Schema = new Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
+      validate: {
+        validator: (roles: unknown[]) => roles.length === 1,
+        message: "Un utilisateur doit avoir exactement un rôle.",
+      },
     },
     group: {
       type: [mongoose.Schema.Types.ObjectId],

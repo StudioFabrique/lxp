@@ -55,8 +55,11 @@ describe("PromoteToRoot", () => {
     vi.clearAllMocks();
   });
 
-  it("affiche la durée configurée et promeut le compte avec la clé", async () => {
+  it("affiche la durée configurée et demande confirmation avant la promotion", async () => {
     expect(container.textContent).toContain("45 minutes");
+    expect(container.querySelector(".tooltip")?.getAttribute("data-tip")).toContain(
+      "administrateur et perdra ses droits root",
+    );
 
     const input = container.querySelector<HTMLInputElement>("input");
     await act(async () => {
@@ -74,6 +77,17 @@ describe("PromoteToRoot", () => {
       container
         .querySelector<HTMLFormElement>("form")
         ?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+
+    expect(profileApi.mutations.promoteToRoot).not.toHaveBeenCalled();
+    expect(container.textContent).toContain(
+      "Confirmer le changement d’utilisateur root",
+    );
+
+    await act(async () => {
+      [...container.querySelectorAll<HTMLButtonElement>("dialog button")]
+        .find((button) => button.textContent?.includes("Devenir root"))
+        ?.click();
     });
 
     expect(profileApi.mutations.promoteToRoot).toHaveBeenCalledWith(

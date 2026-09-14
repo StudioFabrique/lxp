@@ -24,7 +24,7 @@ const UserAdd = () => {
   const safeReturnTo = getSafeGroupReturnPath(returnTo);
   const requestedRoleRank = Number(searchParams.get("roleRank"));
   const currentUserRank = user?.roles.length
-    ? Math.min(...user.roles.map(({ rank }) => rank), 4)
+    ? (user.roles[0]?.rank ?? 4)
     : 4;
   const initialRoleRank =
     [1, 2, 3].includes(requestedRoleRank) &&

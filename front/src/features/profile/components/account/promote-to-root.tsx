@@ -6,8 +6,12 @@ import { profileApi } from "../../api/profile.api";
 import { onboardingApi } from "../../../auth/api/onboarding.api";
 import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message";
 import { Check, Copy } from "lucide-react";
+import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import Modal from "../../../../components/UI/modal/modal";
 
 const LOCAL_COMMAND = "npm run generate-activation-key";
+const ROOT_TRANSFER_TOOLTIP =
+  "Un seul utilisateur peut être root. Ce compte deviendra l’unique utilisateur root de l’application. L’utilisateur root actuel, s’il existe, sera automatiquement passé en administrateur et perdra ses droits root. Son compte sera conservé.";
 
 /**
  * Commande à exécuter sur le serveur pour régénérer la clé.
@@ -25,6 +29,7 @@ const activationKeyCommand = (containerId?: string) => {
 
 const PromoteToRoot = () => {
   const { handshake } = useContext(AuthContext);
+  const [isModalOpen, setModalOpen] = useState(false);
   const [token, setToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activationTokenTtlMinutes, setActivationTokenTtlMinutes] =
@@ -44,8 +49,18 @@ const PromoteToRoot = () => {
     }
   };
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleOpenModal = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!token.trim()) {
+      toast.error("La clé d'activation est requise.");
+      return;
+    }
+
+    setModalOpen(true);
+  };
+
+  const onPromote = async () => {
     const normalizedToken = token.trim();
     if (!normalizedToken) {
       toast.error("La clé d'activation est requise.");
@@ -58,6 +73,7 @@ const PromoteToRoot = () => {
         await profileApi.mutations.promoteToRoot(normalizedToken);
       await handshake();
       setToken("");
+      setModalOpen(false);
       toast.success(response.message);
     } catch (error: unknown) {
       toast.error(
@@ -90,9 +106,12 @@ const PromoteToRoot = () => {
 
   return (
     <div className="flex flex-col gap-2 mt-10">
-      <h3 className="text-lg font-semibold">Devenir utilisateur root</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold">Devenir utilisateur root</h3>
+        <QuestionMarkTooltip tooltipValue={ROOT_TRANSFER_TOOLTIP} />
+      </div>
       <BoxWrapper>
-        <form onSubmit={onSubmit} className="flex max-w-xl flex-col gap-4">
+        <form onSubmit={handleOpenModal} className="flex max-w-xl flex-col gap-4">
           <p className="text-sm text-base-content/70">
             Générez une clé sur le serveur avec la commande
             <code className="mx-1 rounded bg-base-300 px-1.5 py-0.5">
@@ -137,6 +156,24 @@ const PromoteToRoot = () => {
           </button>
         </form>
       </BoxWrapper>
+      {isModalOpen ? (
+        <Modal
+          title="Confirmer le changement d’utilisateur root"
+          leftLabel="Annuler"
+          onLeftClick={() => setModalOpen(false)}
+          rightLabel="Devenir root"
+          onRightClick={() => void onPromote()}
+          rightClassName="btn-warning"
+          isSubmitting={isLoading}
+        >
+          <p className="mt-4 text-sm leading-relaxed text-base-content/70">
+            Vous allez devenir l’unique utilisateur root de l’application.
+            L’utilisateur root actuel, s’il existe, sera rétrogradé en
+            administrateur et perdra ses droits root. Confirmez-vous cette
+            action ?
+          </p>
+        </Modal>
+      ) : null}
     </div>
   );
 };

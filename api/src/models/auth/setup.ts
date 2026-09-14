@@ -8,6 +8,7 @@ import User from "../../utils/interfaces/db/user.ts";
 import { env } from "../../config/env.ts";
 import { sendRootEmailVerification } from "../../services/mailer.ts";
 import { regexMail } from "../../utils/constantes.ts";
+import transferRoot from "../user/transfer-root.ts";
 import {
   exactInsensitive,
   isDuplicateKeyError,
@@ -163,9 +164,8 @@ async function createRootUser(
       !expectedExistingAdmins &&
       !existingUser.isActive &&
       !existingUser.emailVerified &&
-      existingUser.roles.some(
-        (roleId: unknown) => String(roleId) === rootRole._id.toString(),
-      );
+      existingUser.roles.length === 1 &&
+      String(existingUser.roles[0]) === rootRole._id.toString();
 
     // Une nouvelle clé d'initialisation permet de reprendre la création du
     // premier root si son email n'a jamais été validé. Les comptes actifs,
@@ -272,6 +272,10 @@ async function createRootUser(
 
   let createdUser;
   const requiresEmailVerification = !expectedExistingAdmins;
+  const adminRole = await Role.findOne({ role: "admin", rank: 1 });
+  if (!adminRole) {
+    throw { statusCode: 500, message: "Le rôle administrateur n'existe pas." };
+  }
   try {
     createdUser = await User.create({
       email,
@@ -280,7 +284,7 @@ async function createRootUser(
       password: hashedPassword,
       isActive: !requiresEmailVerification,
       emailVerified: !requiresEmailVerification,
-      roles: [rootRole._id],
+      roles: [adminRole._id],
     });
   } catch (error) {
     if (isDuplicateKeyError(error)) {
@@ -294,9 +298,11 @@ async function createRootUser(
   }
 
   const userId = createdUser._id.toString();
+  let tokenConsumed = false;
   try {
     await prisma.admin.create({ data: { idMdb: userId } });
     await BlackListedToken.create({ token: input.token });
+    tokenConsumed = true;
 
     if (requiresEmailVerification && env.ENVIRONMENT !== "test") {
       const verificationToken = jwt.sign(
@@ -308,10 +314,13 @@ async function createRootUser(
       );
       await sendRootEmailVerification(email, verificationToken);
     }
+    // Le compte et son invitation sont prêts avant de retirer les droits root
+    // du titulaire actuel. Un échec de création laisse ce dernier inchangé.
+    await transferRoot(userId);
   } catch (error) {
     await Promise.allSettled([
       prisma.admin.deleteMany({ where: { idMdb: userId } }),
-      BlackListedToken.deleteOne({ token: input.token }),
+      ...(tokenConsumed ? [BlackListedToken.deleteOne({ token: input.token })] : []),
       User.deleteOne({ _id: createdUser._id }),
     ]);
     throw error;
@@ -357,13 +366,18 @@ export async function promoteAdminToRoot(token: string, userId: string) {
   }
 
   const roles = user.roles as unknown as IRole[];
-  if (!roles.some(({ role, rank }) => role === "admin" && rank === 1)) {
+  if (roles.length !== 1 || roles[0].role !== "admin" || roles[0].rank !== 1) {
     throw {
       statusCode: 403,
       message: "Seul un utilisateur administrateur peut devenir root.",
     };
   }
 
-  await User.updateOne({ _id: user._id }, { $set: { roles: [rootRole._id] } });
   await BlackListedToken.create({ token });
+  try {
+    await transferRoot(userId);
+  } catch (error) {
+    await BlackListedToken.deleteOne({ token });
+    throw error;
+  }
 }
