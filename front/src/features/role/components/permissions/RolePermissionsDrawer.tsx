@@ -56,7 +56,8 @@ export default function RolePermissionsDrawer({
   const availablePermissions = sortPermissions(
     remainingResources?.[permissionType],
   );
-  const permissionsAreLocked = (detailedRole?.protection ?? role.protection) >= 2;
+  const permissionsAreLocked =
+    (detailedRole?.protection ?? role.protection) >= 2;
 
   const readOnlyItem = (permission: PermissionItem) => (
     <span className="flex items-center gap-2 rounded-field border border-base-300 bg-base-100 px-3 py-2 text-sm">
@@ -76,7 +77,7 @@ export default function RolePermissionsDrawer({
     >
       <div className="flex min-h-full flex-col gap-8 pb-8">
         {permissionsAreLocked ? (
-          <div className="alert alert-info text-sm">
+          <div className="flex gap-4 mx-auto text-info">
             <LockKeyhole className="size-5" />
             <span>Les permissions de ce rôle système sont verrouillées.</span>
           </div>
@@ -114,9 +115,7 @@ export default function RolePermissionsDrawer({
                         className="btn btn-sm h-auto min-h-9 gap-2 border-base-300 bg-base-100 font-normal"
                         title={permission.description}
                         disabled={permissionsAreLocked || isUpdatingPermission}
-                        onClick={() =>
-                          onDeletePermission(permission.fullName)
-                        }
+                        onClick={() => onDeletePermission(permission.fullName)}
                       >
                         <PermissionIcon isRole={permission.isRole} />
                         <span className="capitalize">{permission.name}</span>
