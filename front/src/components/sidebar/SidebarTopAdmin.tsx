@@ -4,17 +4,23 @@ import SidebarItem from "./SidebarItem";
 import PermissionGuard from "../guards/PermissionGuard";
 import { sidebarItems } from "../../config/sidebarItems";
 import { AuthContext } from "../../store/AuthProvider";
-import { getModulesLabel } from "../../utils/helpers/user-role";
+import {
+  getModulesLabel,
+  isTeacherUser,
+} from "../../utils/helpers/user-role";
 import { sidebarListClassName } from "./sidebar-styles";
 
 type SharedSideBarProps = { currentRoute: string[] };
 
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   const { user } = useContext(AuthContext);
+  const isTeacher = isTeacherUser(user);
 
   return (
     <ul className={sidebarListClassName}>
       {sidebarItems.admin.map((item) => {
+        if (item.teacherOnly && !isTeacher) return null;
+
         const Icon = item.icon;
         const label =
           item.key === "module"

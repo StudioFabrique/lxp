@@ -12,6 +12,7 @@ import {
   type AssignmentGradeInput,
   type UploadedAssignmentFile,
 } from "../../models/assignment/assignment.ts";
+import { getTeacherUpcomingAssignments } from "../../models/assignment/teacher-assignments.ts";
 import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 import {
   assignmentUploadsDirectory,
@@ -81,6 +82,26 @@ export async function httpGetStudentAssignments(
     const assignments = await getStudentAssignments(
       req.auth!.userId,
       scope.parcoursIds,
+    );
+    return res.status(200).json({ assignments });
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
+
+export async function httpGetTeacherUpcomingAssignments(
+  req: CustomRequest,
+  res: Response,
+) {
+  try {
+    const scope = await resolveAccessScope(req.auth!);
+    if (!scope || scope.kind !== "teacher") {
+      return res.status(403).json({
+        message: "Cette liste est réservée aux formateurs.",
+      });
+    }
+    const assignments = await getTeacherUpcomingAssignments(
+      scope.moduleIds ?? [],
     );
     return res.status(200).json({ assignments });
   } catch (error) {

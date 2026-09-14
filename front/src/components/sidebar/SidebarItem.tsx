@@ -20,6 +20,12 @@ const SidebarItem = ({
   tooltipText,
   children,
 }: PropsWithChildren<Props>) => {
+  const currentPath = currentRoute.slice(1).join("/");
+  const isActive = Boolean(
+    itemPath &&
+      (currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)),
+  );
+
   return (
     <li className="flex w-full justify-center xl:block">
       <Link
@@ -27,7 +33,7 @@ const SidebarItem = ({
         aria-label={tooltipText}
         data-tip={tooltipText}
         className={`${sidebarControlClassName} ${textSize} max-xl:tooltip max-xl:tooltip-right ${
-          currentRoute[1] === itemPath
+          isActive
             ? "bg-[var(--sidebar-active)] text-[var(--sidebar-active-content)] font-medium ring-1 ring-inset ring-[var(--sidebar-border)]"
             : ""
         }`}

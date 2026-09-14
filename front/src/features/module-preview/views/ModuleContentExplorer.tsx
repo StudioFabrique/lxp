@@ -42,9 +42,13 @@ const ModuleContentExplorer = () => {
   const ability = useContext(AbilityContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const requestedAssignmentCourseId = (
-    location.state as { assignmentCourseId?: number } | null
-  )?.assignmentCourseId;
+  const navigationState = location.state as {
+    assignmentCourseId?: number;
+    assignmentSubmissionId?: number;
+  } | null;
+  const requestedAssignmentCourseId = navigationState?.assignmentCourseId;
+  const requestedAssignmentSubmissionId =
+    navigationState?.assignmentSubmissionId;
   const firstPathSegment = window.location.pathname.split("/")[1];
   const isAdminView = firstPathSegment === "admin";
 
@@ -326,6 +330,7 @@ const ModuleContentExplorer = () => {
               <CourseAssignmentView
                 course={selectedCourse}
                 staff={getUserArea(user) === "staff"}
+                initialSubmissionId={requestedAssignmentSubmissionId}
                 onChanged={moduleActions.fetchModuleData}
               />
             ) : (

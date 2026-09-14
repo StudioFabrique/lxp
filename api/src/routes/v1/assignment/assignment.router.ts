@@ -8,6 +8,7 @@ import {
   httpDownloadAssignmentFile,
   httpGetCourseAssignment,
   httpGetStudentAssignments,
+  httpGetTeacherUpcomingAssignments,
   httpGradeAssignmentSubmission,
   httpPutCourseAssignment,
   httpSaveAssignmentDraft,
@@ -28,6 +29,12 @@ assignmentRouter.get(
   "/student",
   checkPermissions("cursus", "read"),
   httpGetStudentAssignments,
+);
+
+assignmentRouter.get(
+  "/teacher/upcoming",
+  checkPermissions("course", "read"),
+  httpGetTeacherUpcomingAssignments,
 );
 
 assignmentRouter.get(
