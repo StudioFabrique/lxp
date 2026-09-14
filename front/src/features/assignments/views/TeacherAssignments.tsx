@@ -1,9 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  CalendarClock,
-  ClipboardCheck,
-  UserRound,
-} from "lucide-react";
+import { CalendarClock, SquareArrowRightEnter, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import Header from "../../../components/headers/Header";
@@ -106,9 +102,8 @@ export default function TeacherAssignments() {
                 title={assignment.course.title}
                 truncateTitle
                 description={
-                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="flex flex-col gap-x-2 gap-2">
                     <span>{module.title}</span>
-                    <span aria-hidden>·</span>
                     <span className="flex items-center gap-1">
                       <CalendarClock className="size-3.5" aria-hidden />
                       {dateFormatter.format(new Date(assignment.dueAt))}
@@ -126,7 +121,7 @@ export default function TeacherAssignments() {
                     }}
                     aria-label={`Ouvrir l’évaluation ${assignment.course.title}`}
                   >
-                    <ClipboardCheck className="size-[1.2em]" />
+                    <SquareArrowRightEnter className="size-[1.2em]" />
                   </Link>
                 }
                 items={assignment.students.map((student) => {

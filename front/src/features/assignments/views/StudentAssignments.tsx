@@ -111,11 +111,7 @@ export default function StudentAssignments() {
           maxItemsShown={assignments.length}
           label={`${assignments.length} évaluation${assignments.length > 1 ? "s" : ""}`}
           title={period === "upcoming" ? "À venir" : "Évaluations passées"}
-          description={
-            period === "upcoming"
-              ? "Les échéances les plus proches apparaissent en premier."
-              : "Les évaluations les plus récentes apparaissent en premier."
-          }
+
           emptyMessage={
             search
               ? "Aucune évaluation ne correspond à votre recherche."
