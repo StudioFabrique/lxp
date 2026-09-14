@@ -15,6 +15,7 @@ type CursorGlowCardProps = {
     | "warning"
     | "error";
   className?: string;
+  allowOverflow?: boolean;
 };
 
 const CursorGlowCard = ({
@@ -22,6 +23,7 @@ const CursorGlowCard = ({
   glowSize = 1,
   glowColor = "primary",
   className,
+  allowOverflow = false,
 }: CursorGlowCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
@@ -46,45 +48,48 @@ const CursorGlowCard = ({
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
       className={cn(
-        "group relative overflow-hidden rounded-xl transition-transform duration-200 hover:scale-101",
+        "group relative rounded-xl transition-transform duration-200 hover:scale-101",
+        allowOverflow ? "overflow-visible" : "overflow-hidden",
         className,
       )}
     >
-      <motion.span
-        className={cn(
-          "pointer-events-none absolute h-14 w-36 rounded-full blur-xl",
-          glowColor === "primary" && "bg-primary/40",
-          glowColor === "secondary" && "bg-secondary/40",
-          glowColor === "accent" && "bg-accent/40",
-          glowColor === "neutral" && "bg-neutral/40",
-          glowColor === "info" && "bg-info/40",
-          glowColor === "success" && "bg-success/40",
-          glowColor === "warning" && "bg-warning/40",
-          glowColor === "error" && "bg-error/40",
-        )}
-        initial={{ scale: 0, opacity: 0 }}
-        style={{
-          x: springX,
-          y: springY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          scale: isHovered ? glowSize : 0,
-          opacity: isHovered ? 0.7 : 0,
-        }}
-        transition={{
-          scale: {
-            duration: isHovered ? 0.25 : 0.5,
-            ease: isHovered ? "easeOut" : "easeInOut",
-          },
-          opacity: {
-            duration: isHovered ? 0.2 : 0.5,
-            ease: "easeOut",
-          },
-        }}
-        aria-hidden="true"
-      />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+        <motion.span
+          className={cn(
+            "absolute h-14 w-36 rounded-full blur-xl",
+            glowColor === "primary" && "bg-primary/40",
+            glowColor === "secondary" && "bg-secondary/40",
+            glowColor === "accent" && "bg-accent/40",
+            glowColor === "neutral" && "bg-neutral/40",
+            glowColor === "info" && "bg-info/40",
+            glowColor === "success" && "bg-success/40",
+            glowColor === "warning" && "bg-warning/40",
+            glowColor === "error" && "bg-error/40",
+          )}
+          initial={{ scale: 0, opacity: 0 }}
+          style={{
+            x: springX,
+            y: springY,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          animate={{
+            scale: isHovered ? glowSize : 0,
+            opacity: isHovered ? 0.7 : 0,
+          }}
+          transition={{
+            scale: {
+              duration: isHovered ? 0.25 : 0.5,
+              ease: isHovered ? "easeOut" : "easeInOut",
+            },
+            opacity: {
+              duration: isHovered ? 0.2 : 0.5,
+              ease: "easeOut",
+            },
+          }}
+          aria-hidden="true"
+        />
+      </div>
       {children}
     </div>
   );

@@ -25,6 +25,7 @@ const key = (purpose: string, email?: string) => jwt.sign(
 
 async function clean() {
   const ids = (await User.find().select("_id")).map(({ _id }) => String(_id));
+  await prisma.student.deleteMany({ where: { idMdb: { in: ids } } });
   await prisma.admin.deleteMany({ where: { idMdb: { in: ids } } });
   await prisma.contact.deleteMany({ where: { idMdb: { in: ids } } });
   await mongoose.connection.dropDatabase();
@@ -76,10 +77,73 @@ describe("rôle utilisateur unique", () => {
     expect(await prisma.contact.count({ where: { idMdb: String(user._id) } })).toBe(0);
   });
 
-  test("ne crée pas de contact pour un changement de catégorie refusé", async () => {
-    const user = await account("student@test.fr", studentRole);
-    await expect(updateUserRoles([String(user._id)], [String(teacherRole._id)])).rejects.toMatchObject({ statusCode: 400 });
-    expect(await prisma.contact.count({ where: { idMdb: String(user._id) } })).toBe(0);
+  test("permet de passer des administrateurs et formateurs au rôle apprenant", async () => {
+    const owner = await account("owner@test.fr", rootRole);
+    const admin = await account("admin@test.fr", adminRole);
+    const teacher = await account("teacher@test.fr", teacherRole);
+    const ids = [String(admin._id), String(teacher._id)];
+    await prisma.admin.createMany({
+      data: [String(owner._id), ...ids].map((idMdb) => ({ idMdb })),
+    });
+    await prisma.contact.create({
+      data: { idMdb: String(teacher._id), role: "équipe pédagogique", email: teacher.email },
+    });
+
+    await updateUserRoles(ids, [String(studentRole._id)], String(owner._id));
+
+    expect((await User.findById(admin._id))!.roles.map(String)).toEqual([String(studentRole._id)]);
+    expect((await User.findById(teacher._id))!.roles.map(String)).toEqual([String(studentRole._id)]);
+    expect(
+      await prisma.student.count({ where: { idMdb: { in: ids } } }),
+    ).toBe(2);
+    expect(
+      await prisma.contact.count({ where: { idMdb: { in: ids } } }),
+    ).toBe(0);
+    expect(
+      await prisma.admin.count({ where: { idMdb: { in: ids } } }),
+    ).toBe(0);
+  });
+
+  test("permet de passer des apprenants aux rôles formateur et administrateur", async () => {
+    const futureTeacher = await account("future-teacher@test.fr", studentRole);
+    const futureAdmin = await account("future-admin@test.fr", studentRole);
+    const ids = [String(futureTeacher._id), String(futureAdmin._id)];
+    await prisma.student.createMany({
+      data: ids.map((idMdb) => ({ idMdb })),
+    });
+
+    await updateUserRoles(
+      [String(futureTeacher._id)],
+      [String(teacherRole._id)],
+    );
+    await updateUserRoles(
+      [String(futureAdmin._id)],
+      [String(adminRole._id)],
+    );
+
+    expect((await User.findById(futureTeacher._id))!.roles.map(String)).toEqual([
+      String(teacherRole._id),
+    ]);
+    expect((await User.findById(futureAdmin._id))!.roles.map(String)).toEqual([
+      String(adminRole._id),
+    ]);
+    expect(
+      await prisma.admin.count({ where: { idMdb: { in: ids } } }),
+    ).toBe(2);
+    expect(
+      await prisma.contact.count({
+        where: { idMdb: String(futureTeacher._id) },
+      }),
+    ).toBe(1);
+    expect(
+      await prisma.contact.count({
+        where: { idMdb: String(futureAdmin._id) },
+      }),
+    ).toBe(0);
+    // La promotion ne doit pas effacer les acquis si le rôle change à nouveau.
+    expect(
+      await prisma.student.count({ where: { idMdb: { in: ids } } }),
+    ).toBe(2);
   });
 
   test("l'import attribue le rôle système, même avec plusieurs rôles du même rang", async () => {
