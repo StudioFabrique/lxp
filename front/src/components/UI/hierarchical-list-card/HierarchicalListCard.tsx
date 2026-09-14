@@ -64,11 +64,15 @@ const HierarchicalListCard = ({
       <CursorGlowCard
         glowColor="secondary"
         glowSize={2.4}
-        className={cn("rounded-box", { "h-full": !fullWidth })}
+        allowOverflow
+        className={cn(
+          "rounded-box hover:z-10 focus-within:z-10",
+          { "h-full": !fullWidth },
+        )}
       >
         <ul
           className={cn(
-            "list overflow-hidden pb-2 rounded-box border border-base-300",
+            "list overflow-visible pb-2 rounded-box border border-base-300",
             {
               "h-full min-h-52": !fullWidth,
               "border-dashed border-primary/25": !hasHeader,
@@ -80,7 +84,7 @@ const HierarchicalListCard = ({
             <>
               <li
                 className={cn(
-                  "p-4 pb-3",
+                  "rounded-t-[inherit] p-4 pb-3",
                   {
                     "flex min-h-24 items-end bg-cover bg-center text-white":
                       Boolean(headerBackgroundImage),
@@ -190,7 +194,7 @@ const HierarchicalListCard = ({
           modalBoxStyle="max-w-2xl"
           dialogAdditionalClass="z-20"
         >
-          <ul className="list mt-5 overflow-hidden rounded-box border border-base-300 bg-base-200">
+          <ul className="list mt-5 overflow-visible rounded-box border border-base-300 bg-base-200">
             {remainingItems.map((item) => (
               <HierarchicalListRow
                 key={item.id}

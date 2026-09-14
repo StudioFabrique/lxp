@@ -31,7 +31,11 @@ export default async function createManyUsers(
     existingUsers.map((user) => normalizeEmail(user.email)),
   );
 
-  const roles = await Role.find({ rank: roleRank });
+  const roleName = { 1: "admin", 2: "teacher", 3: "student" }[roleRank];
+  const role = roleName ? await Role.findOne({ role: roleName, rank: roleRank }) : null;
+  if (!role) {
+    throw { statusCode: 400, message: "Le rôle d'import est invalide." };
+  }
 
   const seen = new Set<string>();
   const usersToInsert = valid
@@ -44,7 +48,7 @@ export default async function createManyUsers(
     .map((item) => {
       item.user.email = item.email;
       item.user.isActive = false;
-      item.user.roles = roles;
+      item.user.roles = [role._id];
       return item.user;
     });
 

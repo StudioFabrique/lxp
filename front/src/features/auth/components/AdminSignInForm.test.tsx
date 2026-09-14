@@ -52,6 +52,9 @@ describe("AdminSignInForm", () => {
   };
 
   it("attend l'activation par email après la création du premier root", async () => {
+    expect(container.querySelector(".tooltip")?.getAttribute("data-tip")).toContain(
+      "Un seul utilisateur peut être root",
+    );
     await fillInput("Adresse email", "root@test.fr");
     await fillInput("Prénom", "Root");
     await fillInput("Nom", "Admin");
@@ -74,5 +77,17 @@ describe("AdminSignInForm", () => {
     expect(onSuccess).not.toHaveBeenCalled();
     expect(container.textContent).toContain("Activez votre compte root");
     expect(container.textContent).toContain("root@test.fr");
+  });
+
+  it("explique la rétrogradation du root actuel avant une nouvelle création", async () => {
+    await act(async () => {
+      root.render(<AdminSignInForm token="root-token" mode="additional" onSuccess={onSuccess} />);
+    });
+    const tooltip = container.querySelector(".tooltip");
+    expect(tooltip?.getAttribute("data-tip")).toContain("L’utilisateur root actuel");
+    expect(tooltip?.getAttribute("data-tip")).toContain(
+      "administrateur et perdra ses droits root",
+    );
+    expect(onboardingApi.createRootAccount).not.toHaveBeenCalled();
   });
 });

@@ -17,7 +17,7 @@ async function httpPutParcoursTags(req: CustomRequest, res: Response) {
   try {
     await putParcoursTags(+parcoursId, tags, {
       userId,
-      isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+      isAdmin: (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
     });
     return res
       .status(200)

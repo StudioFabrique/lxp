@@ -63,7 +63,7 @@ export function buildTeacherGroupVisibilityFilter(
 export async function getGroupVisibilityFilter(
   auth: GroupAccessAuth,
 ): Promise<FilterQuery<IGroup>> {
-  const userRank = Math.min(...auth.userRoles.map(({ rank }) => rank), 4);
+  const userRank = auth.userRoles[0]?.rank ?? 4;
   if (userRank <= 1) return {};
 
   const groupsWithParcoursPromise = prisma.group.findMany({
@@ -96,7 +96,7 @@ export async function canAccessGroups(
   const uniqueGroupIds = [...new Set(groupIds)];
   if (uniqueGroupIds.length === 0) return false;
 
-  const userRank = Math.min(...auth.userRoles.map(({ rank }) => rank), 4);
+  const userRank = auth.userRoles[0]?.rank ?? 4;
   if (userRank <= 1) return true;
 
   const visibilityFilter = await getGroupVisibilityFilter(auth);

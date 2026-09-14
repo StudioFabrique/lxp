@@ -20,10 +20,7 @@ export default function checkUserManagementScope(
     try {
       if (!req.auth) return res.status(401).json({ message: "Session absente" });
 
-      const actorRank = Math.min(
-        ...req.auth.userRoles.map(({ rank }) => rank),
-        4,
-      );
+      const actorRank = req.auth.userRoles[0]?.rank ?? 4;
       const ids = getIds(req, source);
 
       // Les validateurs de la route produiront le message de format détaillé.
@@ -36,10 +33,7 @@ export default function checkUserManagementScope(
 
       const targets = await User.find({ _id: { $in: ids } }).populate("roles");
       const forbiddenTarget = targets.some((target) => {
-        const targetRank = Math.min(
-          ...(target.roles as any[]).map(({ rank }) => rank),
-          4,
-        );
+        const targetRank = target.roles[0]?.rank ?? 4;
         return targetRank <= actorRank;
       });
 

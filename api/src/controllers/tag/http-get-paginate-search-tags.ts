@@ -23,7 +23,7 @@ async function httpGetPaginateSearchTags(req: CustomRequest, res: Response) {
       value,
       {
         userId: req.auth!.userId,
-        isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+        isAdmin: (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
       },
     );
     return res.status(200).json(result);

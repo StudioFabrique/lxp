@@ -155,61 +155,26 @@ export const rolesPageTourSteps: Step[] = [
   },
   {
     id: "roles-filters",
-    target: '[data-page-tour="filters"]',
-    title: "Rechercher et gérer",
+    target: '[data-page-tour="role-filters"]',
+    title: "Rechercher",
     content:
-      "Recherchez un rôle, actualisez les données ou supprimez une sélection selon vos permissions.",
+      "Retrouvez rapidement un rôle à partir de son nom, de son libellé ou de son modèle.",
     placement: "bottom",
   },
   {
-    id: "roles-table",
-    target: '[data-page-tour="table"]',
-    title: "Liste des rôles",
+    id: "roles-cards",
+    target: '[data-page-tour="role-cards"]',
+    title: "Rôles et permissions",
     content:
-      "Consultez les rôles existants et ouvrez leur configuration pour ajuster leurs permissions.",
+      "Chaque carte présente un rôle et le nombre de permissions de lecture, d'écriture, de modification et de suppression.",
     placement: "top",
   },
   {
     id: "roles-create",
-    target: '[data-page-tour="role-form"]',
+    target: '[data-page-tour="role-create-card"]',
     title: "Créer un rôle",
     content:
-      "Définissez un nom technique, un libellé visible et un modèle de permissions pour ajouter un rôle.",
-    placement: "top",
-  },
-];
-
-export const roleEditPageTourSteps: Step[] = [
-  {
-    id: "role-edit-header",
-    target: '[data-page-tour="header"]',
-    title: "Modification du rôle",
-    content:
-      "Cette page permet de modifier l'identité du rôle et l'ensemble de ses autorisations.",
-    placement: "bottom",
-  },
-  {
-    id: "role-edit-details",
-    target: '[data-page-tour="role-details"]',
-    title: "Informations du rôle",
-    content:
-      "Modifiez le nom, le libellé ou le modèle du rôle lorsque sa protection le permet.",
-    placement: "bottom",
-  },
-  {
-    id: "role-edit-permissions",
-    target: '[data-page-tour="permissions"]',
-    title: "Panneaux de permissions",
-    content:
-      "Les droits sont organisés par lecture, écriture, mise à jour et suppression. Ouvrez chaque panneau pour les ajuster.",
-    placement: "top",
-  },
-  {
-    id: "role-edit-validation",
-    target: '[data-page-tour="validation"]',
-    title: "Réinitialiser ou valider",
-    content:
-      "Vous pouvez restaurer les permissions système manquantes puis terminer vos modifications.",
+      "Utilisez cette carte ou le bouton de l'en-tête pour ouvrir le formulaire de création.",
     placement: "top",
   },
 ];

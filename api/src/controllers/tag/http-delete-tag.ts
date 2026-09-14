@@ -8,7 +8,7 @@ export default async function httpDeleteTag(req: CustomRequest, res: Response) {
     const { id } = req.params;
     await deleteTag(+id, {
       userId: req.auth!.userId,
-      isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+      isAdmin: (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
     });
     return res
       .status(201)

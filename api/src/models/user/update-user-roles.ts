@@ -2,116 +2,196 @@ import Role from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 
-/**
- * Updates roles for multiple users with proper authorization checks
- *
- * This function validates that users exist, roles are valid, and ensures proper
- * role hierarchy constraints are respected before updating user roles in bulk.
- *
- * @param usersToUpdate - Array of user MongoDB IDs to update
- * @param rolesId - Array of role MongoDB IDs to assign to the users
- * @returns Promise<BulkWriteResult> - MongoDB bulk operation result
- * @throws Error with message and statusCode for various validation failures
- */
+/** Remplace le rôle unique, après validation de l'ensemble du lot. */
 async function updateUserRoles(
-  usersToUpdate: Array<string>,
-  rolesId: Array<string>
+  usersToUpdate: string[],
+  rolesId: string[],
+  replacementOwnerId?: string,
 ) {
-  // Fetch existing users with their current roles (including rank for authorization)
-  let actualUsers = await User.find({ _id: usersToUpdate }).populate("roles", {
-    rank: 1,
-  });
-
-  // Validate that users exist
-  if (!actualUsers) {
+  if (!Array.isArray(rolesId) || rolesId.length !== 1) {
     throw {
-      message: "Aucun utilisateur trouvé avec les ID fournis.",
-      statusCode: 404,
+      statusCode: 400,
+      message: "Un utilisateur doit avoir exactement un rôle.",
     };
   }
-
-  // Fetch the roles to be assigned
-  let roles = await Role.find({ _id: rolesId });
-  {
-    // Validate that roles exist
-    if (!roles || roles.length === 0) {
-      throw {
-        message: "Aucun rôle trouvé avec les ID fournis.",
-        statusCode: 404,
-      };
-    }
-  }
-
-  if (roles.some((role) => role.rank == 2))
-    await prisma.contact.createMany({
-      data: actualUsers.map((user) => ({
-        idMdb: user._id.toString(),
-        role: "équipe pédagogique",
-        email: user.email,
-      })),
-      skipDuplicates: true,
-    });
-  else
-    await prisma.contact.deleteMany({
-      where: {
-        idMdb: { in: actualUsers.map((user) => user._id.toString()) },
-        role: "équipe pédagogique",
-      },
-    });
-
-  // Verify that all requested users were found (data integrity check)
-  if (actualUsers.length !== usersToUpdate.length) {
+  if (
+    !Array.isArray(usersToUpdate) ||
+    usersToUpdate.length === 0 ||
+    new Set(usersToUpdate).size !== usersToUpdate.length
+  ) {
     throw {
+      statusCode: 400,
+      message: "La liste d'utilisateurs est invalide.",
+    };
+  }
+  const role = await Role.findById(rolesId[0]);
+  if (!role) throw { statusCode: 404, message: "Le rôle n'existe pas." };
+  // La création/promotion root passe par les parcours dédiés avec clé serveur.
+  if (role.rank === 0) {
+    throw {
+      statusCode: 403,
+      message:
+        "Utilisez le parcours de promotion root avec une clé d'activation.",
+    };
+  }
+  const users = await User.find({ _id: { $in: usersToUpdate } }).populate(
+    "roles",
+  );
+  if (users.length !== usersToUpdate.length) {
+    throw {
+      statusCode: 404,
       message: "Un ou plusieurs utilisateurs n'existent pas.",
-      statusCode: 404,
+    };
+  }
+  if (
+    users.some(
+      (user) =>
+        user.roles.length !== 1 ||
+        user.roles[0].rank === 0,
+    )
+  ) {
+    throw {
+      statusCode: 400,
+      message:
+        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
     };
   }
 
-  // Authorization check: Ensure role hierarchy constraints are respected
-  // This prevents unauthorized role escalation/demotion based on rank system
-  for (let i = 0; i < usersToUpdate.length; i++) {
-    for (const role of roles) {
-      // Check if trying to assign high-rank role to low-rank user (escalation)
-      if (role.rank > 2 && actualUsers[i].roles[0].rank <= 2) {
-        throw {
-          message:
-            "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
-          statusCode: 400,
-        };
-      }
-      // Check if trying to assign low-rank role to high-rank user (demotion)
-      else if (role.rank <= 2 && actualUsers[i].roles[0].rank > 2) {
-        throw {
-          message:
-            "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
-          statusCode: 400,
-        };
+  // Aucune écriture SQL n'est effectuée avant la validation complète du lot.
+  await prisma.$transaction(async (tx) => {
+    if (role.rank <= 2) {
+      const existingAdmins = await tx.admin.findMany({
+        where: { idMdb: { in: usersToUpdate } },
+        select: { idMdb: true },
+      });
+      const existingAdminIds = new Set(
+        existingAdmins.map(({ idMdb }) => idMdb),
+      );
+      const missingAdmins = usersToUpdate
+        .filter((idMdb) => !existingAdminIds.has(idMdb))
+        .map((idMdb) => ({ idMdb }));
+
+      if (missingAdmins.length > 0) {
+        await tx.admin.createMany({ data: missingAdmins });
       }
     }
-  }
 
-  // Debug logging: Display current user roles before update
-  for (const actualUser of actualUsers) {
-  }
+    if (role.rank === 2) {
+      await tx.contact.createMany({
+        data: users.map((user) => ({
+          idMdb: user._id.toString(),
+          role: "équipe pédagogique",
+          email: user.email,
+        })),
+        skipDuplicates: true,
+      });
+    } else {
+      const contacts = await tx.contact.findMany({
+        where: { idMdb: { in: usersToUpdate } },
+        select: { id: true },
+      });
+      const contactIds = contacts.map(({ id }) => id);
 
-  // Prepare bulk update operations for efficient database modification
-  const bulkUpdate = usersToUpdate.map((student: string) => {
-    return {
-      updateOne: {
-        filter: {
-          _id: student,
-        },
-        update: {
-          roles, // Replace existing roles with new role set
-        },
-      },
-    };
+      // Les liaisons Contact utilisent RESTRICT : un formateur affecté doit
+      // être détaché avant que sa fiche pédagogique puisse être supprimée.
+      if (contactIds.length > 0) {
+        await tx.contactsOnCourse.deleteMany({
+          where: { contactId: { in: contactIds } },
+        });
+        await tx.contactsOnModule.deleteMany({
+          where: { contactId: { in: contactIds } },
+        });
+        await tx.contactsOnParcours.deleteMany({
+          where: { contactId: { in: contactIds } },
+        });
+        await tx.contact.deleteMany({ where: { id: { in: contactIds } } });
+      }
+    }
+
+    if (role.rank === 3) {
+      await tx.student.createMany({
+        data: users.map((user) => ({ idMdb: user._id.toString() })),
+        skipDuplicates: true,
+      });
+    }
+
+    if (role.rank > 2) {
+      await tx.teacher.deleteMany({ where: { idMdb: { in: usersToUpdate } } });
+
+      const admins = await tx.admin.findMany({
+        where: { idMdb: { in: usersToUpdate } },
+        select: { id: true },
+      });
+
+      if (admins.length > 0) {
+        if (!replacementOwnerId) {
+          throw {
+            statusCode: 409,
+            message:
+              "Impossible de modifier ces rôles : aucun autre compte ne peut reprendre les contenus pédagogiques.",
+          };
+        }
+        const replacementAdmin = await tx.admin.findFirst({
+          where: {
+            idMdb: replacementOwnerId,
+            id: { notIn: admins.map(({ id }) => id) },
+          },
+          select: { id: true },
+        });
+        if (!replacementAdmin) {
+          throw {
+            statusCode: 409,
+            message:
+              "Impossible de modifier ces rôles : aucun autre compte ne peut reprendre les contenus pédagogiques.",
+          };
+        }
+
+        const previousAdminIds = { in: admins.map(({ id }) => id) };
+        await tx.activity.updateMany({
+          where: { authorId: previousAdminIds },
+          data: { authorId: replacementAdmin.id },
+        });
+        await tx.bonusActivity.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.course.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.formation.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.lesson.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.mediatheque.updateMany({
+          where: { authorId: previousAdminIds },
+          data: { authorId: replacementAdmin.id },
+        });
+        await tx.module.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.parcours.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.resource.updateMany({
+          where: { adminId: previousAdminIds },
+          data: { adminId: replacementAdmin.id },
+        });
+        await tx.admin.deleteMany({ where: { id: previousAdminIds } });
+      }
+    }
   });
-
-  // Execute bulk update operation on all users simultaneously
-  const updatedUsers = await User.bulkWrite(bulkUpdate);
-
-  return updatedUsers;
+  return User.updateMany(
+    { _id: { $in: usersToUpdate } },
+    { $set: { roles: [role._id] } },
+    { runValidators: true },
+  );
 }
 
 export default updateUserRoles;

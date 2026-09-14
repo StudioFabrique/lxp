@@ -23,8 +23,8 @@ export type AccessScope =
     }
   | null;
 
-function highestPrivilegeRank(userRoles: IRole[]): number {
-  return Math.min(...userRoles.map((role) => role.rank), 4);
+function userRoleRank(userRoles: IRole[]): number {
+  return userRoles[0]?.rank ?? 4;
 }
 
 /**
@@ -39,7 +39,7 @@ export async function resolveAccessScope(auth: {
   userId: string;
   userRoles: IRole[];
 }): Promise<AccessScope> {
-  const rank = highestPrivilegeRank(auth.userRoles);
+  const rank = userRoleRank(auth.userRoles);
   if (rank <= 1) return null;
 
   if (rank === 2) return getTeacherAccessScope(auth.userId);

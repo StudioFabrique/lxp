@@ -31,7 +31,7 @@ type Teacher = {
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   const { user } = useContext(AuthContext);
-  const canCreateTeacher = user?.roles.some(({ rank }) => rank < 2) ?? false;
+  const canCreateTeacher = (user?.roles[0]?.rank ?? 4) < 2;
   const {
     allChecked,
     list,

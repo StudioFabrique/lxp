@@ -77,11 +77,12 @@ export async function authenticateSession(
   }
 
   const roles = user.roles as unknown as IRole[];
+  if (roles.length !== 1 || !roles[0]) {
+    throw new AuthenticationError("Le compte doit avoir exactement un rôle.");
+  }
   const permissionNames = new Set<string>();
-  for (const role of roles) {
-    for (const permission of (role.permissions || []) as any[]) {
-      if (permission?.name) permissionNames.add(permission.name);
-    }
+  for (const permission of (roles[0].permissions || []) as any[]) {
+    if (permission?.name) permissionNames.add(permission.name);
   }
 
   const ability = buildAbility(permissionNames);
@@ -92,4 +93,3 @@ export async function authenticateSession(
     abilityRules: ability.rules,
   };
 }
-

@@ -1,7 +1,8 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Response, type NextFunction } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 import updateUserRoles from "../../models/user/update-user-roles.ts";
+import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 
 /**
  * HTTP controller to update roles for multiple users
@@ -19,11 +20,10 @@ import updateUserRoles from "../../models/user/update-user-roles.ts";
  * @returns {void} Calls next middleware with result or error
  */
 async function httpUpdateUserRoles(
-  req: Request,
+  req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
-
   try {
     // Validate request using express-validator
     const result = validationResult(req);
@@ -37,7 +37,7 @@ async function httpUpdateUserRoles(
     const { usersToUpdate, rolesId } = req.body;
 
     // Call service function to update user roles
-    await updateUserRoles(usersToUpdate, rolesId);
+    await updateUserRoles(usersToUpdate, rolesId, req.auth?.userId);
 
     // Pass successful result to next middleware
     next({

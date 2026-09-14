@@ -5,14 +5,11 @@ export type AppArea = "staff" | "student";
 export const hasRoleRank = (
   user: Pick<User, "roles"> | null | undefined,
   ranks: readonly number[],
-) => user?.roles.some((role) => ranks.includes(role.rank)) ?? false;
+) => user?.roles.length === 1 && ranks.includes(user.roles[0].rank);
 
 export const isTeacherUser = (
   user: Pick<User, "roles"> | null | undefined,
-) =>
-  user?.roles.length
-    ? Math.min(...user.roles.map(({ rank }) => rank), 4) === 2
-    : false;
+) => hasRoleRank(user, [2]);
 
 export const getModulesLabel = (
   user: Pick<User, "roles"> | null | undefined,

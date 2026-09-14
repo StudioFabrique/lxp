@@ -1087,7 +1087,7 @@ const OnboardingTour = ({
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const userRank = user?.roles.length
-    ? Math.min(...user.roles.map(({ rank }) => rank), 4)
+    ? (user.roles[0]?.rank ?? 4)
     : 4;
   const staffParcours = useQuery({
     queryKey: ["root-parcours"],

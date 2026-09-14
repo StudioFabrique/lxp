@@ -8,10 +8,7 @@ async function httpPatchParcours(req: CustomRequest, res: Response) {
   try {
     const userId = req.auth?.userId;
     if (!userId) throw { message: noAccess, statusCode: 403 };
-    const rank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const rank = req.auth!.userRoles[0]?.rank ?? 4;
 
     const parcours = await patchParcours(
       Number(req.params.parcoursId),

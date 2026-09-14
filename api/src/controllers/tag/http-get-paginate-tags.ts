@@ -21,7 +21,7 @@ async function httpGetPaginateTags(req: CustomRequest, res: Response) {
       sdir as "asc" | "desc",
       {
         userId: req.auth!.userId,
-        isAdmin: req.auth!.userRoles.some(({ rank }) => rank <= 1),
+        isAdmin: (req.auth!.userRoles[0]?.rank ?? 4) <= 1,
       },
     );
     return res.status(200).json(result);

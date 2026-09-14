@@ -192,6 +192,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       await prisma.lesson.deleteMany({ where: { id: cible.lessonId } });
       await prisma.course.deleteMany({ where: { id: cible.courseId } });
       await prisma.module.deleteMany({ where: { id: cible.moduleId } });
+      await prisma.tagsOnParcours.deleteMany({ where: { parcoursId: cible.parcoursId } });
       await prisma.parcours.deleteMany({ where: { id: cible.parcoursId } });
     }
     await prisma.$disconnect();

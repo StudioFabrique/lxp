@@ -5,6 +5,7 @@ import mongoConnect from "./utils/services/db/mongo-connect.ts";
 import syncAnalyticsIndexes from "./utils/services/db/sync-analytics-indexes.ts";
 import removeLegacyInterfaceRbac from "./utils/services/db/remove-legacy-interface-rbac.ts";
 import syncTeacherContentRbac from "./utils/services/db/sync-teacher-content-rbac.ts";
+import normalizeUserRoles from "./utils/services/db/normalize-user-roles.ts";
 import app from "./app.ts";
 import { socket } from "./socket/socket.ts";
 import { corsOrigins, isDemoMode, PORT } from "./config/config.ts";
@@ -43,6 +44,7 @@ mongoInit();
 async function mongoInit() {
   console.log("Connecting to MongoDB...");
   await mongoConnect();
+  await normalizeUserRoles();
   await removeLegacyInterfaceRbac();
   await syncTeacherContentRbac();
   await syncAnalyticsIndexes();

@@ -24,10 +24,7 @@ async function httpGetUsersByRole(req: CustomRequest, res: Response) {
       };
     }
 
-    const actorRank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
     const result = await getUsersByRole(
       +page!,
       +limit!,

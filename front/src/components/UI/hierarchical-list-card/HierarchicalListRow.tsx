@@ -18,6 +18,7 @@ export type HierarchicalListCardItem = {
   icon?: ReactNode;
   to?: LinkProps["to"];
   state?: LinkProps["state"];
+  onClick?: () => void;
   action?:
     | ReactNode
     | ((
@@ -144,7 +145,7 @@ export const HierarchicalListRow = ({
 
   return (
     <li
-      className={`list-row relative mx-2 hover:bg-accent/2 ${item.to ? "cursor-pointer" : ""} ${hideDivider ? "after:hidden" : ""}`}
+      className={`group/row list-row relative mx-2 hover:bg-accent/2 ${item.to || item.onClick ? "cursor-pointer" : ""} ${hideDivider ? "after:hidden" : ""}`}
       onContextMenu={(event) => {
         if (!itemAction) return;
 
@@ -189,7 +190,9 @@ export const HierarchicalListRow = ({
       </div>
 
       {itemAction || item.to ? (
-        <div className="relative z-10 ml-auto self-center justify-self-end">
+        <div
+          className={`relative z-10 ml-auto self-center justify-self-end ${item.onClick ? "pointer-events-none" : ""}`}
+        >
           {itemAction ??
             (item.to ? (
               <Link
@@ -209,6 +212,13 @@ export const HierarchicalListRow = ({
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
           to={item.to}
           state={item.state}
+          aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
+        />
+      ) : item.onClick ? (
+        <button
+          type="button"
+          className="absolute inset-0 z-0 cursor-pointer rounded-box"
+          onClick={item.onClick}
           aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
         />
       ) : null}

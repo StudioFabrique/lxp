@@ -31,6 +31,10 @@ export const postRoleValidator = [
     .withMessage("Rang invalide")
     .notEmpty()
     .withMessage("Rang absent"),
+  body("duplicateFromId")
+    .optional()
+    .isMongoId()
+    .withMessage("Identifiant du rôle à dupliquer invalide"),
 
   checkValidatorResult,
 ];

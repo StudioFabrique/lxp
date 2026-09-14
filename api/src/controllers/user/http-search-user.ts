@@ -15,10 +15,7 @@ async function httpSearchUser(req: CustomRequest, res: Response) {
   const { page, limit } = req.query;
 
   try {
-    const actorRank = Math.min(
-      ...req.auth!.userRoles.map(({ rank }) => rank),
-      4,
-    );
+    const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
     const result = await searchUser(
       entity,
       value,

@@ -34,7 +34,7 @@ const UserHome = () => {
   const currentUserRank = useMemo(
     () =>
       currentUser
-        ? Math.min(...currentUser.roles.map(({ rank }) => rank), 4)
+        ? (currentUser.roles[0]?.rank ?? 4)
         : undefined,
     [currentUser],
   );
@@ -147,15 +147,15 @@ const UserHome = () => {
   const deleteWarning = useMemo(() => {
     if (!userToDelete) return undefined;
 
-    if (userToDelete.roles.some((role) => role.rank === 3)) {
+    if (userToDelete.roles[0]?.rank === 3) {
       return "Ses accomplissements, résultats de quiz et historiques de progression seront également supprimés.";
     }
 
-    if (userToDelete.roles.some((role) => role.rank === 2)) {
+    if (userToDelete.roles[0]?.rank === 2) {
       return "L'utilisateur sera détaché de ses parcours, modules et cours. Les contenus qu'il a créés seront conservés et transférés.";
     }
 
-    if (userToDelete.roles.some((role) => role.rank === 1)) {
+    if (userToDelete.roles[0]?.rank === 1) {
       return "Les contenus créés par cet administrateur seront conservés et transférés.";
     }
 
@@ -179,7 +179,7 @@ const UserHome = () => {
   // Les statistiques n'existent que pour les étudiants : les autres lignes
   // n'ouvrent rien.
   const isStudent = useCallback(
-    (user: User) => user.roles.some((role) => role.rank === 3),
+    (user: User) => user.roles[0]?.rank === 3,
     [],
   );
 

@@ -8,9 +8,19 @@ import type CustomRequest from "../../utils/interfaces/express/custom-request.ts
 
 export default async function httpPostRole(req: CustomRequest, res: Response) {
   try {
-    const { role, label, rank } = req.body;
-    await createRole(role, label, rank, getActorRank(req.auth!.userRoles));
-    return res.status(201).send({ message: "Rôle créé avec succès" });
+    const { role, label, rank, duplicateFromId } = req.body;
+    await createRole(
+      role,
+      label,
+      rank,
+      getActorRank(req.auth!.userRoles),
+      duplicateFromId,
+    );
+    return res.status(201).send({
+      message: duplicateFromId
+        ? "Rôle dupliqué avec succès"
+        : "Rôle créé avec succès",
+    });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)

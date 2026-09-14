@@ -7,6 +7,7 @@ import {
   roleApi,
 } from "../api/role.api";
 import { useCallback, useMemo } from "react";
+import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 
 function useRoleEdit(id: string) {
   const queryClient = useQueryClient();
@@ -14,6 +15,7 @@ function useRoleEdit(id: string) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["permission-resources", id],
     queryFn: () => roleApi.queries.getPermissions(id),
+    enabled: Boolean(id),
   });
 
   const permissions: Permissions | undefined = useMemo(() => {
@@ -98,17 +100,36 @@ function useRoleEdit(id: string) {
   }, [permissions, resources]);
 
   const refetchPermissions = () => {
-    queryClient.invalidateQueries({ queryKey: ["permission-resources", id] });
+    void queryClient.invalidateQueries({
+      queryKey: ["permission-resources", id],
+    });
+    void queryClient.invalidateQueries({ queryKey: ["roles"] });
   };
 
   const addPermissionMutation = useMutation({
     mutationFn: (name: string) => roleApi.mutations.addPermission(id, name),
-    onSuccess: refetchPermissions,
+    onSuccess: () => {
+      refetchPermissions();
+      toast.success("Permission ajoutée");
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(error, "Impossible d'ajouter cette permission."),
+      );
+    },
   });
 
   const deletePermissionMutation = useMutation({
     mutationFn: (name: string) => roleApi.mutations.deletePermission(id, name),
-    onSuccess: refetchPermissions,
+    onSuccess: () => {
+      refetchPermissions();
+      toast.success("Permission retirée");
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(error, "Impossible de retirer cette permission."),
+      );
+    },
   });
 
   const resetPermissionsMutation = useMutation({
@@ -116,6 +137,14 @@ function useRoleEdit(id: string) {
     onSuccess: () => {
       refetchPermissions();
       toast.success("Permissions réinitialisées avec succès");
+    },
+    onError: (error) => {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "Impossible de réinitialiser les permissions.",
+        ),
+      );
     },
   });
 
@@ -146,6 +175,11 @@ function useRoleEdit(id: string) {
     onAddPermission: handleAddPermission,
     onDeletePermission: handleDeletePermission,
     onResetPermissions: handleResetPermissions,
+    pendingPermission:
+      addPermissionMutation.variables ?? deletePermissionMutation.variables,
+    isUpdatingPermission:
+      addPermissionMutation.isPending || deletePermissionMutation.isPending,
+    isResettingPermissions: resetPermissionsMutation.isPending,
   };
 }
 

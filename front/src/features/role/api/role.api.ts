@@ -34,6 +34,13 @@ export type RoleCounts = {
   countDelete: number;
 };
 
+export type RoleFormPayload = {
+  role: string;
+  label: string;
+  rank: number;
+  duplicateFromId?: string;
+};
+
 const queries = {
   listRoles: async (searchValue?: string) => {
     const path = searchValue
@@ -56,11 +63,7 @@ const mutations = {
     const idsQuery = ids.join(",");
     await apiClient.delete(`/permission/roles/?ids=${idsQuery}`);
   },
-  createRole: async (body: {
-    role: string;
-    label: string;
-    rank: number;
-  }): Promise<{ message: string }> => {
+  createRole: async (body: RoleFormPayload): Promise<{ message: string }> => {
     const res = await apiClient.post("/permission/role", body);
     return res.data;
   },

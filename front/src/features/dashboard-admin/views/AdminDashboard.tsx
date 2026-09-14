@@ -21,7 +21,7 @@ const AdminDashboard = () => {
   const showOnboardingWelcome =
     onboardingStatus === "pending" && canStartOnboarding;
   const userRank = user?.roles.length
-    ? Math.min(...user.roles.map(({ rank }) => rank), 4)
+    ? (user.roles[0]?.rank ?? 4)
     : 4;
   const isAdministrator = userRank <= 1;
   const isRoot = userRank === 0;

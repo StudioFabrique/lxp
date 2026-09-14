@@ -13,12 +13,14 @@ const RoleTypeSelector = ({
   editMode,
   disabled,
   minimumRank,
+  id = "role-model",
 }: {
   currentRoleType: number;
   onSetCurrentRoleType: Dispatch<SetStateAction<number>>;
   editMode?: boolean;
   disabled?: boolean;
   minimumRank: number;
+  id?: string;
 }) => {
   const [showAlertRoleType, setShowAlertRoleType] = useState(false);
   const availableRoleTypes = roleTypes.filter(
@@ -26,11 +28,11 @@ const RoleTypeSelector = ({
   );
 
   return (
-    <div className="flex flex-col gap-1 relative">
+    <div className="relative flex w-full min-w-0 flex-col gap-1">
       <select
-        className="w-full select select-sm border border-neutral/50 focus:outline-none capitalize"
+        className="select select-sm w-full min-w-0 max-w-full border border-neutral/50 capitalize focus:outline-none"
         name="menu"
-        id="menu"
+        id={id}
         value={currentRoleType}
         onChange={(e) => {
           const found = availableRoleTypes.find(

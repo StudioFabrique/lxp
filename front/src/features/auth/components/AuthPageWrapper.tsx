@@ -13,8 +13,8 @@ type Props = PropsWithChildren<{
  */
 const AuthPageWrapper = ({ title, description, children }: Props) => {
   return (
-    <section className="flex w-full flex-col mt-10">
-      <header className="mb-6 text-center">
+    <section className="flex w-full flex-col my-10">
+      <header className="text-center mb-2">
         <div className="flex h-24 items-start justify-center">
           <h1 className="text-2xl font-bold leading-tight text-base-content">
             {title}

@@ -48,7 +48,7 @@ export function ReadCalendarBrowser({
   defaultView = "week",
 }: ReadCalendarBrowserProps = {}) {
   const { user } = useContext(AuthContext);
-  const scopeKey = `${user?._id ?? "anonymous"}:${user?.roles.map(role => role.rank).sort().join(",") ?? ""}`;
+  const scopeKey = `${user?._id ?? "anonymous"}:${user?.roles[0]?.rank ?? ""}`;
   const [view, setView] = useState<CalendarView>(defaultView);
   const [date, setDate] = useState(new Date());
   const [parcoursId, setParcoursId] = useState<number | null>(null);
