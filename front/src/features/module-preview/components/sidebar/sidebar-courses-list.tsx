@@ -259,24 +259,25 @@ const SidebarCoursesList = ({
           </RoleRankGuard>
         )}
       </div>
-      <PermissionGuard action="update" object="course">
-        <div
-          inert={calendarMode}
-          className={cn(
-            "z-30 w-full rounded-xl transition-all duration-300",
-            {
-              "sticky bottom-1": !disableCourseCreationFloating,
-              "bg-transparent shadow-none":
-                disableCourseCreationFloating || isAtNaturalPosition,
-              "border border-base-300 px-2 py-2 backdrop-blur":
-                !disableCourseCreationFloating && !isAtNaturalPosition,
-              "mt-5": courses.length > 0,
-            },
-          )}
-        >
-          {children[0]}
-        </div>
-      </PermissionGuard>
+      {!calendarMode && (
+        <PermissionGuard action="update" object="course">
+          <div
+            className={cn(
+              "z-30 w-full rounded-xl transition-all duration-300",
+              {
+                "sticky bottom-1": !disableCourseCreationFloating,
+                "bg-transparent shadow-none":
+                  disableCourseCreationFloating || isAtNaturalPosition,
+                "border border-base-300 px-2 py-2 backdrop-blur":
+                  !disableCourseCreationFloating && !isAtNaturalPosition,
+                "mt-5": courses.length > 0,
+              },
+            )}
+          >
+            {children[0]}
+          </div>
+        </PermissionGuard>
+      )}
       <div ref={actionsSentinelRef} className="h-px w-full" />
     </div>
   );

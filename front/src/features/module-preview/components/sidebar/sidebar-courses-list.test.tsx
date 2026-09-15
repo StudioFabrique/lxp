@@ -166,6 +166,13 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
 
 
 describe("sidebar en mode calendrier", () => {
+  it("cache les actions de création et d'import de cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "", false, true);
+
+    expect(container.textContent).not.toContain("Créer un cours");
+  });
+
   it("sélectionne le cours du calendrier au clic et le déplie à la demande", () => {
     const container = document.createElement("div");
     const select = vi.fn();
