@@ -10,22 +10,87 @@ type PopulatedStudent = {
   avatar?: Buffer | Uint8Array | string | null;
 };
 
+export type ExpectedAssignmentStudent = {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  avatar?: string | null;
+};
+
 type PopulatedGroup = {
   _id: string | { toString(): string };
   users?: PopulatedStudent[];
 };
 
+const sortExpectedStudents = (students: ExpectedAssignmentStudent[]) =>
+  students.sort((first, second) =>
+    `${first.lastname} ${first.firstname}`.localeCompare(
+      `${second.lastname} ${second.firstname}`,
+      "fr",
+      { sensitivity: "base" },
+    ),
+  );
+
+function toExpectedAssignmentStudent(
+  student: PopulatedStudent,
+): ExpectedAssignmentStudent {
+  return {
+    id: String(student._id),
+    firstname: student.firstname?.trim() ?? "",
+    lastname: student.lastname?.trim() ?? "",
+    email: student.email?.trim() ?? "",
+    avatar: imageToDataUrl(student.avatar),
+  };
+}
+
+export async function getExpectedAssignmentStudentsByGroup(
+  groupIds: readonly string[],
+): Promise<Map<string, ExpectedAssignmentStudent[]>> {
+  const studentsByGroup = new Map<string, ExpectedAssignmentStudent[]>();
+  if (groupIds.length === 0) return studentsByGroup;
+
+  const groups = (await Group.find({ _id: { $in: groupIds } })
+    .populate("users", {
+      _id: 1,
+      firstname: 1,
+      lastname: 1,
+      email: 1,
+      avatar: 1,
+    })
+    .lean()) as unknown as PopulatedGroup[];
+  groups.forEach((group) => {
+    studentsByGroup.set(
+      String(group._id),
+      sortExpectedStudents(
+        (group.users ?? []).map(toExpectedAssignmentStudent),
+      ),
+    );
+  });
+
+  return studentsByGroup;
+}
+
+export async function getExpectedAssignmentStudents(
+  groupIds: readonly string[],
+): Promise<ExpectedAssignmentStudent[]> {
+  const studentsByGroup = await getExpectedAssignmentStudentsByGroup(groupIds);
+  const students = new Map<string, ExpectedAssignmentStudent>();
+  studentsByGroup.forEach((groupStudents) => {
+    groupStudents.forEach((student) => students.set(student.id, student));
+  });
+  return sortExpectedStudents([...students.values()]);
+}
+
 /**
- * Liste les devoirs encore ouverts dans les seuls modules affectés au
+ * Liste les devoirs publiés dans les seuls modules affectés au
  * formateur, puis rapproche les groupes MongoDB des remises PostgreSQL.
  */
 export async function getTeacherUpcomingAssignments(
   moduleIds: readonly number[],
-  now = new Date(),
 ) {
   const assignments = await prisma.courseAssignment.findMany({
     where: {
-      dueAt: { gte: now },
       course: {
         isPublished: true,
         visibility: true,
@@ -79,21 +144,8 @@ export async function getTeacherUpcomingAssignments(
       ),
     ),
   ];
-  const groups =
-    groupIds.length === 0
-      ? []
-      : ((await Group.find({ _id: { $in: groupIds } })
-          .populate("users", {
-            _id: 1,
-            firstname: 1,
-            lastname: 1,
-            email: 1,
-            avatar: 1,
-          })
-          .lean()) as unknown as PopulatedGroup[]);
-  const studentsByGroup = new Map(
-    groups.map((group) => [String(group._id), group.users ?? []]),
-  );
+  const expectedStudentsByGroup =
+    await getExpectedAssignmentStudentsByGroup(groupIds);
 
   return assignments.map((assignment) => {
     const submissionsByStudent = new Map(
@@ -102,17 +154,15 @@ export async function getTeacherUpcomingAssignments(
         submission,
       ]),
     );
-    const students = new Map<string, PopulatedStudent>();
-
-    assignment.course.module.parcours.groups.forEach(({ group }) => {
-      studentsByGroup.get(group.idMdb)?.forEach((student) => {
-        students.set(String(student._id), student);
-      });
-    });
-
     const { groups: _groups, ...parcours } =
       assignment.course.module.parcours;
     const { submissions: _submissions, ...assignmentData } = assignment;
+    const expectedStudents = new Map<string, ExpectedAssignmentStudent>();
+    assignment.course.module.parcours.groups.forEach(({ group }) => {
+      expectedStudentsByGroup.get(group.idMdb)?.forEach((student) => {
+        expectedStudents.set(student.id, student);
+      });
+    });
 
     return {
       ...assignmentData,
@@ -120,25 +170,10 @@ export async function getTeacherUpcomingAssignments(
         ...assignment.course,
         module: { ...assignment.course.module, parcours },
       },
-      students: [...students.values()]
-        .map((student) => {
-          const id = String(student._id);
-          return {
-            id,
-            firstname: student.firstname?.trim() ?? "",
-            lastname: student.lastname?.trim() ?? "",
-            email: student.email?.trim() ?? "",
-            avatar: imageToDataUrl(student.avatar),
-            submission: submissionsByStudent.get(id) ?? null,
-          };
-        })
-        .sort((first, second) =>
-          `${first.lastname} ${first.firstname}`.localeCompare(
-            `${second.lastname} ${second.firstname}`,
-            "fr",
-            { sensitivity: "base" },
-          ),
-        ),
+      students: sortExpectedStudents([...expectedStudents.values()]).map((student) => ({
+        ...student,
+        submission: submissionsByStudent.get(student.id) ?? null,
+      })),
     };
   });
 }

@@ -18,14 +18,12 @@ const { getTeacherUpcomingAssignments } = await import(
 
 beforeEach(() => jest.clearAllMocks());
 
-it("borne les évaluations à venir aux modules affectés au formateur", async () => {
-  const now = new Date("2026-09-14T12:00:00.000Z");
-  await getTeacherUpcomingAssignments([4, 9], now);
+it("borne les évaluations aux modules affectés au formateur, échéances passées incluses", async () => {
+  await getTeacherUpcomingAssignments([4, 9]);
 
   expect(findMany).toHaveBeenCalledWith(
     expect.objectContaining({
       where: {
-        dueAt: { gte: now },
         course: {
           isPublished: true,
           visibility: true,
@@ -94,10 +92,7 @@ it("associe les étudiants des groupes à leur remise", async () => {
   const populate = jest.fn().mockReturnValue({ lean });
   groupFind.mockReturnValue({ populate });
 
-  const result = await getTeacherUpcomingAssignments(
-    [4],
-    new Date("2026-09-14T12:00:00.000Z"),
-  );
+  const result = await getTeacherUpcomingAssignments([4]);
 
   expect(result[0].course.module.parcours).toEqual({
     id: 2,

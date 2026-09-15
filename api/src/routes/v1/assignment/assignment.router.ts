@@ -9,6 +9,7 @@ import {
   httpGetCourseAssignment,
   httpGetStudentAssignments,
   httpGetTeacherUpcomingAssignments,
+  httpGetAssignmentLinkPreview,
   httpGradeAssignmentSubmission,
   httpPutCourseAssignment,
   httpSaveAssignmentDraft,
@@ -35,6 +36,12 @@ assignmentRouter.get(
   "/teacher/upcoming",
   checkPermissions("course", "read"),
   httpGetTeacherUpcomingAssignments,
+);
+
+assignmentRouter.get(
+  "/link-preview",
+  checkPermissions("course", "read"),
+  httpGetAssignmentLinkPreview,
 );
 
 assignmentRouter.get(

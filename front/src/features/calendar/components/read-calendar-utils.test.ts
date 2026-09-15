@@ -50,14 +50,17 @@ describe("cours en lecture", () => {
     expect(events[0]).toMatchObject({
       id: "assignment:8",
       title: "Devoir · Cours",
-      start: "18:30",
-      allDay: true,
+      start: "18:00",
+      end: "19:00",
+      deadlineTime: "18:30",
+      allDay: false,
       type: "warning",
       category: "assignment",
       to: "/student/parcours/module/2",
       navigationState: { courseId: 3, assignmentCourseId: 3 },
     });
     expect(dateKey(events[0].date!)).toBe("2026-10-27");
+    expect(layoutDayEvents(events).visible[0].event.id).toBe("assignment:8");
   });
 });
 const event = (id: number, start: string, end: string): CalendarEvent => ({ id, start, end, title: `Cours ${id}`, type: "primary" });
@@ -71,5 +74,11 @@ describe("chevauchements", () => {
     const result = layoutDayEvents([event(1, "09:00", "12:00"), event(2, "10:00", "11:00"), event(3, "11:00", "12:00"), event(4, "14:00", "15:00")]);
     expect(result.hidden).toEqual([]);
     expect(result.visible.map(item => [item.lane, item.columns])).toEqual([[0, 2], [1, 2], [1, 2], [0, 1]]);
+  });
+  it("garde les devoirs dans la grille horaire quand deux cours occupent déjà les pistes", () => {
+    const devoir: CalendarEvent = { ...event(5, "10:00", "11:00"), category: "assignment" };
+    const result = layoutDayEvents([event(1, "09:00", "12:00"), event(2, "09:30", "11:00"), devoir]);
+    expect(result.visible.find(item => item.event.id === 5)?.columns).toBe(3);
+    expect(result.hidden).toEqual([]);
   });
 });

@@ -34,6 +34,14 @@ export type AssignmentSubmission = {
   criterionScores: AssignmentCriterionScore[];
 };
 
+export type AssignmentExpectedStudent = {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  avatar?: string | null;
+};
+
 export type CourseAssignment = {
   id: number;
   courseId: number;
@@ -44,6 +52,7 @@ export type CourseAssignment = {
   criteria: AssignmentCriterion[];
   files: AssignmentFile[];
   submissions: AssignmentSubmission[];
+  expectedStudents?: AssignmentExpectedStudent[];
 };
 
 export type AssignmentCriterionFormValue = {

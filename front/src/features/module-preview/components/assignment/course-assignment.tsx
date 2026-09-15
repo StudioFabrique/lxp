@@ -14,6 +14,7 @@ import Modal from "../../../../components/UI/modal/modal";
 import type Course from "../../../../utils/interfaces/course";
 import { modulePreviewApi } from "../../api/module-preview.api";
 import type {
+  AssignmentExpectedStudent,
   AssignmentFile,
   AssignmentSubmission,
 } from "../../interfaces/assignment";
@@ -21,6 +22,7 @@ import {
   assignmentScoreTextClass,
   assignmentScoreTone,
 } from "./assignment-score-color";
+import AssignmentLinkPreviews from "./assignment-link-previews";
 
 type Props = {
   course: Course;
@@ -118,6 +120,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   const assignment = course.assignment!;
   const submission = assignment.submissions[0];
   const [text, setText] = useState(submission?.text ?? "");
+  const [savedText, setSavedText] = useState(submission?.text ?? "");
   const [files, setFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState<"draft" | "submit" | null>(null);
   const [showSubmitConfirmation, setShowSubmitConfirmation] = useState(false);
@@ -142,6 +145,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
         submit,
       );
       setFiles([]);
+      setSavedText(text);
       if (submit) setShowSubmitConfirmation(false);
       toast.success(submit ? "Devoir rendu" : "Brouillon enregistré");
       await onChanged();
@@ -252,6 +256,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
             onChange={(event) => setText(event.target.value)}
           />
         </label>
+        <AssignmentLinkPreviews text={savedText} />
 
         {!isSubmitted && (
           <label className="mt-4 flex flex-col gap-2">
@@ -335,10 +340,7 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
             <p
               className={`text-3xl font-bold ${
                 assignmentScoreTextClass[
-                  assignmentScoreTone(
-                    submission.grade,
-                    assignment.maxScore,
-                  )
+                  assignmentScoreTone(submission.grade, assignment.maxScore)
                 ]
               }`}
             >
@@ -356,6 +358,38 @@ function StudentAssignment({ course, onChanged }: Omit<Props, "staff">) {
   );
 }
 
+function MissingStudents({
+  students,
+  compact = false,
+}: {
+  students: AssignmentExpectedStudent[];
+  compact?: boolean;
+}) {
+  if (students.length === 0) return null;
+
+  return (
+    <section
+      className={
+        compact
+          ? "mt-4 border-t border-base-300 px-2 pt-4"
+          : "mx-auto mt-5 max-w-md text-left"
+      }
+    >
+      <h4 className="text-sm font-semibold">
+        En attente de remise ({students.length})
+      </h4>
+      <ul className="mt-2 space-y-1 text-sm text-base-content/70">
+        {students.map((student) => {
+          const name =
+            [student.firstname, student.lastname].filter(Boolean).join(" ") ||
+            "Étudiant";
+          return <li key={student.id}>{name}</li>;
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function StaffAssignment({
   course,
   initialSubmissionId,
@@ -366,6 +400,16 @@ function StaffAssignment({
     () => assignment.submissions.filter((item) => item.submittedAt),
     [assignment.submissions],
   );
+  const missingStudents = useMemo(() => {
+    const submittedStudentIds = new Set(
+      submitted
+        .map((submission) => submission.student?.idMdb)
+        .filter((id): id is string => Boolean(id)),
+    );
+    return (assignment.expectedStudents ?? []).filter(
+      (student) => !submittedStudentIds.has(student.id),
+    );
+  }, [assignment.expectedStudents, submitted]);
   const initiallySelected =
     submitted.find((item) => item.id === initialSubmissionId) ?? submitted[0];
   const [selectedId, setSelectedId] = useState<number | null>(
@@ -449,6 +493,14 @@ function StaffAssignment({
         <p className="mt-1 text-sm text-base-content/60">
           Les remises des apprenants apparaîtront ici pour être notées.
         </p>
+        {(assignment.expectedStudents?.length ?? 0) > 0 && (
+          <p className="mt-3 text-sm text-base-content/60">
+            {assignment.expectedStudents?.length} travail
+            {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""} attendu
+            {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""}
+          </p>
+        )}
+        <MissingStudents students={missingStudents} />
       </div>
     );
   }
@@ -456,7 +508,14 @@ function StaffAssignment({
   return (
     <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="rounded-2xl border border-base-300 bg-base-100 p-3">
-        <h3 className="px-2 pb-3 font-bold">Rendus ({submitted.length})</h3>
+        <h3 className="px-2 pb-1 font-bold">Rendus ({submitted.length})</h3>
+        {(assignment.expectedStudents?.length ?? 0) > 0 && (
+          <p className="px-2 pb-3 text-xs text-base-content/60">
+            {assignment.expectedStudents?.length} travail
+            {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""} attendu
+            {(assignment.expectedStudents?.length ?? 0) > 1 ? "s" : ""}
+          </p>
+        )}
         <div className="flex flex-col gap-2">
           {submitted.map((submission) => {
             const name =
@@ -487,6 +546,7 @@ function StaffAssignment({
             );
           })}
         </div>
+        <MissingStudents students={missingStudents} compact />
       </aside>
 
       {selected && (
@@ -501,6 +561,7 @@ function StaffAssignment({
               Aucune réponse textuelle.
             </p>
           )}
+          <AssignmentLinkPreviews text={selected.text ?? ""} />
           {selected.files.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {selected.files.map((file) => (

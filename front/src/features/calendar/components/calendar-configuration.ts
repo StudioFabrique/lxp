@@ -97,6 +97,7 @@ export interface CalendarEvent {
     assignmentCourseId?: number;
   };
   category?: "course" | "assignment";
+  deadlineTime?: string;
   dayIndex?: number; // 0 = Monday, 6 = Sunday
   date?: Date;
   start: string; // Format "HH:MM"

@@ -98,6 +98,17 @@ it("le clic sur un jour en en-tête de semaine ouvre cette date en vue Jour", as
   expect(Array.from(container.querySelectorAll("button")).find(button => button.textContent === "Jour")?.getAttribute("aria-pressed")).toBe("true");
 });
 
+it("le clic sur une date du mois ouvre ce jour dans la vue Jour", async () => {
+  await render();
+  await click("Mois");
+  const date = container.querySelector<HTMLButtonElement>('button[aria-label$="en vue Jour"]')!;
+  const label = date.getAttribute("aria-label");
+  act(() => date.click()); await flush();
+  expect(container.querySelector('[aria-label="Cours du jour"]')).not.toBeNull();
+  expect(Array.from(container.querySelectorAll("button")).find(button => button.textContent === "Jour")?.getAttribute("aria-pressed")).toBe("true");
+  expect(label).toContain("Voir le");
+});
+
 it.each(["Jour", "Semaine", "Mois", "Timeline"])("garde le popover ancré à l'item au défilement en vue %s", async (view) => {
   await render();
   await click(view);

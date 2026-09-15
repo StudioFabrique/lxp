@@ -10,6 +10,7 @@ import { getMonthDays, isSameDate } from "../calendar-utils";
 
 type Props = {
   events: CalendarEvent[];
+  onSelectDay?: (date: Date) => void;
   onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
   darkMode: boolean;
@@ -18,6 +19,7 @@ type Props = {
 
 const MonthView = ({
   events,
+  onSelectDay,
   onShowMore,
   currentDate,
   darkMode,
@@ -72,8 +74,12 @@ const MonthView = ({
           return (
             <div
               key={idx}
+              onClick={event => {
+                if (!(event.target as HTMLElement).closest("button")) onSelectDay?.(new Date(cellDate));
+              }}
               className={`border-b border-r min-h-[80px] p-1 flex flex-col gap-1 transition-colors
                   ${theme(darkMode).border}
+                  ${onSelectDay ? "cursor-pointer hover:bg-primary/5" : ""}
                   ${
                     !cell.currentMonth ? "bg-base-200 text-base-content/40" : ""
                   }
@@ -82,8 +88,10 @@ const MonthView = ({
                   }
                 `}
             >
-              <div
-                className={`text-right text-xs font-bold mb-1 ${
+              <button type="button"
+                aria-label={`Voir le ${cellDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} en vue Jour`}
+                onClick={() => onSelectDay?.(new Date(cellDate))}
+                className={`self-end rounded px-1 text-right text-xs font-bold mb-1 hover:bg-primary/10 focus-visible:outline-primary ${
                   isToday ? theme(darkMode).todayText : theme(darkMode).subText
                 }`}
               >
@@ -92,7 +100,7 @@ const MonthView = ({
                       cell.date.getMonth()
                     ].substring(0, 3)}.`
                   : cell.date.getDate()}
-              </div>
+              </button>
 
               <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] no-scrollbar">
                 {dayEvents.slice(0, 2).map((event) => {
@@ -115,7 +123,7 @@ const MonthView = ({
                     >
                       <span className="opacity-75 mr-1 hidden lg:inline">
                         {event.category === "assignment"
-                          ? event.start
+                          ? event.deadlineTime ?? event.start
                           : event.allDay
                             ? "Sans horaire"
                             : event.start}

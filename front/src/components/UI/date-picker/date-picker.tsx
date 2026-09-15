@@ -124,6 +124,7 @@ const DatePicker = ({
             sideOffset={8}
             align="start"
             collisionPadding={12}
+            onOpenAutoFocus={(event) => event.preventDefault()}
           >
             <DayPicker
               mode="single"

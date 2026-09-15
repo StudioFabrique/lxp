@@ -15,6 +15,20 @@ export default function CourseTimeFields({ startTime, endTime, onChange }: {
 }) {
   const [showError, setShowError] = useState(false);
   return <div className="@container space-y-2">
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Plage horaire rapide">
+      {([
+        { label: "Matin", startTime: "08:00", endTime: "12:00" },
+        { label: "Après-midi", startTime: "13:00", endTime: "17:00" },
+        { label: "Toute la journée", startTime: "08:00", endTime: "17:00" },
+      ] as const).map(preset => (
+        <button key={preset.label} type="button"
+          className={`btn btn-xs ${startTime === preset.startTime && endTime === preset.endTime ? "btn-primary" : "btn-outline"}`}
+          aria-pressed={startTime === preset.startTime && endTime === preset.endTime}
+          onClick={() => { setShowError(false); onChange({ startTime: preset.startTime, endTime: preset.endTime }); }}>
+          {preset.label}
+        </button>
+      ))}
+    </div>
     <div className="grid grid-cols-1 gap-3 @min-[16rem]:grid-cols-2">
       <label className="flex min-w-0 flex-col gap-1 text-sm">Heure de début
         <input type="time" className="input input-sm w-full" value={startTime ?? ""} max="23:58"

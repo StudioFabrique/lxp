@@ -32,6 +32,7 @@ import type { UpdateCourseFormValues } from "./course-form.types";
 import EditCourseModal from "./edit-course-modal";
 import type { LessonFormValues } from "./lesson-form.types";
 import { emitOnboardingEvent } from "../../../onboarding/onboarding-events";
+import { getUserArea } from "../../../../utils/helpers/user-role";
 
 type CourseItemProps = {
   calendarMode?: boolean;
@@ -103,6 +104,7 @@ const CourseItem = ({
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
+  const isStaff = getUserArea(user) === "staff";
 
   const canEditCourse =
     !calendarMode && (ability.can("update", "course") ||
@@ -281,11 +283,13 @@ const CourseItem = ({
           </div>
         ) : null}
         <div
-          className={`flex flex-col w-full cursor-pointer group ${
+          className={cn(
+            "flex flex-col w-full cursor-pointer group z-10",
             isCourseOpen
               ? "bg-secondary/60 hover:bg-secondary/75"
-              : "bg-secondary/50 hover:bg-secondary/75"
-          } z-10 rounded-lg`}
+              : "bg-secondary/50 hover:bg-secondary/75",
+            isStaff && isCourseOpen ? "rounded-t-lg" : "rounded-lg",
+          )}
           role="button"
           tabIndex={0}
           aria-expanded={isCourseOpen}
@@ -349,18 +353,21 @@ const CourseItem = ({
               )}
             </div>
           </div>
-          <RoleRankGuard ranks={[3]}>
-            <progress
-              className={cn(
-                "w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all",
-              )}
-              value={courseProgress}
-              max={100}
-            />
-          </RoleRankGuard>
+          {!isStaff && (
+            <RoleRankGuard ranks={[3]}>
+              <progress
+                className="w-full progress progress-primary bg-secondary rounded-b-full -mt-1.5 transition-all"
+                value={courseProgress}
+                max={100}
+              />
+            </RoleRankGuard>
+          )}
         </div>
         <motion.div
-          className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2 pt-2"
+          className={cn(
+            "bg-secondary/20 rounded-b-xl overflow-y-auto",
+            !isStaff && "-mt-2 pt-2",
+          )}
           initial={{ maxHeight: 0 }}
           style={{
             height: isCourseOpen ? "auto" : 0,

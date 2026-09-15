@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../utils/db.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
+import { getExpectedAssignmentStudents } from "./teacher-assignments.ts";
 
 export type UploadedAssignmentFile = {
   originalname: string;
@@ -24,6 +25,22 @@ export type AssignmentConfigInput = {
   criteria?: AssignmentCriterionInput[];
   removeFileIds?: number[];
 };
+
+const assignmentWithCourseInclude = {
+  files: { orderBy: { id: "asc" as const } },
+  criteria: { orderBy: { order: "asc" as const } },
+  course: {
+    select: {
+      module: {
+        select: {
+          parcours: {
+            select: { groups: { select: { group: { select: { idMdb: true } } } } },
+          },
+        },
+      },
+    },
+  },
+} satisfies Prisma.CourseAssignmentInclude;
 
 const assignmentInclude = {
   files: { orderBy: { id: "asc" as const } },
@@ -228,7 +245,7 @@ export async function getCourseAssignment(
   const assignment = await prisma.courseAssignment.findUnique({
     where: { courseId },
     include: {
-      ...assignmentInclude,
+      ...assignmentWithCourseInclude,
       submissions: {
         where: staff ? undefined : { student: { idMdb: userIdMdb } },
         orderBy: [{ submittedAt: "desc" }, { updatedAt: "desc" }],
@@ -251,14 +268,22 @@ export async function getCourseAssignment(
     submissions.map((student) => [student.idMdb, student]),
   );
 
+  const expectedStudents = staff
+    ? await getExpectedAssignmentStudents(
+        assignment.course.module.parcours.groups.map(({ group }) => group.idMdb),
+      )
+    : [];
+  const { course: _course, ...assignmentData } = assignment;
+
   return {
-    ...assignment,
+    ...assignmentData,
     criteria:
       staff || assignment.rubricVisible ? assignment.criteria : [],
     submissions: assignment.submissions.map((submission) => ({
       ...submission,
       student: studentNames.get(submission.student.idMdb) ?? submission.student,
     })),
+    expectedStudents,
   };
 }
 

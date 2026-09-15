@@ -290,7 +290,7 @@ function ParcoursCalendar({
             {selection?.event.date && (
               <p className="mt-1 text-sm">
                 {selection.event.category === "assignment"
-                  ? `À rendre avant ${selection.event.start}`
+                  ? `À rendre avant ${selection.event.deadlineTime ?? selection.event.start}`
                   : selection.event.allDay
                   ? "Sans horaire"
                   : `${selection.event.start} – ${selection.event.end}, chaque jour`}

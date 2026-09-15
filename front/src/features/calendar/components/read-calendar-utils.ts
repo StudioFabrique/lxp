@@ -66,9 +66,10 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
             subtitle: module.title,
             description: course.description ?? undefined,
             date: new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate()),
-            start: deadlineTime,
-            end: deadlineTime,
-            allDay: true,
+            start: `${String(deadline.getHours()).padStart(2, "0")}:00`,
+            end: `${String(deadline.getHours() + 1).padStart(2, "0")}:00`,
+            deadlineTime,
+            allDay: false,
             rangeStart: course.assignment.dueAt,
             type: "warning",
             category: "assignment",
@@ -87,16 +88,16 @@ export function calendarCourseEvents(data: ReadCalendar | undefined, date: Date,
 
 export const minutes = (time: string) => { const [hour, minute] = time.split(":").map(Number); return hour * 60 + minute; };
 
-/** Deux pistes au maximum ; les plages contiguës peuvent réutiliser une piste. */
+/** Deux pistes pour les cours ; les devoirs restent visibles même en cas de chevauchement. */
 export function layoutDayEvents(events: CalendarEvent[]) {
-  const timed = events.filter(event => !event.allDay).sort((a, b) => minutes(a.start) - minutes(b.start) || minutes(a.end) - minutes(b.end) || String(a.id).localeCompare(String(b.id)));
+  const timed = events.filter(event => !event.allDay).sort((a, b) => minutes(a.start) - minutes(b.start) || (a.category === "assignment" ? -1 : 0) - (b.category === "assignment" ? -1 : 0) || minutes(a.end) - minutes(b.end) || String(a.id).localeCompare(String(b.id)));
   const visible: { event: CalendarEvent; lane: number; columns: number }[] = [];
   const hidden: CalendarEvent[] = [];
   let group: typeof visible = [];
   let groupEnd = -1;
   let laneEnds = [-1, -1];
   const finishGroup = () => {
-    const columns = group.some(item => item.lane === 1) ? 2 : 1;
+    const columns = Math.max(1, ...group.map(item => item.lane + 1));
     visible.push(...group.map(item => ({ ...item, columns })));
     group = [];
   };
@@ -105,7 +106,10 @@ export function layoutDayEvents(events: CalendarEvent[]) {
     if (start >= groupEnd) { finishGroup(); laneEnds = [-1, -1]; }
     groupEnd = Math.max(groupEnd, end);
     const lane = laneEnds.findIndex(laneEnd => laneEnd <= start);
-    if (lane === -1) hidden.push(event);
+    if (lane === -1 && event.category === "assignment") {
+      laneEnds.push(end);
+      group.push({ event, lane: laneEnds.length - 1, columns: 1 });
+    } else if (lane === -1) hidden.push(event);
     else { laneEnds[lane] = end; group.push({ event, lane, columns: 1 }); }
   }
   finishGroup();

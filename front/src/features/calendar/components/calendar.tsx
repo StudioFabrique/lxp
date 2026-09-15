@@ -76,6 +76,7 @@ const Calendar = ({
         return (
           <MonthView
             events={events}
+            onSelectDay={onSelectDay}
             currentDate={currentDate}
             darkMode={darkMode}
             onClickEventDetails={onClickEventDetails}
