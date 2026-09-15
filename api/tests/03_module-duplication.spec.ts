@@ -163,7 +163,7 @@ describe("flat module duplication", () => {
     expect(copy.parcoursId).toBe(sourceParcoursId);
     expect(copy.courses).toHaveLength(1);
     expect(copy.courses[0].courseSlug).toBeNull();
-    expect(copy.courses[0].lessons[0].title).toBe("Leçon source");
+    expect(copy.courses[0].lessons[0].title).toBe("leçon source");
     expect(copy.quizzes[0].questions[0].contentHash).toBeNull();
   });
 

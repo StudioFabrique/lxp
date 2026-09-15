@@ -60,7 +60,7 @@ async function postTeacher(teacher: IUser) {
       const contact = await prisma.$transaction(async (tx) => {
         const createdContact = await tx.contact.create({
           data: {
-            idMdb: updatedTeacher._id,
+            idMdb: updatedTeacher._id.toString(),
             role: updatedTeacher.roles[0].label,
             phone: updatedTeacher.phoneNumber,
             email: updatedTeacher.email,
@@ -69,7 +69,7 @@ async function postTeacher(teacher: IUser) {
 
         await tx.admin.create({
           data: {
-            idMdb: updatedTeacher._id,
+            idMdb: updatedTeacher._id.toString(),
           },
         });
 

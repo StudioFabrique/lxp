@@ -57,7 +57,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   return (
     <ul className={sidebarListClassName}>
       {/* Avatar */}
-      <li className="flex w-full justify-center xl:block">
+      <li className="flex w-full justify-center 2xl:block">
         <Link
           to={`/${interfaceType}/profil`}
           className={`${sidebarControlClassName} capitalize`}
@@ -71,20 +71,20 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
               imgClassName="size-6 shrink-0 rounded-full object-cover"
             />
           )}
-          <span className="xl:block hidden">{fullName}</span>
+          <span className="2xl:block hidden">{fullName}</span>
         </Link>
       </li>
 
       {interfaceType === "admin" && !aiDisabled && (
-        <li className="flex w-full justify-center xl:block">
+        <li className="flex w-full justify-center 2xl:block">
           <Link
             to="/admin/dashboard-ia"
-            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
             data-tip="Consommation IA"
             aria-label="Consommation IA"
           >
             <Sparkles className="size-4 shrink-0" />
-            <h2 className="xl:block hidden">Consommation IA</h2>
+            <h2 className="2xl:block hidden">Consommation IA</h2>
           </Link>
         </li>
       )}
@@ -93,16 +93,16 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {!demoMode && interfaceType === "student" && <Questionnaire />}
 
       {(demoMode || canStartOnboarding) && (
-        <li className="flex w-full justify-center xl:block">
+        <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
             onClick={handleClickTutorial}
             data-tip="Relancer le tutoriel"
             aria-label="Relancer le tutoriel"
           >
             <CircleHelp className="size-4 shrink-0" />
-            <span className="xl:block hidden">Tutoriel guidé</span>
+            <span className="2xl:block hidden">Tutoriel guidé</span>
           </button>
         </li>
       )}
@@ -110,37 +110,37 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       {/* Sortie : quitter la démonstration remplace la déconnexion, le visiteur
           n'ayant pas de compte auquel revenir. */}
       {demoMode ? (
-        <li className="flex w-full justify-center xl:block">
+        <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
             data-tip="Quitter la démonstration"
             data-demo-tour="demo-exit"
             onClick={() => setIsExitOpen(true)}
             aria-label="Quitter la démonstration"
           >
             <DoorOpen className="size-4 shrink-0" />
-            <span className="xl:block hidden">Sortir de la démo</span>
+            <span className="2xl:block hidden">Sortir de la démo</span>
           </button>
         </li>
       ) : (
-        <li className="flex w-full justify-center xl:block">
+        <li className="flex w-full justify-center 2xl:block">
           <button
             type="button"
-            className={`${sidebarControlClassName} max-xl:tooltip max-xl:tooltip-right`}
+            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
             data-tip="Déconnexion"
             onClick={handleClickLogout}
             aria-label="Déconnexion"
           >
             <LogOutIcon className="size-4 shrink-0" />
-            <span className="xl:block hidden">Déconnexion</span>
+            <span className="2xl:block hidden">Déconnexion</span>
           </button>
         </li>
       )}
 
-      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 xl:flex-row">
+      <li className="flex w-full flex-col-reverse items-center justify-between gap-1 2xl:flex-row">
         {/* Logo */}
-        <div className="flex size-8 items-center justify-center xl:w-16">
+        <div className="flex size-8 items-center justify-center 2xl:w-16">
           <img
             className="w-full object-contain"
             src={newLogo}
@@ -149,7 +149,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </div>
         {/* Toggle clair/sombre */}
         <div
-          className="tooltip tooltip-right xl:tooltip-top"
+          className="tooltip tooltip-right 2xl:tooltip-top"
           data-tip="Mode Clair / Mode Sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />

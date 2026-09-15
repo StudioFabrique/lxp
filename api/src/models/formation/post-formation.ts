@@ -10,7 +10,7 @@ export default async function postFormation(
   tags: number[]
 ) {
   const existingFormation = await prisma.formation.findFirst({
-    where: { title },
+    where: { title: { equals: title, mode: "insensitive" } },
   });
 
   if (existingFormation) {

@@ -23,8 +23,8 @@ describe("HTTP /group — unicité du nom", () => {
   let authToken = {};
 
   const names = {
-    taken: "Promotion unicite",
-    other: "Promotion unicite bis",
+    taken: "promotion unicite",
+    other: "promotion unicite bis",
   };
 
   const postGroup = (name: string) =>

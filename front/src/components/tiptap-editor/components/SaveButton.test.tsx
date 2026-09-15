@@ -4,17 +4,73 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import SaveButton from "./SaveButton";
 
+const motionRenderHistory = vi.hoisted(() => ({
+  positions: [] as Array<{ left?: unknown; duration?: unknown }>,
+}));
+
+vi.mock("motion/react", async () => {
+  const React = await import("react");
+
+  type MotionProps = {
+    animate?: Record<string, unknown>;
+    initial?: unknown;
+    transition?: { duration?: number };
+  };
+
+  const MotionDiv = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement> & MotionProps
+  >(({ animate, initial, transition, ...props }, ref) => {
+    void initial;
+    motionRenderHistory.positions.push({
+      left: animate?.left,
+      duration: transition?.duration,
+    });
+    return <div ref={ref} {...props} />;
+  });
+
+  const MotionButton = React.forwardRef<
+    HTMLButtonElement,
+    React.ButtonHTMLAttributes<HTMLButtonElement> & MotionProps
+  >(({ animate, initial, transition, ...props }, ref) => {
+    void animate;
+    void initial;
+    void transition;
+    return <button ref={ref} {...props} />;
+  });
+
+  const MotionSpan = React.forwardRef<
+    HTMLSpanElement,
+    React.HTMLAttributes<HTMLSpanElement> & MotionProps
+  >(({ animate, initial, transition, ...props }, ref) => {
+    void animate;
+    void initial;
+    void transition;
+    return <span ref={ref} {...props} />;
+  });
+
+  return {
+    motion: {
+      div: MotionDiv,
+      button: MotionButton,
+      span: MotionSpan,
+    },
+  };
+});
+
 let root: Root | null = null;
 
 afterEach(() => {
   if (root) act(() => root?.unmount());
   root = null;
+  motionRenderHistory.positions = [];
   vi.unstubAllGlobals();
 });
 
 describe("SaveButton flottant", () => {
-  it("devient un bouton rond aligné à droite hors de sa position naturelle", () => {
+  it("se place sans transition initiale puis anime les changements suivants", () => {
     let observerCallback: IntersectionObserverCallback | undefined;
+    let animationFrameCallback: FrameRequestCallback | undefined;
 
     class IntersectionObserverMock {
       constructor(callback: IntersectionObserverCallback) {
@@ -26,6 +82,14 @@ describe("SaveButton flottant", () => {
     }
 
     vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn((callback: FrameRequestCallback) => {
+        animationFrameCallback = callback;
+        return 1;
+      }),
+    );
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
 
     const container = document.createElement("div");
     root = createRoot(container);
@@ -41,6 +105,16 @@ describe("SaveButton flottant", () => {
         {} as IntersectionObserver,
       );
     });
+
+    expect(
+      motionRenderHistory.positions.some(
+        ({ left, duration }) =>
+          left === "calc(100% - 0px)" && duration === 0,
+      ),
+    ).toBe(true);
+
+    act(() => animationFrameCallback?.(0));
+    act(() => animationFrameCallback?.(16));
 
     expect(getWrapper()?.classList.contains("sticky")).toBe(true);
     expect(getButton()?.classList.contains("btn-circle")).toBe(true);
@@ -70,6 +144,12 @@ describe("SaveButton flottant", () => {
     expect(
       getButton()?.querySelector("span:last-child")?.classList.contains("ml-2"),
     ).toBe(true);
+    expect(
+      motionRenderHistory.positions[motionRenderHistory.positions.length - 1],
+    ).toEqual({
+      left: "calc(50% - 0px)",
+      duration: 0.36,
+    });
 
     act(() => {
       observerCallback?.(

@@ -8,6 +8,7 @@ const BUTTON_TRANSITION = {
   duration: 0.36,
   ease: [0.4, 0, 0.2, 1] as const,
 };
+const INITIAL_POSITION_TRANSITION = { duration: 0 };
 
 type SaveButtonProps = {
   pending?: boolean;
@@ -18,9 +19,15 @@ type SaveButtonProps = {
 const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
   const [isAtNaturalPosition, setIsAtNaturalPosition] = useState(true);
   const [naturalWidth, setNaturalWidth] = useState<number>();
+  const [canAnimate, setCanAnimate] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const hasReceivedIntersectionRef = useRef(false);
+  const animationFrameRef = useRef<number>(undefined);
   const isFloating = floating && !isAtNaturalPosition;
   const animatedWidth = isFloating ? FLOATING_SIZE : naturalWidth;
+  const transition = canAnimate
+    ? BUTTON_TRANSITION
+    : INITIAL_POSITION_TRANSITION;
 
   const measureNaturalWidth = useCallback(
     (button: HTMLButtonElement | null) => {
@@ -37,7 +44,21 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
 
     const scrollRoot = sentinelRef.current.closest("#main-scroll-container");
     const observer = new IntersectionObserver(
-      ([entry]) => setIsAtNaturalPosition(entry.isIntersecting),
+      ([entry]) => {
+        setIsAtNaturalPosition(entry.isIntersecting);
+
+        if (!hasReceivedIntersectionRef.current) {
+          hasReceivedIntersectionRef.current = true;
+          animationFrameRef.current = requestAnimationFrame(() => {
+            // Laisse Motion appliquer la position initiale instantanée avant de
+            // réactiver les transitions pour les changements dus au scroll.
+            animationFrameRef.current = requestAnimationFrame(() => {
+              animationFrameRef.current = undefined;
+              setCanAnimate(true);
+            });
+          });
+        }
+      },
       {
         root: scrollRoot,
         threshold: 0.1,
@@ -45,7 +66,14 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
     );
 
     observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (animationFrameRef.current !== undefined) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      animationFrameRef.current = undefined;
+      hasReceivedIntersectionRef.current = false;
+    };
   }, [floating]);
 
   const icon = pending ? (
@@ -84,7 +112,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
           animate={{
             left: isFloating ? "calc(100% - 0px)" : "calc(50% - 0px)",
           }}
-          transition={BUTTON_TRANSITION}
+          transition={transition}
           className="absolute top-0 -translate-x-1/2"
         >
           <div
@@ -102,7 +130,7 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
                 paddingLeft: isFloating ? 6 : 16,
                 paddingRight: isFloating ? 6 : 16,
               }}
-              transition={BUTTON_TRANSITION}
+              transition={transition}
               className={`btn btn-sm btn-info justify-start overflow-hidden px-0 text-info-content ${
                 isFloating ? "btn-circle shadow-lg" : ""
               }`}
@@ -118,7 +146,11 @@ const SaveButton = ({ pending, onSave, floating = false }: SaveButtonProps) => {
                   opacity: isFloating ? 0 : 1,
                   x: isFloating ? -4 : 0,
                 }}
-                transition={{ duration: 0.16, ease: "easeInOut" }}
+                transition={
+                  canAnimate
+                    ? { duration: 0.16, ease: "easeInOut" }
+                    : INITIAL_POSITION_TRANSITION
+                }
                 aria-hidden={isFloating}
                 className="ml-2 shrink-0 whitespace-nowrap text-left"
               >
