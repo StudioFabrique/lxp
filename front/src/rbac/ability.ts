@@ -11,7 +11,6 @@ export type AppAction = (typeof appActions)[number];
 export const appSubjects = [
   "accomplishment",
   "activity",
-  "admin",
   "bonusSkill",
   "calendar",
   "chatbot",
@@ -20,7 +19,6 @@ export const appSubjects = [
   "dashboard",
   "dashboardIa",
   "evaluation",
-  "everything",
   "feedback",
   "formation",
   "group",
@@ -38,9 +36,7 @@ export const appSubjects = [
   "skill",
   "social-network",
   "stats",
-  "student",
   "tag",
-  "teacher",
   "user",
 ] as const;
 export type AppSubject = (typeof appSubjects)[number];

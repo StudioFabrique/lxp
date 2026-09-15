@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Permission from "../../utils/interfaces/db/permission.ts";
 import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import {
   resourcesRbac,
@@ -39,6 +38,14 @@ export async function grantPermission(
   actorRank: number,
 ) {
   await assertInterfaceRole({ identifier: "_id", _id: roleId }, actorRank);
+  const supportedPermissions = new Set(
+    resourcesRbac.flatMap(({ name }) =>
+      ["read", "write", "update", "delete"].map((action) => `${action}:${name}`),
+    ),
+  );
+  if (!supportedPermissions.has(permission)) {
+    fail(400, "Permission inconnue ou non disponible");
+  }
   return addPermissionToRole(roleId, permission);
 }
 export async function revokePermission(
@@ -74,10 +81,7 @@ export async function getRoleResources(
   actorRank: number,
 ) {
   await assertInterfaceRole(identifier, actorRank);
-  const [permissions, roles] = await Promise.all([
-    getAllActionsPermissionsForRole(identifier),
-    Role.find({ rank: { $gt: actorRank } }),
-  ]);
+  const permissions = await getAllActionsPermissionsForRole(identifier);
   if (!permissions) fail(404, "aucune permissions n'a été trouvé");
   if (resourcesRbac.length === 0)
     fail(404, "aucune ressources n'a été trouvé");
@@ -86,7 +90,6 @@ export async function getRoleResources(
     permissions,
     ressources: {
       ressources: resourcesRbac,
-      roles: roles.map((role) => role.role),
     },
   };
   if (identifier.identifier === "_id") {
@@ -138,22 +141,7 @@ export async function createRole(
     });
   }
 
-  const privilegedRoles = await Role.find({ rank: { $lte: 1 } }).select("_id");
-  const permissions = await Promise.all(
-    ["read", "write", "update", "delete"].map((action) =>
-      Permission.create({ name: `${action}:${createdRole.role}`, isRole: true }),
-    ),
-  );
-  if (privilegedRoles.length > 0) {
-    await Role.updateMany(
-      { _id: { $in: privilegedRoles.map(({ _id }) => _id) } },
-      {
-        $addToSet: {
-          permissions: { $each: permissions.map((item) => item._id) },
-        },
-      },
-    );
-  }
+  return createdRole;
 }
 
 export async function updateRole(
@@ -203,22 +191,6 @@ export async function resetRole(id: string, actorRank: number) {
   );
 }
 
-async function removeRolePermissions(roleNames: string[]) {
-  const permissionNames = roleNames.flatMap((role) =>
-    ["write", "read", "delete", "update"].map(
-      (action) => `${action}:${role}`,
-    ),
-  );
-  const permissions = await Permission.find({
-    name: { $in: permissionNames },
-  }).select("_id");
-  await Role.updateMany(
-    {},
-    { $pull: { permissions: { $in: permissions.map((item) => item._id) } } },
-  );
-  await Permission.deleteMany({ name: { $in: permissionNames } });
-}
-
 export async function deleteRole(id: string, currentRoles: IRole[]) {
   if (currentRoles.some((role) => role._id.toString() === id))
     fail(400, "Impossible de supprimer ses propres rôle");
@@ -252,7 +224,6 @@ export async function deleteRole(id: string, currentRoles: IRole[]) {
       "Impossible de supprimer un rôle associé à plus d'un utilisateur",
     );
 
-  await removeRolePermissions([role.role]);
   await Role.deleteOne({ _id: id });
 }
 
@@ -296,7 +267,5 @@ export async function deleteManyRoles(ids: string[], currentRoles: IRole[]) {
   if (rolesWithUsers.some((role) => role.usersWithRole?.length > 0))
     fail(400, "Impossible de supprimer un rôle associé à plus d'un utilisateur");
 
-  const rolesToDelete = await Role.find({ _id: { $in: ids } });
-  await removeRolePermissions(rolesToDelete.map((role) => role.role));
   await Role.deleteMany({ _id: { $in: ids } });
 }

@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router";
 import { ArrowRight, X } from "lucide-react";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
+import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -99,7 +100,7 @@ export function ReadCalendarBrowser({
               setDate={setDate}
             />
           ) : (
-            <p className="py-10 text-center">Aucun parcours accessible.</p>
+            <EmptyStatePlaceholder title="Aucun parcours accessible." />
           )}
         </>
       )}

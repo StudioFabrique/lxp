@@ -29,7 +29,7 @@ function actionForMethod(method: string): AppAction | undefined {
 }
 
 export default function checkPermissions(
-  resource?: AppSubject,
+  resource: AppSubject,
   action?: Extract<AppAction, "read" | "write" | "update" | "delete">,
   failedRedirectPath?: string,
 ) {
@@ -42,14 +42,12 @@ export default function checkPermissions(
       req.auth = auth;
       res.locals.roles = auth.userRoles;
 
-      const dynamicSubject = resource ?? req.params.role;
       const resolvedAction = action ?? actionForMethod(req.method);
 
       if (
         !resolvedAction ||
-        !dynamicSubject ||
-        !knownSubjects.has(dynamicSubject) ||
-        !auth.ability.can(resolvedAction, dynamicSubject as AppSubject)
+        !knownSubjects.has(resource) ||
+        !auth.ability.can(resolvedAction, resource)
       ) {
         if (failedRedirectPath) {
           return res.redirect(

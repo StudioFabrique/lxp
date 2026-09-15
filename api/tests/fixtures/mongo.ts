@@ -9,15 +9,15 @@ import {
   firstnames,
   lastnames,
   tags,
-} from "./utils/fixtures/data/data.ts";
-import Role from "./utils/interfaces/db/role.ts";
-import Permission, { type IPermission } from "./utils/interfaces/db/permission.ts";
-import Tag from "./utils/interfaces/db/tag.ts";
-import User from "./utils/interfaces/db/user.ts";
-import { permDefsActions } from "./utils/rbac/config/fixtures-permissions.ts";
-import IConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
-import ConnectionInfos from "./utils/interfaces/db/connection-infos.ts";
-import { env } from "./config/env.ts";
+} from "./data.ts";
+import Role from "../../src/utils/interfaces/db/role.ts";
+import Permission, { type IPermission } from "../../src/utils/interfaces/db/permission.ts";
+import Tag from "../../src/utils/interfaces/db/tag.ts";
+import User from "../../src/utils/interfaces/db/user.ts";
+import { permDefsActions } from "../../src/utils/rbac/config/fixtures-permissions.ts";
+import IConnectionInfos from "../../src/utils/interfaces/db/connection-infos.ts";
+import ConnectionInfos from "../../src/utils/interfaces/db/connection-infos.ts";
+import { env } from "../../src/config/env.ts";
 
 const MONGO_URL = env.MONGO_LOCAL_URL;
 console.log(MONGO_URL);
@@ -350,11 +350,6 @@ function createConnectionInfos() {
   return dates;
 }
 
-async function dropDatabase() {
-  await mongoose.connection.dropDatabase();
-  console.log("Database dropped!");
-}
-
 async function disconnect() {
   await mongoose.disconnect();
   process.exit();
@@ -362,7 +357,6 @@ async function disconnect() {
 
 async function main() {
   await mongoConnect();
-  //await dropDatabase();
   await createRoles();
   await createPermissions();
   await createUser();

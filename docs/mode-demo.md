@@ -259,10 +259,8 @@ instances, le mode n'est connu qu'après la réponse de `GET /v1/demo/config`.
 
 ## Après une migration Prisma
 
-`pg_dump -a` n'exporte que les **données**, liées au schéma du moment. Toute
+`npm run dump` exporte les données sans l'historique `_prisma_migrations`,
+déjà initialisé par Prisma sur la base cible. Les données restent liées au schéma
+du moment. Toute
 migration ajoutant une colonne obligatoire, renommant une colonne ou modifiant un
 énuméré périme donc `api/dumps/demo/dump-pgsql.sql`, qu'il faut régénérer.
-
-À terme, un jeu de fixtures écrit avec le client Prisma (sur le modèle de
-`api/src/fixtures.ts`) suivrait le schéma et supprimerait cette
-servitude.

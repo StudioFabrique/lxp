@@ -16,7 +16,6 @@ export type RolePermissionsResponse = {
   permissions: string[];
   ressources: {
     ressources: { name: string; description: string }[];
-    roles: string[];
   };
   role: Role;
 };

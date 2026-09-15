@@ -1,10 +1,9 @@
-import { prisma } from "./utils/db.ts";
+import { prisma } from "../../src/utils/db.ts";
 import mongoose from "mongoose";
-import User from "./utils/interfaces/db/user.ts";
-import Role from "./utils/interfaces/db/role.ts";
-import Group from "./utils/interfaces/db/group.ts";
-import StudentFeedback from "./utils/interfaces/db/student-feedback.ts";
-import { env } from "./config/env.ts";
+import User from "../../src/utils/interfaces/db/user.ts";
+import Role from "../../src/utils/interfaces/db/role.ts";
+import Group from "../../src/utils/interfaces/db/group.ts";
+import { env } from "../../src/config/env.ts";
 
 const MONGO_URL = env.MONGO_LOCAL_URL;
 
@@ -84,89 +83,6 @@ const colors = [
   "rgba(0, 0, 139, 0.5)", // Dark Blue
 ];
 
-const formations = [
-  {
-    title: "Formation en marketing digital",
-    description:
-      "Acquérir des compétences en marketing digital et stratégies de publicité en ligne.",
-    startDate: "2022-01-10",
-    endDate: "2022-02-20",
-    duration: 6,
-  },
-  {
-    title: "Formation en développement web",
-    description:
-      "Apprendre les fondamentaux du développement web et les langages HTML, CSS et JavaScript.",
-    startDate: "2022-03-05",
-    endDate: "2022-04-15",
-    duration: 6,
-  },
-  {
-    title: "Formation en gestion de projet",
-    description:
-      "Maîtriser les méthodologies de gestion de projet et les outils de planification.",
-    startDate: "2022-05-02",
-    endDate: "2022-06-10",
-    duration: 6,
-  },
-  {
-    title: "Formation en design graphique",
-    description:
-      "Développer des compétences en design graphique, utilisation des logiciels Adobe, et création d'identités visuelles.",
-    startDate: "2022-07-01",
-    endDate: "2022-08-10",
-    duration: 6,
-  },
-  {
-    title: "Formation en comptabilité",
-    description:
-      "Acquérir des compétences en comptabilité générale et analytique, gestion financière et fiscalité.",
-    startDate: "2022-09-05",
-    endDate: "2022-10-15",
-    duration: 6,
-  },
-  {
-    title: "Formation en ressources humaines",
-    description:
-      "Apprendre les bases de la gestion des ressources humaines, recrutement, formation et gestion des carrières.",
-    startDate: "2022-11-01",
-    endDate: "2022-12-10",
-    duration: 6,
-  },
-  {
-    title: "Formation en communication interpersonnelle",
-    description:
-      "Développer des compétences en communication interpersonnelle, écoute active et résolution de conflits.",
-    startDate: "2023-01-10",
-    endDate: "2023-02-20",
-    duration: 6,
-  },
-  {
-    title: "Formation en gestion du temps",
-    description:
-      "Améliorer ses compétences en gestion du temps, établir des priorités et optimiser sa productivité.",
-    startDate: "2023-03-05",
-    endDate: "2023-04-15",
-    duration: 6,
-  },
-  {
-    title: "Formation en e-commerce",
-    description:
-      "Apprendre à créer et gérer une boutique en ligne, stratégies de marketing et logistique.",
-    startDate: "2023-05-02",
-    endDate: "2023-06-10",
-    duration: 6,
-  },
-  {
-    title: "Formation en intelligence artificielle",
-    description:
-      "Acquérir des compétences en intelligence artificielle, machine learning et deep learning.",
-    startDate: "2023-07-01",
-    endDate: "2023-08-10",
-    duration: 6,
-  },
-];
-
 function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -212,7 +128,7 @@ async function createAdmins() {
       skipDuplicates: true,
     });
   } catch (error) {
-    console.error("Error occurred while querying roles:", error);
+    throw error;
   }
 }
 
@@ -230,7 +146,7 @@ async function createTeachers() {
       skipDuplicates: true,
     });
   } catch (error) {
-    console.error("Error occurred while querying roles:", error);
+    throw error;
   }
 }
 
@@ -253,7 +169,7 @@ async function createSqlContacts() {
     );
     const contacts = usersId.map((user: any) => {
       return {
-        idMdb: user._id,
+        idMdb: user._id.toString(),
         role: "formateur",
         email: user.email,
         phone: user.phoneNumber,
@@ -262,9 +178,8 @@ async function createSqlContacts() {
     await prisma.contact.createMany({
       data: contacts,
     });
-    0;
   } catch (error: any) {
-    console.log(error.message);
+    throw error;
   }
 }
 
@@ -315,12 +230,8 @@ async function createFormation() {
       },
     });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
-}
-
-async function createModules() {
-  // Modules are created after their mandatory parcours in createParcours.
 }
 
 async function createParcours() {
@@ -387,23 +298,7 @@ async function createParcours() {
       },
     });
   } catch (error: any) {
-    console.log(error);
-  }
-}
-
-async function addFeedback() {
-  try {
-    const student = await User.findOne(
-      { email: "apprenant@studio.eco" },
-      { _id: 1 },
-    );
-    const feedback = await StudentFeedback.create({
-      user: student!._id,
-      content: "Ceci est un retour d'expérience.",
-      rating: 5,
-    });
-  } catch (error: any) {
-    console.log(error);
+    throw error;
   }
 }
 
@@ -414,9 +309,13 @@ async function loadFixtures() {
   await createFormation();
   await createSqlGroups();
   await createSqlContacts();
-  await createModules();
   await createParcours();
   await disconnect();
 }
 
-loadFixtures();
+loadFixtures().catch(async (error) => {
+  console.error("Échec de la préparation des fixtures PostgreSQL:", error);
+  await disconnect();
+  await prisma.$disconnect();
+  process.exitCode = 1;
+});

@@ -1,4 +1,3 @@
-// 15
 export const firstnames = [
   "Oliver",
   "Sophia",
@@ -17,55 +16,6 @@ export const firstnames = [
   "Mason",
 ];
 
-export const modulesList = [
-  "HTML Fundamentals",
-  "CSS Styling Techniques",
-  "JavaScript Basics",
-  "Responsive Web Design",
-  "Front-end Frameworks (e.g., React)",
-  "Back-end Development with Node.js",
-  "Database Management (SQL and NoSQL)" /*
-  "Web Security and Authentication",
-  "API Development and Integration",
-  "Progressive Web Apps (PWAs)",
-  "Serverless Computing",
-  "Web Performance Optimization",
-  "Web Accessibility Best Practices",
-  "Version Control with Git",
-  "UI/UX Design Principles",
-  "Testing and Debugging Strategies",
-  "Continuous Integration and Deployment (CI/CD)",
-  "Web Development Project Management",
-  "E-commerce Development",
-  "Cloud Computing for Web Apps", */,
-];
-
-// 20
-
-export const groupes = [
-  "Développement Web",
-  "Intelligence Artificielle",
-  "Sécurité informatique",
-  "Design graphique",
-  "Marketing numérique",
-  "Gestion de projet",
-  "Analyse de données",
-  "Réseaux informatiques",
-  "Blockchain",
-  "Développement mobile",
-  "Commerce électronique",
-  "Cloud computing",
-  "Internet des objets",
-  "Big Data",
-  "Ingénierie logicielle",
-  "UX/UI Design",
-  "Cybersécurité",
-  "Business intelligence",
-  "Management stratégique",
-  "Analyse financière",
-];
-
-// 50
 export const lastnames = [
   "Martin",
   "Bernard",
@@ -183,7 +133,6 @@ export const cities: Array<{ name: string; postcode: string }> = [
   { name: "Gelos", postcode: "64101" },
 ];
 
-// 10
 export const domains = [
   "gmail.com",
   "yahoo.com",
@@ -248,52 +197,6 @@ export const addresses = [
   "9899 Poplar Rd",
   "1010 Main St",
   "666 Pinson Xavier St",
-];
-
-export const fakePhoneNumbers: string[] = [
-  "(201) 555-0123",
-  "(202) 555-0190",
-  "(203) 555-0167",
-  "(204) 555-0137",
-  "(205) 555-0185",
-  "(206) 555-0155",
-  "(207) 555-0171",
-  "(208) 555-0140",
-  "(209) 555-0119",
-  "(210) 555-0187",
-  "(211) 555-0158",
-  "(212) 555-0174",
-  "(213) 555-0143",
-  "(214) 555-0112",
-  "(215) 555-0192",
-  "(216) 555-0163",
-  "(217) 555-0132",
-  "(218) 555-0101",
-  "(219) 555-0189",
-  "(220) 555-0150",
-];
-
-export const nicknames: string[] = [
-  "Strategic Summit",
-  "Executive Encounter",
-  "Corporate Confrontation",
-  "Leadership Showdown",
-  "Professional Clash",
-  "Business Battle",
-  "Marketplace Struggle",
-  "Enterprise Rivalry",
-  "Industry Competition",
-  "Innovation Challenge",
-  "Efficiency Faceoff",
-  "Teamwork Rally",
-  "Product Launch Duel",
-  "Market Expansion Showdown",
-  "Negotiation Strife",
-  "Decision-making Clash",
-  "Project Management Melee",
-  "Client Engagement Tussle",
-  "Problem-solving War",
-  "Technology Innovation Battle",
 ];
 
 export const tags: string[] = [
