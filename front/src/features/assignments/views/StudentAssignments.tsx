@@ -122,6 +122,7 @@ export default function StudentAssignments() {
           items={assignments.map((assignment) => {
             const status = assignmentStatus(assignment, now);
             const deadline = `Échéance : ${dateFormatter.format(new Date(assignment.dueAt))}`;
+            const grade = assignment.submissions[0]?.grade;
 
             return {
               id: assignment.id,
@@ -134,7 +135,16 @@ export default function StudentAssignments() {
                 </span>
               ),
               description: assignment.course.module.title,
-              subDescription: deadline,
+              subDescription: (
+                <div className="flex flex-col">
+                  <span>{deadline}</span>
+                  {grade !== null && grade !== undefined && (
+                    <span>
+                      Note attribuée : {grade}/{assignment.maxScore}
+                    </span>
+                  )}
+                </div>
+              ),
               icon:
                 status === "Évalué" ? (
                   <CheckCircle2 />
