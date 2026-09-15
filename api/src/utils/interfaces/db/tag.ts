@@ -6,7 +6,7 @@ export interface ITag extends Document {
 }
 
 const tagSchema: Schema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, lowercase: true, required: true },
   color: { type: String, required: true },
 });
 

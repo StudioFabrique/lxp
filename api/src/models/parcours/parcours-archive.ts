@@ -1,3 +1,4 @@
+import type { TransactionClient } from "../../utils/db.ts";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -650,7 +651,7 @@ function collectAssetReferences(manifest: ParcoursArchiveManifest) {
 }
 
 async function createQuiz(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   quiz: ArchiveQuiz,
   relation: { moduleId?: number; courseId?: number; activityId?: number },
 ) {

@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import Module from "../../../../../src/utils/interfaces/module";
 import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { useMemo, useState } from "react";
@@ -60,14 +61,14 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
               return (
                 <Link
                   to={`/${space}/parcours/module/${module.id}`}
-                  aria-label={`Accéder au module ${module.title}`}
+                  aria-label={`Accéder au module ${formatTitle(module.title)}`}
                   className="tooltip tooltip-bottom flex w-full flex-col justify-between gap-4 rounded-lg border border-base-300 bg-base-200 p-4 shadow-sm transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  data-tip={module.title}
+                  data-tip={formatTitle(module.title)}
                   key={module.id}
                 >
                   <div className="flex items-center justify-between">
                     <p className="text-base-content text-sm font-semibold truncate w-3/4 text-left">
-                      {module.title}
+                      {formatTitle(module.title)}
                     </p>
                     <p className="text-2xl text-primary font-bold">{`${moduleProgress}%`}</p>
                   </div>

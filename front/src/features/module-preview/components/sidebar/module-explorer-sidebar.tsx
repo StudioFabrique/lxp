@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useEffect, useRef, useState } from "react";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import { ExplorerStore } from "../../views/ModuleContentExplorer";
@@ -94,8 +95,8 @@ const ModuleExplorerSidebar = ({
               >
                 <button
                   type="button"
-                  title={`Cours ${courseIndex + 1} : ${course.title}`}
-                  aria-label={`Cours ${courseIndex + 1} : ${course.title}`}
+                  title={`Cours ${courseIndex + 1} : ${formatTitle(course.title)}`}
+                  aria-label={`Cours ${courseIndex + 1} : ${formatTitle(course.title)}`}
                   aria-expanded={isSelectedCourse}
                   disabled={course.lessons.length === 0 && !course.assignment}
                   onClick={() => {
@@ -140,8 +141,8 @@ const ModuleExplorerSidebar = ({
                               : undefined
                           }
                           type="button"
-                          title={`Leçon ${lessonIndex + 1} : ${lesson.title}`}
-                          aria-label={`Leçon ${lessonIndex + 1} : ${lesson.title}`}
+                          title={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
+                          aria-label={`Leçon ${lessonIndex + 1} : ${formatTitle(lesson.title)}`}
                           aria-current={
                             isSelectedLesson ? "step" : undefined
                           }
@@ -172,8 +173,8 @@ const ModuleExplorerSidebar = ({
                                   <button
                                     type="button"
                                     key={activity.id}
-                                    title={`Activité ${activityIndex + 1}${activity.title ? ` : ${activity.title}` : ""}`}
-                                    aria-label={`Activité ${activityIndex + 1}${activity.title ? ` : ${activity.title}` : ""}`}
+                                    title={`Activité ${activityIndex + 1}${activity.title ? ` : ${formatTitle(activity.title)}` : ""}`}
+                                    aria-label={`Activité ${activityIndex + 1}${activity.title ? ` : ${formatTitle(activity.title)}` : ""}`}
                                     aria-current={
                                       activity.id === selectedActivity?.id
                                         ? "step"

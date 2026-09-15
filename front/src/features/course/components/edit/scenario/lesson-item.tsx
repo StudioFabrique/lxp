@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { GripVertical, Trash2 } from "lucide-react";
 import Lesson from "../../../../../../src/utils/interfaces/lesson";
 import DocumentIcon from "../../../../../../src/components/UI/svg/document-icon";
@@ -24,7 +25,7 @@ const LessonItem = (props: LessonItemProps) => {
             <DocumentIcon />
           </div>
         </div>
-        <p className="flex-1">{props.lesson.title}</p>
+        <p className="flex-1">{formatTitle(props.lesson.title)}</p>
       </article>
       <span className="h-fit flex flex-col gap-y-2">
         <button

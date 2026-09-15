@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { TransactionClient } from "../utils/db.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from "../utils/logs/logger.ts";
@@ -68,7 +68,7 @@ export function extractLocalImagesFromHtml(html: string) {
 }
 
 async function countRemainingReferences(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   reference: StoredActivityFileReference,
 ) {
   if (reference.type === "resource") {
@@ -90,7 +90,7 @@ async function countRemainingReferences(
 }
 
 export async function collectUnusedActivityFiles(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   references: StoredActivityFileReference[],
 ) {
   const groupedReferences = new Map<

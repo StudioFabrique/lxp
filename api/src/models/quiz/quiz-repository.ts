@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../../utils/db.ts";
 import {
   type AiQuizQuestion,
@@ -6,9 +6,9 @@ import {
 } from "../../services/quiz/quiz-question.ts";
 
 export class QuizRepository {
-  private readonly database: PrismaClient;
+  private readonly database: typeof prisma;
 
-  constructor(database: PrismaClient = prisma) {
+  constructor(database: typeof prisma = prisma) {
     this.database = database;
   }
 

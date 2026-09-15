@@ -59,6 +59,7 @@ export type ImportProgressItem = {
 };
 
 type LessonMapping = { tempId: number; realId: number };
+type ImportTarget = { parcoursId?: number; moduleId?: number };
 
 const courseProgressId = (courseId: number) => `course-${courseId}`;
 const activityProgressId = (
@@ -102,7 +103,7 @@ function getCriticalImportError(error: unknown) {
   );
 }
 
-export default function useImportCourses() {
+export default function useImportCourses(importTarget?: ImportTarget) {
   // Navigation Data
   const [step, setImportStep] = useState<CoursesImportStep>(
     CoursesImportStep.MbzImport,
@@ -115,6 +116,8 @@ export default function useImportCourses() {
 
   // Selection Data
   const [formationsList, setFormationsList] = useState<Formation[]>([]);
+  const [isFormationsLoading, setIsFormationsLoading] = useState(false);
+  const [formationsError, setFormationsError] = useState("");
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(
     null,
   );
@@ -124,6 +127,7 @@ export default function useImportCourses() {
   );
   const [modulesList, setModulesList] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const hasInitializedImportTarget = useRef(false);
 
   // UI State
   const [isLoading, setIsLoading] = useState(false);
@@ -712,10 +716,68 @@ export default function useImportCourses() {
   // --- Effects de Synchronisation & Chargement des Données de Listes ---
 
   useEffect(() => {
-    if (step === CoursesImportStep.ParcoursSelection) {
-      courseApi.queries.formationsList().then(setFormationsList);
-    }
-  }, [step]);
+    if (step !== CoursesImportStep.ParcoursSelection) return;
+
+    let isCurrent = true;
+    setIsFormationsLoading(true);
+    setFormationsError("");
+
+    const loadSelection = async () => {
+      try {
+        const formations = await courseApi.queries.formationsList();
+        if (!isCurrent) return;
+        setFormationsList(formations);
+
+        if (
+          hasInitializedImportTarget.current ||
+          !importTarget?.parcoursId ||
+          !importTarget.moduleId
+        ) {
+          return;
+        }
+
+        hasInitializedImportTarget.current = true;
+        const modulesData = await courseApi.queries.modulesByParcoursId(
+          importTarget.parcoursId,
+        );
+        const formation = formations.find(
+          (item) => item.id === modulesData.parcoursData.formationId,
+        );
+        if (!formation) return;
+
+        const parcoursData = await courseApi.queries.parcoursByFormationId(
+          formation.id,
+        );
+        const parcours = parcoursData.data.find(
+          (item: Parcours) => item.id === importTarget.parcoursId,
+        );
+        const module = modulesData.modules.find(
+          (item: Module) => item.id === importTarget.moduleId,
+        );
+        if (!isCurrent || !parcours || !module) return;
+
+        setSelectedFormation(formation);
+        setParcoursList(parcoursData.data);
+        setSelectedParcours(parcours);
+        setModulesList(modulesData.modules);
+        setSelectedModule(module);
+      } catch (err) {
+        console.error("Erreur chargement formations:", err);
+        if (isCurrent) {
+          setFormationsError(
+            "Les formations n'ont pas pu être chargées. Veuillez réessayer.",
+          );
+        }
+      } finally {
+        if (isCurrent) setIsFormationsLoading(false);
+      }
+    };
+
+    void loadSelection();
+    return () => {
+      isCurrent = false;
+    };
+  }, [importTarget?.moduleId, importTarget?.parcoursId, step]);
 
   return {
     step,
@@ -731,6 +793,8 @@ export default function useImportCourses() {
     isImportComplete,
     imagesQueue,
     formationsList,
+    isFormationsLoading,
+    formationsError,
     selectedFormation,
     parcoursList,
     selectedParcours,

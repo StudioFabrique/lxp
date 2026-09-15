@@ -7,7 +7,7 @@ export interface IHobby extends Document {
 }
 
 const hobbySchema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, lowercase: true, required: true },
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });
 

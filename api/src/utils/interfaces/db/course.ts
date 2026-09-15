@@ -10,7 +10,7 @@ export interface ICourse extends Document {
 
 const courseSchema: Schema = new Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, lowercase: true, required: true, unique: true },
     groups: { type: [Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true },

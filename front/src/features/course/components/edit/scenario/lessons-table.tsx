@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { useCallback, useMemo } from "react";
 
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
@@ -87,7 +88,7 @@ const LessonsTable = (props: LessonsTableProps) => {
                     onChange={() => handleRowCheck(item.id)}
                   />
                 </td>
-                <td>{item.title}</td>
+                <td>{formatTitle(item.title)}</td>
                 <td className="text-center">{item.activitiesCount}</td>
               </tr>
             ))}

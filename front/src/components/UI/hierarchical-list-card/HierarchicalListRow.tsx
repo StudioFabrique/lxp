@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ExternalLink, MoreVertical } from "lucide-react";
 import { type Key, type ReactNode, useState } from "react";
@@ -175,7 +176,7 @@ export const HierarchicalListRow = ({
         ) : null}
         <div className="block max-w-full text-left first-letter:uppercase">
           <div className="flex min-w-0 items-center gap-2">
-            <div className="truncate font-semibold">{item.title}</div>
+            <div className="truncate font-semibold">{formatTitle(item.title)}</div>
             {item.titleAccessory ? (
               <div className="shrink-0">{item.titleAccessory}</div>
             ) : null}
@@ -199,7 +200,7 @@ export const HierarchicalListRow = ({
                 className="btn btn-square btn-sm btn-ghost"
                 to={item.to}
                 state={item.state}
-                aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
+                aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
               >
                 <ExternalLink className="size-[1.2em]" />
               </Link>
@@ -212,14 +213,14 @@ export const HierarchicalListRow = ({
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
           to={item.to}
           state={item.state}
-          aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
+          aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
         />
       ) : item.onClick ? (
         <button
           type="button"
           className="absolute inset-0 z-0 cursor-pointer rounded-box"
           onClick={item.onClick}
-          aria-label={item.ariaLabel ?? `Ouvrir ${item.title}`}
+          aria-label={item.ariaLabel ?? `Ouvrir ${formatTitle(item.title)}`}
         />
       ) : null}
     </li>

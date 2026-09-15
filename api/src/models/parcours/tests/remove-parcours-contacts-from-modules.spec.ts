@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { TransactionClient } from "../../../utils/db.ts";
 import { jest } from "@jest/globals";
 
 import { removeParcoursContactsFromModules } from "../remove-parcours-contacts-from-modules.ts";
@@ -10,7 +10,7 @@ describe("retrait des ressources pédagogiques d'un parcours", () => {
       .mockResolvedValue({ count: 2 });
     const tx = {
       contactsOnModule: { deleteMany },
-    } as unknown as Prisma.TransactionClient;
+    } as unknown as TransactionClient;
 
     await removeParcoursContactsFromModules(tx, 12, [3, 5]);
 
@@ -26,7 +26,7 @@ describe("retrait des ressources pédagogiques d'un parcours", () => {
     const deleteMany = jest.fn();
     const tx = {
       contactsOnModule: { deleteMany },
-    } as unknown as Prisma.TransactionClient;
+    } as unknown as TransactionClient;
 
     await removeParcoursContactsFromModules(tx, 12, []);
 

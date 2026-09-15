@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { TransactionClient } from "../../utils/db.ts";
 
 /**
  * Retire des modules du parcours les formateurs qui viennent d'être retirés
@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
  * parcours parent au formateur dans son dashboard et dans sa liste.
  */
 export async function removeParcoursContactsFromModules(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   parcoursId: number,
   contactIds: number[],
 ) {

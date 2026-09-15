@@ -1,3 +1,4 @@
+import { toTitleCase, formatTitle } from "../../../../../utils/helpers/text-helpers";
 // Import des dépendances nécessaires
 import User from "../../../../../../src/utils/interfaces/user";
 import { AvatarSmall } from "../../../../../components/avatar/AvatarSmall";
@@ -29,15 +30,15 @@ const StudentItem = (props: StudentItemProps) => {
         <AvatarSmall user={props.studentItem} />
       </td>
       {/* Prénom de l'étudiant */}
-      <td className="bg-transparent capitalize">{firstname}</td>
+      <td className="bg-transparent capitalize">{toTitleCase(firstname)}</td>
       {/* Nom de l'étudiant */}
-      <td className="bg-transparent capitalize">{lastname}</td>
+      <td className="bg-transparent capitalize">{toTitleCase(lastname)}</td>
       {/* Email de l'étudiant */}
       <td className="bg-transparent">{email}</td>
       {/* Formation de l'étudiant */}
-      <td className="bg-transparent">{parcours?.formation.title}</td>
+      <td className="bg-transparent">{formatTitle(parcours?.formation.title)}</td>
       {/* Nom du groupe de l'étudiant */}
-      <td className="bg-transparent">{group!.name}</td>
+      <td className="bg-transparent">{formatTitle(group?.name)}</td>
       {/* Date de création formatée */}
       <td className="bg-transparent">
         {localeDate(createdAt!)}

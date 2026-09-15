@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../utils/helpers/text-helpers";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   LoaderCircle,
@@ -28,14 +29,14 @@ export const getUsersColumns = (
     accessorKey: "firstname",
     header: "Prénom",
     cell: (info) => (
-      <span className="capitalize">{info.getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(info.getValue() as string)}</span>
     ),
   },
   {
     accessorKey: "lastname",
     header: "Nom",
     cell: (info) => (
-      <span className="capitalize">{info.getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(info.getValue() as string)}</span>
     ),
   },
   {

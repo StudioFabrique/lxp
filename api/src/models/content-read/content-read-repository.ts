@@ -1,4 +1,3 @@
-import type { PrismaClient } from "@prisma/client";
 import {
   HEARTBEAT_INTERVAL_MS,
   type ContentType,
@@ -41,9 +40,9 @@ type ReadDelegate = {
 };
 
 export class ContentReadRepository {
-  private readonly database: PrismaClient;
+  private readonly database: typeof prisma;
 
-  constructor(database: PrismaClient = prisma) {
+  constructor(database: typeof prisma = prisma) {
     this.database = database;
   }
 

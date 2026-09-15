@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
@@ -13,14 +14,14 @@ const identityColumns: ColumnDef<User>[] = [
     accessorKey: "firstname",
     header: "Prénom",
     cell: ({ getValue }) => (
-      <span className="capitalize">{getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(getValue() as string)}</span>
     ),
   },
   {
     accessorKey: "lastname",
     header: "Nom",
     cell: ({ getValue }) => (
-      <span className="capitalize">{getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(getValue() as string)}</span>
     ),
   },
   {

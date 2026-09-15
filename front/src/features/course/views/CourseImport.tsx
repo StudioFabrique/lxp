@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import PageHeader from "../../../components/headers/PageHeader";
 import useImportCourses, { CoursesImportStep } from "../hooks/useImportCourses";
 import ParcoursSelection from "../components/import/parcours-selection";
@@ -9,6 +9,10 @@ import MbzImport from "../components/import/mbz-import";
 import { getCourseImportTourSteps } from "../components/import/course-import-tour-steps";
 
 const ImportCoursesHome = () => {
+  const location = useLocation();
+  const importTarget = location.state as
+    | { parcoursId?: number; moduleId?: number }
+    | null;
   const {
     step,
     importedCourses,
@@ -22,6 +26,8 @@ const ImportCoursesHome = () => {
     isImporting,
     isImportComplete,
     formationsList,
+    isFormationsLoading,
+    formationsError,
     selectedFormation,
     parcoursList,
     selectedParcours,
@@ -42,7 +48,7 @@ const ImportCoursesHome = () => {
     onConfirmParcoursSelection,
     onRetryImport,
     onGoBack,
-  } = useImportCourses();
+  } = useImportCourses(importTarget ?? undefined);
 
   const tourSteps = useMemo(
     () =>
@@ -93,6 +99,8 @@ const ImportCoursesHome = () => {
         return (
           <ParcoursSelection
             formationsList={formationsList}
+            isFormationsLoading={isFormationsLoading}
+            formationsError={formationsError}
             selectedFormation={selectedFormation}
             onSelectFormation={setSelectedFormation}
             parcoursList={parcoursList}

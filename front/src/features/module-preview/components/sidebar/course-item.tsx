@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   Check,
   ChevronDown,
@@ -234,7 +235,7 @@ const CourseItem = ({
     <>
       <CreateLessonModal
         open={!calendarMode && isCreatingLesson}
-        courseTitle={course.title}
+        courseTitle={formatTitle(course.title)}
         courseTags={course.tags ?? []}
         isSaving={isSavingLesson}
         onClose={() => setIsCreatingLesson(false)}
@@ -293,7 +294,7 @@ const CourseItem = ({
           role="button"
           tabIndex={0}
           aria-expanded={isCourseOpen}
-          aria-label={course.title}
+          aria-label={formatTitle(course.title)}
           onClick={handleToggleCourseTab}
           onKeyDown={(event) => {
             if (event.target !== event.currentTarget) return;
@@ -315,7 +316,7 @@ const CourseItem = ({
                   )}
                 </div>
                 <h3 className="font-semibold text-secondary-content/80 truncate first-letter:uppercase">
-                  {course.title}
+                  {formatTitle(course.title)}
                 </h3>
               </span>
               {isCourseCompleted && (

@@ -20,7 +20,7 @@ export interface IGroup extends Document {
 
 const groupSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, lowercase: true, required: true },
     desc: { type: String, required: false },
     users: {
       type: [mongoose.Schema.Types.ObjectId],

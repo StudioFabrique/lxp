@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { Check, Trash2, Edit3, EllipsisIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
@@ -176,7 +177,7 @@ const LessonItem = ({
         ref={lessonRef}
         role="button"
         tabIndex={0}
-        aria-label={lesson.title}
+        aria-label={formatTitle(lesson.title)}
         aria-expanded={isLessonSelected}
         onClick={handleBeginReadLesson}
         onKeyDown={(event) => {
@@ -195,7 +196,7 @@ const LessonItem = ({
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
           {calendarMode && (isLessonSelected ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />)}
-          <p className="max-h-14 flex-1 truncate text-sm">{lesson.title}</p>
+          <p className="max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
           {selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               {!calendarMode && canEditLesson && (
