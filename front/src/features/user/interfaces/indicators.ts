@@ -69,6 +69,7 @@ export type FiredAlertRule = {
 };
 
 export type IndicatorsPrediction = {
+  analysisId?: string;
   userId: string;
   from: string;
   to: string;
@@ -83,10 +84,24 @@ export type IndicatorsPrediction = {
   };
   alert: { effectiveLevel: number; fired: FiredAlertRule[] };
   model: {
+    artifactSha256?: string | null;
     championName: string | null;
     trainedAt: string | null;
     metricValue: number | null;
     featureCount: number | null;
   };
   evaluatedAt: string;
+};
+
+export type AnalysisFeedbackInput = {
+  verdict: "appropriate" | "overestimated" | "underestimated" | "uncertain";
+  comment?: string;
+  actionTaken?: string;
+  observedOutcome?: PredictionOutcome;
+  observedAt?: string;
+};
+export type AnalysisFeedback = AnalysisFeedbackInput & { _id: string; createdAt: string; authorId: string };
+export type AnalysisHistory = {
+  items: (IndicatorsPrediction & { analysisId: string; feedback: AnalysisFeedback[] })[];
+  nextCursor: string | null;
 };

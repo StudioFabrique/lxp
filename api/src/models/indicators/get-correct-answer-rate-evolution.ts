@@ -32,12 +32,11 @@ export default async function getCorrectAnswerRateEvolution(
     prisma.quizAttempt.findMany({
       where: {
         studentId: context.studentId,
-        startedAt: { gte: context.from, lte: context.to },
-        finishedAt: { not: null },
+        finishedAt: { gte: context.from, lte: context.to },
         answers: { some: {} },
       },
       select: {
-        startedAt: true,
+        finishedAt: true,
         answers: { select: { isCorrect: true } },
       },
     }),
@@ -57,8 +56,8 @@ export default async function getCorrectAnswerRateEvolution(
 
   const rates = [
     ...attempts.map((attempt) => ({
-      at: attempt.startedAt,
-      date: toDayKey(attempt.startedAt),
+      at: attempt.finishedAt!,
+      date: toDayKey(attempt.finishedAt!),
       value: Math.round(
         (attempt.answers.filter((answer) => answer.isCorrect).length /
           attempt.answers.length) *

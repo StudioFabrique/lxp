@@ -20,18 +20,18 @@ export default async function getDaysSinceLastActivity(
   context: IndicatorContext,
 ): Promise<Indicator<number>> {
   const [connection, promptStat, contentRead] = await Promise.all([
-    ConnectionInfos.findOne({ userId: context.userIdMdb })
+    ConnectionInfos.findOne({ userId: context.userIdMdb, lastConnection: { $lte: context.to } })
       .select({ lastConnection: 1 })
       .sort({ lastConnection: -1 })
       .lean(),
-    PromptStats.findOne({ userId: context.userIdMdb })
+    PromptStats.findOne({ userId: context.userIdMdb, date: { $lte: context.to } })
       .select({ date: 1 })
       .sort({ date: -1 })
       .lean(),
     context.studentId === null
       ? Promise.resolve(null)
       : prisma.lessonRead.findFirst({
-          where: { studentId: context.studentId },
+          where: { studentId: context.studentId, lastOpenedAt: { lte: context.to } },
           select: { lastOpenedAt: true },
           orderBy: { lastOpenedAt: "desc" },
         }),

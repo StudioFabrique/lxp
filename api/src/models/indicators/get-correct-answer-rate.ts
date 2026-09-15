@@ -26,7 +26,7 @@ export default async function getCorrectAnswerRate(
       where: {
         attempt: {
           studentId: context.studentId,
-          startedAt: { gte: context.from, lte: context.to },
+          finishedAt: { gte: context.from, lte: context.to },
         },
       },
       select: { isCorrect: true },

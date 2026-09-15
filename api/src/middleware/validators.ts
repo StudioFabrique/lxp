@@ -14,11 +14,11 @@ import {
   stringValidateOptional,
 } from "../helpers/custom-validators.ts";
 
-export const checkValidatorResult = (
+export function checkValidatorResult(
   req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {
+) {
   const checkValues = validationResult(req);
 
   if (!checkValues.isEmpty()) {
@@ -31,7 +31,7 @@ export const checkValidatorResult = (
     return res.status(400).json({ message: badQuery });
   }
   next();
-};
+}
 
 const customPostalCodeValidation = (value: string) => {
   const postCodePattern = /^\d{5}$/;

@@ -468,6 +468,20 @@ model Student {
   quizzes               Quiz[]
   quizAttempts          QuizAttempt[]
   assignmentSubmissions AssignmentSubmission[]
+  contentReadCredits    ContentReadCredit[]
+}
+
+/// Intervalles réellement crédités ; les anciens compteurs ne sont pas rétrodatés.
+model ContentReadCredit {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  type      String
+  contentId Int
+  from      DateTime
+  to        DateTime
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, type, to])
 }
 
 model Tag {

@@ -25,6 +25,10 @@ export default async function resolveIndicatorContext(
     from ??
     new Date(resolvedTo.getTime() - DEFAULT_WINDOW_DAYS * 24 * 3600 * 1000);
 
+  if (!Number.isFinite(resolvedFrom.getTime()) || !Number.isFinite(resolvedTo.getTime()) || resolvedFrom > resolvedTo || resolvedTo > new Date()) {
+    throw Object.assign(new Error("La période doit être valide, ordonnée et ne pas se terminer dans le futur."), { statusCode: 400 });
+  }
+
   return {
     userIdMdb,
     studentId: student?.id ?? null,

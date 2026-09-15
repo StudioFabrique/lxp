@@ -2,7 +2,7 @@ import {
   HEARTBEAT_INTERVAL_MS,
   type ContentType,
 } from "../../config/content-read.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type TransactionClient } from "../../utils/db.ts";
 
 export type ContentRead = {
   id: number;
@@ -35,14 +35,15 @@ type ReadDelegate = {
   findUnique(args: any): Promise<ContentRead | null>;
   create(args: any): Promise<ContentRead>;
   update(args: any): Promise<ContentRead>;
+  updateMany(args: any): Promise<{ count: number }>;
   aggregate(args: any): Promise<{ _sum: { readTimeMs: number | null } }>;
   count(args: any): Promise<number>;
 };
 
 export class ContentReadRepository {
-  private readonly database: typeof prisma;
+  private readonly database: typeof prisma | TransactionClient;
 
-  constructor(database: typeof prisma = prisma) {
+  constructor(database: typeof prisma | TransactionClient = prisma) {
     this.database = database;
   }
 
@@ -110,13 +111,25 @@ export class ContentReadRepository {
 
     const credit = computeHeartbeatCredit(existing.lastOpenedAt, now);
 
-    return this.delegate(type).update({
-      where: { id: existing.id },
-      data: {
-        readTimeMs: { increment: credit },
-        lastOpenedAt: now,
-      },
-    });
+    if (credit === 0) return existing;
+    // Comparaison de lastOpenedAt : deux onglets ne créditent pas le même intervalle.
+    const write = async (tx: TransactionClient) => {
+      const repository = new ContentReadRepository(tx);
+      const updated = await repository.delegate(type).updateMany({
+        where: { id: existing.id, lastOpenedAt: existing.lastOpenedAt },
+        data: { readTimeMs: { increment: credit }, lastOpenedAt: now },
+      });
+      if (updated.count > 0) {
+        await tx.contentReadCredit.create({ data: {
+          studentId, type, contentId,
+          from: new Date(now.getTime() - credit), to: now,
+        } });
+      }
+      return repository.find(type, contentId, studentId);
+    };
+    return "$transaction" in this.database
+      ? this.database.$transaction(write)
+      : write(this.database);
   }
 
   async finish(type: ContentType, contentId: number, studentId: number) {
@@ -137,12 +150,14 @@ export class ContentReadRepository {
     from: Date,
     to: Date,
   ): Promise<number> {
-    const result = await this.delegate(type).aggregate({
-      where: { studentId, lastOpenedAt: { gte: from, lte: to } },
-      _sum: { readTimeMs: true },
-    });
-
-    return result._sum.readTimeMs ?? 0;
+    const rows = await this.database.$queryRaw<{ duration: number }[]>`
+      SELECT COALESCE(SUM(EXTRACT(EPOCH FROM
+        (LEAST("to", ${to}) - GREATEST("from", ${from}))) * 1000), 0)::float8 AS duration
+      FROM "ContentReadCredit"
+      WHERE "studentId" = ${studentId} AND "type" = ${type}
+        AND "to" > ${from} AND "from" < ${to}
+    `;
+    return rows[0]?.duration ?? 0;
   }
 
   countFinished(type: ContentType, studentId: number, from: Date, to: Date) {
