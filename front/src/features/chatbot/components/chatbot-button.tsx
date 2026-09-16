@@ -13,15 +13,15 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
   return (
     <div className="group fixed bottom-6 right-6 flex items-center z-40">
       <div className="absolute right-20 mr-2 whitespace-nowrap bg-base-100 text-base-content text-sm font-medium px-4 py-3 rounded-2xl shadow-xl border border-base-200 pointer-events-none opacity-0 translate-x-2 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block">
-        <span className="text-accent">Besoin d'aide ?</span>
+        <span className="text-info">Besoin d'aide ?</span>
         <span> Le chatbot </span>
-        <span className="text-accent font-bold">ANDRIA</span>
+        <span className="text-info font-bold">ANDRIA</span>
         <span> est là pour vous aider.</span>
         <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-base-100 border-t border-r border-base-200 rotate-45" />
       </div>
 
       <motion.button
-        className="w-16 h-16 bg-accent rounded-full p-3 shadow-xl cursor-pointer flex items-center justify-center hover:shadow-2xl relative"
+        className="w-16 h-16 bg-info rounded-full p-3 shadow-xl cursor-pointer flex items-center justify-center hover:shadow-2xl relative"
         onClick={handleOpenChatbot}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -30,7 +30,7 @@ export default function ChatbotButton({ onOpenChatbot }: Props) {
         exit={{ opacity: 0, x: 20, scale: 0.95 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <Bot className="w-full h-full object-contain text-accent-content" />
+        <Bot className="w-full h-full object-contain text-info-content" />
       </motion.button>
     </div>
   );

@@ -6,7 +6,7 @@ import type { ChatbotValues } from "../interfaces/chatbot";
 
 export type { ChatbotSource, ChatbotValues } from "../interfaces/chatbot";
 
-const AI_UNAVAILABLE_MESSAGE =
+export const AI_UNAVAILABLE_MESSAGE =
   "L'assistant est temporairement indisponible. Veuillez réessayer plus tard.";
 
 const useChatbot = () => {
@@ -156,7 +156,21 @@ const useChatbot = () => {
     pendingReset,
     setPrompt,
     isLoading,
-    dialog,
+    dialog:
+      aiUnavailable &&
+      !dialog.some(
+        (entry) =>
+          entry.origin === "bot" &&
+          entry.type === "error" &&
+          entry.message === AI_UNAVAILABLE_MESSAGE,
+      )
+        ? dialog.concat({
+            origin: "bot",
+            message: AI_UNAVAILABLE_MESSAGE,
+            date: new Date(),
+            type: "error",
+          })
+        : dialog,
     setDialog,
     onSubmit,
     handleNewChat,

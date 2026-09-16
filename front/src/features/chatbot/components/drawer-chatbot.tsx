@@ -2,12 +2,12 @@ import { AnimatePresence, motion } from "motion/react";
 import HeaderChatbot from "./chatbot-parts/header-chatbot";
 import MessageChatbot from "./chatbot-parts/message-chatbot";
 import MessageLoaderChatbot from "./chatbot-parts/message-loader-chatbot";
-import { ArrowUpIcon, ArrowDownIcon, AlertTriangle, RotateCw } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 
 import PrebuiltPrompt from "./chatbot-parts/prebuilt-prompt";
 import TextInputChatbot from "./chatbot-parts/text-input-chatbot";
 import useChatbotUi from "../hooks/use-chatbot-ui";
-import useChatbot from "../hooks/use-chatbot";
+import useChatbot, { AI_UNAVAILABLE_MESSAGE } from "../hooks/use-chatbot";
 import MessageQuizChatbot from "./chatbot-parts/message-quiz-chatbot";
 import useChatbotQuiz from "../hooks/use-chatbot-quiz";
 import { useContext } from "react";
@@ -104,6 +104,14 @@ export default function DrawerChatbot({
                 messageLoader={<MessageLoaderChatbot />}
                 isLastMessage={isLastMessage}
                 onCloseChatbot={chatbotUi.handleCloseChatbot}
+                onRetry={
+                  chatbot.aiUnavailable &&
+                  message.origin === "bot" &&
+                  message.type === "error" &&
+                  message.message === AI_UNAVAILABLE_MESSAGE
+                    ? chatbot.retryAi
+                    : undefined
+                }
               />
             );
           })}
@@ -157,23 +165,6 @@ export default function DrawerChatbot({
 
         <div ref={chatbotUi.bottomRef} className="h-1 shrink-0" />
       </div>
-
-      {chatbot.aiUnavailable && (
-        <div className="flex items-center gap-2 px-3 py-2 mx-2.5 mb-1 rounded-xl bg-error/10 border border-error/30 text-error text-xs">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
-          <span className="flex-1">
-            L'assistant est temporairement indisponible.
-          </span>
-          <button
-            type="button"
-            onClick={chatbot.retryAi}
-            className="btn btn-xs btn-ghost text-error gap-1"
-          >
-            <RotateCw className="w-3 h-3" />
-            Réessayer
-          </button>
-        </div>
-      )}
 
       <TextInputChatbot
         prompt={prompt}

@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   CornerDownRight,
+  RotateCw,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { cn } from "../../../../utils/cn";
@@ -21,6 +22,7 @@ type Props = {
   isLoading: boolean;
   messageLoader?: React.ReactNode;
   onCloseChatbot: () => void;
+  onRetry?: () => void;
 };
 
 export default function MessageChatbot({
@@ -29,6 +31,7 @@ export default function MessageChatbot({
   isLoading,
   messageLoader,
   onCloseChatbot,
+  onRetry,
 }: Props) {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -171,6 +174,19 @@ export default function MessageChatbot({
             </div>
           )}
         </div>
+        {!isUser && onRetry && (
+          <div className="chat-footer mt-2">
+            <button
+              type="button"
+              onClick={onRetry}
+              disabled={isLoading}
+              className="btn btn-sm btn-outline gap-1"
+            >
+              <RotateCw className="w-3 h-3" />
+              Réessayer
+            </button>
+          </div>
+        )}
       </div>
 
       {isLoading && isLastMessage && messageLoader}
