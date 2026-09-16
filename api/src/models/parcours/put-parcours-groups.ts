@@ -3,7 +3,7 @@ import {
   whereFromObject,
 } from "../../utils/prisma-query.ts";
 import type { Group } from "../../prisma/model-types.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   const groups = await prisma.orm.public.Group.where((row) =>
@@ -46,11 +46,8 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
           relation.create(
             groups.map((group: Group) => {
               return {
-                group: {
-                  connect: {
-                    id: group.id,
-                  },
-                },
+                group: (groupRelation: NestedConnect<"Group">) =>
+                  groupRelation.connect({ id: group.id }),
               };
             }),
           ),

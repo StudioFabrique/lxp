@@ -2,7 +2,7 @@ import {
   requireDatabaseRow,
   whereFromObject,
 } from "../../utils/prisma-query.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putCourseContacts(courseId: number, contacts: number[]) {
   const existingCourse = await prisma.orm.public.Course.where((row) =>
@@ -22,7 +22,7 @@ async function putCourseContacts(courseId: number, contacts: number[]) {
       .deleteAndCount()
       .then((count) => ({ count }));
 
-    const upadtedCourse = await tx.orm.public.Course.where((row) =>
+    const updatedCourse = await tx.orm.public.Course.where((row) =>
       whereFromObject(row, { id: courseId }),
     )
       .update({
@@ -30,16 +30,14 @@ async function putCourseContacts(courseId: number, contacts: number[]) {
           relation.create(
             contacts.map((contact: number) => {
               return {
-                contact: {
-                  connect: {
-                    id: contact,
-                  },
-                },
+                contact: (contactRelation: NestedConnect<"Contact">) =>
+                  contactRelation.connect({ id: contact }),
               };
             }),
           ),
       })
       .then(requireDatabaseRow);
+    return updatedCourse;
   });
   return transaction;
 }

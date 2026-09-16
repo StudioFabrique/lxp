@@ -18,4 +18,10 @@ export type NestedCreate<Model extends string> = Pick<
   "create"
 >;
 
+/** Mutation used to connect an existing record through a relation. */
+export type NestedConnect<Model extends string> = Pick<
+  RelationMutator<Contract, Model>,
+  "connect"
+>;
+
 export { prisma };

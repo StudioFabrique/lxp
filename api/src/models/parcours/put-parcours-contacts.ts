@@ -5,7 +5,7 @@ import {
 import type { Contact } from "../../prisma/model-types.ts";
 
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
@@ -109,9 +109,8 @@ async function putParcoursContacts(
             relation.create(
               existingContacts.map((existingContact: Contact) => {
                 return {
-                  contact: {
-                    connect: { id: existingContact.id },
-                  },
+                  contact: (contactRelation: NestedConnect<"Contact">) =>
+                    contactRelation.connect({ id: existingContact.id }),
                 };
               }),
             ),

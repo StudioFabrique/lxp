@@ -2,7 +2,7 @@ import {
   requireDatabaseRow,
   whereFromObject,
 } from "../../utils/prisma-query.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putCourseTags(courseId: number, tags: number[]) {
   if (!tags.length) {
@@ -36,16 +36,14 @@ async function putCourseTags(courseId: number, tags: number[]) {
           relation.create(
             tags.map((tag: number) => {
               return {
-                tag: {
-                  connect: {
-                    id: tag,
-                  },
-                },
+                tag: (tagRelation: NestedConnect<"Tag">) =>
+                  tagRelation.connect({ id: tag }),
               };
             }),
           ),
       })
       .then(requireDatabaseRow);
+    return updatedCourse;
   });
   return transaction;
 }

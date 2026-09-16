@@ -40,6 +40,12 @@ npm run dev
 `npm run init` crée les trois bases, le réseau Docker et les triggers qui
 signalent les changements de cours au watcher.
 
+Le schéma SQL exposé à ANDRIA-IA conserve volontairement les noms historiques
+PascalCase (`"Course"`, `"Lesson"`, `"Activity"`). Ils sont figés par les
+`@@map` du contrat Prisma 8 : les requêtes d'ingestion et le watcher IA sont
+sensibles à cette casse. Le lowercase que Prisma 8 choisirait sans mapping
+explicite n'est pas utilisé par le LXP.
+
 Pour un projet déjà initialisé, gardez les données et relancez les services :
 
 ```bash

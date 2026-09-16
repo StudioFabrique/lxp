@@ -1,6 +1,6 @@
 import { whereFromObject } from "../../utils/prisma-query.ts";
 import { mongo } from "mongoose";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";
 import { tagOwnerFor } from "../tag/tag-access.ts";
@@ -68,7 +68,10 @@ export default async function postResource(
     tags: (relation) =>
       relation.create(
         tagsToAdd.map((tag) => {
-          return { tag: { connect: { id: tag.id } } };
+          return {
+            tag: (tagRelation: NestedConnect<"Tag">) =>
+              tagRelation.connect({ id: tag.id }),
+          };
         }),
       ),
   });

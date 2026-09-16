@@ -111,9 +111,7 @@ décision qui fait autorité reste celle de l'API.
 
 ```bash
 api/
-├── prisma/
-│   ├── schema.prisma  # Modèle relationnel PostgreSQL
-│   └── migrations/    # Migrations versionnées
+├── migrations/app/    # Graphe de migrations Prisma 8 versionné
 ├── public/            # Build du front servi en production
 ├── uploads/           # Fichiers déposés (activités, logo entreprise)
 ├── tests/             # Tests d'intégration Jest (base Docker dédiée)
@@ -125,6 +123,7 @@ api/
     ├── helpers/       # Fonctions pures métier (slugify, progression...)
     ├── middleware/    # Auth, permissions, validation, uploads, logs
     ├── models/        # Accès aux données (Prisma et Mongoose)
+    ├── prisma/        # Contrat Prisma 8 et artefacts émis
     ├── routes/v1/     # Déclaration des routes et de leurs validateurs
     ├── scripts/       # Scripts utilitaires (clé d'activation, triggers SQL)
     ├── services/      # Services applicatifs (IA, mailer, quiz)
@@ -199,6 +198,18 @@ Deux bases de données coexistent :
 
 Un modèle de `src/models/` peut donc viser l'une ou l'autre base ; c'est la
 seule couche autorisée à le faire.
+
+#### Casse des tables PostgreSQL
+
+Les noms physiques PascalCase (`"Course"`, `"Lesson"`, `"Activity"`, etc.)
+font partie du contrat partagé avec ANDRIA-IA, les triggers SQL et les dumps
+historiques. Prisma 8 dérive sinon par défaut un nom lowerCamelCase du nom du
+modèle (`Course` devient `course`). Chaque modèle du contrat porte donc un
+`@@map("NomPascalCase")` explicite pour préserver les tables Prisma 7.
+
+Il ne faut pas retirer ces `@@map` ni changer leur casse sans migration de
+données coordonnée avec ANDRIA-IA. Toute requête SQL brute doit employer le nom
+mappé, entre guillemets, par exemple `FROM "Course"` et non `FROM "course"`.
 
 ### Temps réel
 

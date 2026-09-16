@@ -75,7 +75,7 @@ export default async function putActivityImage(
       ).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" - 1 WHERE "id" = ${media.id}`
+          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" - 1 WHERE "id" = ${media.id}`
             .affectedCount()
             .build(),
         );
@@ -104,7 +104,7 @@ export default async function putActivityImage(
       ).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id}`
+          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id}`
             .affectedCount()
             .build(),
         );

@@ -86,7 +86,7 @@ export default async function postImage(
       ).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id} AND "type" = 'image'`
+          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id} AND "type" = 'image'`
             .affectedCount()
             .build(),
         );
