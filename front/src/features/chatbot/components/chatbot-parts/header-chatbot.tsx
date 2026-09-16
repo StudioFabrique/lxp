@@ -26,9 +26,9 @@ export default function HeaderChatbot({
   onNewChat,
 }: Props) {
   return (
-    <div className="bg-info text-info-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
+    <div className="bg-accent text-accent-content px-4 py-3 flex items-center justify-between shadow-sm z-10">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-base-100 text-base-content rounded-full p-1 shadow-inner">
+        <div className="w-10 h-10 bg-base-300 text-base-content rounded-full p-1 shadow-inner">
           <Bot className="w-full h-full object-contain" />
         </div>
         <div>
@@ -70,7 +70,7 @@ export default function HeaderChatbot({
 
         <button
           type="button"
-          className="btn btn-ghost btn-sm text-primary-content btn-circle"
+          className="btn btn-ghost btn-sm text-primary-content hover:text-accent btn-circle"
           onClick={onClose}
           aria-label="Fermer le chatbot"
         >
