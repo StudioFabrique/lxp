@@ -78,6 +78,7 @@ const ImageFileUpload = ({
   };
 
   const isPreviewVariant = variant !== "avatar";
+  const hasPreview = Boolean(previewUrl && !previewFailed);
 
   return (
     <button
@@ -85,18 +86,18 @@ const ImageFileUpload = ({
       onClick={onClickChangeImage}
       className={
         isPreviewVariant
-          ? "group relative flex h-32 w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-primary border-dashed p-3 shadow-sm transition hover:shadow-md"
+          ? "group relative flex h-32 w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md"
           : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white"
       }
       style={
-        isPreviewVariant && previewBackgroundColor
+        isPreviewVariant && hasPreview && previewBackgroundColor
           ? { backgroundColor: previewBackgroundColor }
           : undefined
       }
       aria-label={isPreviewVariant ? "Modifier l'image" : "Modifier l'avatar"}
     >
       {isPreviewVariant ? (
-        previewUrl && !previewFailed ? (
+        hasPreview ? (
           <AppImage
             src={previewUrl}
             alt="Image"
@@ -108,7 +109,7 @@ const ImageFileUpload = ({
             }}
           />
         ) : (
-          <span className="flex items-center justify-center gap-2 px-4 text-center text-sm font-semibold text-base-content/70">
+          <span className="flex items-center justify-center gap-2 px-4 text-center text-sm font-semibold text-base-content">
             <Upload className="h-5 w-5 shrink-0" aria-hidden="true" />
             {children ?? "Ajouter une image"}
           </span>
@@ -125,17 +126,19 @@ const ImageFileUpload = ({
       ) : (
         children
       )}
-      <span
-        className={`pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${
-          isPreviewVariant ? "bg-black/15" : "rounded-full bg-white/20"
-        }`}
-      >
-        <EditIcon
-          className={`h-7 w-7 rounded-full bg-base-100/90 p-1.5 stroke-2 ${
-            isPreviewVariant ? "text-base-content" : "text-black"
+      {(!isPreviewVariant || hasPreview) && (
+        <span
+          className={`pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 backdrop-blur-[1px] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${
+            isPreviewVariant ? "bg-black/15" : "rounded-full bg-white/20"
           }`}
-        />
-      </span>
+        >
+          <EditIcon
+            className={`h-7 w-7 rounded-full bg-base-100/90 p-1.5 stroke-2 ${
+              isPreviewVariant ? "text-base-content" : "text-black"
+            }`}
+          />
+        </span>
+      )}
       <input
         ref={fileUploadRef}
         accept={
