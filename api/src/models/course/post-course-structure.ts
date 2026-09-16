@@ -1,4 +1,4 @@
-import { type Lesson } from "@prisma/client";
+import { type Lesson } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
 import { slugify } from "../../helpers/slugify.ts";
 

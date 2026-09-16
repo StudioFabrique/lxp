@@ -1,4 +1,4 @@
-import { type Contact } from "@prisma/client";
+import { type Contact } from "../../generated/prisma/client.ts";
 
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";

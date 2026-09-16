@@ -2,7 +2,7 @@ import type { TransactionClient } from "../../utils/db.ts";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "../../generated/prisma/client.ts";
 import JSZip from "jszip";
 import { z } from "zod";
 

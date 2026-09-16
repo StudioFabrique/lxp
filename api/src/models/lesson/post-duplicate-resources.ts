@@ -1,4 +1,4 @@
-import { type Lesson } from "@prisma/client";
+import { type Lesson } from "../../generated/prisma/client.ts";
 
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";

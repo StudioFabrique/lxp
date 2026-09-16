@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { relationsByModel } from "../generated/relations/relations.ts";
 
 // Only human-readable labels: filenames, URLs, JSON and rich text keep their case.
 const fieldsByModel: Record<string, readonly string[]> = {
@@ -8,7 +8,6 @@ const fieldsByModel: Record<string, readonly string[]> = {
   CourseAssignmentCriterion: ["label"], ResourceActivity: ["label"],
   ResourceBonusActivity: ["label"],
 };
-const models = new Map(Prisma.dmmf.datamodel.models.map(model => [model.name, model]));
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value);
 
@@ -32,8 +31,8 @@ export function normalizeDisplayFields(model: string, operation: string, args: u
       if (typeof value === "string") data[field] = value.toLowerCase();
       else if (object(value) && typeof value.set === "string") value.set = value.set.toLowerCase();
     }
-    for (const relation of models.get(model)?.fields ?? []) {
-      if (relation.kind !== "object" || !object(data[relation.name])) continue;
+    for (const relation of relationsByModel[model] ?? []) {
+      if (!object(data[relation.name])) continue;
       const nested = data[relation.name] as Record<string, unknown>;
       for (const [action, value] of Object.entries(nested)) {
         const entries = Array.isArray(value) ? value : [value];

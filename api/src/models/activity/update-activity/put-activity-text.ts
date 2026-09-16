@@ -3,7 +3,7 @@ import fs from "fs";
 import { randomUUID } from "node:crypto";
 
 import { prisma } from "../../../utils/db.ts";
-import { type BonusActivity, type Activity } from "@prisma/client";
+import { type BonusActivity, type Activity } from "../../../generated/prisma/client.ts";
 
 /**
  * Updates an activity's text content, title, and description.

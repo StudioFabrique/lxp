@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseDates(

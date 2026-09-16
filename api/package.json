@@ -11,7 +11,7 @@
     "wait-for-db": "node check-test-db.ts",
     "docker:up": "cd tests && docker compose up -d && cd ..",
     "docker:down": "cd tests && docker compose down && cd ..",
-    "test:setup": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- node tests/fixtures/mongo.ts && dotenv -e .env.test -- node tests/fixtures/postgres.ts",
+    "test:setup": "npm run prisma-generate && npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- node tests/fixtures/mongo.ts && dotenv -e .env.test -- node tests/fixtures/postgres.ts",
     "test:run": "echo '🚀 Starting Jest...' && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --clearCache && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test -- jest --runInBand",
     "test:cleanup": "npm run docker:down",
     "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
@@ -31,7 +31,8 @@
   "license": "ISC",
   "dependencies": {
     "@casl/ability": "^6.8.1",
-    "@prisma/client": "^6.19.3",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "bcrypt": "^6.0.0",
     "chalk": "^4.1.2",
     "compression": "^1.8.2",
@@ -46,7 +47,7 @@
     "mongoose": "^7.8.12",
     "multer": "^2.4.0",
     "nodemailer": "^9.1.1",
-    "prisma": "^6.12.0",
+    "prisma": "7.10.0",
     "sharp": "^0.35.4",
     "socket.io": "^4.8.3",
     "winston": "^3.19.0",
@@ -75,12 +76,11 @@
   },
   "allowScripts": {
     "@parcel/watcher@2.6.0": true,
-    "@prisma/client@6.19.3": true,
-    "@prisma/engines@6.12.0": true,
     "bcrypt@6.0.0": true,
     "fsevents@2.3.3": true,
-    "prisma@6.12.0": true,
     "sharp@0.32.6": true,
-    "unrs-resolver@1.12.2": true
+    "unrs-resolver@1.12.2": true,
+    "prisma@7.10.0": true,
+    "@prisma/engines@7.10.0": true
   }
 }

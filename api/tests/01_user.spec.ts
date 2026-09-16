@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
@@ -11,7 +11,7 @@ import app from "../src/app.ts";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 // Méthode pour fermer la connexion
 const disconnect = async () => {

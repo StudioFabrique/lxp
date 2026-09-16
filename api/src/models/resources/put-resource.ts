@@ -1,4 +1,4 @@
-import { type Admin, type Resource, type Tag } from "@prisma/client";
+import { type Admin, type Resource, type Tag } from "../../generated/prisma/client.ts";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";

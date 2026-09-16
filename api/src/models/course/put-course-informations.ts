@@ -1,4 +1,4 @@
-import { type Course } from "@prisma/client";
+import { type Course } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseInformations(course: Course) {

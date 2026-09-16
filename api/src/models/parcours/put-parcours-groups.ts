@@ -1,4 +1,4 @@
-import { type Group } from "@prisma/client";
+import { type Group } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {

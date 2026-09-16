@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import request from "supertest";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import { HEARTBEAT_INTERVAL_MS } from "../src/config/content-read.ts";
 import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * Aller-retour complet du suivi de consultation : sans lui, l'indicateur

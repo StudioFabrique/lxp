@@ -1,7 +1,7 @@
 import { prisma } from "../../../utils/db.ts";
 import path from "path";
 import fs from "fs";
-import { type Activity, type BonusActivity } from "@prisma/client";
+import { type Activity, type BonusActivity } from "../../../generated/prisma/client.ts";
 
 export default async function putActivityVideo(
   activityId: number,

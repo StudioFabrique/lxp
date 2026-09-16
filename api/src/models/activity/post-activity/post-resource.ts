@@ -1,4 +1,4 @@
-import { type Lesson, type Activity, type Resource, type BonusActivity } from "@prisma/client";
+import { type Lesson, type Activity, type Resource, type BonusActivity } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 

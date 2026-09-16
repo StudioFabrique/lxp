@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "Accomplishment" (
     "id" SERIAL NOT NULL,
@@ -430,6 +433,18 @@ CREATE TABLE "Student" (
 );
 
 -- CreateTable
+CREATE TABLE "ContentReadCredit" (
+    "id" SERIAL NOT NULL,
+    "studentId" INTEGER NOT NULL,
+    "type" TEXT NOT NULL,
+    "contentId" INTEGER NOT NULL,
+    "from" TIMESTAMP(3) NOT NULL,
+    "to" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ContentReadCredit_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Tag" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -649,6 +664,9 @@ CREATE UNIQUE INDEX "Skill_description_key" ON "Skill"("description");
 CREATE UNIQUE INDEX "Student_idMdb_key" ON "Student"("idMdb");
 
 -- CreateIndex
+CREATE INDEX "ContentReadCredit_studentId_type_to_idx" ON "ContentReadCredit"("studentId", "type", "to");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
@@ -826,6 +844,9 @@ ALTER TABLE "SkillsOnParcours" ADD CONSTRAINT "SkillsOnParcours_parcoursId_fkey"
 ALTER TABLE "SkillsOnParcours" ADD CONSTRAINT "SkillsOnParcours_skillId_fkey" FOREIGN KEY ("skillId") REFERENCES "Skill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ContentReadCredit" ADD CONSTRAINT "ContentReadCredit_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "TagsOnCourse" ADD CONSTRAINT "TagsOnCourse_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -897,3 +918,5 @@ ALTER TABLE "QuizAnswer" ADD CONSTRAINT "QuizAnswer_attemptId_fkey" FOREIGN KEY 
 -- AddForeignKey
 ALTER TABLE "QuizAnswer" ADD CONSTRAINT "QuizAnswer_quizQuestionId_fkey" FOREIGN KEY ("quizQuestionId") REFERENCES "QuizQuestion"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- Contrainte métier non représentable dans le schéma Prisma.
+ALTER TABLE "ContentReadCredit" ADD CONSTRAINT "ContentReadCredit_interval_check" CHECK ("to" > "from");

@@ -1,14 +1,14 @@
 import request from "supertest";
 import app from "../src/app.ts";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import mongoose from "mongoose";
 import path from "path";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 // Méthode pour fermer la connexion
 const disconnect = async () => {

@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import type { Prisma, QuizQuestion } from "@prisma/client";
+import type { Prisma, QuizQuestion } from "../../generated/prisma/client.ts";
 
 export interface AiQuizQuestion {
   id?: string | number | null;

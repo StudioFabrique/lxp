@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db.ts";
 
-import { type Course } from "@prisma/client";
+import { type Course } from "../../generated/prisma/client.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 
 /**

@@ -1,6 +1,6 @@
 import request from "supertest";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { compare } from "bcrypt";
@@ -20,7 +20,7 @@ import { confirmRootEmail } from "../src/models/auth/confirm-root-email.ts";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * Helper method to disconnect from MongoDB

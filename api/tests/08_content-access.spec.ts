@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import request from "supertest";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import Group from "../src/utils/interfaces/db/group.ts";
 import Role from "../src/utils/interfaces/db/role.ts";
 import User from "../src/utils/interfaces/db/user.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * Cloisonnement des contenus entre parcours.

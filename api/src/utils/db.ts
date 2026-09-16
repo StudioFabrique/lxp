@@ -1,9 +1,9 @@
 // Charge et valide la configuration avant que Prisma ne lise DATABASE_URL.
 import "../config/env.ts";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "./create-prisma-client.ts";
 import { normalizeDisplayFields } from "./normalize-display-fields.ts";
 
-const prisma = new PrismaClient().$extends({
+const prisma = createPrismaClient().$extends({
   query: {
     $allModels: {
       async $allOperations({ model, operation, args, query }) {

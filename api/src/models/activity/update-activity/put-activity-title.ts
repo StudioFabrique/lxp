@@ -1,5 +1,5 @@
 import { prisma } from "../../../utils/db.ts";
-import type { Activity, BonusActivity } from "@prisma/client";
+import type { Activity, BonusActivity } from "../../../generated/prisma/client.ts";
 
 /** Updates only the title of an activity attached to a lesson or resource. */
 export default async function putActivityTitle(

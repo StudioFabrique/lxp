@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import request from "supertest";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * La progression est calculée à un seul endroit

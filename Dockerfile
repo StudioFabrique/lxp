@@ -26,7 +26,7 @@ WORKDIR /app/api
 # omitting API development dependency groups from the production install.
 COPY api/package.json api/package-lock.json ./
 COPY api/prisma ./prisma
-RUN npm ci --omit=dev && npx --no-install prisma generate
+RUN npm ci --omit=dev
 
 FROM node:22-alpine AS runtime
 
@@ -39,5 +39,7 @@ COPY api/package.json api/package-lock.json ./api/
 COPY --from=api-production-dependencies /app/api/node_modules ./api/node_modules
 COPY --from=build /app/api/dist ./api/dist
 COPY --from=build /app/api/prisma ./api/prisma
+COPY --from=build /app/api/prisma.config.ts ./api/prisma.config.ts
+COPY --from=build /app/api/src/config/database-urls.ts ./api/src/config/database-urls.ts
 
 CMD ["npm", "run", "start"]

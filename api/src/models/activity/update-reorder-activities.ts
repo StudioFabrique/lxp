@@ -1,4 +1,4 @@
-import { type Lesson, type Resource } from "@prisma/client";
+import { type Lesson, type Resource } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**

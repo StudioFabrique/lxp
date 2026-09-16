@@ -3,7 +3,7 @@ import {
   type ResourceActivity,
   type BonusActivity,
   type ResourceBonusActivity,
-} from "@prisma/client";
+} from "../../../generated/prisma/client.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 

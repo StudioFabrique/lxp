@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../../src/utils/create-prisma-client.ts";
 import Group from "../../src/utils/interfaces/db/group.ts";
 import Role from "../../src/utils/interfaces/db/role.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 export type Enrollment = { cleanup: () => Promise<void> };
 
