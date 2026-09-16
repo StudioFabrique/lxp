@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useEffect, useRef, useState } from "react";
 
 import useInput from "../../../../hooks/useInput";
 import { Link } from "react-router";
@@ -14,6 +14,7 @@ type Item = {
 type Props = {
   formations: Array<Item>;
   initialFormationId?: number;
+  onCreateFormation?: () => void;
   onSubmit: ({
     title,
     formationId,
@@ -26,21 +27,25 @@ type Props = {
 const NewParcoursForm: FC<Props> = ({
   formations,
   initialFormationId,
+  onCreateFormation,
   onSubmit,
 }) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const [formationId, setFormationId] = useState<number | undefined>(
     initialFormationId,
   );
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (formationId) titleInputRef.current?.focus();
+  }, [formationId]);
 
   /**
    * sélectionne la formation
    * @param id number
    */
   const handleFormation = (id: number) => {
-    if (Number !== undefined) {
-      setFormationId(id);
-    }
+    setFormationId(id);
   };
 
   /**
@@ -85,6 +90,7 @@ const NewParcoursForm: FC<Props> = ({
             <Link
               className="text-xs underline font-normal pl-2"
               to="/admin/parcours?createFormation=true"
+              onClick={onCreateFormation}
             >
               Formation inexistante ? Créer une formation
             </Link>
@@ -100,6 +106,7 @@ const NewParcoursForm: FC<Props> = ({
             Donner un nom au parcours
           </label>
           <input
+            ref={titleInputRef}
             data-onboarding-field="parcours-title"
             className={setInputStyle(title.hasError)}
             name="title"

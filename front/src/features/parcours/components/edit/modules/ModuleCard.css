@@ -1,0 +1,30 @@
+.module-card-highlight {
+  --module-card-ring: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  --module-card-shadow: color-mix(in oklab, var(--color-primary) 10%, transparent);
+
+  box-shadow:
+    0 0 0 1px var(--module-card-ring),
+    0 8px 20px var(--module-card-shadow);
+  animation: module-card-highlight-pulse 1.4s ease-in-out 1;
+}
+
+@keyframes module-card-highlight-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px var(--module-card-ring),
+      0 8px 20px var(--module-card-shadow);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 4px color-mix(in oklab, var(--color-primary) 18%, transparent),
+      0 10px 24px var(--module-card-shadow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .module-card-highlight {
+    animation: none;
+  }
+}

@@ -1,3 +1,5 @@
+import { act } from "react";
+import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
@@ -76,10 +78,31 @@ describe("LastParcoursItem", () => {
     expect(markup).toContain('data-tip="Modifier le parcours"');
   });
 
-  it("transmet la formation au formulaire d'ajout d'un parcours", () => {
-    const markup = renderCard();
+  it("transmet la formation au bouton d'ajout", async () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const onCreateParcours = vi.fn();
+    await act(async () => {
+      root.render(
+        <MemoryRouter>
+          <LastParcoursItem
+            formation={formation}
+            onCreateParcours={onCreateParcours}
+          />
+        </MemoryRouter>,
+      );
+    });
 
-    expect(markup).toContain("/admin/parcours/new?formationId=1");
+    const button = [...container.querySelectorAll("button")].find((item) =>
+      item.textContent?.includes("Ajouter un parcours"),
+    );
+    await act(async () => button?.click());
+    expect(onCreateParcours).toHaveBeenCalledWith(1);
+    expect(container.innerHTML).not.toContain("/admin/parcours/new");
+
+    await act(async () => root.unmount());
+    container.remove();
   });
 
   it("ne montre pas le menu d'administration dans la vue étudiante", () => {
