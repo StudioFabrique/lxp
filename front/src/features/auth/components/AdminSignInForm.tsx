@@ -46,6 +46,11 @@ const AdminSignInForm = ({
     },
   });
 
+  const handleCloseTab = () => {
+    window.open("about:blank", "_self");
+    window.close();
+  }
+
   const onSubmit = async (data: AdminSignInValues) => {
     setError("");
     setIsLoading(true);
@@ -80,11 +85,12 @@ const AdminSignInForm = ({
   if (activationEmail) {
     return (
       <AuthPageWrapper title="Activez votre compte root">
-        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70">
+        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70 gap-10 flex flex-col">
           <p>Un lien d'activation a été envoyé à {activationEmail}.</p>
-          <p className="mt-2">
+          <p>
             Consultez votre boîte mail pour terminer la création du compte.
           </p>
+          <button className="btn" onClick={handleCloseTab}>D'accord</button>
         </span>
       </AuthPageWrapper>
     );
