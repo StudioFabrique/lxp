@@ -19,7 +19,7 @@ export default async function syncTeacherContentRbac() {
         Permission.findOneAndUpdate(
           { name },
           { $setOnInsert: { name, isRole: false } },
-          { upsert: true, new: true },
+          { upsert: true, returnDocument: "after" },
         ),
       ),
     ),

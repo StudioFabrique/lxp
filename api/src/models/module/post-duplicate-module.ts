@@ -1,4 +1,5 @@
-import { prisma } from "../../utils/db.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import { prisma, type NestedCreate } from "../../utils/db.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
@@ -10,44 +11,45 @@ export default async function postDuplicateModule(
   targetParcoursId: number,
 ) {
   const [admin, targetParcours, source] = await Promise.all([
-    prisma.admin.findFirst({ where: { idMdb: userId } }),
-    prisma.parcours.findUnique({
-      where: { id: targetParcoursId },
-      select: {
-        id: true,
-        formationId: true,
-        contacts: { select: { contactId: true } },
-        bonusSkills: { select: { id: true } },
-      },
-    }),
-    prisma.module.findUnique({
-      where: { id: sourceModuleId },
-      include: {
-        parcours: { select: { formationId: true } },
-        courses: {
-          orderBy: { order: "asc" },
-          include: {
-            contacts: true,
-            tags: true,
-            lessons: {
-              orderBy: { order: "asc" },
-              include: {
-                activities: {
-                  orderBy: { order: "asc" },
-                  include: { resourceActivities: true },
-                },
-              },
-            },
-          },
-        },
-        quizzes: {
-          where: { courseId: null, activityId: null },
-          include: {
-            questions: { include: { quizQuestionReports: true } },
-          },
-        },
-      },
-    }),
+    prisma.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    ).first(),
+    prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: targetParcoursId }),
+    )
+      .select("id", "formationId")
+      .include("contacts", (related191) => related191.select("contactId"))
+      .include("bonusSkills", (related192) => related192.select("id"))
+      .first(),
+    prisma.orm.public.Module.where((row) =>
+      whereFromObject(row, { id: sourceModuleId }),
+    )
+      .include("parcours", (related193) => related193.select("formationId"))
+      .include("courses", (related194) =>
+        related194
+          .include("contacts")
+          .include("tags")
+          .include("lessons", (related195) =>
+            related195
+              .include("activities", (related196) =>
+                related196
+                  .include("resourceActivities")
+                  .orderBy((row) => row.order.asc()),
+              )
+              .orderBy((row) => row.order.asc()),
+          )
+          .orderBy((row) => row.order.asc()),
+      )
+      .include("quizzes", (related197) =>
+        related197
+          .where((row) =>
+            whereFromObject(row, { courseId: null, activityId: null }),
+          )
+          .include("questions", (related198) =>
+            related198.include("quizQuestionReports"),
+          ),
+      )
+      .first(),
   ]);
 
   if (!admin) {
@@ -56,7 +58,7 @@ export default async function postDuplicateModule(
   if (!source || !targetParcours) {
     throw { message: "Module ou parcours introuvable.", statusCode: 404 };
   }
-  if (source.parcours.formationId !== targetParcours.formationId) {
+  if (source.parcours!.formationId !== targetParcours.formationId) {
     throw {
       message:
         "Un module ne peut être dupliqué que dans un parcours de la même formation.",
@@ -79,10 +81,13 @@ export default async function postDuplicateModule(
     };
   }
 
-  const existingTitles = await prisma.module.findMany({
-    where: { parcours: { formationId: targetParcours.formationId } },
-    select: { title: true },
-  });
+  const existingTitles = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, {
+      parcours: { formationId: targetParcours.formationId },
+    }),
+  )
+    .select("title")
+    .all();
   const identity = getDuplicateIdentity(
     source,
     existingTitles.map(({ title }) => title),
@@ -111,8 +116,12 @@ export default async function postDuplicateModule(
     })),
   );
 
-  const duplicated = await prisma.module.create({
-    data: {
+  const duplicated = await prisma.orm.public.Module.include(
+    "contacts",
+    (related199) => related199.include("contact"),
+  )
+    .include("bonusSkills", (related200) => related200.include("bonusSkill"))
+    .create({
       title: identity.title,
       duplicationIndex: identity.duplicationIndex,
       description: source.description,
@@ -126,104 +135,104 @@ export default async function postDuplicateModule(
       author: source.author,
       adminId: admin.id,
       parcoursId: targetParcours.id,
-      contacts: {
-        create: associations.contactsIds.map((contactId) => ({
-          contact: { connect: { id: contactId } },
-        })),
-      },
-      bonusSkills: {
-        create: associations.skillsIds.map((bonusSkillId) => ({
-          bonusSkill: { connect: { id: bonusSkillId } },
-        })),
-      },
-      courses: {
-        create: duplicatedCourses.map((course) => ({
-          title: course.title,
-          description: course.description,
-          image: course.image,
-          virtualClass: course.virtualClass,
-          visibility: course.visibility,
-          scenario: course.scenario,
-          dates: course.dates as any,
-          order: course.order,
-          isPublished: course.isPublished,
-          author: course.author,
-          adminId: admin.id,
-          // A copy has no independent RAG index. IA course features stay disabled
-          // until an explicit future indexing workflow assigns a new slug.
-          courseSlug: null,
-          duplicationIndex: course.duplicationIndex + 1,
-          contacts: {
-            create: course.contacts.map(({ contactId }) => ({
-              contact: { connect: { id: contactId } },
-            })),
-          },
-          tags: {
-            create: course.tags.map(({ tagId }) => ({
-              tag: { connect: { id: tagId } },
-            })),
-          },
-          lessons: {
-            create: course.lessons.map((lesson) => ({
-              title: lesson.title,
-              description: lesson.description,
-              modalite: lesson.modalite,
-              author: lesson.author,
-              adminId: admin.id,
-              tagId: lesson.tagId,
-              order: lesson.order,
-              isPublished: lesson.isPublished,
-              visibility: lesson.visibility,
-              duplicationIndex: lesson.duplicationIndex + 1,
-              activities: {
-                create: lesson.activities.map((activity) => ({
-                  title: activity.title,
-                  type: activity.type,
-                  order: activity.order,
-                  url: activity.url,
-                  authorId: admin.id,
-                  duplicationIndex: activity.duplicationIndex + 1,
-                  resourceActivities: {
-                    create: activity.resourceActivities.map(
-                      ({ label, order, url }) => ({ label, order, url }),
+      contacts: (relation) =>
+        relation.create(
+          associations.contactsIds.map((contactId) => ({ contactId })),
+        ),
+      bonusSkills: (relation) =>
+        relation.create(
+          associations.skillsIds.map((bonusSkillId) => ({ bonusSkillId })),
+        ),
+      courses: (relation) =>
+        relation.create(
+          duplicatedCourses.map((course) => ({
+            title: course.title,
+            description: course.description,
+            image: course.image,
+            virtualClass: course.virtualClass,
+            visibility: course.visibility,
+            scenario: course.scenario,
+            dates: course.dates as any,
+            order: course.order,
+            isPublished: course.isPublished,
+            author: course.author,
+            adminId: admin.id,
+            courseSlug: null,
+            duplicationIndex: course.duplicationIndex + 1,
+            contacts: (relation: NestedCreate<"ContactsOnCourse">) =>
+              relation.create(
+                course.contacts.map(({ contactId }) => ({ contactId })),
+              ),
+            tags: (relation: NestedCreate<"TagsOnCourse">) =>
+              relation.create(
+                course.tags.map(({ tagId }) => ({ tagId })),
+              ),
+            lessons: (relation: NestedCreate<"Lesson">) =>
+              relation.create(
+                course.lessons.map((lesson) => ({
+                  title: lesson.title,
+                  description: lesson.description,
+                  modalite: lesson.modalite,
+                  author: lesson.author,
+                  adminId: admin.id,
+                  tagId: lesson.tagId,
+                  order: lesson.order,
+                  isPublished: lesson.isPublished,
+                  visibility: lesson.visibility,
+                  duplicationIndex: lesson.duplicationIndex + 1,
+                  activities: (relation: NestedCreate<"Activity">) =>
+                    relation.create(
+                      lesson.activities.map((activity) => ({
+                        title: activity.title,
+                        type: activity.type,
+                        order: activity.order,
+                        url: activity.url,
+                        authorId: admin.id,
+                        duplicationIndex: activity.duplicationIndex + 1,
+                        resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                          relation.create(
+                            activity.resourceActivities.map(
+                              ({ label, order, url }) => ({
+                                label,
+                                order,
+                                url,
+                              }),
+                            ),
+                          ),
+                      })),
                     ),
-                  },
                 })),
-              },
-            })),
-          },
-        })),
-      },
-      quizzes: {
-        create: source.quizzes.map((quiz) => ({
-          title: quiz.title,
-          type: quiz.type,
-          questions: {
-            create: quiz.questions.map((question) => ({
-              externalId: question.externalId,
-              type: question.type,
-              difficulty: question.difficulty,
-              prompt: question.prompt,
-              explanationTrue: question.explanationTrue,
-              explanationWrong: question.explanationWrong,
-              tags: question.tags,
-              data: question.data as any,
-              contentHash: null,
-              quizQuestionReports: {
-                create: question.quizQuestionReports.map(
-                  ({ commentaire }) => ({ commentaire }),
-                ),
-              },
-            })),
-          },
-        })),
-      },
-    },
-    include: {
-      contacts: { include: { contact: true } },
-      bonusSkills: { include: { bonusSkill: true } },
-    },
-  });
+              ),
+          })),
+        ),
+      quizzes: (relation) =>
+        relation.create(
+          source.quizzes.map((quiz) => ({
+            title: quiz.title,
+            type: quiz.type,
+            questions: (relation: NestedCreate<"QuizQuestion">) =>
+              relation.create(
+                quiz.questions.map((question) => ({
+                  externalId: question.externalId,
+                  type: question.type,
+                  difficulty: question.difficulty,
+                  prompt: question.prompt,
+                  explanationTrue: question.explanationTrue,
+                  explanationWrong: question.explanationWrong,
+                  tags: question.tags,
+                  data: question.data as any,
+                  contentHash: null,
+                  quizQuestionReports: (relation: NestedCreate<"QuizQuestionReport">) =>
+                    relation.create(
+                      question.quizQuestionReports.map(({ commentaire }) => ({
+                        commentaire,
+                      })),
+                    ),
+                })),
+              ),
+          })),
+        ),
+    });
   const contacts = await enrichContactsWithNames(
     duplicated.contacts.map(({ contact }) => contact),
   );

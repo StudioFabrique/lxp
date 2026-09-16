@@ -40,7 +40,7 @@ export async function incrementPromptStats(
       $inc: increments,
       $setOnInsert: { groupId },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
 
   if (stats) {

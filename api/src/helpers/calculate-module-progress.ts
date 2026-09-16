@@ -10,9 +10,9 @@
  * 50 % à un module dont dix-huit leçons sur vingt restent à faire.
  */
 
-type LessonReadLike = { finishedAt?: Date | null };
+type LessonReadLike = { finishedAt?: Date | string | null };
 type LessonLike = { lessonsRead?: LessonReadLike[] | null };
-type AssignmentSubmissionLike = { submittedAt?: Date | null };
+type AssignmentSubmissionLike = { submittedAt?: Date | string | null };
 type AssignmentLike = {
   submissions?: AssignmentSubmissionLike[] | null;
 };

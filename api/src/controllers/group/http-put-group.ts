@@ -6,7 +6,10 @@ import fs from "fs";
 import putGroup from "../../models/group/put-group.ts";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
 
-export default async function httpPutGroup(req: Request, res: Response) {
+export default async function httpPutGroup(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
   const { id } = req.params;
 
   const uploadedFile = req.file;

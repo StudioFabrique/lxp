@@ -15,6 +15,7 @@
  */
 
 import User from "../../utils/interfaces/db/user.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
@@ -24,7 +25,7 @@ export default async function putInvitation(userId: string) {
   // Check if the user exists in the database
   const existingUser = await User.findOne({
     _id: new mongoose.Types.ObjectId(userId),
-  });
+  }).populate<{ roles: IRole[] }>("roles");
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
@@ -56,7 +57,7 @@ export default async function putInvitation(userId: string) {
   // Update the "invitationSent" property in the database if the email was sent successfully
   const updateResult = await User.updateOne(
     { _id: existingUser._id },
-    { $set: { invitationSent: true, invitationSentAt: new Date() } }
+    { $set: { invitationSent: true, invitationSentAt: new Date() } },
   );
   return updateResult;
 }

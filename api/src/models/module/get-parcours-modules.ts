@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   moduleWhereForScope,
@@ -8,14 +9,15 @@ export default async function getParcoursModules(
   parcoursId: number,
   scope: AccessScope = null,
 ) {
-  const modules = await prisma.module.findMany({
-    where: {
+  const modules = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, {
       parcoursId: +parcoursId,
       ...(moduleWhereForScope(scope) ?? {}),
-    },
-    orderBy: { createdAt: "asc" },
-    select: { id: true, title: true },
-  });
+    }),
+  )
+    .select("id", "title")
+    .orderBy((row) => row.createdAt.asc())
+    .all();
 
   return modules;
 }

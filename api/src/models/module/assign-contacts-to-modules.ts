@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   moduleWhereForScope,
@@ -22,18 +23,25 @@ export default async function assignContactsToModules(
   const uniqueContactIds = [...new Set(contactIds)];
   const accessWhere = moduleWhereForScope(scope);
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.transaction(async (tx) => {
     const [moduleCount, contactCount] = await Promise.all([
-      tx.module.count({
-        where: {
+      tx.orm.public.Module.where((row) =>
+        whereFromObject(row, {
           id: { in: uniqueModuleIds },
           parcoursId,
           ...(accessWhere ? { AND: [accessWhere] } : {}),
-        },
-      }),
-      tx.contactsOnParcours.count({
-        where: { parcoursId, contactId: { in: uniqueContactIds } },
-      }),
+        }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+      tx.orm.public.ContactsOnParcours.where((row) =>
+        whereFromObject(row, {
+          parcoursId,
+          contactId: { in: uniqueContactIds },
+        }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ]);
 
     if (moduleCount !== uniqueModuleIds.length) {
@@ -50,11 +58,10 @@ export default async function assignContactsToModules(
       };
     }
 
-    return tx.contactsOnModule.createMany({
-      data: uniqueModuleIds.flatMap((moduleId) =>
+    return tx.orm.public.ContactsOnModule.createAndCount(
+      uniqueModuleIds.flatMap((moduleId) =>
         uniqueContactIds.map((contactId) => ({ moduleId, contactId })),
       ),
-      skipDuplicates: true,
-    });
+    ).then((count) => ({ count }));
   });
 }

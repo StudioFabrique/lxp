@@ -2,9 +2,9 @@ import Group from "../../utils/interfaces/db/group.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
 async function getUsersStats() {
-  const totalUsers = await User.count({});
-  const totalActive = await User.count({ isActive: false });
-  const totalGroups = await Group.count({});
+  const totalUsers = await User.countDocuments({});
+  const totalActive = await User.countDocuments({ isActive: false });
+  const totalGroups = await Group.countDocuments({});
 
   return [
     {

@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -5,15 +9,15 @@ async function updateParcoursInfos(
   parcoursId: number,
   title: string,
   description: string,
-  formation: number
+  formation: number,
 ) {
-  const existingParcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId },
-  });
+  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  ).first();
 
-  const existingFormation = await prisma.formation.findFirst({
-    where: { id: formation },
-  });
+  const existingFormation = await prisma.orm.public.Formation.where((row) =>
+    whereFromObject(row, { id: formation }),
+  ).first();
 
   if (!existingFormation) {
     const error: any = {
@@ -31,17 +35,16 @@ async function updateParcoursInfos(
     throw error;
   }
 
-  const updatedParcours = await prisma.parcours.update({
-    where: { id: parcoursId },
-    data: {
+  const updatedParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  )
+    .update({
       title: title,
       description: description,
       isPublished: existingParcours.isPublished,
-      formation: {
-        connect: { id: formation },
-      },
-    },
-  });
+      formation: (relation) => relation.connect({ id: formation }),
+    })
+    .then(requireDatabaseRow);
 
   return updatedParcours;
 }

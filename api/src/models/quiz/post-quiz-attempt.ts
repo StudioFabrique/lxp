@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { QuizAttemptOrigin } from "../../config/quiz-attempt.ts";
 import { prisma } from "../../utils/db.ts";
 import { quizRepository } from "./quiz-repository.ts";
@@ -26,9 +27,9 @@ export default async function postQuizAttempt(
   scope: QuizAttemptScope,
   userIdMdb: string,
 ) {
-  const student = await prisma.student.findUnique({
-    where: { idMdb: userIdMdb },
-  });
+  const student = await prisma.orm.public.Student.where((row) =>
+    whereFromObject(row, { idMdb: userIdMdb }),
+  ).first();
 
   if (!student) return null;
 
@@ -43,8 +44,10 @@ export default async function postQuizAttempt(
 
   if (!quiz) return null;
 
-  return prisma.quizAttempt.create({
-    data: { quizId: quiz.id, studentId: student.id, origin },
-    select: { id: true, quizId: true, origin: true, startedAt: true },
-  });
+  return prisma.orm.public.QuizAttempt.select(
+    "id",
+    "quizId",
+    "origin",
+    "startedAt",
+  ).create({ quizId: quiz.id, studentId: student.id, origin });
 }

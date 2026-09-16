@@ -1,4 +1,4 @@
-import { type Objective } from "../../generated/prisma/client.ts";
+import type { Objective } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseNewObjective(courseId: number, objective: Objective) {

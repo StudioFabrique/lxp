@@ -3,9 +3,9 @@ import { serverIssue } from "../../utils/constantes.ts";
 import getResourceDetails from "../../models/resources/get-resource-details.ts";
 
 export default async function httpGetResourceDetails(
-  req: Request,
+  req: Request<{ resourceId: string }>,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const resourceId = parseInt(req.params.resourceId);

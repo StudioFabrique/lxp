@@ -44,10 +44,10 @@ describe("AssignContactsToModulesModal", () => {
 
   it("capitalise le prénom et le nom de la ressource", () => {
     const resourceName = Array.from(container.querySelectorAll("span")).find(
-      (element) => element.textContent === "jeanne dupont",
+      (element) => element.textContent === "Jeanne Dupont",
     );
 
-    expect(resourceName?.classList.contains("capitalize")).toBe(true);
+    expect(resourceName).toBeDefined();
   });
 
   it("permet de désélectionner puis sélectionner tous les modules", () => {

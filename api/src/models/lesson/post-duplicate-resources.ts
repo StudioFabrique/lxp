@@ -1,8 +1,9 @@
-import { type Lesson } from "../../generated/prisma/client.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import type { Lesson } from "../../prisma/model-types.ts";
 
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedCreate } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
 function createHttpError(message: string, statusCode: number) {
@@ -21,22 +22,17 @@ export default async function postDuplicateResources(
   }
 
   const [existingCourse, prismaAdmin, existingAdmin] = await Promise.all([
-    prisma.course.findFirst({
-      where: { id: courseId },
-      select: {
-        lessons: {
-          select: { title: true, order: true },
-        },
-      },
-    }),
-    prisma.admin.findFirst({
-      where: { idMdb: adminMongoId },
-      select: { id: true },
-    }),
-    User.findOne(
-      { _id: adminMongoId },
-      { firstname: 1, lastname: 1 },
-    ),
+    prisma.orm.public.Course.where((row) =>
+      whereFromObject(row, { id: courseId }),
+    )
+      .include("lessons", (related130) => related130.select("title", "order"))
+      .first(),
+    prisma.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb: adminMongoId }),
+    )
+      .select("id")
+      .first(),
+    User.findOne({ _id: adminMongoId }, { firstname: 1, lastname: 1 }),
   ]);
 
   if (!existingCourse) {
@@ -48,28 +44,23 @@ export default async function postDuplicateResources(
 
   let newLessons: Lesson[] = [];
 
-  await prisma.$transaction(async (tx) => {
-    const resources = await tx.resource.findMany({
-      where: { id: { in: resourceIds } },
-      select: {
-        title: true,
-        description: true,
-        tags: { select: { tagId: true }, take: 1 },
-        bonusActivities: {
-          select: {
-            title: true,
-            type: true,
-            order: true,
-            url: true,
-            resourceBonusActivities: {
-              select: { label: true, order: true, url: true },
-              orderBy: { order: "asc" },
-            },
-          },
-          orderBy: { order: "asc" },
-        },
-      },
-    });
+  await prisma.transaction(async (tx) => {
+    const resources = await tx.orm.public.Resource.where((row) =>
+      whereFromObject(row, { id: { in: resourceIds } }),
+    )
+      .select("title", "description")
+      .include("tags", (related131) => related131.select("tagId").limit(1))
+      .include("bonusActivities", (related132) =>
+        related132
+          .select("title", "type", "order", "url")
+          .include("resourceBonusActivities", (related133) =>
+            related133
+              .select("label", "order", "url")
+              .orderBy((row) => row.order.asc()),
+          )
+          .orderBy((row) => row.order.asc()),
+      )
+      .all();
 
     if (!resources.length) {
       throw createHttpError("Les ressources n'existent pas", 404);
@@ -84,9 +75,7 @@ export default async function postDuplicateResources(
     const maxOrder = existingCourse.lessons.length
       ? Math.max(...existingCourse.lessons.map((lesson) => lesson.order))
       : -1;
-    const existingTitles = existingCourse.lessons.map(
-      (lesson) => lesson.title,
-    );
+    const existingTitles = existingCourse.lessons.map((lesson) => lesson.title);
     const resourcesWithIdentity = resources.map((resource) => {
       const identity = getDuplicateIdentity(
         { title: resource.title, duplicationIndex: 0 },
@@ -111,30 +100,30 @@ export default async function postDuplicateResources(
           })),
         );
 
-        return tx.lesson.create({
-          data: {
-            title: identity.title,
-            duplicationIndex: identity.duplicationIndex,
-            description: resource.description ?? "",
-            modalite: "distanciel",
-            author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
-            order: maxOrder + index + 1,
-            tagId: resource.tags[0].tagId,
-            adminId: prismaAdmin.id,
-            courseId,
-            activities: {
-              create: activities.map((activity) => ({
+        return tx.orm.public.Lesson.create({
+          title: identity.title,
+          duplicationIndex: identity.duplicationIndex,
+          description: resource.description ?? "",
+          modalite: "distanciel",
+          author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
+          order: maxOrder + index + 1,
+          tagId: resource.tags[0].tagId,
+          adminId: prismaAdmin.id,
+          courseId,
+          activities: (relation) =>
+            relation.create(
+              activities.map((activity) => ({
                 title: activity.title,
                 type: activity.type,
                 order: activity.order,
                 url: activity.url,
                 authorId: prismaAdmin.id,
-                resourceActivities: {
-                  create: activity.resourceBonusActivities,
-                },
+                resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                  relation.create(
+                    activity.resourceBonusActivities.map(({ label, order, url }) => ({ label, order, url })),
+                  ),
               })),
-            },
-          },
+            ),
         });
       }),
     );

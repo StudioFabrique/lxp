@@ -3,8 +3,8 @@ import { serverIssue } from "../../../utils/constantes.ts";
 import deleteSocialNetwork from "../../../models/user/social-network/delete-social-network.ts";
 
 export default async function httpDeleteSocialNetwork(
-  req: Request,
-  res: Response
+  req: Request<{ id: string }>,
+  res: Response,
 ) {
   try {
     const id: string = req.params.id;
@@ -15,7 +15,6 @@ export default async function httpDeleteSocialNetwork(
       .status(200)
       .json({ message: "Suppression effectuée avec succès" });
   } catch (error) {
-
     return res.status(500).json({ message: serverIssue });
   }
 }

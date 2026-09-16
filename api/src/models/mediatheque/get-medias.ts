@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import fs from "node:fs/promises";
 
 import {
@@ -65,7 +66,9 @@ export default async function getMedias(params: GetMediasParams) {
       ? { name: { contains: search, mode: "insensitive" as const } }
       : {}),
   };
-  const totalMedias = await prisma.mediatheque.count({ where });
+  const totalMedias = await prisma.orm.public.Mediatheque.aggregate(
+    (aggregate) => ({ total: aggregate.count() }),
+  ).then(({ total }) => total);
 
   const totalPages = Math.ceil(totalMedias / +limit!);
 
@@ -74,14 +77,9 @@ export default async function getMedias(params: GetMediasParams) {
 
   // Recherche dans la table mediatheque tous les éléments de type "image"
   // avec pagination et tri par date de création décroissante
-  const medias = await prisma.mediatheque.findMany({
-    where,
-    skip: offset, // Nombre d'éléments à sauter (pagination)
-    take: +limit!, // Nombre d'éléments à retourner
-    orderBy: {
-      [sort as string]: "desc", // Tri par date de création décroissante
-    },
-  });
+  const medias = await prisma.orm.public.Mediatheque.offset(offset)
+    .limit(+limit!)
+    .all();
 
   const urls = medias.map((media) => media.url);
   if (urls.length === 0) {
@@ -93,59 +91,50 @@ export default async function getMedias(params: GetMediasParams) {
   }
 
   const [lessonActivities, bonusActivities] = await Promise.all([
-    prisma.activity.findMany({
-      where: {
+    prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, {
         OR: [
           { url: { in: urls } },
           { resourceActivities: { some: { url: { in: urls } } } },
           ...(type === "image" ? [{ type: "text" as const }] : []),
         ],
-      },
-      select: {
-        id: true,
-        title: true,
-        type: true,
-        order: true,
-        url: true,
-        resourceActivities: {
-          where: { url: { in: urls } },
-          select: { url: true },
-        },
-        lesson: {
-          select: {
-            id: true,
-            title: true,
-            course: {
-              select: {
-                title: true,
-                module: { select: { id: true, title: true } },
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.bonusActivity.findMany({
-      where: {
+      }),
+    )
+      .select("id", "title", "type", "order", "url")
+      .include("resourceActivities", (related137) =>
+        related137
+          .where((row) => whereFromObject(row, { url: { in: urls } }))
+          .select("url"),
+      )
+      .include("lesson", (related138) =>
+        related138
+          .select("id", "title")
+          .include("course", (related139) =>
+            related139
+              .select("title")
+              .include("module", (related140) =>
+                related140.select("id", "title"),
+              ),
+          ),
+      )
+      .all(),
+    prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, {
         OR: [
           { url: { in: urls } },
           { resourceBonusActivities: { some: { url: { in: urls } } } },
           ...(type === "image" ? [{ type: "text" as const }] : []),
         ],
-      },
-      select: {
-        id: true,
-        title: true,
-        type: true,
-        order: true,
-        url: true,
-        resourceBonusActivities: {
-          where: { url: { in: urls } },
-          select: { url: true },
-        },
-        resource: { select: { id: true, title: true } },
-      },
-    }),
+      }),
+    )
+      .select("id", "title", "type", "order", "url")
+      .include("resourceBonusActivities", (related141) =>
+        related141
+          .where((row) => whereFromObject(row, { url: { in: urls } }))
+          .select("url"),
+      )
+      .include("resource", (related142) => related142.select("id", "title"))
+      .all(),
   ]);
 
   const associations = new Map<string, AssociatedActivity[]>();
@@ -201,11 +190,11 @@ export default async function getMedias(params: GetMediasParams) {
         type: activity.type,
         order: activity.order,
         parent: "lesson",
-        parentTitle: activity.lesson.title,
-        courseTitle: activity.lesson.course.title,
-        moduleTitle: activity.lesson.course.module.title,
-        moduleId: activity.lesson.course.module.id,
-        lessonId: activity.lesson.id,
+        parentTitle: activity.lesson!.title,
+        courseTitle: activity.lesson!.course!.title,
+        moduleTitle: activity.lesson!.course!.module!.title,
+        moduleId: activity.lesson!.course!.module!.id,
+        lessonId: activity.lesson!.id,
       };
       addAssociation(activity.url, association);
       for (const resource of activity.resourceActivities) {
@@ -223,8 +212,8 @@ export default async function getMedias(params: GetMediasParams) {
         type: activity.type,
         order: activity.order,
         parent: "resource",
-        parentTitle: activity.resource.title,
-        resourceId: activity.resource.id,
+        parentTitle: activity.resource!.title,
+        resourceId: activity.resource!.id,
       };
       addAssociation(activity.url, association);
       for (const resource of activity.resourceBonusActivities) {

@@ -4,8 +4,8 @@ const DAY = 86_400_000;
 export function defaultCourseDates(
   index: number,
   count: number,
-  minDate: Date | null,
-  maxDate: Date | null,
+  minDate: Date | string | null,
+  maxDate: Date | string | null,
   now = new Date(),
 ) {
   const start = new Date(minDate ?? now);

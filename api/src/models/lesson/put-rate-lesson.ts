@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function putRateLesson(
@@ -5,29 +9,28 @@ export default async function putRateLesson(
   userIdMdb: string,
   rating: number,
 ) {
-  const student = await prisma.student.findFirst({
-    where: { idMdb: userIdMdb },
-  });
+  const student = await prisma.orm.public.Student.where((row) =>
+    whereFromObject(row, { idMdb: userIdMdb }),
+  ).first();
 
   if (!student) {
     return null;
   }
 
-  const existingLessonRating = await prisma.lessonRating.findFirst({
-    where: { lessonId, studentId: student.id },
-  });
+  const existingLessonRating = await prisma.orm.public.LessonRating.where(
+    (row) => whereFromObject(row, { lessonId, studentId: student.id }),
+  ).first();
 
   if (!existingLessonRating) return null;
 
   // Mettre à jour la notation existante
-  const lessonRating = await prisma.lessonRating.update({
-    where: {
+  const lessonRating = await prisma.orm.public.LessonRating.where((row) =>
+    whereFromObject(row, {
       id: existingLessonRating.id,
-    },
-    data: {
-      rating: +rating,
-    },
-  });
+    }),
+  )
+    .update({ rating: +rating })
+    .then(requireDatabaseRow);
 
   return lessonRating;
 }

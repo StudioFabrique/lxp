@@ -1,4 +1,5 @@
 import User from "../../utils/interfaces/db/user.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
@@ -7,7 +8,7 @@ import { env } from "../../config/env.ts";
 export default async function putResetPassword(userId: string) {
   const existingUser = await User.findOne({
     _id: new mongoose.Types.ObjectId(userId),
-  });
+  }).populate<{ roles: IRole[] }>("roles");
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 

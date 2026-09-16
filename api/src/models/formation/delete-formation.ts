@@ -1,15 +1,16 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function deleteFormation(formationId: number) {
-  return prisma.$transaction(async (transaction) => {
-    const formation = await transaction.formation.findUnique({
-      where: { id: formationId },
-      select: {
-        id: true,
-        title: true,
-        _count: { select: { parcours: true } },
-      },
-    });
+  return prisma.transaction(async (transaction) => {
+    const formation = await transaction.orm.public.Formation.where((row) =>
+      whereFromObject(row, { id: formationId }),
+    )
+      .select("id", "title")
+      .first();
 
     if (!formation) {
       throw {
@@ -18,7 +19,12 @@ export default async function deleteFormation(formationId: number) {
       };
     }
 
-    if (formation._count.parcours > 0) {
+    const linkedParcours = await transaction.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { formationId }),
+    )
+      .select("id")
+      .first();
+    if (linkedParcours) {
       throw {
         statusCode: 409,
         message:
@@ -26,10 +32,16 @@ export default async function deleteFormation(formationId: number) {
       };
     }
 
-    await transaction.tagsOnFormation.deleteMany({
-      where: { formationId },
-    });
-    await transaction.formation.delete({ where: { id: formationId } });
+    await transaction.orm.public.TagsOnFormation.where((row) =>
+      whereFromObject(row, { formationId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await transaction.orm.public.Formation.where((row) =>
+      whereFromObject(row, { id: formationId }),
+    )
+      .delete()
+      .then(requireDatabaseRow);
     return formation.title;
   });
 }

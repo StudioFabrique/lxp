@@ -1,4 +1,6 @@
-import { type Lesson } from "../../generated/prisma/client.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import type { NestedCreate } from "../../utils/db.ts";
+import type { Lesson } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
@@ -7,7 +9,7 @@ import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts"
 export default async function postDuplicateLesson(
   courseId: number,
   lessonId: number[],
-  adminId: string
+  adminId: string,
 ) {
   // Vérification que lessonId n'est pas vide
   if (!lessonId || lessonId.length === 0) {
@@ -16,18 +18,13 @@ export default async function postDuplicateLesson(
     throw error;
   }
 
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-    select: {
-      lessons: {
-        select: {
-          title: true,
-          duplicationIndex: true,
-          order: true,
-        },
-      },
-    },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .include("lessons", (related127) =>
+      related127.select("title", "duplicationIndex", "order"),
+    )
+    .first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -35,10 +32,11 @@ export default async function postDuplicateLesson(
     throw error;
   }
 
-  const prismaAdmin = await prisma.admin.findFirst({
-    where: { idMdb: adminId },
-    select: { id: true },
-  });
+  const prismaAdmin = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: adminId }),
+  )
+    .select("id")
+    .first();
 
   if (!prismaAdmin) {
     const error = new Error("L'auteur n'existe pas");
@@ -48,7 +46,7 @@ export default async function postDuplicateLesson(
 
   const existingAdmin = await User.findOne(
     { _id: adminId },
-    { firstname: 1, lastname: 1 }
+    { firstname: 1, lastname: 1 },
   );
 
   if (!existingAdmin) {
@@ -59,29 +57,19 @@ export default async function postDuplicateLesson(
 
   let newLessons: Lesson[] = [];
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.transaction(async (tx) => {
     // Récupérer les leçons à copier avec leurs activités
-    const lessonsToCopy = await tx.lesson.findMany({
-      where: { id: { in: lessonId } },
-      select: {
-        title: true,
-        duplicationIndex: true,
-        description: true,
-        modalite: true,
-        tagId: true,
-        activities: {
-          select: {
-            title: true,
-            type: true,
-            order: true,
-            url: true,
-            duplicationIndex: true,
-            resourceActivities: true,
-          },
-          orderBy: { order: "asc" },
-        },
-      },
-    });
+    const lessonsToCopy = await tx.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: { in: lessonId } }),
+    )
+      .select("title", "duplicationIndex", "description", "modalite", "tagId")
+      .include("activities", (related128) =>
+        related128
+          .select("title", "type", "order", "url", "duplicationIndex")
+          .include("resourceActivities")
+          .orderBy((row) => row.order.asc()),
+      )
+      .all();
 
     if (!lessonsToCopy || lessonsToCopy.length === 0) {
       throw { statusCode: 404, message: "Les leçons n'existent pas" };
@@ -112,8 +100,11 @@ export default async function postDuplicateLesson(
             ),
           })),
         );
-        return tx.lesson.create({
-          data: {
+        return tx.orm.public.Lesson.include("tag")
+          .include("activities", (related129) =>
+            related129.orderBy((row) => row.order.asc()),
+          )
+          .create({
             title: identity.title,
             duplicationIndex: identity.duplicationIndex,
             description: lessonData.description,
@@ -123,27 +114,26 @@ export default async function postDuplicateLesson(
             tagId: lessonData.tagId,
             adminId: prismaAdmin.id,
             courseId: courseId,
-            activities: {
-              create: activities.map((a) => ({
-                title: a.title,
-                type: a.type,
-                order: a.order,
-                url: a.url,
-                duplicationIndex: a.duplicationIndex,
-                authorId: prismaAdmin.id,
-                resourceActivities: {
-                  create: a.resourceActivities.map(({ label, order, url }) => ({ label, order, url })),
-                },
-              })),
-            },
-          },
-          include: {
-            tag: true,
-            activities: {
-              orderBy: { order: "asc" },
-            },
-          },
-        });
+            activities: (relation) =>
+              relation.create(
+                activities.map((a) => ({
+                  title: a.title,
+                  type: a.type,
+                  order: a.order,
+                  url: a.url,
+                  duplicationIndex: a.duplicationIndex,
+                  authorId: prismaAdmin.id,
+                  resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                    relation.create(
+                      a.resourceActivities.map(({ label, order, url }) => ({
+                        label,
+                        order,
+                        url,
+                      })),
+                    ),
+                })),
+              ),
+          });
       }),
     );
   });

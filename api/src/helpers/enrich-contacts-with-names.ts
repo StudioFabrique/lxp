@@ -16,11 +16,12 @@ export type ContactWithNames<T extends ContactReference> = T & ContactName;
  * La requête est groupée pour ne pas interroger MongoDB contact par contact.
  */
 export async function enrichContactsWithNames<T extends ContactReference>(
-  contacts: readonly T[],
+  contacts: readonly (T | null)[],
 ): Promise<Array<ContactWithNames<T>>> {
-  if (contacts.length === 0) return [];
+  const existingContacts = contacts.filter((contact): contact is T => contact !== null);
+  if (existingContacts.length === 0) return [];
 
-  const ids = [...new Set(contacts.map(({ idMdb }) => idMdb))];
+  const ids = [...new Set(existingContacts.map(({ idMdb }) => idMdb))];
   const users = await User.find(
     { _id: { $in: ids } },
     { _id: 1, firstname: 1, lastname: 1 },
@@ -35,7 +36,7 @@ export async function enrichContactsWithNames<T extends ContactReference>(
     ]),
   );
 
-  return contacts.map((contact) => ({
+  return existingContacts.map((contact) => ({
     ...contact,
     firstname: namesById.get(contact.idMdb)?.firstname ?? "",
     lastname: namesById.get(contact.idMdb)?.lastname ?? "",

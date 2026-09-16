@@ -1,4 +1,8 @@
-import { type Activity, type BonusActivity } from "../../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
+import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -62,18 +66,17 @@ export default async function putReorderResource(req: CustomRequest) {
   // Initialize activity variable (can be either Activity or BonusActivity)
   let existingActivity: Activity | BonusActivity | null = null;
 
-
   // Fetch the parent activity based on type
   if (parent === "lesson") {
     // Case 1: Parent is a Lesson - fetch Activity
-    existingActivity = await prisma.activity.findFirst({
-      where: { id: +activityId },
-    });
+    existingActivity = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: +activityId }),
+    ).first();
   } else if (parent === "resource") {
     // Case 2: Parent is a Resource - fetch BonusActivity
-    existingActivity = await prisma.bonusActivity.findFirst({
-      where: { id: +activityId },
-    });
+    existingActivity = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: +activityId }),
+    ).first();
   }
 
   // Verify parent activity exists
@@ -81,31 +84,33 @@ export default async function putReorderResource(req: CustomRequest) {
     throw { statusCode: 404, message: "Le parent n'existe pas." };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   // Verify author exists
   if (!existingAuthor)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
   // Execute all updates in a transaction to ensure atomicity
-  const transaction = await prisma.$transaction(async (tx) => {
+  const transaction = await prisma.transaction(async (tx) => {
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson - update ResourceActivity order
       for (const [index, resourceId] of activitiesIds.entries()) {
-        await tx.resourceActivity.update({
-          where: { id: resourceId },
-          data: { order: index }, // Set order based on position in array
-        });
+        await tx.orm.public.ResourceActivity.where((row) =>
+          whereFromObject(row, { id: resourceId }),
+        )
+          .update({ order: index })
+          .then(requireDatabaseRow);
       }
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource - update ResourceBonusActivity order
       for (const [index, resourceId] of activitiesIds.entries()) {
-        await tx.resourceBonusActivity.update({
-          where: { id: resourceId },
-          data: { order: index }, // Set order based on position in array
-        });
+        await tx.orm.public.ResourceBonusActivity.where((row) =>
+          whereFromObject(row, { id: resourceId }),
+        )
+          .update({ order: index })
+          .then(requireDatabaseRow);
       }
     }
   });

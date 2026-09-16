@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import { prisma } from "../../utils/db.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
@@ -89,57 +90,46 @@ export async function getExpectedAssignmentStudents(
 export async function getTeacherUpcomingAssignments(
   moduleIds: readonly number[],
 ) {
-  const assignments = await prisma.courseAssignment.findMany({
-    where: {
+  const assignments = await prisma.orm.public.CourseAssignment.where((row) =>
+    whereFromObject(row, {
       course: {
         isPublished: true,
         visibility: true,
         moduleId: { in: [...moduleIds] },
       },
-    },
-    orderBy: [{ dueAt: "asc" }, { id: "asc" }],
-    select: {
-      id: true,
-      dueAt: true,
-      maxScore: true,
-      course: {
-        select: {
-          id: true,
-          title: true,
-          module: {
-            select: {
-              id: true,
-              title: true,
-              parcours: {
-                select: {
-                  id: true,
-                  title: true,
-                  groups: {
-                    select: { group: { select: { idMdb: true } } },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      submissions: {
-        select: {
-          id: true,
-          submittedAt: true,
-          grade: true,
-          gradedAt: true,
-          student: { select: { idMdb: true } },
-        },
-      },
-    },
-  });
+    }),
+  )
+    .select("id", "dueAt", "maxScore")
+    .include("course", (related12) =>
+      related12
+        .select("id", "title")
+        .include("module", (related13) =>
+          related13
+            .select("id", "title")
+            .include("parcours", (related14) =>
+              related14
+                .select("id", "title")
+                .include("groups", (related15) =>
+                  related15.include("group", (related16) =>
+                    related16.select("idMdb"),
+                  ),
+                ),
+            ),
+        ),
+    )
+    .include("submissions", (related17) =>
+      related17
+        .select("id", "submittedAt", "grade", "gradedAt")
+        .include("student", (related18) => related18.select("idMdb")),
+    )
+    .orderBy([(row) => row.dueAt.asc(), (row) => row.id.asc()])
+    .all();
 
   const groupIds = [
     ...new Set(
       assignments.flatMap((assignment) =>
-        assignment.course.module.parcours.groups.map(
-          ({ group }) => group.idMdb,
+        assignment.course!.module!.parcours!.groups.map(
+          ({ group }) => group!.idMdb,
         ),
       ),
     ),
@@ -150,16 +140,15 @@ export async function getTeacherUpcomingAssignments(
   return assignments.map((assignment) => {
     const submissionsByStudent = new Map(
       assignment.submissions.map(({ student, ...submission }) => [
-        student.idMdb,
+        student!.idMdb,
         submission,
       ]),
     );
-    const { groups: _groups, ...parcours } =
-      assignment.course.module.parcours;
+    const { groups: _groups, ...parcours } = assignment.course!.module!.parcours!;
     const { submissions: _submissions, ...assignmentData } = assignment;
     const expectedStudents = new Map<string, ExpectedAssignmentStudent>();
-    assignment.course.module.parcours.groups.forEach(({ group }) => {
-      expectedStudentsByGroup.get(group.idMdb)?.forEach((student) => {
+    assignment.course!.module!.parcours!.groups.forEach(({ group }) => {
+      expectedStudentsByGroup.get(group!.idMdb)?.forEach((student) => {
         expectedStudents.set(student.id, student);
       });
     });
@@ -168,12 +157,14 @@ export async function getTeacherUpcomingAssignments(
       ...assignmentData,
       course: {
         ...assignment.course,
-        module: { ...assignment.course.module, parcours },
+        module: { ...assignment.course!.module, parcours },
       },
-      students: sortExpectedStudents([...expectedStudents.values()]).map((student) => ({
-        ...student,
-        submission: submissionsByStudent.get(student.id) ?? null,
-      })),
+      students: sortExpectedStudents([...expectedStudents.values()]).map(
+        (student) => ({
+          ...student,
+          submission: submissionsByStudent.get(student.id) ?? null,
+        }),
+      ),
     };
   });
 }

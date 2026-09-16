@@ -1,21 +1,24 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 import { type IRole } from "../../utils/interfaces/db/role.ts";
 
 export default async function getBestRatedCourses(userId: string) {
   // 1 Vérifier que userId is in Admin
-  const admin = await prisma.admin.findFirst({
-    where: {
+  const admin = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, {
       idMdb: userId,
-    },
-  });
+    }),
+  ).first();
 
   if (!admin) {
     throw new Error("User is not an admin");
   }
 
   // 2 Vérifier que role in roles === "teacher"
-  const user = await User.findById(userId).populate("roles");
+  const user = await User.findById(userId).populate<{ roles: IRole[] }>(
+    "roles",
+  );
 
   if (!user) return null;
 
@@ -24,28 +27,22 @@ export default async function getBestRatedCourses(userId: string) {
   }
 
   // 3 Récupérer la liste des cours et des leçons
-  const courses = await prisma.course.findMany({
-    where: {
+  const courses = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, {
       adminId: admin.id,
       lessons: { some: { lessonRating: { some: { rating: { gt: 0 } } } } },
-    },
-    take: 4,
-    include: {
-      lessons: {
-        orderBy: {
-          order: "asc",
-        },
-        include: {
-          lessonRating: true,
-        },
-      },
-    },
-  });
+    }),
+  )
+    .include("lessons", (related31) =>
+      related31.include("lessonRating").orderBy((row) => row.order.asc()),
+    )
+    .limit(4)
+    .all();
 
   // 4 Faire la moyenne des notes de chaque cours
   const coursesRating = courses.map((course) => {
     const ratings = course.lessons.flatMap((lesson) =>
-      lesson.lessonRating.map((rating) => rating.rating)
+      lesson.lessonRating.map((rating) => rating.rating),
     );
     const avg =
       ratings.length > 0

@@ -4,6 +4,7 @@ import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 import activateMultipleUsers from "../user/activate-multiple-users.ts";
 import { exactInsensitive } from "../../utils/unique-fields.ts";
+import { Types } from "mongoose";
 
 export default async function createGroup(
   group: IGroup,
@@ -37,7 +38,7 @@ export default async function createGroup(
   await activateMultipleUsers(users);
 
   group.roles = await Role.find({ role: "student", rank: 3 });
-  group.createdBy = creatorId;
+  group.createdBy = new Types.ObjectId(creatorId);
 
   const usersId = users.map((user) => user._id);
 
@@ -55,11 +56,11 @@ export default async function createGroup(
     return null;
   }
 
-  await prisma.group.create({
-    data: {
-      idMdb: createdGroup._id.toString(),
-      parcours: parcoursId ? { create: { parcoursId } } : undefined,
-    },
+  await prisma.orm.public.Group.create({
+    idMdb: createdGroup._id.toString(),
+    parcours: parcoursId
+      ? (relation) => relation.create({ parcoursId })
+      : undefined,
   });
 
   await User.updateMany(

@@ -1,15 +1,13 @@
 import { prisma } from "../../utils/db.ts";
 
 async function getAllTags() {
-  const tags = await prisma.tag.findMany({
-    select: {
-      id: true,
-      name: true,
-      color: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+  const tags = await prisma.orm.public.Tag.select(
+    "id",
+    "name",
+    "color",
+    "createdAt",
+    "updatedAt",
+  ).all();
 
   if (tags && tags.length > 0) {
     return tags;

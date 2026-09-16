@@ -1,3 +1,4 @@
+import type { MongoRecord } from "./mongo-record.ts";
 /**
 Schema pour MongoDB, une fois qu'un utilisateur active son compte,
 le token fournit dans le mail d'activation est enregistré dans cette
@@ -6,9 +7,9 @@ utilisateur malveillant.
 
 */
 
-import mongoose, { type Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-export interface IBlacklistedToken extends Document {
+export interface IBlacklistedToken extends MongoRecord {
   token: string;
 }
 
@@ -16,14 +17,14 @@ const blacklistedTokenSchema: Schema = new Schema(
   {
     token: { type: String, required: true, unique: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 blacklistedTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 const BlackListedToken = mongoose.model<IBlacklistedToken>(
   "BlacklistedToken",
-  blacklistedTokenSchema
+  blacklistedTokenSchema,
 );
 
 export default BlackListedToken;

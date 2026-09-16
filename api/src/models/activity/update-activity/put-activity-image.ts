@@ -1,4 +1,8 @@
-import { type Activity, type BonusActivity } from "../../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
+import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 //import path from "path";
 //import fs from "fs";
@@ -25,9 +29,9 @@ export default async function putActivityImage(
   parent: "lesson" | "resource" = "lesson",
 ) {
   // Check that the user exists
-  const existingUser = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingUser = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
   // Initialize variable to hold either Activity or BonusActivity
@@ -36,14 +40,14 @@ export default async function putActivityImage(
   // Fetch the appropriate entity based on parent type
   if (parent === "lesson") {
     // Handle regular lesson activities
-    existingElement = await prisma.activity.findFirst({
-      where: { id: activityId },
-    });
+    existingElement = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   } else if (parent === "resource") {
     // Handle bonus resource activities
-    existingElement = await prisma.bonusActivity.findFirst({
-      where: { id: activityId },
-    });
+    existingElement = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   }
 
   // Ensure the target activity/resource exists
@@ -63,51 +67,47 @@ export default async function putActivityImage(
   // Otherwise keep the existing URL
 
   // Use transaction to ensure data consistency between activity update and media usage tracking
-  const transaction = await prisma.$transaction(async (tx) => {
+  const transaction = await prisma.transaction(async (tx) => {
     // Decrement usage count for the old media if it exists
     if (existingElement.url) {
-      const media = await tx.mediatheque.findFirst({
-        where: { url: existingElement.url },
-      });
+      const media = await tx.orm.public.Mediatheque.where((row) =>
+        whereFromObject(row, { url: existingElement.url }),
+      ).first();
       if (media) {
-        await tx.mediatheque.update({
-          where: { id: media.id },
-          data: { used: { decrement: 1 } },
-        });
+        await tx.execute(
+          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" - 1 WHERE "id" = ${media.id}`
+            .affectedCount()
+            .build(),
+        );
       }
     }
 
     // Update the appropriate entity based on parent type
     if (parent === "lesson") {
-      await prisma.activity.update({
-        where: { id: activityId },
-        data: {
-          title,
-          // Use filename if provided, otherwise url from media library, otherwise keep existing
-          url: filename ?? url ?? existingElement.url,
-        },
-      });
+      await prisma.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .update({ title, url: filename ?? url ?? existingElement.url })
+        .then(requireDatabaseRow);
     } else {
-      await prisma.bonusActivity.update({
-        where: { id: activityId },
-        data: {
-          title,
-          // Use filename if provided, otherwise url from media library, otherwise keep existing
-          url: filename ?? url ?? existingElement.url,
-        },
-      });
+      await prisma.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .update({ title, url: filename ?? url ?? existingElement.url })
+        .then(requireDatabaseRow);
     }
 
     // Increment usage count for the new media from library if selected
     if (url) {
-      const media = await tx.mediatheque.findFirst({
-        where: { url },
-      });
+      const media = await tx.orm.public.Mediatheque.where((row) =>
+        whereFromObject(row, { url }),
+      ).first();
       if (media) {
-        await tx.mediatheque.update({
-          where: { id: media.id },
-          data: { used: { increment: 1 } },
-        });
+        await tx.execute(
+          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id}`
+            .affectedCount()
+            .build(),
+        );
       }
     }
   });

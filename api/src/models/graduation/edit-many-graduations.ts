@@ -1,10 +1,11 @@
-import { type ObjectId } from "mongoose";
-import Graduation, { type IGraduation } from "../../utils/interfaces/db/graduation.ts";
+import Graduation, {
+  type IGraduation,
+} from "../../utils/interfaces/db/graduation.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { logger } from "../../utils/logs/logger.ts";
 
 export default async function editManyGraduations(
-  userId: ObjectId,
+  userId: string,
   graduations: IGraduation[],
 ) {
   try {
@@ -19,14 +20,14 @@ export default async function editManyGraduations(
           const updatedGraduation = await Graduation.findByIdAndUpdate(
             item._id,
             { ...item },
-            { new: true, upsert: true },
+            { returnDocument: "after", upsert: true },
           );
           return updatedGraduation;
         } else {
           // If no _id, create a new graduation
           const newGraduation = new Graduation({
             ...item,
-            user: user,
+            user: userId,
           });
           return await newGraduation.save();
         }
@@ -34,9 +35,9 @@ export default async function editManyGraduations(
     );
 
     const updatedUser = await User.findByIdAndUpdate(
-      user,
+      userId,
       { graduations: graduationDocs.map((item) => item._id) },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     return updatedUser;

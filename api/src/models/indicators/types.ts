@@ -66,6 +66,6 @@ export function emptyIndicator<TValue>(
   return { key, label, value: null, unit, available: false, meta };
 }
 
-export function toDayKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
+export function toDayKey(date: Date | string): string {
+  return new Date(date).toISOString().slice(0, 10);
 }

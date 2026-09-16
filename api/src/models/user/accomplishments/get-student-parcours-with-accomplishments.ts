@@ -1,46 +1,38 @@
+import { whereFromObject } from "../../../utils/prisma-query.ts";
 import { prisma } from "../../../utils/db.ts";
 
 export default async function getStudentParcoursWithAccomplishments(
-  studentMdbId: string
+  studentMdbId: string,
 ) {
   // return a parcours instead of accomplishment
 
-  const parcoursWithAccomplishments = await prisma.parcours.findMany({
-    where: {
-      modules: {
-        some: {
-          courses: {
-            some: {
-              accomplishments: { some: { student: { idMdb: studentMdbId } } },
-            },
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      title: true,
-      modules: {
-        select: {
-          id: true,
-          title: true,
-          courses: {
-            select: {
-              id: true,
-              title: true,
-              accomplishments: {
-                select: {
-                  id: true,
-                  description: true,
-                  accomplishedAt: true,
-                },
+  const parcoursWithAccomplishments = await prisma.orm.public.Parcours.where(
+    (row) =>
+      whereFromObject(row, {
+        modules: {
+          some: {
+            courses: {
+              some: {
+                accomplishments: { some: { student: { idMdb: studentMdbId } } },
               },
             },
           },
         },
-      },
-    },
-  });
+      }),
+  )
+    .select("id", "title")
+    .include("modules", (related43) =>
+      related43
+        .select("id", "title")
+        .include("courses", (related44) =>
+          related44
+            .select("id", "title")
+            .include("accomplishments", (related45) =>
+              related45.select("id", "description", "accomplishedAt"),
+            ),
+        ),
+    )
+    .all();
 
   const formattedParcours = parcoursWithAccomplishments.map((parcours) => ({
     id: parcours.id,

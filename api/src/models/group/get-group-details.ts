@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -8,23 +9,21 @@ export default async function getGroupDetails(groupId: string) {
     .populate("users")
     .lean();
 
-  const groupPrisma = await prisma.group.findFirst({
-    select: {
-      parcours: {
-        select: {
-          parcoursId: true,
-          parcours: {
-            select: {
-              formationId: true,
-              formation: { select: { id: true, title: true } },
-              title: true,
-            },
-          },
-        },
-      },
-    },
-    where: { idMdb: groupId },
-  });
+  const groupPrisma = await prisma.orm.public.Group.where((row) =>
+    whereFromObject(row, { idMdb: groupId }),
+  )
+    .include("parcours", (related80) =>
+      related80
+        .select("parcoursId")
+        .include("parcours", (related81) =>
+          related81
+            .select("formationId", "title")
+            .include("formation", (related82) =>
+              related82.select("id", "title"),
+            ),
+        ),
+    )
+    .first();
 
   if (!(group && groupPrisma)) return;
 
@@ -35,7 +34,7 @@ export default async function getGroupDetails(groupId: string) {
     //     ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
     //     : undefined,
     formationId: groupPrisma?.parcours[0]
-      ? groupPrisma?.parcours[0].parcours.formationId
+      ? groupPrisma.parcours[0]!.parcours!.formationId
       : null,
     parcoursId: groupPrisma?.parcours[0]
       ? groupPrisma?.parcours[0].parcoursId

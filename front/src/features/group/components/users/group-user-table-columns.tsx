@@ -1,5 +1,5 @@
 import { toTitleCase } from "../../../../utils/helpers/text-helpers";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
 import UserStatusToggle from "../../../user/components/UserStatusToggle";
@@ -9,7 +9,7 @@ const selectionColumn = personSelectionColumn<User>(
   "Sélectionner tous les étudiants affichés",
 );
 
-const identityColumns: ColumnDef<User>[] = [
+const identityColumns: ColumnDef<StockFeatures, User>[] = [
   {
     accessorKey: "firstname",
     header: "Prénom",
@@ -30,7 +30,7 @@ const identityColumns: ColumnDef<User>[] = [
   },
 ];
 
-export const getAvailableStudentColumns = (): ColumnDef<User>[] => [
+export const getAvailableStudentColumns = (): ColumnDef<StockFeatures, User>[] => [
   selectionColumn,
   ...identityColumns,
   {
@@ -47,7 +47,7 @@ export const getGroupStudentColumns = ({
   onDeleteUser,
 }: {
   onDeleteUser: (user: User) => void;
-}): ColumnDef<User>[] => [
+}): ColumnDef<StockFeatures, User>[] => [
   selectionColumn,
   ...identityColumns,
   {

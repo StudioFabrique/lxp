@@ -1,21 +1,32 @@
 import { jest } from "@jest/globals";
+import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const readFile = jest.fn<(...args: unknown[]) => Promise<string>>();
-const countMedias = jest.fn<(...args: unknown[]) => Promise<number>>();
+const countMedias = jest.fn<(...args: unknown[]) => Promise<{ total: number }>>();
 const findMedias = jest.fn<(...args: unknown[]) => Promise<unknown[]>>();
 const findActivities = jest.fn<(...args: unknown[]) => Promise<unknown[]>>();
 const findBonusActivities = jest.fn<
   (...args: unknown[]) => Promise<unknown[]>
 >();
+const mediathequeModel = createModelMock({
+  aggregate: countMedias,
+  all: findMedias,
+});
+const activityModel = createModelMock({ all: findActivities });
+const bonusActivityModel = createModelMock({ all: findBonusActivities });
 
 jest.unstable_mockModule("node:fs/promises", () => ({
   default: { readFile },
 }));
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: {
-    mediatheque: { count: countMedias, findMany: findMedias },
-    activity: { findMany: findActivities },
-    bonusActivity: { findMany: findBonusActivities },
+    orm: {
+      public: {
+        Mediatheque: mediathequeModel,
+        Activity: activityModel,
+        BonusActivity: bonusActivityModel,
+      },
+    },
   },
 }));
 
@@ -23,7 +34,7 @@ const { default: getMedias } = await import("../get-medias.ts");
 
 beforeEach(() => {
   jest.clearAllMocks();
-  countMedias.mockResolvedValue(1);
+  countMedias.mockResolvedValue({ total: 1 });
   findMedias.mockResolvedValue([
     {
       id: 1,

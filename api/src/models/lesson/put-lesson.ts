@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 type LessonUpdateData = {
@@ -9,14 +13,13 @@ type LessonUpdateData = {
 };
 
 async function putLesson(lesson: LessonUpdateData) {
-  const existingLesson = await prisma.lesson.findFirst({
-    where: { id: +lesson.id },
-    select: {
-      course: {
-        select: { tags: { select: { tagId: true } } },
-      },
-    },
-  });
+  const existingLesson = await prisma.orm.public.Lesson.where((row) =>
+    whereFromObject(row, { id: +lesson.id }),
+  )
+    .include("course", (related135) =>
+      related135.include("tags", (related136) => related136.select("tagId")),
+    )
+    .first();
 
   if (!existingLesson) {
     const error = new Error("La leçon n'existe pas");
@@ -25,7 +28,7 @@ async function putLesson(lesson: LessonUpdateData) {
   }
 
   if (
-    !existingLesson.course.tags.some(({ tagId }) => tagId === +lesson.tagId)
+    !existingLesson.course!.tags.some(({ tagId }) => tagId === +lesson.tagId)
   ) {
     throw { statusCode: 400, message: "Le tag doit être associé au cours." };
   }
@@ -33,18 +36,17 @@ async function putLesson(lesson: LessonUpdateData) {
   if (!["hybride", "distanciel", "presentiel"].includes(lesson.modalite))
     throw { statusCode: 400, message: "Modalité non reconnue." };
 
-  return await prisma.lesson.update({
-    where: { id: +lesson.id },
-    data: {
+  return await prisma.orm.public.Lesson.where((row) =>
+    whereFromObject(row, { id: +lesson.id }),
+  )
+    .include("tag")
+    .update({
       title: lesson.title,
       description: lesson.description ?? "",
       modalite: lesson.modalite,
       tagId: +lesson.tagId,
-    },
-    include: {
-      tag: true,
-    },
-  });
+    })
+    .then(requireDatabaseRow);
 }
 
 export default putLesson;

@@ -33,20 +33,22 @@ export default async function httpCreateUser(
     }
 
     const actorRank = req.auth!.userRoles[0]?.rank ?? 4;
-    const userResponse = await createUser(
-      userDataRequest,
-      roleId,
-      actorRank,
-    ); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
+    const userResponse = await createUser(userDataRequest, roleId, actorRank); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     await createManyGraduations(
-      userResponse!.createdUser._id,
-      graduationsDataRequest
+      userResponse!.createdUser._id.toString(),
+      graduationsDataRequest,
     ); // insert graduations in mongodb with user ref _id
 
-    await createManyLinks(userResponse!.createdUser._id, linksDataRequest); // insert links in mongodb with user ref _id
+    await createManyLinks(
+      userResponse!.createdUser._id.toString(),
+      linksDataRequest,
+    ); // insert links in mongodb with user ref _id
 
-    await createManyHobbies(userResponse!.createdUser._id, hobbiesDataRequest); // insert hobbies in mongodb with user ref _id
+    await createManyHobbies(
+      userResponse!.createdUser._id.toString(),
+      hobbiesDataRequest,
+    ); // insert hobbies in mongodb with user ref _id
 
     if (uploadedFile) {
       await fs.promises.unlink(uploadedFile.path);

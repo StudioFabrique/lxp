@@ -1,7 +1,7 @@
 # The containers that compose the project
 services:
   db:
-    image: postgres:latest
+    image: postgres:18-alpine
     restart: always
     container_name: tests-prisma
     ports:
@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
   mongo:
-    image: mongo:latest
+    image: mongo:8.2
     restart: always
     container_name: tests-mongo
     ports:

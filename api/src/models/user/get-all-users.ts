@@ -6,7 +6,7 @@ async function getAllUsers(
   page: number,
   limit: number,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
@@ -15,7 +15,7 @@ async function getAllUsers(
     .sort({ [stype]: dir })
     .skip(getPagination(page, limit))
     .limit(limit);
-  const total = await User.count({});
+  const total = await User.countDocuments({});
 
   const users = data.map((user) => {
     if (user.avatar) {

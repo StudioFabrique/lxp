@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import mongoose, { type HydratedDocument } from "mongoose";
 import Role from "../utils/interfaces/db/role.ts";
 import Permission, {
   type IPermission,
@@ -59,7 +59,7 @@ async function seedPermissions() {
       : "Création des permissions...",
   );
 
-  const bulkPermissions = new Map<string, IPermission>();
+  const bulkPermissions = new Map<string, HydratedDocument<IPermission>>();
   const bulkRoleUpdates = new Map<string, any>();
 
   for (const [roleName, value] of Object.entries({

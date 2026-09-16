@@ -3,8 +3,8 @@ import deleteUserFromGroup from "../../models/group/delete-user-from-group.ts";
 import { serverIssue } from "../../utils/constantes.ts";
 
 export default async function httpDeleteUserFromGroup(
-  req: Request,
-  res: Response
+  req: Request<{ groupId: string; userId: string }>,
+  res: Response,
 ) {
   const { groupId, userId } = req.params;
 

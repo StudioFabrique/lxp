@@ -1,4 +1,8 @@
-import { type Activity, type BonusActivity } from "../../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
+import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
 export default async function putIframe(
@@ -9,22 +13,22 @@ export default async function putIframe(
   url: string,
   parent: "lesson" | "resource",
 ) {
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
   let existingContent: Activity | BonusActivity | null = null;
 
   if (parent === "lesson") {
-    existingContent = await prisma.activity.findFirst({
-      where: { id: activityId },
-    });
+    existingContent = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   } else if (parent === "resource") {
-    existingContent = await prisma.bonusActivity.findFirst({
-      where: { id: activityId },
-    });
+    existingContent = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   }
 
   if (!existingContent) throw { message: "Contenu non trouvé", status: 404 };
@@ -32,33 +36,33 @@ export default async function putIframe(
   let updatedActivity: Activity | BonusActivity | null = null;
 
   if (parent === "lesson") {
-    updatedActivity = await prisma.activity.update({
-      where: { id: activityId },
-      data: {
+    updatedActivity = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    )
+      .update({
         title,
         type: "iframe",
         url,
-        author: {
-          connect: {
+        author: (relation) =>
+          relation.connect({
             id: existingAuthor.id,
-          },
-        },
-      },
-    });
+          }),
+      })
+      .then(requireDatabaseRow);
   } else if (parent === "resource") {
-    updatedActivity = await prisma.bonusActivity.update({
-      where: { id: activityId },
-      data: {
+    updatedActivity = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    )
+      .update({
         title,
         type: "iframe",
         url,
-        admin: {
-          connect: {
+        admin: (relation) =>
+          relation.connect({
             id: existingAuthor.id,
-          },
-        },
-      },
-    });
+          }),
+      })
+      .then(requireDatabaseRow);
   }
 
   return updatedActivity;

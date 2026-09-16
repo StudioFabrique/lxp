@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import {
   calculateModuleProgress,
   countCourseProgress,
@@ -5,7 +6,11 @@ import {
 } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
-import { emptyIndicator, type Indicator, type IndicatorContext } from "./types.ts";
+import {
+  emptyIndicator,
+  type Indicator,
+  type IndicatorContext,
+} from "./types.ts";
 
 export const PARCOURS_PROGRESSION_KEY = "parcours_progression";
 
@@ -29,8 +34,9 @@ export default async function getParcoursProgression(
   const label = "Progression dans le parcours";
 
   const user = await User.findById(context.userIdMdb).select("group").lean();
-  const groupIdMdb = (user?.group as unknown as Array<unknown> | undefined)?.[0]
-    ?.toString();
+  const groupIdMdb = (
+    user?.group as unknown as Array<unknown> | undefined
+  )?.[0]?.toString();
 
   if (!groupIdMdb) {
     return emptyIndicator(PARCOURS_PROGRESSION_KEY, label, "percent", {
@@ -38,16 +44,16 @@ export default async function getParcoursProgression(
     });
   }
 
-  const group = await prisma.group.findFirst({
-    where: { idMdb: groupIdMdb },
-    select: {
-      parcours: {
-        orderBy: { parcoursId: "desc" },
-        take: 1,
-        select: { parcoursId: true },
-      },
-    },
-  });
+  const group = await prisma.orm.public.Group.where((row) =>
+    whereFromObject(row, { idMdb: groupIdMdb }),
+  )
+    .include("parcours", (related92) =>
+      related92
+        .select("parcoursId")
+        .orderBy((row) => row.parcoursId.desc())
+        .limit(1),
+    )
+    .first();
 
   const parcoursId = group?.parcours[0]?.parcoursId;
 
@@ -57,35 +63,37 @@ export default async function getParcoursProgression(
     });
   }
 
-  const modules = await prisma.module.findMany({
-    where: { parcoursId },
-    select: {
-      id: true,
-      title: true,
-      courses: {
-        orderBy: { order: "asc" },
-        select: {
-          assignment: {
-            select: {
-              submissions: {
-                where: { student: { idMdb: context.userIdMdb } },
-                select: { submittedAt: true },
-              },
-            },
-          },
-          lessons: {
-            orderBy: { order: "asc" },
-            select: {
-              lessonsRead: {
-                where: { student: { idMdb: context.userIdMdb } },
-                select: { id: true, finishedAt: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const modules = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { parcoursId }),
+  )
+    .select("id", "title")
+    .include("courses", (related93) =>
+      related93
+        .include("assignment", (related94) =>
+          related94.include("submissions", (related95) =>
+            related95
+              .where((row) =>
+                whereFromObject(row, { student: { idMdb: context.userIdMdb } }),
+              )
+              .select("submittedAt"),
+          ),
+        )
+        .include("lessons", (related96) =>
+          related96
+            .include("lessonsRead", (related97) =>
+              related97
+                .where((row) =>
+                  whereFromObject(row, {
+                    student: { idMdb: context.userIdMdb },
+                  }),
+                )
+                .select("id", "finishedAt"),
+            )
+            .orderBy((row) => row.order.asc()),
+        )
+        .orderBy((row) => row.order.asc()),
+    )
+    .all();
 
   if (modules.length === 0) {
     return emptyIndicator(PARCOURS_PROGRESSION_KEY, label, "percent", {

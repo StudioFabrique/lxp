@@ -1,4 +1,5 @@
-import { type Lesson, type Activity, type Resource, type BonusActivity } from "../../../generated/prisma/client.ts";
+import { whereFromObject } from "../../../utils/prisma-query.ts";
+import type { Lesson, Activity, Resource, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -79,30 +80,30 @@ export default async function postActivityResource(req: CustomRequest) {
 
   // Initialize parent entity variable (can be either a Lesson or Resource)
   let existingParent:
-    | LessonWithActivities
-    | ResourceWithBonusActivities
-    | null = null;
+    LessonWithActivities | ResourceWithBonusActivities | null = null;
 
   // Fetch the parent entity based on type
   if (parent === "lesson")
-    existingParent = await prisma.lesson.findFirst({
-      where: { id: +lessonId },
-      include: { activities: true },
-    });
+    existingParent = await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: +lessonId }),
+    )
+      .include("activities")
+      .first();
   else if (parent === "resource")
-    existingParent = await prisma.resource.findFirst({
-      where: { id: +lessonId },
-      include: { bonusActivities: true },
-    });
+    existingParent = await prisma.orm.public.Resource.where((row) =>
+      whereFromObject(row, { id: +lessonId }),
+    )
+      .include("bonusActivities")
+      .first();
 
   // Verify parent entity exists
   if (!existingParent)
     throw { statusCode: 404, message: "L'élément parent n'existe pas" };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   // Verify author exists
   if (!existingAuthor)
@@ -128,56 +129,50 @@ export default async function postActivityResource(req: CustomRequest) {
   let result: { count: number } = { count: 0 };
 
   // Execute all database operations in a transaction to ensure atomicity
-  await prisma.$transaction(async (tx) => {
+  await prisma.transaction(async (tx) => {
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson
       // Create a new Activity of type "resource" for the lesson
-      const newActivity = await tx.activity.create({
-        data: {
-          title,
-          lessonId: +lessonId,
-          type: "resource",
-          // Set order to be the next in sequence after existing activities
-          order: (existingParent as LessonWithActivities).activities.length,
-          url: "",
-          authorId: existingAuthor.id,
-        },
+      const newActivity = await tx.orm.public.Activity.create({
+        title,
+        lessonId: +lessonId,
+        type: "resource",
+        order: (existingParent as LessonWithActivities).activities.length,
+        url: "",
+        authorId: existingAuthor.id,
       });
 
       // Create multiple ResourceActivity entries linked to the new activity
-      result = await tx.resourceActivity.createMany({
-        data: newResources.map((resource, index) => ({
+      result = await tx.orm.public.ResourceActivity.createAndCount(
+        newResources.map((resource, index) => ({
           label: resource.label,
           url: resource.url,
           activityId: newActivity.id,
-          order: index, // Maintain order within the resource list
+          order: index,
         })),
-      });
+      ).then((count) => ({ count }));
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource
       // Create a new BonusActivity of type "resource" for the resource
-      const newBonusActivity = await tx.bonusActivity.create({
-        data: {
-          title,
-          resourceId: +lessonId,
-          type: "resource",
-          // Set order to be the next in sequence after existing bonus activities
-          order: (existingParent as ResourceWithBonusActivities).bonusActivities
-            .length,
-          url: "",
-          adminId: existingAuthor.id,
-        },
+      const newBonusActivity = await tx.orm.public.BonusActivity.create({
+        title,
+        resourceId: +lessonId,
+        type: "resource",
+        order: (existingParent as ResourceWithBonusActivities).bonusActivities
+          .length,
+        url: "",
+        adminId: existingAuthor.id,
       });
 
       // Create multiple ResourceBonusActivity entries linked to the new bonus activity
-      result = await tx.resourceBonusActivity.createMany({
-        data: newResources.map((resource, index) => ({
+      result = await tx.orm.public.ResourceBonusActivity.createAndCount(
+        newResources.map((resource, index) => ({
           label: resource.label,
           url: resource.url,
           bonusActivityId: newBonusActivity.id,
-          order: index, // Maintain order within the resource list
+          order: index,
         })),
-      });
+      ).then((count) => ({ count }));
     }
 
     // Register all uploaded files in the media library
@@ -188,17 +183,13 @@ export default async function postActivityResource(req: CustomRequest) {
 
       if (file) {
         // Create a mediatheque entry for tracking file usage
-        await tx.mediatheque.create({
-          data: {
-            type: "resource",
-            name: resource.filename,
-            url: file.filename,
-            size: file.size,
-            used: 1, // Mark as used once
-            author: {
-              connect: { id: existingAuthor.id },
-            },
-          },
+        await tx.orm.public.Mediatheque.create({
+          type: "resource",
+          name: resource.filename,
+          url: file.filename,
+          size: file.size,
+          used: 1,
+          author: (relation) => relation.connect({ id: existingAuthor.id }),
         });
       }
     }

@@ -27,10 +27,7 @@ const formationRouter = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(
-      null,
-      path.join(import.meta.dirname, "..", "..", "..", "..", "uploads")
-    );
+    cb(null, path.join(import.meta.dirname, "..", "..", "..", "..", "uploads"));
   },
   filename: function (req, file, cb) {
     if (file.mimetype.startsWith("image")) {
@@ -65,11 +62,13 @@ export const validationModule = [
     .withMessage("La description du module doit être une chaîne de caractères.")
     .custom(stringValidateOptional)
     .withMessage(
-      "La description du module contient des caractères non autorisés."
+      "La description du module contient des caractères non autorisés.",
     )
     .not()
     .matches(/[<>]/)
-    .withMessage("La description du module contient des balises non autorisées.")
+    .withMessage(
+      "La description du module contient des balises non autorisées.",
+    )
     .optional(),
   body("module.quizInstructions")
     .isString()
@@ -123,17 +122,17 @@ formationRouter.put(
   body("tags.*")
     .isNumeric()
     .withMessage("Chaque tag doit être un nombre entier"),
-  httpPutFormationTags
+  httpPutFormationTags,
 );
 
 formationRouter.post(
-  "/new-module/:moduleId?",
+  "/new-module{/:moduleId}",
   checkPermissions("module", "write"),
   upload.single("image"),
   jsonParser,
   checkContentAccess("parcours", "module.parcoursId"),
   validationModule,
-  httpPostModule
+  httpPostModule,
 );
 
 // création d'une nouvelle formation
@@ -141,14 +140,14 @@ formationRouter.post(
   "/",
   checkPermissions("formation"),
   postFormationValidator,
-  httpPostFormation
+  httpPostFormation,
 );
 
 // retourne la liste des formations comprenant le nombre de parcours associé à chaque formation
 formationRouter.get(
   "/list",
   checkPermissions("formation"),
-  httpGetAllFormations
+  httpGetAllFormations,
 );
 
 // mise à jour d'une formation
@@ -158,7 +157,7 @@ formationRouter.put(
   checkFormationAccess("formationId"),
   fomrationIdValidator,
   putFormationValidator,
-  httpPutFormation
+  httpPutFormation,
 );
 
 formationRouter.delete(
@@ -166,7 +165,7 @@ formationRouter.delete(
   checkPermissions("formation"),
   checkFormationAccess("formationId"),
   fomrationIdValidator,
-  httpDeleteFormation
+  httpDeleteFormation,
 );
 
 export default formationRouter;

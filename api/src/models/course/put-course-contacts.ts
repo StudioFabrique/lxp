@@ -1,9 +1,13 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseContacts(courseId: number, contacts: number[]) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  ).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -11,27 +15,31 @@ async function putCourseContacts(courseId: number, contacts: number[]) {
     throw error;
   }
 
-  const transaction = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnCourse.deleteMany({
-      where: { courseId },
-    });
+  const transaction = await prisma.transaction(async (tx) => {
+    await tx.orm.public.ContactsOnCourse.where((row) =>
+      whereFromObject(row, { courseId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
-    const upadtedCourse = await tx.course.update({
-      where: { id: courseId },
-      data: {
-        contacts: {
-          create: contacts.map((contact: number) => {
-            return {
-              contact: {
-                connect: {
-                  id: contact,
+    const upadtedCourse = await tx.orm.public.Course.where((row) =>
+      whereFromObject(row, { id: courseId }),
+    )
+      .update({
+        contacts: (relation) =>
+          relation.create(
+            contacts.map((contact: number) => {
+              return {
+                contact: {
+                  connect: {
+                    id: contact,
+                  },
                 },
-              },
-            };
-          }),
-        },
-      },
-    });
+              };
+            }),
+          ),
+      })
+      .then(requireDatabaseRow);
   });
   return transaction;
 }

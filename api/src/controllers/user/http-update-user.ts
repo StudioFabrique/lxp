@@ -15,7 +15,10 @@ import { validationResult } from "express-validator";
  * @param req Express request object containing user data and file upload
  * @param res Express response object
  */
-export default async function httpUpdateUser(req: Request, res: Response) {
+export default async function httpUpdateUser(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
   const { id } = req.params;
   let userDataRequest = req.body.data.user;
   // Extract related data from the request
@@ -49,13 +52,19 @@ export default async function httpUpdateUser(req: Request, res: Response) {
 
     // Update user's associated data
     await editManyGraduations(
-      userResponse!.updatedUser!._id,
-      graduationsDataRequest
+      userResponse!.updatedUser!._id.toString(),
+      graduationsDataRequest,
     );
 
-    await editManyLinks(userResponse!.updatedUser!._id, linksDataRequest);
+    await editManyLinks(
+      userResponse!.updatedUser!._id.toString(),
+      linksDataRequest,
+    );
 
-    await editManyHobbies(userResponse!.updatedUser!._id, hobbiesDataRequest);
+    await editManyHobbies(
+      userResponse!.updatedUser!._id.toString(),
+      hobbiesDataRequest,
+    );
 
     // Clean up uploaded file after processing
     if (uploadedFile) {

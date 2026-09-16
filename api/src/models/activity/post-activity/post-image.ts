@@ -1,4 +1,8 @@
-import { type Activity, type BonusActivity, type Lesson, type Resource } from "../../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
+import type { Activity, BonusActivity, Lesson, Resource } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
 /**
@@ -20,23 +24,25 @@ export default async function postImage(
   parent: "lesson" | "resource",
 ) {
   // Check if the user exists
-  const existingUser = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingUser = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
   let existingParent: Lesson | Resource | null = null;
 
   if (parent === "lesson")
-    existingParent = await prisma.lesson.findFirst({
-      where: { id: lessonId },
-      include: { activities: true },
-    });
+    existingParent = await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .include("activities")
+      .first();
   else if (parent === "resource")
-    existingParent = await prisma.resource.findFirst({
-      where: { id: lessonId },
-      include: { bonusActivities: true },
-    });
+    existingParent = await prisma.orm.public.Resource.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .include("bonusActivities")
+      .first();
 
   if (!existingParent)
     throw { statusCode: 404, message: "Lesson or resource does not exist" };
@@ -48,45 +54,42 @@ export default async function postImage(
       message: "No image source was provided.",
     };
 
-  const transaction = await prisma.$transaction(async (tx) => {
+  const transaction = await prisma.transaction(async (tx) => {
     // Create the new activity
 
     let newActivity: Activity | BonusActivity | null = null;
 
     if (parent === "lesson")
-      newActivity = await tx.activity.create({
-        data: {
-          title,
-          lessonId,
-          type: "image",
-          url: filename ?? url ?? "", // Use the filename or URL
-          order: (existingParent as Lesson & { activities: Activity[] })
-            .activities.length, // Place the activity at the end
-          authorId: existingUser.id,
-        },
+      newActivity = await tx.orm.public.Activity.create({
+        title,
+        lessonId,
+        type: "image",
+        url: filename ?? url ?? "",
+        order: (existingParent as Lesson & { activities: Activity[] })
+          .activities.length,
+        authorId: existingUser.id,
       });
     else if (parent === "resource")
-      newActivity = await tx.bonusActivity.create({
-        data: {
-          title,
-          resourceId: lessonId,
-          type: "image",
-          url: filename ?? url ?? "", // Use the filename or URL
-          order: (
-            existingParent as Resource & { bonusActivities: BonusActivity[] }
-          ).bonusActivities.length, // Place the activity at the end
-          adminId: existingUser.id,
-        },
+      newActivity = await tx.orm.public.BonusActivity.create({
+        title,
+        resourceId: lessonId,
+        type: "image",
+        url: filename ?? url ?? "",
+        order: (
+          existingParent as Resource & { bonusActivities: BonusActivity[] }
+        ).bonusActivities.length,
+        adminId: existingUser.id,
       });
     if (url) {
-      const media = await tx.mediatheque.findFirst({
-        where: { url },
-      });
+      const media = await tx.orm.public.Mediatheque.where((row) =>
+        whereFromObject(row, { url }),
+      ).first();
       if (media) {
-        await tx.mediatheque.update({
-          where: { id: media.id, type: "image" },
-          data: { used: { increment: 1 } },
-        });
+        await tx.execute(
+          prisma.raw.sql`UPDATE "mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id} AND "type" = 'image'`
+            .affectedCount()
+            .build(),
+        );
       }
     }
   });

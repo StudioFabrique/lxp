@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -11,9 +15,9 @@ async function updateParcoursDates(
   const startDate = new Date(start);
   const endDate = new Date(end);
 
-  const existingParcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId /* adminId: admin.id */ },
-  });
+  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId /* adminId: admin.id */ }),
+  ).first();
 
   if (!existingParcours) {
     const error: any = {
@@ -23,13 +27,11 @@ async function updateParcoursDates(
     throw error;
   }
 
-  const updatedDates = await prisma.parcours.update({
-    where: { id: parcoursId /* adminId: admin.id */ },
-    data: {
-      startDate,
-      endDate,
-    },
-  });
+  const updatedDates = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId /* adminId: admin.id */ }),
+  )
+    .update({ startDate: startDate.toISOString(), endDate: endDate.toISOString() })
+    .then(requireDatabaseRow);
   if (updatedDates) {
     return updatedDates;
   }

@@ -71,8 +71,7 @@ export default function AssignContactsToModulesModal({
     >
       <div className="mt-6 flex flex-col gap-4">
         <p className="text-sm text-base-content/70">
-          Souhaitez-vous aussi affecter{" "}
-          <span className="capitalize">{resourceNames}</span> aux modules
+          Souhaitez-vous aussi affecter <span>{resourceNames}</span> aux modules
           suivants ?
         </p>
         {assignableModules.length === 0 ? (

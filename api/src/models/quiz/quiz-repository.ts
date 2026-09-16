@@ -1,5 +1,5 @@
-import type { Prisma } from "../../generated/prisma/client.ts";
 import { prisma } from "../../utils/db.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import {
   type AiQuizQuestion,
   toQuizQuestionCreateData,
@@ -13,68 +13,72 @@ export class QuizRepository {
   }
 
   findStudentByMongoId(idMdb: string) {
-    return this.database.student.findFirst({ where: { idMdb } });
+    return this.database.orm.public.Student.where((student) =>
+      whereFromObject(student, { idMdb }),
+    ).first();
   }
 
   findEndingQuiz(courseId: number, studentId: number) {
-    return this.database.quiz.findFirst({
-      where: {
+    return this.database.orm.public.Quiz.where((quiz) =>
+      whereFromObject(quiz, {
         courseId,
         studentId,
         type: "ending_course",
         questions: { some: {} },
-      },
-      include: { questions: true },
-    });
+      }),
+    )
+      .include("questions")
+      .first();
   }
 
   createEndingQuiz(title: string, courseId: number, studentId: number) {
-    return this.database.quiz.create({
-      data: { title, type: "ending_course", courseId, studentId },
+    return this.database.orm.public.Quiz.create({
+      title,
+      type: "ending_course",
+      courseId,
+      studentId,
     });
   }
 
   findPreliminaryModule(moduleId: number) {
-    return this.database.module.findUnique({
-      where: { id: moduleId },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        quizInstructions: true,
-      },
-    });
+    return this.database.orm.public.Module.where((module) =>
+      whereFromObject(module, { id: moduleId }),
+    )
+      .select("id", "title", "description", "quizInstructions")
+      .first();
   }
 
   findPreliminaryQuiz(moduleId: number) {
-    return this.database.quiz.findFirst({
-      where: {
+    return this.database.orm.public.Quiz.where((quiz) =>
+      whereFromObject(quiz, {
         moduleId,
         type: "preliminary",
         questions: { some: {} },
-      },
-      include: { questions: true },
-    });
+      }),
+    )
+      .include("questions")
+      .first();
   }
 
   createPreliminaryQuiz(title: string, moduleId: number) {
-    return this.database.quiz.create({
-      data: { title, type: "preliminary", moduleId },
+    return this.database.orm.public.Quiz.create({
+      title,
+      type: "preliminary",
+      moduleId,
     });
   }
 
-  saveQuestion(
-    question: AiQuizQuestion,
-    relation: Pick<Prisma.QuizQuestionUncheckedCreateInput, "quizId"> = {},
-  ) {
-    return this.database.quizQuestion.create({
-      data: { ...toQuizQuestionCreateData(question), ...relation },
+  saveQuestion(question: AiQuizQuestion, relation: { quizId?: number } = {}) {
+    return this.database.orm.public.QuizQuestion.create({
+      ...toQuizQuestionCreateData(question),
+      ...relation,
     });
   }
 
   saveStandaloneQuestion(question: AiQuizQuestion, contentHash: string) {
-    return this.database.quizQuestion.create({
-      data: { ...toQuizQuestionCreateData(question), contentHash },
+    return this.database.orm.public.QuizQuestion.create({
+      ...toQuizQuestionCreateData(question),
+      contentHash,
     });
   }
 }

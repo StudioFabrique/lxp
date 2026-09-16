@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
-export interface IPermission extends Document {
+export interface IPermission extends MongoRecord {
   name: string; // <action>:<ressource>
   isRole: boolean;
 }

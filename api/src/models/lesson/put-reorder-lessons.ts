@@ -1,27 +1,28 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function putReorderLessons(
   courseId: number,
-  lessonsId: number[]
+  lessonsId: number[],
 ) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  ).first();
 
   if (!existingCourse) {
     const error: any = { message: "Le cours n'existe pas.", statusCode: 404 };
     throw error;
   }
 
-  const transaction = await prisma.$transaction(async (tx) => {
+  const transaction = await prisma.transaction(async (tx) => {
     let i = 0;
     for (const id of lessonsId) {
-      await tx.lesson.update({
-        where: { id },
-        data: {
-          order: i,
-        },
-      });
+      await tx.orm.public.Lesson.where((row) => whereFromObject(row, { id }))
+        .update({ order: i })
+        .then(requireDatabaseRow);
       i += 1;
     }
   });

@@ -1,42 +1,44 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function postManySkills(parcoursId: number, newSkills: Array<any>) {
   try {
-    const existingParcours = await prisma.parcours.findUnique({
-      where: { id: parcoursId },
-    });
+    const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: parcoursId }),
+    ).first();
     if (!existingParcours) {
       throw new Error(`Le parcours n'existe pas`);
     }
 
-    const existingSkills = await prisma.bonusSkill.findMany({
-      where: { parcoursId },
-    });
+    const existingSkills = await prisma.orm.public.BonusSkill.where((row) =>
+      whereFromObject(row, { parcoursId }),
+    ).all();
 
     const skills = Array<any>();
 
     for (const skill of newSkills) {
       const tmp = existingSkills.find(
-        (item: any) => item.description === skill.description
+        (item: any) => item.description === skill.description,
       );
       if (!tmp) {
         skills.push(skill);
       }
     }
 
-    const response = await prisma.bonusSkill.createMany({
-      data: skills.map((skill: any) => {
+    const response = await prisma.orm.public.BonusSkill.createAndCount(
+      skills.map((skill: any) => {
         return {
           ...skill,
           parcoursId,
         };
       }),
-    });
+    ).then((count) => ({ count }));
 
-    const result = await prisma.bonusSkill.findMany({
-      where: { parcoursId },
-      select: { id: true, description: true, badge: true },
-    });
+    const result = await prisma.orm.public.BonusSkill.where((row) =>
+      whereFromObject(row, { parcoursId }),
+    )
+      .select("id", "description", "badge")
+      .all();
     return result;
   } catch (error: any) {
     throw new Error("Les compétences n'ont pas été enregistrées");

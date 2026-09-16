@@ -1,43 +1,61 @@
 import { jest } from "@jest/globals";
+import {
+  createModelMock,
+  createWhereRecorder,
+} from "../../../../tests/utils/prisma-mock.ts";
 
-const moduleCount = jest.fn<() => Promise<number>>();
-const deleteMany = jest.fn<() => Promise<{ count: number }>>();
+const moduleCount = jest.fn<() => Promise<{ total: number }>>();
+const deleteMany = jest.fn<() => Promise<number>>();
+const moduleModel = createModelMock(
+  { aggregate: moduleCount },
+  { evaluateWhere: true },
+);
+const associationModel = createModelMock(
+  { deleteAndCount: deleteMany },
+  { evaluateWhere: true },
+);
+const { filters, whereFromObject } = createWhereRecorder();
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
-      module: { count: moduleCount },
-      bonusSkillsOnModule: { deleteMany },
+      orm: {
+        public: {
+          Module: moduleModel,
+          BonusSkillsOnModule: associationModel,
+        },
+      },
     }),
 );
 
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
-  prisma: { $transaction: transaction },
+  prisma: { transaction },
+}));
+jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
+  whereFromObject,
 }));
 
-const { default: removeSkillFromModule } = await import(
-  "../remove-skill-from-module.ts"
-);
+const { default: removeSkillFromModule } =
+  await import("../remove-skill-from-module.ts");
 
 describe("retrait d'une compétence d'un module", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    filters.length = 0;
   });
 
   it("supprime uniquement l'association demandée", async () => {
-    moduleCount.mockResolvedValue(1);
-    deleteMany.mockResolvedValue({ count: 1 });
+    moduleCount.mockResolvedValue({ total: 1 });
+    deleteMany.mockResolvedValue(1);
 
     await expect(
       removeSkillFromModule({ parcoursId: 9, moduleId: 3, skillId: 7 }),
     ).resolves.toEqual({ count: 1 });
 
-    expect(deleteMany).toHaveBeenCalledWith({
-      where: { moduleId: 3, bonusSkillId: 7 },
-    });
+    expect(filters).toContainEqual({ moduleId: 3, bonusSkillId: 7 });
   });
 
   it("refuse un module qui n'appartient pas au parcours", async () => {
-    moduleCount.mockResolvedValue(0);
+    moduleCount.mockResolvedValue({ total: 0 });
 
     await expect(
       removeSkillFromModule({ parcoursId: 9, moduleId: 3, skillId: 7 }),

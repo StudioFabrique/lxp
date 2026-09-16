@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../utils/db.ts";
 import type { CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
@@ -12,7 +13,10 @@ type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
   answer: { mode: string; text: string };
   sources: CourseSource[];
-  meta?: { usage?: { total_tokens?: number }; retrieval?: { best_score?: number } };
+  meta?: {
+    usage?: { total_tokens?: number };
+    retrieval?: { best_score?: number };
+  };
 };
 
 export type ProcessPromptInput = {
@@ -28,11 +32,10 @@ export class PromptProcessingError extends Error {
   readonly statusCode: number;
   readonly body: Record<string, unknown>;
 
-  constructor(
-    statusCode: number,
-    body: Record<string, unknown>,
-  ) {
-    super(typeof body.error === "string" ? body.error : "Prompt processing failed");
+  constructor(statusCode: number, body: Record<string, unknown>) {
+    super(
+      typeof body.error === "string" ? body.error : "Prompt processing failed",
+    );
     this.statusCode = statusCode;
     this.body = body;
   }
@@ -69,10 +72,11 @@ export default async function processPrompt(input: ProcessPromptInput) {
   }
 
   const course = input.courseId
-    ? await prisma.course.findUnique({
-        where: { id: input.courseId },
-        select: { courseSlug: true },
-      })
+    ? await prisma.orm.public.Course.where((row) =>
+        whereFromObject(row, { id: input.courseId }),
+      )
+        .select("courseSlug")
+        .first()
     : null;
   const courseSlug = course?.courseSlug || undefined;
   if (input.courseId && !courseSlug) {
@@ -111,7 +115,8 @@ export default async function processPrompt(input: ProcessPromptInput) {
   }
 
   const payload = (await response.json()) as FastApiResponse;
-  const text = payload.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
+  const text =
+    payload.answer?.text || "Désolé, aucune réponse n'a pu être générée.";
   const status = payload.status?.type ?? "ok";
   const type =
     status === "refusal" ? "warning" : status === "error" ? "error" : "normal";

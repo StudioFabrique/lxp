@@ -52,7 +52,7 @@ describe("HTTP /user", () => {
     teacherToken = teacherLogin.headers["set-cookie"][0];
 
     const student = await User.findOne({ email: "apprenant@studio.eco" });
-    studentId = student?._id.toString();
+    studentId = student!._id.toString();
   });
 
   describe("Test POST /teacher", () => {
@@ -394,12 +394,20 @@ describe("HTTP /user", () => {
       const roles = await Role.find({ rank: { $in: [2, 3] } });
       const response = await request(app)
         .put("/v1/user/user-roles")
-        .send({ usersToUpdate: [studentId], rolesId: roles.map(({ _id }) => String(_id)) })
+        .send({
+          usersToUpdate: [studentId],
+          rolesId: roles.map(({ _id }) => String(_id)),
+        })
         .set("Cookie", [`${authToken}`]);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual(expect.arrayContaining([
-        expect.objectContaining({ path: "rolesId", msg: "Un utilisateur doit avoir exactement un rôle." }),
-      ]));
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: "rolesId",
+            msg: "Un utilisateur doit avoir exactement un rôle.",
+          }),
+        ]),
+      );
     });
     // No authentication
     test("It should respond 401 unauthorized", async () => {
@@ -454,7 +462,9 @@ describe("HTTP /user", () => {
     // Successful update
     test("It should respond 200 success", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
-      const students = await User.find({ roles: { $in: studentRole } });
+      const students = await User.find({
+        roles: { $in: [studentRole!._id] },
+      });
 
       const res = await request(app)
         .put("/v1/user/user-roles")
@@ -470,7 +480,9 @@ describe("HTTP /user", () => {
     test("It should respond 403 forbidden", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
       const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
-      const students = await User.find({ roles: { $in: studentRole } });
+      const students = await User.find({
+        roles: { $in: [studentRole!._id] },
+      });
 
       const res = await request(app)
         .put("/v1/user/user-roles")
@@ -489,7 +501,7 @@ describe("HTTP /user", () => {
     test("It should respond 403 forbidden", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
       const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
-      const admins = await User.find({ roles: { $in: adminRole } });
+      const admins = await User.find({ roles: { $in: [adminRole!._id] } });
 
       const res = await request(app)
         .put("/v1/user/user-roles")
@@ -507,7 +519,7 @@ describe("HTTP /user", () => {
     // Role not found
     test("It should responde 404 not found", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
-      const users = await User.find({ roles: { $in: studentRole } });
+      const users = await User.find({ roles: { $in: [studentRole!._id] } });
       const nonExistingRole = users![0]._id;
       const res = await request(app)
         .put("/v1/user/user-roles")
@@ -523,17 +535,17 @@ describe("HTTP /user", () => {
     // Some users not found
     test("It should responde 404 not found", async () => {
       const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
-      let users = (await User.find(
-        { roles: { $in: studentRole } },
+      const users = await User.find(
+        { roles: { $in: [studentRole!._id] } },
         { _id: 1 },
-      )) as { _id: string }[];
-
-      users = [...users, { _id: studentRole!._id }];
+      );
+      const userIds = users.map(({ _id }) => _id.toString());
+      userIds.push(studentRole!._id.toString());
 
       const res = await request(app)
         .put("/v1/user/user-roles")
         .send({
-          usersToUpdate: users.map((user: any) => user._id),
+          usersToUpdate: userIds,
           rolesId: [studentRole!._id],
         })
         .set("Cookie", [`${authToken}`]);

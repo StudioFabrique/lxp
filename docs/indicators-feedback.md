@@ -46,8 +46,8 @@ analyse ; tous les retours restent conservés.
 
 ## Mise en service
 
-1. Appliquer les migrations LXP avec `prisma migrate deploy`, puis générer le
-   client avec `prisma generate` dans `api` avant de compiler et démarrer l'API.
+1. Émettre le contrat avec `prisma contract emit`, puis appliquer les migrations
+   LXP avec `prisma db migrate` dans `api` avant de compiler et démarrer l'API.
 2. Déployer ensemble l'API, le front et ANDRIA pour disposer de l'empreinte modèle.
 3. Le démarrage LXP crée les index des collections `indicatoranalyses` et
    `indicatoranalysisfeedbacks`.

@@ -216,7 +216,7 @@ démonstration, à chaque déploiement, dès que l'environnement porte
 
 1. `DROP SCHEMA public CASCADE` sur la base LXP. Le dump est un `pg_dump -a`,
    il ne se rejoue que sur un schéma vide ;
-2. `prisma migrate deploy`, puis les triggers ANDRIA ;
+2. `prisma db migrate`, puis les triggers ANDRIA ;
 3. `psql < api/dumps/demo/dump-pgsql.sql` ;
 4. `mongorestore --drop` du dump Mongo, copié dans le conteneur au préalable ;
 5. `rsync` de `api/dumps/demo/activities/` vers le volume `uploads` ;

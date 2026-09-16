@@ -1,15 +1,19 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putParcoursObjectives(
   parcoursId: string,
-  objectives: Array<any>
+  objectives: Array<any>,
 ) {
   const id = parseInt(parcoursId);
 
   try {
-    const existingParcours = await prisma.parcours.findUnique({
-      where: { id },
-    });
+    const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id }),
+    ).first();
 
     if (!existingParcours) {
       const parcoursError: any = new Error("Parcours inexistant");
@@ -17,31 +21,36 @@ async function putParcoursObjectives(
       throw parcoursError;
     }
 
-    const updatedParcours = await prisma.parcours.update({
-      where: { id },
-      data: {
-        objectives: {
-          create: objectives.map((objective: any) => {
-            return {
-              description: objective,
-            };
-          }),
-        },
-      },
-    });
+    const updatedParcours = await prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id }),
+    )
+      .update({
+        objectives: (relation) =>
+          relation.create(
+            objectives.map((objective: any) => {
+              return {
+                description: objective,
+              };
+            }),
+          ),
+      })
+      .then(requireDatabaseRow);
 
     const offset =
-      (await prisma.objective.count({ where: { parcoursId: id } })) -
-      objectives.length;
+      (await prisma.orm.public.Objective.where((row) =>
+        whereFromObject(row, { parcoursId: id }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total)) - objectives.length;
     const limit = objectives.length;
 
-
-    const result = await prisma.objective.findMany({
-      where: { parcoursId: id },
-      skip: offset,
-      take: limit,
-      select: { id: true, description: true },
-    });
+    const result = await prisma.orm.public.Objective.where((row) =>
+      whereFromObject(row, { parcoursId: id }),
+    )
+      .select("id", "description")
+      .offset(offset)
+      .limit(limit)
+      .all();
 
     return result;
   } catch (error) {

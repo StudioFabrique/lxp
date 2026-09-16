@@ -1,10 +1,17 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../src/utils/prisma-query.ts";
 import mongoose from "mongoose";
 import request from "supertest";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import { HEARTBEAT_INTERVAL_MS } from "../src/config/content-read.ts";
-import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
+import {
+  type Enrollment,
+  enrollStudentInParcours,
+} from "./utils/enroll-student.ts";
 
 const prisma = createPrismaClient();
 
@@ -30,40 +37,39 @@ describe("Suivi de consultation des contenus", () => {
     const userIdMdb = login.body._id as string;
 
     // Les fixtures ne créent pas de miroir PostgreSQL pour l'apprenant.
-    const student = await prisma.student.upsert({
-      where: { idMdb: userIdMdb },
-      update: {},
+    const student = await prisma.orm.public.Student.where((row) =>
+      whereFromObject(row, { idMdb: userIdMdb }),
+    ).upsert({
       create: { idMdb: userIdMdb },
+      update: {},
+      conflictOn: { idMdb: userIdMdb },
     });
     studentId = student.id;
 
     const [course, admin, tag] = await Promise.all([
-      prisma.course.findFirst({
-        select: { id: true, module: { select: { parcoursId: true } } },
-      }),
-      prisma.admin.findFirst({ select: { id: true } }),
-      prisma.tag.findFirst({ select: { id: true } }),
+      prisma.orm.public.Course.select("id")
+        .include("module", (related64) => related64.select("parcoursId"))
+        .first(),
+      prisma.orm.public.Admin.select("id").first(),
+      prisma.orm.public.Tag.select("id").first(),
     ]);
 
     // Les contenus sont cloisonnés par parcours : sans inscription, l'apprenant
     // reçoit 404 sur la leçon qu'il est censé consulter.
     enrollment = await enrollStudentInParcours(
       userIdMdb,
-      course!.module.parcoursId,
+      course!.module!.parcoursId,
     );
 
-    const lesson = await prisma.lesson.create({
-      data: {
-        title: "Leçon de suivi",
-        description: "Leçon créée par les tests de suivi de consultation.",
-        modalite: "async",
-        order: 999,
-        author: "test",
-        courseId: course!.id,
-        adminId: admin!.id,
-        tagId: tag!.id,
-      },
-      select: { id: true },
+    const lesson = await prisma.orm.public.Lesson.select("id").create({
+      title: "Leçon de suivi",
+      description: "Leçon créée par les tests de suivi de consultation.",
+      modalite: "async",
+      order: 999,
+      author: "test",
+      courseId: course!.id,
+      adminId: admin!.id,
+      tagId: tag!.id,
     });
     lessonId = lesson.id;
   });
@@ -71,10 +77,18 @@ describe("Suivi de consultation des contenus", () => {
   afterAll(async () => {
     // On ne supprime que ce que ce fichier a créé : la fiche Student est
     // partagée avec les autres specs et référencée par leurs accomplissements.
-    await prisma.lessonRead.deleteMany({ where: { lessonId } });
-    await prisma.lesson.delete({ where: { id: lessonId } });
+    await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .delete()
+      .then(requireDatabaseRow);
     await enrollment.cleanup();
-    await prisma.$disconnect();
+    await prisma.close();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
   });
 
@@ -84,9 +98,9 @@ describe("Suivi de consultation des contenus", () => {
       .set("Cookie", cookie)
       .expect(201);
 
-    const read = await prisma.lessonRead.findUnique({
-      where: { lessonId_studentId: { lessonId, studentId } },
-    });
+    const read = await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+    ).first();
 
     expect(read).not.toBeNull();
     expect(read!.readTimeMs).toBe(0);
@@ -99,7 +113,13 @@ describe("Suivi de consultation des contenus", () => {
       .set("Cookie", cookie)
       .expect(201);
 
-    expect(await prisma.lessonRead.count({ where: { lessonId } })).toBe(1);
+    expect(
+      await prisma.orm.public.LessonRead.where((row) =>
+        whereFromObject(row, { lessonId }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+    ).toBe(1);
   });
 
   it("crédite un temps borné à chaque battement", async () => {
@@ -108,9 +128,9 @@ describe("Suivi de consultation des contenus", () => {
       .set("Cookie", cookie)
       .expect(200);
 
-    const read = await prisma.lessonRead.findUnique({
-      where: { lessonId_studentId: { lessonId, studentId } },
-    });
+    const read = await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+    ).first();
 
     // Le serveur mesure lui-même l'écart : quelques millisecondes ici, et
     // jamais plus de deux intervalles même si le client s'acharne.
@@ -127,9 +147,9 @@ describe("Suivi de consultation des contenus", () => {
         .expect(200);
     }
 
-    const read = await prisma.lessonRead.findUnique({
-      where: { lessonId_studentId: { lessonId, studentId } },
-    });
+    const read = await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+    ).first();
 
     expect(read!.readTimeMs).toBeLessThan(HEARTBEAT_INTERVAL_MS);
   });
@@ -140,11 +160,11 @@ describe("Suivi de consultation des contenus", () => {
       .set("Cookie", cookie)
       .expect(200);
 
-    const read = await prisma.lessonRead.findUnique({
-      where: { lessonId_studentId: { lessonId, studentId } },
-    });
+    const read = await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+    ).first();
 
-    expect(read!.finishedAt).toBeInstanceOf(Date);
+    expect(Number.isNaN(new Date(read!.finishedAt!).getTime())).toBe(false);
   });
 
   it("refuse un type de contenu inconnu", async () => {

@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
+  useTable,
+  stockFeatures,
+  tableFeatures,
+  createSortedRowModel,
   flexRender,
   createColumnHelper,
   type SortingState,
@@ -16,9 +17,14 @@ type Props = {
   feedbacks: StudentFeedback[];
 };
 
-const columnHelper = createColumnHelper<StudentFeedback>();
+const features = tableFeatures({
+  ...stockFeatures,
+  sortedRowModel: createSortedRowModel(),
+});
 
-const columns = [
+const columnHelper = createColumnHelper<typeof features, StudentFeedback>();
+
+const columns = columnHelper.columns([
   columnHelper.accessor("name", {
     header: "Nom",
     cell: (info) => (
@@ -60,20 +66,19 @@ const columns = [
       );
     },
   }),
-];
+]);
 
 const FeedbacksList = ({ feedbacks }: Props) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const data = useMemo(() => feedbacks, [feedbacks]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   return (

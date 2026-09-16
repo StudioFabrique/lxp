@@ -1,6 +1,7 @@
-import mongoose, { type Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
-export interface IConnectionInfos extends Document {
+export interface IConnectionInfos extends MongoRecord {
   lastConnection: Date;
   duration: number;
   createdAt?: Date;

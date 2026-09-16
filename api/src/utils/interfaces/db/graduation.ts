@@ -1,7 +1,8 @@
-import mongoose, { type Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import type { IUser } from "./user.ts";
 
-export interface IGraduation extends Document {
+export interface IGraduation extends MongoRecord {
   title: string;
   degree: string;
   date: Date;

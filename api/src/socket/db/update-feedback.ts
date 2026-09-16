@@ -4,7 +4,7 @@ import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function updateFeedback(
   feedbackId: string,
-  socketId: string
+  socketId: string,
 ) {
   const existingSocket = await UserSocket.findOne({ socketId });
   if (!existingSocket) return false;
@@ -17,7 +17,7 @@ export default async function updateFeedback(
       hasBeenReviewed: true,
       teacher: existingTeacher,
     },
-    { new: true }
+    { returnDocument: "after" },
   );
 
   return true;

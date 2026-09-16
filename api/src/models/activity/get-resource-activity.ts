@@ -1,9 +1,5 @@
-import {
-  type Activity,
-  type BonusActivity,
-  type ResourceActivity,
-  type ResourceBonusActivity,
-} from "../../generated/prisma/client.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import type { Activity, BonusActivity, ResourceActivity, ResourceBonusActivity } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getResourceActivity(
@@ -13,13 +9,13 @@ export default async function getResourceActivity(
   let activity: Activity | BonusActivity | null = null;
 
   if (parent === "lesson")
-    activity = await prisma.activity.findFirst({
-      where: { id: activityId },
-    });
+    activity = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   else {
-    activity = await prisma.bonusActivity.findFirst({
-      where: { id: activityId },
-    });
+    activity = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   }
 
   if (!activity) throw { statusCode: 404, message: "L'activité n'existe pas." };
@@ -27,19 +23,17 @@ export default async function getResourceActivity(
   let resources: ResourceActivity[] | ResourceBonusActivity[] | null = null;
 
   if (parent === "lesson")
-    resources = await prisma.resourceActivity.findMany({
-      where: { activityId },
-      orderBy: {
-        order: "asc",
-      },
-    });
+    resources = await prisma.orm.public.ResourceActivity.where((row) =>
+      whereFromObject(row, { activityId }),
+    )
+      .orderBy((row) => row.order.asc())
+      .all();
   else {
-    resources = await prisma.resourceBonusActivity.findMany({
-      where: { bonusActivityId: activityId },
-      orderBy: {
-        order: "asc",
-      },
-    });
+    resources = await prisma.orm.public.ResourceBonusActivity.where((row) =>
+      whereFromObject(row, { bonusActivityId: activityId }),
+    )
+      .orderBy((row) => row.order.asc())
+      .all();
   }
   return resources;
 }

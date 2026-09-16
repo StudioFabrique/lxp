@@ -1,7 +1,8 @@
-import mongoose, { Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import type { IUser } from "./user.ts";
 
-export interface IStudentFeedback extends Document {
+export interface IStudentFeedback extends MongoRecord {
   /** Échelle 1 (orage) à 5 (soleil) ; le schéma stocke bien un nombre. */
   feelingLevel: number;
   feedbackAt: Date;
@@ -9,7 +10,7 @@ export interface IStudentFeedback extends Document {
   comment?: string;
   hasBeenReviewed: boolean;
   // formateur qui a pris en charge le feedback de l'apprenant
-  teacher: IUser["_id"];
+  teacher?: IUser["_id"];
 }
 
 const studentFeedbackSchema: Schema = new Schema({

@@ -1,5 +1,5 @@
 import { toTitleCase } from "../../../utils/helpers/text-helpers";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import {
   LoaderCircle,
   MailCheck,
@@ -20,7 +20,7 @@ export const getUsersColumns = (
   onSendResetPassword: (id: string) => void,
   currentUserId?: string,
   currentUserRank?: number,
-): ColumnDef<User>[] => [
+): ColumnDef<StockFeatures, User>[] => [
   personSelectionColumn<User>(
     "Sélectionner tous les utilisateurs affichés",
     (user) => canManageUser(user, currentUserRank),

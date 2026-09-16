@@ -10,9 +10,13 @@ export default async function disconnect(socketId: string) {
     if (user) {
       // on vérifie que l'user est un apprenant
       if (existingSocket.rank > 2) {
-        const connInfos = await ConnectionInfos.findOne({
-          _id: user.connectionInfos![user.connectionInfos!.length - 1],
-        });
+        const connectionInfos = user.connectionInfos ?? [];
+        const connInfos =
+          connectionInfos.length > 0
+            ? await ConnectionInfos.findOne({
+                _id: connectionInfos[connectionInfos.length - 1],
+              })
+            : null;
         if (connInfos) {
           // on incrémente la propriété duration avec le nouveau temps de connexion total pour la journée en cours
           const now = new Date().getTime();
@@ -21,7 +25,7 @@ export default async function disconnect(socketId: string) {
           await ConnectionInfos.findOneAndUpdate(
             { _id: connInfos._id },
             { duration: duration },
-            { new: true },
+            { returnDocument: "after" },
           );
         }
       }

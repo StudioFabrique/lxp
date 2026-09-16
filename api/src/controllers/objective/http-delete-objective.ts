@@ -3,7 +3,10 @@ import { validationResult } from "express-validator";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import deleteObjective from "../../models/objective/delete-objective.ts";
 
-async function httpDeleteObjective(req: Request, res: Response) {
+async function httpDeleteObjective(
+  req: Request<{ objectiveId: string }>,
+  res: Response,
+) {
   const result = validationResult(req);
 
   if (!result.isEmpty()) {

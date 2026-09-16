@@ -5,7 +5,6 @@ WORKDIR /app
 # Install build dependencies from each subproject lockfile.
 COPY front/package.json front/package-lock.json ./front/
 COPY api/package.json api/package-lock.json ./api/
-COPY api/prisma ./api/prisma
 RUN npm ci --prefix front
 RUN npm ci --prefix api
 
@@ -22,10 +21,9 @@ FROM node:22-alpine AS api-production-dependencies
 
 WORKDIR /app/api
 
-# Keep Prisma as a runtime dependency for `npx prisma migrate deploy`, while
+# Keep Prisma as a runtime dependency for `npx prisma db migrate`, while
 # omitting API development dependency groups from the production install.
 COPY api/package.json api/package-lock.json ./
-COPY api/prisma ./prisma
 RUN npm ci --omit=dev
 
 FROM node:22-alpine AS runtime
@@ -38,8 +36,9 @@ COPY package.json package-lock.json ./
 COPY api/package.json api/package-lock.json ./api/
 COPY --from=api-production-dependencies /app/api/node_modules ./api/node_modules
 COPY --from=build /app/api/dist ./api/dist
-COPY --from=build /app/api/prisma ./api/prisma
+COPY --from=build /app/api/migrations ./api/migrations
 COPY --from=build /app/api/prisma.config.ts ./api/prisma.config.ts
 COPY --from=build /app/api/src/config/database-urls.ts ./api/src/config/database-urls.ts
+COPY --from=build /app/api/src/prisma ./api/src/prisma
 
 CMD ["npm", "run", "start"]

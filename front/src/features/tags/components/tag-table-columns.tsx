@@ -1,4 +1,4 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import type { TagRow } from "../api/tag.api";
@@ -6,7 +6,7 @@ import TagItem from "../../../components/UI/tag-item/tag-item";
 
 export const getTagColumns = (
   onDelete: (id: number) => void,
-): ColumnDef<TagRow>[] => [
+): ColumnDef<StockFeatures, TagRow>[] => [
   {
     id: "select",
     header: ({ table }) => (

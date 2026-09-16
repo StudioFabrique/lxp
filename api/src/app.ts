@@ -10,6 +10,7 @@ import requireSession from "./middleware/require-session.ts";
 import demoReadOnly from "./middleware/demo-read-only.ts";
 import requestLogger from "./middleware/request-logger.ts";
 import { corsOrigins } from "./config/config.ts";
+import { mountRouter } from "./utils/express/route-registry.ts";
 
 const app = express();
 const publicDirectory = path.join(import.meta.dirname, "..", "public");
@@ -115,10 +116,13 @@ app
       index: false,
       dotfiles: "deny",
     }),
-  )
-  .use("/v1", demoReadOnly, api)
+  );
+
+mountRouter(app, "/v1", demoReadOnly, api);
+
+app
   .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
-  .get("*", (_req, res) => {
+  .get("/{*splat}", (_req, res) => {
     res.setHeader("Cache-Control", "no-cache");
     res.sendFile(path.join(publicDirectory, "index.html"));
   })

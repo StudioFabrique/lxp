@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function enableCourse(
@@ -5,18 +9,19 @@ export default async function enableCourse(
   visibility: boolean,
 ) {
   //  récupération du cours à supprimer dans la bdd pour vérifier qu'il existe
-  const existingCourse = await prisma.course.findFirst({
-    where: {
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, {
       id: courseId,
-    },
-  });
+    }),
+  ).first();
 
   //  si le cours n'existe pas on retourne une erreur
   if (!existingCourse)
     throw { statusCode: 404, message: "Le cours n'existe pas" };
 
-  await prisma.course.update({
-    where: { id: courseId },
-    data: { visibility },
-  });
+  await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .update({ visibility })
+    .then(requireDatabaseRow);
 }

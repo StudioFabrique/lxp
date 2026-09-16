@@ -1,7 +1,7 @@
 import fs from "fs";
 import { type Response } from "express";
-import type { IUser } from "../../../utils/interfaces/db/user.ts";
 import updateUser from "../../../models/user/update-user.ts";
+import type { UserProfileInput } from "../../../models/user/update-user.ts";
 import updateUserAvatar from "../../../models/user/update-user-avatar.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 import { deleteTempUploadedFile } from "../../../middleware/fileUpload.ts";
@@ -9,7 +9,7 @@ import { requestEmailChange } from "../../../models/user/change-email.ts";
 
 export default async function httpUpdateUserProfile(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   const id = req.auth?.userId;
   const avatarFile: any = req.file;
@@ -18,7 +18,7 @@ export default async function httpUpdateUserProfile(
     return res.status(400).json({ message: "non trouvé" });
   }
 
-  const { user }: { user: IUser } = req.body.data;
+  const { user }: { user: UserProfileInput } = req.body.data;
 
   if (!!avatarFile) {
     try {

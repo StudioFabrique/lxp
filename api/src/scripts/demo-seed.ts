@@ -1,3 +1,4 @@
+import { whereFromObject } from "../utils/prisma-query.ts";
 import bcrypt from "bcrypt";
 import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
@@ -92,27 +93,31 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
   // Miroirs PostgreSQL, sans lesquels le compte est inutilisable : c'est la
   // règle appliquée par `models/user/create-user.ts` à toute création.
   if (role.rank === 1 || role.rank === 2) {
-    const existing = await prisma.admin.findFirst({ where: { idMdb } });
-    if (!existing) await prisma.admin.create({ data: { idMdb } });
+    const existing = await prisma.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb }),
+    ).first();
+    if (!existing) await prisma.orm.public.Admin.create({ idMdb });
   }
 
   if (role.rank === 2) {
-    const existing = await prisma.contact.findUnique({ where: { idMdb } });
+    const existing = await prisma.orm.public.Contact.where((row) =>
+      whereFromObject(row, { idMdb }),
+    ).first();
     if (!existing) {
-      await prisma.contact.create({
-        data: {
-          idMdb,
-          role: role.label,
-          phone: "Non Renseigné",
-          email,
-        },
+      await prisma.orm.public.Contact.create({
+        idMdb,
+        role: role.label,
+        phone: "Non Renseigné",
+        email,
       });
     }
   }
 
   if (role.rank === 3) {
-    const existing = await prisma.student.findUnique({ where: { idMdb } });
-    if (!existing) await prisma.student.create({ data: { idMdb } });
+    const existing = await prisma.orm.public.Student.where((row) =>
+      whereFromObject(row, { idMdb }),
+    ).first();
+    if (!existing) await prisma.orm.public.Student.create({ idMdb });
   }
 
   return { user, role };
@@ -127,10 +132,11 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
  * sur tout le contenu — et la démonstration apprenant serait vide.
  */
 async function ensureEnrollment(userId: string) {
-  const parcoursPublies = await prisma.parcours.findMany({
-    where: { isPublished: true },
-    select: { id: true },
-  });
+  const parcoursPublies = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { isPublished: true }),
+  )
+    .select("id")
+    .all();
 
   if (parcoursPublies.length === 0) {
     console.warn(
@@ -141,14 +147,17 @@ async function ensureEnrollment(userId: string) {
 
   const dejaInscrit = await Group.findOne({ users: userId });
   if (dejaInscrit) {
-    const groupePg = await prisma.group.findFirst({
-      where: { idMdb: dejaInscrit.id as string },
-      select: { id: true },
-    });
+    const groupePg = await prisma.orm.public.Group.where((row) =>
+      whereFromObject(row, { idMdb: dejaInscrit.id as string }),
+    )
+      .select("id")
+      .first();
     if (groupePg) {
-      const liens = await prisma.groupsOnParcours.count({
-        where: { groupId: groupePg.id },
-      });
+      const liens = await prisma.orm.public.GroupsOnParcours.where((row) =>
+        whereFromObject(row, { groupId: groupePg.id }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total);
       if (liens > 0) {
         console.log("  inscription déjà en place");
         return;
@@ -168,19 +177,19 @@ async function ensureEnrollment(userId: string) {
 
   const idMdb = groupeMongo.id as string;
   const groupePg =
-    (await prisma.group.findFirst({
-      where: { idMdb },
-      select: { id: true },
-    })) ??
-    (await prisma.group.create({ data: { idMdb }, select: { id: true } }));
+    (await prisma.orm.public.Group.where((row) =>
+      whereFromObject(row, { idMdb }),
+    )
+      .select("id")
+      .first()) ??
+    (await prisma.orm.public.Group.select("id").create({ idMdb }));
 
-  await prisma.groupsOnParcours.createMany({
-    data: parcoursPublies.map((parcours) => ({
+  await prisma.orm.public.GroupsOnParcours.createAndCount(
+    parcoursPublies.map((parcours) => ({
       groupId: groupePg.id,
       parcoursId: parcours.id,
     })),
-    skipDuplicates: true,
-  });
+  ).then((count) => ({ count }));
 
   console.log(
     `  inscription créée sur ${parcoursPublies.length} parcours publié(s)`,
@@ -211,6 +220,6 @@ main()
     process.exitCode = 1;
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await prisma.close();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
   });

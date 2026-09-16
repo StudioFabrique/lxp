@@ -1,4 +1,5 @@
-import Role from "../../utils/interfaces/db/role.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -34,9 +35,9 @@ async function updateUserRoles(
         "Utilisez le parcours de promotion root avec une clé d'activation.",
     };
   }
-  const users = await User.find({ _id: { $in: usersToUpdate } }).populate(
-    "roles",
-  );
+  const users = await User.find({ _id: { $in: usersToUpdate } }).populate<{
+    roles: IRole[];
+  }>("roles");
   if (users.length !== usersToUpdate.length) {
     throw {
       statusCode: 404,
@@ -44,26 +45,22 @@ async function updateUserRoles(
     };
   }
   if (
-    users.some(
-      (user) =>
-        user.roles.length !== 1 ||
-        user.roles[0].rank === 0,
-    )
+    users.some((user) => user.roles.length !== 1 || user.roles[0].rank === 0)
   ) {
     throw {
       statusCode: 400,
-      message:
-        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
+      message: "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.",
     };
   }
 
   // Aucune écriture SQL n'est effectuée avant la validation complète du lot.
-  await prisma.$transaction(async (tx) => {
+  await prisma.transaction(async (tx) => {
     if (role.rank <= 2) {
-      const existingAdmins = await tx.admin.findMany({
-        where: { idMdb: { in: usersToUpdate } },
-        select: { idMdb: true },
-      });
+      const existingAdmins = await tx.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+      )
+        .select("idMdb")
+        .all();
       const existingAdminIds = new Set(
         existingAdmins.map(({ idMdb }) => idMdb),
       );
@@ -72,56 +69,72 @@ async function updateUserRoles(
         .map((idMdb) => ({ idMdb }));
 
       if (missingAdmins.length > 0) {
-        await tx.admin.createMany({ data: missingAdmins });
+        await tx.orm.public.Admin.createAndCount(missingAdmins).then(
+          (count) => ({ count }),
+        );
       }
     }
 
     if (role.rank === 2) {
-      await tx.contact.createMany({
-        data: users.map((user) => ({
+      await tx.orm.public.Contact.createAndCount(
+        users.map((user) => ({
           idMdb: user._id.toString(),
           role: "équipe pédagogique",
           email: user.email,
         })),
-        skipDuplicates: true,
-      });
+      ).then((count) => ({ count }));
     } else {
-      const contacts = await tx.contact.findMany({
-        where: { idMdb: { in: usersToUpdate } },
-        select: { id: true },
-      });
+      const contacts = await tx.orm.public.Contact.where((row) =>
+        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+      )
+        .select("id")
+        .all();
       const contactIds = contacts.map(({ id }) => id);
 
       // Les liaisons Contact utilisent RESTRICT : un formateur affecté doit
       // être détaché avant que sa fiche pédagogique puisse être supprimée.
       if (contactIds.length > 0) {
-        await tx.contactsOnCourse.deleteMany({
-          where: { contactId: { in: contactIds } },
-        });
-        await tx.contactsOnModule.deleteMany({
-          where: { contactId: { in: contactIds } },
-        });
-        await tx.contactsOnParcours.deleteMany({
-          where: { contactId: { in: contactIds } },
-        });
-        await tx.contact.deleteMany({ where: { id: { in: contactIds } } });
+        await tx.orm.public.ContactsOnCourse.where((row) =>
+          whereFromObject(row, { contactId: { in: contactIds } }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
+        await tx.orm.public.ContactsOnModule.where((row) =>
+          whereFromObject(row, { contactId: { in: contactIds } }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
+        await tx.orm.public.ContactsOnParcours.where((row) =>
+          whereFromObject(row, { contactId: { in: contactIds } }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
+        await tx.orm.public.Contact.where((row) =>
+          whereFromObject(row, { id: { in: contactIds } }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
       }
     }
 
     if (role.rank === 3) {
-      await tx.student.createMany({
-        data: users.map((user) => ({ idMdb: user._id.toString() })),
-        skipDuplicates: true,
-      });
+      await tx.orm.public.Student.createAndCount(
+        users.map((user) => ({ idMdb: user._id.toString() })),
+      ).then((count) => ({ count }));
     }
 
     if (role.rank > 2) {
-      await tx.teacher.deleteMany({ where: { idMdb: { in: usersToUpdate } } });
+      await tx.orm.public.Teacher.where((row) =>
+        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
 
-      const admins = await tx.admin.findMany({
-        where: { idMdb: { in: usersToUpdate } },
-        select: { id: true },
-      });
+      const admins = await tx.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+      )
+        .select("id")
+        .all();
 
       if (admins.length > 0) {
         if (!replacementOwnerId) {
@@ -131,13 +144,14 @@ async function updateUserRoles(
               "Impossible de modifier ces rôles : aucun autre compte ne peut reprendre les contenus pédagogiques.",
           };
         }
-        const replacementAdmin = await tx.admin.findFirst({
-          where: {
+        const replacementAdmin = await tx.orm.public.Admin.where((row) =>
+          whereFromObject(row, {
             idMdb: replacementOwnerId,
             id: { notIn: admins.map(({ id }) => id) },
-          },
-          select: { id: true },
-        });
+          }),
+        )
+          .select("id")
+          .first();
         if (!replacementAdmin) {
           throw {
             statusCode: 409,
@@ -147,43 +161,56 @@ async function updateUserRoles(
         }
 
         const previousAdminIds = { in: admins.map(({ id }) => id) };
-        await tx.activity.updateMany({
-          where: { authorId: previousAdminIds },
-          data: { authorId: replacementAdmin.id },
-        });
-        await tx.bonusActivity.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.course.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.formation.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.lesson.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.mediatheque.updateMany({
-          where: { authorId: previousAdminIds },
-          data: { authorId: replacementAdmin.id },
-        });
-        await tx.module.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.parcours.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.resource.updateMany({
-          where: { adminId: previousAdminIds },
-          data: { adminId: replacementAdmin.id },
-        });
-        await tx.admin.deleteMany({ where: { id: previousAdminIds } });
+        await tx.orm.public.Activity.where((row) =>
+          whereFromObject(row, { authorId: previousAdminIds }),
+        )
+          .updateAndCount({ authorId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.BonusActivity.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Course.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Formation.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Lesson.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Mediatheque.where((row) =>
+          whereFromObject(row, { authorId: previousAdminIds }),
+        )
+          .updateAndCount({ authorId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Module.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Parcours.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Resource.where((row) =>
+          whereFromObject(row, { adminId: previousAdminIds }),
+        )
+          .updateAndCount({ adminId: replacementAdmin.id })
+          .then((count) => ({ count }));
+        await tx.orm.public.Admin.where((row) =>
+          whereFromObject(row, { id: previousAdminIds }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
       }
     }
   });

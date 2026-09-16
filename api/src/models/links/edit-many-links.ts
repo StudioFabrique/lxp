@@ -1,9 +1,8 @@
-import { type ObjectId } from "mongoose";
 import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { logger } from "../../utils/logs/logger.ts";
 
-export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
+export default async function editManyLinks(userId: string, links: ILink[]) {
   try {
     const user = await User.findById(userId);
 
@@ -16,14 +15,14 @@ export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
           const updatedLink = await Link.findByIdAndUpdate(
             item._id,
             { ...item },
-            { new: true, upsert: true },
+            { returnDocument: "after", upsert: true },
           );
           return updatedLink;
         } else {
           // If no _id, create a new link
           const newLink = new Link({
             ...item,
-            user: user,
+            user: userId,
           });
           return await newLink.save();
         }
@@ -31,9 +30,9 @@ export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
     );
 
     const updatedUser = await User.findByIdAndUpdate(
-      user,
+      userId,
       { links: linkDocs.map((item) => item._id) },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     return updatedUser;

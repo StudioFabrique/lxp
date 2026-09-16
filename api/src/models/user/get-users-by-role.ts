@@ -37,23 +37,15 @@ async function getUsersByRole(
     ],
   };
 
-  const groupsSql = await prisma.group.findMany({
-    select: {
-      idMdb: true,
-      parcours: {
-        select: {
-          parcours: {
-            select: {
-              title: true,
-              formation: {
-                select: { title: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const groupsSql = await prisma.orm.public.Group.select("idMdb")
+    .include("parcours", (related51) =>
+      related51.include("parcours", (related52) =>
+        related52
+          .select("title")
+          .include("formation", (related53) => related53.select("title")),
+      ),
+    )
+    .all();
 
   let groupsData = Array<any>();
   for (const group of groupsSql) {
@@ -62,10 +54,10 @@ async function getUsersByRole(
       {
         groupId: group.idMdb,
         parcours:
-          group.parcours.length > 0 ? group.parcours[0].parcours.title : "ND",
+          group.parcours.length > 0 ? group.parcours[0]!.parcours!.title : "ND",
         formation:
           group.parcours.length > 0
-            ? group.parcours[0].parcours.formation.title
+            ? group.parcours[0]!.parcours!.formation!.title
             : "ND",
       },
     ];
@@ -93,21 +85,19 @@ async function getUsersByRole(
     sortObject["firstname"] = 1; // tri dynamique par firstname
   }
 
-  const data = await User.find(
-    userFilter,
-    {
-      _id: 1,
-      firstname: 1,
-      lastname: 1,
-      email: 1,
-      avatar: 1,
-      isActive: 1,
-      createdAt: 1,
-      emailVerified: 1,
-      invitationSent: 1,
-      invitationPendingSince: 1,
-    },
-  )
+  const data = await User.find(userFilter, {
+    _id: 1,
+    firstname: 1,
+    lastname: 1,
+    email: 1,
+    avatar: 1,
+    isActive: 1,
+    createdAt: 1,
+    emailVerified: 1,
+    invitationSent: 1,
+    invitationPendingSince: 1,
+    group: 1,
+  })
     .populate("group")
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort(sortObject)
@@ -116,20 +106,17 @@ async function getUsersByRole(
   const total = await User.countDocuments(userFilter);
 
   let users = data.map((user) => {
+    const groupId = user.group?.[0]?._id.toString();
     return {
       ...user.toObject(),
-      parcours:
-        user.group && user.group.length > 0
-          ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId
-            ).parcours
-          : "ND",
-      formation:
-        user.group && user.group.length > 0
-          ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId
-            ).formation
-          : "ND",
+      parcours: groupId
+        ? (groupsData.find((item) => groupId === item.groupId)?.parcours ??
+          "ND")
+        : "ND",
+      formation: groupId
+        ? (groupsData.find((item) => groupId === item.groupId)?.formation ??
+          "ND")
+        : "ND",
       avatar: imageToDataUrl(user.avatar),
       // État dérivé plutôt que brut : la règle de péremption d'un envoi
       // interrompu appartient au serveur, pas à chaque écran qui affiche la

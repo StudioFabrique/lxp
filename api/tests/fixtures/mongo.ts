@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import mongoose from "mongoose";
+import mongoose, { type HydratedDocument } from "mongoose";
 import {
   addresses,
   cities,
@@ -11,7 +11,9 @@ import {
   tags,
 } from "./data.ts";
 import Role from "../../src/utils/interfaces/db/role.ts";
-import Permission, { type IPermission } from "../../src/utils/interfaces/db/permission.ts";
+import Permission, {
+  type IPermission,
+} from "../../src/utils/interfaces/db/permission.ts";
 import Tag from "../../src/utils/interfaces/db/tag.ts";
 import User from "../../src/utils/interfaces/db/user.ts";
 import { permDefsActions } from "../../src/utils/rbac/config/fixtures-permissions.ts";
@@ -264,7 +266,7 @@ async function createRoles() {
 }
 
 async function createPermissions() {
-  const bulkPermissions = new Map<string, IPermission>();
+  const bulkPermissions = new Map<string, HydratedDocument<IPermission>>();
   const bulkRoleUpdates = new Map<string, any>();
 
   for (const [roleName, value] of Object.entries({

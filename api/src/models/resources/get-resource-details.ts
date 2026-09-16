@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -17,33 +18,22 @@ import { prisma } from "../../utils/db.ts";
  */
 export default async function getResourceDetails(resourceId: number) {
   // Fetch resource with all related data
-  const existingResource = await prisma.resource.findFirst({
-    where: { id: resourceId },
-    include: {
-      // Include bonus activities ordered by their order field
-      bonusActivities: {
-        orderBy: { order: "asc" },
-        include: {
-          // Include resource bonus activities for each bonus activity
-          resourceBonusActivities: {
-            orderBy: { order: "asc" },
-          },
-        },
-      },
-      // Include only specific tag fields
-      tags: {
-        select: {
-          tag: {
-            select: {
-              id: true,
-              name: true,
-              color: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const existingResource = await prisma.orm.public.Resource.where((row) =>
+    whereFromObject(row, { id: resourceId }),
+  )
+    .include("bonusActivities", (related27) =>
+      related27
+        .include("resourceBonusActivities", (related28) =>
+          related28.orderBy((row) => row.order.asc()),
+        )
+        .orderBy((row) => row.order.asc()),
+    )
+    .include("tags", (related29) =>
+      related29.include("tag", (related30) =>
+        related30.select("id", "name", "color"),
+      ),
+    )
+    .first();
 
   // Throw 404 error if resource not found
   if (!existingResource)

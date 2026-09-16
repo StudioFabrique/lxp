@@ -1,4 +1,13 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { whereFromObject } from "../src/utils/prisma-query.ts";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+} from "@jest/globals";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
@@ -11,23 +20,44 @@ import normalizeUserRoles from "../src/utils/services/db/normalize-user-roles.ts
 import transferRoot from "../src/models/user/transfer-root.ts";
 import updateUserRoles from "../src/models/user/update-user-roles.ts";
 import createManyUsers from "../src/models/user/create-many-users.ts";
-import { createRootAccount, promoteAdminToRoot } from "../src/models/auth/setup.ts";
+import {
+  createRootAccount,
+  promoteAdminToRoot,
+} from "../src/models/auth/setup.ts";
 import { authenticateSession } from "../src/utils/services/auth/authenticate-session.ts";
 
 const databaseName = "lxp_user_role_policy_test";
 let rootRole: any, adminRole: any, teacherRole: any, studentRole: any;
-const account = (email: string, role: any, isActive = true) => User.create({
-  email, firstname: "test", lastname: "roles", roles: [role._id], isActive,
-});
-const key = (purpose: string, email?: string) => jwt.sign(
-  { purpose, email, nonce: randomUUID() }, env.REGISTER_SECRET, { expiresIn: "5m" },
-);
+const account = (email: string, role: any, isActive = true) =>
+  User.create({
+    email,
+    firstname: "test",
+    lastname: "roles",
+    roles: [role._id],
+    isActive,
+  });
+const key = (purpose: string, email?: string) =>
+  jwt.sign({ purpose, email, nonce: randomUUID() }, env.REGISTER_SECRET, {
+    expiresIn: "5m",
+  });
 
 async function clean() {
   const ids = (await User.find().select("_id")).map(({ _id }) => String(_id));
-  await prisma.student.deleteMany({ where: { idMdb: { in: ids } } });
-  await prisma.admin.deleteMany({ where: { idMdb: { in: ids } } });
-  await prisma.contact.deleteMany({ where: { idMdb: { in: ids } } });
+  await prisma.orm.public.Student.where((row) =>
+    whereFromObject(row, { idMdb: { in: ids } }),
+  )
+    .deleteAndCount()
+    .then((count) => ({ count }));
+  await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: { in: ids } }),
+  )
+    .deleteAndCount()
+    .then((count) => ({ count }));
+  await prisma.orm.public.Contact.where((row) =>
+    whereFromObject(row, { idMdb: { in: ids } }),
+  )
+    .deleteAndCount()
+    .then((count) => ({ count }));
   await mongoose.connection.dropDatabase();
 }
 
@@ -49,32 +79,73 @@ beforeEach(async () => {
 afterAll(async () => {
   await clean();
   await mongoose.disconnect();
-  await prisma.$disconnect();
+  await prisma.close();
 });
 
 describe("rôle utilisateur unique", () => {
   test("normalise les anciens comptes et protège toutes les écritures Mongo", async () => {
     const active = await account("root-actif@test.fr", rootRole);
     await User.collection.insertMany([
-      { email: "root-inactif@test.fr", firstname: "test", lastname: "test", isActive: false, roles: [rootRole._id, teacherRole._id] },
-      { email: "multi@test.fr", firstname: "test", lastname: "test", roles: [studentRole._id, teacherRole._id] },
+      {
+        email: "root-inactif@test.fr",
+        firstname: "test",
+        lastname: "test",
+        isActive: false,
+        roles: [rootRole._id, teacherRole._id],
+      },
+      {
+        email: "multi@test.fr",
+        firstname: "test",
+        lastname: "test",
+        roles: [studentRole._id, teacherRole._id],
+      },
     ]);
     await normalizeUserRoles();
     await normalizeUserRoles();
     expect(await User.countDocuments({ roles: rootRole._id })).toBe(1);
-    expect((await User.findById(active._id))!.roles.map(String)).toEqual([String(rootRole._id)]);
-    expect((await User.findOne({ email: "root-inactif@test.fr" }))!.roles.map(String)).toEqual([String(adminRole._id)]);
-    expect((await User.findOne({ email: "multi@test.fr" }))!.roles.map(String)).toEqual([String(teacherRole._id)]);
-    await expect(User.collection.updateOne({ _id: active._id }, { $set: { roles: [] } })).rejects.toMatchObject({ code: 121 });
-    await expect(User.collection.updateOne({ _id: active._id }, { $set: { roles: [adminRole._id, teacherRole._id] } })).rejects.toMatchObject({ code: 121 });
-    await expect(account("second-root@test.fr", rootRole)).rejects.toMatchObject({ code: 11000 });
+    expect((await User.findById(active._id))!.roles.map(String)).toEqual([
+      String(rootRole._id),
+    ]);
+    expect(
+      (await User.findOne({ email: "root-inactif@test.fr" }))!.roles.map(
+        String,
+      ),
+    ).toEqual([String(adminRole._id)]);
+    expect(
+      (await User.findOne({ email: "multi@test.fr" }))!.roles.map(String),
+    ).toEqual([String(teacherRole._id)]);
+    await expect(
+      User.collection.updateOne({ _id: active._id }, { $set: { roles: [] } }),
+    ).rejects.toMatchObject({ code: 121 });
+    await expect(
+      User.collection.updateOne(
+        { _id: active._id },
+        { $set: { roles: [adminRole._id, teacherRole._id] } },
+      ),
+    ).rejects.toMatchObject({ code: 121 });
+    await expect(
+      account("second-root@test.fr", rootRole),
+    ).rejects.toMatchObject({ code: 11000 });
   });
 
   test("refuse un lot multirôle avant toute écriture", async () => {
     const user = await account("admin@test.fr", adminRole);
-    await expect(updateUserRoles([String(user._id)], [String(adminRole._id), String(teacherRole._id)])).rejects.toMatchObject({ statusCode: 400 });
-    expect((await User.findById(user._id))!.roles.map(String)).toEqual([String(adminRole._id)]);
-    expect(await prisma.contact.count({ where: { idMdb: String(user._id) } })).toBe(0);
+    await expect(
+      updateUserRoles(
+        [String(user._id)],
+        [String(adminRole._id), String(teacherRole._id)],
+      ),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect((await User.findById(user._id))!.roles.map(String)).toEqual([
+      String(adminRole._id),
+    ]);
+    expect(
+      await prisma.orm.public.Contact.where((row) =>
+        whereFromObject(row, { idMdb: String(user._id) }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+    ).toBe(0);
   });
 
   test("permet de passer des administrateurs et formateurs au rôle apprenant", async () => {
@@ -82,25 +153,43 @@ describe("rôle utilisateur unique", () => {
     const admin = await account("admin@test.fr", adminRole);
     const teacher = await account("teacher@test.fr", teacherRole);
     const ids = [String(admin._id), String(teacher._id)];
-    await prisma.admin.createMany({
-      data: [String(owner._id), ...ids].map((idMdb) => ({ idMdb })),
-    });
-    await prisma.contact.create({
-      data: { idMdb: String(teacher._id), role: "équipe pédagogique", email: teacher.email },
+    await prisma.orm.public.Admin.createAndCount(
+      [String(owner._id), ...ids].map((idMdb) => ({ idMdb })),
+    ).then((count) => ({ count }));
+    await prisma.orm.public.Contact.create({
+      idMdb: String(teacher._id),
+      role: "équipe pédagogique",
+      email: teacher.email,
     });
 
     await updateUserRoles(ids, [String(studentRole._id)], String(owner._id));
 
-    expect((await User.findById(admin._id))!.roles.map(String)).toEqual([String(studentRole._id)]);
-    expect((await User.findById(teacher._id))!.roles.map(String)).toEqual([String(studentRole._id)]);
+    expect((await User.findById(admin._id))!.roles.map(String)).toEqual([
+      String(studentRole._id),
+    ]);
+    expect((await User.findById(teacher._id))!.roles.map(String)).toEqual([
+      String(studentRole._id),
+    ]);
     expect(
-      await prisma.student.count({ where: { idMdb: { in: ids } } }),
+      await prisma.orm.public.Student.where((row) =>
+        whereFromObject(row, { idMdb: { in: ids } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(2);
     expect(
-      await prisma.contact.count({ where: { idMdb: { in: ids } } }),
+      await prisma.orm.public.Contact.where((row) =>
+        whereFromObject(row, { idMdb: { in: ids } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(0);
     expect(
-      await prisma.admin.count({ where: { idMdb: { in: ids } } }),
+      await prisma.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: { in: ids } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(0);
   });
 
@@ -108,48 +197,66 @@ describe("rôle utilisateur unique", () => {
     const futureTeacher = await account("future-teacher@test.fr", studentRole);
     const futureAdmin = await account("future-admin@test.fr", studentRole);
     const ids = [String(futureTeacher._id), String(futureAdmin._id)];
-    await prisma.student.createMany({
-      data: ids.map((idMdb) => ({ idMdb })),
-    });
+    await prisma.orm.public.Student.createAndCount(
+      ids.map((idMdb) => ({ idMdb })),
+    ).then((count) => ({ count }));
 
     await updateUserRoles(
       [String(futureTeacher._id)],
       [String(teacherRole._id)],
     );
-    await updateUserRoles(
-      [String(futureAdmin._id)],
-      [String(adminRole._id)],
-    );
+    await updateUserRoles([String(futureAdmin._id)], [String(adminRole._id)]);
 
-    expect((await User.findById(futureTeacher._id))!.roles.map(String)).toEqual([
-      String(teacherRole._id),
-    ]);
+    expect((await User.findById(futureTeacher._id))!.roles.map(String)).toEqual(
+      [String(teacherRole._id)],
+    );
     expect((await User.findById(futureAdmin._id))!.roles.map(String)).toEqual([
       String(adminRole._id),
     ]);
     expect(
-      await prisma.admin.count({ where: { idMdb: { in: ids } } }),
+      await prisma.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: { in: ids } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(2);
     expect(
-      await prisma.contact.count({
-        where: { idMdb: String(futureTeacher._id) },
-      }),
+      await prisma.orm.public.Contact.where((row) =>
+        whereFromObject(row, { idMdb: String(futureTeacher._id) }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(1);
     expect(
-      await prisma.contact.count({
-        where: { idMdb: String(futureAdmin._id) },
-      }),
+      await prisma.orm.public.Contact.where((row) =>
+        whereFromObject(row, { idMdb: String(futureAdmin._id) }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(0);
     // La promotion ne doit pas effacer les acquis si le rôle change à nouveau.
     expect(
-      await prisma.student.count({ where: { idMdb: { in: ids } } }),
+      await prisma.orm.public.Student.where((row) =>
+        whereFromObject(row, { idMdb: { in: ids } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ).toBe(2);
   });
 
   test("l'import attribue le rôle système, même avec plusieurs rôles du même rang", async () => {
-    await Role.create({ role: "student-custom", label: "personnalisé", rank: 3 });
-    const result = await createManyUsers([{ email: "import@test.fr", firstname: "test", lastname: "test" }] as any, 3);
-    expect(result.users[0].roles.map(String)).toEqual([String(studentRole._id)]);
+    await Role.create({
+      role: "student-custom",
+      label: "personnalisé",
+      rank: 3,
+    });
+    const result = await createManyUsers(
+      [{ email: "import@test.fr", firstname: "test", lastname: "test" }] as any,
+      3,
+    );
+    expect(result.users[0].roles.map(String)).toEqual([
+      String(studentRole._id),
+    ]);
   });
 });
 
@@ -158,10 +265,23 @@ describe("transfert du rôle root", () => {
     const oldRoot = await account("old-root@test.fr", rootRole);
     await normalizeUserRoles();
     const email = "new-root@test.fr";
-    const id = await createRootAccount({ token: key("root-account", email), email, firstname: "new", lastname: "root", password: "RootPassword@123" });
-    expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([String(adminRole._id)]);
-    expect((await User.findById(id))!.roles.map(String)).toEqual([String(rootRole._id)]);
-    const accessToken = jwt.sign({ userId: String(oldRoot._id), tokenType: "access" }, env.SECRET);
+    const id = await createRootAccount({
+      token: key("root-account", email),
+      email,
+      firstname: "new",
+      lastname: "root",
+      password: "RootPassword@123",
+    });
+    expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([
+      String(adminRole._id),
+    ]);
+    expect((await User.findById(id))!.roles.map(String)).toEqual([
+      String(rootRole._id),
+    ]);
+    const accessToken = jwt.sign(
+      { userId: String(oldRoot._id), tokenType: "access" },
+      env.SECRET,
+    );
     expect((await authenticateSession(accessToken)).userRoles[0].rank).toBe(1);
   });
 
@@ -172,15 +292,22 @@ describe("transfert du rôle root", () => {
     await promoteAdminToRoot(key("first-admin"), String(first._id));
     await promoteAdminToRoot(key("first-admin"), String(second._id));
     expect(await User.countDocuments({ roles: rootRole._id })).toBe(1);
-    expect((await User.findById(first._id))!.roles.map(String)).toEqual([String(adminRole._id)]);
-    expect((await User.findById(second._id))!.roles.map(String)).toEqual([String(rootRole._id)]);
+    expect((await User.findById(first._id))!.roles.map(String)).toEqual([
+      String(adminRole._id),
+    ]);
+    expect((await User.findById(second._id))!.roles.map(String)).toEqual([
+      String(rootRole._id),
+    ]);
   });
 
   test("deux transferts concurrents ne laissent qu'un seul root", async () => {
     const first = await account("first@test.fr", adminRole);
     const second = await account("second@test.fr", adminRole);
     await normalizeUserRoles();
-    await Promise.all([transferRoot(String(first._id)), transferRoot(String(second._id))]);
+    await Promise.all([
+      transferRoot(String(first._id)),
+      transferRoot(String(second._id)),
+    ]);
     expect(await User.countDocuments({ roles: rootRole._id })).toBe(1);
     expect(await User.countDocuments({ roles: adminRole._id })).toBe(1);
   });
@@ -190,17 +317,35 @@ describe("transfert du rôle root", () => {
     const target = await account("new@test.fr", adminRole);
     await normalizeUserRoles();
     const update = jest.spyOn(User, "updateOne");
-    update.mockImplementationOnce(() => { throw new Error("écriture refusée"); });
+    update.mockImplementationOnce(() => {
+      throw new Error("écriture refusée");
+    });
     try {
-      await expect(transferRoot(String(target._id))).rejects.toThrow("écriture refusée");
-      expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([String(rootRole._id)]);
-    } finally { update.mockRestore(); }
+      await expect(transferRoot(String(target._id))).rejects.toThrow(
+        "écriture refusée",
+      );
+      expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([
+        String(rootRole._id),
+      ]);
+    } finally {
+      update.mockRestore();
+    }
   });
 
   test("une création refusée ne rétrograde pas le root actuel", async () => {
     const oldRoot = await account("old@test.fr", rootRole);
     await normalizeUserRoles();
-    await expect(createRootAccount({ token: key("root-account", oldRoot.email), email: oldRoot.email, firstname: "test", lastname: "test", password: "RootPassword@123" })).rejects.toMatchObject({ statusCode: 409 });
-    expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([String(rootRole._id)]);
+    await expect(
+      createRootAccount({
+        token: key("root-account", oldRoot.email),
+        email: oldRoot.email,
+        firstname: "test",
+        lastname: "test",
+        password: "RootPassword@123",
+      }),
+    ).rejects.toMatchObject({ statusCode: 409 });
+    expect((await User.findById(oldRoot._id))!.roles.map(String)).toEqual([
+      String(rootRole._id),
+    ]);
   });
 });

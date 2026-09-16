@@ -1,39 +1,34 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
-async function putFormationTags(formationId: number, newTags: Array<number>) {
-  const existingFormation = await prisma.formation.findUnique({
-    where: { id: formationId },
-  });
-
+async function putFormationTags(formationId: number, newTags: number[]) {
+  const existingFormation = await prisma.orm.public.Formation.where((row) =>
+    whereFromObject(row, { id: formationId }),
+  ).first();
   if (!existingFormation) {
-    const error: any = {
-      message: "La formation n'existe pas",
-      statusCode: 404,
-    };
-    throw error;
+    throw { message: "La formation n'existe pas", statusCode: 404 };
   }
 
-  await prisma.tagsOnFormation.deleteMany({
-    where: { formationId },
+  return prisma.transaction(async (tx) => {
+    await tx.orm.public.TagsOnFormation.where((row) =>
+      whereFromObject(row, { formationId }),
+    ).deleteAndCount();
+    const tagIds = [...new Set(newTags)];
+    if (tagIds.length > 0) {
+      await tx.orm.public.TagsOnFormation.createAndCount(
+        tagIds.map((tagId) => ({ formationId, tagId })),
+      );
+    }
+    return tx.orm.public.Formation.where((row) =>
+      whereFromObject(row, { id: formationId }),
+    )
+      .include("tags")
+      .first()
+      .then(requireDatabaseRow);
   });
-
-  const updatedParcours = await prisma.formation.update({
-    where: { id: formationId },
-    data: {
-      tags: {
-        create: newTags.map((tag: any) => {
-          return {
-            tag: {
-              connect: { id: parseInt(tag) },
-            },
-          };
-        }),
-      },
-    },
-    include: { tags: true },
-  });
-
-  return updatedParcours;
 }
 
 export default putFormationTags;

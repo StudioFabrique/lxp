@@ -2,13 +2,14 @@ import User from "../../utils/interfaces/db/user.ts";
 import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
 import IConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
 
 export default async function connect(socketId: string, userId: string) {
   try {
     const existingUser = await User.findOne({
       _id: userId,
       isActive: true,
-    }).populate("roles");
+    }).populate<{ roles: IRole[] }>("roles");
 
     if (!existingUser) {
       throw new Error("L'utilisateur n'existe pas ou est inactif.");
@@ -20,16 +21,15 @@ export default async function connect(socketId: string, userId: string) {
     // Create new socket
     await UserSocket.create({
       socketId,
-      userId: existingUser._id,
+      userId: existingUser._id.toString(),
       rank: existingUser.roles[0].rank,
     });
 
     if (existingUser.roles[0].rank > 2) {
-      if (existingUser.connectionInfos.length > 0) {
+      const connectionInfos = existingUser.connectionInfos ?? [];
+      if (connectionInfos.length > 0) {
         const lastConnectionInfos = await ConnectionInfos.findOne({
-          _id: existingUser.connectionInfos[
-            existingUser.connectionInfos.length - 1
-          ],
+          _id: connectionInfos[connectionInfos.length - 1],
         });
 
         if (lastConnectionInfos) {
@@ -54,7 +54,7 @@ export default async function connect(socketId: string, userId: string) {
             const infos = await newInfos.save();
             await User.findOneAndUpdate(
               { _id: userId },
-              { $push: { connectionInfos: infos._id } }
+              { $push: { connectionInfos: infos._id } },
             );
           }
         }
@@ -67,7 +67,7 @@ export default async function connect(socketId: string, userId: string) {
         const infos = await newInfos.save();
         await User.findOneAndUpdate(
           { _id: userId },
-          { $push: { connectionInfos: infos._id } }
+          { $push: { connectionInfos: infos._id } },
         );
       }
     }

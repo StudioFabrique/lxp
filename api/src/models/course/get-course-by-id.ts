@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getCourseById(courseId: number): Promise<{
@@ -7,23 +8,18 @@ export default async function getCourseById(courseId: number): Promise<{
   courseSlug: string | null;
 } | null> {
   // Récupération des données imbriquées avec Prisma
-  const course = await prisma.course.findUnique({
-    where: { id: courseId },
-    select: {
-      id: true,
-      title: true,
-      courseSlug: true,
-      description: true,
-      lessons: {
-        orderBy: { order: "asc" },
-        include: {
-          activities: {
-            orderBy: { order: "asc" },
-          },
-        },
-      },
-    },
-  });
+  const course = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .select("id", "title", "courseSlug", "description")
+    .include("lessons", (related32) =>
+      related32
+        .include("activities", (related33) =>
+          related33.orderBy((row) => row.order.asc()),
+        )
+        .orderBy((row) => row.order.asc()),
+    )
+    .first();
 
   if (!course) {
     return null;

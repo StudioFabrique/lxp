@@ -1,9 +1,13 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseImage(courseId: number, image: any) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  ).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -11,12 +15,11 @@ async function putCourseImage(courseId: number, image: any) {
     throw error;
   }
 
-  const updatedCourse = await prisma.course.update({
-    where: { id: courseId },
-    data: {
-      image,
-    },
-  });
+  const updatedCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .update({ image })
+    .then(requireDatabaseRow);
 
   return updatedCourse;
 }

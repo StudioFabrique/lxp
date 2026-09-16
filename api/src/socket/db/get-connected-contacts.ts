@@ -1,47 +1,34 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import UserSocket from "../../utils/interfaces/db/user-socket.ts";
 
 export default async function getConnectedContacts(userId: string) {
-  const groupId = await User.findOne(
-    { _id: userId },
-    { firstname: 1, lastname: 1 }
-  ).populate("group", { _id: 1 });
+  const user = await User.findById(userId, { group: 1 });
 
-  if (!groupId) {
+  if (!user?.group?.length) {
     throw { message: "Le groupe n'existe pas.", statusCode: 404 };
   }
+  const groupId = user.group[0]!._id.toString();
 
-  const existingContacts = await prisma.group.findFirst({
-    where: { idMdb: groupId.group._id },
-    select: {
-      parcours: {
-        select: {
-          parcours: {
-            select: {
-              contacts: {
-                select: {
-                  contact: {
-                    select: { idMdb: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const existingContacts = await prisma.orm.public.Group.where((row) =>
+    whereFromObject(row, { idMdb: groupId }),
+  )
+    .include("parcours", (related54) =>
+      related54.include("parcours", (related55) =>
+        related55.include("contacts", (related56) =>
+          related56.include("contact", (related57) =>
+            related57.select("idMdb"),
+          ),
+        ),
+      ),
+    )
+    .first();
 
-  let contactsList = Array<any>();
+  const contactIds =
+    existingContacts?.parcours.flatMap((item) =>
+      item.parcours!.contacts.map((contact) => contact.contact!.idMdb),
+    ) ?? [];
 
-  if (existingContacts) {
-    contactsList = existingContacts.parcours.map((item: any) =>
-      item.parcours.contacts.map((elem: any) => new Object(elem.contact.idMdb))
-    );
-  }
-
-  contactsList = await UserSocket.find({ userId: { $in: contactsList[0] } });
-
-  return contactsList;
+  return UserSocket.find({ userId: { $in: contactIds } });
 }

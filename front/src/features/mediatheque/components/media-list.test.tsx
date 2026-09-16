@@ -55,7 +55,7 @@ describe("Liste de la médiathèque", () => {
       );
     });
 
-    expect(container.textContent).toContain("illustration.png");
+    expect(container.textContent).toContain("Illustration.png");
     expect(container.textContent).not.toContain("2 utilisations");
 
     const previewButton = container.querySelector(

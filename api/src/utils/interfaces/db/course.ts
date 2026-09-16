@@ -1,7 +1,8 @@
-import { type Document, Schema, model } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import { Schema, model } from "mongoose";
 import type { IGroup } from "./group.ts";
 
-export interface ICourse extends Document {
+export interface ICourse extends MongoRecord {
   name: string;
   groups: IGroup["_id"];
   createdAt: Date;

@@ -4,9 +4,11 @@ import User from "../../../utils/interfaces/db/user.ts";
 export default async function createHobby(userId: string, title: string) {
   const user = await User.findById(userId);
 
-  const hobby = await Hobby.create({ user, title });
+  if (!user) throw { statusCode: 404, message: "Utilisateur introuvable." };
 
-  await user?.updateOne({ $push: { hobbies: hobby } });
+  const hobby = await Hobby.create({ user: user._id, title });
+
+  await user.updateOne({ $push: { hobbies: hobby._id } });
 
   return hobby;
 }

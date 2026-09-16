@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
-export interface ITag extends Document {
+export interface ITag extends MongoRecord {
   name: string;
   color: string;
 }

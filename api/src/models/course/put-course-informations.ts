@@ -1,10 +1,14 @@
-import { type Course } from "../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import type { Course } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseInformations(course: Course) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: +course.id },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: +course.id }),
+  ).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -12,20 +16,16 @@ async function putCourseInformations(course: Course) {
     throw error;
   }
 
-  const updatedCourse = await prisma.course.update({
-    where: { id: +course.id },
-    data: {
+  const updatedCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: +course.id }),
+  )
+    .select("id", "title", "description", "visibility")
+    .update({
       title: course.title,
       description: course.description ?? null,
       visibility: course.visibility,
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      visibility: true,
-    },
-  });
+    })
+    .then(requireDatabaseRow);
   return updatedCourse;
 }
 

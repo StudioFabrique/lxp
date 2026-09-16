@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import getCoursesByModule from "../../models/course/get-courses-by-module.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";

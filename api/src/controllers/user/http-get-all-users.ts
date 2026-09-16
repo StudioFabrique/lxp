@@ -3,7 +3,10 @@ import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import getAllUsers from "../../models/user/get-all-users.ts";
 import { validationResult } from "express-validator";
 
-async function httpGetAllUsers(req: Request, res: Response) {
+async function httpGetAllUsers(
+  req: Request<{ role: string; stype: string; sdir: string }>,
+  res: Response,
+) {
   const result = validationResult(req);
 
   const { role, stype, sdir } = req.params;

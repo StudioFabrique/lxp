@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import { tagOwnerFor, type TagActor } from "./tag-access.ts";
 
@@ -19,11 +20,11 @@ export default async function postManyTags(
   );
   const tagNames = uniqueTags.map((tag) => tag.name);
 
-  const existingTags = await prisma.tag.findMany({
-    where: {
+  const existingTags = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, {
       name: { in: tagNames, mode: "insensitive" },
-    },
-  });
+    }),
+  ).all();
 
   if (existingTags.length > 0) {
     const duplicateNames = existingTags.map((tag) => tag.name).join(", ");
@@ -42,22 +43,16 @@ export default async function postManyTags(
   );
 
   if (remainingTags.length > 0) {
-    await prisma.tag.createMany({
-      data: remainingTags,
-      skipDuplicates: true,
-    });
+    await prisma.orm.public.Tag.createAndCount(remainingTags).then((count) => ({
+      count,
+    }));
   }
 
-  return prisma.tag.findMany({
-    where: {
+  return prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, {
       name: { in: tagNames, mode: "insensitive" },
-    },
-    select: {
-      id: true,
-      name: true,
-      color: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+    }),
+  )
+    .select("id", "name", "color", "createdAt", "updatedAt")
+    .all();
 }

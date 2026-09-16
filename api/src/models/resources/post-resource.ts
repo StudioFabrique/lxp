@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { mongo } from "mongoose";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -12,13 +13,13 @@ export default async function postResource(
   filename: string | null,
   isAdmin: boolean,
 ) {
-  const existingResource = await prisma.resource.findFirst({
-    where: { title },
-  });
+  const existingResource = await prisma.orm.public.Resource.where((row) =>
+    whereFromObject(row, { title }),
+  ).first();
 
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
@@ -29,15 +30,15 @@ export default async function postResource(
   if (existingResource)
     throw { message: "Une ressource portant ce nom existe déjà", status: 406 };
 
-  const existingTagIds = await prisma.tag.findMany({
-    where: { name: { in: tags, mode: "insensitive" } },
-  });
+  const existingTagIds = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, { name: { in: tags, mode: "insensitive" } }),
+  ).all();
 
   let remainingTags = tags.filter(
     (tag) =>
       !existingTagIds.some(
-        (existingTag) => existingTag.name.toLowerCase() === tag.toLowerCase()
-      )
+        (existingTag) => existingTag.name.toLowerCase() === tag.toLowerCase(),
+      ),
   );
 
   const newTags = remainingTags.map((tag) => ({
@@ -47,30 +48,29 @@ export default async function postResource(
   }));
 
   if (newTags.length > 0) {
-    await prisma.tag.createMany({
-      data: newTags,
-    });
+    await prisma.orm.public.Tag.createAndCount(newTags).then((count) => ({
+      count,
+    }));
   }
 
-  const newlyCreatedTags = await prisma.tag.findMany({
-    where: { name: { in: remainingTags } },
-  });
+  const newlyCreatedTags = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, { name: { in: remainingTags } }),
+  ).all();
 
   const tagsToAdd = [...existingTagIds, ...newlyCreatedTags];
 
-  const createdResource = await prisma.resource.create({
-    data: {
-      title,
-      description,
-      admin: { connect: { id: existingAuthor.id } },
-      author: mongoUser.firstname + " " + mongoUser.lastname,
-      imageUrl: filename,
-      tags: {
-        create: tagsToAdd.map((tag) => {
+  const createdResource = await prisma.orm.public.Resource.create({
+    title,
+    description,
+    admin: (relation) => relation.connect({ id: existingAuthor.id }),
+    author: mongoUser.firstname + " " + mongoUser.lastname,
+    imageUrl: filename,
+    tags: (relation) =>
+      relation.create(
+        tagsToAdd.map((tag) => {
           return { tag: { connect: { id: tag.id } } };
         }),
-      },
-    },
+      ),
   });
   return {
     message: "Ressource créée avec succès",

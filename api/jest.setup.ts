@@ -16,7 +16,7 @@ afterAll(async () => {
     }
 
     // Fermer Prisma
-    await prisma.$disconnect();
+    await prisma.close();
     console.log("✅ Prisma disconnected");
   } catch (error) {
     console.error("❌ Cleanup error:", error);

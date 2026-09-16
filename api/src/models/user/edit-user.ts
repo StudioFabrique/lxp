@@ -58,7 +58,7 @@ export default async function editUser(userId: string, user: IUser) {
       phoneNumber: user.phoneNumber?.toLowerCase(),
       avatar: user.avatar,
     },
-    { new: true }
+    { returnDocument: "after" },
   ).catch((error: any) => {
     // Deux modifications concurrentes peuvent franchir la vérification
     // ci-dessus ; l'index unique tranche, on en fait un conflit lisible.

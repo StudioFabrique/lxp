@@ -188,8 +188,9 @@ Deux bases de données coexistent :
 
 - **PostgreSQL avec Prisma** stocke le domaine pédagogique : formations,
   parcours, modules, cours, leçons, activités, quiz, groupes, compétences,
-  suivi de lecture et de progression. Le schéma est dans
-  `prisma/schema.prisma`, le client partagé dans `src/utils/db.ts` ;
+  suivi de lecture et de progression. Le contrat Prisma 8 est dans
+  `src/prisma/contract.prisma`, les migrations dans `migrations/app/`, et le
+  client partagé dans `src/utils/db.ts` ;
 - **MongoDB avec Mongoose** stocke les données annexes et temporaires :
   utilisateurs et rôles, jetons révoqués, dialogues du chatbot, statistiques
   de prompts, informations de connexion, feedbacks apprenants. Les schémas

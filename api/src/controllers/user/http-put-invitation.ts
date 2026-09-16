@@ -18,9 +18,9 @@ import putInvitation from "../../models/user/put-invitation.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpPutInvitation(
-  req: Request,
+  req: Request<{ userId: string }>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const isValid = validationResult(req);

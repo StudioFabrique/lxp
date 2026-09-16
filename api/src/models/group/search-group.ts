@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
@@ -65,10 +66,7 @@ async function searchGroup(
       roles: fetchedRole._id,
       ...visibilityFilter,
     };
-    const groups = await Group.find(
-      groupFilter,
-      { password: 0 },
-    )
+    const groups = await Group.find(groupFilter, { password: 0 })
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [stype]: dir })
       .skip(getPagination(page, limit))
@@ -77,29 +75,28 @@ async function searchGroup(
 
     const groupsWithFormation = await Promise.all(
       groups.map(async (group) => {
-        const groupPrisma = await prisma.group.findFirst({
-          select: {
-            parcours: {
-              select: {
-                parcoursId: true,
-                parcours: {
-                  select: {
-                    formation: { select: { title: true } },
-                    title: true,
-                  },
-                },
-              },
-            },
-          },
-          where: { idMdb: group._id },
-        });
+        const groupPrisma = await prisma.orm.public.Group.where((row) =>
+          whereFromObject(row, { idMdb: group._id.toString() }),
+        )
+          .include("parcours", (related85) =>
+            related85
+              .select("parcoursId")
+              .include("parcours", (related86) =>
+                related86
+                  .select("title")
+                  .include("formation", (related87) =>
+                    related87.select("title"),
+                  ),
+              ),
+          )
+          .first();
 
         return {
           ...group,
-          nbStudents: group.users.length,
+          nbStudents: group.users?.length ?? 0,
           formation:
             groupPrisma?.parcours && groupPrisma?.parcours.length > 0
-              ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
+              ? `${groupPrisma.parcours[0]!.parcours!.formation!.title} - ${groupPrisma.parcours[0]!.parcours!.title}`
               : null,
           parcoursId:
             groupPrisma?.parcours && groupPrisma?.parcours.length > 0

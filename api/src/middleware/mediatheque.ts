@@ -1,3 +1,4 @@
+import { whereFromObject } from "../utils/prisma-query.ts";
 import { type Response, type NextFunction } from "express";
 import { prisma } from "../utils/db.ts";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
@@ -6,23 +7,21 @@ export default function mediatheque(type: string) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     if (req.file) {
       try {
-        const user = await prisma.admin.findFirst({
-          where: {
+        const user = await prisma.orm.public.Admin.where((row) =>
+          whereFromObject(row, {
             idMdb: req.auth!.userId,
-          },
-        });
+          }),
+        ).first();
         if (!user)
           throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
-        await prisma.mediatheque.create({
-          data: {
-            type,
-            name: req.file.originalname,
-            url: req.file.filename,
-            author: { connect: { id: user.id } },
-            size: req.file.size,
-            used: 1,
-          },
+        await prisma.orm.public.Mediatheque.create({
+          type,
+          name: req.file.originalname,
+          url: req.file.filename,
+          author: (relation) => relation.connect({ id: user.id }),
+          size: req.file.size,
+          used: 1,
         });
       } catch (error: any) {
         const message =

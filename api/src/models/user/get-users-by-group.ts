@@ -5,7 +5,7 @@ import { imageToDataUrl } from "../../utils/images/image-source.ts";
 
 async function getUsersByGroup(groupsIds: string[]) {
   const ids = groupsIds.map(
-    (item: string) => new mongoose.Types.ObjectId(item)
+    (item: string) => new mongoose.Types.ObjectId(item),
   );
 
   const group = await Group.find({ _id: { $in: ids } }).populate("users", {
@@ -27,7 +27,7 @@ async function getUsersByGroup(groupsIds: string[]) {
         {
           _id: item._id,
           name: item.name,
-          users: item.users.map((user: any) => ({
+          users: (item.users ?? []).map((user: any) => ({
             ...user.toObject(),
             avatar: imageToDataUrl(user.avatar),
           })),

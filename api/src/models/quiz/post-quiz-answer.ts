@@ -1,4 +1,6 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
+import type { Models } from "../../prisma/contract.d.ts";
 import {
   gradeAnswer,
   UngradableAnswerError,
@@ -23,24 +25,27 @@ export default async function postQuizAnswer(
   userAnswer: unknown,
   userIdMdb: string,
 ) {
-  const attempt = await prisma.quizAttempt.findUnique({
-    where: { id: attemptId },
-    select: { id: true, quizId: true, student: { select: { idMdb: true } } },
-  });
+  const attempt = await prisma.orm.public.QuizAttempt.where((row) =>
+    whereFromObject(row, { id: attemptId }),
+  )
+    .select("id", "quizId")
+    .include("student", (related24) => related24.select("idMdb"))
+    .first();
 
   if (!attempt) return null;
 
-  if (attempt.student.idMdb !== userIdMdb) {
+  if (attempt.student!.idMdb !== userIdMdb) {
     throw {
       message: "Cette tentative ne vous appartient pas.",
       statusCode: 403,
     };
   }
 
-  const question = await prisma.quizQuestion.findFirst({
-    where: { quizId: attempt.quizId, externalId },
-    select: { id: true, type: true, data: true },
-  });
+  const question = await prisma.orm.public.QuizQuestion.where((row) =>
+    whereFromObject(row, { quizId: attempt.quizId, externalId }),
+  )
+    .select("id", "type", "data")
+    .first();
 
   if (!question) return null;
 
@@ -54,21 +59,25 @@ export default async function postQuizAnswer(
     throw error;
   }
 
-  return prisma.quizAnswer.upsert({
-    where: {
+  const answerData = userAnswer as Models.public_QuizAnswer["userAnswer"];
+  return prisma.orm.public.QuizAnswer.where((row) =>
+    whereFromObject(row, {
       attemptId_quizQuestionId: { attemptId, quizQuestionId: question.id },
-    },
-    create: {
-      attemptId,
-      quizQuestionId: question.id,
-      isCorrect,
-      userAnswer: userAnswer as object,
-    },
-    update: {
-      isCorrect,
-      userAnswer: userAnswer as object,
-      answeredAt: new Date(),
-    },
-    select: { id: true, isCorrect: true },
-  });
+    }),
+  )
+    .select("id", "isCorrect")
+    .upsert({
+      create: {
+        attemptId,
+        quizQuestionId: question.id,
+        isCorrect,
+        userAnswer: answerData,
+      },
+      update: {
+        isCorrect,
+        userAnswer: answerData,
+        answeredAt: new Date().toISOString(),
+      },
+      conflictOn: { attemptId, quizQuestionId: question.id },
+    });
 }

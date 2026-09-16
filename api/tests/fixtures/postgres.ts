@@ -108,10 +108,9 @@ async function createTags() {
     tab.push({ name: tag, color: `${tagsColors[index]}` });
     index++;
   });
-  const newTags = await prisma.tag.createMany({
-    data: tab,
-    skipDuplicates: true,
-  });
+  const newTags = await prisma.orm.public.Tag.createAndCount(tab).then(
+    (count) => ({ count }),
+  );
   console.log({ newTags });
 }
 
@@ -119,14 +118,16 @@ async function createAdmins() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "admin" }, { _id: 1 });
-    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
+    const usersId = await User.find(
+      { roles: { $in: roleId.map(({ _id }) => _id) } },
+      { _id: 1 },
+    );
     console.log({ usersId });
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
-    const storedAdminsIds = await prisma.admin.createMany({
-      data: newAdmins,
-      skipDuplicates: true,
-    });
+    const storedAdminsIds = await prisma.orm.public.Admin.createAndCount(
+      newAdmins,
+    ).then((count) => ({ count }));
   } catch (error) {
     throw error;
   }
@@ -136,15 +137,17 @@ async function createTeachers() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
-    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
+    const usersId = await User.find(
+      { roles: { $in: roleId.map(({ _id }) => _id) } },
+      { _id: 1 },
+    );
     console.log("formateurs", usersId);
 
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
-    const storedUsersIds = await prisma.teacher.createMany({
-      data: newAdmins,
-      skipDuplicates: true,
-    });
+    const storedUsersIds = await prisma.orm.public.Teacher.createAndCount(
+      newAdmins,
+    ).then((count) => ({ count }));
   } catch (error) {
     throw error;
   }
@@ -155,16 +158,16 @@ async function createSqlGroups() {
   console.log({ mongoGroups });
 
   const data = mongoGroups.map((item: any) => ({ idMdb: item._id.toString() }));
-  const sqlGroups = await prisma.group.createMany({
-    data: data,
-  });
+  const sqlGroups = await prisma.orm.public.Group.createAndCount(data).then(
+    (count) => ({ count }),
+  );
 }
 
 async function createSqlContacts() {
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
-      { roles: { $in: roleId } },
+      { roles: { $in: roleId.map(({ _id }) => _id) } },
       { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 },
     );
     const contacts = usersId.map((user: any) => {
@@ -175,9 +178,9 @@ async function createSqlContacts() {
         phone: user.phoneNumber,
       };
     });
-    await prisma.contact.createMany({
-      data: contacts,
-    });
+    await prisma.orm.public.Contact.createAndCount(contacts).then((count) => ({
+      count,
+    }));
   } catch (error: any) {
     throw error;
   }
@@ -203,31 +206,21 @@ async function createFormation() {
         level: "3",
       },
     ];
-    await prisma.formation.create({
-      data: {
-        ...newFormations[0],
-        tags: {
-          create: tags1Dw.map((item: number) => {
-            return {
-              tag: { connect: { id: item } },
-            };
-          }),
-        },
-        admin: { connect: { id: 1 } },
-      },
+    await prisma.orm.public.Formation.create({
+      ...newFormations[0],
+      tags: (relation) =>
+        relation.create(
+          tags1Dw.map((tagId) => ({ tagId })),
+        ),
+      admin: (relation) => relation.connect({ id: 1 }),
     });
-    await prisma.formation.create({
-      data: {
-        ...newFormations[1],
-        tags: {
-          create: tagsCDA.map((item: number) => {
-            return {
-              tag: { connect: { id: item } },
-            };
-          }),
-        },
-        admin: { connect: { id: 1 } },
-      },
+    await prisma.orm.public.Formation.create({
+      ...newFormations[1],
+      tags: (relation) =>
+        relation.create(
+          tagsCDA.map((tagId) => ({ tagId })),
+        ),
+      admin: (relation) => relation.connect({ id: 1 }),
     });
   } catch (error) {
     throw error;
@@ -236,66 +229,52 @@ async function createFormation() {
 
 async function createParcours() {
   try {
-    const contacts = await prisma.contact.findMany({});
-    const modules = await prisma.module.findMany();
+    const contacts = await prisma.orm.public.Contact.all();
+    const modules = await prisma.orm.public.Module.all();
     console.log({ modules });
 
-    const parcours = await prisma.parcours.create({
-      data: {
-        title: "Parcours Test 1",
-        formation: {
-          connect: {
-            id: 1,
-          },
-        },
-        author: "jean fontaine",
-        admin: {
-          connect: { id: 1 },
-        },
-
-        contacts: {
-          create: [
-            {
-              contact: { connect: { id: contacts[0].id } },
-            },
-            {
-              contact: { connect: { id: contacts[1].id } },
-            },
-          ],
-        },
-      },
+    const parcours = await prisma.orm.public.Parcours.create({
+      title: "Parcours Test 1",
+      formation: (relation) =>
+        relation.connect({
+          id: 1,
+        }),
+      author: "jean fontaine",
+      admin: (relation) => relation.connect({ id: 1 }),
+      contacts: (relation) =>
+        relation.create([
+          { contact: (relation) => relation.connect({ id: contacts[0].id }) },
+          { contact: (relation) => relation.connect({ id: contacts[1].id }) },
+        ]),
     });
-    await prisma.module.createMany({
-      data: [
-        {
-          title: "Module 1",
-          author: "test",
-          adminId: 1,
-          parcoursId: parcours.id,
-        },
-        {
-          title: "Module 2",
-          author: "test",
-          adminId: 1,
-          parcoursId: parcours.id,
-        },
-        {
-          title: "Module 3",
-          author: "test",
-          adminId: 1,
-          parcoursId: parcours.id,
-        },
-      ],
-    });
-    await prisma.course.create({
-      data: {
-        title: "Course 1",
-        description: "Description 1",
-        moduleId: 1,
+    await prisma.orm.public.Module.createAndCount([
+      {
+        title: "Module 1",
+        author: "test",
         adminId: 1,
-        order: 0,
-        author: "jacques test",
+        parcoursId: parcours.id,
       },
+      {
+        title: "Module 2",
+        author: "test",
+        adminId: 1,
+        parcoursId: parcours.id,
+      },
+      {
+        title: "Module 3",
+        author: "test",
+        adminId: 1,
+        parcoursId: parcours.id,
+      },
+    ]).then((count) => ({ count }));
+    await prisma.orm.public.Course.create({
+      title: "Course 1",
+      description: "Description 1",
+      moduleId: 1,
+      adminId: 1,
+      order: 0,
+      dates: [],
+      author: "jacques test",
     });
   } catch (error: any) {
     throw error;
@@ -316,6 +295,6 @@ async function loadFixtures() {
 loadFixtures().catch(async (error) => {
   console.error("Échec de la préparation des fixtures PostgreSQL:", error);
   await disconnect();
-  await prisma.$disconnect();
+  await prisma.close();
   process.exitCode = 1;
 });

@@ -1,8 +1,9 @@
-import { prisma } from "../../utils/db.ts";
 import {
-  assertCanUnassignTags,
-  type TagActor,
-} from "../tag/tag-access.ts";
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import { prisma } from "../../utils/db.ts";
+import { assertCanUnassignTags, type TagActor } from "../tag/tag-access.ts";
 
 async function putParcoursTags(
   parcoursId: number,
@@ -12,28 +13,22 @@ async function putParcoursTags(
   const tagIds = [...new Set(newTags)];
 
   // on verifie l'existence du parcours et on récupère les tags de la formation avec laquelle il est en relation
-  const existingParcours = await prisma.parcours.findUnique({
-    where: { id: parcoursId },
-    include: {
-      formation: {
-        include: { tags: true },
-      },
-      tags: {
-        select: {
-          tagId: true,
-          addedBy: true,
-        },
-      },
-    },
-  });
+  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  )
+    .include("formation", (related18) => related18.include("tags"))
+    .include("tags", (related19) => related19.select("tagId", "addedBy"))
+    .first();
 
   if (!existingParcours) {
     throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
   }
 
-  const existingTagsCount = await prisma.tag.count({
-    where: { id: { in: tagIds } },
-  });
+  const existingTagsCount = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, { id: { in: tagIds } }),
+  )
+    .aggregate((aggregate) => ({ total: aggregate.count() }))
+    .then(({ total }) => total);
   if (existingTagsCount !== tagIds.length) {
     throw { message: "Un ou plusieurs tags n'existent pas.", statusCode: 404 };
   }
@@ -53,35 +48,43 @@ async function putParcoursTags(
   const addedTagIds = tagIds.filter((tagId) => !currentTagIds.has(tagId));
 
   // on met à jour les tags du parcours
-  await prisma.$transaction(async (tx) => {
-    await tx.tagsOnFormation.createMany({
-      data: tagIds.map((tagId) => ({
-        tagId,
-        formationId: existingParcours.formation.id,
-      })),
-      skipDuplicates: true,
-    });
+  await prisma.transaction(async (tx) => {
+    const formationTagIds = new Set(
+      existingParcours.formation!.tags.map(({ tagId }) => tagId),
+    );
+    const missingIds = tagIds.filter((tagId) => !formationTagIds.has(tagId));
+    if (missingIds.length > 0) {
+      await tx.orm.public.TagsOnFormation.createAndCount(
+        missingIds.map((tagId) => ({
+          tagId,
+          formationId: existingParcours.formation!.id,
+        })),
+      );
+    }
 
     if (removedTagIds.length > 0) {
-      await tx.tagsOnParcours.deleteMany({
-        where: { parcoursId, tagId: { in: removedTagIds } },
-      });
+      await tx.orm.public.TagsOnParcours.where((row) =>
+        whereFromObject(row, { parcoursId, tagId: { in: removedTagIds } }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
     }
 
     if (addedTagIds.length > 0) {
-      await tx.tagsOnParcours.createMany({
-        data: addedTagIds.map((tagId) => ({
+      await tx.orm.public.TagsOnParcours.createAndCount(
+        addedTagIds.map((tagId) => ({
           parcoursId,
           tagId,
           addedBy: actor.isAdmin ? null : actor.userId,
         })),
-      });
+      ).then((count) => ({ count }));
     }
 
-    await tx.parcours.update({
-      where: { id: parcoursId },
-      data: { updatedAt: new Date() },
-    });
+    await tx.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: parcoursId }),
+    )
+      .update({ updatedAt: new Date().toISOString() })
+      .then(requireDatabaseRow);
   });
 }
 

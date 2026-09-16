@@ -1,9 +1,13 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
 import path from "path";
 import fs from "fs";
 import { randomUUID } from "node:crypto";
 
 import { prisma } from "../../../utils/db.ts";
-import { type BonusActivity, type Activity } from "../../../generated/prisma/client.ts";
+import type { BonusActivity, Activity } from "../../../prisma/model-types.ts";
 
 /**
  * Updates an activity's text content, title, and description.
@@ -36,13 +40,13 @@ export default async function putActivityText(
   let existingActivity: Activity | null = null;
 
   if (parent === "lesson")
-    existingActivity = await prisma.activity.findFirst({
-      where: { id },
-    });
+    existingActivity = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id }),
+    ).first();
   else
-    existingBonusActivity = await prisma.bonusActivity.findFirst({
-      where: { id },
-    });
+    existingBonusActivity = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id }),
+    ).first();
 
   if (!existingActivity && !existingBonusActivity) {
     const error = new Error("L'activité n'existe pas.");
@@ -71,37 +75,31 @@ export default async function putActivityText(
     let updatedActivity: Activity | BonusActivity | null = null;
 
     if (parent === "lesson")
-      updatedActivity = await prisma.activity.update({
-        where: { id },
-        data: {
-          ...existingActivity,
-          url: fileName,
-          title,
-        },
-      });
+      updatedActivity = await prisma.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id }),
+      )
+        .update({ ...existingActivity, url: fileName, title })
+        .then(requireDatabaseRow);
     else
-      updatedActivity = await prisma.bonusActivity.update({
-        where: { id },
-        data: {
-          ...existingBonusActivity,
-          url: fileName,
-          title,
-        },
-      });
+      updatedActivity = await prisma.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { id }),
+      )
+        .update({ ...existingBonusActivity, url: fileName, title })
+        .then(requireDatabaseRow);
 
     let doublons: Activity[] | BonusActivity[] | null = null;
 
     parent === "lesson"
-      ? (doublons = await prisma.activity.findMany({
-          where: {
+      ? (doublons = await prisma.orm.public.Activity.where((row) =>
+          whereFromObject(row, {
             url: existingActivity!.url,
-          },
-        }))
-      : (doublons = await prisma.bonusActivity.findMany({
-          where: {
+          }),
+        ).all())
+      : (doublons = await prisma.orm.public.BonusActivity.where((row) =>
+          whereFromObject(row, {
             url: existingBonusActivity!.url,
-          },
-        }));
+          }),
+        ).all());
 
     if (doublons && doublons.length === 0) {
       await fs.promises.unlink(

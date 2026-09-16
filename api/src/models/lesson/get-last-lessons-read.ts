@@ -1,7 +1,8 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { calculateCourseProgress } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
-import { skillAchievementSelect, withSkillAchievement } from "../../helpers/skill-achievement.ts";
+import { loadSkillAchievements } from "../../helpers/skill-achievement-query.ts";
 
 /**
  * Get the list of last read lessons by a student and not finished.
@@ -12,7 +13,7 @@ import { skillAchievementSelect, withSkillAchievement } from "../../helpers/skil
  */
 export default async function getLastLessonsRead(
   userIdMdb: string,
-  max?: number
+  max?: number,
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
   const groupIds = groupsWhereStudentIs.map((group) => group.id);
@@ -20,8 +21,8 @@ export default async function getLastLessonsRead(
   if (groupIds.length === 0) return null;
 
   // Fetch last opened, unfinished lessons
-  const lessons = await prisma.lessonRead.findMany({
-    where: {
+  const lessons = await prisma.orm.public.LessonRead.where((row) =>
+    whereFromObject(row, {
       student: { idMdb: userIdMdb },
       lesson: {
         course: {
@@ -36,60 +37,52 @@ export default async function getLastLessonsRead(
         },
       },
       finishedAt: null,
-    },
-    include: {
-      lesson: {
-        select: {
-          id: true,
-          title: true,
-          order: true, // lesson order important for sorting
-          course: {
-            select: {
-              id: true,
-              title: true,
-              order: true, // course order for sorting
-              module: {
-                select: {
-                  id: true,
-                  title: true,
-                  parcours: { select: { id: true } },
-                  bonusSkills: {
-                    select: {
-                      bonusSkill: { select: skillAchievementSelect(userIdMdb) },
-                    },
-                  },
-                },
-              },
-              lessons: {
-                select: {
-                  id: true,
-                  lessonsRead: {
-                    where: { student: { idMdb: userIdMdb } },
-                    select: { id: true, finishedAt: true },
-                  },
-                },
-              },
-              assignment: {
-                select: {
-                  submissions: {
-                    where: { student: { idMdb: userIdMdb } },
-                    select: { submittedAt: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { lastOpenedAt: "desc" },
-    take: max,
-  });
+    }),
+  )
+    .include("lesson", (related102) =>
+      related102
+        .select("id", "title", "order")
+        .include("course", (related103) =>
+          related103
+            .select("id", "title", "order")
+            .include("module", (related104) =>
+              related104
+                .select("id", "title")
+                .include("parcours", (related105) => related105.select("id"))
+                .include("bonusSkills", (related106) =>
+                  related106.include("bonusSkill", (related107) => related107),
+                ),
+            )
+            .include("lessons", (related108) =>
+              related108
+                .select("id")
+                .include("lessonsRead", (related109) =>
+                  related109
+                    .where((row) =>
+                      whereFromObject(row, { student: { idMdb: userIdMdb } }),
+                    )
+                    .select("id", "finishedAt"),
+                ),
+            )
+            .include("assignment", (related110) =>
+              related110.include("submissions", (related111) =>
+                related111
+                  .where((row) =>
+                    whereFromObject(row, { student: { idMdb: userIdMdb } }),
+                  )
+                  .select("submittedAt"),
+              ),
+            ),
+        ),
+    )
+    .orderBy((row) => row.lastOpenedAt.desc())
+    .limit(max ?? 4)
+    .all();
 
   // If no lessons started, find the first lesson of the first course in parcours
   if (!lessons.length) {
-    const firstLesson = await prisma.lesson.findFirst({
-      where: {
+    const firstLesson = await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, {
         lessonsRead: { none: { student: { idMdb: userIdMdb } } },
         course: {
           isPublished: true,
@@ -101,46 +94,42 @@ export default async function getLastLessonsRead(
             },
           },
         },
-      },
-      include: {
-        course: {
-          select: {
-            id: true,
-            order: true, // course order
-            title: true,
-            module: {
-              select: {
-                id: true,
-                title: true,
-                parcours: { select: { id: true } },
-                bonusSkills: {
-                  select: { bonusSkill: { select: skillAchievementSelect(userIdMdb) } },
-                },
-              },
-            },
-          },
-        },
-      },
-      orderBy: [
-        { course: { order: "asc" } },
-        { order: "asc" }, // lesson order
-      ],
-    });
+      }),
+    )
+      .include("course", (related112) =>
+        related112
+          .select("id", "order", "title")
+          .include("module", (related113) =>
+            related113
+              .select("id", "title")
+              .include("parcours", (related114) => related114.select("id"))
+              .include("bonusSkills", (related115) =>
+                related115.include("bonusSkill", (related116) => related116),
+              ),
+          ),
+      )
+      .orderBy((row) => row.order.asc())
+      .first();
 
     if (!firstLesson) return null;
+    const skillAchievements = await loadSkillAchievements(userIdMdb, {
+      skillIds: firstLesson.course!.module!.bonusSkills.map(({ bonusSkillId }) => bonusSkillId),
+    });
 
     const lessonReformatted = {
-      parcoursId: firstLesson.course.module.parcours.id,
+      parcoursId: firstLesson.course!.module!.parcours!.id,
       lesson: {
         id: firstLesson.id,
         title: firstLesson.title,
         order: firstLesson.order,
         course: {
           ...firstLesson.course,
-          bonusSkills: firstLesson.course.module.bonusSkills.map(({ bonusSkill }) => withSkillAchievement(bonusSkill)),
+          bonusSkills: firstLesson.course!.module!.bonusSkills.map(
+            ({ bonusSkillId }) => skillAchievements.get(bonusSkillId)!,
+          ),
           module: {
-            ...firstLesson.course.module,
-            title: firstLesson.course.module.title,
+            ...firstLesson.course!.module,
+            title: firstLesson.course!.module!.title,
           },
           // Aucune leçon n'a encore été ouverte dans ce parcours.
           stats: { progress: 0 },
@@ -152,25 +141,34 @@ export default async function getLastLessonsRead(
   }
 
   // Student has started lessons, return sorted list by course order then lesson order
+  const skillAchievements = await loadSkillAchievements(userIdMdb, {
+    skillIds: lessons.flatMap(({ lesson }) =>
+      lesson?.course?.module?.bonusSkills.map(({ bonusSkillId }) => bonusSkillId) ?? [],
+    ),
+  });
   const lessonsReformattedWithSkillBadge = lessons
     .map((lessonRead) => {
-      const { course } = lessonRead.lesson;
-      const bonusSkills = course.module.bonusSkills.map((b) => withSkillAchievement(b.bonusSkill));
+      const lesson = lessonRead.lesson!;
+      const course = lesson.course!;
+      const bonusSkills = course.module!.bonusSkills.map(({ bonusSkillId }) =>
+        skillAchievements.get(bonusSkillId)!,
+      );
 
       return {
         ...lessonRead,
         lesson: {
-          ...lessonRead.lesson,
+          ...lesson,
+          order: lesson.order,
           course: {
             ...course,
-            module: { ...course.module, title: course.module.title },
+            module: { ...course.module!, title: course.module!.title },
             bonusSkills,
             // `lessons` est déjà chargé filtré par apprenant : le calcul ne
             // coûte rien de plus et évite au front de le refaire.
             stats: { progress: calculateCourseProgress(course) },
           },
         },
-        parcoursId: lessonRead.lesson.course.module.parcours.id,
+        parcoursId: course.module!.parcours!.id,
       };
     })
     .sort((a, b) => {

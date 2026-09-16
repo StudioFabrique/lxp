@@ -4,7 +4,9 @@ import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
+import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import AuthPageWrapper from "./AuthPageWrapper";
+import { ROOT_ACCOUNT_POLICY } from "../root-account-policy";
 
 type Props = {
   token: string;
@@ -49,7 +51,7 @@ const AdminSignInForm = ({
   const handleCloseTab = () => {
     window.open("about:blank", "_self");
     window.close();
-  }
+  };
 
   const onSubmit = async (data: AdminSignInValues) => {
     setError("");
@@ -90,7 +92,9 @@ const AdminSignInForm = ({
           <p>
             Consultez votre boîte mail pour terminer la création du compte.
           </p>
-          <button className="btn" onClick={handleCloseTab}>D'accord</button>
+          <button className="btn" onClick={handleCloseTab}>
+            D'accord
+          </button>
         </span>
       </AuthPageWrapper>
     );
@@ -102,6 +106,9 @@ const AdminSignInForm = ({
         mode === "additional"
           ? "Créer votre compte root"
           : "Créer votre administrateur"
+      }
+      titleAccessory={
+        <QuestionMarkTooltip tooltipValue={ROOT_ACCOUNT_POLICY} />
       }
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">

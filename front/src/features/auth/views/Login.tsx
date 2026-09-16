@@ -58,7 +58,7 @@ const Login = () => {
             onChange={email.valueChangeHandler}
             onBlur={email.valueBlurHandler}
             placeholder="Adresse mail"
-            className="auth-login-input input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
           />
         </div>
 
@@ -72,7 +72,7 @@ const Login = () => {
             onChange={password.valueChangeHandler}
             onBlur={password.valueBlurHandler}
             placeholder="Mot de passe"
-            className="auth-login-input input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
+            className="input input-lg text-sm px-5 w-full bg-base-200 text-base-content placeholder-base-content/50 border-none focus:outline-none focus:ring-2 focus:ring-primary rounded-lg pr-12"
           />
           <div className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer flex items-center">
             <PasswordVisibilityToggle

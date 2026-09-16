@@ -3,7 +3,10 @@ import { serverIssue } from "../../utils/constantes.ts";
 import getUserData from "../../models/user/get-user-data.ts";
 import { validationResult } from "express-validator";
 
-export default async function httpGetUserData(req: Request, res: Response) {
+export default async function httpGetUserData(
+  req: Request<{ userId: string }>,
+  res: Response,
+) {
   try {
     const result = validationResult(req);
 

@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { TransactionClient } from "../../utils/db.ts";
 
 /**
@@ -14,10 +15,12 @@ export async function removeParcoursContactsFromModules(
 ) {
   if (contactIds.length === 0) return;
 
-  await tx.contactsOnModule.deleteMany({
-    where: {
+  await tx.orm.public.ContactsOnModule.where((row) =>
+    whereFromObject(row, {
       contactId: { in: contactIds },
       module: { parcoursId },
-    },
-  });
+    }),
+  )
+    .deleteAndCount()
+    .then((count) => ({ count }));
 }

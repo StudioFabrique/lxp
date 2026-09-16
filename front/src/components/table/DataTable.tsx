@@ -1,8 +1,10 @@
 import {
   flexRender,
-  getCoreRowModel,
-  useReactTable,
+  stockFeatures,
+  useTable,
   ColumnDef,
+  type RowData,
+  type StockFeatures,
   OnChangeFn,
   RowSelectionState,
   SortingState,
@@ -12,8 +14,8 @@ import EmptyStatePlaceholder from "../UI/empty-state-placeholder";
 import TableOverflowContainer from "./TableOverflowContainer";
 import "./DataTable.css";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData extends RowData> {
+  columns: ColumnDef<StockFeatures, TData>[];
   data: TData[];
   rowSelection?: RowSelectionState;
   setRowSelection?: OnChangeFn<RowSelectionState>;
@@ -27,7 +29,7 @@ interface DataTableProps<TData, TValue> {
   canSelectRow?: (row: TData) => boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   rowSelection = {},
@@ -40,11 +42,11 @@ export function DataTable<TData, TValue>({
   onRowClick,
   isRowClickable = () => true,
   canSelectRow = () => true,
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
+}: DataTableProps<TData>) {
+  const table = useTable<StockFeatures, TData>({
+    features: stockFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     getRowId: (row) => {
       const identifiableRow = row as TData & {
         _id?: string;

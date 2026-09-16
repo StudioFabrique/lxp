@@ -13,7 +13,7 @@ import deletaActivity from "../../models/activity/delete-activity/delete-activit
  * @returns Promise<void> - Calls next() with success message or error
  */
 export default async function httpDeleteImage(
-  req: Request,
+  req: Request<{ activityId: string; type: string; parent: string }>,
   _res: Response,
   next: NextFunction,
 ) {

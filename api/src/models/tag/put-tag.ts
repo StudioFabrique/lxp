@@ -1,18 +1,20 @@
-import { prisma } from "../../utils/db.ts";
 import {
-  assertCanManageTags,
-  type TagActor,
-} from "./tag-access.ts";
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import { prisma } from "../../utils/db.ts";
+import { assertCanManageTags, type TagActor } from "./tag-access.ts";
 
 export default async function putTag(
   id: number,
   name: string,
   actor: TagActor,
 ) {
-  const tag = await prisma.tag.findUnique({
-    where: { id },
-    select: { createdBy: true },
-  });
+  const tag = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, { id }),
+  )
+    .select("createdBy")
+    .first();
 
   if (!tag) {
     throw { statusCode: 404, message: "Le tag n'existe pas." };
@@ -24,15 +26,12 @@ export default async function putTag(
     "Vous ne pouvez modifier que les tags que vous avez créés.",
   );
 
-  const updatedTag = await prisma.tag.update({
-    where: {
+  const updatedTag = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, {
       id,
-    },
-    data: {
-      // Ne jamais réattribuer le tag : un administrateur peut le corriger sans
-      // retirer son ownership à l'équipe pédagogique qui l'a créé.
-      name,
-    },
-  });
+    }),
+  )
+    .update({ name })
+    .then(requireDatabaseRow);
   return updatedTag;
 }

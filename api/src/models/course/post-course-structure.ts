@@ -1,4 +1,8 @@
-import { type Lesson } from "../../generated/prisma/client.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import type { Lesson } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 import { slugify } from "../../helpers/slugify.ts";
 
@@ -10,10 +14,11 @@ async function postCourseStructure(
   lessons: Lesson[],
   courseSlug?: string,
 ) {
-  const existingModule = await prisma.module.findFirst({
-    where: { id: moduleId },
-    select: { courses: true },
-  });
+  const existingModule = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { id: moduleId }),
+  )
+    .include("courses")
+    .first();
 
   if (!existingModule) {
     const error = new Error("Le module n'existe pas");
@@ -22,28 +27,28 @@ async function postCourseStructure(
   }
 
   // Utilisation d'une transaction pour garantir l'intégrité
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.transaction(async (tx) => {
     // 1. Création du cours
     const providedSlug = (courseSlug || "").trim();
-    const newCourse = await tx.course.create({
-      data: {
-        title,
-        description: description || "",
-        courseSlug: providedSlug,
-        order: existingModule.courses.length,
-        author: "Import",
-        adminId: adminId,
-        moduleId,
-        isPublished: false,
-      },
+    const newCourse = await tx.orm.public.Course.create({
+      title,
+      description: description || "",
+      courseSlug: providedSlug,
+      order: existingModule.courses.length,
+      dates: [],
+      author: "Import",
+      adminId: adminId,
+      moduleId,
+      isPublished: false,
     });
 
     if (!providedSlug) {
       const generated = `${slugify(title) || "cours"}-${newCourse.id}`;
-      await tx.course.update({
-        where: { id: newCourse.id },
-        data: { courseSlug: generated },
-      });
+      await tx.orm.public.Course.where((row) =>
+        whereFromObject(row, { id: newCourse.id }),
+      )
+        .update({ courseSlug: generated })
+        .then(requireDatabaseRow);
       newCourse.courseSlug = generated;
     }
 
@@ -52,18 +57,16 @@ async function postCourseStructure(
     for (let i = 0; i < lessons.length; i++) {
       const lessonImport = lessons[i];
 
-      const newLesson = await tx.lesson.create({
-        data: {
-          title: lessonImport.title,
-          description: "",
-          modalite: lessonImport.modalite || "hybride",
-          author: "Import",
-          adminId: adminId,
-          courseId: newCourse.id,
-          order: i,
-          tagId: 1,
-          isPublished: false,
-        },
+      const newLesson = await tx.orm.public.Lesson.create({
+        title: lessonImport.title,
+        description: "",
+        modalite: lessonImport.modalite || "hybride",
+        author: "Import",
+        adminId: adminId,
+        courseId: newCourse.id,
+        order: i,
+        tagId: 1,
+        isPublished: false,
       });
 
       createdLessons.push({

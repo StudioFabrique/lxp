@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../src/utils/prisma-query.ts";
 import { createPrismaClient } from "../../src/utils/create-prisma-client.ts";
 import Group from "../../src/utils/interfaces/db/group.ts";
 import Role from "../../src/utils/interfaces/db/role.ts";
@@ -21,10 +25,11 @@ export async function enrollStudentInParcours(
 ): Promise<Enrollment> {
   // Le parcours doit être publié : c'est la condition que `getAccessibleParcoursIds`
   // applique, et que la liste des parcours d'un apprenant applique déjà.
-  await prisma.parcours.update({
-    where: { id: parcoursId },
-    data: { isPublished: true },
-  });
+  await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  )
+    .update({ isPublished: true })
+    .then(requireDatabaseRow);
 
   const studentRole = await Role.findOne({ role: "student" });
   const mongoGroup = await Group.create({
@@ -35,18 +40,26 @@ export async function enrollStudentInParcours(
   });
   const mongoGroupId = mongoGroup.id as string;
 
-  const pgGroup = await prisma.group.create({
-    data: { idMdb: mongoGroupId },
-    select: { id: true },
+  const pgGroup = await prisma.orm.public.Group.select("id").create({
+    idMdb: mongoGroupId,
   });
-  await prisma.groupsOnParcours.create({
-    data: { groupId: pgGroup.id, parcoursId },
+  await prisma.orm.public.GroupsOnParcours.create({
+    groupId: pgGroup.id,
+    parcoursId,
   });
 
   return {
     cleanup: async () => {
-      await prisma.groupsOnParcours.deleteMany({ where: { groupId: pgGroup.id } });
-      await prisma.group.deleteMany({ where: { id: pgGroup.id } });
+      await prisma.orm.public.GroupsOnParcours.where((row) =>
+        whereFromObject(row, { groupId: pgGroup.id }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
+      await prisma.orm.public.Group.where((row) =>
+        whereFromObject(row, { id: pgGroup.id }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
       await Group.deleteOne({ _id: mongoGroupId });
     },
   };

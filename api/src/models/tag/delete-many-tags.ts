@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 import { assertCanDeleteTags, type TagActor } from "./tag-access.ts";
@@ -7,44 +8,46 @@ export default async function deleteManyTags(
   actor: TagActor,
 ) {
   const numericTagIds = [...new Set(tagsIds.map((id) => parseInt(id, 10)))];
-  const tags = await prisma.tag.findMany({
-    where: { id: { in: numericTagIds } },
-    select: { id: true, createdBy: true },
-  });
+  const tags = await prisma.orm.public.Tag.where((row) =>
+    whereFromObject(row, { id: { in: numericTagIds } }),
+  )
+    .select("id", "createdBy")
+    .all();
 
   if (tags.length !== numericTagIds.length) {
     throw { statusCode: 404, message: "Un ou plusieurs tags n'existent pas." };
   }
   assertCanDeleteTags(tags, actor);
 
-  const activities = await prisma.activity.findMany({
-    where: { lesson: { tagId: { in: numericTagIds } } },
-    select: { id: true, type: true },
-  });
+  const activities = await prisma.orm.public.Activity.where((row) =>
+    whereFromObject(row, { lesson: { tagId: { in: numericTagIds } } }),
+  )
+    .select("id", "type")
+    .all();
   for (const activity of activities) {
     await deleteActivity(activity.id, activity.type, "lesson");
   }
 
-  await prisma.$transaction([
-    prisma.tagsOnCourse.deleteMany({
-      where: { tagId: { in: numericTagIds } },
-    }),
-    prisma.tagsOnFormation.deleteMany({
-      where: { tagId: { in: numericTagIds } },
-    }),
-    prisma.tagsOnParcours.deleteMany({
-      where: { tagId: { in: numericTagIds } },
-    }),
-    prisma.tagsOnResources.deleteMany({
-      where: { tagId: { in: numericTagIds } },
-    }),
-    prisma.lesson.deleteMany({
-      where: { tagId: { in: numericTagIds } },
-    }),
-    prisma.tag.deleteMany({
-      where: { id: { in: numericTagIds } },
-    }),
-  ]);
+  await prisma.transaction(async (tx) => {
+    await tx.orm.public.TagsOnCourse.where((row) =>
+      whereFromObject(row, { tagId: { in: numericTagIds } }),
+    ).deleteAndCount();
+    await tx.orm.public.TagsOnFormation.where((row) =>
+      whereFromObject(row, { tagId: { in: numericTagIds } }),
+    ).deleteAndCount();
+    await tx.orm.public.TagsOnParcours.where((row) =>
+      whereFromObject(row, { tagId: { in: numericTagIds } }),
+    ).deleteAndCount();
+    await tx.orm.public.TagsOnResources.where((row) =>
+      whereFromObject(row, { tagId: { in: numericTagIds } }),
+    ).deleteAndCount();
+    await tx.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { tagId: { in: numericTagIds } }),
+    ).deleteAndCount();
+    await tx.orm.public.Tag.where((row) =>
+      whereFromObject(row, { id: { in: numericTagIds } }),
+    ).deleteAndCount();
+  });
 
   return [];
 }

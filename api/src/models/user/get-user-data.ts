@@ -1,7 +1,14 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { sortArray } from "../../helpers/sortArray.ts";
 import { prisma } from "../../utils/db.ts";
 import { type IConnectionInfos } from "../../utils/interfaces/db/connection-infos.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
+import type { IGroup } from "../../utils/interfaces/db/group.ts";
+
+type PopulatedUserData = Omit<IUser, "connectionInfos" | "group"> & {
+  connectionInfos?: IConnectionInfos[];
+  group?: IGroup[];
+};
 
 /**
  * Retrieves comprehensive user data including connection history, parcours information, and completion statistics
@@ -12,7 +19,7 @@ import User, { type IUser } from "../../utils/interfaces/db/user.ts";
  */
 export default async function getUserData(userId: string) {
   // Fetch user data from MongoDB with populated relations, excluding sensitive fields
-  let user = (await User.findOne(
+  let user = await User.findOne(
     { _id: userId },
     {
       // Exclude sensitive and unnecessary fields from the response
@@ -34,7 +41,7 @@ export default async function getUserData(userId: string) {
     .populate("hobbies")
     .populate("links")
     .populate("promptStats")
-    .lean()) as IUser;
+    .lean<PopulatedUserData | null>();
 
   // Validate user existence
   if (!user) {
@@ -43,8 +50,7 @@ export default async function getUserData(userId: string) {
 
   // Process connection information for the last 15 days
   // Guard against missing connectionInfos
-  let tmp: IConnectionInfos[] = (user.connectionInfos ??
-    []) as IConnectionInfos[];
+  let tmp: IConnectionInfos[] = user.connectionInfos ?? [];
 
   // Calculate timestamp for 15 days ago
   const now = Date.now();
@@ -89,7 +95,7 @@ export default async function getUserData(userId: string) {
   user = {
     ...user,
     connectionInfos: tmp,
-  } as IUser;
+  };
 
   // Initialize parcours data and completion tracking
   let parcours: any = {};
@@ -97,21 +103,20 @@ export default async function getUserData(userId: string) {
 
   // Process parcours information if user belongs to a group
   if (user.group && user.group.length > 0) {
+    const groupId = user.group[0]!._id.toString();
     // Fetch the most recent parcours for the user's group from PostgreSQL
-    const response = await prisma.group.findFirst({
-      where: { idMdb: user.group[0]._id },
-      select: {
-        parcours: {
-          select: {
-            parcours: { select: { id: true, title: true, image: true } },
-          },
-          orderBy: {
-            parcoursId: "desc", // Get the most recent parcours
-          },
-          take: 1, // Limit to one result
-        },
-      },
-    });
+    const response = await prisma.orm.public.Group.where((row) =>
+      whereFromObject(row, { idMdb: groupId }),
+    )
+      .include("parcours", (related46) =>
+        related46
+          .include("parcours", (related47) =>
+            related47.select("id", "title", "image"),
+          )
+          .orderBy((row) => row.parcoursId.desc())
+          .limit(1),
+      )
+      .first();
 
     // Default total lessons count
     let totalLessonsCount = 0;
@@ -122,22 +127,15 @@ export default async function getUserData(userId: string) {
       parcours = response.parcours.map((item: any) => item.parcours)[0];
 
       // Fetch modules -> courses -> lessons structure for this parcours
-      const parcoursStructure = await prisma.parcours.findMany({
-        where: { id: parcours.id },
-        select: {
-          modules: {
-            select: {
-              courses: {
-                select: {
-                  lessons: {
-                    select: { id: true }, // Only need lesson IDs
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
+      const parcoursStructure = await prisma.orm.public.Parcours.where((row) =>
+        whereFromObject(row, { id: parcours.id }),
+      )
+        .include("modules", (related48) =>
+          related48.include("courses", (related49) =>
+            related49.include("lessons", (related50) => related50.select("id")),
+          ),
+        )
+        .all();
 
       // Flatten the nested arrays to compute the total number of lessons
       totalLessonsCount = parcoursStructure.reduce((accP, p) => {
