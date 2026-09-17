@@ -13,10 +13,15 @@ export default async function resendActivationEmail(email: string) {
     email: email.toLowerCase(),
   }).populate<{ roles: IRole[] }>("roles");
 
-  // Keep the public endpoint neutral for unknown, active or administratively
-  // disabled accounts. The login endpoint only offers this action to users who
-  // have not completed their activation.
-  if (!existingUser || existingUser.isActive || existingUser.emailVerified) {
+  // Seul un compte auquel une invitation a déjà été remise peut en demander
+  // une nouvelle. La réponse publique reste identique dans les autres cas.
+  if (
+    !existingUser ||
+    existingUser.isActive ||
+    existingUser.emailVerified ||
+    !existingUser.invitationSent ||
+    existingUser.roles.length !== 1
+  ) {
     return;
   }
 
@@ -40,6 +45,7 @@ export default async function resendActivationEmail(email: string) {
       _id: existingUser._id,
       isActive: false,
       emailVerified: false,
+      invitationSent: true,
       $or: [
         { invitationSentAt: { $exists: false } },
         {

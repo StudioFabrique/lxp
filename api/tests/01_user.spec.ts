@@ -41,7 +41,7 @@ describe("HTTP /user", () => {
     const role = await Role.findOne({ role: "admin" });
     const user = await User.findOne({ email: "admin@studio.eco" });
     token = jwt.sign(
-      { userId: user!._id, userRoles: [role] },
+      { userId: user!._id, userRoles: [role], purpose: "activation" },
       process.env.REGISTER_SECRET!,
       { expiresIn: "7d" },
     );
@@ -731,6 +731,34 @@ describe("HTTP /user", () => {
   });
 
   describe("Test /activate", () => {
+    test("a password reset token cannot activate an inactive account", async () => {
+      const inactiveUser = await User.findOne({
+        email: "formateur2@studio.eco",
+      }).populate("roles");
+      await User.updateOne(
+        { _id: inactiveUser!._id },
+        { $set: { isActive: false, emailVerified: false } },
+      );
+      const resetToken = jwt.sign(
+        {
+          userId: inactiveUser!._id,
+          userRoles: inactiveUser!.roles,
+          purpose: "password-reset",
+        },
+        process.env.REGISTER_SECRET!,
+        { expiresIn: "15m" },
+      );
+
+      const response = await request(app)
+        .post("/v1/user/activate")
+        .send({ token: resetToken, password: "Abcdef@123456" });
+      const unchangedUser = await User.findById(inactiveUser!._id);
+
+      expect(response.status).toBe(403);
+      expect(unchangedUser?.isActive).toBe(false);
+      expect(unchangedUser?.emailVerified).toBe(false);
+    });
+
     // No datas
     test("It should respond 400 bad request", async () => {
       const res = await request(app)
@@ -1000,7 +1028,7 @@ describe("HTTP /user", () => {
         roles: [role],
       });
       token = jwt.sign(
-        { userId: user._id, userRoles: [role] },
+        { userId: user._id, userRoles: [role], purpose: "activation" },
         process.env.REGISTER_SECRET!,
         { expiresIn: "7d" }
       );

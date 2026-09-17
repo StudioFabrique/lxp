@@ -5,7 +5,7 @@
 
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../../store/ThemeProvider";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { accountApi } from "../api/account.api";
@@ -25,8 +25,10 @@ export default function RegisterHome() {
   const token = searchParams.get("id") ?? "";
 
   const [error, setError] = useState("");
+  const [expiredEmail, setExpiredEmail] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   const {
     register,
@@ -41,6 +43,30 @@ export default function RegisterHome() {
     chooseTheme("classic", "light");
   }, [chooseTheme]);
 
+  useEffect(() => {
+    let active = true;
+    if (!token) {
+      setError("Ce lien n'est plus valide.");
+      setIsChecking(false);
+      return;
+    }
+
+    accountApi.checkInvitation(token).catch((err: unknown) => {
+      if (!active) return;
+      const response = (err as {
+        response?: { data?: { code?: string; message?: string; email?: string } };
+      }).response;
+      setError(response?.data?.message ?? "Ce lien n'est plus valide.");
+      if (response?.data?.code === "ACTIVATION_LINK_EXPIRED") {
+        setExpiredEmail(response.data.email ?? "");
+      }
+    }).finally(() => {
+      if (active) setIsChecking(false);
+    });
+
+    return () => { active = false; };
+  }, [token]);
+
   const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     setError("");
@@ -48,10 +74,15 @@ export default function RegisterHome() {
       const res = await accountApi.activateAccount(token, data.password);
       if (res.success) setSuccess(true);
     } catch (err: unknown) {
+      const response = (err as {
+        response?: { data?: { code?: string; message?: string; email?: string } };
+      }).response;
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Une erreur est survenue";
+        response?.data?.message ?? "Une erreur est survenue";
       setError(msg);
+      if (response?.data?.code === "ACTIVATION_LINK_EXPIRED") {
+        setExpiredEmail(response.data.email ?? "");
+      }
       toast.error(msg);
     } finally {
       setIsLoading(false);
@@ -60,8 +91,21 @@ export default function RegisterHome() {
 
   return (
     <AuthPageWrapper title="Activation du compte">
-      {error.length > 0 ? (
-        <PasswordUpdateError error={error} url="/" />
+      {isChecking ? (
+        <span className="loading loading-spinner" aria-label="Vérification du lien" />
+      ) : error.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <PasswordUpdateError error={error} url="/login" />
+          {expiredEmail !== null && (
+            <Link
+              className="btn btn-primary w-full"
+              to="/reset-password"
+              state={{ mode: "activation", email: expiredEmail }}
+            >
+              Renvoyer un lien d'activation
+            </Link>
+          )}
+        </div>
       ) : success ? (
         <PasswordUpdateSuccess
           message="Votre compte a été activé avec succès."

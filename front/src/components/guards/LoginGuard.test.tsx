@@ -1,4 +1,4 @@
-import { act } from "react";
+import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router";
@@ -22,21 +22,30 @@ let root: Root;
  * Rend le guard sur une adresse donnée, avec des routes témoins : on lit la
  * destination atteinte plutôt que d'inspecter le `Navigate` rendu.
  */
-const renderAt = async (path: string, demoMode: boolean) => {
+const AuthHarness = ({ children, initiallyLoggedIn }: {
+  children: React.ReactNode;
+  initiallyLoggedIn: boolean;
+}) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(initiallyLoggedIn);
+  return (
+    <AuthContext value={{
+      user: isLoggedIn ? { roles: [{ rank: 1 }] } : null,
+      isLoggedIn,
+      isAppInitialized: true,
+      logout: async () => setIsLoggedIn(false),
+    } as never}>
+      {children}
+    </AuthContext>
+  );
+};
+
+const renderAt = async (path: string, demoMode: boolean, loggedIn = false) => {
   await act(async () => {
     root.render(
       <DemoContext
         value={{ ...DEFAULT_DEMO_CONFIG, demoMode, isConfigLoaded: true }}
       >
-        <AuthContext
-          value={
-            {
-              user: null,
-              isLoggedIn: false,
-              isAppInitialized: true,
-            } as never
-          }
-        >
+        <AuthHarness initiallyLoggedIn={loggedIn}>
           <AbilityContext value={createAppAbility([])}>
             <MemoryRouter initialEntries={[path]}>
               <Routes>
@@ -48,10 +57,11 @@ const renderAt = async (path: string, demoMode: boolean) => {
                   <Route path="/confirm-email" element={<p>page-email</p>} />
                 </Route>
                 <Route path="/demo" element={<p>page-demo</p>} />
+                <Route path="/admin" element={<p>tableau-de-bord</p>} />
               </Routes>
             </MemoryRouter>
           </AbilityContext>
-        </AuthContext>
+        </AuthHarness>
       </DemoContext>,
     );
   });
@@ -105,4 +115,26 @@ describe("LoginGuard", () => {
       expect(await renderAt(path, false)).toBe(expected);
     },
   );
+
+  it("demande la déconnexion avant l'activation d'un autre compte", async () => {
+    expect(await renderAt("/register?id=lien", false, true)).toContain(
+      "Vous êtes déjà connectée",
+    );
+    expect(container.textContent).not.toContain("page-inscription");
+
+    const confirm = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent?.includes("Confirmer la déconnexion"),
+    );
+    await act(async () => confirm?.click());
+    expect(container.textContent).toContain("page-inscription");
+  });
+
+  it("revient au tableau de bord en annulant la déconnexion", async () => {
+    await renderAt("/register?id=lien", false, true);
+    const cancel = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent?.includes("Annuler"),
+    );
+    await act(async () => cancel?.click());
+    expect(container.textContent).toContain("tableau-de-bord");
+  });
 });

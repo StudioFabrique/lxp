@@ -22,16 +22,7 @@ async function userLogin(email: string, password: string) {
       select: "-permissions",
     });
 
-    // Toute cause d'échec renvoie la même erreur : distinguer « compte inconnu »
-    // de « compte non activé » permettait de tester une liste d'adresses pour
-    // savoir lesquelles sont inscrites. Le lien de renvoi d'activation est
-    // proposé côté client après n'importe quel échec, et l'endpoint qui le sert
-    // répond lui aussi de façon indifférenciée.
-    //
-    // La comparaison est faite même sans compte correspondant : sortir tout de
-    // suite rendrait la réponse mesurablement plus rapide pour une adresse
-    // inconnue que pour une adresse connue, ce qui rétablirait l'oracle que le
-    // message uniforme vient de fermer.
+    // Comparer aussi quand l'adresse est inconnue pour conserver le même coût.
     const isPasswordValid = await bcrypt.compare(
       password,
       user?.password || DUMMY_PASSWORD_HASH,
@@ -39,6 +30,14 @@ async function userLogin(email: string, password: string) {
 
     if (!user || !user.password || user.roles.length !== 1) {
       throw { message: credentialsError, status: 401 };
+    }
+
+    if (!user.isActive && !user.emailVerified && user.invitationSent) {
+      throw {
+        message: credentialsError,
+        status: 401,
+        code: "ACCOUNT_NOT_ACTIVATED",
+      };
     }
 
     // on vérifie les identifiants et on retourne les informations de l'utilisateur
