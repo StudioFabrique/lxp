@@ -6,6 +6,7 @@ import type Lesson from "../../../utils/interfaces/lesson";
 import type CourseDates from "../interfaces/course-dates";
 import type { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson";
 import type CustomCourse from "../components/list/interfaces/custom-course";
+import type Formation from "../../../utils/interfaces/formation";
 
 const queries = {
   modulesByParcoursId: async (parcoursId?: number) => {
@@ -18,9 +19,9 @@ const queries = {
     );
     return res.data;
   },
-  formationsList: async () => {
+  formationsList: async (): Promise<Formation[]> => {
     const res = await apiClient.get("/formation");
-    return res.data;
+    return res.data.response;
   },
   list: () =>
     queryOptions({

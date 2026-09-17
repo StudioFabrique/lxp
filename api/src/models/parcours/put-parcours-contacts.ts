@@ -1,22 +1,28 @@
-import { type Contact } from "@prisma/client";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import type { Contact } from "../../prisma/model-types.ts";
 
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { removeParcoursContactsFromModules } from "./remove-parcours-contacts-from-modules.ts";
 
 async function putParcoursContacts(
   parcoursId: number,
   newContacts: Array<any>,
-  userId: string
+  userId: string,
 ) {
   try {
-    const transaction = await prisma.$transaction(async (tx) => {
+    const transaction = await prisma.transaction(async (tx) => {
       const admin = await getAdmin(userId);
-      const currentParcoursContacts = await tx.contactsOnParcours.findMany({
-        where: { parcoursId },
-        select: { contactId: true },
-      });
+      const currentParcoursContacts =
+        await tx.orm.public.ContactsOnParcours.where((row) =>
+          whereFromObject(row, { parcoursId }),
+        )
+          .select("contactId")
+          .all();
 
       if (newContacts.length === 0) {
         await removeParcoursContactsFromModules(
@@ -24,19 +30,21 @@ async function putParcoursContacts(
           parcoursId,
           currentParcoursContacts.map(({ contactId }) => contactId),
         );
-        const updatedParcours = await tx.contactsOnParcours.deleteMany({
-          where: { parcoursId },
-        });
+        const updatedParcours = await tx.orm.public.ContactsOnParcours.where(
+          (row) => whereFromObject(row, { parcoursId }),
+        )
+          .deleteAndCount()
+          .then((count) => ({ count }));
         return updatedParcours;
       }
 
-      const contacts = await prisma.contact.findMany();
+      const contacts = await prisma.orm.public.Contact.all();
 
       const contactsToCreate = Array<Contact>();
 
       for (const newContact of newContacts) {
         const contact = contacts.find(
-          (item: Contact) => item.idMdb === newContact.idMdb
+          (item: Contact) => item.idMdb === newContact.idMdb,
         );
         if (!contact) {
           contactsToCreate.push(newContact);
@@ -44,28 +52,29 @@ async function putParcoursContacts(
       }
 
       if (contactsToCreate.length > 0) {
-        await prisma.contact.createMany({
-          data: contactsToCreate.map((contact) => ({
+        await prisma.orm.public.Contact.createAndCount(
+          contactsToCreate.map((contact) => ({
             idMdb: contact.idMdb,
             role: contact.role,
             email: contact.email,
             phone: contact.phone,
           })),
-        });
+        ).then((count) => ({ count }));
       }
 
-      const existingContacts = await prisma.contact.findMany({
-        where: {
+      const existingContacts = await prisma.orm.public.Contact.where((row) =>
+        whereFromObject(row, {
           idMdb: {
             in: newContacts.map((item: any) => item.idMdb),
           },
-        },
-      });
+        }),
+      ).all();
 
-      const existingParcours = await prisma.parcours.findUnique({
-        where: { id: parcoursId },
-        select: { admin: { select: { id: true } } },
-      });
+      const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+        whereFromObject(row, { id: parcoursId }),
+      )
+        .include("admin", (related13) => related13.select("id"))
+        .first();
 
       if (!existingParcours /* || admin.id !== existingParcours.admin.id */) {
         throw {
@@ -73,9 +82,7 @@ async function putParcoursContacts(
           status: 403,
         };
       }
-      const retainedContactIds = new Set(
-        existingContacts.map(({ id }) => id),
-      );
+      const retainedContactIds = new Set(existingContacts.map(({ id }) => id));
       await removeParcoursContactsFromModules(
         tx,
         parcoursId,
@@ -83,37 +90,32 @@ async function putParcoursContacts(
           .map(({ contactId }) => contactId)
           .filter((contactId) => !retainedContactIds.has(contactId)),
       );
-      await tx.contactsOnParcours.deleteMany({
-        where: { parcoursId },
-      });
+      await tx.orm.public.ContactsOnParcours.where((row) =>
+        whereFromObject(row, { parcoursId }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
 
-      const updatedParcours = await prisma.parcours.update({
-        where: { id: parcoursId },
-        data: {
-          contacts: {
-            create: existingContacts.map((existingContact: Contact) => {
-              return {
-                contact: {
-                  connect: { id: existingContact.id },
-                },
-              };
-            }),
-          },
-        },
-        select: {
-          contacts: {
-            select: {
-              contact: {
-                select: {
-                  id: true,
-                  idMdb: true,
-                  role: true,
-                },
-              },
-            },
-          },
-        },
-      });
+      const updatedParcours = await prisma.orm.public.Parcours.where((row) =>
+        whereFromObject(row, { id: parcoursId }),
+      )
+        .include("contacts", (related14) =>
+          related14.include("contact", (related15) =>
+            related15.select("id", "idMdb", "role"),
+          ),
+        )
+        .update({
+          contacts: (relation) =>
+            relation.create(
+              existingContacts.map((existingContact: Contact) => {
+                return {
+                  contact: (contactRelation: NestedConnect<"Contact">) =>
+                    contactRelation.connect({ id: existingContact.id }),
+                };
+              }),
+            ),
+        })
+        .then(requireDatabaseRow);
       return updatedParcours;
     });
     if (!("contacts" in transaction)) return transaction;

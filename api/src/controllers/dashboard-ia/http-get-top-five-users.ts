@@ -4,7 +4,7 @@ import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import { validationResult } from "express-validator";
 
 export default async function httpGetTopFiveUsers(
-  req: Request,
+  req: Request<{ stype: string; sdir: string }>,
   _res: Response,
   next: NextFunction,
 ) {

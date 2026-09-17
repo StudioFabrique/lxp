@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 
 import Modal from "../../../../components/UI/modal/modal";
 
@@ -26,6 +26,7 @@ type Props = {
   isImporting: boolean;
   onCancel: () => void;
   onImport: (payload: ParcoursImportPayload) => void;
+  embedded?: boolean;
 };
 
 const ParcoursImportModal = ({
@@ -37,6 +38,7 @@ const ParcoursImportModal = ({
   isImporting,
   onCancel,
   onImport,
+  embedded = false,
 }: Props) => {
   const [formationChoice, setFormationChoice] =
     useState<ImportFormationChoice>(initialFormationChoice);
@@ -54,17 +56,8 @@ const ParcoursImportModal = ({
     });
   };
 
-  return (
-    <Modal
-      title="Importer un parcours"
-      leftLabel="Annuler"
-      rightLabel="Importer le parcours"
-      onLeftClick={onCancel}
-      onRightClick={handleImport}
-      isSubmitting={isImporting}
-      rightDisabled={formationChoice === undefined}
-      modalBoxStyle="w-11/12 max-w-2xl"
-    >
+  const content = (
+    <>
       <div className="mt-6 flex flex-col gap-5">
         <p className="text-sm text-base-content/70">
           Archive sélectionnée : {archive.name}
@@ -142,6 +135,34 @@ const ParcoursImportModal = ({
           ) : null}
         </div>
       </div>
+      {embedded ? (
+        <div className="modal-action">
+          <button type="button" className="btn btn-outline btn-primary" onClick={onCancel} disabled={isImporting}>
+            Retour
+          </button>
+          <button type="button" className="btn btn-warning" onClick={handleImport} disabled={isImporting || formationChoice === undefined}>
+            {isImporting ? <Loader2 className="animate-spin" /> : null}
+            Importer le parcours
+          </button>
+        </div>
+      ) : null}
+    </>
+  );
+
+  if (embedded) return content;
+
+  return (
+    <Modal
+      title="Importer un parcours"
+      leftLabel="Annuler"
+      rightLabel="Importer le parcours"
+      onLeftClick={onCancel}
+      onRightClick={handleImport}
+      isSubmitting={isImporting}
+      rightDisabled={formationChoice === undefined}
+      modalBoxStyle="w-11/12 max-w-2xl"
+    >
+      {content}
     </Modal>
   );
 };

@@ -51,6 +51,7 @@ type AiPredictionResponse = {
     }[];
   };
   model?: {
+    artifact_sha256?: string;
     champion_name?: string;
     trained_at?: string | null;
     metric_value?: number | null;
@@ -86,6 +87,7 @@ export type IndicatorPrediction = {
   outcome: { prediction: string; probabilities: Record<string, number> };
   alert: { effectiveLevel: number; fired: FiredAlertRule[] };
   model: {
+    artifactSha256?: string | null;
     championName: string | null;
     trainedAt: string | null;
     metricValue: number | null;
@@ -109,6 +111,9 @@ export default async function predictOutcome(
   to?: Date,
 ): Promise<IndicatorPrediction> {
   const context = await resolveIndicatorContext(userIdMdb, from, to);
+  if (context.studentId === null) {
+    throw new IndicatorPredictionError(404, "Apprenant introuvable.");
+  }
 
   const [payload, assessments] = await Promise.all([
     getAllIndicators(userIdMdb, context.from, context.to),
@@ -141,6 +146,7 @@ export default async function predictOutcome(
       })),
     },
     model: {
+      artifactSha256: response.model?.artifact_sha256 ?? null,
       championName: response.model?.champion_name ?? null,
       trainedAt: response.model?.trained_at ?? null,
       metricValue: response.model?.metric_value ?? null,

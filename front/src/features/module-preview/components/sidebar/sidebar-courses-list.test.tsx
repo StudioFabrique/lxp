@@ -166,17 +166,25 @@ describe("SidebarCoursesList pendant l'édition d'une activité texte", () => {
 
 
 describe("sidebar en mode calendrier", () => {
-  it("sélectionne le cours du calendrier au clic tout en conservant son dépliage", () => {
+  it("cache les actions de création et d'import de cours", () => {
+    const container = document.createElement("div");
+    renderCourses(container, "", false, true);
+
+    expect(container.textContent).not.toContain("Créer un cours");
+  });
+
+  it("sélectionne le cours du calendrier au clic et le déplie à la demande", () => {
     const container = document.createElement("div");
     const select = vi.fn();
     renderCourses(container, "", false, true, [], vi.fn(), false, select);
     const button = getCourseButton(container);
-    act(() => button.click());
-    expect(select).toHaveBeenCalledWith(1);
     expect(button.dataset.open).toBe("false");
     act(() => button.click());
-    expect(select).toHaveBeenCalledTimes(2);
+    expect(select).toHaveBeenCalledWith(1);
     expect(button.dataset.open).toBe("true");
+    act(() => button.click());
+    expect(select).toHaveBeenCalledTimes(2);
+    expect(button.dataset.open).toBe("false");
     renderCourses(container, "", false, true, [], vi.fn(), true, select);
     act(() => button.click());
     expect(select).toHaveBeenCalledTimes(2);
@@ -191,7 +199,7 @@ describe("sidebar en mode calendrier", () => {
     expect(button.closest("[inert]")).toBeTruthy();
     expect(container.querySelector('[role="status"]')?.textContent).toContain("Cliquez sur un cours disponible ci-dessous");
     act(() => button.click());
-    expect(button.dataset.open).toBe("true");
+    expect(button.dataset.open).toBe("false");
     expect(button.closest(".ring-primary")).toBeTruthy();
     expect(container.querySelector('[aria-label="Ajouter Premier cours au calendrier"]')).toBeNull();
     expect(button.closest(".opacity-30")).toBeTruthy();
@@ -216,7 +224,7 @@ it("permet le dépliage en mode calendrier hors ajout, même pendant le tutoriel
   expect(button.closest("[inert]")).toBeNull();
   expect(container.querySelector('[role="status"]')).toBeNull();
   act(() => button.click());
-  expect(button.dataset.open).toBe("false");
-  act(() => button.click());
   expect(button.dataset.open).toBe("true");
+  act(() => button.click());
+  expect(button.dataset.open).toBe("false");
 });

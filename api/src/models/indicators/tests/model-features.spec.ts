@@ -20,6 +20,7 @@ function available<T>(
 }
 
 const assessments: AssessmentsSummary = {
+  scoreEvolution: -0.01,
   periodCount: 3,
   cumulativeCount: 8,
   passRate: 0.75,
@@ -39,7 +40,7 @@ describe("toModelIndicators", () => {
     expect(indicators.time_on_content).toBe(30);
   });
 
-  it("traduit l'évolution en points de pourcentage en pente journalière", () => {
+  it("utilise la pente historique, indépendamment de l'écart affiché", () => {
     const { indicators } = toModelIndicators(
       payload({
         correct_answer_rate_evolution: available(
@@ -51,7 +52,7 @@ describe("toModelIndicators", () => {
       assessments,
     );
 
-    // -30 points sur une fenêtre de 30 jours : -0,01 point d'échelle par jour.
+    // La pente provient du récapitulatif, pas de l'écart de -30 points affiché.
     expect(indicators.score_evolution).toBe(-0.01);
   });
 

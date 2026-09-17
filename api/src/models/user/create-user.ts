@@ -111,25 +111,27 @@ export default async function createUser(
     // Gérer les créations Prisma en fonction du rôle
 
     if (role.rank <= 2) {
-      await prisma.admin.create({ data: { idMdb: createdUser._id } });
+      await prisma.orm.public.Admin.create({
+        idMdb: createdUser._id.toString(),
+      });
     }
 
     if (role.rank === 2) {
-      await prisma.contact.create({
-        data: {
-          idMdb: createdUser._id,
-          role: role.label,
-          phone:
-            createdUser.phoneNumber && createdUser.phoneNumber?.length > 0
-              ? createdUser.phoneNumber
-              : "Non Renseigné",
-          email: createdUser.email,
-        },
+      await prisma.orm.public.Contact.create({
+        idMdb: createdUser._id.toString(),
+        role: role.label,
+        phone:
+          createdUser.phoneNumber && createdUser.phoneNumber?.length > 0
+            ? createdUser.phoneNumber
+            : "Non Renseigné",
+        email: createdUser.email,
       });
     }
 
     if (role.rank === 3)
-      await prisma.student.create({ data: { idMdb: createdUser._id } });
+      await prisma.orm.public.Student.create({
+        idMdb: createdUser._id.toString(),
+      });
 
     // L'invitation part sans que la réponse l'attende.
     //

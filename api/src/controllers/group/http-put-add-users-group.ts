@@ -3,8 +3,8 @@ import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import addUsers from "../../models/group/add-users.ts";
 
 export default async function httpPutAddUsersGroup(
-  req: Request,
-  res: Response
+  req: Request<{ id: string }>,
+  res: Response,
 ) {
   const { id } = req.params;
   const { usersId }: { usersId: string[] } = req.body;

@@ -2,7 +2,7 @@ import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-name
 import { prisma } from "../../utils/db.ts";
 
 async function getContacts() {
-  const contacts = await prisma.contact.findMany();
+  const contacts = await prisma.orm.public.Contact.all();
 
   return enrichContactsWithNames(contacts);
 }

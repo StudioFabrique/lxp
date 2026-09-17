@@ -1,4 +1,8 @@
-import { type Lesson, type Resource } from "@prisma/client";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import type { Lesson, Resource } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -40,13 +44,13 @@ export default async function updateReorderActrivities(
 
   // Fetch the parent entity based on type
   if (parent === "lesson")
-    existingParent = await prisma.lesson.findFirst({
-      where: { id: lessonId },
-    });
+    existingParent = await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    ).first();
   else if (parent === "resource")
-    existingParent = await prisma.resource.findFirst({
-      where: { id: lessonId },
-    });
+    existingParent = await prisma.orm.public.Resource.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    ).first();
 
   // Verify parent entity exists
   if (!existingParent) {
@@ -55,30 +59,28 @@ export default async function updateReorderActrivities(
   }
 
   // Execute all updates in a transaction to ensure atomicity
-  const transaction = await prisma.$transaction(async (tx) => {
+  const transaction = await prisma.transaction(async (tx) => {
     // Counter to track the new order value
     let i = 0;
 
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson - update Activity order
       for (const id of activitiesIds) {
-        await tx.activity.update({
-          where: { id },
-          data: {
-            order: i, // Set order based on position in array
-          },
-        });
+        await tx.orm.public.Activity.where((row) =>
+          whereFromObject(row, { id }),
+        )
+          .update({ order: i })
+          .then(requireDatabaseRow);
         i += 1;
       }
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource - update BonusActivity order
       for (const id of activitiesIds) {
-        await tx.bonusActivity.update({
-          where: { id },
-          data: {
-            order: i, // Set order based on position in array
-          },
-        });
+        await tx.orm.public.BonusActivity.where((row) =>
+          whereFromObject(row, { id }),
+        )
+          .update({ order: i })
+          .then(requireDatabaseRow);
         i += 1;
       }
     }

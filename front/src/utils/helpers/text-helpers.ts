@@ -1,11 +1,13 @@
+/** Names: preserve accents and capitalize compound names and apostrophes. */
 function toTitleCase(str: string) {
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map(function (word: string) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(" ");
+  return str.toLowerCase().replace(/(^|[\s’'‐‑-])(\p{L})/gu,
+    (_, separator: string, letter: string) => separator + letter.toUpperCase());
+}
+
+/** French headings use an initial capital. Preserve existing acronyms. */
+export function formatTitle(value: string | null | undefined): string {
+  return (value ?? "").replace(/^(\s*)(\p{L})/u,
+    (_, spaces: string, letter: string) => spaces + letter.toUpperCase());
 }
 
 const cleanActivityTextContent = (content: string): string => {

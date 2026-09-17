@@ -1,4 +1,5 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import { toTitleCase } from "../../../../utils/helpers/text-helpers";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type User from "../../../../utils/interfaces/user";
 import UserStatusToggle from "../../../user/components/UserStatusToggle";
@@ -8,19 +9,19 @@ const selectionColumn = personSelectionColumn<User>(
   "Sélectionner tous les étudiants affichés",
 );
 
-const identityColumns: ColumnDef<User>[] = [
+const identityColumns: ColumnDef<StockFeatures, User>[] = [
   {
     accessorKey: "firstname",
     header: "Prénom",
     cell: ({ getValue }) => (
-      <span className="capitalize">{getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(getValue() as string)}</span>
     ),
   },
   {
     accessorKey: "lastname",
     header: "Nom",
     cell: ({ getValue }) => (
-      <span className="capitalize">{getValue() as string}</span>
+      <span className="capitalize">{toTitleCase(getValue() as string)}</span>
     ),
   },
   {
@@ -29,7 +30,7 @@ const identityColumns: ColumnDef<User>[] = [
   },
 ];
 
-export const getAvailableStudentColumns = (): ColumnDef<User>[] => [
+export const getAvailableStudentColumns = (): ColumnDef<StockFeatures, User>[] => [
   selectionColumn,
   ...identityColumns,
   {
@@ -46,7 +47,7 @@ export const getGroupStudentColumns = ({
   onDeleteUser,
 }: {
   onDeleteUser: (user: User) => void;
-}): ColumnDef<User>[] => [
+}): ColumnDef<StockFeatures, User>[] => [
   selectionColumn,
   ...identityColumns,
   {

@@ -2,7 +2,7 @@
 -- un appelant peut avoir vidé son search_path. C'est le cas de tout fichier
 -- produit par `pg_dump`, qui ouvre par `set_config('search_path', '', false)` :
 -- sans cette clause, le moindre trigger déclenché pendant une restauration
--- échoue sur « relation "Course" does not exist ».
+-- échoue sur une relation introuvable.
 CREATE OR REPLACE FUNCTION andria_notify_change() RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = public, pg_temp

@@ -29,7 +29,7 @@ const AuthLayout = () => {
             )}
           </button>
 
-          <div className="flex flex-col w-70 h-full mx-auto">
+          <div className="flex flex-col w-100 h-full mx-auto">
             <div
               className="flex flex-col items-center gap-2 mb-8  select-none cursor-pointer"
               onClick={() => navigate("/")}

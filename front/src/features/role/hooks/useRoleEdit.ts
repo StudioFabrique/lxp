@@ -41,10 +41,6 @@ function useRoleEdit(id: string) {
               description:
                 data.ressources.ressources.find((r) => r.name === name)
                   ?.description || "",
-              isRole:
-                name === "everything"
-                  ? true
-                  : Boolean(data.ressources.roles.find((r) => r === name)),
             };
           }),
       }),
@@ -63,18 +59,6 @@ function useRoleEdit(id: string) {
         fullName: r.name,
         description: r.description,
       })),
-      ...data.ressources.roles.map((r) => ({
-        name: r,
-        fullName: r,
-        isRole: true,
-      })),
-      {
-        name: "everything",
-        fullName: "everything",
-        description:
-          "Permet d'acceder a tous les roles en même temps (utilisé dans la liste d'utilisateur)",
-        isRole: true,
-      },
     ];
   }, [data]);
 

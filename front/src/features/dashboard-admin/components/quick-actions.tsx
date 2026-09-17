@@ -6,11 +6,6 @@ import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
 
 const links = [
-  {
-    path: "/admin/parcours/new",
-    label: "Créer un parcours",
-    permission: { action: "write", object: "parcours" },
-  },
   { path: "/admin/user/add", label: "Créer un utilisateur" },
   { path: "/admin/feedbacks", label: "Voir les feedbacks" },
   {
@@ -22,8 +17,10 @@ const links = [
 
 export default function QuickActions({
   onCreateFormation,
+  onCreateParcours,
 }: {
   onCreateFormation: () => void;
+  onCreateParcours: () => void;
 }) {
   const { user } = useContext(AuthContext);
 
@@ -45,26 +42,15 @@ export default function QuickActions({
             </button>
           </li>
         </PermissionGuard>
+        <PermissionGuard action="write" object="parcours">
+          <li>
+            <button type="button" onClick={onCreateParcours}>
+              Créer un parcours
+            </button>
+          </li>
+        </PermissionGuard>
         {links.map((item) => {
           if (item.teacherOnly && !isTeacherUser(user)) return null;
-
-          const content = (
-            <li>
-              <Link to={item.path}>{item.label}</Link>
-            </li>
-          );
-
-          if (item.permission) {
-            return (
-              <PermissionGuard
-                key={item.label}
-                action={item.permission.action}
-                object={item.permission.object}
-              >
-                {content}
-              </PermissionGuard>
-            );
-          }
 
           return (
             <li key={item.label}>

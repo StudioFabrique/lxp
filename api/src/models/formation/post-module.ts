@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -18,20 +19,22 @@ async function postModule(
   }
 
   const [parcours, user, admin, creatorContact] = await Promise.all([
-    prisma.parcours.findUnique({
-      where: { id: +moduleToAdd.parcoursId },
-      include: {
-        formation: true,
-        contacts: { select: { contactId: true } },
-        bonusSkills: { select: { id: true } },
-      },
-    }),
+    prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: +moduleToAdd.parcoursId }),
+    )
+      .include("formation")
+      .include("contacts", (related70) => related70.select("contactId"))
+      .include("bonusSkills", (related71) => related71.select("id"))
+      .first(),
     User.findById(userId, { firstname: 1, lastname: 1 }),
-    prisma.admin.findFirst({ where: { idMdb: userId } }),
-    prisma.contact.findUnique({
-      where: { idMdb: userId },
-      select: { id: true },
-    }),
+    prisma.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    ).first(),
+    prisma.orm.public.Contact.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    )
+      .select("id")
+      .first(),
   ]);
 
   if (!parcours) throw { statusCode: 404, message: "Parcours introuvable." };
@@ -68,13 +71,14 @@ async function postModule(
     creatorContact?.id,
   );
 
-  const duplicate = await prisma.module.findFirst({
-    where: {
+  const duplicate = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, {
       parcours: { formationId: parcours.formationId },
       title: { equals: moduleToAdd.title.trim(), mode: "insensitive" },
-    },
-    select: { id: true },
-  });
+    }),
+  )
+    .select("id")
+    .first();
   if (duplicate) {
     throw {
       statusCode: 409,
@@ -100,8 +104,12 @@ async function postModule(
       ? Uint8Array.from(defaultImage)
       : null;
 
-  const created = await prisma.module.create({
-    data: {
+  const created = await prisma.orm.public.Module.include(
+    "contacts",
+    (related72) => related72.include("contact"),
+  )
+    .include("bonusSkills", (related73) => related73.include("bonusSkill"))
+    .create({
       title: moduleToAdd.title.trim(),
       description: moduleToAdd.description,
       quizInstructions: moduleToAdd.quizInstructions,
@@ -111,22 +119,15 @@ async function postModule(
       author: `${user.firstname} ${user.lastname}`,
       adminId: admin.id,
       parcoursId: parcours.id,
-      contacts: {
-        create: contactIds.map((contactId: number) => ({
-          contact: { connect: { id: contactId } },
-        })),
-      },
-      bonusSkills: {
-        create: skillIds.map((skillId: number) => ({
-          bonusSkill: { connect: { id: skillId } },
-        })),
-      },
-    },
-    include: {
-      contacts: { include: { contact: true } },
-      bonusSkills: { include: { bonusSkill: true } },
-    },
-  });
+      contacts: (relation) =>
+        relation.create(
+          contactIds.map((contactId: number) => ({ contactId })),
+        ),
+      bonusSkills: (relation) =>
+        relation.create(
+          skillIds.map((bonusSkillId: number) => ({ bonusSkillId })),
+        ),
+    });
   const contacts = await enrichContactsWithNames(
     created.contacts.map(({ contact }) => contact),
   );

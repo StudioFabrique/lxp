@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -9,28 +10,18 @@ import { prisma } from "../../utils/db.ts";
  */
 export default async function getParcoursSkillsContacts(parcoursId: number) {
   // Recherche du parcours avec ses relations contacts et compétences
-  const existingParcours = await prisma.parcours.findUnique({
-    where: { id: parcoursId },
-    select: {
-      contacts: {
-        select: {
-          contact: {
-            select: {
-              id: true,
-              idMdb: true,
-              role: true,
-            },
-          },
-        },
-      },
-      bonusSkills: {
-        select: {
-          id: true,
-          description: true,
-        },
-      },
-    },
-  });
+  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  )
+    .include("contacts", (related237) =>
+      related237.include("contact", (related238) =>
+        related238.select("id", "idMdb", "role"),
+      ),
+    )
+    .include("bonusSkills", (related239) =>
+      related239.select("id", "description"),
+    )
+    .first();
 
   // Vérifie si le parcours existe
   if (!existingParcours)

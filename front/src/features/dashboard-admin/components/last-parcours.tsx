@@ -9,6 +9,7 @@ import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import { AuthContext } from "../../../store/AuthProvider";
 import { isTeacherUser } from "../../../utils/helpers/user-role";
+import ParcoursCreationModal from "../../parcours/components/create/ParcoursCreationModal";
 
 type LastParcoursProps = {
   parcours: FormationParcoursSummary[];
@@ -30,6 +31,25 @@ export default function LastParcours({
   const [isFormationModalOpen, setIsFormationModalOpen] = useState(
     searchParams.get("createFormation") === "true",
   );
+  const [parcoursFormationId, setParcoursFormationId] = useState<number | null>(null);
+  const isParcoursModalOpen =
+    parcoursFormationId !== null || searchParams.get("createParcours") === "true";
+  const requestedFormationId = Number(searchParams.get("formationId"));
+  const initialFormationId = parcoursFormationId && parcoursFormationId > 0
+    ? parcoursFormationId
+    : Number.isInteger(requestedFormationId) && requestedFormationId > 0
+      ? requestedFormationId
+      : undefined;
+
+  const closeParcoursModal = () => {
+    setParcoursFormationId(null);
+    if (searchParams.has("createParcours")) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete("createParcours");
+      nextSearchParams.delete("formationId");
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+  };
 
   const openFormationModal = () => {
     setIsFormationModalOpen(true);
@@ -53,7 +73,10 @@ export default function LastParcours({
             Derniers parcours ajoutés
           </h3>
         )}
-        <QuickActions onCreateFormation={openFormationModal} />
+        <QuickActions
+          onCreateFormation={openFormationModal}
+          onCreateParcours={() => setParcoursFormationId(-1)}
+        />
       </div>
 
       <div className="w-full mt-4">
@@ -74,6 +97,7 @@ export default function LastParcours({
                 key={formation.id}
                 formation={formation}
                 fullWidth={usesFullWidthLayout}
+                onCreateParcours={setParcoursFormationId}
               />
             ))}
             <PermissionGuard action="write" object="parcours">
@@ -94,6 +118,12 @@ export default function LastParcours({
       )}
       {isFormationModalOpen ? (
         <FormationModal onClose={closeFormationModal} />
+      ) : null}
+      {isParcoursModalOpen ? (
+        <ParcoursCreationModal
+          initialFormationId={initialFormationId}
+          onClose={closeParcoursModal}
+        />
       ) : null}
     </div>
   );

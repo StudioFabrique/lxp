@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   moduleWhereForScope,
@@ -17,20 +18,23 @@ export default async function removeContactFromModule(
 ) {
   const accessWhere = moduleWhereForScope(scope);
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.transaction(async (tx) => {
     const [moduleCount, requesterContact] = await Promise.all([
-      tx.module.count({
-        where: {
+      tx.orm.public.Module.where((row) =>
+        whereFromObject(row, {
           id: moduleId,
           parcoursId,
           ...(accessWhere ? { AND: [accessWhere] } : {}),
-        },
-      }),
+        }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
       scope?.kind === "teacher" && requesterUserId
-        ? tx.contact.findUnique({
-            where: { idMdb: requesterUserId },
-            select: { id: true },
-          })
+        ? tx.orm.public.Contact.where((row) =>
+            whereFromObject(row, { idMdb: requesterUserId }),
+          )
+            .select("id")
+            .first()
         : null,
     ]);
 
@@ -49,9 +53,11 @@ export default async function removeContactFromModule(
       };
     }
 
-    const result = await tx.contactsOnModule.deleteMany({
-      where: { moduleId, contactId },
-    });
+    const result = await tx.orm.public.ContactsOnModule.where((row) =>
+      whereFromObject(row, { moduleId, contactId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
     if (result.count === 0) {
       throw {
         statusCode: 404,

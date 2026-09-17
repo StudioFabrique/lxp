@@ -1,4 +1,5 @@
-import mongoose, { type Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
 type Dialog = {
   origin: "user" | "bot";
@@ -14,7 +15,7 @@ export type CourseSource = {
   heading_path: string;
 };
 
-export interface IChatDialogs extends Document {
+export interface IChatDialogs extends MongoRecord {
   userId: mongoose.Types.ObjectId;
   question: Dialog;
   answer: Dialog;

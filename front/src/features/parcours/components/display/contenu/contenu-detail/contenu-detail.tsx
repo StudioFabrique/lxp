@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../../utils/helpers/text-helpers";
 import BookIcon from "../../../../../../../src/components/UI/svg/book-icon";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../../../../src/utils/interfaces/course";
@@ -83,7 +84,7 @@ const ContenuDetail: FC<{
           <div className="flex flex-col truncate w-full px-4">
             <span className="truncate text-sm opacity-70">{`Cours ${i + 1}`}</span>
             <span className="text-base-content font-bold truncate">
-              {course.title}
+              {formatTitle(course.title)}
             </span>
           </div>
 

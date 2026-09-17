@@ -1,4 +1,4 @@
-import type { FilterQuery } from "mongoose";
+import { Types, type QueryFilter } from "mongoose";
 import { prisma } from "../../db.ts";
 import Group, { type IGroup } from "../../interfaces/db/group.ts";
 import type CustomRequest from "../../interfaces/express/custom-request.ts";
@@ -19,8 +19,10 @@ function attachedGroupIds(groupsWithParcours: GroupParcoursLinks[]) {
 
 export function buildAttachedGroupVisibilityFilter(
   groupsWithParcours: GroupParcoursLinks[],
-): FilterQuery<IGroup> {
-  return { _id: { $in: attachedGroupIds(groupsWithParcours) } };
+): QueryFilter<IGroup> {
+  return {
+    _id: { $in: attachedGroupIds(groupsWithParcours) },
+  } as unknown as QueryFilter<IGroup>;
 }
 
 /**
@@ -35,7 +37,7 @@ export function buildTeacherGroupVisibilityFilter(
   userId: string,
   accessibleParcoursIds: number[],
   groupsWithParcours: GroupParcoursLinks[],
-): FilterQuery<IGroup> {
+): QueryFilter<IGroup> {
   const accessibleParcours = new Set(accessibleParcoursIds);
   const attachedIds = attachedGroupIds(groupsWithParcours);
   const accessibleAttachedGroupIds = groupsWithParcours
@@ -52,7 +54,7 @@ export function buildTeacherGroupVisibilityFilter(
         createdBy: userId,
       },
     ],
-  };
+  } as unknown as QueryFilter<IGroup>;
 }
 
 /**
@@ -62,16 +64,13 @@ export function buildTeacherGroupVisibilityFilter(
  */
 export async function getGroupVisibilityFilter(
   auth: GroupAccessAuth,
-): Promise<FilterQuery<IGroup>> {
+): Promise<QueryFilter<IGroup>> {
   const userRank = auth.userRoles[0]?.rank ?? 4;
   if (userRank <= 1) return {};
 
-  const groupsWithParcoursPromise = prisma.group.findMany({
-    select: {
-      idMdb: true,
-      parcours: { select: { parcoursId: true } },
-    },
-  });
+  const groupsWithParcoursPromise = prisma.orm.public.Group.select("idMdb")
+    .include("parcours", (related58) => related58.select("parcoursId"))
+    .all();
 
   if (userRank !== 2) {
     return buildAttachedGroupVisibilityFilter(await groupsWithParcoursPromise);
@@ -101,7 +100,7 @@ export async function canAccessGroups(
 
   const visibilityFilter = await getGroupVisibilityFilter(auth);
   const visibleGroupsCount = await Group.countDocuments({
-    _id: { $in: uniqueGroupIds },
+    _id: { $in: uniqueGroupIds.map((id) => new Types.ObjectId(id)) },
     ...visibilityFilter,
   });
 

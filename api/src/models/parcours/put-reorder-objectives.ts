@@ -1,59 +1,52 @@
-import { type Objective } from "@prisma/client";
 import { prisma } from "../../utils/db.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
 
-async function putReorderObjectives(
+export default async function putReorderObjectives(
   parcoursId: string,
-  objectivesId: Array<number>
+  objectiveIds: number[],
 ) {
-  const id = parseInt(parcoursId);
-
-  return prisma.$transaction(async (prismaClient) => {
-    const existingParcours = await prismaClient.parcours.findUnique({
-      where: { id },
-    });
-
-    if (!existingParcours) {
-      const parcoursError: any = {
-        message: "Le parcours n'existe pas",
-        status: 404,
-      };
-      throw parcoursError;
+  const id = Number(parcoursId);
+  return prisma.transaction(async (tx) => {
+    const parcours = await tx.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id }),
+    )
+      .select("id")
+      .first();
+    if (!parcours) {
+      throw { message: "Le parcours n'existe pas", status: 404 };
     }
 
-    const objectives = await prismaClient.objective.findMany({
-      where: {
-        id: {
-          in: objectivesId,
-        },
-      },
-    });
-
-
-    let tmp = Array<Objective>();
-    for (const index of objectivesId) {
-      let obj = objectives.find((item) => item.id === index);
-      if (obj) {
-        tmp.push(obj);
-      }
+    const objectives = await tx.orm.public.Objective.where((row) =>
+      whereFromObject(row, { parcoursId: id, id: { in: objectiveIds } }),
+    )
+      .select("id", "description")
+      .all();
+    const descriptions = new Map(
+      objectives.map(({ id: objectiveId, description }) => [
+        objectiveId,
+        description,
+      ]),
+    );
+    if (descriptions.size !== objectiveIds.length) {
+      throw { message: "Objectif introuvable dans ce parcours", status: 404 };
     }
 
-    const transaction = await prisma.$transaction(async (tx) => {
-      await prismaClient.objective.deleteMany({ where: { parcoursId: id } });
-      const updatedParcours = await tx.parcours.update({
-        where: { id },
-        data: {
-          objectives: {
-            create: tmp.map((objective: any) => {
-              return {
-                description: objective.description,
-              };
-            }),
-          },
-        },
-        select: { objectives: { select: { id: true, description: true } } },
+    await tx.orm.public.Objective.where((row) =>
+      whereFromObject(row, { parcoursId: id }),
+    ).deleteAndCount();
+    for (const objectiveId of objectiveIds) {
+      await tx.orm.public.Objective.create({
+        parcoursId: id,
+        description: descriptions.get(objectiveId)!,
       });
-    });
+    }
+
+    return tx.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id }),
+    )
+      .include("objectives", (related) =>
+        related.select("id", "description").orderBy((row) => row.id.asc()),
+      )
+      .first();
   });
 }
-
-export default putReorderObjectives;

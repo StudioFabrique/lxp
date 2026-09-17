@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../utils/db.ts";
@@ -204,7 +208,7 @@ async function createRootUser(
         emailVerified: false,
       },
       { $set: replacement },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!updatedUser) {
@@ -220,14 +224,14 @@ async function createRootUser(
     let tokenConsumed = false;
 
     try {
-      const existingAdmin = await prisma.admin.findFirst({
-        where: { idMdb: userId },
-        select: { id: true },
-      });
+      const existingAdmin = await prisma.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: userId }),
+      )
+        .select("id")
+        .first();
       if (!existingAdmin) {
-        const createdAdmin = await prisma.admin.create({
-          data: { idMdb: userId },
-          select: { id: true },
+        const createdAdmin = await prisma.orm.public.Admin.select("id").create({
+          idMdb: userId,
         });
         createdAdminId = createdAdmin.id;
       }
@@ -240,8 +244,7 @@ async function createRootUser(
           { purpose: "root-email-verification", userId, email },
           env.REGISTER_SECRET,
           {
-            expiresIn:
-              env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
+            expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
           },
         );
         await sendRootEmailVerification(email, verificationToken);
@@ -250,7 +253,13 @@ async function createRootUser(
       await Promise.allSettled([
         ...(createdAdminId === undefined
           ? []
-          : [prisma.admin.delete({ where: { id: createdAdminId } })]),
+          : [
+              prisma.orm.public.Admin.where((row) =>
+                whereFromObject(row, { id: createdAdminId }),
+              )
+                .delete()
+                .then(requireDatabaseRow),
+            ]),
         ...(tokenConsumed
           ? [BlackListedToken.deleteOne({ token: input.token })]
           : []),
@@ -300,7 +309,7 @@ async function createRootUser(
   const userId = createdUser._id.toString();
   let tokenConsumed = false;
   try {
-    await prisma.admin.create({ data: { idMdb: userId } });
+    await prisma.orm.public.Admin.create({ idMdb: userId });
     await BlackListedToken.create({ token: input.token });
     tokenConsumed = true;
 
@@ -319,8 +328,14 @@ async function createRootUser(
     await transferRoot(userId);
   } catch (error) {
     await Promise.allSettled([
-      prisma.admin.deleteMany({ where: { idMdb: userId } }),
-      ...(tokenConsumed ? [BlackListedToken.deleteOne({ token: input.token })] : []),
+      prisma.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: userId }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count })),
+      ...(tokenConsumed
+        ? [BlackListedToken.deleteOne({ token: input.token })]
+        : []),
       User.deleteOne({ _id: createdUser._id }),
     ]);
     throw error;

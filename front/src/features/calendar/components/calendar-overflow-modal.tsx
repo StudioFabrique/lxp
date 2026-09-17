@@ -24,7 +24,7 @@ export default function CalendarOverflowModal({ events, onClose, onClickDetails 
       <ul className="list mt-5 overflow-hidden rounded-box border border-base-300 bg-base-200">
         {events.map(event => <HierarchicalListRow key={event.id} dismissOverflow={onClose} item={{
           id: event.id, title: event.title, description: event.subtitle,
-          subDescription: `${event.date?.toLocaleDateString("fr-FR") ?? ""} · ${event.category === "assignment" ? `À rendre avant ${event.start}` : event.allDay ? "Sans horaire" : `${event.start} – ${event.end}`}`,
+          subDescription: `${event.date?.toLocaleDateString("fr-FR") ?? ""} · ${event.category === "assignment" ? `À rendre avant ${event.deadlineTime ?? event.start}` : event.allDay ? "Sans horaire" : `${event.start} – ${event.end}`}`,
           action: event.to ? <Link to={event.to} state={event.navigationState} className="btn btn-sm btn-square btn-ghost" aria-label={`${event.category === "assignment" ? "Accéder au devoir" : "Accéder au cours"} ${event.title}`}><ArrowRight className="size-4" /></Link>
             : <button type="button" className="btn btn-sm" onClick={e => { onClickDetails?.(event.id, e.currentTarget.getBoundingClientRect()); onClose(); }}>Détails</button>,
         }} />)}

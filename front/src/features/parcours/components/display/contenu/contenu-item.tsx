@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import Module from "../../../../../../src/utils/interfaces/module";
 import { getMonth } from "../../../helpers/date-helpers";
@@ -80,7 +81,7 @@ const ContenuItem = ({
             className={`text-sm opacity-80 ${isSelected ? "text-primary-content" : ""}`}
           >{`Module ${iterationCount}`}</p>
           <p className="wrap-break-word text-base font-semibold">
-            {module.title}
+            {formatTitle(module.title)}
           </p>
         </div>
         <Link
@@ -91,7 +92,7 @@ const ContenuItem = ({
               : "hover:text-primary",
           )}
           to={`../module/${module.id}`}
-          aria-label={`Voir le module ${module.title}`}
+          aria-label={`Voir le module ${formatTitle(module.title)}`}
         >
           <ArrowRightCircle />
         </Link>

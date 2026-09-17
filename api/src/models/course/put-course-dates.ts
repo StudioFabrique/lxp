@@ -1,4 +1,7 @@
-import { Prisma } from "@prisma/client";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseDates(
@@ -9,12 +12,13 @@ async function putCourseDates(
   asynchroneDuration: number,
   id: number,
   startTime?: string,
-  endTime?: string
+  endTime?: string,
 ) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-    select: { dates: true },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .select("dates")
+    .first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -25,19 +29,25 @@ async function putCourseDates(
   let existingDates = existingCourse.dates;
   existingDates = [
     ...existingDates,
-    { minDate, maxDate, synchroneDuration, asynchroneDuration, id, ...(startTime && endTime ? { startTime, endTime } : {}) },
+    {
+      minDate,
+      maxDate,
+      synchroneDuration,
+      asynchroneDuration,
+      id,
+      ...(startTime && endTime ? { startTime, endTime } : {}),
+    },
   ];
 
-  const updatedCourse = await prisma.course.update({
-    where: { id: courseId },
-    data: {
+  const updatedCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .select("dates")
+    .update({
       calendarInitialized: true,
       dates: existingDates,
-    } as Prisma.CourseUpdateInput,
-    select: {
-      dates: true,
-    },
-  });
+    })
+    .then(requireDatabaseRow);
 
   return updatedCourse;
 }

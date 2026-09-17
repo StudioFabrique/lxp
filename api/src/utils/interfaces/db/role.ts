@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import { type IPermission } from "./permission.ts";
 
-export interface IRole extends Document {
+export interface IRole extends MongoRecord {
   role: string;
   label: string;
   rank: number;

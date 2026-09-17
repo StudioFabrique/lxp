@@ -70,7 +70,7 @@ export default function HeaderChatbot({
 
         <button
           type="button"
-          className="btn btn-ghost btn-sm text-primary-content btn-circle"
+          className="btn btn-ghost btn-sm text-primary-content hover:text-accent btn-circle"
           onClick={onClose}
           aria-label="Fermer le chatbot"
         >

@@ -3,7 +3,7 @@ import { regexGeneric, serverIssue } from "../../utils/constantes.ts";
 import getResourcesList from "../../models/resources/get-resources-list.ts";
 
 export default async function httpGetResourcesList(
-  req: Request,
+  req: Request<{ stype: string; sdir: string }>,
   _res: Response,
   next: NextFunction,
 ) {

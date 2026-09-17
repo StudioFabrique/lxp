@@ -1,12 +1,16 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function putFormation(
   formationId: number,
-  formation: any
+  formation: any,
 ) {
-  const exisitingFormation = await prisma.formation.findFirst({
-    where: { id: formationId },
-  });
+  const exisitingFormation = await prisma.orm.public.Formation.where((row) =>
+    whereFromObject(row, { id: formationId }),
+  ).first();
 
   if (!exisitingFormation) {
     const error: any = {
@@ -16,9 +20,9 @@ export default async function putFormation(
     throw error;
   }
 
-  const existingTitle = await prisma.formation.findFirst({
-    where: { title: formation.title },
-  });
+  const existingTitle = await prisma.orm.public.Formation.where((row) =>
+    whereFromObject(row, { title: formation.title }),
+  ).first();
 
   if (existingTitle && existingTitle.id !== formationId) {
     const error: any = {
@@ -30,37 +34,36 @@ export default async function putFormation(
 
   let updatedFormation: any = {};
 
-  await prisma.$transaction(async (tx) => {
-    await tx.tagsOnFormation.deleteMany({
-      where: { formationId },
-    });
-    updatedFormation = await tx.formation.update({
-      where: { id: formationId },
-      data: {
+  await prisma.transaction(async (tx) => {
+    await tx.orm.public.TagsOnFormation.where((row) =>
+      whereFromObject(row, { formationId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    if (formation.tags.length > 0) {
+      await tx.orm.public.TagsOnFormation.createAndCount(
+        [...new Set(formation.tags as number[])].map((tagId) => ({
+          formationId,
+          tagId,
+        })),
+      );
+    }
+    updatedFormation = await tx.orm.public.Formation.where((row) =>
+      whereFromObject(row, { id: formationId }),
+    )
+      .select("id", "title", "description", "code", "level", "createdAt")
+      .include("parcours", (related74) => related74.select("id"))
+      .include("tags", (related75) =>
+        related75.include("tag", (related76) => related76.select("id")),
+      )
+      .update({
         title: formation.title,
         description: formation.description,
         code: formation.code,
         level: formation.level,
-        updatedAt: new Date(),
-        tags: {
-          create: formation.tags.map((item: number) => {
-            return {
-              tag: { connect: { id: item } },
-            };
-          }),
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        code: true,
-        level: true,
-        parcours: { select: { id: true } },
-        tags: { select: { tag: { select: { id: true } } } },
-        createdAt: true,
-      },
-    });
+        updatedAt: new Date().toISOString(),
+      })
+      .then(requireDatabaseRow);
   });
 
   return {

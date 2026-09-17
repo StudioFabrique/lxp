@@ -64,6 +64,7 @@ import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby.t
 import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network.ts";
 import httpDeleteSocialNetwork from "../../../controllers/user/social-network/http-delete-social-network.ts";
 import { checkGroupAccess } from "../../../middleware/check-group-access.ts";
+import { mountRouter } from "../../../utils/express/route-registry.ts";
 
 const userRouter = express.Router();
 
@@ -261,7 +262,12 @@ userRouter.get(
   httpSearchUser,
 );
 
-userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
+mountRouter(
+  userRouter,
+  "/new-teacher",
+  checkPermissions("user"),
+  postTeacherRouter,
+);
 
 userRouter.get("/contacts", checkPermissions("user"), httpGetContacts);
 
@@ -278,7 +284,12 @@ userRouter.post(
   httpGetUsersByGroup,
 );
 
-userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
+mountRouter(
+  userRouter,
+  "/profile",
+  checkPermissions("cursus"),
+  userProfileRouter,
+);
 
 // Centres d'intérêts d'un étudiant (création, suppression)
 userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);

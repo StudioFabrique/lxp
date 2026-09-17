@@ -1,17 +1,33 @@
 import mongoose from "mongoose";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
-import Link from "../../utils/interfaces/db/link.ts";
-import Hobby from "../../utils/interfaces/db/hobby.ts";
+import Link, { type ILink } from "../../utils/interfaces/db/link.ts";
+import Hobby, { type IHobby } from "../../utils/interfaces/db/hobby.ts";
 
-export default async function updateUser(_id: string, user: IUser) {
+export type UserProfileInput = Omit<
+  Partial<IUser>,
+  "_id" | "links" | "hobbies" | "email"
+> & {
+  _id?: mongoose.Types.ObjectId | string;
+  email: string;
+  links?: Array<string | mongoose.Types.ObjectId | Partial<ILink>>;
+  hobbies?: Array<string | mongoose.Types.ObjectId | Partial<IHobby>>;
+};
+
+export default async function updateUser(_id: string, user: UserProfileInput) {
   const existingUser = await User.findOne({ _id }).populate("roles");
 
   if (!existingUser)
     throw { message: "L'utilisateur n'existe pas.", statusCode: 404 };
 
-  delete user._id;
-  const { email, password, graduations, roles, group, ...userDataSecure } =
-    user;
+  const {
+    _id: _ignoredId,
+    email,
+    password,
+    graduations,
+    roles,
+    group,
+    ...userDataSecure
+  } = user;
 
   // Handle Links
   let linkIds: mongoose.Types.ObjectId[] = [];
@@ -82,7 +98,7 @@ export default async function updateUser(_id: string, user: IUser) {
   };
 
   const userUpdated = await User.findOneAndUpdate({ _id }, userUpdatePayload, {
-    new: true,
+    returnDocument: "after",
   })
     .populate("links")
     .populate("hobbies")

@@ -1,7 +1,10 @@
 import { type Request, type Response } from "express";
 import getParcoursStats from "../../models/stats/get-parcours-stats.ts";
 
-export default async function httpParcoursStats(req: Request, res: Response) {
+export default async function httpParcoursStats(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
   const parcoursId = parseInt(req.params.id);
 
   if (isNaN(parcoursId)) {

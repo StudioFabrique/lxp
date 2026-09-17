@@ -97,6 +97,7 @@ const SidebarCoursesList = ({
       ? selectedCourseId
       : undefined;
   const [openCourseId, setOpenCourseId] = useState<number | undefined>(() => {
+    if (calendarMode) return undefined;
     const courseContainingSelectedLesson = courses.find((course) =>
       course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
     );
@@ -113,6 +114,9 @@ const SidebarCoursesList = ({
   const actionsSentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (calendarMode) {
+      return;
+    }
     const selectedCourse = courses.find((course) =>
       course.lessons.some((lesson) => lesson.id === selectedLesson?.id),
     ) ?? courses.find((course) => course.id === selectedAssignmentCourseId);
@@ -131,6 +135,7 @@ const SidebarCoursesList = ({
     setOpenCourseId(nextOpenCourseId);
   }, [
     courseIdLockedOpen,
+    calendarMode,
     courses,
     editLessonId,
     openedCourseId,
@@ -215,7 +220,7 @@ const SidebarCoursesList = ({
               onUpdateCourse={onUpdateCourse}
               openEditOnMount={!calendarMode && course.id === editCourseId}
               editLessonId={calendarMode ? undefined : editLessonId}
-              isOpen={course.id === openCourseId}
+              isOpen={!calendarAdding && course.id === openCourseId}
               lessonIdToScroll={lessonIdToScroll}
               onLessonScrolled={onLessonScrolled}
               onToggle={() => {
@@ -254,24 +259,25 @@ const SidebarCoursesList = ({
           </RoleRankGuard>
         )}
       </div>
-      <PermissionGuard action="update" object="course">
-        <div
-          inert={calendarMode}
-          className={cn(
-            "z-30 w-full rounded-xl transition-all duration-300",
-            {
-              "sticky bottom-1": !disableCourseCreationFloating,
-              "bg-transparent shadow-none":
-                disableCourseCreationFloating || isAtNaturalPosition,
-              "border border-base-300 px-2 py-2 backdrop-blur":
-                !disableCourseCreationFloating && !isAtNaturalPosition,
-              "mt-5": courses.length > 0,
-            },
-          )}
-        >
-          {children[0]}
-        </div>
-      </PermissionGuard>
+      {!calendarMode && (
+        <PermissionGuard action="update" object="course">
+          <div
+            className={cn(
+              "z-30 w-full rounded-xl transition-all duration-300",
+              {
+                "sticky bottom-1": !disableCourseCreationFloating,
+                "bg-transparent shadow-none":
+                  disableCourseCreationFloating || isAtNaturalPosition,
+                "border border-base-300 px-2 py-2 backdrop-blur":
+                  !disableCourseCreationFloating && !isAtNaturalPosition,
+                "mt-5": courses.length > 0,
+              },
+            )}
+          >
+            {children[0]}
+          </div>
+        </PermissionGuard>
+      )}
       <div ref={actionsSentinelRef} className="h-px w-full" />
     </div>
   );

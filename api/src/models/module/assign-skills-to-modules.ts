@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   moduleWhereForScope,
@@ -22,18 +23,22 @@ export default async function assignSkillsToModules(
   const uniqueSkillIds = [...new Set(skillIds)];
   const accessWhere = moduleWhereForScope(scope);
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.transaction(async (tx) => {
     const [moduleCount, skillCount] = await Promise.all([
-      tx.module.count({
-        where: {
+      tx.orm.public.Module.where((row) =>
+        whereFromObject(row, {
           id: { in: uniqueModuleIds },
           parcoursId,
           ...(accessWhere ? { AND: [accessWhere] } : {}),
-        },
-      }),
-      tx.bonusSkill.count({
-        where: { parcoursId, id: { in: uniqueSkillIds } },
-      }),
+        }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+      tx.orm.public.BonusSkill.where((row) =>
+        whereFromObject(row, { parcoursId, id: { in: uniqueSkillIds } }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ]);
 
     if (moduleCount !== uniqueModuleIds.length) {
@@ -50,11 +55,10 @@ export default async function assignSkillsToModules(
       };
     }
 
-    return tx.bonusSkillsOnModule.createMany({
-      data: uniqueModuleIds.flatMap((moduleId) =>
+    return tx.orm.public.BonusSkillsOnModule.createAndCount(
+      uniqueModuleIds.flatMap((moduleId) =>
         uniqueSkillIds.map((bonusSkillId) => ({ moduleId, bonusSkillId })),
       ),
-      skipDuplicates: true,
-    });
+    ).then((count) => ({ count }));
   });
 }

@@ -1,5 +1,5 @@
 import { prisma } from "../../utils/db.ts";
-import Role from "../../utils/interfaces/db/role.ts";
+import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
@@ -45,7 +45,7 @@ async function postTeacher(teacher: IUser) {
     email,
     password,
     isActive: false,
-    roles: [new Object(fetchedRole._id)],
+    roles: [fetchedRole._id],
   });
 
   // si l'enregistement de l'utisilateur dans la base de données Mongodb a réussi
@@ -53,24 +53,20 @@ async function postTeacher(teacher: IUser) {
   if (newTeacher) {
     const updatedTeacher = await User.findOne(
       { _id: newTeacher._id },
-      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 },
-    ).populate("roles", { label: 1 });
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1, roles: 1 },
+    ).populate<{ roles: IRole[] }>("roles", { label: 1 });
 
     if (updatedTeacher) {
-      const contact = await prisma.$transaction(async (tx) => {
-        const createdContact = await tx.contact.create({
-          data: {
-            idMdb: updatedTeacher._id,
-            role: updatedTeacher.roles[0].label,
-            phone: updatedTeacher.phoneNumber,
-            email: updatedTeacher.email,
-          },
+      const contact = await prisma.transaction(async (tx) => {
+        const createdContact = await tx.orm.public.Contact.create({
+          idMdb: updatedTeacher._id.toString(),
+          role: updatedTeacher.roles[0].label,
+          phone: updatedTeacher.phoneNumber,
+          email: updatedTeacher.email,
         });
 
-        await tx.admin.create({
-          data: {
-            idMdb: updatedTeacher._id,
-          },
+        await tx.orm.public.Admin.create({
+          idMdb: updatedTeacher._id.toString(),
         });
 
         return createdContact;

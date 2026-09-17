@@ -1,8 +1,11 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { prisma } from "../../utils/db.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { getGroupVisibilityFilter } from "../../utils/services/permissions/accessible-groups.ts";
+import type { QueryFilter } from "mongoose";
+import type { IGroup } from "../../utils/interfaces/db/group.ts";
 
 type GroupsList = {
   _id: string;
@@ -18,47 +21,46 @@ export default async function getStudentGroups(
   const studentRole = await Role.find({ role: "student" }, { _id: 1 });
   const visibilityFilter = await getGroupVisibilityFilter(auth);
 
-  const groups = await Group.find(
-    { roles: { $in: studentRole }, ...visibilityFilter },
-    { _id: 1, name: 1, desc: 1, users: 1 }
-  );
-
-  const prismaGroups = await prisma.group.findMany({
-    where: { idMdb: { in: groups.map(({ id }) => String(id)) } },
-    select: {
-      idMdb: true,
-      parcours: {
-        select: {
-          parcours: {
-            select: {
-              title: true,
-            },
-          },
-        },
-      },
-    },
+  const groupFilter: QueryFilter<IGroup> = {
+    roles: { $in: studentRole.map((role) => role._id) },
+    ...visibilityFilter,
+  };
+  const groups = await Group.find(groupFilter, {
+    _id: 1,
+    name: 1,
+    desc: 1,
+    users: 1,
   });
 
-
+  const prismaGroups = await prisma.orm.public.Group.where((row) =>
+    whereFromObject(row, {
+      idMdb: { in: groups.map(({ _id }) => _id.toString()) },
+    }),
+  )
+    .select("idMdb")
+    .include("parcours", (related83) =>
+      related83.include("parcours", (related84) => related84.select("title")),
+    )
+    .all();
 
   let returnedGroups: GroupsList[] = [];
 
   for (const prismaGroup of prismaGroups) {
     const group = groups.find(
-      (item) => item._id.toString() === prismaGroup.idMdb
+      (item) => item._id.toString() === prismaGroup.idMdb,
     );
 
     if (group) {
       returnedGroups = [
         ...returnedGroups,
         {
-          _id: group._id,
+          _id: group._id.toString(),
           desc: group.desc ?? "",
           name: group.name,
-          nbStudents: group.users.length,
+          nbStudents: group.users?.length ?? 0,
           formation:
             prismaGroup.parcours.length > 0
-              ? prismaGroup.parcours[0].parcours.title
+              ? prismaGroup.parcours[0]!.parcours!.title
               : "",
         },
       ];

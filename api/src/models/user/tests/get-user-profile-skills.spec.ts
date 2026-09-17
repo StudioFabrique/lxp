@@ -1,10 +1,10 @@
 import { jest } from "@jest/globals";
 
-const findMany = jest.fn<() => Promise<unknown[]>>();
 const getAccessibleParcoursIds = jest.fn<() => Promise<number[]>>();
+const loadSkillAchievements = jest.fn<() => Promise<Map<number, unknown>>>();
 
-jest.unstable_mockModule("../../../utils/db.ts", () => ({
-  prisma: { bonusSkill: { findMany } },
+jest.unstable_mockModule("../../../helpers/skill-achievement-query.ts", () => ({
+  loadSkillAchievements,
 }));
 
 jest.unstable_mockModule(
@@ -25,33 +25,26 @@ describe("badges de compétences du profil apprenant", () => {
     getAccessibleParcoursIds.mockResolvedValue([]);
 
     await expect(getUserProfileSkills("student-id")).resolves.toEqual([]);
-    expect(findMany).not.toHaveBeenCalled();
+    expect(loadSkillAchievements).not.toHaveBeenCalled();
   });
 
   it("retourne les badges des parcours accessibles avec leur progression", async () => {
     getAccessibleParcoursIds.mockResolvedValue([4, 8]);
-    findMany.mockResolvedValue([
-      {
-        id: 12,
-        description: "Collaborer",
-        badge: "badge.png",
-        modules: [
+    loadSkillAchievements.mockResolvedValue(
+      new Map([
+        [
+          12,
           {
-            module: {
-              id: 5,
-              title: "Travail en équipe",
-              courses: [
-                {
-                  lessons: [
-                    { lessonsRead: [{ finishedAt: new Date() }] },
-                  ],
-                },
-              ],
-            },
+            id: 12,
+            description: "Collaborer",
+            badge: "badge.png",
+            completedModules: 1,
+            totalModules: 1,
+            isEarned: true,
           },
         ],
-      },
-    ]);
+      ]),
+    );
 
     await expect(getUserProfileSkills("student-id")).resolves.toEqual([
       expect.objectContaining({
@@ -61,10 +54,9 @@ describe("badges de compétences du profil apprenant", () => {
         isEarned: true,
       }),
     ]);
-    expect(findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { parcoursId: { in: [4, 8] } },
-      }),
+    expect(loadSkillAchievements).toHaveBeenCalledWith(
+      "student-id",
+      { parcoursIds: [4, 8] },
     );
   });
 });

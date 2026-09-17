@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -11,38 +15,36 @@ export default async function putFinishQuizAttempt(
   attemptId: number,
   userIdMdb: string,
 ) {
-  const attempt = await prisma.quizAttempt.findUnique({
-    where: { id: attemptId },
-    select: {
-      id: true,
-      finishedAt: true,
-      student: { select: { idMdb: true } },
-    },
-  });
+  const attempt = await prisma.orm.public.QuizAttempt.where((row) =>
+    whereFromObject(row, { id: attemptId }),
+  )
+    .select("id", "finishedAt")
+    .include("student", (related25) => related25.select("idMdb"))
+    .first();
 
   if (!attempt) return null;
 
-  if (attempt.student.idMdb !== userIdMdb) {
-    throw { message: "Cette tentative ne vous appartient pas.", statusCode: 403 };
+  if (attempt.student!.idMdb !== userIdMdb) {
+    throw {
+      message: "Cette tentative ne vous appartient pas.",
+      statusCode: 403,
+    };
   }
 
-  const answers = await prisma.quizAnswer.findMany({
-    where: { attemptId },
-    select: { isCorrect: true },
-  });
+  const answers = await prisma.orm.public.QuizAnswer.where((row) =>
+    whereFromObject(row, { attemptId }),
+  )
+    .select("isCorrect")
+    .all();
 
-  return prisma.quizAttempt.update({
-    where: { id: attemptId },
-    data: {
-      finishedAt: attempt.finishedAt ?? new Date(),
+  return prisma.orm.public.QuizAttempt.where((row) =>
+    whereFromObject(row, { id: attemptId }),
+  )
+    .select("id", "finishedAt", "totalQuestions", "correctAnswers")
+    .update({
+      finishedAt: attempt.finishedAt ?? new Date().toISOString(),
       totalQuestions: answers.length,
       correctAnswers: answers.filter((answer) => answer.isCorrect).length,
-    },
-    select: {
-      id: true,
-      finishedAt: true,
-      totalQuestions: true,
-      correctAnswers: true,
-    },
-  });
+    })
+    .then(requireDatabaseRow);
 }

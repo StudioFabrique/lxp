@@ -17,7 +17,7 @@ export default async function patchOnboarding(
   const user = await User.findByIdAndUpdate(
     userId,
     { $set: { onboarding: { ...onboarding, updatedAt: new Date() } } },
-    { new: true },
+    { returnDocument: "after" },
   ).select("onboarding");
 
   return user?.onboarding ?? null;

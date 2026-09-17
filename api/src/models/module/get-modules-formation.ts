@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import {
@@ -9,46 +10,40 @@ export default async function getModulesFormation(
   formationId: number,
   scope: AccessScope = null,
 ) {
-  const modules = await prisma.module.findMany({
-    where: {
+  const modules = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, {
       parcours: { formationId },
       ...(moduleWhereForScope(scope) ?? {}),
-    },
-    orderBy: [{ parcours: { title: "asc" } }, { createdAt: "asc" }],
-    select: {
-      id: true,
-      title: true,
-      quizInstructions: true,
-      description: true,
-      thumb: true,
-      duration: true,
-      parcours: { select: { id: true, title: true } },
-      courses: {
-        select: {
-          id: true,
-          title: true,
-          courseSlug: true,
-          lessons: { select: { id: true, title: true } },
-        },
-      },
-      contacts: {
-        select: {
-          contact: { select: { id: true, idMdb: true, role: true } },
-        },
-      },
-      bonusSkills: {
-        select: {
-          bonusSkill: {
-            select: { id: true, description: true, badge: true },
-          },
-        },
-      },
-    },
-  });
+    }),
+  )
+    .select(
+      "id",
+      "title",
+      "quizInstructions",
+      "description",
+      "thumb",
+      "duration",
+    )
+    .include("parcours", (related176) => related176.select("id", "title"))
+    .include("courses", (related177) =>
+      related177
+        .select("id", "title", "courseSlug")
+        .include("lessons", (related178) => related178.select("id", "title")),
+    )
+    .include("contacts", (related179) =>
+      related179.include("contact", (related180) =>
+        related180.select("id", "idMdb", "role"),
+      ),
+    )
+    .include("bonusSkills", (related181) =>
+      related181.include("bonusSkill", (related182) =>
+        related182.select("id", "description", "badge"),
+      ),
+    )
+    .orderBy((row) => row.createdAt.asc())
+    .all();
   const namedContacts = await enrichContactsWithNames(
-    modules.flatMap(({ contacts }) =>
-      contacts.map(({ contact }) => contact),
-    ),
+    modules.flatMap(({ contacts }) => contacts.map(({ contact }) => contact)),
   );
   const contactsByMongoId = new Map(
     namedContacts.map((contact) => [contact.idMdb, contact]),
@@ -61,8 +56,8 @@ export default async function getModulesFormation(
     return {
       ...module,
       thumb,
-      contacts: contacts.map(
-        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+      contacts: contacts.map(({ contact }) =>
+        contactsByMongoId.get(contact!.idMdb)!,
       ),
       bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
       courses: courses.map((course) => ({

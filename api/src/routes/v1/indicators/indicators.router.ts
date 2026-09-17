@@ -3,8 +3,13 @@ import checkPermissions from "../../../middleware/check-permissions.ts";
 import httpGetIndicators from "../../../controllers/indicators/http-get-indicators.ts";
 import httpPostIndicatorsPrediction from "../../../controllers/indicators/http-post-indicators-prediction.ts";
 import { indicatorsWindowValidator } from "./indicators-validators.ts";
+import { analysisFeedbackValidator, analysisHistoryValidator } from "./indicators-validators.ts";
+import { httpAnalysisFeedback, httpAnalysisHistory, requireAnalysisStaff } from "../../../controllers/indicators/http-analysis-history.ts";
 
 const indicatorsRouter = express.Router();
+
+indicatorsRouter.get("/:userId/analyses", checkPermissions("stats", "read"), requireAnalysisStaff, analysisHistoryValidator, httpAnalysisHistory);
+indicatorsRouter.post("/:userId/analyses/:analysisId/feedback", checkPermissions("stats", "read"), requireAnalysisStaff, analysisFeedbackValidator, httpAnalysisFeedback);
 
 /**
  * Tous les indicateurs d'un apprenant en un appel.

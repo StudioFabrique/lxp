@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import removeUserFromGroups from "./remove-user-from-groups.ts";
@@ -25,32 +29,47 @@ export default async function deleteUser(userId: string, connectedId: string) {
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.transaction(async (tx) => {
     /*
      * Un formateur peut être affecté à plusieurs niveaux. Les tables de
      * liaison utilisent RESTRICT côté Contact : on les vide explicitement
      * avant de supprimer sa fiche PostgreSQL.
      */
-    const contact = await tx.contact.findUnique({
-      where: { idMdb: userId },
-      select: { id: true },
-    });
+    const contact = await tx.orm.public.Contact.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    )
+      .select("id")
+      .first();
 
     if (contact) {
-      await tx.contactsOnCourse.deleteMany({
-        where: { contactId: contact.id },
-      });
-      await tx.contactsOnModule.deleteMany({
-        where: { contactId: contact.id },
-      });
-      await tx.contactsOnParcours.deleteMany({
-        where: { contactId: contact.id },
-      });
-      await tx.contact.delete({ where: { id: contact.id } });
+      await tx.orm.public.ContactsOnCourse.where((row) =>
+        whereFromObject(row, { contactId: contact.id }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
+      await tx.orm.public.ContactsOnModule.where((row) =>
+        whereFromObject(row, { contactId: contact.id }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
+      await tx.orm.public.ContactsOnParcours.where((row) =>
+        whereFromObject(row, { contactId: contact.id }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
+      await tx.orm.public.Contact.where((row) =>
+        whereFromObject(row, { id: contact.id }),
+      )
+        .delete()
+        .then(requireDatabaseRow);
     }
 
     // Ancienne représentation, encore présente dans certaines installations.
-    await tx.teacher.deleteMany({ where: { idMdb: userId } });
+    await tx.orm.public.Teacher.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
     /*
      * Admin sert aussi de propriétaire technique aux contenus créés par les
@@ -58,16 +77,18 @@ export default async function deleteUser(userId: string, connectedId: string) {
      * Formation_adminId_fkey (RESTRICT). On transfère donc toutes les
      * références vers l'administrateur connecté avant la suppression.
      */
-    const adminsToDelete = await tx.admin.findMany({
-      where: { idMdb: userId },
-      select: { id: true },
-    });
+    const adminsToDelete = await tx.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    )
+      .select("id")
+      .all();
 
     if (adminsToDelete.length > 0) {
-      const replacementAdmin = await tx.admin.findFirst({
-        where: { idMdb: connectedId },
-        select: { id: true },
-      });
+      const replacementAdmin = await tx.orm.public.Admin.where((row) =>
+        whereFromObject(row, { idMdb: connectedId }),
+      )
+        .select("id")
+        .first();
 
       if (!replacementAdmin) {
         throw {
@@ -80,47 +101,64 @@ export default async function deleteUser(userId: string, connectedId: string) {
       const adminIds = adminsToDelete.map(({ id }) => id);
       const fromDeletedAdmins = { in: adminIds };
 
-      await tx.activity.updateMany({
-        where: { authorId: fromDeletedAdmins },
-        data: { authorId: replacementAdmin.id },
-      });
-      await tx.bonusActivity.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.course.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.formation.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.lesson.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.mediatheque.updateMany({
-        where: { authorId: fromDeletedAdmins },
-        data: { authorId: replacementAdmin.id },
-      });
-      await tx.module.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.parcours.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.resource.updateMany({
-        where: { adminId: fromDeletedAdmins },
-        data: { adminId: replacementAdmin.id },
-      });
-      await tx.admin.deleteMany({ where: { id: { in: adminIds } } });
+      await tx.orm.public.Activity.where((row) =>
+        whereFromObject(row, { authorId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ authorId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Course.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Formation.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Lesson.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Mediatheque.where((row) =>
+        whereFromObject(row, { authorId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ authorId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Module.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Parcours.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Resource.where((row) =>
+        whereFromObject(row, { adminId: fromDeletedAdmins }),
+      )
+        .updateAndCount({ adminId: replacementAdmin.id })
+        .then((count) => ({ count }));
+      await tx.orm.public.Admin.where((row) =>
+        whereFromObject(row, { id: { in: adminIds } }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
     }
 
     // Les accomplissements et autres traces progressives suivent en cascade.
-    await tx.student.deleteMany({ where: { idMdb: userId } });
+    await tx.orm.public.Student.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
     /*
      * Les groupes MongoDB portent eux aussi la relation vers l'utilisateur.

@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import { getPagination } from "../../utils/services/getPagination.ts";
 
@@ -41,31 +42,41 @@ export default async function getResourcesList(
           ...["title", "description", "author"].map((field) => ({
             [field]: { contains: searchTerm, mode: "insensitive" as const },
           })),
-          { tags: { some: { tag: { name: { contains: searchTerm, mode: "insensitive" as const } } } } },
+          {
+            tags: {
+              some: {
+                tag: {
+                  name: { contains: searchTerm, mode: "insensitive" as const },
+                },
+              },
+            },
+          },
         ],
       }
     : {};
 
-  const resources = await prisma.resource.findMany({
-    where: whereCondition,
-    orderBy: sortClause(stype, sdir),
-    skip: getPagination(page, limit),
-    take: limit,
-    include: {
-      bonusActivities: {
-        orderBy: { order: "asc" },
-        select: { id: true, title: true, type: true, order: true },
-      },
-    },
-  });
+  const resources = await prisma.orm.public.Resource.where((row) =>
+    whereFromObject(row, whereCondition),
+  )
+    .include("bonusActivities", (related31) =>
+      related31
+        .select("id", "title", "type", "order")
+        .orderBy((row) => row.order.asc()),
+    )
+    .offset(getPagination(page, limit))
+    .limit(limit)
+    .all();
 
-  const totaltResources = await prisma.resource.count({
-    where: whereCondition,
-  });
+  const totaltResources = await prisma.orm.public.Resource.where((row) =>
+    whereFromObject(row, whereCondition),
+  )
+    .aggregate((aggregate) => ({ total: aggregate.count() }))
+    .then(({ total }) => total);
 
   return {
     resources: resources.map(({ bonusActivities, ...resource }) => ({
-      ...resource, activities: bonusActivities,
+      ...resource,
+      activities: bonusActivities,
     })),
     totaltResources,
   };

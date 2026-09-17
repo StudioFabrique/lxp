@@ -1,4 +1,5 @@
-import { param, query } from "express-validator";
+import { body, param, query } from "express-validator";
+import { FEEDBACK_VERDICTS, OBSERVED_OUTCOMES } from "../../../config/indicator-analysis.ts";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 /**
@@ -15,5 +16,24 @@ export const indicatorsWindowValidator = [
     .optional()
     .isISO8601()
     .withMessage("`to` doit être une date ISO 8601"),
+  checkValidatorResult,
+];
+
+export const analysisHistoryValidator = [
+  param("userId").isMongoId(),
+  query("before").optional().isMongoId(),
+  checkValidatorResult,
+];
+
+export const analysisFeedbackValidator = [
+  param("userId").isMongoId(),
+  param("analysisId").isMongoId(),
+  body("verdict").isIn(FEEDBACK_VERDICTS),
+  body("comment").optional().isString().bail().trim().isLength({ max: 2000 }),
+  body("actionTaken").optional().isString().bail().trim().isLength({ max: 2000 }),
+  body("observedOutcome").optional().isIn(OBSERVED_OUTCOMES),
+  body("observedAt").optional().isISO8601().bail().custom((value) => new Date(value) <= new Date()),
+  body().custom((value) => Boolean(value.observedOutcome) === Boolean(value.observedAt))
+    .withMessage("L'issue observée et sa date doivent être renseignées ensemble."),
   checkValidatorResult,
 ];

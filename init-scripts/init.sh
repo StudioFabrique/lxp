@@ -62,8 +62,8 @@ cd api
 echo "Démarrage des containers Docker..."
 docker compose up -d || { echo -e "\033[1;31m Échec: Démarrage des containers"; exit 1; }
 
-echo "Génération des modèles Prisma..."
-npx prisma generate || { echo -e "\033[1;31m Échec: Génération Prisma"; exit 1; }
+echo "Émission du contrat Prisma..."
+npx prisma contract emit || { echo -e "\033[1;31m Échec: Émission du contrat Prisma"; exit 1; }
 
 echo "Attente de l'initialisation complète de PostgreSQL..."
 # Utilisation de la variable POSTGRES_USER issue du .env (avec "postgres" comme fallback)
@@ -86,7 +86,7 @@ until docker exec lxp-prisma pg_isready -U "${POSTGRES_USER:-postgres}" > /dev/n
 done
 
 echo "Exécution des migrations..."
-npx prisma migrate deploy || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
+npx prisma db migrate || { echo -e "\033[1;31m Échec: Migrations"; exit 1; }
 
 echo "PostgreSQL est prêt !"
 if [ "$restore_data" = true ]; then
@@ -95,7 +95,16 @@ if [ "$restore_data" = true ]; then
   # Restauration PostgreSQL
   if [[ -f "$dump_dir/dump-pgsql.sql" ]]; then
     echo "Dump PostgreSQL trouvé, injection en cours..."
-    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma psql -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" < "$dump_dir/dump-pgsql.sql" || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
+    # Prisma 7 exposait Course.dates comme une liste non nullable, mais sa DDL
+    # PostgreSQL autorisait encore NULL. Prisma 8 aligne le stockage sur le type.
+    # La restauration normalise ces anciennes lignes dans une transaction unique.
+    docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma \
+      psql --single-transaction -v ON_ERROR_STOP=1 \
+      -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" \
+      -c 'ALTER TABLE public."Course" ALTER COLUMN "dates" DROP NOT NULL' \
+      -f - \
+      -c 'UPDATE public."Course" SET "dates" = ARRAY[]::jsonb[] WHERE "dates" IS NULL; ALTER TABLE public."Course" ALTER COLUMN "dates" SET NOT NULL' \
+      < "$dump_dir/dump-pgsql.sql" || { echo -e "\033[1;31m Échec: Import SQL"; exit 1; }
   else
     echo "Aucun fichier $dump_dir/dump-pgsql.sql trouvé. L'import PostgreSQL est ignoré."
   fi
@@ -138,6 +147,6 @@ if [ "$demo_mode" = true ]; then
 elif [ "$restore_data" = true ]; then
   echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
 else
-  echo -e "\033[0;32mConfiguration du projet ANDRIA à partir de bases de données vides terminée avec succès.\033[0m"
+  echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
 fi
 echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"

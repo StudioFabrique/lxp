@@ -1,3 +1,4 @@
+import { formatTitle } from "../../utils/helpers/text-helpers";
 import { CheckCircle2 } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -28,9 +29,9 @@ const SelectableSubCard = <T extends { id?: number | string; title: string }>({
           {icon}
         </div>
         <span
-          className={`font-medium text-sm capitalize ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
+          className={`font-medium text-sm ${isSelected ? "text-secondary-focus" : "text-base-content"}`}
         >
-          {data.title}
+          {formatTitle(data.title)}
         </span>
         {isSelected && (
           <CheckCircle2 size={16} className="text-primary ml-auto" />

@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import type { AssessmentsSummary } from "./model-features.ts";
 import type { IndicatorContext } from "./types.ts";
@@ -11,7 +12,38 @@ import type { IndicatorContext } from "./types.ts";
  */
 export const PASS_THRESHOLD_PERCENT = 40;
 
-type AssessmentRecord = { at: Date; rate: number | null };
+export type AssessmentRecord = {
+  at: Date;
+  rate: number | null;
+  weight?: number;
+};
+
+/** Pente pondérée des notes normalisées, par jour, sur tout l'historique connu. */
+export function scoreEvolution(
+  records: readonly AssessmentRecord[],
+): number | null {
+  const graded = records.filter(
+    (r) => r.rate !== null && Number.isFinite(r.rate),
+  );
+  if (graded.length < 2) return null;
+  const origin = graded[0]!.at.getTime();
+  const points = graded.map((r) => ({
+    x: (r.at.getTime() - origin) / 86_400_000,
+    y: r.rate! / 100,
+    w: r.weight && r.weight > 0 ? r.weight : 1,
+  }));
+  const sw = points.reduce((s, p) => s + p.w, 0);
+  const mx = points.reduce((s, p) => s + p.w * p.x, 0) / sw;
+  const my = points.reduce((s, p) => s + p.w * p.y, 0) / sw;
+  const denominator = points.reduce((s, p) => s + p.w * (p.x - mx) ** 2, 0);
+  if (denominator === 0) return null;
+  return Number(
+    (
+      points.reduce((s, p) => s + p.w * (p.x - mx) * (p.y - my), 0) /
+      denominator
+    ).toFixed(6),
+  );
+}
 
 /** Agrégation pure partagée par les sources quiz et devoir. */
 export function summarizeAssessments(
@@ -24,6 +56,7 @@ export function summarizeAssessments(
   const passed = gradedRates.filter((rate) => rate >= PASS_THRESHOLD_PERCENT);
 
   return {
+    scoreEvolution: scoreEvolution(records),
     periodCount: records.filter(({ at }) => at >= from).length,
     cumulativeCount: records.length,
     passRate:
@@ -49,42 +82,44 @@ export default async function getAssessmentsSummary(
   if (context.studentId === null) return null;
 
   const [attempts, submissions] = await Promise.all([
-    prisma.quizAttempt.findMany({
-      where: {
+    prisma.orm.public.QuizAttempt.where((row) =>
+      whereFromObject(row, {
         studentId: context.studentId,
-        finishedAt: { not: null },
-        startedAt: { lte: context.to },
-      },
-      select: { startedAt: true, totalQuestions: true, correctAnswers: true },
-    }),
-    prisma.assignmentSubmission.findMany({
-      where: {
+        finishedAt: { not: null, lte: context.to },
+      }),
+    )
+      .select("finishedAt", "totalQuestions", "correctAnswers")
+      .all(),
+    prisma.orm.public.AssignmentSubmission.where((row) =>
+      whereFromObject(row, {
         studentId: context.studentId,
         submittedAt: { not: null, lte: context.to },
-      },
-      select: {
-        submittedAt: true,
-        grade: true,
-        assignment: { select: { maxScore: true } },
-      },
-    }),
+      }),
+    )
+      .select("submittedAt", "grade", "gradedAt")
+      .include("assignment", (related88) => related88.select("maxScore"))
+      .all(),
   ]);
 
   const records: AssessmentRecord[] = [
-    ...attempts
-      .map((attempt) => ({
-        at: attempt.startedAt,
-        rate:
-          attempt.totalQuestions > 0
-            ? (attempt.correctAnswers / attempt.totalQuestions) * 100
-            : null,
-      })),
-    ...submissions.map((submission) => ({
-      at: submission.submittedAt!,
+    ...attempts.map((attempt) => ({
+      at: new Date(attempt.finishedAt!),
+      weight: 1,
       rate:
-        submission.grade === null
+        attempt.totalQuestions > 0
+          ? (attempt.correctAnswers / attempt.totalQuestions) * 100
+          : null,
+    })),
+    ...submissions.map((submission) => ({
+      at: new Date(submission.submittedAt!),
+      weight: 1,
+      rate:
+        submission.grade === null ||
+        submission.gradedAt === null ||
+        Date.parse(submission.gradedAt) > context.to.getTime() ||
+        submission.assignment!.maxScore <= 0
           ? null
-          : (submission.grade / submission.assignment.maxScore) * 100,
+          : (submission.grade / submission.assignment!.maxScore) * 100,
     })),
   ];
 

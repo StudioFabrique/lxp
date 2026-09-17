@@ -96,32 +96,13 @@ export const resourcesRbac = [
     description:
       "Espace personnel de suivi permettant de visualiser sa progression, gérer son profil et personnaliser son expérience d'apprentissage",
   },
-  {
-    name: "admin",
-    description: "Permission temporaire - Afficher les admins",
-  },
-  {
-    name: "student",
-    description: "Permission temporaire - Afficher les étudiants",
-  },
-  {
-    name: "teacher",
-    description: "Permission temporaire - Afficher les formateurs",
-  },
-  {
-    name: "everything",
-    description:
-      "Permission temporaire - Afficher tous les utilisateurs de tous roles confondus",
-  },
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherResourcesRbac = resourcesRbac.filter(
   (resource) =>
-    !["permission", "role", "admin", "teacher", "everything"].includes(
-      resource.name,
-    ),
+    !["permission", "role"].includes(resource.name),
 );
 const teacherCreatableResources = teacherResourcesRbac.filter(
   ({ name }) => !["formation", "parcours"].includes(name),
@@ -190,28 +171,17 @@ export async function getPermissionsByRank(
   switch (rank) {
     case 0:
     case 1: {
-      // const roles = await Role.find();
-      // const roleNames = roles.map((role) => role.role);
       const resources: {
         resource: string;
         actions: ("read" | "write" | "update" | "delete")[];
       }[] = [];
 
-      // Add regular resources
       resourcesRbacByRank[rank].read.forEach((resource) => {
         resources.push({
           resource,
           actions: ["read", "write", "update", "delete"],
         });
       });
-
-      // Add role resources
-      // roleNames.forEach((resource) => {
-      //   resources.push({
-      //     resource,
-      //     actions: ["read", "write", "update", "delete"],
-      //   });
-      // });
 
       return resources;
     }

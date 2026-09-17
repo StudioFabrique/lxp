@@ -1,5 +1,10 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
-import { emptyIndicator, type Indicator, type IndicatorContext } from "./types.ts";
+import {
+  emptyIndicator,
+  type Indicator,
+  type IndicatorContext,
+} from "./types.ts";
 
 export const CORRECT_ANSWER_RATE_KEY = "correct_answer_rate";
 
@@ -22,23 +27,26 @@ export default async function getCorrectAnswerRate(
   }
 
   const [answers, submissions] = await Promise.all([
-    prisma.quizAnswer.findMany({
-      where: {
+    prisma.orm.public.QuizAnswer.where((row) =>
+      whereFromObject(row, {
         attempt: {
           studentId: context.studentId,
-          startedAt: { gte: context.from, lte: context.to },
+          finishedAt: { gte: context.from, lte: context.to },
         },
-      },
-      select: { isCorrect: true },
-    }),
-    prisma.assignmentSubmission.findMany({
-      where: {
+      }),
+    )
+      .select("isCorrect")
+      .all(),
+    prisma.orm.public.AssignmentSubmission.where((row) =>
+      whereFromObject(row, {
         studentId: context.studentId,
         gradedAt: { gte: context.from, lte: context.to },
         grade: { not: null },
-      },
-      select: { grade: true, assignment: { select: { maxScore: true } } },
-    }),
+      }),
+    )
+      .select("grade")
+      .include("assignment", (related91) => related91.select("maxScore"))
+      .all(),
   ]);
 
   const earnedPoints =
@@ -47,7 +55,7 @@ export default async function getCorrectAnswerRate(
   const possiblePoints =
     answers.length +
     submissions.reduce(
-      (sum, submission) => sum + submission.assignment.maxScore,
+      (sum, submission) => sum + submission.assignment!.maxScore,
       0,
     );
 

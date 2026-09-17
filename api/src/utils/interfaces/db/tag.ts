@@ -1,12 +1,13 @@
-import mongoose, { Schema, Document } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
-export interface ITag extends Document {
+export interface ITag extends MongoRecord {
   name: string;
   color: string;
 }
 
 const tagSchema: Schema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, lowercase: true, required: true },
   color: { type: String, required: true },
 });
 

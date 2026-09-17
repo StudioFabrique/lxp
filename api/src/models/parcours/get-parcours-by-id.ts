@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
@@ -7,10 +8,7 @@ import {
   type AccessScope,
 } from "../../utils/services/permissions/accessible-parcours.ts";
 import { canUnassignTag } from "../tag/tag-access.ts";
-import {
-  skillAchievementSelect,
-  withSkillAchievement,
-} from "../../helpers/skill-achievement.ts";
+import { loadSkillAchievements } from "../../helpers/skill-achievement-query.ts";
 
 /**
  * Récupère les détails d'un parcours par son ID
@@ -21,100 +19,93 @@ async function getParcoursById(
   scope: AccessScope = null,
 ) {
   // 1. Récupération des données brutes
-  const parcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      startDate: true,
-      endDate: true,
-      image: true,
-      virtualClass: true,
-      isPublished: true,
-      visibility: true,
-      formation: {
-        select: {
-          id: true,
-          title: true,
-          tags: {
-            select: {
-              tag: { select: { id: true, name: true, color: true } },
-            },
-          },
-          level: true,
-        },
-      },
-      tags: {
-        select: {
-          addedBy: true,
-          tag: { select: { id: true, name: true, color: true } },
-        },
-      },
-      contacts: {
-        select: {
-          contact: true,
-        },
-      },
-      skills: { include: { skill: true } },
-      bonusSkills: { select: skillAchievementSelect(userId) },
-      objectives: { select: { id: true, description: true } },
-      modules: {
-        where: moduleWhereForScope(scope),
-        select: {
-          id: true,
-          duration: true,
-          minDate: true,
-          maxDate: true,
-          contacts: { select: { contact: true } },
-          bonusSkills: {
-            select: {
-              bonusSkill: {
-                select: { id: true, description: true, badge: true },
-              },
-            },
-          },
-          courses: {
-            orderBy: { order: "asc" },
-            select: {
-              assignment: {
-                select: {
-                  submissions: {
-                    where: { student: { idMdb: userId } },
-                    select: { submittedAt: true },
-                  },
-                },
-              },
-              lessons: {
-                orderBy: { order: "asc" },
-                select: {
-                  lessonsRead: {
-                    where: { student: { idMdb: userId } },
-                    select: { id: true, finishedAt: true },
-                  },
-                },
-              },
-            },
-          },
-          title: true,
-          description: true,
-          quizInstructions: true,
-          thumb: true,
-        },
-      },
-      groups: {
-        select: {
-          group: {
-            select: {
-              id: true,
-              idMdb: true,
-            },
-          },
-        },
-      },
-      admin: { select: { id: true, idMdb: true } },
-    },
-  });
+  const parcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  )
+    .select(
+      "id",
+      "title",
+      "description",
+      "startDate",
+      "endDate",
+      "image",
+      "virtualClass",
+      "isPublished",
+      "visibility",
+    )
+    .include("formation", (related214) =>
+      related214
+        .select("id", "title", "level")
+        .include("tags", (related215) =>
+          related215.include("tag", (related216) =>
+            related216.select("id", "name", "color"),
+          ),
+        ),
+    )
+    .include("tags", (related217) =>
+      related217
+        .select("addedBy")
+        .include("tag", (related218) =>
+          related218.select("id", "name", "color"),
+        ),
+    )
+    .include("contacts", (related219) => related219.include("contact"))
+    .include("skills", (related220) => related220.include("skill"))
+    .include("bonusSkills", (related221) => related221)
+    .include("objectives", (related222) =>
+      related222.select("id", "description"),
+    )
+    .include("modules", (related223) =>
+      related223
+        .where((row) => whereFromObject(row, moduleWhereForScope(scope)))
+        .select(
+          "id",
+          "duration",
+          "minDate",
+          "maxDate",
+          "title",
+          "description",
+          "quizInstructions",
+          "thumb",
+        )
+        .include("contacts", (related224) => related224.include("contact"))
+        .include("bonusSkills", (related225) =>
+          related225.include("bonusSkill", (related226) =>
+            related226.select("id", "description", "badge"),
+          ),
+        )
+        .include("courses", (related227) =>
+          related227
+            .include("assignment", (related228) =>
+              related228.include("submissions", (related229) =>
+                related229
+                  .where((row) =>
+                    whereFromObject(row, { student: { idMdb: userId } }),
+                  )
+                  .select("submittedAt"),
+              ),
+            )
+            .include("lessons", (related230) =>
+              related230
+                .include("lessonsRead", (related231) =>
+                  related231
+                    .where((row) =>
+                      whereFromObject(row, { student: { idMdb: userId } }),
+                    )
+                    .select("id", "finishedAt"),
+                )
+                .orderBy((row) => row.order.asc()),
+            )
+            .orderBy((row) => row.order.asc()),
+        ),
+    )
+    .include("groups", (related232) =>
+      related232.include("group", (related233) =>
+        related233.select("id", "idMdb"),
+      ),
+    )
+    .include("admin", (related234) => related234.select("id", "idMdb"))
+    .first();
 
   // 2. Gestion d'erreur (Guard Clause)
   if (!parcours) {
@@ -134,12 +125,15 @@ async function getParcoursById(
   const contactsByMongoId = new Map(
     namedContacts.map((contact) => [contact.idMdb, contact]),
   );
+  const skillAchievements = await loadSkillAchievements(userId, {
+    skillIds: parcours.bonusSkills.map(({ id }) => id),
+  });
 
   // 3. Initialisation de l'objet résultat
   // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
   let result: any = {
     ...parcours,
-    bonusSkills: parcours.bonusSkills.map(withSkillAchievement),
+    bonusSkills: parcours.bonusSkills.map(({ id }) => skillAchievements.get(id)!),
     canManage:
       scope?.kind !== "teacher" ||
       scope.directParcoursIds?.includes(parcours.id),
@@ -152,8 +146,8 @@ async function getParcoursById(
 
   // 5. Traitement des contacts (aplatissement)
   // Transforme [{ contact: {...} }] en [{...}]
-  result.contacts = parcours.contacts.map(
-    ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+  result.contacts = parcours.contacts.map(({ contact }) =>
+    contactsByMongoId.get(contact.idMdb)!,
   );
   result.tags = parcours.tags.map(({ tag, addedBy }) => ({
     ...tag,
@@ -172,8 +166,8 @@ async function getParcoursById(
         : null;
 
       // Contacts du module (aplatissement)
-      const moduleContacts = item.contacts.map(
-        ({ contact }: any) => contactsByMongoId.get(contact.idMdb)!,
+      const moduleContacts = item.contacts.map(({ contact }: any) =>
+        contactsByMongoId.get(contact.idMdb)!,
       );
 
       return {
@@ -190,7 +184,7 @@ async function getParcoursById(
 
   // 7. Calcul du nombre d'étudiants
   if (parcours.groups && parcours.groups.length > 0) {
-    const usersCount = await User.count({
+    const usersCount = await User.countDocuments({
       group: { $in: parcours.groups.map((g: any) => g.group.idMdb) },
     });
     result.studentCount = usersCount;

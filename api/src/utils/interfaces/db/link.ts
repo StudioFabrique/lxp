@@ -1,15 +1,11 @@
-import mongoose, { Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import { type IUser } from "./user.ts";
 
 export type LinkType =
-  | "website"
-  | "twitter"
-  | "facebook"
-  | "youtube"
-  | "instagram"
-  | "linkedin";
+  "website" | "twitter" | "facebook" | "youtube" | "instagram" | "linkedin";
 
-export interface ILink extends Document {
+export interface ILink extends MongoRecord {
   url: string;
   type: LinkType;
   alias?: string | null;

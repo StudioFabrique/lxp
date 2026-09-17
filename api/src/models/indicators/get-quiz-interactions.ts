@@ -1,5 +1,11 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
-import { emptyIndicator, toDayKey, type Indicator, type IndicatorContext } from "./types.ts";
+import {
+  emptyIndicator,
+  toDayKey,
+  type Indicator,
+  type IndicatorContext,
+} from "./types.ts";
 
 export const QUIZ_INTERACTIONS_KEY = "quiz_interactions";
 
@@ -19,14 +25,15 @@ export default async function getQuizInteractions(
     });
   }
 
-  const attempts = await prisma.quizAttempt.findMany({
-    where: {
+  const attempts = await prisma.orm.public.QuizAttempt.where((row) =>
+    whereFromObject(row, {
       studentId: context.studentId,
       startedAt: { gte: context.from, lte: context.to },
-    },
-    select: { origin: true, startedAt: true, finishedAt: true },
-    orderBy: { startedAt: "asc" },
-  });
+    }),
+  )
+    .select("origin", "startedAt", "finishedAt")
+    .orderBy((row) => row.startedAt.asc())
+    .all();
 
   const perDay = new Map<string, number>();
   for (const attempt of attempts) {
@@ -49,7 +56,8 @@ export default async function getQuizInteractions(
     meta: {
       selfTest: byOrigin.self_test ?? 0,
       byOrigin,
-      completed: attempts.filter((attempt) => attempt.finishedAt !== null).length,
+      completed: attempts.filter((attempt) => attempt.finishedAt !== null)
+        .length,
     },
   };
 }

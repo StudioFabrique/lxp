@@ -1,4 +1,5 @@
-import { type Activity, type BonusActivity } from "@prisma/client";
+import { whereFromObject } from "../../../utils/prisma-query.ts";
+import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
 export default async function postActivityVideo(
@@ -15,15 +16,19 @@ export default async function postActivityVideo(
     | null = null;
 
   if (parentType === "lesson") {
-    existingParent = await prisma.lesson.findFirst({
-      where: { id: lessonId },
-      select: { id: true, activities: true },
-    });
+    existingParent = await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .select("id")
+      .include("activities")
+      .first();
   } else {
-    existingParent = await prisma.resource.findFirst({
-      where: { id: lessonId },
-      select: { id: true, bonusActivities: true },
-    });
+    existingParent = await prisma.orm.public.Resource.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .select("id")
+      .include("bonusActivities")
+      .first();
   }
 
   if (!existingParent) {
@@ -32,9 +37,9 @@ export default async function postActivityVideo(
     throw error;
   }
 
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   if (!existingAuthor) {
     const error = new Error("L'utilisateur n'existe pas");
@@ -45,45 +50,37 @@ export default async function postActivityVideo(
   let createdActivity: unknown;
 
   if (parentType === "lesson") {
-    createdActivity = await prisma.activity.create({
-      data: {
-        type: "video",
-        order: (existingParent as { id: number; activities: Activity[] })
-          .activities.length,
-        title,
-        url,
-        lesson: {
-          connect: {
-            id: lessonId,
-          },
-        },
-        author: {
-          connect: {
-            id: existingAuthor.id,
-          },
-        },
-      },
+    createdActivity = await prisma.orm.public.Activity.create({
+      type: "video",
+      order: (existingParent as { id: number; activities: Activity[] })
+        .activities.length,
+      title,
+      url,
+      lesson: (relation) =>
+        relation.connect({
+          id: lessonId,
+        }),
+      author: (relation) =>
+        relation.connect({
+          id: existingAuthor.id,
+        }),
     });
   } else {
-    const createdActivity = await prisma.bonusActivity.create({
-      data: {
-        type: "video",
-        order: (
-          existingParent as { id: number; bonusActivities: BonusActivity[] }
-        ).bonusActivities.length,
-        title,
-        url,
-        resource: {
-          connect: {
-            id: lessonId,
-          },
-        },
-        admin: {
-          connect: {
-            id: existingAuthor.id,
-          },
-        },
-      },
+    const createdActivity = await prisma.orm.public.BonusActivity.create({
+      type: "video",
+      order: (
+        existingParent as { id: number; bonusActivities: BonusActivity[] }
+      ).bonusActivities.length,
+      title,
+      url,
+      resource: (relation) =>
+        relation.connect({
+          id: lessonId,
+        }),
+      admin: (relation) =>
+        relation.connect({
+          id: existingAuthor.id,
+        }),
     });
   }
 

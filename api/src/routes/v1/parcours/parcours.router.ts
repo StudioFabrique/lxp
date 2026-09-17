@@ -74,7 +74,7 @@ parcoursRouter.post(
 
 // Route GET pour récupérer une liste simplifiée des parcours
 parcoursRouter.get(
-  "/select/:formationId?",
+  "/select{/:formationId}",
   checkPermissions("parcours"),
   getParcoursSelectValidator,
   httpGetSelectParcours,

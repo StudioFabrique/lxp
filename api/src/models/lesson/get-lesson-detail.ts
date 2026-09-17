@@ -1,41 +1,41 @@
-import { type Contact } from "@prisma/client";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import type { Contact } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getLessonDetail(
   lessonId: number,
   userIdMdb?: string,
 ) {
-  let existingLesson = (await prisma.lesson.findFirst({
-    where: { id: lessonId },
-    select: {
-      id: true,
-      title: true,
-      courseId: true,
-      course: {
-        select: {
-          id: true,
-          title: true,
-          image: true,
-          contacts: { select: { contact: { select: { idMdb: true } } } },
-        },
-      },
-      activities: {
-        select: {
-          id: true,
-          type: true,
-          order: true,
-          url: true,
-          title: true,
-          createdAt: true,
-          updatedAt: true,
-          resourceActivities: true,
-        },
-        orderBy: { order: "asc" },
-      },
-      lessonRating: { where: { student: { idMdb: userIdMdb } } },
-      lessonsRead: { where: { student: { idMdb: userIdMdb } } },
-    },
-  })) as any;
+  let existingLesson = (await prisma.orm.public.Lesson.where((row) =>
+    whereFromObject(row, { id: lessonId }),
+  )
+    .select("id", "title", "courseId")
+    .include("course", (related117) =>
+      related117
+        .select("id", "title", "image")
+        .include("contacts", (related118) =>
+          related118.include("contact", (related119) =>
+            related119.select("idMdb"),
+          ),
+        ),
+    )
+    .include("activities", (related120) =>
+      related120
+        .select("id", "type", "order", "url", "title", "createdAt", "updatedAt")
+        .include("resourceActivities")
+        .orderBy((row) => row.order.asc()),
+    )
+    .include("lessonRating", (related121) =>
+      related121.where((row) =>
+        whereFromObject(row, { student: { idMdb: userIdMdb } }),
+      ),
+    )
+    .include("lessonsRead", (related122) =>
+      related122.where((row) =>
+        whereFromObject(row, { student: { idMdb: userIdMdb } }),
+      ),
+    )
+    .first()) as any;
 
   if (!existingLesson) {
     const error = new Error("La leçon n'existe pas");

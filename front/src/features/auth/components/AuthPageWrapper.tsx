@@ -2,6 +2,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 
 type Props = PropsWithChildren<{
   title: ReactNode;
+  titleAccessory?: ReactNode;
   description?: ReactNode;
 }>;
 
@@ -11,17 +12,23 @@ type Props = PropsWithChildren<{
  * La zone de titre garde la même hauteur sur toutes les pages, y compris
  * lorsqu'un intitulé passe sur plusieurs lignes.
  */
-const AuthPageWrapper = ({ title, description, children }: Props) => {
+const AuthPageWrapper = ({
+  title,
+  titleAccessory,
+  description,
+  children,
+}: Props) => {
   return (
     <section className="flex w-full flex-col my-10">
-      <header className="text-center mb-2">
-        <div className="flex h-24 items-start justify-center">
+      <header className="text-center mb-5">
+        <div className="flex items-start justify-center gap-2">
           <h1 className="text-2xl font-bold leading-tight text-base-content">
             {title}
           </h1>
+          {titleAccessory}
         </div>
         {description && (
-          <p className="mt-2 text-sm text-base-content/70">{description}</p>
+          <p className="mt-5 text-sm text-base-content/70">{description}</p>
         )}
       </header>
 

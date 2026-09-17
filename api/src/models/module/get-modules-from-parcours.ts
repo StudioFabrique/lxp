@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import {
@@ -9,41 +10,39 @@ async function getModulesFromParcours(
   parcoursId: number,
   scope: AccessScope = null,
 ) {
-  const parcours = await prisma.parcours.findUnique({
-    where: { id: +parcoursId },
-    select: {
-      modules: {
-        where: moduleWhereForScope(scope),
-        select: {
-          id: true,
-          title: true,
-          thumb: true,
-          description: true,
-          quizInstructions: true,
-          duration: true,
-          contacts: {
-            select: {
-              contact: { select: { id: true, idMdb: true, role: true } },
-            },
-          },
-          bonusSkills: {
-            select: {
-              bonusSkill: {
-                select: { id: true, description: true, badge: true },
-              },
-            },
-          },
-        },
-      },
-      formation: { select: { id: true } },
-      contacts: {
-        select: {
-          contact: { select: { id: true, idMdb: true, role: true } },
-        },
-      },
-      bonusSkills: true,
-    },
-  });
+  const parcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: +parcoursId }),
+  )
+    .include("modules", (related183) =>
+      related183
+        .where((row) => whereFromObject(row, moduleWhereForScope(scope)))
+        .select(
+          "id",
+          "title",
+          "thumb",
+          "description",
+          "quizInstructions",
+          "duration",
+        )
+        .include("contacts", (related184) =>
+          related184.include("contact", (related185) =>
+            related185.select("id", "idMdb", "role"),
+          ),
+        )
+        .include("bonusSkills", (related186) =>
+          related186.include("bonusSkill", (related187) =>
+            related187.select("id", "description", "badge"),
+          ),
+        ),
+    )
+    .include("formation", (related188) => related188.select("id"))
+    .include("contacts", (related189) =>
+      related189.include("contact", (related190) =>
+        related190.select("id", "idMdb", "role"),
+      ),
+    )
+    .include("bonusSkills")
+    .first();
 
   if (!parcours) throw { statusCode: 404, message: "Parcours introuvable." };
   const namedContacts = await enrichContactsWithNames([
@@ -64,16 +63,16 @@ async function getModulesFromParcours(
       return {
         ...module,
         thumb,
-        contacts: contacts.map(
-          ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+        contacts: contacts.map(({ contact }) =>
+          contactsByMongoId.get(contact!.idMdb)!,
         ),
         skills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
       };
     }),
     parcoursData: {
-      formationId: parcours.formation.id,
-      contacts: parcours.contacts.map(
-        ({ contact }) => contactsByMongoId.get(contact.idMdb)!,
+      formationId: parcours.formation!.id,
+      contacts: parcours.contacts.map(({ contact }) =>
+        contactsByMongoId.get(contact!.idMdb)!,
       ),
       bonusSkills: parcours.bonusSkills,
     },

@@ -10,6 +10,7 @@ import { getContactFullName } from "../../../../../utils/helpers/contact-full-na
 import { normalizeImageSource } from "../../../../../utils/images/image-source";
 import { hasCompleteModuleRequirements } from "../../../helpers/parcours-steps-validation";
 import type { ModuleData } from "../../../interfaces/new-module";
+import "./ModuleCard.css";
 
 type ModuleCardProps = {
   module: ModuleData;
@@ -52,8 +53,7 @@ export default function ModuleCard({
       data-highlighted={highlighted || undefined}
       className={cn(
         "scroll-m-6 rounded-box transition-shadow duration-500",
-        highlighted &&
-          "ring-2 ring-primary ring-offset-2 ring-offset-base-100 shadow-xl animate-pulse animation-keyframes:keyframes-pulse_{0%,100%{opacity:1}50%{opacity:0.8}}]",
+        highlighted && "module-card-highlight",
       )}
     >
       <HierarchicalListCard

@@ -59,12 +59,11 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
         >
           <InheritedTextList
             renderAction={(contact: Contact) =>
-              props.readOnly ? null : (
+              props.readOnly || !parcours?.modules.length ? null : (
                 <button
                   type="button"
                   className="btn btn-sm btn-ghost text-primary"
                   aria-label={`Affecter ${contact.firstname} ${contact.lastname} à plusieurs modules`}
-                  disabled={!parcours?.modules.length}
                   onClick={() => props.onAssignToModules(contact)}
                 >
                   <ListPlus className="size-4" />

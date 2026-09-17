@@ -19,6 +19,8 @@ import { isTeacherUser } from "../../../../utils/helpers/user-role";
 
 type Props = {
   formationsList: Formation[];
+  isFormationsLoading: boolean;
+  formationsError: string;
   selectedFormation: Formation | null;
   onSelectFormation: (formation: Formation) => void;
 
@@ -37,6 +39,8 @@ type Props = {
 
 const ParcoursSelection = ({
   formationsList,
+  isFormationsLoading,
+  formationsError,
   selectedFormation,
   onSelectFormation,
   parcoursList,
@@ -105,8 +109,14 @@ const ParcoursSelection = ({
             Choisir une formation
           </h3>
 
-          {formationsList.length === 0 ? (
+          {isFormationsLoading ? (
             <div className="alert">Chargement des formations...</div>
+          ) : formationsError ? (
+            <div className="alert alert-error text-sm">{formationsError}</div>
+          ) : formationsList.length === 0 ? (
+            <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
+              Aucune formation disponible.
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {formationsList.map((formation) => {

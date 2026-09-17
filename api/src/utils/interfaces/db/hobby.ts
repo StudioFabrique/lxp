@@ -1,13 +1,14 @@
-import mongoose, { Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import { type IUser } from "./user.ts";
 
-export interface IHobby extends Document {
+export interface IHobby extends MongoRecord {
   title: string;
   user: IUser["_id"];
 }
 
 const hobbySchema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, lowercase: true, required: true },
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });
 

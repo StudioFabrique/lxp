@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, mongo } from "mongoose";
+import type { MongoRecord, MongoRef } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import { type IRole } from "./role.ts";
 import { type IGroup } from "./group.ts";
 import { type IGraduation } from "./graduation.ts";
@@ -9,10 +10,7 @@ import { type IStudentFeedback } from "./student-feedback.ts";
 import { type IPromptStats } from "./prompt-stats.ts";
 
 export type OnboardingStatus =
-  | "pending"
-  | "in_progress"
-  | "completed"
-  | "skipped";
+  "pending" | "in_progress" | "completed" | "skipped";
 
 export interface IUserOnboarding {
   status: OnboardingStatus;
@@ -21,7 +19,7 @@ export interface IUserOnboarding {
   updatedAt?: Date;
 }
 
-export interface IUser extends Document {
+export interface IUser extends MongoRecord {
   email: string;
   firstname: string;
   lastname: string;
@@ -35,16 +33,16 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  group?: IGroup["_id"];
+  group?: MongoRef<IGroup>[];
   /** Tableau conservé pour les contrats API et les jointures ; exactement un élément. */
-  roles: IRole["_id"];
+  roles: MongoRef<IRole>[];
   hobbies?: IHobby["_id"][];
   links?: ILink["_id"][];
   graduations?: IGraduation["_id"][];
   createdAt?: Date;
   updatedAt?: Date;
-  connectionInfos?: IConnectionInfos["_id"];
-  studentFeedbacks?: IStudentFeedback["_id"];
+  connectionInfos?: IConnectionInfos["_id"][];
+  studentFeedbacks?: MongoRef<IStudentFeedback>[];
   emailVerified: boolean;
   /** Nouvelle adresse en attente de validation par son propriétaire. */
   pendingEmail?: string;
@@ -61,7 +59,7 @@ export interface IUser extends Document {
    */
   invitationPendingSince?: Date;
   promptCount: number;
-  promptStats?: IPromptStats["_id"];
+  promptStats?: MongoRef<IPromptStats>[];
   onboarding: IUserOnboarding;
 }
 
@@ -82,17 +80,17 @@ const onboardingSchema = new Schema<IUserOnboarding>(
 const userSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
+    firstname: { type: String, lowercase: true, required: true },
+    lastname: { type: String, lowercase: true, required: true },
     description: { type: String, required: false },
     password: { type: String, require: true },
     avatar: { type: Buffer, required: false },
     // test in progress, previously : isActive: { type: Boolean, required: true },
     isActive: { type: Boolean, default: false },
-    nickname: { type: String, required: false },
+    nickname: { type: String, lowercase: true, required: false },
     address: { type: String, required: false },
     postCode: { type: String, required: false },
-    city: { type: String, required: false },
+    city: { type: String, lowercase: true, required: false },
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
     emailVerified: { type: Boolean, default: false },

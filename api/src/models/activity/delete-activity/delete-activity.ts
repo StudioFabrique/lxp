@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
 import fs from "node:fs/promises";
 
 import {
@@ -17,24 +21,20 @@ export default async function deleteActivity(
 ) {
   const isLessonActivity = parent === "lesson";
   const existingActivity = isLessonActivity
-    ? await prisma.activity.findFirst({
-        where: { id: activityId },
-        select: {
-          id: true,
-          type: true,
-          url: true,
-          resourceActivities: { select: { url: true } },
-        },
-      })
-    : await prisma.bonusActivity.findFirst({
-        where: { id: activityId },
-        select: {
-          id: true,
-          type: true,
-          url: true,
-          resourceBonusActivities: { select: { url: true } },
-        },
-      });
+    ? await prisma.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .select("id", "type", "url")
+        .include("resourceActivities", (related0) => related0.select("url"))
+        .first()
+    : await prisma.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .select("id", "type", "url")
+        .include("resourceBonusActivities", (related1) =>
+          related1.select("url"),
+        )
+        .first();
 
   if (!existingActivity) {
     throw { statusCode: 404, message: "L'activité n'existe pas" };
@@ -82,19 +82,36 @@ export default async function deleteActivity(
     });
   }
 
-  const filesToDelete = await prisma.$transaction(async (tx) => {
+  const filesToDelete = await prisma.transaction(async (tx) => {
     if (isLessonActivity) {
-      await tx.activity.delete({ where: { id: activityId } });
+      await tx.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .delete()
+        .then(requireDatabaseRow);
     } else {
-      await tx.bonusActivity.delete({ where: { id: activityId } });
+      await tx.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { id: activityId }),
+      )
+        .delete()
+        .then(requireDatabaseRow);
     }
 
     if (activityType === "text") {
-      const [remainingActivities, remainingBonusActivities] =
-        await Promise.all([
-          tx.activity.count({ where: { url: existingActivity.url } }),
-          tx.bonusActivity.count({ where: { url: existingActivity.url } }),
-        ]);
+      const [remainingActivities, remainingBonusActivities] = await Promise.all(
+        [
+          tx.orm.public.Activity.where((row) =>
+            whereFromObject(row, { url: existingActivity.url }),
+          )
+            .aggregate((aggregate) => ({ total: aggregate.count() }))
+            .then(({ total }) => total),
+          tx.orm.public.BonusActivity.where((row) =>
+            whereFromObject(row, { url: existingActivity.url }),
+          )
+            .aggregate((aggregate) => ({ total: aggregate.count() }))
+            .then(({ total }) => total),
+        ],
+      );
 
       // Certaines anciennes duplications partagent le même fichier texte.
       // Le fichier et ses images ne peuvent être nettoyés qu'au dernier usage.

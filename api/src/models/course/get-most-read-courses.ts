@@ -1,6 +1,4 @@
 import { prisma } from "../../utils/db.ts";
-
-import { type Course } from "@prisma/client";
 import Group from "../../utils/interfaces/db/group.ts";
 
 /**
@@ -11,55 +9,48 @@ import Group from "../../utils/interfaces/db/group.ts";
  */
 export default async function getMostReadCourses(
   userIdMdb: string,
-  max?: number
+  max?: number,
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
   const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
 
-  const courses: any = await prisma.$queryRaw`
-  SELECT c.id, c.title, c."moduleId",  m.title AS moduleTitle, COUNT(lr.*) AS lessonReadCount
-  FROM "Course" c
-  JOIN "Lesson" l ON c.id = l."courseId"
-  LEFT JOIN "LessonRead" lr ON l.id = lr."lessonId"
-  JOIN "Module" m ON c."moduleId" = m.id
-  JOIN "Parcours" p ON m."parcoursId" = p.id
-  JOIN "GroupsOnParcours" gp ON p.id = gp."parcoursId"
-  JOIN "Group" g ON gp."groupId" = g.id
-  WHERE g."idMdb" = ANY(${groupIds})
-  AND c."isPublished" = true
-  AND c."visibility" = true
-  AND p."isPublished" = true
-  GROUP BY c.id, c.title, c."moduleId", m.id, m.title
-  ORDER BY lessonReadCount DESC
-  LIMIT ${max}`;
+  if (groupIds.length === 0) return [];
 
-  // code to add module id,lesson id and to avoid the problem "do not know how to serialize a bigint"
-  const coursesReformated: Course[] = await Promise.all(
-    courses.map(async (course: any) => {
-      const {
-        lessonreadcount,
-        moduleId,
-        module,
-        moduletitle,
-        ...courseReformated
-      } = course;
-
-      const lessonId = (
-        await prisma.lesson.findFirst({
-          select: { id: true },
-          where: { courseId: courseReformated.id },
-          orderBy: { order: "asc" },
-        })
-      )?.id;
-
-      return {
-        module: { id: moduleId, title: moduletitle },
-        lessons: [{ id: lessonId }],
-        ...courseReformated,
-      };
+  const query = prisma.raw.sql`
+    SELECT c.id, c.title, m.id AS "moduleId", m.title AS "moduleTitle",
+      (array_agg(l.id ORDER BY l."order"))[1] AS "lessonId"
+    FROM "Course" c
+    JOIN "Lesson" l ON c.id = l."courseId"
+    LEFT JOIN "LessonRead" lr ON l.id = lr."lessonId"
+    JOIN "Module" m ON c."moduleId" = m.id
+    JOIN "Parcours" p ON m."parcoursId" = p.id
+    JOIN "GroupsOnParcours" gp ON p.id = gp."parcoursId"
+    JOIN "Group" g ON gp."groupId" = g.id
+    WHERE g."idMdb" IN (
+      SELECT jsonb_array_elements_text(${JSON.stringify(groupIds)}::jsonb)
+    )
+      AND c."isPublished" = true
+      AND c."visibility" = true
+      AND p."isPublished" = true
+    GROUP BY c.id, m.id
+    ORDER BY COUNT(lr.id) DESC
+    LIMIT ${max ?? 4}
+  `
+    .returnsRow({
+      id: "pg/int4@1",
+      title: "pg/text@1",
+      moduleId: "pg/int4@1",
+      moduleTitle: "pg/text@1",
+      lessonId: "pg/int4@1",
     })
-  );
+    .build();
 
-  return coursesReformated;
+  const courses = await prisma.runtime().query(query);
+  return courses.map(({ id, title, moduleId, moduleTitle, lessonId }) => ({
+    id,
+    title,
+    module: { id: moduleId, title: moduleTitle },
+    lessons: [{ id: lessonId }],
+  }));
 }

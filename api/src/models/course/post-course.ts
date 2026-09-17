@@ -1,13 +1,18 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
 import { slugify } from "../../helpers/slugify.ts";
 
 async function postCourse(userId: string, course: any) {
-  const existingModule = await prisma.module.findFirst({
-    where: { id: course.moduleId },
-    select: { courses: true },
-  });
+  const existingModule = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { id: course.moduleId }),
+  )
+    .include("courses")
+    .first();
 
   if (!existingModule) {
     const error = new Error("Le module n'existe pas");
@@ -15,9 +20,9 @@ async function postCourse(userId: string, course: any) {
     throw error;
   }
 
-  const existingAdmin = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAdmin = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   if (!existingAdmin) {
     const error: any = {
@@ -38,29 +43,28 @@ async function postCourse(userId: string, course: any) {
   }
 
   const defaultImage = await getUnsplashPresentationImage(course.title);
-  const newCourse = await prisma.course.create({
-    data: {
-      title: course.title,
-      image: defaultImage,
-      module: {
-        connect: {
-          id: course.moduleId,
-        },
-      },
-      author: `${adminName.firstname} ${adminName.lastname}`,
-      admin: { connect: { id: existingAdmin.id } },
-      // on place le nouveau cours en fin de liste des cours associés au module
-      order: existingModule.courses.length,
-    },
-    select: { id: true },
+  const newCourse = await prisma.orm.public.Course.select("id").create({
+    title: course.title,
+    image: defaultImage,
+    module: (relation) =>
+      relation.connect({
+        id: course.moduleId,
+      }),
+    author: `${adminName.firstname} ${adminName.lastname}`,
+    admin: (relation) => relation.connect({ id: existingAdmin.id }),
+    order: existingModule.courses.length,
+    dates: [],
   });
 
   // Backfill the slug (never set above, would stay NULL) so the course stays
   // visible to ANDRIA-AI, which filters out courses with no slug.
-  await prisma.course.update({
-    where: { id: newCourse.id },
-    data: { courseSlug: `${slugify(course.title) || "cours"}-${newCourse.id}` },
-  });
+  await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: newCourse.id }),
+  )
+    .update({
+      courseSlug: `${slugify(course.title) || "cours"}-${newCourse.id}`,
+    })
+    .then(requireDatabaseRow);
 
   return newCourse;
 }

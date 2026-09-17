@@ -72,4 +72,19 @@ describe("DatePicker", () => {
 
     expect(onChange).toHaveBeenCalledWith("2026-09-15");
   });
+
+  it("ne déplace pas automatiquement le focus dans le calendrier à l’ouverture", async () => {
+    act(() => {
+      root.render(<DatePicker value="2026-09-08" onChange={vi.fn()} />);
+    });
+
+    const trigger = container.querySelector<HTMLButtonElement>("button");
+    trigger?.focus();
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(document.activeElement).toBe(trigger);
+  });
 });

@@ -67,6 +67,6 @@ describe("RoleCard", () => {
     expect(markup).toContain("Réinitialiser les permissions du rôle Éditeur");
     expect(markup).toContain("Dupliquer le rôle Éditeur");
     expect(markup).not.toContain("Supprimer le rôle Éditeur");
-    expect(markup).toContain("Protégé");
+    expect(markup).toContain('data-tip="Rôle protégé"');
   });
 });

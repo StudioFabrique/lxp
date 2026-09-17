@@ -1,103 +1,135 @@
-import type { PrismaClient } from "@prisma/client";
 import {
   HEARTBEAT_INTERVAL_MS,
   type ContentType,
 } from "../../config/content-read.ts";
-import { prisma } from "../../utils/db.ts";
+import { prisma, type TransactionClient } from "../../utils/db.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
 
 export type ContentRead = {
   id: number;
-  beganAt: Date;
-  lastOpenedAt: Date;
-  finishedAt: Date | null;
+  beganAt: string;
+  lastOpenedAt: string;
+  finishedAt: string | null;
   readTimeMs: number;
   studentId: number;
 };
 
+type DatabaseSession = typeof prisma | TransactionClient;
+
 const MAX_HEARTBEAT_CREDIT_MS = HEARTBEAT_INTERVAL_MS * 2;
 
-/**
- * Temps à créditer pour un battement, borné.
- *
- * On mesure l'écart réel depuis le dernier signe de vie plutôt que d'accepter
- * une durée envoyée par le client : sinon n'importe qui peut se déclarer
- * quarante heures de lecture sur une leçon.
- */
 export function computeHeartbeatCredit(lastOpenedAt: Date, now: Date): number {
   const elapsed = now.getTime() - lastOpenedAt.getTime();
   if (elapsed <= 0) return 0;
   return Math.min(elapsed, MAX_HEARTBEAT_CREDIT_MS);
 }
 
-// Signature minimale commune aux quatre délégués Prisma *Read. Ils ne
-// partagent pas de type généré commun, leur clé étrangère différant d'un
-// contenu à l'autre.
-type ReadDelegate = {
-  findUnique(args: any): Promise<ContentRead | null>;
-  create(args: any): Promise<ContentRead>;
-  update(args: any): Promise<ContentRead>;
-  aggregate(args: any): Promise<{ _sum: { readTimeMs: number | null } }>;
-  count(args: any): Promise<number>;
-};
-
 export class ContentReadRepository {
-  private readonly database: PrismaClient;
+  private readonly database: DatabaseSession;
 
-  constructor(database: PrismaClient = prisma) {
+  constructor(database: DatabaseSession = prisma) {
     this.database = database;
   }
 
   findStudentByMongoId(idMdb: string) {
-    return this.database.student.findUnique({ where: { idMdb } });
-  }
-
-  private delegate(type: ContentType): ReadDelegate {
-    switch (type) {
-      case "module":
-        return this.database.moduleRead as unknown as ReadDelegate;
-      case "course":
-        return this.database.courseRead as unknown as ReadDelegate;
-      case "lesson":
-        return this.database.lessonRead as unknown as ReadDelegate;
-      case "activity":
-        return this.database.activityRead as unknown as ReadDelegate;
-    }
-  }
-
-  private foreignKey(type: ContentType): string {
-    return `${type}Id`;
-  }
-
-  /** Clé unique composée, nommée `<contenu>Id_studentId` par Prisma. */
-  private uniqueWhere(type: ContentType, contentId: number, studentId: number) {
-    return {
-      [`${this.foreignKey(type)}_studentId`]: {
-        [this.foreignKey(type)]: contentId,
-        studentId,
-      },
-    };
+    return this.database.orm.public.Student.where((student) =>
+      whereFromObject(student, { idMdb }),
+    ).first();
   }
 
   find(type: ContentType, contentId: number, studentId: number) {
-    return this.delegate(type).findUnique({
-      where: this.uniqueWhere(type, contentId, studentId),
-    });
+    const where = { [`${type}Id`]: contentId, studentId };
+    switch (type) {
+      case "module":
+        return this.database.orm.public.ModuleRead.where((read) =>
+          whereFromObject(read, where),
+        ).first();
+      case "course":
+        return this.database.orm.public.CourseRead.where((read) =>
+          whereFromObject(read, where),
+        ).first();
+      case "lesson":
+        return this.database.orm.public.LessonRead.where((read) =>
+          whereFromObject(read, where),
+        ).first();
+      case "activity":
+        return this.database.orm.public.ActivityRead.where((read) =>
+          whereFromObject(read, where),
+        ).first();
+    }
   }
 
-  /** Crée le suivi de lecture, ou repositionne `lastOpenedAt` s'il existe déjà. */
+  private create(type: ContentType, contentId: number, studentId: number) {
+    switch (type) {
+      case "module":
+        return this.database.orm.public.ModuleRead.create({ moduleId: contentId, studentId });
+      case "course":
+        return this.database.orm.public.CourseRead.create({ courseId: contentId, studentId });
+      case "lesson":
+        return this.database.orm.public.LessonRead.create({ lessonId: contentId, studentId });
+      case "activity":
+        return this.database.orm.public.ActivityRead.create({ activityId: contentId, studentId });
+    }
+  }
+
+  private update(
+    type: ContentType,
+    id: number,
+    data: { lastOpenedAt?: string; finishedAt?: string },
+  ) {
+    switch (type) {
+      case "module":
+        return this.database.orm.public.ModuleRead.where((read) =>
+          whereFromObject(read, { id }),
+        ).update(data);
+      case "course":
+        return this.database.orm.public.CourseRead.where((read) =>
+          whereFromObject(read, { id }),
+        ).update(data);
+      case "lesson":
+        return this.database.orm.public.LessonRead.where((read) =>
+          whereFromObject(read, { id }),
+        ).update(data);
+      case "activity":
+        return this.database.orm.public.ActivityRead.where((read) =>
+          whereFromObject(read, { id }),
+        ).update(data);
+    }
+  }
+
   async open(type: ContentType, contentId: number, studentId: number) {
     const existing = await this.find(type, contentId, studentId);
+    return existing
+      ? this.update(type, existing.id, { lastOpenedAt: new Date().toISOString() })
+      : this.create(type, contentId, studentId);
+  }
 
-    if (existing) {
-      return this.delegate(type).update({
-        where: { id: existing.id },
-        data: { lastOpenedAt: new Date() },
-      });
+  private updateReadTime(
+    type: ContentType,
+    existing: ContentRead,
+    credit: number,
+    lastOpenedAt: string,
+  ) {
+    const where = { id: existing.id, lastOpenedAt: existing.lastOpenedAt };
+    const data = { readTimeMs: existing.readTimeMs + credit, lastOpenedAt };
+    switch (type) {
+      case "module":
+        return this.database.orm.public.ModuleRead.where((read) =>
+          whereFromObject(read, where),
+        ).updateAndCount(data);
+      case "course":
+        return this.database.orm.public.CourseRead.where((read) =>
+          whereFromObject(read, where),
+        ).updateAndCount(data);
+      case "lesson":
+        return this.database.orm.public.LessonRead.where((read) =>
+          whereFromObject(read, where),
+        ).updateAndCount(data);
+      case "activity":
+        return this.database.orm.public.ActivityRead.where((read) =>
+          whereFromObject(read, where),
+        ).updateAndCount(data);
     }
-
-    return this.delegate(type).create({
-      data: { [this.foreignKey(type)]: contentId, studentId },
-    });
   }
 
   async addReadTime(
@@ -109,70 +141,110 @@ export class ContentReadRepository {
     const existing = await this.find(type, contentId, studentId);
     if (!existing) return null;
 
-    const credit = computeHeartbeatCredit(existing.lastOpenedAt, now);
+    const credit = computeHeartbeatCredit(new Date(existing.lastOpenedAt), now);
+    if (credit === 0) return existing;
 
-    return this.delegate(type).update({
-      where: { id: existing.id },
-      data: {
-        readTimeMs: { increment: credit },
-        lastOpenedAt: now,
-      },
-    });
+    const write = async (transaction: TransactionClient) => {
+      const repository = new ContentReadRepository(transaction);
+      const count = await repository.updateReadTime(
+        type,
+        existing,
+        credit,
+        now.toISOString(),
+      );
+      if (count > 0) {
+        await transaction.orm.public.ContentReadCredit.create({
+          studentId,
+          type,
+          contentId,
+          from: new Date(now.getTime() - credit).toISOString(),
+          to: now.toISOString(),
+        });
+      }
+      return repository.find(type, contentId, studentId);
+    };
+
+    return "transaction" in this.database
+      ? this.database.transaction(write)
+      : write(this.database);
   }
 
   async finish(type: ContentType, contentId: number, studentId: number) {
     const existing = await this.find(type, contentId, studentId);
-    if (!existing) return null;
-    if (existing.finishedAt) return existing;
-
-    return this.delegate(type).update({
-      where: { id: existing.id },
-      data: { finishedAt: new Date() },
-    });
+    if (!existing || existing.finishedAt) return existing;
+    return this.update(type, existing.id, { finishedAt: new Date().toISOString() });
   }
 
-  /** Temps cumulé sur un type de contenu, pour l'indicateur time_on_content. */
   async sumReadTime(
     type: ContentType,
     studentId: number,
     from: Date,
     to: Date,
   ): Promise<number> {
-    const result = await this.delegate(type).aggregate({
-      where: { studentId, lastOpenedAt: { gte: from, lte: to } },
-      _sum: { readTimeMs: true },
-    });
+    const rows = await this.database.orm.public.ContentReadCredit.where((credit) =>
+      whereFromObject(credit, {
+        studentId,
+        type,
+        to: { gt: from.toISOString() },
+        from: { lt: to.toISOString() },
+      }),
+    )
+      .select("from", "to")
+      .all();
 
-    return result._sum.readTimeMs ?? 0;
+    return rows.reduce((duration, credit) => {
+      const start = Math.max(new Date(credit.from).getTime(), from.getTime());
+      const end = Math.min(new Date(credit.to).getTime(), to.getTime());
+      return duration + Math.max(0, end - start);
+    }, 0);
   }
 
   countFinished(type: ContentType, studentId: number, from: Date, to: Date) {
-    return this.delegate(type).count({
-      where: { studentId, finishedAt: { gte: from, lte: to } },
-    });
+    const where = {
+      studentId,
+      finishedAt: { gte: from.toISOString(), lte: to.toISOString() },
+    };
+    switch (type) {
+      case "module":
+        return this.database.orm.public.ModuleRead.where((read) =>
+          whereFromObject(read, where),
+        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+      case "course":
+        return this.database.orm.public.CourseRead.where((read) =>
+          whereFromObject(read, where),
+        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+      case "lesson":
+        return this.database.orm.public.LessonRead.where((read) =>
+          whereFromObject(read, where),
+        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+      case "activity":
+        return this.database.orm.public.ActivityRead.where((read) =>
+          whereFromObject(read, where),
+        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+    }
   }
 
   async canFinish(type: ContentType, contentId: number, studentId: number) {
     if (type === "course") {
-      const assignment = await this.database.courseAssignment.findUnique({
-        where: { courseId: contentId },
-        select: {
-          submissions: {
-            where: { studentId, submittedAt: { not: null } },
-            select: { id: true },
-          },
-        },
-      });
+      const assignment = await this.database.orm.public.CourseAssignment.where((row) =>
+        whereFromObject(row, { courseId: contentId }),
+      )
+        .include("submissions", (submissions) =>
+          submissions
+            .where((row) => whereFromObject(row, { studentId, submittedAt: { not: null } }))
+            .select("id"),
+        )
+        .first();
       return !assignment || assignment.submissions.length > 0;
     }
     if (type === "module") {
-      const pending = await this.database.courseAssignment.count({
-        where: {
+      const { total } = await this.database.orm.public.CourseAssignment.where((row) =>
+        whereFromObject(row, {
           course: { moduleId: contentId },
           submissions: { none: { studentId, submittedAt: { not: null } } },
-        },
-      });
-      return pending === 0;
+        }),
+      ).aggregate((aggregate) => ({ total: aggregate.count() }));
+      return total === 0;
     }
     return true;
   }

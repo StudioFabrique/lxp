@@ -13,6 +13,7 @@ import { getTeacherUpcomingAssignments } from "../api/teacher-assignments.api";
 import {
   filterTeacherAssignments,
   teacherAssignmentStudentStatus,
+  type TeacherAssignmentEvaluationFilter,
 } from "../teacher-assignments.utils";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -29,6 +30,8 @@ const statusClassName = {
 export default function TeacherAssignments() {
   const [search, setSearch] = useState("");
   const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
+  const [evaluationFilter, setEvaluationFilter] =
+    useState<TeacherAssignmentEvaluationFilter>("ungraded");
   const query = useQuery({
     queryKey: ["teacher-assignments", "upcoming"],
     queryFn: getTeacherUpcomingAssignments,
@@ -41,15 +44,21 @@ export default function TeacherAssignments() {
     [query.data],
   );
   const assignments = useMemo(
-    () => filterTeacherAssignments(query.data ?? [], selectedParcours, search),
-    [query.data, search, selectedParcours],
+    () =>
+      filterTeacherAssignments(
+        query.data ?? [],
+        selectedParcours,
+        search,
+        evaluationFilter,
+      ),
+    [query.data, search, selectedParcours, evaluationFilter],
   );
 
   return (
     <PageWrapper as="main">
       <Header
         title="Évaluations"
-        description="Suivez les évaluations à venir et les remises de vos étudiants."
+        description="Suivez les devoirs à évaluer et les travaux déjà notés."
       />
 
       <ParcoursFilterBadges
@@ -65,11 +74,34 @@ export default function TeacherAssignments() {
         placeholder="Rechercher une évaluation ou un étudiant..."
       />
 
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label="État des devoirs"
+      >
+        <button
+          type="button"
+          className={`btn btn-sm ${evaluationFilter === "ungraded" ? "btn-primary" : "btn-outline"}`}
+          aria-pressed={evaluationFilter === "ungraded"}
+          onClick={() => setEvaluationFilter("ungraded")}
+        >
+          Devoirs non évalués
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm ${evaluationFilter === "graded" ? "btn-primary" : "btn-outline"}`}
+          aria-pressed={evaluationFilter === "graded"}
+          onClick={() => setEvaluationFilter("graded")}
+        >
+          Devoirs évalués
+        </button>
+      </div>
+
       {query.isPending ? (
         <Loader />
       ) : query.isError ? (
         <div className="alert alert-error" role="alert">
-          Impossible de charger les évaluations à venir.
+          Impossible de charger les évaluations.
           <button
             type="button"
             className="btn btn-sm"
@@ -83,13 +115,15 @@ export default function TeacherAssignments() {
           title={
             search || selectedParcours
               ? "Aucune évaluation ne correspond à vos filtres"
-              : "Aucune évaluation à venir"
+              : evaluationFilter === "graded"
+                ? "Aucun devoir évalué"
+                : "Aucun devoir non évalué"
           }
         />
       ) : (
         <section
           className="grid items-start gap-5 lg:grid-cols-2 2xl:grid-cols-3"
-          aria-label={`${assignments.length} évaluation${assignments.length > 1 ? "s" : ""} à venir`}
+          aria-label={`${assignments.length} devoir${assignments.length > 1 ? "s" : ""} ${evaluationFilter === "graded" ? "évalués" : "non évalués"}`}
         >
           {assignments.map((assignment) => {
             const module = assignment.course.module;
@@ -98,12 +132,23 @@ export default function TeacherAssignments() {
             return (
               <HierarchicalListCard
                 key={assignment.id}
-                label="Évaluation à venir"
+                label={
+                  evaluationFilter === "graded"
+                    ? "Devoir évalué"
+                    : "Devoir non évalué"
+                }
                 title={assignment.course.title}
                 truncateTitle
                 description={
                   <span className="flex flex-col gap-x-2 gap-2">
                     <span>{module.title}</span>
+                    {assignment.students.length > 0 && (
+                      <span className="text-sm text-base-content/70">
+                        {assignment.students.length} travail
+                        {assignment.students.length > 1 ? "s" : ""} attendu
+                        {assignment.students.length > 1 ? "s" : ""}
+                      </span>
+                    )}
                     <span className="flex items-center gap-1">
                       <CalendarClock className="size-3.5" aria-hidden />
                       {dateFormatter.format(new Date(assignment.dueAt))}

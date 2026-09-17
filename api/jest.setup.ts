@@ -1,8 +1,8 @@
 // jest.setup.ts
 import mongoose from "mongoose";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "./src/utils/create-prisma-client.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 // ✅ Utilisez afterAll directement, pas global.afterAll
 afterAll(async () => {
@@ -16,7 +16,7 @@ afterAll(async () => {
     }
 
     // Fermer Prisma
-    await prisma.$disconnect();
+    await prisma.close();
     console.log("✅ Prisma disconnected");
   } catch (error) {
     console.error("❌ Cleanup error:", error);

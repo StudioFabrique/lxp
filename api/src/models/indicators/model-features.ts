@@ -14,8 +14,6 @@ import type { IndicatorsPayload } from "./types.ts";
  */
 
 const MS_PER_MINUTE = 60_000;
-const SCORE_RANGE_POINTS = 100;
-const MS_PER_DAY = 86_400_000;
 
 /** Les onze variables du modèle, dans l'ordre de son contrat. */
 export const MODEL_INDICATOR_KEYS = [
@@ -38,6 +36,8 @@ export type ModelIndicators = Record<ModelIndicatorKey, number | null>;
 
 /** Volumétrie des quiz et devoirs d'un apprenant. */
 export type AssessmentsSummary = {
+  /** Pente journalière des notes sur l'historique, null sans dates distinctes. */
+  scoreEvolution: number | null;
   /** Tentatives terminées sur la période. */
   periodCount: number;
   /** Tentatives terminées depuis toujours, jusqu'à la fin de la période. */
@@ -80,15 +80,6 @@ function readIndicator(
   return { value: indicator.value };
 }
 
-function periodDays(payload: IndicatorsPayload): number {
-  const span =
-    new Date(payload.to).getTime() - new Date(payload.from).getTime();
-
-  // Une période d'un jour au minimum : la pente est une variation par jour, la
-  // diviser par zéro n'aurait pas de sens.
-  return Math.max(1, Math.round(span / MS_PER_DAY));
-}
-
 /**
  * Construit la ligne d'entrée du modèle à partir des indicateurs de la
  * plateforme et de la volumétrie des quiz.
@@ -117,10 +108,8 @@ export default function toModelIndicators(
     return convert(value);
   };
 
-  const evolution = readIndicator(payload, "correct_answer_rate_evolution");
-
-  if (evolution.value === null) {
-    missing.score_evolution = evolution.reason!;
+  if (assessments?.scoreEvolution == null) {
+    missing.score_evolution = "Au moins deux évaluations notées à des dates distinctes sont nécessaires.";
   }
 
   if (assessments === null) {
@@ -151,19 +140,8 @@ export default function toModelIndicators(
     quiz_interaction_count: take("quiz_interaction_count", "quiz_interactions"),
     chatbot_proxy: take("chatbot_proxy", "chatbot_interactions"),
 
-    // `score_evolution` est une pente : la variation du score, ramenée à
-    // l'échelle [0, 1], par jour. L'indicateur de la plateforme est un écart en
-    // points de pourcentage sur toute la période, d'où la double division.
-    score_evolution:
-      evolution.value === null
-        ? null
-        : Number(
-            (
-              evolution.value /
-              SCORE_RANGE_POINTS /
-              periodDays(payload)
-            ).toFixed(6),
-          ),
+    // Calcul dédié au modèle ; l'écart affiché dans la fiche reste descriptif.
+    score_evolution: assessments?.scoreEvolution ?? null,
 
     assessment_count: assessments?.periodCount ?? null,
     cumul_assessments: assessments?.cumulativeCount ?? null,

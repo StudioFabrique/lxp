@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../utils/helpers/text-helpers";
 import { FC } from "react";
 import User from "../../utils/interfaces/user";
 import AppImage from "../UI/image/app-image";
@@ -18,7 +19,7 @@ export const AvatarSmall: FC<{
   const initials = `${firstname[0] ?? ""}${lastname[0] ?? ""}`
     .trim()
     .toUpperCase();
-  const fullName = `${firstname} ${lastname}`.trim() || "Utilisateur supprimé";
+  const fullName = toTitleCase(`${firstname} ${lastname}`.trim()) || "Utilisateur supprimé";
 
   return (
     <>

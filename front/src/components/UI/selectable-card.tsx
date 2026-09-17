@@ -1,3 +1,4 @@
+import { formatTitle } from "../../utils/helpers/text-helpers";
 import { ReactNode, MouseEvent, useState, useEffect } from "react";
 import { Eye, Trash2, PenLine, Check } from "lucide-react";
 import ToolTipWarning from "./tooltip-warning/tooltip-warning";
@@ -115,10 +116,10 @@ const SelectableCard = ({
               ) : (
                 <h3
                   className="card-title text-base font-bold text-base-content flex gap-2 items-center"
-                  title={title}
+                  title={formatTitle(title)}
                 >
                   <span className="truncate first-letter:uppercase">
-                    {title}
+                    {formatTitle(title)}
                   </span>
 
                   {onEditTitle && (

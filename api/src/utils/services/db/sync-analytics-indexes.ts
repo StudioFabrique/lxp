@@ -1,6 +1,7 @@
 import ConnectionInfos from "../../interfaces/db/connection-infos.ts";
 import PromptStats from "../../interfaces/db/prompt-stats.ts";
 import StudentFeedback from "../../interfaces/db/student-feedback.ts";
+import { IndicatorAnalysis, IndicatorAnalysisFeedback } from "../../interfaces/db/indicator-analysis.ts";
 import { logger } from "../../logs/logger.ts";
 
 /**
@@ -17,6 +18,8 @@ export default async function syncAnalyticsIndexes() {
       ConnectionInfos.syncIndexes(),
       PromptStats.syncIndexes(),
       StudentFeedback.syncIndexes(),
+      IndicatorAnalysis.createIndexes(),
+      IndicatorAnalysisFeedback.createIndexes(),
     ]);
   } catch (error) {
     // Un index manquant dégrade les performances mais ne doit pas empêcher

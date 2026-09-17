@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import type { Prisma, QuizQuestion } from "@prisma/client";
+import type { Models } from "../../prisma/contract.d.ts";
 
 export interface AiQuizQuestion {
   id?: string | number | null;
@@ -13,7 +13,7 @@ export interface AiQuizQuestion {
 }
 
 export type StoredQuizQuestion = Pick<
-  QuizQuestion,
+  Models.public_QuizQuestion,
   | "externalId"
   | "type"
   | "prompt"
@@ -29,14 +29,13 @@ export function isAiQuizQuestion(value: unknown): value is AiQuizQuestion {
 
   const candidate = value as Record<string, unknown>;
   return (
-    typeof candidate.type === "string" &&
-    typeof candidate.prompt === "string"
+    typeof candidate.type === "string" && typeof candidate.prompt === "string"
   );
 }
 
 export function toQuizQuestionCreateData(
   question: AiQuizQuestion,
-): Omit<Prisma.QuizQuestionUncheckedCreateInput, "quizId" | "contentHash"> {
+) {
   const {
     id,
     type,
@@ -58,7 +57,7 @@ export function toQuizQuestionCreateData(
     explanationTrue: explanation_correct ?? null,
     explanationWrong: explanation_wrong ?? null,
     tags: tags || [],
-    data: specificData as Prisma.InputJsonValue,
+    data: specificData as Models.public_QuizQuestion["data"],
   };
 }
 

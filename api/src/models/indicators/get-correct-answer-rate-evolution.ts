@@ -1,5 +1,11 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
-import { emptyIndicator, toDayKey, type Indicator, type IndicatorContext } from "./types.ts";
+import {
+  emptyIndicator,
+  toDayKey,
+  type Indicator,
+  type IndicatorContext,
+} from "./types.ts";
 
 export const CORRECT_ANSWER_RATE_EVOLUTION_KEY =
   "correct_answer_rate_evolution";
@@ -29,36 +35,32 @@ export default async function getCorrectAnswerRateEvolution(
   }
 
   const [attempts, submissions] = await Promise.all([
-    prisma.quizAttempt.findMany({
-      where: {
+    prisma.orm.public.QuizAttempt.where((row) =>
+      whereFromObject(row, {
         studentId: context.studentId,
-        startedAt: { gte: context.from, lte: context.to },
-        finishedAt: { not: null },
+        finishedAt: { gte: context.from, lte: context.to },
         answers: { some: {} },
-      },
-      select: {
-        startedAt: true,
-        answers: { select: { isCorrect: true } },
-      },
-    }),
-    prisma.assignmentSubmission.findMany({
-      where: {
+      }),
+    )
+      .select("finishedAt")
+      .include("answers", (related89) => related89.select("isCorrect"))
+      .all(),
+    prisma.orm.public.AssignmentSubmission.where((row) =>
+      whereFromObject(row, {
         studentId: context.studentId,
         gradedAt: { gte: context.from, lte: context.to },
         grade: { not: null },
-      },
-      select: {
-        gradedAt: true,
-        grade: true,
-        assignment: { select: { maxScore: true } },
-      },
-    }),
+      }),
+    )
+      .select("gradedAt", "grade")
+      .include("assignment", (related90) => related90.select("maxScore"))
+      .all(),
   ]);
 
   const rates = [
     ...attempts.map((attempt) => ({
-      at: attempt.startedAt,
-      date: toDayKey(attempt.startedAt),
+      at: attempt.finishedAt!,
+      date: toDayKey(attempt.finishedAt!),
       value: Math.round(
         (attempt.answers.filter((answer) => answer.isCorrect).length /
           attempt.answers.length) *
@@ -69,16 +71,17 @@ export default async function getCorrectAnswerRateEvolution(
       at: submission.gradedAt!,
       date: toDayKey(submission.gradedAt!),
       value: Math.round(
-        (submission.grade! / submission.assignment.maxScore) * 100,
+        (submission.grade! / submission.assignment!.maxScore) * 100,
       ),
     })),
   ]
-    .sort((a, b) => a.at.getTime() - b.at.getTime())
+    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
     .map(({ date, value }) => ({ date, value }));
 
   if (rates.length < 2) {
     return emptyIndicator(CORRECT_ANSWER_RATE_EVOLUTION_KEY, label, "trend", {
-      reason: "Au moins deux évaluations notées sont nécessaires pour dégager une tendance.",
+      reason:
+        "Au moins deux évaluations notées sont nécessaires pour dégager une tendance.",
       attemptCount: rates.length,
     });
   }

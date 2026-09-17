@@ -13,16 +13,6 @@ export const adminParcoursRoutes: RouteObject[] = [
         lazy: lazyRoute(() => import("./views/ParcoursHome")),
       },
       {
-        path: "new",
-        element: <RequireAbility action="write" subject="parcours" />,
-        children: [
-          {
-            index: true,
-            lazy: lazyRoute(() => import("./views/ParcoursAdd")),
-          },
-        ],
-      },
-      {
         path: "edit/:id",
         element: <RequireAbility action="update" subject="parcours" />,
         children: [

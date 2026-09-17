@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../prisma-query.ts";
 import { prisma } from "../../db.ts";
 import Group from "../../interfaces/db/group.ts";
 import { type IRole } from "../../interfaces/db/role.ts";
@@ -9,19 +10,17 @@ import { type ContentType } from "../../../config/content-read.ts";
  */
 export type AccessCheckedContent = ContentType | "parcours";
 
-export type AccessScope =
-  | {
-      kind: "teacher" | "learner";
-      parcoursIds: number[];
-      directParcoursIds: number[] | null;
-      /**
-       * `null` signifie que tous les modules des parcours autorisés le sont.
-       * Pour un formateur, la liste contient uniquement les modules auxquels
-       * il est directement affecté.
-       */
-      moduleIds: number[] | null;
-    }
-  | null;
+export type AccessScope = {
+  kind: "teacher" | "learner";
+  parcoursIds: number[];
+  directParcoursIds: number[] | null;
+  /**
+   * `null` signifie que tous les modules des parcours autorisés le sont.
+   * Pour un formateur, la liste contient uniquement les modules auxquels
+   * il est directement affecté.
+   */
+  moduleIds: number[] | null;
+} | null;
 
 function userRoleRank(userRoles: IRole[]): number {
   return userRoles[0]?.rank ?? 4;
@@ -62,18 +61,16 @@ export async function resolveAccessScope(auth: {
 export async function getTeacherAccessScope(
   userIdMdb: string,
 ): Promise<Exclude<AccessScope, null>> {
-  const contact = await prisma.contact.findUnique({
-    where: { idMdb: userIdMdb },
-    select: {
-      parcours: { select: { parcoursId: true } },
-      modules: {
-        select: {
-          moduleId: true,
-          module: { select: { parcoursId: true } },
-        },
-      },
-    },
-  });
+  const contact = await prisma.orm.public.Contact.where((row) =>
+    whereFromObject(row, { idMdb: userIdMdb }),
+  )
+    .include("parcours", (related59) => related59.select("parcoursId"))
+    .include("modules", (related60) =>
+      related60
+        .select("moduleId")
+        .include("module", (related61) => related61.select("parcoursId")),
+    )
+    .first();
 
   if (!contact) {
     return {
@@ -84,9 +81,11 @@ export async function getTeacherAccessScope(
     };
   }
 
-  const directParcoursIds = contact.parcours.map(({ parcoursId }) => parcoursId);
+  const directParcoursIds = contact.parcours.map(
+    ({ parcoursId }) => parcoursId,
+  );
   const directlyAssignedModuleIds = contact.modules
-    .filter(({ module }) => directParcoursIds.includes(module.parcoursId))
+    .filter(({ module }) => directParcoursIds.includes(module!.parcoursId))
     .map(({ moduleId }) => moduleId);
 
   return {
@@ -135,35 +134,19 @@ export async function getAccessibleParcoursIds(
   if (groups.length === 0) return [];
 
   const groupIds = groups.map((group) => group.id as string);
-  const parcoursList = await prisma.parcours.findMany({
-    where: {
+  const parcoursList = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, {
       isPublished: true,
       groups: { some: { group: { idMdb: { in: groupIds } } } },
-    },
-    select: { id: true },
-  });
+    }),
+  )
+    .select("id")
+    .all();
 
   return parcoursList.map((parcours) => parcours.id);
 }
 
 /** Remonte de la chaîne activité → leçon → cours → module jusqu'au parcours. */
-const PARCOURS_SELECTION = {
-  module: { parcoursId: true },
-  course: { module: { select: { id: true, parcoursId: true } } },
-  lesson: {
-    course: { select: { module: { select: { id: true, parcoursId: true } } } },
-  },
-  activity: {
-    lesson: {
-      select: {
-        course: {
-          select: { module: { select: { id: true, parcoursId: true } } },
-        },
-      },
-    },
-  },
-} as const;
-
 /**
  * Parcours dont relève un contenu, ou `null` si le contenu n'existe pas.
  *
@@ -175,30 +158,41 @@ export async function findContentAccessCoordinates(
   contentId: number,
 ): Promise<{ parcoursId: number; moduleId: number | null } | null> {
   if (type === "parcours") {
-    const row = await prisma.parcours.findUnique({
-      where: { id: contentId },
-      select: { id: true },
-    });
+    const row = await prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: contentId }),
+    )
+      .select("id")
+      .first();
     return row ? { parcoursId: row.id, moduleId: null } : null;
   }
 
-  const query = { where: { id: contentId }, select: PARCOURS_SELECTION[type] };
-
   switch (type) {
     case "module": {
-      const row = await prisma.module.findUnique(query as any);
-      return row
-        ? { parcoursId: row.parcoursId, moduleId: contentId }
-        : null;
+      const row = await prisma.orm.public.Module.where((row) =>
+        whereFromObject(row, { id: contentId }),
+      )
+        .select("parcoursId")
+        .first();
+      return row ? { parcoursId: row.parcoursId, moduleId: contentId } : null;
     }
     case "course": {
-      const row: any = await prisma.course.findUnique(query as any);
+      const row = await prisma.orm.public.Course.where((row) =>
+        whereFromObject(row, { id: contentId }),
+      )
+        .include("module", (module) => module.select("id", "parcoursId"))
+        .first();
       return row?.module
         ? { parcoursId: row.module.parcoursId, moduleId: row.module.id }
         : null;
     }
     case "lesson": {
-      const row: any = await prisma.lesson.findUnique(query as any);
+      const row = await prisma.orm.public.Lesson.where((row) =>
+        whereFromObject(row, { id: contentId }),
+      )
+        .include("course", (course) =>
+          course.include("module", (module) => module.select("id", "parcoursId")),
+        )
+        .first();
       return row?.course?.module
         ? {
             parcoursId: row.course.module.parcoursId,
@@ -207,7 +201,15 @@ export async function findContentAccessCoordinates(
         : null;
     }
     case "activity": {
-      const row: any = await prisma.activity.findUnique(query as any);
+      const row = await prisma.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id: contentId }),
+      )
+        .include("lesson", (lesson) =>
+          lesson.include("course", (course) =>
+            course.include("module", (module) => module.select("id", "parcoursId")),
+          ),
+        )
+        .first();
       return row?.lesson?.course?.module
         ? {
             parcoursId: row.lesson.course.module.parcoursId,

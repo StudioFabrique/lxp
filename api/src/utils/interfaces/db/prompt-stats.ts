@@ -1,6 +1,7 @@
-import mongoose, { type Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 
-export interface IPromptStats extends Document {
+export interface IPromptStats extends MongoRecord {
   userId: string;
   date: Date;
   tokensUsed: number;

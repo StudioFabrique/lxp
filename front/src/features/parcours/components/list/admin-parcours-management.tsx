@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -22,6 +22,7 @@ import useEagerLoadingList from "../../../../hooks/useEagerLoadingList";
 import MultiCriteriaSearch from "../../../../components/UI/multi-criteria-search";
 import { normalizeSearchText } from "../../../../utils/helpers/normalize-search-text";
 import { parcoursApi } from "../../api/parcours.api";
+import ParcoursCreationModal from "../create/ParcoursCreationModal";
 
 type AdminParcoursManagementProps = {
   formations: FormationParcoursSummary[];
@@ -38,6 +39,15 @@ const AdminParcoursManagement = ({
   const usesFullWidthLayout = !isAdmin || (isTeacher && formations.length <= 1);
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [parcoursFormationId, setParcoursFormationId] = useState<number | null>(null);
+  const isParcoursModalOpen = isAdmin &&
+    (parcoursFormationId !== null || searchParams.get("createParcours") === "true");
+  const requestedFormationId = Number(searchParams.get("formationId"));
+  const initialFormationId = parcoursFormationId && parcoursFormationId > 0
+    ? parcoursFormationId
+    : Number.isInteger(requestedFormationId) && requestedFormationId > 0
+      ? requestedFormationId
+      : undefined;
   const [parcoursToDelete, setParcoursToDelete] =
     useState<ParcoursSummary | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -155,6 +165,16 @@ const AdminParcoursManagement = ({
     }
   };
 
+  const closeParcoursModal = () => {
+    setParcoursFormationId(null);
+    if (searchParams.has("createParcours")) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete("createParcours");
+      nextSearchParams.delete("formationId");
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+  };
+
   const openParcoursDeletion = (parcours: ParcoursSummary) => {
     setParcoursToDelete(parcours);
     setDeleteConfirmation("");
@@ -201,10 +221,14 @@ const AdminParcoursManagement = ({
               </button>
             </PermissionGuard>
             <PermissionGuard action="write" object="parcours">
-              <Link className="btn btn-primary btn-soft" to="new">
+              <button
+                type="button"
+                className="btn btn-primary btn-soft"
+                onClick={() => setParcoursFormationId(-1)}
+              >
                 <PlusCircle />
                 Créer un parcours
-              </Link>
+              </button>
             </PermissionGuard>
           </div>
         ) : null}
@@ -246,6 +270,7 @@ const AdminParcoursManagement = ({
               isManagementView
               baseRoute={layout}
               fullWidth={usesFullWidthLayout}
+              onCreateParcours={isAdmin ? setParcoursFormationId : undefined}
               onEditFormation={isAdmin ? openFormationEdition : undefined}
               onDeleteParcours={isAdmin ? openParcoursDeletion : undefined}
               onExportParcours={
@@ -288,10 +313,17 @@ const AdminParcoursManagement = ({
         />
       ) : null}
 
-      {isAdmin && formationModal.isOpen ? (
+      {isAdmin && (formationModal.isOpen || searchParams.get("createFormation") === "true") ? (
         <FormationModal
           formationId={formationModal.formationId}
           onClose={closeFormationModal}
+        />
+      ) : null}
+
+      {isParcoursModalOpen ? (
+        <ParcoursCreationModal
+          initialFormationId={initialFormationId}
+          onClose={closeParcoursModal}
         />
       ) : null}
 

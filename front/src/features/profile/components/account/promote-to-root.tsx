@@ -8,10 +8,9 @@ import { getApiErrorMessage } from "../../../../utils/helpers/api-error-message"
 import { Check, Copy } from "lucide-react";
 import QuestionMarkTooltip from "../../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import Modal from "../../../../components/UI/modal/modal";
+import { ROOT_ACCOUNT_POLICY } from "../../../auth/root-account-policy";
 
 const LOCAL_COMMAND = "npm run generate-activation-key";
-const ROOT_TRANSFER_TOOLTIP =
-  "Un seul utilisateur peut être root. Ce compte deviendra l’unique utilisateur root de l’application. L’utilisateur root actuel, s’il existe, sera automatiquement passé en administrateur et perdra ses droits root. Son compte sera conservé.";
 
 /**
  * Commande à exécuter sur le serveur pour régénérer la clé.
@@ -108,7 +107,7 @@ const PromoteToRoot = () => {
     <div className="flex flex-col gap-2 mt-10">
       <div className="flex items-center gap-2">
         <h3 className="text-lg font-semibold">Devenir utilisateur root</h3>
-        <QuestionMarkTooltip tooltipValue={ROOT_TRANSFER_TOOLTIP} />
+        <QuestionMarkTooltip tooltipValue={ROOT_ACCOUNT_POLICY} />
       </div>
       <BoxWrapper>
         <form onSubmit={handleOpenModal} className="flex max-w-xl flex-col gap-4">

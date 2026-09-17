@@ -1,3 +1,7 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import { includeCreatorContact } from "../formation/module-contact-ids.ts";
@@ -9,22 +13,21 @@ async function putModule(
   userId?: string,
 ) {
   const [existingModule, currentContact] = await Promise.all([
-    prisma.module.findUnique({
-      where: { id: module.id },
-      include: {
-        parcours: {
-          include: {
-            contacts: { select: { contactId: true } },
-            bonusSkills: { select: { id: true } },
-          },
-        },
-      },
-    }),
+    prisma.orm.public.Module.where((row) =>
+      whereFromObject(row, { id: module.id }),
+    )
+      .include("parcours", (related202) =>
+        related202
+          .include("contacts", (related203) => related203.select("contactId"))
+          .include("bonusSkills", (related204) => related204.select("id")),
+      )
+      .first(),
     userId
-      ? prisma.contact.findUnique({
-          where: { idMdb: userId },
-          select: { id: true },
-        })
+      ? prisma.orm.public.Contact.where((row) =>
+          whereFromObject(row, { idMdb: userId }),
+        )
+          .select("id")
+          .first()
       : null,
   ]);
   if (!existingModule) {
@@ -33,10 +36,10 @@ async function putModule(
   const selectedContactIds = [...new Set<number>(module.contactsIds ?? [])];
   const bonusSkillIds = [...new Set<number>(module.bonusSkillsIds ?? [])];
   const allowedContactIds = new Set(
-    existingModule.parcours.contacts.map(({ contactId }) => contactId),
+    existingModule.parcours!.contacts.map(({ contactId }) => contactId),
   );
   const allowedSkillIds = new Set(
-    existingModule.parcours.bonusSkills.map(({ id }) => id),
+    existingModule.parcours!.bonusSkills.map(({ id }) => id),
   );
   if (
     selectedContactIds.some((id) => !allowedContactIds.has(id)) ||
@@ -54,15 +57,42 @@ async function putModule(
     currentContact?.id,
   );
 
-  const updated = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnModule.deleteMany({ where: { moduleId: module.id } });
-    await tx.bonusSkillsOnModule.deleteMany({
-      where: { moduleId: module.id },
-    });
+  const updated = await prisma.transaction(async (tx) => {
+    await tx.orm.public.ContactsOnModule.where((row) =>
+      whereFromObject(row, { moduleId: module.id }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await tx.orm.public.BonusSkillsOnModule.where((row) =>
+      whereFromObject(row, { moduleId: module.id }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
-    return tx.module.update({
-      where: { id: module.id },
-      data: {
+    return tx.orm.public.Module.where((row) =>
+      whereFromObject(row, { id: module.id }),
+    )
+      .select(
+        "id",
+        "title",
+        "description",
+        "quizInstructions",
+        "duration",
+        "minDate",
+        "maxDate",
+        "thumb",
+      )
+      .include("contacts", (related205) =>
+        related205.include("contact", (related206) =>
+          related206.select("id", "idMdb", "role"),
+        ),
+      )
+      .include("bonusSkills", (related207) =>
+        related207.include("bonusSkill", (related208) =>
+          related208.select("id", "description", "badge"),
+        ),
+      )
+      .update({
         title: module.title,
         description: module.description ?? "",
         quizInstructions: module.quizInstructions ?? "",
@@ -75,42 +105,16 @@ async function putModule(
                 : undefined,
             }
           : {}),
-        contacts: {
-          create: contactIds.map((id: number) => ({
-            contact: { connect: { id } },
-          })),
-        },
-        bonusSkills: {
-          create: bonusSkillIds.map((id: number) => ({
-            bonusSkill: { connect: { id } },
-          })),
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        quizInstructions: true,
-        duration: true,
-        minDate: true,
-        maxDate: true,
-        thumb: true,
-        contacts: {
-          select: {
-            contact: {
-              select: { id: true, idMdb: true, role: true },
-            },
-          },
-        },
-        bonusSkills: {
-          select: {
-            bonusSkill: {
-              select: { id: true, description: true, badge: true },
-            },
-          },
-        },
-      },
-    });
+        contacts: (relation) =>
+          relation.create(
+            contactIds.map((contactId: number) => ({ contactId })),
+          ),
+        bonusSkills: (relation) =>
+          relation.create(
+            bonusSkillIds.map((bonusSkillId: number) => ({ bonusSkillId })),
+          ),
+      })
+      .then(requireDatabaseRow);
   });
   const contacts = await enrichContactsWithNames(
     updated.contacts.map(({ contact }) => contact),

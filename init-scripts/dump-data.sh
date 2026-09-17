@@ -17,7 +17,7 @@ mkdir -p ./api/dumps
 
 # SAUVEGARDE POSTGRESQL
 echo "Sauvegarde de PostgreSQL en cours..."
-docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma pg_dump -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" -a > ./api/dumps/dump-pgsql.sql || { echo -e "\033[1;31m ❌ Échec: Dump PostgreSQL"; exit 1; }
+docker exec -i -e PGPASSWORD="${POSTGRES_PASSWORD:-postgres}" lxp-prisma pg_dump -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-lxp}" -a --exclude-table-data=public._prisma_migrations > ./api/dumps/dump-pgsql.sql || { echo -e "\033[1;31m ❌ Échec: Dump PostgreSQL"; exit 1; }
 echo -e "\033[0;32m Dump PostgreSQL réussi.\033[0m"
 
 # SAUVEGARDE MONGODB

@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../src/app.ts";
 import { isDemoWriteAllowed } from "../src/config/demo-read-only-allowlist.ts";
-import { listMutatingRoutes } from "../src/utils/testing/express-routes.ts";
+import { listMutatingRoutes } from "../src/utils/express/route-registry.ts";
 
 /**
  * Verrou lecture seule de l'instance de démonstration.

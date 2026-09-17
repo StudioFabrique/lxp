@@ -23,25 +23,25 @@ const SidebarItem = ({
   const currentPath = currentRoute.slice(1).join("/");
   const isActive = Boolean(
     itemPath &&
-      (currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)),
+    (currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)),
   );
 
   return (
-    <li className="flex w-full justify-center xl:block">
+    <li className="flex w-full justify-center 2xl:block">
       <Link
         to={linkTo}
         aria-label={tooltipText}
         data-tip={tooltipText}
-        className={`${sidebarControlClassName} ${textSize} max-xl:tooltip max-xl:tooltip-right ${
+        className={`${sidebarControlClassName} ${textSize} max-2xl:tooltip max-2xl:tooltip-right ${
           isActive
-            ? "bg-[var(--sidebar-active)] text-[var(--sidebar-active-content)] font-medium ring-1 ring-inset ring-[var(--sidebar-border)]"
+            ? "bg-(--sidebar-active) text-(--sidebar-active-content) font-medium ring-1 ring-inset ring-(--sidebar-border)"
             : ""
         }`}
       >
         <span className="flex size-4 shrink-0 items-center justify-center [&>svg]:size-4">
           {icon}
         </span>
-        <span className="xl:block hidden">{children}</span>
+        <span className="2xl:block hidden">{children}</span>
       </Link>
     </li>
   );

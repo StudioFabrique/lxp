@@ -26,8 +26,8 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
   };
 
   return (
-    <li className="flex w-full justify-center xl:block">
-      <div className="relative z-50 flex w-full justify-center xl:block">
+    <li className="flex w-full justify-center 2xl:block">
+      <div className="relative z-50 flex w-full justify-center 2xl:block">
         <Link
           to="https://forms.gle/joWqE48La7S6NqCK8"
           onClick={handleClose}
@@ -43,7 +43,7 @@ const Questionnaire = ({ textSize = "text-sm" }: Props) => {
           <span>
             <ClipboardList className="size-4 shrink-0" />
           </span>
-          <span className={`xl:block hidden ${textSize}`}>
+          <span className={`2xl:block hidden ${textSize}`}>
             Questionnaire (Bêta Testeurs)
           </span>
         </Link>

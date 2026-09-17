@@ -1,19 +1,22 @@
-import { type Group } from "@prisma/client";
-import { prisma } from "../../utils/db.ts";
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
+import type { Group } from "../../prisma/model-types.ts";
+import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
-  const groups = await prisma.group.findMany({
-    where: {
+  const groups = await prisma.orm.public.Group.where((row) =>
+    whereFromObject(row, {
       idMdb: {
         in: groupsIds.map((item: string) => item),
       },
-    },
-  });
+    }),
+  ).all();
 
-
-  const existingParcours = await prisma.parcours.findFirst({
-    where: { id: parcoursId },
-  });
+  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, { id: parcoursId }),
+  ).first();
 
   if (!existingParcours) {
     const error = { message: "Le parcours n'existe pas", statusCode: 404 };
@@ -22,40 +25,34 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
 
   let updatedParcours: any = {};
 
-  const transaction = await prisma.$transaction(async (tx) => {
-    await tx.groupsOnParcours.deleteMany({
-      where: {
+  const transaction = await prisma.transaction(async (tx) => {
+    await tx.orm.public.GroupsOnParcours.where((row) =>
+      whereFromObject(row, {
         parcoursId,
-      },
-    });
-    updatedParcours = await tx.parcours.update({
-      where: { id: parcoursId },
-      data: {
-        groups: {
-          create: groups.map((group: Group) => {
-            return {
-              group: {
-                connect: {
-                  id: group.id,
-                },
-              },
-            };
-          }),
-        },
-      },
-      select: {
-        groups: {
-          select: {
-            group: {
-              select: {
-                id: true,
-                idMdb: true,
-              },
-            },
-          },
-        },
-      },
-    });
+      }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    updatedParcours = await tx.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: parcoursId }),
+    )
+      .include("groups", (related16) =>
+        related16.include("group", (related17) =>
+          related17.select("id", "idMdb"),
+        ),
+      )
+      .update({
+        groups: (relation) =>
+          relation.create(
+            groups.map((group: Group) => {
+              return {
+                group: (groupRelation: NestedConnect<"Group">) =>
+                  groupRelation.connect({ id: group.id }),
+              };
+            }),
+          ),
+      })
+      .then(requireDatabaseRow);
   });
 
   return updatedParcours;

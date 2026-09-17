@@ -53,6 +53,7 @@ const Login = () => {
           <input
             name="email"
             type="email"
+            autoComplete="email"
             value={email.value}
             onChange={email.valueChangeHandler}
             onBlur={email.valueBlurHandler}
@@ -66,6 +67,7 @@ const Login = () => {
           <input
             name="password"
             type={inputType}
+            autoComplete="current-password"
             value={password.value}
             onChange={password.valueChangeHandler}
             onBlur={password.valueBlurHandler}

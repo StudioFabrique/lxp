@@ -45,6 +45,13 @@
     border-radius: var(--radius-field);
 }
 
+/* Keep autofilled fields in the active theme across the application. */
+:where(input, textarea, select):-webkit-autofill {
+    -webkit-text-fill-color: var(--color-base-content);
+    box-shadow: 0 0 0 1000px var(--color-base-200) inset !important;
+    caret-color: var(--color-base-content);
+}
+
 /* =================================== */
 /* THÈMES CLAIRS                       */
 /* =================================== */

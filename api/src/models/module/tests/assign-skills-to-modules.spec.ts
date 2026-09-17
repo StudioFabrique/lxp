@@ -1,34 +1,55 @@
 import { jest } from "@jest/globals";
+import {
+  createModelMock,
+  createWhereRecorder,
+} from "../../../../tests/utils/prisma-mock.ts";
 
-const moduleCount = jest.fn<() => Promise<number>>();
-const skillCount = jest.fn<() => Promise<number>>();
-const createMany = jest.fn<() => Promise<{ count: number }>>();
+const moduleCount = jest.fn<() => Promise<{ total: number }>>();
+const skillCount = jest.fn<() => Promise<{ total: number }>>();
+const createMany = jest.fn<() => Promise<number>>();
+const moduleModel = createModelMock(
+  { aggregate: moduleCount },
+  { evaluateWhere: true },
+);
+const skillModel = createModelMock(
+  { aggregate: skillCount },
+  { evaluateWhere: true },
+);
+const associationModel = createModelMock({ createAndCount: createMany });
+const { filters, whereFromObject } = createWhereRecorder();
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
-      module: { count: moduleCount },
-      bonusSkill: { count: skillCount },
-      bonusSkillsOnModule: { createMany },
+      orm: {
+        public: {
+          Module: moduleModel,
+          BonusSkill: skillModel,
+          BonusSkillsOnModule: associationModel,
+        },
+      },
     }),
 );
 
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
-  prisma: { $transaction: transaction },
+  prisma: { transaction },
+}));
+jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
+  whereFromObject,
 }));
 
-const { default: assignSkillsToModules } = await import(
-  "../assign-skills-to-modules.ts"
-);
+const { default: assignSkillsToModules } =
+  await import("../assign-skills-to-modules.ts");
 
 describe("affectation rapide des compétences", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    filters.length = 0;
   });
 
   it("ajoute toutes les associations demandées sans doublons", async () => {
-    moduleCount.mockResolvedValue(2);
-    skillCount.mockResolvedValue(2);
-    createMany.mockResolvedValue({ count: 4 });
+    moduleCount.mockResolvedValue({ total: 2 });
+    skillCount.mockResolvedValue({ total: 2 });
+    createMany.mockResolvedValue(4);
 
     await expect(
       assignSkillsToModules({
@@ -38,20 +59,17 @@ describe("affectation rapide des compétences", () => {
       }),
     ).resolves.toEqual({ count: 4 });
 
-    expect(createMany).toHaveBeenCalledWith({
-      data: [
-        { moduleId: 3, bonusSkillId: 7 },
-        { moduleId: 3, bonusSkillId: 8 },
-        { moduleId: 4, bonusSkillId: 7 },
-        { moduleId: 4, bonusSkillId: 8 },
-      ],
-      skipDuplicates: true,
-    });
+    expect(createMany).toHaveBeenCalledWith([
+      { moduleId: 3, bonusSkillId: 7 },
+      { moduleId: 3, bonusSkillId: 8 },
+      { moduleId: 4, bonusSkillId: 7 },
+      { moduleId: 4, bonusSkillId: 8 },
+    ]);
   });
 
   it("refuse une compétence qui n'appartient pas au parcours", async () => {
-    moduleCount.mockResolvedValue(1);
-    skillCount.mockResolvedValue(0);
+    moduleCount.mockResolvedValue({ total: 1 });
+    skillCount.mockResolvedValue({ total: 0 });
 
     await expect(
       assignSkillsToModules({
@@ -64,9 +82,9 @@ describe("affectation rapide des compétences", () => {
   });
 
   it("borne les modules au périmètre du formateur", async () => {
-    moduleCount.mockResolvedValue(1);
-    skillCount.mockResolvedValue(1);
-    createMany.mockResolvedValue({ count: 1 });
+    moduleCount.mockResolvedValue({ total: 1 });
+    skillCount.mockResolvedValue({ total: 1 });
+    createMany.mockResolvedValue(1);
 
     await assignSkillsToModules(
       { parcoursId: 9, moduleIds: [3], skillIds: [7] },
@@ -78,12 +96,10 @@ describe("affectation rapide des compétences", () => {
       },
     );
 
-    expect(moduleCount).toHaveBeenCalledWith({
-      where: {
-        id: { in: [3] },
-        parcoursId: 9,
-        AND: [{ id: { in: [3] } }],
-      },
+    expect(filters).toContainEqual({
+      id: { in: [3] },
+      parcoursId: 9,
+      AND: [{ id: { in: [3] } }],
     });
   });
 });

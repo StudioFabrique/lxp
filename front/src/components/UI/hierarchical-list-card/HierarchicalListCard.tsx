@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 import { useState, type ReactNode } from "react";
 
 import { cn } from "../../../utils/cn";
@@ -46,7 +47,7 @@ const HierarchicalListCard = ({
   emptyMessage = "Aucun élément associé",
   moreItemsLabel = (remainingItemsCount) =>
     `Afficher plus (${remainingItemsCount})`,
-  overflowTitle = title ? `Autres éléments de ${title}` : "Autres éléments",
+  overflowTitle = title ? `Autres éléments de ${formatTitle(title)}` : "Autres éléments",
   footer,
   footerClassName,
   footerAtBottom = false,
@@ -120,7 +121,7 @@ const HierarchicalListCard = ({
                           { truncate: truncateTitle },
                         )}
                       >
-                        {title}
+                        {formatTitle(title)}
                       </h4>
                     </div>
                     {description ? (

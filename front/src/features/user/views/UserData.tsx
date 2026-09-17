@@ -12,6 +12,8 @@ import PredictionPanel from "../components/user-data/PredictionPanel";
 import useTeacher from "../hooks/useTeacher";
 import useStudentIndicators from "../hooks/useStudentIndicators";
 import useStudentPrediction from "../hooks/useStudentPrediction";
+import AnalysisFeedbackForm from "../components/user-data/AnalysisFeedbackForm";
+import AnalysisHistory from "../components/user-data/AnalysisHistory";
 
 export default function UserData() {
   const { studentId } = useParams();
@@ -52,8 +54,11 @@ export default function UserData() {
       {predictionQuery.prediction ? (
         <BoxWrapper>
           <PredictionPanel prediction={predictionQuery.prediction} />
+          <AnalysisFeedbackForm key={predictionQuery.prediction.analysisId} prediction={predictionQuery.prediction} />
         </BoxWrapper>
       ) : null}
+
+      <BoxWrapper><AnalysisHistory key={studentId} studentId={studentId!} /></BoxWrapper>
 
       <section style={classImage} />
 

@@ -13,6 +13,7 @@ import {
   type UploadedAssignmentFile,
 } from "../../models/assignment/assignment.ts";
 import { getTeacherUpcomingAssignments } from "../../models/assignment/teacher-assignments.ts";
+import { getLinkPreview } from "../../models/assignment/link-preview.ts";
 import { resolveAccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 import {
   assignmentUploadsDirectory,
@@ -106,6 +107,16 @@ export async function httpGetTeacherUpcomingAssignments(
     return res.status(200).json({ assignments });
   } catch (error) {
     return sendError(res, error);
+  }
+}
+
+export async function httpGetAssignmentLinkPreview(req: CustomRequest, res: Response) {
+  const url = req.query.url;
+  if (typeof url !== "string") return res.status(400).json({ message: "Lien invalide." });
+  try {
+    return res.status(200).json(await getLinkPreview(url));
+  } catch {
+    return res.status(422).json({ message: "Aperçu indisponible." });
   }
 }
 

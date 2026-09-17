@@ -1,32 +1,49 @@
-import type { Prisma } from "@prisma/client";
+import type { TransactionClient } from "../../../utils/db.ts";
 import { jest } from "@jest/globals";
+import {
+  createModelMock,
+  createWhereRecorder,
+} from "../../../../tests/utils/prisma-mock.ts";
 
-import { removeParcoursContactsFromModules } from "../remove-parcours-contacts-from-modules.ts";
+const deleteMany = jest.fn<() => Promise<number>>();
+const associationModel = createModelMock(
+  { deleteAndCount: deleteMany },
+  { evaluateWhere: true },
+);
+const { filters, whereFromObject } = createWhereRecorder();
+
+jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
+  whereFromObject,
+}));
+
+const { removeParcoursContactsFromModules } = await import(
+  "../remove-parcours-contacts-from-modules.ts"
+);
 
 describe("retrait des ressources pédagogiques d'un parcours", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    filters.length = 0;
+  });
+
   it("supprime leurs affectations dans les modules du même parcours", async () => {
-    const deleteMany = jest
-      .fn<() => Promise<{ count: number }>>()
-      .mockResolvedValue({ count: 2 });
+    deleteMany.mockResolvedValue(2);
     const tx = {
-      contactsOnModule: { deleteMany },
-    } as unknown as Prisma.TransactionClient;
+      orm: { public: { ContactsOnModule: associationModel } },
+    } as unknown as TransactionClient;
 
     await removeParcoursContactsFromModules(tx, 12, [3, 5]);
 
-    expect(deleteMany).toHaveBeenCalledWith({
-      where: {
-        contactId: { in: [3, 5] },
-        module: { parcoursId: 12 },
-      },
+    expect(filters).toContainEqual({
+      contactId: { in: [3, 5] },
+      module: { parcoursId: 12 },
     });
   });
 
   it("ne lance aucune requête lorsqu'aucun contact n'est retiré", async () => {
-    const deleteMany = jest.fn();
     const tx = {
-      contactsOnModule: { deleteMany },
-    } as unknown as Prisma.TransactionClient;
+      orm: { public: { ContactsOnModule: associationModel } },
+    } as unknown as TransactionClient;
 
     await removeParcoursContactsFromModules(tx, 12, []);
 

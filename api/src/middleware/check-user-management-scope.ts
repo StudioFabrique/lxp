@@ -1,5 +1,5 @@
 import { type NextFunction, type Response } from "express";
-import Role from "../utils/interfaces/db/role.ts";
+import Role, { type IRole } from "../utils/interfaces/db/role.ts";
 import User from "../utils/interfaces/db/user.ts";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 
@@ -18,20 +18,20 @@ export default function checkUserManagementScope(
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-      if (!req.auth) return res.status(401).json({ message: "Session absente" });
+      if (!req.auth)
+        return res.status(401).json({ message: "Session absente" });
 
       const actorRank = req.auth.userRoles[0]?.rank ?? 4;
       const ids = getIds(req, source);
 
       // Les validateurs de la route produiront le message de format détaillé.
-      if (
-        ids.length === 0 ||
-        ids.some((id) => !/^[a-f\d]{24}$/i.test(id))
-      ) {
+      if (ids.length === 0 || ids.some((id) => !/^[a-f\d]{24}$/i.test(id))) {
         return next();
       }
 
-      const targets = await User.find({ _id: { $in: ids } }).populate("roles");
+      const targets = await User.find({ _id: { $in: ids } }).populate<{
+        roles: IRole[];
+      }>("roles");
       const forbiddenTarget = targets.some((target) => {
         const targetRank = target.roles[0]?.rank ?? 4;
         return targetRank <= actorRank;
@@ -52,7 +52,9 @@ export default function checkUserManagementScope(
           if (roleIds.some((id: string) => !/^[a-f\d]{24}$/i.test(id))) {
             return next();
           }
-          const roles = await Role.find({ _id: { $in: roleIds } }).select("rank");
+          const roles = await Role.find({ _id: { $in: roleIds } }).select(
+            "rank",
+          );
           if (roles.some(({ rank }) => rank <= actorRank)) {
             return res.status(403).json({
               message:

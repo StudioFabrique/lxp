@@ -63,7 +63,7 @@ import { httpEnableCourse } from "../../../controllers/course/http-enable-course
 import httpPostImportCourseMbz from "../../../controllers/course/http-post-import-course-mbz.ts";
 
 import { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } from "../../../controllers/course/http-course-calendar.ts";
-import { isValidCalendarDates } from "../../../models/course/course-calendar-dates.ts";
+import { isValidCalendarDates } from "../../../helpers/course-calendar-dates.ts";
 
 import { httpGetCalendarParcours, httpGetParcoursCalendar } from "../../../controllers/course/http-read-calendar.ts";
 

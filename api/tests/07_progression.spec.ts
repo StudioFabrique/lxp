@@ -1,11 +1,18 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../src/utils/prisma-query.ts";
 import mongoose from "mongoose";
 import request from "supertest";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
-import { type Enrollment, enrollStudentInParcours } from "./utils/enroll-student.ts";
+import {
+  type Enrollment,
+  enrollStudentInParcours,
+} from "./utils/enroll-student.ts";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * La progression est calculée à un seul endroit
@@ -41,16 +48,18 @@ describe("Progression servie par l'API", () => {
     cookie = login.headers["set-cookie"] as unknown as string[];
     const userIdMdb = login.body._id as string;
 
-    await prisma.student.upsert({
-      where: { idMdb: userIdMdb },
-      update: {},
+    await prisma.orm.public.Student.where((row) =>
+      whereFromObject(row, { idMdb: userIdMdb }),
+    ).upsert({
       create: { idMdb: userIdMdb },
+      update: {},
+      conflictOn: { idMdb: userIdMdb },
     });
 
     const [module, admin, tag] = await Promise.all([
-      prisma.module.findFirst({ select: { id: true, parcoursId: true } }),
-      prisma.admin.findFirst({ select: { id: true } }),
-      prisma.tag.findFirst({ select: { id: true } }),
+      prisma.orm.public.Module.select("id", "parcoursId").first(),
+      prisma.orm.public.Admin.select("id").first(),
+      prisma.orm.public.Tag.select("id").first(),
     ]);
     moduleId = module!.id;
 
@@ -58,47 +67,54 @@ describe("Progression servie par l'API", () => {
     // reçoit 404 sur son propre module.
     enrollment = await enrollStudentInParcours(userIdMdb, module!.parcoursId);
 
-    const course = await prisma.course.create({
-      data: {
-        title: "Cours de progression",
-        order: 999,
-        author: "test",
-        adminId: admin!.id,
-        moduleId,
-        isPublished: true,
-        visibility: true,
-      },
-      select: { id: true },
+    const course = await prisma.orm.public.Course.select("id").create({
+      title: "Cours de progression",
+      order: 999,
+      dates: [],
+      author: "test",
+      adminId: admin!.id,
+      moduleId,
+      isPublished: true,
+      visibility: true,
     });
     courseId = course.id;
 
     // Quatre leçons : un quart terminé doit donner 25 %, pas un arrondi flou.
     for (let index = 0; index < 4; index++) {
-      const lesson = await prisma.lesson.create({
-        data: {
-          title: `Leçon ${index + 1}`,
-          description: "Leçon créée par les tests de progression.",
-          modalite: "async",
-          order: index,
-          author: "test",
-          courseId,
-          adminId: admin!.id,
-          tagId: tag!.id,
-          isPublished: true,
-          visibility: true,
-        },
-        select: { id: true },
+      const lesson = await prisma.orm.public.Lesson.select("id").create({
+        title: `Leçon ${index + 1}`,
+        description: "Leçon créée par les tests de progression.",
+        modalite: "async",
+        order: index,
+        author: "test",
+        courseId,
+        adminId: admin!.id,
+        tagId: tag!.id,
+        isPublished: true,
+        visibility: true,
       });
       lessonIds.push(lesson.id);
     }
   });
 
   afterAll(async () => {
-    await prisma.lessonRead.deleteMany({ where: { lessonId: { in: lessonIds } } });
-    await prisma.lesson.deleteMany({ where: { id: { in: lessonIds } } });
-    await prisma.course.delete({ where: { id: courseId } });
+    await prisma.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId: { in: lessonIds } }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await prisma.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: { in: lessonIds } }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await prisma.orm.public.Course.where((row) =>
+      whereFromObject(row, { id: courseId }),
+    )
+      .delete()
+      .then(requireDatabaseRow);
     await enrollment.cleanup();
-    await prisma.$disconnect();
+    await prisma.close();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
   });
 
@@ -162,7 +178,10 @@ describe("Progression servie par l'API", () => {
       lessons: Array<{ lessonsRead: Array<{ finishedAt: string | null }> }>;
     }>;
 
-    const total = courses.reduce((sum, course) => sum + course.lessons.length, 0);
+    const total = courses.reduce(
+      (sum, course) => sum + course.lessons.length,
+      0,
+    );
     const completed = courses.reduce(
       (sum, course) =>
         sum +
@@ -172,8 +191,6 @@ describe("Progression servie par l'API", () => {
       0,
     );
 
-    expect(module.stats.progress).toBe(
-      Math.round((completed / total) * 100),
-    );
+    expect(module.stats.progress).toBe(Math.round((completed / total) * 100));
   });
 });

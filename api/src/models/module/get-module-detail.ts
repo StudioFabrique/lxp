@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -5,38 +6,36 @@ export default async function getModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
-  const module = await prisma.module.findUnique({
-    where: { id: moduleId },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      image: true,
-      duration: true,
-      minDate: true,
-      maxDate: true,
-      parcours: { select: { id: true, title: true } },
-      bonusSkills: { select: { bonusSkill: true } },
-      contacts: { select: { contact: true } },
-      courses: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          courseSlug: true,
-          lessons: {
-            include: {
-              lessonsRead: {
-                where: { student: { idMdb: userMongoId } },
-              },
-            },
-            orderBy: { order: "asc" },
-          },
-        },
-        orderBy: { order: "asc" },
-      },
-    },
-  });
+  const module = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { id: moduleId }),
+  )
+    .select(
+      "id",
+      "title",
+      "description",
+      "image",
+      "duration",
+      "minDate",
+      "maxDate",
+    )
+    .include("parcours", (related170) => related170.select("id", "title"))
+    .include("bonusSkills", (related171) => related171.include("bonusSkill"))
+    .include("contacts", (related172) => related172.include("contact"))
+    .include("courses", (related173) =>
+      related173
+        .select("id", "title", "description", "courseSlug")
+        .include("lessons", (related174) =>
+          related174
+            .include("lessonsRead", (related175) =>
+              related175.where((row) =>
+                whereFromObject(row, { student: { idMdb: userMongoId } }),
+              ),
+            )
+            .orderBy((row) => row.order.asc()),
+        )
+        .orderBy((row) => row.order.asc()),
+    )
+    .first();
 
   if (!module) {
     throw { message: "Le module n'existe pas.", statusCode: 404 };
@@ -51,8 +50,8 @@ export default async function getModuleDetail(
     image: module.image
       ? Buffer.from(module.image as any).toString("base64")
       : null,
-    parcours: parcours.title,
-    parcoursId: parcours.id,
+    parcours: parcours!.title,
+    parcoursId: parcours!.id,
     bonusSkills: bonusSkills.map(({ bonusSkill }) => bonusSkill),
     contacts: namedContacts,
     courses: module.courses.map((course) => ({

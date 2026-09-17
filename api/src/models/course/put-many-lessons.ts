@@ -1,9 +1,10 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putManyLessons(courseId: number, lessonsIds: number[]) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  ).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -11,14 +12,14 @@ async function putManyLessons(courseId: number, lessonsIds: number[]) {
     throw error;
   }
 
-  const transaction = await prisma.$transaction(async (tx) => {
-    const existingLessons = await tx.lesson.findMany({
-      where: {
+  const transaction = await prisma.transaction(async (tx) => {
+    const existingLessons = await tx.orm.public.Lesson.where((row) =>
+      whereFromObject(row, {
         id: {
           in: lessonsIds,
         },
-      },
-    });
+      }),
+    ).all();
 
     let lessonsCopy: any = [];
     for (const lesson of existingLessons) {
@@ -33,9 +34,9 @@ async function putManyLessons(courseId: number, lessonsIds: number[]) {
       ];
     }
 
-    await tx.lesson.createMany({
-      data: lessonsCopy,
-    });
+    await tx.orm.public.Lesson.createAndCount(lessonsCopy).then((count) => ({
+      count,
+    }));
   });
 
   return transaction;

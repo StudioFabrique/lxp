@@ -216,7 +216,7 @@ démonstration, à chaque déploiement, dès que l'environnement porte
 
 1. `DROP SCHEMA public CASCADE` sur la base LXP. Le dump est un `pg_dump -a`,
    il ne se rejoue que sur un schéma vide ;
-2. `prisma migrate deploy`, puis les triggers ANDRIA ;
+2. `prisma db migrate`, puis les triggers ANDRIA ;
 3. `psql < api/dumps/demo/dump-pgsql.sql` ;
 4. `mongorestore --drop` du dump Mongo, copié dans le conteneur au préalable ;
 5. `rsync` de `api/dumps/demo/activities/` vers le volume `uploads` ;
@@ -259,10 +259,8 @@ instances, le mode n'est connu qu'après la réponse de `GET /v1/demo/config`.
 
 ## Après une migration Prisma
 
-`pg_dump -a` n'exporte que les **données**, liées au schéma du moment. Toute
+`npm run dump` exporte les données sans l'historique `_prisma_migrations`,
+déjà initialisé par Prisma sur la base cible. Les données restent liées au schéma
+du moment. Toute
 migration ajoutant une colonne obligatoire, renommant une colonne ou modifiant un
 énuméré périme donc `api/dumps/demo/dump-pgsql.sql`, qu'il faut régénérer.
-
-À terme, un jeu de fixtures écrit avec le client Prisma (sur le modèle de
-`api/src/fixtures.ts`) suivrait le schéma et supprimerait cette
-servitude.

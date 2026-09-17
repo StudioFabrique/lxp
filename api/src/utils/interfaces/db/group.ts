@@ -1,26 +1,27 @@
-import mongoose, { type Document, Schema, model } from "mongoose";
+import type { MongoRecord, MongoRef } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import { type IRole } from "./role.ts";
 import { type IUser } from "./user.ts";
 import { type ITag } from "./tag.ts";
 import { type IPromptStats } from "./prompt-stats.ts";
 
-export interface IGroup extends Document {
+export interface IGroup extends MongoRecord {
   name: string;
   desc?: string;
-  users?: IUser["_id"];
-  tags?: ITag["_id"];
-  roles: IRole["_id"];
-  createdBy?: IUser["_id"];
+  users?: MongoRef<IUser>[];
+  tags?: MongoRef<ITag>[];
+  roles: MongoRef<IRole>[];
+  createdBy?: MongoRef<IUser>;
   image: Buffer;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  promptStats?: IPromptStats["_id"];
+  promptStats?: MongoRef<IPromptStats>[];
 }
 
 const groupSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, lowercase: true, required: true },
     desc: { type: String, required: false },
     users: {
       type: [mongoose.Schema.Types.ObjectId],

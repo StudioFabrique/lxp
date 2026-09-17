@@ -1,10 +1,12 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getCourseDates(courseId: number) {
-  const existingCourse = await prisma.course.findFirst({
-    where: { id: courseId },
-    select: { dates: true },
-  });
+  const existingCourse = await prisma.orm.public.Course.where((row) =>
+    whereFromObject(row, { id: courseId }),
+  )
+    .select("dates")
+    .first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");

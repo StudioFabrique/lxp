@@ -1,24 +1,25 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteLesson(userId: string, lessonId: number) {
-  const existingLesson = await prisma.lesson.findFirst({
-    where: { id: lessonId },
-    include: {
-      course: {
-        select: {
-          module: {
-            select: {
-              contacts: {
-                select: { contact: { select: { idMdb: true } } },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const existingLesson = await prisma.orm.public.Lesson.where((row) =>
+    whereFromObject(row, { id: lessonId }),
+  )
+    .include("course", (related98) =>
+      related98.include("module", (related99) =>
+        related99.include("contacts", (related100) =>
+          related100.include("contact", (related101) =>
+            related101.select("idMdb"),
+          ),
+        ),
+      ),
+    )
+    .first();
 
   if (!existingLesson) {
     const error = new Error("La leçon n'existe pas");
@@ -29,12 +30,14 @@ export default async function deleteLesson(userId: string, lessonId: number) {
   // Vérification des droits
   await userBelongsToContacts(
     userId,
-    existingLesson.course.module.contacts.map(({ contact }) => contact),
+    existingLesson.course!.module!.contacts.map(({ contact }) => contact),
     "Vous n'êtes pas autorisé à supprimer cette leçon.",
   );
 
   // Récupérer les activités avant de supprimer la leçon
-  const activities = await prisma.activity.findMany({ where: { lessonId } });
+  const activities = await prisma.orm.public.Activity.where((row) =>
+    whereFromObject(row, { lessonId }),
+  ).all();
 
   // Supprimer les activités
   for (const act of activities) {
@@ -42,18 +45,24 @@ export default async function deleteLesson(userId: string, lessonId: number) {
   }
 
   // Ouvrir la transaction pour nettoyer la leçon et le reste
-  await prisma.$transaction(async (tx) => {
-    await tx.lessonRead.deleteMany({
-      where: { lessonId },
-    });
+  await prisma.transaction(async (tx) => {
+    await tx.orm.public.LessonRead.where((row) =>
+      whereFromObject(row, { lessonId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
-    await tx.lessonRating.deleteMany({
-      where: { lessonId },
-    });
+    await tx.orm.public.LessonRating.where((row) =>
+      whereFromObject(row, { lessonId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
 
-    await tx.lesson.delete({
-      where: { id: lessonId },
-    });
+    await tx.orm.public.Lesson.where((row) =>
+      whereFromObject(row, { id: lessonId }),
+    )
+      .delete()
+      .then(requireDatabaseRow);
   });
 
   return true;

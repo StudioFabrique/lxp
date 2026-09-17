@@ -1,10 +1,12 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getModuleImage(moduleId: number) {
-  const module = await prisma.module.findUnique({
-    where: { id: moduleId },
-    select: { image: true },
-  });
+  const module = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { id: moduleId }),
+  )
+    .select("image")
+    .first();
 
   return {
     image:

@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   moduleWhereForScope,
@@ -16,14 +17,16 @@ export default async function removeSkillFromModule(
 ) {
   const accessWhere = moduleWhereForScope(scope);
 
-  return prisma.$transaction(async (tx) => {
-    const moduleCount = await tx.module.count({
-      where: {
+  return prisma.transaction(async (tx) => {
+    const moduleCount = await tx.orm.public.Module.where((row) =>
+      whereFromObject(row, {
         id: moduleId,
         parcoursId,
         ...(accessWhere ? { AND: [accessWhere] } : {}),
-      },
-    });
+      }),
+    )
+      .aggregate((aggregate) => ({ total: aggregate.count() }))
+      .then(({ total }) => total);
     if (moduleCount !== 1) {
       throw {
         statusCode: 400,
@@ -31,9 +34,11 @@ export default async function removeSkillFromModule(
       };
     }
 
-    const result = await tx.bonusSkillsOnModule.deleteMany({
-      where: { moduleId, bonusSkillId: skillId },
-    });
+    const result = await tx.orm.public.BonusSkillsOnModule.where((row) =>
+      whereFromObject(row, { moduleId, bonusSkillId: skillId }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
     if (result.count === 0) {
       throw {
         statusCode: 404,

@@ -1,11 +1,11 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router";
 
 export const getGroupColumns = (
   onDelete: (id: string) => void,
-): ColumnDef<Group>[] => [
+): ColumnDef<StockFeatures, Group>[] => [
   {
     id: "select",
     header: ({ table }) => (

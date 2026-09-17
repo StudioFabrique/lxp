@@ -95,12 +95,12 @@ export default function ModuleForm({
             >
               Téléverser une image
             </ImageFileUpload>
-            <p className="text-xs text-base-content/60">
-              JPG, PNG, WebP ou GIF — 1 Mo maximum.
-              {mode === "create" && !temporaryImage.file
+            <span className="text-xs text-base-content/60">
+              JPG, PNG, WebP ou GIF. 1 Mo maximum.
+               <p>{mode === "create" && !temporaryImage.file
                 ? " Une image sera générée automatiquement si aucune image n’est téléversée."
-                : null}
-            </p>
+                : null}</p>
+            </span>
           </div>
 
           {duplicatedSkills ? (

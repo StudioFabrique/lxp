@@ -1,12 +1,24 @@
 import { jest } from "@jest/globals";
+import {
+  createModelMock,
+  createWhereRecorder,
+} from "../../../../tests/utils/prisma-mock.ts";
 
 const findMany = jest
   .fn<(...args: any[]) => Promise<unknown>>()
   .mockResolvedValue([]);
 const groupFind = jest.fn();
+const assignmentModel = createModelMock(
+  { all: findMany },
+  { evaluateWhere: true, evaluateIncludes: true },
+);
+const { filters, whereFromObject } = createWhereRecorder();
 
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
-  prisma: { courseAssignment: { findMany } },
+  prisma: { orm: { public: { CourseAssignment: assignmentModel } } },
+}));
+jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
+  whereFromObject,
 }));
 jest.unstable_mockModule("../../../utils/interfaces/db/group.ts", () => ({
   default: { find: groupFind },
@@ -16,29 +28,30 @@ const { getTeacherUpcomingAssignments } = await import(
   "../teacher-assignments.ts"
 );
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  filters.length = 0;
+});
 
-it("borne les évaluations à venir aux modules affectés au formateur", async () => {
-  const now = new Date("2026-09-14T12:00:00.000Z");
-  await getTeacherUpcomingAssignments([4, 9], now);
+it("borne les évaluations aux modules affectés au formateur, échéances passées incluses", async () => {
+  await getTeacherUpcomingAssignments([4, 9]);
 
-  expect(findMany).toHaveBeenCalledWith(
-    expect.objectContaining({
-      where: {
-        dueAt: { gte: now },
-        course: {
-          isPublished: true,
-          visibility: true,
-          moduleId: { in: [4, 9] },
-        },
-      },
-      orderBy: [{ dueAt: "asc" }, { id: "asc" }],
-    }),
+  expect(filters).toContainEqual({
+    course: {
+      isPublished: true,
+      visibility: true,
+      moduleId: { in: [4, 9] },
+    },
+  });
+  expect(assignmentModel.include).toHaveBeenCalledWith(
+    "course",
+    expect.any(Function),
   );
-  const query = findMany.mock.calls[0][0];
-  expect(query.select.course.select.module.select.parcours.select.groups).toEqual(
-    { select: { group: { select: { idMdb: true } } } },
+  expect(assignmentModel.include).toHaveBeenCalledWith(
+    "submissions",
+    expect.any(Function),
   );
+  expect(assignmentModel.orderBy).toHaveBeenCalled();
   expect(groupFind).not.toHaveBeenCalled();
 });
 
@@ -94,10 +107,7 @@ it("associe les étudiants des groupes à leur remise", async () => {
   const populate = jest.fn().mockReturnValue({ lean });
   groupFind.mockReturnValue({ populate });
 
-  const result = await getTeacherUpcomingAssignments(
-    [4],
-    new Date("2026-09-14T12:00:00.000Z"),
-  );
+  const result = await getTeacherUpcomingAssignments([4]);
 
   expect(result[0].course.module.parcours).toEqual({
     id: 2,

@@ -1,6 +1,7 @@
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
 
 /**
  * Send activation invitations to multiple users
@@ -20,7 +21,7 @@ export default async function postManyInvitations(userIds: string[]) {
     _id: {
       $in: userIds,
     },
-  }).populate("roles");
+  }).populate<{ roles: IRole[] }>("roles");
 
   // Validate that all requested users were found
   if (users.length !== userIds.length) {
@@ -36,13 +37,13 @@ export default async function postManyInvitations(userIds: string[]) {
     // If the account is not already active, proceed with sending the invitation
     if (!user.isActive) {
       // Generate a unique activation token valid for 7 days
-      const token = activationToken(user._id, user.roles[0], "7d");
+      const token = activationToken(user._id.toString(), user.roles[0], "7d");
 
       // Send the activation email with the token
       await sendPasswordEmail(user.email, token, "activation");
       await User.updateOne(
         { _id: user._id },
-        { $set: { invitationSent: true, invitationSentAt: new Date() } }
+        { $set: { invitationSent: true, invitationSentAt: new Date() } },
       );
       i += 1;
     }

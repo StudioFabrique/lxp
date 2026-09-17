@@ -1,4 +1,5 @@
-import { prisma } from "../../utils/db.ts";
+import { whereFromObject } from "../../utils/prisma-query.ts";
+import { prisma, type NestedCreate } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
@@ -8,44 +9,46 @@ export default async function postDuplicateParcours(
   userId: string,
 ) {
   const [source, admin, mongoUser] = await Promise.all([
-    prisma.parcours.findUnique({
-      where: { id: parcoursId },
-      include: {
-        objectives: true,
-        bonusSkills: true,
-        contacts: true,
-        tags: true,
-        modules: {
-          include: {
-            contacts: true,
-            bonusSkills: true,
-            quizzes: {
-              where: { courseId: null, activityId: null },
-              include: {
-                questions: { include: { quizQuestionReports: true } },
-              },
-            },
-            courses: {
-              orderBy: { order: "asc" },
-              include: {
-                contacts: true,
-                tags: true,
-                lessons: {
-                  orderBy: { order: "asc" },
-                  include: {
-                    activities: {
-                      orderBy: { order: "asc" },
-                      include: { resourceActivities: true },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.admin.findFirst({ where: { idMdb: userId } }),
+    prisma.orm.public.Parcours.where((row) =>
+      whereFromObject(row, { id: parcoursId }),
+    )
+      .include("objectives")
+      .include("bonusSkills")
+      .include("contacts")
+      .include("tags")
+      .include("modules", (related7) =>
+        related7
+          .include("contacts")
+          .include("bonusSkills")
+          .include("quizzes", (related8) =>
+            related8
+              .where((row) =>
+                whereFromObject(row, { courseId: null, activityId: null }),
+              )
+              .include("questions", (related9) =>
+                related9.include("quizQuestionReports"),
+              ),
+          )
+          .include("courses", (related10) =>
+            related10
+              .include("contacts")
+              .include("tags")
+              .include("lessons", (related11) =>
+                related11
+                  .include("activities", (related12) =>
+                    related12
+                      .include("resourceActivities")
+                      .orderBy((row) => row.order.asc()),
+                  )
+                  .orderBy((row) => row.order.asc()),
+              )
+              .orderBy((row) => row.order.asc()),
+          ),
+      )
+      .first(),
+    prisma.orm.public.Admin.where((row) =>
+      whereFromObject(row, { idMdb: userId }),
+    ).first(),
     User.findById(userId),
   ]);
 
@@ -56,18 +59,18 @@ export default async function postDuplicateParcours(
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
   }
 
-  const existingParcoursTitles = await prisma.parcours.findMany({
-    select: { title: true },
-  });
+  const existingParcoursTitles =
+    await prisma.orm.public.Parcours.select("title").all();
   const parcoursIdentity = getDuplicateIdentity(
     source,
     existingParcoursTitles.map(({ title }) => title),
   );
 
-  const existingModuleTitles = await prisma.module.findMany({
-    where: { parcours: { formationId: source.formationId } },
-    select: { title: true },
-  });
+  const existingModuleTitles = await prisma.orm.public.Module.where((row) =>
+    whereFromObject(row, { parcours: { formationId: source.formationId } }),
+  )
+    .select("title")
+    .all();
   const usedModuleTitles = existingModuleTitles.map(({ title }) => title);
   const moduleIdentities = source.modules.map((module) => {
     const identity = getDuplicateIdentity(module, usedModuleTitles);
@@ -87,10 +90,7 @@ export default async function postDuplicateParcours(
               activities: await Promise.all(
                 lesson.activities.map(async (activity) => ({
                   ...activity,
-                  url: await duplicateActivityFile(
-                    activity.url,
-                    activity.type,
-                  ),
+                  url: await duplicateActivityFile(activity.url, activity.type),
                   resourceActivities: await Promise.all(
                     activity.resourceActivities.map(async (resource) => ({
                       ...resource,
@@ -109,49 +109,44 @@ export default async function postDuplicateParcours(
     })),
   );
 
-  return prisma.$transaction(async (tx) => {
-    const createdParcours = await tx.parcours.create({
-      data: {
-        title: parcoursIdentity.title,
-        duplicationIndex: parcoursIdentity.duplicationIndex,
-        description: source.description,
-        startDate: source.startDate,
-        endDate: source.endDate,
-        degree: source.degree,
-        image: source.image,
-        thumb: source.thumb,
-        virtualClass: source.virtualClass,
-        visibility: false,
-        isPublished: false,
-        author: mongoUser
-          ? `${mongoUser.firstname} ${mongoUser.lastname}`
-          : source.author,
-        adminId: admin.id,
-        formationId: source.formationId,
-        objectives: {
-          create: source.objectives.map(({ description }) => ({ description })),
-        },
-        contacts: {
-          create: source.contacts.map(({ contactId }) => ({
-            contact: { connect: { id: contactId } },
-          })),
-        },
-        tags: {
-          create: source.tags.map(({ tagId }) => ({
-            tag: { connect: { id: tagId } },
-          })),
-        },
-      },
+  return prisma.transaction(async (tx) => {
+    const createdParcours = await tx.orm.public.Parcours.create({
+      title: parcoursIdentity.title,
+      duplicationIndex: parcoursIdentity.duplicationIndex,
+      description: source.description,
+      startDate: source.startDate,
+      endDate: source.endDate,
+      degree: source.degree,
+      image: source.image,
+      thumb: source.thumb,
+      virtualClass: source.virtualClass,
+      visibility: false,
+      isPublished: false,
+      author: mongoUser
+        ? `${mongoUser.firstname} ${mongoUser.lastname}`
+        : source.author,
+      adminId: admin.id,
+      formationId: source.formationId,
+      objectives: (relation) =>
+        relation.create(
+          source.objectives.map(({ description }) => ({ description })),
+        ),
+      contacts: (relation) =>
+        relation.create(
+          source.contacts.map(({ contactId }) => ({ contactId })),
+        ),
+      tags: (relation) =>
+        relation.create(
+          source.tags.map(({ tagId }) => ({ tagId })),
+        ),
     });
 
     const skillMap = new Map<number, number>();
     for (const skill of source.bonusSkills) {
-      const createdSkill = await tx.bonusSkill.create({
-        data: {
-          description: skill.description,
-          badge: skill.badge,
-          parcoursId: createdParcours.id,
-        },
+      const createdSkill = await tx.orm.public.BonusSkill.create({
+        description: skill.description,
+        badge: skill.badge,
+        parcoursId: createdParcours.id,
       });
       skillMap.set(skill.id, createdSkill.id);
     }
@@ -159,36 +154,34 @@ export default async function postDuplicateParcours(
     for (let index = 0; index < copiedModules.length; index += 1) {
       const module = copiedModules[index];
       const identity = moduleIdentities[index];
-      await tx.module.create({
-        data: {
-          title: identity.title,
-          duplicationIndex: identity.duplicationIndex,
-          description: module.description,
-          quizInstructions: module.quizInstructions,
-          image: module.image,
-          thumb: module.thumb,
-          duration: module.duration,
-          rating: module.rating,
-          minDate: module.minDate,
-          maxDate: module.maxDate,
-          author: module.author,
-          adminId: admin.id,
-          parcoursId: createdParcours.id,
-          contacts: {
-            create: module.contacts.map(({ contactId }) => ({
-              contact: { connect: { id: contactId } },
-            })),
-          },
-          bonusSkills: {
-            create: module.bonusSkills
+      await tx.orm.public.Module.create({
+        title: identity.title,
+        duplicationIndex: identity.duplicationIndex,
+        description: module.description,
+        quizInstructions: module.quizInstructions,
+        image: module.image,
+        thumb: module.thumb,
+        duration: module.duration,
+        rating: module.rating,
+        minDate: module.minDate,
+        maxDate: module.maxDate,
+        author: module.author,
+        adminId: admin.id,
+        parcoursId: createdParcours.id,
+        contacts: (relation) =>
+          relation.create(
+            module.contacts.map(({ contactId }) => ({ contactId })),
+          ),
+        bonusSkills: (relation) =>
+          relation.create(
+            module.bonusSkills
               .map(({ bonusSkillId }) => skillMap.get(bonusSkillId))
               .filter((id): id is number => id !== undefined)
-              .map((bonusSkillId) => ({
-                bonusSkill: { connect: { id: bonusSkillId } },
-              })),
-          },
-          courses: {
-            create: module.courses.map((course) => ({
+              .map((bonusSkillId) => ({ bonusSkillId })),
+          ),
+        courses: (relation) =>
+          relation.create(
+            module.courses.map((course) => ({
               title: course.title,
               description: course.description,
               image: course.image,
@@ -202,72 +195,79 @@ export default async function postDuplicateParcours(
               adminId: admin.id,
               courseSlug: null,
               duplicationIndex: course.duplicationIndex + 1,
-              contacts: {
-                create: course.contacts.map(({ contactId }) => ({
-                  contact: { connect: { id: contactId } },
-                })),
-              },
-              tags: {
-                create: course.tags.map(({ tagId }) => ({
-                  tag: { connect: { id: tagId } },
-                })),
-              },
-              lessons: {
-                create: course.lessons.map((lesson) => ({
-                  title: lesson.title,
-                  description: lesson.description,
-                  modalite: lesson.modalite,
-                  author: lesson.author,
-                  adminId: admin.id,
-                  tagId: lesson.tagId,
-                  order: lesson.order,
-                  isPublished: lesson.isPublished,
-                  visibility: lesson.visibility,
-                  duplicationIndex: lesson.duplicationIndex + 1,
-                  activities: {
-                    create: lesson.activities.map((activity) => ({
-                      title: activity.title,
-                      type: activity.type,
-                      order: activity.order,
-                      url: activity.url,
-                      authorId: admin.id,
-                      duplicationIndex: activity.duplicationIndex + 1,
-                      resourceActivities: {
-                        create: activity.resourceActivities.map(
-                          ({ label, order, url }) => ({ label, order, url }),
-                        ),
-                      },
-                    })),
-                  },
-                })),
-              },
+              contacts: (relation: NestedCreate<"ContactsOnCourse">) =>
+                relation.create(
+                  course.contacts.map(({ contactId }) => ({ contactId })),
+                ),
+              tags: (relation: NestedCreate<"TagsOnCourse">) =>
+                relation.create(
+                  course.tags.map(({ tagId }) => ({ tagId })),
+                ),
+              lessons: (relation: NestedCreate<"Lesson">) =>
+                relation.create(
+                  course.lessons.map((lesson) => ({
+                    title: lesson.title,
+                    description: lesson.description,
+                    modalite: lesson.modalite,
+                    author: lesson.author,
+                    adminId: admin.id,
+                    tagId: lesson.tagId,
+                    order: lesson.order,
+                    isPublished: lesson.isPublished,
+                    visibility: lesson.visibility,
+                    duplicationIndex: lesson.duplicationIndex + 1,
+                    activities: (relation: NestedCreate<"Activity">) =>
+                      relation.create(
+                        lesson.activities.map((activity) => ({
+                          title: activity.title,
+                          type: activity.type,
+                          order: activity.order,
+                          url: activity.url,
+                          authorId: admin.id,
+                          duplicationIndex: activity.duplicationIndex + 1,
+                          resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                            relation.create(
+                              activity.resourceActivities.map(
+                                ({ label, order, url }) => ({
+                                  label,
+                                  order,
+                                  url,
+                                }),
+                              ),
+                            ),
+                        })),
+                      ),
+                  })),
+                ),
             })),
-          },
-          quizzes: {
-            create: module.quizzes.map((quiz) => ({
+          ),
+        quizzes: (relation) =>
+          relation.create(
+            module.quizzes.map((quiz) => ({
               title: quiz.title,
               type: quiz.type,
-              questions: {
-                create: quiz.questions.map((question) => ({
-                  externalId: question.externalId,
-                  type: question.type,
-                  difficulty: question.difficulty,
-                  prompt: question.prompt,
-                  explanationTrue: question.explanationTrue,
-                  explanationWrong: question.explanationWrong,
-                  tags: question.tags,
-                  data: question.data as any,
-                  contentHash: null,
-                  quizQuestionReports: {
-                    create: question.quizQuestionReports.map(
-                      ({ commentaire }) => ({ commentaire }),
-                    ),
-                  },
-                })),
-              },
+              questions: (relation: NestedCreate<"QuizQuestion">) =>
+                relation.create(
+                  quiz.questions.map((question) => ({
+                    externalId: question.externalId,
+                    type: question.type,
+                    difficulty: question.difficulty,
+                    prompt: question.prompt,
+                    explanationTrue: question.explanationTrue,
+                    explanationWrong: question.explanationWrong,
+                    tags: question.tags,
+                    data: question.data as any,
+                    contentHash: null,
+                    quizQuestionReports: (relation: NestedCreate<"QuizQuestionReport">) =>
+                      relation.create(
+                        question.quizQuestionReports.map(({ commentaire }) => ({
+                          commentaire,
+                        })),
+                      ),
+                  })),
+                ),
             })),
-          },
-        },
+          ),
       });
     }
 

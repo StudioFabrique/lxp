@@ -1,13 +1,10 @@
-import type { Prisma } from "@prisma/client";
+import { requireDatabaseRow, whereFromObject } from "../utils/prisma-query.ts";
+import type { TransactionClient } from "../utils/db.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from "../utils/logs/logger.ts";
 
-export type StoredActivityFileType =
-  | "text"
-  | "image"
-  | "video"
-  | "resource";
+export type StoredActivityFileType = "text" | "image" | "video" | "resource";
 
 export type StoredActivityFileReference = {
   url: string;
@@ -41,11 +38,7 @@ export function resolveActivityFilePath(
   const filename = path.basename(reference.url);
   if (!filename || filename === "." || filename === path.sep) return null;
 
-  return path.join(
-    activitiesRoot,
-    activityDirectory[reference.type],
-    filename,
-  );
+  return path.join(activitiesRoot, activityDirectory[reference.type], filename);
 }
 
 export function extractLocalImagesFromHtml(html: string) {
@@ -68,29 +61,49 @@ export function extractLocalImagesFromHtml(html: string) {
 }
 
 async function countRemainingReferences(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   reference: StoredActivityFileReference,
 ) {
   if (reference.type === "resource") {
     const [activityResources, bonusResources] = await Promise.all([
-      tx.resourceActivity.count({ where: { url: reference.url } }),
-      tx.resourceBonusActivity.count({ where: { url: reference.url } }),
+      tx.orm.public.ResourceActivity.where((row) =>
+        whereFromObject(row, { url: reference.url }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+      tx.orm.public.ResourceBonusActivity.where((row) =>
+        whereFromObject(row, { url: reference.url }),
+      )
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
     ]);
     return activityResources + bonusResources;
   }
 
   const [activities, bonusActivities, resourceImages] = await Promise.all([
-    tx.activity.count({ where: { url: reference.url } }),
-    tx.bonusActivity.count({ where: { url: reference.url } }),
+    tx.orm.public.Activity.where((row) =>
+      whereFromObject(row, { url: reference.url }),
+    )
+      .aggregate((aggregate) => ({ total: aggregate.count() }))
+      .then(({ total }) => total),
+    tx.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { url: reference.url }),
+    )
+      .aggregate((aggregate) => ({ total: aggregate.count() }))
+      .then(({ total }) => total),
     reference.type === "image"
-      ? tx.resource.count({ where: { imageUrl: reference.url } })
+      ? tx.orm.public.Resource.where((row) =>
+          whereFromObject(row, { imageUrl: reference.url }),
+        )
+          .aggregate((aggregate) => ({ total: aggregate.count() }))
+          .then(({ total }) => total)
       : Promise.resolve(0),
   ]);
   return activities + bonusActivities + resourceImages;
 }
 
 export async function collectUnusedActivityFiles(
-  tx: Prisma.TransactionClient,
+  tx: TransactionClient,
   references: StoredActivityFileReference[],
 ) {
   const groupedReferences = new Map<
@@ -117,9 +130,9 @@ export async function collectUnusedActivityFiles(
     let remainingMediaUses = 0;
 
     if (reference.trackedInMediatheque !== false) {
-      const media = await tx.mediatheque.findFirst({
-        where: { url: reference.url },
-      });
+      const media = await tx.orm.public.Mediatheque.where((row) =>
+        whereFromObject(row, { url: reference.url }),
+      ).first();
 
       if (media) {
         remainingMediaUses = Math.max(
@@ -129,12 +142,17 @@ export async function collectUnusedActivityFiles(
         );
 
         if (remainingMediaUses === 0) {
-          await tx.mediatheque.delete({ where: { id: media.id } });
+          await tx.orm.public.Mediatheque.where((row) =>
+            whereFromObject(row, { id: media.id }),
+          )
+            .delete()
+            .then(requireDatabaseRow);
         } else {
-          await tx.mediatheque.update({
-            where: { id: media.id },
-            data: { used: remainingMediaUses },
-          });
+          await tx.orm.public.Mediatheque.where((row) =>
+            whereFromObject(row, { id: media.id }),
+          )
+            .update({ used: remainingMediaUses })
+            .then(requireDatabaseRow);
         }
       }
     }

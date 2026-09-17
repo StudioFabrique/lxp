@@ -1,7 +1,11 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
 import { prisma } from "../../../utils/db.ts";
 import path from "path";
 import fs from "fs";
-import { type Activity, type BonusActivity } from "@prisma/client";
+import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 
 export default async function putActivityVideo(
   activityId: number,
@@ -14,13 +18,13 @@ export default async function putActivityVideo(
   let existingParent: Activity | BonusActivity | null = null;
 
   if (parentType === "lesson") {
-    existingParent = await prisma.activity.findFirst({
-      where: { id: activityId },
-    });
+    existingParent = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   } else {
-    existingParent = await prisma.bonusActivity.findFirst({
-      where: { id: activityId },
-    });
+    existingParent = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    ).first();
   }
 
   if (!existingParent) {
@@ -29,9 +33,9 @@ export default async function putActivityVideo(
     throw error;
   }
 
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   if (!existingAuthor) {
     const error = new Error("L'utilisateur n'existe pas");
@@ -42,23 +46,17 @@ export default async function putActivityVideo(
   let updatedActivity: Activity | BonusActivity | null = null;
 
   if (parentType === "lesson")
-    updatedActivity = await prisma.activity.update({
-      where: { id: activityId },
-      data: {
-        ...existingParent,
-        title,
-        url,
-      },
-    });
+    updatedActivity = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    )
+      .update({ ...existingParent, title, url })
+      .then(requireDatabaseRow);
   else
-    updatedActivity = await prisma.bonusActivity.update({
-      where: { id: activityId },
-      data: {
-        ...existingParent,
-        title,
-        url,
-      },
-    });
+    updatedActivity = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: activityId }),
+    )
+      .update({ ...existingParent, title, url })
+      .then(requireDatabaseRow);
 
   if (!existingParent.url.startsWith("http")) {
     if (existingParent.url !== url) {

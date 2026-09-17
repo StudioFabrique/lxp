@@ -1,9 +1,13 @@
+import {
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function deleteBonusSkill(id: number) {
-  const existingSkill = await prisma.bonusSkill.findFirst({
-    where: { id },
-  });
+  const existingSkill = await prisma.orm.public.BonusSkill.where((row) =>
+    whereFromObject(row, { id }),
+  ).first();
 
   if (!existingSkill) {
     const error404 = {
@@ -14,9 +18,11 @@ async function deleteBonusSkill(id: number) {
   }
 
   try {
-    const response = await prisma.bonusSkill.delete({
-      where: { id },
-    });
+    const response = await prisma.orm.public.BonusSkill.where((row) =>
+      whereFromObject(row, { id }),
+    )
+      .delete()
+      .then(requireDatabaseRow);
   } catch (error: any) {
     const error405 = {
       message:

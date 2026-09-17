@@ -712,8 +712,8 @@ const OnboardingTourContent = ({
       target = "/admin/dashboard?createFormation=true";
     } else if (stage === "admin-parcours-create") {
       target = contextId
-        ? `/admin/parcours/new?formationId=${contextId}`
-        : "/admin/parcours/new";
+        ? `/admin/dashboard?createParcours=true&formationId=${contextId}`
+        : "/admin/dashboard?createParcours=true";
     } else if (stage === "admin-parcours-tags" && contextId) {
       target = `/admin/parcours/edit/${contextId}?step=1`;
     } else if (stage.startsWith("admin-module-") && contextId) {

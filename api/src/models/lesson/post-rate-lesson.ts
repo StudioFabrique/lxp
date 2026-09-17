@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
@@ -6,9 +7,9 @@ export default async function postRateLesson(
   userIdMdb: string,
   rating: number,
 ) {
-  const student = await prisma.student.findFirst({
-    where: { idMdb: userIdMdb },
-  });
+  const student = await prisma.orm.public.Student.where((row) =>
+    whereFromObject(row, { idMdb: userIdMdb }),
+  ).first();
 
   const studentData = await User.findById(student?.idMdb);
 
@@ -16,33 +17,34 @@ export default async function postRateLesson(
     return [];
   }
 
-  const lesson = await prisma.lesson.findFirst({
-    where: { id: lessonId },
-    select: { courseId: true, title: true },
-  });
+  const lesson = await prisma.orm.public.Lesson.where((row) =>
+    whereFromObject(row, { id: lessonId }),
+  )
+    .select("courseId", "title")
+    .first();
 
   if (!lesson) return null;
 
-  const existingLessonRating = await prisma.lessonRating.findFirst({
-    where: { lessonId, studentId: student.id },
-    select: { id: true },
-  });
+  const existingLessonRating = await prisma.orm.public.LessonRating.where(
+    (row) => whereFromObject(row, { lessonId, studentId: student.id }),
+  )
+    .select("id")
+    .first();
 
   if (existingLessonRating) return null;
 
-  const transactionResult = await prisma.$transaction([
-    prisma.lessonRating.create({
-      data: { lessonId, studentId: student.id, rating: +rating },
-    }),
-    prisma.accomplishment.create({
-      data: {
-        name: `${studentData.firstname} ${studentData.lastname}`,
-        description: `vient d'attribuer une note de ${rating} sur 5 à la leçon ${lesson.title}`,
-        student: { connect: { id: student.id } },
-        course: { connect: { id: lesson.courseId } },
-      },
-    }),
-  ]);
-
-  return transactionResult[0];
+  return prisma.transaction(async (tx) => {
+    const lessonRating = await tx.orm.public.LessonRating.create({
+      lessonId,
+      studentId: student.id,
+      rating: +rating,
+    });
+    await tx.orm.public.Accomplishment.create({
+      name: `${studentData.firstname} ${studentData.lastname}`,
+      description: `vient d'attribuer une note de ${rating} sur 5 à la leçon ${lesson.title}`,
+      student: (relation) => relation.connect({ id: student.id }),
+      course: (relation) => relation.connect({ id: lesson.courseId }),
+    });
+    return lessonRating;
+  });
 }

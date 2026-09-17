@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, StockFeatures } from "@tanstack/react-table";
 import { AvatarSmall } from "../avatar/AvatarSmall";
 
 /** Ce qu'une ligne doit porter pour qu'on puisse afficher son avatar. */
@@ -19,7 +19,7 @@ export type TablePerson = {
 export function personSelectionColumn<TData extends TablePerson>(
   selectAllLabel = "Sélectionner toutes les lignes affichées",
   canSelect: (row: TData) => boolean = () => true,
-): ColumnDef<TData> {
+): ColumnDef<StockFeatures, TData> {
   return {
     id: "select",
     header: ({ table }) => (

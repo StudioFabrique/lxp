@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { indicatorsApi } from "../api/indicators.api";
@@ -33,6 +33,7 @@ export default function useStudentPrediction(
   studentId: string,
   range?: { from: string; to: string } | null,
 ) {
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () =>
       indicatorsApi.mutations.predictStudentOutcome(
@@ -42,10 +43,11 @@ export default function useStudentPrediction(
     onError: (error: unknown) => {
       toast.error(predictionErrorMessage(error));
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["analysis-history", studentId] }),
   });
 
   return {
-    prediction: mutation.data ?? null,
+    prediction: mutation.data?.userId === studentId ? mutation.data : null,
     predict: mutation.mutate,
     isPending: mutation.isPending,
     isError: mutation.isError,

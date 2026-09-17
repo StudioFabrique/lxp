@@ -1,7 +1,8 @@
-import mongoose, { type Document, Schema } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import mongoose, { Schema } from "mongoose";
 import type { IUser } from "./user.ts";
 
-export interface IGraduation extends Document {
+export interface IGraduation extends MongoRecord {
   title: string;
   degree: string;
   date: Date;
@@ -9,8 +10,8 @@ export interface IGraduation extends Document {
 }
 
 const graduationSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  degree: { type: String, required: true },
+  title: { type: String, lowercase: true, required: true },
+  degree: { type: String, lowercase: true, required: true },
   date: { type: Date, required: true },
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });

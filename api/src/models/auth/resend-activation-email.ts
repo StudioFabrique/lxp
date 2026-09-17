@@ -1,6 +1,7 @@
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import User from "../../utils/interfaces/db/user.ts";
+import type { IRole } from "../../utils/interfaces/db/role.ts";
 import {
   ACTIVATION_EMAIL_COOLDOWN_MS,
   getActivationEmailRetryAfterSeconds,
@@ -8,16 +9,14 @@ import {
 import { env } from "../../config/env.ts";
 
 export default async function resendActivationEmail(email: string) {
-  const existingUser = await User.findOne({ email: email.toLowerCase() });
+  const existingUser = await User.findOne({
+    email: email.toLowerCase(),
+  }).populate<{ roles: IRole[] }>("roles");
 
   // Keep the public endpoint neutral for unknown, active or administratively
   // disabled accounts. The login endpoint only offers this action to users who
   // have not completed their activation.
-  if (
-    !existingUser ||
-    existingUser.isActive ||
-    existingUser.emailVerified
-  ) {
+  if (!existingUser || existingUser.isActive || existingUser.emailVerified) {
     return;
   }
 

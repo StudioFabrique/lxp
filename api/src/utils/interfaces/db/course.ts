@@ -1,7 +1,8 @@
-import { type Document, Schema, model } from "mongoose";
+import type { MongoRecord } from "./mongo-record.ts";
+import { Schema, model } from "mongoose";
 import type { IGroup } from "./group.ts";
 
-export interface ICourse extends Document {
+export interface ICourse extends MongoRecord {
   name: string;
   groups: IGroup["_id"];
   createdAt: Date;
@@ -10,7 +11,7 @@ export interface ICourse extends Document {
 
 const courseSchema: Schema = new Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, lowercase: true, required: true, unique: true },
     groups: { type: [Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true },

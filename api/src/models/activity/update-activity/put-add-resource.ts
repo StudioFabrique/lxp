@@ -1,9 +1,8 @@
 import {
-  type Activity,
-  type ResourceActivity,
-  type BonusActivity,
-  type ResourceBonusActivity,
-} from "@prisma/client";
+  requireDatabaseRow,
+  whereFromObject,
+} from "../../../utils/prisma-query.ts";
+import type { Activity, ResourceActivity, BonusActivity, ResourceBonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -83,34 +82,30 @@ export default async function putAddResource(req: CustomRequest) {
 
   // Initialize parent activity variable (can be either Activity or BonusActivity)
   let existingParent:
-    | ActivityWithResources
-    | BonusActivityWithResources
-    | null = null;
+    ActivityWithResources | BonusActivityWithResources | null = null;
 
   // Fetch the parent activity based on type
   if (parent === "lesson")
-    existingParent = await prisma.activity.findFirst({
-      where: { id: +activityId },
-      include: {
-        resourceActivities: true,
-      },
-    });
+    existingParent = await prisma.orm.public.Activity.where((row) =>
+      whereFromObject(row, { id: +activityId }),
+    )
+      .include("resourceActivities")
+      .first();
   else if (parent === "resource")
-    existingParent = await prisma.bonusActivity.findFirst({
-      where: { id: +activityId },
-      include: {
-        resourceBonusActivities: true,
-      },
-    });
+    existingParent = await prisma.orm.public.BonusActivity.where((row) =>
+      whereFromObject(row, { id: +activityId }),
+    )
+      .include("resourceBonusActivities")
+      .first();
 
   // Verify parent activity exists
   if (!existingParent)
     throw { statusCode: 404, message: "L'activité n'existe pas." };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
+  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
+    whereFromObject(row, { idMdb: userId }),
+  ).first();
 
   // Verify author exists
   if (!existingAuthor)
@@ -133,43 +128,45 @@ export default async function putAddResource(req: CustomRequest) {
   }
 
   // Execute all database operations in a transaction to ensure atomicity
-  await prisma.$transaction(async (tx) => {
+  await prisma.transaction(async (tx) => {
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson Activity
       // Add new ResourceActivity entries to the existing activity
-      await tx.activity.update({
-        where: { id: +activityId },
-        data: {
-          resourceActivities: {
-            create: newResources.map((resource, index) => ({
-              label: resource.label,
-              url: resource.url,
-              // Set order to be the next in sequence after existing resources
-              order:
-                (existingParent as ActivityWithResources).resourceActivities
-                  .length + index,
-            })),
-          },
-        },
-      });
+      await tx.orm.public.Activity.where((row) =>
+        whereFromObject(row, { id: +activityId }),
+      )
+        .update({
+          resourceActivities: (relation) =>
+            relation.create(
+              newResources.map((resource, index) => ({
+                label: resource.label,
+                url: resource.url,
+                order:
+                  (existingParent as ActivityWithResources).resourceActivities
+                    .length + index,
+              })),
+            ),
+        })
+        .then(requireDatabaseRow);
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource BonusActivity
       // Add new ResourceBonusActivity entries to the existing bonus activity
-      await tx.bonusActivity.update({
-        where: { id: +activityId },
-        data: {
-          resourceBonusActivities: {
-            create: newResources.map((resource, index) => ({
-              label: resource.label,
-              url: resource.url,
-              // Set order to be the next in sequence after existing resources
-              order:
-                (existingParent as BonusActivityWithResources)
-                  .resourceBonusActivities.length + index,
-            })),
-          },
-        },
-      });
+      await tx.orm.public.BonusActivity.where((row) =>
+        whereFromObject(row, { id: +activityId }),
+      )
+        .update({
+          resourceBonusActivities: (relation) =>
+            relation.create(
+              newResources.map((resource, index) => ({
+                label: resource.label,
+                url: resource.url,
+                order:
+                  (existingParent as BonusActivityWithResources)
+                    .resourceBonusActivities.length + index,
+              })),
+            ),
+        })
+        .then(requireDatabaseRow);
     }
 
     // Register all uploaded files in the media library
@@ -180,17 +177,13 @@ export default async function putAddResource(req: CustomRequest) {
 
       if (file) {
         // Create a mediatheque entry for tracking file usage
-        await tx.mediatheque.create({
-          data: {
-            type: "resource",
-            name: resource.filename,
-            url: file.filename,
-            size: file.size,
-            used: 1, // Mark as used once
-            author: {
-              connect: { id: existingAuthor.id },
-            },
-          },
+        await tx.orm.public.Mediatheque.create({
+          type: "resource",
+          name: resource.filename,
+          url: file.filename,
+          size: file.size,
+          used: 1,
+          author: (relation) => relation.connect({ id: existingAuthor.id }),
         });
       }
     }

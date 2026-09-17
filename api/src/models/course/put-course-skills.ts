@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db.ts";
 
 async function putCourseBonusSkills(
   courseId: number,
-  bonusSkillsIds: number[]
+  bonusSkillsIds: number[],
 ) {
   /*  const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },

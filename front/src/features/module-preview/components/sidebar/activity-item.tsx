@@ -1,3 +1,4 @@
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { useEffect, useRef, useState } from "react";
 import activityIconType from "../../../../utils/helpers/activity-icon-type";
@@ -66,7 +67,7 @@ export default function ActivityItem({
       <span
         className={`truncate w-[90%] first-letter:uppercase ${isSelected && "underline"}`}
       >
-        {activity.title}
+        {formatTitle(activity.title)}
       </span>
       {canEdit && !disabled && (
         <ArrowDownUp className="w-4 hover:text-primary ml-auto" />

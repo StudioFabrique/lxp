@@ -4,9 +4,11 @@ import User from "../../../utils/interfaces/db/user.ts";
 export default async function createSocialNetwork(userId: string, url: string) {
   const user = await User.findById(userId);
 
-  const socialNetwork = await Link.create({ user, url });
+  if (!user) throw { statusCode: 404, message: "Utilisateur introuvable." };
 
-  await user?.updateOne({ $push: { links: socialNetwork } });
+  const socialNetwork = await Link.create({ user: user._id, url });
+
+  await user.updateOne({ $push: { links: socialNetwork._id } });
 
   return socialNetwork;
 }

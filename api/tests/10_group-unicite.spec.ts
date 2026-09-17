@@ -1,3 +1,4 @@
+import { whereFromObject } from "../src/utils/prisma-query.ts";
 import request from "supertest";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -23,8 +24,8 @@ describe("HTTP /group — unicité du nom", () => {
   let authToken = {};
 
   const names = {
-    taken: "Promotion unicite",
-    other: "Promotion unicite bis",
+    taken: "promotion unicite",
+    other: "promotion unicite bis",
   };
 
   const postGroup = (name: string) =>
@@ -38,9 +39,13 @@ describe("HTTP /group — unicité du nom", () => {
       name: { $in: [names.taken, names.other] },
     });
 
-    await prisma.group.deleteMany({
-      where: { idMdb: { in: groups.map((group) => group._id.toString()) } },
-    });
+    await prisma.orm.public.Group.where((row) =>
+      whereFromObject(row, {
+        idMdb: { in: groups.map((group) => group._id.toString()) },
+      }),
+    )
+      .deleteAndCount()
+      .then((count) => ({ count }));
     await Group.deleteMany({ _id: { $in: groups.map((group) => group._id) } });
   };
 

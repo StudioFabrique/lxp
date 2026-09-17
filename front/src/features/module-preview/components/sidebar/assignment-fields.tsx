@@ -1,5 +1,4 @@
-import { Eye, EyeOff, FileText, GripVertical, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, FileText, Plus, Trash2 } from "lucide-react";
 import DatePicker from "../../../../components/UI/date-picker/date-picker";
 import { cn } from "../../../../utils/cn";
 import type {
@@ -18,7 +17,6 @@ export default function AssignmentFields({
   existingFiles = [],
   onChange,
 }: Props) {
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const visibleExistingFiles = existingFiles.filter(
     (file) => !value.removeFileIds.includes(file.id),
   );
@@ -45,20 +43,13 @@ export default function AssignmentFields({
     });
   };
 
-  const moveCriterion = (toIndex: number) => {
-    if (draggedIndex === null || draggedIndex === toIndex) return;
-    const criteria = [...value.criteria];
-    const [moved] = criteria.splice(draggedIndex, 1);
-    criteria.splice(toIndex, 0, moved);
-    patch({ criteria });
-    setDraggedIndex(toIndex);
-  };
-
   return (
     <section className="flex flex-col gap-4 rounded-xl border border-base-300 p-4">
       <label className="flex cursor-pointer items-center justify-between gap-4">
         <span>
-          <span className="block font-semibold">Exiger la remise d’un devoir</span>
+          <span className="block font-semibold">
+            Exiger la remise d’un devoir
+          </span>
           <span className="block text-xs text-base-content/60">
             Le devoir devient la dernière étape obligatoire du cours.
           </span>
@@ -73,7 +64,25 @@ export default function AssignmentFields({
 
       {value.required && (
         <div className="flex flex-col gap-5 border-t border-base-300 pt-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)]">
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Barème *</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-base-content/60">Sur</span>
+                <input
+                  type="number"
+                  min="0.5"
+                  max="1000"
+                  step="0.5"
+                  className="input input-sm input-bordered w-20"
+                  value={value.maxScore}
+                  onChange={(event) =>
+                    patch({ maxScore: Number(event.target.value) })
+                  }
+                />
+                <span className="text-sm">points</span>
+              </div>
+            </label>
             <div className="grid grid-cols-[minmax(0,1fr)_8rem] items-end gap-2">
               <DatePicker
                 id="assignment-due-date"
@@ -82,7 +91,7 @@ export default function AssignmentFields({
                 placeholder="Choisir une date"
                 clearable={false}
                 onChange={(date) =>
-                  patch({ dueAt: `${date}T${dueTime || "23:59"}` })
+                  patch({ dueAt: `${date}T${dueTime || "17:00"}` })
                 }
               />
               <label className="flex flex-col gap-2">
@@ -90,7 +99,7 @@ export default function AssignmentFields({
                 <input
                   type="time"
                   className="input input-sm input-bordered w-full"
-                  value={dueTime}
+                  value={dueTime || "17:00"}
                   disabled={!dueDate}
                   required
                   onChange={(event) =>
@@ -99,34 +108,11 @@ export default function AssignmentFields({
                 />
               </label>
             </div>
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-semibold">Barème *</span>
-              <label className="input input-bordered flex items-center gap-2">
-                <span className="text-sm text-base-content/60">sur</span>
-                <input
-                  type="number"
-                  min="0.5"
-                  max="1000"
-                  step="0.5"
-                  className="grow"
-                  value={value.maxScore}
-                  onChange={(event) =>
-                    patch({ maxScore: Number(event.target.value) })
-                  }
-                />
-                <span className="text-sm">points</span>
-              </label>
-            </label>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h5 className="text-sm font-semibold">Grille de critères</h5>
-                <p className="text-xs text-base-content/60">
-                  Facultative. Faites glisser les critères pour les réordonner.
-                </p>
-              </div>
+          <div className="flex flex-col gap-3 border-b border-base-300 pb-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 ">
+              <h5 className="text-sm font-semibold">Grille de critères</h5>
               <button
                 type="button"
                 className="btn btn-sm btn-outline btn-primary"
@@ -135,23 +121,11 @@ export default function AssignmentFields({
                 <Plus className="h-4 w-4" /> Critère
               </button>
             </div>
-
             {value.criteria.map((criterion, index) => (
               <div
                 key={criterion.key}
-                draggable
-                onDragStart={() => setDraggedIndex(index)}
-                onDragOver={(event) => {
-                  event.preventDefault();
-                  moveCriterion(index);
-                }}
-                onDragEnd={() => setDraggedIndex(null)}
-                className={cn(
-                  "grid grid-cols-[auto_1fr_7rem_auto] items-center gap-2 rounded-lg border border-base-300 bg-base-100 p-2",
-                  draggedIndex === index && "opacity-60",
-                )}
+                className="grid grid-cols-[1fr_7rem_auto] items-center gap-2 rounded-lg border border-base-300 bg-base-100 p-2"
               >
-                <GripVertical className="h-4 w-4 cursor-grab text-base-content/40" />
                 <input
                   className="input input-sm input-bordered min-w-0"
                   value={criterion.label}
@@ -241,7 +215,9 @@ export default function AssignmentFields({
           </div>
 
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold">Instructions de remise *</span>
+            <span className="text-sm font-semibold">
+              Instructions de remise *
+            </span>
             <textarea
               className="textarea textarea-bordered min-h-28 w-full resize-y"
               value={value.instructions}
@@ -276,7 +252,9 @@ export default function AssignmentFields({
                   className="flex items-center gap-2 rounded-lg bg-base-200 px-3 py-2 text-sm"
                 >
                   <FileText className="h-4 w-4 shrink-0" />
-                  <span className="min-w-0 flex-1 truncate">{file.originalName}</span>
+                  <span className="min-w-0 flex-1 truncate">
+                    {file.originalName}
+                  </span>
                   <button
                     type="button"
                     className="btn btn-ghost btn-xs btn-square text-error"

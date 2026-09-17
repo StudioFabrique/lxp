@@ -37,46 +37,47 @@ import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 import demoRouter from "./demo/demo.router.ts";
 import assignmentRouter from "./assignment/assignment.router.ts";
+import { mountRouter } from "../../utils/express/route-registry.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
 
 // Mode démonstration : configuration d'exécution et ouverture de session.
 // Monté en tête et sans garde, ces routes devant répondre à un visiteur anonyme.
-v1Router.use("/demo", demoRouter);
+mountRouter(v1Router, "/demo", demoRouter);
 
 // Routes d'authentification et de gestion des utilisateurs
-v1Router.use("/auth", authRouter);
-v1Router.use("/user", userRouter);
-v1Router.use("/group", groupRouter);
+mountRouter(v1Router, "/auth", authRouter);
+mountRouter(v1Router, "/user", userRouter);
+mountRouter(v1Router, "/group", groupRouter);
 
 // Routes liées au parcours pédagogique
-v1Router.use("/parcours", parcoursRouter);
-v1Router.use("/skills", skillsRouter);
-v1Router.use("/tag", tagRouter);
-v1Router.use("/formation", formationRouter);
-v1Router.use("/bonus-skill", bonusSkillRouter);
-v1Router.use("/objective", objectiveRouter);
-v1Router.use("/modules", moduleRouter);
+mountRouter(v1Router, "/parcours", parcoursRouter);
+mountRouter(v1Router, "/skills", skillsRouter);
+mountRouter(v1Router, "/tag", tagRouter);
+mountRouter(v1Router, "/formation", formationRouter);
+mountRouter(v1Router, "/bonus-skill", bonusSkillRouter);
+mountRouter(v1Router, "/objective", objectiveRouter);
+mountRouter(v1Router, "/modules", moduleRouter);
 
 // Routes de gestion des permissions et des cours
-v1Router.use("/permission", permissionRouter);
-v1Router.use("/course", checkPermissions("course"), courseRouter);
-v1Router.use("/lesson", lessonRouter);
-v1Router.use("/content-read", contentReadRouter);
-v1Router.use("/assignment", assignmentRouter);
-v1Router.use("/activity", activityRouter);
+mountRouter(v1Router, "/permission", permissionRouter);
+mountRouter(v1Router, "/course", checkPermissions("course"), courseRouter);
+mountRouter(v1Router, "/lesson", lessonRouter);
+mountRouter(v1Router, "/content-read", contentReadRouter);
+mountRouter(v1Router, "/assignment", assignmentRouter);
+mountRouter(v1Router, "/activity", activityRouter);
 
 // Routes pour les statistiques, évaluations et médias
-v1Router.use("/stats", statsRouter);
-v1Router.use("/indicators", indicatorsRouter);
-v1Router.use("/evaluation", evaluationRouter);
-v1Router.use("/media", mediaRouter);
-v1Router.use("/resources", resourcesRouter);
+mountRouter(v1Router, "/stats", statsRouter);
+mountRouter(v1Router, "/indicators", indicatorsRouter);
+mountRouter(v1Router, "/evaluation", evaluationRouter);
+mountRouter(v1Router, "/media", mediaRouter);
+mountRouter(v1Router, "/resources", resourcesRouter);
 
 // Route pour les quiz
 
-v1Router.use("/quiz", quizRouter);
+mountRouter(v1Router, "/quiz", quizRouter);
 
 v1Router.post(
   "/company-logo",
@@ -91,8 +92,8 @@ v1Router.delete(
   httpDeleteCompanyLogo,
 );
 
-v1Router.use("/chatbot", chatbotRouter);
+mountRouter(v1Router, "/chatbot", chatbotRouter);
 
-v1Router.use("/dashboard-ia", dashboardIa);
+mountRouter(v1Router, "/dashboard-ia", dashboardIa);
 
 export default v1Router;

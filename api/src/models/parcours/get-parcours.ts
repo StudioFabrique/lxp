@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   parcoursWhereForScope,
@@ -5,21 +6,22 @@ import {
 } from "../../utils/services/permissions/accessible-parcours.ts";
 
 async function getParcours(scope: AccessScope = null) {
-  const parcoursList = await prisma.parcours.findMany({
-    where: parcoursWhereForScope(scope),
-    select: {
-      id: true,
-      title: true,
-      createdAt: true,
-      updatedAt: true,
-      formation: { select: { title: true, level: true } },
-      admin: { select: { idMdb: true } },
-      author: true,
-      isPublished: true,
-      visibility: true,
-      thumb: true,
-    },
-  });
+  const parcoursList = await prisma.orm.public.Parcours.where((row) =>
+    whereFromObject(row, parcoursWhereForScope(scope)),
+  )
+    .select(
+      "id",
+      "title",
+      "createdAt",
+      "updatedAt",
+      "author",
+      "isPublished",
+      "visibility",
+      "thumb",
+    )
+    .include("formation", (related240) => related240.select("title", "level"))
+    .include("admin", (related241) => related241.select("idMdb"))
+    .all();
 
   if (!parcoursList) {
     throw new Error(`Data not found.`);
@@ -30,7 +32,9 @@ async function getParcours(scope: AccessScope = null) {
         scope?.kind !== "teacher" ||
         scope.directParcoursIds?.includes(parcours.id);
       if (parcours.thumb && typeof parcours.thumb !== "string") {
-        const base64thumb = Buffer.from(parcours.thumb as any).toString("base64");
+        const base64thumb = Buffer.from(parcours.thumb as any).toString(
+          "base64",
+        );
         return { ...parcours, thumb: base64thumb, canManage };
       }
       return { ...parcours, canManage };

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { TeacherAssignmentListItem } from "./api/teacher-assignments.api";
 import {
   filterTeacherAssignments,
+  teacherAssignmentIsGraded,
   teacherAssignmentStudentStatus,
 } from "./teacher-assignments.utils";
 
@@ -84,5 +85,16 @@ describe("liste formateur des évaluations", () => {
         submission: { id: 1, grade: 16 },
       }),
     ).toBe("Évalué");
+  });
+  it("place un devoir partiellement noté dans les non évalués et le déplace une fois tous les rendus notés", () => {
+    const item = assignment(1, "2026-09-20T12:00:00.000Z", "Accueil");
+    item.students[0].submission = { id: 1, submittedAt: "2026-09-14T12:00:00.000Z", grade: 16 };
+    item.students.push({ ...item.students[0], id: "student-2", submission: { id: 2, submittedAt: "2026-09-14T12:00:00.000Z", grade: null } });
+    expect(teacherAssignmentIsGraded(item)).toBe(false);
+    expect(filterTeacherAssignments([item], null, "", "ungraded")).toHaveLength(1);
+    expect(filterTeacherAssignments([item], null, "", "graded")).toHaveLength(0);
+    item.students[1].submission!.grade = 12;
+    expect(teacherAssignmentIsGraded(item)).toBe(true);
+    expect(filterTeacherAssignments([item], null, "", "graded")).toHaveLength(1);
   });
 });

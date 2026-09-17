@@ -1,3 +1,4 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
@@ -64,7 +65,7 @@ export default async function putGroup(
     const updatedGroup = await Group.findOneAndUpdate(
       { _id: id },
       { $set: updateData },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     await User.updateMany({ group: id }, { $pull: { group: id } });
@@ -74,9 +75,9 @@ export default async function putGroup(
       { $addToSet: { group: id } },
     );
 
-    const existingPrismaGroup = await prisma.group.findFirst({
-      where: { idMdb: id },
-    });
+    const existingPrismaGroup = await prisma.orm.public.Group.where((row) =>
+      whereFromObject(row, { idMdb: id }),
+    ).first();
 
     if (!existingPrismaGroup) {
       throw {
@@ -86,22 +87,18 @@ export default async function putGroup(
     }
 
     if (parcoursId !== undefined) {
-      await prisma.groupsOnParcours.deleteMany({
-        where: {
+      await prisma.orm.public.GroupsOnParcours.where((row) =>
+        whereFromObject(row, {
           groupId: existingPrismaGroup.id,
-        },
-      });
+        }),
+      )
+        .deleteAndCount()
+        .then((count) => ({ count }));
 
       if (parcoursId > 0) {
-        await prisma.groupsOnParcours.create({
-          data: {
-            group: {
-              connect: { id: existingPrismaGroup.id },
-            },
-            parcours: {
-              connect: { id: parcoursId },
-            },
-          },
+        await prisma.orm.public.GroupsOnParcours.create({
+          group: (relation) => relation.connect({ id: existingPrismaGroup.id }),
+          parcours: (relation) => relation.connect({ id: parcoursId }),
         });
       }
     }

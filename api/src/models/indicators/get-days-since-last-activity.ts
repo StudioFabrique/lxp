@@ -1,7 +1,12 @@
+import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
 import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
-import { emptyIndicator, type Indicator, type IndicatorContext } from "./types.ts";
+import {
+  emptyIndicator,
+  type Indicator,
+  type IndicatorContext,
+} from "./types.ts";
 
 export const DAYS_SINCE_LAST_ACTIVITY_KEY = "days_since_last_activity";
 
@@ -20,21 +25,31 @@ export default async function getDaysSinceLastActivity(
   context: IndicatorContext,
 ): Promise<Indicator<number>> {
   const [connection, promptStat, contentRead] = await Promise.all([
-    ConnectionInfos.findOne({ userId: context.userIdMdb })
+    ConnectionInfos.findOne({
+      userId: context.userIdMdb,
+      lastConnection: { $lte: context.to },
+    })
       .select({ lastConnection: 1 })
       .sort({ lastConnection: -1 })
       .lean(),
-    PromptStats.findOne({ userId: context.userIdMdb })
+    PromptStats.findOne({
+      userId: context.userIdMdb,
+      date: { $lte: context.to },
+    })
       .select({ date: 1 })
       .sort({ date: -1 })
       .lean(),
     context.studentId === null
       ? Promise.resolve(null)
-      : prisma.lessonRead.findFirst({
-          where: { studentId: context.studentId },
-          select: { lastOpenedAt: true },
-          orderBy: { lastOpenedAt: "desc" },
-        }),
+      : prisma.orm.public.LessonRead.where((row) =>
+          whereFromObject(row, {
+            studentId: context.studentId,
+            lastOpenedAt: { lte: context.to },
+          }),
+        )
+          .select("lastOpenedAt")
+          .orderBy((row) => row.lastOpenedAt.desc())
+          .first(),
   ]);
 
   const candidates = [

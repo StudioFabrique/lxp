@@ -3,9 +3,9 @@ import { validationResult } from "express-validator";
 import putResetPassword from "../../models/user/put-reset-password.ts";
 
 export default async function httpPutResetPassword(
-  req: Request,
+  req: Request<{ userId: string }>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const isValid = validationResult(req);

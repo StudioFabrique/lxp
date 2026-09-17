@@ -1,4 +1,4 @@
-import { isValidCourseTimes } from "../../../models/course/course-calendar-dates.ts";
+import { isValidCourseTimes } from "../../../helpers/course-calendar-dates.ts";
 import { body, param, query } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators.ts";

@@ -1,14 +1,14 @@
 import request from "supertest";
 import app from "../src/app.ts";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 import mongoose from "mongoose";
 import path from "path";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 // Méthode pour fermer la connexion
 const disconnect = async () => {
@@ -152,14 +152,12 @@ describe("HTTP Formation", () => {
       "src",
       "assets",
       "images",
-      "module-default-thumb.png"
+      "module-default-thumb.png",
     );
 
     // No authentication
     test("It should respond 401 unauthorized", async () => {
-      await request(app)
-        .post("/v1/formation/new-module")
-        .expect(401);
+      await request(app).post("/v1/formation/new-module").expect(401);
     });
 
     // Successful creation with image
@@ -395,31 +393,25 @@ describe("HTTP Formation", () => {
     // Already existing formation
     test("It should respond 409 conflict", async () => {
       // Recording fixtures
-      const result = await prisma.formation.create({
-        data: {
-          ...formation1,
-          admin: { connect: { id: 1 } },
-          tags: {
-            create: [
-              { tag: { connect: { id: 1 } } },
-              { tag: { connect: { id: 2 } } },
-              { tag: { connect: { id: 3 } } },
-            ],
-          },
-        },
+      const result = await prisma.orm.public.Formation.create({
+        ...formation1,
+        admin: (relation) => relation.connect({ id: 1 }),
+        tags: (relation) =>
+          relation.create([
+            { tag: (relation) => relation.connect({ id: 1 }) },
+            { tag: (relation) => relation.connect({ id: 2 }) },
+            { tag: (relation) => relation.connect({ id: 3 }) },
+          ]),
       });
-      await prisma.formation.create({
-        data: {
-          ...formation2,
-          admin: { connect: { id: 1 } },
-          tags: {
-            create: [
-              { tag: { connect: { id: 1 } } },
-              { tag: { connect: { id: 2 } } },
-              { tag: { connect: { id: 3 } } },
-            ],
-          },
-        },
+      await prisma.orm.public.Formation.create({
+        ...formation2,
+        admin: (relation) => relation.connect({ id: 1 }),
+        tags: (relation) =>
+          relation.create([
+            { tag: (relation) => relation.connect({ id: 1 }) },
+            { tag: (relation) => relation.connect({ id: 2 }) },
+            { tag: (relation) => relation.connect({ id: 3 }) },
+          ]),
       });
 
       await request(app)

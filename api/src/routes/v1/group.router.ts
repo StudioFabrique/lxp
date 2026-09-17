@@ -36,14 +36,14 @@ groupRouter.get("/student", checkPermissions("group"), httpGetStudentGroups);
 // search/:role/:entity/:value/:stype/:sdir
 groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
-  checkPermissions(),
+  checkPermissions("group"),
   searchValidator,
   httpSearchGroup,
 );
 
 groupRouter.get(
   "/:role/:stype/:sdir",
-  checkPermissions(),
+  checkPermissions("group"),
   getAllValidator,
   httpGetAllGroups,
 );

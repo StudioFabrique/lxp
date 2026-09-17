@@ -36,14 +36,14 @@ export const getTemplate = (
 
   if (template === "root-email-verification") {
     link = publicUrl("confirm-email", { token });
-    return `<p>Bonjour,</p><p>Votre compte root ANDRIA a été créé pour l'adresse ${escapeHtml(email ?? "")}.</p><p>Activez-le en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Activer mon compte root</a></p><p>Ce lien expire dans 24 heures. Tant que vous ne l'avez pas utilisé, le compte reste inactif.</p>`;
+    return `<p>Bonjour,</p><p>Votre compte root ANDRIA a été créé pour l'adresse ${escapeHtml(email ?? "")} </p><p>Activez-le en cliquant sur le lien ci-dessous :</p><p><a href="${link}">Activer mon compte root</a></p><p>Ce lien expire dans 24 heures. Tant que vous ne l'avez pas utilisé, le compte reste inactif.</p>`;
   }
 
   if (template === "root-account-init" || template === "root-account") {
     const rootEmail = email ?? "";
     const path = template === "root-account-init" ? "init" : "createRoot";
     link = publicUrl(path, { token, email: rootEmail });
-    return `<p>Bonjour,</p><p>Vous êtes invité à créer un compte root ANDRIA pour l'adresse ${escapeHtml(rootEmail)}.</p><p><a href="${link}">Créer mon compte root</a></p><p>La clé d'activation et l'adresse email sont déjà renseignées. Ce lien est personnel et expire après le délai configuré pour les clés root.</p>`;
+    return `<p>Bonjour,</p><p>Vous êtes invité à créer un compte root ANDRIA pour l'adresse ${escapeHtml(rootEmail)} </p><p><a href="${link}">Créer mon compte root</a></p><p>La clé d'activation et l'adresse email sont déjà renseignées. Ce lien est personnel et expire après le délai configuré pour les clés root.</p>`;
   }
 
   switch (template) {
@@ -53,7 +53,7 @@ export const getTemplate = (
 <br/>
 Bienvenue sur la plateforme ANDRIA ! 🎉<br/>
 
-Votre compte a bien été créé pour l'email : <b>${email!}</b>.<br/>Pour finaliser votre inscription et accéder à toutes les fonctionnalités, veuillez activer votre compte en cliquant sur le lien ci-dessous : <br/>
+Votre compte a bien été créé pour l'email : <b>${email!}</b> <br/>Pour finaliser votre inscription et accéder à toutes les fonctionnalités, veuillez activer votre compte en cliquant sur le lien ci-dessous : <br/>
 <br/>
 👉 <a href=${link}>Lien d'activation</a><br/><br/>
 

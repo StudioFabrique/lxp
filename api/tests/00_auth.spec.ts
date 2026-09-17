@@ -1,6 +1,7 @@
+import { whereFromObject } from "../src/utils/prisma-query.ts";
 import request from "supertest";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { compare } from "bcrypt";
@@ -20,7 +21,7 @@ import { confirmRootEmail } from "../src/models/auth/confirm-root-email.ts";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * Helper method to disconnect from MongoDB
@@ -210,7 +211,11 @@ describe("HTTP auth", () => {
       await User.updateOne(
         { email },
         {
-          $set: { invitationSent: false, isActive: false, emailVerified: false },
+          $set: {
+            invitationSent: false,
+            isActive: false,
+            emailVerified: false,
+          },
           $unset: { invitationSentAt: 1 },
         },
       );
@@ -397,13 +402,19 @@ describe("HTTP auth", () => {
         expect(
           await BlackListedToken.exists({ token: verificationToken }),
         ).not.toBeNull();
-        await expect(confirmRootEmail(verificationToken)).rejects.toMatchObject({
-          statusCode: 400,
-          message: "Ce lien a déjà été utilisé.",
-        });
+        await expect(confirmRootEmail(verificationToken)).rejects.toMatchObject(
+          {
+            statusCode: 400,
+            message: "Ce lien a déjà été utilisé.",
+          },
+        );
       } finally {
         if (rootUserId) {
-          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await prisma.orm.public.Admin.where((row) =>
+            whereFromObject(row, { idMdb: rootUserId }),
+          )
+            .deleteAndCount()
+            .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });
         }
         await BlackListedToken.deleteOne({ token });
@@ -472,21 +483,29 @@ describe("HTTP auth", () => {
             emailVerified: false,
           }),
         );
-        expect(
-          await compare("NewRootPassword@456", rootUser!.password),
-        ).toBe(true);
-        expect(
-          await compare("OldRootPassword@123", rootUser!.password),
-        ).toBe(false);
+        expect(await compare("NewRootPassword@456", rootUser!.password)).toBe(
+          true,
+        );
+        expect(await compare("OldRootPassword@123", rootUser!.password)).toBe(
+          false,
+        );
         expect(
           await BlackListedToken.exists({ token: replacementToken }),
         ).not.toBeNull();
         expect(
-          await prisma.admin.count({ where: { idMdb: rootUserId } }),
+          await prisma.orm.public.Admin.where((row) =>
+            whereFromObject(row, { idMdb: rootUserId }),
+          )
+            .aggregate((aggregate) => ({ total: aggregate.count() }))
+            .then(({ total }) => total),
         ).toBe(1);
       } finally {
         if (rootUserId) {
-          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await prisma.orm.public.Admin.where((row) =>
+            whereFromObject(row, { idMdb: rootUserId }),
+          )
+            .deleteAndCount()
+            .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });
         }
         await BlackListedToken.deleteMany({
@@ -556,7 +575,11 @@ describe("HTTP auth", () => {
         ]);
       } finally {
         if (rootUserId) {
-          await prisma.admin.deleteMany({ where: { idMdb: rootUserId } });
+          await prisma.orm.public.Admin.where((row) =>
+            whereFromObject(row, { idMdb: rootUserId }),
+          )
+            .deleteAndCount()
+            .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });
         }
         await BlackListedToken.deleteOne({ token });

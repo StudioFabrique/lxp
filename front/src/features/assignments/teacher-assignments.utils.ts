@@ -17,15 +17,25 @@ export function teacherAssignmentStudentStatus(
   return "À remettre";
 }
 
+export type TeacherAssignmentEvaluationFilter = "ungraded" | "graded";
+
+export function teacherAssignmentIsGraded(assignment: TeacherAssignmentListItem) {
+  return assignment.students.length > 0 && assignment.students.every(
+    student => student.submission?.submittedAt && student.submission.grade !== null && student.submission.grade !== undefined,
+  );
+}
+
 export function filterTeacherAssignments(
   assignments: TeacherAssignmentListItem[],
   selectedParcours: string | null,
   search: string,
+  evaluationFilter?: TeacherAssignmentEvaluationFilter,
 ) {
   const normalizedSearch = normalizeSearchText(search);
 
   return assignments
     .filter((assignment) => {
+      if (evaluationFilter && teacherAssignmentIsGraded(assignment) !== (evaluationFilter === "graded")) return false;
       if (
         selectedParcours !== null &&
         assignment.course.module.parcours.title !== selectedParcours
@@ -52,8 +62,9 @@ export function filterTeacherAssignments(
       );
     })
     .sort((first, second) => {
-      const dueDateDifference =
-        new Date(first.dueAt).getTime() - new Date(second.dueAt).getTime();
+      const dueDateDifference = evaluationFilter === "graded"
+        ? new Date(second.dueAt).getTime() - new Date(first.dueAt).getTime()
+        : new Date(first.dueAt).getTime() - new Date(second.dueAt).getTime();
       if (dueDateDifference !== 0) return dueDateDifference;
       return first.course.title.localeCompare(second.course.title, "fr", {
         numeric: true,

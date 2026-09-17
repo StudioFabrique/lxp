@@ -33,6 +33,7 @@ type LastParcoursItemProps = {
   isManagementView?: boolean;
   baseRoute?: "admin" | "student";
   onCreateFormation?: () => void;
+  onCreateParcours?: (formationId: number) => void;
   onEditFormation?: (formationId: number) => void;
   onDeleteParcours?: (
     parcours: FormationParcoursSummary["parcours"][number],
@@ -50,6 +51,7 @@ const LastParcoursItem = ({
   isManagementView = false,
   baseRoute = "admin",
   onCreateFormation,
+  onCreateParcours,
   onEditFormation,
   onDeleteParcours,
   onExportParcours,
@@ -133,15 +135,16 @@ const LastParcoursItem = ({
       footer={
         formation && baseRoute === "admin" && !usesFullWidthLayout ? (
           <PermissionGuard action="write" object="parcours">
-            <Link
-              to={`/admin/parcours/new?formationId=${formation.id}`}
+            <button
+              type="button"
+              onClick={() => onCreateParcours?.(formation.id)}
               className={cn("btn btn-sm btn-dash mx-5", {
                 "self-end": formation.parcours.length > 0,
               })}
             >
               <Plus className="size-[1.2em]" />
               <span>Ajouter un parcours</span>
-            </Link>
+            </button>
           </PermissionGuard>
         ) : undefined
       }
