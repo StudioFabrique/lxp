@@ -178,6 +178,25 @@ describe("rôle utilisateur unique", () => {
     ).toBe(0);
   });
 
+  test("permet de réenregistrer le rôle d'un apprenant existant", async () => {
+    const student = await account("student@test.fr", studentRole);
+    const idMdb = String(student._id);
+    await prisma.orm.public.Student.create({ idMdb });
+
+    await expect(
+      updateUserRoles([idMdb], [String(studentRole._id)]),
+    ).resolves.toBeDefined();
+
+    expect(
+      await prisma.orm.public.Student.where({ idMdb })
+        .aggregate((aggregate) => ({ total: aggregate.count() }))
+        .then(({ total }) => total),
+    ).toBe(1);
+    expect((await User.findById(student._id))!.roles.map(String)).toEqual([
+      String(studentRole._id),
+    ]);
+  });
+
   test("permet de passer des apprenants aux rôles formateur et administrateur", async () => {
     const futureTeacher = await account("future-teacher@test.fr", studentRole);
     const futureAdmin = await account("future-admin@test.fr", studentRole);
