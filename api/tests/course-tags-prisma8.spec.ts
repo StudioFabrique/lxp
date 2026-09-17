@@ -8,7 +8,7 @@ import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 const prisma = createPrismaClient();
 
 describe("PUT /v1/course/tags/:courseId with Prisma 8", () => {
-  let authCookie: string[];
+  let authCookie: string;
 
   beforeAll(async () => {
     await mongoConnect();
@@ -16,7 +16,7 @@ describe("PUT /v1/course/tags/:courseId with Prisma 8", () => {
       .post("/v1/auth/login")
       .send({ email: "admin@studio.eco", password: "Abcdef@123456" })
       .expect(200);
-    authCookie = loginResponse.headers["set-cookie"];
+    authCookie = loginResponse.headers["set-cookie"][0];
   });
 
   afterAll(async () => {
