@@ -147,6 +147,6 @@ if [ "$demo_mode" = true ]; then
 elif [ "$restore_data" = true ]; then
   echo -e "\033[0;32mConfiguration du projet ANDRIA avec les données de démonstration terminée avec succès.\033[0m"
 else
-  echo -e "\033[0;32mConfiguration du projet ANDRIA à partir de bases de données vides terminée avec succès.\033[0m"
+  echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
 fi
 echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"

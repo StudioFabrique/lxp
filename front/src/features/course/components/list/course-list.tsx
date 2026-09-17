@@ -174,7 +174,7 @@ export default function CourseList({
               key={course.id}
               label="Cours"
               labelAccessory={
-                <div className="flex items-center gap-1.5">
+                <div>
                   <span
                     role="img"
                     className="opacity-50"
@@ -242,7 +242,6 @@ export default function CourseList({
                             ? "Rendre invisible"
                             : "Rendre visible"
                         } le cours ${course.title}`}
-                        aria-pressed={Boolean(course.visibility)}
                         disabled={pendingCourseAction?.courseId === course.id}
                         onClick={() => handleToggleCourseVisibility(course)}
                       >
