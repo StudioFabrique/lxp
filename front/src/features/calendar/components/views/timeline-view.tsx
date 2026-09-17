@@ -10,14 +10,13 @@ type Props = {
   currentDate: Date;
   startHour: number;
   endHour: number;
-  darkMode: boolean;
   currentWeekDayVisible: boolean;
   style?: { hourHeight: number };
   onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
   onShowMore?: (events: CalendarEvent[]) => void;
 };
 
-export default function TimelineView({ onSelectDay, events, view, currentDate, startHour, endHour, darkMode, currentWeekDayVisible, style = { hourHeight: 60 }, onClickEventDetails, onShowMore }: Props) {
+export default function TimelineView({ onSelectDay, events, view, currentDate, startHour, endHour, currentWeekDayVisible, style = { hourHeight: 60 }, onClickEventDetails, onShowMore }: Props) {
   const [now, setNow] = useState(new Date());
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 60_000); return () => clearInterval(timer); }, []);
   const days = useMemo(() => {
@@ -32,11 +31,11 @@ export default function TimelineView({ onSelectDay, events, view, currentDate, s
   const indicator = getCurrentTimeIndicator(now, startHour, endHour, style);
   const hasHeader = view === "week" || currentWeekDayVisible;
   const hasUntimed = days.some(day => day.allDay.length || day.hidden.length);
-  const eventClass = (event: CalendarEvent) => darkMode ? eventConfig[event.type].dark : eventConfig[event.type].light;
+  const eventClass = (event: CalendarEvent) => eventConfig[event.type];
   const clickEvent = (event: CalendarEvent, target: HTMLElement) => onClickEventDetails?.(event.id, target.getBoundingClientRect(), target);
   return <div className="overflow-auto max-h-[75vh]" aria-label={view === "day" ? "Cours du jour" : "Cours de la semaine"}>
     <div data-calendar-scroll-content className={view === "week" ? "min-w-[700px]" : "min-w-full"}>
-      {hasHeader && <div className={`sticky top-0 z-30 flex border-b ${theme(darkMode).headerBg} ${theme(darkMode).border}`}>
+      {hasHeader && <div className={`sticky top-0 z-30 flex border-b ${theme.headerBg} ${theme.border}`}>
         <div className="w-16 shrink-0" />
         {days.map(({ date }) => {
           const label = date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });

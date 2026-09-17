@@ -1,9 +1,8 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { normalizeImageSource } from "../../../../../../src/utils/images/image-source";
 import Module from "../../../../../../src/utils/interfaces/module";
 
 import Calendar from "../../../../calendar/components/calendar";
-import { ThemeContext as Context } from "../../../../../store/ThemeProvider";
 import { TimelineEvent } from "../../../../calendar/components/calendar-configuration";
 import { formatDate } from "../../../../calendar/components/calendar-utils";
 import ModuleTimelineDateModal from "./module-timeline-date-modal";
@@ -13,10 +12,9 @@ import ModuleTimelineDetailsPopover, {
 import { useParams, useSearchParams } from "react-router";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
 import { useParcoursModules } from "../../../hooks/useParcoursModules";
+import BoxWrapper from "../../../../../components/wrappers/BoxWrapper";
 
 const Calendrier = () => {
-  const { theme } = useContext(Context);
-  const darkMode = theme === "dark";
   const currentDate = new Date();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -106,19 +104,11 @@ const Calendrier = () => {
 
   return (
     <div ref={containerRef} className="relative flex flex-col gap-y-5 h-full">
-      <div className="flex justify-end">
-        <div
-          className={`text-sm px-4 py-2 rounded-lg border ${
-            darkMode
-              ? "bg-slate-800 border-slate-700"
-              : "bg-gray-50 border-gray-200"
-          }`}
-        >
-          <span className="font-semibold">Dates du parcours : </span>
-          {`${formatDate(datesParcours.startDate)} -
+      <BoxWrapper className="flex flex-row self-end gap-2 text-sm">
+        <span className="font-semibold">Dates du parcours : </span>
+        {`${formatDate(datesParcours.startDate)} -
           ${formatDate(datesParcours.endDate)}`}
-        </div>
-      </div>
+      </BoxWrapper>
 
       <div className="flex-1 min-h-0 rounded-xl overflow-hidden">
         <Calendar
@@ -128,7 +118,6 @@ const Calendrier = () => {
           endHour={18}
           view={"year-timeline"}
           timelineEvents={modulesTimelineEvents}
-          darkMode={darkMode}
           onClickTimelineYearEventDetails={handleShowModuleDetails}
           onClickEditTimelineYearEvent={handleEditModuleDates}
         />

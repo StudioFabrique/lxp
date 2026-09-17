@@ -8,7 +8,6 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import ParcoursFilterBadges from "../../../components/UI/parcours-filter-badges";
 import { AuthContext } from "../../../store/AuthProvider";
-import { ThemeContext } from "../../../store/ThemeProvider";
 import apiClient from "../../../lib/axios";
 import Calendar from "../components/calendar";
 import type {
@@ -125,7 +124,6 @@ function ParcoursCalendar({
   date: Date;
   setDate: (date: Date) => void;
 }) {
-  const { theme } = useContext(ThemeContext);
   const { pathname } = useLocation();
   const area = pathname.startsWith("/student/") ? "student" : "admin";
   const [selection, setSelection] = useState<{
@@ -192,7 +190,6 @@ function ParcoursCalendar({
             currentDate={date}
             startHour={startHour}
             endHour={endHour}
-            darkMode={theme === "dark"}
             onClickEventDetails={(id, _rect, element) =>
               select(
                 events.find((event) => event.id === id),
@@ -238,7 +235,6 @@ function ParcoursCalendar({
                       setView(value);
                     }}
                     allowedViews={allowedViews}
-                    darkMode={theme === "dark"}
                   />
                 </div>
               </div>

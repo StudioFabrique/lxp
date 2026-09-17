@@ -13,7 +13,7 @@ function render(disabled = false) {
   root = createRoot(container);
   const onChangeDates = vi.fn();
   const onClickDetails = vi.fn();
-  act(() => root.render(<Calendar events={[]} view="planning" currentDate={new Date(2026, 8, 1)} darkMode={false} planningDisabled={disabled}
+  act(() => root.render(<Calendar events={[]} view="planning" currentDate={new Date(2026, 8, 1)} planningDisabled={disabled}
     timelineEvents={[{ id: "1:0", title: "Introduction", startDate: new Date(2026, 8, 2), endDate: new Date(2026, 8, 3) }]}
     onChangeTimelineEventDates={onChangeDates} onClickTimelineYearEventDetails={onClickDetails} />));
   const surface = container.querySelector<HTMLDivElement>('[aria-label="Calendrier mensuel des cours"]')!;

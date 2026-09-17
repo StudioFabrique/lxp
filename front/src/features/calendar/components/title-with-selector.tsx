@@ -13,7 +13,6 @@ type Props = {
   currentDate: Date;
   onSelectTitle?: (title: string) => void;
   view: CalendarView;
-  darkMode?: boolean;
 };
 
 const TitleWithSelector = ({
@@ -22,7 +21,6 @@ const TitleWithSelector = ({
   currentDate,
   onSelectTitle,
   view,
-  darkMode,
 }: Props) => {
   // --- DYNAMIC DATE ---
   const dynamicDate = useMemo(() => {
@@ -86,7 +84,7 @@ const TitleWithSelector = ({
         </span>
       )}
 
-      <span className={`text-sm font-normal ml-2 ${theme(darkMode).subText}`}>
+      <span className={`text-sm font-normal ml-2 ${theme.subText}`}>
         | {dynamicDate}
       </span>
     </div>
@@ -96,7 +94,7 @@ const TitleWithSelector = ({
   //   <div className="flex items-center gap-1">
   //     <button
   //       onClick={() => handleNavigate("prev")}
-  //       className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
+  //       className={`p-1 rounded hover:opacity-70 ${theme.subText}`}
   //     >
   //       {/* Chevron Left */}
   //       <svg
@@ -116,14 +114,14 @@ const TitleWithSelector = ({
   //     <button
   //       onClick={handleToday}
   //       className={`text-xs font-bold px-2 py-1 rounded border ${
-  //         theme(darkMode).border
+  //         theme.border
   //       } hover:opacity-70`}
   //     >
   //       Aujourd'hui
   //     </button>
   //     <button
   //       onClick={() => handleNavigate("next")}
-  //       className={`p-1 rounded hover:opacity-70 ${theme(darkMode).subText}`}
+  //       className={`p-1 rounded hover:opacity-70 ${theme.subText}`}
   //     >
   //       {/* Chevron Right */}
   //       <svg

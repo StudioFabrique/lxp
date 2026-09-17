@@ -32,7 +32,6 @@ interface Props {
   endHour?: number;
   view?: CalendarView;
   currentWeekDayVisible?: boolean;
-  darkMode?: boolean;
   header?: ReactNode;
   style?: { hourHeight: number };
 }
@@ -52,7 +51,6 @@ const Calendar = ({
   endHour = 19,
   view = "week",
   currentWeekDayVisible = true,
-  darkMode = false,
   header,
   style = { hourHeight: 60 },
 }: Props) => {
@@ -65,7 +63,6 @@ const Calendar = ({
           <PlanningView
             events={timelineEvents}
             currentDate={currentDate}
-            darkMode={darkMode}
             selectedEventId={selectedTimelineEventId}
             disabled={planningDisabled}
             onClickDetails={onClickTimelineYearEventDetails}
@@ -78,7 +75,6 @@ const Calendar = ({
             events={events}
             onSelectDay={onSelectDay}
             currentDate={currentDate}
-            darkMode={darkMode}
             onClickEventDetails={onClickEventDetails}
             onShowMore={setOverflow}
           />
@@ -87,7 +83,6 @@ const Calendar = ({
         return (
           <YearTimelineView
             events={timelineEvents}
-            darkMode={darkMode}
             onClickDetails={onClickTimelineYearEventDetails}
             onClickEdit={onClickEditTimelineYearEvent}
           />
@@ -104,7 +99,6 @@ const Calendar = ({
             endHour={endHour}
             currentDate={currentDate}
             currentWeekDayVisible={currentWeekDayVisible}
-            darkMode={darkMode}
             style={style}
             onClickEventDetails={onClickEventDetails}
             onShowMore={setOverflow}
@@ -116,8 +110,8 @@ const Calendar = ({
   return (
     <div
       className={`flex flex-col pb-1 rounded-xl shadow-xl overflow-hidden border font-sans transition-colors duration-300 ${
-        theme(darkMode).bg
-      } ${theme(darkMode).text} ${theme(darkMode).border}`}
+        theme.bg
+      } ${theme.text} ${theme.border}`}
     >
       {/* --- HEADER --- */}
       {header}
