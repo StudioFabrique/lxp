@@ -35,6 +35,9 @@ describe("buildRecommendedActions", () => {
       "create-admin",
       "change-logo",
     ]);
+    expect(actions.find(({ id }) => id === "change-logo")?.to).toBe(
+      "/admin/parametres-instance?tutorial=logo",
+    );
   });
 
   it("ne propose pas à un admin de créer un autre admin", () => {
@@ -44,7 +47,7 @@ describe("buildRecommendedActions", () => {
       parcours: [],
     });
 
-    expect(actions.map(({ id }) => id)).toEqual(["change-logo"]);
+    expect(actions.map(({ id }) => id)).toEqual([]);
   });
 
   it("ordonne les actions formateur et ouvre le premier parcours rattaché", () => {

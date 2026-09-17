@@ -1,51 +1,16 @@
-import { act, useState } from "react";
+import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { useForm } from "react-hook-form";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { AuthContext } from "../../../../store/AuthProvider";
 import Info from "./info";
-
-vi.mock(
-  "../../../../components/UI/image-file-upload/image-file-upload",
-  () => ({ default: () => <div /> }),
-);
 
 const TestInfo = () => {
   const {
     register,
     formState: { errors },
   } = useForm();
-  const [temporaryAvatar, setTemporaryAvatar] = useState<{
-    file: File | null;
-    url: string | null;
-  }>({ file: null, url: null });
-
-  return (
-    <AuthContext
-      value={
-        {
-          user: {
-            roles: [
-              {
-                _id: "role-id",
-                role: "admin",
-                label: "administrateur",
-                rank: 1,
-                protection: 2,
-              },
-            ],
-          },
-        } as never
-      }
-    >
-      <Info
-        formProps={{ register, errors }}
-        temporaryAvatar={temporaryAvatar}
-        setTemporaryAvatar={setTemporaryAvatar}
-      />
-    </AuthContext>
-  );
+  return <Info formProps={{ register, errors }} />;
 };
 
 describe("Info", () => {
@@ -62,18 +27,14 @@ describe("Info", () => {
     container.remove();
   });
 
-  it("affiche le rôle actuel de l'utilisateur sans permettre sa modification", () => {
+  it("ne présente plus le rôle ni la photo dans le formulaire", () => {
     act(() => {
       root = createRoot(container);
       root.render(<TestInfo />);
     });
 
-    const roleInput = container.querySelector<HTMLInputElement>(
-      "#current-role",
-    );
-
-    expect(roleInput?.value).toBe("administrateur");
-    expect(roleInput?.disabled).toBe(true);
+    expect(container.querySelector("#current-role")).toBeNull();
+    expect(container.querySelector('input[type="file"]')).toBeNull();
   });
 
   it("permet de modifier l'adresse email", () => {
@@ -88,5 +49,32 @@ describe("Info", () => {
     expect(emailInput).not.toBeNull();
     expect(emailInput?.disabled).toBe(false);
     expect(emailInput?.readOnly).toBe(false);
+  });
+
+  it("répartit les champs demandés en deux colonnes sans présentation", () => {
+    act(() => {
+      root = createRoot(container);
+      root.render(<TestInfo />);
+    });
+
+    const columns = container.querySelectorAll<HTMLDivElement>(".grid > div");
+    const fieldNames = (column: HTMLDivElement) =>
+      [...column.querySelectorAll<HTMLInputElement>("input")].map(
+        (input) => input.name,
+      );
+
+    expect(fieldNames(columns[0])).toEqual([
+      "firstname",
+      "lastname",
+      "nickname",
+      "email",
+    ]);
+    expect(fieldNames(columns[1])).toEqual([
+      "address",
+      "city",
+      "postCode",
+      "phoneNumber",
+    ]);
+    expect(container.querySelector("textarea")).toBeNull();
   });
 });

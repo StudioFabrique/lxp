@@ -21,6 +21,7 @@ import courseRouter from "./course/course.router.ts";
 import lessonRouter from "./lesson/lesson.router.ts";
 import contentReadRouter from "./content-read/content-read.router.ts";
 import checkPermissions from "../../middleware/check-permissions.ts";
+import checkRoleRank from "../../middleware/check-role-rank.ts";
 import activityRouter from "./activity/activityRouter.ts";
 import quizRouter from "./quiz/quiz.router.ts";
 
@@ -82,6 +83,7 @@ mountRouter(v1Router, "/quiz", quizRouter);
 v1Router.post(
   "/company-logo",
   checkPermissions("formation"),
+  checkRoleRank([0]),
   uploadCompanyLogo(),
   httpPostCompanyLogo,
 );
@@ -89,6 +91,7 @@ v1Router.post(
 v1Router.delete(
   "/company-logo",
   checkPermissions("formation"),
+  checkRoleRank([0]),
   httpDeleteCompanyLogo,
 );
 

@@ -8,6 +8,7 @@ import { avatarImageMaxSize } from "../../../../config/images-sizes.ts";
 import jsonParser from "../../../../middleware/json-parser.ts";
 import checkPermissions from "../../../../middleware/check-permissions.ts";
 import httpGetUserProfileSkills from "../../../../controllers/user/profile/http-get-user-profile-skills.ts";
+import httpDeleteUserAvatar from "../../../../controllers/user/profile/http-delete-user-avatar.ts";
 
 const userProfileRouter = Router();
 
@@ -41,10 +42,10 @@ userProfileRouter.put(
   httpUpdateUserPassword,
 );
 
-/* userProfileRouter.put(
+userProfileRouter.delete(
   "/avatar",
-  createFileUploadMiddleware(avatarImageMaxSize),
-  httpUpdateUserAvatar
-); */
+  checkPermissions("cursus", "update"),
+  httpDeleteUserAvatar,
+);
 
 export default userProfileRouter;

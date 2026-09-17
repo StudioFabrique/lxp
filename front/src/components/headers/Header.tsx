@@ -3,6 +3,7 @@
  */
 
 import { PropsWithChildren, type ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
@@ -13,6 +14,7 @@ interface HeaderProps {
   successBgColor?: boolean;
   disabled?: boolean;
   description?: string;
+  icon?: LucideIcon;
   isSubHeader?: boolean;
   hasError?: boolean;
   classname?: string;
@@ -21,6 +23,7 @@ interface HeaderProps {
 }
 
 const Header = (props: PropsWithChildren<HeaderProps>) => {
+  const Icon = props.icon;
   return (
     <BoxWrapper
       onClick={props.onClick}
@@ -36,7 +39,12 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
-        {!props.isSubHeader && <SidebarRouteIcon />}
+        {!props.isSubHeader &&
+          (Icon ? (
+            <Icon aria-hidden className="size-7 shrink-0" />
+          ) : (
+            <SidebarRouteIcon />
+          ))}
         <div>
           <h2
             className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}

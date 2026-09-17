@@ -46,13 +46,18 @@ export function buildRecommendedActions({
             },
           ]
         : []),
-      {
-        id: "change-logo",
-        title: "Changer le logo de l'organisme",
-        description: "Personnalisez l'identité visuelle de la plateforme.",
-        to: "/admin/profil?tutorial=logo",
-        icon: recommendedActionIcons.changeLogo,
-      },
+      ...(userRank === 0
+        ? [
+            {
+              id: "change-logo",
+              title: "Changer le logo de l'organisme",
+              description:
+                "Personnalisez l'identité visuelle de la plateforme.",
+              to: "/admin/parametres-instance?tutorial=logo",
+              icon: recommendedActionIcons.changeLogo,
+            },
+          ]
+        : []),
     ];
   }
 

@@ -23,6 +23,10 @@ const mutations = {
     const res = await apiClient.put("/user/profile/information", payload);
     return res.data;
   },
+  deleteAvatar: async () => {
+    const res = await apiClient.delete("/user/profile/avatar");
+    return res.data;
+  },
   updatePassword: async (payload: { oldPass: string; newPass: string }) => {
     const res = await apiClient.put("/user/profile/password", payload);
     return res.data;
