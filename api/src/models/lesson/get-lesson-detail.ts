@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { Contact } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -6,9 +5,7 @@ export default async function getLessonDetail(
   lessonId: number,
   userIdMdb?: string,
 ) {
-  let existingLesson = (await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, { id: lessonId }),
-  )
+  let existingLesson = (await prisma.orm.public.Lesson.where({ id: lessonId })
     .select("id", "title", "courseId")
     .include("course", (related117) =>
       related117
@@ -26,14 +23,18 @@ export default async function getLessonDetail(
         .orderBy((row) => row.order.asc()),
     )
     .include("lessonRating", (related121) =>
-      related121.where((row) =>
-        whereFromObject(row, { student: { idMdb: userIdMdb } }),
-      ),
+      userIdMdb
+        ? related121.where((row) =>
+            row.student.some((student) => student.idMdb.eq(userIdMdb)),
+          )
+        : related121,
     )
     .include("lessonsRead", (related122) =>
-      related122.where((row) =>
-        whereFromObject(row, { student: { idMdb: userIdMdb } }),
-      ),
+      userIdMdb
+        ? related122.where((row) =>
+            row.student.some((student) => student.idMdb.eq(userIdMdb)),
+          )
+        : related122,
     )
     .first()) as any;
 

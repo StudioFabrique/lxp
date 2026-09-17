@@ -1,15 +1,12 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function deleteObjective(objectiveId: string) {
   const id = parseInt(objectiveId);
 
-  const exisitingObjective = await prisma.orm.public.Objective.where((row) =>
-    whereFromObject(row, { id }),
-  ).first();
+  const exisitingObjective = await prisma.orm.public.Objective.where({
+    id,
+  }).first();
 
   if (!exisitingObjective) {
     const error = new Error("L'objectif n'existe pas");
@@ -18,9 +15,7 @@ async function deleteObjective(objectiveId: string) {
   }
 
   try {
-    const result = await prisma.orm.public.Objective.where((row) =>
-      whereFromObject(row, { id }),
-    )
+    const result = await prisma.orm.public.Objective.where({ id })
       .select("id")
       .delete()
       .then(requireDatabaseRow);

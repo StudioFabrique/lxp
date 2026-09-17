@@ -1,26 +1,17 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
 import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getRootAdminParcours(scope: AccessScope = null) {
-  const formations = await prisma.orm.public.Formation.where((row) =>
-    whereFromObject(
-      row,
-      scope === null
-        ? undefined
-        : { parcours: { some: { id: { in: scope.parcoursIds } } } },
-    ),
-  )
+  const query = scope
+    ? prisma.orm.public.Formation.where((row) =>
+        row.parcours.some((parcours) => parcours.id.in(scope.parcoursIds)),
+      )
+    : prisma.orm.public.Formation;
+  const formations = await query
     .select("id", "title", "level")
-    .include("parcours", (related242) =>
-      related242
-        .where((row) =>
-          whereFromObject(
-            row,
-            scope === null ? undefined : { id: { in: scope.parcoursIds } },
-          ),
-        )
+    .include("parcours", (parcours) =>
+      (scope ? parcours.where((row) => row.id.in(scope.parcoursIds)) : parcours)
         .select("id", "title", "startDate", "endDate", "isPublished", "thumb")
         .orderBy((row) => row.createdAt.desc()),
     )

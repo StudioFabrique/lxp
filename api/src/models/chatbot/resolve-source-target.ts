@@ -1,19 +1,21 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and, or } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
 import { type CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
 
 export default async function resolveSourceTarget(source: CourseSource) {
   const numericActivityId = Number(source.activity);
   const activity = await prisma.orm.public.Activity.where((row) =>
-    whereFromObject(row, {
-      lesson: { course: { courseSlug: source.course } },
-      OR: [
+    and(
+      row.lesson.some((lesson) =>
+        lesson.course.some((course) => course.courseSlug.eq(source.course)),
+      ),
+      or(
         ...(Number.isInteger(numericActivityId)
-          ? [{ id: numericActivityId }]
+          ? [row.id.eq(numericActivityId)]
           : []),
-        { title: { equals: source.activity, mode: "insensitive" as const } },
-      ],
-    }),
+        row.title.ilike(source.activity.replace(/[\\%_]/g, "\\$&")),
+      ),
+    ),
   )
     .select("id")
     .include("lesson", (related19) =>
@@ -26,7 +28,7 @@ export default async function resolveSourceTarget(source: CourseSource) {
   const lesson =
     activity?.lesson ??
     (await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { course: { courseSlug: source.course } }),
+      row.course.some((course) => course.courseSlug.eq(source.course)),
     )
       .select("id")
       .include("course", (related21) => related21.select("moduleId"))

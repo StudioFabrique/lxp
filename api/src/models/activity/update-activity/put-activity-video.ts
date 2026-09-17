@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import { prisma } from "../../../utils/db.ts";
 import path from "path";
 import fs from "fs";
@@ -18,13 +15,13 @@ export default async function putActivityVideo(
   let existingParent: Activity | BonusActivity | null = null;
 
   if (parentType === "lesson") {
-    existingParent = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    ).first();
+    existingParent = await prisma.orm.public.Activity.where({
+      id: activityId,
+    }).first();
   } else {
-    existingParent = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    ).first();
+    existingParent = await prisma.orm.public.BonusActivity.where({
+      id: activityId,
+    }).first();
   }
 
   if (!existingParent) {
@@ -33,9 +30,9 @@ export default async function putActivityVideo(
     throw error;
   }
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) {
     const error = new Error("L'utilisateur n'existe pas");
@@ -46,15 +43,13 @@ export default async function putActivityVideo(
   let updatedActivity: Activity | BonusActivity | null = null;
 
   if (parentType === "lesson")
-    updatedActivity = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    )
+    updatedActivity = await prisma.orm.public.Activity.where({ id: activityId })
       .update({ ...existingParent, title, url })
       .then(requireDatabaseRow);
   else
-    updatedActivity = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    )
+    updatedActivity = await prisma.orm.public.BonusActivity.where({
+      id: activityId,
+    })
       .update({ ...existingParent, title, url })
       .then(requireDatabaseRow);
 

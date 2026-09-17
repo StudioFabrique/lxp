@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import { includeCreatorContact } from "../formation/module-contact-ids.ts";
@@ -13,9 +10,7 @@ async function putModule(
   userId?: string,
 ) {
   const [existingModule, currentContact] = await Promise.all([
-    prisma.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: module.id }),
-    )
+    prisma.orm.public.Module.where({ id: module.id })
       .include("parcours", (related202) =>
         related202
           .include("contacts", (related203) => related203.select("contactId"))
@@ -23,11 +18,7 @@ async function putModule(
       )
       .first(),
     userId
-      ? prisma.orm.public.Contact.where((row) =>
-          whereFromObject(row, { idMdb: userId }),
-        )
-          .select("id")
-          .first()
+      ? prisma.orm.public.Contact.where({ idMdb: userId }).select("id").first()
       : null,
   ]);
   if (!existingModule) {
@@ -58,20 +49,14 @@ async function putModule(
   );
 
   const updated = await prisma.transaction(async (tx) => {
-    await tx.orm.public.ContactsOnModule.where((row) =>
-      whereFromObject(row, { moduleId: module.id }),
-    )
+    await tx.orm.public.ContactsOnModule.where({ moduleId: module.id })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.BonusSkillsOnModule.where((row) =>
-      whereFromObject(row, { moduleId: module.id }),
-    )
+    await tx.orm.public.BonusSkillsOnModule.where({ moduleId: module.id })
       .deleteAndCount()
       .then((count) => ({ count }));
 
-    return tx.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: module.id }),
-    )
+    return tx.orm.public.Module.where({ id: module.id })
       .select(
         "id",
         "title",

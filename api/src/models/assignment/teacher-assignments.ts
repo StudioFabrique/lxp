@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import Group from "../../utils/interfaces/db/group.ts";
 import { prisma } from "../../utils/db.ts";
 import { imageToDataUrl } from "../../utils/images/image-source.ts";
@@ -91,13 +92,13 @@ export async function getTeacherUpcomingAssignments(
   moduleIds: readonly number[],
 ) {
   const assignments = await prisma.orm.public.CourseAssignment.where((row) =>
-    whereFromObject(row, {
-      course: {
-        isPublished: true,
-        visibility: true,
-        moduleId: { in: [...moduleIds] },
-      },
-    }),
+    row.course.some((course) =>
+      and(
+        course.isPublished.eq(true),
+        course.visibility.eq(true),
+        course.moduleId.in([...moduleIds]),
+      ),
+    ),
   )
     .select("id", "dueAt", "maxScore")
     .include("course", (related12) =>
@@ -144,7 +145,8 @@ export async function getTeacherUpcomingAssignments(
         submission,
       ]),
     );
-    const { groups: _groups, ...parcours } = assignment.course!.module!.parcours!;
+    const { groups: _groups, ...parcours } =
+      assignment.course!.module!.parcours!;
     const { submissions: _submissions, ...assignmentData } = assignment;
     const expectedStudents = new Map<string, ExpectedAssignmentStudent>();
     assignment.course!.module!.parcours!.groups.forEach(({ group }) => {

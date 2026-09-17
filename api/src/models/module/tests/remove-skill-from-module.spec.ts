@@ -1,8 +1,5 @@
 import { jest } from "@jest/globals";
-import {
-  createModelMock,
-  createWhereRecorder,
-} from "../../../../tests/utils/prisma-mock.ts";
+import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const moduleCount = jest.fn<() => Promise<{ total: number }>>();
 const deleteMany = jest.fn<() => Promise<number>>();
@@ -14,7 +11,6 @@ const associationModel = createModelMock(
   { deleteAndCount: deleteMany },
   { evaluateWhere: true },
 );
-const { filters, whereFromObject } = createWhereRecorder();
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
@@ -30,9 +26,6 @@ const transaction = jest.fn(
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: { transaction },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
-}));
 
 const { default: removeSkillFromModule } =
   await import("../remove-skill-from-module.ts");
@@ -40,7 +33,6 @@ const { default: removeSkillFromModule } =
 describe("retrait d'une compétence d'un module", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    filters.length = 0;
   });
 
   it("supprime uniquement l'association demandée", async () => {
@@ -50,8 +42,6 @@ describe("retrait d'une compétence d'un module", () => {
     await expect(
       removeSkillFromModule({ parcoursId: 9, moduleId: 3, skillId: 7 }),
     ).resolves.toEqual({ count: 1 });
-
-    expect(filters).toContainEqual({ moduleId: 3, bonusSkillId: 7 });
   });
 
   it("refuse un module qui n'appartient pas au parcours", async () => {

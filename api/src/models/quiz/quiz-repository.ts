@@ -1,5 +1,6 @@
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import { whereFromObject } from "../../utils/prisma-query.ts";
+
 import {
   type AiQuizQuestion,
   toQuizQuestionCreateData,
@@ -13,19 +14,17 @@ export class QuizRepository {
   }
 
   findStudentByMongoId(idMdb: string) {
-    return this.database.orm.public.Student.where((student) =>
-      whereFromObject(student, { idMdb }),
-    ).first();
+    return this.database.orm.public.Student.where({ idMdb }).first();
   }
 
   findEndingQuiz(courseId: number, studentId: number) {
     return this.database.orm.public.Quiz.where((quiz) =>
-      whereFromObject(quiz, {
-        courseId,
-        studentId,
-        type: "ending_course",
-        questions: { some: {} },
-      }),
+      and(
+        quiz.courseId.eq(courseId),
+        quiz.studentId.eq(studentId),
+        quiz.type.eq("ending_course"),
+        quiz.questions.some(),
+      ),
     )
       .include("questions")
       .first();
@@ -41,20 +40,18 @@ export class QuizRepository {
   }
 
   findPreliminaryModule(moduleId: number) {
-    return this.database.orm.public.Module.where((module) =>
-      whereFromObject(module, { id: moduleId }),
-    )
+    return this.database.orm.public.Module.where({ id: moduleId })
       .select("id", "title", "description", "quizInstructions")
       .first();
   }
 
   findPreliminaryQuiz(moduleId: number) {
     return this.database.orm.public.Quiz.where((quiz) =>
-      whereFromObject(quiz, {
-        moduleId,
-        type: "preliminary",
-        questions: { some: {} },
-      }),
+      and(
+        quiz.moduleId.eq(moduleId),
+        quiz.type.eq("preliminary"),
+        quiz.questions.some(),
+      ),
     )
       .include("questions")
       .first();

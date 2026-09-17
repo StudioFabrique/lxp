@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../src/utils/prisma-query.ts";
+import { requireDatabaseRow } from "../src/utils/require-database-row.ts";
 import mongoose from "mongoose";
 import postDuplicateModule from "../src/models/module/post-duplicate-module.ts";
 import { prisma } from "../src/utils/db.ts";
@@ -24,9 +21,9 @@ describe("flat module duplication", () => {
     if (!user) throw new Error("Admin Mongo fixture is missing");
     userId = user._id.toString();
 
-    const admin = await prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first();
+    const admin = await prisma.orm.public.Admin.where({
+      idMdb: userId,
+    }).first();
     const tag = await prisma.orm.public.Tag.first();
     if (!admin || !tag) throw new Error("Prisma fixtures are missing");
     adminId = admin.id;
@@ -117,16 +114,12 @@ describe("flat module duplication", () => {
 
   afterAll(async () => {
     await prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, {
-        id: {
-          in: [sourceParcoursId, secondParcoursId, otherFormationParcoursId],
-        },
-      }),
+      row.id.in([sourceParcoursId, secondParcoursId, otherFormationParcoursId]),
     )
       .deleteAndCount()
       .then((count) => ({ count }));
     await prisma.orm.public.Formation.where((row) =>
-      whereFromObject(row, { id: { in: [formationId, otherFormationId] } }),
+      row.id.in([formationId, otherFormationId]),
     )
       .deleteAndCount()
       .then((count) => ({ count }));
@@ -143,9 +136,7 @@ describe("flat module duplication", () => {
     );
 
     expect(result.id).not.toBe(sourceModuleId);
-    const copy = await prisma.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: result.id }),
-    )
+    const copy = await prisma.orm.public.Module.where({ id: result.id })
       .include("courses", (related62) => related62.include("lessons"))
       .include("quizzes", (related63) => related63.include("questions"))
       .first()
@@ -164,9 +155,7 @@ describe("flat module duplication", () => {
       userId,
       secondParcoursId,
     );
-    const copy = await prisma.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: result.id }),
-    )
+    const copy = await prisma.orm.public.Module.where({ id: result.id })
       .first()
       .then(requireDatabaseRow);
     expect(copy.parcoursId).toBe(secondParcoursId);

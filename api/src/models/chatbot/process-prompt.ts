@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../utils/db.ts";
 import type { CourseSource } from "../../utils/interfaces/db/chat-dialogs.ts";
@@ -72,9 +71,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
   }
 
   const course = input.courseId
-    ? await prisma.orm.public.Course.where((row) =>
-        whereFromObject(row, { id: input.courseId }),
-      )
+    ? await prisma.orm.public.Course.where({ id: input.courseId })
         .select("courseSlug")
         .first()
     : null;

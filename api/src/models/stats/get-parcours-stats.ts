@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -9,9 +8,7 @@ import { prisma } from "../../utils/db.ts";
  * - Nombre de modules dans le parcours
  */
 export default async function getParcoursStats(parcoursId: number) {
-  const parcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const parcours = await prisma.orm.public.Parcours.where({ id: parcoursId })
     .include("formation", (related32) => related32.select("level"))
     .include("modules", (related33) =>
       related33

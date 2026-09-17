@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 import User from "../../utils/interfaces/db/user.ts";
@@ -10,9 +7,9 @@ export default async function putFinishReadLesson(
   lessonId: number,
   userIdMdb: string,
 ) {
-  const student = await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: userIdMdb }),
-  ).first();
+  const student = await prisma.orm.public.Student.where({
+    idMdb: userIdMdb,
+  }).first();
 
   const studentData = await User.findById(student?.idMdb);
 
@@ -20,9 +17,10 @@ export default async function putFinishReadLesson(
     return [];
   }
 
-  const lessonRead = await prisma.orm.public.LessonRead.where((row) =>
-    whereFromObject(row, { lessonId, student }),
-  )
+  const lessonRead = await prisma.orm.public.LessonRead.where({
+    lessonId,
+    studentId: student.id,
+  })
     .select("id", "finishedAt")
     .include("lesson", (related134) => related134.select("title", "courseId"))
     .first();
@@ -36,9 +34,7 @@ export default async function putFinishReadLesson(
   }
 
   return prisma.transaction(async (tx) => {
-    const updated = await tx.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { id: lessonRead.id }),
-    )
+    const updated = await tx.orm.public.LessonRead.where({ id: lessonRead.id })
       .update({ finishedAt: new Date().toISOString() })
       .then(requireDatabaseRow);
     await tx.orm.public.Accomplishment.create({

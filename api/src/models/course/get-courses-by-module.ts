@@ -1,18 +1,15 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getCoursesByModule(moduleId: number, userMdbId: string) {
-  const teacherOrAdmin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userMdbId }),
-  ).first();
+  const teacherOrAdmin = await prisma.orm.public.Admin.where({
+    idMdb: userMdbId,
+  }).first();
 
-  const courses = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, {
-      moduleId,
-      isPublished: teacherOrAdmin ? undefined : true,
-      visibility: teacherOrAdmin ? undefined : true,
-    }),
-  )
+  const courses = await prisma.orm.public.Course.where({
+    moduleId,
+    isPublished: teacherOrAdmin ? undefined : true,
+    visibility: teacherOrAdmin ? undefined : true,
+  })
     .select(
       "id",
       "title",

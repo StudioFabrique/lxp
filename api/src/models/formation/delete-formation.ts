@@ -1,14 +1,11 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function deleteFormation(formationId: number) {
   return prisma.transaction(async (transaction) => {
-    const formation = await transaction.orm.public.Formation.where((row) =>
-      whereFromObject(row, { id: formationId }),
-    )
+    const formation = await transaction.orm.public.Formation.where({
+      id: formationId,
+    })
       .select("id", "title")
       .first();
 
@@ -19,9 +16,9 @@ export default async function deleteFormation(formationId: number) {
       };
     }
 
-    const linkedParcours = await transaction.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { formationId }),
-    )
+    const linkedParcours = await transaction.orm.public.Parcours.where({
+      formationId,
+    })
       .select("id")
       .first();
     if (linkedParcours) {
@@ -32,14 +29,10 @@ export default async function deleteFormation(formationId: number) {
       };
     }
 
-    await transaction.orm.public.TagsOnFormation.where((row) =>
-      whereFromObject(row, { formationId }),
-    )
+    await transaction.orm.public.TagsOnFormation.where({ formationId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await transaction.orm.public.Formation.where((row) =>
-      whereFromObject(row, { id: formationId }),
-    )
+    await transaction.orm.public.Formation.where({ id: formationId })
       .delete()
       .then(requireDatabaseRow);
     return formation.title;

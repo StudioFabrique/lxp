@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
 import { prisma } from "../../../utils/db.ts";
 import Group from "../../../utils/interfaces/db/group.ts";
 import StudentFeedback from "../../../utils/interfaces/db/student-feedback.ts";
@@ -12,21 +11,13 @@ export default async function getLastFeedbacks(
   notReviewed: boolean,
 ) {
   const groupsSql = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, {
-      parcours: {
-        some: {
-          parcours: {
-            contacts: {
-              some: {
-                contact: {
-                  idMdb: teacherId,
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
+    row.parcours.some((parcours) =>
+      parcours.parcours.some((parcours) =>
+        parcours.contacts.some((contacts) =>
+          contacts.contact.some((contact) => contact.idMdb.eq(teacherId)),
+        ),
+      ),
+    ),
   ).all();
 
   const groupsIds = groupsSql.map((item) => new Types.ObjectId(item.idMdb));

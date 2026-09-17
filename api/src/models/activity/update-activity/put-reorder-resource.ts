@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
@@ -69,14 +66,14 @@ export default async function putReorderResource(req: CustomRequest) {
   // Fetch the parent activity based on type
   if (parent === "lesson") {
     // Case 1: Parent is a Lesson - fetch Activity
-    existingActivity = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id: +activityId }),
-    ).first();
+    existingActivity = await prisma.orm.public.Activity.where({
+      id: +activityId,
+    }).first();
   } else if (parent === "resource") {
     // Case 2: Parent is a Resource - fetch BonusActivity
-    existingActivity = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id: +activityId }),
-    ).first();
+    existingActivity = await prisma.orm.public.BonusActivity.where({
+      id: +activityId,
+    }).first();
   }
 
   // Verify parent activity exists
@@ -84,9 +81,9 @@ export default async function putReorderResource(req: CustomRequest) {
     throw { statusCode: 404, message: "Le parent n'existe pas." };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   // Verify author exists
   if (!existingAuthor)
@@ -97,18 +94,14 @@ export default async function putReorderResource(req: CustomRequest) {
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson - update ResourceActivity order
       for (const [index, resourceId] of activitiesIds.entries()) {
-        await tx.orm.public.ResourceActivity.where((row) =>
-          whereFromObject(row, { id: resourceId }),
-        )
+        await tx.orm.public.ResourceActivity.where({ id: resourceId })
           .update({ order: index })
           .then(requireDatabaseRow);
       }
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource - update ResourceBonusActivity order
       for (const [index, resourceId] of activitiesIds.entries()) {
-        await tx.orm.public.ResourceBonusActivity.where((row) =>
-          whereFromObject(row, { id: resourceId }),
-        )
+        await tx.orm.public.ResourceBonusActivity.where({ id: resourceId })
           .update({ order: index })
           .then(requireDatabaseRow);
       }

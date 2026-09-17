@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
@@ -18,16 +17,12 @@ export default async function postActivityText(
   let existingResource: any = null;
 
   if (parent === "lesson") {
-    existingLesson = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: parentId }),
-    )
+    existingLesson = await prisma.orm.public.Lesson.where({ id: parentId })
       .select("id")
       .include("activities")
       .first();
   } else {
-    existingResource = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: parentId }),
-    )
+    existingResource = await prisma.orm.public.Resource.where({ id: parentId })
       .select("id")
       .include("bonusActivities")
       .first();
@@ -36,9 +31,9 @@ export default async function postActivityText(
   if (!existingLesson && !existingResource)
     throw { message: "Le parent de l'activité n'existe pas", status: 404 };
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 

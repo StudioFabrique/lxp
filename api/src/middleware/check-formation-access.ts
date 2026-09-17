@@ -1,4 +1,5 @@
-import { whereFromObject } from "../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { type NextFunction, type Response } from "express";
 import { noData } from "../utils/constantes.ts";
 import { prisma } from "../utils/db.ts";
@@ -22,19 +23,16 @@ export default function checkFormationAccess(parameterName = "formationId") {
       }
 
       const existsInScope = await prisma.orm.public.Formation.where((row) =>
-        whereFromObject(row, {
-          id: formationId,
-          parcours: {
-            some: {
-              id: {
-                in:
-                  scope.kind === "teacher" && req.method !== "GET"
-                    ? (scope.directParcoursIds ?? [])
-                    : scope.parcoursIds,
-              },
-            },
-          },
-        }),
+        and(
+          row.id.eq(formationId),
+          row.parcours.some((parcours) =>
+            parcours.id.in(
+              scope.kind === "teacher" && req.method !== "GET"
+                ? (scope.directParcoursIds ?? [])
+                : scope.parcoursIds,
+            ),
+          ),
+        ),
       )
         .select("id")
         .first();

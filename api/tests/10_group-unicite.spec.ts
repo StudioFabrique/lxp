@@ -1,4 +1,3 @@
-import { whereFromObject } from "../src/utils/prisma-query.ts";
 import request from "supertest";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -40,9 +39,7 @@ describe("HTTP /group — unicité du nom", () => {
     });
 
     await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, {
-        idMdb: { in: groups.map((group) => group._id.toString()) },
-      }),
+      row.idMdb.in(groups.map((group) => group._id.toString())),
     )
       .deleteAndCount()
       .then((count) => ({ count }));

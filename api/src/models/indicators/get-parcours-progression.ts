@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import {
   calculateModuleProgress,
   countCourseProgress,
@@ -44,9 +43,7 @@ export default async function getParcoursProgression(
     });
   }
 
-  const group = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, { idMdb: groupIdMdb }),
-  )
+  const group = await prisma.orm.public.Group.where({ idMdb: groupIdMdb })
     .include("parcours", (related92) =>
       related92
         .select("parcoursId")
@@ -63,9 +60,7 @@ export default async function getParcoursProgression(
     });
   }
 
-  const modules = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { parcoursId }),
-  )
+  const modules = await prisma.orm.public.Module.where({ parcoursId })
     .select("id", "title")
     .include("courses", (related93) =>
       related93
@@ -73,7 +68,9 @@ export default async function getParcoursProgression(
           related94.include("submissions", (related95) =>
             related95
               .where((row) =>
-                whereFromObject(row, { student: { idMdb: context.userIdMdb } }),
+                row.student.some((student) =>
+                  student.idMdb.eq(context.userIdMdb),
+                ),
               )
               .select("submittedAt"),
           ),
@@ -83,9 +80,9 @@ export default async function getParcoursProgression(
             .include("lessonsRead", (related97) =>
               related97
                 .where((row) =>
-                  whereFromObject(row, {
-                    student: { idMdb: context.userIdMdb },
-                  }),
+                  row.student.some((student) =>
+                    student.idMdb.eq(context.userIdMdb),
+                  ),
                 )
                 .select("id", "finishedAt"),
             )

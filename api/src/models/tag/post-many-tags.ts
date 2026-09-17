@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import { tagOwnerFor, type TagActor } from "./tag-access.ts";
 
@@ -18,12 +17,11 @@ export default async function postManyTags(
           candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
       ) === index,
   );
-  const tagNames = uniqueTags.map((tag) => tag.name);
+  // La migration normalise les noms en minuscules avant l'insertion.
+  const tagNames = uniqueTags.map((tag) => tag.name.toLowerCase());
 
   const existingTags = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, {
-      name: { in: tagNames, mode: "insensitive" },
-    }),
+    row.name.in(tagNames),
   ).all();
 
   if (existingTags.length > 0) {
@@ -34,25 +32,11 @@ export default async function postManyTags(
     };
   }
 
-  const remainingTags = uniqueTags.filter(
-    (tag) =>
-      !existingTags.some(
-        (existingTag) =>
-          existingTag.name.toLowerCase() === tag.name.toLowerCase(),
-      ),
-  );
-
-  if (remainingTags.length > 0) {
-    await prisma.orm.public.Tag.createAndCount(remainingTags).then((count) => ({
-      count,
-    }));
+  if (uniqueTags.length > 0) {
+    await prisma.orm.public.Tag.createAndCount(uniqueTags);
   }
 
-  return prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, {
-      name: { in: tagNames, mode: "insensitive" },
-    }),
-  )
+  return prisma.orm.public.Tag.where((row) => row.name.in(tagNames))
     .select("id", "name", "color", "createdAt", "updatedAt")
     .all();
 }

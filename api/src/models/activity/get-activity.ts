@@ -1,10 +1,7 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getActivity(activityId: number) {
-  const activity = await prisma.orm.public.Activity.where((row) =>
-    whereFromObject(row, { id: activityId }),
-  )
+  const activity = await prisma.orm.public.Activity.where({ id: activityId })
     .select(
       "id",
       "type",

@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
@@ -16,16 +15,12 @@ export default async function postActivityVideo(
     | null = null;
 
   if (parentType === "lesson") {
-    existingParent = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Lesson.where({ id: lessonId })
       .select("id")
       .include("activities")
       .first();
   } else {
-    existingParent = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Resource.where({ id: lessonId })
       .select("id")
       .include("bonusActivities")
       .first();
@@ -37,9 +32,9 @@ export default async function postActivityVideo(
     throw error;
   }
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) {
     const error = new Error("L'utilisateur n'existe pas");

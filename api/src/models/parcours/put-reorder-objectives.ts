@@ -1,5 +1,5 @@
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import { whereFromObject } from "../../utils/prisma-query.ts";
 
 export default async function putReorderObjectives(
   parcoursId: string,
@@ -7,9 +7,7 @@ export default async function putReorderObjectives(
 ) {
   const id = Number(parcoursId);
   return prisma.transaction(async (tx) => {
-    const parcours = await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id }),
-    )
+    const parcours = await tx.orm.public.Parcours.where({ id })
       .select("id")
       .first();
     if (!parcours) {
@@ -17,7 +15,7 @@ export default async function putReorderObjectives(
     }
 
     const objectives = await tx.orm.public.Objective.where((row) =>
-      whereFromObject(row, { parcoursId: id, id: { in: objectiveIds } }),
+      and(row.parcoursId.eq(id), row.id.in(objectiveIds)),
     )
       .select("id", "description")
       .all();
@@ -31,9 +29,7 @@ export default async function putReorderObjectives(
       throw { message: "Objectif introuvable dans ce parcours", status: 404 };
     }
 
-    await tx.orm.public.Objective.where((row) =>
-      whereFromObject(row, { parcoursId: id }),
-    ).deleteAndCount();
+    await tx.orm.public.Objective.where({ parcoursId: id }).deleteAndCount();
     for (const objectiveId of objectiveIds) {
       await tx.orm.public.Objective.create({
         parcoursId: id,
@@ -41,9 +37,7 @@ export default async function putReorderObjectives(
       });
     }
 
-    return tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id }),
-    )
+    return tx.orm.public.Parcours.where({ id })
       .include("objectives", (related) =>
         related.select("id", "description").orderBy((row) => row.id.asc()),
       )

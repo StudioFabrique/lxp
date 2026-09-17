@@ -1,9 +1,6 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export type RemoveSkillFromModuleInput = {
   parcoursId: number;
@@ -15,15 +12,19 @@ export default async function removeSkillFromModule(
   { parcoursId, moduleId, skillId }: RemoveSkillFromModuleInput,
   scope: AccessScope = null,
 ) {
-  const accessWhere = moduleWhereForScope(scope);
-
   return prisma.transaction(async (tx) => {
     const moduleCount = await tx.orm.public.Module.where((row) =>
-      whereFromObject(row, {
-        id: moduleId,
-        parcoursId,
-        ...(accessWhere ? { AND: [accessWhere] } : {}),
-      }),
+      and(
+        row.id.eq(moduleId),
+        row.parcoursId.eq(parcoursId),
+        ...(scope
+          ? [
+              scope.moduleIds === null
+                ? row.parcoursId.in(scope.parcoursIds)
+                : row.id.in(scope.moduleIds),
+            ]
+          : []),
+      ),
     )
       .aggregate((aggregate) => ({ total: aggregate.count() }))
       .then(({ total }) => total);
@@ -34,9 +35,10 @@ export default async function removeSkillFromModule(
       };
     }
 
-    const result = await tx.orm.public.BonusSkillsOnModule.where((row) =>
-      whereFromObject(row, { moduleId, bonusSkillId: skillId }),
-    )
+    const result = await tx.orm.public.BonusSkillsOnModule.where({
+      moduleId,
+      bonusSkillId: skillId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
     if (result.count === 0) {

@@ -1,5 +1,9 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
-import type { Lesson, Resource, Activity, BonusActivity } from "../../../prisma/model-types.ts";
+import type {
+  Lesson,
+  Resource,
+  Activity,
+  BonusActivity,
+} from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
 export default async function postIframe(
@@ -13,24 +17,20 @@ export default async function postIframe(
   let existingParent: Lesson | Resource | null = null;
 
   if (parent === "lesson")
-    existingParent = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Lesson.where({ id: lessonId })
       .include("activities")
       .first();
   else if (parent === "resource")
-    existingParent = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Resource.where({ id: lessonId })
       .include("bonusActivities")
       .first();
 
   if (!existingParent)
     throw { message: "L'id de la lesson n'existe pas", status: 404 };
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 

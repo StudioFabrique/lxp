@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import type { IndicatorContext } from "./types.ts";
 
@@ -16,9 +15,7 @@ export default async function resolveIndicatorContext(
   from?: Date,
   to?: Date,
 ): Promise<IndicatorContext> {
-  const student = await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: userIdMdb }),
-  )
+  const student = await prisma.orm.public.Student.where({ idMdb: userIdMdb })
     .select("id")
     .first();
 

@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { calculateCourseProgress } from "../../helpers/calculate-module-progress.ts";
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
@@ -22,22 +23,28 @@ export default async function getLastLessonsRead(
 
   // Fetch last opened, unfinished lessons
   const lessons = await prisma.orm.public.LessonRead.where((row) =>
-    whereFromObject(row, {
-      student: { idMdb: userIdMdb },
-      lesson: {
-        course: {
-          isPublished: true,
-          visibility: true,
-          module: {
-            parcours: {
-              isPublished: true,
-              groups: { some: { group: { idMdb: { in: groupIds } } } },
-            },
-          },
-        },
-      },
-      finishedAt: null,
-    }),
+    and(
+      row.student.some((student) => student.idMdb.eq(userIdMdb)),
+      row.lesson.some((lesson) =>
+        lesson.course.some((course) =>
+          and(
+            course.isPublished.eq(true),
+            course.visibility.eq(true),
+            course.module.some((module) =>
+              module.parcours.some((parcours) =>
+                and(
+                  parcours.isPublished.eq(true),
+                  parcours.groups.some((groups) =>
+                    groups.group.some((group) => group.idMdb.in(groupIds)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      row.finishedAt.isNull(),
+    ),
   )
     .include("lesson", (related102) =>
       related102
@@ -59,7 +66,9 @@ export default async function getLastLessonsRead(
                 .include("lessonsRead", (related109) =>
                   related109
                     .where((row) =>
-                      whereFromObject(row, { student: { idMdb: userIdMdb } }),
+                      row.student.some((student) =>
+                        student.idMdb.eq(userIdMdb),
+                      ),
                     )
                     .select("id", "finishedAt"),
                 ),
@@ -68,7 +77,7 @@ export default async function getLastLessonsRead(
               related110.include("submissions", (related111) =>
                 related111
                   .where((row) =>
-                    whereFromObject(row, { student: { idMdb: userIdMdb } }),
+                    row.student.some((student) => student.idMdb.eq(userIdMdb)),
                   )
                   .select("submittedAt"),
               ),
@@ -82,19 +91,27 @@ export default async function getLastLessonsRead(
   // If no lessons started, find the first lesson of the first course in parcours
   if (!lessons.length) {
     const firstLesson = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, {
-        lessonsRead: { none: { student: { idMdb: userIdMdb } } },
-        course: {
-          isPublished: true,
-          visibility: true,
-          module: {
-            parcours: {
-              isPublished: true,
-              groups: { some: { group: { idMdb: { in: groupIds } } } },
-            },
-          },
-        },
-      }),
+      and(
+        row.lessonsRead.none((lessonsRead) =>
+          lessonsRead.student.some((student) => student.idMdb.eq(userIdMdb)),
+        ),
+        row.course.some((course) =>
+          and(
+            course.isPublished.eq(true),
+            course.visibility.eq(true),
+            course.module.some((module) =>
+              module.parcours.some((parcours) =>
+                and(
+                  parcours.isPublished.eq(true),
+                  parcours.groups.some((groups) =>
+                    groups.group.some((group) => group.idMdb.in(groupIds)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     )
       .include("course", (related112) =>
         related112
@@ -113,7 +130,9 @@ export default async function getLastLessonsRead(
 
     if (!firstLesson) return null;
     const skillAchievements = await loadSkillAchievements(userIdMdb, {
-      skillIds: firstLesson.course!.module!.bonusSkills.map(({ bonusSkillId }) => bonusSkillId),
+      skillIds: firstLesson.course!.module!.bonusSkills.map(
+        ({ bonusSkillId }) => bonusSkillId,
+      ),
     });
 
     const lessonReformatted = {
@@ -142,8 +161,11 @@ export default async function getLastLessonsRead(
 
   // Student has started lessons, return sorted list by course order then lesson order
   const skillAchievements = await loadSkillAchievements(userIdMdb, {
-    skillIds: lessons.flatMap(({ lesson }) =>
-      lesson?.course?.module?.bonusSkills.map(({ bonusSkillId }) => bonusSkillId) ?? [],
+    skillIds: lessons.flatMap(
+      ({ lesson }) =>
+        lesson?.course?.module?.bonusSkills.map(
+          ({ bonusSkillId }) => bonusSkillId,
+        ) ?? [],
     ),
   });
   const lessonsReformattedWithSkillBadge = lessons

@@ -1,10 +1,9 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getParcours(userId: string) {
-  const contactWithParcours = await prisma.orm.public.Contact.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  )
+  const contactWithParcours = await prisma.orm.public.Contact.where({
+    idMdb: userId,
+  })
     .include("parcours", (related62) =>
       related62.include("parcours", (related63) =>
         related63.select("id", "title"),

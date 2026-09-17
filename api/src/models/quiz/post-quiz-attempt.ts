@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { QuizAttemptOrigin } from "../../config/quiz-attempt.ts";
 import { prisma } from "../../utils/db.ts";
 import { quizRepository } from "./quiz-repository.ts";
@@ -27,9 +26,9 @@ export default async function postQuizAttempt(
   scope: QuizAttemptScope,
   userIdMdb: string,
 ) {
-  const student = await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: userIdMdb }),
-  ).first();
+  const student = await prisma.orm.public.Student.where({
+    idMdb: userIdMdb,
+  }).first();
 
   if (!student) return null;
 

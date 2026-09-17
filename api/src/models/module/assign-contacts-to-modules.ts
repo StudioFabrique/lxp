@@ -1,9 +1,6 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export type AssignContactsToModulesInput = {
   parcoursId: number;
@@ -21,24 +18,25 @@ export default async function assignContactsToModules(
 ) {
   const uniqueModuleIds = [...new Set(moduleIds)];
   const uniqueContactIds = [...new Set(contactIds)];
-  const accessWhere = moduleWhereForScope(scope);
-
   return prisma.transaction(async (tx) => {
     const [moduleCount, contactCount] = await Promise.all([
       tx.orm.public.Module.where((row) =>
-        whereFromObject(row, {
-          id: { in: uniqueModuleIds },
-          parcoursId,
-          ...(accessWhere ? { AND: [accessWhere] } : {}),
-        }),
+        and(
+          row.id.in(uniqueModuleIds),
+          row.parcoursId.eq(parcoursId),
+          ...(scope
+            ? [
+                scope.moduleIds === null
+                  ? row.parcoursId.in(scope.parcoursIds)
+                  : row.id.in(scope.moduleIds),
+              ]
+            : []),
+        ),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
       tx.orm.public.ContactsOnParcours.where((row) =>
-        whereFromObject(row, {
-          parcoursId,
-          contactId: { in: uniqueContactIds },
-        }),
+        and(row.parcoursId.eq(parcoursId), row.contactId.in(uniqueContactIds)),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),

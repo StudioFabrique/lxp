@@ -1,13 +1,12 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function postReportQuizQuestion(
   externalId: string,
   comment: string,
 ) {
-  const question = await prisma.orm.public.QuizQuestion.where((row) =>
-    whereFromObject(row, { externalId }),
-  ).first();
+  const question = await prisma.orm.public.QuizQuestion.where({
+    externalId,
+  }).first();
 
   if (!question) return null;
 

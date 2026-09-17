@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 
@@ -7,9 +6,9 @@ export default async function postRateLesson(
   userIdMdb: string,
   rating: number,
 ) {
-  const student = await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: userIdMdb }),
-  ).first();
+  const student = await prisma.orm.public.Student.where({
+    idMdb: userIdMdb,
+  }).first();
 
   const studentData = await User.findById(student?.idMdb);
 
@@ -17,17 +16,16 @@ export default async function postRateLesson(
     return [];
   }
 
-  const lesson = await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, { id: lessonId }),
-  )
+  const lesson = await prisma.orm.public.Lesson.where({ id: lessonId })
     .select("courseId", "title")
     .first();
 
   if (!lesson) return null;
 
-  const existingLessonRating = await prisma.orm.public.LessonRating.where(
-    (row) => whereFromObject(row, { lessonId, studentId: student.id }),
-  )
+  const existingLessonRating = await prisma.orm.public.LessonRating.where({
+    lessonId,
+    studentId: student.id,
+  })
     .select("id")
     .first();
 

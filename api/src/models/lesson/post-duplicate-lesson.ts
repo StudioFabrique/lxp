@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { NestedCreate } from "../../utils/db.ts";
 import type { Lesson } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
@@ -18,9 +17,7 @@ export default async function postDuplicateLesson(
     throw error;
   }
 
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const existingCourse = await prisma.orm.public.Course.where({ id: courseId })
     .include("lessons", (related127) =>
       related127.select("title", "duplicationIndex", "order"),
     )
@@ -32,9 +29,7 @@ export default async function postDuplicateLesson(
     throw error;
   }
 
-  const prismaAdmin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: adminId }),
-  )
+  const prismaAdmin = await prisma.orm.public.Admin.where({ idMdb: adminId })
     .select("id")
     .first();
 
@@ -60,7 +55,7 @@ export default async function postDuplicateLesson(
   await prisma.transaction(async (tx) => {
     // Récupérer les leçons à copier avec leurs activités
     const lessonsToCopy = await tx.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: { in: lessonId } }),
+      row.id.in(lessonId),
     )
       .select("title", "duplicationIndex", "description", "modalite", "tagId")
       .include("activities", (related128) =>
@@ -123,7 +118,9 @@ export default async function postDuplicateLesson(
                   url: a.url,
                   duplicationIndex: a.duplicationIndex,
                   authorId: prismaAdmin.id,
-                  resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                  resourceActivities: (
+                    relation: NestedCreate<"ResourceActivity">,
+                  ) =>
                     relation.create(
                       a.resourceActivities.map(({ label, order, url }) => ({
                         label,

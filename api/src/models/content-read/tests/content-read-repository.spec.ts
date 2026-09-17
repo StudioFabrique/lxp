@@ -6,8 +6,7 @@ import { computeHeartbeatCredit } from "../content-read-repository.ts";
 
 describe("computeHeartbeatCredit", () => {
   const start = new Date("2026-08-19T10:00:00.000Z");
-  const at = (seconds: number) =>
-    new Date(start.getTime() + seconds * 1000);
+  const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
 
   it("crédite l'écart réel entre deux battements", () => {
     expect(computeHeartbeatCredit(start, at(30))).toBe(30_000);
@@ -31,9 +30,9 @@ describe("computeHeartbeatCredit", () => {
 
 describe("isContentType", () => {
   it("accepte les quatre niveaux de contenu", () => {
-    expect(["module", "course", "lesson", "activity"].every(isContentType)).toBe(
-      true,
-    );
+    expect(
+      ["module", "course", "lesson", "activity"].every(isContentType),
+    ).toBe(true);
   });
 
   it("rejette tout autre niveau", () => {

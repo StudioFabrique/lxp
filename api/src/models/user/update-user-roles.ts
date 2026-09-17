@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import Role, { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
@@ -57,7 +58,7 @@ async function updateUserRoles(
   await prisma.transaction(async (tx) => {
     if (role.rank <= 2) {
       const existingAdmins = await tx.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+        row.idMdb.in(usersToUpdate),
       )
         .select("idMdb")
         .all();
@@ -85,7 +86,7 @@ async function updateUserRoles(
       ).then((count) => ({ count }));
     } else {
       const contacts = await tx.orm.public.Contact.where((row) =>
-        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+        row.idMdb.in(usersToUpdate),
       )
         .select("id")
         .all();
@@ -95,23 +96,21 @@ async function updateUserRoles(
       // être détaché avant que sa fiche pédagogique puisse être supprimée.
       if (contactIds.length > 0) {
         await tx.orm.public.ContactsOnCourse.where((row) =>
-          whereFromObject(row, { contactId: { in: contactIds } }),
+          row.contactId.in(contactIds),
         )
           .deleteAndCount()
           .then((count) => ({ count }));
         await tx.orm.public.ContactsOnModule.where((row) =>
-          whereFromObject(row, { contactId: { in: contactIds } }),
+          row.contactId.in(contactIds),
         )
           .deleteAndCount()
           .then((count) => ({ count }));
         await tx.orm.public.ContactsOnParcours.where((row) =>
-          whereFromObject(row, { contactId: { in: contactIds } }),
+          row.contactId.in(contactIds),
         )
           .deleteAndCount()
           .then((count) => ({ count }));
-        await tx.orm.public.Contact.where((row) =>
-          whereFromObject(row, { id: { in: contactIds } }),
-        )
+        await tx.orm.public.Contact.where((row) => row.id.in(contactIds))
           .deleteAndCount()
           .then((count) => ({ count }));
       }
@@ -124,14 +123,12 @@ async function updateUserRoles(
     }
 
     if (role.rank > 2) {
-      await tx.orm.public.Teacher.where((row) =>
-        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
-      )
+      await tx.orm.public.Teacher.where((row) => row.idMdb.in(usersToUpdate))
         .deleteAndCount()
         .then((count) => ({ count }));
 
       const admins = await tx.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: { in: usersToUpdate } }),
+        row.idMdb.in(usersToUpdate),
       )
         .select("id")
         .all();
@@ -145,10 +142,10 @@ async function updateUserRoles(
           };
         }
         const replacementAdmin = await tx.orm.public.Admin.where((row) =>
-          whereFromObject(row, {
-            idMdb: replacementOwnerId,
-            id: { notIn: admins.map(({ id }) => id) },
-          }),
+          and(
+            row.idMdb.eq(replacementOwnerId),
+            row.id.notIn(admins.map(({ id }) => id)),
+          ),
         )
           .select("id")
           .first();
@@ -160,55 +157,53 @@ async function updateUserRoles(
           };
         }
 
-        const previousAdminIds = { in: admins.map(({ id }) => id) };
+        const previousAdminIds = admins.map(({ id }) => id);
         await tx.orm.public.Activity.where((row) =>
-          whereFromObject(row, { authorId: previousAdminIds }),
+          row.authorId.in(previousAdminIds),
         )
           .updateAndCount({ authorId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.BonusActivity.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Course.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Formation.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Lesson.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Mediatheque.where((row) =>
-          whereFromObject(row, { authorId: previousAdminIds }),
+          row.authorId.in(previousAdminIds),
         )
           .updateAndCount({ authorId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Module.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Parcours.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
         await tx.orm.public.Resource.where((row) =>
-          whereFromObject(row, { adminId: previousAdminIds }),
+          row.adminId.in(previousAdminIds),
         )
           .updateAndCount({ adminId: replacementAdmin.id })
           .then((count) => ({ count }));
-        await tx.orm.public.Admin.where((row) =>
-          whereFromObject(row, { id: previousAdminIds }),
-        )
+        await tx.orm.public.Admin.where((row) => row.id.in(previousAdminIds))
           .deleteAndCount()
           .then((count) => ({ count }));
       }

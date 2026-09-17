@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../src/utils/prisma-query.ts";
+import { requireDatabaseRow } from "../src/utils/require-database-row.ts";
 import mongoose from "mongoose";
 import request from "supertest";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
@@ -48,9 +45,7 @@ describe("Progression servie par l'API", () => {
     cookie = login.headers["set-cookie"] as unknown as string[];
     const userIdMdb = login.body._id as string;
 
-    await prisma.orm.public.Student.where((row) =>
-      whereFromObject(row, { idMdb: userIdMdb }),
-    ).upsert({
+    await prisma.orm.public.Student.where({ idMdb: userIdMdb }).upsert({
       create: { idMdb: userIdMdb },
       update: {},
       conflictOn: { idMdb: userIdMdb },
@@ -99,18 +94,14 @@ describe("Progression servie par l'API", () => {
 
   afterAll(async () => {
     await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId: { in: lessonIds } }),
+      row.lessonId.in(lessonIds),
     )
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: { in: lessonIds } }),
-    )
+    await prisma.orm.public.Lesson.where((row) => row.id.in(lessonIds))
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.Course.where((row) =>
-      whereFromObject(row, { id: courseId }),
-    )
+    await prisma.orm.public.Course.where({ id: courseId })
       .delete()
       .then(requireDatabaseRow);
     await enrollment.cleanup();

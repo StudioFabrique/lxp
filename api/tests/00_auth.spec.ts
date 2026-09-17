@@ -1,4 +1,3 @@
-import { whereFromObject } from "../src/utils/prisma-query.ts";
 import request from "supertest";
 import dotenv from "dotenv";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
@@ -410,9 +409,7 @@ describe("HTTP auth", () => {
         );
       } finally {
         if (rootUserId) {
-          await prisma.orm.public.Admin.where((row) =>
-            whereFromObject(row, { idMdb: rootUserId }),
-          )
+          await prisma.orm.public.Admin.where({ idMdb: rootUserId })
             .deleteAndCount()
             .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });
@@ -493,17 +490,13 @@ describe("HTTP auth", () => {
           await BlackListedToken.exists({ token: replacementToken }),
         ).not.toBeNull();
         expect(
-          await prisma.orm.public.Admin.where((row) =>
-            whereFromObject(row, { idMdb: rootUserId }),
-          )
+          await prisma.orm.public.Admin.where({ idMdb: rootUserId })
             .aggregate((aggregate) => ({ total: aggregate.count() }))
             .then(({ total }) => total),
         ).toBe(1);
       } finally {
         if (rootUserId) {
-          await prisma.orm.public.Admin.where((row) =>
-            whereFromObject(row, { idMdb: rootUserId }),
-          )
+          await prisma.orm.public.Admin.where({ idMdb: rootUserId })
             .deleteAndCount()
             .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });
@@ -575,9 +568,7 @@ describe("HTTP auth", () => {
         ]);
       } finally {
         if (rootUserId) {
-          await prisma.orm.public.Admin.where((row) =>
-            whereFromObject(row, { idMdb: rootUserId }),
-          )
+          await prisma.orm.public.Admin.where({ idMdb: rootUserId })
             .deleteAndCount()
             .then((count) => ({ count }));
           await User.deleteOne({ _id: rootUserId });

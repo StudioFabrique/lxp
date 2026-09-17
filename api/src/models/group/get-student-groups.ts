@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import Role from "../../utils/interfaces/db/role.ts";
 import { prisma } from "../../utils/db.ts";
@@ -33,9 +32,7 @@ export default async function getStudentGroups(
   });
 
   const prismaGroups = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, {
-      idMdb: { in: groups.map(({ _id }) => _id.toString()) },
-    }),
+    row.idMdb.in(groups.map(({ _id }) => _id.toString())),
   )
     .select("idMdb")
     .include("parcours", (related83) =>

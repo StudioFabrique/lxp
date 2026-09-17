@@ -1,13 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function deleteCourseDates(courseId: number, datesId: number) {
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  ).first();
+  const existingCourse = await prisma.orm.public.Course.where({
+    id: courseId,
+  }).first();
 
   if (!existingCourse) {
     const error: Error = new Error("Le cours n'existe pas");
@@ -21,9 +18,7 @@ async function deleteCourseDates(courseId: number, datesId: number) {
     dates = dates.filter((item: any) => item.id !== datesId);
   }
 
-  const updatedCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const updatedCourse = await prisma.orm.public.Course.where({ id: courseId })
     .update({ calendarInitialized: true, dates })
     .then(requireDatabaseRow);
 

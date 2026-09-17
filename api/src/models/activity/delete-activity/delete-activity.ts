@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import fs from "node:fs/promises";
 
 import {
@@ -21,15 +18,11 @@ export default async function deleteActivity(
 ) {
   const isLessonActivity = parent === "lesson";
   const existingActivity = isLessonActivity
-    ? await prisma.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+    ? await prisma.orm.public.Activity.where({ id: activityId })
         .select("id", "type", "url")
         .include("resourceActivities", (related0) => related0.select("url"))
         .first()
-    : await prisma.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+    : await prisma.orm.public.BonusActivity.where({ id: activityId })
         .select("id", "type", "url")
         .include("resourceBonusActivities", (related1) =>
           related1.select("url"),
@@ -84,15 +77,11 @@ export default async function deleteActivity(
 
   const filesToDelete = await prisma.transaction(async (tx) => {
     if (isLessonActivity) {
-      await tx.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+      await tx.orm.public.Activity.where({ id: activityId })
         .delete()
         .then(requireDatabaseRow);
     } else {
-      await tx.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+      await tx.orm.public.BonusActivity.where({ id: activityId })
         .delete()
         .then(requireDatabaseRow);
     }
@@ -100,14 +89,10 @@ export default async function deleteActivity(
     if (activityType === "text") {
       const [remainingActivities, remainingBonusActivities] = await Promise.all(
         [
-          tx.orm.public.Activity.where((row) =>
-            whereFromObject(row, { url: existingActivity.url }),
-          )
+          tx.orm.public.Activity.where({ url: existingActivity.url })
             .aggregate((aggregate) => ({ total: aggregate.count() }))
             .then(({ total }) => total),
-          tx.orm.public.BonusActivity.where((row) =>
-            whereFromObject(row, { url: existingActivity.url }),
-          )
+          tx.orm.public.BonusActivity.where({ url: existingActivity.url })
             .aggregate((aggregate) => ({ total: aggregate.count() }))
             .then(({ total }) => total),
         ],

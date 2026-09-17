@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import type { AssessmentsSummary } from "./model-features.ts";
 import type { IndicatorContext } from "./types.ts";
@@ -80,21 +81,25 @@ export default async function getAssessmentsSummary(
   context: IndicatorContext,
 ): Promise<AssessmentsSummary | null> {
   if (context.studentId === null) return null;
+  const studentId = context.studentId;
+  const to = context.to.toISOString();
 
   const [attempts, submissions] = await Promise.all([
     prisma.orm.public.QuizAttempt.where((row) =>
-      whereFromObject(row, {
-        studentId: context.studentId,
-        finishedAt: { not: null, lte: context.to },
-      }),
+      and(
+        row.studentId.eq(studentId),
+        row.finishedAt.isNotNull(),
+        row.finishedAt.lte(to),
+      ),
     )
       .select("finishedAt", "totalQuestions", "correctAnswers")
       .all(),
     prisma.orm.public.AssignmentSubmission.where((row) =>
-      whereFromObject(row, {
-        studentId: context.studentId,
-        submittedAt: { not: null, lte: context.to },
-      }),
+      and(
+        row.studentId.eq(studentId),
+        row.submittedAt.isNotNull(),
+        row.submittedAt.lte(to),
+      ),
     )
       .select("submittedAt", "grade", "gradedAt")
       .include("assignment", (related88) => related88.select("maxScore"))

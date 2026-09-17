@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { mongo } from "mongoose";
 import { prisma, type NestedConnect } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -13,13 +12,13 @@ export default async function postResource(
   filename: string | null,
   isAdmin: boolean,
 ) {
-  const existingResource = await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { title }),
-  ).first();
+  const existingResource = await prisma.orm.public.Resource.where({
+    title,
+  }).first();
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
@@ -31,7 +30,7 @@ export default async function postResource(
     throw { message: "Une ressource portant ce nom existe déjà", status: 406 };
 
   const existingTagIds = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, { name: { in: tags, mode: "insensitive" } }),
+    row.name.in(tags),
   ).all();
 
   let remainingTags = tags.filter(
@@ -54,7 +53,7 @@ export default async function postResource(
   }
 
   const newlyCreatedTags = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, { name: { in: remainingTags } }),
+    row.name.in(remainingTags),
   ).all();
 
   const tagsToAdd = [...existingTagIds, ...newlyCreatedTags];

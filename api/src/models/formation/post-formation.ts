@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function postFormation(
@@ -9,8 +8,9 @@ export default async function postFormation(
   level: string,
   tags: number[],
 ) {
+  const titlePattern = title.replace(/[\\%_]/g, "\\$&");
   const existingFormation = await prisma.orm.public.Formation.where((row) =>
-    whereFromObject(row, { title: { equals: title, mode: "insensitive" } }),
+    row.title.ilike(titlePattern),
   ).first();
 
   if (existingFormation) {
@@ -21,9 +21,9 @@ export default async function postFormation(
     throw error;
   }
 
-  const existingAdmin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAdmin = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAdmin) {
     const error: any = {
@@ -51,8 +51,7 @@ export default async function postFormation(
       code,
       level,
       admin: (relation) => relation.connect({ id: existingAdmin.id }),
-      tags: (relation) =>
-        relation.create(tags.map((tagId) => ({ tagId }))),
+      tags: (relation) => relation.create(tags.map((tagId) => ({ tagId }))),
     });
 
   return {

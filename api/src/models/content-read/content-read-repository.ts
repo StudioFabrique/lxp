@@ -1,9 +1,9 @@
+import { and } from "@prisma/orm-postgres/orm-client";
 import {
   HEARTBEAT_INTERVAL_MS,
   type ContentType,
 } from "../../config/content-read.ts";
 import { prisma, type TransactionClient } from "../../utils/db.ts";
-import { whereFromObject } from "../../utils/prisma-query.ts";
 
 export type ContentRead = {
   id: number;
@@ -32,43 +32,56 @@ export class ContentReadRepository {
   }
 
   findStudentByMongoId(idMdb: string) {
-    return this.database.orm.public.Student.where((student) =>
-      whereFromObject(student, { idMdb }),
-    ).first();
+    return this.database.orm.public.Student.where({ idMdb }).first();
   }
 
   find(type: ContentType, contentId: number, studentId: number) {
-    const where = { [`${type}Id`]: contentId, studentId };
     switch (type) {
       case "module":
-        return this.database.orm.public.ModuleRead.where((read) =>
-          whereFromObject(read, where),
-        ).first();
+        return this.database.orm.public.ModuleRead.where({
+          moduleId: contentId,
+          studentId,
+        }).first();
       case "course":
-        return this.database.orm.public.CourseRead.where((read) =>
-          whereFromObject(read, where),
-        ).first();
+        return this.database.orm.public.CourseRead.where({
+          courseId: contentId,
+          studentId,
+        }).first();
       case "lesson":
-        return this.database.orm.public.LessonRead.where((read) =>
-          whereFromObject(read, where),
-        ).first();
+        return this.database.orm.public.LessonRead.where({
+          lessonId: contentId,
+          studentId,
+        }).first();
       case "activity":
-        return this.database.orm.public.ActivityRead.where((read) =>
-          whereFromObject(read, where),
-        ).first();
+        return this.database.orm.public.ActivityRead.where({
+          activityId: contentId,
+          studentId,
+        }).first();
     }
   }
 
   private create(type: ContentType, contentId: number, studentId: number) {
     switch (type) {
       case "module":
-        return this.database.orm.public.ModuleRead.create({ moduleId: contentId, studentId });
+        return this.database.orm.public.ModuleRead.create({
+          moduleId: contentId,
+          studentId,
+        });
       case "course":
-        return this.database.orm.public.CourseRead.create({ courseId: contentId, studentId });
+        return this.database.orm.public.CourseRead.create({
+          courseId: contentId,
+          studentId,
+        });
       case "lesson":
-        return this.database.orm.public.LessonRead.create({ lessonId: contentId, studentId });
+        return this.database.orm.public.LessonRead.create({
+          lessonId: contentId,
+          studentId,
+        });
       case "activity":
-        return this.database.orm.public.ActivityRead.create({ activityId: contentId, studentId });
+        return this.database.orm.public.ActivityRead.create({
+          activityId: contentId,
+          studentId,
+        });
     }
   }
 
@@ -79,28 +92,22 @@ export class ContentReadRepository {
   ) {
     switch (type) {
       case "module":
-        return this.database.orm.public.ModuleRead.where((read) =>
-          whereFromObject(read, { id }),
-        ).update(data);
+        return this.database.orm.public.ModuleRead.where({ id }).update(data);
       case "course":
-        return this.database.orm.public.CourseRead.where((read) =>
-          whereFromObject(read, { id }),
-        ).update(data);
+        return this.database.orm.public.CourseRead.where({ id }).update(data);
       case "lesson":
-        return this.database.orm.public.LessonRead.where((read) =>
-          whereFromObject(read, { id }),
-        ).update(data);
+        return this.database.orm.public.LessonRead.where({ id }).update(data);
       case "activity":
-        return this.database.orm.public.ActivityRead.where((read) =>
-          whereFromObject(read, { id }),
-        ).update(data);
+        return this.database.orm.public.ActivityRead.where({ id }).update(data);
     }
   }
 
   async open(type: ContentType, contentId: number, studentId: number) {
     const existing = await this.find(type, contentId, studentId);
     return existing
-      ? this.update(type, existing.id, { lastOpenedAt: new Date().toISOString() })
+      ? this.update(type, existing.id, {
+          lastOpenedAt: new Date().toISOString(),
+        })
       : this.create(type, contentId, studentId);
   }
 
@@ -110,25 +117,28 @@ export class ContentReadRepository {
     credit: number,
     lastOpenedAt: string,
   ) {
-    const where = { id: existing.id, lastOpenedAt: existing.lastOpenedAt };
     const data = { readTimeMs: existing.readTimeMs + credit, lastOpenedAt };
     switch (type) {
       case "module":
-        return this.database.orm.public.ModuleRead.where((read) =>
-          whereFromObject(read, where),
-        ).updateAndCount(data);
+        return this.database.orm.public.ModuleRead.where({
+          id: existing.id,
+          lastOpenedAt: existing.lastOpenedAt,
+        }).updateAndCount(data);
       case "course":
-        return this.database.orm.public.CourseRead.where((read) =>
-          whereFromObject(read, where),
-        ).updateAndCount(data);
+        return this.database.orm.public.CourseRead.where({
+          id: existing.id,
+          lastOpenedAt: existing.lastOpenedAt,
+        }).updateAndCount(data);
       case "lesson":
-        return this.database.orm.public.LessonRead.where((read) =>
-          whereFromObject(read, where),
-        ).updateAndCount(data);
+        return this.database.orm.public.LessonRead.where({
+          id: existing.id,
+          lastOpenedAt: existing.lastOpenedAt,
+        }).updateAndCount(data);
       case "activity":
-        return this.database.orm.public.ActivityRead.where((read) =>
-          whereFromObject(read, where),
-        ).updateAndCount(data);
+        return this.database.orm.public.ActivityRead.where({
+          id: existing.id,
+          lastOpenedAt: existing.lastOpenedAt,
+        }).updateAndCount(data);
     }
   }
 
@@ -172,7 +182,9 @@ export class ContentReadRepository {
   async finish(type: ContentType, contentId: number, studentId: number) {
     const existing = await this.find(type, contentId, studentId);
     if (!existing || existing.finishedAt) return existing;
-    return this.update(type, existing.id, { finishedAt: new Date().toISOString() });
+    return this.update(type, existing.id, {
+      finishedAt: new Date().toISOString(),
+    });
   }
 
   async sumReadTime(
@@ -181,13 +193,14 @@ export class ContentReadRepository {
     from: Date,
     to: Date,
   ): Promise<number> {
-    const rows = await this.database.orm.public.ContentReadCredit.where((credit) =>
-      whereFromObject(credit, {
-        studentId,
-        type,
-        to: { gt: from.toISOString() },
-        from: { lt: to.toISOString() },
-      }),
+    const rows = await this.database.orm.public.ContentReadCredit.where(
+      (credit) =>
+        and(
+          credit.studentId.eq(studentId),
+          credit.type.eq(type),
+          credit.to.gt(from.toISOString()),
+          credit.from.lt(to.toISOString()),
+        ),
     )
       .select("from", "to")
       .all();
@@ -200,49 +213,79 @@ export class ContentReadRepository {
   }
 
   countFinished(type: ContentType, studentId: number, from: Date, to: Date) {
-    const where = {
-      studentId,
-      finishedAt: { gte: from.toISOString(), lte: to.toISOString() },
-    };
+    const fromIso = from.toISOString();
+    const toIso = to.toISOString();
     switch (type) {
       case "module":
         return this.database.orm.public.ModuleRead.where((read) =>
-          whereFromObject(read, where),
-        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+          and(
+            read.studentId.eq(studentId),
+            read.finishedAt.gte(fromIso),
+            read.finishedAt.lte(toIso),
+          ),
+        )
+          .aggregate((aggregate) => ({ total: aggregate.count() }))
+          .then(({ total }) => total);
       case "course":
         return this.database.orm.public.CourseRead.where((read) =>
-          whereFromObject(read, where),
-        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+          and(
+            read.studentId.eq(studentId),
+            read.finishedAt.gte(fromIso),
+            read.finishedAt.lte(toIso),
+          ),
+        )
+          .aggregate((aggregate) => ({ total: aggregate.count() }))
+          .then(({ total }) => total);
       case "lesson":
         return this.database.orm.public.LessonRead.where((read) =>
-          whereFromObject(read, where),
-        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+          and(
+            read.studentId.eq(studentId),
+            read.finishedAt.gte(fromIso),
+            read.finishedAt.lte(toIso),
+          ),
+        )
+          .aggregate((aggregate) => ({ total: aggregate.count() }))
+          .then(({ total }) => total);
       case "activity":
         return this.database.orm.public.ActivityRead.where((read) =>
-          whereFromObject(read, where),
-        ).aggregate((aggregate) => ({ total: aggregate.count() })).then(({ total }) => total);
+          and(
+            read.studentId.eq(studentId),
+            read.finishedAt.gte(fromIso),
+            read.finishedAt.lte(toIso),
+          ),
+        )
+          .aggregate((aggregate) => ({ total: aggregate.count() }))
+          .then(({ total }) => total);
     }
   }
 
   async canFinish(type: ContentType, contentId: number, studentId: number) {
     if (type === "course") {
-      const assignment = await this.database.orm.public.CourseAssignment.where((row) =>
-        whereFromObject(row, { courseId: contentId }),
-      )
+      const assignment = await this.database.orm.public.CourseAssignment.where({
+        courseId: contentId,
+      })
         .include("submissions", (submissions) =>
           submissions
-            .where((row) => whereFromObject(row, { studentId, submittedAt: { not: null } }))
+            .where((row) =>
+              and(row.studentId.eq(studentId), row.submittedAt.isNotNull()),
+            )
             .select("id"),
         )
         .first();
       return !assignment || assignment.submissions.length > 0;
     }
     if (type === "module") {
-      const { total } = await this.database.orm.public.CourseAssignment.where((row) =>
-        whereFromObject(row, {
-          course: { moduleId: contentId },
-          submissions: { none: { studentId, submittedAt: { not: null } } },
-        }),
+      const { total } = await this.database.orm.public.CourseAssignment.where(
+        (row) =>
+          and(
+            row.course.some((course) => course.moduleId.eq(contentId)),
+            row.submissions.none((submissions) =>
+              and(
+                submissions.studentId.eq(studentId),
+                submissions.submittedAt.isNotNull(),
+              ),
+            ),
+          ),
       ).aggregate((aggregate) => ({ total: aggregate.count() }));
       return total === 0;
     }

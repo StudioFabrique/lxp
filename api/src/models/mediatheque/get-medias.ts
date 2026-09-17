@@ -1,4 +1,4 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and, or } from "@prisma/orm-postgres/orm-client";
 import fs from "node:fs/promises";
 
 import {
@@ -58,17 +58,19 @@ export default async function getMedias(params: GetMediasParams) {
   if (!sorts.includes(sort as string)) {
     sort = "createdAt"; // Tri par défaut
   }
+  const searchPattern = search
+    ? `%${search.replace(/[\\%_]/g, "\\$&")}%`
+    : null;
 
   // Retourne le nombre total de médias de type "image"
-  const where = {
-    type: type as "image" | "resource" | "video" | "audio",
-    ...(search
-      ? { name: { contains: search, mode: "insensitive" as const } }
-      : {}),
-  };
-  const totalMedias = await prisma.orm.public.Mediatheque.aggregate(
-    (aggregate) => ({ total: aggregate.count() }),
-  ).then(({ total }) => total);
+  const mediaQuery = prisma.orm.public.Mediatheque.where((media) =>
+    searchPattern
+      ? and(media.type.eq(type!), media.name.ilike(searchPattern))
+      : media.type.eq(type!),
+  );
+  const totalMedias = await mediaQuery
+    .aggregate((aggregate) => ({ total: aggregate.count() }))
+    .then(({ total }) => total);
 
   const totalPages = Math.ceil(totalMedias / +limit!);
 
@@ -77,9 +79,7 @@ export default async function getMedias(params: GetMediasParams) {
 
   // Recherche dans la table mediatheque tous les éléments de type "image"
   // avec pagination et tri par date de création décroissante
-  const medias = await prisma.orm.public.Mediatheque.offset(offset)
-    .limit(+limit!)
-    .all();
+  const medias = await mediaQuery.offset(offset).limit(+limit!).all();
 
   const urls = medias.map((media) => media.url);
   if (urls.length === 0) {
@@ -92,19 +92,15 @@ export default async function getMedias(params: GetMediasParams) {
 
   const [lessonActivities, bonusActivities] = await Promise.all([
     prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, {
-        OR: [
-          { url: { in: urls } },
-          { resourceActivities: { some: { url: { in: urls } } } },
-          ...(type === "image" ? [{ type: "text" as const }] : []),
-        ],
-      }),
+      or(
+        row.url.in(urls),
+        row.resourceActivities.some((resource) => resource.url.in(urls)),
+        ...(type === "image" ? [row.type.eq("text")] : []),
+      ),
     )
       .select("id", "title", "type", "order", "url")
       .include("resourceActivities", (related137) =>
-        related137
-          .where((row) => whereFromObject(row, { url: { in: urls } }))
-          .select("url"),
+        related137.where((row) => row.url.in(urls)).select("url"),
       )
       .include("lesson", (related138) =>
         related138
@@ -119,19 +115,15 @@ export default async function getMedias(params: GetMediasParams) {
       )
       .all(),
     prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, {
-        OR: [
-          { url: { in: urls } },
-          { resourceBonusActivities: { some: { url: { in: urls } } } },
-          ...(type === "image" ? [{ type: "text" as const }] : []),
-        ],
-      }),
+      or(
+        row.url.in(urls),
+        row.resourceBonusActivities.some((resource) => resource.url.in(urls)),
+        ...(type === "image" ? [row.type.eq("text")] : []),
+      ),
     )
       .select("id", "title", "type", "order", "url")
       .include("resourceBonusActivities", (related141) =>
-        related141
-          .where((row) => whereFromObject(row, { url: { in: urls } }))
-          .select("url"),
+        related141.where((row) => row.url.in(urls)).select("url"),
       )
       .include("resource", (related142) => related142.select("id", "title"))
       .all(),

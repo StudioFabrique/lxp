@@ -1,15 +1,12 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Objective } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putObjective(objective: Objective) {
   try {
-    const exisitingObjective = await prisma.orm.public.Objective.where((row) =>
-      whereFromObject(row, { id: +objective.id }),
-    ).first();
+    const exisitingObjective = await prisma.orm.public.Objective.where({
+      id: +objective.id,
+    }).first();
 
     if (!objective) {
       const objError: any = {
@@ -19,9 +16,9 @@ async function putObjective(objective: Objective) {
       throw objError;
     }
 
-    const updatedObjective = await prisma.orm.public.Objective.where((row) =>
-      whereFromObject(row, { id: +objective.id }),
-    )
+    const updatedObjective = await prisma.orm.public.Objective.where({
+      id: +objective.id,
+    })
       .select("id", "description")
       .update({ description: objective.description })
       .then(requireDatabaseRow);

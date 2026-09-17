@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseDates(
@@ -14,9 +11,7 @@ async function putCourseDates(
   startTime?: string,
   endTime?: string,
 ) {
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const existingCourse = await prisma.orm.public.Course.where({ id: courseId })
     .select("dates")
     .first();
 
@@ -39,9 +34,7 @@ async function putCourseDates(
     },
   ];
 
-  const updatedCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const updatedCourse = await prisma.orm.public.Course.where({ id: courseId })
     .select("dates")
     .update({
       calendarInitialized: true,

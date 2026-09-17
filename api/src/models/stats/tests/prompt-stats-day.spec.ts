@@ -2,9 +2,9 @@ import { promptStatsDay } from "../prompt-stats-day.ts";
 
 describe("promptStatsDay", () => {
   it("ramène l'horodatage à minuit UTC", () => {
-    expect(promptStatsDay(new Date("2026-08-19T22:13:45.000Z")).toISOString()).toBe(
-      "2026-08-19T00:00:00.000Z",
-    );
+    expect(
+      promptStatsDay(new Date("2026-08-19T22:13:45.000Z")).toISOString(),
+    ).toBe("2026-08-19T00:00:00.000Z");
   });
 
   it("produit la même clé que l'ancienne chaîne YYYY-MM-DD", () => {

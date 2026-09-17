@@ -1,8 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
-import type { Activity, ResourceActivity, BonusActivity, ResourceBonusActivity } from "../../../prisma/model-types.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
+import type {
+  Activity,
+  ResourceActivity,
+  BonusActivity,
+  ResourceBonusActivity,
+} from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -86,15 +88,13 @@ export default async function putAddResource(req: CustomRequest) {
 
   // Fetch the parent activity based on type
   if (parent === "lesson")
-    existingParent = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id: +activityId }),
-    )
+    existingParent = await prisma.orm.public.Activity.where({ id: +activityId })
       .include("resourceActivities")
       .first();
   else if (parent === "resource")
-    existingParent = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id: +activityId }),
-    )
+    existingParent = await prisma.orm.public.BonusActivity.where({
+      id: +activityId,
+    })
       .include("resourceBonusActivities")
       .first();
 
@@ -103,9 +103,9 @@ export default async function putAddResource(req: CustomRequest) {
     throw { statusCode: 404, message: "L'activité n'existe pas." };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   // Verify author exists
   if (!existingAuthor)
@@ -132,9 +132,7 @@ export default async function putAddResource(req: CustomRequest) {
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson Activity
       // Add new ResourceActivity entries to the existing activity
-      await tx.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: +activityId }),
-      )
+      await tx.orm.public.Activity.where({ id: +activityId })
         .update({
           resourceActivities: (relation) =>
             relation.create(
@@ -151,9 +149,7 @@ export default async function putAddResource(req: CustomRequest) {
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource BonusActivity
       // Add new ResourceBonusActivity entries to the existing bonus activity
-      await tx.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id: +activityId }),
-      )
+      await tx.orm.public.BonusActivity.where({ id: +activityId })
         .update({
           resourceBonusActivities: (relation) =>
             relation.create(

@@ -1,15 +1,14 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import User from "../../utils/interfaces/db/user.ts";
 import { prisma } from "../../utils/db.ts";
 import { type IRole } from "../../utils/interfaces/db/role.ts";
 
 export default async function getBestRatedCourses(userId: string) {
   // 1 Vérifier que userId is in Admin
-  const admin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, {
-      idMdb: userId,
-    }),
-  ).first();
+  const admin = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!admin) {
     throw new Error("User is not an admin");
@@ -28,10 +27,12 @@ export default async function getBestRatedCourses(userId: string) {
 
   // 3 Récupérer la liste des cours et des leçons
   const courses = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, {
-      adminId: admin.id,
-      lessons: { some: { lessonRating: { some: { rating: { gt: 0 } } } } },
-    }),
+    and(
+      row.adminId.eq(admin.id),
+      row.lessons.some((lessons) =>
+        lessons.lessonRating.some((lessonRating) => lessonRating.rating.gt(0)),
+      ),
+    ),
   )
     .include("lessons", (related31) =>
       related31.include("lessonRating").orderBy((row) => row.order.asc()),

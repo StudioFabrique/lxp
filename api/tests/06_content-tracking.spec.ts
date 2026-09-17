@@ -1,7 +1,5 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../src/utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+import { requireDatabaseRow } from "../src/utils/require-database-row.ts";
 import mongoose from "mongoose";
 import request from "supertest";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
@@ -37,9 +35,9 @@ describe("Suivi de consultation des contenus", () => {
     const userIdMdb = login.body._id as string;
 
     // Les fixtures ne créent pas de miroir PostgreSQL pour l'apprenant.
-    const student = await prisma.orm.public.Student.where((row) =>
-      whereFromObject(row, { idMdb: userIdMdb }),
-    ).upsert({
+    const student = await prisma.orm.public.Student.where({
+      idMdb: userIdMdb,
+    }).upsert({
       create: { idMdb: userIdMdb },
       update: {},
       conflictOn: { idMdb: userIdMdb },
@@ -77,14 +75,10 @@ describe("Suivi de consultation des contenus", () => {
   afterAll(async () => {
     // On ne supprime que ce que ce fichier a créé : la fiche Student est
     // partagée avec les autres specs et référencée par leurs accomplissements.
-    await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId }),
-    )
+    await prisma.orm.public.LessonRead.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    await prisma.orm.public.Lesson.where({ id: lessonId })
       .delete()
       .then(requireDatabaseRow);
     await enrollment.cleanup();
@@ -99,7 +93,7 @@ describe("Suivi de consultation des contenus", () => {
       .expect(201);
 
     const read = await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+      and(row.lessonId.eq(lessonId), row.studentId.eq(studentId)),
     ).first();
 
     expect(read).not.toBeNull();
@@ -114,9 +108,7 @@ describe("Suivi de consultation des contenus", () => {
       .expect(201);
 
     expect(
-      await prisma.orm.public.LessonRead.where((row) =>
-        whereFromObject(row, { lessonId }),
-      )
+      await prisma.orm.public.LessonRead.where({ lessonId })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(1);
@@ -129,7 +121,7 @@ describe("Suivi de consultation des contenus", () => {
       .expect(200);
 
     const read = await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+      and(row.lessonId.eq(lessonId), row.studentId.eq(studentId)),
     ).first();
 
     // Le serveur mesure lui-même l'écart : quelques millisecondes ici, et
@@ -148,7 +140,7 @@ describe("Suivi de consultation des contenus", () => {
     }
 
     const read = await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+      and(row.lessonId.eq(lessonId), row.studentId.eq(studentId)),
     ).first();
 
     expect(read!.readTimeMs).toBeLessThan(HEARTBEAT_INTERVAL_MS);
@@ -161,7 +153,7 @@ describe("Suivi de consultation des contenus", () => {
       .expect(200);
 
     const read = await prisma.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId_studentId: { lessonId, studentId } }),
+      and(row.lessonId.eq(lessonId), row.studentId.eq(studentId)),
     ).first();
 
     expect(Number.isNaN(new Date(read!.finishedAt!).getTime())).toBe(false);

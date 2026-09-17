@@ -1,4 +1,3 @@
-import { whereFromObject } from "../src/utils/prisma-query.ts";
 import { jest } from "@jest/globals";
 import express from "express";
 import request from "supertest";
@@ -201,9 +200,10 @@ integration("Indicateurs et retours sur bases isolées", () => {
       repo.addReadTime("course", courseId, studentId, to),
     ]);
     expect(
-      await prisma.orm.public.ContentReadCredit.where((row) =>
-        whereFromObject(row, { studentId, type: "course" }),
-      )
+      await prisma.orm.public.ContentReadCredit.where({
+        studentId,
+        type: "course",
+      })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(1);

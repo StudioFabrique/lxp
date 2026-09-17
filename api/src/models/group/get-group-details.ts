@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -9,9 +8,7 @@ export default async function getGroupDetails(groupId: string) {
     .populate("users")
     .lean();
 
-  const groupPrisma = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, { idMdb: groupId }),
-  )
+  const groupPrisma = await prisma.orm.public.Group.where({ idMdb: groupId })
     .include("parcours", (related80) =>
       related80
         .select("parcoursId")

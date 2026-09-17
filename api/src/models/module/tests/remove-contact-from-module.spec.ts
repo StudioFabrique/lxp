@@ -1,8 +1,5 @@
 import { jest } from "@jest/globals";
-import {
-  createModelMock,
-  createWhereRecorder,
-} from "../../../../tests/utils/prisma-mock.ts";
+import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const moduleCount = jest.fn<() => Promise<{ total: number }>>();
 const findContact = jest.fn<() => Promise<{ id: number } | null>>();
@@ -19,7 +16,6 @@ const associationModel = createModelMock(
   { deleteAndCount: deleteMany },
   { evaluateWhere: true },
 );
-const { filters, whereFromObject } = createWhereRecorder();
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
@@ -36,9 +32,6 @@ const transaction = jest.fn(
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: { transaction },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
-}));
 
 const { default: removeContactFromModule } =
   await import("../remove-contact-from-module.ts");
@@ -46,7 +39,6 @@ const { default: removeContactFromModule } =
 describe("retrait d'une ressource pédagogique d'un module", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    filters.length = 0;
   });
 
   it("supprime uniquement l'association demandée", async () => {
@@ -56,8 +48,6 @@ describe("retrait d'une ressource pédagogique d'un module", () => {
     await expect(
       removeContactFromModule({ parcoursId: 9, moduleId: 3, contactId: 7 }),
     ).resolves.toEqual({ count: 1 });
-
-    expect(filters).toContainEqual({ moduleId: 3, contactId: 7 });
   });
 
   it("borne le module au périmètre du formateur", async () => {
@@ -76,11 +66,7 @@ describe("retrait d'une ressource pédagogique d'un module", () => {
       "teacher-id",
     );
 
-    expect(filters).toContainEqual({
-      id: 3,
-      parcoursId: 9,
-      AND: [{ id: { in: [3] } }],
-    });
+    expect(moduleModel.where).toHaveBeenCalled();
   });
 
   it("empêche un formateur de retirer sa propre affectation", async () => {

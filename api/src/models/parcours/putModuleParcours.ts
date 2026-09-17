@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { BonusSkill, Contact } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -12,18 +11,16 @@ async function putModuleParcours(
 ) {
   const input = JSON.parse(module);
   const [parcours, user, admin] = await Promise.all([
-    prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: +input.parcoursId }),
-    )
+    prisma.orm.public.Parcours.where({ id: +input.parcoursId })
       .include("contacts", (related21) =>
-        related21.include("contact", (related22) => related22.select("id", "idMdb")),
+        related21.include("contact", (related22) =>
+          related22.select("id", "idMdb"),
+        ),
       )
       .include("bonusSkills", (related23) => related23.select("id"))
       .first(),
     User.findById(userId, { firstname: 1, lastname: 1 }),
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first(),
+    prisma.orm.public.Admin.where({ idMdb: userId }).first(),
   ]);
 
   if (!parcours) {
@@ -95,12 +92,16 @@ async function putModuleParcours(
     contacts: (relation) =>
       relation.create(
         (input.contacts ?? []).map((item: Contact) => ({
-          contactId: parcours.contacts.find(({ contact }) => contact?.idMdb === item.idMdb)!.contact!.id,
+          contactId: parcours.contacts.find(
+            ({ contact }) => contact?.idMdb === item.idMdb,
+          )!.contact!.id,
         })),
       ),
     bonusSkills: (relation) =>
       relation.create(
-        (input.bonusSkills ?? []).map((item: BonusSkill) => ({ bonusSkillId: item.id })),
+        (input.bonusSkills ?? []).map((item: BonusSkill) => ({
+          bonusSkillId: item.id,
+        })),
       ),
   });
 

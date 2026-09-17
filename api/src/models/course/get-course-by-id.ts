@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function getCourseById(courseId: number): Promise<{
@@ -8,9 +7,7 @@ export default async function getCourseById(courseId: number): Promise<{
   courseSlug: string | null;
 } | null> {
   // Récupération des données imbriquées avec Prisma
-  const course = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const course = await prisma.orm.public.Course.where({ id: courseId })
     .select("id", "title", "courseSlug", "description")
     .include("lessons", (related32) =>
       related32

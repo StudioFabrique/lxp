@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import request from "supertest";
 import app from "../src/app.ts";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
-import { whereFromObject } from "../src/utils/prisma-query.ts";
+
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 
 const prisma = createPrismaClient();
@@ -36,9 +36,9 @@ describe("PUT /v1/course/tags/:courseId with Prisma 8", () => {
       data: { id: 1 },
     });
 
-    const assignments = await prisma.orm.public.TagsOnCourse.where((row) =>
-      whereFromObject(row, { courseId: 1 }),
-    ).all();
+    const assignments = await prisma.orm.public.TagsOnCourse.where({
+      courseId: 1,
+    }).all();
 
     expect(assignments.map(({ tagId }) => tagId).sort()).toEqual([2, 3]);
   });

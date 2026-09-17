@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
 import { prisma } from "../../../utils/db.ts";
 
 export default async function getStudentParcoursWithAccomplishments(
@@ -8,17 +7,15 @@ export default async function getStudentParcoursWithAccomplishments(
 
   const parcoursWithAccomplishments = await prisma.orm.public.Parcours.where(
     (row) =>
-      whereFromObject(row, {
-        modules: {
-          some: {
-            courses: {
-              some: {
-                accomplishments: { some: { student: { idMdb: studentMdbId } } },
-              },
-            },
-          },
-        },
-      }),
+      row.modules.some((modules) =>
+        modules.courses.some((courses) =>
+          courses.accomplishments.some((accomplishments) =>
+            accomplishments.student.some((student) =>
+              student.idMdb.eq(studentMdbId),
+            ),
+          ),
+        ),
+      ),
   )
     .select("id", "title")
     .include("modules", (related43) =>

@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Contact } from "../../prisma/model-types.ts";
 
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
@@ -18,9 +15,7 @@ async function putParcoursContacts(
     const transaction = await prisma.transaction(async (tx) => {
       const admin = await getAdmin(userId);
       const currentParcoursContacts =
-        await tx.orm.public.ContactsOnParcours.where((row) =>
-          whereFromObject(row, { parcoursId }),
-        )
+        await tx.orm.public.ContactsOnParcours.where({ parcoursId })
           .select("contactId")
           .all();
 
@@ -30,9 +25,9 @@ async function putParcoursContacts(
           parcoursId,
           currentParcoursContacts.map(({ contactId }) => contactId),
         );
-        const updatedParcours = await tx.orm.public.ContactsOnParcours.where(
-          (row) => whereFromObject(row, { parcoursId }),
-        )
+        const updatedParcours = await tx.orm.public.ContactsOnParcours.where({
+          parcoursId,
+        })
           .deleteAndCount()
           .then((count) => ({ count }));
         return updatedParcours;
@@ -63,16 +58,12 @@ async function putParcoursContacts(
       }
 
       const existingContacts = await prisma.orm.public.Contact.where((row) =>
-        whereFromObject(row, {
-          idMdb: {
-            in: newContacts.map((item: any) => item.idMdb),
-          },
-        }),
+        row.idMdb.in(newContacts.map((item: any) => item.idMdb)),
       ).all();
 
-      const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-        whereFromObject(row, { id: parcoursId }),
-      )
+      const existingParcours = await prisma.orm.public.Parcours.where({
+        id: parcoursId,
+      })
         .include("admin", (related13) => related13.select("id"))
         .first();
 
@@ -90,15 +81,13 @@ async function putParcoursContacts(
           .map(({ contactId }) => contactId)
           .filter((contactId) => !retainedContactIds.has(contactId)),
       );
-      await tx.orm.public.ContactsOnParcours.where((row) =>
-        whereFromObject(row, { parcoursId }),
-      )
+      await tx.orm.public.ContactsOnParcours.where({ parcoursId })
         .deleteAndCount()
         .then((count) => ({ count }));
 
-      const updatedParcours = await prisma.orm.public.Parcours.where((row) =>
-        whereFromObject(row, { id: parcoursId }),
-      )
+      const updatedParcours = await prisma.orm.public.Parcours.where({
+        id: parcoursId,
+      })
         .include("contacts", (related14) =>
           related14.include("contact", (related15) =>
             related15.select("id", "idMdb", "role"),

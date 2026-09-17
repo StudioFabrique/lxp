@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   collectUnusedActivityFiles,
@@ -13,18 +10,18 @@ export default async function deleteResource(
   resourceId: number,
   userId: string,
 ) {
-  const existingResource = await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { id: resourceId }),
-  )
+  const existingResource = await prisma.orm.public.Resource.where({
+    id: resourceId,
+  })
     .include("bonusActivities", (related26) => related26.select("id", "type"))
     .first();
 
   if (!existingResource)
     throw { statusCode: 404, message: "La ressource n'existe pas." };
 
-  const existingUser = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingUser = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingUser)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
@@ -34,9 +31,7 @@ export default async function deleteResource(
   }
 
   const filesToDelete = await prisma.transaction(async (tx) => {
-    await tx.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: resourceId }),
-    )
+    await tx.orm.public.Resource.where({ id: resourceId })
       .delete()
       .then(requireDatabaseRow);
 

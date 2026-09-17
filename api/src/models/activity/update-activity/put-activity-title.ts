@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import { prisma } from "../../../utils/db.ts";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 
@@ -12,9 +9,7 @@ export default async function putActivityTitle(
   parent: "lesson" | "resource",
   userId: string,
 ) {
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  )
+  const existingAuthor = await prisma.orm.public.Admin.where({ idMdb: userId })
     .select("id")
     .first();
 
@@ -24,26 +19,18 @@ export default async function putActivityTitle(
 
   const existingActivity: Activity | BonusActivity | null =
     parent === "lesson"
-      ? await prisma.orm.public.Activity.where((row) =>
-          whereFromObject(row, { id: activityId }),
-        ).first()
-      : await prisma.orm.public.BonusActivity.where((row) =>
-          whereFromObject(row, { id: activityId }),
-        ).first();
+      ? await prisma.orm.public.Activity.where({ id: activityId }).first()
+      : await prisma.orm.public.BonusActivity.where({ id: activityId }).first();
 
   if (!existingActivity) {
     throw { statusCode: 404, message: "L'activité n'existe pas." };
   }
 
   return parent === "lesson"
-    ? prisma.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+    ? prisma.orm.public.Activity.where({ id: activityId })
         .update({ title })
         .then(requireDatabaseRow)
-    : prisma.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+    : prisma.orm.public.BonusActivity.where({ id: activityId })
         .update({ title })
         .then(requireDatabaseRow);
 }

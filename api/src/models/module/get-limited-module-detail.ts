@@ -1,26 +1,21 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import {
   calculateCourseProgress,
   calculateModuleProgress,
 } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
-import {
-  isModuleCompleted,
-} from "../../helpers/skill-achievement.ts";
+import { isModuleCompleted } from "../../helpers/skill-achievement.ts";
 import { loadSkillAchievements } from "../../helpers/skill-achievement-query.ts";
 
 export default async function getLimitedModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
-  const isTeacher = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userMongoId }),
-  ).first();
+  const isTeacher = await prisma.orm.public.Admin.where({
+    idMdb: userMongoId,
+  }).first();
 
-  const module = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: moduleId }),
-  )
+  const module = await prisma.orm.public.Module.where({ id: moduleId })
     .select(
       "id",
       "title",
@@ -48,16 +43,11 @@ export default async function getLimitedModuleDetail(
         related157.select("id", "idMdb"),
       ),
     )
-    .include("courses", (related158) =>
-      related158
-        .where((row) =>
-          whereFromObject(
-            row,
-            isTeacher
-              ? undefined
-              : { AND: [{ visibility: true }, { isPublished: true }] },
-          ),
-        )
+    .include("courses", (courses) =>
+      (isTeacher
+        ? courses
+        : courses.where({ visibility: true, isPublished: true })
+      )
         .select(
           "id",
           "title",
@@ -87,7 +77,7 @@ export default async function getLimitedModuleDetail(
             .include("submissions", (related166) =>
               related166
                 .where((row) =>
-                  whereFromObject(row, { student: { idMdb: userMongoId } }),
+                  row.student.some((student) => student.idMdb.eq(userMongoId)),
                 )
                 .select(
                   "id",
@@ -108,7 +98,7 @@ export default async function getLimitedModuleDetail(
             .include("tag")
             .include("lessonsRead", (related169) =>
               related169.where((row) =>
-                whereFromObject(row, { student: { idMdb: userMongoId } }),
+                row.student.some((student) => student.idMdb.eq(userMongoId)),
               ),
             )
             .orderBy((row) => row.order.asc()),

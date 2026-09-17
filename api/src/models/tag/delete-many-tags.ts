@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 import { assertCanDeleteTags, type TagActor } from "./tag-access.ts";
@@ -9,7 +8,7 @@ export default async function deleteManyTags(
 ) {
   const numericTagIds = [...new Set(tagsIds.map((id) => parseInt(id, 10)))];
   const tags = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, { id: { in: numericTagIds } }),
+    row.id.in(numericTagIds),
   )
     .select("id", "createdBy")
     .all();
@@ -20,7 +19,7 @@ export default async function deleteManyTags(
   assertCanDeleteTags(tags, actor);
 
   const activities = await prisma.orm.public.Activity.where((row) =>
-    whereFromObject(row, { lesson: { tagId: { in: numericTagIds } } }),
+    row.lesson.some((lesson) => lesson.tagId.in(numericTagIds)),
   )
     .select("id", "type")
     .all();
@@ -30,22 +29,22 @@ export default async function deleteManyTags(
 
   await prisma.transaction(async (tx) => {
     await tx.orm.public.TagsOnCourse.where((row) =>
-      whereFromObject(row, { tagId: { in: numericTagIds } }),
+      row.tagId.in(numericTagIds),
     ).deleteAndCount();
     await tx.orm.public.TagsOnFormation.where((row) =>
-      whereFromObject(row, { tagId: { in: numericTagIds } }),
+      row.tagId.in(numericTagIds),
     ).deleteAndCount();
     await tx.orm.public.TagsOnParcours.where((row) =>
-      whereFromObject(row, { tagId: { in: numericTagIds } }),
+      row.tagId.in(numericTagIds),
     ).deleteAndCount();
     await tx.orm.public.TagsOnResources.where((row) =>
-      whereFromObject(row, { tagId: { in: numericTagIds } }),
+      row.tagId.in(numericTagIds),
     ).deleteAndCount();
     await tx.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { tagId: { in: numericTagIds } }),
+      row.tagId.in(numericTagIds),
     ).deleteAndCount();
     await tx.orm.public.Tag.where((row) =>
-      whereFromObject(row, { id: { in: numericTagIds } }),
+      row.id.in(numericTagIds),
     ).deleteAndCount();
   });
 

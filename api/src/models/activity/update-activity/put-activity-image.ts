@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import type { Activity, BonusActivity } from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 //import path from "path";
@@ -29,9 +26,9 @@ export default async function putActivityImage(
   parent: "lesson" | "resource" = "lesson",
 ) {
   // Check that the user exists
-  const existingUser = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingUser = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
   // Initialize variable to hold either Activity or BonusActivity
@@ -40,14 +37,14 @@ export default async function putActivityImage(
   // Fetch the appropriate entity based on parent type
   if (parent === "lesson") {
     // Handle regular lesson activities
-    existingElement = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    ).first();
+    existingElement = await prisma.orm.public.Activity.where({
+      id: activityId,
+    }).first();
   } else if (parent === "resource") {
     // Handle bonus resource activities
-    existingElement = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id: activityId }),
-    ).first();
+    existingElement = await prisma.orm.public.BonusActivity.where({
+      id: activityId,
+    }).first();
   }
 
   // Ensure the target activity/resource exists
@@ -70,12 +67,13 @@ export default async function putActivityImage(
   const transaction = await prisma.transaction(async (tx) => {
     // Decrement usage count for the old media if it exists
     if (existingElement.url) {
-      const media = await tx.orm.public.Mediatheque.where((row) =>
-        whereFromObject(row, { url: existingElement.url }),
-      ).first();
+      const media = await tx.orm.public.Mediatheque.where({
+        url: existingElement.url,
+      }).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" - 1 WHERE "id" = ${media.id}`
+          prisma.raw
+            .sql`UPDATE "Mediatheque" SET "used" = "used" - 1 WHERE "id" = ${media.id}`
             .affectedCount()
             .build(),
         );
@@ -84,27 +82,22 @@ export default async function putActivityImage(
 
     // Update the appropriate entity based on parent type
     if (parent === "lesson") {
-      await prisma.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+      await prisma.orm.public.Activity.where({ id: activityId })
         .update({ title, url: filename ?? url ?? existingElement.url })
         .then(requireDatabaseRow);
     } else {
-      await prisma.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id: activityId }),
-      )
+      await prisma.orm.public.BonusActivity.where({ id: activityId })
         .update({ title, url: filename ?? url ?? existingElement.url })
         .then(requireDatabaseRow);
     }
 
     // Increment usage count for the new media from library if selected
     if (url) {
-      const media = await tx.orm.public.Mediatheque.where((row) =>
-        whereFromObject(row, { url }),
-      ).first();
+      const media = await tx.orm.public.Mediatheque.where({ url }).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id}`
+          prisma.raw
+            .sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id}`
             .affectedCount()
             .build(),
         );
