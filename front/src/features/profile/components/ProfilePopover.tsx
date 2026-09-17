@@ -174,7 +174,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
                           />
                         )}
                         <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-white/20 opacity-0 backdrop-blur-[1px] transition-opacity group-hover/avatar:opacity-100 group-focus-visible/avatar:opacity-100">
-                          <EditIcon className="size-7 rounded-full bg-base-100/90 p-1.5 stroke-2 text-black" />
+                          <EditIcon className="size-7 rounded-full bg-base-100/90 p-1.5 stroke-2 text-base-content" />
                         </span>
                       </button>
                       {user?.avatar && (

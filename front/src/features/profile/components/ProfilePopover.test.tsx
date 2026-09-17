@@ -132,4 +132,14 @@ describe("Menu du profil", () => {
       document.querySelector('button[aria-label="Supprimer la photo de profil"]'),
     ).toBeNull();
   });
+
+  it("adapte le contraste de l’icône de modification au thème", () => {
+    showMenu(0);
+    const editIcon = document.querySelector(
+      'button[aria-label="Modifier la photo de profil"] svg',
+    );
+
+    expect(editIcon?.classList.contains("text-base-content")).toBe(true);
+    expect(editIcon?.classList.contains("text-black")).toBe(false);
+  });
 });
