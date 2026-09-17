@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import { getAccessibleParcoursIds } from "../../utils/services/permissions/accessible-parcours.ts";
 
@@ -10,7 +9,7 @@ async function getParcoursByStudent(studentId: string) {
   const accessibleParcoursIds = await getAccessibleParcoursIds(studentId);
 
   const parcoursList = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: { in: accessibleParcoursIds } }),
+    row.id.in(accessibleParcoursIds),
   )
     .select(
       "id",

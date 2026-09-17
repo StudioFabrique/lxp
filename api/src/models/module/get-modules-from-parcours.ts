@@ -1,21 +1,21 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 async function getModulesFromParcours(
   parcoursId: number,
   scope: AccessScope = null,
 ) {
-  const parcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: +parcoursId }),
-  )
-    .include("modules", (related183) =>
-      related183
-        .where((row) => whereFromObject(row, moduleWhereForScope(scope)))
+  const parcours = await prisma.orm.public.Parcours.where({ id: +parcoursId })
+    .include("modules", (modules) =>
+      (scope
+        ? modules.where((row) =>
+            scope.moduleIds === null
+              ? row.parcoursId.in(scope.parcoursIds)
+              : row.id.in(scope.moduleIds),
+          )
+        : modules
+      )
         .select(
           "id",
           "title",

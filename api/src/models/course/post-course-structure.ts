@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Lesson } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 import { slugify } from "../../helpers/slugify.ts";
@@ -14,9 +11,7 @@ async function postCourseStructure(
   lessons: Lesson[],
   courseSlug?: string,
 ) {
-  const existingModule = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: moduleId }),
-  )
+  const existingModule = await prisma.orm.public.Module.where({ id: moduleId })
     .include("courses")
     .first();
 
@@ -44,9 +39,7 @@ async function postCourseStructure(
 
     if (!providedSlug) {
       const generated = `${slugify(title) || "cours"}-${newCourse.id}`;
-      await tx.orm.public.Course.where((row) =>
-        whereFromObject(row, { id: newCourse.id }),
-      )
+      await tx.orm.public.Course.where({ id: newCourse.id })
         .update({ courseSlug: generated })
         .then(requireDatabaseRow);
       newCourse.courseSlug = generated;

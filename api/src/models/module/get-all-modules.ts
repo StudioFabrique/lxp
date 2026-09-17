@@ -1,14 +1,15 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getAllModules(scope: AccessScope = null) {
-  const modules = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, moduleWhereForScope(scope)),
-  )
+  const query = scope
+    ? prisma.orm.public.Module.where((row) =>
+        scope.moduleIds === null
+          ? row.parcoursId.in(scope.parcoursIds)
+          : row.id.in(scope.moduleIds),
+      )
+    : prisma.orm.public.Module;
+  const modules = await query
     .select("id", "title", "thumb", "createdAt", "parcoursId")
     .include("parcours", (related147) =>
       related147

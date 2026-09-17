@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import Group, { type IGroup } from "../../utils/interfaces/db/group.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
@@ -75,9 +74,9 @@ export default async function putGroup(
       { $addToSet: { group: id } },
     );
 
-    const existingPrismaGroup = await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, { idMdb: id }),
-    ).first();
+    const existingPrismaGroup = await prisma.orm.public.Group.where({
+      idMdb: id,
+    }).first();
 
     if (!existingPrismaGroup) {
       throw {
@@ -87,11 +86,9 @@ export default async function putGroup(
     }
 
     if (parcoursId !== undefined) {
-      await prisma.orm.public.GroupsOnParcours.where((row) =>
-        whereFromObject(row, {
-          groupId: existingPrismaGroup.id,
-        }),
-      )
+      await prisma.orm.public.GroupsOnParcours.where({
+        groupId: existingPrismaGroup.id,
+      })
         .deleteAndCount()
         .then((count) => ({ count }));
 

@@ -1,22 +1,15 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Group } from "../../prisma/model-types.ts";
 import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   const groups = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, {
-      idMdb: {
-        in: groupsIds.map((item: string) => item),
-      },
-    }),
+    row.idMdb.in(groupsIds.map((item: string) => item)),
   ).all();
 
-  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  ).first();
+  const existingParcours = await prisma.orm.public.Parcours.where({
+    id: parcoursId,
+  }).first();
 
   if (!existingParcours) {
     const error = { message: "Le parcours n'existe pas", statusCode: 404 };
@@ -26,16 +19,12 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   let updatedParcours: any = {};
 
   const transaction = await prisma.transaction(async (tx) => {
-    await tx.orm.public.GroupsOnParcours.where((row) =>
-      whereFromObject(row, {
-        parcoursId,
-      }),
-    )
+    await tx.orm.public.GroupsOnParcours.where({
+      parcoursId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
-    updatedParcours = await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId }),
-    )
+    updatedParcours = await tx.orm.public.Parcours.where({ id: parcoursId })
       .include("groups", (related16) =>
         related16.include("group", (related17) =>
           related17.select("id", "idMdb"),

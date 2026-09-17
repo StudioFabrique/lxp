@@ -1,7 +1,5 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Models } from "../../prisma/contract.d.ts";
 
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
@@ -56,16 +54,16 @@ async function patchParcours(
 
   const updated = await prisma.transaction(async (tx) => {
     const existingParcours = await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, {
-        id: parcoursId,
-        ...(admin
-          ? { adminId: admin.id }
-          : {
-              contacts: {
-                some: { contact: { idMdb: actor.userId } },
-              },
-            }),
-      }),
+      and(
+        row.id.eq(parcoursId),
+        admin
+          ? row.adminId.eq(admin.id)
+          : row.contacts.some((assignment) =>
+              assignment.contact.some((contact) =>
+                contact.idMdb.eq(actor.userId),
+              ),
+            ),
+      ),
     )
       .select("id", "startDate", "endDate", "formationId")
       .include("tags", (related0) => related0.select("tagId", "addedBy"))
@@ -80,9 +78,9 @@ async function patchParcours(
     }
 
     if (payload.formationId !== undefined) {
-      const formation = await tx.orm.public.Formation.where((row) =>
-        whereFromObject(row, { id: payload.formationId }),
-      )
+      const formation = await tx.orm.public.Formation.where({
+        id: payload.formationId,
+      })
         .select("id")
         .first();
 
@@ -93,7 +91,7 @@ async function patchParcours(
 
     if (payload.tagIds !== undefined) {
       const tagsCount = await tx.orm.public.Tag.where((row) =>
-        whereFromObject(row, { id: { in: tagIds } }),
+        row.id.in(tagIds),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total);
@@ -122,7 +120,7 @@ async function patchParcours(
       const removedTagIds = removedAssignments.map(({ tagId }) => tagId);
       if (removedTagIds.length > 0) {
         await tx.orm.public.TagsOnParcours.where((row) =>
-          whereFromObject(row, { parcoursId, tagId: { in: removedTagIds } }),
+          and(row.parcoursId.eq(parcoursId), row.tagId.in(removedTagIds)),
         )
           .deleteAndCount()
           .then((count) => ({ count }));
@@ -142,7 +140,7 @@ async function patchParcours(
 
     if (payload.contactIds !== undefined) {
       const contactsCount = await tx.orm.public.Contact.where((row) =>
-        whereFromObject(row, { id: { in: contactIds } }),
+        row.id.in(contactIds),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total);
@@ -186,7 +184,13 @@ async function patchParcours(
     const data: Partial<
       Pick<
         Models.public_Parcours,
-        "title" | "description" | "startDate" | "endDate" | "virtualClass" | "formationId" | "updatedAt"
+        | "title"
+        | "description"
+        | "startDate"
+        | "endDate"
+        | "virtualClass"
+        | "formationId"
+        | "updatedAt"
       >
     > = {};
     if (payload.title !== undefined) data.title = payload.title;
@@ -208,9 +212,9 @@ async function patchParcours(
       data.updatedAt = new Date().toISOString();
     }
     if (payload.contactIds !== undefined) {
-      await tx.orm.public.ContactsOnParcours.where((row) =>
-        whereFromObject(row, { parcoursId }),
-      ).deleteAndCount();
+      await tx.orm.public.ContactsOnParcours.where({
+        parcoursId,
+      }).deleteAndCount();
       if (contactIds.length > 0) {
         await tx.orm.public.ContactsOnParcours.createAndCount(
           contactIds.map((contactId) => ({ parcoursId, contactId })),
@@ -218,21 +222,22 @@ async function patchParcours(
       }
     }
     if (payload.objectives !== undefined) {
-      await tx.orm.public.Objective.where((row) =>
-        whereFromObject(row, { parcoursId }),
-      ).deleteAndCount();
+      await tx.orm.public.Objective.where({ parcoursId }).deleteAndCount();
       if (payload.objectives.length > 0) {
         await tx.orm.public.Objective.createAndCount(
-          payload.objectives.map((description) => ({ parcoursId, description })),
+          payload.objectives.map((description) => ({
+            parcoursId,
+            description,
+          })),
         );
       }
     }
 
     if (payload.tagIds !== undefined && tagIds.length > 0) {
       const formationId = payload.formationId ?? existingParcours.formationId;
-      const formationTags = await tx.orm.public.TagsOnFormation.where((row) =>
-        whereFromObject(row, { formationId }),
-      )
+      const formationTags = await tx.orm.public.TagsOnFormation.where({
+        formationId,
+      })
         .select("tagId")
         .all();
       const assignedIds = new Set(formationTags.map(({ tagId }) => tagId));
@@ -244,9 +249,7 @@ async function patchParcours(
       }
     }
 
-    const updated = await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId }),
-    )
+    const updated = await tx.orm.public.Parcours.where({ id: parcoursId })
       .select(
         "id",
         "title",

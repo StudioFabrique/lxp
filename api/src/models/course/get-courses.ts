@@ -1,17 +1,17 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 async function getCourses(scope: AccessScope = null) {
-  const courses = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(
-      row,
-      scope === null ? undefined : { module: moduleWhereForScope(scope) },
-    ),
-  )
+  const query = scope
+    ? prisma.orm.public.Course.where((row) =>
+        row.module.some((module) =>
+          scope.moduleIds === null
+            ? module.parcoursId.in(scope.parcoursIds)
+            : module.id.in(scope.moduleIds),
+        ),
+      )
+    : prisma.orm.public.Course;
+  const courses = await query
     .select("id", "title", "author", "updatedAt", "isPublished", "visibility")
     .include("module", (related54) =>
       related54

@@ -1,16 +1,13 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getUnsplashPresentationImage } from "../../helpers/unsplash-presentation-image.ts";
 import { slugify } from "../../helpers/slugify.ts";
 
 async function postCourse(userId: string, course: any) {
-  const existingModule = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: course.moduleId }),
-  )
+  const existingModule = await prisma.orm.public.Module.where({
+    id: course.moduleId,
+  })
     .include("courses")
     .first();
 
@@ -20,9 +17,9 @@ async function postCourse(userId: string, course: any) {
     throw error;
   }
 
-  const existingAdmin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAdmin = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAdmin) {
     const error: any = {
@@ -58,9 +55,7 @@ async function postCourse(userId: string, course: any) {
 
   // Backfill the slug (never set above, would stay NULL) so the course stays
   // visible to ANDRIA-AI, which filters out courses with no slug.
-  await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: newCourse.id }),
-  )
+  await prisma.orm.public.Course.where({ id: newCourse.id })
     .update({
       courseSlug: `${slugify(course.title) || "cours"}-${newCourse.id}`,
     })

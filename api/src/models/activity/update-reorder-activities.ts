@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Lesson, Resource } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -44,13 +41,13 @@ export default async function updateReorderActrivities(
 
   // Fetch the parent entity based on type
   if (parent === "lesson")
-    existingParent = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    ).first();
+    existingParent = await prisma.orm.public.Lesson.where({
+      id: lessonId,
+    }).first();
   else if (parent === "resource")
-    existingParent = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    ).first();
+    existingParent = await prisma.orm.public.Resource.where({
+      id: lessonId,
+    }).first();
 
   // Verify parent entity exists
   if (!existingParent) {
@@ -66,9 +63,7 @@ export default async function updateReorderActrivities(
     if (parent === "lesson") {
       // Case 1: Parent is a Lesson - update Activity order
       for (const id of activitiesIds) {
-        await tx.orm.public.Activity.where((row) =>
-          whereFromObject(row, { id }),
-        )
+        await tx.orm.public.Activity.where({ id })
           .update({ order: i })
           .then(requireDatabaseRow);
         i += 1;
@@ -76,9 +71,7 @@ export default async function updateReorderActrivities(
     } else if (parent === "resource") {
       // Case 2: Parent is a Resource - update BonusActivity order
       for (const id of activitiesIds) {
-        await tx.orm.public.BonusActivity.where((row) =>
-          whereFromObject(row, { id }),
-        )
+        await tx.orm.public.BonusActivity.where({ id })
           .update({ order: i })
           .then(requireDatabaseRow);
         i += 1;

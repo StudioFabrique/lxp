@@ -1,10 +1,7 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getCourseDates(courseId: number) {
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const existingCourse = await prisma.orm.public.Course.where({ id: courseId })
     .select("dates")
     .first();
 

@@ -1,4 +1,4 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
 import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
@@ -19,21 +19,26 @@ export default async function getLessonsByTag(
   // Les leçons sont bornées au périmètre de l'appelant ; les ressources, elles,
   // forment une bibliothèque transverse sans rattachement à un parcours et
   // restent donc gouvernées par la seule permission `read:resource`.
-  const lessonScope =
-    scope === null
-      ? { tagId }
-      : {
-          tagId,
-          course: {
-            module:
-              scope.moduleIds === null
-                ? { parcoursId: { in: scope.parcoursIds } }
-                : { id: { in: scope.moduleIds } },
-          },
-        };
+  const filterLessons = (query: typeof prisma.orm.public.Lesson) =>
+    query.where((lesson) =>
+      and(
+        lesson.tagId.eq(tagId),
+        ...(scope
+          ? [
+              lesson.course.some((course) =>
+                course.module.some((module) =>
+                  scope.moduleIds === null
+                    ? module.parcoursId.in(scope.parcoursIds)
+                    : module.id.in(scope.moduleIds),
+                ),
+              ),
+            ]
+          : []),
+      ),
+    );
   if (supplementaryResources) {
     const resources = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { tags: { some: { tagId } } }),
+      row.tags.some((tags) => tags.tagId.eq(tagId)),
     )
       .select("id", "title")
       .include("bonusActivities", (related123) => related123.select("id"))
@@ -49,9 +54,7 @@ export default async function getLessonsByTag(
 
     if (!includeCourseContents) return resourceResults;
 
-    const lessons = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, lessonScope),
-    )
+    const lessons = await filterLessons(prisma.orm.public.Lesson)
       .select("id", "title")
       .include("activities", (related124) => related124.select("id"))
       .include("course", (related125) => related125.select("title"))
@@ -70,9 +73,7 @@ export default async function getLessonsByTag(
     ];
   }
 
-  const lessons = await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, lessonScope),
-  )
+  const lessons = await filterLessons(prisma.orm.public.Lesson)
     .select("id", "title")
     .include("activities", (related126) => related126.select("id"))
     .all();

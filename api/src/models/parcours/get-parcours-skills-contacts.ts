@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -10,9 +9,9 @@ import { prisma } from "../../utils/db.ts";
  */
 export default async function getParcoursSkillsContacts(parcoursId: number) {
   // Recherche du parcours avec ses relations contacts et compétences
-  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const existingParcours = await prisma.orm.public.Parcours.where({
+    id: parcoursId,
+  })
     .include("contacts", (related237) =>
       related237.include("contact", (related238) =>
         related238.select("id", "idMdb", "role"),

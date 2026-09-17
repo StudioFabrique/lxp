@@ -1,13 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function deleteBonusSkill(id: number) {
-  const existingSkill = await prisma.orm.public.BonusSkill.where((row) =>
-    whereFromObject(row, { id }),
-  ).first();
+  const existingSkill = await prisma.orm.public.BonusSkill.where({
+    id,
+  }).first();
 
   if (!existingSkill) {
     const error404 = {
@@ -18,9 +15,7 @@ async function deleteBonusSkill(id: number) {
   }
 
   try {
-    const response = await prisma.orm.public.BonusSkill.where((row) =>
-      whereFromObject(row, { id }),
-    )
+    const response = await prisma.orm.public.BonusSkill.where({ id })
       .delete()
       .then(requireDatabaseRow);
   } catch (error: any) {

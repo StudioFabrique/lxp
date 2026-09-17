@@ -1,12 +1,8 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 import { canUnassignTag } from "../tag/tag-access.ts";
 import { loadSkillAchievements } from "../../helpers/skill-achievement-query.ts";
 
@@ -19,9 +15,7 @@ async function getParcoursById(
   scope: AccessScope = null,
 ) {
   // 1. Récupération des données brutes
-  const parcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const parcours = await prisma.orm.public.Parcours.where({ id: parcoursId })
     .select(
       "id",
       "title",
@@ -55,9 +49,15 @@ async function getParcoursById(
     .include("objectives", (related222) =>
       related222.select("id", "description"),
     )
-    .include("modules", (related223) =>
-      related223
-        .where((row) => whereFromObject(row, moduleWhereForScope(scope)))
+    .include("modules", (modules) =>
+      (scope
+        ? modules.where((row) =>
+            scope.moduleIds === null
+              ? row.parcoursId.in(scope.parcoursIds)
+              : row.id.in(scope.moduleIds),
+          )
+        : modules
+      )
         .select(
           "id",
           "duration",
@@ -80,7 +80,7 @@ async function getParcoursById(
               related228.include("submissions", (related229) =>
                 related229
                   .where((row) =>
-                    whereFromObject(row, { student: { idMdb: userId } }),
+                    row.student.some((student) => student.idMdb.eq(userId)),
                   )
                   .select("submittedAt"),
               ),
@@ -90,7 +90,7 @@ async function getParcoursById(
                 .include("lessonsRead", (related231) =>
                   related231
                     .where((row) =>
-                      whereFromObject(row, { student: { idMdb: userId } }),
+                      row.student.some((student) => student.idMdb.eq(userId)),
                     )
                     .select("id", "finishedAt"),
                 )
@@ -133,7 +133,9 @@ async function getParcoursById(
   // On utilise 'any' ici pour pouvoir modifier les types (Buffer -> string) et ajouter des propriétés
   let result: any = {
     ...parcours,
-    bonusSkills: parcours.bonusSkills.map(({ id }) => skillAchievements.get(id)!),
+    bonusSkills: parcours.bonusSkills.map(({ id }) =>
+      skillAchievements.get(id)!,
+    ),
     canManage:
       scope?.kind !== "teacher" ||
       scope.directParcoursIds?.includes(parcours.id),

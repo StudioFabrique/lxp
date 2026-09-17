@@ -1,4 +1,4 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
 import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
@@ -12,10 +12,10 @@ export default async function getSelectParcours(
   scope: AccessScope = null,
 ) {
   const parcoursList = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, {
-      ...(formationId !== null && { formationId }),
-      ...(scope !== null && { id: { in: scope.parcoursIds } }),
-    }),
+    and(
+      ...(formationId === null ? [] : [row.formationId.eq(formationId)]),
+      ...(scope ? [row.id.in(scope.parcoursIds)] : []),
+    ),
   )
     .select("id", "title")
     .all();

@@ -1,7 +1,6 @@
 import * as Popover from "@radix-ui/react-popover";
 import { ChevronLeft, ChevronRight, Plus, Trash2, X } from "lucide-react";
-import { useContext, useLayoutEffect, useRef, useState } from "react";
-import { ThemeContext } from "../../../../store/ThemeProvider";
+import { useLayoutEffect, useRef, useState } from "react";
 import Calendar from "../../../calendar/components/calendar";
 import type Module from "../../../../utils/interfaces/module";
 import type CourseDates from "../../../course/interfaces/course-dates";
@@ -56,7 +55,6 @@ export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
 }
 
 export default function ModuleCourseCalendar({ module, store }: { module: Module; store: ModuleCalendarStore; }) {
-  const { theme } = useContext(ThemeContext);
   const { selection, setSelection, currentDate, setCurrentDate } = store;
   const container = useRef<HTMLDivElement>(null);
   const anchorElement = useRef<HTMLElement | null>(null);
@@ -108,7 +106,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
   if (store.isError) return <div role="alert" className="rounded-lg border border-error p-6">Impossible de charger le calendrier. <button className="btn btn-sm" onClick={() => void store.refetch()}>Réessayer</button></div>;
 
   return <div ref={container} className="min-w-0" aria-label="Planification des cours">
-    <Calendar darkMode={theme === "dark"} events={[]} timelineEvents={store.events} currentDate={currentDate} view="planning"
+    <Calendar events={[]} timelineEvents={store.events} currentDate={currentDate} view="planning"
       selectedTimelineEventId={selection?.eventId} planningDisabled={store.isSaving || store.isAdding}
       onChangeTimelineEventDates={(id, start, end) => { void store.changeDates(id, start, end); }}
       onClickTimelineYearEventDetails={(id, rect) => {

@@ -1,9 +1,6 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export default async function getCoursesTimeline(
   minDate: string,
@@ -13,23 +10,23 @@ export default async function getCoursesTimeline(
   // Les cours suivent le périmètre du module ; aucun contact posé sur le cours
   // n'est requis pour un formateur déjà affecté au module.
   const courses = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, {
-      isPublished: true,
-      visibility: true,
-      module: {
-        ...(scope === null ? {} : moduleWhereForScope(scope)),
-        OR: [
-          {
-            minDate: {
-              lte: new Date(maxDate).toISOString(),
-            },
-            maxDate: {
-              gte: new Date(minDate).toISOString(),
-            },
-          },
-        ],
-      },
-    }),
+    and(
+      row.isPublished.eq(true),
+      row.visibility.eq(true),
+      row.module.some((module) =>
+        and(
+          module.minDate.lte(new Date(maxDate).toISOString()),
+          module.maxDate.gte(new Date(minDate).toISOString()),
+          ...(scope
+            ? [
+                scope.moduleIds === null
+                  ? module.parcoursId.in(scope.parcoursIds)
+                  : module.id.in(scope.moduleIds),
+              ]
+            : []),
+        ),
+      ),
+    ),
   )
     .select("id", "title", "dates")
     .include("module", (related50) =>
@@ -69,7 +66,8 @@ export default async function getCoursesTimeline(
     return acc;
   }, []);
 
-  return coursesFormatted.sort((a: { minDate: string }, b: { minDate: string }) =>
-    a.minDate.localeCompare(b.minDate),
+  return coursesFormatted.sort(
+    (a: { minDate: string }, b: { minDate: string }) =>
+      a.minDate.localeCompare(b.minDate),
   );
 }

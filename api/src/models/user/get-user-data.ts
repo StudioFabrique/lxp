@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { sortArray } from "../../helpers/sortArray.ts";
 import { prisma } from "../../utils/db.ts";
 import { type IConnectionInfos } from "../../utils/interfaces/db/connection-infos.ts";
@@ -105,9 +104,7 @@ export default async function getUserData(userId: string) {
   if (user.group && user.group.length > 0) {
     const groupId = user.group[0]!._id.toString();
     // Fetch the most recent parcours for the user's group from PostgreSQL
-    const response = await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, { idMdb: groupId }),
-    )
+    const response = await prisma.orm.public.Group.where({ idMdb: groupId })
       .include("parcours", (related46) =>
         related46
           .include("parcours", (related47) =>
@@ -127,9 +124,9 @@ export default async function getUserData(userId: string) {
       parcours = response.parcours.map((item: any) => item.parcours)[0];
 
       // Fetch modules -> courses -> lessons structure for this parcours
-      const parcoursStructure = await prisma.orm.public.Parcours.where((row) =>
-        whereFromObject(row, { id: parcours.id }),
-      )
+      const parcoursStructure = await prisma.orm.public.Parcours.where({
+        id: parcours.id,
+      })
         .include("modules", (related48) =>
           related48.include("courses", (related49) =>
             related49.include("lessons", (related50) => related50.select("id")),

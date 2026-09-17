@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -18,9 +17,9 @@ import { prisma } from "../../utils/db.ts";
  */
 export default async function getResourceDetails(resourceId: number) {
   // Fetch resource with all related data
-  const existingResource = await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { id: resourceId }),
-  )
+  const existingResource = await prisma.orm.public.Resource.where({
+    id: resourceId,
+  })
     .include("bonusActivities", (related27) =>
       related27
         .include("resourceBonusActivities", (related28) =>

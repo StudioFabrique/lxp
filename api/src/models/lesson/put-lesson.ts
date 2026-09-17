@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 type LessonUpdateData = {
@@ -13,9 +10,9 @@ type LessonUpdateData = {
 };
 
 async function putLesson(lesson: LessonUpdateData) {
-  const existingLesson = await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, { id: +lesson.id }),
-  )
+  const existingLesson = await prisma.orm.public.Lesson.where({
+    id: +lesson.id,
+  })
     .include("course", (related135) =>
       related135.include("tags", (related136) => related136.select("tagId")),
     )
@@ -36,9 +33,7 @@ async function putLesson(lesson: LessonUpdateData) {
   if (!["hybride", "distanciel", "presentiel"].includes(lesson.modalite))
     throw { statusCode: 400, message: "Modalité non reconnue." };
 
-  return await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, { id: +lesson.id }),
-  )
+  return await prisma.orm.public.Lesson.where({ id: +lesson.id })
     .include("tag")
     .update({
       title: lesson.title,

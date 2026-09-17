@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { all, and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import {
   emptyIndicator,
@@ -33,24 +34,29 @@ export default async function getCorrectAnswerRateEvolution(
       reason: "Cet utilisateur n'est pas un apprenant.",
     });
   }
+  const studentId = context.studentId;
+  const from = context.from.toISOString();
+  const to = context.to.toISOString();
 
   const [attempts, submissions] = await Promise.all([
     prisma.orm.public.QuizAttempt.where((row) =>
-      whereFromObject(row, {
-        studentId: context.studentId,
-        finishedAt: { gte: context.from, lte: context.to },
-        answers: { some: {} },
-      }),
+      and(
+        row.studentId.eq(studentId),
+        row.finishedAt.gte(from),
+        row.finishedAt.lte(to),
+        row.answers.some((answers) => all()),
+      ),
     )
       .select("finishedAt")
       .include("answers", (related89) => related89.select("isCorrect"))
       .all(),
     prisma.orm.public.AssignmentSubmission.where((row) =>
-      whereFromObject(row, {
-        studentId: context.studentId,
-        gradedAt: { gte: context.from, lte: context.to },
-        grade: { not: null },
-      }),
+      and(
+        row.studentId.eq(studentId),
+        row.gradedAt.gte(from),
+        row.gradedAt.lte(to),
+        row.grade.isNotNull(),
+      ),
     )
       .select("gradedAt", "grade")
       .include("assignment", (related90) => related90.select("maxScore"))

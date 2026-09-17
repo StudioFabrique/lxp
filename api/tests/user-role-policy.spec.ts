@@ -1,4 +1,3 @@
-import { whereFromObject } from "../src/utils/prisma-query.ts";
 import {
   afterAll,
   beforeAll,
@@ -43,19 +42,13 @@ const key = (purpose: string, email?: string) =>
 
 async function clean() {
   const ids = (await User.find().select("_id")).map(({ _id }) => String(_id));
-  await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: { in: ids } }),
-  )
+  await prisma.orm.public.Student.where((row) => row.idMdb.in(ids))
     .deleteAndCount()
     .then((count) => ({ count }));
-  await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: { in: ids } }),
-  )
+  await prisma.orm.public.Admin.where((row) => row.idMdb.in(ids))
     .deleteAndCount()
     .then((count) => ({ count }));
-  await prisma.orm.public.Contact.where((row) =>
-    whereFromObject(row, { idMdb: { in: ids } }),
-  )
+  await prisma.orm.public.Contact.where((row) => row.idMdb.in(ids))
     .deleteAndCount()
     .then((count) => ({ count }));
   await mongoose.connection.dropDatabase();
@@ -140,9 +133,7 @@ describe("rôle utilisateur unique", () => {
       String(adminRole._id),
     ]);
     expect(
-      await prisma.orm.public.Contact.where((row) =>
-        whereFromObject(row, { idMdb: String(user._id) }),
-      )
+      await prisma.orm.public.Contact.where({ idMdb: String(user._id) })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(0);
@@ -171,23 +162,17 @@ describe("rôle utilisateur unique", () => {
       String(studentRole._id),
     ]);
     expect(
-      await prisma.orm.public.Student.where((row) =>
-        whereFromObject(row, { idMdb: { in: ids } }),
-      )
+      await prisma.orm.public.Student.where((row) => row.idMdb.in(ids))
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(2);
     expect(
-      await prisma.orm.public.Contact.where((row) =>
-        whereFromObject(row, { idMdb: { in: ids } }),
-      )
+      await prisma.orm.public.Contact.where((row) => row.idMdb.in(ids))
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(0);
     expect(
-      await prisma.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: { in: ids } }),
-      )
+      await prisma.orm.public.Admin.where((row) => row.idMdb.in(ids))
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(0);
@@ -214,31 +199,25 @@ describe("rôle utilisateur unique", () => {
       String(adminRole._id),
     ]);
     expect(
-      await prisma.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: { in: ids } }),
-      )
+      await prisma.orm.public.Admin.where((row) => row.idMdb.in(ids))
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(2);
     expect(
-      await prisma.orm.public.Contact.where((row) =>
-        whereFromObject(row, { idMdb: String(futureTeacher._id) }),
-      )
+      await prisma.orm.public.Contact.where({
+        idMdb: String(futureTeacher._id),
+      })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(1);
     expect(
-      await prisma.orm.public.Contact.where((row) =>
-        whereFromObject(row, { idMdb: String(futureAdmin._id) }),
-      )
+      await prisma.orm.public.Contact.where({ idMdb: String(futureAdmin._id) })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(0);
     // La promotion ne doit pas effacer les acquis si le rôle change à nouveau.
     expect(
-      await prisma.orm.public.Student.where((row) =>
-        whereFromObject(row, { idMdb: { in: ids } }),
-      )
+      await prisma.orm.public.Student.where((row) => row.idMdb.in(ids))
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ).toBe(2);

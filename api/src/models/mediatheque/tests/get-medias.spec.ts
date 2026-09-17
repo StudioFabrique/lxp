@@ -2,12 +2,12 @@ import { jest } from "@jest/globals";
 import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const readFile = jest.fn<(...args: unknown[]) => Promise<string>>();
-const countMedias = jest.fn<(...args: unknown[]) => Promise<{ total: number }>>();
+const countMedias =
+  jest.fn<(...args: unknown[]) => Promise<{ total: number }>>();
 const findMedias = jest.fn<(...args: unknown[]) => Promise<unknown[]>>();
 const findActivities = jest.fn<(...args: unknown[]) => Promise<unknown[]>>();
-const findBonusActivities = jest.fn<
-  (...args: unknown[]) => Promise<unknown[]>
->();
+const findBonusActivities =
+  jest.fn<(...args: unknown[]) => Promise<unknown[]>>();
 const mediathequeModel = createModelMock({
   aggregate: countMedias,
   all: findMedias,

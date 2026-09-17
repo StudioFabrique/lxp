@@ -1,4 +1,5 @@
-import { whereFromObject } from "../src/utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import mongoose from "mongoose";
 import request from "supertest";
 import { createPrismaClient } from "../src/utils/create-prisma-client.ts";
@@ -158,9 +159,9 @@ describe("Cloisonnement des contenus par parcours", () => {
     const teacher = await User.findOne({ email: "formateur@studio.eco" });
     if (!teacher) throw new Error("Fixture formateur absente");
     teacherUserId = teacher.id;
-    const teacherContact = await prisma.orm.public.Contact.where((row) =>
-      whereFromObject(row, { idMdb: teacher.id }),
-    )
+    const teacherContact = await prisma.orm.public.Contact.where({
+      idMdb: teacher.id,
+    })
       .select("id")
       .upsert({
         create: { idMdb: teacher.id, role: "teacher", email: teacher.email },
@@ -212,90 +213,68 @@ describe("Cloisonnement des contenus par parcours", () => {
     const temporaryTagIds = [teacherTagId, adminTagId].filter(Boolean);
     if (temporaryTagIds.length > 0) {
       await prisma.orm.public.TagsOnParcours.where((row) =>
-        whereFromObject(row, { tagId: { in: temporaryTagIds } }),
+        row.tagId.in(temporaryTagIds),
       )
         .deleteAndCount()
         .then((count) => ({ count }));
       await prisma.orm.public.TagsOnFormation.where((row) =>
-        whereFromObject(row, { tagId: { in: temporaryTagIds } }),
+        row.tagId.in(temporaryTagIds),
       )
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Tag.where((row) =>
-        whereFromObject(row, { id: { in: temporaryTagIds } }),
-      )
+      await prisma.orm.public.Tag.where((row) => row.id.in(temporaryTagIds))
         .deleteAndCount()
         .then((count) => ({ count }));
     }
     await prisma.orm.public.ContactsOnParcours.where((row) =>
-      whereFromObject(row, {
-        contactId: teacherContactId,
-        parcoursId: { in: [inscrit.parcoursId, etranger.parcoursId] },
-      }),
+      and(
+        row.contactId.eq(teacherContactId),
+        row.parcoursId.in([inscrit.parcoursId, etranger.parcoursId]),
+      ),
     )
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.ContactsOnCourse.where((row) =>
-      whereFromObject(row, {
-        contactId: teacherContactId,
-        courseId: etranger.courseId,
-      }),
-    )
+    await prisma.orm.public.ContactsOnCourse.where({
+      contactId: teacherContactId,
+      courseId: etranger.courseId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.ContactsOnModule.where((row) =>
-      whereFromObject(row, {
-        contactId: teacherContactId,
-        moduleId: inscrit.moduleId,
-      }),
-    )
+    await prisma.orm.public.ContactsOnModule.where({
+      contactId: teacherContactId,
+      moduleId: inscrit.moduleId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: moduleVisibleMaisVerrouille }),
-    )
+    await prisma.orm.public.Module.where({ id: moduleVisibleMaisVerrouille })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.GroupsOnParcours.where((row) =>
-      whereFromObject(row, { groupId: pgGroupId }),
-    )
+    await prisma.orm.public.GroupsOnParcours.where({ groupId: pgGroupId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, { id: pgGroupId }),
-    )
+    await prisma.orm.public.Group.where({ id: pgGroupId })
       .deleteAndCount()
       .then((count) => ({ count }));
     await Group.deleteOne({ _id: mongoGroupId });
     for (const cible of [inscrit, etranger]) {
-      await prisma.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id: cible.activityId }),
-      )
+      await prisma.orm.public.Activity.where({ id: cible.activityId })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Lesson.where((row) =>
-        whereFromObject(row, { id: cible.lessonId }),
-      )
+      await prisma.orm.public.Lesson.where({ id: cible.lessonId })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Course.where((row) =>
-        whereFromObject(row, { id: cible.courseId }),
-      )
+      await prisma.orm.public.Course.where({ id: cible.courseId })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Module.where((row) =>
-        whereFromObject(row, { id: cible.moduleId }),
-      )
+      await prisma.orm.public.Module.where({ id: cible.moduleId })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.TagsOnParcours.where((row) =>
-        whereFromObject(row, { parcoursId: cible.parcoursId }),
-      )
+      await prisma.orm.public.TagsOnParcours.where({
+        parcoursId: cible.parcoursId,
+      })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Parcours.where((row) =>
-        whereFromObject(row, { id: cible.parcoursId }),
-      )
+      await prisma.orm.public.Parcours.where({ id: cible.parcoursId })
         .deleteAndCount()
         .then((count) => ({ count }));
     }
@@ -518,9 +497,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       teacherTagId = creationTag.body[0].id;
 
       await expect(
-        prisma.orm.public.Tag.where((row) =>
-          whereFromObject(row, { id: teacherTagId }),
-        )
+        prisma.orm.public.Tag.where({ id: teacherTagId })
           .select("createdBy")
           .first(),
       ).resolves.toEqual({ createdBy: teacherUserId });
@@ -538,9 +515,7 @@ describe("Cloisonnement des contenus par parcours", () => {
         .expect(201);
 
       await expect(
-        prisma.orm.public.Tag.where((row) =>
-          whereFromObject(row, { id: teacherTagId }),
-        )
+        prisma.orm.public.Tag.where({ id: teacherTagId })
           .select("createdBy")
           .first(),
       ).resolves.toEqual({ createdBy: teacherUserId });
@@ -566,9 +541,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminTagId = creationTagAdmin.body[0].id;
 
       await expect(
-        prisma.orm.public.Tag.where((row) =>
-          whereFromObject(row, { id: adminTagId }),
-        )
+        prisma.orm.public.Tag.where({ id: adminTagId })
           .select("createdBy")
           .first(),
       ).resolves.toEqual({ createdBy: null });
@@ -605,10 +578,10 @@ describe("Cloisonnement des contenus par parcours", () => {
 
       await expect(
         prisma.orm.public.TagsOnParcours.where((row) =>
-          whereFromObject(row, {
-            parcoursId: inscrit.parcoursId,
-            tagId: { in: [referenceTagId, teacherTagId, adminTagId] },
-          }),
+          and(
+            row.parcoursId.eq(inscrit.parcoursId),
+            row.tagId.in([referenceTagId, teacherTagId, adminTagId]),
+          ),
         )
           .aggregate((aggregate) => ({ total: aggregate.count() }))
           .then(({ total }) => total),
@@ -649,12 +622,10 @@ describe("Cloisonnement des contenus par parcours", () => {
 
       await expect(
         prisma.orm.public.ContactsOnModule.where((row) =>
-          whereFromObject(row, {
-            contactId_moduleId: {
-              contactId: teacherContactId,
-              moduleId: inscrit.moduleId,
-            },
-          }),
+          and(
+            row.contactId.eq(teacherContactId),
+            row.moduleId.eq(inscrit.moduleId),
+          ),
         ).first(),
       ).resolves.toBeNull();
 

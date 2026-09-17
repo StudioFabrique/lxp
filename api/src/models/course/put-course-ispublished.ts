@@ -1,13 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putCourseIsPublished(courseId: number) {
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  ).first();
+  const existingCourse = await prisma.orm.public.Course.where({
+    id: courseId,
+  }).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -15,9 +12,7 @@ async function putCourseIsPublished(courseId: number) {
     throw error;
   }
 
-  const updatedCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const updatedCourse = await prisma.orm.public.Course.where({ id: courseId })
     .update({ isPublished: true })
     .then(requireDatabaseRow);
   return updatedCourse;

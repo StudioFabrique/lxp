@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma, type NestedCreate } from "../../utils/db.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
@@ -11,19 +10,13 @@ export default async function postDuplicateModule(
   targetParcoursId: number,
 ) {
   const [admin, targetParcours, source] = await Promise.all([
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first(),
-    prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: targetParcoursId }),
-    )
+    prisma.orm.public.Admin.where({ idMdb: userId }).first(),
+    prisma.orm.public.Parcours.where({ id: targetParcoursId })
       .select("id", "formationId")
       .include("contacts", (related191) => related191.select("contactId"))
       .include("bonusSkills", (related192) => related192.select("id"))
       .first(),
-    prisma.orm.public.Module.where((row) =>
-      whereFromObject(row, { id: sourceModuleId }),
-    )
+    prisma.orm.public.Module.where({ id: sourceModuleId })
       .include("parcours", (related193) => related193.select("formationId"))
       .include("courses", (related194) =>
         related194
@@ -42,9 +35,7 @@ export default async function postDuplicateModule(
       )
       .include("quizzes", (related197) =>
         related197
-          .where((row) =>
-            whereFromObject(row, { courseId: null, activityId: null }),
-          )
+          .where({ courseId: null, activityId: null })
           .include("questions", (related198) =>
             related198.include("quizQuestionReports"),
           ),
@@ -82,9 +73,9 @@ export default async function postDuplicateModule(
   }
 
   const existingTitles = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, {
-      parcours: { formationId: targetParcours.formationId },
-    }),
+    row.parcours.some((parcours) =>
+      parcours.formationId.eq(targetParcours.formationId),
+    ),
   )
     .select("title")
     .all();
@@ -164,9 +155,7 @@ export default async function postDuplicateModule(
                 course.contacts.map(({ contactId }) => ({ contactId })),
               ),
             tags: (relation: NestedCreate<"TagsOnCourse">) =>
-              relation.create(
-                course.tags.map(({ tagId }) => ({ tagId })),
-              ),
+              relation.create(course.tags.map(({ tagId }) => ({ tagId }))),
             lessons: (relation: NestedCreate<"Lesson">) =>
               relation.create(
                 course.lessons.map((lesson) => ({
@@ -189,7 +178,9 @@ export default async function postDuplicateModule(
                         url: activity.url,
                         authorId: admin.id,
                         duplicationIndex: activity.duplicationIndex + 1,
-                        resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                        resourceActivities: (
+                          relation: NestedCreate<"ResourceActivity">,
+                        ) =>
                           relation.create(
                             activity.resourceActivities.map(
                               ({ label, order, url }) => ({
@@ -222,7 +213,9 @@ export default async function postDuplicateModule(
                   tags: question.tags,
                   data: question.data as any,
                   contentHash: null,
-                  quizQuestionReports: (relation: NestedCreate<"QuizQuestionReport">) =>
+                  quizQuestionReports: (
+                    relation: NestedCreate<"QuizQuestionReport">,
+                  ) =>
                     relation.create(
                       question.quizQuestionReports.map(({ commentaire }) => ({
                         commentaire,

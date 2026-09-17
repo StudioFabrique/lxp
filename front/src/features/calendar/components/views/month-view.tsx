@@ -13,7 +13,6 @@ type Props = {
   onSelectDay?: (date: Date) => void;
   onShowMore: (events: CalendarEvent[]) => void;
   currentDate: Date;
-  darkMode: boolean;
   onClickEventDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
 };
 
@@ -22,7 +21,6 @@ const MonthView = ({
   onSelectDay,
   onShowMore,
   currentDate,
-  darkMode,
   onClickEventDetails,
 }: Props) => {
   const days = useMemo(() => {
@@ -36,14 +34,14 @@ const MonthView = ({
       {/* Header */}
       <div
         className={`grid grid-cols-7 h-10 border-b ${
-          theme(darkMode).headerBg
-        } ${theme(darkMode).border}`}
+          theme.headerBg
+        } ${theme.border}`}
       >
         {daysOfWeek.map((d) => (
           <div
             key={d}
             className={`flex items-center justify-center font-bold text-sm ${
-              theme(darkMode).subText
+              theme.subText
             }`}
           >
             {d}
@@ -78,13 +76,13 @@ const MonthView = ({
                 if (!(event.target as HTMLElement).closest("button")) onSelectDay?.(new Date(cellDate));
               }}
               className={`border-b border-r min-h-[80px] p-1 flex flex-col gap-1 transition-colors
-                  ${theme(darkMode).border}
+                  ${theme.border}
                   ${onSelectDay ? "cursor-pointer hover:bg-primary/5" : ""}
                   ${
                     !cell.currentMonth ? "bg-base-200 text-base-content/40" : ""
                   }
                   ${
-                    isToday ? theme(darkMode).todayBg : ""
+                    isToday ? theme.todayBg : ""
                   }
                 `}
             >
@@ -92,7 +90,7 @@ const MonthView = ({
                 aria-label={`Voir le ${cellDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} en vue Jour`}
                 onClick={() => onSelectDay?.(new Date(cellDate))}
                 className={`self-end rounded px-1 text-right text-xs font-bold mb-1 hover:bg-primary/10 focus-visible:outline-primary ${
-                  isToday ? theme(darkMode).todayText : theme(darkMode).subText
+                  isToday ? theme.todayText : theme.subText
                 }`}
               >
                 {cell.date.getDate() === 1
@@ -104,9 +102,7 @@ const MonthView = ({
 
               <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] no-scrollbar">
                 {dayEvents.slice(0, 2).map((event) => {
-                  const styleClass = darkMode
-                    ? eventConfig[event.type].dark
-                    : eventConfig[event.type].light;
+                  const styleClass = eventConfig[event.type];
                   return (
                     <button
                       type="button"

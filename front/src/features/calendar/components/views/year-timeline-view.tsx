@@ -6,14 +6,12 @@ type Props = {
   events: TimelineEvent[];
   onClickEdit?: (id: number | string) => void;
   onClickDetails?: (id: number | string, rect: DOMRect, element?: HTMLElement) => void;
-  darkMode: boolean;
 };
 
 const YearTimelineView = ({
   events,
   onClickEdit,
   onClickDetails,
-  darkMode,
 }: Props) => {
   // Sort events: Closest (Earliest) -> Farthest (Latest)
   const sortedEvents = useMemo(() => {
@@ -68,7 +66,7 @@ const YearTimelineView = ({
     return (
       <div
         className={`flex items-center justify-center h-full my-10 ${
-          theme(darkMode).subText
+          theme.subText
         }`}
       >
         Aucun événements à afficher
@@ -82,8 +80,8 @@ const YearTimelineView = ({
       {range.min + range.max > 0 && (
         <div
           className={`flex justify-between items-center px-4 h-10 border-b flex-shrink-0 text-xs font-bold uppercase tracking-wider z-20 relative ${
-            theme(darkMode).headerBg
-          } ${theme(darkMode).border} ${theme(darkMode).subText}`}
+            theme.headerBg
+          } ${theme.border} ${theme.subText}`}
         >
           <span>du {formatDate(new Date(range.min))}</span>
           <span>au {formatDate(new Date(range.max))}</span>
@@ -147,7 +145,7 @@ const YearTimelineView = ({
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0 ${
-                      theme(darkMode).border
+                      theme.border
                     } bg-base-300`}
                   >
                     {event.image ? (
@@ -171,7 +169,7 @@ const YearTimelineView = ({
                   >
                     <div
                       className={`text-sm font-semibold truncate ${
-                        theme(darkMode).text
+                        theme.text
                       }`}
                     >
                       {event.title}
@@ -179,7 +177,7 @@ const YearTimelineView = ({
                     {event.startDate && event.endDate && (
                       <div
                         className={`text-[10px] truncate group-hover:text-secondary ${
-                          theme(darkMode).subText
+                          theme.subText
                         }`}
                       >
                         {`${formatDate(event.startDate)} - ${formatDate(
@@ -221,7 +219,7 @@ const YearTimelineView = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-end gap-5 w-full mr-10 opacity-60">
-                    <span className={`text-xs ${theme(darkMode).subText}`}>
+                    <span className={`text-xs ${theme.subText}`}>
                       Date manquante
                     </span>
                     {onClickEdit && (

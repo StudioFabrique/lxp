@@ -1,7 +1,6 @@
 import { jest } from "@jest/globals";
 import {
   createModelMock,
-  createWhereRecorder,
   requireDatabaseRow,
 } from "../../../../tests/utils/prisma-mock.ts";
 const findResource = jest.fn<(...args: unknown[]) => Promise<unknown>>();
@@ -45,7 +44,6 @@ const prisma = {
     },
   },
 };
-const { filters, whereFromObject } = createWhereRecorder();
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: {
     ...prisma,
@@ -53,8 +51,7 @@ jest.unstable_mockModule("../../../utils/db.ts", () => ({
       callback(prisma),
   },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
+jest.unstable_mockModule("../../../utils/require-database-row.ts", () => ({
   requireDatabaseRow,
 }));
 jest.unstable_mockModule("../../../utils/interfaces/db/user.ts", () => ({
@@ -75,7 +72,6 @@ const { default: deleteFile } =
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 beforeEach(() => {
   jest.clearAllMocks();
-  filters.length = 0;
 });
 describe("Ressources supplémentaires", () => {
   it("retrouve la ressource par identifiant pour la renommer et conserve son image", async () => {
@@ -100,7 +96,7 @@ describe("Ressources supplémentaires", () => {
       null,
       true,
     );
-    expect(filters).toContainEqual({ id: 7 });
+    expect(resourceModel.where).toHaveBeenCalledWith({ id: 7 });
     const args = updateResource.mock.calls[0][0] as {
       title: string;
       imageUrl?: string;
@@ -137,7 +133,7 @@ describe("Ressources supplémentaires", () => {
       auth: { userId: "user" },
     } as unknown as CustomRequest);
     expect(bonusUpdate).toHaveBeenCalledWith({ label: "Nouveau nom" });
-    expect(filters).toContainEqual({ id: 12 });
+    expect(bonusModel.where).toHaveBeenCalledWith({ id: 12 });
     expect(lessonFind).not.toHaveBeenCalled();
   });
   it("supprime un fichier bonus et applique le nettoyage des fichiers partagés", async () => {
@@ -145,7 +141,7 @@ describe("Ressources supplémentaires", () => {
     bonusDelete.mockResolvedValueOnce({ id: 12 });
     await deleteFile(12, "user", "resource");
     expect(bonusDelete).toHaveBeenCalledWith();
-    expect(filters).toContainEqual({ id: 12 });
+    expect(bonusModel.where).toHaveBeenCalledWith({ id: 12 });
     expect(lessonFind).not.toHaveBeenCalled();
     expect(cleanup).toHaveBeenCalledWith([]);
   });

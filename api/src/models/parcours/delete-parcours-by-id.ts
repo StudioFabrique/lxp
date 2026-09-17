@@ -1,16 +1,11 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { getAdmin } from "../../helpers/get-admin.ts";
 import { prisma } from "../../utils/db.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 async function deleteParcoursById(parcoursId: number, userId: string) {
   const admin = await getAdmin(userId);
-  const parcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const parcours = await prisma.orm.public.Parcours.where({ id: parcoursId })
     .include("admin", (related210) => related210.select("idMdb"))
     .include("modules", (related211) =>
       related211.include("courses", (related212) =>
@@ -44,39 +39,25 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
   }
 
   await prisma.transaction(async (tx) => {
-    await tx.orm.public.TagsOnParcours.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.TagsOnParcours.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.ContactsOnParcours.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.ContactsOnParcours.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.BonusSkill.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.BonusSkill.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.Objective.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.Objective.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.GroupsOnParcours.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.GroupsOnParcours.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.SkillsOnParcours.where((row) =>
-      whereFromObject(row, { parcoursId }),
-    )
+    await tx.orm.public.SkillsOnParcours.where({ parcoursId })
       .deleteAndCount()
       .then((count) => ({ count }));
-    await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId, adminId: admin.id }),
-    )
+    await tx.orm.public.Parcours.where({ id: parcoursId, adminId: admin.id })
       .delete()
       .then(requireDatabaseRow);
   });

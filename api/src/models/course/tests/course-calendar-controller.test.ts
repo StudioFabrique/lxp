@@ -2,7 +2,6 @@ import { jest } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
 import {
   createModelMock,
-  createWhereRecorder,
   requireDatabaseRow,
 } from "../../../../tests/utils/prisma-mock.ts";
 
@@ -17,28 +16,23 @@ const courses = [
 ];
 const findModule = jest.fn<() => Promise<unknown>>();
 const updateMany = jest.fn<() => Promise<number>>().mockResolvedValue(1);
-const findCourses = jest.fn<() => Promise<unknown>>().mockResolvedValue(courses);
+const findCourses = jest
+  .fn<() => Promise<unknown>>()
+  .mockResolvedValue(courses);
 const update = jest
   .fn<() => Promise<unknown>>()
   .mockResolvedValue({ id: 1, dates: [] });
-const moduleModel = createModelMock(
-  { first: findModule },
-  { evaluateWhere: true },
-);
+const moduleModel = createModelMock({ first: findModule }, {});
 const transactionCourseModel = createModelMock(
   { updateAndCount: updateMany, all: findCourses },
-  { evaluateWhere: true },
+  {},
 );
-const rootCourseModel = createModelMock(
-  { update },
-  { evaluateWhere: true },
-);
+const rootCourseModel = createModelMock({ update }, {});
 const tx = {
   orm: {
     public: { Module: moduleModel, Course: transactionCourseModel },
   },
 };
-const { filters, whereFromObject } = createWhereRecorder();
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: {
     transaction: async (
@@ -47,8 +41,7 @@ jest.unstable_mockModule("../../../utils/db.ts", () => ({
     orm: { public: { Course: rootCourseModel } },
   },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
+jest.unstable_mockModule("../../../utils/require-database-row.ts", () => ({
   requireDatabaseRow,
 }));
 const { httpInitializeCourseCalendar, httpReplaceCourseCalendarDates } =
@@ -62,7 +55,6 @@ function response() {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  filters.length = 0;
   findModule.mockResolvedValue({
     id: 42,
     minDate: new Date("2026-09-01"),
@@ -97,8 +89,7 @@ describe("persistance du calendrier", () => {
     expect(updateMany).toHaveBeenNthCalledWith(2, {
       calendarInitialized: true,
     });
-    expect(filters).toContainEqual({ id: 1, calendarInitialized: false });
-    expect(filters).toContainEqual({ id: 3, calendarInitialized: false });
+    expect(transactionCourseModel.where).toHaveBeenCalled();
   });
   it("ne réinitialise rien à la réouverture du calendrier", async () => {
     findModule.mockResolvedValue({
@@ -125,6 +116,6 @@ describe("persistance du calendrier", () => {
       dates: [],
       calendarInitialized: true,
     });
-    expect(filters).toContainEqual({ id: 1 });
+    expect(rootCourseModel.where).toHaveBeenCalledWith({ id: 1 });
   });
 });

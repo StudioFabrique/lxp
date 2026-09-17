@@ -1,7 +1,5 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import type { Admin, Resource, Tag } from "../../prisma/model-types.ts";
 import { getSoftColor } from "../../helpers/getSoftColors.ts";
 import { prisma } from "../../utils/db.ts";
@@ -18,15 +16,15 @@ export default async function putResource(
   isAdmin: boolean,
 ) {
   let updatedResource: Resource | null = null;
-  const existingResource = await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { id: resourceId }),
-  ).first();
+  const existingResource = await prisma.orm.public.Resource.where({
+    id: resourceId,
+  }).first();
 
   if (!existingResource)
     throw { message: "La ressource n'existe pas", statusCode: 404 };
 
   const duplicate = await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { title, id: { not: resourceId } }),
+    and(row.title.eq(title), row.id.neq(resourceId)),
   ).first();
   if (duplicate)
     throw {
@@ -34,9 +32,9 @@ export default async function putResource(
       statusCode: 409,
     };
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   if (!existingAuthor) throw { message: "Utilisateur non trouvé", status: 404 };
 
@@ -45,7 +43,7 @@ export default async function putResource(
   if (!mongoUser) throw { message: "Utilisateur non trouvé", status: 404 };
 
   const existingTagIds = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, { name: { in: tags, mode: "insensitive" } }),
+    row.name.in(tags),
   ).all();
 
   let remainingTags = tags.filter(
@@ -67,7 +65,7 @@ export default async function putResource(
     }));
     const newlyCreatedTags =
       (await prisma.orm.public.Tag.where((row) =>
-        whereFromObject(row, { name: { in: remainingTags } }),
+        row.name.in(remainingTags),
       ).all()) ?? [];
 
     const tagsToAdd = [...existingTagIds, ...newlyCreatedTags];
@@ -107,9 +105,7 @@ async function updateResource(
   tags: Tag[],
   filename: string | null,
 ) {
-  return await prisma.orm.public.Resource.where((row) =>
-    whereFromObject(row, { id: resourceId }),
-  )
+  return await prisma.orm.public.Resource.where({ id: resourceId })
     .update({
       title,
       description,
@@ -117,9 +113,7 @@ async function updateResource(
       author: mongoUser.firstname + " " + mongoUser.lastname,
       ...(filename ? { imageUrl: filename } : {}),
       tags: (relation) =>
-        relation.create(
-          tags.map((tag) => ({ tagId: tag.id })),
-        ),
+        relation.create(tags.map((tag) => ({ tagId: tag.id }))),
     })
     .then(requireDatabaseRow);
 }

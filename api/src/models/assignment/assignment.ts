@@ -1,7 +1,5 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { getExpectedAssignmentStudents } from "./teacher-assignments.ts";
@@ -103,9 +101,7 @@ export async function saveCourseAssignment(
   files: readonly UploadedAssignmentFile[],
 ) {
   const config = normalizedConfig(input);
-  const existing = await prisma.orm.public.CourseAssignment.where((row) =>
-    whereFromObject(row, { courseId }),
-  )
+  const existing = await prisma.orm.public.CourseAssignment.where({ courseId })
     .include("files", (related) => related.orderBy((row) => row.id.asc()))
     .include("criteria", (related) => related.orderBy((row) => row.order.asc()))
     .first();
@@ -113,9 +109,9 @@ export async function saveCourseAssignment(
   if (!config) {
     if (!existing)
       return { assignment: null, removedStoredNames: [] as string[] };
-    const submissionCount = await prisma.orm.public.AssignmentSubmission.where(
-      (row) => whereFromObject(row, { assignmentId: existing.id }),
-    )
+    const submissionCount = await prisma.orm.public.AssignmentSubmission.where({
+      assignmentId: existing.id,
+    })
       .aggregate((aggregate) => ({ total: aggregate.count() }))
       .then(({ total }) => total);
     if (submissionCount > 0) {
@@ -128,15 +124,15 @@ export async function saveCourseAssignment(
       ...existing.files.map((file) => file.storedName),
       ...(
         await prisma.orm.public.AssignmentSubmissionFile.where((row) =>
-          whereFromObject(row, { submission: { assignmentId: existing.id } }),
+          row.submission.some((submission) =>
+            submission.assignmentId.eq(existing.id),
+          ),
         )
           .select("storedName")
           .all()
       ).map((file) => file.storedName),
     ];
-    await prisma.orm.public.CourseAssignment.where((row) =>
-      whereFromObject(row, { id: existing.id }),
-    )
+    await prisma.orm.public.CourseAssignment.where({ id: existing.id })
       .delete()
       .then(requireDatabaseRow);
     return { assignment: null, removedStoredNames };
@@ -161,11 +157,7 @@ export async function saveCourseAssignment(
   );
   if (existing && rubricChanged) {
     const gradedCount = await prisma.orm.public.AssignmentSubmission.where(
-      (row) =>
-        whereFromObject(row, {
-          assignmentId: existing.id,
-          grade: { not: null },
-        }),
+      (row) => and(row.assignmentId.eq(existing.id), row.grade.isNotNull()),
     )
       .aggregate((aggregate) => ({ total: aggregate.count() }))
       .then(({ total }) => total);
@@ -179,9 +171,7 @@ export async function saveCourseAssignment(
 
   const assignment = await prisma.transaction(async (transaction) => {
     const saved = existing
-      ? await transaction.orm.public.CourseAssignment.where((row) =>
-          whereFromObject(row, { id: existing.id }),
-        )
+      ? await transaction.orm.public.CourseAssignment.where({ id: existing.id })
           .update({
             dueAt: config.dueAt.toISOString(),
             maxScore: config.maxScore,
@@ -201,13 +191,13 @@ export async function saveCourseAssignment(
     // conserve la note totale déjà attribuée et son historique.
     if (!existing || rubricChanged) {
       await transaction.orm.public.AssignmentCriterionScore.where((row) =>
-        whereFromObject(row, { criterion: { assignmentId: saved.id } }),
+        row.criterion.some((criterion) => criterion.assignmentId.eq(saved.id)),
       )
         .deleteAndCount()
         .then((count) => ({ count }));
-      await transaction.orm.public.CourseAssignmentCriterion.where((row) =>
-        whereFromObject(row, { assignmentId: saved.id }),
-      )
+      await transaction.orm.public.CourseAssignmentCriterion.where({
+        assignmentId: saved.id,
+      })
         .deleteAndCount()
         .then((count) => ({ count }));
       if (config.criteria.length > 0) {
@@ -223,9 +213,7 @@ export async function saveCourseAssignment(
     }
     if (filesToRemove.length > 0) {
       await transaction.orm.public.CourseAssignmentFile.where((row) =>
-        whereFromObject(row, {
-          id: { in: filesToRemove.map((file) => file.id) },
-        }),
+        row.id.in(filesToRemove.map((file) => file.id)),
       )
         .deleteAndCount()
         .then((count) => ({ count }));
@@ -241,11 +229,11 @@ export async function saveCourseAssignment(
         })),
       ).then((count) => ({ count }));
     }
-    return transaction.orm.public.CourseAssignment.where((row) =>
-      whereFromObject(row, { id: saved.id }),
-    )
+    return transaction.orm.public.CourseAssignment.where({ id: saved.id })
       .include("files", (related) => related.orderBy((row) => row.id.asc()))
-      .include("criteria", (related) => related.orderBy((row) => row.order.asc()))
+      .include("criteria", (related) =>
+        related.orderBy((row) => row.order.asc()),
+      )
       .first()
       .then(requireDatabaseRow);
   });
@@ -261,9 +249,9 @@ export async function getCourseAssignment(
   userIdMdb: string,
   staff: boolean,
 ) {
-  const assignment = await prisma.orm.public.CourseAssignment.where((row) =>
-    whereFromObject(row, { courseId }),
-  )
+  const assignment = await prisma.orm.public.CourseAssignment.where({
+    courseId,
+  })
     .include("files", (related) => related.orderBy((row) => row.id.asc()))
     .include("criteria", (related) => related.orderBy((row) => row.order.asc()))
     .include("course", (course) =>
@@ -275,14 +263,13 @@ export async function getCourseAssignment(
         ),
       ),
     )
-    .include("submissions", (related2) =>
-      related2
-        .where((row) =>
-          whereFromObject(
-            row,
-            staff ? undefined : { student: { idMdb: userIdMdb } },
-          ),
-        )
+    .include("submissions", (submissions) =>
+      (staff
+        ? submissions
+        : submissions.where((row) =>
+            row.student.some((student) => student.idMdb.eq(userIdMdb)),
+          )
+      )
         .include("student", (related3) => related3.select("id", "idMdb"))
         .include("files", (related4) => related4.orderBy((row) => row.id.asc()))
         .include("criterionScores")
@@ -317,7 +304,8 @@ export async function getCourseAssignment(
     criteria: staff || assignment.rubricVisible ? assignment.criteria : [],
     submissions: assignment.submissions.map((submission) => ({
       ...submission,
-      student: studentNames.get(submission.student!.idMdb) ?? submission.student,
+      student:
+        studentNames.get(submission.student!.idMdb) ?? submission.student,
     })),
     expectedStudents,
   };
@@ -328,13 +316,13 @@ export function getStudentAssignments(
   parcoursIds: readonly number[],
 ) {
   return prisma.orm.public.CourseAssignment.where((row) =>
-    whereFromObject(row, {
-      course: {
-        isPublished: true,
-        visibility: true,
-        module: { parcoursId: { in: [...parcoursIds] } },
-      },
-    }),
+    row.course.some((course) =>
+      and(
+        course.isPublished.eq(true),
+        course.visibility.eq(true),
+        course.module.some((module) => module.parcoursId.in([...parcoursIds])),
+      ),
+    ),
   )
     .select("id", "dueAt", "maxScore")
     .include("course", (related5) =>
@@ -348,7 +336,9 @@ export function getStudentAssignments(
     )
     .include("submissions", (related8) =>
       related8
-        .where((row) => whereFromObject(row, { student: { idMdb: userIdMdb } }))
+        .where((row) =>
+          row.student.some((student) => student.idMdb.eq(userIdMdb)),
+        )
         .select("id", "submittedAt", "grade", "gradedAt")
         .limit(1),
     )
@@ -363,20 +353,18 @@ export async function saveSubmission(
   files: readonly UploadedAssignmentFile[],
   submit: boolean,
 ) {
-  const student = await prisma.orm.public.Student.where((row) =>
-    whereFromObject(row, { idMdb: userIdMdb }),
-  ).first();
+  const student = await prisma.orm.public.Student.where({
+    idMdb: userIdMdb,
+  }).first();
   if (!student)
     throw httpError(403, "Seul un apprenant peut rendre un devoir.");
 
-  const assignment = await prisma.orm.public.CourseAssignment.where((row) =>
-    whereFromObject(row, { courseId }),
-  )
+  const assignment = await prisma.orm.public.CourseAssignment.where({
+    courseId,
+  })
     .include("course", (related9) => related9.select("moduleId"))
     .include("submissions", (related10) =>
-      related10
-        .where((row) => whereFromObject(row, { studentId: student.id }))
-        .include("files"),
+      related10.where({ studentId: student.id }).include("files"),
     )
     .first();
   if (!assignment) throw httpError(404, "Ce cours ne comporte aucun devoir.");
@@ -398,9 +386,9 @@ export async function saveSubmission(
 
   return prisma.transaction(async (transaction) => {
     const submission = existing
-      ? await transaction.orm.public.AssignmentSubmission.where((row) =>
-          whereFromObject(row, { id: existing.id }),
-        )
+      ? await transaction.orm.public.AssignmentSubmission.where({
+          id: existing.id,
+        })
           .update({
             text: text.trim() || null,
             submittedAt: submit ? new Date().toISOString() : null,
@@ -423,9 +411,9 @@ export async function saveSubmission(
         })),
       ).then((count) => ({ count }));
     }
-    const saved = await transaction.orm.public.AssignmentSubmission.where(
-      (row) => whereFromObject(row, { id: submission.id }),
-    )
+    const saved = await transaction.orm.public.AssignmentSubmission.where({
+      id: submission.id,
+    })
       .include("files")
       .include("criterionScores")
       .first()
@@ -433,23 +421,24 @@ export async function saveSubmission(
     if (submit) {
       const unfinishedLessons = await transaction.orm.public.Lesson.where(
         (row) =>
-          whereFromObject(row, {
-            courseId,
-            lessonsRead: {
-              none: { studentId: student.id, finishedAt: { not: null } },
-            },
-          }),
+          and(
+            row.courseId.eq(courseId),
+            row.lessonsRead.none((lessonsRead) =>
+              and(
+                lessonsRead.studentId.eq(student.id),
+                lessonsRead.finishedAt.isNotNull(),
+              ),
+            ),
+          ),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total);
       if (unfinishedLessons === 0) {
-        await transaction.orm.public.CourseRead.where((row) =>
-          whereFromObject(row, {
-            courseId,
-            studentId: student.id,
-            finishedAt: null,
-          }),
-        )
+        await transaction.orm.public.CourseRead.where({
+          courseId,
+          studentId: student.id,
+          finishedAt: null,
+        })
           .updateAndCount({ finishedAt: new Date().toISOString() })
           .then((count) => ({ count }));
       }
@@ -457,42 +446,50 @@ export async function saveSubmission(
       const [unfinishedModuleLessons, unfinishedModuleAssignments] =
         await Promise.all([
           transaction.orm.public.Lesson.where((row) =>
-            whereFromObject(row, {
-              course: {
-                moduleId: assignment.course!.moduleId,
-                visibility: true,
-                isPublished: true,
-              },
-              lessonsRead: {
-                none: { studentId: student.id, finishedAt: { not: null } },
-              },
-            }),
+            and(
+              row.course.some((course) =>
+                and(
+                  course.moduleId.eq(assignment.course!.moduleId),
+                  course.visibility.eq(true),
+                  course.isPublished.eq(true),
+                ),
+              ),
+              row.lessonsRead.none((lessonsRead) =>
+                and(
+                  lessonsRead.studentId.eq(student.id),
+                  lessonsRead.finishedAt.isNotNull(),
+                ),
+              ),
+            ),
           )
             .aggregate((aggregate) => ({ total: aggregate.count() }))
             .then(({ total }) => total),
           transaction.orm.public.CourseAssignment.where((row) =>
-            whereFromObject(row, {
-              course: {
-                moduleId: assignment.course!.moduleId,
-                visibility: true,
-                isPublished: true,
-              },
-              submissions: {
-                none: { studentId: student.id, submittedAt: { not: null } },
-              },
-            }),
+            and(
+              row.course.some((course) =>
+                and(
+                  course.moduleId.eq(assignment.course!.moduleId),
+                  course.visibility.eq(true),
+                  course.isPublished.eq(true),
+                ),
+              ),
+              row.submissions.none((submissions) =>
+                and(
+                  submissions.studentId.eq(student.id),
+                  submissions.submittedAt.isNotNull(),
+                ),
+              ),
+            ),
           )
             .aggregate((aggregate) => ({ total: aggregate.count() }))
             .then(({ total }) => total),
         ]);
       if (unfinishedModuleLessons === 0 && unfinishedModuleAssignments === 0) {
-        await transaction.orm.public.ModuleRead.where((row) =>
-          whereFromObject(row, {
-            moduleId: assignment.course!.moduleId,
-            studentId: student.id,
-            finishedAt: null,
-          }),
-        )
+        await transaction.orm.public.ModuleRead.where({
+          moduleId: assignment.course!.moduleId,
+          studentId: student.id,
+          finishedAt: null,
+        })
           .updateAndCount({ finishedAt: new Date().toISOString() })
           .then((count) => ({ count }));
       }
@@ -514,7 +511,10 @@ export async function gradeSubmission(
   graderIdMdb: string,
 ) {
   const submission = await prisma.orm.public.AssignmentSubmission.where((row) =>
-    whereFromObject(row, { id: submissionId, assignment: { courseId } }),
+    and(
+      row.id.eq(submissionId),
+      row.assignment.some((assignment) => assignment.courseId.eq(courseId)),
+    ),
   )
     .include("assignment", (related11) => related11.include("criteria"))
     .first();
@@ -564,9 +564,9 @@ export async function gradeSubmission(
   }
 
   return prisma.transaction(async (transaction) => {
-    await transaction.orm.public.AssignmentCriterionScore.where((row) =>
-      whereFromObject(row, { submissionId }),
-    )
+    await transaction.orm.public.AssignmentCriterionScore.where({
+      submissionId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
     if (scores.length > 0) {
@@ -574,9 +574,9 @@ export async function gradeSubmission(
         scores.map((score) => ({ submissionId, ...score })),
       ).then((count) => ({ count }));
     }
-    return transaction.orm.public.AssignmentSubmission.where((row) =>
-      whereFromObject(row, { id: submissionId }),
-    )
+    return transaction.orm.public.AssignmentSubmission.where({
+      id: submissionId,
+    })
       .include("files")
       .include("criterionScores")
       .include("student")
@@ -599,16 +599,29 @@ export async function getAssignmentFile(
 ) {
   if (kind === "brief") {
     return prisma.orm.public.CourseAssignmentFile.where((row) =>
-      whereFromObject(row, { id: fileId, assignment: { courseId } }),
+      and(
+        row.id.eq(fileId),
+        row.assignment.some((assignment) => assignment.courseId.eq(courseId)),
+      ),
     ).first();
   }
   return prisma.orm.public.AssignmentSubmissionFile.where((row) =>
-    whereFromObject(row, {
-      id: fileId,
-      submission: {
-        assignment: { courseId },
-        ...(staff ? {} : { student: { idMdb: userIdMdb } }),
-      },
-    }),
+    and(
+      row.id.eq(fileId),
+      row.submission.some((submission) =>
+        and(
+          submission.assignment.some((assignment) =>
+            assignment.courseId.eq(courseId),
+          ),
+          ...(staff
+            ? []
+            : [
+                submission.student.some((student) =>
+                  student.idMdb.eq(userIdMdb),
+                ),
+              ]),
+        ),
+      ),
+    ),
   ).first();
 }

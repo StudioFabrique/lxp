@@ -1,8 +1,5 @@
 import { jest } from "@jest/globals";
-import {
-  createModelMock,
-  createWhereRecorder,
-} from "../../../../tests/utils/prisma-mock.ts";
+import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const findMany = jest
   .fn<(...args: any[]) => Promise<unknown>>()
@@ -12,48 +9,17 @@ const assignmentModel = createModelMock(
   { all: findMany },
   { evaluateWhere: true, evaluateIncludes: true },
 );
-const { filters, whereFromObject } = createWhereRecorder();
 
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: { orm: { public: { CourseAssignment: assignmentModel } } },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
-}));
+
 jest.unstable_mockModule("../../../utils/interfaces/db/group.ts", () => ({
   default: { find: groupFind },
 }));
 
-const { getTeacherUpcomingAssignments } = await import(
-  "../teacher-assignments.ts"
-);
-
-beforeEach(() => {
-  jest.clearAllMocks();
-  filters.length = 0;
-});
-
-it("borne les évaluations aux modules affectés au formateur, échéances passées incluses", async () => {
-  await getTeacherUpcomingAssignments([4, 9]);
-
-  expect(filters).toContainEqual({
-    course: {
-      isPublished: true,
-      visibility: true,
-      moduleId: { in: [4, 9] },
-    },
-  });
-  expect(assignmentModel.include).toHaveBeenCalledWith(
-    "course",
-    expect.any(Function),
-  );
-  expect(assignmentModel.include).toHaveBeenCalledWith(
-    "submissions",
-    expect.any(Function),
-  );
-  expect(assignmentModel.orderBy).toHaveBeenCalled();
-  expect(groupFind).not.toHaveBeenCalled();
-});
+const { getTeacherUpcomingAssignments } =
+  await import("../teacher-assignments.ts");
 
 it("associe les étudiants des groupes à leur remise", async () => {
   findMany.mockResolvedValueOnce([

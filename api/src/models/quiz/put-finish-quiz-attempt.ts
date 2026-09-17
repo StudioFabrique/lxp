@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 /**
@@ -15,9 +12,7 @@ export default async function putFinishQuizAttempt(
   attemptId: number,
   userIdMdb: string,
 ) {
-  const attempt = await prisma.orm.public.QuizAttempt.where((row) =>
-    whereFromObject(row, { id: attemptId }),
-  )
+  const attempt = await prisma.orm.public.QuizAttempt.where({ id: attemptId })
     .select("id", "finishedAt")
     .include("student", (related25) => related25.select("idMdb"))
     .first();
@@ -31,15 +26,11 @@ export default async function putFinishQuizAttempt(
     };
   }
 
-  const answers = await prisma.orm.public.QuizAnswer.where((row) =>
-    whereFromObject(row, { attemptId }),
-  )
+  const answers = await prisma.orm.public.QuizAnswer.where({ attemptId })
     .select("isCorrect")
     .all();
 
-  return prisma.orm.public.QuizAttempt.where((row) =>
-    whereFromObject(row, { id: attemptId }),
-  )
+  return prisma.orm.public.QuizAttempt.where({ id: attemptId })
     .select("id", "finishedAt", "totalQuestions", "correctAnswers")
     .update({
       finishedAt: attempt.finishedAt ?? new Date().toISOString(),

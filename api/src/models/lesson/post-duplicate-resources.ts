@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { Lesson } from "../../prisma/model-types.ts";
 
 import { duplicateActivityFile } from "../../helpers/duplicate-activity-file.ts";
@@ -22,16 +21,10 @@ export default async function postDuplicateResources(
   }
 
   const [existingCourse, prismaAdmin, existingAdmin] = await Promise.all([
-    prisma.orm.public.Course.where((row) =>
-      whereFromObject(row, { id: courseId }),
-    )
+    prisma.orm.public.Course.where({ id: courseId })
       .include("lessons", (related130) => related130.select("title", "order"))
       .first(),
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: adminMongoId }),
-    )
-      .select("id")
-      .first(),
+    prisma.orm.public.Admin.where({ idMdb: adminMongoId }).select("id").first(),
     User.findOne({ _id: adminMongoId }, { firstname: 1, lastname: 1 }),
   ]);
 
@@ -46,7 +39,7 @@ export default async function postDuplicateResources(
 
   await prisma.transaction(async (tx) => {
     const resources = await tx.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: { in: resourceIds } }),
+      row.id.in(resourceIds),
     )
       .select("title", "description")
       .include("tags", (related131) => related131.select("tagId").limit(1))
@@ -118,9 +111,13 @@ export default async function postDuplicateResources(
                 order: activity.order,
                 url: activity.url,
                 authorId: prismaAdmin.id,
-                resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                resourceActivities: (
+                  relation: NestedCreate<"ResourceActivity">,
+                ) =>
                   relation.create(
-                    activity.resourceBonusActivities.map(({ label, order, url }) => ({ label, order, url })),
+                    activity.resourceBonusActivities.map(
+                      ({ label, order, url }) => ({ label, order, url }),
+                    ),
                   ),
               })),
             ),

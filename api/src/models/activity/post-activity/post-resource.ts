@@ -1,5 +1,9 @@
-import { whereFromObject } from "../../../utils/prisma-query.ts";
-import type { Lesson, Activity, Resource, BonusActivity } from "../../../prisma/model-types.ts";
+import type {
+  Lesson,
+  Activity,
+  Resource,
+  BonusActivity,
+} from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -84,15 +88,11 @@ export default async function postActivityResource(req: CustomRequest) {
 
   // Fetch the parent entity based on type
   if (parent === "lesson")
-    existingParent = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: +lessonId }),
-    )
+    existingParent = await prisma.orm.public.Lesson.where({ id: +lessonId })
       .include("activities")
       .first();
   else if (parent === "resource")
-    existingParent = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: +lessonId }),
-    )
+    existingParent = await prisma.orm.public.Resource.where({ id: +lessonId })
       .include("bonusActivities")
       .first();
 
@@ -101,9 +101,9 @@ export default async function postActivityResource(req: CustomRequest) {
     throw { statusCode: 404, message: "L'élément parent n'existe pas" };
 
   // Fetch the author from database using MongoDB ID
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   // Verify author exists
   if (!existingAuthor)

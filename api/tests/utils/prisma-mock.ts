@@ -25,10 +25,7 @@ export function createModelMock(
   for (const method of chainMethods) {
     model[method] ??= jest.fn(() => model);
   }
-  model.where ??= jest.fn((predicate: (fields: object) => unknown) => {
-    if (options.evaluateWhere) predicate({});
-    return model;
-  });
+  model.where ??= jest.fn(() => model);
   model.include ??= jest.fn(
     (_relation: string, refine?: (collection: typeof model) => unknown) => {
       if (options.evaluateIncludes) refine?.(model);
@@ -37,16 +34,6 @@ export function createModelMock(
   );
 
   return model;
-}
-
-export function createWhereRecorder() {
-  const filters: unknown[] = [];
-  const whereFromObject = jest.fn((_fields: object, filter: unknown) => {
-    filters.push(filter);
-    return {};
-  });
-
-  return { filters, whereFromObject };
 }
 
 export function requireDatabaseRow<Row>(row: Row | null): Row {

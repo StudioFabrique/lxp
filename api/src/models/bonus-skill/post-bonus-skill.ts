@@ -1,17 +1,16 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function postBonusSkill(parcoursId: number, newSkill: any) {
   try {
-    const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId }),
-    ).first();
+    const existingParcours = await prisma.orm.public.Parcours.where({
+      id: parcoursId,
+    }).first();
     if (!existingParcours) {
       throw new Error(`Le parcours n'existe pas`);
     }
-    const existingSkill = await prisma.orm.public.Skill.where((row) =>
-      whereFromObject(row, { description: newSkill.description }),
-    ).first();
+    const existingSkill = await prisma.orm.public.Skill.where({
+      description: newSkill.description,
+    }).first();
 
     if (!existingSkill) {
       const response = await prisma.orm.public.BonusSkill.create({

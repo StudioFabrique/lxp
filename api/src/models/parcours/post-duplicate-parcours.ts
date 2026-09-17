@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma, type NestedCreate } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { getDuplicateIdentity } from "../../helpers/duplication.ts";
@@ -9,9 +8,7 @@ export default async function postDuplicateParcours(
   userId: string,
 ) {
   const [source, admin, mongoUser] = await Promise.all([
-    prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId }),
-    )
+    prisma.orm.public.Parcours.where({ id: parcoursId })
       .include("objectives")
       .include("bonusSkills")
       .include("contacts")
@@ -22,9 +19,7 @@ export default async function postDuplicateParcours(
           .include("bonusSkills")
           .include("quizzes", (related8) =>
             related8
-              .where((row) =>
-                whereFromObject(row, { courseId: null, activityId: null }),
-              )
+              .where({ courseId: null, activityId: null })
               .include("questions", (related9) =>
                 related9.include("quizQuestionReports"),
               ),
@@ -46,9 +41,7 @@ export default async function postDuplicateParcours(
           ),
       )
       .first(),
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first(),
+    prisma.orm.public.Admin.where({ idMdb: userId }).first(),
     User.findById(userId),
   ]);
 
@@ -67,7 +60,9 @@ export default async function postDuplicateParcours(
   );
 
   const existingModuleTitles = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { parcours: { formationId: source.formationId } }),
+    row.parcours.some((parcours) =>
+      parcours.formationId.eq(source.formationId),
+    ),
   )
     .select("title")
     .all();
@@ -136,9 +131,7 @@ export default async function postDuplicateParcours(
           source.contacts.map(({ contactId }) => ({ contactId })),
         ),
       tags: (relation) =>
-        relation.create(
-          source.tags.map(({ tagId }) => ({ tagId })),
-        ),
+        relation.create(source.tags.map(({ tagId }) => ({ tagId }))),
     });
 
     const skillMap = new Map<number, number>();
@@ -200,9 +193,7 @@ export default async function postDuplicateParcours(
                   course.contacts.map(({ contactId }) => ({ contactId })),
                 ),
               tags: (relation: NestedCreate<"TagsOnCourse">) =>
-                relation.create(
-                  course.tags.map(({ tagId }) => ({ tagId })),
-                ),
+                relation.create(course.tags.map(({ tagId }) => ({ tagId }))),
               lessons: (relation: NestedCreate<"Lesson">) =>
                 relation.create(
                   course.lessons.map((lesson) => ({
@@ -225,7 +216,9 @@ export default async function postDuplicateParcours(
                           url: activity.url,
                           authorId: admin.id,
                           duplicationIndex: activity.duplicationIndex + 1,
-                          resourceActivities: (relation: NestedCreate<"ResourceActivity">) =>
+                          resourceActivities: (
+                            relation: NestedCreate<"ResourceActivity">,
+                          ) =>
                             relation.create(
                               activity.resourceActivities.map(
                                 ({ label, order, url }) => ({
@@ -258,7 +251,9 @@ export default async function postDuplicateParcours(
                     tags: question.tags,
                     data: question.data as any,
                     contentHash: null,
-                    quizQuestionReports: (relation: NestedCreate<"QuizQuestionReport">) =>
+                    quizQuestionReports: (
+                      relation: NestedCreate<"QuizQuestionReport">,
+                    ) =>
                       relation.create(
                         question.quizQuestionReports.map(({ commentaire }) => ({
                           commentaire,

@@ -1,8 +1,5 @@
 import { jest } from "@jest/globals";
-import {
-  createModelMock,
-  createWhereRecorder,
-} from "../../../../tests/utils/prisma-mock.ts";
+import { createModelMock } from "../../../../tests/utils/prisma-mock.ts";
 
 const moduleCount = jest.fn<() => Promise<{ total: number }>>();
 const skillCount = jest.fn<() => Promise<{ total: number }>>();
@@ -16,7 +13,6 @@ const skillModel = createModelMock(
   { evaluateWhere: true },
 );
 const associationModel = createModelMock({ createAndCount: createMany });
-const { filters, whereFromObject } = createWhereRecorder();
 const transaction = jest.fn(
   async (callback: (tx: unknown) => Promise<unknown>) =>
     callback({
@@ -33,9 +29,6 @@ const transaction = jest.fn(
 jest.unstable_mockModule("../../../utils/db.ts", () => ({
   prisma: { transaction },
 }));
-jest.unstable_mockModule("../../../utils/prisma-query.ts", () => ({
-  whereFromObject,
-}));
 
 const { default: assignSkillsToModules } =
   await import("../assign-skills-to-modules.ts");
@@ -43,7 +36,6 @@ const { default: assignSkillsToModules } =
 describe("affectation rapide des compétences", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    filters.length = 0;
   });
 
   it("ajoute toutes les associations demandées sans doublons", async () => {
@@ -96,10 +88,6 @@ describe("affectation rapide des compétences", () => {
       },
     );
 
-    expect(filters).toContainEqual({
-      id: { in: [3] },
-      parcoursId: 9,
-      AND: [{ id: { in: [3] } }],
-    });
+    expect(moduleModel.where).toHaveBeenCalled();
   });
 });

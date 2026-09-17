@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import path from "path";
 import fs from "fs";
 import { randomUUID } from "node:crypto";
@@ -40,13 +37,11 @@ export default async function putActivityText(
   let existingActivity: Activity | null = null;
 
   if (parent === "lesson")
-    existingActivity = await prisma.orm.public.Activity.where((row) =>
-      whereFromObject(row, { id }),
-    ).first();
+    existingActivity = await prisma.orm.public.Activity.where({ id }).first();
   else
-    existingBonusActivity = await prisma.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { id }),
-    ).first();
+    existingBonusActivity = await prisma.orm.public.BonusActivity.where({
+      id,
+    }).first();
 
   if (!existingActivity && !existingBonusActivity) {
     const error = new Error("L'activité n'existe pas.");
@@ -75,31 +70,23 @@ export default async function putActivityText(
     let updatedActivity: Activity | BonusActivity | null = null;
 
     if (parent === "lesson")
-      updatedActivity = await prisma.orm.public.Activity.where((row) =>
-        whereFromObject(row, { id }),
-      )
+      updatedActivity = await prisma.orm.public.Activity.where({ id })
         .update({ ...existingActivity, url: fileName, title })
         .then(requireDatabaseRow);
     else
-      updatedActivity = await prisma.orm.public.BonusActivity.where((row) =>
-        whereFromObject(row, { id }),
-      )
+      updatedActivity = await prisma.orm.public.BonusActivity.where({ id })
         .update({ ...existingBonusActivity, url: fileName, title })
         .then(requireDatabaseRow);
 
     let doublons: Activity[] | BonusActivity[] | null = null;
 
     parent === "lesson"
-      ? (doublons = await prisma.orm.public.Activity.where((row) =>
-          whereFromObject(row, {
-            url: existingActivity!.url,
-          }),
-        ).all())
-      : (doublons = await prisma.orm.public.BonusActivity.where((row) =>
-          whereFromObject(row, {
-            url: existingBonusActivity!.url,
-          }),
-        ).all());
+      ? (doublons = await prisma.orm.public.Activity.where({
+          url: existingActivity!.url,
+        }).all())
+      : (doublons = await prisma.orm.public.BonusActivity.where({
+          url: existingBonusActivity!.url,
+        }).all());
 
     if (doublons && doublons.length === 0) {
       await fs.promises.unlink(

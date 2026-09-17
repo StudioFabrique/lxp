@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
@@ -6,9 +5,7 @@ export default async function getModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
-  const module = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: moduleId }),
-  )
+  const module = await prisma.orm.public.Module.where({ id: moduleId })
     .select(
       "id",
       "title",
@@ -28,7 +25,7 @@ export default async function getModuleDetail(
           related174
             .include("lessonsRead", (related175) =>
               related175.where((row) =>
-                whereFromObject(row, { student: { idMdb: userMongoId } }),
+                row.student.some((student) => student.idMdb.eq(userMongoId)),
               ),
             )
             .orderBy((row) => row.order.asc()),

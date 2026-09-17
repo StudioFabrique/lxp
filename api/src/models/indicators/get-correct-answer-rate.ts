@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import {
   emptyIndicator,
@@ -25,24 +26,29 @@ export default async function getCorrectAnswerRate(
       { reason: "Cet utilisateur n'est pas un apprenant." },
     );
   }
+  const studentId = context.studentId;
+  const from = context.from.toISOString();
+  const to = context.to.toISOString();
 
   const [answers, submissions] = await Promise.all([
     prisma.orm.public.QuizAnswer.where((row) =>
-      whereFromObject(row, {
-        attempt: {
-          studentId: context.studentId,
-          finishedAt: { gte: context.from, lte: context.to },
-        },
-      }),
+      row.attempt.some((attempt) =>
+        and(
+          attempt.studentId.eq(studentId),
+          attempt.finishedAt.gte(from),
+          attempt.finishedAt.lte(to),
+        ),
+      ),
     )
       .select("isCorrect")
       .all(),
     prisma.orm.public.AssignmentSubmission.where((row) =>
-      whereFromObject(row, {
-        studentId: context.studentId,
-        gradedAt: { gte: context.from, lte: context.to },
-        grade: { not: null },
-      }),
+      and(
+        row.studentId.eq(studentId),
+        row.gradedAt.gte(from),
+        row.gradedAt.lte(to),
+        row.grade.isNotNull(),
+      ),
     )
       .select("grade")
       .include("assignment", (related91) => related91.select("maxScore"))

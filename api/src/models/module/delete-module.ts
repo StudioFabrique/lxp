@@ -1,15 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteModule(moduleId: number, userId: string) {
-  const module = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: moduleId }),
-  )
+  const module = await prisma.orm.public.Module.where({ id: moduleId })
     .include("courses", (related143) =>
       related143.include("lessons", (related144) =>
         related144.include("activities"),
@@ -38,9 +33,7 @@ export default async function deleteModule(moduleId: number, userId: string) {
     await deleteActivity(activity.id, activity.type, "lesson");
   }
 
-  await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, { id: moduleId }),
-  )
+  await prisma.orm.public.Module.where({ id: moduleId })
     .delete()
     .then(requireDatabaseRow);
   return true;

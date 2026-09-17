@@ -12,9 +12,8 @@ jest.unstable_mockModule(
   () => ({ getAccessibleParcoursIds }),
 );
 
-const { default: getUserProfileSkills } = await import(
-  "../get-user-profile-skills.ts"
-);
+const { default: getUserProfileSkills } =
+  await import("../get-user-profile-skills.ts");
 
 describe("badges de compétences du profil apprenant", () => {
   beforeEach(() => {
@@ -54,9 +53,8 @@ describe("badges de compétences du profil apprenant", () => {
         isEarned: true,
       }),
     ]);
-    expect(loadSkillAchievements).toHaveBeenCalledWith(
-      "student-id",
-      { parcoursIds: [4, 8] },
-    );
+    expect(loadSkillAchievements).toHaveBeenCalledWith("student-id", {
+      parcoursIds: [4, 8],
+    });
   });
 });

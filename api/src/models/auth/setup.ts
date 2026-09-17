@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../utils/db.ts";
@@ -224,9 +221,9 @@ async function createRootUser(
     let tokenConsumed = false;
 
     try {
-      const existingAdmin = await prisma.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: userId }),
-      )
+      const existingAdmin = await prisma.orm.public.Admin.where({
+        idMdb: userId,
+      })
         .select("id")
         .first();
       if (!existingAdmin) {
@@ -254,9 +251,7 @@ async function createRootUser(
         ...(createdAdminId === undefined
           ? []
           : [
-              prisma.orm.public.Admin.where((row) =>
-                whereFromObject(row, { id: createdAdminId }),
-              )
+              prisma.orm.public.Admin.where({ id: createdAdminId })
                 .delete()
                 .then(requireDatabaseRow),
             ]),
@@ -328,9 +323,7 @@ async function createRootUser(
     await transferRoot(userId);
   } catch (error) {
     await Promise.allSettled([
-      prisma.orm.public.Admin.where((row) =>
-        whereFromObject(row, { idMdb: userId }),
-      )
+      prisma.orm.public.Admin.where({ idMdb: userId })
         .deleteAndCount()
         .then((count) => ({ count })),
       ...(tokenConsumed

@@ -1,8 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
-import type { Activity, BonusActivity, Lesson, Resource } from "../../../prisma/model-types.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
+import type {
+  Activity,
+  BonusActivity,
+  Lesson,
+  Resource,
+} from "../../../prisma/model-types.ts";
 import { prisma } from "../../../utils/db.ts";
 
 /**
@@ -24,23 +26,19 @@ export default async function postImage(
   parent: "lesson" | "resource",
 ) {
   // Check if the user exists
-  const existingUser = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingUser = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
   let existingParent: Lesson | Resource | null = null;
 
   if (parent === "lesson")
-    existingParent = await prisma.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Lesson.where({ id: lessonId })
       .include("activities")
       .first();
   else if (parent === "resource")
-    existingParent = await prisma.orm.public.Resource.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    existingParent = await prisma.orm.public.Resource.where({ id: lessonId })
       .include("bonusActivities")
       .first();
 
@@ -81,12 +79,11 @@ export default async function postImage(
         adminId: existingUser.id,
       });
     if (url) {
-      const media = await tx.orm.public.Mediatheque.where((row) =>
-        whereFromObject(row, { url }),
-      ).first();
+      const media = await tx.orm.public.Mediatheque.where({ url }).first();
       if (media) {
         await tx.execute(
-          prisma.raw.sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id} AND "type" = 'image'`
+          prisma.raw
+            .sql`UPDATE "Mediatheque" SET "used" = "used" + 1 WHERE "id" = ${media.id} AND "type" = 'image'`
             .affectedCount()
             .build(),
         );

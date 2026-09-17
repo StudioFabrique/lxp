@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function putParcoursObjectives(
@@ -11,9 +8,9 @@ async function putParcoursObjectives(
   const id = parseInt(parcoursId);
 
   try {
-    const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id }),
-    ).first();
+    const existingParcours = await prisma.orm.public.Parcours.where({
+      id,
+    }).first();
 
     if (!existingParcours) {
       const parcoursError: any = new Error("Parcours inexistant");
@@ -21,9 +18,7 @@ async function putParcoursObjectives(
       throw parcoursError;
     }
 
-    const updatedParcours = await prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id }),
-    )
+    const updatedParcours = await prisma.orm.public.Parcours.where({ id })
       .update({
         objectives: (relation) =>
           relation.create(
@@ -37,16 +32,12 @@ async function putParcoursObjectives(
       .then(requireDatabaseRow);
 
     const offset =
-      (await prisma.orm.public.Objective.where((row) =>
-        whereFromObject(row, { parcoursId: id }),
-      )
+      (await prisma.orm.public.Objective.where({ parcoursId: id })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total)) - objectives.length;
     const limit = objectives.length;
 
-    const result = await prisma.orm.public.Objective.where((row) =>
-      whereFromObject(row, { parcoursId: id }),
-    )
+    const result = await prisma.orm.public.Objective.where({ parcoursId: id })
       .select("id", "description")
       .offset(offset)
       .limit(limit)

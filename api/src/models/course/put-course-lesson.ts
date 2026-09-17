@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { Lesson } from "../../prisma/model-types.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -9,9 +8,7 @@ async function putCourseLesson(
   adminId: string,
 ) {
   const tagId = Number(lessonData.tagId);
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const existingCourse = await prisma.orm.public.Course.where({ id: courseId })
     .include("lessons")
     .include("tags", (related61) => related61.select("tagId"))
     .first();
@@ -28,9 +25,7 @@ async function putCourseLesson(
     throw error;
   }
 
-  const prismaAdmin = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: adminId }),
-  )
+  const prismaAdmin = await prisma.orm.public.Admin.where({ idMdb: adminId })
     .select("id")
     .first();
 

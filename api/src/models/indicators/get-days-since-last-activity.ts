@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import ConnectionInfos from "../../utils/interfaces/db/connection-infos.ts";
 import PromptStats from "../../utils/interfaces/db/prompt-stats.ts";
@@ -42,10 +43,10 @@ export default async function getDaysSinceLastActivity(
     context.studentId === null
       ? Promise.resolve(null)
       : prisma.orm.public.LessonRead.where((row) =>
-          whereFromObject(row, {
-            studentId: context.studentId,
-            lastOpenedAt: { lte: context.to },
-          }),
+          and(
+            row.studentId.eq(context.studentId!),
+            row.lastOpenedAt.lte(context.to.toISOString()),
+          ),
         )
           .select("lastOpenedAt")
           .orderBy((row) => row.lastOpenedAt.desc())

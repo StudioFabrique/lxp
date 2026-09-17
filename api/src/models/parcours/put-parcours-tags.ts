@@ -1,7 +1,5 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import { assertCanUnassignTags, type TagActor } from "../tag/tag-access.ts";
 
@@ -13,9 +11,9 @@ async function putParcoursTags(
   const tagIds = [...new Set(newTags)];
 
   // on verifie l'existence du parcours et on récupère les tags de la formation avec laquelle il est en relation
-  const existingParcours = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const existingParcours = await prisma.orm.public.Parcours.where({
+    id: parcoursId,
+  })
     .include("formation", (related18) => related18.include("tags"))
     .include("tags", (related19) => related19.select("tagId", "addedBy"))
     .first();
@@ -25,7 +23,7 @@ async function putParcoursTags(
   }
 
   const existingTagsCount = await prisma.orm.public.Tag.where((row) =>
-    whereFromObject(row, { id: { in: tagIds } }),
+    row.id.in(tagIds),
   )
     .aggregate((aggregate) => ({ total: aggregate.count() }))
     .then(({ total }) => total);
@@ -64,7 +62,7 @@ async function putParcoursTags(
 
     if (removedTagIds.length > 0) {
       await tx.orm.public.TagsOnParcours.where((row) =>
-        whereFromObject(row, { parcoursId, tagId: { in: removedTagIds } }),
+        and(row.parcoursId.eq(parcoursId), row.tagId.in(removedTagIds)),
       )
         .deleteAndCount()
         .then((count) => ({ count }));
@@ -80,9 +78,7 @@ async function putParcoursTags(
       ).then((count) => ({ count }));
     }
 
-    await tx.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: parcoursId }),
-    )
+    await tx.orm.public.Parcours.where({ id: parcoursId })
       .update({ updatedAt: new Date().toISOString() })
       .then(requireDatabaseRow);
   });

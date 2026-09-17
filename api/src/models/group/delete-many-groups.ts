@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import Group from "../../utils/interfaces/db/group.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -26,12 +25,10 @@ export default async function deleteManyGroups(groupsIds: string[]) {
 
     await prisma.transaction(async (tx) => {
       await tx.orm.public.GroupsOnParcours.where((row) =>
-        whereFromObject(row, {
-          group: { idMdb: { in: groupsIds } },
-        }),
+        row.group.some((group) => group.idMdb.in(groupsIds)),
       ).deleteAndCount();
       await tx.orm.public.Group.where((row) =>
-        whereFromObject(row, { idMdb: { in: groupsIds } }),
+        row.idMdb.in(groupsIds),
       ).deleteAndCount();
     });
 

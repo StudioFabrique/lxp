@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import {
   emptyIndicator,
@@ -24,12 +25,16 @@ export default async function getQuizInteractions(
       reason: "Cet utilisateur n'est pas un apprenant.",
     });
   }
+  const studentId = context.studentId;
+  const from = context.from.toISOString();
+  const to = context.to.toISOString();
 
   const attempts = await prisma.orm.public.QuizAttempt.where((row) =>
-    whereFromObject(row, {
-      studentId: context.studentId,
-      startedAt: { gte: context.from, lte: context.to },
-    }),
+    and(
+      row.studentId.eq(studentId),
+      row.startedAt.gte(from),
+      row.startedAt.lte(to),
+    ),
   )
     .select("origin", "startedAt", "finishedAt")
     .orderBy((row) => row.startedAt.asc())

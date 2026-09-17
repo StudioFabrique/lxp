@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import {
   collectUnusedActivityFiles,
@@ -15,22 +12,18 @@ export default async function deleteResource(
 ) {
   const existingResource =
     parent === "resource"
-      ? await prisma.orm.public.ResourceBonusActivity.where((row) =>
-          whereFromObject(row, { id: resourceId }),
-        )
+      ? await prisma.orm.public.ResourceBonusActivity.where({ id: resourceId })
           .select("url")
           .first()
-      : await prisma.orm.public.ResourceActivity.where((row) =>
-          whereFromObject(row, { id: resourceId }),
-        )
+      : await prisma.orm.public.ResourceActivity.where({ id: resourceId })
           .select("url")
           .first();
   if (!existingResource)
     throw { statusCode: 404, message: "La ressource n'existe pas." };
 
-  const existingAuthor = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingAuthor = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
   if (!existingAuthor)
     throw {
       statusCode: 404,
@@ -39,14 +32,10 @@ export default async function deleteResource(
   const filesToDelete = await prisma.transaction(async (tx) => {
     const deletedResource =
       parent === "resource"
-        ? await tx.orm.public.ResourceBonusActivity.where((row) =>
-            whereFromObject(row, { id: resourceId }),
-          )
+        ? await tx.orm.public.ResourceBonusActivity.where({ id: resourceId })
             .delete()
             .then(requireDatabaseRow)
-        : await tx.orm.public.ResourceActivity.where((row) =>
-            whereFromObject(row, { id: resourceId }),
-          )
+        : await tx.orm.public.ResourceActivity.where({ id: resourceId })
             .delete()
             .then(requireDatabaseRow);
 

@@ -7,7 +7,6 @@ const commonProps = {
   currentDate: new Date(2026, 8, 9),
   startHour: 8,
   endHour: 18,
-  darkMode: false,
   currentWeekDayVisible: false,
 };
 

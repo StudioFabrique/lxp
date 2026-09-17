@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { prisma } from "../../utils/db.ts";
 import type { Models } from "../../prisma/contract.d.ts";
 import {
@@ -25,9 +26,7 @@ export default async function postQuizAnswer(
   userAnswer: unknown,
   userIdMdb: string,
 ) {
-  const attempt = await prisma.orm.public.QuizAttempt.where((row) =>
-    whereFromObject(row, { id: attemptId }),
-  )
+  const attempt = await prisma.orm.public.QuizAttempt.where({ id: attemptId })
     .select("id", "quizId")
     .include("student", (related24) => related24.select("idMdb"))
     .first();
@@ -41,9 +40,10 @@ export default async function postQuizAnswer(
     };
   }
 
-  const question = await prisma.orm.public.QuizQuestion.where((row) =>
-    whereFromObject(row, { quizId: attempt.quizId, externalId }),
-  )
+  const question = await prisma.orm.public.QuizQuestion.where({
+    quizId: attempt.quizId,
+    externalId,
+  })
     .select("id", "type", "data")
     .first();
 
@@ -61,9 +61,7 @@ export default async function postQuizAnswer(
 
   const answerData = userAnswer as Models.public_QuizAnswer["userAnswer"];
   return prisma.orm.public.QuizAnswer.where((row) =>
-    whereFromObject(row, {
-      attemptId_quizQuestionId: { attemptId, quizQuestionId: question.id },
-    }),
+    and(row.attemptId.eq(attemptId), row.quizQuestionId.eq(question.id)),
   )
     .select("id", "isCorrect")
     .upsert({

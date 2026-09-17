@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../../utils/require-database-row.ts";
 import { prisma } from "../../../utils/db.ts";
 import type CustomRequest from "../../../utils/interfaces/express/custom-request.ts";
 
@@ -21,14 +18,10 @@ export default async function putResource(req: CustomRequest) {
   // Recherche de la ressource existante
   const existingResource =
     parent === "resource"
-      ? await prisma.orm.public.ResourceBonusActivity.where((row) =>
-          whereFromObject(row, { id: +resourceId }),
-        )
+      ? await prisma.orm.public.ResourceBonusActivity.where({ id: +resourceId })
           .select("id")
           .first()
-      : await prisma.orm.public.ResourceActivity.where((row) =>
-          whereFromObject(row, { id: +resourceId }),
-        )
+      : await prisma.orm.public.ResourceActivity.where({ id: +resourceId })
           .select("id")
           .first();
 
@@ -37,9 +30,9 @@ export default async function putResource(req: CustomRequest) {
     throw { statusCode: 404, message: "La ressource n'existe pas." };
 
   // Recherche de l'utilisateur
-  const existingUser = await prisma.orm.public.Admin.where((row) =>
-    whereFromObject(row, { idMdb: userId }),
-  ).first();
+  const existingUser = await prisma.orm.public.Admin.where({
+    idMdb: userId,
+  }).first();
 
   // Vérification de l'existence de l'utilisateur
   if (!existingUser)
@@ -47,14 +40,10 @@ export default async function putResource(req: CustomRequest) {
 
   const updatedResource =
     parent === "resource"
-      ? await prisma.orm.public.ResourceBonusActivity.where((row) =>
-          whereFromObject(row, { id: +resourceId }),
-        )
+      ? await prisma.orm.public.ResourceBonusActivity.where({ id: +resourceId })
           .update({ label })
           .then(requireDatabaseRow)
-      : await prisma.orm.public.ResourceActivity.where((row) =>
-          whereFromObject(row, { id: +resourceId }),
-        )
+      : await prisma.orm.public.ResourceActivity.where({ id: +resourceId })
           .update({ label })
           .then(requireDatabaseRow);
   return updatedResource;

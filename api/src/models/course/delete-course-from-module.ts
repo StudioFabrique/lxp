@@ -1,18 +1,13 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
 import deleteLesson from "../lesson/delete-lesson.ts";
 
 export default async function deleteCourse(courseId: number, userId: string) {
   // Récupération du cours et des IDs de ses leçons
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, {
-      id: courseId,
-    }),
-  )
+  const existingCourse = await prisma.orm.public.Course.where({
+    id: courseId,
+  })
     .include("lessons", (related23) => related23.select("id"))
     .include("assignment", (related24) =>
       related24
@@ -48,11 +43,9 @@ export default async function deleteCourse(courseId: number, userId: string) {
   }
 
   // Suppression du cours dans la base de données
-  await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, {
-      id: courseId,
-    }),
-  )
+  await prisma.orm.public.Course.where({
+    id: courseId,
+  })
     .delete()
     .then(requireDatabaseRow);
 

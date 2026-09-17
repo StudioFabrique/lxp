@@ -1,4 +1,5 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
+
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -19,22 +20,14 @@ async function postModule(
   }
 
   const [parcours, user, admin, creatorContact] = await Promise.all([
-    prisma.orm.public.Parcours.where((row) =>
-      whereFromObject(row, { id: +moduleToAdd.parcoursId }),
-    )
+    prisma.orm.public.Parcours.where({ id: +moduleToAdd.parcoursId })
       .include("formation")
       .include("contacts", (related70) => related70.select("contactId"))
       .include("bonusSkills", (related71) => related71.select("id"))
       .first(),
     User.findById(userId, { firstname: 1, lastname: 1 }),
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first(),
-    prisma.orm.public.Contact.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    )
-      .select("id")
-      .first(),
+    prisma.orm.public.Admin.where({ idMdb: userId }).first(),
+    prisma.orm.public.Contact.where({ idMdb: userId }).select("id").first(),
   ]);
 
   if (!parcours) throw { statusCode: 404, message: "Parcours introuvable." };
@@ -72,10 +65,12 @@ async function postModule(
   );
 
   const duplicate = await prisma.orm.public.Module.where((row) =>
-    whereFromObject(row, {
-      parcours: { formationId: parcours.formationId },
-      title: { equals: moduleToAdd.title.trim(), mode: "insensitive" },
-    }),
+    and(
+      row.parcours.some((relatedParcours) =>
+        relatedParcours.formationId.eq(parcours.formationId),
+      ),
+      row.title.ilike(moduleToAdd.title.trim().replace(/[\\%_]/g, "\\$&")),
+    ),
   )
     .select("id")
     .first();
@@ -120,9 +115,7 @@ async function postModule(
       adminId: admin.id,
       parcoursId: parcours.id,
       contacts: (relation) =>
-        relation.create(
-          contactIds.map((contactId: number) => ({ contactId })),
-        ),
+        relation.create(contactIds.map((contactId: number) => ({ contactId }))),
       bonusSkills: (relation) =>
         relation.create(
           skillIds.map((bonusSkillId: number) => ({ bonusSkillId })),

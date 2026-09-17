@@ -1,16 +1,13 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 
 export default async function putFormation(
   formationId: number,
   formation: any,
 ) {
-  const exisitingFormation = await prisma.orm.public.Formation.where((row) =>
-    whereFromObject(row, { id: formationId }),
-  ).first();
+  const exisitingFormation = await prisma.orm.public.Formation.where({
+    id: formationId,
+  }).first();
 
   if (!exisitingFormation) {
     const error: any = {
@@ -20,9 +17,9 @@ export default async function putFormation(
     throw error;
   }
 
-  const existingTitle = await prisma.orm.public.Formation.where((row) =>
-    whereFromObject(row, { title: formation.title }),
-  ).first();
+  const existingTitle = await prisma.orm.public.Formation.where({
+    title: formation.title,
+  }).first();
 
   if (existingTitle && existingTitle.id !== formationId) {
     const error: any = {
@@ -35,9 +32,7 @@ export default async function putFormation(
   let updatedFormation: any = {};
 
   await prisma.transaction(async (tx) => {
-    await tx.orm.public.TagsOnFormation.where((row) =>
-      whereFromObject(row, { formationId }),
-    )
+    await tx.orm.public.TagsOnFormation.where({ formationId })
       .deleteAndCount()
       .then((count) => ({ count }));
     if (formation.tags.length > 0) {
@@ -48,9 +43,7 @@ export default async function putFormation(
         })),
       );
     }
-    updatedFormation = await tx.orm.public.Formation.where((row) =>
-      whereFromObject(row, { id: formationId }),
-    )
+    updatedFormation = await tx.orm.public.Formation.where({ id: formationId })
       .select("id", "title", "description", "code", "level", "createdAt")
       .include("parcours", (related74) => related74.select("id"))
       .include("tags", (related75) =>

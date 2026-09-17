@@ -1,4 +1,3 @@
-import { whereFromObject } from "../utils/prisma-query.ts";
 import bcrypt from "bcrypt";
 import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
@@ -93,16 +92,12 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
   // Miroirs PostgreSQL, sans lesquels le compte est inutilisable : c'est la
   // règle appliquée par `models/user/create-user.ts` à toute création.
   if (role.rank === 1 || role.rank === 2) {
-    const existing = await prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb }),
-    ).first();
+    const existing = await prisma.orm.public.Admin.where({ idMdb }).first();
     if (!existing) await prisma.orm.public.Admin.create({ idMdb });
   }
 
   if (role.rank === 2) {
-    const existing = await prisma.orm.public.Contact.where((row) =>
-      whereFromObject(row, { idMdb }),
-    ).first();
+    const existing = await prisma.orm.public.Contact.where({ idMdb }).first();
     if (!existing) {
       await prisma.orm.public.Contact.create({
         idMdb,
@@ -114,9 +109,7 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
   }
 
   if (role.rank === 3) {
-    const existing = await prisma.orm.public.Student.where((row) =>
-      whereFromObject(row, { idMdb }),
-    ).first();
+    const existing = await prisma.orm.public.Student.where({ idMdb }).first();
     if (!existing) await prisma.orm.public.Student.create({ idMdb });
   }
 
@@ -132,9 +125,9 @@ async function ensureAccount(profile: (typeof PROFILES)[number]) {
  * sur tout le contenu — et la démonstration apprenant serait vide.
  */
 async function ensureEnrollment(userId: string) {
-  const parcoursPublies = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { isPublished: true }),
-  )
+  const parcoursPublies = await prisma.orm.public.Parcours.where({
+    isPublished: true,
+  })
     .select("id")
     .all();
 
@@ -147,15 +140,15 @@ async function ensureEnrollment(userId: string) {
 
   const dejaInscrit = await Group.findOne({ users: userId });
   if (dejaInscrit) {
-    const groupePg = await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, { idMdb: dejaInscrit.id as string }),
-    )
+    const groupePg = await prisma.orm.public.Group.where({
+      idMdb: dejaInscrit.id as string,
+    })
       .select("id")
       .first();
     if (groupePg) {
-      const liens = await prisma.orm.public.GroupsOnParcours.where((row) =>
-        whereFromObject(row, { groupId: groupePg.id }),
-      )
+      const liens = await prisma.orm.public.GroupsOnParcours.where({
+        groupId: groupePg.id,
+      })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total);
       if (liens > 0) {
@@ -177,11 +170,7 @@ async function ensureEnrollment(userId: string) {
 
   const idMdb = groupeMongo.id as string;
   const groupePg =
-    (await prisma.orm.public.Group.where((row) =>
-      whereFromObject(row, { idMdb }),
-    )
-      .select("id")
-      .first()) ??
+    (await prisma.orm.public.Group.where({ idMdb }).select("id").first()) ??
     (await prisma.orm.public.Group.select("id").create({ idMdb }));
 
   await prisma.orm.public.GroupsOnParcours.createAndCount(

@@ -1,4 +1,4 @@
-import { requireDatabaseRow, whereFromObject } from "../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../utils/require-database-row.ts";
 import type { TransactionClient } from "../utils/db.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -66,14 +66,10 @@ async function countRemainingReferences(
 ) {
   if (reference.type === "resource") {
     const [activityResources, bonusResources] = await Promise.all([
-      tx.orm.public.ResourceActivity.where((row) =>
-        whereFromObject(row, { url: reference.url }),
-      )
+      tx.orm.public.ResourceActivity.where({ url: reference.url })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
-      tx.orm.public.ResourceBonusActivity.where((row) =>
-        whereFromObject(row, { url: reference.url }),
-      )
+      tx.orm.public.ResourceBonusActivity.where({ url: reference.url })
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
     ]);
@@ -81,20 +77,14 @@ async function countRemainingReferences(
   }
 
   const [activities, bonusActivities, resourceImages] = await Promise.all([
-    tx.orm.public.Activity.where((row) =>
-      whereFromObject(row, { url: reference.url }),
-    )
+    tx.orm.public.Activity.where({ url: reference.url })
       .aggregate((aggregate) => ({ total: aggregate.count() }))
       .then(({ total }) => total),
-    tx.orm.public.BonusActivity.where((row) =>
-      whereFromObject(row, { url: reference.url }),
-    )
+    tx.orm.public.BonusActivity.where({ url: reference.url })
       .aggregate((aggregate) => ({ total: aggregate.count() }))
       .then(({ total }) => total),
     reference.type === "image"
-      ? tx.orm.public.Resource.where((row) =>
-          whereFromObject(row, { imageUrl: reference.url }),
-        )
+      ? tx.orm.public.Resource.where({ imageUrl: reference.url })
           .aggregate((aggregate) => ({ total: aggregate.count() }))
           .then(({ total }) => total)
       : Promise.resolve(0),
@@ -130,9 +120,9 @@ export async function collectUnusedActivityFiles(
     let remainingMediaUses = 0;
 
     if (reference.trackedInMediatheque !== false) {
-      const media = await tx.orm.public.Mediatheque.where((row) =>
-        whereFromObject(row, { url: reference.url }),
-      ).first();
+      const media = await tx.orm.public.Mediatheque.where({
+        url: reference.url,
+      }).first();
 
       if (media) {
         remainingMediaUses = Math.max(
@@ -142,15 +132,11 @@ export async function collectUnusedActivityFiles(
         );
 
         if (remainingMediaUses === 0) {
-          await tx.orm.public.Mediatheque.where((row) =>
-            whereFromObject(row, { id: media.id }),
-          )
+          await tx.orm.public.Mediatheque.where({ id: media.id })
             .delete()
             .then(requireDatabaseRow);
         } else {
-          await tx.orm.public.Mediatheque.where((row) =>
-            whereFromObject(row, { id: media.id }),
-          )
+          await tx.orm.public.Mediatheque.where({ id: media.id })
             .update({ used: remainingMediaUses })
             .then(requireDatabaseRow);
         }

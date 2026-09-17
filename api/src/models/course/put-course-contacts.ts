@@ -1,13 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma, type NestedConnect } from "../../utils/db.ts";
 
 async function putCourseContacts(courseId: number, contacts: number[]) {
-  const existingCourse = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  ).first();
+  const existingCourse = await prisma.orm.public.Course.where({
+    id: courseId,
+  }).first();
 
   if (!existingCourse) {
     const error = new Error("Le cours n'existe pas");
@@ -16,15 +13,11 @@ async function putCourseContacts(courseId: number, contacts: number[]) {
   }
 
   const transaction = await prisma.transaction(async (tx) => {
-    await tx.orm.public.ContactsOnCourse.where((row) =>
-      whereFromObject(row, { courseId }),
-    )
+    await tx.orm.public.ContactsOnCourse.where({ courseId })
       .deleteAndCount()
       .then((count) => ({ count }));
 
-    const updatedCourse = await tx.orm.public.Course.where((row) =>
-      whereFromObject(row, { id: courseId }),
-    )
+    const updatedCourse = await tx.orm.public.Course.where({ id: courseId })
       .update({
         contacts: (relation) =>
           relation.create(

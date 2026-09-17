@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import type { TransactionClient } from "../../utils/db.ts";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
@@ -251,9 +250,7 @@ const manifestSchema: z.ZodType<ParcoursArchiveManifest> = z.object({
                 visibility: z.boolean().nullable(),
                 scenario: z.boolean(),
                 isPublished: z.boolean(),
-                dates: z
-                  .array(z.unknown() as z.ZodType<JsonValue>)
-                  .max(10_000),
+                dates: z.array(z.unknown() as z.ZodType<JsonValue>).max(10_000),
                 order: z.number().int(),
                 tags: z.array(tagSchema).max(10_000),
                 quizzes: z.array(quizSchema).max(100),
@@ -332,9 +329,7 @@ function quizToArchive(quiz: any): ArchiveQuiz {
 }
 
 export async function exportParcoursArchive(parcoursId: number) {
-  const source = await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  const source = await prisma.orm.public.Parcours.where({ id: parcoursId })
     .include("formation", (related243) =>
       related243.include("tags", (related244) => related244.include("tag")),
     )
@@ -347,18 +342,14 @@ export async function exportParcoursArchive(parcoursId: number) {
         .include("bonusSkills")
         .include("quizzes", (related248) =>
           related248
-            .where((row) =>
-              whereFromObject(row, { courseId: null, activityId: null }),
-            )
+            .where({ courseId: null, activityId: null })
             .include("questions"),
         )
         .include("courses", (related249) =>
           related249
             .include("tags", (related250) => related250.include("tag"))
             .include("quizzes", (related251) =>
-              related251
-                .where((row) => whereFromObject(row, { activityId: null }))
-                .include("questions"),
+              related251.where({ activityId: null }).include("questions"),
             )
             .include("lessons", (related252) =>
               related252
@@ -682,9 +673,7 @@ async function createQuiz(
 
 async function getOrCreateTag(tx: TransactionClient, tag: ArchiveTag) {
   const name = tag.name.toLowerCase();
-  return tx.orm.public.Tag.where((row) =>
-    whereFromObject(row, { name }),
-  ).upsert({
+  return tx.orm.public.Tag.where({ name }).upsert({
     create: { ...tag, name },
     update: {},
     conflictOn: { name },
@@ -739,9 +728,7 @@ export async function importParcoursArchive(
   }
   const manifest = parseParcoursArchiveManifest(parsedJson);
   const [admin, mongoUser] = await Promise.all([
-    prisma.orm.public.Admin.where((row) =>
-      whereFromObject(row, { idMdb: userId }),
-    ).first(),
+    prisma.orm.public.Admin.where({ idMdb: userId }).first(),
     User.findById(userId),
   ]);
   if (!admin) throw httpError(404, "L'utilisateur n'existe pas.");
@@ -841,236 +828,252 @@ export async function importParcoursArchive(
       writtenFiles.push(destination);
     }
 
-    const result = await prisma.transaction(
-      async (tx) => {
-        const selectedFormation =
-          formationId === undefined
-            ? null
-            : await tx.orm.public.Formation.where((row) =>
-                whereFromObject(row, { id: formationId }),
-              ).first();
-        if (formationId !== undefined && !selectedFormation) {
-          throw httpError(404, "La formation sélectionnée n'existe pas.");
-        }
-        const existingFormation =
-          selectedFormation || createFormation
-            ? null
-            : await tx.orm.public.Formation.where((row) =>
-                whereFromObject(row, { title: manifest.formation.title }),
-              ).first();
-        const { tags: formationTags = [], ...formationData } =
-          manifest.formation;
-        const formationTagIds = [...new Set((await Promise.all(
-          formationTags.map((tag) => getOrCreateTag(tx, tag)),
-        )).map(({ id }) => id))];
-        const createImportedFormation = async (title: string) =>
-          tx.orm.public.Formation.create({
-            ...formationData,
-            title,
-            adminId: admin.id,
-            tags: (relation) =>
-              relation.create(formationTagIds.map((tagId) => ({ tagId }))),
-          });
-        let formation: Awaited<ReturnType<typeof createImportedFormation>>;
-        if (createFormation) {
-          const formationTitles =
-            await tx.orm.public.Formation.select("title").all();
-          const normalizedTitles = new Set(
-            formationTitles.map(({ title }) =>
-              title.trim().toLocaleLowerCase(),
-            ),
-          );
-          const title = normalizedTitles.has(
-            manifest.formation.title.trim().toLocaleLowerCase(),
-          )
-            ? getDuplicateIdentity(
-                { title: manifest.formation.title, duplicationIndex: 0 },
-                formationTitles.map(({ title }) => title),
-              ).title
-            : manifest.formation.title;
-          formation = await createImportedFormation(title);
-        } else {
-          formation =
-            selectedFormation ??
-            existingFormation ??
-            (await createImportedFormation(manifest.formation.title));
-        }
-        const existingTitles =
-          await tx.orm.public.Parcours.select("title").all();
+    const result = await prisma.transaction(async (tx) => {
+      const selectedFormation =
+        formationId === undefined
+          ? null
+          : await tx.orm.public.Formation.where({ id: formationId }).first();
+      if (formationId !== undefined && !selectedFormation) {
+        throw httpError(404, "La formation sélectionnée n'existe pas.");
+      }
+      const existingFormation =
+        selectedFormation || createFormation
+          ? null
+          : await tx.orm.public.Formation.where({
+              title: manifest.formation.title,
+            }).first();
+      const { tags: formationTags = [], ...formationData } = manifest.formation;
+      const formationTagIds = [
+        ...new Set(
+          (
+            await Promise.all(
+              formationTags.map((tag) => getOrCreateTag(tx, tag)),
+            )
+          ).map(({ id }) => id),
+        ),
+      ];
+      const createImportedFormation = async (title: string) =>
+        tx.orm.public.Formation.create({
+          ...formationData,
+          title,
+          adminId: admin.id,
+          tags: (relation) =>
+            relation.create(formationTagIds.map((tagId) => ({ tagId }))),
+        });
+      let formation: Awaited<ReturnType<typeof createImportedFormation>>;
+      if (createFormation) {
+        const formationTitles =
+          await tx.orm.public.Formation.select("title").all();
         const normalizedTitles = new Set(
-          existingTitles.map(({ title }) => title.trim().toLocaleLowerCase()),
+          formationTitles.map(({ title }) => title.trim().toLocaleLowerCase()),
         );
-        const identity = normalizedTitles.has(
-          manifest.parcours.title.trim().toLocaleLowerCase(),
+        const title = normalizedTitles.has(
+          manifest.formation.title.trim().toLocaleLowerCase(),
         )
           ? getDuplicateIdentity(
-              { title: manifest.parcours.title, duplicationIndex: 0 },
-              existingTitles.map(({ title }) => title),
+              { title: manifest.formation.title, duplicationIndex: 0 },
+              formationTitles.map(({ title }) => title),
+            ).title
+          : manifest.formation.title;
+        formation = await createImportedFormation(title);
+      } else {
+        formation =
+          selectedFormation ??
+          existingFormation ??
+          (await createImportedFormation(manifest.formation.title));
+      }
+      const existingTitles = await tx.orm.public.Parcours.select("title").all();
+      const normalizedTitles = new Set(
+        existingTitles.map(({ title }) => title.trim().toLocaleLowerCase()),
+      );
+      const identity = normalizedTitles.has(
+        manifest.parcours.title.trim().toLocaleLowerCase(),
+      )
+        ? getDuplicateIdentity(
+            { title: manifest.parcours.title, duplicationIndex: 0 },
+            existingTitles.map(({ title }) => title),
+          )
+        : { title: manifest.parcours.title, duplicationIndex: 0 };
+      const cover = (
+        reference: AssetReference | null,
+      ): Uint8Array<ArrayBuffer> | null => {
+        if (reference?.kind !== "asset") return null;
+        const buffer = importedAssets.get(reference.path)?.buffer;
+        if (!buffer) return null;
+        const value = new Uint8Array(buffer.length);
+        value.set(buffer);
+        return value;
+      };
+      const parcoursTagIds = [
+        ...new Set(
+          (
+            await Promise.all(
+              manifest.parcours.tags.map((tag) => getOrCreateTag(tx, tag)),
             )
-          : { title: manifest.parcours.title, duplicationIndex: 0 };
-        const cover = (
-          reference: AssetReference | null,
-        ): Uint8Array<ArrayBuffer> | null => {
-          if (reference?.kind !== "asset") return null;
-          const buffer = importedAssets.get(reference.path)?.buffer;
-          if (!buffer) return null;
-          const value = new Uint8Array(buffer.length);
-          value.set(buffer);
-          return value;
-        };
-        const parcoursTagIds = [...new Set((await Promise.all(
-          manifest.parcours.tags.map((tag) => getOrCreateTag(tx, tag)),
-        )).map(({ id }) => id))];
-        const parcoursSkillIds = [...new Set((await Promise.all(
-          manifest.parcours.skills.map((skill) =>
-            tx.orm.public.Skill.where((row) =>
-              whereFromObject(row, { description: skill.description }),
-            ).upsert({
-                create: skill,
-                update: {},
-                conflictOn: { description: skill.description },
-              }),
+          ).map(({ id }) => id),
+        ),
+      ];
+      const parcoursSkillIds = [
+        ...new Set(
+          (
+            await Promise.all(
+              manifest.parcours.skills.map((skill) =>
+                tx.orm.public.Skill.where({
+                  description: skill.description,
+                }).upsert({
+                  create: skill,
+                  update: {},
+                  conflictOn: { description: skill.description },
+                }),
+              ),
+            )
+          ).map(({ id }) => id),
+        ),
+      ];
+      const createdParcours = await tx.orm.public.Parcours.create({
+        title: identity.title,
+        duplicationIndex: identity.duplicationIndex,
+        description: manifest.parcours.description,
+        startDate: manifest.parcours.startDate,
+        endDate: manifest.parcours.endDate,
+        degree: manifest.parcours.degree,
+        image: cover(manifest.parcours.image),
+        thumb: cover(manifest.parcours.thumb),
+        virtualClass: manifest.parcours.virtualClass,
+        visibility: false,
+        isPublished: false,
+        author,
+        adminId: admin.id,
+        formationId: formation.id,
+        objectives: (relation) =>
+          relation.create(
+            manifest.parcours.objectives.map((description) => ({
+              description,
+            })),
           ),
-        )).map(({ id }) => id))];
-        const createdParcours = await tx.orm.public.Parcours.create({
-          title: identity.title,
-          duplicationIndex: identity.duplicationIndex,
-          description: manifest.parcours.description,
-          startDate: manifest.parcours.startDate,
-          endDate: manifest.parcours.endDate,
-          degree: manifest.parcours.degree,
-          image: cover(manifest.parcours.image),
-          thumb: cover(manifest.parcours.thumb),
-          virtualClass: manifest.parcours.virtualClass,
-          visibility: false,
-          isPublished: false,
+        tags: (relation) =>
+          relation.create(parcoursTagIds.map((tagId) => ({ tagId }))),
+        skills: (relation) =>
+          relation.create(parcoursSkillIds.map((skillId) => ({ skillId }))),
+      });
+      const bonusSkillIds = new Map<string, number>();
+      for (const skill of manifest.parcours.bonusSkills) {
+        const created = await tx.orm.public.BonusSkill.create({
+          description: skill.description,
+          badge: skill.badge,
+          parcoursId: createdParcours.id,
+        });
+        bonusSkillIds.set(skill.key, created.id);
+      }
+      for (
+        let moduleIndex = 0;
+        moduleIndex < manifest.parcours.modules.length;
+        moduleIndex += 1
+      ) {
+        const module = manifest.parcours.modules[moduleIndex];
+        const createdModule = await tx.orm.public.Module.create({
+          title: module.title,
+          description: module.description,
+          quizInstructions: module.quizInstructions,
+          image: cover(module.image),
+          thumb: cover(module.thumb),
+          duration: module.duration,
+          rating: module.rating,
+          minDate: module.minDate,
+          maxDate: module.maxDate,
           author,
           adminId: admin.id,
-          formationId: formation.id,
-          objectives: (relation) =>
+          parcoursId: createdParcours.id,
+          bonusSkills: (relation) =>
             relation.create(
-              manifest.parcours.objectives.map((description) => ({
-                description,
-              })),
+              module.bonusSkillKeys
+                .map((key) => bonusSkillIds.get(key))
+                .filter((id): id is number => id !== undefined)
+                .map((bonusSkillId) => ({ bonusSkillId })),
             ),
-          tags: (relation) =>
-            relation.create(parcoursTagIds.map((tagId) => ({ tagId }))),
-          skills: (relation) =>
-            relation.create(parcoursSkillIds.map((skillId) => ({ skillId }))),
         });
-        const bonusSkillIds = new Map<string, number>();
-        for (const skill of manifest.parcours.bonusSkills) {
-          const created = await tx.orm.public.BonusSkill.create({
-            description: skill.description,
-            badge: skill.badge,
-            parcoursId: createdParcours.id,
-          });
-          bonusSkillIds.set(skill.key, created.id);
-        }
-        for (
-          let moduleIndex = 0;
-          moduleIndex < manifest.parcours.modules.length;
-          moduleIndex += 1
-        ) {
-          const module = manifest.parcours.modules[moduleIndex];
-          const createdModule = await tx.orm.public.Module.create({
-            title: module.title,
-            description: module.description,
-            quizInstructions: module.quizInstructions,
-            image: cover(module.image),
-            thumb: cover(module.thumb),
-            duration: module.duration,
-            rating: module.rating,
-            minDate: module.minDate,
-            maxDate: module.maxDate,
+        for (const quiz of module.quizzes)
+          await createQuiz(tx, quiz, { moduleId: createdModule.id });
+        for (const course of module.courses) {
+          const courseTagIds = [
+            ...new Set(
+              (
+                await Promise.all(
+                  course.tags.map((tag) => getOrCreateTag(tx, tag)),
+                )
+              ).map(({ id }) => id),
+            ),
+          ];
+          const createdCourse = await tx.orm.public.Course.create({
+            title: course.title,
+            description: course.description,
+            image: cover(course.image),
+            virtualClass: course.virtualClass,
+            visibility: course.visibility,
+            scenario: course.scenario,
+            dates: course.dates as JsonValue[],
+            order: course.order,
+            isPublished: publishCourses,
             author,
             adminId: admin.id,
-            parcoursId: createdParcours.id,
-            bonusSkills: (relation) =>
-              relation.create(
-                module.bonusSkillKeys
-                  .map((key) => bonusSkillIds.get(key))
-                  .filter((id): id is number => id !== undefined)
-                  .map((bonusSkillId) => ({ bonusSkillId })),
-              ),
+            moduleId: createdModule.id,
+            tags: (relation) =>
+              relation.create(courseTagIds.map((tagId) => ({ tagId }))),
           });
-          for (const quiz of module.quizzes)
-            await createQuiz(tx, quiz, { moduleId: createdModule.id });
-          for (const course of module.courses) {
-            const courseTagIds = [...new Set((await Promise.all(
-              course.tags.map((tag) => getOrCreateTag(tx, tag)),
-            )).map(({ id }) => id))];
-            const createdCourse = await tx.orm.public.Course.create({
-              title: course.title,
-              description: course.description,
-              image: cover(course.image),
-              virtualClass: course.virtualClass,
-              visibility: course.visibility,
-              scenario: course.scenario,
-              dates: course.dates as JsonValue[],
-              order: course.order,
-              isPublished: publishCourses,
+          for (const quiz of course.quizzes)
+            await createQuiz(tx, quiz, { courseId: createdCourse.id });
+          for (const lesson of course.lessons) {
+            const lessonTag = await getOrCreateTag(tx, lesson.tag);
+            const createdLesson = await tx.orm.public.Lesson.create({
+              title: lesson.title,
+              description: lesson.description,
+              modalite: lesson.modalite,
+              order: lesson.order,
+              isPublished: false,
+              visibility: false,
               author,
               adminId: admin.id,
-              moduleId: createdModule.id,
-              tags: (relation) =>
-                relation.create(courseTagIds.map((tagId) => ({ tagId }))),
+              courseId: createdCourse.id,
+              tagId: lessonTag.id,
             });
-            for (const quiz of course.quizzes)
-              await createQuiz(tx, quiz, { courseId: createdCourse.id });
-            for (const lesson of course.lessons) {
-              const lessonTag = await getOrCreateTag(tx, lesson.tag);
-              const createdLesson = await tx.orm.public.Lesson.create({
-                title: lesson.title,
-                description: lesson.description,
-                modalite: lesson.modalite,
-                order: lesson.order,
-                isPublished: false,
-                visibility: false,
-                author,
-                adminId: admin.id,
-                courseId: createdCourse.id,
-                tagId: lessonTag.id,
+            for (const activity of lesson.activities) {
+              const createdActivity = await tx.orm.public.Activity.create({
+                title: activity.title,
+                type: activity.type,
+                order: activity.order,
+                url: resolveSource(activity.source),
+                authorId: admin.id,
+                lessonId: createdLesson.id,
+                resourceActivities: (relation) =>
+                  relation.create(
+                    activity.resources.map((resource) => ({
+                      label: resource.label,
+                      order: resource.order,
+                      url: resolveSource(resource.source),
+                    })),
+                  ),
               });
-              for (const activity of lesson.activities) {
-                const createdActivity = await tx.orm.public.Activity.create({
-                  title: activity.title,
-                  type: activity.type,
-                  order: activity.order,
-                  url: resolveSource(activity.source),
-                  authorId: admin.id,
-                  lessonId: createdLesson.id,
-                  resourceActivities: (relation) =>
-                    relation.create(
-                      activity.resources.map((resource) => ({
-                        label: resource.label,
-                        order: resource.order,
-                        url: resolveSource(resource.source),
-                      })),
-                    ),
+              for (const quiz of activity.quizzes)
+                await createQuiz(tx, quiz, {
+                  activityId: createdActivity.id,
                 });
-                for (const quiz of activity.quizzes)
-                  await createQuiz(tx, quiz, {
-                    activityId: createdActivity.id,
-                  });
-              }
             }
           }
         }
-        for (const [archivePath, imported] of importedAssets) {
-          if (imported.kind === "cover" || imported.kind === "text") continue;
-          await tx.orm.public.Mediatheque.create({
-            type: imported.kind,
-            url: imported.value,
-            name: path.basename(archivePath),
-            size: imported.buffer.length,
-            used: assetUsages.get(archivePath) ?? 1,
-            authorId: admin.id,
-          });
-        }
-        return createdParcours;
-      },
-    );
+      }
+      for (const [archivePath, imported] of importedAssets) {
+        if (imported.kind === "cover" || imported.kind === "text") continue;
+        await tx.orm.public.Mediatheque.create({
+          type: imported.kind,
+          url: imported.value,
+          name: path.basename(archivePath),
+          size: imported.buffer.length,
+          used: assetUsages.get(archivePath) ?? 1,
+          authorId: admin.id,
+        });
+      }
+      return createdParcours;
+    });
     return {
       success: true as const,
       parcoursId: result.id,

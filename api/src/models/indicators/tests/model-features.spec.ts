@@ -111,8 +111,16 @@ describe("toModelIndicators", () => {
       payload({
         session_time: available("session_time", 60_000, "ms"),
         mood: available("mood", 4, "level"),
-        monthly_connection_days: available("monthly_connection_days", 12, "count"),
-        days_since_last_activity: available("days_since_last_activity", 2, "days"),
+        monthly_connection_days: available(
+          "monthly_connection_days",
+          12,
+          "count",
+        ),
+        days_since_last_activity: available(
+          "days_since_last_activity",
+          2,
+          "days",
+        ),
         time_on_content: available("time_on_content", 60_000, "ms"),
         quiz_interactions: available("quiz_interactions", 5, "count"),
         chatbot_interactions: available("chatbot_interactions", 7, "count"),

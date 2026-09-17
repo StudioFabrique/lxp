@@ -1,11 +1,8 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
 
 async function getCourseInformations(courseId: number) {
-  const course = await prisma.orm.public.Course.where((row) =>
-    whereFromObject(row, { id: courseId }),
-  )
+  const course = await prisma.orm.public.Course.where({ id: courseId })
     .select(
       "id",
       "title",

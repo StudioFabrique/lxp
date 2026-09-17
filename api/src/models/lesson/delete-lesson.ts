@@ -1,15 +1,10 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../utils/require-database-row.ts";
 import { prisma } from "../../utils/db.ts";
 import userBelongsToContacts from "../../utils/userBelongsToContacts.ts";
 import deleteActivity from "../activity/delete-activity/delete-activity.ts";
 
 export default async function deleteLesson(userId: string, lessonId: number) {
-  const existingLesson = await prisma.orm.public.Lesson.where((row) =>
-    whereFromObject(row, { id: lessonId }),
-  )
+  const existingLesson = await prisma.orm.public.Lesson.where({ id: lessonId })
     .include("course", (related98) =>
       related98.include("module", (related99) =>
         related99.include("contacts", (related100) =>
@@ -35,9 +30,7 @@ export default async function deleteLesson(userId: string, lessonId: number) {
   );
 
   // Récupérer les activités avant de supprimer la leçon
-  const activities = await prisma.orm.public.Activity.where((row) =>
-    whereFromObject(row, { lessonId }),
-  ).all();
+  const activities = await prisma.orm.public.Activity.where({ lessonId }).all();
 
   // Supprimer les activités
   for (const act of activities) {
@@ -46,21 +39,15 @@ export default async function deleteLesson(userId: string, lessonId: number) {
 
   // Ouvrir la transaction pour nettoyer la leçon et le reste
   await prisma.transaction(async (tx) => {
-    await tx.orm.public.LessonRead.where((row) =>
-      whereFromObject(row, { lessonId }),
-    )
+    await tx.orm.public.LessonRead.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
 
-    await tx.orm.public.LessonRating.where((row) =>
-      whereFromObject(row, { lessonId }),
-    )
+    await tx.orm.public.LessonRating.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
 
-    await tx.orm.public.Lesson.where((row) =>
-      whereFromObject(row, { id: lessonId }),
-    )
+    await tx.orm.public.Lesson.where({ id: lessonId })
       .delete()
       .then(requireDatabaseRow);
   });

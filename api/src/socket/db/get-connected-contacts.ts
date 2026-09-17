@@ -1,4 +1,3 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
 import { prisma } from "../../utils/db.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import UserSocket from "../../utils/interfaces/db/user-socket.ts";
@@ -11,9 +10,9 @@ export default async function getConnectedContacts(userId: string) {
   }
   const groupId = user.group[0]!._id.toString();
 
-  const existingContacts = await prisma.orm.public.Group.where((row) =>
-    whereFromObject(row, { idMdb: groupId }),
-  )
+  const existingContacts = await prisma.orm.public.Group.where({
+    idMdb: groupId,
+  })
     .include("parcours", (related54) =>
       related54.include("parcours", (related55) =>
         related55.include("contacts", (related56) =>

@@ -1,9 +1,6 @@
-import { whereFromObject } from "../../utils/prisma-query.ts";
+import { and } from "@prisma/orm-postgres/orm-client";
 import { prisma } from "../../utils/db.ts";
-import {
-  moduleWhereForScope,
-  type AccessScope,
-} from "../../utils/services/permissions/accessible-parcours.ts";
+import type { AccessScope } from "../../utils/services/permissions/accessible-parcours.ts";
 
 export type RemoveContactFromModuleInput = {
   parcoursId: number;
@@ -16,23 +13,25 @@ export default async function removeContactFromModule(
   scope: AccessScope = null,
   requesterUserId?: string,
 ) {
-  const accessWhere = moduleWhereForScope(scope);
-
   return prisma.transaction(async (tx) => {
     const [moduleCount, requesterContact] = await Promise.all([
       tx.orm.public.Module.where((row) =>
-        whereFromObject(row, {
-          id: moduleId,
-          parcoursId,
-          ...(accessWhere ? { AND: [accessWhere] } : {}),
-        }),
+        and(
+          row.id.eq(moduleId),
+          row.parcoursId.eq(parcoursId),
+          ...(scope
+            ? [
+                scope.moduleIds === null
+                  ? row.parcoursId.in(scope.parcoursIds)
+                  : row.id.in(scope.moduleIds),
+              ]
+            : []),
+        ),
       )
         .aggregate((aggregate) => ({ total: aggregate.count() }))
         .then(({ total }) => total),
       scope?.kind === "teacher" && requesterUserId
-        ? tx.orm.public.Contact.where((row) =>
-            whereFromObject(row, { idMdb: requesterUserId }),
-          )
+        ? tx.orm.public.Contact.where({ idMdb: requesterUserId })
             .select("id")
             .first()
         : null,
@@ -53,9 +52,10 @@ export default async function removeContactFromModule(
       };
     }
 
-    const result = await tx.orm.public.ContactsOnModule.where((row) =>
-      whereFromObject(row, { moduleId, contactId }),
-    )
+    const result = await tx.orm.public.ContactsOnModule.where({
+      moduleId,
+      contactId,
+    })
       .deleteAndCount()
       .then((count) => ({ count }));
     if (result.count === 0) {

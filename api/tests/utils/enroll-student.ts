@@ -1,7 +1,4 @@
-import {
-  requireDatabaseRow,
-  whereFromObject,
-} from "../../src/utils/prisma-query.ts";
+import { requireDatabaseRow } from "../../src/utils/require-database-row.ts";
 import { createPrismaClient } from "../../src/utils/create-prisma-client.ts";
 import Group from "../../src/utils/interfaces/db/group.ts";
 import Role from "../../src/utils/interfaces/db/role.ts";
@@ -25,9 +22,7 @@ export async function enrollStudentInParcours(
 ): Promise<Enrollment> {
   // Le parcours doit être publié : c'est la condition que `getAccessibleParcoursIds`
   // applique, et que la liste des parcours d'un apprenant applique déjà.
-  await prisma.orm.public.Parcours.where((row) =>
-    whereFromObject(row, { id: parcoursId }),
-  )
+  await prisma.orm.public.Parcours.where({ id: parcoursId })
     .update({ isPublished: true })
     .then(requireDatabaseRow);
 
@@ -50,14 +45,10 @@ export async function enrollStudentInParcours(
 
   return {
     cleanup: async () => {
-      await prisma.orm.public.GroupsOnParcours.where((row) =>
-        whereFromObject(row, { groupId: pgGroup.id }),
-      )
+      await prisma.orm.public.GroupsOnParcours.where({ groupId: pgGroup.id })
         .deleteAndCount()
         .then((count) => ({ count }));
-      await prisma.orm.public.Group.where((row) =>
-        whereFromObject(row, { id: pgGroup.id }),
-      )
+      await prisma.orm.public.Group.where({ id: pgGroup.id })
         .deleteAndCount()
         .then((count) => ({ count }));
       await Group.deleteOne({ _id: mongoGroupId });
