@@ -12,9 +12,16 @@ export default async function putResetPassword(userId: string) {
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
+  if (!existingUser.isActive) {
+    throw {
+      statusCode: 400,
+      message: "Un compte inactif ne peut pas réinitialiser son mot de passe.",
+    };
+  }
+
   const role = await existingUser.roles[0];
 
-  const token = activationToken(userId, role, "15m");
+  const token = activationToken(userId, role, "15m", "password-reset");
 
   if (env.ENVIRONMENT !== "test") {
     try {
@@ -33,7 +40,7 @@ export async function putResetPasswordByEmail(email: string) {
 
   // Endpoint public : on ne révèle pas si le compte existe ou non pour éviter
   // l'énumération des utilisateurs. La réponse reste identique dans tous les cas.
-  if (!existingUser) return;
+  if (!existingUser || !existingUser.isActive) return;
 
   return putResetPassword(existingUser._id.toString());
 }

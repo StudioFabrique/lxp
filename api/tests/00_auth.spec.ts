@@ -174,17 +174,10 @@ describe("HTTP auth", () => {
         .expect(401);
     });
 
-    test("It should not reveal that an account exists but awaits activation", async () => {
-      // Distinguer « compte en attente d'activation » de « compte inconnu »
-      // permettait de tester une liste d'adresses pour savoir lesquelles sont
-      // inscrites. Les deux cas répondent désormais à l'identique, et le lien
-      // de renvoi d'activation est proposé après n'importe quel échec.
-      // L'état du compte est posé ici plutôt que hérité des fixtures :
-      // `01_user.spec.ts` réactive `formateur2` au passage, et l'ordre
-      // d'exécution des fichiers dépend du cache de jest.
+    test("It should offer activation only after an invitation was sent", async () => {
       await User.updateOne(
         { email: "formateur2@studio.eco" },
-        { $set: { isActive: false, emailVerified: false } },
+        { $set: { isActive: false, emailVerified: false, invitationSent: true } },
       );
 
       const inactif = await request(app).post("/v1/auth/login").send({
@@ -197,16 +190,26 @@ describe("HTTP auth", () => {
       });
 
       expect(inactif.status).toBe(401);
-      expect(inactif.body.code).toBeUndefined();
-      expect(inactif.body).toEqual(inconnu.body);
+      expect(inactif.body.code).toBe("ACCOUNT_NOT_ACTIVATED");
+      expect(inactif.body.message).toBe(inconnu.body.message);
       expect(inactif.status).toBe(inconnu.status);
+
+      await User.updateOne(
+        { email: "formateur2@studio.eco" },
+        { $set: { invitationSent: false } },
+      );
+      const neverInvited = await request(app).post("/v1/auth/login").send({
+        email: "formateur2@studio.eco",
+        password: "Abcdef@123456",
+      });
+      expect(neverInvited.body.code).toBeUndefined();
     });
   });
 
   describe("Test POST /auth/resend-activation", () => {
     test("It should resend once and enforce the account cooldown", async () => {
       const email = "formateur2@studio.eco";
-      // Même précaution : le renvoi n'est proposé qu'à un compte encore inactif.
+      // Un compte jamais invité ne doit recevoir aucun lien.
       await User.updateOne(
         { email },
         {
@@ -219,6 +222,16 @@ describe("HTTP auth", () => {
         },
       );
 
+      const withoutInvitation = await request(app)
+        .post("/v1/auth/resend-activation")
+        .send({ email });
+      const neverInvited = await User.findOne({ email });
+
+      expect(withoutInvitation.status).toBe(200);
+      expect(neverInvited?.invitationSent).toBe(false);
+      expect(neverInvited?.invitationSentAt).toBeUndefined();
+
+      await User.updateOne({ email }, { $set: { invitationSent: true } });
       const firstResponse = await request(app)
         .post("/v1/auth/resend-activation")
         .send({ email });
@@ -235,6 +248,37 @@ describe("HTTP auth", () => {
       expect(secondResponse.status).toBe(429);
       expect(secondResponse.body.code).toBe("ACTIVATION_EMAIL_COOLDOWN");
       expect(secondResponse.body.retryAfterSeconds).toBeGreaterThan(0);
+    });
+
+    test("It should identify an expired signed activation link", async () => {
+      const user = await User.findOne({ email: "formateur2@studio.eco" });
+      const expiredToken = jwt.sign(
+        {
+          userId: user!._id.toString(),
+          userRoles: user!.roles,
+          purpose: "activation",
+        },
+        env.REGISTER_SECRET,
+        { expiresIn: -1 },
+      );
+
+      const response = await request(app)
+        .post("/v1/user/check-invitation")
+        .send({ token: expiredToken });
+
+      expect(response.status).toBe(410);
+      expect(response.body.code).toBe("ACTIVATION_LINK_EXPIRED");
+      expect(response.body.email).toBe(user!.email);
+
+      await User.updateOne(
+        { _id: user!._id },
+        { $set: { invitationSent: false } },
+      );
+      const neverInvited = await request(app)
+        .post("/v1/user/check-invitation")
+        .send({ token: expiredToken });
+      expect(neverInvited.status).toBe(401);
+      expect(neverInvited.body.email).toBeUndefined();
     });
   });
 

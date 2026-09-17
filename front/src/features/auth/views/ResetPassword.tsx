@@ -100,15 +100,15 @@ const ResetPasswordHome = () => {
           )}
         </button>
 
-        <button
-          type="button"
-          onClick={() => changeMode(isActivation ? "reset" : "activation")}
-          className="text-sm text-primary hover:underline transition-all"
-        >
-          {isActivation
-            ? "Mot de passe oublié ?"
-            : "Compte non activé ? Renvoyer le lien d'activation"}
-        </button>
+        {isActivation && (
+          <button
+            type="button"
+            onClick={() => changeMode("reset")}
+            className="text-sm text-primary hover:underline transition-all"
+          >
+            Mot de passe oublié ?
+          </button>
+        )}
 
         <div className="text-center mt-2">
           <Link

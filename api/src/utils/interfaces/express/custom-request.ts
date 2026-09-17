@@ -11,5 +11,6 @@ export default interface CustomRequest<
     userRoles: Array<IRole>;
     ability: AppAbility;
     abilityRules: AppAbilityRule[];
+    passwordTokenPurpose?: "activation" | "password-reset";
   };
 }
