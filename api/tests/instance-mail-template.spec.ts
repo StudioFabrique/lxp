@@ -16,6 +16,8 @@ describe("identité de l’instance dans les e-mails", () => {
     expect(html).toContain('src="cid:instance-logo"');
     expect(html).toContain('bgcolor="#123456"');
     expect(html).toContain('bgcolor="#f8fbff"');
+    expect(html).toContain('bgcolor="#f8fbff" style="padding:0;background-color:#f8fbff');
+    expect(html).toContain("border-top:1px solid #e6eaee;border-radius:18px 18px 0 0");
     expect(html).toContain("<strong>STEP</strong></td>");
     expect(html).not.toContain("Cet e-mail a été envoyé par");
     expect(html).toContain('src="cid:andria-footer-light"');
@@ -31,6 +33,7 @@ describe("identité de l’instance dans les e-mails", () => {
 
     expect(html).not.toContain("cid:instance-logo");
     expect(html).not.toContain("padding:24px 32px 30px");
+    expect(html).toContain("border-top:1px solid #e6eaee;border-radius:12px 12px 0 0");
     expect(html).toContain("<strong>STEP</strong></td>");
     expect(html).toContain('src="cid:andria-footer-light"');
   });
