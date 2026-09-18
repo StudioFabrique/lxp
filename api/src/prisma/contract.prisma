@@ -296,7 +296,7 @@ model Group {
 }
 
 model GroupsOnParcours {
-  groupId    Int
+  groupId    Int @unique
   parcoursId Int
   group      Group    @relation(fields: [groupId], references: [id])
   parcours   Parcours @relation(fields: [parcoursId], references: [id])

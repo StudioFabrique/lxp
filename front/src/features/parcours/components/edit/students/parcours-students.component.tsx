@@ -24,6 +24,7 @@ export type GroupList = {
   users: string[];
   isActive: boolean;
   isSelected: boolean;
+  parcoursId?: number | null;
 };
 
 const ParcoursStudents = () => {
@@ -37,9 +38,11 @@ const ParcoursStudents = () => {
   const availableGroups = useMemo(() => {
     const addedGroupIds = new Set(groups.map(({ _id }) => _id));
     return (fetchedGroups as GroupList[]).filter(
-      ({ _id }) => !addedGroupIds.has(_id),
+      ({ _id, parcoursId: assignedParcoursId }) =>
+        !addedGroupIds.has(_id) &&
+        (!assignedParcoursId || assignedParcoursId === parcoursId),
     );
-  }, [fetchedGroups, groups]);
+  }, [fetchedGroups, groups, parcoursId]);
   const groupIds = useMemo(
     () => groups.map((group) => group._id).filter(Boolean) as string[],
     [groups],

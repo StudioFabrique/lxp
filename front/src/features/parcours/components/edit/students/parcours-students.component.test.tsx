@@ -25,6 +25,13 @@ const availableGroup = {
   name: "Groupe B",
 };
 
+const assignedElsewhere = {
+  ...availableGroup,
+  _id: "other-parcours-group-id",
+  name: "Groupe C",
+  parcoursId: 2,
+};
+
 let parcoursGroups: (typeof group)[] = [];
 
 const updateGroups = vi.fn();
@@ -71,7 +78,7 @@ vi.mock("../../../hooks/useParcoursGroupsQuery", () => ({
 
 vi.mock("../../../hooks/useStudentGroupsQuery", () => ({
   useStudentGroupsQuery: () => ({
-    data: [group, availableGroup],
+    data: [group, availableGroup, assignedElsewhere],
     refetch: vi.fn(),
   }),
 }));
@@ -137,5 +144,6 @@ describe("ParcoursStudents", () => {
 
     expect(container.textContent).not.toContain("Groupe A");
     expect(container.textContent).toContain("Groupe B");
+    expect(container.textContent).not.toContain("Groupe C");
   });
 });

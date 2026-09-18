@@ -12,6 +12,7 @@ type GroupsList = {
   desc: string;
   formation: string;
   nbStudents: number;
+  parcoursId: number | null;
 };
 
 export default async function getStudentGroups(
@@ -36,7 +37,9 @@ export default async function getStudentGroups(
   )
     .select("idMdb")
     .include("parcours", (related83) =>
-      related83.include("parcours", (related84) => related84.select("title")),
+      related83
+        .select("parcoursId")
+        .include("parcours", (related84) => related84.select("title")),
     )
     .all();
 
@@ -55,6 +58,7 @@ export default async function getStudentGroups(
           desc: group.desc ?? "",
           name: group.name,
           nbStudents: group.users?.length ?? 0,
+          parcoursId: prismaGroup.parcours[0]?.parcoursId ?? null,
           formation:
             prismaGroup.parcours.length > 0
               ? prismaGroup.parcours[0]!.parcours!.title
