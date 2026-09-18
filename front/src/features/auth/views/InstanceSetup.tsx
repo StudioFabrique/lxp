@@ -69,7 +69,6 @@ export default function InstanceSetup() {
       if (!useDefaults && logo.file) payload.append("image", logo.file);
 
       await profileApi.mutations.updateInstanceSettings(payload);
-      toast.success("Votre espace est prêt.");
       navigate("/admin", { replace: true });
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "La configuration a échoué."));
