@@ -4,6 +4,12 @@ import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
 import { logger } from "../utils/logs/logger.ts";
 import { env } from "../config/env.ts";
+import { readInstanceSettings } from "./instance-settings.ts";
+
+async function mailContext() {
+  const settings = await readInstanceSettings();
+  return { organizationName: settings.name };
+}
 
 /**
  * Transporteur SMTP.
@@ -54,13 +60,13 @@ export async function sendPasswordEmail(
         : email;
 
     // Récupération du template HTML correspondant
-    const message = getTemplate(template, token, email);
+    const message = getTemplate(template, token, email, await mailContext());
 
     // Envoi de l'email
     const result = await transporter.sendMail({
       from: env.MAILER_FROM,
       to: destination,
-      subject: "Activation du compte",
+      subject: template === "reset" ? "Réinitialisation de votre mot de passe" : "Activation du compte",
       html: message,
     });
 
@@ -103,7 +109,7 @@ export async function sendUpdatedUserEmail(email: string) {
         : email;
 
     // Récupération du template pour la mise à jour du compte
-    const message = getTemplate("updated-user", "");
+    const message = getTemplate("updated-user", "", email, await mailContext());
 
     // Envoi de l'email
     const result = await transporter.sendMail({
@@ -141,7 +147,7 @@ async function sendAccountEmail(
       from: env.MAILER_FROM,
       to: destination,
       subject,
-      html: getTemplate(template, token, email),
+      html: getTemplate(template, token, email, await mailContext()),
     });
   } catch (error: any) {
     logger.error(`Envoi du mail « ${subject} » impossible`, error);
@@ -167,7 +173,7 @@ export function sendRootEmailVerification(email: string, token: string) {
     email,
     token,
     "root-email-verification",
-    "Activation de votre compte root ANDRIA",
+    "Activation de votre compte administrateur",
   );
 }
 
@@ -180,6 +186,6 @@ export function sendRootAccountInvitation(
     email,
     token,
     firstRoot ? "root-account-init" : "root-account",
-    "Création de votre compte root ANDRIA",
+    "Création de votre compte administrateur",
   );
 }

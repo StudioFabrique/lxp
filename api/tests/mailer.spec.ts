@@ -28,7 +28,7 @@ describe("Activation SMTP du compte root", () => {
     expect(sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: "root@test.fr",
-        subject: "Activation de votre compte root ANDRIA",
+        subject: "Activation de votre compte administrateur",
         html: expect.stringContaining("confirm-email?token=token"),
       }),
     );
