@@ -12,7 +12,7 @@ const Info: FC<{
   formProps: FormProps;
 }> = ({ formProps }) => (
   <div className="flex flex-col gap-2">
-    <BoxWrapper>
+    <BoxWrapper unstyled>
       <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <FormInput

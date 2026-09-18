@@ -25,6 +25,7 @@ import {
 import { type PropsWithChildren, useEffect, useState } from "react";
 
 import FadeWrapper from "../wrappers/FadeWrapper";
+import BoxWrapper from "../wrappers/BoxWrapper";
 
 const EMPTY_STATE_ICONS = [
   Coffee,
@@ -75,8 +76,8 @@ const EmptyStatePlaceholder = ({
   const PlaceholderIcon = EMPTY_STATE_ICONS[iconIndex];
 
   return (
-    <div
-      className={`select-none bg-base-200 rounded-lg ${withBorder ? "border border-base-300 shadow-sm" : ""}`}
+    <BoxWrapper
+      className={withBorder ? "border border-base-300 select-none" : ""}
     >
       <FadeWrapper>
         <div className="flex flex-col items-center gap-10 min-h-[50vh] justify-center">
@@ -87,7 +88,7 @@ const EmptyStatePlaceholder = ({
           </div>
         </div>
       </FadeWrapper>
-    </div>
+    </BoxWrapper>
   );
 };
 

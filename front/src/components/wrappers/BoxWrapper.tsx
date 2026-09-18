@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef, FC } from "react";
+import React, { ComponentPropsWithoutRef } from "react";
 import { cn } from "../../utils/cn";
 
 type Props = ComponentPropsWithoutRef<"div"> & {
@@ -6,12 +6,12 @@ type Props = ComponentPropsWithoutRef<"div"> & {
   unstyled?: boolean;
 };
 
-const BoxWrapper: FC<Props> = ({
+const BoxWrapper = ({
   className,
   children,
   unstyled = false,
   ...props
-}) => {
+}: Props) => {
   return (
     <div
       {...props}
