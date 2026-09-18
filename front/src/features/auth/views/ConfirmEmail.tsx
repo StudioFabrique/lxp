@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { onboardingApi } from "../api/onboarding.api";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import AuthPageWrapper from "../components/AuthPageWrapper";
+import { clearPendingRootActivation } from "../pending-root-activation";
 
 const ConfirmEmail = () => {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ const ConfirmEmail = () => {
       .confirmEmail(token)
       .then((response) => {
         if (!active) return;
+        clearPendingRootActivation();
         setState("success");
         setMessage(response.message);
       })

@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { onboardingApi } from "../api/onboarding.api";
 import AdminSignInForm from "./AdminSignInForm";
+import { getPendingRootActivationEmail } from "../pending-root-activation";
 
 vi.mock("../api/onboarding.api", () => ({
   onboardingApi: {
@@ -17,6 +18,7 @@ describe("AdminSignInForm", () => {
   const onSuccess = vi.fn();
 
   beforeEach(async () => {
+    localStorage.clear();
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -81,6 +83,7 @@ describe("AdminSignInForm", () => {
       password: "RootPassword@123",
     });
     expect(onSuccess).not.toHaveBeenCalled();
+    expect(getPendingRootActivationEmail()).toBe("root@test.fr");
     expect(container.textContent).toContain("Vérifiez votre boîte mail");
     expect(container.textContent).toContain("root@test.fr");
 
@@ -92,6 +95,7 @@ describe("AdminSignInForm", () => {
         ?.click();
     });
     expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(getPendingRootActivationEmail()).toBe("");
   });
 
   it("explique la rétrogradation du root actuel avant une nouvelle création", async () => {

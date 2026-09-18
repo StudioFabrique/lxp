@@ -114,7 +114,7 @@ configure_development_env() {
 
   echo
   echo "Configuration des services de développement"
-  echo "Appuyez sur Entrée pour conserver une valeur proposée."
+  echo
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
   prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
   prompt_env_value "MAILER_PASSWORD" "Mot de passe SMTP" true "$file"

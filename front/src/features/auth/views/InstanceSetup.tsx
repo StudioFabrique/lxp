@@ -76,13 +76,13 @@ export default function InstanceSetup() {
       description="Configurez l’identité de votre organisation. Vous pourrez modifier ces informations plus tard dans les paramètres."
     >
       <form
-        className="flex flex-col gap-5"
+        className="mx-auto flex w-full max-w-sm flex-col items-center gap-5"
         onSubmit={(event) => {
           event.preventDefault();
           void completeSetup();
         }}
       >
-        <label className="flex flex-col gap-2">
+        <label className="flex w-full flex-col gap-2 text-center">
           <span className="text-sm font-semibold text-base-content">
             Nom de l’organisation
           </span>
@@ -100,8 +100,8 @@ export default function InstanceSetup() {
           </span>
         </label>
 
-        <div className="flex flex-col gap-2">
-          <div>
+        <div className="flex w-full flex-col items-center gap-2 text-center">
+          <div className="w-full">
             <span className="text-sm font-semibold text-base-content">
               Logo <span className="font-normal text-base-content/50">(facultatif)</span>
             </span>

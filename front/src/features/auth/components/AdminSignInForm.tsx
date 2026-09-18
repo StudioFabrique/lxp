@@ -8,11 +8,16 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import AuthPageWrapper from "./AuthPageWrapper";
 import { ROOT_ACCOUNT_POLICY } from "../root-account-policy";
+import {
+  clearPendingRootActivation,
+  setPendingRootActivationEmail,
+} from "../pending-root-activation";
 
 type Props = {
   token: string;
   onSuccess: () => void;
   onRestart?: () => void;
+  initialActivationEmail?: string;
   email?: string;
   mode?: "first" | "additional";
 };
@@ -29,12 +34,15 @@ const AdminSignInForm = ({
   token,
   onSuccess,
   onRestart,
+  initialActivationEmail = "",
   email = "",
   mode = "first",
 }: Props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [activationEmail, setActivationEmail] = useState("");
+  const [activationEmail, setActivationEmail] = useState(
+    initialActivationEmail,
+  );
 
   const {
     register,
@@ -68,7 +76,9 @@ const AdminSignInForm = ({
       });
 
       if (mode === "first" && response.pendingActivation) {
-        setActivationEmail(data.email.trim());
+        const pendingEmail = data.email.trim();
+        setPendingRootActivationEmail(pendingEmail);
+        setActivationEmail(pendingEmail);
         return;
       }
 
@@ -83,6 +93,11 @@ const AdminSignInForm = ({
   };
 
   if (activationEmail) {
+    const restartCreation = () => {
+      clearPendingRootActivation();
+      onRestart?.();
+    };
+
     return (
       <AuthPageWrapper title="Vérifiez votre boîte mail">
         <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
@@ -102,7 +117,7 @@ const AdminSignInForm = ({
           <button
             type="button"
             className="btn btn-ghost btn-sm w-full normal-case text-base-content/70"
-            onClick={onRestart}
+            onClick={restartCreation}
           >
             Recommencer la création
           </button>
