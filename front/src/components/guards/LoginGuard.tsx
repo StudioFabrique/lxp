@@ -18,6 +18,7 @@ const LoginGuard = () => {
   const isTokenRoute = ["/createRoot", "/confirm-email"].includes(
     location.pathname,
   );
+  const isInstanceSetupRoute = location.pathname === "/instance-setup";
 
   useEffect(() => {
     let active = true;
@@ -48,6 +49,11 @@ const LoginGuard = () => {
 
   if (!isAppInitialized || !isConfigLoaded || (!isLoggedIn && !setupChecked))
     return <Loader />;
+
+  if (isLoggedIn && user && isInstanceSetupRoute) {
+    if (user.roles?.[0]?.rank === 0) return <Outlet />;
+    return <Navigate replace to={getUserHomePath(user) ?? "/access-denied"} />;
+  }
 
   if (isLoggedIn && user && location.pathname === "/register" &&
       new URLSearchParams(location.search).has("id")) {

@@ -22,14 +22,15 @@ let root: Root;
  * Rend le guard sur une adresse donnée, avec des routes témoins : on lit la
  * destination atteinte plutôt que d'inspecter le `Navigate` rendu.
  */
-const AuthHarness = ({ children, initiallyLoggedIn }: {
+const AuthHarness = ({ children, initiallyLoggedIn, rank }: {
   children: React.ReactNode;
   initiallyLoggedIn: boolean;
+  rank: number;
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(initiallyLoggedIn);
   return (
     <AuthContext value={{
-      user: isLoggedIn ? { roles: [{ rank: 1 }] } : null,
+      user: isLoggedIn ? { roles: [{ rank }] } : null,
       isLoggedIn,
       isAppInitialized: true,
       logout: async () => setIsLoggedIn(false),
@@ -39,13 +40,18 @@ const AuthHarness = ({ children, initiallyLoggedIn }: {
   );
 };
 
-const renderAt = async (path: string, demoMode: boolean, loggedIn = false) => {
+const renderAt = async (
+  path: string,
+  demoMode: boolean,
+  loggedIn = false,
+  rank = 1,
+) => {
   await act(async () => {
     root.render(
       <DemoContext
         value={{ ...DEFAULT_DEMO_CONFIG, demoMode, isConfigLoaded: true }}
       >
-        <AuthHarness initiallyLoggedIn={loggedIn}>
+        <AuthHarness initiallyLoggedIn={loggedIn} rank={rank}>
           <AbilityContext value={createAppAbility([])}>
             <MemoryRouter initialEntries={[path]}>
               <Routes>
@@ -55,6 +61,7 @@ const renderAt = async (path: string, demoMode: boolean, loggedIn = false) => {
                   <Route path="/init" element={<p>page-premier-admin</p>} />
                   <Route path="/createRoot" element={<p>page-nouveau-root</p>} />
                   <Route path="/confirm-email" element={<p>page-email</p>} />
+                  <Route path="/instance-setup" element={<p>page-configuration</p>} />
                 </Route>
                 <Route path="/demo" element={<p>page-demo</p>} />
                 <Route path="/admin" element={<p>tableau-de-bord</p>} />
@@ -136,5 +143,17 @@ describe("LoginGuard", () => {
     );
     await act(async () => cancel?.click());
     expect(container.textContent).toContain("tableau-de-bord");
+  });
+
+  it("laisse le super administrateur configurer l'instance", async () => {
+    expect(await renderAt("/instance-setup", false, true, 0)).toBe(
+      "page-configuration",
+    );
+  });
+
+  it("renvoie les autres utilisateurs vers leur accueil", async () => {
+    expect(await renderAt("/instance-setup", false, true)).toBe(
+      "tableau-de-bord",
+    );
   });
 });
