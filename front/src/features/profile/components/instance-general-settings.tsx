@@ -242,7 +242,8 @@ export default function InstanceGeneralSettings() {
                 Personnalisation de l’interface
               </h2>
               <p className="text-sm text-base-content/70">
-                Définissez le thème initial de l’interface.
+                Définissez le premier thème initial de l’interface pour tous les
+                utilisateurs.
               </p>
             </div>
 
