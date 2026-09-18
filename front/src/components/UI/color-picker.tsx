@@ -55,17 +55,25 @@ const ColorPicker = ({
         title="Couleur de fond du logo"
         className={
           compact
-            ? "btn btn-square btn-sm border border-base-300 bg-base-100/90 p-1 shadow-sm"
+            ? "btn btn-square btn-sm border p-1 shadow-sm"
             : "btn btn-dash btn-sm gap-2"
+        }
+        style={
+          compact
+            ? { backgroundColor: "#ffffff", borderColor: "#cbd5e1" }
+            : undefined
         }
       >
         <div
           className={
             compact
-              ? "h-5 w-5 rounded border border-base-300"
+              ? "h-5 w-5 rounded border"
               : "h-4 w-4 border border-base-300"
           }
-          style={{ backgroundColor: selectedColor }}
+          style={{
+            backgroundColor: selectedColor,
+            ...(compact ? { borderColor: "#cbd5e1" } : {}),
+          }}
         />
         {!compact && (
           <span className="font-mono">{selectedColor.toUpperCase()}</span>
