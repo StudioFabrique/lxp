@@ -6,6 +6,8 @@ import {
   LoaderCircle,
   Pencil,
   Send,
+  Eye,
+  EyeOff,
   Trash2,
 } from "lucide-react";
 import { Link } from "react-router";
@@ -19,6 +21,8 @@ type ParcoursActionsMenuProps = {
   parcours: ParcoursSummary;
   onDelete: (parcours: ParcoursSummary) => void;
   onExport?: (parcours: ParcoursSummary) => void;
+  onVisibility?: (parcours: ParcoursSummary) => void;
+  isUpdatingVisibility?: boolean;
   isExporting?: boolean;
   menuControl?: HierarchicalListMenuControl;
 };
@@ -31,7 +35,9 @@ const ParcoursActionsMenu = ({
   parcours,
   onDelete,
   onExport,
+  onVisibility,
   isExporting = false,
+  isUpdatingVisibility = false,
   menuControl,
 }: ParcoursActionsMenuProps) => (
   <DropdownMenu.Root
@@ -89,6 +95,23 @@ const ParcoursActionsMenu = ({
                     </Link>
                   </DropdownMenu.Item>
                 </RoleRankGuard>
+              ) : null}
+
+              {parcours.isPublished && onVisibility ? (
+                <DropdownMenu.Item
+                  className={itemClassName}
+                  disabled={isUpdatingVisibility}
+                  onSelect={() => onVisibility(parcours)}
+                >
+                  {isUpdatingVisibility ? (
+                    <LoaderCircle className="size-4 animate-spin" />
+                  ) : parcours.visibility === false ? (
+                    <Eye className="size-4" />
+                  ) : (
+                    <EyeOff className="size-4" />
+                  )}
+                  {parcours.visibility === false ? "Rendre visible" : "Masquer"}
+                </DropdownMenu.Item>
               ) : null}
             </>
           </PermissionGuard>

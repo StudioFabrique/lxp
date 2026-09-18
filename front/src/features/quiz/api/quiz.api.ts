@@ -15,8 +15,11 @@ const queries = {
    * La forme de la réponse est celle du service IA : sa conversion vers le
    * modèle interne reste dans les hooks, qui en portent déjà le mapping.
    */
-  requestRandomQuestion: async (content?: string) => {
-    const res = await apiClient.post("/quiz/random", { content });
+  requestRandomQuestion: async (
+    content?: string,
+    context?: { courseId?: number; attemptId?: number | null },
+  ) => {
+    const res = await apiClient.post("/quiz/random", { content, ...context });
     return res.data;
   },
 

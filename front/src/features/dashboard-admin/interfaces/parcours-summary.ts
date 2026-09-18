@@ -4,6 +4,7 @@ export default interface ParcoursSummary {
   startDate: string | null;
   endDate: string | null;
   isPublished: boolean;
+  visibility?: boolean;
   thumb: string | null;
   canManage?: boolean;
 }

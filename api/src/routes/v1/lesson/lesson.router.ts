@@ -27,9 +27,31 @@ import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesso
 import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson.ts";
 import httpPostDuplicateLesson from "../../../controllers/lesson/http-post-duplicate-lesson.ts";
 import httpPostDuplicateResources from "../../../controllers/lesson/http-post-duplicate-resources.ts";
+import {
+  httpPutLessonPublication,
+  httpPutLessonVisibility,
+} from "../../../controllers/lesson/http-put-lesson-availability.ts";
+import { body } from "express-validator";
+import { checkValidatorResult } from "../../../middleware/validators.ts";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
+
+lessonRouter.put(
+  "/publication/:lessonId",
+  checkPermissions("lesson", "update"),
+  checkContentAccess("lesson", "lessonId"),
+  [body("isPublished").isBoolean(), checkValidatorResult],
+  httpPutLessonPublication,
+);
+
+lessonRouter.put(
+  "/visibility/:lessonId",
+  checkPermissions("lesson", "update"),
+  checkContentAccess("lesson", "lessonId"),
+  [body("visibility").isBoolean(), checkValidatorResult],
+  httpPutLessonVisibility,
+);
 
 // Route pour mettre à jour une leçon existante
 lessonRouter.put(

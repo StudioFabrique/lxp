@@ -243,7 +243,10 @@ export default function useCourseQuiz(
 
       try {
         const question =
-          await quizApi.queries.requestRandomQuestion(activityContent);
+          await quizApi.queries.requestRandomQuestion(activityContent, {
+            courseId,
+            attemptId: isAppending ? attemptTracking.getAttemptId() : null,
+          });
 
         const mappedQuiz = mapExternalToInternal(question);
 
@@ -266,7 +269,7 @@ export default function useCourseQuiz(
         setIsStreaming(false);
       }
     },
-    [activityContent, aiDisabled, aiUnavailable, aiIndexed, setAiUnavailable],
+    [activityContent, aiDisabled, aiUnavailable, aiIndexed, setAiUnavailable, courseId, attemptTracking],
   );
 
   const onCloseQuizzes = () => {
@@ -337,7 +340,10 @@ export default function useCourseQuiz(
 
         // Demande immédiatement un nouveau quiz aléatoire basé sur le contenu de l'activité
         const question =
-          await quizApi.queries.requestRandomQuestion(activityContent);
+          await quizApi.queries.requestRandomQuestion(activityContent, {
+            courseId,
+            attemptId: attemptTracking.getAttemptId(),
+          });
 
         const mappedQuiz = mapExternalToInternal(question);
 
@@ -377,6 +383,7 @@ export default function useCourseQuiz(
       isAnswered,
       isCorrect,
       attemptTracking,
+      courseId,
     ],
   );
 

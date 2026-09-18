@@ -1083,7 +1083,8 @@ const InertOnboarding = ({ children }: PropsWithChildren) => (
 const OnboardingTour = ({
   layout,
   children,
-}: PropsWithChildren<{ layout: Layout }>) => {
+  enabled = true,
+}: PropsWithChildren<{ layout: Layout; enabled?: boolean }>) => {
   const { user } = useContext(AuthContext);
   const { demoMode } = useDemoMode();
   const userRank = user?.roles.length
@@ -1101,7 +1102,7 @@ const OnboardingTour = ({
   const isEligibilityResolved =
     layout === "student" || demoMode || !staffParcours.isLoading;
 
-  if (demoMode) return <InertOnboarding>{children}</InertOnboarding>;
+  if (demoMode || !enabled) return <InertOnboarding>{children}</InertOnboarding>;
   // À la déconnexion, la barre latérale peut rester montée pendant le rendu où
   // `user` vient de passer à null. Le contexte inerte évite que ses composants
   // consommateurs se retrouvent momentanément hors fournisseur.

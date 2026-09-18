@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import { noData, serverIssue } from "../../utils/constantes.ts";
 import updateManyUsersStatus from "../../models/user/update-many-users-status.ts";
 import { validationResult } from "express-validator";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 async function httpUpdateManyUsersStatus(req: Request, res: Response) {
   try {
@@ -16,6 +17,7 @@ async function httpUpdateManyUsersStatus(req: Request, res: Response) {
     if (!response) {
       return res.status(404).json({ message: noData });
     }
+    scheduleAvailabilityReconciliation();
     return res
       .status(201)
       .json({ message: "Status des utilisateurs modifié avec succès!" });

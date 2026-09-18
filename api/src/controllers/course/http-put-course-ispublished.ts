@@ -3,6 +3,7 @@ import { type Request, type Response } from "express";
 import putCourseIsPublished from "../../models/course/put-course-ispublished.ts";
 import { serverIssue } from "../../utils/constantes.ts";
 import enableCourse from "../../models/course/enable-course.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 async function httpPutCourseIsPublished(req: Request, res: Response) {
   const { courseId } = req.params;
@@ -10,6 +11,7 @@ async function httpPutCourseIsPublished(req: Request, res: Response) {
   try {
     await enableCourse(+courseId, true);
     await putCourseIsPublished(+courseId);
+    scheduleAvailabilityReconciliation();
     return res
       .status(201)
       .json({ success: true, message: "Le cours a été publié avec succès" });

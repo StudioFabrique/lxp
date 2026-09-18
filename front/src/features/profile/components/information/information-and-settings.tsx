@@ -23,13 +23,14 @@ type UserInformation = {
 const InformationAndSettings: FC<{
   formRef: Ref<HTMLFormElement>;
   onSaved?: () => void;
-}> = ({ formRef, onSaved }) => {
+  onDirtyChange?: (dirty: boolean) => void;
+}> = ({ formRef, onSaved, onDirtyChange }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
   } = useForm({
     resolver: zodResolver(informationSchema),
@@ -91,6 +92,10 @@ const InformationAndSettings: FC<{
       });
     }
   }, [userData, reset]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   if (isLoading) return <Loader />;
 

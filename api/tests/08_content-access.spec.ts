@@ -64,6 +64,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminId,
       formationId,
       isPublished: true,
+      visibility: true,
     });
     const module = await prisma.orm.public.Module.select("id").create({
       title: `${titre} module`,
@@ -78,6 +79,8 @@ describe("Cloisonnement des contenus par parcours", () => {
       moduleId: module.id,
       order: 1,
       dates: [],
+      isPublished: true,
+      visibility: true,
     });
     const lesson = await prisma.orm.public.Lesson.select("id").create({
       title: `${titre} leçon`,
@@ -88,6 +91,8 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminId,
       courseId: course.id,
       tagId,
+      isPublished: true,
+      visibility: true,
     });
     const activity = await prisma.orm.public.Activity.select("id").create({
       title: `${titre} activité`,
@@ -309,6 +314,38 @@ describe("Cloisonnement des contenus par parcours", () => {
         .get(`/v1/modules/detail/limited/${inscrit.moduleId}`)
         .set("Cookie", cookieApprenant)
         .expect(200);
+    });
+
+    it("refuse le contenu dès qu'une leçon de la chaîne est masquée", async () => {
+      await prisma.orm.public.Lesson.where({ id: inscrit.lessonId }).update({
+        visibility: false,
+      });
+      try {
+        await request(app)
+          .get(`/v1/lesson/${inscrit.lessonId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(404);
+      } finally {
+        await prisma.orm.public.Lesson.where({ id: inscrit.lessonId }).update({
+          visibility: true,
+        });
+      }
+    });
+
+    it("refuse le contenu dès que son parcours est masqué", async () => {
+      await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
+        visibility: false,
+      });
+      try {
+        await request(app)
+          .get(`/v1/lesson/${inscrit.lessonId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(404);
+      } finally {
+        await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
+          visibility: true,
+        });
+      }
     });
   });
 

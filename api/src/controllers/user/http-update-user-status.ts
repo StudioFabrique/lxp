@@ -18,6 +18,7 @@ import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import updateUserStatus from "../../models/user/update-user-status.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import { validationResult } from "express-validator";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 async function httpUpdateUserStatus(
   req: CustomRequest,
@@ -41,6 +42,7 @@ async function httpUpdateUserStatus(
       userId,
       value
     );
+    scheduleAvailabilityReconciliation();
     // Construct success message based on the updated user's status
     next({
       statusCode: 201,

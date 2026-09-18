@@ -5,6 +5,10 @@ export default async function getModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
+  const teacherOrAdmin = await prisma.orm.public.Admin.where({
+    idMdb: userMongoId,
+  }).first();
+
   const module = await prisma.orm.public.Module.where({ id: moduleId })
     .select(
       "id",
@@ -20,9 +24,17 @@ export default async function getModuleDetail(
     .include("contacts", (related172) => related172.include("contact"))
     .include("courses", (related173) =>
       related173
+        .where({
+          isPublished: teacherOrAdmin ? undefined : true,
+          visibility: teacherOrAdmin ? undefined : true,
+        })
         .select("id", "title", "description", "courseSlug")
         .include("lessons", (related174) =>
           related174
+            .where({
+              isPublished: teacherOrAdmin ? undefined : true,
+              visibility: teacherOrAdmin ? undefined : true,
+            })
             .include("lessonsRead", (related175) =>
               related175.where((row) =>
                 row.student.some((student) => student.idMdb.eq(userMongoId)),

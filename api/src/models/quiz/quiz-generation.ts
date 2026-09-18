@@ -8,6 +8,8 @@ import {
 import { quizRepository } from "./quiz-repository.ts";
 import type { QuizStreamDoneEvent } from "../../services/quiz/quiz-stream.ts";
 import { logger } from "../../utils/logs/logger.ts";
+import { buildStudentProfile } from "../../services/ai/student-profile-adapter.ts";
+import { prisma } from "../../utils/db.ts";
 
 export class QuizGenerationError extends Error {
   readonly statusCode: number;
@@ -171,9 +173,33 @@ type RandomQuizInput = {
   maxAttempts: number;
   pastQuestions: unknown[];
   userId?: string;
+  courseId?: number;
+  attemptId?: number;
 };
 
 export async function generateRandomQuiz(input: RandomQuizInput) {
+  let attempt: {
+    id: number;
+    quizId: number;
+    finishedAt: string | null;
+    student: { idMdb: string } | null;
+  } | null = null;
+  if (input.attemptId && input.userId) {
+    attempt = await prisma.orm.public.QuizAttempt.where({ id: input.attemptId })
+      .select("id", "quizId", "finishedAt")
+      .include("student", (student) => student.select("idMdb"))
+      .first();
+    if (
+      !attempt ||
+      attempt.student?.idMdb !== input.userId ||
+      attempt.finishedAt !== null
+    ) {
+      throw new QuizGenerationError(403, "Tentative de quiz invalide.");
+    }
+  }
+  const profile = input.userId
+    ? await buildStudentProfile(input.userId, input.courseId)
+    : undefined;
   const data = await aiApiClient.postJson<
     AiQuizQuestion & { tokens?: { total_tokens?: number } }
   >("/quiz/random", {
@@ -184,12 +210,13 @@ export async function generateRandomQuiz(input: RandomQuizInput) {
       toxicity_threshold: input.toxicityThreshold,
       max_attempts: input.maxAttempts,
       past_questions: input.pastQuestions,
-      ...(input.userId && { profile: { user_id: String(input.userId) } }),
+      ...(profile && { profile }),
     },
   });
 
-  await quizRepository
-    .saveStandaloneQuestion(data, createQuizGenerationKey())
+  await (attempt
+    ? quizRepository.saveQuestion(data, { quizId: attempt.quizId })
+    : quizRepository.saveStandaloneQuestion(data, createQuizGenerationKey()))
     .catch((error) => logger.error("Erreur de sauvegarde cache:", error));
   const tokens = data.tokens?.total_tokens;
   if (input.userId && tokens) await trackTokens(input.userId, tokens);

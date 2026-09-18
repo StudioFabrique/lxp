@@ -14,10 +14,11 @@ import useStudentIndicators from "../hooks/useStudentIndicators";
 import useStudentPrediction from "../hooks/useStudentPrediction";
 import AnalysisFeedbackForm from "../components/user-data/AnalysisFeedbackForm";
 import AnalysisHistory from "../components/user-data/AnalysisHistory";
+import DeclaredLearningProfile from "../components/user-data/DeclaredLearningProfile";
 
 export default function UserData() {
   const { studentId } = useParams();
-  const { student, parcours, imageUrl, isLoading, isError } = useTeacher(
+  const { student, parcours, imageUrl, learningProfile, isLoading, isError } = useTeacher(
     studentId!,
   );
   const indicatorsQuery = useStudentIndicators(studentId!);
@@ -80,6 +81,8 @@ export default function UserData() {
               />
             </section>
           </BoxWrapper>
+
+          <DeclaredLearningProfile data={learningProfile} />
 
           <BoxWrapper>
             <IndicatorsGrid

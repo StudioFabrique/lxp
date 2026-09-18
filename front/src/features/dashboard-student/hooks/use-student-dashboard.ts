@@ -5,6 +5,10 @@ import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
 import { profileApi } from "../../profile/api/profile.api";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
+import {
+  learningProfileApi,
+  learningProfileKey,
+} from "../../learning-profile/learning-profile.api";
 
 const defaultTitle = "Bonjour, {firstname} {lastname} !";
 const defaultMessage =
@@ -24,8 +28,17 @@ export function useStudentDashboard() {
     queryFn: dashboardStudentApi.queries.getLastReadLessons,
   });
 
+  const learningContext = useQuery({
+    queryKey: learningProfileKey,
+    queryFn: learningProfileApi.get,
+    refetchOnWindowFocus: true,
+  });
+
   return {
-    showOnboardingWelcome: onboardingStatus === "pending",
+    showOnboardingWelcome:
+      onboardingStatus === "pending" &&
+      learningContext.data?.hasAvailableContent === true &&
+      learningContext.data?.onboardingRequired === false,
     welcomeTitle: formatWelcomeTitle(
       instanceSettings?.welcomeTitles.student ?? defaultTitle,
       user,
@@ -35,5 +48,6 @@ export function useStudentDashboard() {
     lastLesson: lastLessons?.[0],
     remainingLessons: lastLessons?.slice(1) ?? [],
     hasLastLessons: Boolean(lastLessons?.length),
+    learningContext,
   };
 }

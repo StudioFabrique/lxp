@@ -338,3 +338,46 @@ export function sendRootAccountInvitation(
     "Création de votre compte administrateur",
   );
 }
+
+const escapeMailText = (value: string) =>
+  value.replace(/[&<>"']/g, (character) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+      character
+    ]!,
+  );
+
+export async function sendContentAvailabilityEmail(input: {
+  email: string;
+  firstname: string;
+  formation: string;
+  parcours: string[];
+  messageId: string;
+}) {
+  if (!regexMail.test(input.email)) throw { statusCode: 400, message: badQuery };
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : input.email;
+  const dashboardUrl = `${env.FRONT_URL ?? ""}/student/dashboard`;
+  const context = await mailContext();
+  const parcours = input.parcours.map(escapeMailText).join(", ");
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#1f2937">
+      <h1>De nouveaux contenus sont disponibles</h1>
+      <p>Bonjour ${escapeMailText(input.firstname)},</p>
+      <p>La formation <strong>${escapeMailText(input.formation)}</strong> est désormais accessible.</p>
+      <p>Parcours disponibles : ${parcours}</p>
+      <p><a href="${escapeMailText(dashboardUrl)}" style="display:inline-block;padding:12px 18px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px">Découvrir mes contenus</a></p>
+      <p>${escapeMailText(context.organizationName)}</p>
+    </div>`;
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: `Votre formation ${input.formation} est disponible`,
+    messageId: input.messageId,
+    html,
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
+}

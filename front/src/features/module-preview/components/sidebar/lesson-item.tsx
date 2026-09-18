@@ -1,5 +1,5 @@
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
-import { Check, Trash2, Edit3, EllipsisIcon, ChevronDown, ChevronRight } from "lucide-react";
+import { Check, Trash2, Edit3, EllipsisIcon, ChevronDown, ChevronRight, Cloud, CloudOff, Eye, EyeOff } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -8,6 +8,8 @@ import { createPortal } from "react-dom";
 import EditLessonModal from "./edit-lesson-modal";
 import type { LessonFormValues } from "./lesson-form.types";
 import type Tag from "../../../../utils/interfaces/tag";
+import { modulePreviewApi } from "../../api/module-preview.api";
+import toast from "react-hot-toast";
 
 type LessonItemProps = {
   calendarMode?: boolean;
@@ -50,6 +52,8 @@ const LessonItem = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isEditingLesson, setIsEditingLesson] = useState(openEditOnMount);
   const [isSavingLesson, setIsSavingLesson] = useState(false);
+  const [isPublished, setIsPublished] = useState(Boolean(lesson.isPublished));
+  const [isVisible, setIsVisible] = useState(Boolean(lesson.visibility));
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const isLessonRead = lesson.lessonsRead?.some(
@@ -196,6 +200,14 @@ const LessonItem = ({
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
           {calendarMode && (isLessonSelected ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />)}
+          {!calendarMode && canEditLesson && (!isPublished || !isVisible) ? (
+            <span
+              className="tooltip"
+              data-tip={!isPublished ? "Leçon non publiée" : "Leçon invisible"}
+            >
+              {!isPublished ? <CloudOff className="size-4" /> : <EyeOff className="size-4" />}
+            </span>
+          ) : null}
           <p className="max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
           {selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
@@ -221,6 +233,45 @@ const LessonItem = ({
                         }}
                         onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling
                       >
+                        <li>
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 text-sm text-base-content"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              try {
+                                await modulePreviewApi.mutations.setLessonPublication(lesson.id!, !isPublished);
+                                setIsPublished(!isPublished);
+                                if (!isPublished) setIsVisible(true);
+                                setIsOpen(false);
+                              } catch {
+                                toast.error("Impossible de modifier la publication de la leçon.");
+                              }
+                            }}
+                          >
+                            {isPublished ? <CloudOff className="w-4 h-4" /> : <Cloud className="w-4 h-4" />}
+                            <span>{isPublished ? "Dépublier" : "Publier"}</span>
+                          </button>
+                        </li>
+                        {isPublished ? <li>
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 text-sm text-base-content"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              try {
+                                await modulePreviewApi.mutations.setLessonVisibility(lesson.id!, !isVisible);
+                                setIsVisible(!isVisible);
+                                setIsOpen(false);
+                              } catch {
+                                toast.error("Impossible de modifier la visibilité de la leçon.");
+                              }
+                            }}
+                          >
+                            {isVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            <span>{isVisible ? "Rendre invisible" : "Rendre visible"}</span>
+                          </button>
+                        </li> : null}
                         <li>
                           <button
                             type="button"

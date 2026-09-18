@@ -1,12 +1,14 @@
 import { type Request, type Response } from "express";
 import { serverIssue } from "../../utils/constantes.ts";
 import putParcoursGroups from "../../models/parcours/put-parcours-groups.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 async function httpPutParcoursGroups(req: Request, res: Response) {
   const { parcoursId, groupsIds } = req.body;
 
   try {
     const response = await putParcoursGroups(+parcoursId, groupsIds);
+    scheduleAvailabilityReconciliation();
     if (response) {
       return res
         .status(201)

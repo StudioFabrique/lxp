@@ -156,6 +156,12 @@ const mutations = {
     });
     return res.data;
   },
+  updateParcoursVisibility: async (id: number, visibility: boolean) => {
+    const res = await apiClient.put(`/parcours/visibility/${id}`, {
+      visibility,
+    });
+    return res.data;
+  },
   updateParcoursImage: async (id: string, formData: FormData) => {
     await apiClient.put(`/parcours/update-image/${id}`, formData);
   },

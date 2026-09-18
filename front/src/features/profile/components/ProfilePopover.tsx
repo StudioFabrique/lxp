@@ -209,16 +209,26 @@ export default function ProfilePopover({ interfaceType }: Props) {
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
-                    onClick={() => {
-                      setOpen(false);
-                      setEditing(true);
-                    }}
-                  >
-                    Modifier mon profil
-                  </button>
+                  {interfaceType === "student" ? (
+                    <Link
+                      to="/student/profil"
+                      className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
+                      onClick={() => setOpen(false)}
+                    >
+                      Mon profil
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
+                      onClick={() => {
+                        setOpen(false);
+                        setEditing(true);
+                      }}
+                    >
+                      Modifier mon profil
+                    </button>
+                  )}
                   <div className="mt-3 border-t border-base-300 pt-3">
                     {canSeeProgress && (
                       <Link

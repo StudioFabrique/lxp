@@ -6,6 +6,7 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 export default async function httpCreateGroup(req: CustomRequest, res: Response) {
   const uploadedFile = req.file;
@@ -27,6 +28,7 @@ export default async function httpCreateGroup(req: CustomRequest, res: Response)
       image = await fs.promises.readFile(uploadedFile.path);
     }
     await createGroup(group, users, image, req.auth!.userId, parcoursId);
+    scheduleAvailabilityReconciliation();
 
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });

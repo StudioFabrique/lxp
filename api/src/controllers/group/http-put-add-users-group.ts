@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import addUsers from "../../models/group/add-users.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 export default async function httpPutAddUsersGroup(
   req: Request<{ id: string }>,
@@ -15,6 +16,8 @@ export default async function httpPutAddUsersGroup(
     if (!response) {
       return res.status(400).json({ message: badQuery });
     }
+
+    scheduleAvailabilityReconciliation();
 
     return res.status(200).json({ data: response });
   } catch (err) {
