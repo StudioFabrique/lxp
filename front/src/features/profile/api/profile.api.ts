@@ -6,7 +6,7 @@ export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
   hasLogo: boolean;
-  defaultTheme: string;
+  enabledThemes: string[];
   welcomeTitles: {
     admin: string;
     teacher: string;

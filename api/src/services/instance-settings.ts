@@ -4,7 +4,7 @@ import path from "path";
 export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
-  defaultTheme: string;
+  enabledThemes: string[];
   welcomeTitles: {
     admin: string;
     teacher: string;
@@ -20,7 +20,10 @@ export type InstanceSettings = {
 export const defaultInstanceSettings: InstanceSettings = {
   name: "ANDRIA",
   setupCompleted: false,
-  defaultTheme: "classic",
+  enabledThemes: [
+    "classic", "ocean", "linen", "sage",
+    "classic-dark", "aurora", "ember", "abyss",
+  ],
   welcomeTitles: {
     admin: "Bonjour, {firstname} {lastname} !",
     teacher: "Bonjour, {firstname} {lastname} !",
@@ -85,14 +88,9 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
         typeof saved.setupCompleted === "boolean"
           ? saved.setupCompleted
           : defaultInstanceSettings.setupCompleted,
-      defaultTheme:
-        typeof saved.defaultTheme === "string"
-          ? saved.defaultTheme === "light"
-            ? "classic"
-            : saved.defaultTheme === "dark"
-              ? "classic-dark"
-              : saved.defaultTheme
-          : "classic",
+      enabledThemes: Array.isArray(saved.enabledThemes)
+        ? saved.enabledThemes.filter((theme: unknown): theme is string => typeof theme === "string")
+        : defaultInstanceSettings.enabledThemes,
       welcomeTitles: {
         ...defaultInstanceSettings.welcomeTitles,
         ...(saved.welcomeTitles ?? {}),

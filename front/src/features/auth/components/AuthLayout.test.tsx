@@ -25,7 +25,7 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
       name: "STEP",
       setupCompleted: true,
       hasLogo: true,
-      defaultTheme: "classic",
+      enabledThemes: ["classic", "classic-dark"],
       welcomeTitles: {
         admin: "Bonjour",
         teacher: "Bonjour",

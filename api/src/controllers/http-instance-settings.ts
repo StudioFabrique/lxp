@@ -25,7 +25,15 @@ const allowedThemes = new Set([
   "plum",
   "moss",
   "cobalt",
+  "pearl", "mint", "blossom", "sky", "lemon", "clay", "ice", "paper",
+  "midnight", "forest-night", "coffee", "amethyst", "storm", "wine", "teal-night", "obsidian",
 ]);
+
+const lightThemes = new Set([
+  "classic", "ocean", "linen", "sage", "lavender", "sunrise", "glacier", "sand",
+  "pearl", "mint", "blossom", "sky", "lemon", "clay", "ice", "paper",
+]);
+const darkThemes = new Set([...allowedThemes].filter((theme) => !lightThemes.has(theme)));
 
 export async function httpGetInstanceSettings(
   _req: CustomRequest,
@@ -42,7 +50,7 @@ export async function httpPutInstanceSettings(
   req: CustomRequest,
   res: Response,
 ) {
-  const { name, defaultTheme } = req.body ?? {};
+  const { name } = req.body ?? {};
   const currentSettings = await readInstanceSettings();
   let titles: Record<string, unknown> | undefined;
   let messages: Record<string, unknown> | undefined;
@@ -68,10 +76,21 @@ export async function httpPutInstanceSettings(
     });
   }
 
-  if (typeof defaultTheme !== "string" || !allowedThemes.has(defaultTheme)) {
+  let enabledThemes: unknown;
+  try {
+    enabledThemes = JSON.parse(req.body?.enabledThemes ?? "");
+  } catch {
+    enabledThemes = null;
+  }
+  if (
+    !Array.isArray(enabledThemes) ||
+    enabledThemes.some((theme) => typeof theme !== "string" || !allowedThemes.has(theme)) ||
+    !enabledThemes.some((theme) => lightThemes.has(theme)) ||
+    !enabledThemes.some((theme) => darkThemes.has(theme))
+  ) {
     return res
       .status(400)
-      .json({ message: "Le thème sélectionné est invalide." });
+      .json({ message: "Sélectionnez au moins un thème clair et un thème sombre." });
   }
 
   if (
@@ -100,7 +119,7 @@ export async function httpPutInstanceSettings(
       req.body?.setupCompleted === "true"
         ? true
         : currentSettings.setupCompleted,
-    defaultTheme,
+    enabledThemes: [...new Set(enabledThemes as string[])],
     welcomeTitles: {
       admin: (titles!.admin as string).trim(),
       teacher: (titles!.teacher as string).trim(),

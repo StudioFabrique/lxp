@@ -13,7 +13,6 @@ import toast from "react-hot-toast";
 import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AvatarSmall } from "../../../components/avatar/AvatarSmall";
-import { darkThemes, lightThemes } from "../../../config/themes";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import { maxSizeError } from "../../../utils/helpers/max-size-error";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
@@ -26,7 +25,7 @@ type Props = { interfaceType: string };
 
 export default function ProfilePopover({ interfaceType }: Props) {
   const { user, handshake } = useContext(AuthContext);
-  const { theme, toggleTheme, chooseTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -101,7 +100,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
     }
   };
 
-  const themeOptions = theme === "light" ? lightThemes : darkThemes;
+  const themeOptions = theme === "light" ? availableLightThemes : availableDarkThemes;
 
   return (
     <>

@@ -27,8 +27,8 @@ export default function InstanceLogoControls({
   helpText,
 }: Props) {
   return (
-    <div className="w-full min-w-0 max-w-sm">
-      <div className="mb-2">
+    <div className="w-full min-w-0 max-w-sm text-center">
+      <div className="mb-2 text-center">
         <span className="text-sm font-bold text-base-content">
           Logo{" "}
           {optional && (
@@ -73,7 +73,7 @@ export default function InstanceLogoControls({
         )}
       </div>
 
-      <p className="mt-2 text-xs text-base-content/60">{helpText}</p>
+      <p className="mt-2 text-center text-xs text-base-content/60">{helpText}</p>
     </div>
   );
 }

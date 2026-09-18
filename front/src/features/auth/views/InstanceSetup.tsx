@@ -56,7 +56,7 @@ export default function InstanceSetup() {
       const payload = new FormData();
       payload.append("name", organizationName);
       payload.append("setupCompleted", "true");
-      payload.append("defaultTheme", settings.defaultTheme);
+      payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
       payload.append("welcomeTitles", JSON.stringify(settings.welcomeTitles));
       payload.append(
         "welcomeMessages",

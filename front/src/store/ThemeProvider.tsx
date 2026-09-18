@@ -5,19 +5,28 @@ import {
   useEffect,
   useState,
 } from "react";
-import { darkThemes, lightThemes, themes } from "../config/themes";
+import {
+  darkThemes,
+  defaultEnabledThemes,
+  lightThemes,
+  themes,
+} from "../config/themes";
 import { BASE_API_URL } from "../config/urls";
 
 type ThemeContextType = {
   theme: "light" | "dark";
   toggleTheme: () => void;
   chooseTheme: (newTheme: string, mode: "light" | "dark") => void;
+  availableLightThemes: readonly string[];
+  availableDarkThemes: readonly string[];
 };
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: "light",
   toggleTheme: () => {},
   chooseTheme: () => {},
+  availableLightThemes: defaultEnabledThemes.filter((theme) => lightThemes.includes(theme as never)),
+  availableDarkThemes: defaultEnabledThemes.filter((theme) => darkThemes.includes(theme as never)),
 });
 
 const getAvailableTheme = (
@@ -57,10 +66,16 @@ const initializeTheme = (): "light" | "dark" => {
 
 const ThemeProvider = ({ children }: PropsWithChildren) => {
   const [theme, setTheme] = useState<"light" | "dark">(initializeTheme);
+  const [availableLightThemes, setAvailableLightThemes] = useState<readonly string[]>(
+    defaultEnabledThemes.filter((item) => lightThemes.includes(item as never)),
+  );
+  const [availableDarkThemes, setAvailableDarkThemes] = useState<readonly string[]>(
+    defaultEnabledThemes.filter((item) => darkThemes.includes(item as never)),
+  );
 
   const chooseTheme = useCallback(
     (newTheme: string, mode: "light" | "dark") => {
-      const availableThemes = mode === "light" ? lightThemes : darkThemes;
+      const availableThemes = mode === "light" ? availableLightThemes : availableDarkThemes;
       if (!availableThemes.some((availableTheme) => availableTheme === newTheme))
         return;
 
@@ -79,7 +94,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
       // sélectionné doit néanmoins être appliqué immédiatement.
       document.documentElement.setAttribute("data-theme", newTheme);
     },
-    [],
+    [availableDarkThemes, availableLightThemes],
   );
 
   const toggleTheme = useCallback(() => {
@@ -101,8 +116,6 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
   }, [theme]);
 
   useEffect(() => {
-    if (localStorage.getItem("themePreferenceSet") === "true") return;
-
     const abortController = new AbortController();
     fetch(`${BASE_API_URL}/instance-settings`, {
       credentials: "include",
@@ -110,32 +123,29 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
     })
       .then((response) => {
         if (!response.ok) throw new Error("Paramètres indisponibles");
-        return response.json() as Promise<{ defaultTheme?: string }>;
+        return response.json() as Promise<{ enabledThemes?: string[] }>;
       })
-      .then(({ defaultTheme }) => {
-        if (!defaultTheme) return;
-        const mode = lightThemes.includes(
-          defaultTheme as (typeof lightThemes)[number],
-        )
-          ? "light"
-          : darkThemes.includes(defaultTheme as (typeof darkThemes)[number])
-            ? "dark"
-            : null;
-        if (!mode) return;
+      .then(({ enabledThemes }) => {
+        if (!Array.isArray(enabledThemes)) return;
+        const enabledLight = lightThemes.filter((item) => enabledThemes.includes(item));
+        const enabledDark = darkThemes.filter((item) => enabledThemes.includes(item));
+        if (!enabledLight.length || !enabledDark.length) return;
+        setAvailableLightThemes(enabledLight);
+        setAvailableDarkThemes(enabledDark);
 
-        themes[mode] = defaultTheme;
-        localStorage.setItem(`${mode}Theme`, defaultTheme);
-        localStorage.setItem("activeTheme", mode);
-        document.documentElement.setAttribute("data-theme", defaultTheme);
-        setTheme(mode);
+        themes.light = getAvailableTheme(localStorage.getItem("lightTheme"), enabledLight, enabledLight[0]);
+        themes.dark = getAvailableTheme(localStorage.getItem("darkTheme"), enabledDark, enabledDark[0]);
+        localStorage.setItem("lightTheme", themes.light);
+        localStorage.setItem("darkTheme", themes.dark);
+        document.documentElement.setAttribute("data-theme", themes[theme]);
       })
       .catch(() => undefined);
 
     return () => abortController.abort();
-  }, []);
+  }, [theme]);
 
   return (
-    <ThemeContext value={{ theme, toggleTheme, chooseTheme }}>
+    <ThemeContext value={{ theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes }}>
       {children}
     </ThemeContext>
   );

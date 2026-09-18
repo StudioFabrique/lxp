@@ -5,7 +5,7 @@ import type CustomRequest from "../src/utils/interfaces/express/custom-request.t
 const defaultInstanceSettings = {
   name: "ANDRIA",
   setupCompleted: true,
-  defaultTheme: "classic",
+  enabledThemes: ["classic", "classic-dark"],
   welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
   welcomeMessages: {
     admin: "Bienvenue",
@@ -43,7 +43,7 @@ function request(name: string) {
   return {
     body: {
       name,
-      defaultTheme: defaultInstanceSettings.defaultTheme,
+      enabledThemes: JSON.stringify(defaultInstanceSettings.enabledThemes),
       welcomeTitles: JSON.stringify(defaultInstanceSettings.welcomeTitles),
       welcomeMessages: JSON.stringify(defaultInstanceSettings.welcomeMessages),
     },

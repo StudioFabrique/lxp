@@ -32,7 +32,7 @@ describe("Personnalisez votre espace", () => {
       name: "ANDRIA",
       setupCompleted: false,
       hasLogo: false,
-      defaultTheme: "classic",
+      enabledThemes: ["classic", "classic-dark"],
       welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
       welcomeMessages: { admin: "Bienvenue", teacher: "Bienvenue", student: "Bienvenue" },
     });
@@ -40,7 +40,7 @@ describe("Personnalisez votre espace", () => {
       name: "ANDRIA",
       setupCompleted: true,
       hasLogo: false,
-      defaultTheme: "classic",
+      enabledThemes: ["classic", "classic-dark"],
       welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
       welcomeMessages: { admin: "Bienvenue", teacher: "Bienvenue", student: "Bienvenue" },
     });

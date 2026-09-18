@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./themes/light-themes.css";
+@import "./themes/dark-themes.css";
 @plugin "@tailwindcss/typography";
 
 @plugin "daisyui" {
@@ -13,6 +15,14 @@
         sunrise,
         glacier,
         sand,
+        pearl,
+        mint,
+        blossom,
+        sky,
+        lemon,
+        clay,
+        ice,
+        paper,
         /* Thèmes sombres */ classic-dark,
         aurora,
         ember,
@@ -20,7 +30,15 @@
         graphite,
         plum,
         moss,
-        cobalt;
+        cobalt,
+        midnight,
+        forest-night,
+        coffee,
+        amethyst,
+        storm,
+        wine,
+        teal-night,
+        obsidian;
 }
 
 /* Preserve a clear keyboard focus indicator on every interactive control. */

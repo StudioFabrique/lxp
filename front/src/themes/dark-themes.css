@@ -1,0 +1,70 @@
+/* Thèmes sombres additionnels. */
+@plugin "daisyui/theme" {
+  name: "midnight"; color-scheme: dark;
+  --color-primary: #818cf8; --color-primary-content: #11132b; --color-secondary: #38bdf8; --color-secondary-content: #082f49; --color-accent: #c084fc; --color-accent-content: #2e1065;
+  --color-neutral: #111827; --color-neutral-content: #e5e7eb; --color-base-100: #0b1020; --color-base-200: #111827; --color-base-300: #243047; --color-base-content: #e5e7eb;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "forest-night"; color-scheme: dark;
+  --color-primary: #4ade80; --color-primary-content: #052e16; --color-secondary: #2dd4bf; --color-secondary-content: #042f2e; --color-accent: #facc15; --color-accent-content: #422006;
+  --color-neutral: #16352a; --color-neutral-content: #dcfce7; --color-base-100: #071c14; --color-base-200: #0d2a1e; --color-base-300: #1d4936; --color-base-content: #dcfce7;
+  --color-info: #22d3ee; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "coffee"; color-scheme: dark;
+  --color-primary: #d6a77a; --color-primary-content: #321b0d; --color-secondary: #f59e0b; --color-secondary-content: #451a03; --color-accent: #84cc16; --color-accent-content: #1a2e05;
+  --color-neutral: #38291f; --color-neutral-content: #f5e8dc; --color-base-100: #211711; --color-base-200: #302117; --color-base-300: #513827; --color-base-content: #f5e8dc;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "amethyst"; color-scheme: dark;
+  --color-primary: #c084fc; --color-primary-content: #2e1065; --color-secondary: #f0abfc; --color-secondary-content: #4a044e; --color-accent: #67e8f9; --color-accent-content: #164e63;
+  --color-neutral: #352347; --color-neutral-content: #f3e8ff; --color-base-100: #1c1029; --color-base-200: #29153d; --color-base-300: #4b2868; --color-base-content: #f3e8ff;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "storm"; color-scheme: dark;
+  --color-primary: #93c5fd; --color-primary-content: #172554; --color-secondary: #94a3b8; --color-secondary-content: #0f172a; --color-accent: #fbbf24; --color-accent-content: #422006;
+  --color-neutral: #263445; --color-neutral-content: #e2e8f0; --color-base-100: #111923; --color-base-200: #1a2533; --color-base-300: #35455a; --color-base-content: #e2e8f0;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "wine"; color-scheme: dark;
+  --color-primary: #fb7185; --color-primary-content: #4c0519; --color-secondary: #d8b4fe; --color-secondary-content: #3b0764; --color-accent: #fda4af; --color-accent-content: #4c0519;
+  --color-neutral: #4a1d2d; --color-neutral-content: #ffe4e6; --color-base-100: #260c16; --color-base-200: #38111f; --color-base-300: #64243a; --color-base-content: #ffe4e6;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "teal-night"; color-scheme: dark;
+  --color-primary: #2dd4bf; --color-primary-content: #042f2e; --color-secondary: #22d3ee; --color-secondary-content: #083344; --color-accent: #a3e635; --color-accent-content: #1a2e05;
+  --color-neutral: #123b3d; --color-neutral-content: #ccfbf1; --color-base-100: #061f21; --color-base-200: #0b2c2f; --color-base-300: #185054; --color-base-content: #ccfbf1;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+@plugin "daisyui/theme" {
+  name: "obsidian"; color-scheme: dark;
+  --color-primary: #f8fafc; --color-primary-content: #09090b; --color-secondary: #a1a1aa; --color-secondary-content: #18181b; --color-accent: #60a5fa; --color-accent-content: #172554;
+  --color-neutral: #18181b; --color-neutral-content: #fafafa; --color-base-100: #09090b; --color-base-200: #18181b; --color-base-300: #303036; --color-base-content: #fafafa;
+  --color-info: #38bdf8; --color-success: #4ade80; --color-warning: #fbbf24; --color-error: #fb7185;
+}
+
+/* Tokens structurels et sidebar partagés par les nouveaux thèmes sombres. */
+:where(
+  [data-theme="midnight"], [data-theme="forest-night"], [data-theme="coffee"],
+  [data-theme="amethyst"], [data-theme="storm"], [data-theme="wine"],
+  [data-theme="teal-night"], [data-theme="obsidian"]
+) {
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+  --sidebar-bg: var(--color-base-100);
+  --sidebar-content: var(--color-base-content);
+  --sidebar-surface: var(--color-base-200);
+  --sidebar-hover: var(--color-base-300);
+  --sidebar-active: var(--color-base-200);
+  --sidebar-active-content: var(--color-base-content);
+  --sidebar-border: color-mix(in oklab, var(--color-base-300) 72%, transparent);
+}

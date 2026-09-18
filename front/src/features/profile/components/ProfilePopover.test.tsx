@@ -62,6 +62,8 @@ describe("Menu du profil", () => {
                 theme: "light",
                 toggleTheme: () => {},
                 chooseTheme: () => {},
+                availableLightThemes: ["classic"],
+                availableDarkThemes: ["classic-dark"],
               }}
             >
               <ProfilePopover interfaceType={interfaceType} />
