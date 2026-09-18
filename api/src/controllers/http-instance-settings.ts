@@ -51,7 +51,9 @@ export async function httpPutInstanceSettings(
     titles = JSON.parse(req.body?.welcomeTitles ?? "");
     messages = JSON.parse(req.body?.welcomeMessages ?? "");
   } catch {
-    return res.status(400).json({ message: "Les messages envoyés sont invalides." });
+    return res
+      .status(400)
+      .json({ message: "Les messages envoyés sont invalides." });
   }
   const titleValues = [titles?.admin, titles?.teacher, titles?.student];
   const messageValues = [messages?.admin, messages?.teacher, messages?.student];
@@ -59,9 +61,20 @@ export async function httpPutInstanceSettings(
   if (
     typeof name !== "string" ||
     name.trim().length < 2 ||
-    name.trim().length > 80 ||
-    typeof defaultTheme !== "string" ||
-    !allowedThemes.has(defaultTheme) ||
+    name.trim().length > 80
+  ) {
+    return res.status(400).json({
+      message: "Le nom de l’organisme doit contenir entre 2 et 80 caractères.",
+    });
+  }
+
+  if (typeof defaultTheme !== "string" || !allowedThemes.has(defaultTheme)) {
+    return res
+      .status(400)
+      .json({ message: "Le thème sélectionné est invalide." });
+  }
+
+  if (
     titleValues.some(
       (value) =>
         typeof value !== "string" ||
@@ -77,7 +90,7 @@ export async function httpPutInstanceSettings(
   ) {
     return res.status(400).json({
       message:
-        "Le nom et les messages de bienvenue ne respectent pas les longueurs autorisées.",
+        "Les titres et sous-textes de bienvenue doivent contenir entre 2 et 120 ou 300 caractères respectivement.",
     });
   }
 

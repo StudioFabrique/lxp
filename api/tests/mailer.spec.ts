@@ -13,9 +13,7 @@ jest.unstable_mockModule("../src/utils/logs/logger.ts", () => ({
   logger: { error: jest.fn() },
 }));
 
-const { sendRootEmailVerification } = await import(
-  "../src/services/mailer.ts"
-);
+const { sendRootEmailVerification } = await import("../src/services/mailer.ts");
 
 describe("Activation SMTP du compte root", () => {
   beforeEach(() => {
@@ -57,5 +55,14 @@ describe("Activation SMTP du compte root", () => {
       statusCode: 500,
       message: "Le mail n'a pas pu être envoyé au destinataire",
     });
+  });
+
+  test("applique au mail le mode sombre sélectionné dans l'application", async () => {
+    await sendRootEmailVerification("root@test.fr", "token", "dark");
+
+    const message = sendMail.mock.calls[0]?.[0] as { html?: string };
+    expect(message.html).toContain('bgcolor="#0f172a"');
+    expect(message.html).toContain('bgcolor="#1e293b"');
+    expect(message.html).toContain("border-radius:18px 18px 0 0");
   });
 });

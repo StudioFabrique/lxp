@@ -160,7 +160,11 @@ authRouter.post(
     .withMessage(
       "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.",
     ),
-  httpPostFirstAdmin
+  body("themeMode")
+    .optional()
+    .isIn(["light", "dark"])
+    .withMessage("Le thème doit être clair ou sombre."),
+  httpPostFirstAdmin,
 );
 
 // Création d'un compte root supplémentaire depuis une invitation envoyée par

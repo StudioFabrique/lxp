@@ -164,6 +164,7 @@ async function sendAccountEmail(
     | "root-account-init"
     | "root-account",
   subject: string,
+  themeMode?: "light" | "dark",
 ) {
   if (!regexMail.test(email)) {
     throw { statusCode: 400, message: badQuery };
@@ -177,7 +178,10 @@ async function sendAccountEmail(
       from: env.MAILER_FROM,
       to: destination,
       subject,
-      html: getTemplate(template, token, email, await mailContext()),
+      html: getTemplate(template, token, email, {
+        ...(await mailContext()),
+        themeMode,
+      }),
       attachments: template.startsWith("root-")
         ? andriaLogoAttachment()
         : undefined,
@@ -201,12 +205,17 @@ export function sendEmailChangeConfirmation(email: string, token: string) {
   );
 }
 
-export function sendRootEmailVerification(email: string, token: string) {
+export function sendRootEmailVerification(
+  email: string,
+  token: string,
+  themeMode?: "light" | "dark",
+) {
   return sendAccountEmail(
     email,
     token,
     "root-email-verification",
     "Activation de votre compte administrateur",
+    themeMode,
   );
 }
 

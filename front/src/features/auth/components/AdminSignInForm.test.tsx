@@ -81,6 +81,7 @@ describe("AdminSignInForm", () => {
       firstname: "Root",
       lastname: "Admin",
       password: "RootPassword@123",
+      themeMode: "light",
     });
     expect(onSuccess).not.toHaveBeenCalled();
     expect(getPendingRootActivationEmail()).toBe("root@test.fr");

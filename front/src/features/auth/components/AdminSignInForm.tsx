@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { MailCheck } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
@@ -12,6 +12,7 @@ import {
   clearPendingRootActivation,
   setPendingRootActivationEmail,
 } from "../pending-root-activation";
+import { ThemeContext } from "../../../store/ThemeProvider";
 
 type Props = {
   token: string;
@@ -38,6 +39,7 @@ const AdminSignInForm = ({
   email = "",
   mode = "first",
 }: Props) => {
+  const { theme } = useContext(ThemeContext);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activationEmail, setActivationEmail] = useState(
@@ -73,6 +75,7 @@ const AdminSignInForm = ({
         firstname: data.firstname.trim(),
         lastname: data.lastname.trim(),
         password: data.password,
+        themeMode: theme,
       });
 
       if (mode === "first" && response.pendingActivation) {
