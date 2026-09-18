@@ -1,5 +1,9 @@
 import { describe, expect, test } from "@jest/globals";
 import { getTemplate } from "../src/helpers/get-mail-template.ts";
+import {
+  escapeHtml,
+  instanceHomeUrl,
+} from "../src/helpers/mail-template/shared.ts";
 
 describe("identité de l’instance dans les e-mails", () => {
   test("affiche le logo et sa couleur dans le bandeau", () => {
@@ -15,6 +19,9 @@ describe("identité de l’instance dans les e-mails", () => {
       "Cet e-mail a été envoyé par <strong>STEP</strong>.",
     );
     expect(html).toContain('src="cid:andria-footer-light"');
+    expect(html).toContain(
+      `<a href="${escapeHtml(instanceHomeUrl())}" style="display:inline-block;text-decoration:none"><img src="cid:andria-footer-light"`,
+    );
   });
 
   test("supprime entièrement le bandeau lorsqu’aucun logo n’existe", () => {
@@ -41,6 +48,9 @@ describe("identité de l’instance dans les e-mails", () => {
     );
 
     expect(html).toContain('src="cid:andria-official-logo"');
+    expect(html).toContain(
+      `<a href="${escapeHtml(instanceHomeUrl())}" style="display:inline-block;text-decoration:none"><img src="cid:andria-official-logo"`,
+    );
     expect(html).not.toContain("andria-footer-light");
     expect(html).not.toContain("andria-footer-dark");
   });

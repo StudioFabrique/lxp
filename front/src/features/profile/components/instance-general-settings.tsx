@@ -162,167 +162,163 @@ export default function InstanceGeneralSettings() {
           className="h-auto gap-6 overflow-visible"
           data-recommended-tour="instance-logo"
         >
-        <form
-          className="flex h-full flex-col gap-6"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void save("identity");
-          }}
-        >
-          <div>
-            <h2 className="text-lg font-bold">Identité de l’organisme</h2>
-            <p className="text-sm text-base-content/70">
-              Personnalisez le nom, le logo et son fond d’affichage.
-            </p>
-          </div>
-
-          <fieldset
-            disabled={isLoading || isSaving}
-            className="flex flex-col gap-6"
+          <form
+            className="flex h-full flex-col gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void save("identity");
+            }}
           >
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-bold">Nom de l’organisme</span>
-              <input
-                className="input input-bordered w-full max-w-xl focus:outline-none"
-                value={settings.name}
-                maxLength={80}
-                onChange={(event) =>
-                  setSettings((current) => ({
-                    ...current,
-                    name: event.target.value,
-                  }))
-                }
-              />
-            </label>
-
-            <div className="flex w-full min-w-0 max-w-md flex-col gap-5 self-end">
-              <div>
-                <span className="mb-2 block text-sm font-bold">Logo</span>
-                <div className="max-w-md">
-                  <ImageFileUpload
-                    temporaryImage={logo}
-                    onSetTemporaryImage={(image) => {
-                      setLogo(image);
-                      setDeleteLogo(false);
-                    }}
-                    maxSize={avatarImageMaxSize}
-                    variant="logo"
-                    previewBackgroundColor={backgroundColor}
-                    onPreviewAvailabilityChange={setHasLogo}
-                  >
-                    Ajouter un logo
-                  </ImageFileUpload>
-                </div>
-                <div className="mt-2 flex max-w-md items-start justify-between gap-3">
-                  <p className="text-xs text-base-content/60">
-                    JPG ou PNG. Le changement sera appliqué à la sauvegarde.
-                  </p>
-                  {hasLogo && !deleteLogo && (
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-sm btn-square shrink-0 text-error"
-                      onClick={() => {
-                        setLogo({ file: null, url: null });
-                        setHasLogo(false);
-                        setDeleteLogo(true);
-                      }}
-                      aria-label="Supprimer le logo"
-                      title="Supprimer le logo"
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <span className="mb-2 block text-sm font-bold">
-                  Couleur de fond du logo
-                </span>
-                <ColorPicker
-                  defaultColor={backgroundColor}
-                  onColorChange={setBackgroundColor}
-                />
-                <p className="mt-2 text-xs text-base-content/60">
-                  La couleur sélectionnée est visible directement dans l’aperçu.
-                </p>
-              </div>
+            <div>
+              <h2 className="text-lg font-bold">Identité de l’organisme</h2>
+              <p className="text-sm text-base-content/70">
+                Personnalisez le nom, le logo et son fond d’affichage.
+              </p>
             </div>
-          </fieldset>
 
-          <div className="mt-auto flex justify-end pt-5">
-            <button
-              type="submit"
-              className="btn btn-primary min-w-32 normal-case"
+            <fieldset
               disabled={isLoading || isSaving}
+              className="flex flex-col gap-6"
             >
-              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSaving ? "Sauvegarde…" : "Sauvegarder"}
-            </button>
-          </div>
-        </form>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-bold">Nom de l’organisme</span>
+                <input
+                  className="input input-bordered w-full max-w-xl focus:outline-none"
+                  value={settings.name}
+                  maxLength={80}
+                  onChange={(event) =>
+                    setSettings((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <div className="flex w-full min-w-0 max-w-md flex-col gap-5 self-end">
+                <div>
+                  <span className="mb-2 block text-sm font-bold">Logo</span>
+                  <div className="max-w-md">
+                    <ImageFileUpload
+                      temporaryImage={logo}
+                      onSetTemporaryImage={(image) => {
+                        setLogo(image);
+                        setDeleteLogo(false);
+                      }}
+                      maxSize={avatarImageMaxSize}
+                      variant="logo"
+                      previewBackgroundColor={backgroundColor}
+                      onPreviewAvailabilityChange={setHasLogo}
+                    >
+                      Ajouter un logo
+                    </ImageFileUpload>
+                  </div>
+                  <div className="mt-2 flex max-w-md items-start justify-between gap-3">
+                    <p className="text-xs text-base-content/60">
+                      JPG ou PNG. Le changement sera appliqué à la sauvegarde.
+                    </p>
+                    {hasLogo && !deleteLogo && (
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm btn-square shrink-0 text-error"
+                        onClick={() => {
+                          setLogo({ file: null, url: null });
+                          setHasLogo(false);
+                          setDeleteLogo(true);
+                        }}
+                        aria-label="Supprimer le logo"
+                        title="Supprimer le logo"
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="mb-2 block text-sm font-bold">
+                    Couleur de fond du logo
+                  </span>
+                  <ColorPicker
+                    defaultColor={backgroundColor}
+                    onColorChange={setBackgroundColor}
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <div className="mt-auto flex justify-end pt-5">
+              <button
+                type="submit"
+                className="btn btn-primary min-w-32 normal-case"
+                disabled={isLoading || isSaving}
+              >
+                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSaving ? "Sauvegarde…" : "Sauvegarder"}
+              </button>
+            </div>
+          </form>
         </BoxWrapper>
 
         <BoxWrapper className="h-auto gap-6 overflow-visible">
-        <form
-          className="flex h-full flex-col gap-6"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void save("interface");
-          }}
-        >
-          <div>
-            <h2 className="text-lg font-bold">
-              Personnalisation de l’interface
-            </h2>
-            <p className="text-sm text-base-content/70">
-              Définissez le thème initial de l’interface.
-            </p>
-          </div>
-
-          <fieldset
-            disabled={isLoading || isSaving}
-            className="flex flex-col gap-5"
+          <form
+            className="flex h-full flex-col gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void save("interface");
+            }}
           >
             <div>
-              <span className="mb-2 block text-sm font-bold">
-                Thème par défaut
-              </span>
-              <div className="flex max-w-2xl flex-col gap-3">
-                <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2">
-                  <ThemeSelect
-                    label="Thème clair"
-                    themesList={lightThemes}
-                    selectedTheme={lightPreviewTheme}
-                    onThemeChange={previewTheme}
-                    dropdownClassName="dropdown-bottom dropdown-end"
-                  />
-                </div>
-                <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2">
-                  <ThemeSelect
-                    label="Thème sombre"
-                    themesList={darkThemes}
-                    selectedTheme={darkPreviewTheme}
-                    onThemeChange={previewTheme}
-                    dropdownClassName="dropdown-bottom dropdown-end"
-                  />
-                </div>
-              </div>
+              <h2 className="text-lg font-bold">
+                Personnalisation de l’interface
+              </h2>
+              <p className="text-sm text-base-content/70">
+                Définissez le thème initial de l’interface.
+              </p>
             </div>
 
-          </fieldset>
-
-          <div className="mt-auto flex justify-end pt-5">
-            <button
-              type="submit"
-              className="btn btn-primary min-w-32 normal-case"
+            <fieldset
               disabled={isLoading || isSaving}
+              className="flex flex-col gap-5"
             >
-              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSaving ? "Sauvegarde…" : "Sauvegarder"}
-            </button>
-          </div>
-        </form>
+              <div>
+                <span className="mb-2 block text-sm font-bold">
+                  Thème par défaut
+                </span>
+                <div className="flex max-w-2xl flex-col gap-3">
+                  <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2">
+                    <ThemeSelect
+                      label="Thème clair"
+                      themesList={lightThemes}
+                      selectedTheme={lightPreviewTheme}
+                      onThemeChange={previewTheme}
+                      dropdownClassName="dropdown-bottom dropdown-end"
+                    />
+                  </div>
+                  <div className="rounded-lg border border-base-300 bg-base-100 px-3 py-2">
+                    <ThemeSelect
+                      label="Thème sombre"
+                      themesList={darkThemes}
+                      selectedTheme={darkPreviewTheme}
+                      onThemeChange={previewTheme}
+                      dropdownClassName="dropdown-bottom dropdown-end"
+                    />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div className="mt-auto flex justify-end pt-5">
+              <button
+                type="submit"
+                className="btn btn-primary min-w-32 normal-case"
+                disabled={isLoading || isSaving}
+              >
+                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSaving ? "Sauvegarde…" : "Sauvegarder"}
+              </button>
+            </div>
+          </form>
         </BoxWrapper>
       </div>
 

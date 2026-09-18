@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import ImageFileUpload, {
   type TemporaryImage,
 } from "../../../components/UI/image-file-upload/image-file-upload";
+import ColorPicker from "../../../components/UI/color-picker";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import {
@@ -21,6 +22,9 @@ export default function InstanceSetup() {
   const [settings, setSettings] = useState<InstanceSettings | null>(null);
   const [name, setName] = useState(DEFAULT_NAME);
   const [logo, setLogo] = useState<TemporaryImage>({ file: null, url: null });
+  const [logoBackgroundColor, setLogoBackgroundColor] = useState(
+    DEFAULT_LOGO_BACKGROUND,
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -61,7 +65,10 @@ export default function InstanceSetup() {
         "welcomeMessages",
         JSON.stringify(settings.welcomeMessages),
       );
-      payload.append("color", DEFAULT_LOGO_BACKGROUND);
+      payload.append(
+        "color",
+        useDefaults ? DEFAULT_LOGO_BACKGROUND : logoBackgroundColor,
+      );
       if (!useDefaults && logo.file) payload.append("image", logo.file);
 
       await profileApi.mutations.updateInstanceSettings(payload);
@@ -118,10 +125,20 @@ export default function InstanceSetup() {
             onSetTemporaryImage={setLogo}
             maxSize={avatarImageMaxSize}
             variant="logo"
-            previewBackgroundColor={DEFAULT_LOGO_BACKGROUND}
+            previewBackgroundColor={logoBackgroundColor}
           >
             Ajouter votre logo
           </ImageFileUpload>
+        </div>
+
+        <div className="flex w-full flex-col items-center gap-2 text-center">
+          <span className="text-sm font-semibold text-base-content">
+            Couleur de fond du logo
+          </span>
+          <ColorPicker
+            defaultColor={logoBackgroundColor}
+            onColorChange={setLogoBackgroundColor}
+          />
         </div>
 
         <button

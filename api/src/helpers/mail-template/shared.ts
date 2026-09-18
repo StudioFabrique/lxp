@@ -16,13 +16,12 @@ export const escapeHtml = (value: string) =>
         c
       ]!,
   );
-export const publicUrl = (path: string, params: Record<string, string>) => {
+export const instanceHomeUrl = () => {
   const configuredUrl = env.FRONT_URL ?? "http://localhost:5173/";
-  const baseUrl = configuredUrl.endsWith("/")
-    ? configuredUrl
-    : `${configuredUrl}/`;
-  return `${baseUrl}${path}?${new URLSearchParams(params).toString()}`;
+  return configuredUrl.endsWith("/") ? configuredUrl : `${configuredUrl}/`;
 };
+export const publicUrl = (path: string, params: Record<string, string>) =>
+  `${instanceHomeUrl()}${path}?${new URLSearchParams(params).toString()}`;
 export const button = (link: string, label: string) =>
   `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:28px auto"><tr><td bgcolor="#1769aa" style="border-radius:7px"><a href="${escapeHtml(link)}" style="display:inline-block;padding:13px 22px;color:#ffffff;font-size:14px;font-weight:700;line-height:20px;text-decoration:none">${escapeHtml(label)}</a></td></tr></table>`;
 
@@ -39,8 +38,9 @@ export const layout = (
   name: string,
   options: LayoutOptions = {},
 ) => {
+  const homeLink = escapeHtml(instanceHomeUrl());
   const brand = options.officialAndriaLogo
-    ? `<img src="cid:${ANDRIA_LOGO_CID}" width="181" height="59" alt="ANDRIA" style="display:block;width:181px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none">`
+    ? `<a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${ANDRIA_LOGO_CID}" width="181" height="59" alt="ANDRIA" style="display:block;width:181px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none"></a>`
     : options.logoCid
       ? `<img src="cid:${escapeHtml(options.logoCid)}" alt="${escapeHtml(name)}" style="display:block;max-width:220px;max-height:100px;width:auto;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none">`
       : "";
@@ -75,7 +75,7 @@ export const layout = (
   const contentRadius = brand ? "18px 18px 0 0" : "12px 12px 0 0";
   const footerLogo = options.officialAndriaLogo
     ? ""
-    : `<td align="right" valign="middle" style="padding-left:12px;text-align:right"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></td>`;
+    : `<td align="right" valign="middle" style="padding-left:12px;text-align:right"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td>`;
 
   return `<!doctype html>
 <html lang="fr">

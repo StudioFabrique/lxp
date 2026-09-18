@@ -21,7 +21,7 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
     { name: "Gray", hex: "#6b7280" },
   ];
 
-  const handleColorSelect = (color: string) => {
+  const handlePredefinedColorSelect = (color: string) => {
     onColorChange(color);
     const elem = document.activeElement as HTMLElement;
     elem?.blur();
@@ -55,7 +55,7 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
                     : "border-base-300"
                 }`}
                 style={{ backgroundColor: color.hex }}
-                onClick={() => handleColorSelect(color.hex)}
+                onClick={() => handlePredefinedColorSelect(color.hex)}
                 title={color.name}
               />
             ))}
@@ -68,7 +68,7 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
             <input
               type="color"
               value={selectedColor}
-              onChange={(e) => handleColorSelect(e.target.value)}
+              onChange={(e) => onColorChange(e.target.value)}
               className="input border-0 input-sm p-0 w-10 h-10 cursor-pointer"
             />
           </div>
