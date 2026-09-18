@@ -6,6 +6,9 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   const groups = await prisma.orm.public.Group.where((row) =>
     row.idMdb.in(groupsIds.map((item: string) => item)),
   ).all();
+  if (groups.length !== groupsIds.length) {
+    throw { message: "Le groupe n'existe pas", statusCode: 404 };
+  }
 
   const existingParcours = await prisma.orm.public.Parcours.where({
     id: parcoursId,
@@ -19,6 +22,14 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
   let updatedParcours: any = {};
 
   const transaction = await prisma.transaction(async (tx) => {
+    for (const group of groups) {
+      const existingGroupLink = await tx.orm.public.GroupsOnParcours.where({
+        groupId: group.id,
+      }).first();
+      if (existingGroupLink && existingGroupLink.parcoursId !== parcoursId) {
+        throw { message: "Ce groupe est déjà associé à un autre parcours", statusCode: 409 };
+      }
+    }
     await tx.orm.public.GroupsOnParcours.where({
       parcoursId,
     })

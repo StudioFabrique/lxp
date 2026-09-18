@@ -8307,14 +8307,6 @@
               "indexes": [
                 {
                   "columns": [
-                    "groupId"
-                  ],
-                  "name": "GroupsOnParcours_groupId_idx_e2fb5578",
-                  "prefix": "GroupsOnParcours_groupId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
                     "parcoursId"
                   ],
                   "name": "GroupsOnParcours_parcoursId_idx_86f41ed4",
@@ -8328,7 +8320,13 @@
                   "parcoursId"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "groupId"
+                  ]
+                }
+              ]
             },
             "Lesson": {
               "columns": {
@@ -10785,7 +10783,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "05d31adbc19eaa9a93ef11559888b6c55e16d6ff07d43ca52efc8ee90d7fa52c"
+    "storageHash": "f367ad15425cd9fcde1315a043487cb20aa8a286409edf6d3429fa92bbf77509"
   },
   "execution": {
     "executionHash": "2fb89632fd0e86aea4b5b3fcf9697a887576bbcb4485b120f296cce1893150d9",
