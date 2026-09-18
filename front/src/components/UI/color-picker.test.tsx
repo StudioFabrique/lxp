@@ -45,4 +45,34 @@ describe("ColorPicker", () => {
     expect(document.activeElement).toBe(input);
     expect(container.textContent).toContain("#123456");
   });
+
+  it("affiche une palette compacte à droite de la pastille", async () => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await act(async () =>
+      root.render(
+        <ColorPicker compact defaultColor="#ffffff" onColorChange={vi.fn()} />,
+      ),
+    );
+
+    const menu = container.querySelector(".dropdown-content");
+    expect(menu?.className).toContain("sm:left-full");
+    expect(menu?.textContent).toContain("Choisir une couleur de fond");
+    expect(menu?.querySelector(".grid-cols-4")?.children).toHaveLength(8);
+    expect(
+      Array.from(menu?.querySelectorAll(".grid-cols-4 button") ?? []).map(
+        (button) => button.getAttribute("title"),
+      ),
+    ).toEqual([
+      "White",
+      "Black",
+      "Slate",
+      "Blue",
+      "Purple",
+      "Orange",
+      "Green",
+      "Teal",
+    ]);
+  });
 });

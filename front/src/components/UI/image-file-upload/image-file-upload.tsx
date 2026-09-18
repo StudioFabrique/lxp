@@ -21,6 +21,7 @@ type ImageFileUploadProps = {
   variant?: "avatar" | "logo" | "image";
   previewBackgroundColor?: string;
   onPreviewAvailabilityChange?: (isAvailable: boolean) => void;
+  compact?: boolean;
 };
 
 const avatarAllowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
@@ -34,6 +35,7 @@ const ImageFileUpload = ({
   variant = "avatar",
   previewBackgroundColor,
   onPreviewAvailabilityChange,
+  compact = false,
   children,
 }: PropsWithChildren<ImageFileUploadProps>) => {
   const fileUploadRef = useRef<HTMLInputElement>(null);
@@ -86,7 +88,7 @@ const ImageFileUpload = ({
       onClick={onClickChangeImage}
       className={
         isPreviewVariant
-          ? "group relative flex h-32 w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md"
+          ? `group relative flex ${compact ? "h-24" : "h-32"} w-full min-w-0 max-w-72 items-center justify-center overflow-hidden rounded-xl border border-base-content/30 border-dashed bg-base-200 p-3 text-base-content shadow-sm transition hover:border-primary hover:shadow-md`
           : "btn btn-ghost group relative h-fit w-fit rounded-full bg-white p-0 text-white"
       }
       style={

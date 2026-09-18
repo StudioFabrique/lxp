@@ -2,11 +2,8 @@ import { useEffect, useState } from "react";
 import { Building2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import ImageFileUpload, {
-  type TemporaryImage,
-} from "../../../components/UI/image-file-upload/image-file-upload";
-import ColorPicker from "../../../components/UI/color-picker";
-import { avatarImageMaxSize } from "../../../config/images-sizes";
+import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
+import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import {
   profileApi,
@@ -108,38 +105,14 @@ export default function InstanceSetup() {
           />
         </label>
 
-        <div className="flex w-full flex-col items-center gap-2 text-center">
-          <div className="w-full">
-            <span className="text-sm font-semibold text-base-content">
-              Logo{" "}
-              <span className="font-normal text-base-content/50">
-                (facultatif)
-              </span>
-            </span>
-            <p className="mt-1 text-xs text-base-content/60">
-              Format JPG ou PNG, 500 Ko maximum.
-            </p>
-          </div>
-          <ImageFileUpload
-            temporaryImage={logo}
-            onSetTemporaryImage={setLogo}
-            maxSize={avatarImageMaxSize}
-            variant="logo"
-            previewBackgroundColor={logoBackgroundColor}
-          >
-            Ajouter votre logo
-          </ImageFileUpload>
-        </div>
-
-        <div className="flex w-full flex-col items-center gap-2 text-center">
-          <span className="text-sm font-semibold text-base-content">
-            Couleur de fond du logo
-          </span>
-          <ColorPicker
-            defaultColor={logoBackgroundColor}
-            onColorChange={setLogoBackgroundColor}
-          />
-        </div>
+        <InstanceLogoControls
+          temporaryImage={logo}
+          onSetTemporaryImage={setLogo}
+          backgroundColor={logoBackgroundColor}
+          onBackgroundColorChange={setLogoBackgroundColor}
+          optional
+          helpText="JPG ou PNG · 500 Ko maximum."
+        />
 
         <button
           type="submit"

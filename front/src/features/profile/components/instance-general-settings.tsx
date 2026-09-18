@@ -1,12 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
-import ColorPicker from "../../../components/UI/color-picker";
-import ImageFileUpload, {
-  type TemporaryImage,
-} from "../../../components/UI/image-file-upload/image-file-upload";
-import { avatarImageMaxSize } from "../../../config/images-sizes";
+import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
+import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
 import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import { darkThemes, lightThemes } from "../../../config/themes";
 import { ThemeContext } from "../../../store/ThemeProvider";
@@ -195,55 +192,27 @@ export default function InstanceGeneralSettings() {
                 />
               </label>
 
-              <div className="flex w-full min-w-0 max-w-md flex-col gap-5 self-end">
-                <div>
-                  <span className="mb-2 block text-sm font-bold">Logo</span>
-                  <div className="max-w-md">
-                    <ImageFileUpload
-                      temporaryImage={logo}
-                      onSetTemporaryImage={(image) => {
-                        setLogo(image);
-                        setDeleteLogo(false);
-                      }}
-                      maxSize={avatarImageMaxSize}
-                      variant="logo"
-                      previewBackgroundColor={backgroundColor}
-                      onPreviewAvailabilityChange={setHasLogo}
-                    >
-                      Ajouter un logo
-                    </ImageFileUpload>
-                  </div>
-                  <div className="mt-2 flex max-w-md items-start justify-between gap-3">
-                    <p className="text-xs text-base-content/60">
-                      JPG ou PNG. Le changement sera appliqué à la sauvegarde.
-                    </p>
-                    {hasLogo && !deleteLogo && (
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-sm btn-square shrink-0 text-error"
-                        onClick={() => {
+              <div className="w-full max-w-sm self-end">
+                <InstanceLogoControls
+                  temporaryImage={logo}
+                  onSetTemporaryImage={(image) => {
+                    setLogo(image);
+                    setDeleteLogo(false);
+                  }}
+                  backgroundColor={backgroundColor}
+                  onBackgroundColorChange={setBackgroundColor}
+                  onPreviewAvailabilityChange={setHasLogo}
+                  onRemove={
+                    hasLogo && !deleteLogo
+                      ? () => {
                           setLogo({ file: null, url: null });
                           setHasLogo(false);
                           setDeleteLogo(true);
-                        }}
-                        aria-label="Supprimer le logo"
-                        title="Supprimer le logo"
-                      >
-                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="mb-2 block text-sm font-bold">
-                    Couleur de fond du logo
-                  </span>
-                  <ColorPicker
-                    defaultColor={backgroundColor}
-                    onColorChange={setBackgroundColor}
-                  />
-                </div>
+                        }
+                      : undefined
+                  }
+                  helpText="JPG ou PNG · appliqué à la sauvegarde."
+                />
               </div>
             </fieldset>
 
