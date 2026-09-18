@@ -86,8 +86,8 @@ describe("CompanyPictureUpload", () => {
       container.querySelector("img")?.dispatchEvent(new Event("load"));
     });
 
-    const deleteButton = Array.from(container.querySelectorAll("button")).find(
-      (button) => button.textContent?.includes("Supprimer le logo"),
+    const deleteButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Supprimer le logo"]',
     );
     expect(deleteButton).toBeDefined();
 
@@ -102,6 +102,8 @@ describe("CompanyPictureUpload", () => {
     expect(
       container.querySelector<HTMLInputElement>('input[type="color"]')?.value,
     ).toBe("#ffffff");
-    expect(container.textContent).not.toContain("Supprimer le logo");
+    expect(
+      container.querySelector('button[aria-label="Supprimer le logo"]'),
+    ).toBeNull();
   });
 });

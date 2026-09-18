@@ -5,7 +5,7 @@ import PageWrapper from "../../../components/wrappers/PageWrapper";
 import RecommendedActionTour from "../../../components/guided-tour/RecommendedActionTour";
 import { logoTourSteps } from "../../../components/guided-tour/recommended-action-tour-steps";
 import { AuthContext } from "../../../store/AuthProvider";
-import CompanyPictureUpload from "../components/company-picture-upload";
+import InstanceGeneralSettings from "../components/instance-general-settings";
 
 export default function InstanceSettings() {
   const { user } = useContext(AuthContext);
@@ -19,11 +19,11 @@ export default function InstanceSettings() {
     <PageWrapper>
       <Header
         title="Paramètres de l’instance"
-        description="Personnalisez le logo et sa couleur de fond pour votre organisme."
+        description="Personnalisez l’identité et l’accueil de votre organisme."
         icon={Settings}
       />
-      <div className="max-w-2xl">
-        <CompanyPictureUpload />
+      <div className="flex w-full flex-col gap-4">
+        <InstanceGeneralSettings />
       </div>
       <RecommendedActionTour tutorial="logo" steps={logoTourSteps} />
     </PageWrapper>

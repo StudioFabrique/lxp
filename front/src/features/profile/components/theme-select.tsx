@@ -7,6 +7,7 @@ interface ThemeSelectProps {
   onThemeChange: (newTheme: string, mode: "light" | "dark") => void;
   dropdownClassName?: string;
   compact?: boolean;
+  selectedTheme?: string;
 }
 
 const ThemeSwatch = ({ theme }: { theme: string }) => (
@@ -26,18 +27,20 @@ export default function ThemeSelect({
   onThemeChange,
   dropdownClassName = "",
   compact = false,
+  selectedTheme: controlledTheme,
 }: ThemeSelectProps) {
   const mode = useMemo(() => {
     return label === "Thème clair" ? "light" : "dark";
   }, [label]);
 
-  const [selectedTheme, setSelectedTheme] = useState(
+  const [internalTheme, setInternalTheme] = useState(
     () => localStorage.getItem(`${mode}Theme`) || "Aucun thème sélectionné",
   );
+  const selectedTheme = controlledTheme ?? internalTheme;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newTheme = event.target.value;
-    setSelectedTheme(newTheme);
+    setInternalTheme(newTheme);
     onThemeChange(newTheme, mode);
   };
 

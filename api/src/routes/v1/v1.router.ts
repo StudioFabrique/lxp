@@ -39,6 +39,10 @@ import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 import demoRouter from "./demo/demo.router.ts";
 import assignmentRouter from "./assignment/assignment.router.ts";
 import { mountRouter } from "../../utils/express/route-registry.ts";
+import {
+  httpGetInstanceSettings,
+  httpPutInstanceSettings,
+} from "../../controllers/http-instance-settings.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -93,6 +97,15 @@ v1Router.delete(
   checkPermissions("formation"),
   checkRoleRank([0]),
   httpDeleteCompanyLogo,
+);
+
+v1Router.get("/instance-settings", httpGetInstanceSettings);
+v1Router.put(
+  "/instance-settings",
+  checkPermissions("formation"),
+  checkRoleRank([0]),
+  uploadCompanyLogo(),
+  httpPutInstanceSettings,
 );
 
 mountRouter(v1Router, "/chatbot", chatbotRouter);

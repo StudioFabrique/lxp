@@ -34,7 +34,7 @@ const ColorPicker = ({ onColorChange, defaultColor = "#ffffff" }: Props) => {
           className="w-4 h-4 border border-base-300"
           style={{ backgroundColor: selectedColor }}
         />
-        Couleur de fond
+        <span className="font-mono">{selectedColor.toUpperCase()}</span>
       </div>
 
       <div

@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { darkThemes, lightThemes, themes } from "../config/themes";
+import { BASE_API_URL } from "../config/urls";
 
 type ThemeContextType = {
   theme: "light" | "dark";
@@ -45,7 +46,10 @@ const initializeTheme = (): "light" | "dark" => {
   localStorage.setItem("darkTheme", themes.dark);
 
   const activeTheme = localStorage.getItem("activeTheme");
-  if (activeTheme === "light" || activeTheme === "dark") return activeTheme;
+  if (activeTheme === "light" || activeTheme === "dark") {
+    localStorage.setItem("themePreferenceSet", "true");
+    return activeTheme;
+  }
 
   localStorage.setItem("activeTheme", "light");
   return "light";
@@ -68,6 +72,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
         localStorage.setItem("darkTheme", newTheme);
       }
       localStorage.setItem("activeTheme", mode);
+      localStorage.setItem("themePreferenceSet", "true");
       setTheme(mode);
 
       // React ne relance pas l'effet si le mode est déjà actif. Le thème
@@ -81,6 +86,7 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
     setTheme((prev) => {
       const newTheme = prev === "light" ? "dark" : "light";
       localStorage.setItem("activeTheme", newTheme);
+      localStorage.setItem("themePreferenceSet", "true");
       return newTheme;
     });
   }, []);
@@ -93,6 +99,40 @@ const ThemeProvider = ({ children }: PropsWithChildren) => {
         theme === "light" ? themes.light : themes.dark,
       );
   }, [theme]);
+
+  useEffect(() => {
+    if (localStorage.getItem("themePreferenceSet") === "true") return;
+
+    const abortController = new AbortController();
+    fetch(`${BASE_API_URL}/instance-settings`, {
+      credentials: "include",
+      signal: abortController.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Paramètres indisponibles");
+        return response.json() as Promise<{ defaultTheme?: string }>;
+      })
+      .then(({ defaultTheme }) => {
+        if (!defaultTheme) return;
+        const mode = lightThemes.includes(
+          defaultTheme as (typeof lightThemes)[number],
+        )
+          ? "light"
+          : darkThemes.includes(defaultTheme as (typeof darkThemes)[number])
+            ? "dark"
+            : null;
+        if (!mode) return;
+
+        themes[mode] = defaultTheme;
+        localStorage.setItem(`${mode}Theme`, defaultTheme);
+        localStorage.setItem("activeTheme", mode);
+        document.documentElement.setAttribute("data-theme", defaultTheme);
+        setTheme(mode);
+      })
+      .catch(() => undefined);
+
+    return () => abortController.abort();
+  }, []);
 
   return (
     <ThemeContext value={{ theme, toggleTheme, chooseTheme }}>

@@ -6,8 +6,9 @@ import { avatarImageMaxSize } from "../../../config/images-sizes";
 import ColorPicker from "../../../components/UI/color-picker";
 import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import TableActionsModal from "../../../components/table/TableActionsModal";
-import { Trash2 } from "lucide-react";
+import { Loader2, RefreshCw, Trash2 } from "lucide-react";
 
 const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
@@ -120,31 +121,21 @@ const CompanyPictureUpload = () => {
   };
 
   return (
-    <div className="card h-full" data-recommended-tour="company-logo">
-      <div className="card-body p-6">
-        {/* Header */}
-        <h2 className="card-title text-lg font-medium mb-4">
-          Logo de l'organisme
-        </h2>
+    <BoxWrapper
+      className="h-auto gap-6 overflow-visible"
+      data-recommended-tour="company-logo"
+    >
+      <div>
+        <h2 className="text-lg font-bold">Logo et apparence</h2>
+        <p className="text-sm text-base-content/70">
+          Modifiez le logo de l’organisme et son fond d’affichage.
+        </p>
+      </div>
 
-        {/* Main */}
-        <div className="grid grid-cols-1 items-center gap-6 sm:grid-cols-2">
-          {/* Left color picker */}
-          <div className="flex flex-col gap-3 items-center md:items-start w-full md:w-auto">
-            <span className="label-text font-semibold">Arrière-plan</span>
-            <ColorPicker
-              defaultColor={bgColor}
-              onColorChange={handleColorChange}
-            />
-            {!temporaryAvatar.file && (
-              <p className="text-xs text-base-content/60 italic">
-                Formats : .jpg, .jpeg, .png
-              </p>
-            )}
-          </div>
-
-          {/* Right image upload */}
-          <div className="flex w-full min-w-0 flex-col items-center gap-3">
+      <div className="grid items-start gap-6 md:grid-cols-2">
+        <div className="min-w-0">
+          <span className="mb-2 block text-sm font-bold">Aperçu du logo</span>
+          <div className="max-w-md">
             <ImageFileUpload
               temporaryImage={temporaryAvatar}
               onSetTemporaryImage={setTemporaryAvatar}
@@ -153,72 +144,78 @@ const CompanyPictureUpload = () => {
               previewBackgroundColor={bgColor}
               onPreviewAvailabilityChange={setHasLogo}
             >
-              Ajouter le logo
+              Ajouter un logo
             </ImageFileUpload>
-            {hasLogo && (
-              <button
-                type="button"
-                className="btn btn-error btn-outline btn-sm"
-                onClick={() => setShowDeleteConfirmation(true)}
-                disabled={isSaving || isDeleting}
-              >
-                <Trash2 className="h-4 w-4" />
-                Supprimer le logo
-              </button>
-            )}
           </div>
+          <p className="mt-2 text-xs text-base-content/60">
+            JPG ou PNG. Cliquez sur l’aperçu pour remplacer le logo.
+          </p>
         </div>
 
-        {/* Feedback */}
-        {requiresReload && (
-          <FadeWrapper>
-            <div className="alert alert-success mt-6 py-2 shadow-sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div className="text-sm">
-                <span>
-                  Rechargement requis pour répercuter les modifications du logo
-                </span>
-              </div>
+        <div className="flex min-h-32 flex-col">
+          <span className="mb-2 block text-sm font-bold">Couleur de fond</span>
+          <div>
+            <ColorPicker
+              defaultColor={bgColor}
+              onColorChange={handleColorChange}
+            />
+          </div>
+
+          {isSaving && (
+            <p className="mt-3 flex items-center gap-2 text-xs text-base-content/60">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+              Enregistrement en cours…
+            </p>
+          )}
+
+          {hasLogo && (
+            <div className="mt-5 flex justify-end">
               <button
-                onClick={() => window.location.reload()}
-                className="btn btn-sm btn-ghost"
+                type="button"
+                className="btn btn-ghost btn-sm btn-square text-error"
+                onClick={() => setShowDeleteConfirmation(true)}
+                disabled={isSaving || isDeleting}
+                aria-label="Supprimer le logo"
+                title="Supprimer le logo"
               >
-                Recharger
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
-          </FadeWrapper>
-        )}
-
-        <TableActionsModal
-          isOpen={showDeleteConfirmation}
-          onCancel={() => setShowDeleteConfirmation(false)}
-          title="Supprimer le logo"
-          description="Êtes-vous sûr de vouloir supprimer le logo de l'organisme ?"
-          alertMessageBottom="La couleur de fond associée sera également supprimée."
-        >
-          <button
-            type="button"
-            className="btn btn-error btn-md"
-            onClick={handleDeleteLogo}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Suppression…" : "Confirmer"}
-          </button>
-        </TableActionsModal>
+          )}
+        </div>
       </div>
-    </div>
+
+      {requiresReload && (
+        <FadeWrapper>
+          <div className="flex justify-end border-t border-base-300 pt-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="btn btn-ghost btn-sm"
+            >
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              Recharger
+            </button>
+          </div>
+        </FadeWrapper>
+      )}
+
+      <TableActionsModal
+        isOpen={showDeleteConfirmation}
+        onCancel={() => setShowDeleteConfirmation(false)}
+        title="Supprimer le logo"
+        description="Êtes-vous sûr de vouloir supprimer le logo de l'organisme ?"
+        alertMessageBottom="La couleur de fond associée sera également supprimée."
+      >
+        <button
+          type="button"
+          className="btn btn-error btn-md"
+          onClick={handleDeleteLogo}
+          disabled={isDeleting}
+        >
+          {isDeleting ? "Suppression…" : "Confirmer"}
+        </button>
+      </TableActionsModal>
+    </BoxWrapper>
   );
 };
 

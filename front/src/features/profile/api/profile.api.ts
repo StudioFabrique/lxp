@@ -2,6 +2,20 @@ import apiClient from "../../../lib/axios";
 import type Skill from "../../../utils/interfaces/skill";
 
 export type CompanyLogoResponse = { message: string };
+export type InstanceSettings = {
+  name: string;
+  defaultTheme: string;
+  welcomeTitles: {
+    admin: string;
+    teacher: string;
+    student: string;
+  };
+  welcomeMessages: {
+    admin: string;
+    teacher: string;
+    student: string;
+  };
+};
 
 const queries = {
   getInformation: async () => {
@@ -15,6 +29,10 @@ const queries = {
   getSkills: async (): Promise<Skill[]> => {
     const res = await apiClient.get<{ data: Skill[] }>("/user/profile/skills");
     return res.data.data;
+  },
+  getInstanceSettings: async (): Promise<InstanceSettings> => {
+    const res = await apiClient.get<InstanceSettings>("/instance-settings");
+    return res.data;
   },
 };
 
@@ -47,6 +65,15 @@ const mutations = {
   },
   deleteCompanyLogo: async (): Promise<CompanyLogoResponse> => {
     const res = await apiClient.delete<CompanyLogoResponse>("/company-logo");
+    return res.data;
+  },
+  updateInstanceSettings: async (
+    payload: FormData,
+  ): Promise<InstanceSettings> => {
+    const res = await apiClient.put<InstanceSettings>(
+      "/instance-settings",
+      payload,
+    );
     return res.data;
   },
 };
