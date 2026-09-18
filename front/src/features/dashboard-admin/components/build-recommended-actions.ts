@@ -10,6 +10,7 @@ type Options = {
   adminsCount?: number;
   studentsCount?: number;
   groupsCount?: number;
+  hasLogo?: boolean;
   parcours: FormationParcoursSummary[];
 };
 
@@ -20,6 +21,7 @@ export function buildRecommendedActions({
   adminsCount,
   studentsCount,
   groupsCount,
+  hasLogo,
   parcours,
 }: Options): RecommendedAction[] {
   if (userRank <= 1) {
@@ -46,7 +48,7 @@ export function buildRecommendedActions({
             },
           ]
         : []),
-      ...(userRank === 0
+      ...(userRank === 0 && hasLogo === false
         ? [
             {
               id: "change-logo",

@@ -20,7 +20,7 @@ export function useAdminDashboard() {
   const isRoot = userRank === 0;
   const isTeacher = userRank === 2;
 
-  const { data: instanceSettings } = useQuery({
+  const { data: instanceSettings, isLoading: isInstanceSettingsLoading } = useQuery({
     queryKey: ["instance-settings"],
     queryFn: profileApi.queries.getInstanceSettings,
   });
@@ -65,12 +65,14 @@ export function useAdminDashboard() {
     adminsCount: adminsCount.data,
     studentsCount: studentsCount.data,
     groupsCount: groupsCount.data,
+    hasLogo: instanceSettings?.hasLogo,
     parcours,
   });
 
   const areRecommendationsLoading =
     (isAdministrator && teachersCount.isLoading) ||
     (isRoot && adminsCount.isLoading) ||
+    (isRoot && isInstanceSettingsLoading) ||
     (isTeacher &&
       (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
   const roleSettings = isTeacher

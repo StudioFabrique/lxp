@@ -5,6 +5,7 @@ export type CompanyLogoResponse = { message: string };
 export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
+  hasLogo: boolean;
   defaultTheme: string;
   welcomeTitles: {
     admin: string;

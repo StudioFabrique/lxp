@@ -44,7 +44,9 @@ export default function InstanceSetup() {
 
     const organizationName = useDefaults ? DEFAULT_NAME : name.trim();
     if (organizationName.length < 2) {
-      toast.error("Le nom de l’organisation doit contenir au moins 2 caractères.");
+      toast.error(
+        "Le nom de l’organisation doit contenir au moins 2 caractères.",
+      );
       return;
     }
 
@@ -55,7 +57,10 @@ export default function InstanceSetup() {
       payload.append("setupCompleted", "true");
       payload.append("defaultTheme", settings.defaultTheme);
       payload.append("welcomeTitles", JSON.stringify(settings.welcomeTitles));
-      payload.append("welcomeMessages", JSON.stringify(settings.welcomeMessages));
+      payload.append(
+        "welcomeMessages",
+        JSON.stringify(settings.welcomeMessages),
+      );
       payload.append("color", DEFAULT_LOGO_BACKGROUND);
       if (!useDefaults && logo.file) payload.append("image", logo.file);
 
@@ -93,17 +98,16 @@ export default function InstanceSetup() {
             disabled={!settings || isSaving}
             onChange={(event) => setName(event.target.value)}
             className="input input-lg w-full rounded-lg border-none bg-base-200 px-5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-            aria-describedby="organization-name-help"
           />
-          <span id="organization-name-help" className="text-xs text-base-content/60">
-            ANDRIA est utilisé par défaut.
-          </span>
         </label>
 
         <div className="flex w-full flex-col items-center gap-2 text-center">
           <div className="w-full">
             <span className="text-sm font-semibold text-base-content">
-              Logo <span className="font-normal text-base-content/50">(facultatif)</span>
+              Logo{" "}
+              <span className="font-normal text-base-content/50">
+                (facultatif)
+              </span>
             </span>
             <p className="mt-1 text-xs text-base-content/60">
               Format JPG ou PNG, 500 Ko maximum.

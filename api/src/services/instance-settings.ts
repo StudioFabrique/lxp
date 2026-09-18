@@ -45,6 +45,25 @@ const settingsPath = path.join(
   "instance-settings.json",
 );
 
+const companyLogoPath = path.join(
+  import.meta.dirname,
+  "..",
+  "..",
+  "uploads",
+  "company",
+  "company-logo.jpeg",
+);
+
+export async function hasCompanyLogo() {
+  try {
+    await fs.promises.access(companyLogoPath, fs.constants.F_OK);
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
+    throw error;
+  }
+}
+
 export async function readInstanceSettings(): Promise<InstanceSettings> {
   try {
     const saved = JSON.parse(await fs.promises.readFile(settingsPath, "utf8"));

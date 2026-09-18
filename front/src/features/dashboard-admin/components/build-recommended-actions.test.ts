@@ -27,6 +27,7 @@ describe("buildRecommendedActions", () => {
       userRank: 0,
       teachersCount: 0,
       adminsCount: 0,
+      hasLogo: false,
       parcours: [],
     });
 
@@ -38,6 +39,18 @@ describe("buildRecommendedActions", () => {
     expect(actions.find(({ id }) => id === "change-logo")?.to).toBe(
       "/admin/parametres-instance?tutorial=logo",
     );
+  });
+
+  it("ne propose pas de changer le logo lorsqu'il a déjà été configuré", () => {
+    const actions = buildRecommendedActions({
+      userRank: 0,
+      teachersCount: 1,
+      adminsCount: 1,
+      hasLogo: true,
+      parcours: [],
+    });
+
+    expect(actions.find(({ id }) => id === "change-logo")).toBeUndefined();
   });
 
   it("ne propose pas à un admin de créer un autre admin", () => {

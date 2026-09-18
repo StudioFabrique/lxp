@@ -3,6 +3,7 @@ import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import fs from "fs";
 import path from "path";
 import {
+  hasCompanyLogo,
   readInstanceSettings,
   writeInstanceSettings,
 } from "../services/instance-settings.ts";
@@ -30,7 +31,11 @@ export async function httpGetInstanceSettings(
   _req: CustomRequest,
   res: Response,
 ) {
-  res.json(await readInstanceSettings());
+  const [settings, hasLogo] = await Promise.all([
+    readInstanceSettings(),
+    hasCompanyLogo(),
+  ]);
+  res.json({ ...settings, hasLogo });
 }
 
 export async function httpPutInstanceSettings(
@@ -109,5 +114,5 @@ export async function httpPutInstanceSettings(
     await fs.promises.rm(logoPath, { force: true });
   }
 
-  res.json(settings);
+  res.json({ ...settings, hasLogo: await hasCompanyLogo() });
 }
