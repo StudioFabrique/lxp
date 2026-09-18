@@ -5,11 +5,41 @@ import nodemailer from "nodemailer";
 import { logger } from "../utils/logs/logger.ts";
 import { env } from "../config/env.ts";
 import { readInstanceSettings } from "./instance-settings.ts";
+import fs from "fs";
+import path from "path";
+import { ANDRIA_LOGO_CID } from "../helpers/mail-template/shared.ts";
 
 async function mailContext() {
   const settings = await readInstanceSettings();
   return { organizationName: settings.name };
 }
+
+const andriaLogoCandidates = [
+  // Image de production : le Dockerfile copie le SVG avec le serveur compilé.
+  path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo.svg"),
+  // Développement et tests : le fichier officiel reste la source de vérité.
+  path.join(
+    import.meta.dirname,
+    "..",
+    "..",
+    "..",
+    "front",
+    "src",
+    "assets",
+    "andria-logo",
+    "logo-darkmode.svg",
+  ),
+];
+
+const andriaLogoPath = () =>
+  andriaLogoCandidates.find((candidate) => fs.existsSync(candidate));
+
+const andriaLogoAttachment = () => {
+  const logoPath = andriaLogoPath();
+  return logoPath
+    ? [{ filename: "andria-logo.svg", path: logoPath, cid: ANDRIA_LOGO_CID }]
+    : undefined;
+};
 
 /**
  * Transporteur SMTP.
@@ -148,6 +178,9 @@ async function sendAccountEmail(
       to: destination,
       subject,
       html: getTemplate(template, token, email, await mailContext()),
+      attachments: template.startsWith("root-")
+        ? andriaLogoAttachment()
+        : undefined,
     });
   } catch (error: any) {
     logger.error(`Envoi du mail « ${subject} » impossible`, error);

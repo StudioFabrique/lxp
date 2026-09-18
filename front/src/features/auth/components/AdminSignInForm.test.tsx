@@ -75,8 +75,15 @@ describe("AdminSignInForm", () => {
       password: "RootPassword@123",
     });
     expect(onSuccess).not.toHaveBeenCalled();
-    expect(container.textContent).toContain("Activez votre compte root");
+    expect(container.textContent).toContain("Vérifiez votre boîte mail");
     expect(container.textContent).toContain("root@test.fr");
+
+    await act(async () => {
+      Array.from(container.querySelectorAll("button"))
+        .find((button) => button.textContent?.includes("Retour à la connexion"))
+        ?.click();
+    });
+    expect(onSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("explique la rétrogradation du root actuel avant une nouvelle création", async () => {

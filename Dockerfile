@@ -12,6 +12,8 @@ RUN npm ci --prefix api
 COPY front ./front
 COPY api ./api
 RUN npm run build --prefix api && npm run build --prefix front
+RUN mkdir -p api/dist/mail-assets && \
+    cp front/src/assets/andria-logo/logo-darkmode.svg api/dist/mail-assets/andria-logo.svg
 
 # Seed uploads in the same runtime path used by the API and production volume.
 RUN mkdir -p api/dist/uploads && \

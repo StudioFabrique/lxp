@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { MailCheck } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
@@ -48,11 +49,6 @@ const AdminSignInForm = ({
     },
   });
 
-  const handleCloseTab = () => {
-    window.open("about:blank", "_self");
-    window.close();
-  };
-
   const onSubmit = async (data: AdminSignInValues) => {
     setError("");
     setIsLoading(true);
@@ -86,16 +82,31 @@ const AdminSignInForm = ({
 
   if (activationEmail) {
     return (
-      <AuthPageWrapper title="Activez votre compte root">
-        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70 gap-10 flex flex-col">
-          <p>Un lien d'activation a été envoyé à {activationEmail}.</p>
-          <p>
-            Consultez votre boîte mail pour terminer la création du compte.
-          </p>
-          <button className="btn" onClick={handleCloseTab}>
-            D'accord
+      <AuthPageWrapper title="Vérifiez votre boîte mail">
+        <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <MailCheck className="h-8 w-8" aria-hidden="true" />
+          </span>
+
+          <div className="flex flex-col gap-2 text-sm text-base-content/70">
+            <p>
+              Un lien d’activation a été envoyé à<br />
+              <strong className="text-base-content">{activationEmail}</strong>
+            </p>
+            <p>
+              Cliquez sur ce lien pour activer votre compte, puis
+              connectez-vous à votre espace.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-primary mt-2 w-full rounded-lg text-base normal-case text-base-100"
+            onClick={onSuccess}
+          >
+            Retour à la connexion
           </button>
-        </span>
+        </div>
       </AuthPageWrapper>
     );
   }

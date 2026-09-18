@@ -4,6 +4,7 @@ import type Skill from "../../../utils/interfaces/skill";
 export type CompanyLogoResponse = { message: string };
 export type InstanceSettings = {
   name: string;
+  setupCompleted: boolean;
   defaultTheme: string;
   welcomeTitles: {
     admin: string;

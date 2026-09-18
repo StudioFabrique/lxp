@@ -3,6 +3,7 @@ import path from "path";
 
 export type InstanceSettings = {
   name: string;
+  setupCompleted: boolean;
   defaultTheme: string;
   welcomeTitles: {
     admin: string;
@@ -18,6 +19,7 @@ export type InstanceSettings = {
 
 export const defaultInstanceSettings: InstanceSettings = {
   name: "ANDRIA",
+  setupCompleted: false,
   defaultTheme: "classic",
   welcomeTitles: {
     admin: "Bonjour, {firstname} {lastname} !",
@@ -48,6 +50,11 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
     const saved = JSON.parse(await fs.promises.readFile(settingsPath, "utf8"));
     return {
       name: typeof saved.name === "string" ? saved.name : defaultInstanceSettings.name,
+      // A settings file created before the onboarding existed represents an
+      // already configured instance. This avoids interrupting existing roots
+      // after an upgrade while new installations still start as incomplete.
+      setupCompleted:
+        typeof saved.setupCompleted === "boolean" ? saved.setupCompleted : true,
       defaultTheme:
         typeof saved.defaultTheme === "string"
           ? saved.defaultTheme === "light"

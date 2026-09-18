@@ -23,6 +23,10 @@ export const authRoutes: RouteObject[] = [
         lazy: lazyRoute(() => import("./views/Login")),
       },
       {
+        path: "/instance-setup",
+        lazy: lazyRoute(() => import("./views/InstanceSetup")),
+      },
+      {
         path: "/register",
         lazy: lazyRoute(() => import("./views/Register")),
       },

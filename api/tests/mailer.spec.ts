@@ -30,8 +30,22 @@ describe("Activation SMTP du compte root", () => {
         to: "root@test.fr",
         subject: "Activation de votre compte administrateur",
         html: expect.stringContaining("confirm-email?token=token"),
+        attachments: [
+          expect.objectContaining({
+            filename: "andria-logo.svg",
+            cid: "andria-official-logo",
+          }),
+        ],
       }),
     );
+
+    const message = sendMail.mock.calls[0]?.[0] as {
+      html?: string;
+    };
+    expect(message.html).toContain('src="cid:andria-official-logo"');
+    expect(message.html).toContain('role="presentation"');
+    expect(message.html).toContain('align="center"');
+    expect(message.html).toContain("margin:28px auto");
   });
 
   test("fait échouer le flux lorsque l'envoi SMTP échoue", async () => {

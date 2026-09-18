@@ -45,17 +45,21 @@ L'API de l'application est disponible sur <http://localhost:3000>.
 Après saisie de cette clé dans `/init`, un lien est envoyé à l'adresse indiquée.
 Le compte root reste inactif jusqu'à l'ouverture de ce lien.
 
+Lors des initialisations suivantes, `npm run init` vérifie et réutilise chaque
+dossier `node_modules` déjà à jour au lieu de relancer inutilement `npm ci`.
+Les dépendances manquantes ou invalides sont réinstallées automatiquement.
+
 ### Commandes courantes
 
-| Action                                    | Commande                                         |
-| ----------------------------------------- | ------------------------------------------------ |
-| Initialiser des bases vides               | `npm run init`                                   |
-| Restaurer un dump placé dans `api/dumps/` | `npm run init:data`                              |
-| Charger les données de démonstration      | `npm run init:demo`                              |
-| Démarrer l'API et le front                | `npm run dev`                                    |
-| Démarrer les bases sans les réinitialiser | `docker compose -f api/docker-compose.yml up -d` |
-| Sauvegarder les données locales           | `npm run dump`                                   |
-| Lancer les tests de l'API                 | `npm test`                                       |
+| Action                                        | Commande                                         |
+| --------------------------------------------- | ------------------------------------------------ |
+| Initialiser des bases vides                   | `npm run init`                                   |
+| Restaurer un dump placé dans `api/dumps/`     | `npm run init:data`                              |
+| Charger les données de démonstration          | `npm run init:demo`                              |
+| Démarrer l'API et le front                    | `npm run dev`                                    |
+| Démarrer les bases sans les réinitialiser     | `docker compose -f api/docker-compose.yml up -d` |
+| Sauvegarder les données locales               | `npm run dump`                                   |
+| Lancer les tests de l'API                     | `npm test`                                       |
 
 ## Variables d'environnement
 

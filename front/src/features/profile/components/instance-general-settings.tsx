@@ -17,6 +17,7 @@ import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/qu
 
 const emptySettings: InstanceSettings = {
   name: "",
+  setupCompleted: true,
   defaultTheme: "classic",
   welcomeTitles: { admin: "", teacher: "", student: "" },
   welcomeMessages: { admin: "", teacher: "", student: "" },

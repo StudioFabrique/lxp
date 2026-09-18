@@ -38,6 +38,7 @@ export async function httpPutInstanceSettings(
   res: Response,
 ) {
   const { name, defaultTheme } = req.body ?? {};
+  const currentSettings = await readInstanceSettings();
   let titles: Record<string, unknown> | undefined;
   let messages: Record<string, unknown> | undefined;
 
@@ -77,6 +78,10 @@ export async function httpPutInstanceSettings(
 
   const settings = {
     name: name.trim(),
+    setupCompleted:
+      req.body?.setupCompleted === "true"
+        ? true
+        : currentSettings.setupCompleted,
     defaultTheme,
     welcomeTitles: {
       admin: (titles!.admin as string).trim(),

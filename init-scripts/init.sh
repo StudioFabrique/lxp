@@ -21,19 +21,29 @@ case "${1:-}" in
     ;;
 esac
 
+install_dependencies() {
+  label="$1"
+  directory="$2"
+  shift 2
+
+  if [ -d "$directory/node_modules" ] \
+    && npm ls --depth=0 --prefix "$directory" > /dev/null 2>&1; then
+    echo "Dépendances $label déjà présentes et à jour, installation ignorée."
+    return
+  fi
+
+  echo "Installation des dépendances $label..."
+  npm ci "$@" || { echo -e "\033[1;31m Échec: Installation des dépendances $label"; exit 1; }
+}
+
 if [ "$restore_data" = false ]; then
   echo "Nettoyage des données existantes..."
   ./init-scripts/clean-project-data.sh || { echo -e "\033[1;31m Échec: Nettoyage des données"; exit 1; }
 fi
 
-echo "Installation des dépendances racine..."
-npm ci --ignore-scripts || { echo -e "\033[1;31m Échec: Installation des dépendances racine"; exit 1; }
-
-echo "Installation des dépendances API..."
-npm ci --prefix api || { echo -e "\033[1;31m Échec: Installation des dépendances API"; exit 1; }
-
-echo "Installation des dépendances frontend..."
-npm ci --prefix front || { echo -e "\033[1;31m Échec: Installation des dépendances frontend"; exit 1; }
+install_dependencies "racine" "." --ignore-scripts
+install_dependencies "API" "api" --prefix api
+install_dependencies "frontend" "front" --prefix front
 
 echo "Copie des fichiers .env..."
 # If .env in api does not exist, copy .env.example to .env
