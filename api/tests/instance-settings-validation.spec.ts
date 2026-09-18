@@ -17,7 +17,8 @@ const defaultInstanceSettings = {
 jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
   readInstanceSettings: jest.fn(async () => defaultInstanceSettings),
   writeInstanceSettings: jest.fn(),
-  hasCompanyLogo: jest.fn(async () => false),
+  hasInstanceLogo: jest.fn(async () => false),
+  instanceLogoPath: "/tmp/instance-logo-test.jpeg",
 }));
 
 const { httpPutInstanceSettings } =

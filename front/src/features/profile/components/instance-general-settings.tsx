@@ -7,7 +7,7 @@ import ImageFileUpload, {
   type TemporaryImage,
 } from "../../../components/UI/image-file-upload/image-file-upload";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
-import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
+import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import { darkThemes, lightThemes } from "../../../config/themes";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
@@ -41,7 +41,7 @@ export default function InstanceGeneralSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [logo, setLogo] = useState<TemporaryImage>({
     file: null,
-    url: COMPANY_LOGO,
+    url: INSTANCE_LOGO,
   });
   const [hasLogo, setHasLogo] = useState(false);
   const [deleteLogo, setDeleteLogo] = useState(false);
@@ -83,7 +83,7 @@ export default function InstanceGeneralSettings() {
       .finally(() => setIsLoading(false));
 
     const abortController = new AbortController();
-    fetch(COMPANY_LOGO_COLOR, {
+    fetch(INSTANCE_LOGO_COLOR, {
       cache: "no-store",
       signal: abortController.signal,
     })
@@ -160,7 +160,7 @@ export default function InstanceGeneralSettings() {
       <div className="grid items-stretch gap-4 xl:grid-cols-2">
         <BoxWrapper
           className="h-auto gap-6 overflow-visible"
-          data-recommended-tour="company-logo"
+          data-recommended-tour="instance-logo"
         >
         <form
           className="flex h-full flex-col gap-6"

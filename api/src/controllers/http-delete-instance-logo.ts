@@ -11,29 +11,29 @@ const deleteFileIfItExists = async (filePath: string) => {
   }
 };
 
-export default async function httpDeleteCompanyLogo(
+export default async function httpDeleteInstanceLogo(
   _req: Request,
   res: Response,
 ) {
-  const companyAssetsPath = path.join(
+  const instanceAssetsPath = path.join(
     import.meta.dirname,
     "..",
     "..",
     "uploads",
-    "company",
+    "instance",
   );
 
   try {
     await Promise.all([
-      deleteFileIfItExists(path.join(companyAssetsPath, "company-logo.jpeg")),
-      deleteFileIfItExists(path.join(companyAssetsPath, "company-color.txt")),
+      deleteFileIfItExists(path.join(instanceAssetsPath, "instance-logo.jpeg")),
+      deleteFileIfItExists(path.join(instanceAssetsPath, "instance-color.txt")),
     ]);
 
     return res.json({
       message: "Le logo de l'organisme a bien été supprimé",
     });
   } catch (error) {
-    logger.error("Error deleting company logo:", error);
+    logger.error("Error deleting instance logo:", error);
     return res.status(500).json({
       message: "Le logo de l'organisme n'a pas pu être supprimé.",
     });

@@ -41,22 +41,31 @@ const settingsPath = path.join(
   "..",
   "..",
   "uploads",
-  "company",
+  "instance",
   "instance-settings.json",
 );
 
-const companyLogoPath = path.join(
+export const instanceLogoPath = path.join(
   import.meta.dirname,
   "..",
   "..",
   "uploads",
-  "company",
-  "company-logo.jpeg",
+  "instance",
+  "instance-logo.jpeg",
 );
 
-export async function hasCompanyLogo() {
+export const instanceColorPath = path.join(
+  import.meta.dirname,
+  "..",
+  "..",
+  "uploads",
+  "instance",
+  "instance-color.txt",
+);
+
+export async function hasInstanceLogo() {
   try {
-    await fs.promises.access(companyLogoPath, fs.constants.F_OK);
+    await fs.promises.access(instanceLogoPath, fs.constants.F_OK);
     return true;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
@@ -68,7 +77,10 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
   try {
     const saved = JSON.parse(await fs.promises.readFile(settingsPath, "utf8"));
     return {
-      name: typeof saved.name === "string" ? saved.name : defaultInstanceSettings.name,
+      name:
+        typeof saved.name === "string"
+          ? saved.name
+          : defaultInstanceSettings.name,
       setupCompleted:
         typeof saved.setupCompleted === "boolean"
           ? saved.setupCompleted

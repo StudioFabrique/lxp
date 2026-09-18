@@ -30,9 +30,9 @@ import statsRouter from "./stats.router.ts";
 import indicatorsRouter from "./indicators/indicators.router.ts";
 import evaluationRouter from "./evaluation/evaluation.router.ts";
 import mediaRouter from "./mediatheque/mediatheque.router.ts";
-import { uploadCompanyLogo } from "../../middleware/upload-company-image.ts";
-import httpPostCompanyLogo from "../../controllers/http-post-company-logo.ts";
-import httpDeleteCompanyLogo from "../../controllers/http-delete-company-logo.ts";
+import { uploadInstanceLogo } from "../../middleware/upload-instance-image.ts";
+import httpPostInstanceLogo from "../../controllers/http-post-instance-logo.ts";
+import httpDeleteInstanceLogo from "../../controllers/http-delete-instance-logo.ts";
 import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
@@ -85,18 +85,18 @@ mountRouter(v1Router, "/resources", resourcesRouter);
 mountRouter(v1Router, "/quiz", quizRouter);
 
 v1Router.post(
-  "/company-logo",
+  "/instance-logo",
   checkPermissions("formation"),
   checkRoleRank([0]),
-  uploadCompanyLogo(),
-  httpPostCompanyLogo,
+  uploadInstanceLogo(),
+  httpPostInstanceLogo,
 );
 
 v1Router.delete(
-  "/company-logo",
+  "/instance-logo",
   checkPermissions("formation"),
   checkRoleRank([0]),
-  httpDeleteCompanyLogo,
+  httpDeleteInstanceLogo,
 );
 
 v1Router.get("/instance-settings", httpGetInstanceSettings);
@@ -104,7 +104,7 @@ v1Router.put(
   "/instance-settings",
   checkPermissions("formation"),
   checkRoleRank([0]),
-  uploadCompanyLogo(),
+  uploadInstanceLogo(),
   httpPutInstanceSettings,
 );
 

@@ -2,8 +2,12 @@ import { env } from "../../config/env.ts";
 export type MailContext = {
   organizationName?: string;
   themeMode?: "light" | "dark";
+  logoCid?: string;
+  logoBackgroundColor?: string;
 };
 export const ANDRIA_LOGO_CID = "andria-official-logo";
+export const ANDRIA_FOOTER_LOGO_LIGHT_CID = "andria-footer-light";
+export const ANDRIA_FOOTER_LOGO_DARK_CID = "andria-footer-dark";
 export const escapeHtml = (value: string) =>
   value.replace(
     /[&<>'"]/g,
@@ -26,6 +30,8 @@ type LayoutOptions = {
   officialAndriaLogo?: boolean;
   contentAlignment?: "left" | "center";
   themeMode?: "light" | "dark";
+  logoCid?: string;
+  logoBackgroundColor?: string;
 };
 
 export const layout = (
@@ -35,7 +41,9 @@ export const layout = (
 ) => {
   const brand = options.officialAndriaLogo
     ? `<img src="cid:${ANDRIA_LOGO_CID}" width="181" height="59" alt="ANDRIA" style="display:block;width:181px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none">`
-    : `<span style="color:#ffffff;font-size:21px;font-weight:700;line-height:28px">${escapeHtml(name)}</span>`;
+    : options.logoCid
+      ? `<img src="cid:${escapeHtml(options.logoCid)}" alt="${escapeHtml(name)}" style="display:block;max-width:220px;max-height:100px;width:auto;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none">`
+      : "";
   const contentAlignment = options.contentAlignment ?? "left";
   const darkMode = options.themeMode === "dark";
 
@@ -56,6 +64,18 @@ export const layout = (
         muted: "#68737d",
         border: "#e6eaee",
       };
+  const headerColor = options.officialAndriaLogo
+    ? colors.header
+    : /^#[0-9a-f]{6}$/i.test(options.logoBackgroundColor ?? "")
+      ? options.logoBackgroundColor!
+      : "#ffffff";
+  const header = brand
+    ? `<tr><td align="center" bgcolor="${headerColor}" style="padding:24px 32px 30px;background-color:${headerColor};text-align:center">${brand}</td></tr>`
+    : "";
+  const contentRadius = brand ? "18px 18px 0 0" : "12px 12px 0 0";
+  const footerLogo = options.officialAndriaLogo
+    ? ""
+    : `<td align="right" valign="middle" style="padding-left:12px;text-align:right"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></td>`;
 
   return `<!doctype html>
 <html lang="fr">
@@ -64,10 +84,10 @@ export const layout = (
   <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="${colors.page}" style="width:100%;background-color:${colors.page}">
     <tr>
       <td align="center" style="padding:40px 16px">
-        <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="${colors.header}" style="width:100%;max-width:600px;background-color:${colors.header};border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.16)">
-          <tr><td align="center" bgcolor="${colors.header}" style="padding:24px 32px 30px;background-color:${colors.header};text-align:center">${brand}</td></tr>
-          <tr><td align="${contentAlignment}" bgcolor="${colors.card}" style="padding:32px;background-color:${colors.card};border-radius:18px 18px 0 0;color:${colors.text};font-size:15px;line-height:24px;text-align:${contentAlignment}">${content}</td></tr>
-          <tr><td bgcolor="${colors.card}" style="padding:20px 32px;background-color:${colors.card};border-top:1px solid ${colors.border};color:${colors.muted};font-size:12px;line-height:18px;text-align:left">Cet e-mail a été envoyé par ${escapeHtml(name)}.</td></tr>
+        <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="${brand ? headerColor : colors.card}" style="width:100%;max-width:600px;background-color:${brand ? headerColor : colors.card};border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.16)">
+          ${header}
+          <tr><td align="${contentAlignment}" bgcolor="${colors.card}" style="padding:32px;background-color:${colors.card};border-radius:${contentRadius};color:${colors.text};font-size:15px;line-height:24px;text-align:${contentAlignment}">${content}</td></tr>
+          <tr><td bgcolor="${colors.card}" style="padding:20px 32px;background-color:${colors.card};border-top:1px solid ${colors.border};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="color:${colors.muted};text-align:left">Cet e-mail a été envoyé par <strong>${escapeHtml(name)}</strong>.</td>${footerLogo}</tr></table></td></tr>
         </table>
       </td>
     </tr>
@@ -77,3 +97,8 @@ export const layout = (
 };
 export const organizationName = (context: MailContext) =>
   context.organizationName?.trim() || "ANDRIA";
+export const instanceBrand = (context: MailContext) => ({
+  logoCid: context.logoCid,
+  logoBackgroundColor: context.logoBackgroundColor,
+  themeMode: context.themeMode,
+});

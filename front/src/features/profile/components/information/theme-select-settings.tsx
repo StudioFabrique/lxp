@@ -1,4 +1,4 @@
-import CompanyPictureUpload from "../company-picture-upload";
+import InstancePictureUpload from "../instance-picture-upload";
 import ThemeSelect from "../theme-select";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
@@ -40,7 +40,7 @@ const ThemeSelectSettings = () => {
 
         <div>
           <RoleRankGuard ranks={[0, 1]}>
-            <CompanyPictureUpload />
+      <InstancePictureUpload />
           </RoleRankGuard>
         </div>
       </div>

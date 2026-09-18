@@ -4,7 +4,7 @@ import ImageFileUpload from "../../../components/UI/image-file-upload/image-file
 import { useCallback, useEffect, useRef, useState } from "react";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import ColorPicker from "../../../components/UI/color-picker";
-import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../../config/urls";
+import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import TableActionsModal from "../../../components/table/TableActionsModal";
@@ -13,11 +13,11 @@ import { Loader2, RefreshCw, Trash2 } from "lucide-react";
 const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
 
-const CompanyPictureUpload = () => {
+const InstancePictureUpload = () => {
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
     url: string | null;
-  }>({ file: null, url: COMPANY_LOGO });
+  }>({ file: null, url: INSTANCE_LOGO });
 
   const [bgColor, setBgColor] = useState(defaultBackgroundColor);
   const [hasLogo, setHasLogo] = useState(false);
@@ -40,7 +40,7 @@ const CompanyPictureUpload = () => {
 
       setIsSaving(true);
       profileApi.mutations
-        .saveCompanyLogo(formData)
+        .saveInstanceLogo(formData)
         .then((data) => {
           if (avatar.file) setHasLogo(true);
           setRequiresReload(true);
@@ -65,7 +65,7 @@ const CompanyPictureUpload = () => {
   useEffect(() => {
     const abortController = new AbortController();
 
-    fetch(COMPANY_LOGO_COLOR, {
+    fetch(INSTANCE_LOGO_COLOR, {
       cache: "no-store",
       signal: abortController.signal,
     })
@@ -102,7 +102,7 @@ const CompanyPictureUpload = () => {
     setIsDeleting(true);
 
     profileApi.mutations
-      .deleteCompanyLogo()
+      .deleteInstanceLogo()
       .then((data) => {
         hasSelectedColor.current = true;
         bgColorRef.current = defaultBackgroundColor;
@@ -123,7 +123,7 @@ const CompanyPictureUpload = () => {
   return (
     <BoxWrapper
       className="h-auto gap-6 overflow-visible"
-      data-recommended-tour="company-logo"
+      data-recommended-tour="instance-logo"
     >
       <div>
         <h2 className="text-lg font-bold">Logo et apparence</h2>
@@ -219,4 +219,4 @@ const CompanyPictureUpload = () => {
   );
 };
 
-export default CompanyPictureUpload;
+export default InstancePictureUpload;

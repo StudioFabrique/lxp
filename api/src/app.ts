@@ -111,8 +111,8 @@ app
     }),
   )
   .use(
-    "/company",
-    express.static(path.join(uploadsDirectory, "company"), {
+    "/instance",
+    express.static(path.join(uploadsDirectory, "instance"), {
       index: false,
       dotfiles: "deny",
     }),

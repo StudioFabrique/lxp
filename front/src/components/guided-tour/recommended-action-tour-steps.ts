@@ -76,7 +76,7 @@ export const groupCreationTourSteps: Step[] = [
 
 export const logoTourSteps: Step[] = [
   {
-    target: '[data-recommended-tour="company-logo"]',
+    target: '[data-recommended-tour="instance-logo"]',
     title: "Personnalisez votre organisme",
     content:
       "Choisissez la couleur d'arrière-plan puis ajoutez votre logo au format JPG ou PNG. La personnalisation est enregistrée automatiquement.",

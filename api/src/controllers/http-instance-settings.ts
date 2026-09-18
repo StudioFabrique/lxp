@@ -1,9 +1,9 @@
 import type { Response } from "express";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import fs from "fs";
-import path from "path";
 import {
-  hasCompanyLogo,
+  hasInstanceLogo,
+  instanceLogoPath,
   readInstanceSettings,
   writeInstanceSettings,
 } from "../services/instance-settings.ts";
@@ -33,7 +33,7 @@ export async function httpGetInstanceSettings(
 ) {
   const [settings, hasLogo] = await Promise.all([
     readInstanceSettings(),
-    hasCompanyLogo(),
+    hasInstanceLogo(),
   ]);
   res.json({ ...settings, hasLogo });
 }
@@ -116,16 +116,8 @@ export async function httpPutInstanceSettings(
   await writeInstanceSettings(settings);
 
   if (req.body?.deleteLogo === "true" && !req.file) {
-    const logoPath = path.join(
-      import.meta.dirname,
-      "..",
-      "..",
-      "uploads",
-      "company",
-      "company-logo.jpeg",
-    );
-    await fs.promises.rm(logoPath, { force: true });
+    await fs.promises.rm(instanceLogoPath, { force: true });
   }
 
-  res.json({ ...settings, hasLogo: await hasCompanyLogo() });
+  res.json({ ...settings, hasLogo: await hasInstanceLogo() });
 }

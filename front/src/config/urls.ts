@@ -21,8 +21,8 @@ export const SOCKET_URL = API_BASE_URL;
 export const ACTIVITIES_VIDEOS =
   API_BASE_URL + "activities/videos/";
 
-export const COMPANY_LOGO =
-  API_BASE_URL + "company/company-logo.jpeg";
+export const INSTANCE_LOGO =
+  API_BASE_URL + "instance/instance-logo.jpeg";
 
-export const COMPANY_LOGO_COLOR =
-  API_BASE_URL + "company/company-color.txt";
+export const INSTANCE_LOGO_COLOR =
+  API_BASE_URL + "instance/instance-color.txt";

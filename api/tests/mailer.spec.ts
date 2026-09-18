@@ -13,7 +13,8 @@ jest.unstable_mockModule("../src/utils/logs/logger.ts", () => ({
   logger: { error: jest.fn() },
 }));
 
-const { sendRootEmailVerification } = await import("../src/services/mailer.ts");
+const { sendRootEmailVerification, sendEmailChangeConfirmation } =
+  await import("../src/services/mailer.ts");
 
 describe("Activation SMTP du compte root", () => {
   beforeEach(() => {
@@ -44,6 +45,7 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain('role="presentation"');
     expect(message.html).toContain('align="center"');
     expect(message.html).toContain("margin:28px auto");
+    expect(message.html).not.toContain("andria-footer-light");
   });
 
   test("fait échouer le flux lorsque l'envoi SMTP échoue", async () => {
@@ -64,5 +66,18 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain('bgcolor="#0f172a"');
     expect(message.html).toContain('bgcolor="#1e293b"');
     expect(message.html).toContain("border-radius:18px 18px 0 0");
+  });
+
+  test("joint le logo ANDRIA adapté au pied des autres mails", async () => {
+    await sendEmailChangeConfirmation("root@test.fr", "token");
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('src="cid:andria-footer-light"'),
+        attachments: expect.arrayContaining([
+          expect.objectContaining({ cid: "andria-footer-light" }),
+        ]),
+      }),
+    );
   });
 });

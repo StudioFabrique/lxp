@@ -3,5 +3,5 @@ export const profileKeys = {
   information: () => [...profileKeys.all, "information"] as const,
   accomplishments: () => [...profileKeys.all, "accomplishments"] as const,
   skills: () => [...profileKeys.all, "skills"] as const,
-  companyLogo: () => [...profileKeys.all, "company-logo"] as const,
+  instanceLogo: () => [...profileKeys.all, "instance-logo"] as const,
 };
