@@ -21,24 +21,129 @@ case "${1:-}" in
     ;;
 esac
 
+install_dependencies() {
+  label="$1"
+  directory="$2"
+  shift 2
+
+  if [ -d "$directory/node_modules" ] \
+    && npm ls --depth=0 --prefix "$directory" > /dev/null 2>&1; then
+    echo "Dépendances $label déjà présentes et à jour, installation ignorée."
+    return
+  fi
+
+  echo "Installation des dépendances $label..."
+  npm ci "$@" || { echo -e "\033[1;31m Échec: Installation des dépendances $label"; exit 1; }
+}
+
+read_env_value() {
+  key="$1"
+  file="$2"
+  value=$(grep -E "^${key}=" "$file" | tail -n 1 | cut -d'=' -f2-)
+  value=${value#\"}
+  value=${value%\"}
+  printf '%s' "$value"
+}
+
+write_env_value() {
+  key="$1"
+  value="$2"
+  file="$3"
+  temporary_file="${file}.tmp"
+  escaped_value=${value//\\/\\\\}
+  escaped_value=${escaped_value//\"/\\\"}
+  found=false
+  : > "$temporary_file"
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      "$key="*)
+        printf '%s="%s"\n' "$key" "$escaped_value" >> "$temporary_file"
+        found=true
+        ;;
+      *) printf '%s\n' "$line" >> "$temporary_file" ;;
+    esac
+  done < "$file"
+
+  if [ "$found" = false ]; then
+    printf '%s="%s"\n' "$key" "$escaped_value" >> "$temporary_file"
+  fi
+  mv "$temporary_file" "$file"
+}
+
+prompt_env_value() {
+  key="$1"
+  label="$2"
+  secret="${3:-false}"
+  file="$4"
+  current_value=$(read_env_value "$key" "$file")
+
+  while true; do
+    if [ -n "$current_value" ]; then
+      prompt="$label [$current_value] : "
+    else
+      prompt="$label : "
+    fi
+
+    if [ "$secret" = true ]; then
+      read -r -s -p "$prompt" entered_value
+      echo
+    else
+      read -r -p "$prompt" entered_value
+    fi
+
+    value="${entered_value:-$current_value}"
+    if [ -n "$value" ]; then
+      write_env_value "$key" "$value" "$file"
+      return
+    fi
+    echo "Une valeur est requise pour $key."
+  done
+}
+
+configure_development_env() {
+  file="$1"
+  environment=$(read_env_value "ENVIRONMENT" "$file")
+  if [ "$environment" != "development" ]; then
+    return
+  fi
+  if [ ! -t 0 ]; then
+    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    exit 1
+  fi
+
+  echo
+  echo "Configuration des services de développement"
+  echo
+  prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
+  prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
+  prompt_env_value "MAILER_PASSWORD" "Mot de passe SMTP" true "$file"
+  prompt_env_value "MAILER_SMTP" "Serveur SMTP" false "$file"
+  prompt_env_value "MAILER_DEV_RECIPIENT" "Destinataire des emails en développement" false "$file"
+  prompt_env_value "MAILER_SMTP_PORT" "Port SMTP" false "$file"
+  prompt_env_value "MAILER_FROM" "Expéditeur (nom et adresse)" false "$file"
+  echo "Configuration enregistrée dans api/.env."
+  echo
+}
+
 if [ "$restore_data" = false ]; then
   echo "Nettoyage des données existantes..."
   ./init-scripts/clean-project-data.sh || { echo -e "\033[1;31m Échec: Nettoyage des données"; exit 1; }
 fi
 
-echo "Installation des dépendances racine..."
-npm ci --ignore-scripts || { echo -e "\033[1;31m Échec: Installation des dépendances racine"; exit 1; }
-
-echo "Installation des dépendances API..."
-npm ci --prefix api || { echo -e "\033[1;31m Échec: Installation des dépendances API"; exit 1; }
-
-echo "Installation des dépendances frontend..."
-npm ci --prefix front || { echo -e "\033[1;31m Échec: Installation des dépendances frontend"; exit 1; }
+install_dependencies "racine" "." --ignore-scripts
+install_dependencies "API" "api" --prefix api
+install_dependencies "frontend" "front" --prefix front
 
 echo "Copie des fichiers .env..."
 # If .env in api does not exist, copy .env.example to .env
 if [ ! -f "./api/.env" ]; then
+  if grep -q '^ENVIRONMENT=development' ./api/env.example && [ ! -t 0 ]; then
+    echo -e "\033[1;31mÉchec: la création de api/.env en développement nécessite un terminal interactif.\033[0m"
+    exit 1
+  fi
   cp ./api/env.example ./api/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
+  configure_development_env "./api/.env"
 fi
 cp ./front/env.example ./front/.env || { echo -e "\033[1;31m Échec: Copie des variables d'environnement"; exit 1; }
 

@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
 import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
-import { AvatarSmall } from "../avatar/AvatarSmall";
+import ProfilePopover from "../../features/profile/components/ProfilePopover";
 import ThemeToggle from "../buttons/ThemeToggle";
 import { emitOnboardingEvent } from "../../features/onboarding/onboarding-events";
 import { useDemoMode } from "../../store/DemoContext";
@@ -23,16 +23,12 @@ type SharedSideBarProps = {
 };
 
 const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
-  const { user, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const { canStart: canStartOnboarding } = useOnboarding();
   const navigate = useNavigate();
   const { demoMode, demoUrl, exitUrl, aiDisabled } = useDemoMode();
   const [isExitOpen, setIsExitOpen] = useState(false);
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
-
-  const fullName = user
-    ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
-    : "";
 
   const handleClickLogout = () => {
     logout();
@@ -58,21 +54,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
     <ul className={sidebarListClassName}>
       {/* Avatar */}
       <li className="flex w-full justify-center 2xl:block">
-        <Link
-          to={`/${interfaceType}/profil`}
-          className={`${sidebarControlClassName} capitalize`}
-          data-tip={fullName}
-          aria-label={fullName ? `Profil de ${fullName}` : "Profil utilisateur"}
-        >
-          {user && (
-            <AvatarSmall
-              user={user}
-              noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
-              imgClassName="size-6 shrink-0 rounded-full object-cover"
-            />
-          )}
-          <span className="2xl:block hidden">{fullName}</span>
-        </Link>
+        <ProfilePopover interfaceType={interfaceType} />
       </li>
 
       {interfaceType === "admin" && !aiDisabled && (
@@ -147,10 +129,9 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
             alt="logo ANDRIA en blanc et bleu"
           />
         </div>
-        {/* Toggle clair/sombre */}
         <div
           className="tooltip tooltip-right 2xl:tooltip-top"
-          data-tip="Mode Clair / Mode Sombre"
+          data-tip="Mode clair / Mode sombre"
         >
           <ThemeToggle className="size-8 shrink-0 cursor-pointer rounded-lg p-0 transition-colors hover:bg-(--sidebar-hover)" />
         </div>

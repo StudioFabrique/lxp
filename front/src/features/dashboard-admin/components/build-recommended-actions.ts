@@ -10,6 +10,7 @@ type Options = {
   adminsCount?: number;
   studentsCount?: number;
   groupsCount?: number;
+  hasLogo?: boolean;
   parcours: FormationParcoursSummary[];
 };
 
@@ -20,6 +21,7 @@ export function buildRecommendedActions({
   adminsCount,
   studentsCount,
   groupsCount,
+  hasLogo,
   parcours,
 }: Options): RecommendedAction[] {
   if (userRank <= 1) {
@@ -46,13 +48,18 @@ export function buildRecommendedActions({
             },
           ]
         : []),
-      {
-        id: "change-logo",
-        title: "Changer le logo de l'organisme",
-        description: "Personnalisez l'identité visuelle de la plateforme.",
-        to: "/admin/profil?tutorial=logo",
-        icon: recommendedActionIcons.changeLogo,
-      },
+      ...(userRank === 0 && hasLogo === false
+        ? [
+            {
+              id: "change-logo",
+              title: "Changer le logo de l'organisme",
+              description:
+                "Personnalisez l'identité visuelle de la plateforme.",
+              to: "/admin/parametres-instance?tutorial=logo",
+              icon: recommendedActionIcons.changeLogo,
+            },
+          ]
+        : []),
     ];
   }
 

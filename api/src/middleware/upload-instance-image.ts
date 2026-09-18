@@ -5,25 +5,27 @@ import fs from "fs"; // Import File System module
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import { logger } from "../utils/logs/logger.ts";
 
-export const uploadCompanyLogo = () => {
+export const uploadInstanceLogo = () => {
   const destinationPath = path.join(
     import.meta.dirname,
     "..",
     "..",
     "uploads",
-    "company"
+    "instance",
   );
 
   const storage = multer.diskStorage({
     destination: function (_req, _file, cb) {
-      cb(null, destinationPath);
+      fs.mkdir(destinationPath, { recursive: true }, (error) => {
+        cb(error, destinationPath);
+      });
     },
     filename: async function (_req: CustomRequest, file, cb) {
       if (file.mimetype.startsWith("image")) {
         // Force the filename to be constant
-        cb(null, "company-logo.jpeg");
+        cb(null, "instance-logo.jpeg");
       } else {
-        cb(new Error("Le fichier doit être une image"), "company-logo.jpeg");
+        cb(new Error("Le fichier doit être une image"), "instance-logo.jpeg");
       }
     },
   });
@@ -75,9 +77,10 @@ export const uploadCompanyLogo = () => {
       }
 
       if (hasValidColor) {
-        const colorFilePath = path.join(destinationPath, "company-color.txt");
+        const colorFilePath = path.join(destinationPath, "instance-color.txt");
 
         try {
+          await fs.promises.mkdir(destinationPath, { recursive: true });
           await fs.promises.writeFile(colorFilePath, colorData, "utf8");
         } catch (writeError) {
           logger.error("Error writing color file:", writeError);

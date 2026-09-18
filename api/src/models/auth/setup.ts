@@ -22,6 +22,7 @@ type FirstAdminInput = {
   firstname: string;
   lastname: string;
   password: string;
+  themeMode?: "light" | "dark";
 };
 
 type RootActivationPayload = {
@@ -244,7 +245,11 @@ async function createRootUser(
             expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
           },
         );
-        await sendRootEmailVerification(email, verificationToken);
+        await sendRootEmailVerification(
+          email,
+          verificationToken,
+          input.themeMode,
+        );
       }
     } catch (error) {
       await Promise.allSettled([
@@ -316,7 +321,11 @@ async function createRootUser(
           expiresIn: env.ROOT_ACTIVATION_EMAIL_TOKEN_TTL_HOURS * 60 * 60,
         },
       );
-      await sendRootEmailVerification(email, verificationToken);
+      await sendRootEmailVerification(
+        email,
+        verificationToken,
+        input.themeMode,
+      );
     }
     // Le compte et son invitation sont prêts avant de retirer les droits root
     // du titulaire actuel. Un échec de création laisse ce dernier inchangé.

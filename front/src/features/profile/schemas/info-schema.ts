@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { regexGeneric, regexMail, regexOptionalGeneric } from "../../../config/constantes";
+import {
+  regexGeneric,
+  regexMail,
+  regexOptionalGeneric,
+} from "../../../config/constantes";
 
 export const informationSchema = z.object({
   firstname: z
@@ -7,16 +11,12 @@ export const informationSchema = z.object({
     .regex(regexGeneric, {
       message: "Le prénom contient des caractères invalides",
     }),
-  lastname: z
-    .string({ error: "Le nom est obligatoire" })
-    .regex(regexGeneric, {
-      message: "Le nom contient des caractères invalides",
-    }),
-  email: z
-    .string({ error: "L'email est obligatoire" })
-    .regex(regexMail, {
-      message: "L'email contient des caractères invalides",
-    }),
+  lastname: z.string({ error: "Le nom est obligatoire" }).regex(regexGeneric, {
+    message: "Le nom contient des caractères invalides",
+  }),
+  email: z.string({ error: "L'email est obligatoire" }).regex(regexMail, {
+    message: "L'email contient des caractères invalides",
+  }),
   nickname: z
     .string()
     .regex(regexOptionalGeneric, {
@@ -45,12 +45,6 @@ export const informationSchema = z.object({
     .string()
     .regex(/* regexPhoneNumber */ regexOptionalGeneric, {
       message: "Le numéro de téléphone contient des caractères invalides",
-    })
-    .optional(),
-  description: z
-    .string()
-    .regex(regexOptionalGeneric, {
-      message: "La description contient des caractères invalides",
     })
     .optional(),
 });

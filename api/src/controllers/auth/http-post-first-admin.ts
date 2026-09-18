@@ -10,7 +10,7 @@ export default async function httpPostFirstAdmin(req: Request, res: Response) {
       return res.status(400).json({ message: errors.array()[0].msg });
     }
 
-    const { token, email, firstname, lastname, password } = req.body;
+    const { token, email, firstname, lastname, password, themeMode } = req.body;
     if (!token || !email || !firstname || !lastname || !password) {
       return res.status(400).json({ message: "Tous les champs sont requis." });
     }
@@ -32,12 +32,12 @@ export default async function httpPostFirstAdmin(req: Request, res: Response) {
       firstname,
       lastname,
       password,
+      themeMode: themeMode === "dark" ? "dark" : "light",
     });
     return res.status(201).json({
       success: true,
       pendingActivation: true,
-      message:
-        "Un lien d'activation a été envoyé à votre adresse email.",
+      message: "Un lien d'activation a été envoyé à votre adresse email.",
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({

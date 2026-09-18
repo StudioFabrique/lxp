@@ -6,7 +6,12 @@ import app from "../src/app.ts";
 import mongoConnect from "../src/utils/services/db/mongo-connect.ts";
 
 const uploadsDirectory = path.join(import.meta.dirname, "..", "uploads");
-const fichierActivite = path.join(uploadsDirectory, "activities", "files", "test-acces.txt");
+const fichierActivite = path.join(
+  uploadsDirectory,
+  "activities",
+  "files",
+  "test-acces.txt",
+);
 
 /**
  * Surface exposée sans session.
@@ -57,7 +62,7 @@ describe("Accès non authentifié", () => {
     });
 
     it("laisse le logo de l'entreprise public, l'écran de connexion en dépend", async () => {
-      const reponse = await request(app).get("/company/company-logo.jpeg");
+      const reponse = await request(app).get("/instance/instance-logo.jpeg");
       expect(reponse.status).not.toBe(401);
     });
   });
@@ -85,7 +90,9 @@ describe("Accès non authentifié", () => {
       expect(codes.slice(0, premierBlocage)).toEqual(
         Array(premierBlocage).fill(401),
       );
-      expect(codes.slice(premierBlocage).every((code) => code === 429)).toBe(true);
+      expect(codes.slice(premierBlocage).every((code) => code === 429)).toBe(
+        true,
+      );
       expect(Number(retryAfter)).toBeGreaterThan(0);
     });
   });

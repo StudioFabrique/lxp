@@ -2,7 +2,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import apiClient from "../../../lib/axios";
-import CompanyPictureUpload from "./company-picture-upload";
+import InstancePictureUpload from "./instance-picture-upload";
 
 vi.mock("../../../lib/axios", () => ({
   default: {
@@ -18,7 +18,7 @@ vi.mock("react-hot-toast", () => ({
   },
 }));
 
-describe("CompanyPictureUpload", () => {
+describe("InstancePictureUpload", () => {
   let container: HTMLDivElement;
   let root: Root;
 
@@ -52,7 +52,7 @@ describe("CompanyPictureUpload", () => {
   it("restaure la couleur sauvegardée et sauvegarde une couleur seule", async () => {
     await act(async () => {
       root = createRoot(container);
-      root.render(<CompanyPictureUpload />);
+      root.render(<InstancePictureUpload />);
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
@@ -69,7 +69,7 @@ describe("CompanyPictureUpload", () => {
 
     expect(apiClient.post).toHaveBeenCalledOnce();
     const [url, body] = vi.mocked(apiClient.post).mock.calls[0];
-    expect(url).toBe("/company-logo");
+    expect(url).toBe("/instance-logo");
     expect(body).toBeInstanceOf(FormData);
     expect((body as FormData).get("color")).toBe("#3b82f6");
     expect((body as FormData).get("image")).toBeNull();
@@ -78,7 +78,7 @@ describe("CompanyPictureUpload", () => {
   it("permet de supprimer le logo et réinitialise sa couleur", async () => {
     await act(async () => {
       root = createRoot(container);
-      root.render(<CompanyPictureUpload />);
+      root.render(<InstancePictureUpload />);
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
@@ -86,8 +86,8 @@ describe("CompanyPictureUpload", () => {
       container.querySelector("img")?.dispatchEvent(new Event("load"));
     });
 
-    const deleteButton = Array.from(container.querySelectorAll("button")).find(
-      (button) => button.textContent?.includes("Supprimer le logo"),
+    const deleteButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Supprimer le logo"]',
     );
     expect(deleteButton).toBeDefined();
 
@@ -98,10 +98,12 @@ describe("CompanyPictureUpload", () => {
     );
     await act(async () => confirmButton?.click());
 
-    expect(apiClient.delete).toHaveBeenCalledWith("/company-logo");
+    expect(apiClient.delete).toHaveBeenCalledWith("/instance-logo");
     expect(
       container.querySelector<HTMLInputElement>('input[type="color"]')?.value,
     ).toBe("#ffffff");
-    expect(container.textContent).not.toContain("Supprimer le logo");
+    expect(
+      container.querySelector('button[aria-label="Supprimer le logo"]'),
+    ).toBeNull();
   });
 });

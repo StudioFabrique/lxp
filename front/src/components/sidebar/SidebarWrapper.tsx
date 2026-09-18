@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import SidebarBottom from "./SidebarBottom";
-import { COMPANY_LOGO, COMPANY_LOGO_COLOR } from "../../config/urls";
+import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../config/urls";
 import { useDemoMode } from "../../store/DemoContext";
 import DemoModeIndicator from "../../features/demo/components/DemoModeIndicator";
 
@@ -18,21 +18,9 @@ const SidebarWrapper = ({
 
   const [logoBgColor, setBgColor] = useState<string>();
 
-  const showLogo = (logoExists || loading) && COMPANY_LOGO;
+  const showLogo = logoExists || loading;
 
   useEffect(() => {
-    if (!COMPANY_LOGO) {
-      setExists(false);
-      setLoading(false);
-      return;
-    }
-
-    if (!COMPANY_LOGO_COLOR) {
-      setExists(false);
-      setLoading(false);
-      return;
-    }
-
     const img = new Image();
     img.onload = () => {
       setExists(true);
@@ -42,11 +30,13 @@ const SidebarWrapper = ({
       setExists(false);
       setLoading(false);
     };
-    img.src = COMPANY_LOGO;
+    img.src = INSTANCE_LOGO;
 
-    fetch(COMPANY_LOGO_COLOR).then(async (response) =>
-      setBgColor(await response.text()),
-    );
+    fetch(INSTANCE_LOGO_COLOR)
+      .then(async (response) => {
+        if (response.ok) setBgColor(await response.text());
+      })
+      .catch(() => undefined);
   }, []);
 
   return (
@@ -58,9 +48,9 @@ const SidebarWrapper = ({
         {showLogo && (
           <img
             className="self-start 2xl:h-12.5 2xl:w-12.5 h-8 w-8 rounded-full border object-contain p-1 mb-3 bg-white border-(--sidebar-border)"
-            src={COMPANY_LOGO}
+            src={INSTANCE_LOGO}
             style={{ backgroundColor: logoBgColor }}
-            alt="Company logo"
+            alt="Logo de l’organisme"
           />
         )}
         {demoMode && <DemoModeIndicator />}

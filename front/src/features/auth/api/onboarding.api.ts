@@ -29,6 +29,7 @@ const createFirstAdmin = async (data: {
   firstname: string;
   lastname: string;
   password: string;
+  themeMode?: "light" | "dark";
 }): Promise<CreateRootResponse> => {
   const res = await apiClient.post("/auth/first-admin", data);
   return res.data;
@@ -40,6 +41,7 @@ const createRootAccount = async (data: {
   firstname: string;
   lastname: string;
   password: string;
+  themeMode?: "light" | "dark";
 }): Promise<CreateRootResponse> => {
   const res = await apiClient.post("/auth/root-account", data);
   return res.data;

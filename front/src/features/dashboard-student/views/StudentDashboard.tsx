@@ -1,9 +1,5 @@
-import { useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { dashboardStudentApi } from "../api/dashboard-student.api";
 import Header from "../../../../src/components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
-import { AuthContext } from "../../../store/AuthProvider";
 import ResumeActivity from "../components/resume-activity";
 import ResumeActivities from "../components/resume-activities";
 import ResumeParcours from "../components/resume-parcours";
@@ -12,17 +8,17 @@ import FeelingFeedback from "../components/right-side/feeling-feedback";
 import StudentAccomplishments from "../components/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../components/right-side/most-read-courses";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
-import { useOnboarding } from "../../onboarding/OnboardingContext";
+import { useStudentDashboard } from "../hooks/use-student-dashboard";
 
 const StudentDashboard = () => {
-  const { user } = useContext(AuthContext);
-  const { status: onboardingStatus } = useOnboarding();
-  const showOnboardingWelcome = onboardingStatus === "pending";
-
-  const { data: lastLessons } = useQuery({
-    queryKey: ["last-read-lessons"],
-    queryFn: dashboardStudentApi.queries.getLastReadLessons,
-  });
+  const {
+    showOnboardingWelcome,
+    welcomeTitle,
+    welcomeMessage,
+    lastLesson,
+    remainingLessons,
+    hasLastLessons,
+  } = useStudentDashboard();
 
   return (
     <PageWrapper>
@@ -31,9 +27,8 @@ const StudentDashboard = () => {
           <OnboardingWelcome layout="student" />
         ) : (
           <Header
-            title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
-            description="Bienvenue dans votre espace, commencez votre apprentissage ou
-                reprenez là où vous vous êtes arrêté"
+            title={welcomeTitle}
+            description={welcomeMessage}
             classname="capitalize"
           >
             {/* Ajouter boutons ici par la suite */}
@@ -47,10 +42,10 @@ const StudentDashboard = () => {
           data-onboarding="student-content"
         >
           {/* <Notifications /> */}
-          {lastLessons && lastLessons?.length > 0 ? (
+          {hasLastLessons && lastLesson ? (
             <>
-              <ResumeActivity lastLesson={lastLessons[0]} />
-              <ResumeActivities lastLessons={lastLessons.slice(1)} />
+              <ResumeActivity lastLesson={lastLesson} />
+              <ResumeActivities lastLessons={remainingLessons} />
             </>
           ) : (
             <ResumeParcours />

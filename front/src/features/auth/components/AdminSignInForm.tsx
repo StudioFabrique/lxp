@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { MailCheck } from "lucide-react";
 import { onboardingApi } from "../api/onboarding.api";
 import PasswordForm from "./PasswordForm";
 import { regexMail } from "../../../config/constantes";
@@ -7,10 +8,17 @@ import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import AuthPageWrapper from "./AuthPageWrapper";
 import { ROOT_ACCOUNT_POLICY } from "../root-account-policy";
+import {
+  clearPendingRootActivation,
+  setPendingRootActivationEmail,
+} from "../pending-root-activation";
+import { ThemeContext } from "../../../store/ThemeProvider";
 
 type Props = {
   token: string;
   onSuccess: () => void;
+  onRestart?: () => void;
+  initialActivationEmail?: string;
   email?: string;
   mode?: "first" | "additional";
 };
@@ -26,12 +34,17 @@ type AdminSignInValues = {
 const AdminSignInForm = ({
   token,
   onSuccess,
+  onRestart,
+  initialActivationEmail = "",
   email = "",
   mode = "first",
 }: Props) => {
+  const { theme } = useContext(ThemeContext);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [activationEmail, setActivationEmail] = useState("");
+  const [activationEmail, setActivationEmail] = useState(
+    initialActivationEmail,
+  );
 
   const {
     register,
@@ -48,11 +61,6 @@ const AdminSignInForm = ({
     },
   });
 
-  const handleCloseTab = () => {
-    window.open("about:blank", "_self");
-    window.close();
-  };
-
   const onSubmit = async (data: AdminSignInValues) => {
     setError("");
     setIsLoading(true);
@@ -67,10 +75,13 @@ const AdminSignInForm = ({
         firstname: data.firstname.trim(),
         lastname: data.lastname.trim(),
         password: data.password,
+        themeMode: theme,
       });
 
       if (mode === "first" && response.pendingActivation) {
-        setActivationEmail(data.email.trim());
+        const pendingEmail = data.email.trim();
+        setPendingRootActivationEmail(pendingEmail);
+        setActivationEmail(pendingEmail);
         return;
       }
 
@@ -85,17 +96,35 @@ const AdminSignInForm = ({
   };
 
   if (activationEmail) {
+    const restartCreation = () => {
+      clearPendingRootActivation();
+      onRestart?.();
+    };
+
     return (
-      <AuthPageWrapper title="Activez votre compte root">
-        <span className="my-auto min-h-40 content-center text-center text-sm text-base-content/70 gap-10 flex flex-col">
-          <p>Un lien d'activation a été envoyé à {activationEmail}.</p>
-          <p>
-            Consultez votre boîte mail pour terminer la création du compte.
-          </p>
-          <button className="btn" onClick={handleCloseTab}>
-            D'accord
+      <AuthPageWrapper title="Vérifiez votre boîte mail">
+        <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
+          <MailCheck className="h-8 w-8" aria-hidden="true" />
+
+          <div className="flex flex-col gap-2 text-sm text-base-content/70">
+            <div className="flex flex-col">
+              <span>Un lien d’activation a été envoyé à</span>
+              <strong className="text-base-content">{activationEmail}</strong>
+            </div>
+            <p>
+              Cliquez sur ce lien pour activer votre compte, puis connectez-vous
+              à votre espace.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm w-full normal-case text-base-content/70"
+            onClick={restartCreation}
+          >
+            Recommencer la création
           </button>
-        </span>
+        </div>
       </AuthPageWrapper>
     );
   }

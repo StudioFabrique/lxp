@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { onboardingApi } from "../api/onboarding.api";
 import AdminSignInForm from "./AdminSignInForm";
+import { getPendingRootActivationEmail } from "../pending-root-activation";
 
 vi.mock("../api/onboarding.api", () => ({
   onboardingApi: {
@@ -17,6 +18,7 @@ describe("AdminSignInForm", () => {
   const onSuccess = vi.fn();
 
   beforeEach(async () => {
+    localStorage.clear();
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
@@ -27,7 +29,13 @@ describe("AdminSignInForm", () => {
     });
 
     await act(async () => {
-      root.render(<AdminSignInForm token="setup-token" onSuccess={onSuccess} />);
+      root.render(
+        <AdminSignInForm
+          token="setup-token"
+          onSuccess={onSuccess}
+          onRestart={onSuccess}
+        />,
+      );
     });
   });
 
@@ -73,10 +81,22 @@ describe("AdminSignInForm", () => {
       firstname: "Root",
       lastname: "Admin",
       password: "RootPassword@123",
+      themeMode: "light",
     });
     expect(onSuccess).not.toHaveBeenCalled();
-    expect(container.textContent).toContain("Activez votre compte root");
+    expect(getPendingRootActivationEmail()).toBe("root@test.fr");
+    expect(container.textContent).toContain("Vérifiez votre boîte mail");
     expect(container.textContent).toContain("root@test.fr");
+
+    await act(async () => {
+      Array.from(container.querySelectorAll("button"))
+        .find((button) =>
+          button.textContent?.includes("Recommencer la création"),
+        )
+        ?.click();
+    });
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(getPendingRootActivationEmail()).toBe("");
   });
 
   it("explique la rétrogradation du root actuel avant une nouvelle création", async () => {

@@ -117,9 +117,20 @@ async function updateUserRoles(
     }
 
     if (role.rank === 3) {
-      await tx.orm.public.Student.createAndCount(
-        users.map((user) => ({ idMdb: user._id.toString() })),
-      ).then((count) => ({ count }));
+      // Un apprenant peut déjà avoir sa ligne SQL (par exemple lorsque son
+      // rôle est sauvegardé sans changement, ou après un aller-retour vers un
+      // autre rôle). La synchronisation doit donc être rejouable sans tenter
+      // d'insérer une seconde fois le même idMdb.
+      await Promise.all(
+        users.map((user) => {
+          const idMdb = user._id.toString();
+          return tx.orm.public.Student.where({ idMdb }).upsert({
+            create: { idMdb },
+            update: {},
+            conflictOn: { idMdb },
+          });
+        }),
+      );
     }
 
     if (role.rank > 2) {

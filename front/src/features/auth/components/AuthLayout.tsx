@@ -1,22 +1,43 @@
 import AndriaLogoLightMode from "../../../assets/andria-logo/logo-lightmode.svg";
 import AndriaLogoDarkMode from "../../../assets/andria-logo/logo-darkmode.svg";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { useAuthBackground } from "../hooks/useAuthBackground";
 import LoginRightColumn from "./LoginRightColumn";
 import LoginGuard from "../../../components/guards/LoginGuard";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { profileApi } from "../../profile/api/profile.api";
 
 const AuthLayout = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { background, isFailed } = useAuthBackground(theme);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const showOrganizationName =
+    pathname === "/login" || pathname === "/reset-password";
+  const [organizationName, setOrganizationName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!showOrganizationName) return;
+    let active = true;
+
+    profileApi.queries
+      .getInstanceSettings()
+      .then(({ name }) => {
+        if (active) setOrganizationName(name.trim() || "ANDRIA");
+      })
+      .catch(() => undefined);
+
+    return () => {
+      active = false;
+    };
+  }, [showOrganizationName]);
 
   return (
     <div className="relative min-h-screen w-full font-inter bg-base-100 flex py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
-        <div className="relative flex flex-col items-center px-8 w-full h-full min-h-150 max-h-[85vh]">
+        <div className="relative flex flex-col items-center px-8 w-full h-full min-h-[calc(100vh-6rem)]">
           <button
             onClick={toggleTheme}
             className="absolute top-0 right-4 lg:right-8 btn btn-circle btn-ghost text-base-content/70 hover:text-base-content transition-colors"
@@ -50,6 +71,12 @@ const AuthLayout = () => {
             <div className="w-full flex-1 flex flex-col">
               <LoginGuard />
             </div>
+
+            {showOrganizationName && organizationName && (
+              <p className="mt-auto pt-6 text-center text-xs text-base-content/60">
+                {organizationName}
+              </p>
+            )}
           </div>
         </div>
 

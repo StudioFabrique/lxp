@@ -1,10 +1,7 @@
-import { Dispatch, FC, SetStateAction, useContext } from "react";
+import { FC } from "react";
 import { UseFormRegister } from "react-hook-form";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import FormInput from "../../../../components/form/FormInput";
-import ImageFileUpload from "../../../../components/UI/image-file-upload/image-file-upload";
-import { avatarImageMaxSize } from "../../../../config/images-sizes";
-import { AuthContext } from "../../../../store/AuthProvider";
 
 type FormProps = {
   register: UseFormRegister<any>;
@@ -13,35 +10,17 @@ type FormProps = {
 
 const Info: FC<{
   formProps: FormProps;
-  temporaryAvatar: { file: File | null; url: string | null };
-  setTemporaryAvatar: Dispatch<
-    SetStateAction<{ file: File | null; url: string | null }>
-  >;
-}> = ({ formProps, temporaryAvatar, setTemporaryAvatar }) => {
-  const { user } = useContext(AuthContext);
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className="text-lg font-semibold">Informations</h3>
-      <BoxWrapper>
+}> = ({ formProps }) => (
+  <div className="flex flex-col gap-2">
+    <BoxWrapper unstyled>
+      <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-10 justify-between">
-            <FormInput
-              label="Prénom"
-              name="firstname"
-              register={formProps.register}
-              error={formProps.errors.firstname}
-            />
-            <div className="flex flex-col items-center gap-2">
-              <h4>Avatar</h4>
-              <ImageFileUpload
-                temporaryImage={temporaryAvatar}
-                onSetTemporaryImage={setTemporaryAvatar}
-                maxSize={avatarImageMaxSize}
-                existingImage={user?.avatar}
-              />
-            </div>
-          </div>
+          <FormInput
+            label="Prénom"
+            name="firstname"
+            register={formProps.register}
+            error={formProps.errors.firstname}
+          />
           <FormInput
             label="Nom"
             name="lastname"
@@ -65,19 +44,8 @@ const Info: FC<{
             Toute nouvelle adresse doit être validée depuis l'email reçu avant
             de remplacer l'adresse actuelle.
           </p>
-          <div className="flex flex-col gap-y-2 w-full">
-            <label htmlFor="current-role" className="text-sm font-bold">
-              Rôle
-            </label>
-            <input
-              id="current-role"
-              className="w-full input input-bordered capitalize disabled:cursor-not-allowed disabled:text-base-content/60"
-              type="text"
-              value={user?.roles[0]?.label ?? ""}
-              disabled
-              readOnly
-            />
-          </div>
+        </div>
+        <div className="flex flex-col gap-2">
           <FormInput
             label="Adresse"
             name="address"
@@ -97,14 +65,14 @@ const Info: FC<{
             error={formProps.errors.postCode}
           />
           <FormInput
-            label="Telephone"
+            label="Téléphone"
             name="phoneNumber"
             register={formProps.register}
             error={formProps.errors.phoneNumber}
           />
         </div>
-      </BoxWrapper>
-    </div>
-  );
-};
+      </div>
+    </BoxWrapper>
+  </div>
+);
 export default Info;

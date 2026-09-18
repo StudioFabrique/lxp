@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, FastForward } from "lucide-react";
 import { Link } from "react-router";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import type { RecommendedAction } from "./recommended-action-config";
 
 type Props = {
@@ -67,18 +68,20 @@ export default function RecommendedActions({
               <li key={action.id} className="h-full">
                 <Link
                   to={action.to}
-                  className="group flex h-full items-start gap-3 rounded-xl border border-base-300 bg-base-100 p-4 shadow-sm transition hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="group block h-full rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-semibold">{action.title}</span>
-                    <span className="mt-1 block text-sm text-base-content/65">
-                      {action.description}
+                  <BoxWrapper className="flex-row items-start gap-3 bg-primary/5 p-4 transition group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:shadow-md">
+                    <span className="flex size-10 shrink-0 items-center justify-center text-primary">
+                      <Icon className="h-5 w-5" />
                     </span>
-                  </span>
-                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{action.title}</span>
+                      <span className="mt-1 block text-sm text-base-content/65">
+                        {action.description}
+                      </span>
+                    </span>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+                  </BoxWrapper>
                 </Link>
               </li>
             );

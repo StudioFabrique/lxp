@@ -21,6 +21,7 @@ import courseRouter from "./course/course.router.ts";
 import lessonRouter from "./lesson/lesson.router.ts";
 import contentReadRouter from "./content-read/content-read.router.ts";
 import checkPermissions from "../../middleware/check-permissions.ts";
+import checkRoleRank from "../../middleware/check-role-rank.ts";
 import activityRouter from "./activity/activityRouter.ts";
 import quizRouter from "./quiz/quiz.router.ts";
 
@@ -29,15 +30,19 @@ import statsRouter from "./stats.router.ts";
 import indicatorsRouter from "./indicators/indicators.router.ts";
 import evaluationRouter from "./evaluation/evaluation.router.ts";
 import mediaRouter from "./mediatheque/mediatheque.router.ts";
-import { uploadCompanyLogo } from "../../middleware/upload-company-image.ts";
-import httpPostCompanyLogo from "../../controllers/http-post-company-logo.ts";
-import httpDeleteCompanyLogo from "../../controllers/http-delete-company-logo.ts";
+import { uploadInstanceLogo } from "../../middleware/upload-instance-image.ts";
+import httpPostInstanceLogo from "../../controllers/http-post-instance-logo.ts";
+import httpDeleteInstanceLogo from "../../controllers/http-delete-instance-logo.ts";
 import resourcesRouter from "./resources/resources.router.ts";
 import chatbotRouter from "./chatbot/chatbot.router.ts";
 import dashboardIa from "./dashboard-ia/dashboard-ia-router.ts";
 import demoRouter from "./demo/demo.router.ts";
 import assignmentRouter from "./assignment/assignment.router.ts";
 import { mountRouter } from "../../utils/express/route-registry.ts";
+import {
+  httpGetInstanceSettings,
+  httpPutInstanceSettings,
+} from "../../controllers/http-instance-settings.ts";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -80,16 +85,27 @@ mountRouter(v1Router, "/resources", resourcesRouter);
 mountRouter(v1Router, "/quiz", quizRouter);
 
 v1Router.post(
-  "/company-logo",
+  "/instance-logo",
   checkPermissions("formation"),
-  uploadCompanyLogo(),
-  httpPostCompanyLogo,
+  checkRoleRank([0]),
+  uploadInstanceLogo(),
+  httpPostInstanceLogo,
 );
 
 v1Router.delete(
-  "/company-logo",
+  "/instance-logo",
   checkPermissions("formation"),
-  httpDeleteCompanyLogo,
+  checkRoleRank([0]),
+  httpDeleteInstanceLogo,
+);
+
+v1Router.get("/instance-settings", httpGetInstanceSettings);
+v1Router.put(
+  "/instance-settings",
+  checkPermissions("formation"),
+  checkRoleRank([0]),
+  uploadInstanceLogo(),
+  httpPutInstanceSettings,
 );
 
 mountRouter(v1Router, "/chatbot", chatbotRouter);

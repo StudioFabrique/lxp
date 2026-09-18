@@ -5,6 +5,9 @@ interface ThemeSelectProps {
   label: "Thème clair" | "Thème sombre";
   themesList: readonly string[];
   onThemeChange: (newTheme: string, mode: "light" | "dark") => void;
+  dropdownClassName?: string;
+  compact?: boolean;
+  selectedTheme?: string;
 }
 
 const ThemeSwatch = ({ theme }: { theme: string }) => (
@@ -22,29 +25,53 @@ export default function ThemeSelect({
   label,
   themesList,
   onThemeChange,
+  dropdownClassName = "",
+  compact = false,
+  selectedTheme: controlledTheme,
 }: ThemeSelectProps) {
   const mode = useMemo(() => {
     return label === "Thème clair" ? "light" : "dark";
   }, [label]);
 
-  const [selectedTheme, setSelectedTheme] = useState(
+  const [internalTheme, setInternalTheme] = useState(
     () => localStorage.getItem(`${mode}Theme`) || "Aucun thème sélectionné",
   );
+  const selectedTheme = controlledTheme ?? internalTheme;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newTheme = event.target.value;
-    setSelectedTheme(newTheme);
+    setInternalTheme(newTheme);
     onThemeChange(newTheme, mode);
   };
 
   return (
-    <span className="w-full flex justify-between items-center">
-      <label htmlFor={`${mode}ThemeDropdown`}>{label}</label>
+    <span
+      className={
+        compact
+          ? "min-w-0 shrink-0"
+          : "w-full flex justify-between items-center"
+      }
+    >
+      {!compact && <label htmlFor={`${mode}ThemeDropdown`}>{label}</label>}
 
-      <div className="dropdown" id={`${mode}ThemeDropdown`}>
-        <div tabIndex={0} role="button" className="btn m-1 gap-2">
+      <div
+        className={`dropdown ${dropdownClassName}`}
+        id={`${mode}ThemeDropdown`}
+      >
+        <div
+          tabIndex={0}
+          role="button"
+          aria-label={`Choisir le ${label.toLowerCase()}`}
+          className={
+            compact
+              ? "btn btn-sm h-8 min-h-8 max-w-32 min-w-0 gap-1 px-2"
+              : "btn m-1 gap-2"
+          }
+        >
           <ThemeSwatch theme={selectedTheme} />
-          {themeLabels[selectedTheme] ?? selectedTheme}
+          <span className="truncate">
+            {themeLabels[selectedTheme] ?? selectedTheme}
+          </span>
           <svg
             width="12px"
             height="12px"
@@ -58,7 +85,7 @@ export default function ThemeSelect({
 
         <ul
           tabIndex={-1}
-          className="dropdown-content max-h-80 overflow-y-auto bg-base-300 rounded-box z-10 w-60 p-2 shadow-2xl"
+          className="dropdown-content z-10 min-w-max rounded-box bg-base-300 p-2 shadow-2xl"
         >
           {themesList.map((theme) => (
             <li key={theme}>
