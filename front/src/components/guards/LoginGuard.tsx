@@ -1,15 +1,18 @@
-import { Navigate, Outlet, useLocation } from "react-router";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { useDemoMode } from "../../store/DemoContext";
 import { getUserHomePath } from "../../utils/helpers/user-role";
+import Modal from "../UI/modal/modal";
 
 const LoginGuard = () => {
-  const { isLoggedIn, isAppInitialized, user } = useContext(AuthContext);
+  const { isLoggedIn, isAppInitialized, user, logout } = useContext(AuthContext);
   const { demoMode, isConfigLoaded } = useDemoMode();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [setupChecked, setSetupChecked] = useState(false);
   const [hasAdmins, setHasAdmins] = useState(true);
   const isTokenRoute = ["/createRoot", "/confirm-email"].includes(
@@ -50,6 +53,30 @@ const LoginGuard = () => {
   if (isLoggedIn && user && isInstanceSetupRoute) {
     if (user.roles?.[0]?.rank === 0) return <Outlet />;
     return <Navigate replace to={getUserHomePath(user) ?? "/access-denied"} />;
+  }
+
+  if (isLoggedIn && user && location.pathname === "/register" &&
+      new URLSearchParams(location.search).has("id")) {
+    const homePath = getUserHomePath(user) ?? "/access-denied";
+    return (
+      <Modal
+        title="Vous êtes déjà connectée"
+        leftLabel="Annuler"
+        rightLabel="Confirmer la déconnexion"
+        onLeftClick={() => navigate(homePath, { replace: true })}
+        onRightClick={async () => {
+          setIsDisconnecting(true);
+          await logout();
+          setIsDisconnecting(false);
+        }}
+        isSubmitting={isDisconnecting}
+        rightClassName="btn-primary"
+      >
+        <p className="mt-4">
+          Déconnectez-vous pour activer le compte associé à ce lien.
+        </p>
+      </Modal>
+    );
   }
 
   if (isLoggedIn && user && !isTokenRoute) {

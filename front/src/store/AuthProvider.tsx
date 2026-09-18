@@ -99,13 +99,14 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       setUser(response.data);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        setError("Identifiant ou mot de passe incorrect");
-        // L'API ne dit plus si l'échec vient d'un compte inexistant ou d'un
-        // compte en attente d'activation : c'était un moyen d'énumérer les
-        // adresses inscrites. Le lien de renvoi est donc proposé après
-        // n'importe quel échec, l'endpoint qu'il appelle répondant lui aussi
-        // de façon indifférenciée.
-        setActivationRequired(true);
+        const requiresActivation =
+          err.response?.data?.code === "ACCOUNT_NOT_ACTIVATED";
+        setError(
+          requiresActivation
+            ? "Votre compte n'est pas encore activé."
+            : "Identifiant ou mot de passe incorrect",
+        );
+        setActivationRequired(requiresActivation);
         setActivationRetryAfterSeconds(0);
         if (err.response?.status === 403) logout();
       } else {

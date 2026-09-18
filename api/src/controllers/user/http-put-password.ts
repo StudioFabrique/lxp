@@ -17,7 +17,12 @@ export default async function httpPutPassword(
     const userId = req.auth?.userId;
     const { password, token } = req.body;
 
-    await putPassword(userId!, password, token);
+    await putPassword(
+      userId!,
+      password,
+      token,
+      req.auth!.passwordTokenPurpose!,
+    );
     const result = {
       statusCode: 200,
       data: { success: true, message: "Mot de passe mis à jour avec succès" },
