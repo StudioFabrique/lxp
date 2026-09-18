@@ -5,7 +5,8 @@ import AdminSignInForm from "../components/AdminSignInForm";
 import useAdminInit, { InitStep } from "../hooks/useAdminInit";
 
 const AdminInit = () => {
-  const { initStep, token, onNextStep, onTokenValidated } = useAdminInit();
+  const { initStep, token, onNextStep, onTokenValidated, restart } =
+    useAdminInit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const invitedToken = searchParams.get("token")?.trim() ?? "";
@@ -17,6 +18,7 @@ const AdminInit = () => {
         token={invitedToken}
         email={invitedEmail}
         onSuccess={() => navigate("/")}
+        onRestart={() => navigate("/init", { replace: true })}
       />
     );
   }
@@ -29,7 +31,11 @@ const AdminInit = () => {
         return <TokenForm onNext={onTokenValidated} />;
       case InitStep.SignInForm:
         return (
-          <AdminSignInForm token={token!} onSuccess={() => navigate("/")} />
+          <AdminSignInForm
+            token={token!}
+            onSuccess={() => navigate("/")}
+            onRestart={restart}
+          />
         );
       default:
         return <Welcome onNext={onNextStep} />;

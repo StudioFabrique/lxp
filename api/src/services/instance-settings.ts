@@ -50,11 +50,10 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
     const saved = JSON.parse(await fs.promises.readFile(settingsPath, "utf8"));
     return {
       name: typeof saved.name === "string" ? saved.name : defaultInstanceSettings.name,
-      // A settings file created before the onboarding existed represents an
-      // already configured instance. This avoids interrupting existing roots
-      // after an upgrade while new installations still start as incomplete.
       setupCompleted:
-        typeof saved.setupCompleted === "boolean" ? saved.setupCompleted : true,
+        typeof saved.setupCompleted === "boolean"
+          ? saved.setupCompleted
+          : defaultInstanceSettings.setupCompleted,
       defaultTheme:
         typeof saved.defaultTheme === "string"
           ? saved.defaultTheme === "light"

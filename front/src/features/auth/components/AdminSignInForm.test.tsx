@@ -27,7 +27,13 @@ describe("AdminSignInForm", () => {
     });
 
     await act(async () => {
-      root.render(<AdminSignInForm token="setup-token" onSuccess={onSuccess} />);
+      root.render(
+        <AdminSignInForm
+          token="setup-token"
+          onSuccess={onSuccess}
+          onRestart={onSuccess}
+        />,
+      );
     });
   });
 
@@ -80,7 +86,9 @@ describe("AdminSignInForm", () => {
 
     await act(async () => {
       Array.from(container.querySelectorAll("button"))
-        .find((button) => button.textContent?.includes("Retour à la connexion"))
+        .find((button) =>
+          button.textContent?.includes("Recommencer la création"),
+        )
         ?.click();
     });
     expect(onSuccess).toHaveBeenCalledTimes(1);

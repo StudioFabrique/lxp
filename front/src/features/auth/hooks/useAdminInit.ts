@@ -19,5 +19,10 @@ export default function useAdminInit() {
     setInitStep(InitStep.SignInForm);
   };
 
-  return { initStep, token, onNextStep, onTokenValidated };
+  const restart = () => {
+    setToken(null);
+    setInitStep(InitStep.Welcome);
+  };
+
+  return { initStep, token, onNextStep, onTokenValidated, restart };
 }

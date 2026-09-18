@@ -12,6 +12,7 @@ import { ROOT_ACCOUNT_POLICY } from "../root-account-policy";
 type Props = {
   token: string;
   onSuccess: () => void;
+  onRestart?: () => void;
   email?: string;
   mode?: "first" | "additional";
 };
@@ -27,6 +28,7 @@ type AdminSignInValues = {
 const AdminSignInForm = ({
   token,
   onSuccess,
+  onRestart,
   email = "",
   mode = "first",
 }: Props) => {
@@ -84,27 +86,25 @@ const AdminSignInForm = ({
     return (
       <AuthPageWrapper title="Vérifiez votre boîte mail">
         <div className="flex min-h-64 flex-col items-center justify-center gap-5 text-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <MailCheck className="h-8 w-8" aria-hidden="true" />
-          </span>
+          <MailCheck className="h-8 w-8" aria-hidden="true" />
 
           <div className="flex flex-col gap-2 text-sm text-base-content/70">
-            <p>
-              Un lien d’activation a été envoyé à<br />
+            <div className="flex flex-col">
+              <span>Un lien d’activation a été envoyé à</span>
               <strong className="text-base-content">{activationEmail}</strong>
-            </p>
+            </div>
             <p>
-              Cliquez sur ce lien pour activer votre compte, puis
-              connectez-vous à votre espace.
+              Cliquez sur ce lien pour activer votre compte, puis connectez-vous
+              à votre espace.
             </p>
           </div>
 
           <button
             type="button"
-            className="btn btn-primary mt-2 w-full rounded-lg text-base normal-case text-base-100"
-            onClick={onSuccess}
+            className="btn btn-ghost btn-sm w-full normal-case text-base-content/70"
+            onClick={onRestart}
           >
-            Retour à la connexion
+            Recommencer la création
           </button>
         </div>
       </AuthPageWrapper>
