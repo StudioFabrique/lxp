@@ -31,7 +31,7 @@ app
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
+          imgSrc: ["'self'", "data:", "blob:", "https://images.unsplash.com"],
           scriptSrc: ["'self'", "https://www.youtube.com"],
           frameSrc: [
             "'self'",
