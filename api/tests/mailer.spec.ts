@@ -31,8 +31,9 @@ describe("Activation SMTP du compte root", () => {
         html: expect.stringContaining("confirm-email?token=token"),
         attachments: [
           expect.objectContaining({
-            filename: "andria-logo.svg",
+            filename: "andria-logo.png",
             cid: "andria-official-logo",
+            contentType: "image/png",
           }),
         ],
       }),

@@ -64,8 +64,8 @@ async function instanceLogoAttachment() {
 }
 
 const andriaLogoCandidates = [
-  // Image de production : le Dockerfile copie le SVG avec le serveur compilé.
-  path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo.svg"),
+  // Image de production : le Dockerfile copie le PNG optimisé avec le serveur compilé.
+  path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo.png"),
   // Développement et tests : le fichier officiel reste la source de vérité.
   path.join(
     import.meta.dirname,
@@ -76,7 +76,7 @@ const andriaLogoCandidates = [
     "src",
     "assets",
     "andria-logo",
-    "logo-darkmode.svg",
+    "logo-darkmode-email.png",
   ),
 ];
 
@@ -86,7 +86,14 @@ const andriaLogoPath = () =>
 const andriaLogoAttachment = () => {
   const logoPath = andriaLogoPath();
   return logoPath
-    ? [{ filename: "andria-logo.svg", path: logoPath, cid: ANDRIA_LOGO_CID }]
+    ? [
+        {
+          filename: "andria-logo.png",
+          path: logoPath,
+          cid: ANDRIA_LOGO_CID,
+          contentType: "image/png",
+        },
+      ]
     : undefined;
 };
 
@@ -100,7 +107,7 @@ const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
           "..",
           "..",
           "mail-assets",
-          "andria-logo-light.svg",
+          "andria-logo-light.png",
         ),
         path.join(
           import.meta.dirname,
@@ -111,15 +118,16 @@ const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
           "src",
           "assets",
           "andria-logo",
-          "logo-lightmode.svg",
+          "logo-lightmode-email.png",
         ),
       ].find((candidate) => fs.existsSync(candidate));
 
   return logoPath
     ? [
         {
-          filename: "andria-footer-logo.svg",
+          filename: "andria-footer-logo.png",
           path: logoPath,
+          contentType: "image/png",
           cid: isDark
             ? ANDRIA_FOOTER_LOGO_DARK_CID
             : ANDRIA_FOOTER_LOGO_LIGHT_CID,
