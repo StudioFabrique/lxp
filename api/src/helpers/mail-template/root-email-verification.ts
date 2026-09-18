@@ -16,6 +16,7 @@ export const rootEmailVerification = (
     organizationName(context),
     {
       officialAndriaLogo: true,
+      showFooter: false,
       contentAlignment: "center",
       themeMode: context.themeMode,
     },

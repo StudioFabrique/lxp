@@ -27,6 +27,7 @@ export const button = (link: string, label: string) =>
 
 type LayoutOptions = {
   officialAndriaLogo?: boolean;
+  showFooter?: boolean;
   contentAlignment?: "left" | "center";
   themeMode?: "light" | "dark";
   logoCid?: string;
@@ -58,7 +59,7 @@ export const layout = (
       }
     : {
         page: "#f3f5f8",
-        card: "#ffffff",
+        card: "#f8fbff",
         header: "#17202a",
         text: "#17202a",
         muted: "#68737d",
@@ -87,7 +88,7 @@ export const layout = (
         <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="${brand ? headerColor : colors.card}" style="width:100%;max-width:600px;background-color:${brand ? headerColor : colors.card};border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.16)">
           ${header}
           <tr><td align="${contentAlignment}" bgcolor="${colors.card}" style="padding:32px;background-color:${colors.card};border-radius:${contentRadius};color:${colors.text};font-size:15px;line-height:24px;text-align:${contentAlignment}">${content}</td></tr>
-          <tr><td bgcolor="${colors.card}" style="padding:20px 32px;background-color:${colors.card};border-top:1px solid ${colors.border};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="color:${colors.muted};text-align:left">Cet e-mail a été envoyé par <strong>${escapeHtml(name)}</strong>.</td>${footerLogo}</tr></table></td></tr>
+          ${options.showFooter === false ? "" : `<tr><td bgcolor="${colors.card}" style="padding:20px 32px;background-color:${colors.card};border-top:1px solid ${colors.border};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="color:${colors.muted};text-align:left"><strong>${escapeHtml(name)}</strong></td>${footerLogo}</tr></table></td></tr>`}
         </table>
       </td>
     </tr>
