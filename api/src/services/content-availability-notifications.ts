@@ -64,7 +64,6 @@ export async function initializeContentAvailabilityNotifications() {
     visibility: true,
   });
   await prisma.orm.public.Lesson.where((lesson) => lesson.id.gt(0)).updateAndCount({
-    isPublished: true,
     visibility: true,
   });
 

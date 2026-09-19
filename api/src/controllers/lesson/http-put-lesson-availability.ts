@@ -2,10 +2,10 @@ import type { Request, Response } from "express";
 import putLessonAvailability from "../../models/lesson/put-lesson-availability.ts";
 import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
-async function update(req: Request, res: Response, field: "isPublished" | "visibility") {
+async function update(req: Request, res: Response) {
   try {
     const result = await putLessonAvailability(Number(req.params.lessonId), {
-      [field]: req.body[field],
+      visibility: req.body.visibility,
     });
     scheduleAvailabilityReconciliation();
     return res.status(200).json(result);
@@ -15,7 +15,5 @@ async function update(req: Request, res: Response, field: "isPublished" | "visib
   }
 }
 
-export const httpPutLessonPublication = (req: Request, res: Response) =>
-  update(req, res, "isPublished");
 export const httpPutLessonVisibility = (req: Request, res: Response) =>
-  update(req, res, "visibility");
+  update(req, res);

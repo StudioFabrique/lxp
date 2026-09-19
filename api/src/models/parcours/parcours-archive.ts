@@ -118,7 +118,6 @@ type ParcoursArchiveManifest = {
           modalite: string;
           order: number;
           visibility: boolean;
-          isPublished: boolean;
           tag: ArchiveTag;
           activities: ArchiveActivity[];
         }>;
@@ -262,7 +261,6 @@ const manifestSchema: z.ZodType<ParcoursArchiveManifest> = z.object({
                       modalite: z.string().max(255),
                       order: z.number().int(),
                       visibility: z.boolean(),
-                      isPublished: z.boolean(),
                       tag: tagSchema,
                       activities: z.array(activitySchema).max(10_000),
                     }),
@@ -504,7 +502,6 @@ export async function exportParcoursArchive(parcoursId: number) {
           modalite: lesson.modalite,
           order: lesson.order,
           visibility: lesson.visibility,
-          isPublished: lesson.isPublished,
           tag: { name: lesson.tag.name, color: lesson.tag.color },
           activities,
         });
@@ -1029,8 +1026,7 @@ export async function importParcoursArchive(
               description: lesson.description,
               modalite: lesson.modalite,
               order: lesson.order,
-              isPublished: false,
-              visibility: false,
+              visibility: true,
               author,
               adminId: admin.id,
               courseId: createdCourse.id,

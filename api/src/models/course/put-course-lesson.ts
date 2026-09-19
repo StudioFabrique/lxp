@@ -61,7 +61,6 @@ async function putCourseLesson(
       "author",
       "adminId",
       "courseId",
-      "isPublished",
       "visibility",
       "order",
     )

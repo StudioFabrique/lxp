@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dropColumn.Lesson.isPublished",
+    "label": "Drop column \"isPublished\" from \"Lesson\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "isPublished",
+        "table": "Lesson"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isPublished\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lesson",
+          "isPublished"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"isPublished\"",
+        "sql": "ALTER TABLE \"public\".\"Lesson\" DROP COLUMN \"isPublished\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isPublished\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lesson",
+          "isPublished"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.Lesson.visibility",
+    "label": "Set default on \"Lesson\".\"visibility\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "visibility",
+        "table": "Lesson"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"visibility\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Lesson",
+          "visibility"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"visibility\"",
+        "sql": "ALTER TABLE \"public\".\"Lesson\" ALTER COLUMN \"visibility\" SET DEFAULT true"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"visibility\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "Lesson",
+          "visibility"
+        ]
+      }
+    ]
+  }
+]

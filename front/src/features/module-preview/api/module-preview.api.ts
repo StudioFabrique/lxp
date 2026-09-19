@@ -177,10 +177,6 @@ const mutations = {
     const res = await apiClient.put("/lesson/update", payload);
     return res.data;
   },
-  setLessonPublication: async (lessonId: number, isPublished: boolean) => {
-    const res = await apiClient.put(`/lesson/publication/${lessonId}`, { isPublished });
-    return res.data;
-  },
   setLessonVisibility: async (lessonId: number, visibility: boolean) => {
     const res = await apiClient.put(`/lesson/visibility/${lessonId}`, { visibility });
     return res.data;

@@ -141,12 +141,7 @@ export async function isLearnerContentAvailable(
               and(
                 course.isPublished.eq(true),
                 course.visibility.eq(true),
-                course.lessons.some((lesson) =>
-                  and(
-                    lesson.isPublished.eq(true),
-                    lesson.visibility.eq(true),
-                  ),
-                ),
+                course.lessons.some((lesson) => lesson.visibility.eq(true)),
               ),
             ),
           ),
@@ -166,12 +161,7 @@ export async function isLearnerContentAvailable(
             and(
               course.isPublished.eq(true),
               course.visibility.eq(true),
-              course.lessons.some((lesson) =>
-                and(
-                  lesson.isPublished.eq(true),
-                  lesson.visibility.eq(true),
-                ),
-              ),
+              course.lessons.some((lesson) => lesson.visibility.eq(true)),
             ),
           ),
         ),
@@ -186,7 +176,7 @@ export async function isLearnerContentAvailable(
           row.isPublished.eq(true),
           row.visibility.eq(true),
           row.lessons.some((lesson) =>
-            and(lesson.isPublished.eq(true), lesson.visibility.eq(true)),
+            lesson.visibility.eq(true),
           ),
           row.module.some((module) =>
             module.parcours.some((parcours) =>
@@ -202,7 +192,6 @@ export async function isLearnerContentAvailable(
       await prisma.orm.public.Lesson.where((row) =>
         and(
           row.id.eq(contentId),
-          row.isPublished.eq(true),
           row.visibility.eq(true),
           row.course.some((course) =>
             and(
@@ -229,7 +218,6 @@ export async function isLearnerContentAvailable(
         row.id.eq(contentId),
         row.lesson.some((lesson) =>
           and(
-            lesson.isPublished.eq(true),
             lesson.visibility.eq(true),
             lesson.course.some((course) =>
               and(

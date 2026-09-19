@@ -91,7 +91,6 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminId,
       courseId: course.id,
       tagId,
-      isPublished: true,
       visibility: true,
     });
     const activity = await prisma.orm.public.Activity.select("id").create({

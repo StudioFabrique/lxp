@@ -3242,13 +3242,6 @@
                   "kind": "scalar"
                 }
               },
-              "isPublished": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
               "modalite": {
                 "nullable": false,
                 "type": {
@@ -3409,9 +3402,6 @@
                 },
                 "id": {
                   "column": "id"
-                },
-                "isPublished": {
-                  "column": "isPublished"
                 },
                 "modalite": {
                   "column": "modalite"
@@ -9056,15 +9046,6 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
-                "isPublished": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
-                  "nativeType": "bool",
-                  "nullable": false
-                },
                 "modalite": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -9094,7 +9075,7 @@
                   "codecId": "pg/bool@1",
                   "default": {
                     "kind": "literal",
-                    "value": false
+                    "value": true
                   },
                   "nativeType": "bool",
                   "nullable": false
@@ -11711,7 +11692,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2496f6f420615de98b65f924d997e7520b7e00e12001009800631c9c30b5693d"
+    "storageHash": "9cb1a4b11855b7227b2f9002f256052f76b05578b4a712a3e5780b35fa3e4ff9"
   },
   "execution": {
     "executionHash": "f6ebe31908f861b0176236677bacf9442eb3a1775a543a8fb0638dea106928c8",

@@ -54,12 +54,7 @@ export async function resolveAvailableFormations(
           and(
             course.isPublished.eq(true),
             course.visibility.eq(true),
-            course.lessons.some((lesson) =>
-              and(
-                lesson.isPublished.eq(true),
-                lesson.visibility.eq(true),
-              ),
-            ),
+            course.lessons.some((lesson) => lesson.visibility.eq(true)),
           ),
         ),
       ),
@@ -257,4 +252,3 @@ export async function updateFormationAssessment(
 
   return getLearningContext(userIdMdb);
 }
-

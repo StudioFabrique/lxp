@@ -21,7 +21,6 @@ export default interface Lesson {
   order?: number;
   lessonsRead?: LessonRead[];
   lessonRating: LessonRating[];
-  isPublished?: boolean;
   visibility?: boolean;
 }
 

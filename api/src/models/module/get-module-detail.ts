@@ -32,7 +32,6 @@ export default async function getModuleDetail(
         .include("lessons", (related174) =>
           related174
             .where({
-              isPublished: teacherOrAdmin ? undefined : true,
               visibility: teacherOrAdmin ? undefined : true,
             })
             .include("lessonsRead", (related175) =>

@@ -320,8 +320,7 @@ model Lesson {
   courseId         Int
   tagId            Int
   order            Int
-  isPublished      Boolean        @default(false)
-  visibility       Boolean        @default(false)
+  visibility       Boolean        @default(true)
   activities       Activity[]
   admin            Admin          @relation(fields: [adminId], references: [id], onDelete: Restrict)
   course           Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)

@@ -85,7 +85,6 @@ describe("Progression servie par l'API", () => {
         courseId,
         adminId: admin!.id,
         tagId: tag!.id,
-        isPublished: true,
         visibility: true,
       });
       lessonIds.push(lesson.id);
