@@ -71,6 +71,7 @@ async function putCourseLesson(
         modalite: lessonData.modalite,
         author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
         order: existingCourse.lessons.length,
+        visibility: true,
         tag: (relation) => relation.connect({ id: tagId }),
         admin: (relation) => relation.connect({ id: prismaAdmin.id }),
         course: (relation) => relation.connect({ id: courseId }),

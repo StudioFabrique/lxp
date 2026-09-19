@@ -59,6 +59,7 @@ async function postCourseStructure(
         courseId: newCourse.id,
         order: i,
         tagId: 1,
+        visibility: true,
       });
 
       createdLessons.push({

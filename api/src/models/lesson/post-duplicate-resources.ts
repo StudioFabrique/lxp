@@ -103,6 +103,7 @@ export default async function postDuplicateResources(
           tagId: resource.tags[0].tagId,
           adminId: prismaAdmin.id,
           courseId,
+          visibility: true,
           activities: (relation) =>
             relation.create(
               activities.map((activity) => ({
