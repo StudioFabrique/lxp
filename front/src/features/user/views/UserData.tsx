@@ -83,6 +83,12 @@ export default function UserData() {
           </BoxWrapper>
 
           <DeclaredLearningProfile data={learningProfile} />
+          <BoxWrapper>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <section><h2 className="text-lg font-bold">Mes passions</h2>{student.hobbies?.length ? <ul className="mt-2 flex flex-wrap gap-2">{student.hobbies.map((hobby) => <li key={hobby.title} className="badge badge-outline">{hobby.title}</li>)}</ul> : <p className="text-sm text-base-content/60">Aucune passion renseignée.</p>}</section>
+              <section><h2 className="text-lg font-bold">Mes liens</h2>{student.links?.length ? <ul className="mt-2 space-y-1">{student.links.filter((link) => /^https?:\/\//i.test(link.url)).map((link) => <li key={link.url}><a className="link link-primary break-all" href={link.url} target="_blank" rel="noopener noreferrer">{link.url}</a></li>)}</ul> : <p className="text-sm text-base-content/60">Aucun lien renseigné.</p>}</section>
+            </div>
+          </BoxWrapper>
 
           <BoxWrapper>
             <IndicatorsGrid

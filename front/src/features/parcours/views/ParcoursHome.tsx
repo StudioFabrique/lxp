@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { parcoursApi } from "../api/parcours.api";
 import Loader from "../../../../src/components/loaders/Loader";
 import { sortArray } from "../../../../src/utils/helpers/sort-array";
-import { useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { dashboardAdminApi } from "../../dashboard-admin/api/dashboard-admin.api";
 import AdminParcoursManagement from "../components/list/admin-parcours-management";
 import type { FormationParcoursSummary } from "../../dashboard-admin/interfaces/parcours-summary";
@@ -69,6 +69,10 @@ const ParcoursHome = () => {
     ) : (
       <AdminParcoursManagement formations={formations} layout="admin" />
     );
+  }
+
+  if (!isStudentParcoursLoading && studentParcoursList?.length === 1) {
+    return <Navigate to={`/student/parcours/view/${studentParcoursList[0].id}`} replace />;
   }
 
   return (

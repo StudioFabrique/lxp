@@ -1,10 +1,11 @@
-import { CircleHelp, DoorOpen, LogOutIcon, Sparkles } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { CircleHelp, DoorOpen, LogOutIcon } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useContext, useState } from "react";
 import newLogo from "../../assets/andria-logo/logo-darkmode.svg";
 import Questionnaire from "./Questionnaire";
 import { AuthContext } from "../../store/AuthProvider";
 import ProfilePopover from "../../features/profile/components/ProfilePopover";
+import AiConsumptionPopover from "./AiConsumptionPopover";
 import ThemeToggle from "../buttons/ThemeToggle";
 import { emitOnboardingEvent } from "../../features/onboarding/onboarding-events";
 import { useDemoMode } from "../../store/DemoContext";
@@ -59,15 +60,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
       {interfaceType === "admin" && !aiDisabled && (
         <li className="flex w-full justify-center 2xl:block">
-          <Link
-            to="/admin/dashboard-ia"
-            className={`${sidebarControlClassName} max-2xl:tooltip max-2xl:tooltip-right`}
-            data-tip="Consommation IA"
-            aria-label="Consommation IA"
-          >
-            <Sparkles className="size-4 shrink-0" />
-            <h2 className="2xl:block hidden">Consommation IA</h2>
-          </Link>
+          <AiConsumptionPopover />
         </li>
       )}
 

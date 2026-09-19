@@ -1,243 +1,73 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useBlocker, useSearchParams } from "react-router";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
-import Header from "../../../components/headers/Header";
-import Loader from "../../../components/loaders/Loader";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
-import PageWrapper from "../../../components/wrappers/PageWrapper";
-import {
-  levelOptions,
-  paceOptions,
-  PreferenceCards,
-  SingleChoiceCards,
-} from "../../learning-profile/LearningChoiceCards";
-import {
-  learningProfileApi,
-  learningProfileKey,
-} from "../../learning-profile/learning-profile.api";
-import type {
-  FormationLevel,
-  LearningPace,
-  LearningPreference,
-} from "../../learning-profile/types";
-import InformationAndSettings from "../components/information/information-and-settings";
+import { levelOptions, paceOptions, PreferenceCards, SingleChoiceCards } from "../../learning-profile/LearningChoiceCards";
+import { learningProfileApi, learningProfileKey } from "../../learning-profile/learning-profile.api";
+import type { FormationLevel, LearningPace, LearningPreference } from "../../learning-profile/types";
 
-const tabs = [
-  { id: "informations", label: "Informations personnelles" },
-  { id: "preferences", label: "Préférences d’apprentissage" },
-  { id: "niveaux", label: "Niveaux par formation" },
-] as const;
-type TabId = (typeof tabs)[number]["id"];
+type Props = { onClose?: () => void };
 
-export default function StudentProfile() {
-  const [params, setParams] = useSearchParams();
-  const requestedTab = params.get("onglet") as TabId | null;
-  const activeTab = tabs.some((tab) => tab.id === requestedTab)
-    ? requestedTab!
-    : "informations";
-  const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: learningProfileKey, queryFn: learningProfileApi.get });
-  const informationForm = useRef<HTMLFormElement>(null);
-  const [dirty, setDirty] = useState(false);
+export default function StudentProfile({ onClose }: Props) {
+  const [tab, setTab] = useState<"preferences" | "niveaux">("preferences");
   const [pace, setPace] = useState<LearningPace | null>(null);
   const [preferences, setPreferences] = useState<LearningPreference[]>([]);
   const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
   const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+  const query = useQuery({ queryKey: learningProfileKey, queryFn: learningProfileApi.get });
 
   useEffect(() => {
     if (!query.data) return;
     setPace(query.data.profile.pace);
     setPreferences(query.data.profile.preferences);
-    setLevels(
-      Object.fromEntries(
-        query.data.availableFormations
-          .filter((formation) => formation.assessment)
-          .map((formation) => [formation.id, formation.assessment!.level]),
-      ),
-    );
+    setLevels(Object.fromEntries(query.data.availableFormations.filter((formation) => formation.assessment).map((formation) => [formation.id, formation.assessment!.level])));
   }, [query.data]);
 
-  useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => {
-      if (!dirty) return;
-      event.preventDefault();
-    };
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
-
-  const blocker = useBlocker(dirty);
-  useEffect(() => {
-    if (blocker.state !== "blocked") return;
-    if (window.confirm("Vous avez des modifications non enregistrées. Quitter cette page ?")) {
-      blocker.proceed();
-    } else {
-      blocker.reset();
-    }
-  }, [blocker]);
-
-  const switchTab = (tab: TabId) => {
-    if (
-      dirty &&
-      !window.confirm("Vous avez des modifications non enregistrées. Changer d’onglet ?")
-    ) return;
-    setDirty(false);
-    setParams({ onglet: tab });
-  };
-
-  const preferencesDirty = useMemo(() => {
-    if (!query.data) return false;
-    return (
-      pace !== query.data.profile.pace ||
-      [...preferences].sort().join("|") !==
-        [...query.data.profile.preferences].sort().join("|")
-    );
-  }, [pace, preferences, query.data]);
-
-  useEffect(() => {
-    if (activeTab === "preferences") setDirty(preferencesDirty);
-  }, [activeTab, preferencesDirty]);
-
-  const savePreferences = async () => {
-    if (!pace || preferences.length === 0) {
+  const save = async () => {
+    if (tab === "preferences" && (!pace || preferences.length === 0)) {
       toast.error("Choisissez un rythme et au moins une préférence.");
       return;
     }
     setSaving(true);
     try {
-      await learningProfileApi.update({ pace, preferences });
+      if (tab === "preferences") await learningProfileApi.update({ pace: pace!, preferences });
+      else {
+        const changed = query.data?.availableFormations.filter((formation) => levels[formation.id] && levels[formation.id] !== formation.assessment?.level) ?? [];
+        await Promise.all(changed.map((formation) => learningProfileApi.updateFormation(formation.id, levels[formation.id]!)));
+      }
       await queryClient.invalidateQueries({ queryKey: learningProfileKey });
-      setDirty(false);
-      toast.success("Préférences enregistrées.");
+      toast.success("Vos choix ont été enregistrés.");
+      onClose?.();
     } catch {
-      toast.error("Impossible d’enregistrer les préférences.");
+      toast.error("Impossible d’enregistrer vos choix.");
     } finally {
       setSaving(false);
     }
   };
 
-  const saveLevels = async () => {
-    if (!query.data) return;
-    setSaving(true);
-    try {
-      const changed = query.data.availableFormations.filter(
-        (formation) =>
-          levels[formation.id] &&
-          levels[formation.id] !== formation.assessment?.level,
-      );
-      await Promise.all(
-        changed.map((formation) =>
-          learningProfileApi.updateFormation(formation.id, levels[formation.id]!),
-        ),
-      );
-      await queryClient.invalidateQueries({ queryKey: learningProfileKey });
-      setDirty(false);
-      toast.success("Niveaux enregistrés.");
-    } catch {
-      toast.error("Impossible d’enregistrer les niveaux.");
-    } finally {
-      setSaving(false);
-    }
-  };
+  const content = <div className="space-y-5">
+    <div className="flex items-start justify-between gap-4">
+      <div><h2 id="learning-settings-title" className="text-xl font-bold">Mes préférences et niveaux</h2><p className="text-sm text-base-content/65">Personnalisez votre accompagnement.</p></div>
+      {onClose && <button type="button" className="btn btn-ghost btn-square btn-sm" onClick={onClose} aria-label="Fermer"><X className="size-5" /></button>}
+    </div>
+    <div role="tablist" aria-label="Réglages d’apprentissage" className="tabs tabs-bordered">
+      <button type="button" role="tab" aria-selected={tab === "preferences"} className={`tab ${tab === "preferences" ? "tab-active" : ""}`} onClick={() => setTab("preferences")}>Préférences</button>
+      <button type="button" role="tab" aria-selected={tab === "niveaux"} className={`tab ${tab === "niveaux" ? "tab-active" : ""}`} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
+    </div>
+    {query.isLoading ? <p>Chargement…</p> : query.isError ? <p role="alert">Impossible de charger vos choix.</p> : tab === "preferences" ? <div className="space-y-5">
+      <h3 className="font-semibold">Quel rythme préférez-vous ?</h3>
+      <SingleChoiceCards name="profile-pace" options={paceOptions} value={pace} onChange={setPace} />
+      <h3 className="font-semibold">Comment aimez-vous apprendre ?</h3>
+      <PreferenceCards value={preferences} onChange={setPreferences} />
+    </div> : <div className="space-y-5">{query.data?.availableFormations.map((formation) => <section key={formation.id} className="rounded-xl border border-base-300 p-4">
+      <h3 className="mb-3 font-semibold">{formation.title}</h3>
+      <SingleChoiceCards name={`profile-level-${formation.id}`} options={levelOptions} value={levels[formation.id] ?? null} onChange={(level) => setLevels((current) => ({ ...current, [formation.id]: level }))} />
+    </section>)}</div>}
+    <div className="flex justify-end border-t border-base-300 pt-4"><button type="button" className="btn btn-primary" disabled={saving || query.isLoading || query.isError} onClick={() => void save()}>{saving ? "Enregistrement…" : "Enregistrer"}</button></div>
+  </div>;
 
-  if (query.isLoading) return <Loader />;
-
-  return (
-    <PageWrapper as="main">
-      <Header title="Mon profil" description="Gérez vos informations et vos préférences d’apprentissage." />
-      <div
-        className="tabs tabs-bordered flex-nowrap overflow-x-auto"
-        role="tablist"
-        aria-label="Sections du profil"
-      >
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            className={`tab shrink-0 ${activeTab === tab.id ? "tab-active" : ""}`}
-            onClick={() => switchTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      <BoxWrapper className="gap-6 p-5 sm:p-7">
-        {activeTab === "informations" ? (
-          <>
-            <InformationAndSettings
-              formRef={informationForm}
-              onDirtyChange={setDirty}
-              onSaved={() => setDirty(false)}
-            />
-            <div className="flex justify-end border-t border-base-300 pt-4">
-              <button className="btn btn-primary" onClick={() => informationForm.current?.requestSubmit()}>
-                Enregistrer
-              </button>
-            </div>
-          </>
-        ) : null}
-
-        {activeTab === "preferences" ? (
-          <>
-            <div>
-              <h2 className="text-xl font-bold">Préférences d’apprentissage</h2>
-              <p className="text-sm text-base-content/70">
-                Ces choix personnalisent votre accompagnement par l’IA.
-              </p>
-            </div>
-            <SingleChoiceCards name="profile-pace" options={paceOptions} value={pace} onChange={setPace} />
-            <PreferenceCards value={preferences} onChange={setPreferences} />
-            <div className="flex justify-end border-t border-base-300 pt-4">
-              <button className="btn btn-primary" disabled={saving} onClick={() => void savePreferences()}>
-                Enregistrer
-              </button>
-            </div>
-          </>
-        ) : null}
-
-        {activeTab === "niveaux" ? (
-          <>
-            <div>
-              <h2 className="text-xl font-bold">Niveaux par formation</h2>
-              <p className="text-sm text-base-content/70">Ces niveaux sont déclaratifs et modifiables à tout moment.</p>
-            </div>
-            {query.data?.availableFormations.length ? (
-              query.data.availableFormations.map((formation) => (
-                <section key={formation.id} className="rounded-xl border border-base-300 p-4 sm:p-5">
-                  <h3 className="text-lg font-bold">{formation.title}</h3>
-                  <p className="mb-4 text-sm text-base-content/65">
-                    {formation.parcours.map((item) => item.title).join(" · ")}
-                    {formation.assessment?.updatedAt
-                      ? ` · Mis à jour le ${new Date(formation.assessment.updatedAt).toLocaleDateString("fr-FR")}`
-                      : " · Non renseigné"}
-                  </p>
-                  <SingleChoiceCards
-                    name={`profile-level-${formation.id}`}
-                    options={levelOptions}
-                    value={levels[formation.id] ?? null}
-                    onChange={(level) => {
-                      setLevels((current) => ({ ...current, [formation.id]: level }));
-                      setDirty(true);
-                    }}
-                  />
-                </section>
-              ))
-            ) : (
-              <p className="py-12 text-center text-base-content/65">Aucune formation n’est disponible pour le moment.</p>
-            )}
-            <div className="flex justify-end border-t border-base-300 pt-4">
-              <button className="btn btn-primary" disabled={saving} onClick={() => void saveLevels()}>
-                Enregistrer
-              </button>
-            </div>
-          </>
-        ) : null}
-      </BoxWrapper>
-    </PageWrapper>
-  );
+  if (!onClose) return <main className="mx-auto max-w-3xl p-6">{content}</main>;
+  return createPortal(<div className="modal modal-open" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><div role="dialog" aria-modal="true" aria-labelledby="learning-settings-title" className="modal-box max-h-[90vh] w-11/12 max-w-3xl overflow-y-auto">{content}</div></div>, document.body);
 }
-

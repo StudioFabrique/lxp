@@ -2,10 +2,12 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import InformationAndSettings from "./information/information-and-settings";
+import { useLocation } from "react-router";
 
 type Props = { onClose: () => void; onSaved: () => void };
 
 export default function ProfileEditorModal({ onClose, onSaved }: Props) {
+  const isStudent = useLocation().pathname.startsWith("/student");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -45,7 +47,7 @@ export default function ProfileEditorModal({ onClose, onSaved }: Props) {
           </button>
         </div>
         <div className="min-h-0 overflow-y-auto px-6 pb-5">
-          <InformationAndSettings formRef={formRef} onSaved={onSaved} />
+          <InformationAndSettings formRef={formRef} onSaved={onSaved} isStudent={isStudent} />
         </div>
         <div className="flex shrink-0 justify-end gap-2 border-t border-base-300 bg-base-100 px-6 py-4">
           <button type="button" className="btn btn-ghost" onClick={onClose}>

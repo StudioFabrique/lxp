@@ -18,13 +18,16 @@ type UserInformation = {
   city: string;
   postCode?: string;
   phoneNumber?: string;
+  hobbies?: Array<{ title: string }>;
+  links?: Array<{ url: string }>;
 };
 
 const InformationAndSettings: FC<{
   formRef: Ref<HTMLFormElement>;
   onSaved?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
-}> = ({ formRef, onSaved, onDirtyChange }) => {
+  isStudent?: boolean;
+}> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const {
@@ -43,13 +46,20 @@ const InformationAndSettings: FC<{
       city: "",
       postCode: "",
       phoneNumber: "",
+      passions: "",
+      personalLinks: "",
     },
   });
 
   const [userData, setUserData] = useState<UserInformation>();
   const onSubmit = (data: z.infer<typeof informationSchema>) => {
     const formData = new FormData();
-    formData.append("data", JSON.stringify({ user: data }));
+    const { passions, personalLinks, ...information } = data;
+    formData.append("data", JSON.stringify({ user: isStudent ? {
+      ...information,
+      hobbies: (passions ?? "").split(",").map((title) => title.trim()).filter(Boolean).map((title) => ({ title })),
+      links: (personalLinks ?? "").split(/[,\n]/).map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url)).map((url) => ({ url })),
+    } : information }));
 
     profileApi.mutations
       .updateInformation(formData)
@@ -89,6 +99,8 @@ const InformationAndSettings: FC<{
         city: userData.city ?? "",
         postCode: userData.postCode ?? "",
         phoneNumber: userData.phoneNumber ?? "",
+        passions: userData.hobbies?.map((item) => item.title).join(", ") ?? "",
+        personalLinks: userData.links?.map((item) => item.url).join("\n") ?? "",
       });
     }
   }, [userData, reset]);
@@ -107,7 +119,7 @@ const InformationAndSettings: FC<{
         if (firstError?.message) toast.error(firstError.message);
       })}
     >
-      <Info formProps={{ register, errors }} />
+      <Info formProps={{ register, errors }} isStudent={isStudent} />
     </form>
   );
 };

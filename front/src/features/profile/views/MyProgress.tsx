@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChartNoAxesCombined } from "lucide-react";
 import { Link, useLocation } from "react-router";
+import { useState } from "react";
+import StudentProfile from "./StudentProfile";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import Loader from "../../../components/loaders/Loader";
@@ -18,6 +20,7 @@ async function loadParcoursProgress(): Promise<Parcours[]> {
 }
 
 export default function MyProgress() {
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { pathname } = useLocation();
   const space = pathname.split("/")[1];
   const {
@@ -35,7 +38,8 @@ export default function MyProgress() {
         title="Mon avancement"
         description="Suivez la progression de vos modules, vos accomplissements et vos badges de compétences."
         icon={ChartNoAxesCombined}
-      />
+      ><button type="button" className="btn btn-outline btn-sm" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
+      {settingsOpen && <StudentProfile onClose={() => setSettingsOpen(false)} />}
       <section aria-labelledby="module-progress-title" className="space-y-4">
         <h2 id="module-progress-title" className="text-xl font-bold">
           Progression des modules

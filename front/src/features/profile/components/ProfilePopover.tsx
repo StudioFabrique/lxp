@@ -209,16 +209,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
                       )}
                     </div>
                   </div>
-                  {interfaceType === "student" ? (
-                    <Link
-                      to="/student/profil"
-                      className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
-                      onClick={() => setOpen(false)}
-                    >
-                      Mon profil
-                    </Link>
-                  ) : (
-                    <button
+                  <button
                       type="button"
                       className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
                       onClick={() => {
@@ -228,7 +219,6 @@ export default function ProfilePopover({ interfaceType }: Props) {
                     >
                       Modifier mon profil
                     </button>
-                  )}
                   <div className="mt-3 border-t border-base-300 pt-3">
                     {canSeeProgress && (
                       <Link

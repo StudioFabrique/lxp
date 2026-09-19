@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Header from "../../../components/headers/Header";
 import Loader from "../../../components/loaders/Loader";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
@@ -44,6 +45,7 @@ export default function StudentLearningOnboarding() {
   const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
@@ -165,7 +167,7 @@ export default function StudentLearningOnboarding() {
     <PageWrapper as="main">
       <Header
         title="Personnalisons votre accompagnement"
-        description="Vos réponses pourront être modifiées depuis Mon profil."
+        description="Vos réponses pourront être modifiées depuis Mon avancement."
       />
       <BoxWrapper className="gap-6 p-4 sm:p-6">
         <Stepper
@@ -180,25 +182,20 @@ export default function StudentLearningOnboarding() {
           disabled={saving}
         />
 
-        <section className="mx-auto w-full max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-8">
+        <AnimatePresence mode="wait" initial={false}>
+        <motion.section key={step.key} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }} transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }} className="mx-auto w-full max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-8">
           {step.kind === "intro" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Bienvenue dans vos formations</h1>
               <p>Quelques réponses nous aideront à contextualiser votre accompagnement.</p>
-              {context.availableFormations.map((item) => (
-                <div key={item.id} className="rounded-xl bg-base-200 p-4">
-                  <h2 className="font-bold">{item.title}</h2>
-                  <p className="mt-1 text-sm text-base-content/70">
-                    {item.parcours.map((parcours) => parcours.title).join(" · ")}
-                  </p>
-                </div>
-              ))}
+              {context.formationsToAssess[0] && <div className="rounded-xl border border-primary/30 bg-primary/10 p-5"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours actuel</p><h2 className="mt-1 text-lg font-bold">{context.formationsToAssess[0].parcours[0]?.title ?? context.formationsToAssess[0].title}</h2><p className="mt-1 text-sm text-base-content/70">{context.formationsToAssess[0].title}</p></div>}
             </div>
           ) : null}
 
           {step.kind === "pace" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Quel rythme préférez-vous ?</h1>
+              <p className="text-sm text-base-content/65">Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard.</p>
               <SingleChoiceCards name="pace" options={paceOptions} value={pace} onChange={setPace} />
             </div>
           ) : null}
@@ -206,7 +203,7 @@ export default function StudentLearningOnboarding() {
           {step.kind === "preferences" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Comment aimez-vous apprendre ?</h1>
-              <p className="text-sm text-base-content/70">Sélectionnez au moins une préférence.</p>
+              <p className="text-sm text-base-content/70">Sélectionnez au moins une préférence. Les mots clés ci-dessous vous aident à choisir comment aborder les contenus.</p>
               <PreferenceCards value={preferences} onChange={setPreferences} />
             </div>
           ) : null}
@@ -216,9 +213,7 @@ export default function StudentLearningOnboarding() {
               <div>
                 <p className="text-sm font-semibold text-primary">{formation.title}</p>
                 <h1 className="text-2xl font-bold">Quel est votre niveau actuel ?</h1>
-                <p className="mt-1 text-sm text-base-content/70">
-                  Parcours : {formation.parcours.map((item) => item.title).join(" · ")}
-                </p>
+                <div className="mt-3 flex flex-wrap gap-2" aria-label="Parcours de cette formation">{formation.parcours.map((item) => <span key={item.id} className="badge badge-outline">{item.title}</span>)}</div>
               </div>
               <SingleChoiceCards
                 name={`level-${formation.id}`}
@@ -232,7 +227,7 @@ export default function StudentLearningOnboarding() {
           {step.kind === "summary" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Votre profil est prêt</h1>
-              <p>Confirmez vos réponses. Vous pourrez les modifier à tout moment depuis Mon profil.</p>
+              <p>Confirmez vos réponses. Vous pourrez les modifier à tout moment depuis Mon avancement.</p>
               <div className="rounded-xl bg-base-200 p-4 text-sm">
                 <p><strong>Formations renseignées :</strong> {context.availableFormations.length}</p>
                 {context.onboardingMode === "initial" ? (
@@ -261,9 +256,9 @@ export default function StudentLearningOnboarding() {
               </button>
             )}
           </div>
-        </section>
+        </motion.section>
+        </AnimatePresence>
       </BoxWrapper>
     </PageWrapper>
   );
 }
-

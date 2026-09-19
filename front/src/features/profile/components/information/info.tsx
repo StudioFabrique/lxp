@@ -10,7 +10,8 @@ type FormProps = {
 
 const Info: FC<{
   formProps: FormProps;
-}> = ({ formProps }) => (
+  isStudent?: boolean;
+}> = ({ formProps, isStudent }) => (
   <div className="flex flex-col gap-2">
     <BoxWrapper unstyled>
       <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
@@ -72,6 +73,10 @@ const Info: FC<{
           />
         </div>
       </div>
+      {isStudent && <div className="mt-5 grid gap-5 sm:grid-cols-2">
+        <label className="flex flex-col gap-2 font-medium">Mes passions <span className="text-xs font-normal text-base-content/60">Séparez-les par une virgule.</span><textarea className="textarea textarea-bordered w-full" {...formProps.register("passions")} /></label>
+        <label className="flex flex-col gap-2 font-medium">Mes liens <span className="text-xs font-normal text-base-content/60">Un lien par ligne.</span><textarea className="textarea textarea-bordered w-full" {...formProps.register("personalLinks")} /></label>
+      </div>}
     </BoxWrapper>
   </div>
 );
