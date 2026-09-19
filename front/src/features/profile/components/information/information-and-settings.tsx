@@ -6,6 +6,9 @@ import toast from "react-hot-toast";
 import { informationSchema } from "../../schemas/info-schema";
 import { profileApi } from "../../api/profile.api";
 import Loader from "../../../../components/loaders/Loader";
+import ProfileItemsEditor from "./ProfileItemsEditor";
+import type Hobby from "../../../user/interfaces/hobby";
+import type { Link } from "../../../user/interfaces/link";
 import type { z } from "zod";
 
 type UserInformation = {
@@ -18,8 +21,8 @@ type UserInformation = {
   city: string;
   postCode?: string;
   phoneNumber?: string;
-  hobbies?: Array<{ title: string }>;
-  links?: Array<{ url: string }>;
+  hobbies?: Hobby[];
+  links?: Link[];
 };
 
 const InformationAndSettings: FC<{
@@ -29,6 +32,9 @@ const InformationAndSettings: FC<{
   isStudent?: boolean;
 }> = ({ formRef, onSaved, onDirtyChange, isStudent = false }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+  const [itemsDirty, setItemsDirty] = useState(false);
 
   const {
     register,
@@ -46,20 +52,17 @@ const InformationAndSettings: FC<{
       city: "",
       postCode: "",
       phoneNumber: "",
-      passions: "",
-      personalLinks: "",
     },
   });
 
   const [userData, setUserData] = useState<UserInformation>();
   const onSubmit = (data: z.infer<typeof informationSchema>) => {
     const formData = new FormData();
-    const { passions, personalLinks, ...information } = data;
     formData.append("data", JSON.stringify({ user: isStudent ? {
-      ...information,
-      hobbies: (passions ?? "").split(",").map((title) => title.trim()).filter(Boolean).map((title) => ({ title })),
-      links: (personalLinks ?? "").split(/[,\n]/).map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url)).map((url) => ({ url })),
-    } : information }));
+      ...data,
+      hobbies,
+      links,
+    } : data }));
 
     profileApi.mutations
       .updateInformation(formData)
@@ -70,6 +73,7 @@ const InformationAndSettings: FC<{
             : "Profil sauvegardé avec succès !",
         );
         onSaved?.();
+        setItemsDirty(false);
       })
       .catch((err) => {
         const errorMessage = err?.response?.data?.message ?? "Erreur inconnue";
@@ -99,15 +103,15 @@ const InformationAndSettings: FC<{
         city: userData.city ?? "",
         postCode: userData.postCode ?? "",
         phoneNumber: userData.phoneNumber ?? "",
-        passions: userData.hobbies?.map((item) => item.title).join(", ") ?? "",
-        personalLinks: userData.links?.map((item) => item.url).join("\n") ?? "",
       });
+      setHobbies(userData.hobbies ?? []);
+      setLinks(userData.links ?? []);
     }
   }, [userData, reset]);
 
   useEffect(() => {
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
+    onDirtyChange?.(isDirty || itemsDirty);
+  }, [isDirty, itemsDirty, onDirtyChange]);
 
   if (isLoading) return <Loader />;
 
@@ -119,7 +123,8 @@ const InformationAndSettings: FC<{
         if (firstError?.message) toast.error(firstError.message);
       })}
     >
-      <Info formProps={{ register, errors }} isStudent={isStudent} />
+      <Info formProps={{ register, errors }} />
+      {isStudent && <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); setItemsDirty(true); }} onLinksChange={(items) => { setLinks(items); setItemsDirty(true); }} />}
     </form>
   );
 };

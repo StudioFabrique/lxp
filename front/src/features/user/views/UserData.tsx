@@ -15,6 +15,7 @@ import useStudentPrediction from "../hooks/useStudentPrediction";
 import AnalysisFeedbackForm from "../components/user-data/AnalysisFeedbackForm";
 import AnalysisHistory from "../components/user-data/AnalysisHistory";
 import DeclaredLearningProfile from "../components/user-data/DeclaredLearningProfile";
+import LinkPreview from "../../profile/components/information/LinkPreview";
 
 export default function UserData() {
   const { studentId } = useParams();
@@ -85,8 +86,8 @@ export default function UserData() {
           <DeclaredLearningProfile data={learningProfile} />
           <BoxWrapper>
             <div className="grid gap-6 sm:grid-cols-2">
-              <section><h2 className="text-lg font-bold">Mes passions</h2>{student.hobbies?.length ? <ul className="mt-2 flex flex-wrap gap-2">{student.hobbies.map((hobby) => <li key={hobby.title} className="badge badge-outline">{hobby.title}</li>)}</ul> : <p className="text-sm text-base-content/60">Aucune passion renseignée.</p>}</section>
-              <section><h2 className="text-lg font-bold">Mes liens</h2>{student.links?.length ? <ul className="mt-2 space-y-1">{student.links.filter((link) => /^https?:\/\//i.test(link.url)).map((link) => <li key={link.url}><a className="link link-primary break-all" href={link.url} target="_blank" rel="noopener noreferrer">{link.url}</a></li>)}</ul> : <p className="text-sm text-base-content/60">Aucun lien renseigné.</p>}</section>
+              <section><h2 className="text-lg font-bold">Mes passions</h2>{student.hobbies?.length ? <ul className="mt-2 flex flex-wrap gap-2">{student.hobbies.map((hobby) => <li key={hobby._id ?? hobby.title} className="rounded-lg border border-base-300 bg-base-200 px-3 py-1.5 text-sm">{hobby.title}</li>)}</ul> : <p className="text-sm text-base-content/60">Aucune passion renseignée.</p>}</section>
+              <section><h2 className="text-lg font-bold">Mes liens</h2>{student.links?.some((link) => /^https?:\/\//i.test(link.url)) ? <ul className="mt-2 space-y-2">{student.links.filter((link) => /^https?:\/\//i.test(link.url)).map((link) => <li key={link._id ?? link.url} className="rounded-lg border border-base-300 bg-base-200 px-3 py-2"><LinkPreview link={link} /></li>)}</ul> : <p className="text-sm text-base-content/60">Aucun lien renseigné.</p>}</section>
             </div>
           </BoxWrapper>
 

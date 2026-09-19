@@ -97,20 +97,23 @@ function MediathequeHomePage() {
       />
 
       <div
-        role="tablist"
+        role="group"
         aria-label="Type de média"
-        className="tabs tabs-box overflow-x-auto"
+        className="flex flex-wrap items-center gap-2"
       >
         {mediaTypes.map((mediaType) => (
           <button
             key={mediaType.type}
             type="button"
-            role="tab"
-            aria-selected={type === mediaType.type}
-            className={`tab gap-2 ${type === mediaType.type ? "tab-active" : ""}`}
+            aria-pressed={type === mediaType.type}
+            className={`badge badge-lg h-9 cursor-pointer gap-2 px-4 transition-colors ${
+              type === mediaType.type
+                ? "badge-primary bg-primary text-primary-content"
+                : "badge-outline hover:badge-primary"
+            }`}
             onClick={() => setType(mediaType.type)}
           >
-            <span className="size-4 [&>svg]:size-4" aria-hidden="true">
+            <span className="size-4 shrink-0 [&>svg]:size-4" aria-hidden="true">
               {mediaType.icon}
             </span>
             {mediaType.label}

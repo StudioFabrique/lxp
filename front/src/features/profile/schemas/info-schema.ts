@@ -47,6 +47,4 @@ export const informationSchema = z.object({
       message: "Le numéro de téléphone contient des caractères invalides",
     })
     .optional(),
-  passions: z.string().optional(),
-  personalLinks: z.string().refine((value) => value.split(/[,\n]/).every((url) => !url.trim() || /^https?:\/\//i.test(url.trim())), "Chaque lien doit commencer par http:// ou https://").optional(),
 });
