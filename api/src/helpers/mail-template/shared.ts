@@ -74,7 +74,7 @@ export const layout = (
     ? {
         page: "#0f172a",
         card: "#1e293b",
-        header: instanceColor,
+        header: "#111827",
         text: "#f8fafc",
         muted: "#aeb8c7",
         border: "#334155",
@@ -82,7 +82,7 @@ export const layout = (
     : {
         page: "#eef2f6",
         card: "#ffffff",
-        header: instanceColor,
+        header: "#17202a",
         text: "#17202a",
         muted: "#68737d",
         border: "#e6eaee",
@@ -96,7 +96,12 @@ export const layout = (
         : "#ffffff";
   const headerUsesColor = template === "minimal" || template === "gradient" || template === "contrast";
   const displayedHeaderColor = headerUsesColor ? headerColor : colors.card;
-  const themedContent = content.replaceAll("#1769aa", instanceColor);
+  const shouldUseInstanceColor =
+    !options.officialAndriaLogo &&
+    /^#[0-9a-f]{6}$/i.test(options.logoBackgroundColor ?? "");
+  const themedContent = shouldUseInstanceColor
+    ? content.replaceAll("#1769aa", instanceColor)
+    : content;
   const pageColor = template === "soft" ? instanceColor : colors.page;
   const header = brand
     ? `<tr><td align="${design.headerAlign}" bgcolor="${displayedHeaderColor}" style="padding:${design.headerPadding};background-color:${displayedHeaderColor};text-align:${design.headerAlign}">${brand}</td></tr>`

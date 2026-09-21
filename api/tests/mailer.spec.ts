@@ -46,6 +46,8 @@ describe("Activation SMTP du compte root", () => {
     expect(message.html).toContain('role="presentation"');
     expect(message.html).toContain('align="center"');
     expect(message.html).toContain("margin:28px auto");
+    expect(message.html).toContain('bgcolor="#17202a"');
+    expect(message.html).toContain('bgcolor="#1769aa"');
     expect(message.html).not.toContain("andria-footer-light");
   });
 
