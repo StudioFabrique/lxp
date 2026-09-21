@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { Check, Gauge, GraduationCap, Shapes } from "lucide-react";
 import Loader from "../../../components/loaders/Loader";
 import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
@@ -278,7 +279,7 @@ export default function StudentLearningOnboarding() {
           ) : null}
 
           {step.kind === "formation" && formation ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-bold">
                   Quel est votre niveau actuel ?
@@ -414,40 +415,73 @@ export default function StudentLearningOnboarding() {
           ) : null}
 
           {step.kind === "summary" ? (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <h1 className="text-2xl font-bold">Vos choix en un coup d’œil</h1>
-                <p className="mt-1 text-sm text-base-content/65">
-                  Vérifiez votre profil avant de commencer. Vous pourrez le modifier plus tard.
+                <h1 className="text-2xl font-bold">Votre profil</h1>
+                <p className="mt-2 text-sm text-base-content/65">
+                  Vérifiez vos réponses avant de commencer. Vous pourrez les
+                  modifier plus tard depuis votre profil.
                 </p>
               </div>
-              <dl className="divide-y divide-base-300 text-sm">
-                <div className="grid grid-cols-[7rem_1fr] gap-3 py-3 first:pt-0">
-                  <dt className="font-semibold text-base-content/60">Rythme</dt>
-                  <dd className="font-semibold">
-                    {paceOptions.find((option) => option.value === pace)?.label ?? "Non renseigné"}
-                  </dd>
-                </div>
-                <div className="grid grid-cols-[7rem_1fr] gap-3 py-3">
-                  <dt className="font-semibold text-base-content/60">Préférences</dt>
-                  <dd className="flex flex-wrap gap-1.5">
-                    {preferenceOptions
-                      .filter((option) => preferences.includes(option.value))
-                      .map((option) => (
-                        <span key={option.value} className="badge badge-ghost font-medium">
-                          {option.label}
-                        </span>
-                      ))}
-                  </dd>
-                </div>
-                {formation ? (
-                  <div className="grid grid-cols-[7rem_1fr] gap-3 py-3">
-                    <dt className="font-semibold text-base-content/60">Niveau</dt>
-                    <dd className="font-semibold">
-                      {levelOptions.find((option) => option.value === levels[formation.id])?.label ?? "Non renseigné"}
+              <dl className="grid gap-3 sm:grid-cols-2">
+                <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                    <Gauge className="size-5" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <dt className="text-sm text-base-content/65">Rythme</dt>
+                    <dd className="mt-1 font-semibold">
+                      {paceOptions.find((option) => option.value === pace)
+                        ?.label ?? "Non renseigné"}
                     </dd>
                   </div>
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                    <Check className="size-4" aria-hidden="true" />
+                  </span>
+                </div>
+                {formation ? (
+                  <div className="flex min-h-28 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                      <GraduationCap className="size-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <dt className="text-sm text-base-content/65">Niveau</dt>
+                      <dd className="mt-1 font-semibold">
+                        {levelOptions.find(
+                          (option) => option.value === levels[formation.id],
+                        )?.label ?? "Non renseigné"}
+                      </dd>
+                    </div>
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                      <Check className="size-4" aria-hidden="true" />
+                    </span>
+                  </div>
                 ) : null}
+                <div className="flex min-h-32 items-start gap-4 rounded-xl border border-primary bg-primary/10 p-4 sm:col-span-2">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                    <Shapes className="size-5" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <dt className="text-sm text-base-content/65">
+                      Préférences d’apprentissage
+                    </dt>
+                    <dd className="mt-3 flex flex-wrap gap-2">
+                      {preferenceOptions
+                        .filter((option) => preferences.includes(option.value))
+                        .map((option) => (
+                          <span
+                            key={option.value}
+                            className="rounded-lg border border-primary/25 bg-base-100 px-3 py-2 text-sm font-semibold"
+                          >
+                            {option.label}
+                          </span>
+                        ))}
+                    </dd>
+                  </div>
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-content">
+                    <Check className="size-4" aria-hidden="true" />
+                  </span>
+                </div>
               </dl>
             </div>
           ) : null}

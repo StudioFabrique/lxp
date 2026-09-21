@@ -1,4 +1,4 @@
-import { BookOpen, CircleCheck } from "lucide-react";
+import { BookOpen, CalendarDays, CircleCheck } from "lucide-react";
 import Course from "../../../../utils/interfaces/course";
 
 type Props = {
@@ -6,41 +6,45 @@ type Props = {
 };
 
 const JournalTimeline = ({ course }: Props) => {
-  const accomplishments = course.accomplishments ?? [];
+  const accomplishments = [...(course.accomplishments ?? [])].sort(
+    (a, b) =>
+      new Date(b.accomplishedAt ?? 0).getTime() -
+      new Date(a.accomplishedAt ?? 0).getTime(),
+  );
 
   return (
-    <div className="p-4 flex flex-col">
-      <span className="flex gap-2 items-center">
-        <BookOpen className="text-primary self-start" />
-        <h3 className="text-xl font-bold text-primary mb-6 first-letter:uppercase">{course.title}</h3>
-      </span>
-
-      <div className="grid xl:grid-cols-2 grid-cols-1">
-        {accomplishments.length > 0 ? (
-          <ul className="timeline timeline-vertical">
-            {accomplishments.map((acc, index) => (
-              <li key={acc.id}>
-                {index > 0 && <hr />}
-                <div className="timeline-start text-sm text-base-content/70">
-                  {acc.accomplishedAt &&
-                    new Date(acc.accomplishedAt).toLocaleString("fr")}
-                </div>
-                <div className="timeline-middle">
-                  <CircleCheck className="h-5 w-5 text-success" />
-                </div>
-                <div className="timeline-end timeline-box text-base-content">
-                  {acc.description}
-                </div>
-                <hr />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-base-content/60">
-            Aucun accomplissement enregistré pour ce cours.
-          </p>
-        )}
+    <div className="flex flex-col p-5 sm:p-7">
+      <div className="mb-6 flex items-center gap-3 border-b border-base-200 pb-5">
+        <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">
+          <BookOpen className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-base-content/50">Historique du cours</p>
+          <h3 className="text-xl font-bold first-letter:uppercase">{course.title}</h3>
+        </div>
       </div>
+
+      <ol className="relative ml-3 border-l-2 border-base-300 pl-7">
+        {accomplishments.map((acc) => (
+          <li key={acc.id} className="relative pb-7 last:pb-0">
+            <span className="absolute -left-[2.3rem] grid size-5 place-items-center rounded-full bg-success text-success-content ring-4 ring-base-100">
+              <CircleCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <article className="rounded-xl border border-base-300 bg-base-200/40 p-4">
+              <p className="font-medium text-base-content">{acc.description}</p>
+              {acc.accomplishedAt && (
+                <time className="mt-2 flex items-center gap-1.5 text-xs text-base-content/55" dateTime={new Date(acc.accomplishedAt).toISOString()}>
+                  <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
+                  {new Intl.DateTimeFormat("fr-FR", {
+                    dateStyle: "long",
+                    timeStyle: "short",
+                  }).format(new Date(acc.accomplishedAt))}
+                </time>
+              )}
+            </article>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 };
