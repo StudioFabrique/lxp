@@ -1,3 +1,5 @@
+import { all, and } from "@prisma/orm-postgres/orm-client";
+
 import { calculateModuleProgress } from "../../helpers/calculate-module-progress.ts";
 import { enrichContactsWithNames } from "../../helpers/enrich-contacts-with-names.ts";
 import { prisma } from "../../utils/db.ts";
@@ -50,14 +52,29 @@ async function getParcoursById(
       related222.select("id", "description"),
     )
     .include("modules", (modules) =>
-      (scope
-        ? modules.where((row) =>
-            scope.moduleIds === null
+      modules
+        .where((row) => {
+          const isInScope = scope
+            ? scope.moduleIds === null
               ? row.parcoursId.in(scope.parcoursIds)
-              : row.id.in(scope.moduleIds),
-          )
-        : modules
-      )
+              : row.id.in(scope.moduleIds)
+            : all();
+
+          const isAvailableToLearner =
+            scope?.kind === "learner"
+              ? row.courses.some((course) =>
+                  and(
+                    course.isPublished.eq(true),
+                    course.visibility.eq(true),
+                    course.lessons.some((lesson) =>
+                      lesson.visibility.eq(true),
+                    ),
+                  ),
+                )
+              : all();
+
+          return and(isInScope, isAvailableToLearner);
+        })
         .select(
           "id",
           "duration",
@@ -76,6 +93,11 @@ async function getParcoursById(
         )
         .include("courses", (related227) =>
           related227
+            .where((row) =>
+              scope?.kind === "learner"
+                ? and(row.isPublished.eq(true), row.visibility.eq(true))
+                : all(),
+            )
             .include("assignment", (related228) =>
               related228.include("submissions", (related229) =>
                 related229
@@ -87,6 +109,11 @@ async function getParcoursById(
             )
             .include("lessons", (related230) =>
               related230
+                .where((row) =>
+                  scope?.kind === "learner"
+                    ? row.visibility.eq(true)
+                    : all(),
+                )
                 .include("lessonsRead", (related231) =>
                   related231
                     .where((row) =>
