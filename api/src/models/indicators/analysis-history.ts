@@ -55,16 +55,13 @@ export async function saveAnalysisFeedback(userId: string, analysisId: string, a
   if (await IndicatorAnalysisFeedback.exists({ analysisId: analysis._id, authorId })) {
     throw Object.assign(new Error("Vous avez déjà donné votre avis sur cette analyse."), { statusCode: 409 });
   }
-  const { verdict, comment, actionTaken, observedOutcome, observedAt } = input;
-  if (observedAt && new Date(observedAt) < new Date(analysis.snapshot.evaluatedAt)) {
-    throw Object.assign(new Error("L'issue observée doit être postérieure à l'analyse."), { statusCode: 400 });
-  }
+  const { verdict, comment, actionTaken, observedOutcome } = input;
   try {
     return await IndicatorAnalysisFeedback.create({
       analysisId: analysis._id,
       authorId,
       submissionKey: `${analysis._id}:${authorId}`,
-      verdict, comment, actionTaken, observedOutcome, observedAt,
+      verdict, comment, actionTaken, observedOutcome,
     });
   } catch (error: any) {
     if (error?.code === 11000) {

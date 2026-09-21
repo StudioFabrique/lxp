@@ -98,7 +98,6 @@ export type AnalysisFeedbackInput = {
   comment?: string;
   actionTaken?: string;
   observedOutcome?: PredictionOutcome;
-  observedAt?: string;
 };
 export type AnalysisFeedback = AnalysisFeedbackInput & { _id: string; createdAt: string; authorId: string };
 export type AnalysisHistory = {

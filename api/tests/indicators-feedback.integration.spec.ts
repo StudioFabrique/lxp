@@ -246,7 +246,7 @@ integration("Indicateurs et retours sur bases isolées", () => {
     expect(history.body.items[0].analysisId).toBe(analysisId);
   });
 
-  it("refuse les apprenants, les identifiants invalides et les issues mal datées", async () => {
+  it("refuse les apprenants et les identifiants invalides", async () => {
     await request(app).get(`/${userId}/analyses`).expect(401);
     await request(app)
       .get(`/${userId}/analyses`)
@@ -262,29 +262,6 @@ integration("Indicateurs et retours sur bases isolées", () => {
       .post(path)
       .set("x-test-rank", "2")
       .send({ verdict: "wrong" })
-      .expect(400);
-    await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({ verdict: "appropriate", observedOutcome: "graduate" })
-      .expect(400);
-    await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({
-        verdict: "appropriate",
-        observedOutcome: "graduate",
-        observedAt: "2026-08-01",
-      })
-      .expect(400);
-    await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({
-        verdict: "appropriate",
-        observedOutcome: "graduate",
-        observedAt: "2099-01-01",
-      })
       .expect(400);
     await request(app)
       .post(`/${staffId}/analyses/${analysisId}/feedback`)
@@ -318,9 +295,11 @@ integration("Indicateurs et retours sur bases isolées", () => {
       .send({
         verdict: "appropriate",
         observedOutcome: "graduate",
-        observedAt: "2026-09-01T12:00:00Z",
       })
       .expect(201);
+    const savedFeedback = await IndicatorAnalysisFeedback.findOne({ analysisId, authorId: otherStaffId }).lean();
+    expect(savedFeedback?.createdAt).toBeInstanceOf(Date);
+    expect(savedFeedback?.observedAt).toBeUndefined();
     expect(await IndicatorAnalysisFeedback.countDocuments({ analysisId })).toBe(
       2,
     );

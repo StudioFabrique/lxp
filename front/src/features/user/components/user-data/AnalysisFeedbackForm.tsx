@@ -33,7 +33,6 @@ export default function AnalysisFeedbackForm({
   const [comment, setComment] = useState("");
   const [actionTaken, setActionTaken] = useState("");
   const [outcome, setOutcome] = useState<PredictionOutcome | "">("");
-  const [observedAt, setObservedAt] = useState("");
   const mutation = useMutation({
     mutationFn: (input: AnalysisFeedbackInput) =>
       indicatorsApi.mutations.saveAnalysisFeedback(
@@ -60,7 +59,6 @@ export default function AnalysisFeedbackForm({
       ...(outcome
         ? {
             observedOutcome: outcome,
-            observedAt: new Date(observedAt).toISOString(),
           }
         : {}),
     });
@@ -71,7 +69,6 @@ export default function AnalysisFeedbackForm({
     setComment("");
     setActionTaken("");
     setOutcome("");
-    setObservedAt("");
   };
   const close = () => {
     setIsOpen(false);
@@ -147,18 +144,6 @@ export default function AnalysisFeedbackForm({
                 <option value="dropout">Abandon</option>
               </select>
             </label>
-            {outcome ? (
-              <label className="flex flex-col gap-1">
-                Date et heure du constat
-                <input
-                  className="input input-bordered"
-                  type="datetime-local"
-                  required
-                  value={observedAt}
-                  onChange={(e) => setObservedAt(e.target.value)}
-                />
-              </label>
-            ) : null}
             {mutation.isError ? (
               <p role="alert" className="text-error">
                 {isAxiosError(mutation.error)

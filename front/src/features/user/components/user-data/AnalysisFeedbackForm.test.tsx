@@ -71,13 +71,19 @@ describe("Retour sur une analyse", () => {
     expect(host.textContent).not.toContain("Donner mon avis");
   });
 
-  it("demande une date seulement lorsque le résultat est connu", async () => {
+  it("enregistre le résultat sans demander de date", async () => {
+    const save = vi.spyOn(indicatorsApi.mutations, "saveAnalysisFeedback").mockResolvedValue();
     await render();
-    expect(host.querySelector('input[type="datetime-local"]')).toBeNull();
     await changeSelect(1, "graduate");
-    expect(host.querySelector<HTMLInputElement>('input[type="datetime-local"]')?.required).toBe(true);
-    await changeSelect(1, "");
     expect(host.querySelector('input[type="datetime-local"]')).toBeNull();
+    await changeSelect(0, "appropriate");
+    await act(async () => {
+      host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    });
+    expect(save).toHaveBeenCalledWith("student", "analysis", {
+      verdict: "appropriate", comment: "", actionTaken: "", observedOutcome: "graduate",
+    });
   });
 
   it("affiche une erreur et laisse réessayer", async () => {

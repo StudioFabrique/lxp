@@ -2,28 +2,9 @@ import { and } from "@prisma/orm-postgres/orm-client";
 
 import { prisma } from "../../utils/db.ts";
 import Group from "../../utils/interfaces/db/group.ts";
+import { LEARNING_PACES, LEARNING_PREFERENCES, FORMATION_LEVELS } from "../../config/learning-profile.ts";
 
-export const LEARNING_PACES = [
-  "progressive",
-  "standard",
-  "intensive",
-  "no_preference",
-] as const;
-
-export const LEARNING_PREFERENCES = [
-  "concrete_examples",
-  "step_by_step",
-  "summary",
-  "practical_exercises",
-  "visual_aids",
-] as const;
-
-export const FORMATION_LEVELS = [
-  "beginner",
-  "intermediate",
-  "advanced",
-  "unsure",
-] as const;
+export { LEARNING_PACES, LEARNING_PREFERENCES, FORMATION_LEVELS } from "../../config/learning-profile.ts";
 
 export type LearningPace = (typeof LEARNING_PACES)[number];
 export type LearningPreference = (typeof LEARNING_PREFERENCES)[number];

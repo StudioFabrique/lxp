@@ -195,7 +195,7 @@ function AnalysisDetailsModal({
                   <p className="mt-2 text-sm">
                     <span className="font-medium">Résultat constaté :</span>{" "}
                     {formatOutcome(feedback.observedOutcome)} (
-                    {new Date(feedback.observedAt!).toLocaleString("fr-FR")})
+                    {new Date(feedback.createdAt).toLocaleString("fr-FR")})
                   </p>
                 ) : null}
               </article>

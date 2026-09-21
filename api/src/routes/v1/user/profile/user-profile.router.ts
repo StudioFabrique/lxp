@@ -20,7 +20,7 @@ import {
   FORMATION_LEVELS,
   LEARNING_PACES,
   LEARNING_PREFERENCES,
-} from "../../../../models/learning-profile/learning-profile.ts";
+} from "../../../../config/learning-profile.ts";
 
 const userProfileRouter = Router();
 

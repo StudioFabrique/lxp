@@ -21,6 +21,7 @@ describe("Suivi de consultation des contenus", () => {
   let cookie: string[];
   let studentId: number;
   let lessonId: number;
+  let coursePublication: { id: number; isPublished: boolean; visibility: boolean };
   let enrollment: Enrollment;
 
   beforeAll(async () => {
@@ -45,12 +46,19 @@ describe("Suivi de consultation des contenus", () => {
     studentId = student.id;
 
     const [course, admin, tag] = await Promise.all([
-      prisma.orm.public.Course.select("id")
+      prisma.orm.public.Course.select("id", "isPublished", "visibility")
         .include("module", (related64) => related64.select("parcoursId"))
         .first(),
       prisma.orm.public.Admin.select("id").first(),
       prisma.orm.public.Tag.select("id").first(),
     ]);
+    coursePublication = {
+      id: course!.id,
+      isPublished: course!.isPublished,
+      visibility: course!.visibility,
+    };
+    await prisma.orm.public.Course.where({ id: course!.id })
+      .update({ isPublished: true, visibility: true });
 
     // Les contenus sont cloisonnés par parcours : sans inscription, l'apprenant
     // reçoit 404 sur la leçon qu'il est censé consulter.
@@ -68,8 +76,17 @@ describe("Suivi de consultation des contenus", () => {
       courseId: course!.id,
       adminId: admin!.id,
       tagId: tag!.id,
+      visibility: true,
     });
     lessonId = lesson.id;
+    await prisma.orm.public.Activity.create({
+      title: "Activité de suivi",
+      type: "text",
+      order: 1,
+      url: "",
+      lessonId,
+      authorId: admin!.id,
+    });
   });
 
   afterAll(async () => {
@@ -78,9 +95,17 @@ describe("Suivi de consultation des contenus", () => {
     await prisma.orm.public.LessonRead.where({ lessonId })
       .deleteAndCount()
       .then((count) => ({ count }));
+    await prisma.orm.public.Activity.where({ lessonId })
+      .deleteAndCount()
+      .then((count) => ({ count }));
     await prisma.orm.public.Lesson.where({ id: lessonId })
       .delete()
       .then(requireDatabaseRow);
+    await prisma.orm.public.Course.where({ id: coursePublication.id })
+      .update({
+        isPublished: coursePublication.isPublished,
+        visibility: coursePublication.visibility,
+      });
     await enrollment.cleanup();
     await prisma.close();
     if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
