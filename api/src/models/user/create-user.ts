@@ -6,6 +6,7 @@ import { randomUUID } from "crypto";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { mailerDisabled } from "../../config/mailer-disabled.ts";
+import { devAccountPasswordHash } from "../../config/dev-account-password.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import {
   exactInsensitive,
@@ -104,7 +105,9 @@ export default async function createUser(
       postCode: user.postCode?.toLowerCase(),
       birthDate: user.birthDate,
       phoneNumber: user.phoneNumber?.toLowerCase(),
-      password: await hash(randomUUID() + "@Sn99", 10),
+      password:
+        (await devAccountPasswordHash()) ??
+        (await hash(randomUUID() + "@Sn99", 10)),
       isActive: mailerDisabled,
       emailVerified: mailerDisabled,
       avatar: user.avatar,

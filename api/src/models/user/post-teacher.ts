@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
 import { sendActivationInvitation } from "./create-user.ts";
 import { mailerDisabled } from "../../config/mailer-disabled.ts";
+import { devAccountPasswordHash } from "../../config/dev-account-password.ts";
 
 async function postTeacher(teacher: IUser) {
   const email = normalizeEmail(teacher.email ?? "");
@@ -32,7 +33,9 @@ async function postTeacher(teacher: IUser) {
   }
 
   // enregistrement du contact dans la base de données Mongodb
-  const password = await bcrypt.hash(generateRandomString(), 10);
+  const password =
+    (await devAccountPasswordHash()) ??
+    (await bcrypt.hash(generateRandomString(), 10));
   const fetchedRole = await Role.findOne({ role: "teacher" });
   if (!fetchedRole) {
     throw {
