@@ -16,6 +16,7 @@ import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder"
 import {
   levelOptions,
   paceOptions,
+  preferenceOptions,
   PreferenceCards,
   SingleChoiceCards,
 } from "../LearningChoiceCards";
@@ -227,7 +228,7 @@ export default function StudentLearningOnboarding() {
     <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-8 pb-[9px]">
       {formation?.parcours[0] ? (
         <header className="px-5 py-3 sm:px-6">
-          <h2 className="mt-1 text-2xl font-extrabold leading-tight text-primary first-letter:uppercase sm:text-3xl">
+          <h2 className="mt-1 text-2xl font-extrabold leading-tight text-secondary first-letter:uppercase sm:text-3xl">
             {formation.parcours[0].title}
           </h2>
           <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
@@ -364,9 +365,7 @@ export default function StudentLearningOnboarding() {
           {step.kind === "theme" ? (
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold">
-                  Choisissez votre ambiance
-                </h1>
+                <h1 className="text-2xl font-bold">Choisissez votre thème</h1>
                 <p className="mt-2 text-sm text-base-content/65">
                   Personnalisez les modes clair et sombre. Vous pourrez toujours
                   les modifier depuis votre profil.
@@ -415,20 +414,41 @@ export default function StudentLearningOnboarding() {
           ) : null}
 
           {step.kind === "summary" ? (
-            <div className="space-y-5">
-              <h1 className="text-2xl font-bold">Votre profil est prêt</h1>
-              <p>
-                Confirmez vos réponses. Vous pourrez les modifier à tout moment
-                depuis Mon avancement.
-              </p>
-              <div className="rounded-xl bg-base-200 p-4 text-sm">
-                <p>
-                  <strong>Parcours :</strong> {formation?.parcours[0]?.title}
-                </p>
-                <p className="mt-2">
-                  <strong>Préférences choisies :</strong> {preferences.length}
+            <div className="space-y-4">
+              <div>
+                <h1 className="text-2xl font-bold">Vos choix en un coup d’œil</h1>
+                <p className="mt-1 text-sm text-base-content/65">
+                  Vérifiez votre profil avant de commencer. Vous pourrez le modifier plus tard.
                 </p>
               </div>
+              <dl className="divide-y divide-base-300 text-sm">
+                <div className="grid grid-cols-[7rem_1fr] gap-3 py-3 first:pt-0">
+                  <dt className="font-semibold text-base-content/60">Rythme</dt>
+                  <dd className="font-semibold">
+                    {paceOptions.find((option) => option.value === pace)?.label ?? "Non renseigné"}
+                  </dd>
+                </div>
+                <div className="grid grid-cols-[7rem_1fr] gap-3 py-3">
+                  <dt className="font-semibold text-base-content/60">Préférences</dt>
+                  <dd className="flex flex-wrap gap-1.5">
+                    {preferenceOptions
+                      .filter((option) => preferences.includes(option.value))
+                      .map((option) => (
+                        <span key={option.value} className="badge badge-ghost font-medium">
+                          {option.label}
+                        </span>
+                      ))}
+                  </dd>
+                </div>
+                {formation ? (
+                  <div className="grid grid-cols-[7rem_1fr] gap-3 py-3">
+                    <dt className="font-semibold text-base-content/60">Niveau</dt>
+                    <dd className="font-semibold">
+                      {levelOptions.find((option) => option.value === levels[formation.id])?.label ?? "Non renseigné"}
+                    </dd>
+                  </div>
+                ) : null}
+              </dl>
             </div>
           ) : null}
 
