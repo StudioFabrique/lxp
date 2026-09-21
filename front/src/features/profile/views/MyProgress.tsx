@@ -38,7 +38,7 @@ export default function MyProgress() {
         title="Mon avancement"
         description="Suivez la progression de vos modules, vos accomplissements et vos badges de compétences."
         icon={ChartNoAxesCombined}
-      ><button type="button" className="btn btn-outline btn-sm" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
+      ><button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
       {settingsOpen && <StudentProfile onClose={() => setSettingsOpen(false)} />}
       <section aria-labelledby="module-progress-title" className="space-y-4">
         <h2 id="module-progress-title" className="text-xl font-bold">

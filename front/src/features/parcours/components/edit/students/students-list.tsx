@@ -1,4 +1,3 @@
- 
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import Group from "../../../../../../src/utils/interfaces/group";
 import { useState } from "react";
@@ -69,9 +68,7 @@ const StudentsList = (props: StudentsListProps) => {
     <>
       <article className="flex w-full flex-col gap-4">
         <div>
-          <h4 className="mb-1.5 text-sm font-semibold">
-            Groupes d'apprenants
-          </h4>
+          <h4 className="mb-1.5 text-sm font-semibold">Groupes d'apprenants</h4>
           <ul className="flex flex-wrap gap-1.5">
             {groups.map((group) => (
               <li

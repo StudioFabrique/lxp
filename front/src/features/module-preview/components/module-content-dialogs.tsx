@@ -46,6 +46,7 @@ export default function ModuleContentDialogs({
       {store.badgeCompletion && (
         <ModuleCompletionModal
           moduleTitle={store.badgeCompletion.moduleTitle}
+          parcoursId={state.module?.parcoursId}
           badges={store.badgeCompletion.badges}
           onClose={store.closeBadgeCompletion}
         />

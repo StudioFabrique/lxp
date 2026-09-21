@@ -139,7 +139,7 @@ const RoleList = () => {
         <PermissionGuard action="write" object="role">
           <button
             type="button"
-            className="btn btn-primary btn-soft"
+            className="btn btn-outline btn-primary"
             data-page-tour="role-create-header"
             onClick={() => setFormModal({ mode: "create" })}
           >

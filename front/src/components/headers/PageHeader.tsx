@@ -57,7 +57,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
       onClick={props.onClick}
       data-page-tour="header"
       className={cn(
-        "mb-6 h-auto w-full flex-row items-center justify-between px-4 shadow-none select-none",
+        "mb-6 h-auto w-full flex-row flex-wrap items-center justify-between gap-3 px-4 shadow-none select-none",
         props.isSubHeader ? "py-2" : "py-4",
         props.isSubHeader && !props.disabled && "ring-1",
         props.hasError && "ring-2 ring-error",
@@ -66,7 +66,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
         props.onClick && "cursor-pointer hover:opacity-50",
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {!props.isSubHeader && <SidebarRouteIcon />}
         <div>
           <h2
@@ -89,7 +89,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
         </div>
       </div>
       <div
-        className="flex items-center justify-end gap-2"
+        className={cn("header-actions flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end", !props.isSubHeader && "header-actions-main")}
         data-page-tour="header-actions"
       >
         {props.children}

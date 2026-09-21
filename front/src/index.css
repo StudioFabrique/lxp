@@ -41,6 +41,29 @@
         obsidian;
 }
 
+/* data-tip tooltips are rendered in a page-level layer so cards cannot clip them. */
+.tooltip[data-tip]::before,
+.tooltip[data-tip]::after {
+    display: none;
+}
+
+.header-actions-main .btn:not(.btn-circle) {
+    min-height: 2.75rem;
+    height: auto;
+    padding-inline: 1rem;
+    gap: 0.5rem;
+    font-weight: 600;
+    white-space: normal;
+    text-align: center;
+}
+
+.header-actions-main .btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    margin-inline: 0;
+}
+
 /* Preserve a clear keyboard focus indicator on every interactive control. */
 :where(
     input:not([type="hidden"]),

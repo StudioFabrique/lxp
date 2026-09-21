@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import Confetti from "react-confetti";
+import { useLocation, useNavigate } from "react-router";
 import Modal from "../../../components/UI/modal/modal";
 import type Skill from "../../../utils/interfaces/skill";
 import SkillBadge from "../../../components/skills/skill-badge";
@@ -16,21 +17,31 @@ function easeOutElastic(value: number) {
 
 type Props = {
   moduleTitle: string;
+  parcoursId?: number;
   badges: Skill[];
   onClose: () => void;
 };
 
 export default function ModuleCompletionModal({
   moduleTitle,
+  parcoursId,
   badges,
   onClose,
 }: Props) {
   const reduceMotion = useReducedMotion();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const area = pathname.split("/")[1];
 
   return (
     <Modal
       title={`Le module « ${moduleTitle} » est terminé !`}
       rightLabel="Continuer"
+      leftLabel={parcoursId ? "Retour au parcours" : undefined}
+      onLeftClick={parcoursId ? () => {
+        onClose();
+        navigate(`/${area}/parcours/view/${parcoursId}`);
+      } : undefined}
       onRightClick={onClose}
       onMinimizeClick={onClose}
       modalBoxStyle="relative isolate w-11/12 max-w-3xl"
@@ -73,7 +84,7 @@ export default function ModuleCompletionModal({
                   <span className="text-sm font-medium first-letter:uppercase">
                     {badge.description}
                   </span>
-                  <SkillModules skill={badge} onNavigate={onClose} />
+                  {!badge.isEarned && <SkillModules skill={badge} onNavigate={onClose} />}
                 </motion.li>
               ))}
             </ul>

@@ -70,6 +70,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               </div>
               <SkillBadgeSummary
                 skills={lastLesson.lesson.course.bonusSkills}
+                showProgress
+                size="small"
                 className="rounded-xl border border-white/20 bg-base-100/50 p-1.5 shadow-sm backdrop-blur-sm"
               />
             </div>,

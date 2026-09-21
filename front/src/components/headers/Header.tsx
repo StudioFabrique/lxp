@@ -40,7 +40,7 @@ const Header = ({
     <BoxWrapper
       onClick={onClick}
       className={cn(
-        "h-auto w-full flex-row items-center justify-between px-4 shadow-none select-none",
+        "h-auto w-full flex-row flex-wrap items-center justify-between gap-3 px-4 shadow-none select-none",
         isSubHeader ? "py-2" : "py-4",
         isSubHeader && !disabled && "ring-1",
         alternateBgColor && "bg-base-300",
@@ -51,7 +51,7 @@ const Header = ({
         containerClassname,
       )}
     >
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {!isSubHeader &&
           (Icon ? (
             <Icon aria-hidden className="size-7 shrink-0" />
@@ -82,7 +82,11 @@ const Header = ({
           </p>
         </div>
       </div>
-      <div className="flex shrink-0 justify-end items-center">{children}</div>
+      {children && (
+        <div className={cn("header-actions flex w-full min-w-0 flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end", !isSubHeader && "header-actions-main")}>
+          {children}
+        </div>
+      )}
     </BoxWrapper>
   );
 };

@@ -4,6 +4,8 @@ import type Skill from "../../../utils/interfaces/skill";
 type SkillBadgeSummaryProps = {
   skills?: Skill[];
   className?: string;
+  showProgress?: boolean;
+  size?: "tiny" | "small";
 };
 
 const MAX_VISIBLE_BADGES = 2;
@@ -11,6 +13,8 @@ const MAX_VISIBLE_BADGES = 2;
 const SkillBadgeSummary = ({
   skills = [],
   className = "",
+  showProgress = false,
+  size = "tiny",
 }: SkillBadgeSummaryProps) => {
   if (skills.length === 0) return null;
 
@@ -18,10 +22,10 @@ const SkillBadgeSummary = ({
 
   return (
     <div
-      className={`flex shrink-0 justify-between items-start gap-1 ${className}`}
+      className={`flex shrink-0 items-start gap-2 ${className}`}
     >
       {skills.slice(0, MAX_VISIBLE_BADGES).map((skill) => (
-        <SkillBadge key={skill.id} skill={skill} size="small" />
+        <SkillBadge key={skill.id} skill={skill} size={size} showProgress={showProgress} />
       ))}
       {hiddenBadgeCount > 0 ? (
         <span

@@ -16,7 +16,7 @@ export default function ResourcesHeader({
         <PermissionGuard action="write" object="resource">
           <button
             type="button"
-            className="btn btn-primary btn-soft"
+            className="btn btn-outline btn-primary"
             onClick={onCreate}
           >
             <PlusCircle /> Créer une ressource

@@ -210,7 +210,7 @@ const UserHome = () => {
         tourSteps={usersPageTourSteps}
       >
         <PermissionGuard object="user" action="write">
-          <Link className="btn btn-primary btn-soft" to="/admin/user/add">
+          <Link className="btn btn-outline btn-primary" to="/admin/user/add">
             <PlusCircle className="mr-2 h-5 w-5" />
             Créer un utilisateur
           </Link>

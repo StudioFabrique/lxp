@@ -12,7 +12,8 @@ import { useStudentDashboard } from "../hooks/use-student-dashboard";
 import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
 import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { ChartNoAxesCombined } from "lucide-react";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -54,7 +55,12 @@ const StudentDashboard = () => {
             title={welcomeTitle}
             description={welcomeMessage}
             classname="capitalize"
-          />
+          >
+            <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
+              <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+              Mon avancement
+            </Link>
+          </Header>
         )}
       </div>
 

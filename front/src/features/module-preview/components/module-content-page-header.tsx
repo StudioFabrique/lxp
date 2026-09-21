@@ -27,7 +27,7 @@ export default function ModuleContentPageHeader({
       {canEditModule && (
         <PermissionGuard object="lesson" action="update">
           <Link
-            className="btn btn-primary gap-2 text-base-100"
+            className="btn btn-outline btn-primary gap-2"
             to={`/admin/parcours/edit/${module?.parcoursId}?step=4&moduleId=${module?.id}`}
           >
             <PenBox /> Modifier le module
