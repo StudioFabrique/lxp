@@ -16,12 +16,16 @@ const PreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
       <BoxWrapper>
         <span className="w-full flex justify-between items-center">
           <h2 className="text-xl font-bold">Objectifs du parcours</h2>
-          <div
-            className="w-6 h-6 text-primary cursor-pointer"
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm btn-square text-primary"
             onClick={() => props.onEdit(2)}
+            aria-label="Modifier les objectifs du parcours"
           >
-            <EditIcon />
-          </div>
+            <span className="size-5">
+              <EditIcon />
+            </span>
+          </button>
         </span>
         <ul className="flex flex-col gap-y-2">
           {objectives.map((objective) => (

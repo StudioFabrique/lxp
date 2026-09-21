@@ -8,11 +8,13 @@ import { userInGroupSearchOptions } from "../../../../../config/search-options";
 import RefreshIcon from "../../../../../../src/components/UI/svg/refresh-icon.component";
 import StudentsListTable from "./students-list-table";
 import type { StudentWithGroup } from "../../../hooks/useParcoursStudentsQuery";
-import { UserX } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+import { Link } from "react-router";
 
 interface StudentsListProps {
   initalList: StudentWithGroup[];
   groups: Group[];
+  parcoursId: number;
   onRemoveGroup: (groupId: string) => void;
 }
 
@@ -49,18 +51,6 @@ const StudentsList = (props: StudentsListProps) => {
     }
   };
 
-  const setStyle = (_id: string) => {
-    return _id === filter
-      ? "btn btn-sm btn-outline rounded-full btn-accent"
-      : "btn btn-sm btn-outline rounded-full btn-info";
-  };
-
-  const removeBtn = (
-    <button className="">
-      <UserX className="w-4 h-4" />
-    </button>
-  );
-
   const handleRemoveGroup = (_id: string) => {
     setFilter(null);
     props.onRemoveGroup(_id);
@@ -77,25 +67,54 @@ const StudentsList = (props: StudentsListProps) => {
 
   return (
     <>
-      <article className="w-full flex justify-between items-center">
-        <div className="flex items-center gap-x-2">
-          <h4 className="">Groupes :</h4>
-          <ul className="flex gap-x-2">
+      <article className="flex w-full flex-col gap-4">
+        <div>
+          <h4 className="mb-1.5 text-sm font-semibold">
+            Groupes d'apprenants
+          </h4>
+          <ul className="flex flex-wrap gap-1.5">
             {groups.map((group) => (
-              <li className={setStyle(group._id!)} key={group._id}>
-                <span className="flex items-center gap-x-4">
-                  <b onClick={() => handleFilterGroups(group._id!)}>
+              <li
+                className="flex min-w-0 items-center gap-1.5 rounded-md border border-base-300 bg-base-100 p-2"
+                key={group._id}
+              >
+                <button
+                  type="button"
+                  className={`btn btn-sm h-8 min-h-8 min-w-0 justify-start px-2.5 normal-case ${
+                    group._id === filter ? "btn-accent" : "btn-ghost"
+                  }`}
+                  aria-pressed={group._id === filter}
+                  title="Filtrer les apprenants de ce groupe"
+                  onClick={() => handleFilterGroups(group._id!)}
+                >
+                  <span className="truncate text-left font-semibold capitalize">
                     {group.name}
-                  </b>
-                  <div onClick={() => handleRemoveGroup(group._id!)}>
-                    {removeBtn}
-                  </div>
-                </span>
+                  </span>
+                </button>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Link
+                    to={`/admin/group/edit/${group._id}?parcours=${props.parcoursId}`}
+                    className="btn btn-sm btn-ghost h-8 min-h-8 gap-1.5 whitespace-nowrap px-2.5 text-primary"
+                    aria-label={`Modifier le groupe ${group.name}`}
+                  >
+                    <Pencil className="size-4" />
+                    Modifier
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-ghost h-8 min-h-8 gap-1.5 whitespace-nowrap px-2.5 text-error"
+                    aria-label={`Détacher le groupe ${group.name}`}
+                    onClick={() => handleRemoveGroup(group._id!)}
+                  >
+                    <Trash2 className="size-4" />
+                    Détacher
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         </div>
-        <div className="flex gap-x-2 items-center">
+        <div className="flex items-center justify-end gap-x-2">
           <Search options={userInGroupSearchOptions} onSearch={handleSearch} />
           <div
             className="text-primary cursor-pointer"
@@ -137,7 +156,11 @@ const StudentsList = (props: StudentsListProps) => {
           </article>
         </>
       ) : (
-        <p>Les groupes choisis sont vides.</p>
+        <p className="py-6 text-center text-sm text-base-content/60">
+          {filter
+            ? "Aucun apprenant n’est rattaché à ce groupe."
+            : "Aucun apprenant n’est actuellement rattaché aux groupes sélectionnés."}
+        </p>
       )}
     </>
   );

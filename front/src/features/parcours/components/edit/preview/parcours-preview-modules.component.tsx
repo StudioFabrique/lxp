@@ -38,11 +38,13 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
         </h2>
         <button
           type="button"
-          className="w-6 h-6 text-primary cursor-pointer"
+          className="btn btn-ghost btn-sm btn-square text-primary"
           onClick={handleEditModules}
           aria-label="Modifier la liste des modules"
         >
-          <EditIcon />
+          <span className="size-5">
+            <EditIcon />
+          </span>
         </button>
       </span>
       <section className="grid items-start gap-5 lg:grid-cols-2 xl:grid-cols-3">

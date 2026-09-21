@@ -39,11 +39,13 @@ export function SingleChoiceCards<T extends string>({
   options,
   value,
   onChange,
+  compact = false,
 }: {
   name: string;
   options: SingleOption<T>[];
   value: T | null;
   onChange: (value: T) => void;
+  compact?: boolean;
 }) {
   return (
     <div
@@ -57,7 +59,8 @@ export function SingleChoiceCards<T extends string>({
           <label
             key={option.value}
             className={cn(
-              "relative cursor-pointer rounded-xl border p-4 transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+              "relative cursor-pointer rounded-xl border transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+              compact ? "p-3" : "p-4",
               selected
                 ? "border-primary bg-primary/10"
                 : "border-base-300 hover:border-primary/50",
@@ -117,7 +120,7 @@ export function PreferenceCards({
           <label
             key={option.value}
             className={cn(
-              "flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+              "flex min-h-20 cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
               selected ? "border-primary bg-primary/10" : "border-base-300",
             )}
           >
@@ -136,7 +139,7 @@ export function PreferenceCards({
             <span className="font-semibold">{option.label}</span>
             <span
               className={cn(
-                "flex size-6 items-center justify-center rounded border",
+                  "flex size-6 shrink-0 items-center justify-center rounded border",
                 selected
                   ? "border-primary bg-primary text-primary-content"
                   : "border-base-300",

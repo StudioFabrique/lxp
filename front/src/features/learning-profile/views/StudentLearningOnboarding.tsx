@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Loader from "../../../components/loaders/Loader";
-import Stepper from "../../../components/UI/stepper-component/stepper-component";
+import TagItem from "../../../components/UI/tag-item/tag-item";
 import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
+import { ThemeContext } from "../../../store/ThemeProvider";
 import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
 import { profileApi } from "../../profile/api/profile.api";
+import { themeLabels } from "../../../config/themes";
 import type Hobby from "../../user/interfaces/hobby";
 import type { Link } from "../../user/interfaces/link";
-import {
-  LearningChoiceCardsPlaceholder,
-} from "../views/onboarding-placeholder";
+import { LearningChoiceCardsPlaceholder } from "../views/onboarding-placeholder";
 import {
   levelOptions,
   paceOptions,
@@ -32,14 +32,19 @@ import type {
 type OnboardingStep = {
   key: string;
   label: string;
-  kind: "intro" | "pace" | "preferences" | "formation" | "profile" | "summary";
+  kind: "pace" | "preferences" | "formation" | "profile" | "theme" | "summary";
   formationId?: number;
 };
 
 export default function StudentLearningOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: learningProfileKey, queryFn: learningProfileApi.get });
+  const { chooseTheme, availableLightThemes, availableDarkThemes } =
+    useContext(ThemeContext);
+  const query = useQuery({
+    queryKey: learningProfileKey,
+    queryFn: learningProfileApi.get,
+  });
   const context = query.data;
   const [index, setIndex] = useState(0);
   const [pace, setPace] = useState<LearningPace | null>(null);
@@ -49,30 +54,53 @@ export default function StudentLearningOnboarding() {
   const [started, setStarted] = useState(false);
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
-  const [profileInformation, setProfileInformation] = useState<Record<string, unknown> | null>(null);
+  const [profileInformation, setProfileInformation] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
   const [profileItemsChanged, setProfileItemsChanged] = useState(false);
+  const [selectedThemes, setSelectedThemes] = useState(() => ({
+    light: localStorage.getItem("lightTheme") ?? "classic",
+    dark: localStorage.getItem("darkTheme") ?? "classic-dark",
+  }));
   const reduceMotion = useReducedMotion();
 
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
-    const formation = context.formationsToAssess[0] ?? context.availableFormations[0];
+    const formation =
+      context.formationsToAssess[0] ?? context.availableFormations[0];
     if (!formation) return [];
-    return [
-      { key: "intro", label: "Bienvenue", kind: "intro" },
+    const onboardingSteps: OnboardingStep[] = [];
+
+    if (context.onboardingMode === "initial") {
+      onboardingSteps.push({ key: "theme", label: "Apparence", kind: "theme" });
+    }
+
+    onboardingSteps.push(
       { key: "pace", label: "Rythme", kind: "pace" },
       { key: "preferences", label: "Préférences", kind: "preferences" },
-      { key: `formation:${formation.id}`, label: "Votre niveau", kind: "formation", formationId: formation.id },
+      {
+        key: `formation:${formation.id}`,
+        label: "Votre niveau",
+        kind: "formation",
+        formationId: formation.id,
+      },
       { key: "profile", label: "À propos de vous", kind: "profile" },
-      { key: "summary", label: "Terminé", kind: "summary" },
-    ];
+    );
+
+    onboardingSteps.push({ key: "summary", label: "Terminé", kind: "summary" });
+    return onboardingSteps;
   }, [context]);
 
   useEffect(() => {
-    profileApi.queries.getInformation().then(({ data }) => {
-      setProfileInformation(data);
-      setHobbies(data.hobbies ?? []);
-      setLinks(data.links ?? []);
-    }).catch(() => undefined);
+    profileApi.queries
+      .getInformation()
+      .then(({ data }) => {
+        setProfileInformation(data);
+        setHobbies(data.hobbies ?? []);
+        setLinks(data.links ?? []);
+      })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -104,20 +132,25 @@ export default function StudentLearningOnboarding() {
       <AuthPageWrapper title="Personnalisons votre parcours">
         <div className="py-12 text-center">
           <p>Impossible de charger votre profil d’apprentissage.</p>
-          <button className="btn btn-primary mt-4" onClick={() => void query.refetch()}>
+          <button
+            className="btn btn-primary mt-4"
+            onClick={() => void query.refetch()}
+          >
             Réessayer
           </button>
         </div>
       </AuthPageWrapper>
     );
   }
-  if (!context?.hasAvailableContent) return <Navigate to="/student/dashboard" replace />;
+  if (!context?.hasAvailableContent)
+    return <Navigate to="/student/dashboard" replace />;
   if (!context.onboardingRequired || steps.length === 0) {
     return <Navigate to="/student/dashboard" replace />;
   }
 
   const step = steps[index]!;
-  const formation = context.formationsToAssess[0] ?? context.availableFormations[0];
+  const formation =
+    context.formationsToAssess[0] ?? context.availableFormations[0];
 
   const continueToNext = async () => {
     if (step.kind === "pace" && !pace) {
@@ -128,24 +161,40 @@ export default function StudentLearningOnboarding() {
       toast.error("Choisissez au moins une préférence.");
       return;
     }
-    if (step.kind === "formation" && step.formationId && !levels[step.formationId]) {
+    if (
+      step.kind === "formation" &&
+      step.formationId &&
+      !levels[step.formationId]
+    ) {
       toast.error("Choisissez un niveau pour continuer.");
       return;
     }
 
     setSaving(true);
     try {
-      if (step.kind === "pace" && pace) await learningProfileApi.update({ pace });
-      if (step.kind === "preferences") await learningProfileApi.update({ preferences });
+      if (step.kind === "pace" && pace)
+        await learningProfileApi.update({ pace });
+      if (step.kind === "preferences")
+        await learningProfileApi.update({ preferences });
       if (step.kind === "formation" && step.formationId) {
-        await learningProfileApi.updateFormation(step.formationId, levels[step.formationId]!);
+        await learningProfileApi.updateFormation(
+          step.formationId,
+          levels[step.formationId]!,
+        );
       }
       const next = steps[index + 1];
-      if (step.kind === "profile" && profileItemsChanged && profileInformation) {
+      if (
+        step.kind === "profile" &&
+        profileItemsChanged &&
+        profileInformation
+      ) {
         const payload = new FormData();
-        payload.append("data", JSON.stringify({
-          user: { ...profileInformation, hobbies, links },
-        }));
+        payload.append(
+          "data",
+          JSON.stringify({
+            user: { ...profileInformation, hobbies, links },
+          }),
+        );
         await profileApi.mutations.updateInformation(payload);
         setProfileItemsChanged(false);
       }
@@ -175,92 +224,217 @@ export default function StudentLearningOnboarding() {
   };
 
   return (
-    <AuthPageWrapper
-      title="Personnalisons votre parcours"
-      description="Quelques repères simples pour adapter votre expérience. Vous pourrez les modifier plus tard."
-    >
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-1">
-        <Stepper
-          actualStep={{ id: index + 1, label: step.label, saved: false, isValid: true }}
-          stepsList={steps.map((item, stepIndex) => ({
-            id: stepIndex + 1,
-            label: item.label,
-            saved: stepIndex < index,
-            isValid: true,
-          }))}
-          updateStep={(id) => id <= index + 1 && setIndex(id - 1)}
-          disabled={saving}
-        />
+    <section className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col gap-3 px-1 pt-8 pb-[9px]">
+      {formation?.parcours[0] ? (
+        <header className="px-5 py-3 sm:px-6">
+          <h2 className="mt-1 text-2xl font-extrabold leading-tight text-primary first-letter:uppercase sm:text-3xl">
+            {formation.parcours[0].title}
+          </h2>
+          <p className="mt-1.5 text-sm font-medium text-base-content/65 first-letter:uppercase">
+            {formation.title}
+          </p>
+        </header>
+      ) : null}
 
-        <AnimatePresence mode="wait" initial={false}>
-        <motion.section key={step.key} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }} transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }} className="w-full rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm sm:p-7">
-          {formation?.parcours[0] && step.kind !== "intro" ? (
-            <div className="mb-6 rounded-xl bg-primary/10 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours</p>
-              <p className="mt-0.5 text-lg font-bold first-letter:uppercase">{formation.parcours[0].title}</p>
-            </div>
-          ) : null}
-          {step.kind === "intro" ? (
-            <div className="space-y-5">
-              <h1 className="text-2xl font-bold">Bienvenue dans votre parcours</h1>
-              <p>Nous allons nous concentrer uniquement sur ce parcours pour garder cette étape courte et utile.</p>
-              {formation?.parcours[0] && <div className="rounded-xl border border-primary/30 bg-primary/10 p-5"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours</p><h2 className="mt-1 text-2xl font-bold first-letter:uppercase">{formation.parcours[0].title}</h2><p className="mt-1 text-sm text-base-content/70 first-letter:uppercase">{formation.title}</p></div>}
-            </div>
-          ) : null}
-
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.section
+          key={step.key}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }}
+          transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }}
+          className={`flex min-h-0 w-full flex-1 flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm ${step.kind === "formation" ? "sm:p-5" : "sm:p-7"}`}
+        >
           {step.kind === "pace" ? (
             <div className="space-y-5">
-              <h1 className="text-2xl font-bold">Quel rythme préférez-vous ?</h1>
-              <p className="text-sm text-base-content/65">Choisissez la proposition qui vous convient. Vous pourrez la modifier plus tard.</p>
-              <SingleChoiceCards name="pace" options={paceOptions} value={pace} onChange={setPace} />
+              <h1 className="text-2xl font-bold">
+                Quel rythme préférez-vous ?
+              </h1>
+              <p className="text-sm text-base-content/65">
+                Choisissez la proposition qui vous convient. Vous pourrez la
+                modifier plus tard.
+              </p>
+              <SingleChoiceCards
+                name="pace"
+                options={paceOptions}
+                value={pace}
+                onChange={setPace}
+              />
             </div>
           ) : null}
 
           {step.kind === "preferences" ? (
             <div className="space-y-5">
-              <h1 className="text-2xl font-bold">Comment aimez-vous apprendre ?</h1>
-              <p className="text-sm text-base-content/70">Sélectionnez au moins une préférence. Les mots clés ci-dessous vous aident à choisir comment aborder les contenus.</p>
+              <h1 className="text-2xl font-bold">
+                Comment aimez-vous apprendre ?
+              </h1>
+              <p className="text-sm text-base-content/70">
+                Sélectionnez au moins une préférence. Les mots clés ci-dessous
+                vous aident à choisir comment aborder les contenus.
+              </p>
               <PreferenceCards value={preferences} onChange={setPreferences} />
             </div>
           ) : null}
 
           {step.kind === "formation" && formation ? (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div>
-                <h1 className="text-2xl font-bold">Quel est votre niveau actuel ?</h1>
-                <p className="mt-2 text-sm text-base-content/65">Appuyez-vous sur ces exemples tirés du parcours pour vous situer.</p>
+                <h1 className="text-2xl font-bold">
+                  Quel est votre niveau actuel ?
+                </h1>
+                <p className="mt-1 text-sm text-base-content/65">
+                  Appuyez-vous sur ces exemples tirés du parcours pour vous
+                  situer.
+                </p>
               </div>
-              {formation.parcours[0]?.tags.length ? <div><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-base-content/55">Notions abordées</p><div className="flex flex-wrap gap-2">{formation.parcours[0].tags.map((tag) => <span key={tag} className="badge badge-outline">{tag}</span>)}</div></div> : null}
-              {formation.parcours[0]?.contentSamples.length ? <div className="rounded-xl border border-base-300 bg-base-200/60 p-4"><p className="mb-2 text-sm font-semibold">Exemples de contenus</p><ul className="space-y-2 text-sm">{formation.parcours[0].contentSamples.map((sample) => <li key={`${sample.type}-${sample.title}`} className="flex gap-2"><span className="text-primary">•</span><span>{sample.title} <span className="text-base-content/50">({sample.type === "module" ? "module" : "cours"})</span></span></li>)}</ul></div> : null}
+              {formation.parcours[0]?.tags.length ? (
+                <div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {formation.parcours[0].tags.slice(0, 4).map((tag) => (
+                      <TagItem key={tag.id} tag={tag} noIcon />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {formation.parcours[0]?.contentSamples.length ? (
+                <div>
+                  <p className="mb-1 text-sm font-semibold">
+                    Exemples de contenus
+                  </p>
+                  <ul className="space-y-1 text-sm leading-5">
+                    {formation.parcours[0].contentSamples.map((sample) => (
+                      <li
+                        key={`${sample.type}-${sample.title}`}
+                        className="flex gap-2"
+                      >
+                        <span className="text-primary">•</span>
+                        <span>
+                          <span>
+                            {sample.title.charAt(0).toLocaleUpperCase("fr-FR") +
+                              sample.title.slice(1)}
+                          </span>{" "}
+                          <span className="text-base-content/50">
+                            ({sample.type === "module" ? "module" : "cours"})
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
               <SingleChoiceCards
                 name={`level-${formation.id}`}
                 options={levelOptions}
                 value={levels[formation.id] ?? null}
-                onChange={(level) => setLevels((current) => ({ ...current, [formation.id]: level }))}
+                onChange={(level) =>
+                  setLevels((current) => ({
+                    ...current,
+                    [formation.id]: level,
+                  }))
+                }
+                compact
               />
             </div>
           ) : null}
 
           {step.kind === "profile" ? (
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold">Souhaitez-vous en dire un peu plus ?</h1>
-              <p className="text-sm text-base-content/65">Cette étape est entièrement facultative. Vous pouvez la passer sans rien renseigner.</p>
-              <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); setProfileItemsChanged(true); }} onLinksChange={(items) => { setLinks(items); setProfileItemsChanged(true); }} />
+              <h1 className="text-2xl font-bold">
+                Souhaitez-vous en dire un peu plus ?
+              </h1>
+              <p className="text-sm text-base-content/65">
+                Cette étape est entièrement facultative. Vous pouvez la passer
+                sans rien renseigner.
+              </p>
+              <ProfileItemsEditor
+                hobbies={hobbies}
+                links={links}
+                onHobbiesChange={(items) => {
+                  setHobbies(items);
+                  setProfileItemsChanged(true);
+                }}
+                onLinksChange={(items) => {
+                  setLinks(items);
+                  setProfileItemsChanged(true);
+                }}
+              />
+            </div>
+          ) : null}
+
+          {step.kind === "theme" ? (
+            <div className="space-y-4">
+              <div>
+                <h1 className="text-2xl font-bold">
+                  Choisissez votre ambiance
+                </h1>
+                <p className="mt-2 text-sm text-base-content/65">
+                  Personnalisez les modes clair et sombre. Vous pourrez toujours
+                  les modifier depuis votre profil.
+                </p>
+              </div>
+              {(
+                [
+                  ["light", "Thèmes clairs", availableLightThemes],
+                  ["dark", "Thèmes sombres", availableDarkThemes],
+                ] as const
+              ).map(([mode, label, themeList]) => (
+                <section key={mode}>
+                  <h2 className="mb-2 text-sm font-bold">{label}</h2>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {themeList.map((themeName) => {
+                      const selected = selectedThemes[mode] === themeName;
+                      return (
+                        <button
+                          key={themeName}
+                          type="button"
+                          data-theme={themeName}
+                          aria-pressed={selected}
+                          onClick={() => {
+                            chooseTheme(themeName, mode);
+                            setSelectedThemes((current) => ({
+                              ...current,
+                              [mode]: themeName,
+                            }));
+                          }}
+                          className={`group flex min-w-0 items-center gap-2 rounded-xl border bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5 ${selected ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
+                        >
+                          <span className="flex size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
+                            <span className="h-full w-1/2 bg-primary" />
+                            <span className="h-full w-1/2 bg-secondary" />
+                          </span>
+                          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-base-content">
+                            {themeLabels[themeName] ?? themeName}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
           ) : null}
 
           {step.kind === "summary" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Votre profil est prêt</h1>
-              <p>Confirmez vos réponses. Vous pourrez les modifier à tout moment depuis Mon avancement.</p>
+              <p>
+                Confirmez vos réponses. Vous pourrez les modifier à tout moment
+                depuis Mon avancement.
+              </p>
               <div className="rounded-xl bg-base-200 p-4 text-sm">
-                <p><strong>Parcours :</strong> {formation?.parcours[0]?.title}</p>
-                <p className="mt-2"><strong>Préférences choisies :</strong> {preferences.length}</p>
+                <p>
+                  <strong>Parcours :</strong> {formation?.parcours[0]?.title}
+                </p>
+                <p className="mt-2">
+                  <strong>Préférences choisies :</strong> {preferences.length}
+                </p>
               </div>
             </div>
           ) : null}
 
-          <div className="mt-8 flex justify-between gap-3 border-t border-base-300 pt-5">
+          <div
+            className={`mt-auto flex justify-between gap-3 border-t border-base-300 ${step.kind === "formation" ? "pt-4" : "pt-5"}`}
+          >
             <button
               type="button"
               className="btn btn-ghost"
@@ -270,18 +444,27 @@ export default function StudentLearningOnboarding() {
               Précédent
             </button>
             {step.kind === "summary" ? (
-              <button type="button" className="btn btn-primary" disabled={saving} onClick={() => void confirm()}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={saving}
+                onClick={() => void confirm()}
+              >
                 {saving ? <Loader /> : "Confirmer"}
               </button>
             ) : (
-              <button type="button" className="btn btn-primary" disabled={saving} onClick={() => void continueToNext()}>
-                {step.kind === "profile" ? "Passer ou continuer" : "Continuer"}
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={saving}
+                onClick={() => void continueToNext()}
+              >
+                Continuer
               </button>
             )}
           </div>
         </motion.section>
-        </AnimatePresence>
-      </div>
-    </AuthPageWrapper>
+      </AnimatePresence>
+    </section>
   );
 }

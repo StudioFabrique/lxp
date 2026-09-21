@@ -23,7 +23,7 @@ export type LearningFormation = {
   parcours: Array<{
     id: number;
     title: string;
-    tags: string[];
+    tags: Array<{ id: number; name: string; color: string }>;
     contentSamples: Array<{ title: string; type: "module" | "course" }>;
   }>;
   assessment: { level: FormationLevel; updatedAt: string } | null;

@@ -27,12 +27,16 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
       <div className="flex flex-col gap-y-8">
         <span className="w-full flex justify-between items-center">
           <h2 className="text-xl font-bold">Informations</h2>
-          <div
-            className="w-6 h-6 text-primary cursor-pointer"
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm btn-square text-primary"
             onClick={() => props.onEdit(1)}
+            aria-label="Modifier les informations du parcours"
           >
-            <EditIcon />
-          </div>
+            <span className="size-5">
+              <EditIcon />
+            </span>
+          </button>
         </span>
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Colonne #1 */}

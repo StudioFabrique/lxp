@@ -46,17 +46,17 @@ const StudentDashboard = () => {
 
   return (
     <PageWrapper>
-      {showOnboardingWelcome ? (
-        <div data-onboarding="student-dashboard-header">
+      <div data-onboarding="student-dashboard-header">
+        {showOnboardingWelcome ? (
           <OnboardingWelcome layout="student" />
-        </div>
-      ) : (
-        <Header
-          title={welcomeTitle}
-          description={welcomeMessage}
-          classname="capitalize"
-        />
-      )}
+        ) : (
+          <Header
+            title={welcomeTitle}
+            description={welcomeMessage}
+            classname="capitalize"
+          />
+        )}
+      </div>
 
       {learningContext.isError ? (
         <BoxWrapper className="min-h-[50vh] items-center justify-center text-center">

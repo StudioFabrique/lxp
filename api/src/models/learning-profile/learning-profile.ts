@@ -35,7 +35,7 @@ export type AvailableFormation = {
   parcours: Array<{
     id: number;
     title: string;
-    tags: string[];
+    tags: Array<{ id: number; name: string; color: string }>;
     contentSamples: Array<{ title: string; type: "module" | "course" }>;
   }>;
 };
@@ -68,7 +68,7 @@ export async function resolveAvailableFormations(
     .select("id", "title", "formationId")
     .include("formation", (formation) => formation.select("id", "title"))
     .include("tags", (tags) =>
-      tags.include("tag", (tag) => tag.select("name")),
+      tags.include("tag", (tag) => tag.select("id", "name", "color")),
     )
     .include("modules", (modules) =>
       modules
@@ -105,8 +105,11 @@ export async function resolveAvailableFormations(
       id: item.id,
       title: item.title,
       tags: item.tags
-        .map((link) => link.tag?.name)
-        .filter((name): name is string => Boolean(name)),
+        .map((link) => link.tag)
+        .filter(
+          (tag): tag is { id: number; name: string; color: string } =>
+            Boolean(tag),
+        ),
       contentSamples,
     });
     byFormation.set(formation.id, existing);

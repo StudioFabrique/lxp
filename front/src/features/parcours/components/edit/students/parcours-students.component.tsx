@@ -126,6 +126,7 @@ const ParcoursStudents = () => {
               <StudentsList
                 initalList={students}
                 groups={groups}
+                parcoursId={parcoursId}
                 onRemoveGroup={(groupId) =>
                   setDraftGroups(
                     groups.filter((group) => group._id !== groupId),
