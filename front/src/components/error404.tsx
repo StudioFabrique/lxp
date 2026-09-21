@@ -1,13 +1,16 @@
 import { Link } from "react-router";
+import EmptyStatePlaceholder from "./UI/empty-state-placeholder";
 
 const Error404 = () => {
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-y-4 mt-32">
-      <h1 className="text-5xl">Erreur 404</h1>
-      <Link className="underline text-sm" to="..">
-        Retour
+    <EmptyStatePlaceholder title="Parcours introuvable" withBorder={false}>
+      <p className="text-center text-base-content/70">
+        Ce parcours n’existe pas ou n’est plus disponible.
+      </p>
+      <Link className="btn btn-primary" to="..">
+        Voir les parcours
       </Link>
-    </div>
+    </EmptyStatePlaceholder>
   );
 };
 

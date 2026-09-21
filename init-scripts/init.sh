@@ -271,4 +271,22 @@ elif [ "$restore_data" = true ]; then
 else
   echo -e "\033[0;32mConfiguration du projet ANDRIA terminée avec succès.\033[0m"
 fi
-echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
+cd ..
+if [ ! -t 0 ]; then
+  echo -e "\033[30;47m Prochaine étape => Lancer la commande \`npm run dev\` à la racine du projet. \033[0m"
+  exit 0
+fi
+
+while true; do
+  read -r -p "Lancer npm run dev maintenant ? [o/N] : " start_dev
+  case "$start_dev" in
+    o|O|oui|Oui|OUI|y|Y|yes|YES)
+      exec npm run dev
+      ;;
+    ""|n|N|non|Non|NON|no|NO)
+      echo "Vous pouvez lancer npm run dev plus tard à la racine du projet."
+      break
+      ;;
+    *) echo "Répondez par oui ou non." ;;
+  esac
+done
