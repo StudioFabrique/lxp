@@ -18,6 +18,8 @@ import {
   levelOptions,
   paceOptions,
   preferenceOptions,
+} from "../learning-choice-options";
+import {
   PreferenceCards,
   SingleChoiceCards,
 } from "../LearningChoiceCards";

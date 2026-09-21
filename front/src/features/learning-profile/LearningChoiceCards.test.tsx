@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 import {
   levelOptions,
   paceOptions,
+} from "./learning-choice-options";
+import {
   PreferenceCards,
   SingleChoiceCards,
 } from "./LearningChoiceCards";

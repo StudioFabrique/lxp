@@ -1,8 +1,8 @@
 import { sortArray } from "../../../utils/helpers/sort-array";
+import type Lesson from "../../../utils/interfaces/lesson";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function courseScenarioFromHttp(data: any) {
-  const updatedData: any = {
+export default function courseScenarioFromHttp(data: { lessons: Lesson[]; scenario: boolean }) {
+  const updatedData = {
     lessons: sortArray(data.lessons, "order"),
     scenario: data.scenario,
   };

@@ -5,7 +5,7 @@ import {
   levelOptions,
   paceOptions,
   preferenceOptions,
-} from "../../../learning-profile/LearningChoiceCards";
+} from "../../../learning-profile/learning-choice-options";
 
 type DeclaredProfile = {
   profile: LearningContext["profile"];

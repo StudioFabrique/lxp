@@ -3,7 +3,8 @@ import { createPortal } from "react-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
-import { levelOptions, paceOptions, PreferenceCards, SingleChoiceCards } from "../../learning-profile/LearningChoiceCards";
+import { levelOptions, paceOptions } from "../../learning-profile/learning-choice-options";
+import { PreferenceCards, SingleChoiceCards } from "../../learning-profile/LearningChoiceCards";
 import { learningProfileApi, learningProfileKey } from "../../learning-profile/learning-profile.api";
 import type { FormationLevel, LearningPace, LearningPreference } from "../../learning-profile/types";
 
