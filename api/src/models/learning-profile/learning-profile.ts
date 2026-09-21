@@ -32,7 +32,12 @@ export type FormationLevel = (typeof FORMATION_LEVELS)[number];
 export type AvailableFormation = {
   id: number;
   title: string;
-  parcours: Array<{ id: number; title: string }>;
+  parcours: Array<{
+    id: number;
+    title: string;
+    tags: string[];
+    contentSamples: Array<{ title: string; type: "module" | "course" }>;
+  }>;
 };
 
 export async function resolveAvailableFormations(
@@ -62,6 +67,19 @@ export async function resolveAvailableFormations(
   )
     .select("id", "title", "formationId")
     .include("formation", (formation) => formation.select("id", "title"))
+    .include("tags", (tags) =>
+      tags.include("tag", (tag) => tag.select("name")),
+    )
+    .include("modules", (modules) =>
+      modules
+        .select("title")
+        .include("courses", (courses) =>
+          courses
+            .where({ isPublished: true, visibility: true })
+            .select("title")
+            .orderBy((course) => course.order.asc()),
+        ),
+    )
     .orderBy((row) => row.title.asc())
     .all();
 
@@ -73,7 +91,24 @@ export async function resolveAvailableFormations(
       title: formation.title,
       parcours: [],
     };
-    existing.parcours.push({ id: item.id, title: item.title });
+    const contentSamples = item.modules
+      .flatMap((module) => [
+        { title: module.title, type: "module" as const },
+        ...module.courses.map((course) => ({
+          title: course.title,
+          type: "course" as const,
+        })),
+      ])
+      .filter((sample) => sample.title.trim().length > 0)
+      .slice(0, 4);
+    existing.parcours.push({
+      id: item.id,
+      title: item.title,
+      tags: item.tags
+        .map((link) => link.tag?.name)
+        .filter((name): name is string => Boolean(name)),
+      contentSamples,
+    });
     byFormation.set(formation.id, existing);
   }
 
@@ -128,10 +163,13 @@ export async function getLearningContext(userIdMdb: string) {
   const hasGlobalAnswers = Boolean(
     profile?.pace && profile.preferences.length > 0,
   );
+  const initialCompleted = Boolean(profile?.initialCompletedAt);
+  // L'onboarding initial porte volontairement sur un seul parcours. Les autres
+  // niveaux restent disponibles dans le profil sans imposer un nouveau tunnel.
   const onboardingRequired =
     formations.length > 0 &&
-    (!hasGlobalAnswers || formationsToAssess.length > 0);
-  const initialCompleted = Boolean(profile?.initialCompletedAt);
+    !initialCompleted &&
+    (!hasGlobalAnswers || assessments.length === 0);
 
   return {
     hasAvailableContent: formations.length > 0,
@@ -179,8 +217,10 @@ export async function updateLearningProfile(
 
   if (input.action === "confirm") {
     const context = await getLearningContext(userIdMdb);
-    const missingAfterUpdate = context.formationsToAssess.length > 0;
-    if (!pace || preferences.length === 0 || missingAfterUpdate) {
+    const hasAssessment = context.availableFormations.some(
+      (formation) => formation.assessment,
+    );
+    if (!pace || preferences.length === 0 || !hasAssessment) {
       throw {
         statusCode: 400,
         message: "Complétez toutes les réponses requises avant de confirmer.",

@@ -2,6 +2,7 @@ import { PropsWithChildren, useMemo, useState, type MouseEvent } from "react";
 import { CircleHelp } from "lucide-react";
 import { EVENTS, Joyride, type Step } from "react-joyride";
 import { cn } from "../../utils/cn";
+import { formatTitle } from "../../utils/helpers/text-helpers";
 import BoxWrapper from "../wrappers/BoxWrapper";
 import SidebarRouteIcon from "./SidebarRouteIcon";
 import PageTourTooltip from "./PageTourTooltip";
@@ -75,7 +76,7 @@ const PageHeader = (props: PropsWithChildren<Props>) => {
               props.classname,
             )}
           >
-            {props.title}
+            {formatTitle(props.title)}
           </h2>
           <p
             className={cn(

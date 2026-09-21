@@ -6,6 +6,7 @@ import defaultImage from "../assets/books.jpeg";
 import { Eye } from "lucide-react";
 import Parcours from "../../../utils/interfaces/parcours";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 interface ParcoursItemProps {
   parcours: Parcours;
@@ -45,7 +46,7 @@ export default function ParcoursItem({ parcours }: ParcoursItemProps) {
           <span className="flex gap-x-2 items-center">
             <div>
               <h1 className="text-xl text-white capitalize">
-                {parcours.title}
+                {formatTitle(parcours.title)}
               </h1>
             </div>
           </span>

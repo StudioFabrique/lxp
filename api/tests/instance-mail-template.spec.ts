@@ -15,6 +15,7 @@ describe("identité de l’instance dans les e-mails", () => {
 
     expect(html).toContain('src="cid:instance-logo"');
     expect(html).toContain('bgcolor="#123456"');
+    expect(html).toContain('bgcolor="#eaf2f8"');
     expect(html).toContain('bgcolor="#f8fbff"');
     expect(html).toContain('bgcolor="#f8fbff" style="padding:0;background-color:#f8fbff');
     expect(html).toContain("border-top:1px solid #e6eaee;border-radius:18px 18px 0 0");

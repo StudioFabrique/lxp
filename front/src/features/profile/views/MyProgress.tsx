@@ -77,7 +77,7 @@ export default function MyProgress() {
                           <div className="mb-3 flex items-start justify-between gap-3">
                             <Link
                               to={`/${space}/parcours/module/${module.id}`}
-                              className="font-medium hover:underline"
+                              className="font-medium hover:underline first-letter:uppercase"
                             >
                               {module.title}
                             </Link>

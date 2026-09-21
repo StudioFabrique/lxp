@@ -27,6 +27,12 @@ export const authRoutes: RouteObject[] = [
         lazy: lazyRoute(() => import("./views/InstanceSetup")),
       },
       {
+        path: "/student/onboarding",
+        lazy: lazyRoute(
+          () => import("../learning-profile/views/StudentLearningOnboarding"),
+        ),
+      },
+      {
         path: "/register",
         lazy: lazyRoute(() => import("./views/Register")),
       },

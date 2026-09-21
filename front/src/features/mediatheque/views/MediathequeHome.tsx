@@ -106,10 +106,10 @@ function MediathequeHomePage() {
             key={mediaType.type}
             type="button"
             aria-pressed={type === mediaType.type}
-            className={`badge badge-lg h-9 cursor-pointer gap-2 px-4 transition-colors ${
+            className={`btn btn-sm cursor-pointer gap-2 ${
               type === mediaType.type
-                ? "badge-primary bg-primary text-primary-content"
-                : "badge-outline hover:badge-primary"
+                ? "btn-primary"
+                : "btn-outline"
             }`}
             onClick={() => setType(mediaType.type)}
           >

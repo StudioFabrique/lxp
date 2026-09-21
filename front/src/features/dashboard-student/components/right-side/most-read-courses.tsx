@@ -29,7 +29,7 @@ const MostReadCourses = () => {
           >
             <div className="flex flex-col w-[70%]">
               <span data-tip={`${course.title}`} className="tooltip flex">
-                <p className="font-semibold truncate">{course.title}</p>
+                <p className="font-semibold truncate first-letter:uppercase">{course.title}</p>
               </span>
               <span
                 data-tip={`${course.module.title}`}

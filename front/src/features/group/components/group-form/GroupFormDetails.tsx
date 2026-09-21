@@ -5,6 +5,7 @@ import BoxWrapper from "../../../../../src/components/wrappers/BoxWrapper";
 import { ExternalLink } from "lucide-react";
 import { groupApi } from "../../api/group.api";
 import type { GroupFormValues } from "../../group.schema";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 
 const GroupFormDetails = () => {
   const {
@@ -62,7 +63,7 @@ const GroupFormDetails = () => {
               </option>
               {formations.map((formation) => (
                 <option key={formation.id} value={formation.id}>
-                  {formation.title}
+                  {formatTitle(formation.title)}
                 </option>
               ))}
             </select>
@@ -92,7 +93,7 @@ const GroupFormDetails = () => {
               </option>
               {parcoursList.map((parcours) => (
                 <option key={parcours.id} value={parcours.id}>
-                  {parcours.title}
+                  {formatTitle(parcours.title)}
                 </option>
               ))}
             </select>
@@ -110,7 +111,7 @@ const GroupFormDetails = () => {
               <p className="text-xs text-base-content/60">
                 Parcours sélectionné
               </p>
-              <p className="font-semibold">{selectedParcours.title}</p>
+              <p className="font-semibold">{formatTitle(selectedParcours.title)}</p>
             </div>
             <a
               href={`/admin/parcours/view/${selectedParcours.id}`}

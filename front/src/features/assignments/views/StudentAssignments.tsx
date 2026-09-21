@@ -59,10 +59,10 @@ export default function StudentAssignments() {
         <button
           type="button"
           className={cn(
-            "badge cursor-pointer transition-colors",
+            "btn btn-sm cursor-pointer",
             period === "upcoming"
-              ? "badge-primary"
-              : "badge-outline hover:badge-primary",
+              ? "btn-primary"
+              : "btn-outline",
           )}
           aria-pressed={period === "upcoming"}
           onClick={() => setPeriod("upcoming")}
@@ -72,10 +72,10 @@ export default function StudentAssignments() {
         <button
           type="button"
           className={cn(
-            "badge cursor-pointer transition-colors",
+            "btn btn-sm cursor-pointer",
             period === "past"
-              ? "badge-primary"
-              : "badge-outline hover:badge-primary",
+              ? "btn-primary"
+              : "btn-outline",
           )}
           aria-pressed={period === "past"}
           onClick={() => setPeriod("past")}

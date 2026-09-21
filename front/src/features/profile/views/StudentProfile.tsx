@@ -52,9 +52,9 @@ export default function StudentProfile({ onClose }: Props) {
       <div><h2 id="learning-settings-title" className="text-xl font-bold">Mes préférences et niveaux</h2><p className="text-sm text-base-content/65">Personnalisez votre accompagnement.</p></div>
       {onClose && <button type="button" className="btn btn-ghost btn-square btn-sm" onClick={onClose} aria-label="Fermer"><X className="size-5" /></button>}
     </div>
-    <div role="tablist" aria-label="Réglages d’apprentissage" className="tabs tabs-bordered">
-      <button type="button" role="tab" aria-selected={tab === "preferences"} className={`tab ${tab === "preferences" ? "tab-active" : ""}`} onClick={() => setTab("preferences")}>Préférences</button>
-      <button type="button" role="tab" aria-selected={tab === "niveaux"} className={`tab ${tab === "niveaux" ? "tab-active" : ""}`} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
+    <div role="tablist" aria-label="Réglages d’apprentissage" className="flex flex-wrap gap-2">
+      <button type="button" role="tab" aria-selected={tab === "preferences"} className={`btn btn-sm cursor-pointer ${tab === "preferences" ? "btn-primary" : "btn-outline"}`} onClick={() => setTab("preferences")}>Préférences</button>
+      <button type="button" role="tab" aria-selected={tab === "niveaux"} className={`btn btn-sm cursor-pointer ${tab === "niveaux" ? "btn-primary" : "btn-outline"}`} onClick={() => setTab("niveaux")}>Niveaux par formation</button>
     </div>
     {query.isLoading ? <p>Chargement…</p> : query.isError ? <p role="alert">Impossible de charger vos choix.</p> : tab === "preferences" ? <div className="space-y-5">
       <h3 className="font-semibold">Quel rythme préférez-vous ?</h3>
@@ -62,7 +62,7 @@ export default function StudentProfile({ onClose }: Props) {
       <h3 className="font-semibold">Comment aimez-vous apprendre ?</h3>
       <PreferenceCards value={preferences} onChange={setPreferences} />
     </div> : <div className="space-y-5">{query.data?.availableFormations.map((formation) => <section key={formation.id} className="rounded-xl border border-base-300 p-4">
-      <h3 className="mb-3 font-semibold">{formation.title}</h3>
+      <h3 className="mb-3 font-semibold first-letter:uppercase">{formation.title}</h3>
       <SingleChoiceCards name={`profile-level-${formation.id}`} options={levelOptions} value={levels[formation.id] ?? null} onChange={(level) => setLevels((current) => ({ ...current, [formation.id]: level }))} />
     </section>)}</div>}
     <div className="flex justify-end border-t border-base-300 pt-4"><button type="button" className="btn btn-primary" disabled={saving || query.isLoading || query.isError} onClick={() => void save()}>{saving ? "Enregistrement…" : "Enregistrer"}</button></div>

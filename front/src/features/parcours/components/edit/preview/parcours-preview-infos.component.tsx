@@ -7,6 +7,7 @@ import TagsList from "./tags-list.component";
 import { localeDate } from "../../../../../utils/helpers/locale-date";
 import EditIcon from "../../../../../../src/components/UI/svg/edit-icon";
 import { useParcoursQuery } from "../../../hooks/useParcoursQuery";
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 
 interface ParcoursPreviewInfosProps {
   onEdit: (id: number) => void;
@@ -38,9 +39,9 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
           <article className="flex flex-col gap-y-4">
             <BoxWrapper>
               <h2 className="text-xl font-bold">Formation</h2>
-              <SubWrapper>{parcours?.formation.title}</SubWrapper>
+              <SubWrapper>{formatTitle(parcours?.formation.title)}</SubWrapper>
               <h2 className="text-xl font-bold">Titre du parcours</h2>
-              <SubWrapper>{parcours?.title}</SubWrapper>
+              <SubWrapper>{formatTitle(parcours?.title)}</SubWrapper>
               <h2 className="text-xl font-bold">Description du parcours</h2>
               <div className="text-xs max-h-[35vh] overflow-auto scrollbar scrollbar-thumb-secondary scrollbar-track-primary">
                 <SubWrapper>

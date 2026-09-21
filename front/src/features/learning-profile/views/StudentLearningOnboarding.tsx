@@ -3,11 +3,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import Header from "../../../components/headers/Header";
 import Loader from "../../../components/loaders/Loader";
 import Stepper from "../../../components/UI/stepper-component/stepper-component";
-import BoxWrapper from "../../../components/wrappers/BoxWrapper";
-import PageWrapper from "../../../components/wrappers/PageWrapper";
+import AuthPageWrapper from "../../auth/components/AuthPageWrapper";
+import ProfileItemsEditor from "../../profile/components/information/ProfileItemsEditor";
+import { profileApi } from "../../profile/api/profile.api";
+import type Hobby from "../../user/interfaces/hobby";
+import type { Link } from "../../user/interfaces/link";
 import {
   LearningChoiceCardsPlaceholder,
 } from "../views/onboarding-placeholder";
@@ -30,7 +32,7 @@ import type {
 type OnboardingStep = {
   key: string;
   label: string;
-  kind: "intro" | "pace" | "preferences" | "formation" | "summary";
+  kind: "intro" | "pace" | "preferences" | "formation" | "profile" | "summary";
   formationId?: number;
 };
 
@@ -45,29 +47,33 @@ export default function StudentLearningOnboarding() {
   const [levels, setLevels] = useState<Record<number, FormationLevel>>({});
   const [saving, setSaving] = useState(false);
   const [started, setStarted] = useState(false);
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+  const [profileInformation, setProfileInformation] = useState<Record<string, unknown> | null>(null);
+  const [profileItemsChanged, setProfileItemsChanged] = useState(false);
   const reduceMotion = useReducedMotion();
 
   const steps = useMemo<OnboardingStep[]>(() => {
     if (!context) return [];
-    const formationSteps = context.formationsToAssess.map((formation) => ({
-      key: `formation:${formation.id}`,
-      label: formation.title,
-      kind: "formation" as const,
-      formationId: formation.id,
-    }));
-    return context.onboardingMode === "initial"
-      ? [
-          { key: "intro", label: "Introduction", kind: "intro" },
-          { key: "pace", label: "Rythme", kind: "pace" },
-          { key: "preferences", label: "Préférences", kind: "preferences" },
-          ...formationSteps,
-          { key: "summary", label: "Récapitulatif", kind: "summary" },
-        ]
-      : [
-          ...formationSteps,
-          { key: "summary", label: "Récapitulatif", kind: "summary" },
-        ];
+    const formation = context.formationsToAssess[0] ?? context.availableFormations[0];
+    if (!formation) return [];
+    return [
+      { key: "intro", label: "Bienvenue", kind: "intro" },
+      { key: "pace", label: "Rythme", kind: "pace" },
+      { key: "preferences", label: "Préférences", kind: "preferences" },
+      { key: `formation:${formation.id}`, label: "Votre niveau", kind: "formation", formationId: formation.id },
+      { key: "profile", label: "À propos de vous", kind: "profile" },
+      { key: "summary", label: "Terminé", kind: "summary" },
+    ];
   }, [context]);
+
+  useEffect(() => {
+    profileApi.queries.getInformation().then(({ data }) => {
+      setProfileInformation(data);
+      setHobbies(data.hobbies ?? []);
+      setLinks(data.links ?? []);
+    }).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     if (!context || started) return;
@@ -95,15 +101,14 @@ export default function StudentLearningOnboarding() {
   if (query.isLoading) return <LearningChoiceCardsPlaceholder />;
   if (query.isError) {
     return (
-      <PageWrapper>
-        <Header title="Personnalisons votre accompagnement" />
-        <BoxWrapper className="items-center py-16 text-center">
+      <AuthPageWrapper title="Personnalisons votre parcours">
+        <div className="py-12 text-center">
           <p>Impossible de charger votre profil d’apprentissage.</p>
           <button className="btn btn-primary mt-4" onClick={() => void query.refetch()}>
             Réessayer
           </button>
-        </BoxWrapper>
-      </PageWrapper>
+        </div>
+      </AuthPageWrapper>
     );
   }
   if (!context?.hasAvailableContent) return <Navigate to="/student/dashboard" replace />;
@@ -112,9 +117,7 @@ export default function StudentLearningOnboarding() {
   }
 
   const step = steps[index]!;
-  const formation = step.formationId
-    ? context.availableFormations.find((item) => item.id === step.formationId)
-    : null;
+  const formation = context.formationsToAssess[0] ?? context.availableFormations[0];
 
   const continueToNext = async () => {
     if (step.kind === "pace" && !pace) {
@@ -138,6 +141,14 @@ export default function StudentLearningOnboarding() {
         await learningProfileApi.updateFormation(step.formationId, levels[step.formationId]!);
       }
       const next = steps[index + 1];
+      if (step.kind === "profile" && profileItemsChanged && profileInformation) {
+        const payload = new FormData();
+        payload.append("data", JSON.stringify({
+          user: { ...profileInformation, hobbies, links },
+        }));
+        await profileApi.mutations.updateInformation(payload);
+        setProfileItemsChanged(false);
+      }
       if (next) {
         await learningProfileApi.update({ currentStep: next.key });
         setIndex(index + 1);
@@ -164,12 +175,11 @@ export default function StudentLearningOnboarding() {
   };
 
   return (
-    <PageWrapper as="main">
-      <Header
-        title="Personnalisons votre accompagnement"
-        description="Vos réponses pourront être modifiées depuis Mon avancement."
-      />
-      <BoxWrapper className="gap-6 p-4 sm:p-6">
+    <AuthPageWrapper
+      title="Personnalisons votre parcours"
+      description="Quelques repères simples pour adapter votre expérience. Vous pourrez les modifier plus tard."
+    >
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-1">
         <Stepper
           actualStep={{ id: index + 1, label: step.label, saved: false, isValid: true }}
           stepsList={steps.map((item, stepIndex) => ({
@@ -183,12 +193,18 @@ export default function StudentLearningOnboarding() {
         />
 
         <AnimatePresence mode="wait" initial={false}>
-        <motion.section key={step.key} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }} transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }} className="mx-auto w-full max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-8">
+        <motion.section key={step.key} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -24 }} transition={{ duration: reduceMotion ? 0.01 : 0.28, ease: "easeOut" }} className="w-full rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm sm:p-7">
+          {formation?.parcours[0] && step.kind !== "intro" ? (
+            <div className="mb-6 rounded-xl bg-primary/10 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours</p>
+              <p className="mt-0.5 text-lg font-bold first-letter:uppercase">{formation.parcours[0].title}</p>
+            </div>
+          ) : null}
           {step.kind === "intro" ? (
             <div className="space-y-5">
-              <h1 className="text-2xl font-bold">Bienvenue dans vos formations</h1>
-              <p>Quelques réponses nous aideront à contextualiser votre accompagnement.</p>
-              {context.formationsToAssess[0] && <div className="rounded-xl border border-primary/30 bg-primary/10 p-5"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours actuel</p><h2 className="mt-1 text-lg font-bold">{context.formationsToAssess[0].parcours[0]?.title ?? context.formationsToAssess[0].title}</h2><p className="mt-1 text-sm text-base-content/70">{context.formationsToAssess[0].title}</p></div>}
+              <h1 className="text-2xl font-bold">Bienvenue dans votre parcours</h1>
+              <p>Nous allons nous concentrer uniquement sur ce parcours pour garder cette étape courte et utile.</p>
+              {formation?.parcours[0] && <div className="rounded-xl border border-primary/30 bg-primary/10 p-5"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Votre parcours</p><h2 className="mt-1 text-2xl font-bold first-letter:uppercase">{formation.parcours[0].title}</h2><p className="mt-1 text-sm text-base-content/70 first-letter:uppercase">{formation.title}</p></div>}
             </div>
           ) : null}
 
@@ -211,10 +227,11 @@ export default function StudentLearningOnboarding() {
           {step.kind === "formation" && formation ? (
             <div className="space-y-5">
               <div>
-                <p className="text-sm font-semibold text-primary">{formation.title}</p>
                 <h1 className="text-2xl font-bold">Quel est votre niveau actuel ?</h1>
-                <div className="mt-3 flex flex-wrap gap-2" aria-label="Parcours de cette formation">{formation.parcours.map((item) => <span key={item.id} className="badge badge-outline">{item.title}</span>)}</div>
+                <p className="mt-2 text-sm text-base-content/65">Appuyez-vous sur ces exemples tirés du parcours pour vous situer.</p>
               </div>
+              {formation.parcours[0]?.tags.length ? <div><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-base-content/55">Notions abordées</p><div className="flex flex-wrap gap-2">{formation.parcours[0].tags.map((tag) => <span key={tag} className="badge badge-outline">{tag}</span>)}</div></div> : null}
+              {formation.parcours[0]?.contentSamples.length ? <div className="rounded-xl border border-base-300 bg-base-200/60 p-4"><p className="mb-2 text-sm font-semibold">Exemples de contenus</p><ul className="space-y-2 text-sm">{formation.parcours[0].contentSamples.map((sample) => <li key={`${sample.type}-${sample.title}`} className="flex gap-2"><span className="text-primary">•</span><span>{sample.title} <span className="text-base-content/50">({sample.type === "module" ? "module" : "cours"})</span></span></li>)}</ul></div> : null}
               <SingleChoiceCards
                 name={`level-${formation.id}`}
                 options={levelOptions}
@@ -224,15 +241,21 @@ export default function StudentLearningOnboarding() {
             </div>
           ) : null}
 
+          {step.kind === "profile" ? (
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold">Souhaitez-vous en dire un peu plus ?</h1>
+              <p className="text-sm text-base-content/65">Cette étape est entièrement facultative. Vous pouvez la passer sans rien renseigner.</p>
+              <ProfileItemsEditor hobbies={hobbies} links={links} onHobbiesChange={(items) => { setHobbies(items); setProfileItemsChanged(true); }} onLinksChange={(items) => { setLinks(items); setProfileItemsChanged(true); }} />
+            </div>
+          ) : null}
+
           {step.kind === "summary" ? (
             <div className="space-y-5">
               <h1 className="text-2xl font-bold">Votre profil est prêt</h1>
               <p>Confirmez vos réponses. Vous pourrez les modifier à tout moment depuis Mon avancement.</p>
               <div className="rounded-xl bg-base-200 p-4 text-sm">
-                <p><strong>Formations renseignées :</strong> {context.availableFormations.length}</p>
-                {context.onboardingMode === "initial" ? (
-                  <p className="mt-2"><strong>Préférences choisies :</strong> {preferences.length}</p>
-                ) : null}
+                <p><strong>Parcours :</strong> {formation?.parcours[0]?.title}</p>
+                <p className="mt-2"><strong>Préférences choisies :</strong> {preferences.length}</p>
               </div>
             </div>
           ) : null}
@@ -252,13 +275,13 @@ export default function StudentLearningOnboarding() {
               </button>
             ) : (
               <button type="button" className="btn btn-primary" disabled={saving} onClick={() => void continueToNext()}>
-                Continuer
+                {step.kind === "profile" ? "Passer ou continuer" : "Continuer"}
               </button>
             )}
           </div>
         </motion.section>
         </AnimatePresence>
-      </BoxWrapper>
-    </PageWrapper>
+      </div>
+    </AuthPageWrapper>
   );
 }

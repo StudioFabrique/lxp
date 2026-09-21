@@ -26,7 +26,7 @@ describe("ParcoursFilterBadges", () => {
     expect(markup).toContain("Parcours E");
     expect(markup).not.toContain("Parcours F");
     expect(markup).toContain("Afficher plus de parcours (1)");
-    expect(markup).toContain("badge-secondary badge-soft");
+    expect(markup).toContain("btn-secondary btn-soft btn-sm");
     expect(markup).toContain('aria-expanded="false"');
   });
 
@@ -50,4 +50,3 @@ describe("ParcoursFilterBadges", () => {
     expect(markup).toContain('aria-pressed="true"');
   });
 });
-

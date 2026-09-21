@@ -1,5 +1,6 @@
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
 import type { LearningContext } from "../../../learning-profile/types";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import {
   levelOptions,
   paceOptions,
@@ -49,8 +50,8 @@ export default function DeclaredLearningProfile({ data }: { data: DeclaredProfil
           {data?.formations.length ? data.formations.map((formation) => (
             <div key={formation.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-base-200 p-3">
               <div>
-                <p className="font-semibold">{formation.title}</p>
-                <p className="text-xs text-base-content/60">{formation.parcours.map((item) => item.title).join(" · ")}</p>
+                <p className="font-semibold">{formatTitle(formation.title)}</p>
+                <p className="text-xs text-base-content/60">{formation.parcours.map((item) => formatTitle(item.title)).join(" · ")}</p>
               </div>
               <div className="text-right">
                 <p>{labelFor(levelOptions, formation.assessment?.level)}</p>

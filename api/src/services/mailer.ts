@@ -19,6 +19,7 @@ import {
   type MailContext,
   button,
   escapeHtml,
+  formatDisplayTitle,
   instanceBrand,
   layout,
   organizationName,
@@ -356,11 +357,14 @@ export async function sendContentAvailabilityEmail(input: {
     env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : input.email;
   const dashboardUrl = new URL("student/dashboard", env.FRONT_URL ?? "http://localhost:5173/").toString();
   const context = await mailContext();
-  const parcours = input.parcours.map(escapeHtml).join(", ");
+  const formation = formatDisplayTitle(input.formation);
+  const parcours = input.parcours
+    .map((title) => escapeHtml(formatDisplayTitle(title)))
+    .join(", ");
   const html = layout(`
     <h1 style="margin:0 0 20px;font-size:24px;line-height:32px">De nouveaux contenus sont disponibles</h1>
     <p>Bonjour ${escapeHtml(input.firstname)},</p>
-    <p>La formation <strong>${escapeHtml(input.formation)}</strong> est désormais accessible.</p>
+    <p>La formation <strong>${escapeHtml(formation)}</strong> est désormais accessible.</p>
     <p>Parcours disponibles : ${parcours}</p>
     ${button(dashboardUrl, "Découvrir mes contenus")}
   `, organizationName(context), instanceBrand(context));
@@ -368,7 +372,7 @@ export async function sendContentAvailabilityEmail(input: {
   return transporter.sendMail({
     from: env.MAILER_FROM,
     to: destination,
-    subject: `Votre formation ${input.formation} est disponible`,
+    subject: `Votre formation ${formation} est disponible`,
     messageId: input.messageId,
     html,
     attachments: [

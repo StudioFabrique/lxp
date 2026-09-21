@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import Modal from "../../../../../components/UI/modal/modal";
 import { getContactFullName } from "../../../../../utils/helpers/contact-full-name";
 import type Contact from "../../../../../utils/interfaces/contact";
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 
 type ModuleChoice = {
   id: number;
@@ -111,7 +112,7 @@ export default function AssignContactsToModulesModal({
                     checked={selectedModuleIds.includes(module.id)}
                     onChange={() => toggleModule(module.id)}
                   />
-                  <span className="text-sm">{module.title}</span>
+                  <span className="text-sm">{formatTitle(module.title)}</span>
                 </label>
               ))}
             </div>

@@ -16,6 +16,9 @@ export const escapeHtml = (value: string) =>
         c
       ]!,
   );
+export const formatDisplayTitle = (value: string) =>
+  value.replace(/^(\s*)(\p{L})/u, (_, spaces: string, letter: string) =>
+    spaces + letter.toUpperCase());
 export const instanceHomeUrl = () => {
   const configuredUrl = env.FRONT_URL ?? "http://localhost:5173/";
   return configuredUrl.endsWith("/") ? configuredUrl : `${configuredUrl}/`;
@@ -58,7 +61,7 @@ export const layout = (
         border: "#334155",
       }
     : {
-        page: "#f3f5f8",
+        page: "#eaf2f8",
         card: "#f8fbff",
         header: "#17202a",
         text: "#17202a",

@@ -135,7 +135,7 @@ export default function ResourceAdd({
                             {activityIconType(activity.type)}
                           </span>
                           <span className="truncate text-sm">
-                            {activity.title}
+                            <span className="inline-block first-letter:uppercase">{activity.title}</span>
                           </span>
                         </button>
                         {!readOnly && (

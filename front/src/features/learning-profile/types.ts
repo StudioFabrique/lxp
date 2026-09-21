@@ -20,7 +20,12 @@ export type FormationLevel =
 export type LearningFormation = {
   id: number;
   title: string;
-  parcours: Array<{ id: number; title: string }>;
+  parcours: Array<{
+    id: number;
+    title: string;
+    tags: string[];
+    contentSamples: Array<{ title: string; type: "module" | "course" }>;
+  }>;
   assessment: { level: FormationLevel; updatedAt: string } | null;
 };
 
@@ -41,4 +46,3 @@ export type LearningContext = {
     updatedAt: string | null;
   };
 };
-

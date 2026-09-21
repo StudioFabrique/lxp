@@ -122,7 +122,7 @@ const ParcoursImportModal = ({
             ) : null}
             {formations.map((formation) => (
               <option key={formation.id} value={formation.id}>
-                {formation.title}
+                <span className="inline-block first-letter:uppercase">{formation.title}</span>
               </option>
             ))}
           </select>

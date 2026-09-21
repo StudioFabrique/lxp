@@ -59,7 +59,7 @@ export default function EditLessonModal({
             <div className="min-w-0">
               <h3 className="text-lg font-bold">Modifier la leçon</h3>
               <p className="truncate text-sm text-base-content/60">
-                {lesson.title}
+                <span className="inline-block first-letter:uppercase">{lesson.title}</span>
               </p>
             </div>
           </div>

@@ -89,7 +89,7 @@ export default function EditCourseModal({
         <div className="flex items-center justify-between border-b border-base-300 px-6 py-4">
           <div>
             <h3 className="text-lg font-bold">Modifier le cours</h3>
-            <p className="text-sm text-base-content/60">{course.title}</p>
+            <p className="text-sm text-base-content/60 first-letter:uppercase">{course.title}</p>
           </div>
           <button
             type="button"

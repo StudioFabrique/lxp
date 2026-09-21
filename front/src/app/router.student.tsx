@@ -19,15 +19,6 @@ export const studentRoutes: RouteObject[] = [
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="./dashboard" replace /> },
-      {
-        path: "onboarding",
-        lazy: lazyRoute(
-          () =>
-            import(
-              "../features/learning-profile/views/StudentLearningOnboarding"
-            ),
-        ),
-      },
       guard("cursus", studentDashboardRoutes),
       guard("parcours", studentParcoursRoutes),
       guard("module", studentModulePreviewRoutes),

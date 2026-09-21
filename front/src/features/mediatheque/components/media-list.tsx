@@ -64,21 +64,21 @@ export default function MediaList({
               <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  className="btn btn-square btn-sm btn-ghost tooltip tooltip-left"
+                  className="btn btn-square btn-sm h-10 min-h-10 w-10 btn-ghost tooltip tooltip-left"
                   data-tip="Afficher un aperçu"
                   aria-label={`Afficher un aperçu de ${media.name}`}
                   onClick={() => onPreview(media)}
                 >
-                  <Eye className="size-[1.2em]" />
+                  <Eye className="size-[1.125rem]" />
                 </button>
                 <button
                   type="button"
-                  className="btn btn-sm btn-ghost gap-1 tooltip tooltip-left"
+                  className="btn btn-sm h-10 min-h-10 gap-1.5 px-3 btn-ghost tooltip tooltip-left"
                   data-tip="Voir les activités associées"
                   aria-label={`Voir les activités associées à ${media.name}`}
                   onClick={() => onShowActivities(media)}
                 >
-                  <ListTree className="size-[1.2em]" />
+                  <ListTree className="size-[1.125rem]" />
                   <span aria-hidden="true">
                     {media.associatedActivities.length}
                   </span>

@@ -3,6 +3,7 @@ import { BookOpen, Component, Rocket } from "lucide-react";
 import Parcours from "../../../../utils/interfaces/parcours";
 import Course from "../../../../utils/interfaces/course";
 import JournalTimeline from "./journal-timeline";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 
 type Props = {
   parcoursList: Parcours[];
@@ -20,7 +21,7 @@ const JournalTree = ({ parcoursList }: Props) => {
             <details open>
               <summary className="font-bold text-sm mb-4">
                 <Rocket className="h-4 w-4" />
-                {parcours.title}
+                {formatTitle(parcours.title)}
               </summary>
               <ul>
                 {parcours.modules?.map((module) => (
@@ -28,7 +29,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                     <details open>
                       <summary>
                         <Component className="h-4 w-4" />
-                        {module.title}
+                        {formatTitle(module.title)}
                       </summary>
                       <ul>
                         {module.courses?.map((course) => (
@@ -42,7 +43,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                               onClick={() => setSelectedCourse(course)}
                             >
                               <BookOpen className="h-4 w-4" />
-                              {course.title}
+                              {formatTitle(course.title)}
                             </a>
                           </li>
                         ))}

@@ -12,7 +12,7 @@ const JournalTimeline = ({ course }: Props) => {
     <div className="p-4 flex flex-col">
       <span className="flex gap-2 items-center">
         <BookOpen className="text-primary self-start" />
-        <h3 className="text-xl font-bold text-primary mb-6">{course.title}</h3>
+        <h3 className="text-xl font-bold text-primary mb-6 first-letter:uppercase">{course.title}</h3>
       </span>
 
       <div className="grid xl:grid-cols-2 grid-cols-1">

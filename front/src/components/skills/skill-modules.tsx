@@ -11,7 +11,7 @@ export default function SkillModules({ skill, onNavigate }: { skill: Skill; onNa
       {skill.modules.map((module) => (
         <li key={module.id} className="rounded-lg bg-base-200 p-3">
           <Link className="link link-hover font-medium" to={`/student/parcours/module/${module.id}`} onClick={onNavigate}>
-            {module.title}
+            <span className="inline-block first-letter:uppercase">{module.title}</span>
           </Link>
           <p className={module.isCompleted ? "text-success" : "text-base-content/70"}>
             {module.isCompleted ? "Terminé" : `À terminer · ${module.progress} %`}
