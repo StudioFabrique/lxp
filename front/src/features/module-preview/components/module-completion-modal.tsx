@@ -35,16 +35,19 @@ export default function ModuleCompletionModal({
 
   return (
     <Modal
-      title={`Le module « ${moduleTitle} » est terminé !`}
       rightLabel="Continuer"
       leftLabel={parcoursId ? "Retour au parcours" : undefined}
-      onLeftClick={parcoursId ? () => {
-        onClose();
-        navigate(`/${area}/parcours/view/${parcoursId}`);
-      } : undefined}
+      onLeftClick={
+        parcoursId
+          ? () => {
+              onClose();
+              navigate(`/${area}/parcours/view/${parcoursId}`);
+            }
+          : undefined
+      }
       onRightClick={onClose}
       onMinimizeClick={onClose}
-      modalBoxStyle="relative isolate w-11/12 max-w-3xl"
+      modalBoxStyle="relative isolate w-11/12 max-w-3xl max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-h-[calc(100dvh-4rem)]"
     >
       {!reduceMotion && (
         <div
@@ -55,41 +58,58 @@ export default function ModuleCompletionModal({
         </div>
       )}
       <div className="py-8 text-center">
-        <p className="text-lg font-semibold">Félicitations, vous avez terminé tous les cours de ce module !</p>
-        {badges.length === 0 && <p className="mt-4">Aucun badge n’est associé à ce module.</p>}
+        <p className="text-lg font-semibold text-primary">
+          Félicitations, vous avez terminé tous les cours de ce module !
+        </p>
+        {badges.length === 0 && (
+          <p className="mt-4">Aucun badge n’est associé à ce module.</p>
+        )}
         {[
-          { title: "Badges obtenus", items: badges.filter((badge) => badge.isEarned) },
-          { title: "Badges restant à obtenir", items: badges.filter((badge) => !badge.isEarned) },
-        ].filter((group) => group.items.length > 0).map((group) => (
-          <section key={group.title} className="mt-6">
-            <h4 className="text-lg font-semibold">{group.title}</h4>
-            <ul aria-label={group.title} className="grid gap-6 py-6 sm:grid-cols-2">
-              {group.items.map((badge, index) => (
-                <motion.li
-                  key={badge.id}
-                  className="flex min-w-0 flex-col items-center gap-3"
-                  initial={reduceMotion ? false : { scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0 }
-                      : {
-                          duration: 0.9,
-                          delay: index * 0.15,
-                          ease: easeOutElastic,
-                        }
-                  }
-                >
-                  <SkillBadge skill={badge} size="large" inModal />
-                  <span className="text-sm font-medium first-letter:uppercase">
-                    {badge.description}
-                  </span>
-                  {!badge.isEarned && <SkillModules skill={badge} onNavigate={onClose} />}
-                </motion.li>
-              ))}
-            </ul>
-          </section>
-        ))}
+          {
+            title: "Badges obtenus",
+            items: badges.filter((badge) => badge.isEarned),
+          },
+          {
+            title: "Badges restant à obtenir",
+            items: badges.filter((badge) => !badge.isEarned),
+          },
+        ]
+          .filter((group) => group.items.length > 0)
+          .map((group) => (
+            <section key={group.title} className="mt-6">
+              <h4 className="text-lg font-semibold">{group.title}</h4>
+              <ul
+                aria-label={group.title}
+                className="grid gap-6 py-6 sm:grid-cols-2"
+              >
+                {group.items.map((badge, index) => (
+                  <motion.li
+                    key={badge.id}
+                    className="flex min-w-0 flex-col items-center gap-3"
+                    initial={reduceMotion ? false : { scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : {
+                            duration: 0.9,
+                            delay: index * 0.15,
+                            ease: easeOutElastic,
+                          }
+                    }
+                  >
+                    <SkillBadge skill={badge} size="large" inModal />
+                    <span className="text-sm font-medium first-letter:uppercase">
+                      {badge.description}
+                    </span>
+                    {!badge.isEarned && (
+                      <SkillModules skill={badge} onNavigate={onClose} />
+                    )}
+                  </motion.li>
+                ))}
+              </ul>
+            </section>
+          ))}
       </div>
     </Modal>
   );

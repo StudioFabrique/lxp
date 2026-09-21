@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { Quiz, UserAnswer } from "../../interfaces/quiz";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, GripVertical } from "lucide-react";
 import QuizModalButtons from "./quiz-modal-buttons";
+import { cn } from "../../../../utils/cn";
 
 interface Props {
   quiz: Extract<Quiz, { type: "ordering" }>;
@@ -11,85 +12,70 @@ interface Props {
 }
 
 const QuizOrdering = ({ quiz, onAnswer, onReport, isAnswered }: Props) => {
-  // On garde les items et leur index d'origine pour vérifier à la fin
-  const [items, setItems] = useState<{ text: string; originalIndex: number }[]>(
-    [],
+  const [items, setItems] = useState(() =>
+    quiz.data.items.map((text: string, originalIndex: number) => ({ text, originalIndex })),
   );
+  const [dragOver, setDragOver] = useState<number | null>(null);
+  const dragging = useRef<number | null>(null);
 
-  const isValid = items.length === quiz.data.items.length;
-
-  const moveItem = (index: number, direction: "up" | "down") => {
-    if (isAnswered) return;
-    const newItems = [...items];
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
-
-    // Swap
-    [newItems[index], newItems[targetIndex]] = [
-      newItems[targetIndex],
-      newItems[index],
-    ];
-    setItems(newItems);
+  const moveItem = (from: number, to: number) => {
+    if (isAnswered || from === to || to < 0 || to >= items.length) return;
+    setItems((previous) => {
+      const next = [...previous];
+      next.splice(to, 0, next.splice(from, 1)[0]);
+      return next;
+    });
   };
 
   const handleValidate = () => {
-    // On extrait l'ordre actuel basé sur l'index d'origine
     const currentOrder = items.map((item) => item.originalIndex);
-    // On compare avec quiz.data.order
-    const isCorrect =
-      JSON.stringify(currentOrder) === JSON.stringify(quiz.data.order);
+    const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(quiz.data.order);
     onAnswer(isCorrect, { type: "ordering", items });
-
-    return isCorrect;
   };
-
-  useEffect(() => {
-    setItems(
-      quiz.data.items.map((text: string, i: number) => ({
-        text,
-        originalIndex: i,
-      })),
-    );
-  }, [quiz]);
 
   return (
     <div className="flex flex-col gap-4">
+      <p className="text-sm text-base-content/70">Glissez les éléments dans le bon ordre. Les flèches permettent aussi de les déplacer.</p>
       <ul className="flex flex-col gap-2">
         {items.map((item, index) => (
           <li
             key={item.originalIndex}
-            className="flex items-center gap-3 p-3 bg-base-200 rounded-box border border-base-300"
+            draggable={!isAnswered}
+            onDragStart={(event) => {
+              dragging.current = index;
+              event.dataTransfer.effectAllowed = "move";
+              event.dataTransfer.setData("text/plain", String(index));
+            }}
+            onDragOver={(event) => {
+              if (isAnswered) return;
+              event.preventDefault();
+              setDragOver(index);
+            }}
+            onDragLeave={() => setDragOver(null)}
+            onDrop={(event) => {
+              event.preventDefault();
+              if (dragging.current !== null) moveItem(dragging.current, index);
+              setDragOver(null);
+              dragging.current = null;
+            }}
+            onDragEnd={() => { dragging.current = null; setDragOver(null); }}
+            className={cn(
+              "flex items-center gap-2 rounded-box border border-base-300 bg-base-200 p-2 sm:gap-3 sm:p-3",
+              !isAnswered && "cursor-grab active:cursor-grabbing",
+              dragOver === index && dragging.current !== index && "ring-2 ring-primary",
+            )}
           >
+            <GripVertical size={18} className="shrink-0 text-base-content/50" aria-hidden="true" />
+            <span className="badge badge-primary badge-outline shrink-0">{index + 1}</span>
+            <span className="min-w-0 flex-1 font-medium break-words">{item.text}</span>
             <div className="flex flex-col gap-1">
-              <button
-                className="btn btn-xs btn-circle btn-ghost"
-                disabled={index === 0 || isAnswered}
-                onClick={() => moveItem(index, "up")}
-              >
-                <ArrowUp size={14} />
-              </button>
-              <button
-                className="btn btn-xs btn-circle btn-ghost"
-                disabled={index === items.length - 1 || isAnswered}
-                onClick={() => moveItem(index, "down")}
-              >
-                <ArrowDown size={14} />
-              </button>
+              <button type="button" className="btn btn-xs btn-circle btn-ghost" disabled={index === 0 || isAnswered} onClick={() => moveItem(index, index - 1)} aria-label={`Monter ${item.text}`}><ArrowUp size={14} /></button>
+              <button type="button" className="btn btn-xs btn-circle btn-ghost" disabled={index === items.length - 1 || isAnswered} onClick={() => moveItem(index, index + 1)} aria-label={`Descendre ${item.text}`}><ArrowDown size={14} /></button>
             </div>
-            <span className="font-medium text-lg flex-1">{item.text}</span>
-            <span className="badge badge-primary badge-outline">
-              {index + 1}
-            </span>
           </li>
         ))}
       </ul>
-      {!isAnswered && (
-        <QuizModalButtons
-          isValid={isValid}
-          onValidate={handleValidate}
-          onReport={onReport}
-          externalId={quiz.id}
-        />
-      )}
+      {!isAnswered && <QuizModalButtons isValid={items.length === quiz.data.items.length} onValidate={handleValidate} onReport={onReport} externalId={quiz.id} />}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Loader2, Minimize2, X } from "lucide-react";
 import QuestionMarkTooltip from "../question-mark-tooltip/question-mark-tooltip";
 
 type ModalProps = {
-  title: string;
+  title?: string;
   titleTooltip?: string;
   onLeftClick?: () => void;
   onRightClick?: () => void;
@@ -53,7 +53,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
           </div>
         )}
         <div className="flex justify-between gap-5">
-          <h3 className="font-bold text-lg">{props.title}</h3>
+          {props.title && <h3 className="font-bold text-lg">{props.title}</h3>}
           {props.titleTooltip && (
             <QuestionMarkTooltip
               tooltipPosition="left"
@@ -72,7 +72,7 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
           ) : props.onMinimizeClick ? (
             <button
               type="button"
-              className="btn btn-sm btn-ghost"
+              className="btn btn-sm btn-ghost ml-auto"
               onClick={props.onMinimizeClick}
             >
               <Minimize2 />

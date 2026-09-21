@@ -51,6 +51,11 @@ const ParcoursView = () => {
   const canEditParcours =
     ability.can("update", "parcours") && parcours.canManage !== false;
   const isStudent = !canEditParcours;
+  const hasStarted = modules?.some((module) =>
+    module.courses.some((course) =>
+      course.lessons.some((lesson) => Boolean(lesson.lessonsRead?.length)),
+    ),
+  );
   const hasDescription = Boolean(parcoursInfos?.description?.trim());
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
@@ -188,6 +193,7 @@ const ParcoursView = () => {
                     onClickResume={handleClickResume}
                     hideResumeCourseButton={!(modules?.length > 0)}
                     isStudent={isStudent}
+                    hasStarted={hasStarted}
                   />
                 </PermissionGuard>,
               ]}

@@ -11,12 +11,14 @@ import {
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
 import { cn } from "../../../utils/cn";
+import TrophyIcon from "../../../components/UI/svg/trophy-icon.component";
 
 type ModuleContentToolbarProps = {
   progress: React.ReactNode;
   progressRef: React.RefObject<HTMLDivElement | null>;
   isSidebarCollapsed: boolean;
   isContentSelected: boolean;
+  showCompletionBadge?: boolean;
   canPlanCourses: boolean;
   isCalendarView: boolean;
   isCalendarSaving: boolean;
@@ -29,6 +31,7 @@ type ModuleContentToolbarProps = {
   onToggleCourseReordering: () => void;
   onPublishAll: () => void;
   onCloseContent: () => void;
+  onOpenCompletionBadge?: () => void;
 };
 
 const actionClassName = "btn border-secondary/20";
@@ -38,6 +41,7 @@ export default function ModuleContentToolbar({
   progressRef,
   isSidebarCollapsed,
   isContentSelected,
+  showCompletionBadge = false,
   canPlanCourses,
   isCalendarView,
   isCalendarSaving,
@@ -50,14 +54,19 @@ export default function ModuleContentToolbar({
   onToggleCourseReordering,
   onPublishAll,
   onCloseContent,
+  onOpenCompletionBadge,
 }: ModuleContentToolbarProps) {
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-5">
       <button
         type="button"
         className={`${actionClassName} btn-primary tooltip tooltip-right`}
-        aria-label={isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"}
-        data-tip={isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"}
+        aria-label={
+          isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
+        }
+        data-tip={
+          isSidebarCollapsed ? "Ouvrir le panneau" : "Réduire le panneau"
+        }
         onClick={onToggleSidebar}
       >
         {isSidebarCollapsed ? (
@@ -74,9 +83,15 @@ export default function ModuleContentToolbar({
             className={cn(actionClassName, "tooltip tooltip-right", {
               "btn-primary": isReorderingCourses,
             })}
-            aria-label={isReorderingCourses ? "Terminer la réorganisation" : "Réorganiser les cours"}
+            aria-label={
+              isReorderingCourses
+                ? "Terminer la réorganisation"
+                : "Réorganiser les cours"
+            }
             aria-pressed={isReorderingCourses}
-            data-tip={isReorderingCourses ? "Terminer" : "Réorganiser les cours"}
+            data-tip={
+              isReorderingCourses ? "Terminer" : "Réorganiser les cours"
+            }
             onClick={onToggleCourseReordering}
           >
             <ArrowDownUp className="size-5" />
@@ -94,7 +109,9 @@ export default function ModuleContentToolbar({
       {canPlanCourses && (
         <button
           type="button"
-          className={cn(actionClassName, "gap-2", { "btn-primary": isCalendarView })}
+          className={cn(actionClassName, "gap-2", {
+            "btn-primary": isCalendarView,
+          })}
           aria-label="Calendrier"
           aria-pressed={isCalendarView}
           disabled={isCalendarSaving}
@@ -125,6 +142,19 @@ export default function ModuleContentToolbar({
         </RoleRankGuard>
       )}
 
+      {showCompletionBadge && (
+        <button
+          type="button"
+          className={`${actionClassName} tooltip tooltip-left`}
+          aria-label="Mes réussites"
+          data-tip="Mes réussites"
+          onClick={onOpenCompletionBadge}
+        >
+          <span className="block size-5" aria-hidden="true">
+            <TrophyIcon />
+          </span>
+        </button>
+      )}
       {isContentSelected && (
         <button
           type="button"

@@ -24,12 +24,17 @@ const JournalTree = ({ parcoursList }: Props) => {
   const selectedCourse =
     coursesWithAccomplishments.find(
       ({ course }) => course.id === selectedCourseId,
-    )?.course ?? coursesWithAccomplishments[0]?.course ?? null;
+    )?.course ??
+    coursesWithAccomplishments[0]?.course ??
+    null;
 
   if (coursesWithAccomplishments.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-base-300 bg-base-200/50 px-6 py-10 text-center">
-        <Sparkles className="mx-auto mb-3 h-8 w-8 text-base-content/40" aria-hidden="true" />
+        <Sparkles
+          className="mx-auto mb-3 h-8 w-8 text-base-content/40"
+          aria-hidden="true"
+        />
         <p className="font-semibold">Votre historique est encore vide</p>
         <p className="mt-1 text-sm text-base-content/60">
           Terminez une activité pour voir votre premier accomplissement.
@@ -40,10 +45,10 @@ const JournalTree = ({ parcoursList }: Props) => {
 
   return (
     <div className="grid min-h-80 overflow-hidden rounded-2xl border border-base-300 bg-base-100 lg:max-h-[70vh] lg:grid-cols-[minmax(16rem,22rem)_1fr]">
-      <nav className="border-b border-base-300 bg-base-200/60 p-3 lg:overflow-y-auto lg:border-r lg:border-b-0" aria-label="Cours avec accomplissements">
-        <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-base-content/50">
-          Cours complétés
-        </p>
+      <nav
+        className="border-b border-base-300 bg-base-200/60 p-3 lg:overflow-y-auto lg:border-r lg:border-b-0"
+        aria-label="Cours avec accomplissements"
+      >
         <ul className="space-y-1">
           {coursesWithAccomplishments.map(({ parcours, module, course }) => {
             const isSelected = selectedCourse?.id === course.id;
@@ -61,20 +66,30 @@ const JournalTree = ({ parcoursList }: Props) => {
                   aria-current={isSelected ? "true" : undefined}
                 >
                   <span className="flex items-center gap-3">
-                    <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${isSelected ? "bg-primary-content/15" : "bg-primary/10 text-primary"}`}>
+                    <span
+                      className={`grid size-9 shrink-0 place-items-center rounded-lg ${isSelected ? "bg-primary-content/15" : "bg-primary/10 text-primary"}`}
+                    >
                       <BookOpen className="h-4 w-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-semibold">{formatTitle(course.title)}</span>
-                      <span className={`block truncate text-xs ${isSelected ? "text-primary-content/75" : "text-base-content/55"}`}>
-                        {formatTitle(parcours.title)} · {formatTitle(module.title)}
+                      <span className="block truncate font-semibold">
+                        {formatTitle(course.title)}
+                      </span>
+                      <span
+                        className={`block truncate text-xs ${isSelected ? "text-primary-content/75" : "text-base-content/55"}`}
+                      >
+                        {formatTitle(parcours.title)} ·{" "}
+                        {formatTitle(module.title)}
                       </span>
                     </span>
                     <span className="flex items-center gap-1 text-xs font-semibold">
                       <CircleCheckBig className="h-4 w-4" aria-hidden="true" />
                       {count}
                     </span>
-                    <ChevronRight className="h-4 w-4 opacity-60" aria-hidden="true" />
+                    <ChevronRight
+                      className="h-4 w-4 opacity-60"
+                      aria-hidden="true"
+                    />
                   </span>
                 </button>
               </li>

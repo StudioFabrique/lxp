@@ -217,6 +217,7 @@ const ModuleContent = () => {
               isContentSelected={Boolean(
                 state.selectedLesson || selectedAssignmentCourseId,
               )}
+              showCompletionBadge={isStudentView && userArea === "student" && state.module.stats?.isCompleted === true}
               canPlanCourses={canPlanCourses}
               isCalendarView={isCalendarView}
               isCalendarSaving={calendar.isSaving}
@@ -233,6 +234,7 @@ const ModuleContent = () => {
               onToggleCourseReordering={handleToggleCourseReordering}
               onPublishAll={contentStore.courseActions.publishAllCourses}
               onCloseContent={handleCloseContent}
+              onOpenCompletionBadge={contentStore.openBadgeCompletion}
             />
           }
           sidebar={
