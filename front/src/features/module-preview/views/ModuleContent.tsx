@@ -1,8 +1,8 @@
-import useModuleContentExplorer from "../hooks/use-module-content-explorer";
+import useModuleContent from "../hooks/use-module-content";
 import useContentTracking from "../hooks/use-content-tracking";
-import ModuleContentExplorerSkeleton from "./ModulePreviewSkeleton";
+import ModuleContentSkeleton from "./ModuleContentSkeleton";
 import { Link, useLocation, useNavigate } from "react-router";
-import { CalendarDays, LoaderCircle, PenBox, UploadCloud } from "lucide-react";
+import { ArrowDownUp, CalendarDays, Check, LoaderCircle, PenBox, UploadCloud } from "lucide-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../store/AuthProvider";
 import userBelongsToContacts from "../../../utils/helpers/user-belongs-to-contacts";
@@ -15,11 +15,11 @@ import QuizRequestModal from "../../quiz/components/modals/quiz-request-modal";
 import LessonCompletionModal from "../components/lesson-completion-modal";
 import PermissionGuard from "../../../components/guards/PermissionGuard";
 import RoleRankGuard from "../../../components/guards/RoleRankGuard";
-import ModuleContentExplorerWrapper from "../components/module-content-explorer-wrapper";
-import ModuleContentExplorerHeader from "../components/module-content-explorer-header";
-import ModuleExplorerSidebar from "../components/sidebar/module-explorer-sidebar";
+import ModuleContentLayout from "../components/module-content-layout";
+import ModuleContentHeader from "../components/module-content-header";
+import ModuleContentSidebar from "../components/sidebar/module-content-sidebar";
 import ProgressBar from "../components/progress-bar";
-import ModuleExplorerPreview from "../components/preview/module-explorer-preview";
+import ModuleContentPreview from "../components/preview/module-content-preview";
 import ModuleData from "../components/module-data/module-data";
 import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
@@ -31,13 +31,13 @@ import ModuleCourseCalendar from "../components/calendar/module-course-calendar"
 import { getUserArea, hasRoleRank } from "../../../utils/helpers/user-role";
 import CourseAssignmentView from "../components/assignment/course-assignment";
 
-export type ExplorerStore = ReturnType<typeof useModuleContentExplorer>;
+export type ModuleContentStore = ReturnType<typeof useModuleContent>;
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant.
  * La modification de contenu est aussi possible pour le formateur et l'admin.
  */
-const ModuleContentExplorer = () => {
+const ModuleContent = () => {
   const { user } = useContext(AuthContext);
   const ability = useContext(AbilityContext);
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ const ModuleContentExplorer = () => {
   const firstPathSegment = window.location.pathname.split("/")[1];
   const isAdminView = firstPathSegment === "admin";
 
-  const explorerStore = useModuleContentExplorer();
+  const contentStore = useModuleContent();
   const {
     state,
     computed,
@@ -60,9 +60,10 @@ const ModuleContentExplorer = () => {
     lessonActions,
     moduleActions,
     scrollTopRef,
-  } = explorerStore;
+  } = contentStore;
 
   const [calendarModuleId, setCalendarModuleId] = useState<number | null>(null);
+  const [isReorderingCourses, setIsReorderingCourses] = useState(false);
   const [assignmentSelection, setAssignmentSelection] = useState({
     locationKey: location.key,
     courseId: requestedAssignmentCourseId,
@@ -157,11 +158,11 @@ const ModuleContentExplorer = () => {
   return (
     <PageWrapper>
       {/* --- Section Modales --- */}
-      {explorerStore.badgeCompletion && (
+      {contentStore.badgeCompletion && (
         <ModuleCompletionModal
-          moduleTitle={explorerStore.badgeCompletion.moduleTitle}
-          badges={explorerStore.badgeCompletion.badges}
-          onClose={explorerStore.closeBadgeCompletion}
+          moduleTitle={contentStore.badgeCompletion.moduleTitle}
+          badges={contentStore.badgeCompletion.badges}
+          onClose={contentStore.closeBadgeCompletion}
         />
       )}
       <QuizModal
@@ -252,11 +253,12 @@ const ModuleContentExplorer = () => {
       {/* --- Section Contenu  --- */}
       {state.module && state.module?.parcoursId && state.module.id ? (
         /* Wrapper */
-        <ModuleContentExplorerWrapper
+        <ModuleContentLayout
           calendarAction={canPlanCourses && (
             <button type="button" className={`btn gap-2 border-secondary/20 ${isCalendarView ? "btn-primary" : ""}`}
               aria-pressed={isCalendarView} disabled={calendar.isSaving}
               onClick={() => {
+                setIsReorderingCourses(false);
                 setCalendarModuleId(isCalendarView ? null : state.module!.id!);
                 calendar.setSelection(null);
                 calendar.setIsAdding(false);
@@ -266,13 +268,37 @@ const ModuleContentExplorer = () => {
             </button>
           )}
           calendarContent={isCalendarView ? <ModuleCourseCalendar key={state.module.id} module={state.module} store={calendar} /> : undefined}
+          reorderCoursesAction={!isCalendarView && state.module.courses.length > 1 && canEditModule ? (
+            <PermissionGuard object="course" action="update">
+              <button
+                type="button"
+                className={`btn tooltip tooltip-right border-secondary/20 ${isReorderingCourses ? "btn-primary" : ""}`}
+                aria-label={isReorderingCourses ? "Terminer la réorganisation" : "Réorganiser les cours"}
+                aria-pressed={isReorderingCourses}
+                data-tip={isReorderingCourses ? "Terminer" : "Réorganiser les cours"}
+                onClick={() => {
+                  setIsReorderingCourses((active) => !active);
+                  if (state.isPanelClosed) dispatch({ type: "toggle_panel_visibility" });
+                }}
+              >
+                {isReorderingCourses ? (
+                  <Check className="size-5" />
+                ) : (
+                  <ArrowDownUp className="size-5" />
+                )}
+              </button>
+            </PermissionGuard>
+          ) : undefined}
           scrollTopRef={scrollTopRef}
           selectedLesson={state.selectedLesson}
           isContentSelected={Boolean(
             state.selectedLesson || selectedAssignmentCourseId,
           )}
           isPanelClosed={state.isPanelClosed}
-          onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
+          onTogglePanel={() => {
+            if (!state.isPanelClosed) setIsReorderingCourses(false);
+            dispatch({ type: "toggle_panel_visibility" });
+          }}
           onCloseAll={() => {
             setSelectedAssignmentCourseId(undefined);
             dispatch({ type: "select_lesson", lesson: undefined });
@@ -289,10 +315,10 @@ const ModuleContentExplorer = () => {
                   className="btn tooltip tooltip-left border-secondary/20"
                   aria-label="Tout publier"
                   data-tip="Tout publier"
-                  disabled={explorerStore.isPublishingAllCourses}
-                  onClick={explorerStore.courseActions.publishAllCourses}
+                  disabled={contentStore.isPublishingAllCourses}
+                  onClick={contentStore.courseActions.publishAllCourses}
                 >
-                  {explorerStore.isPublishingAllCourses ? (
+                  {contentStore.isPublishingAllCourses ? (
                     <LoaderCircle className="w-5 h-5 animate-spin" />
                   ) : (
                     <UploadCloud className="w-5 h-5" />
@@ -301,15 +327,16 @@ const ModuleContentExplorer = () => {
               </PermissionGuard>
             </RoleRankGuard>
           }
-          header={<ModuleContentExplorerHeader moduleData={state.module} />}
+          header={<ModuleContentHeader moduleData={state.module} />}
           progressionSide={
             /* Sidebar */
-            <ModuleExplorerSidebar
-              store={explorerStore}
+            <ModuleContentSidebar
+              store={contentStore}
               calendar={isCalendarView ? calendar : undefined}
               canEditModule={canEditModule}
               canEditSelectedLesson={canEditSelectedLesson}
               selectedAssignmentCourseId={selectedAssignmentCourseId}
+              isReorderingCourses={isReorderingCourses}
               onSelectAssignment={(courseId) => {
                 setSelectedAssignmentCourseId(courseId);
                 if (courseId) {
@@ -334,8 +361,8 @@ const ModuleContentExplorer = () => {
                 onChanged={moduleActions.fetchModuleData}
               />
             ) : (
-              <ModuleExplorerPreview
-                store={explorerStore}
+              <ModuleContentPreview
+                store={contentStore}
                 quizState={quizState}
                 aiIndexed={isSelectedCourseAiIndexed}
                 smartQuizState={smartQuizState}
@@ -348,10 +375,10 @@ const ModuleContentExplorer = () => {
         />
       ) : (
         /* Skeleton */
-        <ModuleContentExplorerSkeleton />
+        <ModuleContentSkeleton />
       )}
     </PageWrapper>
   );
 };
 
-export default ModuleContentExplorer;
+export default ModuleContent;

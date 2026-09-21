@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../../../store/AuthProvider";
 import type Module from "../../../utils/interfaces/module";
-import useModuleContentExplorer from "./use-module-content-explorer";
+import useModuleContent from "./use-module-content";
 import { modulePreviewApi } from "../api/module-preview.api";
 
 vi.mock("../api/module-preview.api", () => ({
@@ -17,10 +17,10 @@ vi.mock("../api/module-preview.api", () => ({
 }));
 
 let root: Root;
-let store: ReturnType<typeof useModuleContentExplorer>;
+let store: ReturnType<typeof useModuleContent>;
 let client: QueryClient;
 function Harness() {
-  const explorer = useModuleContentExplorer();
+  const explorer = useModuleContent();
   useEffect(() => { store = explorer; });
   return null;
 }

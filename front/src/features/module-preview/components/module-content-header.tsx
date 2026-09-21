@@ -7,13 +7,13 @@ import { ComponentIcon, RocketIcon } from "lucide-react";
 import defaultImage from "../../../assets/images/module-default.jpg";
 import { normalizeImageSource } from "../../../utils/images/image-source";
 
-type ModuleContentExplorerHeaderProps = {
+type ModuleContentHeaderProps = {
   moduleData: Module & { parcours: string };
 };
 
-const ModuleContentExplorerHeader = ({
+const ModuleContentHeader = ({
   moduleData,
-}: ModuleContentExplorerHeaderProps) => {
+}: ModuleContentHeaderProps) => {
   const { pathname } = useLocation();
   const baseRoute = pathname.split("/")[1];
 
@@ -31,4 +31,4 @@ const ModuleContentExplorerHeader = ({
   );
 };
 
-export default ModuleContentExplorerHeader;
+export default ModuleContentHeader;

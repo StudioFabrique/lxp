@@ -7,9 +7,10 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 
-type ModuleContentExplorerWrapperProps = {
+type ModuleContentLayoutProps = {
   calendarAction?: React.ReactNode;
   calendarContent?: React.ReactNode;
+  reorderCoursesAction?: React.ReactNode;
   selectedLesson?: Lesson;
   isContentSelected?: boolean;
   isPanelClosed?: boolean;
@@ -26,12 +27,13 @@ type ModuleContentExplorerWrapperProps = {
 };
 
 /**
- * Ce composant sert de conteneur (wrapper) structurel pour le composant ModuleContentExplorer.
+ * Conteneur structurel de la page ModuleContent.
  * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props.
  */
-const ModuleContentExplorerWrapper = ({
+const ModuleContentLayout = ({
   calendarAction,
   calendarContent,
+  reorderCoursesAction,
   selectedLesson,
   isContentSelected = Boolean(selectedLesson),
   isPanelClosed = false,
@@ -45,7 +47,7 @@ const ModuleContentExplorerWrapper = ({
   topProgressBar,
   previewLesson,
   moduleData,
-}: ModuleContentExplorerWrapperProps) => {
+}: ModuleContentLayoutProps) => {
   return (
     <div className="w-full overflow-x-clip">
       {header}
@@ -67,6 +69,7 @@ const ModuleContentExplorerWrapper = ({
             )}
           </button>
         </div>
+        {reorderCoursesAction}
         <span
           ref={scrollTopRef}
           className="min-w-0 flex-1 bg-secondary/20 rounded-lg h-10 px-2 border border-secondary/20 flex items-center"
@@ -114,4 +117,4 @@ const ModuleContentExplorerWrapper = ({
   );
 };
 
-export default ModuleContentExplorerWrapper;
+export default ModuleContentLayout;

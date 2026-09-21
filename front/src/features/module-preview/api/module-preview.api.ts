@@ -251,6 +251,10 @@ const mutations = {
     const res = await apiClient.delete(`/activity/${type}/${activityId}/lesson`);
     return res.data;
   },
+  reorderCourses: async (moduleId: number, courseIds: number[]) => {
+    const res = await apiClient.put(`/course/reorder/${moduleId}`, courseIds);
+    return res.data;
+  },
   reorderActivities: async (lessonId: number, activitiesIds: number[]) => {
     const res = await apiClient.put(`/activity/reorder/${lessonId}`, {
       activitiesIds,

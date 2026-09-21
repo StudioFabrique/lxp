@@ -1,7 +1,7 @@
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
 import { useEffect, useRef, useState } from "react";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
-import { ExplorerStore } from "../../views/ModuleContentExplorer";
+import { ModuleContentStore } from "../../views/ModuleContent";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
 import ActivityList from "./activity-list";
 import CreateCourseItem from "./create-course-item";
@@ -14,20 +14,22 @@ import type { ModuleCalendarStore } from "../../hooks/use-module-calendar";
 
 type Props = {
   calendar?: ModuleCalendarStore;
-  store: ExplorerStore;
+  store: ModuleContentStore;
   canEditModule?: boolean;
   canEditSelectedLesson?: boolean;
   selectedAssignmentCourseId?: number;
   onSelectAssignment: (courseId?: number) => void;
+  isReorderingCourses?: boolean;
 };
 
-const ModuleExplorerSidebar = ({
+const ModuleContentSidebar = ({
   store,
   calendar,
   canEditModule,
   canEditSelectedLesson,
   selectedAssignmentCourseId,
   onSelectAssignment,
+  isReorderingCourses = false,
 }: Props) => {
   const { state, dispatch, courseActions, lessonActions, activityActions } =
     store;
@@ -261,6 +263,8 @@ const ModuleExplorerSidebar = ({
           onEnableCourse={courseActions.enableCourse}
           onPublishCourse={courseActions.publishCourse}
           onUpdateCourse={courseActions.updateCourse}
+          onCourseReorder={courseActions.courseReorder}
+          isReorderingCourses={isReorderingCourses}
           editCourseId={editCourseId}
           editLessonId={editLessonId}
           openedCourseId={openedCourseId}
@@ -312,4 +316,4 @@ const ModuleExplorerSidebar = ({
   );
 };
 
-export default ModuleExplorerSidebar;
+export default ModuleContentSidebar;

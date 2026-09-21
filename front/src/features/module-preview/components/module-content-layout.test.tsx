@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type Lesson from "../../../utils/interfaces/lesson";
-import ModuleContentExplorerWrapper from "./module-content-explorer-wrapper";
+import ModuleContentLayout from "./module-content-layout";
 
 const roots: Root[] = [];
 
@@ -19,7 +19,7 @@ const renderWrapper = (
 
   act(() => {
     root.render(
-      <ModuleContentExplorerWrapper
+      <ModuleContentLayout
         calendarAction={calendar ? <button aria-label="Calendrier" /> : undefined}
         calendarContent={calendar ? <div>Planification</div> : undefined}
         selectedLesson={selectedLesson}
@@ -44,7 +44,7 @@ afterEach(() => {
   roots.splice(0).forEach((root) => act(() => root.unmount()));
 });
 
-describe("ModuleContentExplorerWrapper", () => {
+describe("ModuleContentLayout", () => {
   it("place l'action Tout publier à gauche de Tout réduire", () => {
     const container = document.createElement("div");
     const onPublishAll = vi.fn();

@@ -14,9 +14,9 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
-  initialModuleExplorerContentState,
-  moduleExplorerContentReducer,
-} from "../store/module-explorer-reducer";
+  initialModuleContentState,
+  moduleContentReducer,
+} from "../store/module-content-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import {
@@ -38,7 +38,7 @@ import { getUserArea } from "../../../utils/helpers/user-role";
 import { parcoursKeys } from "../../parcours/api/parcours.keys";
 import type Skill from "../../../utils/interfaces/skill";
 
-const useModuleContentExplorer = () => {
+const useModuleContent = () => {
   // Le contexte du chatbot
   const { setCurrentActivity } = useContext(ChatbotContext);
   const { user } = useContext(AuthContext);
@@ -72,8 +72,8 @@ const useModuleContentExplorer = () => {
   const [isPublishingAllCourses, setIsPublishingAllCourses] = useState(false);
 
   const [state, dispatch] = useReducer(
-    moduleExplorerContentReducer,
-    initialModuleExplorerContentState,
+    moduleContentReducer,
+    initialModuleContentState,
   );
   const selectedLessonId = state.selectedLesson?.id;
   const selectedActivityId = state.selectedActivity?.id;
@@ -775,6 +775,41 @@ const useModuleContentExplorer = () => {
     }
   };
 
+  const courseReorder = async ({
+    source,
+    location,
+  }: BaseEventPayload<ElementDragType>) => {
+    if (isReordering.current.course || !state.module?.id) {
+      if (isReordering.current.course) toast("Veuillez patienter");
+      return;
+    }
+
+    const fromId = source.data.index as number;
+    const destination = location.current.dropTargets[0];
+    if (!destination) return;
+
+    const toId = destination.data.index as number;
+    if (fromId === undefined || toId === undefined || fromId === toId) return;
+
+    const reorderedCourses = Array.from(state.module.courses);
+    const [movedCourse] = reorderedCourses.splice(fromId, 1);
+    reorderedCourses.splice(toId, 0, movedCourse);
+    dispatch({ type: "reorder_course", fromId, toId });
+    isReordering.current.course = true;
+
+    try {
+      await modulePreviewApi.mutations.reorderCourses(
+        state.module.id,
+        reorderedCourses.map((course) => course.id),
+      );
+    } catch {
+      dispatch({ type: "reorder_course", fromId: toId, toId: fromId });
+      toast.error("Impossible de modifier l’ordre des cours");
+    } finally {
+      isReordering.current.course = false;
+    }
+  };
+
   const nextLesson = () => {
     dispatch({ type: "go_to_next_lesson" });
   };
@@ -917,6 +952,7 @@ const useModuleContentExplorer = () => {
       deleteCourse,
       createCourse,
       updateCourse,
+      courseReorder,
     },
     lessonActions: {
       completeLesson,
@@ -938,4 +974,4 @@ const useModuleContentExplorer = () => {
   };
 };
 
-export default useModuleContentExplorer;
+export default useModuleContent;

@@ -15,6 +15,12 @@ import type { UpdateCourseFormValues } from "./course-form.types";
 import type { LessonFormValues } from "./lesson-form.types";
 import { cn } from "../../../../utils/cn";
 import { useOnboarding } from "../../../onboarding/OnboardingContext";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type {
+  BaseEventPayload,
+  ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import SortableCourseItem from "./sortable-course-item";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -38,6 +44,8 @@ type SidebarCoursesListProps = {
     courseId: number,
     values: UpdateCourseFormValues,
   ) => Promise<boolean>;
+  onCourseReorder?: (args: BaseEventPayload<ElementDragType>) => void;
+  isReorderingCourses?: boolean;
   editCourseId?: number;
   editLessonId?: number;
   openedCourseId?: number;
@@ -74,6 +82,8 @@ const SidebarCoursesList = ({
   onEnableCourse,
   onPublishCourse,
   onUpdateCourse,
+  onCourseReorder,
+  isReorderingCourses = false,
   editCourseId,
   editLessonId,
   openedCourseId,
@@ -112,6 +122,15 @@ const SidebarCoursesList = ({
     );
   });
   const actionsSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isReorderingCourses || !onCourseReorder) return;
+
+    return monitorForElements({
+      canMonitor: ({ source }) => source.data.type === "course",
+      onDrop: onCourseReorder,
+    });
+  }, [isReorderingCourses, onCourseReorder]);
 
   useEffect(() => {
     if (calendarMode) {
@@ -201,12 +220,22 @@ const SidebarCoursesList = ({
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
-          courses.map((course) => (
-            <div key={course.id} className={cn("relative w-full rounded-lg transition-opacity", {
+          courses.map((course, index) => (
+            <SortableCourseItem
+              key={course.id}
+              courseId={course.id}
+              courseTitle={course.title}
+              index={index}
+              enabled={isReorderingCourses}
+            >
+            <div className={cn("relative w-full rounded-lg transition-opacity", {
               "ring-2 ring-primary ring-offset-4 ring-offset-base-200": calendarMode && calendarSelectedCourseId === course.id,
               "opacity-30": calendarMode && calendarAdding && !calendarOrphanIds.includes(course.id),
             })}>
-            <div inert={calendarMode && calendarAdding} className={calendarMode && calendarAdding ? "pointer-events-none" : undefined}>
+            <div
+              inert={(calendarMode && calendarAdding) || isReorderingCourses}
+              className={(calendarMode && calendarAdding) || isReorderingCourses ? "pointer-events-none" : undefined}
+            >
             <CourseItem
               calendarMode={calendarMode}
               course={course}
@@ -220,7 +249,7 @@ const SidebarCoursesList = ({
               onUpdateCourse={onUpdateCourse}
               openEditOnMount={!calendarMode && course.id === editCourseId}
               editLessonId={calendarMode ? undefined : editLessonId}
-              isOpen={!calendarAdding && course.id === openCourseId}
+              isOpen={!calendarAdding && !isReorderingCourses && course.id === openCourseId}
               lessonIdToScroll={lessonIdToScroll}
               onLessonScrolled={onLessonScrolled}
               onToggle={() => {
@@ -250,6 +279,7 @@ const SidebarCoursesList = ({
                 aria-label={`Ajouter ${course.title} au calendrier`} onClick={() => onAddCalendarCourse?.(course.id)} />
             )}
             </div>
+            </SortableCourseItem>
           ))
         ) : (
           <RoleRankGuard ranks={[3]}>
@@ -259,7 +289,7 @@ const SidebarCoursesList = ({
           </RoleRankGuard>
         )}
       </div>
-      {!calendarMode && (
+      {!calendarMode && !isReorderingCourses && (
         <PermissionGuard action="update" object="course">
           <div
             className={cn(

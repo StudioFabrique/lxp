@@ -52,15 +52,16 @@ type ConditionnalStateProperties =
     };
 
 // Le type du state du reducer
-export type ModuleExplorerContentState = StaticStateProperties &
+export type ModuleContentState = StaticStateProperties &
   ConditionnalStateProperties;
 
-type ModuleExplorerContentAction =
+type ModuleContentAction =
   // Module
   | { type: "update_module_data"; module: Module & { parcours: string } }
   // Course
   | { type: "set_course_visibility"; isVisible: boolean; course: Course }
   | { type: "delete_course"; id: number }
+  | { type: "reorder_course"; fromId: number; toId: number }
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson; activityId?: number }
   | { type: "select_lesson_by_id"; id: number }
@@ -100,16 +101,16 @@ type ModuleExplorerContentAction =
 
 const stored = localStorage.getItem(STORAGE_KEY);
 
-export const initialModuleExplorerContentState: ModuleExplorerContentState = {
+export const initialModuleContentState: ModuleContentState = {
   mode: "read",
   isPanelClosed: stored ? JSON.parse(stored) : false,
   modalVisibility: "none",
 };
 
-export function moduleExplorerContentReducer(
-  state: ModuleExplorerContentState,
-  action: ModuleExplorerContentAction
-): ModuleExplorerContentState {
+export function moduleContentReducer(
+  state: ModuleContentState,
+  action: ModuleContentAction
+): ModuleContentState {
   switch (action.type) {
     // --- Module ---
     case "update_module_data": {
@@ -311,6 +312,22 @@ export function moduleExplorerContentReducer(
             })) || [],
         },
       };
+
+    case "reorder_course": {
+      if (!state.module) return state;
+
+      const courses = Array.from(state.module.courses);
+      const [removed] = courses.splice(action.fromId, 1);
+      courses.splice(action.toId, 0, removed);
+
+      return {
+        ...state,
+        module: {
+          ...state.module,
+          courses: courses.map((course, order) => ({ ...course, order })),
+        },
+      };
+    }
 
     case "reorder_lesson": {
       if (!state.module) return state;

@@ -6,11 +6,11 @@ import ActivityTypeSelection from "./activity-type-selection";
 import LessonReaderAndEditor from "./lesson-reader-and-editor";
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import StudentActivityNavigation from "./student-activity-navigation";
-import { ExplorerStore } from "../../views/ModuleContentExplorer";
+import { ModuleContentStore } from "../../views/ModuleContent";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
 import { useCallback } from "react";
 
-const ModuleExplorerPreview = ({
+const ModuleContentPreview = ({
   store,
   smartQuizState,
   quizState,
@@ -18,7 +18,7 @@ const ModuleExplorerPreview = ({
   canNavigateAsAdmin = false,
   aiIndexed = true,
 }: {
-  store: ExplorerStore;
+  store: ModuleContentStore;
   smartQuizState: ReturnType<typeof useSmartQuizPrompt>;
   quizState: ReturnType<typeof useCourseQuiz>;
   canEditSelectedLesson?: boolean;
@@ -191,4 +191,4 @@ const ModuleExplorerPreview = ({
   );
 };
 
-export default ModuleExplorerPreview;
+export default ModuleContentPreview;
