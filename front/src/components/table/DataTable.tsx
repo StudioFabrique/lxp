@@ -24,6 +24,7 @@ interface DataTableProps<TData extends RowData> {
   isLoading?: boolean;
   isSearching?: boolean;
   emptyMessage?: string;
+  emptyPlaceholderWithBorder?: boolean;
   onRowClick?: (row: TData) => void;
   isRowClickable?: (row: TData) => boolean;
   canSelectRow?: (row: TData) => boolean;
@@ -39,6 +40,7 @@ export function DataTable<TData extends RowData>({
   isLoading,
   isSearching = false,
   emptyMessage = "Aucun élément disponible",
+  emptyPlaceholderWithBorder,
   onRowClick,
   isRowClickable = () => true,
   canSelectRow = () => true,
@@ -68,7 +70,7 @@ export function DataTable<TData extends RowData>({
     return isLoading ? null : (
       <EmptyStatePlaceholder
         title={emptyMessage}
-        withBorder={!isSearching}
+        withBorder={emptyPlaceholderWithBorder ?? !isSearching}
       />
     );
   }

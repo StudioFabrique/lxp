@@ -54,3 +54,29 @@ describe("LessonItem en mode calendrier", () => {
     },
   );
 });
+
+describe("visibilité d'une leçon dans la sidebar", () => {
+  it("n'affiche aucun indicateur quand la leçon est visible", () => {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+    roots.push(root);
+    const visibleLesson = { ...lesson, visibility: true } as Lesson;
+
+    act(() =>
+      root.render(
+        <LessonItem
+          lesson={visibleLesson}
+          courseTags={[]}
+          selectedLesson={visibleLesson}
+          canEditLesson
+          onSelectLesson={vi.fn()}
+          onOpenModal={vi.fn()}
+          onUpdateLesson={vi.fn().mockResolvedValue(true)}
+        />,
+      ),
+    );
+
+    expect(container.querySelector('[aria-label="Leçon visible"]')).toBeNull();
+    expect(container.querySelector('[aria-label="Leçon invisible"]')).toBeNull();
+  });
+});

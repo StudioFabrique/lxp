@@ -1,0 +1,999 @@
+import { useLocation, useParams } from "react-router";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+  useRef,
+  useContext,
+} from "react";
+import Module from "../../../utils/interfaces/module";
+import Lesson from "../../../utils/interfaces/lesson";
+import LessonRead from "../../../utils/interfaces/lesson-read";
+import LessonRating from "../interfaces/lesson-rating";
+import toast from "react-hot-toast";
+import {
+  initialModuleContentState,
+  moduleContentReducer,
+} from "../store/module-content-reducer";
+import { ACTIVITIES } from "../../../config/urls";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
+import {
+  BaseEventPayload,
+  ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { ChatbotContext } from "../../../../src/store/ChatbotProvider";
+import { modulePreviewApi } from "../api/module-preview.api";
+import type {
+  CreateCourseFormValues,
+  UpdateCourseFormValues,
+} from "../components/sidebar/course-form.types";
+import type { LessonFormValues } from "../components/sidebar/lesson-form.types";
+import { emitOnboardingEvent } from "../../onboarding/onboarding-events";
+import { cleanActivityTextContent } from "../../../utils/helpers/text-helpers";
+import { useQueryClient } from "@tanstack/react-query";
+import { AuthContext } from "../../../store/AuthProvider";
+import { getUserArea } from "../../../utils/helpers/user-role";
+import { parcoursKeys } from "../../parcours/api/parcours.keys";
+import type Skill from "../../../utils/interfaces/skill";
+
+const useModuleContent = () => {
+  // Le contexte du chatbot
+  const { setCurrentActivity } = useContext(ChatbotContext);
+  const { user } = useContext(AuthContext);
+  const isStudent = getUserArea(user) === "student";
+  const queryClient = useQueryClient();
+  const completionInFlight = useRef(false);
+  const [badgeCompletion, setBadgeCompletion] = useState<{
+    moduleId: number;
+    moduleTitle: string;
+    badges: Skill[];
+  } | null>(null);
+
+  const { moduleId } = useParams();
+  const location = useLocation();
+  const stateFromUrl = location.state as {
+    courseId?: number;
+    lessonId?: number;
+    activityId?: number;
+  } | null;
+  const handledLocationKey = useRef<string | undefined>(undefined);
+  const isInitialActivityLoaded = useRef(false);
+  const isDiagnosticPassed = useRef(false);
+  const isReordering = useRef({
+    course: false,
+    lesson: false,
+    activity: false,
+  });
+
+  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPublishingAllCourses, setIsPublishingAllCourses] = useState(false);
+
+  const [state, dispatch] = useReducer(
+    moduleContentReducer,
+    initialModuleContentState,
+  );
+  const selectedLessonId = state.selectedLesson?.id;
+  const selectedActivityId = state.selectedActivity?.id;
+  const selectedActivityType = state.selectedActivity?.type;
+  const selectedActivityUrl = state.selectedActivity?.url;
+  const moduleCourses = state.module?.courses;
+  const activeModuleId = useRef(moduleId);
+  useEffect(() => {
+    activeModuleId.current = moduleId;
+    return () => {
+      activeModuleId.current = undefined;
+    };
+  }, [moduleId]);
+  const requestedActivityId =
+    stateFromUrl?.lessonId === selectedLessonId
+      ? stateFromUrl?.activityId
+      : undefined;
+
+  const hasStartedModule = useMemo(() => {
+    if (!state.module) return false;
+    return state.module.courses.some((course) =>
+      course.lessons.some(
+        (lesson) => lesson.lessonsRead && lesson.lessonsRead.length > 0,
+      ),
+    );
+  }, [state.module]);
+
+  const isLessonCompleted = useMemo(
+    () =>
+      Boolean(
+        state.selectedLesson?.lessonsRead?.some(
+          (lessonRead) => lessonRead.finishedAt,
+        ),
+      ),
+    [state.selectedLesson?.lessonsRead],
+  );
+
+  const isFirstActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !selectedActivityId) return false;
+
+    return activities[0].id === selectedActivityId;
+  }, [selectedActivityId, state.selectedLesson?.activities]);
+
+  const isLastActivitySelected = useMemo(() => {
+    const activities = state.selectedLesson?.activities;
+    if (!activities?.length || !selectedActivityId) return false;
+
+    return activities[activities.length - 1].id === selectedActivityId;
+  }, [selectedActivityId, state.selectedLesson?.activities]);
+
+  const isLastLessonSelected = useMemo(() => {
+    if (!moduleCourses?.length || !selectedLessonId) return false;
+
+    const lessons = moduleCourses.flatMap((course) => course.lessons);
+    const lastLesson = lessons[lessons.length - 1];
+    return lastLesson?.id === selectedLessonId;
+  }, [moduleCourses, selectedLessonId]);
+
+  const hasNextLesson = useMemo(() => {
+    if (!moduleCourses?.length || !selectedLessonId) return false;
+
+    const lessons = moduleCourses.flatMap((course) => course.lessons);
+    const currentLessonIndex = lessons.findIndex(
+      (lesson) => lesson.id === selectedLessonId,
+    );
+    return currentLessonIndex >= 0 && currentLessonIndex < lessons.length - 1;
+  }, [moduleCourses, selectedLessonId]);
+
+  const isLastLessonOfCurrentCourse = useMemo(() => {
+    if (!selectedLessonId || !moduleCourses) return false;
+
+    // On trouve le cours auquel appartient la leçon sélectionnée
+    const currentCourse = moduleCourses.find((course) =>
+      course.lessons.some((lesson) => lesson.id === selectedLessonId),
+    );
+
+    if (!currentCourse || !currentCourse.lessons.length) return false;
+
+    // On compare l'ID de la leçon actuelle avec l'ID de la dernière leçon de ce cours
+    const lastLessonInCourse =
+      currentCourse.lessons[currentCourse.lessons.length - 1];
+    return lastLessonInCourse.id === selectedLessonId;
+  }, [moduleCourses, selectedLessonId]);
+
+  const fetchModuleData = useCallback(async () => {
+    if (!moduleId) return;
+    setIsLoadingRequest(true);
+    try {
+      const { data } = (await modulePreviewApi.queries.getModuleDetail(
+        moduleId,
+      )) as { data: Module & { parcours: string } };
+      if (activeModuleId.current !== moduleId) return;
+      setBadgeCompletion((current) =>
+        current?.moduleId === data.id ? current : null,
+      );
+      dispatch({ type: "update_module_data", module: data });
+    } catch {
+      // silently fail
+    } finally {
+      setIsLoadingRequest(false);
+    }
+  }, [moduleId]);
+
+  // Comme la clôture ci-dessous : ouvrir le suivi ne doit pas faire échouer
+  // l'affichage de la leçon, ni laisser un rejet sans preneur chez l'appelant.
+  const initiateLesson = useCallback(async (lessonId: number) => {
+    await modulePreviewApi.tracking.begin("lesson", lessonId).catch(() => {});
+  }, []);
+
+  // Le suivi de contenu ne doit jamais faire échouer la complétion d'une leçon.
+  const finishContent = useCallback(
+    (type: "module" | "course" | "lesson", contentId: number) => {
+      modulePreviewApi.tracking.finish(type, contentId).catch(() => {});
+    },
+    [],
+  );
+
+  // Handler pour signaler la fin du quiz et enclencher la lecture
+  const onFinishInitialQuiz = useCallback(async () => {
+    isDiagnosticPassed.current = true;
+    if (selectedLessonId) {
+      await initiateLesson(selectedLessonId);
+    }
+  }, [selectedLessonId, initiateLesson]);
+
+  const completeLesson = useCallback(
+    async (rating: number) => {
+      const lessonId = state.selectedLesson?.id;
+      if (state.selectedLesson && lessonId && !completionInFlight.current) {
+        completionInFlight.current = true;
+        try {
+          // Deux responsabilités distinctes, longtemps servies par la même
+          // route historique : clore le suivi de lecture, puis enregistrer la
+          // note. `/content-read` porte désormais le suivi pour les quatre
+          // niveaux de contenu, la notation reste propre à la leçon.
+          const { contentRead: lessonRead } =
+            (await modulePreviewApi.tracking.finish("lesson", lessonId)) as {
+              contentRead: LessonRead;
+            };
+          if (activeModuleId.current !== String(state.module?.id)) return;
+          dispatch({
+            type: "mark_lesson_as_complete",
+            lesson: state.selectedLesson,
+            lessonRead,
+          });
+          // La note ne conditionne pas l'obtention des compétences.
+          try {
+            const { data: lessonRating } =
+              (await modulePreviewApi.mutations.rateLesson(lessonId, rating)) as {
+                data: LessonRating;
+              };
+            if (activeModuleId.current !== String(state.module?.id)) return;
+            dispatch({ type: "set_lesson_rating", rating: [lessonRating] });
+          } catch {
+            toast.error(
+              "La leçon est terminée, mais votre évaluation n'a pas pu être enregistrée.",
+            );
+          }
+
+          if (state.module?.id) {
+            if (state.module.parcoursId) {
+              void queryClient.invalidateQueries({
+                queryKey: parcoursKeys.detail(state.module.parcoursId),
+              });
+            }
+            const { data: updatedModule } =
+              (await modulePreviewApi.queries.getModuleDetail(state.module.id)) as {
+                data: Module & { parcours: string };
+              };
+            if (activeModuleId.current !== String(state.module.id)) return;
+            dispatch({ type: "update_module_data", module: updatedModule });
+
+            const completedCourse = updatedModule.courses.find(
+              (course) => course.id === state.selectedLesson?.courseId,
+            );
+            if (completedCourse?.stats?.isCompleted) {
+              finishContent("course", completedCourse.id);
+            }
+            if (updatedModule.stats?.isCompleted) {
+              finishContent("module", state.module.id);
+            }
+
+            void queryClient.invalidateQueries({ queryKey: ["last-read-lessons"] });
+            if (isStudent && !state.module.stats?.isCompleted && updatedModule.stats?.isCompleted) {
+              dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
+              setBadgeCompletion({
+                moduleId: state.module.id,
+                moduleTitle: updatedModule.title,
+                badges: updatedModule.bonusSkills,
+              });
+            }
+          }
+        } catch {
+          // silently fail
+        } finally {
+          completionInFlight.current = false;
+        }
+      }
+    },
+    [
+      state.selectedLesson,
+      state.module,
+      isStudent,
+      queryClient,
+      finishContent,
+    ],
+  );
+
+  const deleteActivity = useCallback(async () => {
+    if (!state.selectedActivity) return;
+    try {
+      await modulePreviewApi.mutations.deleteActivity(
+        state.selectedActivity.type,
+        state.selectedActivity.id,
+      );
+      dispatch({ type: "delete_selected_activity" });
+      toast.success("L'activité a été supprimé");
+      dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
+    } catch {
+      // silently fail
+    }
+  }, [state.selectedActivity]);
+
+  const rateContent = useCallback(
+    async (rating: number) => {
+      try {
+        const { data } = (await modulePreviewApi.mutations.updateLessonRating(
+          selectedLessonId!,
+          rating,
+        )) as { data: LessonRating };
+        dispatch({ type: "set_lesson_rating", rating: [data] });
+      } catch {
+        // silently fail
+      }
+    },
+    [selectedLessonId],
+  );
+
+  const enableCourse = useCallback(
+    async (courseId: number, visibility: boolean) => {
+      try {
+        const data = await modulePreviewApi.mutations.enableCourse(
+          courseId,
+          visibility,
+        );
+        if (data.success) {
+          toast.success(data.message);
+          fetchModuleData();
+        }
+      } catch {
+        // silently fail
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const publishCourse = useCallback(
+    async (courseId: number) => {
+      try {
+        const data = await modulePreviewApi.mutations.publishCourse(courseId);
+        if (data.success) {
+          toast.success(data.message);
+          fetchModuleData();
+        }
+      } catch {
+        // silently fail
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const publishAllCourses = useCallback(async () => {
+    const unpublishedCourseIds =
+      state.module?.courses
+        .filter((course) => !course.isPublished)
+        .map((course) => course.id) ?? [];
+
+    if (unpublishedCourseIds.length === 0) {
+      toast.success("Tous les cours sont déjà publiés");
+      return;
+    }
+
+    setIsPublishingAllCourses(true);
+    try {
+      await Promise.all(
+        unpublishedCourseIds.map((courseId) =>
+          modulePreviewApi.mutations.publishCourse(courseId),
+        ),
+      );
+      await fetchModuleData();
+      toast.success("Tous les cours ont été publiés avec succès");
+    } catch {
+      await fetchModuleData();
+      toast.error("Impossible de publier tous les cours");
+    } finally {
+      setIsPublishingAllCourses(false);
+    }
+  }, [fetchModuleData, state.module?.courses]);
+
+  const deleteCourse = useCallback(async (courseId: number) => {
+    try {
+      const data = await modulePreviewApi.mutations.deleteCourse(courseId);
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "delete_course", id: courseId });
+      }
+    } catch {
+      toast.error("Impossible de supprimer le cours");
+    }
+  }, []);
+
+  const createCourse = useCallback(
+    async (values: CreateCourseFormValues): Promise<number | false> => {
+      if (!moduleId || !values.title.trim()) return false;
+      try {
+        const data = await modulePreviewApi.mutations.createCourse({
+          title: values.title.trim(),
+          moduleId: +moduleId,
+        });
+        await modulePreviewApi.mutations.updateCourseInfos({
+          id: data.course.id,
+          title: values.title.trim(),
+          description: values.description,
+          visibility: values.visibility,
+        });
+        await modulePreviewApi.mutations.saveCourseAssignment(
+          data.course.id,
+          values.assignment,
+        );
+        if (values.tagIds.length > 0) {
+          await modulePreviewApi.mutations.setCourseTags(
+            data.course.id,
+            values.tagIds,
+          );
+        }
+        if (values.lessonTitles.length > 0) {
+          const tagId = values.tagIds[0];
+          for (const lessonTitle of values.lessonTitles) {
+            await modulePreviewApi.mutations.createLesson(data.course.id, {
+              title: lessonTitle,
+              description: "",
+              modalite: "distanciel",
+              tagId,
+            });
+          }
+        }
+        if (values.lessonIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateLessons(
+            data.course.id,
+            values.lessonIds,
+          );
+        }
+        if (values.resourceIds.length > 0) {
+          await modulePreviewApi.mutations.duplicateResources(
+            data.course.id,
+            values.resourceIds,
+          );
+        }
+        await fetchModuleData();
+        toast.success("Cours créé");
+        emitOnboardingEvent({ type: "course_created", id: data.course.id });
+        return data.course.id;
+      } catch {
+        toast.error("Impossible de créer le cours");
+        return false;
+      }
+    },
+    [fetchModuleData, moduleId],
+  );
+
+  const updateCourse = useCallback(
+    async (courseId: number, values: UpdateCourseFormValues) => {
+      try {
+        await modulePreviewApi.mutations.updateCourseInfos({
+          id: courseId,
+          title: values.title.trim(),
+          description: values.description,
+          visibility: values.visibility,
+        });
+        await modulePreviewApi.mutations.saveCourseAssignment(
+          courseId,
+          values.assignment,
+        );
+        await modulePreviewApi.mutations.setCourseTags(courseId, values.tagIds);
+        await fetchModuleData();
+        toast.success("Cours mis à jour");
+        return true;
+      } catch {
+        toast.error("Impossible de modifier le cours");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const createLesson = useCallback(
+    async (
+      courseId: number,
+      data: LessonFormValues,
+    ): Promise<number | false> => {
+      if (!data.title.trim() || !data.tagId) return false;
+      try {
+        const created = await modulePreviewApi.mutations.createLesson(
+          courseId,
+          { ...data, title: data.title.trim() },
+        );
+        await fetchModuleData();
+        toast.success("Leçon créée");
+        // Le composant appelant sélectionne la nouvelle leçon une fois cette
+        // promesse résolue. Différer l'événement laisse React afficher le
+        // bouton de création d'activité avant que Joyride ne cherche sa cible.
+        window.setTimeout(() => {
+          emitOnboardingEvent({ type: "lesson_created", id: created.id });
+        });
+        return created.id;
+      } catch {
+        toast.error("Impossible de créer la leçon");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const updateLesson = useCallback(
+    async (lessonId: number, data: LessonFormValues) => {
+      if (!data.title.trim() || !data.tagId) return false;
+      try {
+        await modulePreviewApi.mutations.updateLesson({
+          id: lessonId,
+          ...data,
+          title: data.title.trim(),
+          description: data.description.trim(),
+        });
+        await fetchModuleData();
+        toast.success("Leçon mise à jour");
+        return true;
+      } catch {
+        toast.error("Impossible de modifier la leçon");
+        return false;
+      }
+    },
+    [fetchModuleData],
+  );
+
+  const deleteLesson = useCallback(async (lessonId: number) => {
+    try {
+      const data = await modulePreviewApi.mutations.deleteLesson(lessonId);
+      if (data.success) {
+        toast.success(data.message);
+        dispatch({ type: "delete_lesson", id: lessonId });
+      }
+    } catch {
+      toast.error("Impossible de supprimer la leçon");
+    }
+  }, []);
+
+  const fetchLessonData = useCallback(async () => {
+    if (!selectedLessonId) return;
+
+    try {
+      const lesson = (await modulePreviewApi.queries.getLesson(
+        selectedLessonId,
+      )) as Lesson;
+      dispatch({
+        type: "select_lesson",
+        lesson,
+        activityId: requestedActivityId,
+      });
+    } catch {
+      // silently fail
+    }
+
+    if (isDiagnosticPassed.current) {
+      await initiateLesson(selectedLessonId);
+    }
+  }, [selectedLessonId, requestedActivityId, initiateLesson]);
+
+  const refreshSelectedLesson = useCallback(
+    async (selectLastActivity = false): Promise<boolean> => {
+      if (!selectedLessonId) return false;
+
+      setIsLoading(true);
+      try {
+        const lesson = (await modulePreviewApi.queries.getLesson(
+          selectedLessonId,
+        )) as Lesson;
+        const activityId = selectLastActivity
+          ? lesson.activities?.[lesson.activities.length - 1]?.id
+          : selectedActivityId;
+
+        dispatch({ type: "select_lesson", lesson, activityId });
+
+        if (selectLastActivity && activityId) {
+          emitOnboardingEvent({ type: "activity_created", id: activityId });
+        }
+
+        return true;
+      } catch {
+        toast.error("Impossible de rafraîchir la leçon");
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedActivityId, selectedLessonId],
+  );
+
+  const fetchActivityTextContent = useCallback(() => {
+    if (
+      selectedActivityType === "text" &&
+      selectedActivityUrl &&
+      state.mode === "read"
+    ) {
+      fetch(`${ACTIVITIES}${selectedActivityUrl}`, {
+        credentials: "include",
+      })
+        .then((response) => response.text())
+        .then((content: string) => {
+          dispatch({ type: "update_activity_content", content });
+        });
+    }
+  }, [state.mode, selectedActivityType, selectedActivityUrl]);
+
+  const saveTextActivity = async (
+    title: string,
+    content: string,
+  ): Promise<boolean> => {
+    if (!content || !(content.length > 0)) {
+      toast.error("Le contenu est obligatoire");
+      return false;
+    }
+
+    const finalContent = cleanActivityTextContent(content);
+
+    setIsLoading(true);
+
+    let response: boolean;
+    try {
+      if (state.mode === "write") {
+        const activity = (await modulePreviewApi.mutations.createTextActivity(
+          state.selectedLesson!.id!,
+          { title, value: finalContent, parent: "lesson" },
+        )) as Activity;
+        dispatch({ type: "create_activity", activity });
+        emitOnboardingEvent({ type: "activity_created", id: activity.id });
+        response = true;
+      } else {
+        const activity = (
+          (await modulePreviewApi.mutations.updateTextActivity(
+            state.selectedActivity!.id,
+            { title, value: finalContent, parent: "lesson" },
+          )) as { response: Activity }
+        ).response;
+        dispatch({ type: "edit_activity", activity });
+        response = true;
+      }
+    } catch {
+      response = false;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsLoading(false);
+    return response;
+  };
+
+  const saveIframeActivity = async (title: string): Promise<boolean> => {
+    setIsLoading(true);
+
+    let response: boolean;
+    try {
+      if (state.mode === "write") {
+        const activity = (await modulePreviewApi.mutations.createIframeActivity(
+          state.selectedLesson!.id!,
+          { title, url: state.newActivitySrc },
+        )) as Activity;
+        dispatch({ type: "create_activity", activity });
+        response = true;
+      } else {
+        const activity = (await modulePreviewApi.mutations.updateIframeActivity(
+          state.selectedActivity!.id,
+          { title, url: state.selectedActivity?.url },
+        )) as Activity;
+        dispatch({ type: "edit_activity", activity });
+        response = true;
+      }
+    } catch {
+      response = false;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsLoading(false);
+    return response;
+  };
+
+  const saveResourceActivity = async (title: string): Promise<boolean> => {
+    if (!state.selectedActivity?.id) return false;
+
+    setIsLoading(true);
+    try {
+      const response = await modulePreviewApi.mutations.updateResourceActivityTitle(
+        state.selectedActivity.id,
+        title,
+        "lesson",
+      );
+      return response.success !== false;
+    } catch {
+      toast.error("Impossible de modifier le titre des ressources");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveActivity = async (
+    id?: number | undefined,
+    titleOverride?: string | undefined,
+    content?: string | undefined,
+  ): Promise<boolean> => {
+    if (state.mode === "read") return false;
+
+    const title = (
+      titleOverride ??
+      (state.mode === "write"
+        ? state.newActivityTitle
+        : state.selectedActivity?.title)
+    )?.trim();
+    const activityType =
+      state.mode === "write"
+        ? state.activityType
+        : state.selectedActivity?.type;
+
+    if (!title) {
+      const error = "Le titre est obligatoire";
+      toast.error(error);
+      dispatch({ type: "set_activity_title_error", error });
+      return false;
+    }
+
+    switch (activityType) {
+      case "text":
+        return await saveTextActivity(title, content ?? "");
+      case "iframe":
+        return await saveIframeActivity(title);
+      case "resource":
+        if (state.mode === "write") return false;
+        if (id && id !== state.selectedActivity?.id) return false;
+        return await saveResourceActivity(title);
+      default:
+        return false;
+    }
+  };
+
+  const activityReorder = async ({
+    source,
+    location,
+  }: BaseEventPayload<ElementDragType>) => {
+    if (isReordering.current.activity) {
+      toast("Veuillez patienter");
+      return;
+    }
+
+    // Extraction des index depuis les données attachées aux éléments
+    const fromId = source.data.index as number;
+
+    const destination = location.current.dropTargets[0];
+
+    if (!destination) return;
+
+    const toId = destination.data.index as number;
+
+    if (fromId === undefined || toId === undefined || fromId === toId) return;
+
+    dispatch({ type: "reorder_activity", fromId, toId });
+
+    isReordering.current.activity = true;
+
+    if (state.selectedLesson && state.selectedLesson.activities) {
+      const reorderedActivities = Array.from(state.selectedLesson.activities);
+      const [movedItem] = reorderedActivities.splice(fromId, 1);
+      reorderedActivities.splice(toId, 0, movedItem);
+
+      const newActivitiesIds = reorderedActivities.map(
+        (activity) => activity.id,
+      );
+
+      try {
+        await modulePreviewApi.mutations.reorderActivities(
+          state.selectedLesson.id!,
+          newActivitiesIds,
+        );
+      } catch {
+        // silently fail
+      } finally {
+        isReordering.current.activity = false;
+      }
+    } else {
+      isReordering.current.activity = false;
+    }
+  };
+
+  const courseReorder = async ({
+    source,
+    location,
+  }: BaseEventPayload<ElementDragType>) => {
+    if (isReordering.current.course || !state.module?.id) {
+      if (isReordering.current.course) toast("Veuillez patienter");
+      return;
+    }
+
+    const destination = location.current.dropTargets[0];
+    if (!destination || destination.data.type !== "course") return;
+
+    const sourceCourseId = source.data.id;
+    const destinationCourseId = destination.data.id;
+    if (
+      typeof sourceCourseId !== "number" ||
+      typeof destinationCourseId !== "number" ||
+      sourceCourseId === destinationCourseId
+    ) {
+      return;
+    }
+
+    const reorderedCourses = Array.from(state.module.courses);
+    const fromId = reorderedCourses.findIndex(
+      (course) => course.id === sourceCourseId,
+    );
+    const toId = reorderedCourses.findIndex(
+      (course) => course.id === destinationCourseId,
+    );
+    if (fromId < 0 || toId < 0 || fromId === toId) return;
+
+    const [movedCourse] = reorderedCourses.splice(fromId, 1);
+    if (!movedCourse) return;
+    reorderedCourses.splice(toId, 0, movedCourse);
+
+    isReordering.current.course = true;
+    dispatch({ type: "reorder_course", fromIndex: fromId, toIndex: toId });
+
+    try {
+      await modulePreviewApi.mutations.reorderCourses(
+        state.module.id,
+        reorderedCourses.map((course) => course.id),
+      );
+    } catch {
+      dispatch({
+        type: "reorder_course",
+        fromIndex: toId,
+        toIndex: fromId,
+      });
+      toast.error("Impossible de modifier l’ordre des cours");
+    } finally {
+      isReordering.current.course = false;
+    }
+  };
+
+  const nextLesson = () => {
+    dispatch({ type: "go_to_next_lesson" });
+  };
+
+  const selectActivityType = (activityType: ActivityType) => {
+    switch (activityType) {
+      case "text":
+      case "iframe":
+      case "video":
+      case "image":
+      case "resource":
+        return dispatch({
+          type: "select_mode",
+          mode: "write",
+          activityType,
+        });
+    }
+  };
+
+  const scrollTopRef = useRef<HTMLDivElement>(null);
+
+  const acknowledgeLessonScroll = useCallback((lessonId: number) => {
+    dispatch({ type: "acknowledge_lesson_scroll", lessonId });
+  }, []);
+
+  useEffect(() => {
+    if (!state.selectedActivity?.id) return;
+
+    if (!isInitialActivityLoaded.current) {
+      isInitialActivityLoaded.current = true;
+      return;
+    }
+
+    if (scrollTopRef.current) {
+      setTimeout(() => {
+        scrollTopRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [state.selectedActivity?.id]);
+
+  useEffect(() => {
+    if (
+      !state.module ||
+      String(state.module.id) !== moduleId ||
+      handledLocationKey.current === location.key
+    )
+      return;
+
+    if (stateFromUrl?.lessonId) {
+      dispatch({
+        type: "select_content_by_id",
+        lessonId: stateFromUrl.lessonId,
+        activityId: stateFromUrl.activityId,
+      });
+    }
+    if (stateFromUrl?.courseId && !stateFromUrl.lessonId) {
+      dispatch({ type: "select_lesson", lesson: undefined });
+    }
+    handledLocationKey.current = location.key;
+  }, [
+    location.key,
+    moduleId,
+    state.module,
+    stateFromUrl?.activityId,
+    stateFromUrl?.lessonId,
+    stateFromUrl?.courseId,
+  ]);
+
+  useEffect(() => {
+    // Le changement de module déclenche volontairement un nouveau chargement.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchModuleData();
+  }, [fetchModuleData]);
+
+  useEffect(() => {
+    fetchLessonData();
+  }, [fetchLessonData]);
+
+  useEffect(() => {
+    fetchActivityTextContent();
+  }, [fetchActivityTextContent]);
+
+  // If a activity is selected, select the title of the current course and set the chatbot activity name
+  useEffect(() => {
+    if (
+      state.selectedLesson?.courseId &&
+      state.selectedActivity?.type === "text" &&
+      state.module?.courses
+    ) {
+      // Cherche le cours actuel dans la liste du module
+      const currentCourse = state.module.courses.find(
+        (course) => course.id === state.selectedLesson?.courseId,
+      );
+
+      // Attribue le titre du cours au chatbot
+      if (currentCourse?.title) {
+        setCurrentActivity((prev) => ({
+          ...prev,
+          courseId: currentCourse.id,
+          content: state.textActivityContent,
+        }));
+      }
+    }
+  }, [
+    setCurrentActivity,
+    state.selectedLesson?.courseId,
+    state.selectedActivity?.type,
+    state.module?.courses,
+    state.textActivityContent,
+  ]);
+
+  return {
+    state,
+    badgeCompletion:
+      badgeCompletion?.moduleId === Number(moduleId) ? badgeCompletion : null,
+    closeBadgeCompletion: () => setBadgeCompletion(null),
+    computed: {
+      isLessonCompleted,
+      isFirstActivitySelected,
+      isLastActivitySelected,
+      isLastLessonSelected,
+      hasNextLesson,
+      hasStartedModule,
+      isLastLessonOfCurrentCourse,
+    },
+    isLoading: isLoading || isLoadingRequest,
+    isPublishingAllCourses,
+    dispatch,
+    moduleActions: {
+      fetchModuleData,
+      onFinishInitialQuiz,
+    },
+    courseActions: {
+      enableCourse,
+      publishCourse,
+      publishAllCourses,
+      deleteCourse,
+      createCourse,
+      updateCourse,
+      courseReorder,
+    },
+    lessonActions: {
+      completeLesson,
+      rateContent,
+      deleteLesson,
+      nextLesson,
+      createLesson,
+      updateLesson,
+    },
+    activityActions: {
+      saveActivity,
+      deleteActivity,
+      activityReorder,
+      selectActivityType,
+      refreshSelectedLesson,
+    },
+    scrollTopRef,
+    acknowledgeLessonScroll,
+  };
+};
+
+export type ModuleContentStore = ReturnType<typeof useModuleContent>;
+
+export default useModuleContent;

@@ -18,6 +18,8 @@ export default async function httpPostRequestRandomQuiz(
     toxicity_threshold = 0.6,
     max_attempts = 4,
     past_questions = [],
+    courseId,
+    attemptId,
   } = req.body;
   const userId = req.auth?.userId;
 
@@ -29,6 +31,8 @@ export default async function httpPostRequestRandomQuiz(
       maxAttempts: max_attempts,
       pastQuestions: past_questions,
       userId,
+      courseId,
+      attemptId,
     });
 
     return res.status(200).json(data);

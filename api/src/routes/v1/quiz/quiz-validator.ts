@@ -32,6 +32,8 @@ export const randomQuizValidator = [
     .isLength({ max: 50_000 })
     .withMessage("Le contenu ne peut pas dépasser 50 000 caractères.")
     .trim(),
+  body("courseId").optional().isInt({ min: 1 }),
+  body("attemptId").optional().isInt({ min: 1 }),
   checkValidatorResult,
 ];
 

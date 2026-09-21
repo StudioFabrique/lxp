@@ -23,7 +23,6 @@ function validManifest() {
       endDate: null,
       degree: null,
       virtualClass: null,
-      visibility: false,
       isPublished: false,
       image: null,
       thumb: null,

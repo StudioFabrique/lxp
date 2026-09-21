@@ -11,7 +11,7 @@ import Lesson from "../../../../../src/utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
-import { ActivitySelectMode } from "../../store/module-explorer-reducer";
+import { ActivitySelectMode } from "../../store/module-content-reducer";
 import Modal from "../../../../components/UI/modal/modal";
 import Video from "../../../lesson/components/edit/activities/video";
 import ImageActivityEditor from "../../../lesson/components/edit/activities/image/image-activity-editor";

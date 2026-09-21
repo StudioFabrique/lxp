@@ -11,7 +11,7 @@ export default function ResourcesAddHeader() {
         description="Mettre à jour une ressource pédagogique supplémentaire"
       >
         {/* Create new lesson button that navigates to creation page */}
-        <Link className="btn btn-primary btn-soft" to="..">
+        <Link className="btn btn-outline btn-primary" to="..">
           <ArrowLeft /> Retour à la liste des ressources
         </Link>
       </Header>

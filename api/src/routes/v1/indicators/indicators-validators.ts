@@ -32,8 +32,5 @@ export const analysisFeedbackValidator = [
   body("comment").optional().isString().bail().trim().isLength({ max: 2000 }),
   body("actionTaken").optional().isString().bail().trim().isLength({ max: 2000 }),
   body("observedOutcome").optional().isIn(OBSERVED_OUTCOMES),
-  body("observedAt").optional().isISO8601().bail().custom((value) => new Date(value) <= new Date()),
-  body().custom((value) => Boolean(value.observedOutcome) === Boolean(value.observedAt))
-    .withMessage("L'issue observée et sa date doivent être renseignées ensemble."),
   checkValidatorResult,
 ];

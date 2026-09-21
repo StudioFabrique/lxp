@@ -98,8 +98,7 @@ export default function PredictionPanel({ prediction }: PredictionPanelProps) {
 
           {fired.length === 0 ? (
             <p className="text-sm italic text-base-content/50">
-              Aucun signal d'alerte : assiduité, travail des contenus et
-              résultats restent dans les clous.
+              Aucun signal d'alerte.
             </p>
           ) : (
             <ul className="flex flex-col gap-y-3">

@@ -47,10 +47,10 @@ const ParcoursFilterBadges = ({
       >
         {allowAll && <button
           type="button"
-          className={`badge cursor-pointer transition-colors ${
+          className={`btn btn-sm cursor-pointer ${
             selectedParcours === null
-              ? "badge-primary"
-              : "badge-outline hover:badge-primary"
+              ? "btn-primary"
+              : "btn-outline"
           }`}
           aria-pressed={selectedParcours === null}
           onClick={() => onSelect(null)}
@@ -65,10 +65,10 @@ const ParcoursFilterBadges = ({
             <button
               key={parcoursTitle}
               type="button"
-              className={`badge cursor-pointer transition-colors ${
+              className={`btn btn-sm cursor-pointer ${
                 isSelected
-                  ? "badge-primary bg-primary text-primary-content"
-                  : "badge-outline hover:badge-primary"
+                  ? "btn-primary"
+                  : "btn-outline"
               }`}
               aria-pressed={isSelected}
               onClick={() => onSelect(isSelected && allowAll ? null : parcoursTitle)}
@@ -81,7 +81,7 @@ const ParcoursFilterBadges = ({
         {hasMore ? (
           <button
             type="button"
-            className="badge badge-secondary badge-soft cursor-pointer gap-1"
+            className="btn btn-secondary btn-soft btn-sm cursor-pointer gap-1"
             aria-expanded={showAll}
             onClick={() => setShowAll((current) => !current)}
           >

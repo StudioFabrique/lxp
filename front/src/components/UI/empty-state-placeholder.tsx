@@ -77,6 +77,7 @@ const EmptyStatePlaceholder = ({
 
   return (
     <BoxWrapper
+      unstyled={!withBorder}
       className={withBorder ? "border border-base-300 select-none" : ""}
     >
       <FadeWrapper>

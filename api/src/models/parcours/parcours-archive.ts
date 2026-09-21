@@ -76,7 +76,6 @@ type ParcoursArchiveManifest = {
     endDate: string | null;
     degree: string | null;
     virtualClass: string | null;
-    visibility: boolean;
     isPublished: boolean;
     image: AssetReference | null;
     thumb: AssetReference | null;
@@ -118,7 +117,6 @@ type ParcoursArchiveManifest = {
           modalite: string;
           order: number;
           visibility: boolean;
-          isPublished: boolean;
           tag: ArchiveTag;
           activities: ArchiveActivity[];
         }>;
@@ -206,7 +204,6 @@ const manifestSchema: z.ZodType<ParcoursArchiveManifest> = z.object({
     endDate: z.iso.datetime().nullable(),
     degree: z.string().max(500).nullable(),
     virtualClass: safeString.nullable(),
-    visibility: z.boolean(),
     isPublished: z.boolean(),
     image: assetReferenceSchema.nullable(),
     thumb: assetReferenceSchema.nullable(),
@@ -262,7 +259,6 @@ const manifestSchema: z.ZodType<ParcoursArchiveManifest> = z.object({
                       modalite: z.string().max(255),
                       order: z.number().int(),
                       visibility: z.boolean(),
-                      isPublished: z.boolean(),
                       tag: tagSchema,
                       activities: z.array(activitySchema).max(10_000),
                     }),
@@ -504,7 +500,6 @@ export async function exportParcoursArchive(parcoursId: number) {
           modalite: lesson.modalite,
           order: lesson.order,
           visibility: lesson.visibility,
-          isPublished: lesson.isPublished,
           tag: { name: lesson.tag.name, color: lesson.tag.color },
           activities,
         });
@@ -570,7 +565,6 @@ export async function exportParcoursArchive(parcoursId: number) {
       endDate: dateString(source.endDate),
       degree: source.degree,
       virtualClass: source.virtualClass,
-      visibility: source.visibility,
       isPublished: source.isPublished,
       image: addBuffer(source.image, "assets/parcours/image"),
       thumb: addBuffer(source.thumb, "assets/parcours/thumb"),
@@ -940,7 +934,6 @@ export async function importParcoursArchive(
         image: cover(manifest.parcours.image),
         thumb: cover(manifest.parcours.thumb),
         virtualClass: manifest.parcours.virtualClass,
-        visibility: false,
         isPublished: false,
         author,
         adminId: admin.id,
@@ -1029,8 +1022,7 @@ export async function importParcoursArchive(
               description: lesson.description,
               modalite: lesson.modalite,
               order: lesson.order,
-              isPublished: false,
-              visibility: false,
+              visibility: true,
               author,
               adminId: admin.id,
               courseId: createdCourse.id,

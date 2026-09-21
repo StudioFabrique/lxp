@@ -20,7 +20,6 @@ async function getParcoursByStudent(studentId: string) {
       "updatedAt",
       "author",
       "isPublished",
-      "visibility",
       "thumb",
     )
     .include("formation", (related235) =>

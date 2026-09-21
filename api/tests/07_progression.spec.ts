@@ -85,10 +85,17 @@ describe("Progression servie par l'API", () => {
         courseId,
         adminId: admin!.id,
         tagId: tag!.id,
-        isPublished: true,
         visibility: true,
       });
       lessonIds.push(lesson.id);
+      await prisma.orm.public.Activity.create({
+        title: `Activité ${index + 1}`,
+        type: "text",
+        order: 1,
+        url: "",
+        lessonId: lesson.id,
+        authorId: admin!.id,
+      });
     }
   });
 
@@ -96,6 +103,9 @@ describe("Progression servie par l'API", () => {
     await prisma.orm.public.LessonRead.where((row) =>
       row.lessonId.in(lessonIds),
     )
+      .deleteAndCount()
+      .then((count) => ({ count }));
+    await prisma.orm.public.Activity.where((row) => row.lessonId.in(lessonIds))
       .deleteAndCount()
       .then((count) => ({ count }));
     await prisma.orm.public.Lesson.where((row) => row.id.in(lessonIds))

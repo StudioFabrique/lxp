@@ -26,6 +26,7 @@ const useTeacher = (studentId: string) => {
     imageUrl,
     student,
     parcours,
+    learningProfile: studentQuery.data?.learningProfile ?? null,
     isLoading: studentQuery.isLoading,
     isError: studentQuery.isError,
   };

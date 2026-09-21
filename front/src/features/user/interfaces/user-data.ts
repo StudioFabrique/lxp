@@ -1,5 +1,6 @@
 import type Parcours from "../../../utils/interfaces/parcours";
 import type User from "../../../utils/interfaces/user";
+import type { LearningContext } from "../../learning-profile/types";
 
 export type ProgressionData = {
   id: number;
@@ -16,6 +17,10 @@ export type UserDataResponse = {
   user: User;
   parcours?: Parcours | null;
   totalTokens?: number;
+  learningProfile?: {
+    profile: LearningContext["profile"];
+    formations: LearningContext["availableFormations"];
+  } | null;
 };
 
 export type UserProgressionResponse = {

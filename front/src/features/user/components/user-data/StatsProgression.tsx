@@ -1,4 +1,5 @@
 import type { IndicatorModuleProgress } from "../../interfaces/indicators";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 
 type Props = {
   modules: IndicatorModuleProgress[];
@@ -20,8 +21,8 @@ export default function StatsProgression({ modules }: Props) {
           className="flex flex-col md:flex-row md:justify-between overflow-auto pr-2"
         >
           <div className="flex gap-x-4 items-center w-full mb-2">
-            <span className="flex capitalize font-bold flex-1">
-              {module.title}
+            <span className="flex font-bold flex-1">
+              {formatTitle(module.title)}
             </span>
             <StatsProgressionChart value={module.progress} />
           </div>

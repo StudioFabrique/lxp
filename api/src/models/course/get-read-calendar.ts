@@ -45,7 +45,7 @@ export function getParcoursCalendar(parcoursId: number, scope: AccessScope) {
               related60
                 .where((row) =>
                   scope?.kind === "learner"
-                    ? and(row.isPublished.eq(true), row.visibility.eq(true))
+                    ? row.visibility.eq(true)
                     : all(),
                 )
                 .select("id")

@@ -1,5 +1,6 @@
 import { Copy } from "lucide-react";
 import { SourceModule } from "../../../interfaces/new-module";
+import { formatTitle } from "../../../../../utils/helpers/text-helpers";
 
 type ModuleListItemProps = {
   module: SourceModule;
@@ -17,9 +18,9 @@ export default function ModuleListItem({
     <li className="rounded-xl bg-base-100 border border-base-300 p-4 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="font-semibold">{module.title}</p>
+          <p className="font-semibold">{formatTitle(module.title)}</p>
           <p className="text-xs text-base-content/65">
-            Parcours : {module.parcours.title}
+            Parcours : {formatTitle(module.parcours.title)}
             {isCurrentParcours ? " (actuel)" : ""}
           </p>
           <p className="mt-2 text-xs text-base-content/65">

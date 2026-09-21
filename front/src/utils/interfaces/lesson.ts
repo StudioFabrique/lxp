@@ -21,6 +21,7 @@ export default interface Lesson {
   order?: number;
   lessonsRead?: LessonRead[];
   lessonRating: LessonRating[];
+  visibility?: boolean;
 }
 
 export interface LessonWithActivitiesCount {

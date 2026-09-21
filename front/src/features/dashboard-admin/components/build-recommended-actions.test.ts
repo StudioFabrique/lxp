@@ -32,8 +32,8 @@ describe("buildRecommendedActions", () => {
     });
 
     expect(actions.map(({ id }) => id)).toEqual([
-      "invite-teachers",
       "create-admin",
+      "invite-teachers",
       "change-logo",
     ]);
     expect(actions.find(({ id }) => id === "change-logo")?.to).toBe(

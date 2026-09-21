@@ -62,10 +62,12 @@ export default function useQuizAttemptTracking() {
     quizApi.mutations.finishAttempt(attemptId).catch(() => undefined);
   }, []);
 
+  const getAttemptId = useCallback(() => attemptIdRef.current, []);
+
   // Référence stable : les hooks appelants la déclarent en dépendance de
   // leurs `useCallback`, un objet recréé à chaque rendu les invaliderait.
   return useMemo(
-    () => ({ start, recordAnswer, finish }),
-    [start, recordAnswer, finish],
+    () => ({ start, recordAnswer, finish, getAttemptId }),
+    [start, recordAnswer, finish, getAttemptId],
   );
 }

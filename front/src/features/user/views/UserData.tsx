@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Header from "../../../components/headers/Header";
@@ -14,10 +15,13 @@ import useStudentIndicators from "../hooks/useStudentIndicators";
 import useStudentPrediction from "../hooks/useStudentPrediction";
 import AnalysisFeedbackForm from "../components/user-data/AnalysisFeedbackForm";
 import AnalysisHistory from "../components/user-data/AnalysisHistory";
+import DeclaredLearningProfile from "../components/user-data/DeclaredLearningProfile";
+import LinkPreview from "../../profile/components/information/LinkPreview";
 
 export default function UserData() {
   const { studentId } = useParams();
-  const { student, parcours, imageUrl, isLoading, isError } = useTeacher(
+  const [dailyLimitReached, setDailyLimitReached] = useState(false);
+  const { student, parcours, imageUrl, learningProfile, isLoading, isError } = useTeacher(
     studentId!,
   );
   const indicatorsQuery = useStudentIndicators(studentId!);
@@ -46,6 +50,7 @@ export default function UserData() {
           isPending={predictionQuery.isPending}
           disabled={indicatorsQuery.isLoading || indicatorsQuery.isError}
           hasResult={predictionQuery.prediction !== null}
+          dailyLimitReached={dailyLimitReached}
         />
       </Header>
 
@@ -54,11 +59,13 @@ export default function UserData() {
       {predictionQuery.prediction ? (
         <BoxWrapper>
           <PredictionPanel prediction={predictionQuery.prediction} />
-          <AnalysisFeedbackForm key={predictionQuery.prediction.analysisId} prediction={predictionQuery.prediction} />
+          <div className="mt-4 flex justify-end">
+            <AnalysisFeedbackForm key={predictionQuery.prediction.analysisId} prediction={predictionQuery.prediction} />
+          </div>
         </BoxWrapper>
       ) : null}
 
-      <BoxWrapper><AnalysisHistory key={studentId} studentId={studentId!} /></BoxWrapper>
+      <BoxWrapper><AnalysisHistory key={studentId} studentId={studentId!} onDailyAnalysisChange={setDailyLimitReached} /></BoxWrapper>
 
       <section style={classImage} />
 
@@ -79,6 +86,14 @@ export default function UserData() {
                 }
               />
             </section>
+          </BoxWrapper>
+
+          <DeclaredLearningProfile data={learningProfile} />
+          <BoxWrapper>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <section><h2 className="text-lg font-bold">Mes passions</h2>{student.hobbies?.length ? <ul className="mt-2 flex flex-wrap gap-2">{student.hobbies.map((hobby) => <li key={hobby._id ?? hobby.title} className="rounded-lg border border-base-300 bg-base-200 px-3 py-1.5 text-sm">{hobby.title}</li>)}</ul> : <p className="text-sm text-base-content/60">Aucune passion renseignée.</p>}</section>
+              <section><h2 className="text-lg font-bold">Mes liens</h2>{student.links?.some((link) => /^https?:\/\//i.test(link.url)) ? <ul className="mt-2 space-y-2">{student.links.filter((link) => /^https?:\/\//i.test(link.url)).map((link) => <li key={link._id ?? link.url} className="rounded-lg border border-base-300 bg-base-200 px-3 py-2"><LinkPreview link={link} /></li>)}</ul> : <p className="text-sm text-base-content/60">Aucun lien renseigné.</p>}</section>
+            </div>
           </BoxWrapper>
 
           <BoxWrapper>

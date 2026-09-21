@@ -219,7 +219,7 @@ function ParcoursCalendar({
             }}
             header={
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 bg-base-200 p-4">
-                <h2 className="font-semibold">{parcours.title}</h2>
+                <h2 className="font-semibold first-letter:uppercase">{parcours.title}</h2>
                 <div className="flex flex-wrap items-center gap-2">
                   {view !== "year-timeline" && (
                     <TimeSelector

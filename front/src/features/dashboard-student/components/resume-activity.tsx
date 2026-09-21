@@ -62,10 +62,16 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
             >
               <div className="flex min-w-0 gap-2">
                 <ComponentIcon className="shrink-0 stroke-white" />
-                <p className="truncate text-white">{`${lastLesson.lesson.course.module.title}`}</p>
+                <p className="truncate text-white">
+                  {capitalizeFirstLetter(
+                    lastLesson.lesson.course.module.title,
+                  )}
+                </p>
               </div>
               <SkillBadgeSummary
                 skills={lastLesson.lesson.course.bonusSkills}
+                showProgress
+                size="small"
                 className="rounded-xl border border-white/20 bg-base-100/50 p-1.5 shadow-sm backdrop-blur-sm"
               />
             </div>,
@@ -73,7 +79,10 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-5 pb-9">
                 <Link
                   to={`/${currentRoute[0]}/parcours/module/${lastLesson.lesson.course.module.id}`}
-                  state={{ lessonId: lastLesson.lesson.id }}
+                  state={{
+                    lessonId: lastLesson.lesson.id,
+                    activityId: lastLesson.activityId,
+                  }}
                   aria-label={lastLesson.beganAt ? "Reprendre" : "Démarrer"}
                   className="pointer-events-auto z-10 btn btn-primary text-base-100 flex"
                 >

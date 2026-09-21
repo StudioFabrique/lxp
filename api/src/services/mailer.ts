@@ -17,6 +17,12 @@ import {
   ANDRIA_FOOTER_LOGO_LIGHT_CID,
   ANDRIA_LOGO_CID,
   type MailContext,
+  button,
+  escapeHtml,
+  formatDisplayTitle,
+  instanceBrand,
+  layout,
+  organizationName,
 } from "../helpers/mail-template/shared.ts";
 
 const INSTANCE_LOGO_CID = "instance-logo";
@@ -64,8 +70,8 @@ async function instanceLogoAttachment() {
 }
 
 const andriaLogoCandidates = [
-  // Image de production : le Dockerfile copie le SVG avec le serveur compilé.
-  path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo.svg"),
+  // Image de production : le Dockerfile copie le PNG optimisé avec le serveur compilé.
+  path.join(import.meta.dirname, "..", "..", "mail-assets", "andria-logo.png"),
   // Développement et tests : le fichier officiel reste la source de vérité.
   path.join(
     import.meta.dirname,
@@ -76,7 +82,7 @@ const andriaLogoCandidates = [
     "src",
     "assets",
     "andria-logo",
-    "logo-darkmode.svg",
+    "logo-darkmode-email.png",
   ),
 ];
 
@@ -86,7 +92,14 @@ const andriaLogoPath = () =>
 const andriaLogoAttachment = () => {
   const logoPath = andriaLogoPath();
   return logoPath
-    ? [{ filename: "andria-logo.svg", path: logoPath, cid: ANDRIA_LOGO_CID }]
+    ? [
+        {
+          filename: "andria-logo.png",
+          path: logoPath,
+          cid: ANDRIA_LOGO_CID,
+          contentType: "image/png",
+        },
+      ]
     : undefined;
 };
 
@@ -100,7 +113,7 @@ const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
           "..",
           "..",
           "mail-assets",
-          "andria-logo-light.svg",
+          "andria-logo-light.png",
         ),
         path.join(
           import.meta.dirname,
@@ -111,15 +124,16 @@ const andriaFooterLogoAttachment = (themeMode?: "light" | "dark") => {
           "src",
           "assets",
           "andria-logo",
-          "logo-lightmode.svg",
+          "logo-lightmode-email.png",
         ),
       ].find((candidate) => fs.existsSync(candidate));
 
   return logoPath
     ? [
         {
-          filename: "andria-footer-logo.svg",
+          filename: "andria-footer-logo.png",
           path: logoPath,
+          contentType: "image/png",
           cid: isDark
             ? ANDRIA_FOOTER_LOGO_DARK_CID
             : ANDRIA_FOOTER_LOGO_LIGHT_CID,
@@ -329,4 +343,41 @@ export function sendRootAccountInvitation(
     firstRoot ? "root-account-init" : "root-account",
     "Création de votre compte administrateur",
   );
+}
+
+export async function sendContentAvailabilityEmail(input: {
+  email: string;
+  firstname: string;
+  formation: string;
+  parcours: string[];
+  messageId: string;
+}) {
+  if (!regexMail.test(input.email)) throw { statusCode: 400, message: badQuery };
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : input.email;
+  const dashboardUrl = new URL("student/dashboard", env.FRONT_URL ?? "http://localhost:5173/").toString();
+  const context = await mailContext();
+  const formation = formatDisplayTitle(input.formation);
+  const parcours = input.parcours
+    .map((title) => escapeHtml(formatDisplayTitle(title)))
+    .join(", ");
+  const html = layout(`
+    <h1 style="margin:0 0 20px;font-size:24px;line-height:32px">De nouveaux contenus sont disponibles</h1>
+    <p>Bonjour ${escapeHtml(input.firstname)},</p>
+    <p>La formation <strong>${escapeHtml(formation)}</strong> est désormais accessible.</p>
+    <p>Parcours disponibles : ${parcours}</p>
+    ${button(dashboardUrl, "Découvrir mes contenus")}
+  `, organizationName(context), instanceBrand(context));
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: `Votre formation ${formation} est disponible`,
+    messageId: input.messageId,
+    html,
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
 }

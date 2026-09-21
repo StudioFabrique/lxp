@@ -1,10 +1,12 @@
 import apiClient from "../../../lib/axios";
+import type { AxiosProgressEvent } from "axios";
+import type { Activity, ActivityResource } from "../../../utils/interfaces/activity";
 
 const queries = {
   getResources: async (
     activityId: number,
     parent: string,
-  ): Promise<{ success: boolean; resources: any[] }> => {
+  ): Promise<{ success: boolean; resources: ActivityResource[] }> => {
     const res = await apiClient.get(
       `/activity/resources/${activityId}/${parent}`,
     );
@@ -17,7 +19,7 @@ const mutations = {
     id: string | number,
     formData: FormData,
     method: "post" | "put",
-  ): Promise<any> => {
+  ): Promise<{ success: boolean; message: string; response?: Activity }> => {
     const res = await apiClient[method](`/activity/video/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -29,7 +31,7 @@ const mutations = {
     parent: string,
     formData: FormData,
     method: "post" | "put",
-  ): Promise<any> => {
+  ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient[method](
       `/activity/image/${id}/${parent}`,
       formData,
@@ -44,7 +46,7 @@ const mutations = {
     id: number,
     formData: FormData,
     signal?: AbortSignal,
-    onUploadProgress?: (progressEvent: any) => void,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.post(`/activity/resource/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -58,7 +60,7 @@ const mutations = {
     activityId: number,
     parent: string,
     formData: FormData,
-    onUploadProgress?: (progressEvent: any) => void,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.put(
       `/activity/add-resource/${activityId}/${parent}`,
@@ -75,7 +77,7 @@ const mutations = {
     resourceId: number,
     label: string,
     parent: "lesson" | "resource" = "lesson",
-  ): Promise<{ success: boolean; message: string; data: any }> => {
+  ): Promise<{ success: boolean; message: string; data: ActivityResource }> => {
     const res = await apiClient.put(`/activity/resource/${resourceId}`, {
       label, parent,
     });

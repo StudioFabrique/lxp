@@ -212,7 +212,7 @@ const AdminParcoursManagement = ({
             <PermissionGuard action="write" object="formation">
               <button
                 type="button"
-                className="btn btn-primary btn-soft"
+                className="btn btn-outline btn-primary"
                 data-onboarding="formation-create-entry"
                 onClick={openFormationCreation}
               >
@@ -223,7 +223,7 @@ const AdminParcoursManagement = ({
             <PermissionGuard action="write" object="parcours">
               <button
                 type="button"
-                className="btn btn-primary btn-soft"
+                className="btn btn-outline btn-primary"
                 onClick={() => setParcoursFormationId(-1)}
               >
                 <PlusCircle />

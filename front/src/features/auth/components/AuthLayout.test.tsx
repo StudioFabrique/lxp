@@ -25,17 +25,7 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
       name: "STEP",
       setupCompleted: true,
       hasLogo: true,
-      defaultTheme: "classic",
-      welcomeTitles: {
-        admin: "Bonjour",
-        teacher: "Bonjour",
-        student: "Bonjour",
-      },
-      welcomeMessages: {
-        admin: "Bienvenue",
-        teacher: "Bienvenue",
-        student: "Bienvenue",
-      },
+      enabledThemes: ["classic", "classic-dark"],
     });
     container = document.createElement("div");
     document.body.appendChild(container);

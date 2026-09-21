@@ -12,7 +12,14 @@ export default async function getRootAdminParcours(scope: AccessScope = null) {
     .select("id", "title", "level")
     .include("parcours", (parcours) =>
       (scope ? parcours.where((row) => row.id.in(scope.parcoursIds)) : parcours)
-        .select("id", "title", "startDate", "endDate", "isPublished", "thumb")
+        .select(
+          "id",
+          "title",
+          "startDate",
+          "endDate",
+          "isPublished",
+          "thumb",
+        )
         .orderBy((row) => row.createdAt.desc()),
     )
     .orderBy((row) => row.createdAt.desc())

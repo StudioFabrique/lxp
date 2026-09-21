@@ -210,7 +210,7 @@ const UserHome = () => {
         tourSteps={usersPageTourSteps}
       >
         <PermissionGuard object="user" action="write">
-          <Link className="btn btn-primary btn-soft" to="/admin/user/add">
+          <Link className="btn btn-outline btn-primary" to="/admin/user/add">
             <PlusCircle className="mr-2 h-5 w-5" />
             Créer un utilisateur
           </Link>
@@ -231,10 +231,10 @@ const UserHome = () => {
               key={role._id}
               type="button"
               onClick={() => handleRoleSwitch(role)}
-              className={`badge cursor-pointer transition-colors ${
+              className={`btn btn-sm cursor-pointer ${
                 currentRole._id === role._id
-                  ? "badge-primary bg-primary text-primary-content"
-                  : "badge-outline hover:badge-primary"
+                  ? "btn-primary"
+                  : "btn-outline"
               }`}
             >
               {role.label}

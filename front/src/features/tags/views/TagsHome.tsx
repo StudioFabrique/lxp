@@ -156,7 +156,7 @@ const TagsHome = () => {
       >
         <PermissionGuard object="tag" action="write">
           <Link
-            className="btn btn-primary btn-soft"
+            className="btn btn-outline btn-primary"
             to="?openModal=true"
           >
             <PlusCircle className="mr-2 h-5 w-5" />

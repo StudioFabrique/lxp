@@ -2,12 +2,11 @@ import InstancePictureUpload from "../instance-picture-upload";
 import ThemeSelect from "../theme-select";
 import RoleRankGuard from "../../../../components/guards/RoleRankGuard";
 import BoxWrapper from "../../../../components/wrappers/BoxWrapper";
-import { darkThemes, lightThemes } from "../../../../config/themes";
 import { useContext } from "react";
 import { ThemeContext } from "../../../../store/ThemeProvider";
 
 const ThemeSelectSettings = () => {
-  const { chooseTheme } = useContext(ThemeContext);
+  const { chooseTheme, availableLightThemes, availableDarkThemes } = useContext(ThemeContext);
 
   const handleThemeChange = (
     newTheme: string,
@@ -25,14 +24,14 @@ const ThemeSelectSettings = () => {
           <BoxWrapper>
             <ThemeSelect
               label="Thème clair"
-              themesList={lightThemes}
+              themesList={availableLightThemes}
               onThemeChange={handleThemeChange}
             />
           </BoxWrapper>
           <BoxWrapper>
             <ThemeSelect
               label="Thème sombre"
-              themesList={darkThemes}
+              themesList={availableDarkThemes}
               onThemeChange={handleThemeChange}
             />
           </BoxWrapper>

@@ -7,6 +7,7 @@ import {
   type AccessScope,
   findContentAccessCoordinates,
   isContentAllowedForScope,
+  isLearnerContentAvailable,
   resolveAccessScope,
 } from "../utils/services/permissions/accessible-parcours.ts";
 
@@ -47,6 +48,13 @@ export default function checkContentAccess(
       }
 
       if (!isContentAllowedForScope(scope, type, req.method, coordinates)) {
+        return res.status(404).json({ message: noData });
+      }
+
+      if (
+        scope.kind === "learner" &&
+        !(await isLearnerContentAvailable(type, contentId))
+      ) {
         return res.status(404).json({ message: noData });
       }
 

@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthContext } from "../../../store/AuthProvider";
 import type User from "../../../utils/interfaces/user";
@@ -32,11 +33,13 @@ const renderDashboardList = (
   } as React.ContextType<typeof AuthContext>;
 
   return renderToStaticMarkup(
-    <AuthContext.Provider value={auth}>
-      <MemoryRouter>
-        <LastParcours parcours={formations} isLoading={false} />
-      </MemoryRouter>
-    </AuthContext.Provider>,
+    <QueryClientProvider client={new QueryClient()}>
+      <AuthContext.Provider value={auth}>
+        <MemoryRouter>
+          <LastParcours parcours={formations} isLoading={false} />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </QueryClientProvider>,
   );
 };
 
@@ -46,11 +49,13 @@ describe("LastParcours", () => {
       user: { roles: [{ rank: 2 }] } as User,
     } as React.ContextType<typeof AuthContext>;
     const markup = renderToStaticMarkup(
-      <AuthContext.Provider value={auth}>
-        <MemoryRouter>
-          <LastParcours parcours={[]} isLoading={false} />
-        </MemoryRouter>
-      </AuthContext.Provider>,
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthContext.Provider value={auth}>
+          <MemoryRouter>
+            <LastParcours parcours={[]} isLoading={false} />
+          </MemoryRouter>
+        </AuthContext.Provider>
+      </QueryClientProvider>,
     );
 
     expect(markup).not.toContain("Derniers parcours ajoutés");
@@ -102,5 +107,6 @@ describe("LastParcours", () => {
 
     expect(markup).toContain("xl:grid-cols-3");
     expect(markup).toContain("min-h-52");
+    expect(markup).toContain("Actions pour le parcours Parcours test");
   });
 });

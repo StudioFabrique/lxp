@@ -32,7 +32,7 @@ export default function BonusActivityItem({
         data-tip="Cliquez pour prévisualiser l'activité."
         onClick={() => onPreview(activity)}
       >
-        {activity.title}
+        <span className="inline-block first-letter:uppercase">{activity.title}</span>
       </button>
       <PermissionGuard action="write" object="resource">
         <div

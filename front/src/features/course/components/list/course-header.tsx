@@ -11,7 +11,7 @@ function CourseHeader() {
         description="Liste des cours associés à un module"
       >
         <PermissionGuard action="write" object="course">
-          <Link className="btn btn-primary btn-soft mr-5" to="import">
+          <Link className="btn btn-outline btn-primary" to="import">
             <div className="flex gap-x-2 items-center">
               <ImportIcon />
               Importer des cours

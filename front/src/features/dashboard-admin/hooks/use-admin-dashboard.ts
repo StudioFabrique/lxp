@@ -8,8 +8,10 @@ import { dashboardAdminApi } from "../api/dashboard-admin.api";
 import { buildRecommendedActions } from "../components/build-recommended-actions";
 
 const defaultTitle = "Bonjour, {firstname} {lastname} !";
-const defaultMessage =
+const adminDescription =
   "Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants";
+const teacherDescription =
+  "Bienvenue dans votre espace pédagogique, retrouvez vos contenus et accompagnez vos apprenants";
 
 export function useAdminDashboard() {
   const { user } = useContext(AuthContext);
@@ -75,22 +77,12 @@ export function useAdminDashboard() {
     (isRoot && isInstanceSettingsLoading) ||
     (isTeacher &&
       (studentsCount.isLoading || groupsCount.isLoading || isParcoursLoading));
-  const roleSettings = isTeacher
-    ? {
-        title: instanceSettings?.welcomeTitles.teacher,
-        message: instanceSettings?.welcomeMessages.teacher,
-      }
-    : {
-        title: instanceSettings?.welcomeTitles.admin,
-        message: instanceSettings?.welcomeMessages.admin,
-      };
-
   return {
     user,
     showOnboardingWelcome:
       onboardingStatus === "pending" && canStartOnboarding,
-    welcomeTitle: formatWelcomeTitle(roleSettings.title ?? defaultTitle, user),
-    welcomeMessage: roleSettings.message ?? defaultMessage,
+    welcomeTitle: formatWelcomeTitle(defaultTitle, user),
+    welcomeMessage: isTeacher ? teacherDescription : adminDescription,
     parcours,
     modules,
     recommendedActions,

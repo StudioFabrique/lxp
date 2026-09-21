@@ -103,7 +103,7 @@ function AssignmentHeader({ course }: { course: Course }) {
       <div className="flex items-center gap-3">
         <div>
           <h2 className="text-2xl font-bold">Devoir</h2>
-          <p className="mt-1 text-sm text-base-content/70">{course.title}</p>
+          <p className="mt-1 text-sm text-base-content/70 first-letter:uppercase">{course.title}</p>
         </div>
       </div>
       <div className="self-end text-end">

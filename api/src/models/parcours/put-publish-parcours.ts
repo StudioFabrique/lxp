@@ -14,7 +14,9 @@ async function putPublishParcours(parcoursId: number, isPublished: boolean) {
   const publishedParcours = await prisma.orm.public.Parcours.where({
     id: parcoursId,
   })
-    .update({ isPublished })
+    .update({
+      isPublished,
+    })
     .then(requireDatabaseRow);
   return publishedParcours;
 }

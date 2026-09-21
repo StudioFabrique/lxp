@@ -90,6 +90,7 @@ const ParcoursActionsMenu = ({
                   </DropdownMenu.Item>
                 </RoleRankGuard>
               ) : null}
+
             </>
           </PermissionGuard>
         ) : null}

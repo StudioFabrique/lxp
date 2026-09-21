@@ -7,6 +7,7 @@ import type CourseDates from "../interfaces/course-dates";
 import type { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson";
 import type CustomCourse from "../components/list/interfaces/custom-course";
 import type Formation from "../../../utils/interfaces/formation";
+import { isAxiosError } from "axios";
 
 const queries = {
   modulesByParcoursId: async (parcoursId?: number) => {
@@ -20,8 +21,16 @@ const queries = {
     return res.data;
   },
   formationsList: async (): Promise<Formation[]> => {
-    const res = await apiClient.get("/formation");
-    return res.data.response;
+    try {
+      const res = await apiClient.get<Formation[] | { response: Formation[] }>(
+        "/formation",
+      );
+      return Array.isArray(res.data) ? res.data : res.data.response;
+    } catch (error) {
+      // L'API historique répond 404 lorsqu'aucune formation n'existe.
+      if (isAxiosError(error) && error.response?.status === 404) return [];
+      throw error;
+    }
   },
   list: () =>
     queryOptions({
@@ -260,6 +269,16 @@ const mutations = {
 
   deleteLesson: async (id: number): Promise<{ success: boolean; message: string }> => {
     const res = await apiClient.delete(`/lesson/${id}`);
+    return res.data;
+  },
+
+  setLessonVisibility: async (
+    lessonId: number,
+    visibility: boolean,
+  ): Promise<Lesson> => {
+    const res = await apiClient.put(`/lesson/visibility/${lessonId}`, {
+      visibility,
+    });
     return res.data;
   },
 

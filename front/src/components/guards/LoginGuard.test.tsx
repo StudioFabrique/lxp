@@ -62,9 +62,11 @@ const renderAt = async (
                   <Route path="/createRoot" element={<p>page-nouveau-root</p>} />
                   <Route path="/confirm-email" element={<p>page-email</p>} />
                   <Route path="/instance-setup" element={<p>page-configuration</p>} />
+                  <Route path="/student/onboarding" element={<p>page-onboarding</p>} />
                 </Route>
                 <Route path="/demo" element={<p>page-demo</p>} />
                 <Route path="/admin" element={<p>tableau-de-bord</p>} />
+                <Route path="/student" element={<p>espace-apprenant</p>} />
               </Routes>
             </MemoryRouter>
           </AbilityContext>
@@ -149,6 +151,16 @@ describe("LoginGuard", () => {
     expect(await renderAt("/instance-setup", false, true, 0)).toBe(
       "page-configuration",
     );
+  });
+
+  it("affiche l'onboarding dans le layout de connexion pour un apprenant connecté", async () => {
+    expect(await renderAt("/student/onboarding", false, true, 3)).toBe(
+      "page-onboarding",
+    );
+  });
+
+  it("renvoie vers la connexion un visiteur qui ouvre l'onboarding", async () => {
+    expect(await renderAt("/student/onboarding", false)).toBe("page-connexion");
   });
 
   it("renvoie les autres utilisateurs vers leur accueil", async () => {

@@ -7,6 +7,7 @@ import { trackTokens } from "../stats/trackTokens.ts";
 import trackChatbotUsage from "../stats/track-chatbot-usage.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import { env } from "../../config/env.ts";
+import { buildStudentProfile } from "../../services/ai/student-profile-adapter.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -82,6 +83,11 @@ export default async function processPrompt(input: ProcessPromptInput) {
       error: "Les fonctionnalités IA de ce cours copié ne sont pas indexées.",
     });
   }
+  const studentProfile = await buildStudentProfile(
+    input.userId,
+    input.courseId,
+    courseSlug,
+  );
 
   const response = await fetch(`${baseUrl}/ask`, {
     method: "POST",
@@ -94,15 +100,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
       question: input.fullPrompt || input.prompt,
       course_slug: courseSlug,
       threshold: 0.7,
-      student_profile: {
-        user_id: input.userId,
-        course_id: courseSlug,
-        tempo_label: "normal",
-        experience_label: "intermediaire",
-        weak_concepts: [],
-        preferences: ["exemples concrets"],
-        metrics: {},
-      },
+      student_profile: studentProfile,
     }),
   });
   if (!response.ok) {

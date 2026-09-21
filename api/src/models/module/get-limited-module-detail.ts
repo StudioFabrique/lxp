@@ -1,3 +1,5 @@
+import { all, and } from "@prisma/orm-postgres/orm-client";
+
 import {
   calculateCourseProgress,
   calculateModuleProgress,
@@ -46,7 +48,18 @@ export default async function getLimitedModuleDetail(
     .include("courses", (courses) =>
       (isTeacher
         ? courses
-        : courses.where({ visibility: true, isPublished: true })
+        : courses.where((course) =>
+            and(
+              course.visibility.eq(true),
+              course.isPublished.eq(true),
+              course.lessons.some((lesson) =>
+                and(
+                  lesson.visibility.eq(true),
+                  lesson.activities.some((activity) => activity.id.gt(0)),
+                ),
+              ),
+            ),
+          )
       )
         .select(
           "id",
@@ -95,6 +108,14 @@ export default async function getLimitedModuleDetail(
         )
         .include("lessons", (related168) =>
           related168
+            .where((lesson) =>
+              isTeacher
+                ? all()
+                : and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
+            )
             .include("tag")
             .include("lessonsRead", (related169) =>
               related169.where((row) =>

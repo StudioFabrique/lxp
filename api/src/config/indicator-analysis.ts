@@ -7,5 +7,4 @@ export type AnalysisFeedbackInput = {
   comment?: string;
   actionTaken?: string;
   observedOutcome?: typeof OBSERVED_OUTCOMES[number];
-  observedAt?: string;
 };

@@ -177,6 +177,10 @@ const mutations = {
     const res = await apiClient.put("/lesson/update", payload);
     return res.data;
   },
+  setLessonVisibility: async (lessonId: number, visibility: boolean) => {
+    const res = await apiClient.put(`/lesson/visibility/${lessonId}`, { visibility });
+    return res.data;
+  },
   deleteLesson: async (lessonId: number) => {
     const res = await apiClient.delete<CommandResult>(`/lesson/${lessonId}`);
     return res.data;
@@ -245,6 +249,10 @@ const mutations = {
   },
   deleteActivity: async (type: string, activityId: number) => {
     const res = await apiClient.delete(`/activity/${type}/${activityId}/lesson`);
+    return res.data;
+  },
+  reorderCourses: async (moduleId: number, courseIds: number[]) => {
+    const res = await apiClient.put(`/course/reorder/${moduleId}`, courseIds);
     return res.data;
   },
   reorderActivities: async (lessonId: number, activitiesIds: number[]) => {

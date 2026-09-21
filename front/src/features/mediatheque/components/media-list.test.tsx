@@ -65,6 +65,8 @@ describe("Liste de la médiathèque", () => {
       'button[aria-label="Voir les activités associées à illustration.png"]',
     );
     expect(activitiesButton?.textContent).toBe("1");
+    expect(previewButton?.className).toContain("h-10");
+    expect(activitiesButton?.className).toContain("h-10");
 
     act(() =>
       previewButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })),

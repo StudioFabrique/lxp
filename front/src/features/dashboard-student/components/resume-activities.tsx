@@ -18,27 +18,30 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
         <h2 className="font-bold text-xl">
           Reprendre mes activités là où je m'étais arrêté
         </h2>
-        <div className="grid lg:grid-cols-3 gap-2">
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           {lastLessons.map((item) => {
             // Progression du cours, calculée par l'API.
             const courseProgress = item.lesson.course.stats?.progress ?? 0;
 
             return (
               <CursorGlowCard key={item.id}>
-                <div className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20">
+                <div className="relative flex cursor-pointer flex-col gap-2 bg-secondary/10 p-3 backdrop-blur-2xl hover:bg-secondary/20">
                   <div className="w-full text-left">
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                     <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
                     <SkillBadgeSummary
                       skills={item.lesson.course.bonusSkills}
-                      className="mt-2"
+                      className="relative z-10 mt-1"
                     />
                   </div>
                   <Link
                     to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
-                    state={{ lessonId: item.lesson.id }}
-                    className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary"
+                    state={{
+                      lessonId: item.lesson.id,
+                      activityId: item.activityId,
+                    }}
+                    className="before:absolute before:inset-0 before:rounded-xl focus-visible:before:outline-2 focus-visible:before:outline-primary"
                   >
                     <span className="flex justify-between w-full">
                       <span className="flex gap-x-4 capitalize items-center text-sm min-w-0">
@@ -50,10 +53,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                         </p>
                       </span>
 
-                      <ArrowUpRightIcon />
+                      <ArrowUpRightIcon className="size-4 shrink-0 text-primary" />
                     </span>
                     <progress
-                      className="progress [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
+                      className="progress mt-1 h-1.5 w-full [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
                       value={courseProgress}
                       max={100}
                     />

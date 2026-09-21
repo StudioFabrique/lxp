@@ -9,6 +9,7 @@ import DatePicker from "../../../../components/UI/date-picker/date-picker";
 
 import CourseTimeFields from "../../../course/components/edit/calendar/course-time-fields";
 import { validCourseTimes } from "../../../course/helpers/course-times";
+import { formatTitle } from "../../../../utils/helpers/text-helpers";
 
 export function DatesEditor({ dates, isSaving, onSave, onDelete }: {
   dates: CourseDates[];
@@ -162,7 +163,7 @@ export default function ModuleCourseCalendar({ module, store }: { module: Module
           onCloseAutoFocus={e => e.preventDefault()}
         >
           <div className="mb-4 flex items-start justify-between gap-2">
-            <h3 className="font-semibold">{selectedCourse?.title}</h3>
+            <h3 className="font-semibold">{formatTitle(selectedCourse?.title)}</h3>
             <Popover.Close
               className="btn btn-xs btn-ghost"
               aria-label="Fermer les dates"

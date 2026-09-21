@@ -1,4 +1,4 @@
-import Header from "../../../../src/components/headers/Header";
+import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import ResumeActivity from "../components/resume-activity";
 import ResumeActivities from "../components/resume-activities";
@@ -9,8 +9,14 @@ import StudentAccomplishments from "../components/right-side/feedback-apprenant/
 import MostReadCourses from "../components/right-side/most-read-courses";
 import OnboardingWelcome from "../../onboarding/OnboardingWelcome";
 import { useStudentDashboard } from "../hooks/use-student-dashboard";
+import EmptyStatePlaceholder from "../../../components/UI/empty-state-placeholder";
+import BoxWrapper from "../../../components/wrappers/BoxWrapper";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { ChartNoAxesCombined } from "lucide-react";
 
 const StudentDashboard = () => {
+  const navigate = useNavigate();
   const {
     showOnboardingWelcome,
     welcomeTitle,
@@ -18,7 +24,26 @@ const StudentDashboard = () => {
     lastLesson,
     remainingLessons,
     hasLastLessons,
+    learningContext,
   } = useStudentDashboard();
+
+  useEffect(() => {
+    if (
+      learningContext.data?.onboardingRequired &&
+      learningContext.data.shouldAutoRedirect
+    ) {
+      navigate("/student/onboarding", { replace: true });
+    }
+  }, [learningContext.data, navigate]);
+
+  if (learningContext.isLoading) {
+    return (
+      <PageWrapper aria-busy="true">
+        <div className="skeleton h-24 w-full rounded-xl" />
+        <div className="skeleton h-[50vh] w-full rounded-xl" />
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -31,11 +56,61 @@ const StudentDashboard = () => {
             description={welcomeMessage}
             classname="capitalize"
           >
-            {/* Ajouter boutons ici par la suite */}
+            <Link to="/student/mon-avancement" className="btn btn-outline btn-primary">
+              <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+              Mon avancement
+            </Link>
           </Header>
         )}
       </div>
 
+      {learningContext.isError ? (
+        <BoxWrapper className="min-h-[50vh] items-center justify-center text-center">
+          <p className="text-lg font-semibold">
+            Impossible de charger votre contexte pédagogique.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary mt-4"
+            onClick={() => void learningContext.refetch()}
+          >
+            Réessayer
+          </button>
+        </BoxWrapper>
+      ) : null}
+
+      {!learningContext.isError &&
+      learningContext.data?.hasAvailableContent === false ? (
+        <EmptyStatePlaceholder title="Aucun contenu disponible pour l’instant, revenez plus tard !" />
+      ) : null}
+
+      {!learningContext.isError &&
+      learningContext.data?.hasAvailableContent &&
+      learningContext.data.onboardingRequired &&
+      !learningContext.data.shouldAutoRedirect ? (
+        <BoxWrapper className="flex-row flex-wrap items-center justify-between gap-4 border border-primary/25 bg-primary/5">
+          <div>
+            <h2 className="font-bold">Compléter mon profil d’apprentissage</h2>
+            <p className="text-sm text-base-content/70">
+              Formations en attente :{" "}
+              {learningContext.data.formationsToAssess
+                .map((formation) => formation.title)
+                .join(", ") || "préférences générales"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => navigate("/student/onboarding")}
+          >
+            Reprendre mon onboarding
+          </button>
+        </BoxWrapper>
+      ) : null}
+
+      {!learningContext.isError &&
+      learningContext.data?.hasAvailableContent &&
+      !learningContext.data.shouldAutoRedirect ? (
       <div className="grid gap-16 xl:grid-cols-3">
         <div
           className="flex flex-col gap-5 xl:col-span-2"
@@ -60,6 +135,7 @@ const StudentDashboard = () => {
           {/* <Chat /> */}
         </div>
       </div>
+      ) : null}
     </PageWrapper>
   );
 };

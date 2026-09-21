@@ -10,6 +10,10 @@ import app from "./app.ts";
 import { socket } from "./socket/socket.ts";
 import { corsOrigins, isDemoMode, PORT } from "./config/config.ts";
 import { authenticateSession } from "./utils/services/auth/authenticate-session.ts";
+import {
+  initializeContentAvailabilityNotifications,
+  startContentAvailabilityWorker,
+} from "./services/content-availability-notifications.ts";
 
 let server: http.Server | https.Server;
 
@@ -48,6 +52,7 @@ async function mongoInit() {
   await removeLegacyInterfaceRbac();
   await syncTeacherContentRbac();
   await syncAnalyticsIndexes();
+  await initializeContentAvailabilityNotifications();
 
   server.listen(PORT, () => {
     console.log(`🚀 Serveur démarré sur  http//localhost:${PORT}`);
@@ -61,5 +66,6 @@ async function mongoInit() {
     console.log("Mode démonstration : temps réel désactivé.");
   } else {
     socket(io);
+    startContentAvailabilityWorker();
   }
 }

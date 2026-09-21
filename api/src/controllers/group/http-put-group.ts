@@ -5,6 +5,7 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload.ts";
 import fs from "fs";
 import putGroup from "../../models/group/put-group.ts";
 import type { IUser } from "../../utils/interfaces/db/user.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 export default async function httpPutGroup(
   req: Request<{ id: string }>,
@@ -32,6 +33,7 @@ export default async function httpPutGroup(
     }
 
     await putGroup(id, group, users, image, parcoursId);
+    scheduleAvailabilityReconciliation();
 
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });

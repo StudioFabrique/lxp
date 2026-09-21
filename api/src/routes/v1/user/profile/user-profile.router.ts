@@ -9,6 +9,18 @@ import jsonParser from "../../../../middleware/json-parser.ts";
 import checkPermissions from "../../../../middleware/check-permissions.ts";
 import httpGetUserProfileSkills from "../../../../controllers/user/profile/http-get-user-profile-skills.ts";
 import httpDeleteUserAvatar from "../../../../controllers/user/profile/http-delete-user-avatar.ts";
+import { body, param } from "express-validator";
+import { checkValidatorResult } from "../../../../middleware/validators.ts";
+import {
+  httpGetLearningProfile,
+  httpPatchLearningProfile,
+  httpPutFormationAssessment,
+} from "../../../../controllers/user/profile/http-learning-profile.ts";
+import {
+  FORMATION_LEVELS,
+  LEARNING_PACES,
+  LEARNING_PREFERENCES,
+} from "../../../../config/learning-profile.ts";
 
 const userProfileRouter = Router();
 
@@ -19,6 +31,39 @@ userProfileRouter.get(
   "/information",
   checkPermissions("cursus", "read"),
   httpGetUserProfileInformation,
+);
+
+userProfileRouter.get(
+  "/learning",
+  checkPermissions("cursus", "read"),
+  httpGetLearningProfile,
+);
+
+userProfileRouter.patch(
+  "/learning",
+  checkPermissions("cursus", "update"),
+  [
+    body("pace").optional().isIn(LEARNING_PACES),
+    body("preferences")
+      .optional()
+      .isArray({ min: 1, max: LEARNING_PREFERENCES.length }),
+    body("preferences.*").optional().isIn(LEARNING_PREFERENCES),
+    body("currentStep").optional().isString().isLength({ max: 100 }),
+    body("action").optional().isIn(["start", "confirm"]),
+    checkValidatorResult,
+  ],
+  httpPatchLearningProfile,
+);
+
+userProfileRouter.put(
+  "/learning/formations/:formationId",
+  checkPermissions("cursus", "update"),
+  [
+    param("formationId").isInt({ min: 1 }),
+    body("level").isIn(FORMATION_LEVELS),
+    checkValidatorResult,
+  ],
+  httpPutFormationAssessment,
 );
 
 userProfileRouter.get(

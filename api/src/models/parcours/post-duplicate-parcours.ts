@@ -115,7 +115,6 @@ export default async function postDuplicateParcours(
       image: source.image,
       thumb: source.thumb,
       virtualClass: source.virtualClass,
-      visibility: false,
       isPublished: false,
       author: mongoUser
         ? `${mongoUser.firstname} ${mongoUser.lastname}`
@@ -204,7 +203,6 @@ export default async function postDuplicateParcours(
                     adminId: admin.id,
                     tagId: lesson.tagId,
                     order: lesson.order,
-                    isPublished: lesson.isPublished,
                     visibility: lesson.visibility,
                     duplicationIndex: lesson.duplicationIndex + 1,
                     activities: (relation: NestedCreate<"Activity">) =>

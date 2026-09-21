@@ -128,7 +128,7 @@ const GroupList = () => {
         tourSteps={groupsPageTourSteps}
       >
         <PermissionGuard object="group" action="write">
-          <Link className="btn btn-primary btn-soft" to="/admin/group/add">
+          <Link className="btn btn-outline btn-primary" to="/admin/group/add">
             <PlusCircle className="mr-2 h-5 w-5" />
             Créer un nouveau groupe
           </Link>

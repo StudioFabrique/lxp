@@ -1,9 +1,9 @@
 import { and } from "@prisma/orm-postgres/orm-client";
 
 import { prisma } from "../../db.ts";
-import Group from "../../interfaces/db/group.ts";
 import { type IRole } from "../../interfaces/db/role.ts";
 import { type ContentType } from "../../../config/content-read.ts";
+import { resolveAvailableFormations } from "../../../models/learning-profile/learning-profile.ts";
 
 /**
  * Un parcours est lui-même une cible de contrôle d'accès, au même titre que les
@@ -118,22 +118,137 @@ export function isContentAllowedForScope(
 export async function getAccessibleParcoursIds(
   userIdMdb: string,
 ): Promise<number[]> {
-  const groups = await Group.find({ users: userIdMdb }).select("_id");
-  if (groups.length === 0) return [];
+  const formations = await resolveAvailableFormations(userIdMdb);
+  return formations.flatMap((formation) =>
+    formation.parcours.map((parcours) => parcours.id),
+  );
+}
 
-  const groupIds = groups.map((group) => group.id as string);
-  const parcoursList = await prisma.orm.public.Parcours.where((row) =>
-    and(
-      row.isPublished.eq(true),
-      row.groups.some((groups) =>
-        groups.group.some((group) => group.idMdb.in(groupIds)),
+/** Vérifie la chaîne stricte publication/visibilité pour un accès apprenant. */
+export async function isLearnerContentAvailable(
+  type: AccessCheckedContent,
+  contentId: number,
+) {
+  if (type === "parcours") {
+    return Boolean(
+      await prisma.orm.public.Parcours.where((row) =>
+        and(
+          row.id.eq(contentId),
+          row.isPublished.eq(true),
+          row.modules.some((module) =>
+            module.courses.some((course) =>
+              and(
+                course.isPublished.eq(true),
+                course.visibility.eq(true),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ).first(),
+    );
+  }
+  if (type === "module") {
+    return Boolean(
+      await prisma.orm.public.Module.where((row) =>
+        and(
+          row.id.eq(contentId),
+          row.parcours.some((parcours) =>
+            parcours.isPublished.eq(true),
+          ),
+          row.courses.some((course) =>
+            and(
+              course.isPublished.eq(true),
+              course.visibility.eq(true),
+              course.lessons.some((lesson) =>
+                and(
+                  lesson.visibility.eq(true),
+                  lesson.activities.some((activity) => activity.id.gt(0)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ).first(),
+    );
+  }
+  if (type === "course") {
+    return Boolean(
+      await prisma.orm.public.Course.where((row) =>
+        and(
+          row.id.eq(contentId),
+          row.isPublished.eq(true),
+          row.visibility.eq(true),
+          row.lessons.some((lesson) =>
+            and(
+              lesson.visibility.eq(true),
+              lesson.activities.some((activity) => activity.id.gt(0)),
+            ),
+          ),
+          row.module.some((module) =>
+            module.parcours.some((parcours) =>
+              parcours.isPublished.eq(true),
+            ),
+          ),
+        ),
+      ).first(),
+    );
+  }
+  if (type === "lesson") {
+    return Boolean(
+      await prisma.orm.public.Lesson.where((row) =>
+        and(
+          row.id.eq(contentId),
+          row.visibility.eq(true),
+          row.activities.some((activity) => activity.id.gt(0)),
+          row.course.some((course) =>
+            and(
+              course.isPublished.eq(true),
+              course.visibility.eq(true),
+              course.module.some((module) =>
+                module.parcours.some((parcours) =>
+                  and(
+                    parcours.isPublished.eq(true),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ).first(),
+    );
+  }
+
+  return Boolean(
+    await prisma.orm.public.Activity.where((row) =>
+      and(
+        row.id.eq(contentId),
+        row.lesson.some((lesson) =>
+          and(
+            lesson.visibility.eq(true),
+            lesson.course.some((course) =>
+              and(
+                course.isPublished.eq(true),
+                course.visibility.eq(true),
+                course.module.some((module) =>
+                  module.parcours.some((parcours) =>
+                    and(
+                      parcours.isPublished.eq(true),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
-    ),
-  )
-    .select("id")
-    .all();
-
-  return parcoursList.map((parcours) => parcours.id);
+    ).first(),
+  );
 }
 
 /** Remonte de la chaîne activité → leçon → cours → module jusqu'au parcours. */

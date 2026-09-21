@@ -12,6 +12,7 @@ import {
   getModulesLabel,
   isTeacherUser,
 } from "../../../utils/helpers/user-role";
+import { formatTitle } from "../../../utils/helpers/text-helpers";
 
 type Props = {
   modules: ModuleSummary[];
@@ -41,7 +42,7 @@ export default function LastModules({ modules, isLoading }: Props) {
             </div>
 
             <div className="list-col-grow min-w-0 self-center">
-              <div className="font-semibold truncate">{module.title}</div>
+              <div className="font-semibold truncate">{formatTitle(module.title)}</div>
               <div className="text-xs font-light opacity-50 truncate">
                 {module.parcours ?? "Non rattaché"}
               </div>

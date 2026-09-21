@@ -2,6 +2,7 @@ import { type Response, type NextFunction } from "express";
 
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
 import enableCourse from "../../models/course/enable-course.ts";
+import { scheduleAvailabilityReconciliation } from "../../services/content-availability-notifications.ts";
 
 export async function httpEnableCourse(
   req: CustomRequest,
@@ -16,6 +17,7 @@ export async function httpEnableCourse(
     //  appel de la fonction qui supprime le cours et ses ressources associés
     //  l'identifiant du cours est converti en type number
     await enableCourse(+courseId, Boolean(visibility === "true"));
+    scheduleAvailabilityReconciliation();
     //  retourne une réponse positive
     const result = {
       statusCode: 200,

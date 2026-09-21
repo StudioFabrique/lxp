@@ -45,9 +45,7 @@ export default function InstanceSetup() {
 
     const organizationName = useDefaults ? DEFAULT_NAME : name.trim();
     if (organizationName.length < 2) {
-      toast.error(
-        "Le nom de l’organisation doit contenir au moins 2 caractères.",
-      );
+      toast.error("Le nom de l’organisme doit contenir au moins 2 caractères.");
       return;
     }
 
@@ -56,12 +54,7 @@ export default function InstanceSetup() {
       const payload = new FormData();
       payload.append("name", organizationName);
       payload.append("setupCompleted", "true");
-      payload.append("defaultTheme", settings.defaultTheme);
-      payload.append("welcomeTitles", JSON.stringify(settings.welcomeTitles));
-      payload.append(
-        "welcomeMessages",
-        JSON.stringify(settings.welcomeMessages),
-      );
+      payload.append("enabledThemes", JSON.stringify(settings.enabledThemes));
       payload.append(
         "color",
         useDefaults ? DEFAULT_LOGO_BACKGROUND : logoBackgroundColor,
@@ -69,7 +62,6 @@ export default function InstanceSetup() {
       if (!useDefaults && logo.file) payload.append("image", logo.file);
 
       await profileApi.mutations.updateInstanceSettings(payload);
-      toast.success("Votre espace est prêt.");
       navigate("/admin", { replace: true });
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "La configuration a échoué."));
@@ -82,7 +74,7 @@ export default function InstanceSetup() {
     <AuthPageWrapper
       title="Personnalisez votre espace"
       titleAccessory={<Building2 className="mt-0.5 h-6 w-6 text-primary" />}
-      description="Configurez l’identité de votre organisation. Vous pourrez modifier ces informations plus tard dans les paramètres."
+      description="Configurez l’identité de votre organisme. Vous pourrez modifier ces informations plus tard dans les paramètres."
     >
       <form
         className="mx-auto flex w-full max-w-sm flex-col items-center gap-5"
@@ -93,7 +85,7 @@ export default function InstanceSetup() {
       >
         <label className="flex w-full flex-col gap-2 text-center">
           <span className="text-sm font-semibold text-base-content">
-            Nom de l’organisation
+            Nom de l’organisme
           </span>
           <input
             type="text"

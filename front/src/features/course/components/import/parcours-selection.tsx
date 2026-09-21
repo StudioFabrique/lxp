@@ -31,6 +31,8 @@ type Props = {
   modulesList: Module[];
   selectedModule: Module | null;
   onSelectModule: (module: Module | null) => void;
+  onRefreshFormations: () => void;
+  onRefreshParcours: () => void;
   onRefreshModules: () => void;
 
   onConfirm: (parcours?: Parcours | null) => void;
@@ -49,6 +51,8 @@ const ParcoursSelection = ({
   modulesList,
   selectedModule,
   onSelectModule,
+  onRefreshFormations,
+  onRefreshParcours,
   onRefreshModules,
   onConfirm,
   onGoBack,
@@ -56,6 +60,10 @@ const ParcoursSelection = ({
   const { user } = useContext(AuthContext);
   const isTeacher = isTeacherUser(user);
   const [showReloadModulesButton, setShowReloadModulesButton] = useState(false);
+  const [showReloadFormationsButton, setShowReloadFormationsButton] =
+    useState(false);
+  const [showReloadParcoursButton, setShowReloadParcoursButton] =
+    useState(false);
 
   const canConfirm = Boolean(
     selectedFormation && selectedParcours && selectedModule,
@@ -107,6 +115,16 @@ const ParcoursSelection = ({
         >
           <h3 className="text-lg font-bold flex items-center gap-2 text-base-content">
             Choisir une formation
+            {showReloadFormationsButton && (
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost tooltip ml-auto"
+                data-tip="Recharger la liste des formations"
+                onClick={onRefreshFormations}
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+            )}
           </h3>
 
           {isFormationsLoading ? (
@@ -114,8 +132,19 @@ const ParcoursSelection = ({
           ) : formationsError ? (
             <div className="alert alert-error text-sm">{formationsError}</div>
           ) : formationsList.length === 0 ? (
-            <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
-              Aucune formation disponible.
+            <div className="flex px-5 text-sm text-base-content">
+              <span>Aucune formation existante</span>
+              {!isTeacher && (
+                <Link
+                  className="btn btn-primary btn-sm ml-auto normal-case"
+                  to="/admin/parcours?createFormation=true"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setShowReloadFormationsButton(true)}
+                >
+                  Créer une formation
+                </Link>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -146,11 +175,32 @@ const ParcoursSelection = ({
               <span className="text-primary underline decoration-dotted capitalize">
                 {selectedFormation.title}
               </span>
+              {showReloadParcoursButton && (
+                <button
+                  type="button"
+                  className="btn btn-xs btn-ghost tooltip ml-auto"
+                  data-tip="Recharger la liste des parcours"
+                  onClick={onRefreshParcours}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              )}
             </h3>
 
             {parcoursList.length === 0 ? (
-              <div className="alert alert-warning bg-warning/10 text-error border-warning/20 text-sm">
-                Aucun parcours disponible pour cette formation.
+              <div className="flex items-center px-5 text-sm">
+                <span>Aucun parcours disponible pour cette formation.</span>
+                {!isTeacher && (
+                  <Link
+                    className="btn btn-primary btn-sm ml-auto normal-case"
+                    to={`/admin/dashboard?createParcours=true&formationId=${selectedFormation.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => setShowReloadParcoursButton(true)}
+                  >
+                    Créer un parcours
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

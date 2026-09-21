@@ -33,7 +33,7 @@ const PreviewLessons = (props: PreviewLessonsProps) => {
               <div className="w-8 h-8 text-primary">
                 <DocumentIcon />
               </div>
-              <p className="flex-1">{lesson.title}</p>
+              <p className="flex-1 first-letter:uppercase">{lesson.title}</p>
             </div>
           </li>
         ))}

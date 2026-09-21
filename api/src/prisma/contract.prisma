@@ -283,6 +283,8 @@ model Formation {
   admin       Admin             @relation(fields: [adminId], references: [id])
   parcours    Parcours[]
   tags        TagsOnFormation[]
+  studentAssessments StudentFormationAssessment[]
+  availabilityNotifications ContentAvailabilityNotification[]
 
   @@map("Formation")
 }
@@ -318,7 +320,6 @@ model Lesson {
   courseId         Int
   tagId            Int
   order            Int
-  isPublished      Boolean        @default(false)
   visibility       Boolean        @default(false)
   activities       Activity[]
   admin            Admin          @relation(fields: [adminId], references: [id], onDelete: Restrict)
@@ -436,7 +437,6 @@ model Parcours {
   createdAt        TimestamptzString             @default(now())
   updatedAt        temporal.updatedAtString()
   author           String
-  visibility       Boolean              @default(false)
   adminId          Int
   formationId      Int
   virtualClass     String?
@@ -528,8 +528,74 @@ model Student {
   quizAttempts          QuizAttempt[]
   assignmentSubmissions AssignmentSubmission[]
   contentReadCredits    ContentReadCredit[]
+  learningProfile       StudentLearningProfile?
+  formationAssessments  StudentFormationAssessment[]
+  availabilityNotifications ContentAvailabilityNotification[]
 
   @@map("Student")
+}
+
+/// Déclarations globales de l'apprenant, indépendantes d'une formation.
+model StudentLearningProfile {
+  id                 Int      @id @default(autoincrement())
+  studentId          Int      @unique
+  pace               String?
+  preferences        String[]
+  onboardingStatus   String   @default("not_started")
+  currentStep        String   @default("")
+  onboardingVersion  Int      @default(1)
+  initialCompletedAt TimestamptzString?
+  createdAt          TimestamptzString @default(now())
+  updatedAt          temporal.updatedAtString()
+  student            Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("StudentLearningProfile")
+}
+
+/// Auto-évaluation déclarative, unique pour une formation donnée.
+model StudentFormationAssessment {
+  id          Int       @id @default(autoincrement())
+  studentId   Int
+  formationId Int
+  level       String
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, formationId])
+  @@index([formationId])
+  @@map("StudentFormationAssessment")
+}
+
+/// Outbox durable pour l'annonce de la première disponibilité d'une formation.
+model ContentAvailabilityNotification {
+  id                Int       @id @default(autoincrement())
+  studentId         Int
+  formationId       Int
+  status            String    @default("pending")
+  attemptCount      Int       @default(0)
+  nextAttemptAt     TimestamptzString @default(now())
+  lastAttemptAt     TimestamptzString?
+  sentAt            TimestamptzString?
+  lastError         String?
+  suppressionReason String?
+  createdAt         TimestamptzString @default(now())
+  updatedAt         temporal.updatedAtString()
+  student           Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  formation         Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, formationId])
+  @@index([status, nextAttemptAt], map: "AvailabilityNotification_due")
+  @@map("ContentAvailabilityNotification")
+}
+
+/// Marqueurs idempotents des initialisations applicatives liées aux données.
+model SystemJobState {
+  key         String @id
+  completedAt TimestamptzString @default(now())
+
+  @@map("SystemJobState")
 }
 
 /// Intervalles réellement crédités ; les anciens compteurs ne sont pas rétrodatés.

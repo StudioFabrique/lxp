@@ -9,9 +9,10 @@ import SkillModules from "./skill-modules";
 
 type Props = {
   skill: Skill;
-  size?: "small" | "medium" | "large";
+  size?: "tiny" | "small" | "medium" | "large";
   inModal?: boolean;
   card?: boolean;
+  showProgress?: boolean;
 };
 
 export default function SkillBadge({
@@ -19,13 +20,14 @@ export default function SkillBadge({
   size = "medium",
   inModal = false,
   card = false,
+  showProgress = true,
 }: Props) {
   const { user } = useContext(AuthContext);
   const isStudent = getUserArea(user) === "student";
   const [isOpen, setIsOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   const dialogContent = useRef<HTMLDivElement>(null);
-  const sizeClass = { small: "size-12", medium: "size-20", large: "size-28" }[
+  const sizeClass = { tiny: "size-6", small: "size-12", medium: "size-20", large: "size-28" }[
     size
   ];
   const completed = skill.completedModules ?? 0;
@@ -139,7 +141,7 @@ export default function SkillBadge({
           {content}
         </div>
       )}
-      {!card && progress}
+      {!card && showProgress && progress}
       {isOpen &&
         createPortal(
           <Modal

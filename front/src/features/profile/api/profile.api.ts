@@ -6,17 +6,7 @@ export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
   hasLogo: boolean;
-  defaultTheme: string;
-  welcomeTitles: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
-  welcomeMessages: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
+  enabledThemes: string[];
 };
 
 const queries = {

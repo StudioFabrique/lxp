@@ -40,8 +40,8 @@ const course: CustomCourse = {
   isPublished: true,
   visibility: true,
   lessons: [
-    { id: 4, title: "Première leçon", order: 0 },
-    { id: 5, title: "Deuxième leçon", order: 1 },
+    { id: 4, title: "Première leçon", order: 0, visibility: true },
+    { id: 5, title: "Deuxième leçon", order: 1, visibility: false },
   ],
 };
 
@@ -49,8 +49,8 @@ const courseWithFourLessons: CustomCourse = {
   ...course,
   lessons: [
     ...course.lessons,
-    { id: 6, title: "Troisième leçon", order: 2 },
-    { id: 7, title: "Quatrième leçon", order: 3 },
+    { id: 6, title: "Troisième leçon", order: 2, visibility: true },
+    { id: 7, title: "Quatrième leçon", order: 3, visibility: true },
   ],
 };
 
@@ -188,10 +188,22 @@ describe("CourseList", () => {
 
     expect(markup).toContain('aria-label="Actions pour Première leçon"');
     expect(markup).toContain('aria-label="Actions pour Deuxième leçon"');
-    expect(markup).toContain('data-actions-count="3"');
+    expect(markup).toContain('data-actions-count="4"');
     expect(markup).toContain("Accéder à la leçon");
+    expect(markup).toContain("Rendre invisible");
+    expect(markup).toContain("Rendre visible");
     expect(markup).toContain("Modifier la leçon");
     expect(markup).toContain("Supprimer la leçon");
     expect(markup).toContain("ml-auto self-center justify-self-end");
+  });
+
+  it("signale discrètement uniquement les leçons invisibles", () => {
+    const markup = renderToStaticMarkup(
+      <MemoryRouter>
+        <CourseList coursesList={[course]} onRefreshCourses={vi.fn()} />
+      </MemoryRouter>,
+    );
+
+    expect(markup.match(/aria-label="Leçon invisible"/g)).toHaveLength(1);
   });
 });

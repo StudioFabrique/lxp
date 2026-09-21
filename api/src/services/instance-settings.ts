@@ -4,36 +4,16 @@ import path from "path";
 export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
-  defaultTheme: string;
-  welcomeTitles: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
-  welcomeMessages: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
+  enabledThemes: string[];
 };
 
 export const defaultInstanceSettings: InstanceSettings = {
   name: "ANDRIA",
   setupCompleted: false,
-  defaultTheme: "classic",
-  welcomeTitles: {
-    admin: "Bonjour, {firstname} {lastname} !",
-    teacher: "Bonjour, {firstname} {lastname} !",
-    student: "Bonjour, {firstname} {lastname} !",
-  },
-  welcomeMessages: {
-    admin:
-      "Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants",
-    teacher:
-      "Bienvenue dans votre espace pédagogique, retrouvez vos contenus et accompagnez vos apprenants",
-    student:
-      "Bienvenue dans votre espace, commencez votre apprentissage ou reprenez là où vous vous êtes arrêté",
-  },
+  enabledThemes: [
+    "classic", "ocean", "linen", "sage",
+    "classic-dark", "aurora", "ember", "abyss",
+  ],
 };
 
 const settingsPath = path.join(
@@ -85,22 +65,9 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
         typeof saved.setupCompleted === "boolean"
           ? saved.setupCompleted
           : defaultInstanceSettings.setupCompleted,
-      defaultTheme:
-        typeof saved.defaultTheme === "string"
-          ? saved.defaultTheme === "light"
-            ? "classic"
-            : saved.defaultTheme === "dark"
-              ? "classic-dark"
-              : saved.defaultTheme
-          : "classic",
-      welcomeTitles: {
-        ...defaultInstanceSettings.welcomeTitles,
-        ...(saved.welcomeTitles ?? {}),
-      },
-      welcomeMessages: {
-        ...defaultInstanceSettings.welcomeMessages,
-        ...(saved.welcomeMessages ?? {}),
-      },
+      enabledThemes: Array.isArray(saved.enabledThemes)
+        ? saved.enabledThemes.filter((theme: unknown): theme is string => typeof theme === "string")
+        : defaultInstanceSettings.enabledThemes,
     };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {

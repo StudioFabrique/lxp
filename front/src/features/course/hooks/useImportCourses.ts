@@ -713,6 +713,33 @@ export default function useImportCourses(importTarget?: ImportTarget) {
     await loadModules(selectedParcours);
   }, [loadModules, selectedParcours]);
 
+  const fetchFormations = useCallback(async () => {
+    setIsFormationsLoading(true);
+    setFormationsError("");
+    try {
+      setFormationsList(await courseApi.queries.formationsList());
+    } catch (err) {
+      console.error("Erreur chargement formations:", err);
+      setFormationsError(
+        "Les formations n'ont pas pu être chargées. Veuillez réessayer.",
+      );
+    } finally {
+      setIsFormationsLoading(false);
+    }
+  }, []);
+
+  const fetchParcours = useCallback(async () => {
+    if (!selectedFormation) return;
+    try {
+      const data = await courseApi.queries.parcoursByFormationId(
+        selectedFormation.id,
+      );
+      setParcoursList(data.data);
+    } catch (err) {
+      console.error("Erreur chargement parcours:", err);
+    }
+  }, [selectedFormation]);
+
   // --- Effects de Synchronisation & Chargement des Données de Listes ---
 
   useEffect(() => {
@@ -803,6 +830,8 @@ export default function useImportCourses(importTarget?: ImportTarget) {
     setSelectedFormation: handleSelectFormation,
     setSelectedParcours: handleSelectParcours,
     setSelectedModule,
+    fetchFormations,
+    fetchParcours,
     fetchModules,
     handleImportMbz,
     onRemoveActivity,

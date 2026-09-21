@@ -13,7 +13,6 @@ async function getParcours(scope: AccessScope = null) {
       "updatedAt",
       "author",
       "isPublished",
-      "visibility",
       "thumb",
     )
     .include("formation", (related240) => related240.select("title", "level"))

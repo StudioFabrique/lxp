@@ -16,6 +16,9 @@ export const escapeHtml = (value: string) =>
         c
       ]!,
   );
+export const formatDisplayTitle = (value: string) =>
+  value.replace(/^(\s*)(\p{L})/u, (_, spaces: string, letter: string) =>
+    spaces + letter.toUpperCase());
 export const instanceHomeUrl = () => {
   const configuredUrl = env.FRONT_URL ?? "http://localhost:5173/";
   return configuredUrl.endsWith("/") ? configuredUrl : `${configuredUrl}/`;
@@ -27,6 +30,7 @@ export const button = (link: string, label: string) =>
 
 type LayoutOptions = {
   officialAndriaLogo?: boolean;
+  showFooter?: boolean;
   contentAlignment?: "left" | "center";
   themeMode?: "light" | "dark";
   logoCid?: string;
@@ -57,8 +61,8 @@ export const layout = (
         border: "#334155",
       }
     : {
-        page: "#f3f5f8",
-        card: "#ffffff",
+        page: "#eaf2f8",
+        card: "#f8fbff",
         header: "#17202a",
         text: "#17202a",
         muted: "#68737d",
@@ -75,7 +79,7 @@ export const layout = (
   const contentRadius = brand ? "18px 18px 0 0" : "12px 12px 0 0";
   const footerLogo = options.officialAndriaLogo
     ? ""
-    : `<td align="right" valign="middle" style="padding-left:12px;text-align:right"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td>`;
+    : `<td align="right" valign="middle" style="padding:20px 32px 20px 12px;text-align:right"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td>`;
 
   return `<!doctype html>
 <html lang="fr">
@@ -87,7 +91,7 @@ export const layout = (
         <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" bgcolor="${brand ? headerColor : colors.card}" style="width:100%;max-width:600px;background-color:${brand ? headerColor : colors.card};border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.16)">
           ${header}
           <tr><td align="${contentAlignment}" bgcolor="${colors.card}" style="padding:32px;background-color:${colors.card};border-radius:${contentRadius};color:${colors.text};font-size:15px;line-height:24px;text-align:${contentAlignment}">${content}</td></tr>
-          <tr><td bgcolor="${colors.card}" style="padding:20px 32px;background-color:${colors.card};border-top:1px solid ${colors.border};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="color:${colors.muted};text-align:left">Cet e-mail a été envoyé par <strong>${escapeHtml(name)}</strong>.</td>${footerLogo}</tr></table></td></tr>
+          ${options.showFooter === false ? "" : `<tr><td bgcolor="${colors.card}" style="padding:0;background-color:${colors.card};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%;border-top:1px solid ${colors.border};border-radius:${contentRadius}"><tr><td valign="middle" style="padding:20px 0 20px 32px;color:${colors.muted};text-align:left"><strong>${escapeHtml(name)}</strong></td>${footerLogo}</tr></table></td></tr>`}
         </table>
       </td>
     </tr>

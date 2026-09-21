@@ -19,7 +19,7 @@ export const adminProfileRoutes: RouteObject[] = [
 export const studentProfileRoutes: RouteObject[] = [
   {
     path: "profil",
-    element: <Navigate to="../mon-avancement" replace />,
+    lazy: lazyRoute(() => import("./views/StudentProfile")),
   },
   {
     path: "mon-avancement",

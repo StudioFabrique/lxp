@@ -10,7 +10,6 @@ import {
   IndicatorAnalysis,
   IndicatorAnalysisFeedback,
 } from "../src/utils/interfaces/db/indicator-analysis.ts";
-import { saveAnalysis } from "../src/models/indicators/analysis-history.ts";
 import {
   requireAnalysisStaff,
   httpAnalysisFeedback,
@@ -43,7 +42,7 @@ integration("Indicateurs et retours sur bases isolées", () => {
   app.use((req: CustomRequest, _res, next) => {
     if (req.headers["x-test-rank"])
       req.auth = {
-        userId: staffId,
+        userId: String(req.headers["x-test-user-id"] ?? staffId),
         userRoles: [{ rank: Number(req.headers["x-test-rank"]) }],
       } as CustomRequest["auth"];
     next();
@@ -247,7 +246,7 @@ integration("Indicateurs et retours sur bases isolées", () => {
     expect(history.body.items[0].analysisId).toBe(analysisId);
   });
 
-  it("refuse les apprenants, les identifiants invalides et les issues mal datées", async () => {
+  it("refuse les apprenants et les identifiants invalides", async () => {
     await request(app).get(`/${userId}/analyses`).expect(401);
     await request(app)
       .get(`/${userId}/analyses`)
@@ -265,29 +264,6 @@ integration("Indicateurs et retours sur bases isolées", () => {
       .send({ verdict: "wrong" })
       .expect(400);
     await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({ verdict: "appropriate", observedOutcome: "graduate" })
-      .expect(400);
-    await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({
-        verdict: "appropriate",
-        observedOutcome: "graduate",
-        observedAt: "2026-08-01",
-      })
-      .expect(400);
-    await request(app)
-      .post(path)
-      .set("x-test-rank", "2")
-      .send({
-        verdict: "appropriate",
-        observedOutcome: "graduate",
-        observedAt: "2099-01-01",
-      })
-      .expect(400);
-    await request(app)
       .post(`/${staffId}/analyses/${analysisId}/feedback`)
       .set("x-test-rank", "2")
       .send({ verdict: "appropriate" })
@@ -299,7 +275,7 @@ integration("Indicateurs et retours sur bases isolées", () => {
       .expect(400);
   });
 
-  it("conserve les retours successifs sans remplacer la prédiction", async () => {
+  it("n'autorise qu'un retour par membre de l'équipe sans remplacer la prédiction", async () => {
     const path = `/${userId}/analyses/${analysisId}/feedback`;
     await request(app)
       .post(path)
@@ -309,12 +285,21 @@ integration("Indicateurs et retours sur bases isolées", () => {
     await request(app)
       .post(path)
       .set("x-test-rank", "2")
+      .send({ verdict: "appropriate" })
+      .expect(409);
+    const otherStaffId = new mongoose.Types.ObjectId().toString();
+    await request(app)
+      .post(path)
+      .set("x-test-rank", "2")
+      .set("x-test-user-id", otherStaffId)
       .send({
         verdict: "appropriate",
         observedOutcome: "graduate",
-        observedAt: "2026-09-01T12:00:00Z",
       })
       .expect(201);
+    const savedFeedback = await IndicatorAnalysisFeedback.findOne({ analysisId, authorId: otherStaffId }).lean();
+    expect(savedFeedback?.createdAt).toBeInstanceOf(Date);
+    expect(savedFeedback?.observedAt).toBeUndefined();
     expect(await IndicatorAnalysisFeedback.countDocuments({ analysisId })).toBe(
       2,
     );
@@ -328,8 +313,15 @@ integration("Indicateurs et retours sur bases isolées", () => {
 
   it("pagine l'historique sans mélanger les apprenants ni perdre une analyse", async () => {
     const stored = await IndicatorAnalysis.findById(analysisId).lean();
-    for (let i = 0; i < 20; i++)
-      await saveAnalysis(stored!.snapshot as IndicatorPrediction, staffId);
+    for (let i = 0; i < 20; i++) {
+      await IndicatorAnalysis.create({
+        userId,
+        authorId: staffId,
+        featureVersion: stored!.featureVersion,
+        dayKey: `2026-07-${String(i + 1).padStart(2, "0")}`,
+        snapshot: stored!.snapshot as IndicatorPrediction,
+      });
+    }
     const first = await request(app)
       .get(`/${userId}/analyses`)
       .set("x-test-rank", "2")

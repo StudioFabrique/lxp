@@ -17,13 +17,7 @@ export default async function httpGetLastLessonsRead(
   try {
     const response = await getLastLessonsRead(userId, 4);
 
-    if (!response) {
-      return res
-        .status(404)
-        .json({ message: "Dernières leçons lues non trouvées" });
-    }
-
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Les dernières leçons lues ont été récupérées",
       data: response,
     });

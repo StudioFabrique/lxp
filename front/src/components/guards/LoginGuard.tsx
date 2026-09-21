@@ -4,7 +4,7 @@ import { AuthContext } from "../../store/AuthProvider";
 import Loader from "../loaders/Loader";
 import { onboardingApi } from "../../features/auth/api/onboarding.api";
 import { useDemoMode } from "../../store/DemoContext";
-import { getUserHomePath } from "../../utils/helpers/user-role";
+import { getUserHomePath, hasRoleRank } from "../../utils/helpers/user-role";
 import Modal from "../UI/modal/modal";
 
 const LoginGuard = () => {
@@ -19,6 +19,7 @@ const LoginGuard = () => {
     location.pathname,
   );
   const isInstanceSetupRoute = location.pathname === "/instance-setup";
+  const isStudentOnboardingRoute = location.pathname === "/student/onboarding";
 
   useEffect(() => {
     let active = true;
@@ -55,6 +56,14 @@ const LoginGuard = () => {
     return <Navigate replace to={getUserHomePath(user) ?? "/access-denied"} />;
   }
 
+  if (isLoggedIn && user && isStudentOnboardingRoute) {
+    return hasRoleRank(user, [3]) ? (
+      <Outlet />
+    ) : (
+      <Navigate replace to={getUserHomePath(user) ?? "/access-denied"} />
+    );
+  }
+
   if (isLoggedIn && user && location.pathname === "/register" &&
       new URLSearchParams(location.search).has("id")) {
     const homePath = getUserHomePath(user) ?? "/access-denied";
@@ -83,6 +92,11 @@ const LoginGuard = () => {
     const homePath = getUserHomePath(user);
     if (homePath) return <Navigate replace to={homePath} />;
     return <Navigate replace to="/access-denied" />;
+  }
+
+
+  if (!isLoggedIn && isStudentOnboardingRoute) {
+    return <Navigate replace to="/login" />;
   }
 
   // Sur l'instance de démonstration, aucune des pages d'authentification n'a

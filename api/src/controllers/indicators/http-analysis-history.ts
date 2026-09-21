@@ -13,7 +13,7 @@ export function requireAnalysisStaff(req: CustomRequest, res: Response, next: Ne
 
 export async function httpAnalysisHistory(req: CustomRequest, res: Response) {
   try {
-    return res.json(await getAnalysisHistory(req.params.userId!, req.query.before as string | undefined));
+    return res.json(await getAnalysisHistory(req.params.userId!, req.auth!.userId, req.query.before as string | undefined));
   } catch (error) {
     logger.error("Lecture de l'historique des analyses", error);
     return res.status(500).json({ message: "Impossible de charger l'historique des analyses." });

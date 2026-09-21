@@ -141,7 +141,7 @@ export default function TeacherAssignments() {
                 truncateTitle
                 description={
                   <span className="flex flex-col gap-x-2 gap-2">
-                    <span>{module.title}</span>
+                    <span className="inline-block first-letter:uppercase">{module.title}</span>
                     {assignment.students.length > 0 && (
                       <span className="text-sm text-base-content/70">
                         {assignment.students.length} travail

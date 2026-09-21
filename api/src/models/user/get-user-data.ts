@@ -3,6 +3,7 @@ import { prisma } from "../../utils/db.ts";
 import { type IConnectionInfos } from "../../utils/interfaces/db/connection-infos.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import type { IGroup } from "../../utils/interfaces/db/group.ts";
+import { getLearningContext } from "../learning-profile/learning-profile.ts";
 
 type PopulatedUserData = Omit<IUser, "connectionInfos" | "group"> & {
   connectionInfos?: IConnectionInfos[];
@@ -165,8 +166,16 @@ export default async function getUserData(userId: string) {
   }
 
   // Return comprehensive user data structure
+  const learningContext = await getLearningContext(userId).catch(() => null);
+
   return {
     user,
     parcours: parcours ?? null,
+    learningProfile: learningContext
+      ? {
+          profile: learningContext.profile,
+          formations: learningContext.availableFormations,
+        }
+      : null,
   };
 }

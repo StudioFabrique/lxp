@@ -5,13 +5,7 @@ import type CustomRequest from "../src/utils/interfaces/express/custom-request.t
 const defaultInstanceSettings = {
   name: "ANDRIA",
   setupCompleted: true,
-  defaultTheme: "classic",
-  welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
-  welcomeMessages: {
-    admin: "Bienvenue",
-    teacher: "Bienvenue",
-    student: "Bienvenue",
-  },
+  enabledThemes: ["classic", "classic-dark"],
 };
 
 jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
@@ -43,9 +37,7 @@ function request(name: string) {
   return {
     body: {
       name,
-      defaultTheme: defaultInstanceSettings.defaultTheme,
-      welcomeTitles: JSON.stringify(defaultInstanceSettings.welcomeTitles),
-      welcomeMessages: JSON.stringify(defaultInstanceSettings.welcomeMessages),
+      enabledThemes: JSON.stringify(defaultInstanceSettings.enabledThemes),
     },
   } as CustomRequest;
 }

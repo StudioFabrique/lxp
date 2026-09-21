@@ -12,6 +12,14 @@ export const lightThemes = [
   "sunrise",
   "glacier",
   "sand",
+  "pearl",
+  "mint",
+  "blossom",
+  "sky",
+  "lemon",
+  "clay",
+  "ice",
+  "paper",
 ] as const;
 
 export const darkThemes = [
@@ -23,6 +31,25 @@ export const darkThemes = [
   "plum",
   "moss",
   "cobalt",
+  "midnight",
+  "forest-night",
+  "coffee",
+  "amethyst",
+  "storm",
+  "wine",
+  "teal-night",
+  "obsidian",
+] as const;
+
+export const defaultEnabledThemes = [
+  "classic",
+  "ocean",
+  "linen",
+  "sage",
+  "classic-dark",
+  "aurora",
+  "ember",
+  "abyss",
 ] as const;
 
 export const themeLabels: Record<string, string> = {
@@ -42,4 +69,20 @@ export const themeLabels: Record<string, string> = {
   plum: "Prune",
   moss: "Mousse",
   cobalt: "Cobalt",
+  pearl: "Perle",
+  mint: "Menthe",
+  blossom: "Floraison",
+  sky: "Ciel",
+  lemon: "Citron",
+  clay: "Argile",
+  ice: "Glace",
+  paper: "Papier",
+  midnight: "Minuit",
+  "forest-night": "Forêt nocturne",
+  coffee: "Café",
+  amethyst: "Améthyste",
+  storm: "Orage",
+  wine: "Bordeaux",
+  "teal-night": "Sarcelle nocturne",
+  obsidian: "Obsidienne",
 };

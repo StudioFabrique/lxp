@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import Contact from "../../../../../../src/utils/interfaces/contact";
 import useEagerLoadingList from "../../../../../../src/hooks/useEagerLoadingList";
 import SortColumnIcon from "../../../../../components/UI/sort-column-icon/sort-column-icon";
@@ -32,6 +32,18 @@ type Teacher = {
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   const { user } = useContext(AuthContext);
   const canCreateTeacher = (user?.roles[0]?.rank ?? 4) < 2;
+  const [selectedContactIds, setSelectedContactIds] = useState<Set<number>>(
+    () => new Set(),
+  );
+  const selectableContacts = useMemo(
+    () =>
+      (props.list ?? []).map((contact) =>
+        contact.id !== undefined && selectedContactIds.has(contact.id)
+          ? { ...contact, isSelected: true }
+          : contact,
+      ),
+    [props.list, selectedContactIds],
+  );
   const {
     allChecked,
     list,
@@ -40,7 +52,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "lastname");
+  } = useEagerLoadingList(selectableContacts, "lastname");
   const queryClient = useQueryClient();
 
   const { mutate: createTeacher } = useMutation({
@@ -49,6 +61,13 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message);
+        if (data.contact?.id !== undefined) {
+          setSelectedContactIds((previousIds) => {
+            const nextIds = new Set(previousIds);
+            nextIds.add(data.contact.id);
+            return nextIds;
+          });
+        }
         queryClient.invalidateQueries({
           queryKey: parcoursKeys.availableContacts(),
         });
@@ -64,8 +83,33 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   });
 
   const handleAllChecked = useCallback(() => {
+    setSelectedContactIds((previousIds) => {
+      const nextIds = new Set(previousIds);
+      list?.forEach((contact) => {
+        if (contact.id !== undefined) {
+          if (allChecked) nextIds.delete(contact.id);
+          else nextIds.add(contact.id);
+        }
+      });
+      return nextIds;
+    });
     setAllChecked((prevState) => !prevState);
-  }, [setAllChecked]);
+  }, [allChecked, list, setAllChecked]);
+
+  const handleContactCheck = useCallback(
+    (contact: Contact) => {
+      if (contact.id === undefined) return;
+
+      setSelectedContactIds((previousIds) => {
+        const nextIds = new Set(previousIds);
+        if (contact.isSelected) nextIds.delete(contact.id!);
+        else nextIds.add(contact.id!);
+        return nextIds;
+      });
+      handleRowCheck(contact.id);
+    },
+    [handleRowCheck],
+  );
 
   const table = useMemo(() => {
     return (
@@ -111,7 +155,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                     checked={
                       item.isSelected !== undefined ? item.isSelected : false
                     }
-                    onChange={() => handleRowCheck(item.id)}
+                    onChange={() => handleContactCheck(item)}
                   />
                 </td>
                 <td>{getContactFullName(item)}</td>
@@ -125,7 +169,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     direction,
     fieldSort,
     handleAllChecked,
-    handleRowCheck,
+    handleContactCheck,
     list,
     sortData,
   ]);

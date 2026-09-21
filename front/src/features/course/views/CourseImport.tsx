@@ -36,6 +36,8 @@ const ImportCoursesHome = () => {
     setSelectedFormation,
     setSelectedParcours,
     setSelectedModule,
+    fetchFormations,
+    fetchParcours,
     fetchModules,
     handleImportMbz,
     onRemoveActivity,
@@ -111,6 +113,8 @@ const ImportCoursesHome = () => {
             onSelectModule={setSelectedModule}
             onConfirm={onConfirmParcoursSelection}
             onGoBack={onGoBack}
+            onRefreshFormations={fetchFormations}
+            onRefreshParcours={fetchParcours}
             onRefreshModules={fetchModules}
           />
         );

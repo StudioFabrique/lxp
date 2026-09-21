@@ -78,6 +78,8 @@ describe("Cloisonnement des contenus par parcours", () => {
       moduleId: module.id,
       order: 1,
       dates: [],
+      isPublished: true,
+      visibility: true,
     });
     const lesson = await prisma.orm.public.Lesson.select("id").create({
       title: `${titre} leçon`,
@@ -88,6 +90,7 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminId,
       courseId: course.id,
       tagId,
+      visibility: true,
     });
     const activity = await prisma.orm.public.Activity.select("id").create({
       title: `${titre} activité`,
@@ -309,6 +312,70 @@ describe("Cloisonnement des contenus par parcours", () => {
         .get(`/v1/modules/detail/limited/${inscrit.moduleId}`)
         .set("Cookie", cookieApprenant)
         .expect(200);
+    });
+
+    it("ne liste pas un module qui ne contient aucun cours accessible", async () => {
+      const moduleExistant = await prisma.orm.public.Module.where({
+        id: inscrit.moduleId,
+      })
+        .select("adminId")
+        .first();
+      if (!moduleExistant) throw new Error("Module de test introuvable");
+      const moduleSansCours = await prisma.orm.public.Module.select(
+        "id",
+      ).create({
+        title: "Module sans cours accessible",
+        author: "test",
+        adminId: moduleExistant.adminId,
+        parcoursId: inscrit.parcoursId,
+      });
+
+      try {
+        const reponse = await request(app)
+          .get(`/v1/parcours/parcours-by-id/${inscrit.parcoursId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(200);
+
+        expect(
+          reponse.body.modules.map((module: { id: number }) => module.id),
+        ).not.toContain(moduleSansCours.id);
+      } finally {
+        await prisma.orm.public.Module.where({ id: moduleSansCours.id })
+          .deleteAndCount()
+          .then((count) => ({ count }));
+      }
+    });
+
+    it("refuse le contenu dès qu'une leçon de la chaîne est masquée", async () => {
+      await prisma.orm.public.Lesson.where({ id: inscrit.lessonId }).update({
+        visibility: false,
+      });
+      try {
+        await request(app)
+          .get(`/v1/lesson/${inscrit.lessonId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(404);
+      } finally {
+        await prisma.orm.public.Lesson.where({ id: inscrit.lessonId }).update({
+          visibility: true,
+        });
+      }
+    });
+
+    it("refuse le contenu dès que son parcours n'est plus publié", async () => {
+      await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
+        isPublished: false,
+      });
+      try {
+        await request(app)
+          .get(`/v1/lesson/${inscrit.lessonId}`)
+          .set("Cookie", cookieApprenant)
+          .expect(404);
+      } finally {
+        await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
+          isPublished: true,
+        });
+      }
     });
   });
 

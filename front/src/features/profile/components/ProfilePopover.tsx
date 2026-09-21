@@ -13,7 +13,6 @@ import toast from "react-hot-toast";
 import { AuthContext } from "../../../store/AuthProvider";
 import { ThemeContext } from "../../../store/ThemeProvider";
 import { AvatarSmall } from "../../../components/avatar/AvatarSmall";
-import { darkThemes, lightThemes } from "../../../config/themes";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
 import { maxSizeError } from "../../../utils/helpers/max-size-error";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
@@ -26,7 +25,7 @@ type Props = { interfaceType: string };
 
 export default function ProfilePopover({ interfaceType }: Props) {
   const { user, handshake } = useContext(AuthContext);
-  const { theme, toggleTheme, chooseTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -101,7 +100,7 @@ export default function ProfilePopover({ interfaceType }: Props) {
     }
   };
 
-  const themeOptions = theme === "light" ? lightThemes : darkThemes;
+  const themeOptions = theme === "light" ? availableLightThemes : availableDarkThemes;
 
   return (
     <>
@@ -114,11 +113,13 @@ export default function ProfilePopover({ interfaceType }: Props) {
             aria-label={`Ouvrir le menu de ${fullName}`}
           >
             {user && (
-              <AvatarSmall
-                user={user}
-                noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
-                imgClassName="size-6 shrink-0 rounded-full object-cover"
-              />
+              <span className="flex size-4 shrink-0 items-center justify-center">
+                <AvatarSmall
+                  user={user}
+                  noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
+                  imgClassName="size-6 shrink-0 rounded-full object-cover"
+                />
+              </span>
             )}
             <span className="2xl:block hidden truncate">{fullName}</span>
           </button>
@@ -211,15 +212,15 @@ export default function ProfilePopover({ interfaceType }: Props) {
                     </div>
                   </div>
                   <button
-                    type="button"
-                    className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
-                    onClick={() => {
-                      setOpen(false);
-                      setEditing(true);
-                    }}
-                  >
-                    Modifier mon profil
-                  </button>
+                      type="button"
+                      className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
+                      onClick={() => {
+                        setOpen(false);
+                        setEditing(true);
+                      }}
+                    >
+                      Modifier mon profil
+                    </button>
                   <div className="mt-3 border-t border-base-300 pt-3">
                     {canSeeProgress && (
                       <Link

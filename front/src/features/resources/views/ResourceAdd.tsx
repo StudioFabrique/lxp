@@ -65,14 +65,14 @@ export default function ResourceAdd({
           {state.resourceId && canEdit && (
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-outline btn-primary"
               onClick={() => setShowSettings(true)}
             >
               <Edit /> Modifier les détails de la ressource
             </button>
           )}
           <Link
-            className="btn btn-primary btn-soft"
+            className="btn btn-outline btn-primary"
             to={readOnly ? "/student/ressources" : "/admin/resources"}
           >
             <ArrowLeft /> Retour aux ressources
@@ -135,7 +135,7 @@ export default function ResourceAdd({
                             {activityIconType(activity.type)}
                           </span>
                           <span className="truncate text-sm">
-                            {activity.title}
+                            <span className="inline-block first-letter:uppercase">{activity.title}</span>
                           </span>
                         </button>
                         {!readOnly && (

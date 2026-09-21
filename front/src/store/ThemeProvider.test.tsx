@@ -51,8 +51,7 @@ describe("ThemeProvider", () => {
   });
 
   it("propose autant de thèmes clairs que de thèmes sombres", () => {
-    expect(lightThemes).toHaveLength(8);
-    expect(darkThemes).toHaveLength(8);
+    expect(lightThemes).toHaveLength(darkThemes.length);
   });
 
   it("applique les variantes et reste basculable dans les deux sens", async () => {
@@ -104,8 +103,8 @@ describe("ThemeProvider", () => {
   });
 
   it("remplace les anciens thèmes enregistrés par les nouveaux thèmes par défaut", async () => {
-    localStorage.setItem("lightTheme", "paper");
-    localStorage.setItem("darkTheme", "slate");
+    localStorage.setItem("lightTheme", "ancien-theme-clair");
+    localStorage.setItem("darkTheme", "ancien-theme-sombre");
 
     await act(async () => {
       root = createRoot(container);
