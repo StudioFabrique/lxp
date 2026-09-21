@@ -220,12 +220,11 @@ const SidebarCoursesList = ({
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
-          courses.map((course, index) => (
+          courses.map((course) => (
             <SortableCourseItem
               key={course.id}
               courseId={course.id}
               courseTitle={course.title}
-              index={index}
               enabled={isReorderingCourses}
             >
             <div className={cn("relative w-full rounded-lg transition-opacity", {

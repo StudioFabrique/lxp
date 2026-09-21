@@ -1,41 +1,24 @@
-import { act, createRef } from "react";
+import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, describe, expect, it, vi } from "vitest";
-
-import type Lesson from "../../../utils/interfaces/lesson";
+import { afterEach, describe, expect, it } from "vitest";
 import ModuleContentLayout from "./module-content-layout";
 
 const roots: Root[] = [];
 
-const renderWrapper = (
-  container: HTMLDivElement,
-  selectedLesson?: Lesson,
-  onPublishAll = vi.fn(),
-  showPublishAll = true,
-  calendar = false,
-) => {
+const renderLayout = (container: HTMLDivElement, isSidebarCollapsed = false) => {
   const root = createRoot(container);
   roots.push(root);
 
   act(() => {
     root.render(
       <ModuleContentLayout
-        calendarAction={calendar ? <button aria-label="Calendrier" /> : undefined}
-        calendarContent={calendar ? <div>Planification</div> : undefined}
-        selectedLesson={selectedLesson}
-        onTogglePanel={vi.fn()}
-        onCloseAll={vi.fn()}
-        showPublishAll={showPublishAll}
-        publishAllAction={
-          <button type="button" aria-label="Tout publier" onClick={onPublishAll} />
-        }
-        scrollTopRef={createRef<HTMLDivElement>()}
-        header={null}
-        progressionSide={<div>Liste des cours</div>}
-        topProgressBar={null}
-        previewLesson={<div>Activité sélectionnée</div>}
-        moduleData={<div>Données du module</div>}
-      />,
+        header={<div>En-tête</div>}
+        toolbar={<div>Actions</div>}
+        sidebar={<div>Liste des cours</div>}
+        isSidebarCollapsed={isSidebarCollapsed}
+      >
+        <div>Contenu principal</div>
+      </ModuleContentLayout>,
     );
   });
 };
@@ -45,67 +28,20 @@ afterEach(() => {
 });
 
 describe("ModuleContentLayout", () => {
-  it("place l'action Tout publier à gauche de Tout réduire", () => {
+  it("rend les zones structurelles dans leur ordre", () => {
     const container = document.createElement("div");
-    const onPublishAll = vi.fn();
-    renderWrapper(container, { id: 1 } as Lesson, onPublishAll);
+    renderLayout(container);
 
-    const publishButton = container.querySelector<HTMLButtonElement>(
-      'button[aria-label="Tout publier"]',
+    expect(container.textContent).toBe(
+      "En-têteActionsListe des coursContenu principal",
     );
-    const collapseButton = container.querySelector<HTMLButtonElement>(
-      'button[aria-label="Tout réduire"]',
-    );
-
-    expect(publishButton).toBeTruthy();
-    expect(collapseButton).toBeTruthy();
-    expect(
-      publishButton!.compareDocumentPosition(collapseButton!) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-
-    act(() => publishButton?.click());
-    expect(onPublishAll).toHaveBeenCalledOnce();
   });
 
-  it("conserve Tout publier lorsqu'aucune leçon n'est ouverte", () => {
+  it("masque uniquement la sidebar lorsqu'elle est réduite", () => {
     const container = document.createElement("div");
-    renderWrapper(container);
+    renderLayout(container, true);
 
-    expect(
-      container.querySelector('button[aria-label="Tout publier"]'),
-    ).toBeTruthy();
-    expect(
-      container.querySelector('button[aria-label="Tout réduire"]'),
-    ).toBeNull();
+    expect(container.textContent).not.toContain("Liste des cours");
+    expect(container.textContent).toContain("Contenu principal");
   });
-
-  it("masque Tout publier lorsque tous les cours sont publiés", () => {
-    const container = document.createElement("div");
-    renderWrapper(container, undefined, vi.fn(), false);
-
-    expect(
-      container.querySelector('button[aria-label="Tout publier"]'),
-    ).toBeNull();
-  });
-});
-
-
-it("place Calendrier avant Tout publier et remplace le panneau droit avec ou sans leçon sélectionnée", () => {
-  for (const lesson of [undefined, { id: 1 } as Lesson]) {
-    const container = document.createElement("div");
-    renderWrapper(container, lesson, vi.fn(), true, true);
-    const calendarButton = container.querySelector('button[aria-label="Calendrier"]');
-    const publishButton = container.querySelector('button[aria-label="Tout publier"]');
-    expect(calendarButton).toBeTruthy();
-    expect(publishButton).toBeTruthy();
-    expect(
-      calendarButton!.compareDocumentPosition(publishButton!) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(container.textContent).toContain("Planification");
-    expect(container.textContent).toContain("Liste des cours");
-    expect(container.textContent).not.toContain("Activité sélectionnée");
-    expect(container.textContent).not.toContain("Données du module");
-  }
 });

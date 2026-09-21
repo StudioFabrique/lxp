@@ -6,7 +6,7 @@ import ActivityTypeSelection from "./activity-type-selection";
 import LessonReaderAndEditor from "./lesson-reader-and-editor";
 import EmptyStatePlaceholder from "../../../../components/UI/empty-state-placeholder";
 import StudentActivityNavigation from "./student-activity-navigation";
-import { ModuleContentStore } from "../../views/ModuleContent";
+import type { ModuleContentStore } from "../../hooks/use-module-content";
 import FadeWrapper from "../../../../components/wrappers/FadeWrapper";
 import { useCallback } from "react";
 

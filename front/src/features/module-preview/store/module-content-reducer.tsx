@@ -61,7 +61,7 @@ type ModuleContentAction =
   // Course
   | { type: "set_course_visibility"; isVisible: boolean; course: Course }
   | { type: "delete_course"; id: number }
-  | { type: "reorder_course"; fromId: number; toId: number }
+  | { type: "reorder_course"; fromIndex: number; toIndex: number }
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson; activityId?: number }
   | { type: "select_lesson_by_id"; id: number }
@@ -317,8 +317,15 @@ export function moduleContentReducer(
       if (!state.module) return state;
 
       const courses = Array.from(state.module.courses);
-      const [removed] = courses.splice(action.fromId, 1);
-      courses.splice(action.toId, 0, removed);
+      const isValidIndex = (index: number) =>
+        Number.isInteger(index) && index >= 0 && index < courses.length;
+      if (!isValidIndex(action.fromIndex) || !isValidIndex(action.toIndex)) {
+        return state;
+      }
+
+      const [removed] = courses.splice(action.fromIndex, 1);
+      if (!removed) return state;
+      courses.splice(action.toIndex, 0, removed);
 
       return {
         ...state,

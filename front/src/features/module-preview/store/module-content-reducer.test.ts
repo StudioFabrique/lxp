@@ -112,7 +112,7 @@ describe("moduleContentReducer", () => {
 
     const state = moduleContentReducer(
       { ...initialModuleContentState, module },
-      { type: "reorder_course", fromId: 0, toId: 2 },
+      { type: "reorder_course", fromIndex: 0, toIndex: 2 },
     );
 
     expect(state.module?.courses.map(({ id, order }) => ({ id, order }))).toEqual([
@@ -120,6 +120,30 @@ describe("moduleContentReducer", () => {
       { id: 12, order: 1 },
       { id: 10, order: 2 },
     ]);
+  });
+
+  it.each([
+    { fromIndex: -1, toIndex: 1 },
+    { fromIndex: 3, toIndex: 0 },
+    { fromIndex: 0, toIndex: 3 },
+  ])("ignore un réordonnancement de cours invalide ($fromIndex → $toIndex)", (action) => {
+    const module = {
+      id: 2,
+      courses: [
+        { id: 10, order: 0, lessons: [] },
+        { id: 11, order: 1, lessons: [] },
+        { id: 12, order: 2, lessons: [] },
+      ],
+    } as unknown as Module & { parcours: string };
+    const initialState = { ...initialModuleContentState, module };
+
+    const state = moduleContentReducer(initialState, {
+      type: "reorder_course",
+      ...action,
+    });
+
+    expect(state).toBe(initialState);
+    expect(state.module?.courses.every(Boolean)).toBe(true);
   });
 
   it("ignore une URL iframe inchangée en mode édition", () => {

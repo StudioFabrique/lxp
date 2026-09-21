@@ -784,18 +784,34 @@ const useModuleContent = () => {
       return;
     }
 
-    const fromId = source.data.index as number;
     const destination = location.current.dropTargets[0];
-    if (!destination) return;
+    if (!destination || destination.data.type !== "course") return;
 
-    const toId = destination.data.index as number;
-    if (fromId === undefined || toId === undefined || fromId === toId) return;
+    const sourceCourseId = source.data.id;
+    const destinationCourseId = destination.data.id;
+    if (
+      typeof sourceCourseId !== "number" ||
+      typeof destinationCourseId !== "number" ||
+      sourceCourseId === destinationCourseId
+    ) {
+      return;
+    }
 
     const reorderedCourses = Array.from(state.module.courses);
+    const fromId = reorderedCourses.findIndex(
+      (course) => course.id === sourceCourseId,
+    );
+    const toId = reorderedCourses.findIndex(
+      (course) => course.id === destinationCourseId,
+    );
+    if (fromId < 0 || toId < 0 || fromId === toId) return;
+
     const [movedCourse] = reorderedCourses.splice(fromId, 1);
+    if (!movedCourse) return;
     reorderedCourses.splice(toId, 0, movedCourse);
-    dispatch({ type: "reorder_course", fromId, toId });
+
     isReordering.current.course = true;
+    dispatch({ type: "reorder_course", fromIndex: fromId, toIndex: toId });
 
     try {
       await modulePreviewApi.mutations.reorderCourses(
@@ -803,7 +819,11 @@ const useModuleContent = () => {
         reorderedCourses.map((course) => course.id),
       );
     } catch {
-      dispatch({ type: "reorder_course", fromId: toId, toId: fromId });
+      dispatch({
+        type: "reorder_course",
+        fromIndex: toId,
+        toIndex: fromId,
+      });
       toast.error("Impossible de modifier l’ordre des cours");
     } finally {
       isReordering.current.course = false;
@@ -973,5 +993,7 @@ const useModuleContent = () => {
     acknowledgeLessonScroll,
   };
 };
+
+export type ModuleContentStore = ReturnType<typeof useModuleContent>;
 
 export default useModuleContent;

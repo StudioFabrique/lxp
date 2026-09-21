@@ -1,29 +1,12 @@
 import type React from "react";
-import type Lesson from "../../../../src/utils/interfaces/lesson";
-import {
-  ListChevronsUpDown,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from "lucide-react";
 import { motion } from "motion/react";
 
 type ModuleContentLayoutProps = {
-  calendarAction?: React.ReactNode;
-  calendarContent?: React.ReactNode;
-  reorderCoursesAction?: React.ReactNode;
-  selectedLesson?: Lesson;
-  isContentSelected?: boolean;
-  isPanelClosed?: boolean;
-  onTogglePanel: () => void;
-  onCloseAll: () => void;
-  publishAllAction?: React.ReactNode;
-  showPublishAll?: boolean;
-  scrollTopRef: React.RefObject<HTMLDivElement | null>;
   header: React.ReactNode;
-  progressionSide: React.ReactNode;
-  topProgressBar: React.ReactNode;
-  previewLesson: React.ReactNode;
-  moduleData: React.ReactNode;
+  toolbar: React.ReactNode;
+  sidebar: React.ReactNode;
+  children: React.ReactNode;
+  isSidebarCollapsed?: boolean;
 };
 
 /**
@@ -31,68 +14,20 @@ type ModuleContentLayoutProps = {
  * Il encapsule la logique de présentation et la mise en page des aperçus de leçons en utilisant des props.
  */
 const ModuleContentLayout = ({
-  calendarAction,
-  calendarContent,
-  reorderCoursesAction,
-  selectedLesson,
-  isContentSelected = Boolean(selectedLesson),
-  isPanelClosed = false,
-  onTogglePanel,
-  onCloseAll,
-  publishAllAction,
-  showPublishAll = true,
-  scrollTopRef,
   header,
-  progressionSide,
-  topProgressBar,
-  previewLesson,
-  moduleData,
+  toolbar,
+  sidebar,
+  children,
+  isSidebarCollapsed = false,
 }: ModuleContentLayoutProps) => {
   return (
     <div className="w-full overflow-x-clip">
       {header}
 
-      <div className="flex flex-wrap items-center gap-2 mt-5 sm:flex-nowrap sm:gap-5">
-        <div
-          data-tip={isPanelClosed ? "Ouvrir le panneau" : "Réduire le panneau"}
-          className="tooltip tooltip-right"
-        >
-          <button
-            type="button"
-            onClick={onTogglePanel}
-            className="btn btn-primary w-fit border-secondary/20"
-          >
-            {isPanelClosed ? (
-              <PanelLeftOpen className="w-6 h-6" />
-            ) : (
-              <PanelLeftClose className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-        {reorderCoursesAction}
-        <span
-          ref={scrollTopRef}
-          className="min-w-0 flex-1 bg-secondary/20 rounded-lg h-10 px-2 border border-secondary/20 flex items-center"
-        >
-          {topProgressBar}
-        </span>
-        {calendarAction}
-        {showPublishAll ? publishAllAction : null}
-        {isContentSelected ? (
-          <button
-            type="button"
-            className="btn tooltip tooltip-left border-secondary/20"
-            aria-label="Tout réduire"
-            data-tip="Tout réduire"
-            onClick={onCloseAll}
-          >
-            <ListChevronsUpDown className="w-5 h-5" />
-          </button>
-        ) : null}
-      </div>
+      {toolbar}
 
       <div className="mt-5 grid grid-cols-[minmax(7.5rem,1fr)_minmax(0,2fr)] gap-2 sm:grid-cols-[minmax(9rem,1fr)_minmax(0,2fr)] sm:gap-3 lg:grid-cols-3 lg:gap-5 w-full">
-        {!isPanelClosed && (
+        {!isSidebarCollapsed && (
           <motion.div
             className="min-w-0"
             initial={{ width: 0, opacity: 0 }}
@@ -100,17 +35,17 @@ const ModuleContentLayout = ({
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {progressionSide}
+            {sidebar}
           </motion.div>
         )}
         <div
           className={`flex flex-col gap-2 min-w-0 min-h-[80vh] ${
-            isPanelClosed
+            isSidebarCollapsed
               ? "col-span-2 lg:col-span-3"
               : "col-span-1 lg:col-span-2"
           }`}
         >
-          {calendarContent ?? (isContentSelected ? previewLesson : moduleData)}
+          {children}
         </div>
       </div>
     </div>

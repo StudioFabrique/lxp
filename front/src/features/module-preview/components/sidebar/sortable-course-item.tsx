@@ -11,14 +11,12 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/ut
 type Props = PropsWithChildren<{
   courseId: number;
   courseTitle: string;
-  index: number;
   enabled: boolean;
 }>;
 
 export default function SortableCourseItem({
   courseId,
   courseTitle,
-  index,
   enabled,
   children,
 }: Props) {
@@ -33,7 +31,7 @@ export default function SortableCourseItem({
     return combine(
       draggable({
         element,
-        getInitialData: () => ({ type: "course", id: courseId, index }),
+        getInitialData: () => ({ type: "course", id: courseId }),
         onGenerateDragPreview: ({ nativeSetDragImage }) => {
           setCustomNativeDragPreview({
             nativeSetDragImage,
@@ -54,13 +52,13 @@ export default function SortableCourseItem({
       dropTargetForElements({
         element,
         canDrop: ({ source }) => source.data.type === "course",
-        getData: () => ({ type: "course", index }),
+        getData: () => ({ type: "course", id: courseId }),
         onDragEnter: () => setIsDraggedOver(true),
         onDragLeave: () => setIsDraggedOver(false),
         onDrop: () => setIsDraggedOver(false),
       }),
     );
-  }, [courseId, courseTitle, enabled, index]);
+  }, [courseId, courseTitle, enabled]);
 
   return (
     <div
