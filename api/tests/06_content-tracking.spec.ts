@@ -21,7 +21,7 @@ describe("Suivi de consultation des contenus", () => {
   let cookie: string[];
   let studentId: number;
   let lessonId: number;
-  let coursePublication: { id: number; isPublished: boolean; visibility: boolean };
+  let coursePublication: { id: number; isPublished: boolean; visibility: boolean | null };
   let enrollment: Enrollment;
 
   beforeAll(async () => {
