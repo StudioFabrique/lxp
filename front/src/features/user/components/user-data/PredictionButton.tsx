@@ -5,6 +5,8 @@ interface PredictionButtonProps {
   disabled?: boolean;
   /** `true` une fois une première analyse obtenue. */
   hasResult: boolean;
+  /** Une analyse existe déjà pour la journée UTC courante. */
+  dailyLimitReached?: boolean;
 }
 
 /**
@@ -19,21 +21,23 @@ export default function PredictionButton({
   isPending,
   disabled = false,
   hasResult,
+  dailyLimitReached = false,
 }: PredictionButtonProps) {
   return (
     <button
       type="button"
       className="btn btn-primary normal-case"
       onClick={onAnalyze}
-      disabled={isPending || disabled}
+      disabled={isPending || disabled || dailyLimitReached || hasResult}
+      title={dailyLimitReached || hasResult ? "Une seule analyse peut être réalisée par jour pour cet apprenant." : undefined}
     >
       {isPending ? (
         <>
           <span className="loading loading-spinner" />
           Analyse en cours…
         </>
-      ) : hasResult ? (
-        "Relancer l'analyse"
+      ) : dailyLimitReached || hasResult ? (
+        "Analyse du jour réalisée"
       ) : (
         "Analyser le risque de décrochage"
       )}

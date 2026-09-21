@@ -16,7 +16,6 @@ async function putPublishParcours(parcoursId: number, isPublished: boolean) {
   })
     .update({
       isPublished,
-      ...(isPublished ? { visibility: true } : {}),
     })
     .then(requireDatabaseRow);
   return publishedParcours;

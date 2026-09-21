@@ -147,27 +147,6 @@ const AdminParcoursManagement = ({
     onError: () => toast.error("Le parcours n'a pas pu être exporté."),
   });
 
-  const visibilityMutation = useMutation({
-    mutationFn: (parcours: ParcoursSummary) =>
-      parcoursApi.mutations.updateParcoursVisibility(
-        parcours.id,
-        parcours.visibility === false,
-      ),
-    onSuccess: (_response, parcours) => {
-      toast.success(
-        parcours.visibility === false
-          ? "Le parcours est désormais visible."
-          : "Le parcours est désormais masqué.",
-      );
-      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
-    },
-    onError: (error) => {
-      toast.error(
-        getApiErrorMessage(error, "La visibilité n'a pas pu être modifiée."),
-      );
-    },
-  });
-
   const openFormationCreation = () => {
     setFormationModal({ isOpen: true, formationId: null });
     emitOnboardingEvent({ type: "formation_entry_clicked" });
@@ -299,17 +278,9 @@ const AdminParcoursManagement = ({
                   ? (parcours) => exportParcoursMutation.mutate(parcours)
                   : undefined
               }
-              onVisibilityParcours={
-                isAdmin ? (parcours) => visibilityMutation.mutate(parcours) : undefined
-              }
               exportingParcoursId={
                 exportParcoursMutation.isPending
                   ? exportParcoursMutation.variables?.id
-                  : null
-              }
-              updatingVisibilityParcoursId={
-                visibilityMutation.isPending
-                  ? visibilityMutation.variables?.id
                   : null
               }
             />

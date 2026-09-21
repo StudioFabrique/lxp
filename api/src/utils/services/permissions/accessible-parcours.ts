@@ -135,7 +135,6 @@ export async function isLearnerContentAvailable(
         and(
           row.id.eq(contentId),
           row.isPublished.eq(true),
-          row.visibility.eq(true),
           row.modules.some((module) =>
             module.courses.some((course) =>
               and(
@@ -160,7 +159,7 @@ export async function isLearnerContentAvailable(
         and(
           row.id.eq(contentId),
           row.parcours.some((parcours) =>
-            and(parcours.isPublished.eq(true), parcours.visibility.eq(true)),
+            parcours.isPublished.eq(true),
           ),
           row.courses.some((course) =>
             and(
@@ -193,7 +192,7 @@ export async function isLearnerContentAvailable(
           ),
           row.module.some((module) =>
             module.parcours.some((parcours) =>
-              and(parcours.isPublished.eq(true), parcours.visibility.eq(true)),
+              parcours.isPublished.eq(true),
             ),
           ),
         ),
@@ -215,7 +214,6 @@ export async function isLearnerContentAvailable(
                 module.parcours.some((parcours) =>
                   and(
                     parcours.isPublished.eq(true),
-                    parcours.visibility.eq(true),
                   ),
                 ),
               ),
@@ -241,7 +239,6 @@ export async function isLearnerContentAvailable(
                   module.parcours.some((parcours) =>
                     and(
                       parcours.isPublished.eq(true),
-                      parcours.visibility.eq(true),
                     ),
                   ),
                 ),

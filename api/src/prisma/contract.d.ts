@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'dd4848aef9f84bde7dc55558dca502f5e0e60e923134b9d8c18c40999b6c8739'>;
+  StorageHashBase<'435269178a774bff213921631a2f3982db5c1a5dccb686f6e050fe36a0c5754e'>;
 export type ExecutionHash =
   ExecutionHashBase<'f6ebe31908f861b0176236677bacf9442eb3a1775a543a8fb0638dea106928c8'>;
 export type ProfileHash =
@@ -545,7 +545,6 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly author: CodecTypes['pg/text@1']['output'];
-      readonly visibility: CodecTypes['pg/bool@1']['output'];
       readonly adminId: CodecTypes['pg/int4@1']['output'];
       readonly formationId: CodecTypes['pg/int4@1']['output'];
       readonly virtualClass: CodecTypes['pg/text@1']['output'] | null;
@@ -1000,7 +999,6 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly author: CodecTypes['pg/text@1']['input'];
-      readonly visibility: CodecTypes['pg/bool@1']['input'];
       readonly adminId: CodecTypes['pg/int4@1']['input'];
       readonly formationId: CodecTypes['pg/int4@1']['input'];
       readonly virtualClass: CodecTypes['pg/text@1']['input'] | null;
@@ -1460,7 +1458,6 @@ export type StorageColumnTypes = {
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly virtualClass: CodecTypes['pg/text@1']['output'] | null;
-      readonly visibility: CodecTypes['pg/bool@1']['output'];
     };
     readonly Quiz: {
       readonly activityId: CodecTypes['pg/int4@1']['output'] | null;
@@ -1915,7 +1912,6 @@ export type StorageColumnInputTypes = {
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly virtualClass: CodecTypes['pg/text@1']['input'] | null;
-      readonly visibility: CodecTypes['pg/bool@1']['input'];
     };
     readonly Quiz: {
       readonly activityId: CodecTypes['pg/int4@1']['input'] | null;
@@ -2441,7 +2437,6 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     author: CodecTypes['pg/text@1']['output'];
-    visibility: CodecTypes['pg/bool@1']['output'];
     adminId: CodecTypes['pg/int4@1']['output'];
     formationId: CodecTypes['pg/int4@1']['output'];
     virtualClass: CodecTypes['pg/text@1']['output'] | null;
@@ -5469,15 +5464,6 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                };
-                readonly visibility: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
                 };
                 readonly adminId: {
                   readonly nativeType: 'int4';
@@ -9777,10 +9763,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly visibility: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly adminId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -9920,7 +9902,6 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly author: { readonly column: 'author' };
-                readonly visibility: { readonly column: 'visibility' };
                 readonly adminId: { readonly column: 'adminId' };
                 readonly formationId: { readonly column: 'formationId' };
                 readonly virtualClass: { readonly column: 'virtualClass' };

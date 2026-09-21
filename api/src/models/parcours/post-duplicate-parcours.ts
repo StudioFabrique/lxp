@@ -115,7 +115,6 @@ export default async function postDuplicateParcours(
       image: source.image,
       thumb: source.thumb,
       virtualClass: source.virtualClass,
-      visibility: false,
       isPublished: false,
       author: mongoUser
         ? `${mongoUser.firstname} ${mongoUser.lastname}`

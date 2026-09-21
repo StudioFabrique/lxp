@@ -114,18 +114,6 @@ export default function LastParcours({
     onError: () => toast.error("Le parcours n'a pas pu être exporté."),
   });
 
-  const visibilityMutation = useMutation({
-    mutationFn: (item: ParcoursSummary) =>
-      parcoursApi.mutations.updateParcoursVisibility(item.id, item.visibility === false),
-    onSuccess: (_response, item) => {
-      toast.success(item.visibility === false ? "Le parcours est désormais visible." : "Le parcours est désormais masqué.");
-      void queryClient.invalidateQueries({ queryKey: ["root-parcours"] });
-    },
-    onError: (error) => {
-      toast.error(getApiErrorMessage(error, "La visibilité n'a pas pu être modifiée."));
-    },
-  });
-
   const closeParcoursDeletion = () => {
     if (deleteParcoursMutation.isPending) return;
     setParcoursToDelete(null);
@@ -177,9 +165,7 @@ export default function LastParcours({
                   setDeleteConfirmation("");
                 }}
                 onExportParcours={(item) => exportParcoursMutation.mutate(item)}
-                onVisibilityParcours={(item) => visibilityMutation.mutate(item)}
                 exportingParcoursId={exportParcoursMutation.isPending ? exportParcoursMutation.variables?.id : null}
-                updatingVisibilityParcoursId={visibilityMutation.isPending ? visibilityMutation.variables?.id : null}
               />
             ))}
             <PermissionGuard action="write" object="parcours">

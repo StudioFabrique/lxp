@@ -27,7 +27,6 @@ async function getParcoursById(
       "image",
       "virtualClass",
       "isPublished",
-      "visibility",
     )
     .include("formation", (related214) =>
       related214

@@ -2,7 +2,7 @@ import { type Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes.ts";
 import predictOutcome from "../../models/indicators/predict-outcome.ts";
 import type CustomRequest from "../../utils/interfaces/express/custom-request.ts";
-import { saveAnalysis } from "../../models/indicators/analysis-history.ts";
+import { hasAnalysisToday, saveAnalysis } from "../../models/indicators/analysis-history.ts";
 
 /** Rang au-delà duquel l'utilisateur est un apprenant. */
 const STUDENT_RANK_THRESHOLD = 2;
@@ -41,6 +41,12 @@ export default async function httpPostIndicatorsPrediction(
   }
 
   try {
+    if (await hasAnalysisToday(userId)) {
+      return res.status(409).json({
+        message: "Une analyse a déjà été réalisée aujourd'hui pour cet apprenant.",
+      });
+    }
+
     const prediction = await predictOutcome(
       userId,
       parseDate(req.query.from),

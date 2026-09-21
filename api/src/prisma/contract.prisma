@@ -437,7 +437,6 @@ model Parcours {
   createdAt        TimestamptzString             @default(now())
   updatedAt        temporal.updatedAtString()
   author           String
-  visibility       Boolean              @default(false)
   adminId          Int
   formationId      Int
   virtualClass     String?

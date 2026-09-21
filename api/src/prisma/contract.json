@@ -4397,13 +4397,6 @@
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
-              },
-              "visibility": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
               }
             },
             "relations": {
@@ -4594,9 +4587,6 @@
                 },
                 "virtualClass": {
                   "column": "virtualClass"
-                },
-                "visibility": {
-                  "column": "visibility"
                 }
               },
               "namespaceId": "public",
@@ -9990,15 +9980,6 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
-                },
-                "visibility": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
-                  "nativeType": "bool",
-                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -11692,7 +11673,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "dd4848aef9f84bde7dc55558dca502f5e0e60e923134b9d8c18c40999b6c8739"
+    "storageHash": "435269178a774bff213921631a2f3982db5c1a5dccb686f6e050fe36a0c5754e"
   },
   "execution": {
     "executionHash": "f6ebe31908f861b0176236677bacf9442eb3a1775a543a8fb0638dea106928c8",

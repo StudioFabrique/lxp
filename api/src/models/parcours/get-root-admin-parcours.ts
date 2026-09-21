@@ -18,7 +18,6 @@ export default async function getRootAdminParcours(scope: AccessScope = null) {
           "startDate",
           "endDate",
           "isPublished",
-          "visibility",
           "thumb",
         )
         .orderBy((row) => row.createdAt.desc()),

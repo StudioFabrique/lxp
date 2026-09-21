@@ -57,12 +57,7 @@ export async function initializeContentAvailabilityNotifications() {
   }).first();
   if (baseline) return;
 
-  // Ces colonnes existaient sans être pilotées. Cette normalisation ne se joue
-  // qu'une fois et préserve la visibilité que les apprenants avaient avant la
-  // mise en place de la hiérarchie stricte.
-  await prisma.orm.public.Parcours.where({ isPublished: true }).updateAndCount({
-    visibility: true,
-  });
+  // Cette normalisation ne se joue qu'une fois pour les leçons héritées.
   await prisma.orm.public.Lesson.where((lesson) => lesson.id.gt(0)).updateAndCount({
     visibility: true,
   });

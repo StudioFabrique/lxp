@@ -18,6 +18,9 @@ async function render() {
   root = createRoot(host);
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
   await act(async () => root.render(<QueryClientProvider client={client}><AnalysisFeedbackForm prediction={prediction} /></QueryClientProvider>));
+  await act(async () => {
+    Array.from(host.querySelectorAll("button")).find((button) => button.textContent?.includes("Donner mon avis"))!.click();
+  });
 }
 
 async function changeSelect(index: number, value: string) {
@@ -35,7 +38,18 @@ afterEach(async () => {
 });
 
 describe("Retour sur une analyse", () => {
-  it("enregistre l'avis sur la bonne analyse et permet un nouveau retour", async () => {
+  it("ouvre le formulaire dans une fenêtre modale", async () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    const client = new QueryClient();
+    await act(async () => root.render(<QueryClientProvider client={client}><AnalysisFeedbackForm prediction={prediction} /></QueryClientProvider>));
+    expect(host.querySelector("form")).toBeNull();
+    await act(async () => host.querySelector<HTMLButtonElement>("button")!.click());
+    expect(host.querySelector("dialog.modal-open form")).not.toBeNull();
+  });
+
+  it("enregistre l'avis sur la bonne analyse puis ferme et masque la modale", async () => {
     const save = vi.spyOn(indicatorsApi.mutations, "saveAnalysisFeedback").mockResolvedValue();
     await render();
     await changeSelect(0, "underestimated");
@@ -44,12 +58,17 @@ describe("Retour sur une analyse", () => {
       await new Promise((resolve) => setTimeout(resolve, 20));
     });
     expect(save).toHaveBeenCalledWith("student", "analysis", { verdict: "underestimated", comment: "", actionTaken: "" });
-    expect(host.querySelector('[role="status"]')?.textContent).toBe("Retour enregistré.");
-    await act(async () => {
-      Array.from(host.querySelectorAll("button")).find((button) => button.textContent === "Ajouter un nouveau retour")!.click();
-    });
-    expect(host.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
-    expect(host.querySelector("select")?.value).toBe("");
+    expect(host.querySelector("dialog")).toBeNull();
+    expect(host.textContent).not.toContain("Donner mon avis");
+  });
+
+  it("masque le bouton lorsqu'un retour de cet auteur existe déjà", async () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    const client = new QueryClient();
+    await act(async () => root.render(<QueryClientProvider client={client}><AnalysisFeedbackForm prediction={prediction} hasExistingFeedback /></QueryClientProvider>));
+    expect(host.textContent).not.toContain("Donner mon avis");
   });
 
   it("demande une date seulement lorsque le résultat est connu", async () => {

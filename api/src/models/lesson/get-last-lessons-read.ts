@@ -38,7 +38,6 @@ export default async function getLastLessonsRead(
                 module.parcours.some((parcours) =>
                   and(
                     parcours.isPublished.eq(true),
-                    parcours.visibility.eq(true),
                     parcours.groups.some((groups) =>
                       groups.group.some((group) => group.idMdb.in(groupIds)),
                     ),

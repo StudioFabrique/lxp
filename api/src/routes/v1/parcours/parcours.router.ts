@@ -48,7 +48,6 @@ import uploadParcoursArchive from "../../../middleware/upload-parcours-archive.t
 import checkRoleRank from "../../../middleware/check-role-rank.ts";
 import { checkValidatorResult } from "../../../middleware/validators.ts";
 import { checkGroupAccess } from "../../../middleware/check-group-access.ts";
-import httpPutParcoursVisibility from "../../../controllers/parcours/http-put-parcours-visibility.ts";
 
 // Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
@@ -229,18 +228,6 @@ parcoursRouter.put(
   checkRoleRank([0, 1]),
   checkContentAccess("parcours", "parcoursId"),
   httpPublishParcours,
-);
-
-parcoursRouter.put(
-  "/visibility/:parcoursId",
-  checkPermissions("parcours"),
-  checkRoleRank([0, 1]),
-  [
-    body("visibility").isBoolean(),
-    checkValidatorResult,
-  ],
-  checkContentAccess("parcours", "parcoursId"),
-  httpPutParcoursVisibility,
 );
 
 // Route GET pour récupérer les formations avec tous leurs parcours

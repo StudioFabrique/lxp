@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/05d31adbc19eaa9a93ef11559888b6c55e16d6ff07d43ca52efc8ee90d7fa52c/contract';
-import endContract from '../../snapshots/05d31adbc19eaa9a93ef11559888b6c55e16d6ff07d43ca52efc8ee90d7fa52c/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/435269178a774bff213921631a2f3982db5c1a5dccb686f6e050fe36a0c5754e/contract';
+import endContract from '../../snapshots/435269178a774bff213921631a2f3982db5c1a5dccb686f6e050fe36a0c5754e/contract.json' with { type: 'json' };
 import {
   Migration,
   MigrationCLI,
@@ -12,8 +12,7 @@ import {
   rawSql,
 } from '@prisma/orm-postgres/migration';
 
-// Keep human-readable labels consistently lowercase, including nested ORM writes.
-// The trigger runs before INSERT/UPDATE, so RETURNING sees the stored value.
+// Preserve the display-label normalization from the previous baseline.
 const normalizedLabels: Record<string, readonly string[]> = {
   Accomplishment: ['name'],
   Activity: ['title'],
@@ -316,6 +315,44 @@ export default class M extends Migration<never, End> {
       }),
       this.createTable({
         schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        columns: [
+          col('attemptCount', 'int4', {
+            notNull: true,
+            default: lit(0),
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('formationId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('lastAttemptAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('lastError', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('nextAttemptAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('sentAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('pending'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('studentId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('suppressionReason', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
         table: 'ContentReadCredit',
         columns: [
           col('contentId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
@@ -535,11 +572,6 @@ export default class M extends Migration<never, End> {
             codecRef: { codecId: 'pg/int4@1' },
           }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
-          col('isPublished', 'bool', {
-            notNull: true,
-            default: lit(false),
-            codecRef: { codecId: 'pg/bool@1' },
-          }),
           col('modalite', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
           col('order', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('tagId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
@@ -756,11 +788,6 @@ export default class M extends Migration<never, End> {
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
           col('virtualClass', 'text', { codecRef: { codecId: 'pg/text@1' } }),
-          col('visibility', 'bool', {
-            notNull: true,
-            default: lit(false),
-            codecRef: { codecId: 'pg/bool@1' },
-          }),
         ],
         constraints: [primaryKey(['id'])],
       }),
@@ -963,6 +990,86 @@ export default class M extends Migration<never, End> {
       }),
       this.createTable({
         schema: 'public',
+        table: 'StudentFormationAssessment',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('formationId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('level', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('studentId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'StudentLearningProfile',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('currentStep', 'text', {
+            notNull: true,
+            default: lit(''),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('initialCompletedAt', 'timestamptz', {
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('onboardingStatus', 'text', {
+            notNull: true,
+            default: lit('not_started'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('onboardingVersion', 'int4', {
+            notNull: true,
+            default: lit(1),
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('pace', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('preferences', 'text[]', {
+            notNull: true,
+            codecRef: { codecId: 'pg/text@1', many: true },
+          }),
+          col('studentId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'StudentLearningProfile_preferences_elem_not_null_dfeac928',
+            'array_position("preferences", NULL) IS NULL',
+          ),
+        ],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'SystemJobState',
+        columns: [
+          col('completedAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('key', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+        ],
+        constraints: [primaryKey(['key'])],
+      }),
+      this.createTable({
+        schema: 'public',
         table: 'Tag',
         columns: [
           col('color', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
@@ -1059,6 +1166,12 @@ export default class M extends Migration<never, End> {
       }),
       this.addUnique({
         schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        constraint: 'ContentAvailabilityNotification_studentId_formationId_key',
+        columns: ['studentId', 'formationId'],
+      }),
+      this.addUnique({
+        schema: 'public',
         table: 'CourseAssignment',
         constraint: 'CourseAssignment_courseId_key',
         columns: ['courseId'],
@@ -1080,6 +1193,12 @@ export default class M extends Migration<never, End> {
         table: 'Formation',
         constraint: 'Formation_title_key',
         columns: ['title'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'GroupsOnParcours',
+        constraint: 'GroupsOnParcours_groupId_key',
+        columns: ['groupId'],
       }),
       this.addUnique({
         schema: 'public',
@@ -1122,6 +1241,18 @@ export default class M extends Migration<never, End> {
         table: 'Student',
         constraint: 'Student_idMdb_key',
         columns: ['idMdb'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'StudentFormationAssessment',
+        constraint: 'StudentFormationAssessment_studentId_formationId_key',
+        columns: ['studentId', 'formationId'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'StudentLearningProfile',
+        constraint: 'StudentLearningProfile_studentId_key',
+        columns: ['studentId'],
       }),
       this.addUnique({
         schema: 'public',
@@ -1275,6 +1406,24 @@ export default class M extends Migration<never, End> {
       }),
       this.createIndex({
         schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        index: 'AvailabilityNotification_due',
+        columns: ['status', 'nextAttemptAt'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        index: 'ContentAvailabilityNotification_formationId_idx_cf630c64',
+        columns: ['formationId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        index: 'ContentAvailabilityNotification_studentId_idx_bf255322',
+        columns: ['studentId'],
+      }),
+      this.createIndex({
+        schema: 'public',
         table: 'ContentReadCredit',
         index: 'ContentReadCredit_studentId_idx_bf255322',
         columns: ['studentId'],
@@ -1338,12 +1487,6 @@ export default class M extends Migration<never, End> {
         table: 'Formation',
         index: 'Formation_adminId_idx_530179db',
         columns: ['adminId'],
-      }),
-      this.createIndex({
-        schema: 'public',
-        table: 'GroupsOnParcours',
-        index: 'GroupsOnParcours_groupId_idx_e2fb5578',
-        columns: ['groupId'],
       }),
       this.createIndex({
         schema: 'public',
@@ -1548,6 +1691,18 @@ export default class M extends Migration<never, End> {
         table: 'SkillsOnParcours',
         index: 'SkillsOnParcours_skillId_idx_6e19993d',
         columns: ['skillId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'StudentFormationAssessment',
+        index: 'StudentFormationAssessment_formationId_idx_cf630c64',
+        columns: ['formationId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'StudentFormationAssessment',
+        index: 'StudentFormationAssessment_studentId_idx_bf255322',
+        columns: ['studentId'],
       }),
       this.createIndex({
         schema: 'public',
@@ -1826,6 +1981,26 @@ export default class M extends Migration<never, End> {
           references: { schema: 'public', table: 'Parcours', columns: ['id'] },
           onDelete: 'restrict',
           onUpdate: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        foreignKey: {
+          name: 'ContentAvailabilityNotification_studentId_fkey',
+          columns: ['studentId'],
+          references: { schema: 'public', table: 'Student', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'ContentAvailabilityNotification',
+        foreignKey: {
+          name: 'ContentAvailabilityNotification_formationId_fkey',
+          columns: ['formationId'],
+          references: { schema: 'public', table: 'Formation', columns: ['id'] },
+          onDelete: 'cascade',
         },
       }),
       this.addForeignKey({
@@ -2228,6 +2403,36 @@ export default class M extends Migration<never, End> {
           name: 'SkillsOnParcours_skillId_fkey',
           columns: ['skillId'],
           references: { schema: 'public', table: 'Skill', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'StudentFormationAssessment',
+        foreignKey: {
+          name: 'StudentFormationAssessment_studentId_fkey',
+          columns: ['studentId'],
+          references: { schema: 'public', table: 'Student', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'StudentFormationAssessment',
+        foreignKey: {
+          name: 'StudentFormationAssessment_formationId_fkey',
+          columns: ['formationId'],
+          references: { schema: 'public', table: 'Formation', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'StudentLearningProfile',
+        foreignKey: {
+          name: 'StudentLearningProfile_studentId_fkey',
+          columns: ['studentId'],
+          references: { schema: 'public', table: 'Student', columns: ['id'] },
+          onDelete: 'cascade',
         },
       }),
       this.addForeignKey({

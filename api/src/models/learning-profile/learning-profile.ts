@@ -50,7 +50,6 @@ export async function resolveAvailableFormations(
   const parcours = await prisma.orm.public.Parcours.where((row) =>
     and(
       row.isPublished.eq(true),
-      row.visibility.eq(true),
       row.groups.some((links) =>
         links.group.some((group) => group.idMdb.in(groupIds)),
       ),

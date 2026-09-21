@@ -41,11 +41,7 @@ type LastParcoursItemProps = {
   onExportParcours?: (
     parcours: FormationParcoursSummary["parcours"][number],
   ) => void;
-  onVisibilityParcours?: (
-    parcours: FormationParcoursSummary["parcours"][number],
-  ) => void;
   exportingParcoursId?: number | null;
-  updatingVisibilityParcoursId?: number | null;
   fullWidth?: boolean;
 };
 
@@ -59,9 +55,7 @@ const LastParcoursItem = ({
   onEditFormation,
   onDeleteParcours,
   onExportParcours,
-  onVisibilityParcours,
   exportingParcoursId = null,
-  updatingVisibilityParcoursId = null,
   fullWidth,
 }: LastParcoursItemProps) => {
   const usesFullWidthLayout = fullWidth ?? baseRoute === "student";
@@ -76,9 +70,7 @@ const LastParcoursItem = ({
         title: item.title,
         description: getDatesTooltip(item.startDate, item.endDate),
         subDescription: item.isPublished ? (
-          <span className={item.visibility === false ? "text-warning" : "text-success"}>
-            {item.visibility === false ? "Publié · masqué" : "Publié · visible"}
-          </span>
+          <span className="text-success">Publié</span>
         ) : (
           <span className="text-info">Non publié</span>
         ),
@@ -99,9 +91,7 @@ const LastParcoursItem = ({
                   onDeleteParcours(parcours);
                 }}
                 onExport={onExportParcours}
-                onVisibility={onVisibilityParcours}
                 isExporting={exportingParcoursId === item.id}
-                isUpdatingVisibility={updatingVisibilityParcoursId === item.id}
               />
             )
           ) : baseRoute === "admin" && item.canManage !== false ? (

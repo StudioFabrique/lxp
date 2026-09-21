@@ -64,7 +64,6 @@ describe("Cloisonnement des contenus par parcours", () => {
       adminId,
       formationId,
       isPublished: true,
-      visibility: true,
     });
     const module = await prisma.orm.public.Module.select("id").create({
       title: `${titre} module`,
@@ -363,9 +362,9 @@ describe("Cloisonnement des contenus par parcours", () => {
       }
     });
 
-    it("refuse le contenu dès que son parcours est masqué", async () => {
+    it("refuse le contenu dès que son parcours n'est plus publié", async () => {
       await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
-        visibility: false,
+        isPublished: false,
       });
       try {
         await request(app)
@@ -374,7 +373,7 @@ describe("Cloisonnement des contenus par parcours", () => {
           .expect(404);
       } finally {
         await prisma.orm.public.Parcours.where({ id: inscrit.parcoursId }).update({
-          visibility: true,
+          isPublished: true,
         });
       }
     });

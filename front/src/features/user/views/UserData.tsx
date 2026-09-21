@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { bgImageGradient } from "../../../utils/helpers/color-helpers";
 import Header from "../../../components/headers/Header";
@@ -19,6 +20,7 @@ import LinkPreview from "../../profile/components/information/LinkPreview";
 
 export default function UserData() {
   const { studentId } = useParams();
+  const [dailyLimitReached, setDailyLimitReached] = useState(false);
   const { student, parcours, imageUrl, learningProfile, isLoading, isError } = useTeacher(
     studentId!,
   );
@@ -48,6 +50,7 @@ export default function UserData() {
           isPending={predictionQuery.isPending}
           disabled={indicatorsQuery.isLoading || indicatorsQuery.isError}
           hasResult={predictionQuery.prediction !== null}
+          dailyLimitReached={dailyLimitReached}
         />
       </Header>
 
@@ -56,11 +59,13 @@ export default function UserData() {
       {predictionQuery.prediction ? (
         <BoxWrapper>
           <PredictionPanel prediction={predictionQuery.prediction} />
-          <AnalysisFeedbackForm key={predictionQuery.prediction.analysisId} prediction={predictionQuery.prediction} />
+          <div className="mt-4 flex justify-end">
+            <AnalysisFeedbackForm key={predictionQuery.prediction.analysisId} prediction={predictionQuery.prediction} />
+          </div>
         </BoxWrapper>
       ) : null}
 
-      <BoxWrapper><AnalysisHistory key={studentId} studentId={studentId!} /></BoxWrapper>
+      <BoxWrapper><AnalysisHistory key={studentId} studentId={studentId!} onDailyAnalysisChange={setDailyLimitReached} /></BoxWrapper>
 
       <section style={classImage} />
 
