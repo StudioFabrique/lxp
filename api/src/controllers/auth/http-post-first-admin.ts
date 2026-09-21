@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import { validationResult } from "express-validator";
 import { createFirstAdmin } from "../../models/auth/setup.ts";
 import { regexMail, regexNewPassword } from "../../utils/constantes.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 export default async function httpPostFirstAdmin(req: Request, res: Response) {
   try {
@@ -36,8 +37,10 @@ export default async function httpPostFirstAdmin(req: Request, res: Response) {
     });
     return res.status(201).json({
       success: true,
-      pendingActivation: true,
-      message: "Un lien d'activation a été envoyé à votre adresse email.",
+      pendingActivation: !mailerDisabled,
+      message: mailerDisabled
+        ? "Compte administrateur créé avec succès."
+        : "Un lien d'activation a été envoyé à votre adresse email.",
     });
   } catch (error: any) {
     return res.status(error.statusCode ?? 500).json({

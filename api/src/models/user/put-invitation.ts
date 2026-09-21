@@ -18,6 +18,7 @@ import User from "../../utils/interfaces/db/user.ts";
 import type { IRole } from "../../utils/interfaces/db/role.ts";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { env } from "../../config/env.ts";
 
@@ -28,6 +29,10 @@ export default async function putInvitation(userId: string) {
   }).populate<{ roles: IRole[] }>("roles");
 
   if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
+
+  if (mailerDisabled) {
+    throw { statusCode: 400, message: "Le mailer est désactivé en développement." };
+  }
 
   if (existingUser.isActive) {
     throw {

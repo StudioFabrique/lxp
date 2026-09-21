@@ -4,6 +4,7 @@ import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
 import { sendActivationInvitation } from "./create-user.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 async function postTeacher(teacher: IUser) {
   const email = normalizeEmail(teacher.email ?? "");
@@ -44,7 +45,8 @@ async function postTeacher(teacher: IUser) {
     ...teacher,
     email,
     password,
-    isActive: false,
+    isActive: mailerDisabled,
+    emailVerified: mailerDisabled,
     roles: [fetchedRole._id],
   });
 
@@ -72,15 +74,17 @@ async function postTeacher(teacher: IUser) {
         return createdContact;
       });
 
-      await User.updateOne(
-        { _id: newTeacher._id },
-        { $set: { invitationPendingSince: new Date() } },
-      );
-      void sendActivationInvitation(
-        newTeacher._id.toString(),
-        newTeacher.email,
-        fetchedRole,
-      );
+      if (!mailerDisabled) {
+        await User.updateOne(
+          { _id: newTeacher._id },
+          { $set: { invitationPendingSince: new Date() } },
+        );
+        void sendActivationInvitation(
+          newTeacher._id.toString(),
+          newTeacher.email,
+          fetchedRole,
+        );
+      }
 
       return {
         ...contact,

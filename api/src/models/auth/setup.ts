@@ -7,6 +7,7 @@ import Role from "../../utils/interfaces/db/role.ts";
 import { type IRole } from "../../utils/interfaces/db/role.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import { env } from "../../config/env.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 import { sendRootEmailVerification } from "../../services/mailer.ts";
 import { regexMail } from "../../utils/constantes.ts";
 import transferRoot from "../user/transfer-root.ts";
@@ -194,8 +195,8 @@ async function createRootUser(
       lastname: input.lastname.toLowerCase(),
       password: hashedPassword,
       roles: [rootRole._id],
-      isActive: false,
-      emailVerified: false,
+      isActive: mailerDisabled,
+      emailVerified: mailerDisabled,
     };
 
     const updatedUser = await User.findOneAndUpdate(
@@ -237,7 +238,7 @@ async function createRootUser(
       await BlackListedToken.create({ token: input.token });
       tokenConsumed = true;
 
-      if (env.ENVIRONMENT !== "test") {
+      if (env.ENVIRONMENT !== "test" && !mailerDisabled) {
         const verificationToken = jwt.sign(
           { purpose: "root-email-verification", userId, email },
           env.REGISTER_SECRET,
@@ -267,10 +268,10 @@ async function createRootUser(
           {
             _id: existingUser._id,
             password: hashedPassword,
-            isActive: false,
-            emailVerified: false,
+            isActive: mailerDisabled,
+            emailVerified: mailerDisabled,
           },
-          { $set: previousUser },
+          { $set: { ...previousUser, isActive: false, emailVerified: false } },
         ),
       ]);
       throw error;
@@ -280,7 +281,7 @@ async function createRootUser(
   }
 
   let createdUser;
-  const requiresEmailVerification = !expectedExistingAdmins;
+  const requiresEmailVerification = !expectedExistingAdmins && !mailerDisabled;
   const adminRole = await Role.findOne({ role: "admin", rank: 1 });
   if (!adminRole) {
     throw { statusCode: 500, message: "Le rôle administrateur n'existe pas." };

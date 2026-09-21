@@ -1,6 +1,7 @@
 import Role from "../../utils/interfaces/db/role.ts";
 import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import { normalizeEmail } from "../../utils/unique-fields.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 export default async function createManyUsers(
   users: IUser[],
@@ -47,7 +48,8 @@ export default async function createManyUsers(
     })
     .map((item) => {
       item.user.email = item.email;
-      item.user.isActive = false;
+      item.user.isActive = mailerDisabled;
+      item.user.emailVerified = mailerDisabled;
       item.user.roles = [role._id];
       return item.user;
     });
