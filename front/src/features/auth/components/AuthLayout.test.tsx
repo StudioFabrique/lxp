@@ -26,6 +26,7 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
       setupCompleted: true,
       hasLogo: true,
       enabledThemes: ["classic", "classic-dark"],
+      emailTemplate: "minimal",
     });
     container = document.createElement("div");
     document.body.appendChild(container);

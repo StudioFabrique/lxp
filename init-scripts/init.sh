@@ -117,7 +117,7 @@ configure_development_env() {
   echo
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
   while true; do
-    read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [o/N] : " enable_mailer
+    read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [y/N] : " enable_mailer
     case "$enable_mailer" in
       o|O|oui|Oui|OUI|y|Y|yes|YES)
         write_env_value "MAILER_DISABLED" "false" "$file"
@@ -130,7 +130,7 @@ configure_development_env() {
         echo
         return
         ;;
-      *) echo "Répondez par oui ou non." ;;
+      *) echo "Répondez par y ou n." ;;
     esac
   done
   prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
@@ -278,15 +278,15 @@ if [ ! -t 0 ]; then
 fi
 
 while true; do
-  read -r -p "Lancer npm run dev maintenant ? [o/N] : " start_dev
+  read -r -p "Lancer npm run dev maintenant ? [y/N] : " start_dev
   case "$start_dev" in
     o|O|oui|Oui|OUI|y|Y|yes|YES)
       exec npm run dev
       ;;
     ""|n|N|non|Non|NON|no|NO)
-      echo "Vous pouvez lancer npm run dev plus tard à la racine du projet."
+      echo -e "Vous pouvez lancer \033[30;47m npm run dev \033[0m plus tard à la racine du projet."
       break
       ;;
-    *) echo "Répondez par oui ou non." ;;
+    *) echo "Répondez par y ou n." ;;
   esac
 done

@@ -42,12 +42,12 @@ const SidebarWrapper = ({
   return (
     <nav
       data-onboarding="sidebar-navigation"
-      className="relative h-full 2xl:w-[20rem] flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200"
+      className="h-full 2xl:w-[20rem] flex flex-col justify-between gap-4 p-4 rounded-xl border bg-(--sidebar-bg) text-(--sidebar-content) border-(--sidebar-border) shadow-sm transition-colors duration-200"
     >
-      <div className={showLogo ? "pt-12 2xl:pt-16" : ""}>
+      <div>
         {showLogo && (
           <img
-            className="absolute top-0 left-0 size-12 2xl:size-16 rounded-tl-xl rounded-br-xl border object-contain p-2 bg-white border-(--sidebar-border)"
+            className="self-start 2xl:h-12.5 2xl:w-12.5 h-8 w-8 rounded-full border object-contain p-1 mb-3 bg-white border-(--sidebar-border)"
             src={INSTANCE_LOGO}
             style={{ backgroundColor: logoBgColor }}
             alt="Logo de l’organisme"

@@ -13,12 +13,16 @@ import {
 } from "../../../config/themes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi, type InstanceSettings } from "../api/profile.api";
+import EmailTemplateSettings, {
+  type EmailTemplateId,
+} from "./email-template-settings";
 
 const emptySettings: InstanceSettings = {
   name: "",
   setupCompleted: true,
   hasLogo: false,
   enabledThemes: [...defaultEnabledThemes],
+  emailTemplate: "minimal",
 };
 
 const defaultBackgroundColor = "#ffffff";
@@ -29,6 +33,9 @@ export default function InstanceGeneralSettings() {
   const [initialSettings, setInitialSettings] = useState(emptySettings);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
+  const [isEmailTemplateModalOpen, setIsEmailTemplateModalOpen] = useState(false);
+  const [draftEmailTemplate, setDraftEmailTemplate] = useState<EmailTemplateId>("minimal");
   const [themeDrawerMode, setThemeDrawerMode] = useState<
     "light" | "dark" | null
   >(null);
@@ -79,7 +86,7 @@ export default function InstanceGeneralSettings() {
     return () => abortController.abort();
   }, []);
 
-  const save = async (scope: "identity" | "interface") => {
+  const save = async (scope: "identity" | "interface" | "email") => {
     setIsSaving(true);
     try {
       const payload = new FormData();
@@ -100,10 +107,22 @@ export default function InstanceGeneralSettings() {
         scope === "identity" ? backgroundColor : initialBackgroundColor,
       );
       payload.append("deleteLogo", String(scope === "identity" && deleteLogo));
+      payload.append(
+        "emailTemplate",
+        scope === "email" ? draftEmailTemplate : initialSettings.emailTemplate,
+      );
       if (scope === "identity" && logo.file) payload.append("image", logo.file);
 
-      await profileApi.mutations.updateInstanceSettings(payload);
-      window.location.reload();
+      const updatedSettings = await profileApi.mutations.updateInstanceSettings(payload);
+      if (scope === "email") {
+        setSettings(updatedSettings);
+        setInitialSettings(updatedSettings);
+        setDraftEmailTemplate(updatedSettings.emailTemplate);
+        setIsEmailTemplateModalOpen(false);
+        toast.success("Le template d’e-mail a été mis à jour.");
+      } else {
+        window.location.reload();
+      }
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, "L’enregistrement a échoué."));
     } finally {
@@ -155,6 +174,18 @@ export default function InstanceGeneralSettings() {
   const previewTheme = (theme: string) => {
     document.documentElement.setAttribute("data-theme", theme);
     setPreviewedTheme(theme);
+  };
+
+  const sendTestEmail = async () => {
+    setIsSendingTestEmail(true);
+    try {
+      const { message } = await profileApi.mutations.sendInstanceTemplateTestEmail();
+      toast.success(message);
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, "L’e-mail de test n’a pas pu être envoyé."));
+    } finally {
+      setIsSendingTestEmail(false);
+    }
   };
 
   return (
@@ -426,7 +457,24 @@ export default function InstanceGeneralSettings() {
           </form>
         </BoxWrapper>
       </div>
-
+      <EmailTemplateSettings
+        selectedTemplate={settings.emailTemplate}
+        draftTemplate={draftEmailTemplate}
+        instanceName={settings.name}
+        hasInstanceLogo={hasLogo || settings.hasLogo}
+        instanceColor={backgroundColor}
+        isOpen={isEmailTemplateModalOpen}
+        isSaving={isSaving}
+        isSendingTest={isSendingTestEmail}
+        onOpen={() => {
+          setDraftEmailTemplate(settings.emailTemplate);
+          setIsEmailTemplateModalOpen(true);
+        }}
+        onClose={() => setIsEmailTemplateModalOpen(false)}
+        onSelect={setDraftEmailTemplate}
+        onSave={() => void save("email")}
+        onSendTest={() => void sendTestEmail()}
+      />
     </div>
   );
 }

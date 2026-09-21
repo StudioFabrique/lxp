@@ -1,8 +1,11 @@
 import type { Response } from "express";
 import type CustomRequest from "../utils/interfaces/express/custom-request.ts";
 import fs from "fs";
+import User from "../utils/interfaces/db/user.ts";
+import { sendInstanceTemplateTestEmail } from "../services/mailer.ts";
 import {
   hasInstanceLogo,
+  emailTemplateIds,
   instanceLogoPath,
   readInstanceSettings,
   writeInstanceSettings,
@@ -63,6 +66,11 @@ export async function httpPutInstanceSettings(
     });
   }
 
+  const emailTemplate = req.body?.emailTemplate ?? currentSettings.emailTemplate;
+  if (!emailTemplateIds.includes(emailTemplate)) {
+    return res.status(400).json({ message: "Le template d’e-mail sélectionné est invalide." });
+  }
+
   let enabledThemes: unknown;
   try {
     enabledThemes = JSON.parse(req.body?.enabledThemes ?? "");
@@ -87,6 +95,7 @@ export async function httpPutInstanceSettings(
         ? true
         : currentSettings.setupCompleted,
     enabledThemes: [...new Set(enabledThemes as string[])],
+    emailTemplate,
   };
 
   await writeInstanceSettings(settings);
@@ -96,4 +105,17 @@ export async function httpPutInstanceSettings(
   }
 
   res.json({ ...settings, hasLogo: await hasInstanceLogo() });
+}
+
+export async function httpPostInstanceTemplateTestEmail(
+  req: CustomRequest,
+  res: Response,
+) {
+  const user = await User.findById(req.auth?.userId).select("email").lean();
+  if (!user?.email) {
+    return res.status(404).json({ message: "L’adresse e-mail du compte est introuvable." });
+  }
+
+  await sendInstanceTemplateTestEmail(user.email);
+  res.json({ message: `L’e-mail de test a été envoyé à ${user.email}.` });
 }

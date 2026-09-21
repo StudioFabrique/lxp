@@ -33,12 +33,14 @@ describe("Personnalisez votre espace", () => {
       setupCompleted: false,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
+      emailTemplate: "minimal",
     });
     vi.mocked(profileApi.mutations.updateInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
       setupCompleted: true,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
+      emailTemplate: "minimal",
     });
 
     container = document.createElement("div");

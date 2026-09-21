@@ -41,6 +41,7 @@ import assignmentRouter from "./assignment/assignment.router.ts";
 import { mountRouter } from "../../utils/express/route-registry.ts";
 import {
   httpGetInstanceSettings,
+  httpPostInstanceTemplateTestEmail,
   httpPutInstanceSettings,
 } from "../../controllers/http-instance-settings.ts";
 
@@ -106,6 +107,12 @@ v1Router.put(
   checkRoleRank([0]),
   uploadInstanceLogo(),
   httpPutInstanceSettings,
+);
+v1Router.post(
+  "/instance-settings/test-email",
+  checkPermissions("formation"),
+  checkRoleRank([0]),
+  httpPostInstanceTemplateTestEmail,
 );
 
 mountRouter(v1Router, "/chatbot", chatbotRouter);

@@ -22,6 +22,7 @@ import {
   escapeHtml,
   formatDisplayTitle,
   instanceBrand,
+  instanceHomeUrl,
   layout,
   organizationName,
 } from "../helpers/mail-template/shared.ts";
@@ -40,6 +41,7 @@ async function mailContext() {
     organizationName: settings.name,
     logoCid: hasLogo ? INSTANCE_LOGO_CID : undefined,
     logoBackgroundColor: color.trim(),
+    emailTemplate: settings.emailTemplate,
   } satisfies MailContext;
 }
 
@@ -265,6 +267,35 @@ export async function sendUpdatedUserEmail(email: string) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function sendInstanceTemplateTestEmail(email: string) {
+  if (mailerDisabled) return;
+  if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
+
+  const destination =
+    env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : email;
+  const context = await mailContext();
+  const name = organizationName(context);
+  const message = layout(
+    `<p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.65">E-mail de test</p>
+    <h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
+    <p style="margin:0">Voici un aperçu réel des e-mails envoyés par <strong>${escapeHtml(name)}</strong>.</p>
+    ${button(instanceHomeUrl(), "Accéder à mon espace")}`,
+    name,
+    instanceBrand(context),
+  );
+
+  return transporter.sendMail({
+    from: env.MAILER_FROM,
+    to: destination,
+    subject: `[Test] Template e-mail ${name}`,
+    html: message,
+    attachments: [
+      ...(await instanceLogoAttachment()),
+      ...andriaFooterLogoAttachment(),
+    ],
+  });
 }
 
 async function sendAccountEmail(
