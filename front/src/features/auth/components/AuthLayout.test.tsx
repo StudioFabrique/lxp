@@ -26,16 +26,6 @@ describe("nom de l’organisme sur les pages d’authentification", () => {
       setupCompleted: true,
       hasLogo: true,
       enabledThemes: ["classic", "classic-dark"],
-      welcomeTitles: {
-        admin: "Bonjour",
-        teacher: "Bonjour",
-        student: "Bonjour",
-      },
-      welcomeMessages: {
-        admin: "Bienvenue",
-        teacher: "Bienvenue",
-        student: "Bienvenue",
-      },
     });
     container = document.createElement("div");
     document.body.appendChild(container);

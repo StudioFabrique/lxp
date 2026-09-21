@@ -1,4 +1,4 @@
-import Header from "../../../../src/components/headers/Header";
+import Header from "../../../components/headers/Header";
 import PageWrapper from "../../../components/wrappers/PageWrapper";
 import ResumeActivity from "../components/resume-activity";
 import ResumeActivities from "../components/resume-activities";
@@ -46,19 +46,17 @@ const StudentDashboard = () => {
 
   return (
     <PageWrapper>
-      <div data-onboarding="student-dashboard-header">
-        {showOnboardingWelcome ? (
+      {showOnboardingWelcome ? (
+        <div data-onboarding="student-dashboard-header">
           <OnboardingWelcome layout="student" />
-        ) : (
-          <Header
-            title={welcomeTitle}
-            description={welcomeMessage}
-            classname="capitalize"
-          >
-            {/* Ajouter boutons ici par la suite */}
-          </Header>
-        )}
-      </div>
+        </div>
+      ) : (
+        <Header
+          title={welcomeTitle}
+          description={welcomeMessage}
+          classname="capitalize"
+        />
+      )}
 
       {learningContext.isError ? (
         <BoxWrapper className="min-h-[50vh] items-center justify-center text-center">

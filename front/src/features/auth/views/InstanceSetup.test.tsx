@@ -33,16 +33,12 @@ describe("Personnalisez votre espace", () => {
       setupCompleted: false,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
-      welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
-      welcomeMessages: { admin: "Bienvenue", teacher: "Bienvenue", student: "Bienvenue" },
     });
     vi.mocked(profileApi.mutations.updateInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
       setupCompleted: true,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
-      welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
-      welcomeMessages: { admin: "Bienvenue", teacher: "Bienvenue", student: "Bienvenue" },
     });
 
     container = document.createElement("div");

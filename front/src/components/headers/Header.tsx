@@ -2,7 +2,7 @@
  * En tête pour les interfaces qui listent les groupes, les users, les parcours, etc...
  */
 
-import { PropsWithChildren, type ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import BoxWrapper from "../wrappers/BoxWrapper";
@@ -22,24 +22,37 @@ interface HeaderProps {
   onClick?: () => void;
 }
 
-const Header = (props: PropsWithChildren<HeaderProps>) => {
-  const Icon = props.icon;
+const Header = ({
+  title,
+  alternateBgColor = false,
+  successBgColor = false,
+  disabled = false,
+  description,
+  icon: Icon,
+  isSubHeader = false,
+  hasError = false,
+  classname,
+  containerClassname,
+  onClick,
+  children,
+}: PropsWithChildren<HeaderProps>) => {
   return (
     <BoxWrapper
-      onClick={props.onClick}
+      onClick={onClick}
       className={cn(
         "h-auto w-full flex-row items-center justify-between px-4 shadow-none select-none",
-        props.isSubHeader ? "py-2" : "py-4",
-        props.isSubHeader && !props.disabled && "ring-1",
-        props.hasError && "ring-2 ring-error",
-        props.successBgColor && "bg-success",
-        props.disabled && "opacity-15",
-        props.onClick && "cursor-pointer hover:opacity-50",
-        props.containerClassname,
+        isSubHeader ? "py-2" : "py-4",
+        isSubHeader && !disabled && "ring-1",
+        alternateBgColor && "bg-base-300",
+        successBgColor && "bg-success text-success-content",
+        hasError && "ring-2 ring-error",
+        disabled && "opacity-15",
+        onClick && "cursor-pointer hover:opacity-50",
+        containerClassname,
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
-        {!props.isSubHeader &&
+        {!isSubHeader &&
           (Icon ? (
             <Icon aria-hidden className="size-7 shrink-0" />
           ) : (
@@ -47,20 +60,29 @@ const Header = (props: PropsWithChildren<HeaderProps>) => {
           ))}
         <div>
           <h2
-            className={`flex-1 ${props.isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold"} ${props.classname}`}
+            className={cn(
+              "flex-1",
+              isSubHeader ? "text-lg font-bold" : "text-xl font-extrabold",
+              classname,
+            )}
           >
-            {props.title}
+            {title}
           </h2>
           <p
-            className={`${props.isSubHeader ? "text-[8.5pt]" : "text-xs"} ${props.hasError ? "text-error" : "text-base-content"}`}
+            className={cn(
+              isSubHeader ? "text-[8.5pt]" : "text-xs",
+              hasError
+                ? "text-error"
+                : successBgColor
+                  ? "text-success-content"
+                  : "text-base-content",
+            )}
           >
-            {props.description}
+            {description}
           </p>
         </div>
       </div>
-      <div className="flex shrink-0 justify-end items-center">
-        {props.children}
-      </div>
+      <div className="flex shrink-0 justify-end items-center">{children}</div>
     </BoxWrapper>
   );
 };

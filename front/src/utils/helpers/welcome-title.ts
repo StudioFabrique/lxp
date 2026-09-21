@@ -1,10 +1,11 @@
-export function formatWelcomeTitle(
-  template: string,
-  user?: { firstname?: string; lastname?: string } | null,
-) {
+import type User from "../interfaces/user";
+
+export function formatWelcomeTitle(template: string, user?: User | null) {
   return template
-    .replace(/\{firstname\}/g, user?.firstname ?? "")
-    .replace(/\{lastname\}/g, user?.lastname ?? "")
+    .split("{firstname}")
+    .join(user?.firstname ?? "")
+    .split("{lastname}")
+    .join(user?.lastname ?? "")
     .replace(/\s+/g, " ")
     .trim();
 }

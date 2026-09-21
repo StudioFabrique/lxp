@@ -73,7 +73,9 @@ export default function InstanceLogoControls({
         )}
       </div>
 
-      <p className="mt-2 text-center text-xs text-base-content/60">{helpText}</p>
+      <p className="mt-2 text-center text-xs text-base-content/60">
+        {helpText}
+      </p>
     </div>
   );
 }

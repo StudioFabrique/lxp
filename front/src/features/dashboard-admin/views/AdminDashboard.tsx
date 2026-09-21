@@ -25,18 +25,17 @@ const AdminDashboard = () => {
 
   return (
     <PageWrapper>
-      {/* --- Bannière de bienvenue --- */}
-      <div data-onboarding="admin-dashboard-header">
-        {showOnboardingWelcome ? (
+      {showOnboardingWelcome ? (
+        <div data-onboarding="admin-dashboard-header">
           <OnboardingWelcome layout="admin" />
-        ) : (
-          <Header
-            title={welcomeTitle}
-            description={welcomeMessage}
-            classname="capitalize"
-          />
-        )}
-      </div>
+        </div>
+      ) : (
+        <Header
+          title={welcomeTitle}
+          description={welcomeMessage}
+          classname="capitalize"
+        />
+      )}
 
       {/* --- Contenu Principal --- */}
       <section className="w-full flex flex-col 2xl:flex-row gap-6">

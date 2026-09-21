@@ -52,19 +52,6 @@ export async function httpPutInstanceSettings(
 ) {
   const { name } = req.body ?? {};
   const currentSettings = await readInstanceSettings();
-  let titles: Record<string, unknown> | undefined;
-  let messages: Record<string, unknown> | undefined;
-
-  try {
-    titles = JSON.parse(req.body?.welcomeTitles ?? "");
-    messages = JSON.parse(req.body?.welcomeMessages ?? "");
-  } catch {
-    return res
-      .status(400)
-      .json({ message: "Les messages envoyés sont invalides." });
-  }
-  const titleValues = [titles?.admin, titles?.teacher, titles?.student];
-  const messageValues = [messages?.admin, messages?.teacher, messages?.student];
 
   if (
     typeof name !== "string" ||
@@ -93,26 +80,6 @@ export async function httpPutInstanceSettings(
       .json({ message: "Sélectionnez au moins un thème clair et un thème sombre." });
   }
 
-  if (
-    titleValues.some(
-      (value) =>
-        typeof value !== "string" ||
-        value.trim().length < 2 ||
-        value.trim().length > 120,
-    ) ||
-    messageValues.some(
-      (value) =>
-        typeof value !== "string" ||
-        value.trim().length < 2 ||
-        value.trim().length > 300,
-    )
-  ) {
-    return res.status(400).json({
-      message:
-        "Les titres et sous-textes de bienvenue doivent contenir entre 2 et 120 ou 300 caractères respectivement.",
-    });
-  }
-
   const settings = {
     name: name.trim(),
     setupCompleted:
@@ -120,16 +87,6 @@ export async function httpPutInstanceSettings(
         ? true
         : currentSettings.setupCompleted,
     enabledThemes: [...new Set(enabledThemes as string[])],
-    welcomeTitles: {
-      admin: (titles!.admin as string).trim(),
-      teacher: (titles!.teacher as string).trim(),
-      student: (titles!.student as string).trim(),
-    },
-    welcomeMessages: {
-      admin: (messages!.admin as string).trim(),
-      teacher: (messages!.teacher as string).trim(),
-      student: (messages!.student as string).trim(),
-    },
   };
 
   await writeInstanceSettings(settings);

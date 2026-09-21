@@ -26,17 +26,6 @@ export function buildRecommendedActions({
 }: Options): RecommendedAction[] {
   if (userRank <= 1) {
     return [
-      ...(teachersCount === 0
-        ? [
-            {
-              id: "invite-teachers",
-              title: "Inviter l'équipe pédagogique",
-              description: "Créez le premier compte formateur.",
-              to: "/admin/user/add?roleRank=2&invite=true&tutorial=teacher",
-              icon: recommendedActionIcons.inviteTeachers,
-            },
-          ]
-        : []),
       ...(userRank === 0 && adminsCount === 0
         ? [
             {
@@ -45,6 +34,17 @@ export function buildRecommendedActions({
               description: "Ajoutez un administrateur supplémentaire.",
               to: "/admin/user/add?roleRank=1&tutorial=admin",
               icon: recommendedActionIcons.createAdmin,
+            },
+          ]
+        : []),
+      ...(teachersCount === 0
+        ? [
+            {
+              id: "invite-teachers",
+              title: "Inviter l'équipe pédagogique",
+              description: "Créez le premier compte formateur.",
+              to: "/admin/user/add?roleRank=2&invite=true&tutorial=teacher",
+              icon: recommendedActionIcons.inviteTeachers,
             },
           ]
         : []),

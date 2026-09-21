@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../store/AuthProvider";
 import { formatWelcomeTitle } from "../../../utils/helpers/welcome-title";
 import { useOnboarding } from "../../onboarding/OnboardingContext";
-import { profileApi } from "../../profile/api/profile.api";
 import { dashboardStudentApi } from "../api/dashboard-student.api";
 import {
   learningProfileApi,
@@ -17,11 +16,6 @@ const defaultMessage =
 export function useStudentDashboard() {
   const { user } = useContext(AuthContext);
   const { status: onboardingStatus } = useOnboarding();
-
-  const { data: instanceSettings } = useQuery({
-    queryKey: ["instance-settings"],
-    queryFn: profileApi.queries.getInstanceSettings,
-  });
 
   const { data: lastLessons } = useQuery({
     queryKey: ["last-read-lessons"],
@@ -39,12 +33,8 @@ export function useStudentDashboard() {
       onboardingStatus === "pending" &&
       learningContext.data?.hasAvailableContent === true &&
       learningContext.data?.onboardingRequired === false,
-    welcomeTitle: formatWelcomeTitle(
-      instanceSettings?.welcomeTitles.student ?? defaultTitle,
-      user,
-    ),
-    welcomeMessage:
-      instanceSettings?.welcomeMessages.student ?? defaultMessage,
+    welcomeTitle: formatWelcomeTitle(defaultTitle, user),
+    welcomeMessage: defaultMessage,
     lastLesson: lastLessons?.[0],
     remainingLessons: lastLessons?.slice(1) ?? [],
     hasLastLessons: Boolean(lastLessons?.length),

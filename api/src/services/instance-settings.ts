@@ -5,16 +5,6 @@ export type InstanceSettings = {
   name: string;
   setupCompleted: boolean;
   enabledThemes: string[];
-  welcomeTitles: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
-  welcomeMessages: {
-    admin: string;
-    teacher: string;
-    student: string;
-  };
 };
 
 export const defaultInstanceSettings: InstanceSettings = {
@@ -24,19 +14,6 @@ export const defaultInstanceSettings: InstanceSettings = {
     "classic", "ocean", "linen", "sage",
     "classic-dark", "aurora", "ember", "abyss",
   ],
-  welcomeTitles: {
-    admin: "Bonjour, {firstname} {lastname} !",
-    teacher: "Bonjour, {firstname} {lastname} !",
-    student: "Bonjour, {firstname} {lastname} !",
-  },
-  welcomeMessages: {
-    admin:
-      "Bienvenue dans votre panneau d'administration, l'outil central pour gérer et surveiller tous les aspects de l'apprentissage de vos apprenants",
-    teacher:
-      "Bienvenue dans votre espace pédagogique, retrouvez vos contenus et accompagnez vos apprenants",
-    student:
-      "Bienvenue dans votre espace, commencez votre apprentissage ou reprenez là où vous vous êtes arrêté",
-  },
 };
 
 const settingsPath = path.join(
@@ -91,14 +68,6 @@ export async function readInstanceSettings(): Promise<InstanceSettings> {
       enabledThemes: Array.isArray(saved.enabledThemes)
         ? saved.enabledThemes.filter((theme: unknown): theme is string => typeof theme === "string")
         : defaultInstanceSettings.enabledThemes,
-      welcomeTitles: {
-        ...defaultInstanceSettings.welcomeTitles,
-        ...(saved.welcomeTitles ?? {}),
-      },
-      welcomeMessages: {
-        ...defaultInstanceSettings.welcomeMessages,
-        ...(saved.welcomeMessages ?? {}),
-      },
     };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {

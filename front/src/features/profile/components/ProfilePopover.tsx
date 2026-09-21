@@ -113,11 +113,13 @@ export default function ProfilePopover({ interfaceType }: Props) {
             aria-label={`Ouvrir le menu de ${fullName}`}
           >
             {user && (
-              <AvatarSmall
-                user={user}
-                noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
-                imgClassName="size-6 shrink-0 rounded-full object-cover"
-              />
+              <span className="flex size-4 shrink-0 items-center justify-center">
+                <AvatarSmall
+                  user={user}
+                  noImgClassName="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs text-primary-content"
+                  imgClassName="size-6 shrink-0 rounded-full object-cover"
+                />
+              </span>
             )}
             <span className="2xl:block hidden truncate">{fullName}</span>
           </button>

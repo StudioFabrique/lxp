@@ -5,25 +5,21 @@ import BoxWrapper from "../../../components/wrappers/BoxWrapper";
 import { type TemporaryImage } from "../../../components/UI/image-file-upload/image-file-upload";
 import InstanceLogoControls from "../../../components/UI/instance-logo-controls";
 import { INSTANCE_LOGO, INSTANCE_LOGO_COLOR } from "../../../config/urls";
-import { darkThemes, defaultEnabledThemes, lightThemes, themeLabels } from "../../../config/themes";
+import {
+  darkThemes,
+  defaultEnabledThemes,
+  lightThemes,
+  themeLabels,
+} from "../../../config/themes";
 import { getApiErrorMessage } from "../../../utils/helpers/api-error-message";
 import { profileApi, type InstanceSettings } from "../api/profile.api";
-import QuestionMarkTooltip from "../../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 const emptySettings: InstanceSettings = {
   name: "",
   setupCompleted: true,
   hasLogo: false,
   enabledThemes: [...defaultEnabledThemes],
-  welcomeTitles: { admin: "", teacher: "", student: "" },
-  welcomeMessages: { admin: "", teacher: "", student: "" },
 };
-
-const messageFields = [
-  ["admin", "Administrateurs"],
-  ["teacher", "Équipe pédagogique"],
-  ["student", "Apprenants"],
-] as const;
 
 const defaultBackgroundColor = "#ffffff";
 const validBackgroundColor = /^#[0-9a-f]{6}$/i;
@@ -83,7 +79,7 @@ export default function InstanceGeneralSettings() {
     return () => abortController.abort();
   }, []);
 
-  const save = async (scope: "identity" | "interface" | "messages") => {
+  const save = async (scope: "identity" | "interface") => {
     setIsSaving(true);
     try {
       const payload = new FormData();
@@ -93,22 +89,10 @@ export default function InstanceGeneralSettings() {
       );
       payload.append(
         "enabledThemes",
-        JSON.stringify(scope === "interface" ? settings.enabledThemes : initialSettings.enabledThemes),
-      );
-      payload.append(
-        "welcomeTitles",
         JSON.stringify(
-          scope === "messages"
-            ? settings.welcomeTitles
-            : initialSettings.welcomeTitles,
-        ),
-      );
-      payload.append(
-        "welcomeMessages",
-        JSON.stringify(
-          scope === "messages"
-            ? settings.welcomeMessages
-            : initialSettings.welcomeMessages,
+          scope === "interface"
+            ? settings.enabledThemes
+            : initialSettings.enabledThemes,
         ),
       );
       payload.append(
@@ -127,10 +111,15 @@ export default function InstanceGeneralSettings() {
     }
   };
 
-  const toggleAvailableTheme = (theme: string, modeThemes: readonly string[]) => {
+  const toggleAvailableTheme = (
+    theme: string,
+    modeThemes: readonly string[],
+  ) => {
     setSettings((current) => {
       const isEnabled = current.enabledThemes.includes(theme);
-      const enabledInMode = modeThemes.filter((item) => current.enabledThemes.includes(item));
+      const enabledInMode = modeThemes.filter((item) =>
+        current.enabledThemes.includes(item),
+      );
       if (isEnabled && enabledInMode.length === 1) {
         toast.error("Conservez au moins un thème dans chaque mode.");
         return current;
@@ -208,7 +197,7 @@ export default function InstanceGeneralSettings() {
                 />
               </label>
 
-            <div className="w-full max-w-sm self-center">
+              <div className="w-full max-w-sm self-center">
                 <InstanceLogoControls
                   temporaryImage={logo}
                   onSetTemporaryImage={(image) => {
@@ -258,7 +247,8 @@ export default function InstanceGeneralSettings() {
                 Personnalisation de l’interface
               </h2>
               <p className="text-sm text-base-content/70">
-                Choisissez les thèmes accessibles à tous les utilisateurs de l’instance.
+                Choisissez les thèmes accessibles à tous les utilisateurs de
+                l’instance.
               </p>
             </div>
 
@@ -291,7 +281,7 @@ export default function InstanceGeneralSettings() {
                           type="button"
                           data-theme={theme}
                           onClick={() => toggleAvailableTheme(theme, themeList)}
-                          className="group flex min-w-0 items-center gap-3 rounded-xl border border-primary bg-base-100 p-3 text-left shadow-sm transition hover:-translate-y-0.5"
+                          className="group flex min-w-0 items-center gap-3 rounded-xl border border-primary bg-base-300 p-3 text-left shadow-sm transition hover:-translate-y-0.5"
                         >
                           <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
                             <span className="h-full w-1/2 bg-primary" />
@@ -319,7 +309,6 @@ export default function InstanceGeneralSettings() {
                         Ajouter
                       </button>
                     </div>
-
                   </section>
                 );
               })}
@@ -348,7 +337,8 @@ export default function InstanceGeneralSettings() {
                   <div className="mb-6 flex items-start justify-between gap-4">
                     <div>
                       <h3 className="text-lg font-bold">
-                        Ajouter un thème {themeDrawerMode === "dark" ? "sombre" : "clair"}
+                        Ajouter un thème{" "}
+                        {themeDrawerMode === "dark" ? "sombre" : "clair"}
                       </h3>
                       <p className="mt-1 text-sm text-base-content/60">
                         Sélectionnez un thème pour le rendre accessible à tous.
@@ -364,57 +354,61 @@ export default function InstanceGeneralSettings() {
                     </button>
                   </div>
 
-                  {themeDrawerMode && (() => {
-                    const themeList = themeDrawerMode === "light" ? lightThemes : darkThemes;
-                    const disabledThemes = themeList.filter(
-                      (theme) => !settings.enabledThemes.includes(theme),
-                    );
+                  {themeDrawerMode &&
+                    (() => {
+                      const themeList =
+                        themeDrawerMode === "light" ? lightThemes : darkThemes;
+                      const disabledThemes = themeList.filter(
+                        (theme) => !settings.enabledThemes.includes(theme),
+                      );
 
-                    return disabledThemes.length > 0 ? (
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {disabledThemes.map((theme) => (
-                          <article
-                            key={theme}
-                            data-theme={theme}
-                            className={`min-w-0 rounded-xl border bg-base-100 p-3 text-left transition ${previewedTheme === theme ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
-                          >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
-                                <span className="h-full w-1/2 bg-primary" />
-                                <span className="h-full w-1/2 bg-secondary" />
-                              </span>
-                              <span className="block min-w-0 truncate text-sm font-semibold text-base-content">
-                                {themeLabels[theme] ?? theme}
-                              </span>
-                            </div>
-                            <div className="mt-3 grid grid-cols-2 gap-2">
-                              {previewedTheme !== theme && (
+                      return disabledThemes.length > 0 ? (
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {disabledThemes.map((theme) => (
+                            <article
+                              key={theme}
+                              data-theme={theme}
+                              className={`min-w-0 rounded-xl border bg-base-100 p-3 text-left transition ${previewedTheme === theme ? "border-primary ring-2 ring-primary/25" : "border-base-300"}`}
+                            >
+                              <div className="flex min-w-0 items-center gap-3">
+                                <span className="flex size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-base-content/20">
+                                  <span className="h-full w-1/2 bg-primary" />
+                                  <span className="h-full w-1/2 bg-secondary" />
+                                </span>
+                                <span className="block min-w-0 truncate text-sm font-semibold text-base-content">
+                                  {themeLabels[theme] ?? theme}
+                                </span>
+                              </div>
+                              <div className="mt-3 grid grid-cols-2 gap-2">
+                                {previewedTheme !== theme && (
+                                  <button
+                                    type="button"
+                                    className="btn btn-ghost btn-xs gap-1 px-1 normal-case"
+                                    onClick={() => previewTheme(theme)}
+                                  >
+                                    <Eye className="size-3.5" />
+                                    Prévisualiser
+                                  </button>
+                                )}
                                 <button
                                   type="button"
-                                  className="btn btn-ghost btn-xs gap-1 px-1 normal-case"
-                                  onClick={() => previewTheme(theme)}
+                                  className={`btn btn-primary btn-xs normal-case ${previewedTheme === theme ? "col-span-2" : ""}`}
+                                  onClick={() =>
+                                    toggleAvailableTheme(theme, themeList)
+                                  }
                                 >
-                                  <Eye className="size-3.5" />
-                                  Prévisualiser
+                                  Ajouter
                                 </button>
-                              )}
-                              <button
-                                type="button"
-                                className={`btn btn-primary btn-xs normal-case ${previewedTheme === theme ? "col-span-2" : ""}`}
-                                onClick={() => toggleAvailableTheme(theme, themeList)}
-                              >
-                                Ajouter
-                              </button>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="rounded-xl bg-base-200 px-4 py-8 text-center text-sm text-base-content/60">
-                        Tous les thèmes sont déjà accessibles.
-                      </p>
-                    );
-                  })()}
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="rounded-xl bg-base-200 px-4 py-8 text-center text-sm text-base-content/60">
+                          Tous les thèmes sont déjà accessibles.
+                        </p>
+                      );
+                    })()}
                 </aside>
               </div>
             </div>
@@ -433,87 +427,6 @@ export default function InstanceGeneralSettings() {
         </BoxWrapper>
       </div>
 
-      <BoxWrapper className="h-auto gap-6">
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void save("messages");
-          }}
-        >
-          <div>
-            <h2 className="text-lg font-bold">Messages des dashboards</h2>
-            <p className="text-sm text-base-content/70">
-              Personnalisez les textes d’accueil affichés selon le profil de
-              l’utilisateur.
-            </p>
-          </div>
-
-          <fieldset
-            disabled={isLoading || isSaving}
-            className="grid gap-4 lg:grid-cols-3"
-          >
-            {messageFields.map(([role, label]) => (
-              <div key={role} className="flex flex-col gap-4">
-                <h3 className="text-sm font-bold">{label}</h3>
-                <label className="flex flex-col gap-2">
-                  <span className="flex items-center gap-1.5 text-xs font-semibold text-base-content/70">
-                    Titre
-                    <QuestionMarkTooltip
-                      tooltipPosition="top"
-                      tooltipValue="Variables disponibles : {firstname} et {lastname}."
-                    />
-                  </span>
-                  <input
-                    className="input input-bordered w-full focus:outline-none"
-                    value={settings.welcomeTitles[role]}
-                    maxLength={120}
-                    onChange={(event) =>
-                      setSettings((current) => ({
-                        ...current,
-                        welcomeTitles: {
-                          ...current.welcomeTitles,
-                          [role]: event.target.value,
-                        },
-                      }))
-                    }
-                  />
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="text-xs font-semibold text-base-content/70">
-                    Sous-texte
-                  </span>
-                  <textarea
-                    className="textarea textarea-bordered min-h-28 w-full resize-y focus:outline-none"
-                    value={settings.welcomeMessages[role]}
-                    maxLength={300}
-                    onChange={(event) =>
-                      setSettings((current) => ({
-                        ...current,
-                        welcomeMessages: {
-                          ...current.welcomeMessages,
-                          [role]: event.target.value,
-                        },
-                      }))
-                    }
-                  />
-                </label>
-              </div>
-            ))}
-          </fieldset>
-
-          <div className="flex justify-end pt-5">
-            <button
-              type="submit"
-              className="btn btn-primary min-w-32 normal-case"
-              disabled={isLoading || isSaving}
-            >
-              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSaving ? "Sauvegarde…" : "Sauvegarder"}
-            </button>
-          </div>
-        </form>
-      </BoxWrapper>
     </div>
   );
 }

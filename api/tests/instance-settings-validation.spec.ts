@@ -6,12 +6,6 @@ const defaultInstanceSettings = {
   name: "ANDRIA",
   setupCompleted: true,
   enabledThemes: ["classic", "classic-dark"],
-  welcomeTitles: { admin: "Bonjour", teacher: "Bonjour", student: "Bonjour" },
-  welcomeMessages: {
-    admin: "Bienvenue",
-    teacher: "Bienvenue",
-    student: "Bienvenue",
-  },
 };
 
 jest.unstable_mockModule("../src/services/instance-settings.ts", () => ({
@@ -44,8 +38,6 @@ function request(name: string) {
     body: {
       name,
       enabledThemes: JSON.stringify(defaultInstanceSettings.enabledThemes),
-      welcomeTitles: JSON.stringify(defaultInstanceSettings.welcomeTitles),
-      welcomeMessages: JSON.stringify(defaultInstanceSettings.welcomeMessages),
     },
   } as CustomRequest;
 }

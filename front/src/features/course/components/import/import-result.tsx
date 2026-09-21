@@ -230,7 +230,7 @@ const ImportResult = ({
 
         {(criticalError || isComplete) && (
           <div
-            className="flex flex-wrap justify-end gap-3 border-t border-base-300 pt-5"
+            className="flex flex-wrap justify-end gap-3 pt-5"
             data-course-import-tour="result-actions"
           >
             <Link
