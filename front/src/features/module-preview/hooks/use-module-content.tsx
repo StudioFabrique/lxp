@@ -949,6 +949,14 @@ const useModuleContent = () => {
     badgeCompletion:
       badgeCompletion?.moduleId === Number(moduleId) ? badgeCompletion : null,
     closeBadgeCompletion: () => setBadgeCompletion(null),
+    openBadgeCompletion: () => {
+      if (!isStudent || !state.module?.id || !state.module.stats?.isCompleted) return;
+      setBadgeCompletion({
+        moduleId: state.module.id,
+        moduleTitle: state.module.title,
+        badges: state.module.bonusSkills,
+      });
+    },
     computed: {
       isLessonCompleted,
       isFirstActivitySelected,

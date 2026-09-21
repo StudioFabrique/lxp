@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChartNoAxesCombined } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useSearchParams } from "react-router";
 import { useState } from "react";
 import StudentProfile from "./StudentProfile";
 import Header from "../../../components/headers/Header";
@@ -22,6 +22,7 @@ async function loadParcoursProgress(): Promise<Parcours[]> {
 export default function MyProgress() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { pathname } = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const space = pathname.split("/")[1];
   const {
     data: parcours = [],
@@ -31,6 +32,9 @@ export default function MyProgress() {
     queryKey: ["my-progress", "modules"],
     queryFn: loadParcoursProgress,
   });
+  const requestedParcoursId = Number(searchParams.get("parcoursId"));
+  const selectedParcours =
+    parcours.find((item) => item.id === requestedParcoursId) ?? parcours[0];
 
   return (
     <PageWrapper className="gap-8">
@@ -40,6 +44,31 @@ export default function MyProgress() {
         icon={ChartNoAxesCombined}
       ><button type="button" className="btn btn-outline" onClick={() => setSettingsOpen(true)}>Mes préférences et niveaux</button></Header>
       {settingsOpen && <StudentProfile onClose={() => setSettingsOpen(false)} />}
+      {parcours.length > 1 && (
+        <div className="flex flex-col gap-2 sm:max-w-md">
+          <label htmlFor="progress-parcours" className="font-semibold">
+            Parcours
+          </label>
+          <select
+            id="progress-parcours"
+            className="select select-bordered w-full"
+            value={selectedParcours?.id ?? ""}
+            onChange={(event) =>
+              setSearchParams((previous) => {
+                const next = new URLSearchParams(previous);
+                next.set("parcoursId", event.target.value);
+                return next;
+              })
+            }
+          >
+            {parcours.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <section aria-labelledby="module-progress-title" className="space-y-4">
         <h2 id="module-progress-title" className="text-xl font-bold">
           Progression des modules
@@ -55,64 +84,57 @@ export default function MyProgress() {
             Aucun parcours disponible.
           </p>
         ) : (
-          <div className="space-y-6">
-            {parcours.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-xl border border-base-300 bg-base-200 p-5"
-              >
-                <h3 className="mb-4 font-semibold">{item.title}</h3>
-                {item.modules?.length ? (
-                  <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    {item.modules.map((module) => {
-                      const progress = Math.min(
-                        100,
-                        Math.max(0, module.stats?.progress ?? 0),
-                      );
-                      return (
-                        <li
-                          key={module.id}
-                          className="rounded-lg bg-base-100 p-4"
+          <div className="rounded-xl border border-base-300 bg-base-200 p-5">
+            <h3 className="mb-4 font-semibold">{selectedParcours.title}</h3>
+            {selectedParcours.modules?.length ? (
+              <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {selectedParcours.modules.map((module) => {
+                  const progress = Math.min(
+                    100,
+                    Math.max(0, module.stats?.progress ?? 0),
+                  );
+                  return (
+                    <li
+                      key={module.id}
+                      className="rounded-lg bg-base-100 p-4"
+                    >
+                      <div className="mb-3 flex items-start justify-between gap-3">
+                        <Link
+                          to={`/${space}/parcours/module/${module.id}`}
+                          className="font-medium hover:underline first-letter:uppercase"
                         >
-                          <div className="mb-3 flex items-start justify-between gap-3">
-                            <Link
-                              to={`/${space}/parcours/module/${module.id}`}
-                              className="font-medium hover:underline first-letter:uppercase"
-                            >
-                              {module.title}
-                            </Link>
-                            <span className="font-semibold text-primary">
-                              {progress}%
-                            </span>
-                          </div>
-                          <progress
-                            className="progress progress-primary w-full"
-                            value={progress}
-                            max={100}
-                            aria-label={`Progression du module ${module.title}`}
-                          />
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-base-content/60">
-                    Aucun module disponible.
-                  </p>
-                )}
-              </div>
-            ))}
+                          {module.title}
+                        </Link>
+                        <span className="font-semibold text-primary">
+                          {progress}%
+                        </span>
+                      </div>
+                      <progress
+                        className="progress progress-primary w-full"
+                        value={progress}
+                        max={100}
+                        aria-label={`Progression du module ${module.title}`}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="text-sm text-base-content/60">
+                Aucun module disponible.
+              </p>
+            )}
           </div>
         )}
       </section>
       <PermissionGuard object="parcours" action="read">
         <section aria-label="Journal">
-          <Journal />
+          <Journal parcoursId={selectedParcours?.id} />
         </section>
       </PermissionGuard>
       <PermissionGuard object="bonusSkill" action="read">
         <section aria-label="Badges et compétences">
-          <Awards />
+          <Awards parcours={selectedParcours} />
         </section>
       </PermissionGuard>
     </PageWrapper>

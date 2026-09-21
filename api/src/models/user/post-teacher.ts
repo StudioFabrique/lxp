@@ -4,6 +4,8 @@ import User, { type IUser } from "../../utils/interfaces/db/user.ts";
 import bcrypt from "bcrypt";
 import { exactInsensitive, normalizeEmail } from "../../utils/unique-fields.ts";
 import { sendActivationInvitation } from "./create-user.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
+import { devAccountPasswordHash } from "../../config/dev-account-password.ts";
 
 async function postTeacher(teacher: IUser) {
   const email = normalizeEmail(teacher.email ?? "");
@@ -31,7 +33,9 @@ async function postTeacher(teacher: IUser) {
   }
 
   // enregistrement du contact dans la base de données Mongodb
-  const password = await bcrypt.hash(generateRandomString(), 10);
+  const password =
+    (await devAccountPasswordHash()) ??
+    (await bcrypt.hash(generateRandomString(), 10));
   const fetchedRole = await Role.findOne({ role: "teacher" });
   if (!fetchedRole) {
     throw {
@@ -44,7 +48,8 @@ async function postTeacher(teacher: IUser) {
     ...teacher,
     email,
     password,
-    isActive: false,
+    isActive: mailerDisabled,
+    emailVerified: mailerDisabled,
     roles: [fetchedRole._id],
   });
 
@@ -72,15 +77,17 @@ async function postTeacher(teacher: IUser) {
         return createdContact;
       });
 
-      await User.updateOne(
-        { _id: newTeacher._id },
-        { $set: { invitationPendingSince: new Date() } },
-      );
-      void sendActivationInvitation(
-        newTeacher._id.toString(),
-        newTeacher.email,
-        fetchedRole,
-      );
+      if (!mailerDisabled) {
+        await User.updateOne(
+          { _id: newTeacher._id },
+          { $set: { invitationPendingSince: new Date() } },
+        );
+        void sendActivationInvitation(
+          newTeacher._id.toString(),
+          newTeacher.email,
+          fetchedRole,
+        );
+      }
 
       return {
         ...contact,

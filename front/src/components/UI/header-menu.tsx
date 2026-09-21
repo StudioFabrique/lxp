@@ -9,12 +9,14 @@ type HeaderMenuProps = {
   hideResumeCourseButton?: boolean;
   onClickResume?: () => void;
   isStudent?: boolean;
+  hasStarted?: boolean;
 };
 
 const HeaderMenu = ({
   hideResumeCourseButton,
   onClickResume,
   isStudent,
+  hasStarted,
 }: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
@@ -44,7 +46,7 @@ const HeaderMenu = ({
               <span className="w-5 h-5">
                 <PlayCircleIcon />
               </span>
-              <p className="normal-case">Reprendre</p>
+              <p className="normal-case">{hasStarted ? "Reprendre" : "Démarrer"}</p>
             </button>
           ) : null}
         </div>

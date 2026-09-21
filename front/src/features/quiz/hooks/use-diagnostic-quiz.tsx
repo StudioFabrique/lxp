@@ -31,7 +31,7 @@ export default function useDiagnosticQuiz(
   // d'exécution, servie par le serveur et mise en cache par `DemoProvider`.
   const { aiDisabled } = useDemoMode();
   const attemptTracking = useQuizAttemptTracking();
-  const { setForceHideChatbot, aiUnavailable, setAiUnavailable } =
+  const { setForceHideChatbot, setAiUnavailable } =
     useContext(ChatbotContext);
 
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -144,15 +144,6 @@ export default function useDiagnosticQuiz(
       return;
     }
 
-    // Si le serveur IA est déjà connu comme indisponible, on évite de
-    // relancer une génération vouée à l'échec et on laisse l'étudiant
-    // accéder au module.
-    if (aiUnavailable) {
-      setIsOpen(false);
-      onFinishInitialQuiz();
-      return;
-    }
-
     setQuizzes([]);
     setCurrentIndex(0);
     setScore(0);
@@ -254,7 +245,6 @@ export default function useDiagnosticQuiz(
     moduleInfo.description,
     attemptTracking,
     aiDisabled,
-    aiUnavailable,
     bypassDiagnostic,
   ]);
 
@@ -357,9 +347,9 @@ export default function useDiagnosticQuiz(
     const userIsAdmin = ability.can("update", "lesson");
 
     if (!hasStartedModule && !isFinished.current && !userIsAdmin) {
-      if (aiDisabled || aiUnavailable) {
-        // Si l'IA est désactivée ou indisponible, passe le diagnostic sans
-        // même afficher le bouton.
+      if (aiDisabled) {
+        // Si les fonctionnalités IA sont désactivées pour l'instance,
+        // le diagnostic est passé sans afficher le bouton.
         isFinished.current = true;
         onFinishInitialQuiz();
       } else {
@@ -376,7 +366,6 @@ export default function useDiagnosticQuiz(
     ability,
     onFinishInitialQuiz,
     aiDisabled,
-    aiUnavailable,
   ]);
 
   useEffect(() => {

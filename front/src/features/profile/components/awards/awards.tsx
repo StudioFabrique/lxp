@@ -3,8 +3,9 @@ import Loader from "../../../../components/loaders/Loader";
 import { profileApi } from "../../api/profile.api";
 import { profileKeys } from "../../api/profile.keys";
 import Skills from "./skills";
+import type Parcours from "../../../../utils/interfaces/parcours";
 
-const Awards = () => {
+const Awards = ({ parcours }: { parcours?: Parcours }) => {
   const {
     data: skills = [],
     isLoading,
@@ -16,6 +17,20 @@ const Awards = () => {
 
   if (isLoading) return <Loader />;
 
+  const moduleIds = new Set(parcours?.modules?.map((module) => module.id) ?? []);
+  const parcoursSkills = skills.flatMap((skill) => {
+    const modules = skill.modules?.filter((module) => moduleIds.has(module.id)) ?? [];
+    return modules.length
+      ? [{
+          ...skill,
+          modules,
+          completedModules: modules.filter((module) => module.isCompleted).length,
+          totalModules: modules.length,
+          isEarned: modules.every((module) => module.isCompleted),
+        }]
+      : [];
+  });
+
   return (
     <div className="flex flex-col gap-5">
       {isError ? (
@@ -23,7 +38,7 @@ const Awards = () => {
           Impossible de charger les badges de compétences.
         </p>
       ) : (
-        <Skills skillData={skills} />
+        <Skills skillData={parcoursSkills} />
       )}
     </div>
   );

@@ -11,8 +11,8 @@ describe("AiApiClient", () => {
   it("centralise l'URL, l'authentification et le format JSON", async () => {
     const fetchMock = jest
       .spyOn(globalThis, "fetch")
-      .mockResolvedValue(
-        new Response(JSON.stringify({ result: "ok" }), {
+      .mockImplementation(async (url) =>
+        new Response(JSON.stringify(url === "http://ai.test/health" ? { status: "ok" } : { result: "ok" }), {
           status: 200,
           headers: { "Content-Type": "application/json" },
         }),
@@ -27,6 +27,10 @@ describe("AiApiClient", () => {
     ).resolves.toEqual({ result: "ok" });
 
     expect(fetchMock).toHaveBeenCalledWith(
+      "http://ai.test/health",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
       "http://ai.test/quiz/random",
       expect.objectContaining({
         method: "POST",
@@ -39,7 +43,9 @@ describe("AiApiClient", () => {
   });
 
   it("conserve le statut et le payload d'une erreur du service IA", async () => {
-    jest.spyOn(globalThis, "fetch").mockResolvedValue(
+    jest.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
+    ).mockResolvedValueOnce(
       new Response(JSON.stringify({ error: "payload invalide" }), {
         status: 422,
         statusText: "Unprocessable Entity",
@@ -60,7 +66,9 @@ describe("AiApiClient", () => {
     // Une exception non gérée côté FastAPI répond « Internal Server Error » en
     // texte : l'appelant doit malgré tout recevoir le statut, pas une erreur
     // d'analyse JSON.
-    jest.spyOn(globalThis, "fetch").mockResolvedValue(
+    jest.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
+    ).mockResolvedValueOnce(
       new Response("Internal Server Error", {
         status: 500,
         statusText: "Internal Server Error",
@@ -83,5 +91,17 @@ describe("AiApiClient", () => {
     await expect(
       client.postJson("/quiz/random", { subject: "student-1", body: {} }),
     ).rejects.toBeInstanceOf(AiConfigurationError);
+  });
+
+  it("bloque la génération lorsque le service IA est indisponible", async () => {
+    const fetchMock = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ status: "unavailable" }), { status: 200 }),
+    );
+    const client = new AiApiClient("http://ai.test", "test-secret");
+
+    await expect(
+      client.postJson("/quiz/random", { subject: "student-1", body: {} }),
+    ).rejects.toMatchObject<Partial<AiApiError>>({ status: 503 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -116,6 +116,23 @@ configure_development_env() {
   echo "Configuration des services de développement"
   echo
   prompt_env_value "UNSPLASH_ACCESS_KEY" "Clé d'accès Unsplash" false "$file"
+  while true; do
+    read -r -p "Souhaitez-vous activer le mailer et obliger la vérification par mail des comptes utilisateurs ? [o/N] : " enable_mailer
+    case "$enable_mailer" in
+      o|O|oui|Oui|OUI|y|Y|yes|YES)
+        write_env_value "MAILER_DISABLED" "false" "$file"
+        break
+        ;;
+      ""|n|N|non|Non|NON|no|NO)
+        write_env_value "MAILER_DISABLED" "true" "$file"
+        echo "Mailer désactivé : les comptes sont activés sans vérification par email."
+        echo "Configuration enregistrée dans api/.env."
+        echo
+        return
+        ;;
+      *) echo "Répondez par oui ou non." ;;
+    esac
+  done
   prompt_env_value "MAILER_EMAIL" "Compte email SMTP" false "$file"
   prompt_env_value "MAILER_PASSWORD" "Mot de passe SMTP" true "$file"
   prompt_env_value "MAILER_SMTP" "Serveur SMTP" false "$file"

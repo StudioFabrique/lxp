@@ -5,7 +5,7 @@ import Loader from "../../../../components/loaders/Loader";
 import Parcours from "../../../../utils/interfaces/parcours";
 import JournalTree from "./journal-tree";
 
-const Journal = () => {
+const Journal = ({ parcoursId }: { parcoursId?: number }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [parcours, setParcours] = useState<Parcours[]>([]);
@@ -18,9 +18,14 @@ const Journal = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
+  const visibleParcours = useMemo(
+    () => parcours.filter((item) => item.id === parcoursId),
+    [parcours, parcoursId],
+  );
+
   const accomplishmentCount = useMemo(
     () =>
-      parcours.reduce(
+      visibleParcours.reduce(
         (total, item) =>
           total +
           (item.modules ?? []).reduce(
@@ -35,7 +40,7 @@ const Journal = () => {
           ),
         0,
       ),
-    [parcours],
+    [visibleParcours],
   );
 
   return (
@@ -59,8 +64,8 @@ const Journal = () => {
 
       {isLoading ? (
         <Loader />
-      ) : parcours.length > 0 ? (
-        <JournalTree parcoursList={parcours} />
+      ) : visibleParcours.length > 0 ? (
+        <JournalTree parcoursList={visibleParcours} />
       ) : (
         <div className="rounded-2xl border border-dashed border-base-300 bg-base-200/50 px-6 py-10 text-center">
           <p className="font-semibold">Votre historique est encore vide</p>

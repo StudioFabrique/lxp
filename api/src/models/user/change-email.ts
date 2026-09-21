@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.ts";
 import { sendEmailChangeConfirmation } from "../../services/mailer.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 import { regexMail } from "../../utils/constantes.ts";
 import BlackListedToken from "../../utils/interfaces/db/blacklisted-token.ts";
 import User from "../../utils/interfaces/db/user.ts";
@@ -65,6 +66,14 @@ export async function requestEmailChange(userId: string, value: string) {
       statusCode: 409,
       message: "Un autre utilisateur utilise déjà cette adresse email.",
     };
+  }
+
+  if (mailerDisabled) {
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { email, emailVerified: true }, $unset: { pendingEmail: 1 } },
+    );
+    return false;
   }
 
   const token = jwt.sign(

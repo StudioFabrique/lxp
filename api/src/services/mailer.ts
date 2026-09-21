@@ -2,6 +2,7 @@
 import { getTemplate } from "../helpers/get-mail-template.ts";
 import { badQuery, regexMail } from "../utils/constantes.ts";
 import nodemailer from "nodemailer";
+import { mailerDisabled } from "../config/mailer-disabled.ts";
 import { logger } from "../utils/logs/logger.ts";
 import { env } from "../config/env.ts";
 import {
@@ -180,6 +181,7 @@ export async function sendPasswordEmail(
   token: string,
   template: string,
 ) {
+  if (mailerDisabled) return;
   try {
     // Vérification du format de l'email
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
@@ -226,6 +228,7 @@ export async function sendPasswordEmail(
  * @param email - Adresse email du destinataire
  */
 export async function sendUpdatedUserEmail(email: string) {
+  if (mailerDisabled) return;
   try {
     // Vérification du format de l'email
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
@@ -275,6 +278,7 @@ async function sendAccountEmail(
   subject: string,
   themeMode?: "light" | "dark",
 ) {
+  if (mailerDisabled) return;
   if (!regexMail.test(email)) {
     throw { statusCode: 400, message: badQuery };
   }
@@ -352,6 +356,7 @@ export async function sendContentAvailabilityEmail(input: {
   parcours: string[];
   messageId: string;
 }) {
+  if (mailerDisabled) return;
   if (!regexMail.test(input.email)) throw { statusCode: 400, message: badQuery };
   const destination =
     env.ENVIRONMENT === "development" ? env.MAILER_DEV_RECIPIENT : input.email;

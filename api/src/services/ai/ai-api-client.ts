@@ -4,6 +4,23 @@ import { env } from "../../config/env.ts";
 
 const DEFAULT_AI_API_URL = "http://localhost:8000";
 
+export async function assertAiHealthy(
+  baseUrl = env.DOCKER_IA_API_BASE_URL || DEFAULT_AI_API_URL,
+): Promise<void> {
+  try {
+    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/health`, {
+      signal: AbortSignal.timeout(3_000),
+    });
+    if (response.ok) {
+      const health = (await response.json()) as { status?: string };
+      if (health?.status === "ok") return;
+    }
+  } catch {
+    // Les erreurs réseau, délais dépassés et réponses invalides ont le même effet.
+  }
+  throw new AiApiError(503, null, "Le service IA est indisponible.");
+}
+
 export class AiConfigurationError extends Error {
   constructor(message: string) {
     super(message);
@@ -108,6 +125,7 @@ export class AiApiClient {
         "Le secret JWT pour le service IA n'est pas configuré.",
       );
     }
+    await assertAiHealthy(this.baseUrl);
 
     const token = jwt.sign(
       {

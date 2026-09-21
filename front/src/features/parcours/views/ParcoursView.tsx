@@ -17,6 +17,7 @@ import ProgressModulesStats from "../components/display/progress-stats";
 import HeaderMenu from "../../../components/UI/header-menu";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import {
+  ChartNoAxesCombined,
   Download,
   Edit,
   GraduationCap,
@@ -50,6 +51,11 @@ const ParcoursView = () => {
   const canEditParcours =
     ability.can("update", "parcours") && parcours.canManage !== false;
   const isStudent = !canEditParcours;
+  const hasStarted = modules?.some((module) =>
+    module.courses.some((course) =>
+      course.lessons.some((lesson) => Boolean(lesson.lessonsRead?.length)),
+    ),
+  );
   const hasDescription = Boolean(parcoursInfos?.description?.trim());
   const hasTags = (parcoursInfos?.tags.length ?? 0) > 0;
   const hasContacts = (parcoursInfos?.contacts.length ?? 0) > 0;
@@ -158,6 +164,14 @@ const ParcoursView = () => {
               </PermissionGuard>
             </RoleRankGuard>
           </div>
+        ) : currentRoute[0] === "student" ? (
+          <Link
+            to={`/student/mon-avancement?parcoursId=${id}`}
+            className="btn btn-outline btn-primary"
+          >
+            <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+            Mon avancement
+          </Link>
         ) : null}
       </Header>
       {isLoading ? (
@@ -179,6 +193,7 @@ const ParcoursView = () => {
                     onClickResume={handleClickResume}
                     hideResumeCourseButton={!(modules?.length > 0)}
                     isStudent={isStudent}
+                    hasStarted={hasStarted}
                   />
                 </PermissionGuard>,
               ]}

@@ -58,6 +58,7 @@ const schema = z
     MAILER_DEV_RECIPIENT: optionalString,
     MAILER_SMTP_PORT: optionalPort,
     MAILER_FROM: optionalString,
+    MAILER_DISABLED: booleanString,
     UNSPLASH_ACCESS_KEY: optionalString,
 
     DOCKER_IA_API_BASE_URL: optionalUrl,

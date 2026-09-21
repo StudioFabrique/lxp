@@ -9,11 +9,11 @@ import ImageHeader from "../../../../src/components/image-header/image-header";
 import FadeWrapper from "../../../components/wrappers/FadeWrapper";
 
 const ResumeParcours = () => {
-  const { data: parcours } = useQuery({
+  const { data: parcoursList } = useQuery({
     queryKey: ["parcours-as-student"],
     queryFn: dashboardStudentApi.queries.getParcoursAsStudent,
-    select: (data) => data[0],
   });
+  const parcours = parcoursList?.[0];
 
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -28,6 +28,16 @@ const ResumeParcours = () => {
           subTitle={parcours?.formation.title ?? ""}
           subTitleIcon={<GraduationCap className="stroke-white w-5" />}
           hidePublished
+          titlePosition="top"
+          bottomAction={parcours ? (
+            <Link
+              to={`/${currentRoute[0]}/parcours/view/${parcours.id}`}
+              className="z-10 btn btn-primary text-white"
+            >
+              <PlayCircleIcon />
+              <p>Accéder au parcours</p>
+            </Link>
+          ) : undefined}
           children={[
             <div
               key="title-and-badges"
@@ -35,7 +45,7 @@ const ResumeParcours = () => {
             />,
             <div key="link" className="p-5 w-full flex justify-end">
               {parcours ? (
-                <div className="flex flex-col h-[17.5em] justify-between gap-5">
+                parcoursList && parcoursList.length > 1 && (
                   <Link
                     to={`/${currentRoute[0]}/parcours`}
                     className="z-10 btn btn-sm"
@@ -43,18 +53,7 @@ const ResumeParcours = () => {
                     <List />
                     <p>Accéder à la liste des autres parcours</p>
                   </Link>
-                  <Link
-                    to={
-                      parcours
-                        ? `/${currentRoute[0]}/parcours/view/${parcours.id}`
-                        : `/${currentRoute[0]}/parcours`
-                    }
-                    className="z-10 btn btn-primary text-white"
-                  >
-                    <PlayCircleIcon />
-                    <p>Accéder au parcours</p>
-                  </Link>
-                </div>
+                )
               ) : (
                 <FadeWrapper>
                   <p className="text-white text-4xl text-center opacity-95 select-none">

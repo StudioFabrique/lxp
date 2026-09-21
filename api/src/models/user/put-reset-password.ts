@@ -4,8 +4,12 @@ import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import { env } from "../../config/env.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 export default async function putResetPassword(userId: string) {
+  if (mailerDisabled) {
+    throw { statusCode: 400, message: "Le mailer est désactivé en développement." };
+  }
   const existingUser = await User.findOne({
     _id: new mongoose.Types.ObjectId(userId),
   }).populate<{ roles: IRole[] }>("roles");

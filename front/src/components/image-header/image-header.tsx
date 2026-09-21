@@ -2,6 +2,7 @@ import { CornerDownRight } from "lucide-react";
 import { ReactNode } from "react";
 import { Link } from "react-router";
 import { bgImageGradient } from "../../utils/helpers/color-helpers";
+import { cn } from "../../utils/cn";
 
 interface ImageHeaderProps {
   imageUrl: string;
@@ -13,6 +14,8 @@ interface ImageHeaderProps {
   isPublished?: boolean;
   hidePublished?: boolean;
   reserveActionSpace?: boolean;
+  bottomAction?: ReactNode;
+  titlePosition?: "top" | "bottom";
   children?: ReactNode[];
 }
 
@@ -33,11 +36,19 @@ const ImageHeader = (props: ImageHeaderProps) => {
         <div className="rounded-xl absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
         {props.children ? props.children[1] : null}
         <div
-          className={`absolute bottom-2 left-2 z-5 flex w-full min-w-0 items-end justify-between gap-x-2 px-4 py-5 font-bold ${
-            props.reserveActionSpace ? "pr-20 sm:pr-48" : ""
-          }`}
+          className={cn(
+            "absolute bottom-2 right-2 left-2 z-5 flex min-w-0 items-end justify-between gap-x-2 px-4 py-5 font-bold",
+            props.bottomAction && "flex-col gap-y-3",
+            props.titlePosition === "top" && "top-2",
+            props.reserveActionSpace && "pr-20 sm:pr-48",
+          )}
         >
-          <span className="flex min-w-0 flex-1 gap-x-2 overflow-hidden">
+          <span
+            className={cn(
+              "flex min-w-0 flex-1 gap-x-2 overflow-hidden",
+              props.bottomAction && "w-full flex-none",
+            )}
+          >
             {props.children ? props.children[0] : null}
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               {props.subTitle ? (
@@ -71,6 +82,9 @@ const ImageHeader = (props: ImageHeaderProps) => {
               ) : null}
             </div>
           </span>
+          {props.bottomAction ? (
+            <div className="flex w-full justify-end">{props.bottomAction}</div>
+          ) : null}
         </div>
       </div>
     </div>

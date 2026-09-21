@@ -2,6 +2,7 @@ import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
 import User from "../../utils/interfaces/db/user.ts";
 import type { IRole } from "../../utils/interfaces/db/role.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 /**
  * Send activation invitations to multiple users
@@ -16,6 +17,7 @@ import type { IRole } from "../../utils/interfaces/db/role.ts";
  * @throws Error if any users are not found or if email sending fails
  */
 export default async function postManyInvitations(userIds: string[]) {
+  if (mailerDisabled) return 0;
   // Retrieve all users by the provided IDs and populate their roles
   const users = await User.find({
     _id: {

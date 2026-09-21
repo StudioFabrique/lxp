@@ -7,8 +7,10 @@ import {
   getActivationEmailRetryAfterSeconds,
 } from "../../utils/services/auth/activation-email-cooldown.ts";
 import { env } from "../../config/env.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
 
 export default async function resendActivationEmail(email: string) {
+  if (mailerDisabled) return;
   const existingUser = await User.findOne({
     email: email.toLowerCase(),
   }).populate<{ roles: IRole[] }>("roles");

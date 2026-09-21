@@ -5,6 +5,8 @@ import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { activationToken } from "../../helpers/activation-token.ts";
 import { sendPasswordEmail } from "../../services/mailer.ts";
+import { mailerDisabled } from "../../config/mailer-disabled.ts";
+import { devAccountPasswordHash } from "../../config/dev-account-password.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import {
   exactInsensitive,
@@ -24,6 +26,7 @@ export async function sendActivationInvitation(
   email: string,
   role: IRole,
 ) {
+  if (mailerDisabled) return;
   try {
     const token = activationToken(userId, role, "7d");
     await sendPasswordEmail(email, token, "activation");
@@ -102,8 +105,11 @@ export default async function createUser(
       postCode: user.postCode?.toLowerCase(),
       birthDate: user.birthDate,
       phoneNumber: user.phoneNumber?.toLowerCase(),
-      password: await hash(randomUUID() + "@Sn99", 10),
-      isActive: false,
+      password:
+        (await devAccountPasswordHash()) ??
+        (await hash(randomUUID() + "@Sn99", 10)),
+      isActive: mailerDisabled,
+      emailVerified: mailerDisabled,
       avatar: user.avatar,
       roles: [role],
     });
@@ -141,7 +147,7 @@ export default async function createUser(
     // l'appel, la remise du message n'en est qu'une conséquence : elle se
     // poursuit en arrière-plan et `invitationSent` reflète son issue dans la
     // liste des utilisateurs, où figure aussi le renvoi manuel.
-    const invitationPending = Boolean(user.invitationSent);
+    const invitationPending = !mailerDisabled && Boolean(user.invitationSent);
 
     if (invitationPending) {
       // Marqué avant le départ : la liste peut être rechargée dans la seconde

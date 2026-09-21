@@ -1,12 +1,16 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { env } from "../config/env.ts";
+import { mailerDisabled } from "../config/mailer-disabled.ts";
 import { getSetupStatus } from "../models/auth/setup.ts";
 import { sendRootAccountInvitation } from "../services/mailer.ts";
 import { regexMail } from "../utils/constantes.ts";
 import { normalizeEmail } from "../utils/unique-fields.ts";
 
 async function main() {
+  if (mailerDisabled) {
+    throw new Error("Le mailer est désactivé en développement.");
+  }
   const email = normalizeEmail(process.argv[2] ?? "");
   if (!regexMail.test(email)) {
     throw new Error("Une adresse email valide est requise.");
