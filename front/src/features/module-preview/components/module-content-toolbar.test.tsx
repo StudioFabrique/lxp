@@ -91,4 +91,22 @@ describe("ModuleContentToolbar", () => {
 
     expect(onToggleCourseReordering).toHaveBeenCalledOnce();
   });
+
+  it("conserve l'icône de réorganisation dans l'état actif", () => {
+    const container = document.createElement("div");
+    renderToolbar(container, { isReorderingCourses: true });
+
+    const button = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Terminer la réorganisation"]',
+    );
+
+    expect(button).not.toBeNull();
+    expect(button?.classList.contains("btn-primary")).toBe(true);
+    expect(
+      button
+        ?.querySelector("svg")
+        ?.classList.contains("lucide-arrow-down-up"),
+    ).toBe(true);
+    expect(button?.querySelector(".lucide-check")).toBeNull();
+  });
 });

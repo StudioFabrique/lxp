@@ -2,7 +2,6 @@ import type React from "react";
 import {
   ArrowDownUp,
   CalendarDays,
-  Check,
   ListChevronsUpDown,
   LoaderCircle,
   PanelLeftClose,
@@ -80,11 +79,7 @@ export default function ModuleContentToolbar({
             data-tip={isReorderingCourses ? "Terminer" : "Réorganiser les cours"}
             onClick={onToggleCourseReordering}
           >
-            {isReorderingCourses ? (
-              <Check className="size-5" />
-            ) : (
-              <ArrowDownUp className="size-5" />
-            )}
+            <ArrowDownUp className="size-5" />
           </button>
         </PermissionGuard>
       )}

@@ -249,6 +249,7 @@ const SidebarCoursesList = ({
               openEditOnMount={!calendarMode && course.id === editCourseId}
               editLessonId={calendarMode ? undefined : editLessonId}
               isOpen={!calendarAdding && !isReorderingCourses && course.id === openCourseId}
+              hideCreateLessonButton={isReorderingCourses}
               lessonIdToScroll={lessonIdToScroll}
               onLessonScrolled={onLessonScrolled}
               onToggle={() => {

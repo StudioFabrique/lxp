@@ -52,6 +52,7 @@ type CourseItemProps = {
   openEditOnMount?: boolean;
   editLessonId?: number;
   isOpen: boolean;
+  hideCreateLessonButton?: boolean;
   lessonIdToScroll?: number;
   onLessonScrolled?: (lessonId: number) => void;
   onToggle: () => void;
@@ -93,6 +94,7 @@ const CourseItem = ({
   openEditOnMount = false,
   editLessonId,
   isOpen: isCourseOpen,
+  hideCreateLessonButton = false,
   lessonIdToScroll,
   onLessonScrolled,
   onToggle,
@@ -324,20 +326,22 @@ const CourseItem = ({
               )}
               {canEditCourse && (
                 <div className="flex gap-1 items-center">
-                  <PermissionGuard action="write" object="course">
-                    <button
-                      data-onboarding="lesson-create"
-                      className="btn btn-success btn-xs gap-1 tooltip"
-                      data-tip="Créer une leçon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        emitOnboardingEvent({ type: "lesson_form_opened" });
-                        setIsCreatingLesson(true);
-                      }}
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  </PermissionGuard>
+                  {!hideCreateLessonButton && (
+                    <PermissionGuard action="write" object="course">
+                      <button
+                        data-onboarding="lesson-create"
+                        className="btn btn-success btn-xs gap-1 tooltip"
+                        data-tip="Créer une leçon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          emitOnboardingEvent({ type: "lesson_form_opened" });
+                          setIsCreatingLesson(true);
+                        }}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </PermissionGuard>
+                  )}
 
                   <PermissionGuard action="update" object="course">
                     <CourseActions
