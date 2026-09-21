@@ -37,7 +37,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                   </div>
                   <Link
                     to={`/${currentRoute[0]}/parcours/module/${item.lesson.course.module.id}`}
-                    state={{ lessonId: item.lesson.id }}
+                    state={{
+                      lessonId: item.lesson.id,
+                      activityId: item.activityId,
+                    }}
                     className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     <span className="flex justify-between w-full">

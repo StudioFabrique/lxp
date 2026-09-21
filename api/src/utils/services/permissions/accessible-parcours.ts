@@ -141,7 +141,12 @@ export async function isLearnerContentAvailable(
               and(
                 course.isPublished.eq(true),
                 course.visibility.eq(true),
-                course.lessons.some((lesson) => lesson.visibility.eq(true)),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
+                ),
               ),
             ),
           ),
@@ -161,7 +166,12 @@ export async function isLearnerContentAvailable(
             and(
               course.isPublished.eq(true),
               course.visibility.eq(true),
-              course.lessons.some((lesson) => lesson.visibility.eq(true)),
+              course.lessons.some((lesson) =>
+                and(
+                  lesson.visibility.eq(true),
+                  lesson.activities.some((activity) => activity.id.gt(0)),
+                ),
+              ),
             ),
           ),
         ),
@@ -176,7 +186,10 @@ export async function isLearnerContentAvailable(
           row.isPublished.eq(true),
           row.visibility.eq(true),
           row.lessons.some((lesson) =>
-            lesson.visibility.eq(true),
+            and(
+              lesson.visibility.eq(true),
+              lesson.activities.some((activity) => activity.id.gt(0)),
+            ),
           ),
           row.module.some((module) =>
             module.parcours.some((parcours) =>
@@ -193,6 +206,7 @@ export async function isLearnerContentAvailable(
         and(
           row.id.eq(contentId),
           row.visibility.eq(true),
+          row.activities.some((activity) => activity.id.gt(0)),
           row.course.some((course) =>
             and(
               course.isPublished.eq(true),

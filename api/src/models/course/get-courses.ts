@@ -20,7 +20,7 @@ async function getCourses(scope: AccessScope = null) {
     )
     .include("lessons", (related56) =>
       related56
-        .select("id", "title", "order")
+        .select("id", "title", "order", "visibility")
         .orderBy((row) => row.order.asc()),
     )
     .all();

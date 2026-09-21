@@ -67,7 +67,10 @@ async function getParcoursById(
                     course.isPublished.eq(true),
                     course.visibility.eq(true),
                     course.lessons.some((lesson) =>
-                      lesson.visibility.eq(true),
+                      and(
+                        lesson.visibility.eq(true),
+                        lesson.activities.some((activity) => activity.id.gt(0)),
+                      ),
                     ),
                   ),
                 )
@@ -95,7 +98,16 @@ async function getParcoursById(
           related227
             .where((row) =>
               scope?.kind === "learner"
-                ? and(row.isPublished.eq(true), row.visibility.eq(true))
+                ? and(
+                    row.isPublished.eq(true),
+                    row.visibility.eq(true),
+                    row.lessons.some((lesson) =>
+                      and(
+                        lesson.visibility.eq(true),
+                        lesson.activities.some((activity) => activity.id.gt(0)),
+                      ),
+                    ),
+                  )
                 : all(),
             )
             .include("assignment", (related228) =>
@@ -111,7 +123,10 @@ async function getParcoursById(
               related230
                 .where((row) =>
                   scope?.kind === "learner"
-                    ? row.visibility.eq(true)
+                    ? and(
+                        row.visibility.eq(true),
+                        row.activities.some((activity) => activity.id.gt(0)),
+                      )
                     : all(),
                 )
                 .include("lessonsRead", (related231) =>
@@ -119,7 +134,7 @@ async function getParcoursById(
                     .where((row) =>
                       row.student.some((student) => student.idMdb.eq(userId)),
                     )
-                    .select("id", "finishedAt"),
+                    .select("id", "lastOpenedAt", "finishedAt"),
                 )
                 .orderBy((row) => row.order.asc()),
             )

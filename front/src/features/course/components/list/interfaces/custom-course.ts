@@ -12,5 +12,6 @@ export default interface CustomCourse {
     id: number;
     title: string;
     order: number;
+    visibility: boolean;
   }>;
 }

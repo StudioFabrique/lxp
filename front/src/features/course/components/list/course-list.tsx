@@ -50,6 +50,9 @@ export default function CourseList({
     courseId: number;
     type: "publish" | "visibility";
   } | null>(null);
+  const [pendingLessonVisibilityId, setPendingLessonVisibilityId] = useState<
+    number | null
+  >(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedParcours, setSelectedParcours] = useState<string | null>(null);
   const parcours = useMemo(
@@ -141,6 +144,33 @@ export default function CourseList({
       );
     } finally {
       setPendingCourseAction(null);
+    }
+  };
+
+  const handleToggleLessonVisibility = async (
+    lesson: CustomCourse["lessons"][number],
+  ) => {
+    setPendingLessonVisibilityId(lesson.id);
+    try {
+      await courseApi.mutations.setLessonVisibility(
+        lesson.id,
+        !lesson.visibility,
+      );
+      toast.success(
+        lesson.visibility
+          ? "La leçon est maintenant invisible."
+          : "La leçon est maintenant visible.",
+      );
+      await onRefreshCourses();
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          "La visibilité de la leçon n'a pas pu être modifiée.",
+        ),
+      );
+    } finally {
+      setPendingLessonVisibilityId(null);
     }
   };
 
@@ -283,6 +313,9 @@ export default function CourseList({
                 id: lesson.id,
                 title: lesson.title,
                 description: `Leçon ${lesson.order + 1}`,
+                titleAccessory: !lesson.visibility ? (
+                  <InvisibleIndicator label="Leçon invisible" />
+                ) : null,
                 icon: <BookOpen strokeWidth="1.5" />,
                 to: `/admin/parcours/module/${course.moduleId}`,
                 state: { lessonId: lesson.id },
@@ -296,6 +329,25 @@ export default function CourseList({
                         icon: <SquareArrowRightEnter />,
                         to: `/admin/parcours/module/${course.moduleId}`,
                         state: { lessonId: lesson.id },
+                      },
+                      {
+                        label: lesson.visibility
+                          ? "Rendre invisible"
+                          : "Rendre visible",
+                        icon:
+                          pendingLessonVisibilityId === lesson.id ? (
+                            <LoaderCircle className="animate-spin" />
+                          ) : lesson.visibility ? (
+                            <EyeOff />
+                          ) : (
+                            <Eye />
+                          ),
+                        onSelect: () => {
+                          if (pendingLessonVisibilityId !== lesson.id) {
+                            void handleToggleLessonVisibility(lesson);
+                          }
+                        },
+                        permission: { action: "update", object: "lesson" },
                       },
                       {
                         label: "Modifier la leçon",

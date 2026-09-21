@@ -7,7 +7,8 @@ import { loadSkillAchievements } from "../../helpers/skill-achievement-query.ts"
 
 /**
  * Get the list of last read lessons by a student and not finished.
- * If none started, return the first lesson of the first course in parcours.
+ * If none is currently in progress, return an empty list so the dashboard can
+ * display the parcours card instead.
  * @param userIdMdb Student ID
  * @param max Max number of lessons to retrieve
  * @returns
@@ -19,23 +20,28 @@ export default async function getLastLessonsRead(
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
   const groupIds = groupsWhereStudentIs.map((group) => group.id);
 
-  if (groupIds.length === 0) return null;
+  if (groupIds.length === 0) return [];
 
   // Fetch last opened, unfinished lessons
   const lessons = await prisma.orm.public.LessonRead.where((row) =>
     and(
       row.student.some((student) => student.idMdb.eq(userIdMdb)),
       row.lesson.some((lesson) =>
-        lesson.course.some((course) =>
-          and(
-            course.isPublished.eq(true),
-            course.visibility.eq(true),
-            course.module.some((module) =>
-              module.parcours.some((parcours) =>
-                and(
-                  parcours.isPublished.eq(true),
-                  parcours.groups.some((groups) =>
-                    groups.group.some((group) => group.idMdb.in(groupIds)),
+        and(
+          lesson.visibility.eq(true),
+          lesson.activities.some((activity) => activity.id.gt(0)),
+          lesson.course.some((course) =>
+            and(
+              course.isPublished.eq(true),
+              course.visibility.eq(true),
+              course.module.some((module) =>
+                module.parcours.some((parcours) =>
+                  and(
+                    parcours.isPublished.eq(true),
+                    parcours.visibility.eq(true),
+                    parcours.groups.some((groups) =>
+                      groups.group.some((group) => group.idMdb.in(groupIds)),
+                    ),
                   ),
                 ),
               ),
@@ -62,6 +68,12 @@ export default async function getLastLessonsRead(
             )
             .include("lessons", (related108) =>
               related108
+                .where((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
+                )
                 .select("id")
                 .include("lessonsRead", (related109) =>
                   related109
@@ -88,78 +100,37 @@ export default async function getLastLessonsRead(
     .limit(max ?? 4)
     .all();
 
-  // If no lessons started, find the first lesson of the first course in parcours
-  if (!lessons.length) {
-    const firstLesson = await prisma.orm.public.Lesson.where((row) =>
-      and(
-        row.lessonsRead.none((lessonsRead) =>
-          lessonsRead.student.some((student) => student.idMdb.eq(userIdMdb)),
+  // Sans leçon en cours, le dashboard affiche la carte du parcours. Il ne doit
+  // pas transformer arbitrairement une leçon jamais ouverte en reprise.
+  if (!lessons.length) return [];
+
+  // Récupère la dernière activité ouverte dans chacune des leçons afin que la
+  // reprise ramène l'apprenant exactement où il s'est arrêté.
+  const lessonIds = lessons.flatMap(({ lesson }) =>
+    lesson?.id ? [lesson.id] : [],
+  );
+  const activityReads = lessonIds.length
+    ? await prisma.orm.public.ActivityRead.where((row) =>
+        and(
+          row.student.some((student) => student.idMdb.eq(userIdMdb)),
+          row.activity.some((activity) => activity.lessonId.in(lessonIds)),
         ),
-        row.course.some((course) =>
-          and(
-            course.isPublished.eq(true),
-            course.visibility.eq(true),
-            course.module.some((module) =>
-              module.parcours.some((parcours) =>
-                and(
-                  parcours.isPublished.eq(true),
-                  parcours.groups.some((groups) =>
-                    groups.group.some((group) => group.idMdb.in(groupIds)),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    )
-      .include("course", (related112) =>
-        related112
-          .select("id", "order", "title")
-          .include("module", (related113) =>
-            related113
-              .select("id", "title")
-              .include("parcours", (related114) => related114.select("id"))
-              .include("bonusSkills", (related115) =>
-                related115.include("bonusSkill", (related116) => related116),
-              ),
-          ),
       )
-      .orderBy((row) => row.order.asc())
-      .first();
-
-    if (!firstLesson) return null;
-    const skillAchievements = await loadSkillAchievements(userIdMdb, {
-      skillIds: firstLesson.course!.module!.bonusSkills.map(
-        ({ bonusSkillId }) => bonusSkillId,
-      ),
-    });
-
-    const lessonReformatted = {
-      parcoursId: firstLesson.course!.module!.parcours!.id,
-      lesson: {
-        id: firstLesson.id,
-        title: firstLesson.title,
-        order: firstLesson.order,
-        course: {
-          ...firstLesson.course,
-          bonusSkills: firstLesson.course!.module!.bonusSkills.map(
-            ({ bonusSkillId }) => skillAchievements.get(bonusSkillId)!,
-          ),
-          module: {
-            ...firstLesson.course!.module,
-            title: firstLesson.course!.module!.title,
-          },
-          // Aucune leçon n'a encore été ouverte dans ce parcours.
-          stats: { progress: 0 },
-        },
-      },
-    };
-
-    return [lessonReformatted];
+        .select("activityId", "lastOpenedAt")
+        .include("activity", (activity) => activity.select("lessonId"))
+        .orderBy((row) => row.lastOpenedAt.desc())
+        .all()
+    : [];
+  const latestActivityByLesson = new Map<number, number>();
+  for (const read of activityReads) {
+    const lessonId = read.activity?.lessonId;
+    if (lessonId && !latestActivityByLesson.has(lessonId)) {
+      latestActivityByLesson.set(lessonId, read.activityId);
+    }
   }
 
-  // Student has started lessons, return sorted list by course order then lesson order
+  // L'ordre par dernière ouverture est conservé : le premier élément devient
+  // la reprise principale du tableau de bord.
   const skillAchievements = await loadSkillAchievements(userIdMdb, {
     skillIds: lessons.flatMap(
       ({ lesson }) =>
@@ -178,6 +149,7 @@ export default async function getLastLessonsRead(
 
       return {
         ...lessonRead,
+        activityId: latestActivityByLesson.get(lesson.id),
         lesson: {
           ...lesson,
           order: lesson.order,
@@ -192,12 +164,6 @@ export default async function getLastLessonsRead(
         },
         parcoursId: course.module!.parcours!.id,
       };
-    })
-    .sort((a, b) => {
-      if (a.lesson.course.order === b.lesson.course.order) {
-        return a.lesson.order - b.lesson.order;
-      }
-      return a.lesson.course.order - b.lesson.course.order;
     });
 
   return lessonsReformattedWithSkillBadge;

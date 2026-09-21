@@ -272,6 +272,16 @@ const mutations = {
     return res.data;
   },
 
+  setLessonVisibility: async (
+    lessonId: number,
+    visibility: boolean,
+  ): Promise<Lesson> => {
+    const res = await apiClient.put(`/lesson/visibility/${lessonId}`, {
+      visibility,
+    });
+    return res.data;
+  },
+
   duplicateLessons: async (
     courseId: string,
     lessonIds: number[],

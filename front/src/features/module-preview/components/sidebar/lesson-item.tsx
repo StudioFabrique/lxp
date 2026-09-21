@@ -1,5 +1,14 @@
 import { formatTitle } from "../../../../utils/helpers/text-helpers";
-import { Check, Trash2, Edit3, EllipsisIcon, ChevronDown, ChevronRight, Eye, EyeOff } from "lucide-react";
+import {
+  Check,
+  Trash2,
+  Edit3,
+  EllipsisIcon,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { cn } from "../../../../utils/cn";
 import Lesson from "../../../../../src/utils/interfaces/lesson";
 import PermissionGuard from "../../../../components/guards/PermissionGuard";
@@ -200,8 +209,12 @@ const LessonItem = ({
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
           {calendarMode && (isLessonSelected ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />)}
           {!calendarMode && canEditLesson && !isVisible ? (
-            <span className="tooltip" data-tip="Leçon invisible">
-              <EyeOff className="size-4" />
+            <span
+              className="tooltip opacity-65"
+              data-tip="Leçon invisible"
+              aria-label="Leçon invisible"
+            >
+              <EyeOff className="size-3.5" />
             </span>
           ) : null}
           <p className="max-h-14 flex-1 truncate text-sm">{formatTitle(lesson.title)}</p>
@@ -215,6 +228,7 @@ const LessonItem = ({
                     type="button"
                     className="btn btn-sm px-2 btn-ghost text-primary-content w-fit hover:text-primary"
                     onClick={handleDropdownToggle}
+                    aria-label={`Actions pour ${formatTitle(lesson.title)}`}
                   >
                     <EllipsisIcon className="w-4 h-4" />
                   </button>
@@ -236,7 +250,10 @@ const LessonItem = ({
                             onClick={async (e) => {
                               e.stopPropagation();
                               try {
-                                await modulePreviewApi.mutations.setLessonVisibility(lesson.id!, !isVisible);
+                                await modulePreviewApi.mutations.setLessonVisibility(
+                                  lesson.id!,
+                                  !isVisible,
+                                );
                                 setIsVisible(!isVisible);
                                 setIsOpen(false);
                               } catch {
@@ -244,8 +261,16 @@ const LessonItem = ({
                               }
                             }}
                           >
-                            {isVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            <span>{isVisible ? "Rendre invisible" : "Rendre visible"}</span>
+                            {isVisible ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )}
+                            <span>
+                              {isVisible
+                                ? "Rendre invisible"
+                                : "Rendre visible"}
+                            </span>
                           </button>
                         </li>
                         <li>

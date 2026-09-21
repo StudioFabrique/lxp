@@ -59,7 +59,12 @@ export async function resolveAvailableFormations(
           and(
             course.isPublished.eq(true),
             course.visibility.eq(true),
-            course.lessons.some((lesson) => lesson.visibility.eq(true)),
+            course.lessons.some((lesson) =>
+              and(
+                lesson.visibility.eq(true),
+                lesson.activities.some((activity) => activity.id.gt(0)),
+              ),
+            ),
           ),
         ),
       ),
@@ -75,7 +80,18 @@ export async function resolveAvailableFormations(
         .select("title")
         .include("courses", (courses) =>
           courses
-            .where({ isPublished: true, visibility: true })
+            .where((course) =>
+              and(
+                course.isPublished.eq(true),
+                course.visibility.eq(true),
+                course.lessons.some((lesson) =>
+                  and(
+                    lesson.visibility.eq(true),
+                    lesson.activities.some((activity) => activity.id.gt(0)),
+                  ),
+                ),
+              ),
+            )
             .select("title")
             .orderBy((course) => course.order.asc()),
         ),

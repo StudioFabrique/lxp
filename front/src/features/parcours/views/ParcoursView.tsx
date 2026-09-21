@@ -17,13 +17,11 @@ import ProgressModulesStats from "../components/display/progress-stats";
 import HeaderMenu from "../../../components/UI/header-menu";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import {
-  Bell,
   Download,
   Edit,
   GraduationCap,
   LoaderCircle,
   RocketIcon,
-  Search,
 } from "lucide-react";
 import useParcoursView from "../hooks/useParcoursView";
 import Header from "../../../../src/components/headers/Header";
@@ -92,17 +90,32 @@ const ParcoursView = () => {
   });
 
   const handleClickResume = () => {
-    const resumeModuleId =
-      modules?.find((module) =>
-        module.courses?.some((course) =>
-          course.lessons?.some(
-            (lesson) =>
-              !lesson.lessonsRead || !lesson.lessonsRead[0]?.finishedAt,
-          ),
+    const unfinishedContents = modules
+      ?.flatMap((module) =>
+        module.courses.flatMap((course) =>
+          course.lessons.map((lesson) => ({ moduleId: module.id, lesson })),
         ),
-      )?.id || modules?.[0]?.id;
+      )
+      .filter(
+        ({ lesson }) =>
+          !lesson.lessonsRead?.some((lessonRead) => lessonRead.finishedAt),
+      );
+    const resumeContent = unfinishedContents
+      ?.filter(({ lesson }) => lesson.lessonsRead?.length)
+      .sort((first, second) => {
+        const firstOpenedAt = first.lesson.lessonsRead?.[0]?.lastOpenedAt;
+        const secondOpenedAt = second.lesson.lessonsRead?.[0]?.lastOpenedAt;
+        return (
+          new Date(secondOpenedAt ?? 0).getTime() -
+          new Date(firstOpenedAt ?? 0).getTime()
+        );
+      })[0] ?? unfinishedContents?.[0];
 
-    navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
+    if (!resumeContent?.moduleId || !resumeContent.lesson.id) return;
+
+    navigate(`/${currentRoute[0]}/parcours/module/${resumeContent.moduleId}`, {
+      state: { lessonId: resumeContent.lesson.id },
+    });
   };
 
   useEffect(() => {
@@ -118,45 +131,34 @@ const ParcoursView = () => {
         title="Aperçu du parcours"
         description="Prévisualiser les modules qui composent ce parcours"
       >
-        <div className="flex gap-4 w-full">
-          {canEditParcours ? (
-            <>
-              <Link
-                to={`/admin/parcours/edit/${id}`}
-                className="btn btn-outline btn-primary"
-              >
-                <Edit />
-                Modifier le parcours
-              </Link>
-              <RoleRankGuard ranks={[0, 1]}>
-                <PermissionGuard action="read" object="parcours">
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-primary"
-                    disabled={exportParcoursMutation.isPending}
-                    onClick={() => exportParcoursMutation.mutate()}
-                  >
-                    {exportParcoursMutation.isPending ? (
-                      <LoaderCircle className="animate-spin" />
-                    ) : (
-                      <Download />
-                    )}
-                    Exporter (.zip)
-                  </button>
-                </PermissionGuard>
-              </RoleRankGuard>
-            </>
-          ) : (
-            <>
-              <button className="btn btn-outline btn-primary">
-                <Search />
-              </button>
-              <button className="btn btn-outline btn-primary">
-                <Bell />
-              </button>
-            </>
-          )}
-        </div>
+        {canEditParcours ? (
+          <div className="flex gap-4 w-full">
+            <Link
+              to={`/admin/parcours/edit/${id}`}
+              className="btn btn-outline btn-primary"
+            >
+              <Edit />
+              Modifier le parcours
+            </Link>
+            <RoleRankGuard ranks={[0, 1]}>
+              <PermissionGuard action="read" object="parcours">
+                <button
+                  type="button"
+                  className="btn btn-outline btn-primary"
+                  disabled={exportParcoursMutation.isPending}
+                  onClick={() => exportParcoursMutation.mutate()}
+                >
+                  {exportParcoursMutation.isPending ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    <Download />
+                  )}
+                  Exporter (.zip)
+                </button>
+              </PermissionGuard>
+            </RoleRankGuard>
+          </div>
+        ) : null}
       </Header>
       {isLoading ? (
         <Loader />
