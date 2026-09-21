@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.ts";
+import { assertAiHealthy } from "../../services/ai/ai-api-client.ts";
 
 export type ImportedCourseArchive = {
   courseSlug: string;
@@ -27,6 +28,7 @@ export default async function importCourseMbz(
     secret,
   );
   const baseUrl = env.DOCKER_IA_API_BASE_URL;
+  await assertAiHealthy(baseUrl);
   const ingestResponse = await fetch(`${baseUrl}/ingest`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -37,6 +39,7 @@ export default async function importCourseMbz(
   }
 
   const data = (await ingestResponse.json()) as { course_slug: string };
+  await assertAiHealthy(baseUrl);
   const zipResponse = await fetch(`${baseUrl}/export/${data.course_slug}.zip`, {
     headers: { Authorization: `Bearer ${token}` },
   });

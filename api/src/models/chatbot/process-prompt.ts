@@ -8,6 +8,7 @@ import trackChatbotUsage from "../stats/track-chatbot-usage.ts";
 import { logger } from "../../utils/logs/logger.ts";
 import { env } from "../../config/env.ts";
 import { buildStudentProfile } from "../../services/ai/student-profile-adapter.ts";
+import { assertAiHealthy } from "../../services/ai/ai-api-client.ts";
 
 type FastApiResponse = {
   status: { type: "ok" | "error" | "refusal" };
@@ -57,6 +58,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
   );
   if (input.clearHistory && input.userId !== "anonymous_student") {
     try {
+      await assertAiHealthy(baseUrl);
       await fetch(`${baseUrl}/stm/reset`, {
         method: "POST",
         headers: {
@@ -89,6 +91,7 @@ export default async function processPrompt(input: ProcessPromptInput) {
     courseSlug,
   );
 
+  await assertAiHealthy(baseUrl);
   const response = await fetch(`${baseUrl}/ask`, {
     method: "POST",
     headers: {

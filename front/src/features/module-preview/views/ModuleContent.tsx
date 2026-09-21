@@ -91,8 +91,14 @@ const ModuleContent = () => {
   // activités et garde module et cours comme détail.
   useContentTracking("module", state.module?.id);
   useContentTracking("course", selectedCourse?.id);
-  useContentTracking("lesson", state.selectedLesson?.id);
-  useContentTracking("activity", state.selectedActivity?.id);
+  useContentTracking(
+    "lesson",
+    !isStudentView || computed.hasStartedModule ? state.selectedLesson?.id : undefined,
+  );
+  useContentTracking(
+    "activity",
+    !isStudentView || computed.hasStartedModule ? state.selectedActivity?.id : undefined,
+  );
 
   const diagnosticQuiz = useDiagnosticQuiz(
     computed.hasStartedModule,

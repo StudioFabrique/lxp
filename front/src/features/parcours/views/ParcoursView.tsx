@@ -17,6 +17,7 @@ import ProgressModulesStats from "../components/display/progress-stats";
 import HeaderMenu from "../../../components/UI/header-menu";
 import ImageHeader from "../../../../src/components/image-header/image-header";
 import {
+  ChartNoAxesCombined,
   Download,
   Edit,
   GraduationCap,
@@ -158,6 +159,14 @@ const ParcoursView = () => {
               </PermissionGuard>
             </RoleRankGuard>
           </div>
+        ) : currentRoute[0] === "student" ? (
+          <Link
+            to={`/student/mon-avancement?parcoursId=${id}`}
+            className="btn btn-outline btn-primary"
+          >
+            <ChartNoAxesCombined className="size-4" aria-hidden="true" />
+            Mon avancement
+          </Link>
         ) : null}
       </Header>
       {isLoading ? (

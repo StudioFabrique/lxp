@@ -25,7 +25,13 @@ type Props = { interfaceType: string };
 
 export default function ProfilePopover({ interfaceType }: Props) {
   const { user, handshake } = useContext(AuthContext);
-  const { theme, toggleTheme, chooseTheme, availableLightThemes, availableDarkThemes } = useContext(ThemeContext);
+  const {
+    theme,
+    toggleTheme,
+    chooseTheme,
+    availableLightThemes,
+    availableDarkThemes,
+  } = useContext(ThemeContext);
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -93,14 +99,18 @@ export default function ProfilePopover({ interfaceType }: Props) {
       toast.success("Photo de profil supprimée.");
     } catch (error: unknown) {
       toast.error(
-        getApiErrorMessage(error, "Impossible de supprimer la photo de profil."),
+        getApiErrorMessage(
+          error,
+          "Impossible de supprimer la photo de profil.",
+        ),
       );
     } finally {
       setDeleting(false);
     }
   };
 
-  const themeOptions = theme === "light" ? availableLightThemes : availableDarkThemes;
+  const themeOptions =
+    theme === "light" ? availableLightThemes : availableDarkThemes;
 
   return (
     <>
@@ -212,15 +222,15 @@ export default function ProfilePopover({ interfaceType }: Props) {
                     </div>
                   </div>
                   <button
-                      type="button"
-                      className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
-                      onClick={() => {
-                        setOpen(false);
-                        setEditing(true);
-                      }}
-                    >
-                      Modifier mon profil
-                    </button>
+                    type="button"
+                    className="btn btn-primary btn-sm mt-2 h-8 min-h-8 w-full gap-2 text-xs"
+                    onClick={() => {
+                      setOpen(false);
+                      setEditing(true);
+                    }}
+                  >
+                    Modifier mon profil
+                  </button>
                   <div className="mt-3 border-t border-base-300 pt-3">
                     {canSeeProgress && (
                       <Link
@@ -238,12 +248,11 @@ export default function ProfilePopover({ interfaceType }: Props) {
                         onClick={() => setOpen(false)}
                         className="btn btn-ghost btn-sm w-full justify-start gap-2"
                       >
-                        <Settings className="size-4" /> Activer le rôle
-                        superadmin
+                        <Settings className="size-4" /> Activer le rôle root
                       </Link>
                     )}
                     <div className="mt-2 flex min-w-0 items-center justify-between gap-1 rounded-lg bg-base-200 p-2 text-xs">
-                      <span className="shrink-0">
+                      <span className="shrink-0 ml-1">
                         Mode {theme === "light" ? "clair" : "sombre"}
                       </span>
 

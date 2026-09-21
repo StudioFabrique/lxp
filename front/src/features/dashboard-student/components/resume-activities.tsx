@@ -32,7 +32,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
 
                     <SkillBadgeSummary
                       skills={item.lesson.course.bonusSkills}
-                      className="relative z-10 mt-1"
+                      className="mt-1 [&_button]:relative [&_button]:z-10"
                     />
                   </div>
                   <Link
