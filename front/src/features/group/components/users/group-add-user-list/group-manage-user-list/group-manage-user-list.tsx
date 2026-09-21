@@ -121,6 +121,7 @@ const GroupManageUserList = ({ usersToAdd, onAddUsers }: Props) => {
             setRowSelection={handleSelectionChange}
             sorting={sorting}
             setSorting={handleSortingChange}
+            emptyPlaceholderWithBorder={false}
             emptyMessage={
               searchValue
                 ? "Aucun étudiant disponible pour cette recherche"

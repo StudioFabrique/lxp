@@ -36,6 +36,18 @@ describe("DataTable", () => {
     expect(markup).not.toContain("border-base-300");
   });
 
+  it("permet de retirer la bordure de l'état vide hors recherche", () => {
+    const markup = renderToStaticMarkup(
+      <DataTable
+        columns={[{ accessorKey: "name", header: "Nom" }]}
+        data={[]}
+        emptyPlaceholderWithBorder={false}
+      />,
+    );
+
+    expect(markup).not.toContain("border-base-300");
+  });
+
   it("déclenche le clic de ligne depuis une cellule de données", () => {
     const row: Row = { id: "student-id", name: "Camille Martin" };
     const onRowClick = vi.fn();
