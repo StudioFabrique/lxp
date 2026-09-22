@@ -13,7 +13,11 @@ jest.unstable_mockModule("../src/utils/logs/logger.ts", () => ({
   logger: { error: jest.fn() },
 }));
 
-const { sendRootEmailVerification, sendEmailChangeConfirmation } =
+const {
+  sendRootEmailVerification,
+  sendEmailChangeConfirmation,
+  sendInstanceTemplateTestEmail,
+} =
   await import("../src/services/mailer.ts");
 
 describe("Activation SMTP du compte root", () => {
@@ -82,5 +86,19 @@ describe("Activation SMTP du compte root", () => {
         ]),
       }),
     );
+  });
+
+  test("ajoute au mail de test un bouton vers le site", async () => {
+    await sendInstanceTemplateTestEmail("root@test.fr");
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining("Accéder au site"),
+      }),
+    );
+
+    const message = sendMail.mock.calls[0]?.[0] as { html?: string };
+    expect(message.html).toContain('href="http://localhost:5173/"');
+    expect(message.html).toContain('bgcolor="#1769aa"');
   });
 });

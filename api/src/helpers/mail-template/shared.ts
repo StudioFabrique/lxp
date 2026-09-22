@@ -20,6 +20,21 @@ export const escapeHtml = (value: string) =>
 export const formatDisplayTitle = (value: string) =>
   value.replace(/^(\s*)(\p{L})/u, (_, spaces: string, letter: string) =>
     spaces + letter.toUpperCase());
+
+const hasEnoughContrastOnWhite = (color: string) => {
+  const channels = color
+    .slice(1)
+    .match(/.{2}/g)!
+    .map((value) => parseInt(value, 16) / 255)
+    .map((value) =>
+      value <= 0.04045
+        ? value / 12.92
+        : Math.pow((value + 0.055) / 1.055, 2.4),
+    );
+  const luminance =
+    0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+  return 1.05 / (luminance + 0.05) >= 3;
+};
 export const instanceHomeUrl = () => {
   const configuredUrl = env.FRONT_URL ?? "http://localhost:5173/";
   return configuredUrl.endsWith("/") ? configuredUrl : `${configuredUrl}/`;
@@ -98,7 +113,8 @@ export const layout = (
   const displayedHeaderColor = headerUsesColor ? headerColor : colors.card;
   const shouldUseInstanceColor =
     !options.officialAndriaLogo &&
-    /^#[0-9a-f]{6}$/i.test(options.logoBackgroundColor ?? "");
+    /^#[0-9a-f]{6}$/i.test(options.logoBackgroundColor ?? "") &&
+    hasEnoughContrastOnWhite(instanceColor);
   const themedContent = shouldUseInstanceColor
     ? content.replaceAll("#1769aa", instanceColor)
     : content;

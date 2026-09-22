@@ -281,7 +281,7 @@ export async function sendInstanceTemplateTestEmail(email: string) {
     `<p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.65">E-mail de test</p>
     <h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
     <p style="margin:0">Voici un aperçu réel des e-mails envoyés par <strong>${escapeHtml(name)}</strong>.</p>
-    ${button(instanceHomeUrl(), "Accéder à mon espace")}`,
+    ${button(instanceHomeUrl(), "Accéder au site")}`,
     name,
     instanceBrand(context),
   );
