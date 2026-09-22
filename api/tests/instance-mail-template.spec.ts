@@ -20,6 +20,7 @@ describe("identité de l’instance dans les e-mails", () => {
     expect(html).not.toContain("<strong>STEP</strong></td>");
     expect(html).not.toContain("Cet e-mail a été envoyé par");
     expect(html).toContain('src="cid:andria-footer-light"');
+    expect(html).toContain('valign="middle"');
     expect(html).toContain(
       `<a href="${escapeHtml(instanceHomeUrl())}" style="display:inline-block;text-decoration:none"><img src="cid:andria-footer-light"`,
     );

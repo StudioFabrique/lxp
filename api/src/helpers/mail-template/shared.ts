@@ -156,13 +156,14 @@ export const layout = (
     : options.logoCid
     ? `<img src="cid:${escapeHtml(options.logoCid)}" width="80" alt="${escapeHtml(name)}" style="display:block;width:80px;max-width:100%;max-height:32px;height:auto;border:0;outline:none;text-decoration:none;object-fit:contain">`
     : `<strong>${escapeHtml(name)}</strong>`;
+  const website = options.website?.trim();
+  const footerVerticalAlign = website ? "top" : "middle";
   const footerLogo = options.officialAndriaLogo
     ? ""
     : template === "contrast"
-      ? `<td align="right" valign="top" style="padding:0;text-align:right"><table role="presentation" border="0" cellpadding="0" cellspacing="0" align="right"><tr><td bgcolor="${cornerColor}" style="padding:18px 32px 18px 24px;background-color:${cornerColor};border-radius:8px 0 0 0"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${cornerUsesLightLogo ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td></tr></table></td>`
-      : `<td align="right" valign="top" style="padding:20px 32px 20px 12px;text-align:right"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td>`;
+      ? `<td align="right" valign="${footerVerticalAlign}" style="padding:0;text-align:right"><table role="presentation" border="0" cellpadding="0" cellspacing="0" align="right"><tr><td bgcolor="${cornerColor}" style="padding:18px 32px 18px 24px;background-color:${cornerColor};border-radius:8px 0 0 0"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${cornerUsesLightLogo ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td></tr></table></td>`
+      : `<td align="right" valign="${footerVerticalAlign}" style="padding:20px 32px 20px 12px;text-align:right"><a href="${homeLink}" style="display:inline-block;text-decoration:none"><img src="cid:${darkMode ? ANDRIA_FOOTER_LOGO_DARK_CID : ANDRIA_FOOTER_LOGO_LIGHT_CID}" width="80" alt="ANDRIA" style="display:block;width:80px;max-width:100%;height:auto;margin-left:auto;border:0;outline:none;text-decoration:none"></a></td>`;
   const footerBorder = template === "contrast" ? "none" : `1px solid ${colors.border}`;
-  const website = options.website?.trim();
   const websiteLink = website
     ? `<a href="${escapeHtml(website)}" style="color:${colors.muted};font-size:12px;line-height:18px;text-decoration:underline;word-break:break-all">${escapeHtml(website)}</a>`
     : "";
@@ -181,7 +182,7 @@ export const layout = (
           ${header}
           ${decoration}
           <tr><td align="${renderedContentAlignment}" bgcolor="${colors.card}" style="padding:${design.padding};background-color:${colors.card};border-radius:${contentRadius};color:${colors.text};font-size:15px;line-height:24px;text-align:${renderedContentAlignment}">${themedContent}</td></tr>
-          ${options.showFooter === false ? "" : `<tr><td bgcolor="${colors.card}" style="padding:0;background-color:${colors.card};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%;border-top:${footerBorder};border-radius:${contentRadius}"><tr><td valign="top" style="padding:${template === "contrast" ? "18px 0 18px 32px" : "20px 0 20px 32px"};color:${colors.muted};text-align:left">${footerLeft}</td>${footerLogo}</tr></table></td></tr>`}
+          ${options.showFooter === false ? "" : `<tr><td bgcolor="${colors.card}" style="padding:0;background-color:${colors.card};color:${colors.muted};font-size:12px;line-height:18px"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="width:100%;border-top:${footerBorder};border-radius:${contentRadius}"><tr><td valign="${footerVerticalAlign}" style="padding:${template === "contrast" ? "18px 0 18px 32px" : "20px 0 20px 32px"};color:${colors.muted};text-align:left">${footerLeft}</td>${footerLogo}</tr></table></td></tr>`}
         </table>
       </td>
     </tr>

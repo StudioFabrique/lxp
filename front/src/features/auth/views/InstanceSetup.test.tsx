@@ -30,7 +30,7 @@ describe("Personnalisez votre espace", () => {
   beforeEach(async () => {
     vi.mocked(profileApi.queries.getInstanceSettings).mockResolvedValue({
       name: "ANDRIA",
-      website: "",
+      website: "https://step.eco",
       setupCompleted: false,
       hasLogo: false,
       enabledThemes: ["classic", "classic-dark"],
@@ -76,6 +76,17 @@ describe("Personnalisez votre espace", () => {
     expect(payload?.get("color")).toBe("#3b82f6");
   });
 
+  it("enregistre le site internet de l’organisme", async () => {
+    await act(async () => {
+      container.querySelector("form")?.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true }),
+      );
+    });
+
+    const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
+    expect(payload?.get("website")).toBe("https://step.eco");
+  });
+
   it("garde le fond blanc avec les paramètres ANDRIA par défaut", async () => {
     await act(async () => {
       container.querySelector<HTMLButtonElement>('button[title="Blue"]')?.click();
@@ -86,5 +97,6 @@ describe("Personnalisez votre espace", () => {
 
     const payload = vi.mocked(profileApi.mutations.updateInstanceSettings).mock.calls[0]?.[0];
     expect(payload?.get("color")).toBe("#ffffff");
+    expect(payload?.get("website")).toBe("");
   });
 });

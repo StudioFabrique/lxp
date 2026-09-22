@@ -121,7 +121,7 @@ function EmailPreview({
             Découvrir mon espace
           </span>
           <div
-            className={`mt-auto flex items-start justify-between ${isBanner ? "-mb-3 -mr-4" : "border-t pt-2"}`}
+            className={`mt-auto flex justify-between ${website ? "items-start" : "items-center"} ${isBanner ? "-mb-3 -mr-4" : "border-t pt-2"}`}
             style={{ borderColor: mutedColor }}
           >
             {isBanner ? (

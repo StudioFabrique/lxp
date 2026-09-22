@@ -52,13 +52,13 @@ export default function InstanceLogoControls({
           >
             Ajouter un logo
           </ImageFileUpload>
-          <div className="absolute right-2 top-2 z-10">
+          {Object.values(temporaryImage).some(v => v) && <div className="absolute right-2 top-2 z-10">
             <ColorPicker
               compact
               defaultColor={backgroundColor}
               onColorChange={onBackgroundColorChange}
             />
-          </div>
+          </div>}
         </div>
         {onRemove && (
           <button
