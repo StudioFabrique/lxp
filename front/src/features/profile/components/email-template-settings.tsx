@@ -66,19 +66,12 @@ function EmailPreview({
         }}
       >
         <div className={`flex items-center px-4 py-2 ${isBanner ? "min-h-16 justify-center rounded-b-[45%]" : isCompactHeader || isEditorial || isBare ? "min-h-9 justify-start" : "min-h-12 justify-center"}`} style={{ backgroundColor: isEditorial || isInvitation || isBare ? "#ffffff" : accent }}>
-          {hasInstanceLogo ? (
+          {hasInstanceLogo && (
             <img
               src={INSTANCE_LOGO}
               alt=""
               className="max-h-7 max-w-24 object-contain"
             />
-          ) : (
-            <span
-              className="truncate text-[8px] font-extrabold uppercase tracking-widest"
-              style={{ color: "#111827" }}
-            >
-              {instanceName || "Votre organisme"}
-            </span>
           )}
         </div>
         <div className={`flex flex-1 flex-col px-4 py-3 ${isEditorial || isInvitation || isBanner ? "text-center" : ""}`}>

@@ -278,7 +278,7 @@ export async function sendInstanceTemplateTestEmail(email: string) {
   const context = await mailContext();
   const name = organizationName(context);
   const message = layout(
-    `<p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.65">E-mail de test</p>
+    `<p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.65">E-mail de test</p>
     <h1 style="margin:0 0 16px;font-size:26px;line-height:34px">Votre template est prêt</h1>
     <p style="margin:0">Voici un aperçu réel des e-mails envoyés par <strong>${escapeHtml(name)}</strong>.</p>
     ${button(instanceHomeUrl(), "Accéder à mon espace")}`,
